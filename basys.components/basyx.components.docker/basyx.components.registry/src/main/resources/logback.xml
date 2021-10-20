@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<configuration>
+ 
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    
+    <!-- Example for a filter, which removes all entries not containing "[TEST]" in the message. -->
+    
+    <!--<filter class="ch.qos.logback.core.filter.EvaluatorFilter">      
+      <evaluator>
+        <expression>return message.contains("[TEST]");</expression>
+      </evaluator>
+      <OnMismatch>DENY</OnMismatch>
+      <OnMatch>NEUTRAL</OnMatch>
+    </filter>-->
+  
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
+    </encoder>
+  </appender>
+  
+  <root level="INFO">          
+    <appender-ref ref="STDOUT" />
+  </root>  
+   
+</configuration>

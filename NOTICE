@@ -1,0 +1,97 @@
+## Funding Acknowledgment
+
+Eclipse BaSyx was started in 2017 for the implementation of the results
+of the project "BaSys 4.0", funded by the German Federal Ministry
+of Education and Research (BMBF), grant number 01IS16022.
+
+## Declared Project Licenses
+
+This program and the accompanying materials are made available under the terms of the Eclipse Public License v. 2.0 which is available at
+https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.html
+
+SPDX-License-Identifier: EPL-2.0
+
+## Source Code
+
+The project maintains the following source code repositories:
+
+ * https://git.eclipse.org/r/basyx/basyx
+
+## Third-party Content
+
+Eclipse Milo
+ 
+ * License: EPL 2.0
+ 
+javax.servlet-api
+
+ * License: CDDL
+ 
+javax.ws.rs-api 
+
+ * License: EPL 2.0
+ 
+jersey-client 
+
+ * License: EPL 2.0
+
+jersey-hk2 
+
+ * License: EPL 2.0
+ 
+Tomcat-catalina
+
+ * License: Apache License 2.0
+ 
+Apache poi-ooxml
+
+ * License: Apache License 2.0
+ 
+Logback 
+
+ * License: EPL 1.0
+
+Janino 
+
+ * License: BSD 3
+
+Eclipse Paho
+
+ * License:  EPL 2.0
+ 
+Postgres
+
+ * License: PostgreSQL Licence
+ 
+GSON 
+
+ * License: Apache License 2.0
+ 
+HikariCP 
+
+ * License: EPL 1.0
+ 
+mongodb-driver-sync
+
+ * License: Apache License 2.0
+ 
+spring-data-mongodb
+
+ * License: Apache License 2.0
+ 
+Moquette
+
+ * License: Apache License 2.0
+ 
+
+To be extended
+
+
+## Cryptography
+
+Content may contain encryption software. The country in which you are currently
+may have restrictions on the import, possession, and use, and/or re-export to
+another country, of encryption software. BEFORE using any encryption software,
+please check the country's laws, regulations and policies concerning the import,
+possession, or use, and re-export of encryption software, to see if this is
+permitted.

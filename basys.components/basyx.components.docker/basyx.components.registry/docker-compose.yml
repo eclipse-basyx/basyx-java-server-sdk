@@ -1,0 +1,25 @@
+version: '2.1'
+services:
+  registry:
+    image: ${BASYX_IMAGE_NAME}:${BASYX_IMAGE_TAG}
+    container_name: ${BASYX_CONTAINER_NAME}
+    ports:
+      - ${BASYX_HOST_PORT}:${BASYX_CONTAINER_PORT}
+#    depends_on:
+#      mongodb:
+#        condition: service_healthy
+#    links:
+#      - mongodb
+
+#  mongodb:
+#    image: mongo:latest
+#    container_name: mongodb
+# Possibility to enable authentication
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: example
+#    healthcheck:
+#      test: echo 'db.runCommand("ping").ok' | mongo mongodb:27017/test --quiet
+#      interval: 3s
+#      timeout: 3s
+#      retries: 5
