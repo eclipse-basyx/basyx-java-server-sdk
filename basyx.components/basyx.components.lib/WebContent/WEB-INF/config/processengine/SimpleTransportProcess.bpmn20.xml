@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test" exporter="Camunda Modeler" exporterVersion="1.16.2">
+  <process id="SimpleTransportProcess" name="transport process using coil-car" isExecutable="true">
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <serviceTask id="step5" name="pick up coil" activiti:class="org.eclipse.basyx.components.processengine.connector.DeviceServiceDelegate">
+      <extensionElements>
+        <activiti:field name="serviceName">
+          <activiti:string><![CDATA[liftTo]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="serviceProvider">
+        	<activiti:string><![CDATA[coilcar]]></activiti:string></activiti:field>
+        <activiti:field name="serviceParameter">
+        	<activiti:string><![CDATA[[0]]]></activiti:string></activiti:field>
+        <activiti:field name="submodelId">
+        	<activiti:string><![CDATA[submodel1]]></activiti:string></activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <serviceTask id="step6" name="bring coil before spindle" activiti:class="org.eclipse.basyx.components.processengine.connector.DeviceServiceDelegate">
+      <extensionElements>
+        <activiti:field name="serviceName">
+          <activiti:string><![CDATA[moveTo]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="serviceProvider">
+        	<activiti:string><![CDATA[coilcar]]></activiti:string></activiti:field>
+        <activiti:field name="serviceParameter">
+        	<activiti:string><![CDATA[[5]]]></activiti:string></activiti:field>
+        <activiti:field name="submodelId">
+        	<activiti:string><![CDATA[submodel1]]></activiti:string></activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow5" sourceRef="step5" targetRef="step6"></sequenceFlow>
+    <sequenceFlow id="flow6" sourceRef="exclusivegateway1" targetRef="step5">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${coilposition == 1}]]></conditionExpression>
+    </sequenceFlow>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <serviceTask id="servicetask1" name="Lift coil until inline" activiti:class="org.eclipse.basyx.components.processengine.connector.DeviceServiceDelegate">
+      <extensionElements>
+        <activiti:field name="serviceName">
+          <activiti:string><![CDATA[liftTo]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="serviceProvider">
+        	<activiti:string><![CDATA[coilcar]]></activiti:string></activiti:field>
+        <activiti:field name="serviceParameter">
+        	<activiti:string><![CDATA[[5]]]></activiti:string></activiti:field>
+        <activiti:field name="submodelId">
+        	<activiti:string><![CDATA[submodel1]]></activiti:string></activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow7" sourceRef="step6" targetRef="servicetask1"></sequenceFlow>
+    <sequenceFlow id="flow8" sourceRef="servicetask4" targetRef="endevent1"></sequenceFlow>
+    <serviceTask id="servicetask2" name="put coil onto spindle" activiti:class="org.eclipse.basyx.components.processengine.connector.DeviceServiceDelegate">
+      <extensionElements>
+        <activiti:field name="serviceName">
+          <activiti:string><![CDATA[moveTo]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="serviceProvider">
+        	<activiti:string><![CDATA[coilcar]]></activiti:string></activiti:field>
+        <activiti:field name="serviceParameter">
+        	<activiti:string><![CDATA[[6]]]></activiti:string></activiti:field>
+        <activiti:field name="submodelId">
+        	<activiti:string><![CDATA[submodel1]]></activiti:string></activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <serviceTask id="servicetask3" name="lift down" activiti:class="org.eclipse.basyx.components.processengine.connector.DeviceServiceDelegate">
+      <extensionElements>
+        <activiti:field name="serviceName">
+          <activiti:string><![CDATA[liftTo]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="serviceProvider">
+        	<activiti:string><![CDATA[coilcar]]></activiti:string></activiti:field>
+        <activiti:field name="serviceParameter">
+        	<activiti:string><![CDATA[[0]]]></activiti:string></activiti:field>
+        <activiti:field name="submodelId">
+        	<activiti:string><![CDATA[submodel1]]></activiti:string></activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow12" sourceRef="servicetask2" targetRef="servicetask3"></sequenceFlow>
+    <sequenceFlow id="flow13" sourceRef="servicetask1" targetRef="servicetask2"></sequenceFlow>
+    <serviceTask id="servicetask4" name="move back" activiti:class="org.eclipse.basyx.components.processengine.connector.DeviceServiceDelegate">
+      <extensionElements>
+        <activiti:field name="serviceName">
+          <activiti:string><![CDATA[moveTo]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="serviceProvider">
+        	<activiti:string><![CDATA[coilcar]]></activiti:string></activiti:field>
+        <activiti:field name="serviceParameter">
+        	<activiti:string><![CDATA[[0]]]></activiti:string></activiti:field>
+        <activiti:field name="submodelId">
+        	<activiti:string><![CDATA[submodel1]]></activiti:string></activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow14" sourceRef="servicetask3" targetRef="servicetask4"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway1" name="check start position of coil"></exclusiveGateway>
+    <sequenceFlow id="flow15" sourceRef="startevent1" targetRef="exclusivegateway1"></sequenceFlow>
+    <serviceTask id="servicetask5" name="move to coil" activiti:class="org.eclipse.basyx.components.processengine.connector.DeviceServiceDelegate">
+      <extensionElements>
+        <activiti:field name="serviceName">
+          <activiti:string><![CDATA[moveTo]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="serviceProvider">
+        	<activiti:string><![CDATA[coilcar]]></activiti:string></activiti:field>
+        <activiti:field name="serviceParameter">
+        	<activiti:string><![CDATA[[0]]]></activiti:string></activiti:field>
+        <activiti:field name="submodelId">
+        	<activiti:string><![CDATA[submodel1]]></activiti:string></activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow16" sourceRef="exclusivegateway1" targetRef="servicetask5">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${coilposition==2}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow17" sourceRef="servicetask5" targetRef="step5"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_smsProcess">
+    <bpmndi:BPMNPlane bpmnElement="smsProcess" id="BPMNPlane_smsProcess">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="12.0" y="128.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="step5" id="BPMNShape_step5">
+        <omgdc:Bounds height="71.0" width="105.0" x="240.0" y="109.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="step6" id="BPMNShape_step6">
+        <omgdc:Bounds height="71.0" width="105.0" x="380.0" y="109.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="1140.0" y="127.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask1" id="BPMNShape_servicetask1">
+        <omgdc:Bounds height="71.0" width="105.0" x="530.0" y="109.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask2" id="BPMNShape_servicetask2">
+        <omgdc:Bounds height="71.0" width="105.0" x="690.0" y="106.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask3" id="BPMNShape_servicetask3">
+        <omgdc:Bounds height="71.0" width="105.0" x="840.0" y="107.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask4" id="BPMNShape_servicetask4">
+        <omgdc:Bounds height="55.0" width="105.0" x="980.0" y="117.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="89.0" y="125.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask5" id="BPMNShape_servicetask5">
+        <omgdc:Bounds height="55.0" width="105.0" x="160.0" y="240.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="345.0" y="144.0"></omgdi:waypoint>
+        <omgdi:waypoint x="380.0" y="144.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="129.0" y="145.0"></omgdi:waypoint>
+        <omgdi:waypoint x="240.0" y="144.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="485.0" y="144.0"></omgdi:waypoint>
+        <omgdi:waypoint x="530.0" y="144.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="1085.0" y="144.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1140.0" y="144.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow12" id="BPMNEdge_flow12">
+        <omgdi:waypoint x="795.0" y="141.0"></omgdi:waypoint>
+        <omgdi:waypoint x="840.0" y="142.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow13" id="BPMNEdge_flow13">
+        <omgdi:waypoint x="635.0" y="144.0"></omgdi:waypoint>
+        <omgdi:waypoint x="690.0" y="141.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow14" id="BPMNEdge_flow14">
+        <omgdi:waypoint x="945.0" y="142.0"></omgdi:waypoint>
+        <omgdi:waypoint x="980.0" y="144.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
+        <omgdi:waypoint x="29.0" y="163.0"></omgdi:waypoint>
+        <omgdi:waypoint x="47.0" y="197.0"></omgdi:waypoint>
+        <omgdi:waypoint x="109.0" y="165.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow16" id="BPMNEdge_flow16">
+        <omgdi:waypoint x="109.0" y="165.0"></omgdi:waypoint>
+        <omgdi:waypoint x="110.0" y="267.0"></omgdi:waypoint>
+        <omgdi:waypoint x="160.0" y="267.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow17" id="BPMNEdge_flow17">
+        <omgdi:waypoint x="212.0" y="240.0"></omgdi:waypoint>
+        <omgdi:waypoint x="292.0" y="180.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

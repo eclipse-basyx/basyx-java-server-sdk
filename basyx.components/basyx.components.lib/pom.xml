@@ -1,0 +1,78 @@
+	<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.eclipse.basyx</groupId>
+		<artifactId>basyx.components</artifactId>
+		<version>1.0.1</version>
+    </parent>
+	
+	<artifactId>basyx.components.lib</artifactId>
+	<name>BaSyx Components Library</name>
+	
+	<packaging>jar</packaging>
+	
+	<!-- Define additional plugins that are not included by default -->
+	<build>
+		<plugins>
+			<!-- Attach sources to jar file -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<dependencies>
+		<!-- PostgreSQL SQL Database -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.2.2</version>
+		</dependency>
+		
+		<dependency>
+  			<groupId>org.camunda.bpm</groupId>
+  			<artifactId>camunda-engine</artifactId>
+  			<version>7.15.0</version>
+		</dependency>
+		
+		<dependency>
+      		<groupId>org.camunda.bpm.model</groupId>
+      		<artifactId>camunda-bpmn-model</artifactId>
+      		<version>7.15.0</version>
+    	</dependency>
+		<!-- Handles resources & files -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.197</version>
+		</dependency>
+
+		<dependency>
+	        <groupId>com.zaxxer</groupId>
+	        <artifactId>HikariCP</artifactId>
+	        <version>3.4.5</version>
+	    </dependency>
+
+		<!-- Add BaSys SDK -->
+		<dependency>
+			<groupId>org.eclipse.basyx</groupId>
+			<artifactId>basyx.sdk</artifactId>
+		</dependency>
+		
+		<!-- Adds additional classes of the BaSys SDK for tests -->
+		<dependency>
+			<groupId>org.eclipse.basyx</groupId>
+			<artifactId>basyx.sdk</artifactId>
+			<classifier>tests</classifier>
+		</dependency>
+	</dependencies>
+</project>
