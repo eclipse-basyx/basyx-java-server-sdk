@@ -45,7 +45,7 @@ public class MongoDBRegistryHandler implements IRegistryHandler {
 	/**
 	 * Receives the path of the configuration.properties file in it's constructor.
 	 * 
-	 * @param configFilePath
+	 * @param config
 	 */
 	public MongoDBRegistryHandler(BaSyxMongoDBConfiguration config) {
 		this.setConfiguration(config);

@@ -14,14 +14,15 @@ import javax.servlet.http.HttpServlet;
 import org.eclipse.basyx.components.IComponent;
 import org.eclipse.basyx.components.configuration.BaSyxContextConfiguration;
 import org.eclipse.basyx.components.configuration.BaSyxMongoDBConfiguration;
+import org.eclipse.basyx.components.configuration.BaSyxMqttConfiguration;
 import org.eclipse.basyx.components.configuration.BaSyxSQLConfiguration;
 import org.eclipse.basyx.components.registry.configuration.BaSyxRegistryConfiguration;
 import org.eclipse.basyx.components.registry.configuration.RegistryBackend;
 import org.eclipse.basyx.components.registry.servlet.InMemoryRegistryServlet;
 import org.eclipse.basyx.components.registry.servlet.MongoDBRegistryServlet;
 import org.eclipse.basyx.components.registry.servlet.SQLRegistryServlet;
-import org.eclipse.basyx.vab.protocol.http.server.BaSyxHTTPServer;
 import org.eclipse.basyx.vab.protocol.http.server.BaSyxContext;
+import org.eclipse.basyx.vab.protocol.http.server.BaSyxHTTPServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,7 @@ public class RegistryComponent implements IComponent {
 	// The backend configuration
 	private BaSyxMongoDBConfiguration mongoDBConfig;
 	private BaSyxSQLConfiguration sqlConfig;
+	private BaSyxMqttConfiguration mqttConfig;
 
 	/**
 	 * Default constructor that loads default configurations
@@ -117,6 +119,24 @@ public class RegistryComponent implements IComponent {
 	}
 
 	/**
+	 * Sets and enables mqtt connection configuration for this component. Has to be
+	 * called before the component is started. backend.
+	 * 
+	 * @param configuration
+	 */
+	public void enableMQTT(BaSyxMqttConfiguration configuration) {
+		this.mqttConfig = configuration;
+	}
+
+	/**
+	 * Disables mqtt configuration. Has to be called before the component is
+	 * started.
+	 */
+	public void disableMQTT() {
+		this.mqttConfig = null;
+	}
+
+	/**
 	 * Loads a registry with a backend according to the registryConfig
 	 * 
 	 * @return
@@ -138,13 +158,18 @@ public class RegistryComponent implements IComponent {
 		return registryServlet;
 	}
 
-	/**
-	 * Creates a registry servlet with an sql backend
-	 * 
-	 * @return
-	 */
 	private HttpServlet loadSQLRegistryServlet() {
-		logger.info("Loading SQLRegistry");
+		logger.info("Loading SQLRegistry servlet");
+		BaSyxSQLConfiguration appliedSQLConfig = loadSQLConfiguration();
+		if (this.mqttConfig == null) {
+			return new SQLRegistryServlet(appliedSQLConfig);
+		} else {
+			logger.info("Enable MQTT events for broker " + this.mqttConfig.getServer());
+			return new SQLRegistryServlet(appliedSQLConfig, this.mqttConfig);
+		}
+	}
+
+	private BaSyxSQLConfiguration loadSQLConfiguration() {
 		BaSyxSQLConfiguration config;
 		if (this.sqlConfig == null) {
 			config = new BaSyxSQLConfiguration();
@@ -152,16 +177,21 @@ public class RegistryComponent implements IComponent {
 		} else {
 			config = this.sqlConfig;
 		}
-		return new SQLRegistryServlet(config);
+		return config;
 	}
 
-	/**
-	 * Creates a registry servlet with an mongodb backend
-	 * 
-	 * @return
-	 */
 	private HttpServlet loadMongoDBRegistryServlet() {
-		logger.info("Loading MongoDBRegistry");
+		logger.info("Loading MongoDBRegistry servlet");
+		BaSyxMongoDBConfiguration appliedMongoDBConfig = loadMongoDBConfiguration();
+		if (this.mqttConfig == null) {
+			return new MongoDBRegistryServlet(appliedMongoDBConfig);
+		} else {
+			logger.info("Enable MQTT events for broker " + this.mqttConfig.getServer());
+			return new MongoDBRegistryServlet(appliedMongoDBConfig, this.mqttConfig);
+		}
+	}
+
+	private BaSyxMongoDBConfiguration loadMongoDBConfiguration() {
 		BaSyxMongoDBConfiguration config;
 		if (this.mongoDBConfig == null) {
 			config = new BaSyxMongoDBConfiguration();
@@ -169,7 +199,7 @@ public class RegistryComponent implements IComponent {
 		} else {
 			config = this.mongoDBConfig;
 		}
-		return new MongoDBRegistryServlet(config);
+		return config;
 	}
 
 	/**
@@ -179,7 +209,12 @@ public class RegistryComponent implements IComponent {
 	 */
 	private HttpServlet loadInMemoryRegistryServlet() {
 		logger.info("Loading InMemoryRegistry");
-		return new InMemoryRegistryServlet();
+		if (this.mqttConfig == null) {
+			return new InMemoryRegistryServlet();
+		} else {
+			logger.info("Enable MQTT events for broker " + this.mqttConfig.getServer());
+			return new InMemoryRegistryServlet(this.mqttConfig);
+		}
 	}
 
 	@Override

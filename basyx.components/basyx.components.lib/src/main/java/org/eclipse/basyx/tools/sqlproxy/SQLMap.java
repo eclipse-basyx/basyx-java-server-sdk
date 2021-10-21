@@ -332,7 +332,7 @@ public class SQLMap extends SQLProxy implements Map<String, Object> {
 		Collection<Object> result = new LinkedList<Object>();
 		// - Fill result
 		for (Map<String, Object> singleResult: sqlResult) {
-			result.add(SQLTableRow.getValueFromString(sqlRootElement, Integer.parseInt((String) singleResult.get("type")), (String) singleResult.get("value"))); 
+			result.add(SQLTableRow.getValueFromString(sqlRootElement, (int) singleResult.get("type"), (String) singleResult.get("value"))); 
 		}
 		
 		// Return result
@@ -355,7 +355,7 @@ public class SQLMap extends SQLProxy implements Map<String, Object> {
 		// Fill hash set - iterate result
 		for (Map<String, Object> singleResult: sqlResult) {
 			// Deserialize value from string
-			Object value = SQLTableRow.getValueFromString(sqlRootElement, Integer.parseInt((String) singleResult.get("type")), (String) singleResult.get("value"));
+			Object value = SQLTableRow.getValueFromString(sqlRootElement, (int) singleResult.get("type"), (String) singleResult.get("value"));
 			
 			// Build entry
 			Entry<String, Object> resultEntry = new AbstractMap.SimpleEntry<String, Object>((String) singleResult.get("name"), value);

@@ -68,7 +68,7 @@ public class DeviceServiceExecutor implements IDeviceServiceExecutor {
 			
 			// invoke the service
 			logger.debug("#Service Executor#--Call service: %s with parameter: %s \n", servicename,  params);
-			Object position = op.invoke(params.toArray());
+			Object position = op.invokeSimple(params.toArray());
 			
 			return position;
 		}catch(Exception e) {

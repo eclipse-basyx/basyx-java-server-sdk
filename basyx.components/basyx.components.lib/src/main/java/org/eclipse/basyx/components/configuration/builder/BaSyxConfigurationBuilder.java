@@ -43,7 +43,7 @@ public abstract class BaSyxConfigurationBuilder<ParentBuilderType> {
 	/**
 	 * End configuration 
 	 * 
-	 * This base implementation invokes the <<<>>> operation of the configured component if configured 
+	 * This base implementation invokes the {@literal <<<>>>} operation of the configured component if configured 
 	 * component is not null. Only set the configured component for the top level builder, not for
 	 * nested builders.
 	 */

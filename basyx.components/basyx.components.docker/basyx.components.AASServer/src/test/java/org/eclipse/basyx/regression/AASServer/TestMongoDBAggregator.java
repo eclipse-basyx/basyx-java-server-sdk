@@ -16,7 +16,6 @@ import java.util.List;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.components.aas.mongodb.MongoDBAASAggregator;
-import org.eclipse.basyx.components.configuration.BaSyxContextConfiguration;
 import org.eclipse.basyx.components.configuration.BaSyxMongoDBConfiguration;
 import org.eclipse.basyx.testsuite.regression.aas.aggregator.AASAggregatorSuite;
 import org.junit.Test;
@@ -30,7 +29,7 @@ public class TestMongoDBAggregator extends AASAggregatorSuite {
 
 	@Override
 	protected IAASAggregator getAggregator() {
-		MongoDBAASAggregator aggregator = new MongoDBAASAggregator(BaSyxContextConfiguration.DEFAULT_CONFIG_PATH);
+		MongoDBAASAggregator aggregator = new MongoDBAASAggregator(BaSyxMongoDBConfiguration.DEFAULT_CONFIG_PATH);
 		aggregator.reset();
 
 		return aggregator;

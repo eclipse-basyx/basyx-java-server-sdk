@@ -31,7 +31,7 @@ public class TestInMemoryAASServer extends AASServerSuite {
 
 	@Override
 	protected String getURL() {
-		return component.getURL() + "/shells";
+		return component.getURL();
 	}
 
 	@BeforeClass

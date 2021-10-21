@@ -1,5 +1,7 @@
 # Add java runtime environment for execution
-FROM java:8-jdk-alpine 
+FROM alpine
+
+RUN apk update && apk add openjdk8
 
 # Copy built jar to image using the jar name specified in the pom.xml (JAR_FILE)
 ARG JAR_FILE

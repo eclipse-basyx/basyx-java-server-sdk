@@ -49,7 +49,7 @@ public class MongoDBAASAPI implements IAASAPI {
 	/**
 	 * Receives the path of the configuration.properties file in it's constructor.
 	 * 
-	 * @param configFilePath
+	 * @param config
 	 */
 	public MongoDBAASAPI(BaSyxMongoDBConfiguration config, String aasId) {
 		this.setConfiguration(config);
@@ -84,7 +84,7 @@ public class MongoDBAASAPI implements IAASAPI {
 	 * Sets the aas id, so that this API points to the aas with aasId. Can be changed
 	 * to point to a different aas in the database.
 	 * 
-	 * @param smId
+	 * @param aasId
 	 */
 	public void setAASId(String aasId) {
 		this.aasId = aasId;
@@ -94,7 +94,7 @@ public class MongoDBAASAPI implements IAASAPI {
 	 * Depending on whether the model is already in the db, this method inserts or replaces the existing data.
 	 * The new aas id for this API is taken from the given aas.
 	 * 
-	 * @param sm
+	 * @param aas
 	 */
 	public void setAAS(AssetAdministrationShell aas) {
 		String id = aas.getIdentification().getId();

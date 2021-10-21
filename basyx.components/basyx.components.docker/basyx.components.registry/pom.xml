@@ -6,12 +6,11 @@
 	<parent>
 		<groupId>org.eclipse.basyx</groupId>
 		<artifactId>basyx.components.docker</artifactId>
-		<version>1.0.1</version>
+		<version>1.1.0-SNAPSHOT</version>
     </parent>
 	
 	<artifactId>basyx.components.registry</artifactId>
 	<name>BaSyx Registry</name>
-	<version>1.0.3</version>
 	
 	<properties>
 		<basyx.components.executable>org.eclipse.basyx.components.registry.executable.RegistryExecutable</basyx.components.executable>
@@ -44,6 +43,20 @@
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-mongodb</artifactId>
 			<version>3.0.2.RELEASE</version>
+		</dependency>
+		
+		<!-- Moquette MQTT broker for testing MQTT events -->
+		<dependency>
+			<groupId>io.moquette</groupId>
+			<artifactId>moquette-broker</artifactId>
+			<version>0.15</version>
+			<scope>test</scope>
+		    <exclusions>
+				<exclusion> 
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+		    </exclusions>
 		</dependency>
 	
 		<!-- Adds additional classes of the BaSys SDK for tests (for TestRegistryProvider) -->

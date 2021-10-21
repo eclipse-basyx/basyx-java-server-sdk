@@ -14,6 +14,7 @@ import java.net.URISyntaxException;
 
 import org.eclipse.basyx.components.aas.AASServerComponent;
 import org.eclipse.basyx.components.aas.configuration.AASEventBackend;
+import org.eclipse.basyx.components.aas.configuration.AASXUploadBackend;
 import org.eclipse.basyx.components.aas.configuration.BaSyxAASServerConfiguration;
 import org.eclipse.basyx.components.configuration.BaSyxContextConfiguration;
 import org.eclipse.basyx.components.configuration.BaSyxMqttConfiguration;
@@ -22,12 +23,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Starts an HTTP server that is able to receive AAS and submodels pushed from
- * remote <br />
+ * remote <br>
  * They are made available at
  * <i>localhost:4000/aasServer/shells/${aasId}/aas</i>. Submodels are available
  * at
- * <i>localhost:4000/aasServer/shells/${aasId}/submodels/${submodelId}/submodel</i><br
- * />
+ * <i>localhost:4000/aasServer/shells/${aasId}/submodels/${submodelId}/submodel</i><br>
  * 
  * @author schnicke, espen
  */
@@ -57,6 +57,11 @@ public class AASServerExecutable {
 			BaSyxMqttConfiguration mqttConfig = new BaSyxMqttConfiguration();
 			mqttConfig.loadFromDefaultSource();
 			component.enableMQTT(mqttConfig);
+		}
+		
+		// if enabled, load AASX uploader functionality
+		if (aasConfig.getAASXUpload().equals(AASXUploadBackend.ENABLED)) {
+			component.enableAASXUpload();
 		}
 
 		component.startComponent();

@@ -20,9 +20,6 @@ import com.google.common.base.Strings;
  *
  */
 public enum AASEventBackend {
-	/**
-	 * Enum values of KeyElements
-	 */
 	NONE("NONE"), MQTT("MQTT");
 	
 	private String literal;

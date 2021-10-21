@@ -66,7 +66,7 @@ public class BaSyxConfiguration {
 	/**
 	 * Load the configuration from a path relative to the current folder
 	 * 
-	 * @param filePath Path to the resource in the application folder
+	 * @param fileKey key where the file path to the resource in the application folder
 	 */
 	public void loadFileOrDefaultResource(String fileKey, String defaultResource) {
 		// Try to load property that points to the configuration file (e.g. java -DfileKey=yx.properties [...])

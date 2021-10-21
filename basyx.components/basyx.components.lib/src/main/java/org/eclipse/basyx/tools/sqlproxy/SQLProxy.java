@@ -43,7 +43,7 @@ public abstract class SQLProxy extends SQLConnector {
 	 *
 	 * @param driver       SQL Driver to connect with the database
 	 * @param tableID     ID of table for this map in database
-	 * @param rootTableID ID of root table in database
+	 * @param rootElement ID of root element in database
 	 */
 	public SQLProxy(ISQLDriver driver, String tableID, SQLRootElement rootElement) {
 		// Invoke base constructor
@@ -118,7 +118,6 @@ public abstract class SQLProxy extends SQLConnector {
 	/**
 	 * Insert an object into the data base
 	 * 
-	 * @param drv JDBC driver to be used
 	 * @param collectionName Name of collection
 	 * @param sqlCollectionElement Collection element
 	 */
@@ -154,7 +153,7 @@ public abstract class SQLProxy extends SQLConnector {
 	 * Insert a collection of SQLMapElements into the database
 	 * 
 	 * @param mapName Name of map
-	 * @param sqlMapElement Map element
+	 * @param values row values
 	 */
 	protected void addToMapMultiple(String mapName, Collection<SQLTableRow> values) {
 		// Execute operation
@@ -167,7 +166,7 @@ public abstract class SQLProxy extends SQLConnector {
 	 * 
 	 * @param drv JDBC driver to be used
 	 * @param mapName Name of map
-	 * @param sqlMapElement Map element
+	 * @param values row values
 	 */
 	protected void addToMapMultiple(ISQLDriver drv, String mapName, Collection<SQLTableRow> values) {
 		// Build value variables for SQL insert string
@@ -273,7 +272,7 @@ public abstract class SQLProxy extends SQLConnector {
 	 * Get an entry from data base table
 	 * 
 	 * @param mapName Name of map
-	 * @param sqlMapElement Map element
+	 * @param key 
 	 */
 	protected Object getValueFromMap(String mapName, String key) {
 		return getValueFromMap(getDriver(), mapName, key);
@@ -285,7 +284,7 @@ public abstract class SQLProxy extends SQLConnector {
 	 * 
 	 * @param drv JDBC driver to be used
 	 * @param mapName Name of map
-	 * @param sqlMapElement Map element
+	 * @param key
 	 */
 	protected Object getValueFromMap(ISQLDriver drv, String mapName, String key) {
 		// SQL query string
@@ -305,7 +304,7 @@ public abstract class SQLProxy extends SQLConnector {
 		// - Null value check, in case that entry was not in database
 		if (result.get("type") == null) return null;
 		// - De-serialize table entry
-		return SQLTableRow.getValueFromString(sqlRootElement, Integer.parseInt((String) result.get("type")), (String) result.get("value"));
+		return SQLTableRow.getValueFromString(sqlRootElement, (int) result.get("type"), (String) result.get("value"));
 	}
 
 	
@@ -313,9 +312,8 @@ public abstract class SQLProxy extends SQLConnector {
 	/**
 	 * Get an entry from data base table
 	 * 
-	 * @param drv JDBC driver to be used
 	 * @param mapName Name of map
-	 * @param sqlMapElement Map element
+	 * @param key
 	 */
 	protected Object getMapRowRaw(String mapName, String key) {
 		return getMapRowRaw(getDriver(), mapName, key);
@@ -327,7 +325,7 @@ public abstract class SQLProxy extends SQLConnector {
 	 * 
 	 * @param drv JDBC driver to be used
 	 * @param mapName Name of map
-	 * @param sqlMapElement Map element
+	 * @param key
 	 */
 	protected Object getMapRowRaw(ISQLDriver drv, String mapName, String key) {
 		// SQL query string
@@ -347,7 +345,6 @@ public abstract class SQLProxy extends SQLConnector {
 	/**
 	 * Get a column from data base table as set
 	 * 
-	 * @param drv JDBC driver to be used
 	 * @param mapName Name of map
 	 * @param columnName Table column name
 	 */
@@ -380,7 +377,7 @@ public abstract class SQLProxy extends SQLConnector {
 	 * Get a column from data base table as array of maps
 	 * 
 	 * @param mapName Name of map
-	 * @param columnName Table column name
+	 * @param columnNames Table column names
 	 */
 	protected Object getMapColumnRaw(String mapName, String... columnNames) {
 		return getMapColumnRaw(getDriver(), mapName, columnNames);
@@ -392,7 +389,7 @@ public abstract class SQLProxy extends SQLConnector {
 	 * 
 	 * @param drv JDBC driver to be used
 	 * @param mapName Name of map
-	 * @param columnName Table column name
+	 * @param columnNames Table column names
 	 */
 	protected Object getMapColumnRaw(ISQLDriver drv, String mapName, String... columnNames) {
 		// Builder for ID list

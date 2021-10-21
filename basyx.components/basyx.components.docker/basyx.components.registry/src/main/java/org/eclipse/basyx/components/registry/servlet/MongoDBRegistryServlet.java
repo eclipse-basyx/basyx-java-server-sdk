@@ -12,7 +12,10 @@ package org.eclipse.basyx.components.registry.servlet;
 import org.eclipse.basyx.aas.registration.memory.AASRegistry;
 import org.eclipse.basyx.aas.registration.restapi.AASRegistryModelProvider;
 import org.eclipse.basyx.components.configuration.BaSyxMongoDBConfiguration;
+import org.eclipse.basyx.components.configuration.BaSyxMqttConfiguration;
+import org.eclipse.basyx.components.registry.mongodb.MongoDBRegistry;
 import org.eclipse.basyx.components.registry.mongodb.MongoDBRegistryHandler;
+import org.eclipse.basyx.components.registry.mqtt.MqttRegistryFactory;
 import org.eclipse.basyx.vab.protocol.http.server.VABHTTPInterface;
 
 /**
@@ -25,14 +28,26 @@ public class MongoDBRegistryServlet extends VABHTTPInterface<AASRegistryModelPro
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Provide HTTP interface with JSONProvider to handle serialization and
-	 * SQLDirectoryProvider as backend
+	 * Provide HTTP interface with JSONProvider and MongoDB as backend with default
+	 * configuration
 	 */
 	public MongoDBRegistryServlet() {
 		super(new AASRegistryModelProvider(new AASRegistry(new MongoDBRegistryHandler())));
 	}
 
+	/**
+	 * Provide HTTP interface with JSONProvider and MongoDB as backend
+	 */
 	public MongoDBRegistryServlet(BaSyxMongoDBConfiguration config) {
-		super(new AASRegistryModelProvider(new AASRegistry(new MongoDBRegistryHandler(config))));
+		super(new AASRegistryModelProvider(new MongoDBRegistry(config)));
+	}
+
+	/**
+	 * Provide HTTP interface with JSONProvider and MongoDB as storage and MQTT as
+	 * event backend
+	 */
+	public MongoDBRegistryServlet(BaSyxMongoDBConfiguration mongoDBConfig, BaSyxMqttConfiguration mqttConfig) {
+		super(new AASRegistryModelProvider(
+				new MqttRegistryFactory().create(new MongoDBRegistry(mongoDBConfig), mqttConfig)));
 	}
 }

@@ -61,7 +61,7 @@ public class MongoDBSubmodelAPI implements ISubmodelAPI {
 	/**
 	 * Receives the path of the configuration.properties file in it's constructor.
 	 * 
-	 * @param configFilePath
+	 * @param config
 	 */
 	public MongoDBSubmodelAPI(BaSyxMongoDBConfiguration config, String smId) {
 		this.setConfiguration(config);

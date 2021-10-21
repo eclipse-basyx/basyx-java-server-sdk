@@ -22,7 +22,7 @@ package org.eclipse.basyx.components.device;
  * or they may be called synchronously as response to signals to the device.
  * 
  * It resembles the following basic state machine
- *      OFF --(deviceInitialized)--> IDLE --(serviceRunning)--> RUNNING --(serviceCompleted)--> COMPLETE --(resetCompleted)--> IDLE 
+ *      OFF --(deviceInitialized){@literal -->} IDLE --(serviceRunning){@literal -->} RUNNING --(serviceCompleted){@literal -->} COMPLETE --(resetCompleted){@literal -->} IDLE 
  * 
  * @author kuhn
  *

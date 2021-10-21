@@ -64,7 +64,6 @@ import com.mongodb.client.MongoClients;
 public class MongoDBAASAggregator implements IAASAggregator {
 	private static Logger logger = LoggerFactory.getLogger(MongoDBAASAggregator.class);
 
-	private static final String DEFAULT_CONFIG_PATH = "mongodb.properties";
 	private static final String IDSHORTPATH = Referable.IDSHORT;
 	private static final String IDPATH = Identifiable.IDENTIFICATION + "." + Identifier.ID;
 
@@ -89,7 +88,7 @@ public class MongoDBAASAggregator implements IAASAggregator {
 	/**
 	 * Receives the path of the configuration.properties file in it's constructor.
 	 * 
-	 * @param configFilePath
+	 * @param config
 	 */
 	public MongoDBAASAggregator(BaSyxMongoDBConfiguration config) {
 		this.setConfiguration(config);
@@ -114,7 +113,7 @@ public class MongoDBAASAggregator implements IAASAggregator {
 	 * Constructor using default connections
 	 */
 	public MongoDBAASAggregator() {
-		this(DEFAULT_CONFIG_PATH);
+		this(BaSyxMongoDBConfiguration.DEFAULT_CONFIG_PATH);
 	}
 
 	/**

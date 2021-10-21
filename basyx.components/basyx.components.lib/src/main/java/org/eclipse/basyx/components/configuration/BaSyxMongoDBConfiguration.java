@@ -107,8 +107,7 @@ public class BaSyxMongoDBConfiguration extends BaSyxConfiguration {
 	 * 
 	 * @param connectionUrl      Connection-URL for the mongodb
 	 * @param database           The database that shall be used
-	 * @param aasCollection      Collection name for the AAS data
-	 * @param submodelCollection Collection name for the submodel data
+	 * @param registryCollection collection of the registry
 	 */
 	public BaSyxMongoDBConfiguration(String connectionUrl, String database, String registryCollection) {
 		this();

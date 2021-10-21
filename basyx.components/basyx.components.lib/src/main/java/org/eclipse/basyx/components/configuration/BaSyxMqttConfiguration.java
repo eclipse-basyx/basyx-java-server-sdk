@@ -31,11 +31,15 @@ public class BaSyxMqttConfiguration extends BaSyxConfiguration {
 	public static final String DEFAULT_PASS = "";
 	public static final String DEFAULT_SERVER = "http://localhost:1883/";
 	public static final String DEFAULT_QOS = "1";
+	public static final String DEFAULT_PERSISTENCE_TYPE = MqttPersistence.FILE.toString();
+	public static final String DEFAULT_PERSISTENCE_PATH = "";
 
 	public static final String USER = "user";
 	public static final String PASS = "pass";
 	public static final String SERVER = "server";
 	public static final String QOS = "qos";
+	public static final String PERSISTENCE_TYPE = "persistence";
+	public static final String PERSISTENCE_PATH = "persistencepath";
 	public static final String WHITELIST_PREFIX = "whitelist.";
 	public static final String WHITELIST_ELEMENT_PREFIX = "whitelist.element.";
 
@@ -51,7 +55,8 @@ public class BaSyxMqttConfiguration extends BaSyxConfiguration {
 		defaultProps.put(PASS, DEFAULT_PASS);
 		defaultProps.put(SERVER, DEFAULT_SERVER);
 		defaultProps.put(QOS, DEFAULT_QOS);
-
+		defaultProps.put(PERSISTENCE_TYPE, DEFAULT_PERSISTENCE_TYPE);
+		defaultProps.put(PERSISTENCE_PATH, DEFAULT_PERSISTENCE_PATH);
 		return defaultProps;
 	}
 
@@ -128,6 +133,22 @@ public class BaSyxMqttConfiguration extends BaSyxConfiguration {
 
 	public void setQoS(int qos) {
 		setProperty(QOS, Integer.toString(qos));
+	}
+
+	public MqttPersistence getPersistenceType() {
+		return MqttPersistence.fromString(getProperty(PERSISTENCE_TYPE));
+	}
+
+	public void setPersistenceType(MqttPersistence type) {
+		setProperty(PERSISTENCE_TYPE, type.toString());
+	}
+
+	public String getPersistencePath() {
+		return getProperty(PERSISTENCE_PATH);
+	}
+
+	public void setPersistencePath(String filePath) {
+		setProperty(PERSISTENCE_PATH, filePath);
 	}
 
 	public boolean isWhitelistEnabled(String submodelId) {

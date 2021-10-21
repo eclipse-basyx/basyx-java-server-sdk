@@ -27,9 +27,11 @@ public class BaSyxRegistryConfiguration extends BaSyxConfiguration {
 
 	// Default BaSyx Context configuration
 	public static final String DEFAULT_BACKEND = RegistryBackend.INMEMORY.toString();
+	public static final String DEFAULT_EVENTS = RegistryEventBackend.NONE.toString();
 
 	// Configuration keys
 	public static final String BACKEND = "registry.backend";
+	public static final String EVENTS = "registry.events";
 
 	// The default path for the context properties file
 	public static final String DEFAULT_CONFIG_PATH = "registry.properties";
@@ -40,6 +42,7 @@ public class BaSyxRegistryConfiguration extends BaSyxConfiguration {
 	public static Map<String, String> getDefaultProperties() {
 		Map<String, String> defaultProps = new HashMap<>();
 		defaultProps.put(BACKEND, DEFAULT_BACKEND);
+		defaultProps.put(EVENTS, DEFAULT_EVENTS);
 		return defaultProps;
 	}
 
@@ -57,7 +60,7 @@ public class BaSyxRegistryConfiguration extends BaSyxConfiguration {
 	}
 
 	public void loadFromEnvironmentVariables() {
-		loadFromEnvironmentVariables(ENV_PREFIX, BACKEND);
+		loadFromEnvironmentVariables(ENV_PREFIX, BACKEND, EVENTS);
 	}
 
 	public void loadFromDefaultSource() {
@@ -71,5 +74,13 @@ public class BaSyxRegistryConfiguration extends BaSyxConfiguration {
 
 	public void setRegistryBackend(RegistryBackend backend) {
 		setProperty(BACKEND, backend.toString());
+	}
+
+	public RegistryEventBackend getRegistryEvents() {
+		return RegistryEventBackend.fromString(getProperty(EVENTS));
+	}
+
+	public void setRegistryEvents(RegistryEventBackend events) {
+		setProperty(EVENTS, events.toString());
 	}
 }

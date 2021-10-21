@@ -11,6 +11,8 @@ package org.eclipse.basyx.components.registry.servlet;
 
 import org.eclipse.basyx.aas.registration.memory.InMemoryRegistry;
 import org.eclipse.basyx.aas.registration.restapi.AASRegistryModelProvider;
+import org.eclipse.basyx.components.configuration.BaSyxMqttConfiguration;
+import org.eclipse.basyx.components.registry.mqtt.MqttRegistryFactory;
 import org.eclipse.basyx.vab.protocol.http.server.VABHTTPInterface;
 
 /**
@@ -29,6 +31,13 @@ public class InMemoryRegistryServlet extends VABHTTPInterface<AASRegistryModelPr
 	 */
 	public InMemoryRegistryServlet() {
 		super(new AASRegistryModelProvider(new InMemoryRegistry()));
+	}
 
+	/**
+	 * Constructor with ModelProvider based on an InMemoryRegistry with an MQTT
+	 * event backend
+	 */
+	public InMemoryRegistryServlet(BaSyxMqttConfiguration mqttConfig) {
+		super(new AASRegistryModelProvider(new MqttRegistryFactory().create(new InMemoryRegistry(), mqttConfig)));
 	}
 }

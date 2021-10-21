@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 
 /**
- * This is a map implementation for a <String, AASDescriptor> map which is needed
- * by map registries. It is based on an arbitrary <String, Object> map and provides a proxy
+ * This is a map implementation for a {@literal <String, AASDescriptor>} map which is needed
+ * by map registries. It is based on an arbitrary {@literal <String, Object>} map and provides a proxy
  * access to that map by assuming AASDescriptor entries.
  * 
  * @author espen

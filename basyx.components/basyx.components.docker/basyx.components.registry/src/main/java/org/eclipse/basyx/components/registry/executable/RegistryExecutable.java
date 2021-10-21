@@ -10,8 +10,10 @@
 package org.eclipse.basyx.components.registry.executable;
 
 import org.eclipse.basyx.components.configuration.BaSyxContextConfiguration;
+import org.eclipse.basyx.components.configuration.BaSyxMqttConfiguration;
 import org.eclipse.basyx.components.registry.RegistryComponent;
 import org.eclipse.basyx.components.registry.configuration.BaSyxRegistryConfiguration;
+import org.eclipse.basyx.components.registry.configuration.RegistryEventBackend;
 
 /**
  * A registry executable for a registry with any backend.
@@ -33,6 +35,22 @@ public class RegistryExecutable {
 
 		// Create and start component according to the configuration
 		RegistryComponent component = new RegistryComponent(contextConfig, registryConfig);
+
+		setMqttConfiguration(registryConfig, component);
+
 		component.startComponent();
+	}
+
+	private static void setMqttConfiguration(BaSyxRegistryConfiguration registryConfig, RegistryComponent component) {
+		if (isMqttBackendSelected(registryConfig)) {
+			BaSyxMqttConfiguration mqttConfig = new BaSyxMqttConfiguration();
+			mqttConfig.loadFromDefaultSource();
+
+			component.enableMQTT(mqttConfig);
+		}
+	}
+
+	private static boolean isMqttBackendSelected(BaSyxRegistryConfiguration registryConfig) {
+		return registryConfig.getRegistryEvents().equals(RegistryEventBackend.MQTT);
 	}
 }

@@ -37,7 +37,7 @@ public class ResultFilter {
 	/**
 	 * Extract a column from a SQL result set and return this column as set
 	 * 
-	 * @param result     SQL result
+	 * @param sqlResult     SQL result
 	 * @param columnName Name of column to extract
 	 */
 	public static Set<String> stringSet(ResultSet sqlResult, Object... columnName) {
@@ -46,7 +46,9 @@ public class ResultFilter {
 		
 		// Process all SQL results
 		try {
-			while (sqlResult.next()) {result.add(sqlResult.getString((String) columnName[0]));}
+			while (sqlResult.next()) {
+				result.add(sqlResult.getString((String) columnName[0]));
+			}
 		} catch (SQLException e) {
 			logger.error("Could not get string set from sqlResult", e);
 		}
@@ -59,7 +61,7 @@ public class ResultFilter {
 	/**
 	 * Extract a column from a SQL result set and return this column as collection
 	 * 
-	 * @param result     SQL result
+	 * @param sqlResult     SQL result
 	 * @param columnName Name of column to extract
 	 */
 	public static Object stringArray(ResultSet sqlResult, Object... columnName) {
@@ -68,7 +70,9 @@ public class ResultFilter {
 		
 		// Process all SQL results
 		try {
-			while (sqlResult.next()) {result.add(sqlResult.getString((String) columnName[0]));}
+			while (sqlResult.next()) {
+				result.add(sqlResult.getString((String) columnName[0]));
+			}
 		} catch (SQLException e) {
 			logger.error("Could not get string collection from sqlResult", e);
 		}
@@ -81,8 +85,8 @@ public class ResultFilter {
 	/**
 	 * Return SQL result set as Map
 	 * 
-	 * @param result     SQL result
-	 * @param columnName Name of column to extract
+	 * @param sqlResult     SQL result
+	 * @param columnNames Name of column to extract
 	 */
 	public static Object mapArray(ResultSet sqlResult, Object... columnNames) {
 		// Create result
@@ -92,8 +96,8 @@ public class ResultFilter {
 		try {
 			while (sqlResult.next()) {
 				// Process columns
-				for (Object columnName: columnNames) {
-					result.put((String) columnName, sqlResult.getString((String) columnName));
+				for (Object columnName : columnNames) {
+					result.put((String) columnName, sqlResult.getObject((String) columnName));
 				}
 			}
 		} catch (SQLException e) {
@@ -108,8 +112,8 @@ public class ResultFilter {
 	/**
 	 * Return SQL result set as List of Maps
 	 * 
-	 * @param result     SQL result
-	 * @param columnName Name of column to extract
+	 * @param sqlResult     SQL result
+	 * @param columnNames Name of column to extract
 	 */
 	public static Object listOfMaps(ResultSet sqlResult, Object... columnNames) {
 		// Create result
@@ -123,7 +127,7 @@ public class ResultFilter {
 				
 				// Process columns
 				for (Object columnName: columnNames) {
-					listElement.put((String) columnName, sqlResult.getString((String) columnName));
+					listElement.put((String) columnName, sqlResult.getObject((String) columnName));
 				}
 				
 				// Add list element to result

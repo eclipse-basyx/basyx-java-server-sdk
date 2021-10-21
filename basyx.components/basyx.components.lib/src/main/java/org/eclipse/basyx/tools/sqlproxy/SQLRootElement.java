@@ -67,11 +67,11 @@ public class SQLRootElement extends SQLConnector {
 		Map<String, Object> sqlResult = readCurrentElementPointer();
 
 		// Store element ID
-		int elementId = Integer.parseInt((String) sqlResult.get("NextElementID"));
+		int elementId = (int) sqlResult.get("NextElementID");
 
 		// SQL update statement
-		String updateString = "UPDATE elements." + getSqlTableID() + " SET NextElementID='" + (elementId + 1)
-				+ "', ElementPrefix='" + sqlResult.get("ElementPrefix") + "'";
+		String updateString = "UPDATE elements." + getSqlTableID() + " SET NextElementID=" + (elementId + 1)
+				+ ", ElementPrefix='" + sqlResult.get("ElementPrefix") + "'";
 		DynamicSQLUpdate dynUpdate = new DynamicSQLUpdate(getDriver(), updateString);
 
 		// Empty parameter set
@@ -148,7 +148,7 @@ public class SQLRootElement extends SQLConnector {
 		if (!currentPointer.containsKey("NextElementID")) {
 			// Initially fill table if it is empty
 			String sqlInsertString = "INSERT INTO elements." + getSqlTableID()
-					+ " (NextElementID, ElementPrefix) VALUES ('1', '" + getSqlTableID() + ":')";
+					+ " (NextElementID, ElementPrefix) VALUES (1, '" + getSqlTableID() + ":')";
 			DynamicSQLUpdate dynUpdate = new DynamicSQLUpdate(getDriver(), sqlInsertString);
 
 			// Clear parameter
@@ -256,7 +256,7 @@ public class SQLRootElement extends SQLConnector {
 	 */
 	public SQLMap retrieveRootMap() {
 		Map<String, Object> currentPointer = readCurrentElementPointer();
-		int elementId = Integer.parseInt((String) currentPointer.get("NextElementID"));
+		int elementId = (int) currentPointer.get("NextElementID");
 		if (elementId == 1) {
 			// No element has been created, yet => create new root map
 			return createMap(getNextIdentifier());

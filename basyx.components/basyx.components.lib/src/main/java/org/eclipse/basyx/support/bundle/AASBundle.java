@@ -15,28 +15,14 @@ import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 
 /**
- * Helper class to bundle an AAS with its corresponding submodels, e.g. for
- * passing them to a server environment
- * 
+ * @deprecated Moved to SDK
  * @author schnicke
  *
  */
-public class AASBundle {
-	private IAssetAdministrationShell aas;
-	private Set<ISubmodel> submodels;
+@Deprecated
+public class AASBundle extends org.eclipse.basyx.aas.bundle.AASBundle {
 
 	public AASBundle(IAssetAdministrationShell aas, Set<ISubmodel> submodels) {
-		super();
-		this.aas = aas;
-		this.submodels = submodels;
+		super(aas, submodels);
 	}
-
-	public IAssetAdministrationShell getAAS() {
-		return aas;
-	}
-
-	public Set<ISubmodel> getSubmodels() {
-		return submodels;
-	}
-
 }

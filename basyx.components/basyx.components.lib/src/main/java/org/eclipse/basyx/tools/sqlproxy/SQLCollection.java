@@ -153,7 +153,7 @@ public class SQLCollection extends SQLProxy implements Collection<Object> {
 				Map<String, Object> singleResult = sqlResult.get(currentIndex++);
 				
 				// Process result
-				return SQLTableRow.getValueFromString(sqlRootElement, Integer.parseInt((String) singleResult.get("type")), (String) singleResult.get("value"));
+				return SQLTableRow.getValueFromString(sqlRootElement, (int) singleResult.get("type"), (String) singleResult.get("value"));
 			}
 
 			// No support for remove operation
@@ -181,7 +181,8 @@ public class SQLCollection extends SQLProxy implements Collection<Object> {
 		// - Fill result
 		int counter = 0; 
 		for (Map<String, Object> singleResult: sqlResult) {
-			result[counter++] = (SQLTableRow.getValueFromString(sqlRootElement, Integer.parseInt((String) singleResult.get("type")), (String) singleResult.get("value")));
+			result[counter++] = (SQLTableRow.getValueFromString(sqlRootElement, (int) singleResult.get("type"),
+					(String) singleResult.get("value")));
 		}
 
 		// Return array
@@ -205,7 +206,7 @@ public class SQLCollection extends SQLProxy implements Collection<Object> {
 		// Fill result array
 		int counter = 0; 
 		for (Map<String, Object> singleResult: sqlResult) {
-			result[counter++] = (T) (SQLTableRow.getValueFromString(sqlRootElement, Integer.parseInt((String) singleResult.get("type")), (String) singleResult.get("value")));
+			result[counter++] = (T) (SQLTableRow.getValueFromString(sqlRootElement, (int) singleResult.get("type"), (String) singleResult.get("value")));
 		}
 
 		// Return array
@@ -383,7 +384,7 @@ public class SQLCollection extends SQLProxy implements Collection<Object> {
 		// Remove all elements that are not part of values collection
 		for (Map<String, Object> row: sqlResult) {
 			// Remove value if contained in map
-			if (!serValues.contains((String) row.get("value"))) performedChange |= this.removeSerValueIfContained(getDriver(), (String) row.get("value"));
+			if (!serValues.contains(row.get("value"))) performedChange |= this.removeSerValueIfContained(getDriver(), (String) row.get("value"));
 		}
 
 		// Changed flag
