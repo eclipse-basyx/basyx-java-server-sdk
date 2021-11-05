@@ -50,7 +50,7 @@ jobs:
       run: psql -f ci/sql/setup_postgres.sql postgresql://postgres:admin@localhost:5432/postgres
 
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B package --file basyx.components/pom.xml
 
     - name: Delete old sdk package
       uses: actions/delete-package-versions@v1
@@ -59,6 +59,6 @@ jobs:
         package-name: 'org.eclipse.basyx.basyx.sdk'
 
     - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+      run: mvn deploy --file basyx.components/pom.xml -s $GITHUB_WORKSPACE/settings.xml
       env:
         GITHUB_TOKEN: ${{ github.token }}
