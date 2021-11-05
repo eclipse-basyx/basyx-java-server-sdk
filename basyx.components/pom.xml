@@ -18,6 +18,13 @@
 		</repository>
 	</distributionManagement>
 	
+	<repositories>
+	    <repository>
+	        <id>Eclipse BaSyx SDK GitHub Packages</id>
+	        <url>https://maven.pkg.github.com/eclipse-basyx/basyx-java-sdk</url>
+	    </repository>
+	</repositories>
+	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
