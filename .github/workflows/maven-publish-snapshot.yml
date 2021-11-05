@@ -51,6 +51,8 @@ jobs:
 
     - name: Build with Maven
       run: mvn -B package --file basyx.components/pom.xml
+      env:       
+        GITHUB_TOKEN: ${{ github.token }}
 
     - name: Delete old sdk package
       uses: actions/delete-package-versions@v1
