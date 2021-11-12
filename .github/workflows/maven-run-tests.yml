@@ -38,6 +38,7 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
         cache: maven
+        settings-path: ${{ github.workspace }} # location for the settings.xml file
     - name: Setup Postgres
       run: psql -f ci/sql/setup_postgres.sql postgresql://postgres:admin@localhost:5432/postgres
     - name: Build with Maven
