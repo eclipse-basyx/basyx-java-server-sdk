@@ -52,7 +52,7 @@ jobs:
     - name: Build with Maven
       run: |
         mkdir -p ~/.m2
-        echo "<settings><servers><server><id>github</id><username>x-access-token</username><password>${GITHUB_TOKEN}</password></server></servers></settings>" > ~/.m2/settings.xml
+        echo "<settings><servers><server><id>Eclipse BaSyx SDK GitHub Packages</id><username>x-access-token</username><password>${GITHUB_TOKEN}</password></server></servers></settings>" > ~/.m2/settings.xml
         mvn -B package --file basyx.components/pom.xml
       env:       
         GITHUB_TOKEN: ${{ github.token }}
