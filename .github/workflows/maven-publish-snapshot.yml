@@ -61,6 +61,9 @@ jobs:
         package-name: 'org.eclipse.basyx.basyx.sdk'
 
     - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy --file basyx.components/pom.xml -s $GITHUB_WORKSPACE/settings.xml
+      run: |
+        mkdir -p ~/.m2
+        echo "<settings><servers><server><id>github</id><username>x-access-token</username><password>${GITHUB_TOKEN}</password></server></servers></settings>" > ~/.m2/settings.xml
+        mvn deploy --file basyx.components/pom.xml -s $GITHUB_WORKSPACE/settings.xml
       env:
         GITHUB_TOKEN: ${{ github.token }}
