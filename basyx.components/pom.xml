@@ -15,6 +15,9 @@
 			<id>github</id>
 			<name>GitHub Eclipse BaSyx Apache Maven Packages</name>
 			<url>https://maven.pkg.github.com/eclipse-basyx/basyx-java-components</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 	</distributionManagement>
 	

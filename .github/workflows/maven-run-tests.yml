@@ -38,10 +38,14 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
         cache: maven
+        settings-path: ${{ github.workspace }} # location for the settings.xml file
     - name: Setup Postgres
       run: psql -f ci/sql/setup_postgres.sql postgresql://postgres:admin@localhost:5432/postgres
     - name: Build with Maven
-      run: mvn -B package --file basyx.components/pom.xml
+      run: |
+        mkdir -p ~/.m2
+        echo "<settings><servers><server><id>Eclipse BaSyx SDK GitHub Packages</id><username>x-access-token</username><password>${GITHUB_TOKEN}</password></server></servers></settings>" > ~/.m2/settings.xml
+        mvn -B package --file basyx.components/pom.xml
       env:       
         GITHUB_TOKEN: ${{ github.token }}
 
