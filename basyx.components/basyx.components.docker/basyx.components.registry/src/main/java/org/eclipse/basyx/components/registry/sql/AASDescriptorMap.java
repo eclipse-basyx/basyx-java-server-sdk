@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.components.registry.sql;
@@ -14,13 +14,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
+import org.eclipse.basyx.registry.descriptor.AASDescriptor;
+
 
 /**
  * This is a map implementation for a {@literal <String, AASDescriptor>} map which is needed
  * by map registries. It is based on an arbitrary {@literal <String, Object>} map and provides a proxy
  * access to that map by assuming AASDescriptor entries.
- * 
+ *
  * @author espen
  *
  */
@@ -32,7 +33,7 @@ public class AASDescriptorMap implements Map<String, AASDescriptor> {
 
 	/**
 	 * Default constructor taking the base map
-	 * 
+	 *
 	 * @param baseMap
 	 */
 	public AASDescriptorMap(Map<String, Object> baseMap) {
@@ -66,7 +67,7 @@ public class AASDescriptorMap implements Map<String, AASDescriptor> {
 		if (mapEntry == null) {
 			return null;
 		} else {
-			return new AASDescriptor(mapEntry);
+			return AASDescriptor.createAsFacade(mapEntry);
 		}
 	}
 
@@ -82,7 +83,7 @@ public class AASDescriptorMap implements Map<String, AASDescriptor> {
 		if (result == null) {
 			return null;
 		} else {
-			return new AASDescriptor(result);
+			return AASDescriptor.createAsFacade(result);
 		}
 	}
 
@@ -105,7 +106,7 @@ public class AASDescriptorMap implements Map<String, AASDescriptor> {
 	@Override
 	public Collection<AASDescriptor> values() {
 		return baseMap.values().stream()
-				.map(o -> new AASDescriptor((Map<String, Object>) o))
+				.map(o -> AASDescriptor.createAsFacade((Map<String, Object>) o))
 				.collect(Collectors.toList());
 	}
 
@@ -124,7 +125,7 @@ public class AASDescriptorMap implements Map<String, AASDescriptor> {
 						if (e.getValue() == null) {
 							return null;
 						} else {
-							return new AASDescriptor((Map<String, Object>) e.getValue());
+							return AASDescriptor.createAsFacade((Map<String, Object>) e.getValue());
 						}
 					}
 

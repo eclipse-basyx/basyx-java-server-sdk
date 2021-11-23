@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.regression.registry;
@@ -12,15 +12,17 @@ package org.eclipse.basyx.regression.registry;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Arrays;
 
-import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
-import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
 import org.eclipse.basyx.components.configuration.BaSyxContextConfiguration;
 import org.eclipse.basyx.components.configuration.BaSyxMqttConfiguration;
 import org.eclipse.basyx.components.configuration.BaSyxSQLConfiguration;
 import org.eclipse.basyx.components.configuration.MqttPersistence;
 import org.eclipse.basyx.components.registry.RegistryComponent;
-import org.eclipse.basyx.extensions.aas.registration.mqtt.MqttAASRegistryServiceObserver;
+import org.eclipse.basyx.extensions.shared.mqtt.MqttRegistryHelper;
+import org.eclipse.basyx.registry.descriptor.AASDescriptor;
+import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
+import org.eclipse.basyx.registry.proxy.RegistryProxy;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
@@ -39,7 +41,7 @@ import io.moquette.broker.config.ResourceLoaderConfig;
 /**
  * Tests, if the RegistryComponent Mqtt-Event feature is enabled for the
  * possible backend configurations
- * 
+ *
  * @author espen
  *
  */
@@ -49,7 +51,7 @@ public class TestMqttRegistryBackend {
 	protected static BaSyxMqttConfiguration mqttConfig;
 	protected static Server mqttBroker;
 
-	protected static AASRegistryProxy aasRegistryProxy;
+	protected static RegistryProxy aasRegistryProxy;
 
 	protected MqttTestListener listener;
 
@@ -80,12 +82,6 @@ public class TestMqttRegistryBackend {
 		testMqttEventForRegistryComponent(inMemoryRegistryComponent);
 	}
 
-	@Test
-	public void testEventsWithSQLBackend() {
-		RegistryComponent sqlRegistryComponent = createSQLRegistryComponent();
-		testMqttEventForRegistryComponent(sqlRegistryComponent);
-	}
-
 	protected void testMqttEventForRegistryComponent(RegistryComponent registryComponent) {
 		registryComponent.enableMQTT(mqttConfig);
 		registryComponent.startComponent();
@@ -93,14 +89,14 @@ public class TestMqttRegistryBackend {
 		AASDescriptor aasDescriptor = createTestAASDescriptor();
 		aasRegistryProxy.register(aasDescriptor);
 
-		assertEquals(MqttAASRegistryServiceObserver.TOPIC_REGISTERAAS, listener.lastTopic);
+		assertEquals(MqttRegistryHelper.TOPIC_REGISTERAAS, listener.lastTopic);
 
 		registryComponent.stopComponent();
 	}
 
-	private static AASRegistryProxy createRegistryProxy() {
+	private static RegistryProxy createRegistryProxy() {
 		registryUrl = new BaSyxContextConfiguration().getUrl();
-		return new AASRegistryProxy(registryUrl);
+		return new RegistryProxy(registryUrl);
 	}
 
 	private static BaSyxMqttConfiguration createMqttConfig() {
@@ -125,10 +121,10 @@ public class TestMqttRegistryBackend {
 	}
 
 	private static AASDescriptor createTestAASDescriptor() {
-		Identifier aasIdentifier = new Identifier(IdentifierType.CUSTOM, "testAAS");
-		String aasEndpoint = "http://localhost:8080/aasList/" + aasIdentifier.getId() + "/aas";
-		AASDescriptor aasDescriptor = new AASDescriptor(aasIdentifier, aasEndpoint);
-		return aasDescriptor;
+		Identifier shellIdentifier = new Identifier(IdentifierType.CUSTOM, "testAAS");
+		Endpoint shellEndpoint = new Endpoint("http://localhost:8080/aasList/" + shellIdentifier.getId() + "/aas");
+		AASDescriptor shellDescriptor = new AASDescriptor("shellIdShort", shellIdentifier, Arrays.asList(shellEndpoint));
+		return shellDescriptor;
 	}
 
 	private RegistryComponent createInMemoryRegistryComponent() {

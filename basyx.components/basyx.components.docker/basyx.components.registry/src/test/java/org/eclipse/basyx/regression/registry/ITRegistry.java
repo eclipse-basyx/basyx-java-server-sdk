@@ -9,11 +9,11 @@
  ******************************************************************************/
 package org.eclipse.basyx.regression.registry;
 
-import org.eclipse.basyx.aas.registration.api.IAASRegistry;
-import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
 import org.eclipse.basyx.components.configuration.BaSyxContextConfiguration;
 import org.eclipse.basyx.components.configuration.BaSyxDockerConfiguration;
-import org.eclipse.basyx.testsuite.regression.aas.registration.TestRegistryProviderSuite;
+import org.eclipse.basyx.registry.api.IRegistry;
+import org.eclipse.basyx.registry.proxy.RegistryProxy;
+import org.eclipse.basyx.testsuite.regression.registry.TestRegistryProviderSuite;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,8 @@ public class ITRegistry extends TestRegistryProviderSuite {
 		logger.info("Running integration test...");
 
 		logger.info("Loading servlet configuration");
-		// Load the servlet configuration inside of the docker configuration from properties file
+		// Load the servlet configuration inside of the docker configuration from
+		// properties file
 		BaSyxContextConfiguration contextConfig = new BaSyxContextConfiguration();
 		contextConfig.loadFromResource(BaSyxContextConfiguration.DEFAULT_CONFIG_PATH);
 
@@ -42,7 +43,7 @@ public class ITRegistry extends TestRegistryProviderSuite {
 	}
 
 	@Override
-	protected IAASRegistry getRegistryService() {
-		return new AASRegistryProxy(registryUrl);
+	protected IRegistry getRegistryService() {
+		return new RegistryProxy(registryUrl);
 	}
 }
