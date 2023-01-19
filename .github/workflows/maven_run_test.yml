@@ -1,0 +1,42 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Java CI with Maven
+
+on:
+  pull_request:
+    branches: [ development-v2 ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+        cache: maven
+    - name: Install BaSyx Feature
+      run: mvn clean install -f basyx.feature
+    - name: Install BaSyx HTTP
+      run: mvn clean install -f basyx.http
+    - name: Install BaSyx AasService Core
+      run: mvn clean install -f basyx.aasservice-core
+    - name: Install BaSyx AasService InMemory
+      run: mvn clean install -f basyx.aasservice-backend-inmemory
+    - name: Install BaSyx AasRepository Core
+      run: mvn clean install -f basyx.aasrepository-core
+    - name: Install BaSyx AasRepository InMemory
+      run: mvn clean install -f basyx.aasrepository-backend-inmemory
+    - name: Install BaSyx AasRepository HTTP
+      run: mvn clean install -f basyx.aasrepository-http
+    - name: Install BaSyx SubmodelRepository Core
+      run: mvn clean install -f basyx.submodelrepository-core
+    - name: Install BaSyx SubmodelRepository InMemory
+      run: mvn clean install -f basyx.submodelrepository-backend-inmemory
+    - name: Install BaSyx SubmodelRepository HTTP
+      run: mvn clean install -f basyx.submodelrepository-http
+     
