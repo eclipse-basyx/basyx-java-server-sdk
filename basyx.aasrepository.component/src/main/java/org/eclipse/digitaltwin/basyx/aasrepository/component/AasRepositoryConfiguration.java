@@ -58,7 +58,7 @@ public class AasRepositoryConfiguration {
 	@Primary
 	@Bean
 	@Autowired
-	public static AasServiceFactory getAasService(AasServiceFactory aasRepositoryFactory, List<AasServiceFeature> features) {
-		return new DecoratedAasServiceFactory(aasRepositoryFactory, features);
+	public static AasServiceFactory getAasService(AasServiceFactory aasServiceFactory, List<AasServiceFeature> features) {
+		return new DecoratedAasServiceFactory(aasServiceFactory, features);
 	}
 }

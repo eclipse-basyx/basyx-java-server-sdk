@@ -24,11 +24,11 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasrepository.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.aasrepository.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 
 /**
  * Specifies the overall AasRepository API
@@ -43,7 +43,7 @@ public interface AasRepository {
 	 * 
 	 * @return a list of all found Asset Administration Shells
 	 */
-	public List<AssetAdministrationShell> getAASList();
+	public Collection<AssetAdministrationShell> getAllAas();
 
 	/**
 	 * Retrieves a specific AAS
@@ -52,7 +52,7 @@ public interface AasRepository {
 	 *            the id of the AAS
 	 * @return the requested AAS
 	 */
-	public AssetAdministrationShell getAAS(String aasId) throws ElementDoesNotExistException;
+	public AssetAdministrationShell getAas(String aasId) throws ElementDoesNotExistException;
 
 	/**
 	 * Creates a new AAS at the endpoint
@@ -60,7 +60,7 @@ public interface AasRepository {
 	 * @param aas
 	 *            the AAS to be created
 	 */
-	public void createAAS(AssetAdministrationShell aas) throws CollidingIdentifierException;
+	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException;
 
 	/**
 	 * Deletes a specific AAS
@@ -68,14 +68,14 @@ public interface AasRepository {
 	 * @param aasId
 	 *            the id of the AAS to be deleted
 	 */
-	public void deleteAAS(String aasId);
+	public void deleteAas(String aasId);
 
 	/**
 	 * Overwrites an existing AAS
 	 * 
 	 * @param aas
 	 */
-	public void updateAAS(AssetAdministrationShell aas);
+	public void updateAas(AssetAdministrationShell aas);
 
 	public default String getName() {
 		return "aasRepository-default-name";

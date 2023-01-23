@@ -40,11 +40,12 @@ import org.junit.Test;
  *
  */
 public abstract class AasServiceSuite {
-	protected abstract AasServiceFactory getAASServiceFactory();
 
 	private AasService aasService;
 	
 	private AssetAdministrationShell aas;
+
+	protected abstract AasServiceFactory getAASServiceFactory();
 
 	@Before
 	public void initSuite() {

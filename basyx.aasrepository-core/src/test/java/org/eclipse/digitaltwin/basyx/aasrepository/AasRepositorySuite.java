@@ -31,8 +31,8 @@ import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasrepository.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.aasrepository.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -53,6 +53,8 @@ public abstract class AasRepositorySuite {
 
 	private AasRepository aasRepo;
 
+	protected abstract AasRepositoryFactory getAasRepositoryFactory();
+
 	@Before
 	public void initSuite() {
 		aasRepo = getAasRepositoryFactory().create();
@@ -69,14 +71,12 @@ public abstract class AasRepositorySuite {
 				.build();
 	}
 
-	protected abstract AasRepositoryFactory getAasRepositoryFactory();
-
 	@Test
 	public void allAasRetrieval() throws Exception {
-		aasRepo.createAAS(aas1);
-		aasRepo.createAAS(aas2);
+		aasRepo.createAas(aas1);
+		aasRepo.createAas(aas2);
 
-		Collection<AssetAdministrationShell> coll = aasRepo.getAASList();
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas();
 		assertEquals(2, coll.size());
 
 		assertTrue(coll.contains(aas1));
@@ -85,19 +85,19 @@ public abstract class AasRepositorySuite {
 
 	@Test
 	public void getAASByIdentifier() throws CollidingIdentifierException, ElementDoesNotExistException {
-		aasRepo.createAAS(aas1);
-		AssetAdministrationShell retrieved = aasRepo.getAAS(aas1.getId());
+		aasRepo.createAas(aas1);
+		AssetAdministrationShell retrieved = aasRepo.getAas(aas1.getId());
 		assertEquals(aas1, retrieved);
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getNonExistingAASByIdentifier() throws ElementDoesNotExistException {
-		aasRepo.getAAS("nonexisting");
+		aasRepo.getAas("nonexisting");
 	}
 
 	@Test(expected = CollidingIdentifierException.class)
 	public void collidingAASIdentifiers() throws CollidingIdentifierException {
-		aasRepo.createAAS(aas1);
-		aasRepo.createAAS(aas1);
+		aasRepo.createAas(aas1);
+		aasRepo.createAas(aas1);
 	}
 }

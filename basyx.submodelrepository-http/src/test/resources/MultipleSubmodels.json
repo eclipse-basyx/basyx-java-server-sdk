@@ -1,0 +1,64 @@
+[
+	{
+		"modelType": "Submodel",
+		"kind": "Instance",
+		"semanticId":
+		{
+			"keys": [
+				{
+					"type": "GlobalReference",
+					"value": "0173-1#01-AFZ615#016"
+				}
+			],
+			"type": "GlobalReference"
+		},
+		"id": "7A7104BDAB57E184",
+		"idShort": "TechnicalData",
+		"submodelElements": [
+			{
+				"modelType": "Property",
+				"kind": "Instance",
+				"semanticId":
+				{
+					"keys": [
+						{
+							"type": "ConceptDescription",
+							"value": "0173-1#02-BAA120#008"
+						}
+					],
+					"type": "GlobalReference"
+				},
+				"value": "5000",
+				"valueType": "xs:integer",
+				"category": "PARAMETER",
+				"idShort": "MaxRotationSpeed"
+			}
+		]
+	},
+	{
+		"modelType": "Submodel",
+		"kind": "Instance",
+		"id": "AC69B1CB44F07935",
+		"idShort": "OperationalData",
+		"submodelElements": [
+			{
+				"modelType": "Property",
+				"kind": "Instance",
+				"semanticId":
+				{
+					"keys": [
+						{
+							"type": "ConceptDescription",
+							"value": "http://customer.com/cd/1/1/18EBD56F6B43D895"
+						}
+					],
+					"type": "GlobalReference"
+				},
+				"value": "4370",
+				"valueType": "xs:integer",
+				"category": "VARIABLE",
+				"idShort": "RotationSpeed"
+			}
+		]
+	}
+]

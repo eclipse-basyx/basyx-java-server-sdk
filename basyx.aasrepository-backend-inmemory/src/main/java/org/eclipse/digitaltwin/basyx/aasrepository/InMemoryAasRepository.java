@@ -30,13 +30,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasrepository.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.aasrepository.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 
 /**
- * Implements the AasRepository as in-memory variant
+ * In-memory implementation of the AasRepository
  *
  * @author schnicke
  *
@@ -58,21 +58,21 @@ public class InMemoryAasRepository implements AasRepository {
 	}
 
 	@Override
-	public List<AssetAdministrationShell> getAASList() {
+	public List<AssetAdministrationShell> getAllAas() {
 		return aasServices.values().stream().map(p -> p.getAAS()).collect(Collectors.toList());
 	}
 
 	@Override
-	public AssetAdministrationShell getAAS(String aasId) throws ElementDoesNotExistException {
+	public AssetAdministrationShell getAas(String aasId) throws ElementDoesNotExistException {
 		if (!aasServices.containsKey(aasId)) {
-			throw new ElementDoesNotExistException();
+			throw new ElementDoesNotExistException(aasId);
 		}
 
 		return aasServices.get(aasId).getAAS();
 	}
 
 	@Override
-	public void createAAS(AssetAdministrationShell aas) throws CollidingIdentifierException {
+	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException {
 		if (aasServices.containsKey(aas.getId())) {
 			throw new CollidingIdentifierException();
 		}
@@ -81,12 +81,12 @@ public class InMemoryAasRepository implements AasRepository {
 	}
 
 	@Override
-	public void deleteAAS(String aasId) {
+	public void deleteAas(String aasId) {
 		aasServices.remove(aasId);
 	}
 
 	@Override
-	public void updateAAS(AssetAdministrationShell aas) {
+	public void updateAas(AssetAdministrationShell aas) {
 		throw new RuntimeException("Not implemented");
 	}
 

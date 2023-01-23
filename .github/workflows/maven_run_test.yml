@@ -19,8 +19,8 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
         cache: maven
-    - name: Install BaSyx Feature
-      run: mvn clean install -f basyx.feature
+    - name: Install BaSyx Core
+      run: mvn clean install -f basyx.core
     - name: Install BaSyx HTTP
       run: mvn clean install -f basyx.http
     - name: Install BaSyx AasService Core

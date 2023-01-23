@@ -56,10 +56,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
- 
+
 public class TestAasRepositoryHTTP {
-
-
 	private static final String aasAccessURL = "http://localhost:8080/shells";
 
 	private ConfigurableApplicationContext appContext;

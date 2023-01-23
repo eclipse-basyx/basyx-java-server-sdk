@@ -31,6 +31,12 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.core.DecoratedFactory;
 
+/**
+ * Factory for AasRepository decoration
+ * 
+ * @author schnicke
+ *
+ */
 public class DecoratedAasRepositoryFactory extends DecoratedFactory<AasRepositoryFactory, AasRepositoryFeature> implements AasRepositoryFactory {
 
 	public DecoratedAasRepositoryFactory(AasRepositoryFactory toDecorate, List<AasRepositoryFeature> features) {

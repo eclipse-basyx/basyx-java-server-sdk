@@ -26,10 +26,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.component;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.PostConstruct;
 
 import org.eclipse.digitaltwin.basyx.aasservice.feature.AasServiceFeature;
 import org.slf4j.Logger;
@@ -48,11 +45,8 @@ public class AasServiceFeaturePrinter {
 
 	private static final Logger logger = LoggerFactory.getLogger(AasServiceFeaturePrinter.class);
 
-	@Autowired(required = false)
-	private List<AasServiceFeature> features = new ArrayList<>();
-
-	@PostConstruct
-	public void printFeatures() {
+	@Autowired
+	public AasServiceFeaturePrinter(List<AasServiceFeature> features) {
 		logger.info("------------------ Aas Service Found Features: ------------------ ");
 		for (AasServiceFeature feature : features) {
 			logger.info("BaSyxFeature " + feature.getName() + " is enabled: " + feature.isEnabled());

@@ -25,7 +25,7 @@
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
 /**
- * Interface for a factory creating an AasRepository based on an AAS
+ * Interface for a factory creating an AasRepository
  * 
  * @author schnicke
  * 
