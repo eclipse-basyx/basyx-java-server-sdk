@@ -26,34 +26,26 @@
 
 package org.eclipse.digitaltwin.basyx.http.serialization;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.model.Referable;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-
 /**
- * Handles the mapping between a Referable list to-be-returned and AAS4J
+ * Wraps the serializer of Aas4J until the serialization bug related to empty
+ * Referable lists is fixed (cf.
+ * https://github.com/eclipse-aas4j/aas4j/issues/55).
  * 
  * @author schnicke
  *
  */
-public class ReferableListJsonSerializer extends JsonSerializer<List<Referable>> {
-
-	Aas4JReferableListWrapper wrapper = new Aas4JReferableListWrapper();
-
-	@Override
-	public void serialize(List<Referable> values, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		try {
-			String str = wrapper.serialize(values);
-			gen.writeRaw(str);
-		} catch (SerializationException e) {
-			e.printStackTrace();
+public class Aas4JReferableListWrapper {
+	public String serialize(List<Referable> referables) throws SerializationException {
+		String str = new org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer().write(referables);
+		if (str == null) {
+			str = "[]";
 		}
-	}
 
+		return str;
+	}
 }

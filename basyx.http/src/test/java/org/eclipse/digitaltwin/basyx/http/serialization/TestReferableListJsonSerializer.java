@@ -26,34 +26,21 @@
 
 package org.eclipse.digitaltwin.basyx.http.serialization;
 
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.model.Referable;
+import org.junit.Test;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+public class TestReferableListJsonSerializer {
 
-/**
- * Handles the mapping between a Referable list to-be-returned and AAS4J
- * 
- * @author schnicke
- *
- */
-public class ReferableListJsonSerializer extends JsonSerializer<List<Referable>> {
-
-	Aas4JReferableListWrapper wrapper = new Aas4JReferableListWrapper();
-
-	@Override
-	public void serialize(List<Referable> values, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		try {
-			String str = wrapper.serialize(values);
-			gen.writeRaw(str);
-		} catch (SerializationException e) {
-			e.printStackTrace();
-		}
+	@Test
+	public void serializeEmptyList() throws SerializationException {
+		List<Referable> referable = new ArrayList<>();
+		String str = new Aas4JReferableListWrapper().serialize(referable);
+		assertEquals("[]", str);
 	}
-
 }
