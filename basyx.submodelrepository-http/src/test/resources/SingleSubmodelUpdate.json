@@ -1,0 +1,16 @@
+{
+	"modelType": "Submodel",
+	"kind": "Instance",
+	"semanticId":
+	{
+		"keys": [
+			{
+				"type": "GlobalReference",
+				"value": "0173-1#01-AFZ615#016"
+			}
+		],
+		"type": "GlobalReference"
+	},
+	"id": "7A7104BDAB57E184",
+	"idShort": "TechnicalData"
+}

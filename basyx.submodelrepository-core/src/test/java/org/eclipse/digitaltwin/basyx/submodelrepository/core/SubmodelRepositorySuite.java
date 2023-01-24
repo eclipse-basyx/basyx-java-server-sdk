@@ -30,7 +30,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
@@ -83,6 +87,57 @@ public abstract class SubmodelRepositorySuite {
 	public void getSpecificNonExistingSubmodel() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.getSubmodel("doesNotExist");
+	}
+
+	@Test
+	public void updateExistingSubmodel() {
+		String id = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID;
+		Submodel expected = buildDummySubmodel(id);
+		
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.updateSubmodel(id, expected);
+		
+		assertEquals(expected, repo.getSubmodel(id));
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void updateNonExistingSubmodel() {
+		String id = "notExisting";
+		Submodel doesNotExist = buildDummySubmodel(id);
+
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.updateSubmodel(id, doesNotExist);
+	}
+
+	@Test
+	public void createSubmodel() {
+		String id = "newSubmodel";
+		Submodel expectedSubmodel = buildDummySubmodel(id);
+
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.createSubmodel(expectedSubmodel);
+
+		Submodel retrieved = repo.getSubmodel(id);
+		assertEquals(expectedSubmodel, retrieved);
+	}
+
+	@Test(expected = CollidingIdentifierException.class)
+	public void createSubmodelWithCollidingId() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		Submodel submodel = repo.getSubmodel(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID);
+
+		repo.createSubmodel(submodel);
+	}
+
+	private Submodel buildDummySubmodel(String id) {
+		return new DefaultSubmodel.Builder()
+				.id(id)
+				.submodelElements(
+					new DefaultProperty.Builder()
+					.idShort("prop")
+					.value("testValue")
+					.valueType(DataTypeDefXsd.STRING).build()
+				).build();
 	}
 
 	private SubmodelRepository getSubmodelRepositoryWithDummySubmodels() {

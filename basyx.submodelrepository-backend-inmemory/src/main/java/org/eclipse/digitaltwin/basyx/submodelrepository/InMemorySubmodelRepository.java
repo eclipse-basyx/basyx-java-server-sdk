@@ -87,10 +87,32 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public Submodel getSubmodel(String id) throws ElementDoesNotExistException {
-		if (!submodels.containsKey(id))
-			throw new ElementDoesNotExistException(id);
+		throwIfSubmodelDoesNotExist(id);
 
 		return submodels.get(id);
 	}
 
+	@Override
+	public void updateSubmodel(String id, Submodel submodel) throws ElementDoesNotExistException {
+		throwIfSubmodelDoesNotExist(id);
+
+		submodels.put(id, submodel);
+	}
+
+	@Override
+	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
+		throwIfSubmodelExists(submodel.getId());
+
+		submodels.put(submodel.getId(), submodel);
+	}
+
+	private void throwIfSubmodelExists(String id) {
+		if (submodels.containsKey(id))
+			throw new CollidingIdentifierException(id);
+	}
+
+	private void throwIfSubmodelDoesNotExist(String id) {
+		if (!submodels.containsKey(id))
+			throw new ElementDoesNotExistException(id);
+	}
 }

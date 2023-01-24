@@ -29,6 +29,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository;
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 
 /**
@@ -54,4 +55,21 @@ public interface SubmodelRepository {
 	 * @throws ElementDoesNotExistException
 	 */
 	public Submodel getSubmodel(String id) throws ElementDoesNotExistException;
+
+	/**
+	 * Updates an existing Submodel
+	 * 
+	 * @param id
+	 * @param submodel
+	 * @throws ElementDoesNotExistException
+	 */
+	public void updateSubmodel(String id, Submodel submodel) throws ElementDoesNotExistException;
+
+	/**
+	 * Creates a new submodel
+	 * 
+	 * @param submodel
+	 * @throws CollidingIdentifierException
+	 */
+	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException;
 }

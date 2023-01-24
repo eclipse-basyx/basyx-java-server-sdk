@@ -60,12 +60,12 @@ public class DummySubmodelFactory {
 	public static final String SUBMODEL_TECHNICAL_DATA_PROPERTY_VALUETYPE = "integer";
 
 	// SUBMODEL_OPERATIONAL_DATA
-	private static final String SUBMODEL_OPERATIONAL_DATA_ID_SHORT = "OperationalData";
-	private static final String SUBMODEL_OPERATIONAL_DATA_ID = "AC69B1CB44F07935";
-	private static final String SUBMODEL_OPERATIONAL_DATA_SEMANTIC_ID_PROPERTY = HTTP_CUSTOMER_COM_CD_1_1_18EBD56F6B43D895;
-	private static final String SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT = ROTATION_SPEED;
-	private static final String SUBMODEL_OPERATIONAL_DATA_PROPERTY_CATEGORY = "VARIABLE";
-	private static final String SUBMODEL_OPERATIONAL_DATA_PROPERTY_VALUE = "4370";
+	public static final String SUBMODEL_OPERATIONAL_DATA_ID_SHORT = "OperationalData";
+	public static final String SUBMODEL_OPERATIONAL_DATA_ID = "AC69B1CB44F07935";
+	public static final String SUBMODEL_OPERATIONAL_DATA_SEMANTIC_ID_PROPERTY = HTTP_CUSTOMER_COM_CD_1_1_18EBD56F6B43D895;
+	public static final String SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT = ROTATION_SPEED;
+	public static final String SUBMODEL_OPERATIONAL_DATA_PROPERTY_CATEGORY = "VARIABLE";
+	public static final String SUBMODEL_OPERATIONAL_DATA_PROPERTY_VALUE = "4370";
 	public static final String AAS_3_0_RC_02_DATA_SPECIFICATION_IEC_61360 = "https://admin-shell.io/aas/3/0/RC02/DataSpecificationIEC61360";
 
 	public static Collection<Submodel> getSubmodels() {
