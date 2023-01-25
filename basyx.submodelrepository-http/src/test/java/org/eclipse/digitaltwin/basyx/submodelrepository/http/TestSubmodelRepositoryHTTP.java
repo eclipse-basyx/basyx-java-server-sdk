@@ -44,7 +44,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
-import org.eclipse.digitaltwin.basyx.submodelrepository.core.DummySubmodelFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -138,6 +138,21 @@ public class TestSubmodelRepositoryHTTP {
 		assertEquals(HttpStatus.CONFLICT.value(), creationResponse.getCode());
 	}
 
+	@Test
+	public void getSubmodelElements() throws FileNotFoundException, IOException, ParseException {
+		String id = "7A7104BDAB57E184";
+		String requestedSubmodelElements = requestSubmodelElementsJSON(id);
+
+		String submodelElementJSON = getSubmodelElementsJSON();
+		assertSameJSONContent(submodelElementJSON, requestedSubmodelElements);
+	}
+
+	@Test
+	public void getSubmodelElementsOfNonExistingSubmodel() throws ParseException, IOException {
+		CloseableHttpResponse response = requestSubmodelElements("nonExisting");
+		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
+	}
+
 	private void assertSubmodelCreationReponse(String submodelJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JsonProcessingException, JsonMappingException {
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
 		String response = getResponseAsString(creationResponse);
@@ -170,6 +185,17 @@ public class TestSubmodelRepositoryHTTP {
 		CloseableHttpResponse response = requestSubmodel(id);
 
 		return getResponseAsString(response);
+	}
+
+	private String requestSubmodelElementsJSON(String id) throws IOException, ParseException {
+		CloseableHttpResponse response = requestSubmodelElements(id);
+				
+		return getResponseAsString(response);
+	}
+
+	private CloseableHttpResponse requestSubmodelElements(String id) throws IOException {
+		CloseableHttpResponse response = executeGetOnURL(submodelAccessURL + "/" + id + "/submodel/submodel-elements");
+		return response;
 	}
 
 	private CloseableHttpResponse executeGetOnURL(String url) throws IOException {
@@ -208,6 +234,10 @@ public class TestSubmodelRepositoryHTTP {
 
 	private String getAllSubmodelJSON() throws IOException {
 		return readJSONStringFromFile("classpath:MultipleSubmodels.json");
+	}
+
+	private String getSubmodelElementsJSON() throws FileNotFoundException, IOException {
+		return readJSONStringFromFile("classpath:SubmodelElements.json");
 	}
 
 	private String readJSONStringFromFile(String fileName) throws FileNotFoundException, IOException {

@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.core;
+package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,6 +38,11 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 
+/**
+ * 
+ * @author schnicke
+ *
+ */
 public class DummySubmodelFactory {
 
 	private static final String HTTP_CUSTOMER_COM_CD_1_1_18EBD56F6B43D895 = "http://customer.com/cd/1/1/18EBD56F6B43D895";

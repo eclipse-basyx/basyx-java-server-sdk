@@ -24,10 +24,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import java.util.Collection;
-import java.util.HashSet;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -37,26 +35,16 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class InMemorySubmodelRepositoryFactory implements SubmodelRepositoryFactory {
+	private SubmodelServiceFactory submodelServiceFactory;
 
-	private Collection<Submodel> submodels;
-
-	public InMemorySubmodelRepositoryFactory() {
-		submodels = new HashSet<>();
-	}
-
-	/**
-	 * Configures passed submodels as preconfigured for the created
-	 * SubmodelRepository
-	 * 
-	 * @param submodels
-	 */
-	public InMemorySubmodelRepositoryFactory(Collection<Submodel> submodels) {
-		this.submodels = submodels;
+	@Autowired
+	public InMemorySubmodelRepositoryFactory(SubmodelServiceFactory submodelServiceFactory) {
+		this.submodelServiceFactory = submodelServiceFactory;
 	}
 
 	@Override
 	public SubmodelRepository create() {
-		return new InMemorySubmodelRepository(submodels);
+		return new InMemorySubmodelRepository(submodelServiceFactory);
 	}
 
 }

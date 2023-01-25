@@ -26,11 +26,13 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -105,6 +107,23 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 			return new ResponseEntity<Submodel>(body, HttpStatus.CREATED);
 		} catch (CollidingIdentifierException e) {
 			return new ResponseEntity<Submodel>(HttpStatus.CONFLICT);
+		}
+	}
+
+	@Override
+	public ResponseEntity<List<SubmodelElement>> getAllSubmodelElementsSubmodelRepo(
+			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") String submodelIdentifier,
+			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
+					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level,
+			@Parameter(in = ParameterIn.QUERY, description = "Determines the request or response kind of the resource", schema = @Schema(allowableValues = { "normal", "trimmed", "value", "reference",
+					"path" }, defaultValue = "normal")) @Valid @RequestParam(value = "content", required = false, defaultValue = "normal") String content,
+			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
+					"withoutBlobValue" })) @Valid @RequestParam(value = "extent", required = false) String extent) {
+		try {
+			Collection<SubmodelElement> submodelElements = repository.getSubmodelElements(submodelIdentifier);
+			return new ResponseEntity<List<SubmodelElement>>(new ArrayList<>(submodelElements), HttpStatus.OK);
+		} catch (ElementDoesNotExistException e) {
+			return new ResponseEntity<List<SubmodelElement>>(HttpStatus.NOT_FOUND);
 		}
 	}
 

@@ -31,26 +31,32 @@ import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.submodelrepository.core.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
+import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.junit.Test;
 
+/**
+ * 
+ * @author schnicke
+ *
+ */
 public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 
 	@Override
-	protected SubmodelRepositoryFactory getSubmodelRepositoryFactory() {
-		return new InMemorySubmodelRepositoryFactory();
+	protected SubmodelRepository getSubmodelRepository() {
+		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
 	}
 
 	@Override
-	protected SubmodelRepositoryFactory getSubmodelRepositoryFactory(Collection<Submodel> submodels) {
-		return new InMemorySubmodelRepositoryFactory(submodels);
+	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
+		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodels);
 	}
 
 	@Test(expected = CollidingIdentifierException.class)
 	public void idCollisionDuringConstruction() {
 		Collection<Submodel> submodelsWithCollidingIds = createSubmodelCollectionWithCollidingIds();
-		new InMemorySubmodelRepository(submodelsWithCollidingIds);
+		new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodelsWithCollidingIds);
 	}
 
 	private Collection<Submodel> createSubmodelCollectionWithCollidingIds() {

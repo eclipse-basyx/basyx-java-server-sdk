@@ -30,10 +30,14 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 
 /**
  * In-memory implementation of the SubmodelRepository
@@ -43,26 +47,37 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
  */
 public class InMemorySubmodelRepository implements SubmodelRepository {
 
-	private Map<String, Submodel> submodels = new LinkedHashMap<>();
+	private Map<String, SubmodelService> submodelServices = new LinkedHashMap<>();
+	private SubmodelServiceFactory submodelServiceFactory;
 
-	public InMemorySubmodelRepository() {
+	/**
+	 * Creates the InMemorySubmodelRepository utilizing the passed
+	 * SubmodelServiceFactory for creating new SubmodelServices
+	 * 
+	 * @param submodelServiceFactory
+	 */
+	public InMemorySubmodelRepository(SubmodelServiceFactory submodelServiceFactory) {
+		this.submodelServiceFactory = submodelServiceFactory;
 	}
 
 	/**
-	 * Creates an in-memory submodel repository containing the passed submodels
+	 * Creates the InMemorySubmodelRepository utilizing the passed
+	 * SubmodelServiceFactory for creating new SubmodelServices and preconfiguring
+	 * it with the passed Submodels
 	 * 
+	 * @param submodelServiceFactory
 	 * @param submodels
 	 */
-	public InMemorySubmodelRepository(Collection<Submodel> submodels) {
+	public InMemorySubmodelRepository(SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels) {
+		this(submodelServiceFactory);
 		assertIdUniqueness(submodels);
 
-		this.submodels = convertToMap(submodels);
+		submodelServices = createServices(submodels);
 	}
 
-
-	private Map<String, Submodel> convertToMap(Collection<Submodel> submodels) {
-		Map<String, Submodel> map = new LinkedHashMap<>();
-		submodels.forEach(s -> map.put(s.getId(), s));
+	private Map<String, SubmodelService> createServices(Collection<Submodel> submodels) {
+		Map<String, SubmodelService> map = new LinkedHashMap<>();
+		submodels.forEach(submodel -> map.put(submodel.getId(), submodelServiceFactory.create(submodel)));
 
 		return map;
 	}
@@ -71,7 +86,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		Set<String> ids = new HashSet<>();
 
 		for (Submodel submodel : submodelsToCheck) {
-			String submodelId =submodel.getId();
+			String submodelId = submodel.getId();
 			boolean unique = ids.add(submodelId);
 
 			if (!unique) {
@@ -82,37 +97,44 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public Collection<Submodel> getAllSubmodels() {
-		return submodels.values();
+		return submodelServices.values().stream().map(service -> service.getSubmodel()).collect(Collectors.toList());
 	}
 
 	@Override
 	public Submodel getSubmodel(String id) throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(id);
 
-		return submodels.get(id);
+		return submodelServices.get(id).getSubmodel();
 	}
 
 	@Override
 	public void updateSubmodel(String id, Submodel submodel) throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(id);
 
-		submodels.put(id, submodel);
+		submodelServices.put(id, submodelServiceFactory.create(submodel));
 	}
 
 	@Override
 	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
 		throwIfSubmodelExists(submodel.getId());
 
-		submodels.put(submodel.getId(), submodel);
+		submodelServices.put(submodel.getId(), submodelServiceFactory.create(submodel));
 	}
 
 	private void throwIfSubmodelExists(String id) {
-		if (submodels.containsKey(id))
+		if (submodelServices.containsKey(id))
 			throw new CollidingIdentifierException(id);
 	}
 
 	private void throwIfSubmodelDoesNotExist(String id) {
-		if (!submodels.containsKey(id))
+		if (!submodelServices.containsKey(id))
 			throw new ElementDoesNotExistException(id);
+	}
+
+	@Override
+	public Collection<SubmodelElement> getSubmodelElements(String submodelId) {
+		throwIfSubmodelDoesNotExist(submodelId);
+
+		return submodelServices.get(submodelId).getSubmodelElements();
 	}
 }

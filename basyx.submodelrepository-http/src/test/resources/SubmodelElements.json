@@ -1,0 +1,19 @@
+[
+	{
+		"modelType": "Property",
+		"kind": "Instance",
+		"semanticId": {
+			"keys": [
+				{
+					"type": "ConceptDescription",
+					"value": "0173-1#02-BAA120#008"
+				}
+			],
+			"type": "GlobalReference"
+		},
+		"value": "5000",
+		"valueType": "xs:integer",
+		"category": "PARAMETER",
+		"idShort": "MaxRotationSpeed"
+	}
+]

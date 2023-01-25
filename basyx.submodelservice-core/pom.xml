@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.eclipse.digitaltwin.basyx</groupId>
-  <artifactId>basyx.submodelrepository-core</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  
-  	<properties>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.eclipse.digitaltwin.basyx</groupId>
+	<artifactId>basyx.submodelservice-core</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<properties>
 		<java.version>11</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
+
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.eclipse.digitaltwin.aas4j/model -->
 		<dependency>
@@ -22,15 +22,6 @@
 			<artifactId>basyx.core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		
-		
-		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.submodelservice-core</artifactId>
-			<classifier>tests</classifier>
-			<scope>test</scope>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
@@ -40,7 +31,7 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<plugin>

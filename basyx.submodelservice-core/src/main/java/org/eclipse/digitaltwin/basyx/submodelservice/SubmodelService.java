@@ -24,61 +24,31 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.submodelrepository;
+package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 
 /**
- * Specifies the overall SubmodelRepository API
+ * Specifies the overall SubmodelService API
  * 
  * @author schnicke
  *
  */
-public interface SubmodelRepository {
-
+public interface SubmodelService {
 	/**
-	 * Retrieves all Submodels from the repository
+	 * Retrieves the Submodel contained in the service
 	 * 
-	 * @return a collection of all found Submodels
-	 */
-	public Collection<Submodel> getAllSubmodels();
-
-	/**
-	 * Retrieves the Submodel with the specific id
-	 * 
-	 * @param submodelId
-	 * @return
-	 * @throws ElementDoesNotExistException
-	 */
-	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException;
-
-	/**
-	 * Updates an existing Submodel
-	 * 
-	 * @param submodelId
-	 * @param submodel
-	 * @throws ElementDoesNotExistException
-	 */
-	public void updateSubmodel(String submodelId, Submodel submodel) throws ElementDoesNotExistException;
-
-	/**
-	 * Creates a new submodel
-	 * 
-	 * @param submodel
-	 * @throws CollidingIdentifierException
-	 */
-	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException;
-
-	/**
-	 * Retrieves all SubmodelElements of a Submodel
-	 * 
-	 * @param submodelId
 	 * @return
 	 */
-	public Collection<SubmodelElement> getSubmodelElements(String submodelId);
+	public Submodel getSubmodel();
+
+	/**
+	 * Retrieves all submodelElements contained in the Submodel
+	 * 
+	 * @return
+	 */
+	public Collection<SubmodelElement> getSubmodelElements();
 }

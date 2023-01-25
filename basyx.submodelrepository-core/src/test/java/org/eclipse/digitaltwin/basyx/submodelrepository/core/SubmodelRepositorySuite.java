@@ -32,12 +32,13 @@ import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.junit.Test;
 
 /**
@@ -47,14 +48,15 @@ import org.junit.Test;
  *
  */
 public abstract class SubmodelRepositorySuite {
-	protected abstract SubmodelRepositoryFactory getSubmodelRepositoryFactory();
-	protected abstract SubmodelRepositoryFactory getSubmodelRepositoryFactory(Collection<Submodel> submodels);
+	protected abstract SubmodelRepository getSubmodelRepository();
+
+	protected abstract SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels);
 
 	@Test
 	public void getAllSubmodelsPreconfigured() {
 		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodels();
 
-		SubmodelRepository repo = getSubmodelRepositoryFactory(expectedSubmodels).create();
+		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
 		Collection<Submodel> submodels = repo.getAllSubmodels();
 
 		assertSubmodelsAreContained(expectedSubmodels, submodels);
@@ -67,7 +69,7 @@ public abstract class SubmodelRepositorySuite {
 
 	@Test
 	public void getAllSubmodelsEmpty() {
-		SubmodelRepository repo = getSubmodelRepositoryFactory().create();
+		SubmodelRepository repo = getSubmodelRepository();
 		Collection<Submodel> submodels = repo.getAllSubmodels();
 
 		assertIsEmpty(submodels);
@@ -129,6 +131,21 @@ public abstract class SubmodelRepositorySuite {
 		repo.createSubmodel(submodel);
 	}
 
+	@Test
+	public void getSubmodelElements() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		Collection<SubmodelElement> elements = repo.getSubmodelElements(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID);
+		Collection<SubmodelElement> expectedElements = DummySubmodelFactory.createOperationalDataSubmodel().getSubmodelElements();
+		assertEquals(expectedElements, elements);
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void getSubmodelElementsOfNonExistingSubmodel() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.getSubmodelElements("notExisting");
+
+	}
+
 	private Submodel buildDummySubmodel(String id) {
 		return new DefaultSubmodel.Builder()
 				.id(id)
@@ -142,7 +159,7 @@ public abstract class SubmodelRepositorySuite {
 
 	private SubmodelRepository getSubmodelRepositoryWithDummySubmodels() {
 		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodels();
-		SubmodelRepository repo = getSubmodelRepositoryFactory(expectedSubmodels).create();
+		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
 		return repo;
 	}
 

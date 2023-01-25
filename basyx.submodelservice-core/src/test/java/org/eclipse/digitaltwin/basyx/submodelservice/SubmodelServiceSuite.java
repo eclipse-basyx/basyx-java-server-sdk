@@ -24,61 +24,36 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.submodelrepository;
+package org.eclipse.digitaltwin.basyx.submodelservice;
 
-import java.util.Collection;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.junit.Test;
 
 /**
- * Specifies the overall SubmodelRepository API
+ * Testsuite for implementations of the SubmodelService interface
  * 
  * @author schnicke
  *
  */
-public interface SubmodelRepository {
+public abstract class SubmodelServiceSuite {
 
-	/**
-	 * Retrieves all Submodels from the repository
-	 * 
-	 * @return a collection of all found Submodels
-	 */
-	public Collection<Submodel> getAllSubmodels();
+	protected abstract SubmodelService getSubmodelService(Submodel submodel);
+	
+	@Test
+	public void getSubmodel() {
+		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
+		SubmodelService smService = getSubmodelService(technicalData);
 
-	/**
-	 * Retrieves the Submodel with the specific id
-	 * 
-	 * @param submodelId
-	 * @return
-	 * @throws ElementDoesNotExistException
-	 */
-	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException;
+		assertEquals(technicalData, smService.getSubmodel());
+	}
 
-	/**
-	 * Updates an existing Submodel
-	 * 
-	 * @param submodelId
-	 * @param submodel
-	 * @throws ElementDoesNotExistException
-	 */
-	public void updateSubmodel(String submodelId, Submodel submodel) throws ElementDoesNotExistException;
-
-	/**
-	 * Creates a new submodel
-	 * 
-	 * @param submodel
-	 * @throws CollidingIdentifierException
-	 */
-	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException;
-
-	/**
-	 * Retrieves all SubmodelElements of a Submodel
-	 * 
-	 * @param submodelId
-	 * @return
-	 */
-	public Collection<SubmodelElement> getSubmodelElements(String submodelId);
+	@Test
+	public void getSubmodelElements() {
+		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
+		SubmodelService smService = getSubmodelService(technicalData);
+		
+		assertEquals(technicalData.getSubmodelElements(), smService.getSubmodelElements());
+	}
 }

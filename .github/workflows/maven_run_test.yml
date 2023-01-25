@@ -33,6 +33,10 @@ jobs:
       run: mvn clean install -f basyx.aasrepository-backend-inmemory
     - name: Install BaSyx AasRepository HTTP
       run: mvn clean install -f basyx.aasrepository-http
+    - name: Install BaSyx SubmodelService Core
+      run: mvn clean install -f basyx.submodelservice-core
+    - name: Install BaSyx SubmodelService InMemory
+      run: mvn clean install -f basyx.submodelservice-backend-inmemory
     - name: Install BaSyx SubmodelRepository Core
       run: mvn clean install -f basyx.submodelrepository-core
     - name: Install BaSyx SubmodelRepository InMemory

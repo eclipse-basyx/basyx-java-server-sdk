@@ -23,62 +23,29 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.submodelservice.feature;
 
-package org.eclipse.digitaltwin.basyx.submodelrepository;
-
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.DecoratedFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 
 /**
- * Specifies the overall SubmodelRepository API
+ * Factory for SubmodelService decoration
  * 
  * @author schnicke
  *
  */
-public interface SubmodelRepository {
+public class DecoratedSubmodelServiceFactory extends DecoratedFactory<SubmodelServiceFactory, SubmodelServiceFeature> implements SubmodelServiceFactory {
 
-	/**
-	 * Retrieves all Submodels from the repository
-	 * 
-	 * @return a collection of all found Submodels
-	 */
-	public Collection<Submodel> getAllSubmodels();
+	public DecoratedSubmodelServiceFactory(SubmodelServiceFactory toDecorate, List<SubmodelServiceFeature> features) {
+		super(toDecorate, features);
+	}
 
-	/**
-	 * Retrieves the Submodel with the specific id
-	 * 
-	 * @param submodelId
-	 * @return
-	 * @throws ElementDoesNotExistException
-	 */
-	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException;
-
-	/**
-	 * Updates an existing Submodel
-	 * 
-	 * @param submodelId
-	 * @param submodel
-	 * @throws ElementDoesNotExistException
-	 */
-	public void updateSubmodel(String submodelId, Submodel submodel) throws ElementDoesNotExistException;
-
-	/**
-	 * Creates a new submodel
-	 * 
-	 * @param submodel
-	 * @throws CollidingIdentifierException
-	 */
-	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException;
-
-	/**
-	 * Retrieves all SubmodelElements of a Submodel
-	 * 
-	 * @param submodelId
-	 * @return
-	 */
-	public Collection<SubmodelElement> getSubmodelElements(String submodelId);
+	@Override
+	public SubmodelService create(Submodel submodel) {
+		return getDecorated().create(submodel);
+	}
 }
