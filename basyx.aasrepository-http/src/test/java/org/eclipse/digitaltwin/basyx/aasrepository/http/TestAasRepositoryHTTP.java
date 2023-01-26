@@ -49,6 +49,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.ResourceUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -95,10 +96,6 @@ public class TestAasRepositoryHTTP {
 		assertResponseContainsSameAAS(aasJsonContent, retrievalResponse);
 	}
 
-	private HttpGet createSpecificAASGETRequest() {
-		return new HttpGet(aasAccessURL + "/customIdentifier");
-	}
-
 	@Test
 	public void aasIdentifierCollision() throws FileNotFoundException, IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
@@ -132,6 +129,25 @@ public class TestAasRepositoryHTTP {
 		CloseableHttpResponse response = client.execute(aasRetrievalRequest);
 
 		assertEquals(404, response.getCode());
+	}
+
+	@Test
+	public void getAllAasWhenEmpty() throws IOException {
+		CloseableHttpResponse retrievalResponse = getAllAas();
+
+		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+	}
+
+	private CloseableHttpResponse getAllAas() throws IOException {
+		CloseableHttpClient client = HttpClients.createDefault();
+
+		HttpGet aasRetrievalRequest = new HttpGet(aasAccessURL);
+		CloseableHttpResponse retrievalResponse = client.execute(aasRetrievalRequest);
+		return retrievalResponse;
+	}
+
+	private HttpGet createSpecificAASGETRequest() {
+		return new HttpGet(aasAccessURL + "/customIdentifier");
 	}
 
 	private CloseableHttpResponse createAASOnServer(CloseableHttpClient client, String aasJsonContent) throws IOException {
