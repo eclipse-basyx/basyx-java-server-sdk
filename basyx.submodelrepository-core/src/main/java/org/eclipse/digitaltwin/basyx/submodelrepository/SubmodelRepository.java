@@ -81,4 +81,18 @@ public interface SubmodelRepository {
 	 * @return
 	 */
 	public Collection<SubmodelElement> getSubmodelElements(String submodelId);
+	
+	/**
+	 * Retrieve specific SubmodelElement of a Submodel
+	 *
+	 * @param submodelId
+	 *            the Submodel id
+	 * @param smeIdShort
+	 *            the SubmodelElement IdShort
+	 * @return the SubmodelElement
+	 * @throws ElementDoesNotExistException
+	 *             if the SubmodelElement or the Submodel does not exist
+	 */
+	public SubmodelElement getSubmodelElement(String submodelId, String smeIdShort) throws ElementDoesNotExistException;
+	
 }

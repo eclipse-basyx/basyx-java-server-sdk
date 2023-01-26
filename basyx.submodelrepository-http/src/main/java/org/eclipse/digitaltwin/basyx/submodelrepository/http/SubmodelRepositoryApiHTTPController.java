@@ -127,4 +127,23 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		}
 	}
 
+	@Override
+	public ResponseEntity<SubmodelElement> getSubmodelElementByPathSubmodelRepo(
+			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") String submodelIdentifier,
+			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
+			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
+					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level,
+			@Parameter(in = ParameterIn.QUERY, description = "Determines the request or response kind of the resource", schema = @Schema(allowableValues = { "normal", "trimmed", "value", "reference",
+					"path" }, defaultValue = "normal")) @Valid @RequestParam(value = "content", required = false, defaultValue = "normal") String content,
+			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
+					"withoutBlobValue" })) @Valid @RequestParam(value = "extent", required = false) String extent) {
+
+		try {
+			SubmodelElement submodelElement = repository.getSubmodelElement(submodelIdentifier, idShortPath);		
+			return new ResponseEntity<SubmodelElement>(submodelElement, HttpStatus.OK);			
+		} catch (ElementDoesNotExistException e) {
+			return new ResponseEntity<SubmodelElement>(HttpStatus.NOT_FOUND);
+		}
+	}
+
 }

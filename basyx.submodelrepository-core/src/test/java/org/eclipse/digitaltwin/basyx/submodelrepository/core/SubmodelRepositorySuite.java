@@ -78,7 +78,7 @@ public abstract class SubmodelRepositorySuite {
 	@Test
 	public void getSpecificSubmodel() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		
+
 		Submodel operationalDataSm = DummySubmodelFactory.createOperationalDataSubmodel();
 		Submodel retrieved = repo.getSubmodel(operationalDataSm.getId());
 
@@ -95,10 +95,10 @@ public abstract class SubmodelRepositorySuite {
 	public void updateExistingSubmodel() {
 		String id = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID;
 		Submodel expected = buildDummySubmodel(id);
-		
+
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.updateSubmodel(id, expected);
-		
+
 		assertEquals(expected, repo.getSubmodel(id));
 	}
 
@@ -146,6 +146,33 @@ public abstract class SubmodelRepositorySuite {
 
 	}
 
+	@Test
+	public void getSubmodelElement() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelElement element = repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT);
+		SubmodelElement expectedElement = DummySubmodelFactory.createOperationalDataSubmodel()
+				.getSubmodelElements()
+				.stream()
+				.filter(sme -> sme.getIdShort()
+						.equals(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT))
+				.findAny()
+				.get();
+
+		assertEquals(expectedElement, element);
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void getNonExistingSubmodelElement() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, "nonExisting");
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void getSubmodelElementOfNonExistingSubmodel() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.getSubmodelElement("nonExisting", "doesNotMatter");
+	}
+
 	private Submodel buildDummySubmodel(String id) {
 		return new DefaultSubmodel.Builder()
 				.id(id)
@@ -166,6 +193,5 @@ public abstract class SubmodelRepositorySuite {
 	private void assertIsEmpty(Collection<Submodel> submodels) {
 		assertTrue(submodels.isEmpty());
 	}
-
 
 }

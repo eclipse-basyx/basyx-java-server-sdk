@@ -29,6 +29,8 @@ package org.eclipse.digitaltwin.basyx.submodelservice;
 import static org.junit.Assert.assertEquals;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.junit.Test;
 
 /**
@@ -55,5 +57,26 @@ public abstract class SubmodelServiceSuite {
 		SubmodelService smService = getSubmodelService(technicalData);
 		
 		assertEquals(technicalData.getSubmodelElements(), smService.getSubmodelElements());
+	}
+	
+	@Test
+	public void getSubmodelElement() {
+		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
+		SubmodelElement smElement = getSubmodelService(technicalData).getSubmodelElement(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT);
+		
+		assertEquals(getDummySubmodelElement(technicalData), smElement);
+	}
+
+	private SubmodelElement getDummySubmodelElement(Submodel technicalData) {
+		return technicalData.getSubmodelElements().stream()
+				.filter(sme -> sme.getIdShort().equals(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT))
+				.findAny().get();
+	}
+	
+	@Test(expected = ElementDoesNotExistException.class)
+	public void getNonExistingSubmodelElement() {
+		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
+		
+		getSubmodelService(technicalData).getSubmodelElement("nonExisting");
 	}
 }

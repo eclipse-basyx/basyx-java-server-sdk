@@ -137,4 +137,12 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 		return submodelServices.get(submodelId).getSubmodelElements();
 	}
+
+	@Override
+	public SubmodelElement getSubmodelElement(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
+		throwIfSubmodelDoesNotExist(submodelId);
+
+		return submodelServices.get(submodelId)
+				.getSubmodelElement(smeIdShort);
+	}
 }

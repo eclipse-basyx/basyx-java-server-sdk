@@ -23,13 +23,13 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 
 /**
  * Implements the SubmodelService as in-memory variant
@@ -58,6 +58,16 @@ public class InMemorySubmodelService implements SubmodelService {
 	@Override
 	public Collection<SubmodelElement> getSubmodelElements() {
 		return submodel.getSubmodelElements();
+	}
+
+	@Override
+	public SubmodelElement getSubmodelElement(String idShort) {
+		return submodel.getSubmodelElements()
+				.stream()
+				.filter(sme -> sme.getIdShort()
+						.equals(idShort))
+				.findAny()
+				.orElseThrow(() -> new ElementDoesNotExistException(idShort));
 	}
 
 }

@@ -103,4 +103,18 @@ public interface SubmodelRepositoryHTTPApi {
 , defaultValue="deep")) @Valid @RequestParam(value = "level", required = false, defaultValue="deep") String level, @Parameter(in = ParameterIn.QUERY, description = "Determines the request or response kind of the resource" ,schema=@Schema(allowableValues={ "normal", "trimmed", "value", "reference", "path" }
 , defaultValue="normal")) @Valid @RequestParam(value = "content", required = false, defaultValue="normal") String content, @Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized" ,schema=@Schema(allowableValues={ "withBlobValue", "withoutBlobValue" }
 )) @Valid @RequestParam(value = "extent", required = false) String extent);
+
+	@Operation(summary = "Returns a specific submodel element from the Submodel at a specified path", description = "", tags = { "Asset Administration Shell Repository" })
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Requested submodel element", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SubmodelElement.class))) })
+	@RequestMapping(value = "/submodels/{submodelIdentifier}/submodel/submodel-elements/{idShortPath}", produces = { "application/json" }, method = RequestMethod.GET)
+	ResponseEntity<SubmodelElement> getSubmodelElementByPathSubmodelRepo(
+			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") String submodelIdentifier,
+			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
+			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
+					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level,
+			@Parameter(in = ParameterIn.QUERY, description = "Determines the request or response kind of the resource", schema = @Schema(allowableValues = { "normal", "trimmed", "value", "reference",
+					"path" }, defaultValue = "normal")) @Valid @RequestParam(value = "content", required = false, defaultValue = "normal") String content,
+			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
+					"withoutBlobValue" })) @Valid @RequestParam(value = "extent", required = false) String extent);
+
 }

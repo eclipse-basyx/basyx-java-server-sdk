@@ -152,6 +152,31 @@ public class TestSubmodelRepositoryHTTP {
 		CloseableHttpResponse response = requestSubmodelElements("nonExisting");
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
+	
+	@Test
+	public void getSubmodelElement() throws FileNotFoundException, IOException, ParseException {
+		String expectedElement = getSubmodelElementJSON();
+		CloseableHttpResponse response = requestSubmodelElement("7A7104BDAB57E184", "MaxRotationSpeed");
+		
+		assertEquals(HttpStatus.OK.value(), response.getCode());		
+		assertSameJSONContent(expectedElement, getResponseAsString(response));
+	}
+	
+	@Test
+	public void getSubmodelElementOfNonExistingSubmodel() throws FileNotFoundException, IOException, ParseException {
+		CloseableHttpResponse response = requestSubmodelElement("nonExisting", "doesNotMatter");
+		
+		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());		
+	}
+	
+	
+	@Test
+	public void getNonExistingSubmodelElement() throws FileNotFoundException, IOException, ParseException {
+		CloseableHttpResponse response = requestSubmodelElement("7A7104BDAB57E184", "nonExisting");
+		
+		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());		
+	}
+
 
 	private void assertSubmodelCreationReponse(String submodelJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JsonProcessingException, JsonMappingException {
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
@@ -198,6 +223,10 @@ public class TestSubmodelRepositoryHTTP {
 		return response;
 	}
 
+	private CloseableHttpResponse requestSubmodelElement(String submodelId, String smeIdShort) throws IOException {
+		return executeGetOnURL(submodelAccessURL + "/" + submodelId + "/submodel/submodel-elements/" + smeIdShort);
+	}
+
 	private CloseableHttpResponse executeGetOnURL(String url) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpGet submodelRetrievalRequest = new HttpGet(url);
@@ -238,6 +267,10 @@ public class TestSubmodelRepositoryHTTP {
 
 	private String getSubmodelElementsJSON() throws FileNotFoundException, IOException {
 		return readJSONStringFromFile("classpath:SubmodelElements.json");
+	}
+
+	private String getSubmodelElementJSON() throws FileNotFoundException, IOException {
+		return readJSONStringFromFile("classpath:SubmodelElement.json");
 	}
 
 	private String readJSONStringFromFile(String fileName) throws FileNotFoundException, IOException {
