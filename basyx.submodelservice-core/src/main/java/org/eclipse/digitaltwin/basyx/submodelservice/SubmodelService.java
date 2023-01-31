@@ -54,7 +54,7 @@ public interface SubmodelService {
 	public Collection<SubmodelElement> getSubmodelElements();
 	
 	/**
-	 * Retrieve specific SubmodelElement of a Submodel
+	 * Retrieve specific SubmodelElement of the Submodel
 	 *
 	 * @param smeIdShort
 	 *            the SubmodelElement IdShort
@@ -63,5 +63,28 @@ public interface SubmodelService {
 	 *             if the SubmodelElement does not exist
 	 */
 	public SubmodelElement getSubmodelElement(String idShort) throws ElementDoesNotExistException;
+
+	/**
+	 * Retrieves the value of a specific SubmodelElement of the Submodel
+	 * 
+	 * @param idShort
+	 *            the SubmodelElement IdShort
+	 * @return the SubmodelElement
+	 * @throws ElementDoesNotExistException
+	 *             if the SubmodelElement does not exist
+	 */
+	public Object getSubmodelElementValue(String idShort) throws ElementDoesNotExistException;
+
+	/**
+	 * Sets the value of a specific SubmodelElement of the Submodel
+	 * 
+	 * @param idShort
+	 *            the SubmodelElement IdShort
+	 * @param value
+	 *            the new value
+	 * @throws ElementDoesNotExistException
+	 *             if the SubmodelElement does not exist
+	 */
+	public void setSubmodelElementValue(String idShort, Object value) throws ElementDoesNotExistException;
 
 }

@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import java.util.Collection;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
@@ -68,6 +69,18 @@ public class InMemorySubmodelService implements SubmodelService {
 						.equals(idShort))
 				.findAny()
 				.orElseThrow(() -> new ElementDoesNotExistException(idShort));
+	}
+
+	@Override
+	public Object getSubmodelElementValue(String idShort) throws ElementDoesNotExistException {
+		Property property = (Property) getSubmodelElement(idShort);
+		return property.getValue();
+	}
+
+	@Override
+	public void setSubmodelElementValue(String idShort, Object value) throws ElementDoesNotExistException {
+		Property property = (Property) getSubmodelElement(idShort);
+		property.setValue((String) value);
 	}
 
 }

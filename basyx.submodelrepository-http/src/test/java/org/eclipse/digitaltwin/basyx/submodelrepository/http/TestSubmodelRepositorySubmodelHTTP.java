@@ -27,22 +27,14 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ParseException;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.junit.After;
@@ -51,13 +43,17 @@ import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.ResourceUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class TestSubmodelRepositoryHTTP {
+/**
+ * Tests the Submodel specific parts of the SubmodelRepository HTTP/REST API
+ * 
+ * @author schnicke
+ *
+ */
+public class TestSubmodelRepositorySubmodelHTTP {
 
 	private String submodelAccessURL = "http://localhost:8080/submodels";
 
@@ -77,7 +73,7 @@ public class TestSubmodelRepositoryHTTP {
 	public void getAllSubmodelsPreconfigured() throws IOException, ParseException {
 		String submodelsJSON = getAllSubmodelsJSON();
 		String expectedSubmodelsJSON = getAllSubmodelJSON();
-		assertSameJSONContent(expectedSubmodelsJSON, submodelsJSON);
+		SubmodelRepositoryHTTPTestUtils.assertSameJSONContent(expectedSubmodelsJSON, submodelsJSON);
 	}
 
 	@Test
@@ -85,7 +81,7 @@ public class TestSubmodelRepositoryHTTP {
 		String submodelJSON = requestSpecificSubmodelJSON(DummySubmodelFactory.createTechnicalDataSubmodel().getId());
 		String expectedSubmodelJSON = getSingleSubmodelJSON();
 
-		assertSameJSONContent(expectedSubmodelJSON, submodelJSON);
+		SubmodelRepositoryHTTPTestUtils.assertSameJSONContent(expectedSubmodelJSON, submodelJSON);
 	}
 
 	@Test
@@ -106,7 +102,7 @@ public class TestSubmodelRepositoryHTTP {
 		assertEquals(HttpStatus.NO_CONTENT.value(), creationResponse.getCode());
 
 		String submodelJSON = requestSpecificSubmodelJSON(id);
-		assertSameJSONContent(expectedSubmodelJSON, submodelJSON);
+		SubmodelRepositoryHTTPTestUtils.assertSameJSONContent(expectedSubmodelJSON, submodelJSON);
 	}
 
 	@Test
@@ -127,7 +123,7 @@ public class TestSubmodelRepositoryHTTP {
 		assertSubmodelCreationReponse(submodelJSON, creationResponse);
 
 		String requestedSubmodel = requestSpecificSubmodelJSON("newSubmodel");
-		assertSameJSONContent(submodelJSON, requestedSubmodel);
+		SubmodelRepositoryHTTPTestUtils.assertSameJSONContent(submodelJSON, requestedSubmodel);
 	}
 
 	@Test
@@ -138,50 +134,13 @@ public class TestSubmodelRepositoryHTTP {
 		assertEquals(HttpStatus.CONFLICT.value(), creationResponse.getCode());
 	}
 
-	@Test
-	public void getSubmodelElements() throws FileNotFoundException, IOException, ParseException {
-		String id = "7A7104BDAB57E184";
-		String requestedSubmodelElements = requestSubmodelElementsJSON(id);
-
-		String submodelElementJSON = getSubmodelElementsJSON();
-		assertSameJSONContent(submodelElementJSON, requestedSubmodelElements);
-	}
-
-	@Test
-	public void getSubmodelElementsOfNonExistingSubmodel() throws ParseException, IOException {
-		CloseableHttpResponse response = requestSubmodelElements("nonExisting");
-		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
-	}
 	
-	@Test
-	public void getSubmodelElement() throws FileNotFoundException, IOException, ParseException {
-		String expectedElement = getSubmodelElementJSON();
-		CloseableHttpResponse response = requestSubmodelElement("7A7104BDAB57E184", "MaxRotationSpeed");
-		
-		assertEquals(HttpStatus.OK.value(), response.getCode());		
-		assertSameJSONContent(expectedElement, getResponseAsString(response));
-	}
-	
-	@Test
-	public void getSubmodelElementOfNonExistingSubmodel() throws FileNotFoundException, IOException, ParseException {
-		CloseableHttpResponse response = requestSubmodelElement("nonExisting", "doesNotMatter");
-		
-		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());		
-	}
-	
-	
-	@Test
-	public void getNonExistingSubmodelElement() throws FileNotFoundException, IOException, ParseException {
-		CloseableHttpResponse response = requestSubmodelElement("7A7104BDAB57E184", "nonExisting");
-		
-		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());		
-	}
 
 
 	private void assertSubmodelCreationReponse(String submodelJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JsonProcessingException, JsonMappingException {
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
-		String response = getResponseAsString(creationResponse);
-		assertSameJSONContent(submodelJSON, response);
+		String response = SubmodelRepositoryHTTPTestUtils.getResponseAsString(creationResponse);
+		SubmodelRepositoryHTTPTestUtils.assertSameJSONContent(submodelJSON, response);
 	}
 
 	private CloseableHttpResponse createSubmodel(String submodelJSON) throws IOException {
@@ -209,78 +168,33 @@ public class TestSubmodelRepositoryHTTP {
 	private String requestSpecificSubmodelJSON(String id) throws IOException, ParseException {
 		CloseableHttpResponse response = requestSubmodel(id);
 
-		return getResponseAsString(response);
-	}
-
-	private String requestSubmodelElementsJSON(String id) throws IOException, ParseException {
-		CloseableHttpResponse response = requestSubmodelElements(id);
-				
-		return getResponseAsString(response);
-	}
-
-	private CloseableHttpResponse requestSubmodelElements(String id) throws IOException {
-		CloseableHttpResponse response = executeGetOnURL(submodelAccessURL + "/" + id + "/submodel/submodel-elements");
-		return response;
-	}
-
-	private CloseableHttpResponse requestSubmodelElement(String submodelId, String smeIdShort) throws IOException {
-		return executeGetOnURL(submodelAccessURL + "/" + submodelId + "/submodel/submodel-elements/" + smeIdShort);
-	}
-
-	private CloseableHttpResponse executeGetOnURL(String url) throws IOException {
-		CloseableHttpClient client = HttpClients.createDefault();
-		HttpGet submodelRetrievalRequest = new HttpGet(url);
-		return client.execute(submodelRetrievalRequest);
+		return SubmodelRepositoryHTTPTestUtils.getResponseAsString(response);
 	}
 
 	private CloseableHttpResponse requestSubmodel(String id) throws IOException {
-		return executeGetOnURL(submodelAccessURL + "/" + id + "/submodel");
-	}
-
-	private void assertSameJSONContent(String expected, String actual) throws JsonProcessingException, JsonMappingException {
-		ObjectMapper mapper = new ObjectMapper();
-
-		assertEquals(mapper.readTree(expected), mapper.readTree(actual));
+		return SubmodelRepositoryHTTPTestUtils.executeGetOnURL(submodelAccessURL + "/" + id + "/submodel");
 	}
 
 	private String getAllSubmodelsJSON() throws IOException, ParseException {
-		CloseableHttpResponse response = executeGetOnURL(submodelAccessURL);
+		CloseableHttpResponse response = SubmodelRepositoryHTTPTestUtils.executeGetOnURL(submodelAccessURL);
 
-		return getResponseAsString(response);
+		return SubmodelRepositoryHTTPTestUtils.getResponseAsString(response);
 	}
 
 	private String getUpdatedSubmodelJSON() throws IOException {
-		return readJSONStringFromFile("classpath:SingleSubmodelUpdate.json");
+		return SubmodelRepositoryHTTPTestUtils.readJSONStringFromFile("classpath:SingleSubmodelUpdate.json");
 	}
 
 	private String getNewSubmodelJSON() throws IOException {
-		return readJSONStringFromFile("classpath:SingleSubmodelNew.json");
+		return SubmodelRepositoryHTTPTestUtils.readJSONStringFromFile("classpath:SingleSubmodelNew.json");
 	}
 
 	private String getSingleSubmodelJSON() throws IOException {
-		return readJSONStringFromFile("classpath:SingleSubmodel.json");
+		return SubmodelRepositoryHTTPTestUtils.readJSONStringFromFile("classpath:SingleSubmodel.json");
 	}
 
 	private String getAllSubmodelJSON() throws IOException {
-		return readJSONStringFromFile("classpath:MultipleSubmodels.json");
-	}
-
-	private String getSubmodelElementsJSON() throws FileNotFoundException, IOException {
-		return readJSONStringFromFile("classpath:SubmodelElements.json");
-	}
-
-	private String getSubmodelElementJSON() throws FileNotFoundException, IOException {
-		return readJSONStringFromFile("classpath:SubmodelElement.json");
-	}
-
-	private String readJSONStringFromFile(String fileName) throws FileNotFoundException, IOException {
-		File file = ResourceUtils.getFile(fileName);
-		InputStream in = new FileInputStream(file);
-		return IOUtils.toString(in, StandardCharsets.UTF_8.name());
-	}
-
-	private String getResponseAsString(CloseableHttpResponse retrievalResponse) throws IOException, ParseException {
-		return EntityUtils.toString(retrievalResponse.getEntity(), "UTF-8");
+		return SubmodelRepositoryHTTPTestUtils.readJSONStringFromFile("classpath:MultipleSubmodels.json");
 	}
 
 }

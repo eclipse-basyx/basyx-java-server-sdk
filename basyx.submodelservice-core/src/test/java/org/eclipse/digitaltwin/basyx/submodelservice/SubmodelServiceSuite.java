@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import static org.junit.Assert.assertEquals;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
@@ -67,16 +68,53 @@ public abstract class SubmodelServiceSuite {
 		assertEquals(getDummySubmodelElement(technicalData), smElement);
 	}
 
-	private SubmodelElement getDummySubmodelElement(Submodel technicalData) {
-		return technicalData.getSubmodelElements().stream()
+	@Test(expected = ElementDoesNotExistException.class)
+	public void getNonExistingSubmodelElement() {
+		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
+
+		getSubmodelService(technicalData).getSubmodelElement("nonExisting");
+	}
+
+	@Test
+	public void getPropertyValue() {
+		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
+		String expected = getDummySubmodelElement(technicalData).getValue();
+		
+		Object value = getSubmodelService(technicalData).getSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT);
+		
+		assertEquals(expected, value);
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void getNonExistingSubmodelElementValue() {
+		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
+
+		getSubmodelService(technicalData).getSubmodelElementValue("nonExisting");
+	}
+
+	@Test
+	public void setPropertyValue() {
+		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
+		SubmodelService smService = getSubmodelService(technicalData);
+
+		String expected = "200";
+		smService.setSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT, expected);
+		Object value = smService.getSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT);
+
+		assertEquals(expected, value);
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void setNonExistingSubmodelElementValue() {
+		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
+
+		getSubmodelService(technicalData).setSubmodelElementValue("nonExisting", "doesNotMatter");
+	}
+
+	private Property getDummySubmodelElement(Submodel technicalData) {
+		return (Property) technicalData.getSubmodelElements().stream()
 				.filter(sme -> sme.getIdShort().equals(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT))
 				.findAny().get();
 	}
 	
-	@Test(expected = ElementDoesNotExistException.class)
-	public void getNonExistingSubmodelElement() {
-		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
-		
-		getSubmodelService(technicalData).getSubmodelElement("nonExisting");
-	}
 }
