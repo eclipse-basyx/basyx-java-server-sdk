@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import java.util.Collection;
@@ -81,9 +80,9 @@ public interface SubmodelRepository {
 	 * @return
 	 */
 	public Collection<SubmodelElement> getSubmodelElements(String submodelId);
-	
+
 	/**
-	 * Retrieve specific SubmodelElement of a Submodel
+	 * Retrieves a specific SubmodelElement of a Submodel
 	 *
 	 * @param submodelId
 	 *            the Submodel id
@@ -94,5 +93,31 @@ public interface SubmodelRepository {
 	 *             if the SubmodelElement or the Submodel does not exist
 	 */
 	public SubmodelElement getSubmodelElement(String submodelId, String smeIdShort) throws ElementDoesNotExistException;
-	
+
+	/**
+	 * Retrieves the value of a specific SubmodelElement of a Submodel
+	 * 
+	 * @param submodelId
+	 *            the Submodel id
+	 * @param smeIdShort
+	 *            the SubmodelElement IdShort
+	 * @return the SubmodelElement
+	 * @throws ElementDoesNotExistException
+	 *             if the SubmodelElement or the Submodel does not exist
+	 */
+	public Object getSubmodelElementValue(String submodelId, String smeIdShort) throws ElementDoesNotExistException;
+
+	/**
+	 * Sets the value of a specific SubmodelElement of a Submodel
+	 * 
+	 * @param submodelId
+	 *            the Submodel id
+	 * @param smeIdShort
+	 *            the SubmodelElement IdShort
+	 * @param value
+	 *            the new value
+	 * @throws ElementDoesNotExistException
+	 *             if the SubmodelElement or the Submodel does not exist
+	 */
+	public void setSubmodelElementValue(String submodelId, String smeIdShort, Object value) throws ElementDoesNotExistException;
 }

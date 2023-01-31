@@ -31,6 +31,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
+import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
@@ -150,13 +151,7 @@ public abstract class SubmodelRepositorySuite {
 	public void getSubmodelElement() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		SubmodelElement element = repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT);
-		SubmodelElement expectedElement = DummySubmodelFactory.createOperationalDataSubmodel()
-				.getSubmodelElements()
-				.stream()
-				.filter(sme -> sme.getIdShort()
-						.equals(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT))
-				.findAny()
-				.get();
+		SubmodelElement expectedElement = getExpectedSubmodelElement();
 
 		assertEquals(expectedElement, element);
 	}
@@ -171,6 +166,59 @@ public abstract class SubmodelRepositorySuite {
 	public void getSubmodelElementOfNonExistingSubmodel() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.getSubmodelElement("nonExisting", "doesNotMatter");
+	}
+
+	@Test
+	public void getPropertyValue() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		Object expected = ((Property) getExpectedSubmodelElement()).getValue();
+		Object value = repo.getSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT);
+
+		assertEquals(expected, value);
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void getNonExistingSubmodelElementValue() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.getSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, "nonExisting");
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void getSubmodelElementValueOfNonExistingSubmodel() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.getSubmodelElementValue("nonExisting", "doesNotMatter");
+	}
+
+	@Test
+	public void setPropertyValue() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		Object expected = "200";
+		repo.setSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT, expected);
+		Object value = repo.getSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT);
+
+		assertEquals(expected, value);
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void setNonExistingSubmodelElementValue() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.setSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, "nonExisting", "doesNotMatter");
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void setSubmodelElementValueOfNonExistingSubmodel() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.setSubmodelElementValue("nonExisting", "doesNotMatter", "doesNotMatter");
+	}
+
+	private SubmodelElement getExpectedSubmodelElement() {
+		return DummySubmodelFactory.createOperationalDataSubmodel()
+				.getSubmodelElements()
+				.stream()
+				.filter(sme -> sme.getIdShort()
+						.equals(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT))
+				.findAny()
+				.get();
 	}
 
 	private Submodel buildDummySubmodel(String id) {
