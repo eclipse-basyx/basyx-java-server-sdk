@@ -37,6 +37,7 @@ import javax.validation.Valid;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,13 +63,13 @@ public interface AasRepositoryHTTPApi {
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Asset Administration Shell deleted successfully") })
 	@RequestMapping(value = "/shells/{aasIdentifier}", method = RequestMethod.DELETE)
 	ResponseEntity<Void> deleteAssetAdministrationShellById(
-			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") String aasIdentifier);
+			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier);
 
 	@Operation(summary = "Deletes the submodel reference from the Asset Administration Shell", description = "", tags = { "Asset Administration Shell Repository" })
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Submodel reference deleted successfully") })
 	@RequestMapping(value = "/shells/{aasIdentifier}/aas/submodels/{submodelIdentifier}", method = RequestMethod.DELETE)
 	ResponseEntity<Void> deleteSubmodelReferenceById(
-			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") String aasIdentifier,
+			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") String submodelIdentifier);
 
 
@@ -84,13 +85,13 @@ public interface AasRepositoryHTTPApi {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Requested submodel references", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Reference.class)))) })
 	@RequestMapping(value = "/shells/{aasIdentifier}/aas/submodels", produces = { "application/json" }, method = RequestMethod.GET)
 	ResponseEntity<List<Reference>> getAllSubmodelReferences(
-			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") String aasIdentifier);
+			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier);
 
 	@Operation(summary = "Returns the Asset Administration Shell", description = "", tags = { "Asset Administration Shell Repository" })
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Requested Asset Administration Shell", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AssetAdministrationShell.class))) })
 	@RequestMapping(value = "/shells/{aasIdentifier}/aas", produces = { "application/json" }, method = RequestMethod.GET)
 	ResponseEntity<AssetAdministrationShell> getAssetAdministrationShell(
-			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") String aasIdentifier,
+			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the request or response kind of the resource", schema = @Schema(allowableValues = { "normal", "trimmed", "value", "reference",
 					"path" }, defaultValue = "normal")) @Valid @RequestParam(value = "content", required = false, defaultValue = "normal") String content);
 
@@ -98,7 +99,7 @@ public interface AasRepositoryHTTPApi {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Requested Asset Administration Shell", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AssetAdministrationShell.class))) })
 	@RequestMapping(value = "/shells/{aasIdentifier}", produces = { "application/json" }, method = RequestMethod.GET)
 	ResponseEntity<AssetAdministrationShell> getAssetAdministrationShellById(
-			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") String aasIdentifier);
+			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier);
 
 	@Operation(summary = "Creates a new Asset Administration Shell", description = "", tags = { "Asset Administration Shell Repository" })
 	@ApiResponses(value = {
@@ -111,7 +112,7 @@ public interface AasRepositoryHTTPApi {
 	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "Submodel reference created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Reference.class))) })
 	@RequestMapping(value = "/shells/{aasIdentifier}/aas/submodels", produces = { "application/json" }, consumes = { "application/json" }, method = RequestMethod.POST)
 	ResponseEntity<Reference> postSubmodelReference(
-			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") String aasIdentifier,
+			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Reference to the Submodel", required = true, schema = @Schema()) @Valid @RequestBody Reference body);
 
 
@@ -119,7 +120,7 @@ public interface AasRepositoryHTTPApi {
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Asset Administration Shell updated successfully") })
 	@RequestMapping(value = "/shells/{aasIdentifier}/aas", consumes = { "application/json" }, method = RequestMethod.PUT)
 	ResponseEntity<Void> putAssetAdministrationShell(
-			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") String aasIdentifier,
+			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Asset Administration Shell object", required = true, schema = @Schema()) @Valid @RequestBody AssetAdministrationShell body,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the request or response kind of the resource", schema = @Schema(allowableValues = { "normal", "trimmed", "value", "reference",
 					"path" }, defaultValue = "normal")) @Valid @RequestParam(value = "content", required = false, defaultValue = "normal") String content);
@@ -129,6 +130,6 @@ public interface AasRepositoryHTTPApi {
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Asset Administration Shell updated successfully") })
 	@RequestMapping(value = "/shells/{aasIdentifier}", consumes = { "application/json" }, method = RequestMethod.PUT)
 	ResponseEntity<Void> putAssetAdministrationShellById(
-			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") String aasIdentifier,
+			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Asset Administration Shell object", required = true, schema = @Schema()) @Valid @RequestBody AssetAdministrationShell body);
 }

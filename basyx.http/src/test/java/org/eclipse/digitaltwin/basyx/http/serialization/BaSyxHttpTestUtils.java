@@ -23,8 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
-package org.eclipse.digitaltwin.basyx.submodelrepository.http;
+package org.eclipse.digitaltwin.basyx.http.serialization;
 
 import static org.junit.Assert.assertEquals;
 
@@ -37,6 +36,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -51,13 +51,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Helper class for the tests working with the SubmodelRepository's HTTP/REST
- * API
+ * Supports the tests working with the HTTP/REST API of AAS, Submodels, etc.
  * 
  * @author schnicke
  *
  */
-public class SubmodelRepositoryHTTPTestUtils {
+public class BaSyxHttpTestUtils {
 
 	/**
 	 * Reads the JSON String from a JSON file
@@ -113,20 +112,58 @@ public class SubmodelRepositoryHTTPTestUtils {
 	}
 
 	/**
-	 * Performs a set request on the passed URL with the passed value
+	 * Performs a set request on the passed URL with the passed content
 	 * 
 	 * @param url
-	 * @param value
+	 * @param content
 	 * @return
 	 * @throws IOException
 	 */
-	public static CloseableHttpResponse executeSetOnURL(String url, String value) throws IOException {
+	public static CloseableHttpResponse executePutOnURL(String url, String content) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
-		HttpPut putRequest = new HttpPut(url);
-		
-		putRequest.setEntity(new StringEntity("\"" + value + "\""));
-		putRequest.setHeader("Content-type", "application/json");
+		HttpPut putRequest = createPutRequestWithHeader(url);
+
+		putRequest.setEntity(new StringEntity(content));
 
 		return client.execute(putRequest);
+	}
+
+	/**
+	 * Performs a post request on the passed URL with the passed content
+	 * 
+	 * @param url
+	 * @param content
+	 * @return
+	 * @throws IOException
+	 */
+	public static CloseableHttpResponse executePostOnServer(String url, String content) throws IOException {
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpPost aasCreateRequest = createPostRequest(url, content);
+
+		return client.execute(aasCreateRequest);
+	}
+
+	private static HttpPut createPutRequestWithHeader(String url) {
+		HttpPut putRequest = new HttpPut(url);
+
+		putRequest.setHeader("Content-type", "application/json");
+
+		return putRequest;
+	}
+
+	private static HttpPost createPostRequest(String url, String content) {
+		HttpPost aasCreateRequest = createPostRequestWithHeader(url);
+
+		StringEntity aasEntity = new StringEntity(content);
+		aasCreateRequest.setEntity(aasEntity);
+
+		return aasCreateRequest;
+	}
+
+	private static HttpPost createPostRequestWithHeader(String url) {
+		HttpPost aasCreateRequest = new HttpPost(url);
+		aasCreateRequest.setHeader("Content-type", "application/json");
+		aasCreateRequest.setHeader("Accept", "application/json");
+		return aasCreateRequest;
 	}
 }

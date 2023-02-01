@@ -29,13 +29,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.classic.methods.HttpPut;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ParseException;
-import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -54,9 +50,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  *
  */
 public class TestSubmodelRepositorySubmodelHTTP {
-
-	private String submodelAccessURL = "http://localhost:8080/submodels";
-
 	private ConfigurableApplicationContext appContext;
 
 	@Before
@@ -73,7 +66,7 @@ public class TestSubmodelRepositorySubmodelHTTP {
 	public void getAllSubmodelsPreconfigured() throws IOException, ParseException {
 		String submodelsJSON = getAllSubmodelsJSON();
 		String expectedSubmodelsJSON = getAllSubmodelJSON();
-		SubmodelRepositoryHTTPTestUtils.assertSameJSONContent(expectedSubmodelsJSON, submodelsJSON);
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelsJSON, submodelsJSON);
 	}
 
 	@Test
@@ -81,7 +74,7 @@ public class TestSubmodelRepositorySubmodelHTTP {
 		String submodelJSON = requestSpecificSubmodelJSON(DummySubmodelFactory.createTechnicalDataSubmodel().getId());
 		String expectedSubmodelJSON = getSingleSubmodelJSON();
 
-		SubmodelRepositoryHTTPTestUtils.assertSameJSONContent(expectedSubmodelJSON, submodelJSON);
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelJSON, submodelJSON);
 	}
 
 	@Test
@@ -102,7 +95,7 @@ public class TestSubmodelRepositorySubmodelHTTP {
 		assertEquals(HttpStatus.NO_CONTENT.value(), creationResponse.getCode());
 
 		String submodelJSON = requestSpecificSubmodelJSON(id);
-		SubmodelRepositoryHTTPTestUtils.assertSameJSONContent(expectedSubmodelJSON, submodelJSON);
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelJSON, submodelJSON);
 	}
 
 	@Test
@@ -123,7 +116,7 @@ public class TestSubmodelRepositorySubmodelHTTP {
 		assertSubmodelCreationReponse(submodelJSON, creationResponse);
 
 		String requestedSubmodel = requestSpecificSubmodelJSON("newSubmodel");
-		SubmodelRepositoryHTTPTestUtils.assertSameJSONContent(submodelJSON, requestedSubmodel);
+		BaSyxHttpTestUtils.assertSameJSONContent(submodelJSON, requestedSubmodel);
 	}
 
 	@Test
@@ -135,66 +128,50 @@ public class TestSubmodelRepositorySubmodelHTTP {
 	}
 
 	
-
-
 	private void assertSubmodelCreationReponse(String submodelJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JsonProcessingException, JsonMappingException {
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
-		String response = SubmodelRepositoryHTTPTestUtils.getResponseAsString(creationResponse);
-		SubmodelRepositoryHTTPTestUtils.assertSameJSONContent(submodelJSON, response);
+		String response = BaSyxHttpTestUtils.getResponseAsString(creationResponse);
+		BaSyxHttpTestUtils.assertSameJSONContent(submodelJSON, response);
 	}
 
 	private CloseableHttpResponse createSubmodel(String submodelJSON) throws IOException {
-		HttpPost submodelCreationRequest = new HttpPost(submodelAccessURL);
-		submodelCreationRequest.setHeader("Content-type", "application/json");
-
-		StringEntity smEntity = new StringEntity(submodelJSON);
-		submodelCreationRequest.setEntity(smEntity);
-
-		CloseableHttpClient client = HttpClients.createDefault();
-		return client.execute(submodelCreationRequest);
+		return BaSyxHttpTestUtils.executePostOnServer(BaSyxSubmodelHttpTestUtils.submodelAccessURL, submodelJSON);
 	}
 
-	private CloseableHttpResponse putSubmodel(String id, String submodelJSON) throws IOException {
-		HttpPut submodelUpdateRequest = new HttpPut(submodelAccessURL + "/" + id + "/submodel");
-		submodelUpdateRequest.setHeader("Content-type", "application/json");
-
-		StringEntity smEntity = new StringEntity(submodelJSON);
-		submodelUpdateRequest.setEntity(smEntity);
-
-		CloseableHttpClient client = HttpClients.createDefault();
-		return client.execute(submodelUpdateRequest);
+	private CloseableHttpResponse putSubmodel(String submodelId, String submodelJSON) throws IOException {
+		return BaSyxHttpTestUtils.executePutOnURL(BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(submodelId), submodelJSON);
 	}
 
-	private String requestSpecificSubmodelJSON(String id) throws IOException, ParseException {
-		CloseableHttpResponse response = requestSubmodel(id);
+	private String requestSpecificSubmodelJSON(String submodelId) throws IOException, ParseException {
+		CloseableHttpResponse response = requestSubmodel(submodelId);
 
-		return SubmodelRepositoryHTTPTestUtils.getResponseAsString(response);
+		return BaSyxHttpTestUtils.getResponseAsString(response);
 	}
 
-	private CloseableHttpResponse requestSubmodel(String id) throws IOException {
-		return SubmodelRepositoryHTTPTestUtils.executeGetOnURL(submodelAccessURL + "/" + id + "/submodel");
+	private CloseableHttpResponse requestSubmodel(String submodelId) throws IOException {
+		return BaSyxHttpTestUtils.executeGetOnURL(BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(submodelId));
 	}
 
 	private String getAllSubmodelsJSON() throws IOException, ParseException {
-		CloseableHttpResponse response = SubmodelRepositoryHTTPTestUtils.executeGetOnURL(submodelAccessURL);
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxSubmodelHttpTestUtils.submodelAccessURL);
 
-		return SubmodelRepositoryHTTPTestUtils.getResponseAsString(response);
+		return BaSyxHttpTestUtils.getResponseAsString(response);
 	}
 
 	private String getUpdatedSubmodelJSON() throws IOException {
-		return SubmodelRepositoryHTTPTestUtils.readJSONStringFromFile("classpath:SingleSubmodelUpdate.json");
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelUpdate.json");
 	}
 
 	private String getNewSubmodelJSON() throws IOException {
-		return SubmodelRepositoryHTTPTestUtils.readJSONStringFromFile("classpath:SingleSubmodelNew.json");
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelNew.json");
 	}
 
 	private String getSingleSubmodelJSON() throws IOException {
-		return SubmodelRepositoryHTTPTestUtils.readJSONStringFromFile("classpath:SingleSubmodel.json");
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodel.json");
 	}
 
 	private String getAllSubmodelJSON() throws IOException {
-		return SubmodelRepositoryHTTPTestUtils.readJSONStringFromFile("classpath:MultipleSubmodels.json");
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:MultipleSubmodels.json");
 	}
 
 }

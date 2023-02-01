@@ -32,6 +32,7 @@ import java.io.IOException;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
+import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -48,8 +49,6 @@ import org.springframework.http.HttpStatus;
  *
  */
 public class TestSubmodelRepositorySubmodelElementsHTTP {
-	private String submodelAccessURL = "http://localhost:8080/submodels";
-
 	private ConfigurableApplicationContext appContext;
 
 	@Before
@@ -68,7 +67,7 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 		String requestedSubmodelElements = requestSubmodelElementsJSON(id);
 
 		String submodelElementJSON = getSubmodelElementsJSON();
-		SubmodelRepositoryHTTPTestUtils.assertSameJSONContent(submodelElementJSON, requestedSubmodelElements);
+		BaSyxHttpTestUtils.assertSameJSONContent(submodelElementJSON, requestedSubmodelElements);
 	}
 
 	@Test
@@ -83,7 +82,7 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 		CloseableHttpResponse response = requestSubmodelElement(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT);
 
 		assertEquals(HttpStatus.OK.value(), response.getCode());
-		SubmodelRepositoryHTTPTestUtils.assertSameJSONContent(expectedElement, SubmodelRepositoryHTTPTestUtils.getResponseAsString(response));
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedElement, BaSyxHttpTestUtils.getResponseAsString(response));
 	}
 
 	@Test
@@ -108,7 +107,7 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 
 		String expectedElement = DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_PROPERTY_VALUE;
 
-		SubmodelRepositoryHTTPTestUtils.assertSameJSONContent(expectedElement, SubmodelRepositoryHTTPTestUtils.getResponseAsString(response));
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedElement, BaSyxHttpTestUtils.getResponseAsString(response));
 	}
 
 	@Test
@@ -133,7 +132,7 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
 
 		CloseableHttpResponse getResponse = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT);
-		assertEquals(expected, SubmodelRepositoryHTTPTestUtils.getResponseAsString(getResponse));
+		assertEquals(expected, BaSyxHttpTestUtils.getResponseAsString(getResponse));
 	}
 
 	@Test
@@ -150,46 +149,55 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 	}
 
 	private CloseableHttpResponse writeSubmodelElementValue(String submodelId, String smeIdShort, String value) throws IOException {
-		return SubmodelRepositoryHTTPTestUtils.executeSetOnURL(createSubmodelElementValueURL(submodelId, smeIdShort), value);
+		String wrappedValue = wrapStringValue(value);
+
+		return BaSyxHttpTestUtils.executePutOnURL(createSubmodelElementValueURL(submodelId, smeIdShort), wrappedValue);
 	}
 
-	private String createSubmodelElementValueURL(String submodelId, String smeIdShort) {
-		return submodelAccessURL + "/" + submodelId + "/submodel/submodel-elements/" + smeIdShort + "?content=value";
+	private String wrapStringValue(String value) {
+		// The value needs to be wrapped to ensure that it is correctly identified as
+		// string and not parsed to another primitive, e.g., int
+		return "\"" + value + "\"";
 	}
+
 
 	private CloseableHttpResponse requestSubmodelElementValue(String submodelId, String smeIdShort) throws IOException {
-		return SubmodelRepositoryHTTPTestUtils.executeGetOnURL(createSubmodelElementValueURL(submodelId, smeIdShort));
+		return BaSyxHttpTestUtils.executeGetOnURL(createSubmodelElementValueURL(submodelId, smeIdShort));
 
 	}
 
 	private String requestSubmodelElementsJSON(String id) throws IOException, ParseException {
 		CloseableHttpResponse response = requestSubmodelElements(id);
 
-		return SubmodelRepositoryHTTPTestUtils.getResponseAsString(response);
+		return BaSyxHttpTestUtils.getResponseAsString(response);
 	}
 
 	private CloseableHttpResponse requestSubmodelElement(String submodelId, String smeIdShort) throws IOException {
-		return SubmodelRepositoryHTTPTestUtils.executeGetOnURL(createSpecificSubmodelElementURL(submodelId, smeIdShort));
+		return BaSyxHttpTestUtils.executeGetOnURL(createSpecificSubmodelElementURL(submodelId, smeIdShort));
+	}
+
+	private String createSubmodelElementValueURL(String submodelId, String smeIdShort) {
+		return createSpecificSubmodelElementURL(submodelId, smeIdShort) + "?content=value";
 	}
 
 	private String createSpecificSubmodelElementURL(String submodelId, String smeIdShort) {
 		return createSubmodelElementsURL(submodelId) + "/" + smeIdShort;
 	}
 
-	private CloseableHttpResponse requestSubmodelElements(String submodelId) throws IOException {
-		return SubmodelRepositoryHTTPTestUtils.executeGetOnURL(createSubmodelElementsURL(submodelId));
+	private String createSubmodelElementsURL(String submodelId) {
+		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(submodelId) + "/submodel-elements";
 	}
 
-	private String createSubmodelElementsURL(String submodelId) {
-		return submodelAccessURL + "/" + submodelId + "/submodel/submodel-elements";
+	private CloseableHttpResponse requestSubmodelElements(String submodelId) throws IOException {
+		return BaSyxHttpTestUtils.executeGetOnURL(createSubmodelElementsURL(submodelId));
 	}
 
 	private String getSubmodelElementsJSON() throws FileNotFoundException, IOException {
-		return SubmodelRepositoryHTTPTestUtils.readJSONStringFromFile("classpath:SubmodelElements.json");
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SubmodelElements.json");
 	}
 
 	private String getSubmodelElementJSON() throws FileNotFoundException, IOException {
-		return SubmodelRepositoryHTTPTestUtils.readJSONStringFromFile("classpath:SubmodelElement.json");
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SubmodelElement.json");
 	}
 
 }

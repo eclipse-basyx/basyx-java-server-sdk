@@ -36,6 +36,7 @@ import javax.validation.Valid;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,7 +68,7 @@ public interface SubmodelRepositoryHTTPApi {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Requested Submodel", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Submodel.class))) })
 	@RequestMapping(value = "/submodels/{submodelIdentifier}/submodel", produces = { "application/json" }, method = RequestMethod.GET)
 	ResponseEntity<Submodel> getSubmodelSubmodelRepo(
-			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") String submodelIdentifier,
+			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the request or response kind of the resource", schema = @Schema(allowableValues = { "normal", "trimmed", "value", "reference",
@@ -79,7 +80,7 @@ public interface SubmodelRepositoryHTTPApi {
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Submodel updated successfully") })
 	@RequestMapping(value = "/submodels/{submodelIdentifier}/submodel", consumes = { "application/json" }, method = RequestMethod.PUT)
 	ResponseEntity<Void> putSubmodelSubmodelRepo(
-			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") String submodelIdentifier,
+			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Submodel object", required = true, schema = @Schema()) @Valid @RequestBody Submodel body,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level,
@@ -99,7 +100,9 @@ public interface SubmodelRepositoryHTTPApi {
     @RequestMapping(value = "/submodels/{submodelIdentifier}/submodel/submodel-elements",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<SubmodelElement>> getAllSubmodelElementsSubmodelRepo(@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("submodelIdentifier") String submodelIdentifier, @Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content" ,schema=@Schema(allowableValues={ "deep", "core" }
+	ResponseEntity<List<SubmodelElement>> getAllSubmodelElementsSubmodelRepo(
+			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
+			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep", "core" }
 , defaultValue="deep")) @Valid @RequestParam(value = "level", required = false, defaultValue="deep") String level, @Parameter(in = ParameterIn.QUERY, description = "Determines the request or response kind of the resource" ,schema=@Schema(allowableValues={ "normal", "trimmed", "value", "reference", "path" }
 , defaultValue="normal")) @Valid @RequestParam(value = "content", required = false, defaultValue="normal") String content, @Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized" ,schema=@Schema(allowableValues={ "withBlobValue", "withoutBlobValue" }
 )) @Valid @RequestParam(value = "extent", required = false) String extent);
@@ -108,7 +111,7 @@ public interface SubmodelRepositoryHTTPApi {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Requested submodel element", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SubmodelElement.class))) })
 	@RequestMapping(value = "/submodels/{submodelIdentifier}/submodel/submodel-elements/{idShortPath}", produces = { "application/json" }, method = RequestMethod.GET)
 	ResponseEntity<Object> getSubmodelElementByPathSubmodelRepo(
-			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") String submodelIdentifier,
+			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level,
@@ -121,7 +124,7 @@ public interface SubmodelRepositoryHTTPApi {
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Submodel element updated successfully") })
 	@RequestMapping(value = "/submodels/{submodelIdentifier}/submodel/submodel-elements/{idShortPath}", consumes = { "application/json" }, method = RequestMethod.PUT)
 	ResponseEntity<Void> putSubmodelElementByPathSubmodelRepo(
-			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") String submodelIdentifier,
+			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody Object body,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
