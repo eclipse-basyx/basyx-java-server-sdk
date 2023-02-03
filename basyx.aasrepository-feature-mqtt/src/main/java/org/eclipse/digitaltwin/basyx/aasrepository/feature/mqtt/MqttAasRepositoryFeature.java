@@ -50,7 +50,7 @@ public class MqttAasRepositoryFeature implements AasRepositoryFeature {
 
 	@Override
 	public AasRepositoryFactory decorate(AasRepositoryFactory aasServiceFactory) {
-		return new MqttAasRepositoryFactory(aasServiceFactory, mqttClient, new MqttTopicFactory(new URLEncoder()));
+		return new MqttAasRepositoryFactory(aasServiceFactory, mqttClient, new MqttAasRepositoryTopicFactory(new URLEncoder()));
 	}
 
 	@Override

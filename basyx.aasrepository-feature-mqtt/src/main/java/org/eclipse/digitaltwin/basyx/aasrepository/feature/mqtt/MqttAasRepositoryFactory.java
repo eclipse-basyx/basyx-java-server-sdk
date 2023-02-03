@@ -34,9 +34,9 @@ public class MqttAasRepositoryFactory implements AasRepositoryFactory {
 
 	private AasRepositoryFactory decorated;
 	private IMqttClient client;
-	private MqttTopicFactory topicFactory;
+	private MqttAasRepositoryTopicFactory topicFactory;
 
-	public MqttAasRepositoryFactory(AasRepositoryFactory decorated, IMqttClient client, MqttTopicFactory topicFactory) {
+	public MqttAasRepositoryFactory(AasRepositoryFactory decorated, IMqttClient client, MqttAasRepositoryTopicFactory topicFactory) {
 		this.decorated = decorated;
 		this.client = client;
 		this.topicFactory = topicFactory;
