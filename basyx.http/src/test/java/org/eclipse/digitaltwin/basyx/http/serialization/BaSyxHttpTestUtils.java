@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
@@ -109,6 +110,19 @@ public class BaSyxHttpTestUtils {
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpGet getRequest = new HttpGet(url);
 		return client.execute(getRequest);
+	}
+
+	/**
+	 * Performs a delete request on the passed URL
+	 * 
+	 * @param url
+	 * @return
+	 * @throws IOException
+	 */
+	public static CloseableHttpResponse executeDeleteOnURL(String url) throws IOException {
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpDelete deleteRequest = new HttpDelete(url);
+		return client.execute(deleteRequest);
 	}
 
 	/**

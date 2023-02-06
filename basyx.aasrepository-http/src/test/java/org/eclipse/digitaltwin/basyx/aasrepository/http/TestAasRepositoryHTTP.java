@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.aasrepository.http;
 
 import static org.junit.Assert.assertEquals;
@@ -45,28 +44,27 @@ import org.springframework.http.HttpStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-
-
 public class TestAasRepositoryHTTP {
 	private static final String aasAccessURL = "http://localhost:8080/shells";
+
+	private static final String dummyAasId = "customIdentifier";
 
 	private ConfigurableApplicationContext appContext;
 
 	@Before
-	public void startAASRepo() throws Exception {
+	public void startAasRepo() throws Exception {
 		appContext = new SpringApplication(DummyAasRepositoryComponent.class).run(new String[] {});
 	}
 
 	@After
-	public void shutdownAASRepo() {
+	public void shutdownAasRepo() {
 		appContext.close();
 	}
 
 	@Test
 	public void aasUpload() throws IOException, ParseException {
-		String aasJsonContent = getAASJSONString();
-
-		CloseableHttpResponse creationResponse = createAASOnServer(aasJsonContent);
+		String aasJsonContent = getAasJSONString();
+		CloseableHttpResponse creationResponse = createAasOnServer(aasJsonContent);
 
 		assertEquals(201, creationResponse.getCode());
 		BaSyxHttpTestUtils.assertSameJSONContent(aasJsonContent, BaSyxHttpTestUtils.getResponseAsString(creationResponse));
@@ -74,37 +72,38 @@ public class TestAasRepositoryHTTP {
 
 	@Test
 	public void aasRoundtrip() throws JsonMappingException, ParseException, JsonProcessingException, IOException {
-		String aasJsonContent = getAASJSONString();
+		String aasJsonContent = createDummyAasOnServer();
 
-		createAASOnServer(aasJsonContent);
-
-		CloseableHttpResponse retrievalResponse = getSpecificAas("customIdentifier");
+		CloseableHttpResponse retrievalResponse = getSpecificAas(dummyAasId);
 		BaSyxHttpTestUtils.assertSameJSONContent(aasJsonContent, BaSyxHttpTestUtils.getResponseAsString(retrievalResponse));
+	}
+
+	private String createDummyAasOnServer() throws FileNotFoundException, IOException {
+		String aasJsonContent = getAasJSONString();
+		createAasOnServer(aasJsonContent);
+		return aasJsonContent;
 	}
 
 	@Test
 	public void aasIdentifierCollision() throws FileNotFoundException, IOException {
-		String aasJsonContent = getAASJSONString();
+		String aasJsonContent = createDummyAasOnServer();
 
-		createAASOnServer(aasJsonContent);
-		CloseableHttpResponse creationResponse = createAASOnServer(aasJsonContent);
+		CloseableHttpResponse creationResponse = createAasOnServer(aasJsonContent);
 
 		assertEquals(400, creationResponse.getCode());
 	}
 
 	@Test
-	public void getAASByIdentifier() throws FileNotFoundException, IOException, ParseException {
-		String aasJsonContent = getAASJSONString();
+	public void getAasByIdentifier() throws FileNotFoundException, IOException, ParseException {
+		String aasJsonContent = createDummyAasOnServer();
 
-		createAASOnServer(aasJsonContent);
-
-		CloseableHttpResponse response = getSpecificAas("customIdentifier");
+		CloseableHttpResponse response = getSpecificAas(dummyAasId);
 
 		BaSyxHttpTestUtils.assertSameJSONContent(aasJsonContent, BaSyxHttpTestUtils.getResponseAsString(response));
 	}
 
 	@Test
-	public void getNonExistingAASByIdentifier() throws IOException {
+	public void getNonExistingAasByIdentifier() throws IOException {
 		CloseableHttpResponse response = getSpecificAas("nonExisting");
 
 		assertEquals(404, response.getCode());
@@ -117,20 +116,47 @@ public class TestAasRepositoryHTTP {
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 
+	@Test
+	public void deleteAas() throws IOException {
+		createDummyAasOnServer();
+
+		String url = getSpecificAasAccessURL(dummyAasId);
+		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(url);
+		assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());
+
+		assertAasIsNotOnServer(dummyAasId);
+	}
+
+	@Test
+	public void deleteNonExistingAas() throws IOException {
+		String url = getSpecificAasAccessURL("nonExisting");
+		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(url);
+		assertEquals(HttpStatus.NOT_FOUND.value(), deleteResponse.getCode());
+	}
+
+	private String getSpecificAasAccessURL(String aasId) {
+		return aasAccessURL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
+	}
+
+	private void assertAasIsNotOnServer(String aasId) throws IOException {
+		CloseableHttpResponse getResponse = getSpecificAas(aasId);
+		assertEquals(HttpStatus.NOT_FOUND.value(), getResponse.getCode());
+	}
+
 	private CloseableHttpResponse getAllAas() throws IOException {
 		return BaSyxHttpTestUtils.executeGetOnURL(aasAccessURL);
 	}
 
 	private CloseableHttpResponse getSpecificAas(String aasId) throws IOException {
-		String getUrl = aasAccessURL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
-		return BaSyxHttpTestUtils.executeGetOnURL(getUrl);
+		String url = getSpecificAasAccessURL(aasId);
+		return BaSyxHttpTestUtils.executeGetOnURL(url);
 	}
 
-	private CloseableHttpResponse createAASOnServer(String aasJsonContent) throws IOException {
+	private CloseableHttpResponse createAasOnServer(String aasJsonContent) throws IOException {
 		return BaSyxHttpTestUtils.executePostOnServer(aasAccessURL, aasJsonContent);
 	}
 
-	private String getAASJSONString() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:AASSimple.json");
+	private String getAasJSONString() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:AasSimple.json");
 	}
 }

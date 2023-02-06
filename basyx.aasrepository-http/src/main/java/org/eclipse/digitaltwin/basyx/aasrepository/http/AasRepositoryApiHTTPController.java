@@ -76,8 +76,12 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 	@Override
 	public ResponseEntity<Void> deleteAssetAdministrationShellById(
 			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier) {
-		String accept = request.getHeader("Accept");
-		return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+		try {
+			aasRepository.deleteAas(aasIdentifier.getIdentifier());
+			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+		} catch (ElementDoesNotExistException e) {
+			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+		}
 	}
 
 	@Override

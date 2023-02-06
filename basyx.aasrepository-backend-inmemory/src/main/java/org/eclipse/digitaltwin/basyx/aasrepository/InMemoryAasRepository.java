@@ -64,30 +64,40 @@ public class InMemoryAasRepository implements AasRepository {
 
 	@Override
 	public AssetAdministrationShell getAas(String aasId) throws ElementDoesNotExistException {
-		if (!aasServices.containsKey(aasId)) {
-			throw new ElementDoesNotExistException(aasId);
-		}
+		throwIfAasDoesNotExist(aasId);
 
 		return aasServices.get(aasId).getAAS();
 	}
 
 	@Override
 	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException {
-		if (aasServices.containsKey(aas.getId())) {
-			throw new CollidingIdentifierException();
-		}
+		throwIfAasExists(aas);
 
 		aasServices.put(aas.getId(), aasServiceFactory.create(aas));
 	}
 
 	@Override
 	public void deleteAas(String aasId) {
+		throwIfAasDoesNotExist(aasId);
+
 		aasServices.remove(aasId);
 	}
 
 	@Override
 	public void updateAas(AssetAdministrationShell aas) {
 		throw new RuntimeException("Not implemented");
+	}
+
+	private void throwIfAasExists(AssetAdministrationShell aas) {
+		if (aasServices.containsKey(aas.getId())) {
+			throw new CollidingIdentifierException();
+		}
+	}
+
+	private void throwIfAasDoesNotExist(String aasId) {
+		if (!aasServices.containsKey(aasId)) {
+			throw new ElementDoesNotExistException(aasId);
+		}
 	}
 
 }
