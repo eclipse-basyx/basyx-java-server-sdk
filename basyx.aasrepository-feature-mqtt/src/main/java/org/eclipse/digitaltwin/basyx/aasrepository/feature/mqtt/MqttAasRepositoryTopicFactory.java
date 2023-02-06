@@ -33,7 +33,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt.encoding.Encoder
  * AASAggregator.
  * 
  */
-public class MqttTopicFactory extends AbstractMqttTopicFactory {
+public class MqttAasRepositoryTopicFactory extends AbstractMqttTopicFactory {
 	private static final String AASREPOSITORY = "aas-repository";
 	private static final String SHELLS = "shells";
 	private static final String CREATED = "created";
@@ -44,7 +44,7 @@ public class MqttTopicFactory extends AbstractMqttTopicFactory {
 	 * @param encoder
 	 *            Used for encoding the aasId/submodelId
 	 */
-	public MqttTopicFactory(Encoder encoder) {
+	public MqttAasRepositoryTopicFactory(Encoder encoder) {
 		super(encoder);
 	}
 

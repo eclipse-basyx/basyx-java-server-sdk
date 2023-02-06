@@ -48,13 +48,13 @@ import org.slf4j.LoggerFactory;
  */
 public class MqttAasRepository implements AasRepository {
 	private static Logger logger = LoggerFactory.getLogger(MqttAasRepository.class);
-	private MqttTopicFactory topicFactory;
+	private MqttAasRepositoryTopicFactory topicFactory;
 
 	private AasRepository decorated;
 
 	private IMqttClient mqttClient;
 
-	public MqttAasRepository(AasRepository decorated, IMqttClient mqttClient, MqttTopicFactory topicFactory) {
+	public MqttAasRepository(AasRepository decorated, IMqttClient mqttClient, MqttAasRepositoryTopicFactory topicFactory) {
 		this.topicFactory = topicFactory;
 		this.decorated = decorated;
 		this.mqttClient = mqttClient;
