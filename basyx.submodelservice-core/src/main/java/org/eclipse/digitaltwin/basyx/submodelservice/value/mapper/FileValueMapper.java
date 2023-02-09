@@ -22,35 +22,27 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
-
-package org.eclipse.digitaltwin.basyx.http.serialization;
-
-import java.io.IOException;
-
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.model.Referable;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import org.eclipse.digitaltwin.aas4j.v3.model.File;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.FileValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 
 /**
- * Handles the mapping between a Referable to-be-returned and AAS4J
+ * Maps {@link File} value to {@link FileValue} 
  * 
- * @author schnicke
+ * @author danish
  *
  */
-public class ReferableJsonSerializer extends JsonSerializer<Referable> {
-
-	@Override
-	public void serialize(Referable value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		try {
-			String str = new org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer().write(value);
-			gen.writeRawValue(str);
-		} catch (SerializationException e) {
-			e.printStackTrace();
-		}
+public class FileValueMapper implements ValueMapper {
+	private FileValue propertyValue;
+	
+	public FileValueMapper(File file) {
+		this.propertyValue = new FileValue(file.getContentType(), file.getValue());
 	}
 
+	@Override
+	public SubmodelElementValue getValue() {
+		return this.propertyValue;
+	}
 }

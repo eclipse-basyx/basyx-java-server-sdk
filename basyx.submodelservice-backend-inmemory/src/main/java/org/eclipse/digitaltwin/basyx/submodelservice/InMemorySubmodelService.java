@@ -31,11 +31,13 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.factory.SubmodelElementValueFactory;
 
 /**
  * Implements the SubmodelService as in-memory variant
  * 
- * @author schnicke
+ * @author schnicke, danish
  * 
  */
 public class InMemorySubmodelService implements SubmodelService {
@@ -72,9 +74,10 @@ public class InMemorySubmodelService implements SubmodelService {
 	}
 
 	@Override
-	public Object getSubmodelElementValue(String idShort) throws ElementDoesNotExistException {
-		Property property = (Property) getSubmodelElement(idShort);
-		return property.getValue();
+	public SubmodelElementValue getSubmodelElementValue(String idShort) throws ElementDoesNotExistException {
+		SubmodelElementValueFactory submodelElementValueFactory = new SubmodelElementValueFactory();
+		
+		return submodelElementValueFactory.create(getSubmodelElement(idShort));
 	}
 
 	@Override

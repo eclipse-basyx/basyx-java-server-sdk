@@ -22,35 +22,31 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
-
-package org.eclipse.digitaltwin.basyx.http.serialization;
-
-import java.io.IOException;
-
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.model.Referable;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import org.eclipse.digitaltwin.aas4j.v3.model.Range;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.RangeValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 
 /**
- * Handles the mapping between a Referable to-be-returned and AAS4J
+ * Maps {@link Range} value to {@link RangeValue} 
  * 
- * @author schnicke
+ * @author danish
  *
  */
-public class ReferableJsonSerializer extends JsonSerializer<Referable> {
-
-	@Override
-	public void serialize(Referable value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		try {
-			String str = new org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer().write(value);
-			gen.writeRawValue(str);
-		} catch (SerializationException e) {
-			e.printStackTrace();
-		}
+public class RangeValueMapper implements ValueMapper {
+	private RangeValue rangeValue;
+	
+	public RangeValueMapper(Range range) {
+		this.rangeValue = new RangeValue(parseIntValue(range.getMin()), parseIntValue(range.getMax()));
 	}
 
+	@Override
+	public SubmodelElementValue getValue() {
+		return this.rangeValue;
+	}
+	
+	private int parseIntValue(String value) {
+		return Integer.parseInt(value);
+	}
 }

@@ -22,35 +22,30 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
-
-package org.eclipse.digitaltwin.basyx.http.serialization;
-
-import java.io.IOException;
-
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.model.Referable;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import org.eclipse.digitaltwin.aas4j.v3.model.Range;
 
 /**
- * Handles the mapping between a Referable to-be-returned and AAS4J
+ * Represents the submodel element {@link Range} value
  * 
- * @author schnicke
+ * @author danish
  *
  */
-public class ReferableJsonSerializer extends JsonSerializer<Referable> {
-
-	@Override
-	public void serialize(Referable value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		try {
-			String str = new org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer().write(value);
-			gen.writeRawValue(str);
-		} catch (SerializationException e) {
-			e.printStackTrace();
-		}
+public class RangeValue implements SubmodelElementValue {
+	private int min;
+	private int max;
+	
+	public RangeValue(int min, int max) {
+		this.min = min;
+		this.max = max;
 	}
-
+	
+	public int getMin() {
+		return min;
+	}
+	
+	public int getMax() {
+		return max;
+	}
 }

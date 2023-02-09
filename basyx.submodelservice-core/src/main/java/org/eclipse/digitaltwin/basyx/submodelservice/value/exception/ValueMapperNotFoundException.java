@@ -22,35 +22,27 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-
-
-package org.eclipse.digitaltwin.basyx.http.serialization;
-
-import java.io.IOException;
-
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.model.Referable;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+package org.eclipse.digitaltwin.basyx.submodelservice.value.exception;
 
 /**
- * Handles the mapping between a Referable to-be-returned and AAS4J
+ * Indicates that the value mapper not available for the specified submodel
+ * element
  * 
- * @author schnicke
+ * @author danish
  *
  */
-public class ReferableJsonSerializer extends JsonSerializer<Referable> {
+public class ValueMapperNotFoundException extends RuntimeException {
 
-	@Override
-	public void serialize(Referable value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		try {
-			String str = new org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer().write(value);
-			gen.writeRawValue(str);
-		} catch (SerializationException e) {
-			e.printStackTrace();
-		}
+	private static final long serialVersionUID = 1L;
+
+	public ValueMapperNotFoundException() {
 	}
 
+	public ValueMapperNotFoundException(String idShort) {
+		super(getMsg(idShort));
+	}
+
+	private static String getMsg(String idShort) {
+		return "Value mapper not found for this submodel element " + idShort;
+	}
 }

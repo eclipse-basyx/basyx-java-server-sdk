@@ -22,35 +22,30 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
-
-package org.eclipse.digitaltwin.basyx.http.serialization;
-
-import java.io.IOException;
-
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.model.Referable;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import org.eclipse.digitaltwin.aas4j.v3.model.File;
 
 /**
- * Handles the mapping between a Referable to-be-returned and AAS4J
+ * Represents the submodel element {@link File} value
  * 
- * @author schnicke
+ * @author danish
  *
  */
-public class ReferableJsonSerializer extends JsonSerializer<Referable> {
-
-	@Override
-	public void serialize(Referable value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		try {
-			String str = new org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer().write(value);
-			gen.writeRawValue(str);
-		} catch (SerializationException e) {
-			e.printStackTrace();
-		}
+public class FileValue implements SubmodelElementValue {
+	private String contentType;
+	private String value;
+	
+	public FileValue(String contentType, String value) {
+		this.contentType = contentType;
+		this.value = value;
 	}
 
+	public String getContentType() {
+		return contentType;
+	}
+
+	public String getValue() {
+		return value;
+	}
 }

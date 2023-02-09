@@ -15,5 +15,65 @@
 		"valueType": "xs:integer",
 		"category": "PARAMETER",
 		"idShort": "MaxRotationSpeed"
+	},
+	{
+		"modelType": "Range",
+		"kind": "Instance",
+		"semanticId": {
+			"keys": [
+				{
+					"type": "ConceptDescription",
+					"value": "0173-1#02-BAA120#008"
+				}
+			],
+			"type": "GlobalReference"
+		},
+		"max": "300",
+		"min": "200",
+		"valueType": "xs:integer",
+		"category": "PARAMETER",
+		"idShort": "RotationSpeedRange"
+	},
+	{
+		"modelType": "MultiLanguageProperty",
+		"kind": "Instance",
+		"semanticId": {
+			"keys": [
+				{
+					"type": "ConceptDescription",
+					"value": "0173-1#02-BAA120#008"
+				}
+			],
+			"type": "GlobalReference"
+		},
+		"category": "PARAM",
+		"idShort": "MultiLanguage",
+		"value": [
+			{
+				"language": "en",
+				"text": "Hello"
+			},
+			{
+				"language": "de",
+				"text": "Hallo"
+			}
+		]
+	},
+	{
+		"modelType": "File",
+		"contentType": "application/octet-stream",
+		"value": "fileValue",
+		"kind": "Instance",
+		"semanticId": {
+			"keys": [
+				{
+					"type": "ConceptDescription",
+					"value": "0173-1#02-BAA120#008"
+				}
+			],
+			"type": "GlobalReference"
+		},
+		"category": "PARAMETER",
+		"idShort": "FileData"
 	}
 ]

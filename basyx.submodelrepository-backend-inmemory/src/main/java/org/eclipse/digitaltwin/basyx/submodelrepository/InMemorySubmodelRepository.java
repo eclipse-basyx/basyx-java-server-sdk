@@ -38,6 +38,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 
 /**
  * In-memory implementation of the SubmodelRepository
@@ -147,7 +148,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public Object getSubmodelElementValue(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
+	public SubmodelElementValue getSubmodelElementValue(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(submodelId);
 
 		return submodelServices.get(submodelId).getSubmodelElementValue(smeIdShort);

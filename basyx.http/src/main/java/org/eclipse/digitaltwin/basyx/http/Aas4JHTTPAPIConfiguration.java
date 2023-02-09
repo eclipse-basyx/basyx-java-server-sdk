@@ -26,14 +26,11 @@
 
 package org.eclipse.digitaltwin.basyx.http;
 
-import java.util.List;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Referable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.http.serialization.AasJsonDeserializer;
 import org.eclipse.digitaltwin.basyx.http.serialization.ReferableJsonSerializer;
-import org.eclipse.digitaltwin.basyx.http.serialization.ReferableListJsonSerializer;
 import org.eclipse.digitaltwin.basyx.http.serialization.SubmodelJsonDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,7 +49,6 @@ public class Aas4JHTTPAPIConfiguration {
 		builder.deserializerByType(AssetAdministrationShell.class, new AasJsonDeserializer());
 
 		builder.serializerByType(Referable.class, new ReferableJsonSerializer());
-		builder.serializerByType(List.class, new ReferableListJsonSerializer());
 
 		return builder;
 	}

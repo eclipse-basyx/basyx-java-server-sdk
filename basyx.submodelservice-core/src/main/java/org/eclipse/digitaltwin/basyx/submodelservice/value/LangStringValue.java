@@ -22,35 +22,36 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
+import java.util.Collections;
+import java.util.Map;
 
-package org.eclipse.digitaltwin.basyx.http.serialization;
+import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
 
-import java.io.IOException;
-
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.model.Referable;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Handles the mapping between a Referable to-be-returned and AAS4J
+ * Maps {@link LangString} value format to adhere to the ValueOnly serialization
+ * of {@link MultiLanguagePropertyValue}
  * 
- * @author schnicke
+ * @author danish
  *
  */
-public class ReferableJsonSerializer extends JsonSerializer<Referable> {
+public class LangStringValue {
 
-	@Override
-	public void serialize(Referable value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		try {
-			String str = new org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer().write(value);
-			gen.writeRawValue(str);
-		} catch (SerializationException e) {
-			e.printStackTrace();
-		}
+	@JsonValue
+	private Map<String, String> language;
+
+	public LangStringValue(LangString langString) {
+		this.language = mapLangString(langString);
 	}
 
+	public Map<String, String> getLanguage() {
+		return language;
+	}
+
+	private Map<String, String> mapLangString(LangString langString) {
+		return Collections.singletonMap(langString.getLanguage(), langString.getText());
+	}
 }

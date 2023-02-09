@@ -40,6 +40,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.junit.Test;
 
 /**
@@ -174,7 +175,7 @@ public abstract class SubmodelRepositorySuite {
 		Object expected = ((Property) getExpectedSubmodelElement()).getValue();
 		Object value = repo.getSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT);
 
-		assertEquals(expected, value);
+		assertEquals(expected, ((PropertyValue) value).getValue());
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
@@ -196,7 +197,7 @@ public abstract class SubmodelRepositorySuite {
 		repo.setSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT, expected);
 		Object value = repo.getSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT);
 
-		assertEquals(expected, value);
+		assertEquals(expected, ((PropertyValue) value).getValue());
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)

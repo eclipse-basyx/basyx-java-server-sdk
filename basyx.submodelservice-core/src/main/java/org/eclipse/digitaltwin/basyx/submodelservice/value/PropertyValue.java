@@ -22,38 +22,24 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
-
-package org.eclipse.digitaltwin.basyx.http.serialization;
-
-import java.io.IOException;
-import java.util.List;
-
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.model.Referable;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 
 /**
- * Handles the mapping between a Referable list to-be-returned and AAS4J
+ * Represents the submodel element {@link Property} value
  * 
- * @author schnicke
+ * @author danish
  *
  */
-public class ReferableListJsonSerializer extends JsonSerializer<List<Referable>> {
-
-	Aas4JReferableListWrapper wrapper = new Aas4JReferableListWrapper();
-
-	@Override
-	public void serialize(List<Referable> values, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		try {
-			String str = wrapper.serialize(values);
-			gen.writeRaw(str);
-		} catch (SerializationException e) {
-			e.printStackTrace();
-		}
+public class PropertyValue implements SubmodelElementValue {
+	private String value;
+	
+	public PropertyValue(String value) {
+		this.value = value;
 	}
 
+	public String getValue() {
+		return value;
+	}
 }

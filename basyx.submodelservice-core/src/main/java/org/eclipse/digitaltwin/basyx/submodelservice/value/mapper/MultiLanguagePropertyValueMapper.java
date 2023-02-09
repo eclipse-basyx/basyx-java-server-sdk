@@ -22,35 +22,38 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
-package org.eclipse.digitaltwin.basyx.http.serialization;
-
-import java.io.IOException;
-
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.model.Referable;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
+import org.eclipse.digitaltwin.aas4j.v3.model.MultiLanguageProperty;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.LangStringValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 
 /**
- * Handles the mapping between a Referable to-be-returned and AAS4J
+ * Maps {@link MultiLanguageProperty} value to
+ * {@link MultiLanguagePropertyValue}
  * 
- * @author schnicke
+ * @author danish
  *
  */
-public class ReferableJsonSerializer extends JsonSerializer<Referable> {
+public class MultiLanguagePropertyValueMapper implements ValueMapper {
+	private MultiLanguagePropertyValue multiLanguagePropertyValue;
 
-	@Override
-	public void serialize(Referable value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		try {
-			String str = new org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer().write(value);
-			gen.writeRawValue(str);
-		} catch (SerializationException e) {
-			e.printStackTrace();
-		}
+	public MultiLanguagePropertyValueMapper(MultiLanguageProperty multiLanguageProperty) {
+		this.multiLanguagePropertyValue = new MultiLanguagePropertyValue(
+				mapLangString(multiLanguageProperty.getValue()));
 	}
 
+	@Override
+	public SubmodelElementValue getValue() {
+		return this.multiLanguagePropertyValue;
+	}
+
+	private List<LangStringValue> mapLangString(List<LangString> langStrings) {
+		return langStrings.stream().map(LangStringValue::new).collect(Collectors.toList());
+	}
 }
