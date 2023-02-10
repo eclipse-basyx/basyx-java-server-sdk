@@ -25,18 +25,26 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.ModelingKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
 
 /**
  * 
@@ -66,7 +74,19 @@ public class DummySubmodelFactory {
 	public static final String SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT = ROTATION_SPEED;
 	public static final String SUBMODEL_OPERATIONAL_DATA_PROPERTY_CATEGORY = "VARIABLE";
 	public static final String SUBMODEL_OPERATIONAL_DATA_PROPERTY_VALUE = "4370";
+	public static final String SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT = "OperationalElementCollection";
+	public static final String SUBMODEL_OPERATIONAL_DATA_ELEMENT_LIST_ID_SHORT = "OperationalElementList";
 	public static final String AAS_3_0_RC_02_DATA_SPECIFICATION_IEC_61360 = "https://admin-shell.io/aas/3/0/RC02/DataSpecificationIEC61360";
+
+	// SUBMODEL_ELEMENTS_SUBMODEL_ELEMENT_COLLECTION
+	public static final String SUBMODEL_ELEMENT_FIRST_ID_SHORT = "MyFirstSubmodelElement";
+	public static final String SUBMODEL_ELEMENT_SECOND_ID_SHORT = "MySecondSubmodelElement";
+	public static final String SUBMODEL_ELEMENT_FIRST_VALUE = "123";
+	public static final String SUBMODEL_ELEMENT_SECOND_VALUE = "456";
+	public static final String SUBMODEL_ELEMENT_COLLECTION_TOP = "TopLevelCollection";
+	public static final String SUBMODEL_ELEMENT_FIRST_LIST = "FirstList";
+	public static final String SUBMODEL_ELEMENT_SECOND_LIST = "SecondList";
+	public static final String SUBMODEL_ELEMENT_COLLECTION_DEEP = "DeepCollection";
 
 	public static Collection<Submodel> getSubmodels() {
 		return Arrays.asList(createTechnicalDataSubmodel(), createOperationalDataSubmodel());
@@ -85,4 +105,80 @@ public class DummySubmodelFactory {
 				.semanticId(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION).value(SUBMODEL_OPERATIONAL_DATA_SEMANTIC_ID_PROPERTY).build()).type(ReferenceTypes.GLOBAL_REFERENCE).build())
 				.idShort(SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT).category(SUBMODEL_OPERATIONAL_DATA_PROPERTY_CATEGORY).value(SUBMODEL_OPERATIONAL_DATA_PROPERTY_VALUE).valueType(DataTypeDefXsd.INTEGER).build()).build();
 	}
+
+	public static Submodel createOperationalDataSubmodelWithHierarchicalSubmodelElements() {
+		return new DefaultSubmodel.Builder().kind(ModelingKind.INSTANCE).idShort(SUBMODEL_OPERATIONAL_DATA_ID_SHORT)
+				.id(SUBMODEL_OPERATIONAL_DATA_ID).submodelElements(createOperationalDataSubmodelElements()).build();
+	}
+
+	private static List<SubmodelElement> createOperationalDataSubmodelElements() {
+		ArrayList<SubmodelElement> list = new ArrayList<>();
+
+		SubmodelElement sme1 = createProperty(SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT);
+		SubmodelElement sme2 = createProperty(SUBMODEL_ELEMENT_FIRST_ID_SHORT);
+		SubmodelElement sme3 = createProperty(SUBMODEL_ELEMENT_SECOND_ID_SHORT);
+
+		SubmodelElementCollection submodelElementCollection = new DefaultSubmodelElementCollection();
+		SubmodelElementList submodelElementList = new DefaultSubmodelElementList();
+
+		Collection<SubmodelElement> submodelElementsCollection = new HashSet<>();
+		List<SubmodelElement> submodelElementsList = new ArrayList<>();
+
+		setValuesOfSubmodelElements(sme2, sme3, submodelElementCollection, submodelElementList,
+				submodelElementsCollection, submodelElementsList);
+
+		SubmodelElementCollection topLevelElementCollection = createNestedElementCollection(sme2);
+
+		list.add(sme1);
+		list.add(submodelElementCollection);
+		list.add(submodelElementList);
+		list.add(topLevelElementCollection);
+		return list;
+	}
+
+	private static void setValuesOfSubmodelElements(SubmodelElement sme2, SubmodelElement sme3,
+			SubmodelElementCollection submodelElementCollection, SubmodelElementList submodelElementList,
+			Collection<SubmodelElement> submodelElementsCollection, List<SubmodelElement> submodelElementsList) {
+		submodelElementList.setIdShort(SUBMODEL_OPERATIONAL_DATA_ELEMENT_LIST_ID_SHORT);
+		submodelElementCollection.setIdShort(SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT);
+		submodelElementsList.add(sme2);
+		submodelElementList.setValue(submodelElementsList);
+		submodelElementsCollection.add(sme3);
+		submodelElementsCollection.add(submodelElementList);
+		submodelElementCollection.setValue(submodelElementsCollection);
+	}
+
+	private static SubmodelElementCollection createNestedElementCollection(SubmodelElement sme2) {
+		SubmodelElementCollection topLevelElementCollection = new DefaultSubmodelElementCollection();
+		SubmodelElementList submodelElementListInElementCollection = new DefaultSubmodelElementList();
+		SubmodelElementList submodelElementListInElementList = new DefaultSubmodelElementList();
+		SubmodelElementCollection submodelElementCollectionInElementList = new DefaultSubmodelElementCollection();
+		Collection<SubmodelElement> submodelElementCollectionInElementListCollection = new HashSet<>();
+		List<SubmodelElement> listForSubmodelElementListInElementList = new ArrayList<>();
+		List<SubmodelElement> listForSubmodelElementListInElementCollection = new ArrayList<>();
+		Collection<SubmodelElement> collectionForTopLevelElementCollection = new HashSet<>();
+
+		submodelElementCollectionInElementListCollection.add(sme2);
+		submodelElementCollectionInElementList.setValue(submodelElementCollectionInElementListCollection);
+		listForSubmodelElementListInElementList.add(submodelElementCollectionInElementList);
+		submodelElementListInElementList.setValue(listForSubmodelElementListInElementList);
+		listForSubmodelElementListInElementCollection.add(submodelElementListInElementList);
+		submodelElementListInElementCollection.setValue(listForSubmodelElementListInElementCollection);
+		collectionForTopLevelElementCollection.add(submodelElementListInElementCollection);
+		topLevelElementCollection.setValue(collectionForTopLevelElementCollection);
+
+		topLevelElementCollection.setIdShort(SUBMODEL_ELEMENT_COLLECTION_TOP);
+		submodelElementListInElementCollection.setIdShort(SUBMODEL_ELEMENT_FIRST_LIST);
+		submodelElementListInElementList.setIdShort(SUBMODEL_ELEMENT_SECOND_LIST);
+		submodelElementCollectionInElementList.setIdShort(SUBMODEL_ELEMENT_COLLECTION_DEEP);
+		return topLevelElementCollection;
+	}
+
+	private static SubmodelElement createProperty(String propertyIdShort) {
+		SubmodelElement sme3 = new DefaultProperty.Builder().kind(ModelingKind.INSTANCE)
+				.idShort(propertyIdShort).category(SUBMODEL_OPERATIONAL_DATA_PROPERTY_CATEGORY)
+				.value(SUBMODEL_OPERATIONAL_DATA_PROPERTY_VALUE).valueType(DataTypeDefXsd.INTEGER).build();
+		return sme3;
+	}
+
 }

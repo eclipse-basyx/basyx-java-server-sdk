@@ -31,8 +31,10 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.submodelservice.pathParsing.HierarchicalSubmodelElementParser;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.factory.SubmodelElementValueFactory;
+
 
 /**
  * Implements the SubmodelService as in-memory variant
@@ -42,7 +44,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.factory.SubmodelEleme
  */
 public class InMemorySubmodelService implements SubmodelService {
 
-	private Submodel submodel;
+	private final Submodel submodel;
+	private HierarchicalSubmodelElementParser parser;
 
 	/**
 	 * Creates the InMemory SubmodelService containing the passed Submodel
@@ -51,6 +54,7 @@ public class InMemorySubmodelService implements SubmodelService {
 	 */
 	public InMemorySubmodelService(Submodel submodel) {
 		this.submodel = submodel;
+		parser = new HierarchicalSubmodelElementParser(submodel);
 	}
 
 	@Override
@@ -64,26 +68,20 @@ public class InMemorySubmodelService implements SubmodelService {
 	}
 
 	@Override
-	public SubmodelElement getSubmodelElement(String idShort) {
-		return submodel.getSubmodelElements()
-				.stream()
-				.filter(sme -> sme.getIdShort()
-						.equals(idShort))
-				.findAny()
-				.orElseThrow(() -> new ElementDoesNotExistException(idShort));
+	public SubmodelElement getSubmodelElement(String idShortPath) throws ElementDoesNotExistException {
+		return parser.getSubmodelElementFromIdShortPath(idShortPath);
 	}
 
 	@Override
-	public SubmodelElementValue getSubmodelElementValue(String idShort) throws ElementDoesNotExistException {
+	public SubmodelElementValue getSubmodelElementValue(String idShortPath) throws ElementDoesNotExistException {
 		SubmodelElementValueFactory submodelElementValueFactory = new SubmodelElementValueFactory();
 		
-		return submodelElementValueFactory.create(getSubmodelElement(idShort));
+		return submodelElementValueFactory.create(getSubmodelElement(idShortPath));
 	}
 
 	@Override
-	public void setSubmodelElementValue(String idShort, Object value) throws ElementDoesNotExistException {
-		Property property = (Property) getSubmodelElement(idShort);
+	public void setSubmodelElementValue(String idShortPath, Object value) throws ElementDoesNotExistException {
+		Property property = (Property) getSubmodelElement(idShortPath);
 		property.setValue((String) value);
 	}
-
 }

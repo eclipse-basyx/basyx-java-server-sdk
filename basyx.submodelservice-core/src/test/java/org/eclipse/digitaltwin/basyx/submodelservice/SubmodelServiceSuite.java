@@ -26,15 +26,25 @@
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
+import org.eclipse.digitaltwin.aas4j.v3.model.ModelingKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Range;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangString;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.LangStringValue;
@@ -85,6 +95,92 @@ public abstract class SubmodelServiceSuite {
 		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
 
 		getSubmodelService(technicalData).getSubmodelElement("nonExisting");
+	}
+
+	@Test
+	public void getDeepNestedSubmodelElement() {
+		Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
+		String idShortPath = generateNestedIdShortPath();
+		SubmodelElement submodelElement = getSubmodelService(operationalData).getSubmodelElement(idShortPath);
+		assertEquals(DummySubmodelFactory.SUBMODEL_ELEMENT_FIRST_ID_SHORT, submodelElement.getIdShort());
+	}
+
+	@Test
+	public void getHierachicalSubmodelElementValue() {
+		Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
+		String idShortPath = generateIdShortPath();
+		PropertyValue submodelElementValue = (PropertyValue) getSubmodelService(operationalData)
+				.getSubmodelElementValue(idShortPath);
+		assertEquals(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_VALUE, submodelElementValue.getValue());
+	}
+
+	@Test
+	public void getHierarchicalSubmodelElementWhenFirstElementIsList() {
+		Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
+
+		List<SubmodelElement> submodelElementsList = new ArrayList<>();
+
+		SubmodelElementList submodelElementList = new DefaultSubmodelElementList();
+		submodelElementList.setIdShort("testList");
+		List<SubmodelElement> listElements = new ArrayList<>();
+		Property testProperty = new DefaultProperty.Builder().kind(ModelingKind.INSTANCE).idShort("propIdShort")
+				.category("cat1").value("123").valueType(DataTypeDefXsd.INTEGER).build();
+		listElements.add(testProperty);
+		submodelElementList.setValue(listElements);
+		submodelElementsList.add(submodelElementList);
+
+		operationalData.setSubmodelElements(submodelElementsList);
+		Object submodelElement = getSubmodelService(operationalData).getSubmodelElement("testList[0]");
+		assertTrue(submodelElement instanceof Property);
+	}
+
+	@Test
+	public void getHierarchicalSubmodelElementWithFirstAndSecondSameIdShort() {
+		Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
+
+		List<SubmodelElement> submodelElementsCollection = new ArrayList<>();
+
+		SubmodelElementCollection submodelElementCollection = new DefaultSubmodelElementCollection();
+		submodelElementCollection.setIdShort("test");
+		List<SubmodelElement> listElements = new ArrayList<>();
+		Property testProperty = new DefaultProperty.Builder().kind(ModelingKind.INSTANCE).idShort("test")
+				.category("cat1").value("123").valueType(DataTypeDefXsd.INTEGER).build();
+
+		listElements.add(testProperty);
+		submodelElementCollection.setValue(listElements);
+		submodelElementsCollection.add(submodelElementCollection);
+		operationalData.setSubmodelElements(submodelElementsCollection);
+
+		Object submodelElement = getSubmodelService(operationalData).getSubmodelElement("test.test");
+
+		assertTrue(submodelElement instanceof DefaultProperty);
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void getNonExistentHierachicalSubmodelElementValue() {
+		Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
+		String idShortPath = generateNonExistentIdShortPath();
+		getSubmodelService(operationalData).getSubmodelElementValue(idShortPath);
+	}
+
+	@Test
+	public void setHierachicalSubmodelElementValue() {
+		String expected = "205";
+		Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
+		String idShortPath = generateIdShortPath();
+		Property submodelElement = (Property) getSubmodelService(operationalData).getSubmodelElement(idShortPath);
+		submodelElement.setValue(expected);
+		submodelElement = (Property) getSubmodelService(operationalData).getSubmodelElement(idShortPath);
+		assertEquals(expected, submodelElement.getValue());
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void setNonExistentHierachicalSubmodelElementValue() {
+		String expected = "205";
+		Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
+		String idShortPath = generateNonExistentIdShortPath();
+		Property submodelElement = (Property) getSubmodelService(operationalData).getSubmodelElement(idShortPath);
+		submodelElement.setValue(expected);
 	}
 
 	@Test
@@ -167,4 +263,22 @@ public abstract class SubmodelServiceSuite {
 
 		assertEquals(expectedValue, submodelElementValue.getValue());
 	}
+
+	private String generateIdShortPath() {
+		return DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT + "."
+				+ DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_LIST_ID_SHORT + "[0]";
+	}
+
+	private String generateNonExistentIdShortPath() {
+		return DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT + "."
+				+ DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_LIST_ID_SHORT + "[1]";
+	}
+
+	private String generateNestedIdShortPath() {
+		String idShortPath = DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_TOP + "."
+				+ DummySubmodelFactory.SUBMODEL_ELEMENT_FIRST_LIST + "[0][0]."
+				+ DummySubmodelFactory.SUBMODEL_ELEMENT_FIRST_ID_SHORT;
+		return idShortPath;
+	}
+
 }

@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import java.util.Collection;
@@ -53,39 +52,34 @@ public interface SubmodelService {
 	 * @return
 	 */
 	public Collection<SubmodelElement> getSubmodelElements();
-	
+
 	/**
 	 * Retrieve specific SubmodelElement of the Submodel
 	 *
-	 * @param smeIdShort
-	 *            the SubmodelElement IdShort
+	 * @param idShortPath the SubmodelElement IdShort
 	 * @return the SubmodelElement
-	 * @throws ElementDoesNotExistException
-	 *             if the SubmodelElement does not exist
+	 * @throws ElementDoesNotExistException if the SubmodelElement does not exist
 	 */
-	public SubmodelElement getSubmodelElement(String idShort) throws ElementDoesNotExistException;
+	public SubmodelElement getSubmodelElement(String idShortPath) throws ElementDoesNotExistException;
 
 	/**
 	 * Retrieves the value of a specific SubmodelElement of the Submodel
 	 * 
-	 * @param idShort
-	 *            the SubmodelElement IdShort
+	 * @param idShortPath
+	 *            the SubmodelElement idShortPath
 	 * @return the SubmodelElementValue
 	 * @throws ElementDoesNotExistException
 	 *             if the SubmodelElement does not exist
 	 */
-	public SubmodelElementValue getSubmodelElementValue(String idShort) throws ElementDoesNotExistException;
+	public SubmodelElementValue getSubmodelElementValue(String idShortPath) throws ElementDoesNotExistException;
 
 	/**
 	 * Sets the value of a specific SubmodelElement of the Submodel
 	 * 
-	 * @param idShort
-	 *            the SubmodelElement IdShort
-	 * @param value
-	 *            the new value
-	 * @throws ElementDoesNotExistException
-	 *             if the SubmodelElement does not exist
+	 * @param idShortPath the SubmodelElement IdShortPath
+	 * @param value       the new value
+	 * @throws ElementDoesNotExistException if the SubmodelElement does not exist
 	 */
-	public void setSubmodelElementValue(String idShort, Object value) throws ElementDoesNotExistException;
+	public void setSubmodelElementValue(String idShortPath, Object value) throws ElementDoesNotExistException;
 
 }
