@@ -22,27 +22,43 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value;
+
+
+package org.eclipse.digitaltwin.basyx.http;
 
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
-import org.eclipse.digitaltwin.aas4j.v3.model.MultiLanguageProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
- * Represents the submodel element {@link MultiLanguageProperty} value
+ * Configuration class providing all relevant beans for HTTP payload
+ * (de-)serialization
  * 
- * @author danish
+ * @author schnicke
  *
  */
-public class MultiLanguagePropertyValue implements SubmodelElementValue {
-	private List<LangString> value;
-	
-	public MultiLanguagePropertyValue(List<LangString> list) {
-		this.value = list;
-	}
+@Configuration
+public class BaSyxHTTPConfiguration {
 
-	public List<LangString> getValue() {
-		return this.value;
+	/**
+	 * Returns a Jackson2ObjectMapperBuilder that is configured using the passed
+	 * list of {@link SerializationExtension}
+	 * 
+	 * @param serializationExtensions
+	 * @return
+	 */
+	@Bean
+	public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder(List<SerializationExtension> serializationExtensions) {
+		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL);
+
+		for (SerializationExtension serializationExtension : serializationExtensions) {
+			serializationExtension.extend(builder);
+		}
+		
+		return builder;
 	}
 }

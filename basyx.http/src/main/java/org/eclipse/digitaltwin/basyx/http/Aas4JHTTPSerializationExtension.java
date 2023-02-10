@@ -22,27 +22,34 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
-import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
-import org.eclipse.digitaltwin.aas4j.v3.model.MultiLanguageProperty;
+package org.eclipse.digitaltwin.basyx.http;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Referable;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.http.serialization.AasJsonDeserializer;
+import org.eclipse.digitaltwin.basyx.http.serialization.ReferableJsonSerializer;
+import org.eclipse.digitaltwin.basyx.http.serialization.SubmodelJsonDeserializer;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.stereotype.Component;
 
 /**
- * Represents the submodel element {@link MultiLanguageProperty} value
+ * SerializationExtension integrating the AAS4J serialization in BaSyx
  * 
- * @author danish
+ * @author schnicke
  *
  */
-public class MultiLanguagePropertyValue implements SubmodelElementValue {
-	private List<LangString> value;
-	
-	public MultiLanguagePropertyValue(List<LangString> list) {
-		this.value = list;
+@Component
+public class Aas4JHTTPSerializationExtension implements SerializationExtension {
+
+	@Override
+	public void extend(Jackson2ObjectMapperBuilder builder) {
+		builder.deserializerByType(Submodel.class, new SubmodelJsonDeserializer());
+		builder.deserializerByType(AssetAdministrationShell.class, new AasJsonDeserializer());
+
+		builder.serializerByType(Referable.class, new ReferableJsonSerializer());
 	}
 
-	public List<LangString> getValue() {
-		return this.value;
-	}
 }

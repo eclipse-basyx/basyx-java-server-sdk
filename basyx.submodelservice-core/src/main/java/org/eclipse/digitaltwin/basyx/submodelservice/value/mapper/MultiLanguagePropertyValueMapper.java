@@ -24,12 +24,7 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
 import org.eclipse.digitaltwin.aas4j.v3.model.MultiLanguageProperty;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.LangStringValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 
@@ -45,15 +40,11 @@ public class MultiLanguagePropertyValueMapper implements ValueMapper {
 
 	public MultiLanguagePropertyValueMapper(MultiLanguageProperty multiLanguageProperty) {
 		this.multiLanguagePropertyValue = new MultiLanguagePropertyValue(
-				mapLangString(multiLanguageProperty.getValue()));
+				multiLanguageProperty.getValue());
 	}
 
 	@Override
 	public SubmodelElementValue getValue() {
 		return this.multiLanguagePropertyValue;
-	}
-
-	private List<LangStringValue> mapLangString(List<LangString> langStrings) {
-		return langStrings.stream().map(LangStringValue::new).collect(Collectors.toList());
 	}
 }

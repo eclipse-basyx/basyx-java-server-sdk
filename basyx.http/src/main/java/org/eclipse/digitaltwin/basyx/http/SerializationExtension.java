@@ -22,27 +22,23 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
-import java.util.List;
+package org.eclipse.digitaltwin.basyx.http;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
-import org.eclipse.digitaltwin.aas4j.v3.model.MultiLanguageProperty;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 /**
- * Represents the submodel element {@link MultiLanguageProperty} value
+ * Base interface for extending the default serialization with further
+ * (de-)serialization capabilities
  * 
- * @author danish
+ * @author schnicke
  *
  */
-public class MultiLanguagePropertyValue implements SubmodelElementValue {
-	private List<LangString> value;
-	
-	public MultiLanguagePropertyValue(List<LangString> list) {
-		this.value = list;
-	}
-
-	public List<LangString> getValue() {
-		return this.value;
-	}
+public interface SerializationExtension {
+	/**
+	 * Extends the passed builder with further (de-)serialization capabilities
+	 * 
+	 * @param builder
+	 */
+	void extend(Jackson2ObjectMapperBuilder builder);
 }

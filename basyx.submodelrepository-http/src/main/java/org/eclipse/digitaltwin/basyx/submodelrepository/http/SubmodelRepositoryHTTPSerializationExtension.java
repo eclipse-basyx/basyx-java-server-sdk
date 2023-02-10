@@ -22,36 +22,29 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
-import java.util.Collections;
-import java.util.Map;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
+package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.MultiLanguagePropertyValueSerializer;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.stereotype.Component;
 
 /**
- * Maps {@link LangString} value format to adhere to the ValueOnly serialization
- * of {@link MultiLanguagePropertyValue}
+ * SerializationExtension integrating the additional SubmodelRepository
+ * serialization
  * 
- * @author danish
+ * @author schnicke
  *
  */
-public class LangStringValue {
+@Component
+public class SubmodelRepositoryHTTPSerializationExtension implements SerializationExtension {
 
-	@JsonValue
-	private Map<String, String> language;
-
-	public LangStringValue(LangString langString) {
-		this.language = mapLangString(langString);
+	@Override
+	public void extend(Jackson2ObjectMapperBuilder builder) {
+		builder.serializerByType(MultiLanguagePropertyValue.class, new MultiLanguagePropertyValueSerializer());
 	}
 
-	public Map<String, String> getLanguage() {
-		return language;
-	}
-
-	private Map<String, String> mapLangString(LangString langString) {
-		return Collections.singletonMap(langString.getLanguage(), langString.getText());
-	}
 }

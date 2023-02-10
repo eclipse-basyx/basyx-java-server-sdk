@@ -24,32 +24,40 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.http;
+package org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.Referable;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.http.serialization.AasJsonDeserializer;
-import org.eclipse.digitaltwin.basyx.http.serialization.ReferableJsonSerializer;
-import org.eclipse.digitaltwin.basyx.http.serialization.SubmodelJsonDeserializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import java.io.IOException;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 
-@Configuration
-public class Aas4JHTTPAPIConfiguration {
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 
-	@Bean
-	public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder() {
-		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL);
+/**
+ * Serializes a MultiLanguagePropertyValue as described in DotAAS Part 2
+ * 
+ * @author schnicke
+ *
+ */
+public class MultiLanguagePropertyValueSerializer extends JsonSerializer<MultiLanguagePropertyValue> {
 
-		builder.deserializerByType(Submodel.class, new SubmodelJsonDeserializer());
-		builder.deserializerByType(AssetAdministrationShell.class, new AasJsonDeserializer());
+	@Override
+	public void serialize(MultiLanguagePropertyValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+		gen.writeStartArray();
 
-		builder.serializerByType(Referable.class, new ReferableJsonSerializer());
+		for (LangString langString : value.getValue()) {
+			writeLangString(gen, langString);
+		}
 
-		return builder;
+		gen.writeEndArray();
 	}
+
+	private void writeLangString(JsonGenerator gen, LangString langString) throws IOException {
+		gen.writeStartObject();
+		gen.writeObjectField(langString.getLanguage(), langString.getText());
+		gen.writeEndObject();
+	}
+
 }
