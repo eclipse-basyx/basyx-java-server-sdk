@@ -33,8 +33,6 @@ import javax.validation.Valid;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,12 +73,8 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 					"path" }, defaultValue = "normal")) @Valid @RequestParam(value = "content", required = false, defaultValue = "normal") String content,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" })) @Valid @RequestParam(value = "extent", required = false) String extent) {
-		try {
-			Submodel retrieved = repository.getSubmodel(submodelIdentifier.getIdentifier());
-			return new ResponseEntity<Submodel>(retrieved, HttpStatus.OK);
-		} catch (ElementDoesNotExistException e) {
-			return new ResponseEntity<Submodel>(HttpStatus.NOT_FOUND);
-		}
+		Submodel retrieved = repository.getSubmodel(submodelIdentifier.getIdentifier());
+		return new ResponseEntity<Submodel>(retrieved, HttpStatus.OK);
 	}
 
 	@Override
@@ -93,22 +87,14 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 					"path" }, defaultValue = "normal")) @Valid @RequestParam(value = "content", required = false, defaultValue = "normal") String content,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" })) @Valid @RequestParam(value = "extent", required = false) String extent) {
-		try {
-			repository.updateSubmodel(submodelIdentifier.getIdentifier(), body);
-			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-		} catch (ElementDoesNotExistException e) {
-			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
-		}
+		repository.updateSubmodel(submodelIdentifier.getIdentifier(), body);
+		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 
 	@Override
 	public ResponseEntity<Submodel> postSubmodel(@Parameter(in = ParameterIn.DEFAULT, description = "Submodel object", required = true, schema = @Schema()) @Valid @RequestBody Submodel body) {
-		try {
-			repository.createSubmodel(body);
-			return new ResponseEntity<Submodel>(body, HttpStatus.CREATED);
-		} catch (CollidingIdentifierException e) {
-			return new ResponseEntity<Submodel>(HttpStatus.CONFLICT);
-		}
+		repository.createSubmodel(body);
+		return new ResponseEntity<Submodel>(body, HttpStatus.CREATED);
 	}
 
 	@Override
@@ -120,12 +106,8 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 					"path" }, defaultValue = "normal")) @Valid @RequestParam(value = "content", required = false, defaultValue = "normal") String content,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" })) @Valid @RequestParam(value = "extent", required = false) String extent) {
-		try {
-			Collection<SubmodelElement> submodelElements = repository.getSubmodelElements(submodelIdentifier.getIdentifier());
-			return new ResponseEntity<List<SubmodelElement>>(new ArrayList<>(submodelElements), HttpStatus.OK);
-		} catch (ElementDoesNotExistException e) {
-			return new ResponseEntity<List<SubmodelElement>>(HttpStatus.NOT_FOUND);
-		}
+		Collection<SubmodelElement> submodelElements = repository.getSubmodelElements(submodelIdentifier.getIdentifier());
+		return new ResponseEntity<List<SubmodelElement>>(new ArrayList<>(submodelElements), HttpStatus.OK);
 	}
 
 	@Override
@@ -139,14 +121,10 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" })) @Valid @RequestParam(value = "extent", required = false) String extent) {
 
-		try {
-			if (isNormalContentRequest(content)) {
-				return handleSubmodelElementValueNormalGetRequest(submodelIdentifier.getIdentifier(), idShortPath);
-			} else if (isValueContentRequest(content)) {
-				return handleSubmodelElementValueGetRequest(submodelIdentifier.getIdentifier(), idShortPath);
-			}
-		} catch (ElementDoesNotExistException e) {
-			return new ResponseEntity<Object>(HttpStatus.NOT_FOUND);
+		if (isNormalContentRequest(content)) {
+			return handleSubmodelElementValueNormalGetRequest(submodelIdentifier.getIdentifier(), idShortPath);
+		} else if (isValueContentRequest(content)) {
+			return handleSubmodelElementValueGetRequest(submodelIdentifier.getIdentifier(), idShortPath);
 		}
 
 		return new ResponseEntity<Object>(HttpStatus.NOT_IMPLEMENTED);
@@ -163,12 +141,8 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 					"path" }, defaultValue = "normal")) @Valid @RequestParam(value = "content", required = false, defaultValue = "normal") String content,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" })) @Valid @RequestParam(value = "extent", required = false) String extent) {
-		try {
-			if (isValueContentRequest(content)) {
-				return handleSubmodelElementValueSetRequest(submodelIdentifier, idShortPath, body);
-			}
-		} catch (ElementDoesNotExistException e) {
-			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+		if (isValueContentRequest(content)) {
+			return handleSubmodelElementValueSetRequest(submodelIdentifier, idShortPath, body);
 		}
 
 		return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
