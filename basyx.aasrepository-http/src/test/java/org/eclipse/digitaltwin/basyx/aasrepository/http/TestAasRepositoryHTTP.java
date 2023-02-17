@@ -171,8 +171,12 @@ public class TestAasRepositoryHTTP {
 		String url = getSpecificSubmodelReferenceUrl();
 
 		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(url);
+		CloseableHttpResponse getResponse = BaSyxHttpTestUtils
+				.executeGetOnURL(getSpecificAasAccessURL(dummyAasId) + "/aas/submodels");
 
 		assertEquals(200, deleteResponse.getCode());
+		BaSyxHttpTestUtils.assertSameJSONContent("[]", BaSyxHttpTestUtils.getResponseAsString(getResponse));
+
 	}
 
 	@Test
