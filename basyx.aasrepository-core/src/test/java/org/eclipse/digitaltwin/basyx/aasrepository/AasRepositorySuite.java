@@ -25,6 +25,8 @@
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -116,10 +118,11 @@ public abstract class AasRepositorySuite {
 
 	@Test
 	public void getSubmodelReferences() {
-		addDummyReferenceToShell(aas1);
+		Reference reference = createDummyReference();
+		addDummyReferenceToShell(aas1, reference);
 		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId());
 
-		assertEquals(DUMMY_SUBMODEL_ID, submodelReferences.get(0).getKeys().get(0).getValue());
+		assertTrue(submodelReferences.contains(reference));
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
@@ -134,7 +137,7 @@ public abstract class AasRepositorySuite {
 
 		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId());
 
-		assertEquals(DUMMY_SUBMODEL_ID, submodelReferences.get(0).getKeys().get(0).getValue());
+		assertTrue(submodelReferences.contains(reference));
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
@@ -145,12 +148,13 @@ public abstract class AasRepositorySuite {
 
 	@Test
 	public void removeSubmodelReference() {
-		addDummyReferenceToShell(aas1);
+		Reference reference = createDummyReference();
+		addDummyReferenceToShell(aas1, reference);
 		aasRepo.removeSubmodelReference(aas1.getId(), DUMMY_SUBMODEL_ID);
 
 		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId());
 
-		assertEquals(0, submodelReferences.size());
+		assertFalse(submodelReferences.contains(reference));
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
@@ -163,10 +167,9 @@ public abstract class AasRepositorySuite {
 		aasRepo.removeSubmodelReference("doesNotMatter", "trivial");
 	}
 
-	private void addDummyReferenceToShell(AssetAdministrationShell aas) {
+	private void addDummyReferenceToShell(AssetAdministrationShell aas, Reference reference) {
 		List<Reference> submodelReferences = new ArrayList<>();
-		Reference dummyReference = createDummyReference();
-		submodelReferences.add(dummyReference);
+		submodelReferences.add(reference);
 		aas.setSubmodels(submodelReferences);
 	}
 
