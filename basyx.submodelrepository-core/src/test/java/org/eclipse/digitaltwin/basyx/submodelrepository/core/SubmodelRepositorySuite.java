@@ -46,7 +46,7 @@ import org.junit.Test;
 /**
  * Testsuite for implementations of the SubmodelRepository interface
  * 
- * @author schnicke
+ * @author schnicke, danish
  *
  */
 public abstract class SubmodelRepositorySuite {
@@ -193,23 +193,32 @@ public abstract class SubmodelRepositorySuite {
 	@Test
 	public void setPropertyValue() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		Object expected = "200";
-		repo.setSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT, expected);
-		Object value = repo.getSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT);
+		String expected = "200";
+		
+		PropertyValue valueToWrite = new PropertyValue(expected);
+		
+		repo.setSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT, valueToWrite);
+		PropertyValue retrievedValue = (PropertyValue) repo.getSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT);
 
-		assertEquals(expected, ((PropertyValue) value).getValue());
+		assertEquals(expected, retrievedValue.getValue());
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void setNonExistingSubmodelElementValue() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		repo.setSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, "nonExisting", "doesNotMatter");
+		
+		PropertyValue valueToWrite = new PropertyValue("400");
+		
+		repo.setSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, "nonExisting", valueToWrite);
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void setSubmodelElementValueOfNonExistingSubmodel() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		repo.setSubmodelElementValue("nonExisting", "doesNotMatter", "doesNotMatter");
+		
+		PropertyValue valueToWrite = new PropertyValue("400");
+		
+		repo.setSubmodelElementValue("nonExisting", "doesNotMatter", valueToWrite);
 	}
 
 	private SubmodelElement getExpectedSubmodelElement() {

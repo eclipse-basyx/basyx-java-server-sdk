@@ -126,38 +126,12 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 
 	@Test
 	public void setPropertyValue() throws IOException, ParseException {
-		String valueToWrite = "200";
+		String expectedValue = getValueJSON("value/setPropertyValue.json");
 		
-		String expectedValue = getValueJSON("value/expectedPropertySetValue.json");
-
-		CloseableHttpResponse writeResponse = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceUtil.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT, valueToWrite);
+		CloseableHttpResponse writeResponse = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceUtil.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT, expectedValue);
 		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
 
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceUtil.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT);
-
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
-	}
-
-	@Test
-	public void setNonExistingSubmodelElementValue() throws IOException {
-		CloseableHttpResponse response = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, "nonExisting", "doesNotMatter");
-		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
-	}
-
-	@Test
-	public void setSubmodelElementValueOfNonExistingSubmodel() throws IOException {
-		CloseableHttpResponse response = writeSubmodelElementValue("nonExisting", "doesNotMatter", "doesNotMatter");
-
-		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
-	}
-	
-	@Test
-	public void getRangeValue() throws IOException, ParseException {
-		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceUtil.SUBMODEL_TECHNICAL_DATA_RANGE_ID_SHORT);
-
-		assertEquals(HttpStatus.OK.value(), response.getCode());
-		
-		String expectedValue = getValueJSON("value/expectedRangeValue.json");
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
 	}
@@ -174,6 +148,41 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 	}
 	
 	@Test
+	public void setMultiLanguagePropertyValue() throws IOException, ParseException {	
+		String expectedValue = getValueJSON("value/setMultiLanguagePropertyValue.json");
+
+		CloseableHttpResponse writeResponse = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceUtil.SUBMODEL_TECHNICAL_DATA_MULTI_LANG_PROP_ID_SHORT, expectedValue);
+		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
+
+		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceUtil.SUBMODEL_TECHNICAL_DATA_MULTI_LANG_PROP_ID_SHORT);
+
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
+	}
+	
+	@Test
+	public void getRangeValue() throws IOException, ParseException {
+		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceUtil.SUBMODEL_TECHNICAL_DATA_RANGE_ID_SHORT);
+
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+		
+		String expectedValue = getValueJSON("value/expectedRangeValue.json");
+
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
+	}
+	
+	@Test
+	public void setRangeValue() throws IOException, ParseException {
+		String expectedValue = getValueJSON("value/setRangeValue.json");
+
+		CloseableHttpResponse writeResponse = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceUtil.SUBMODEL_TECHNICAL_DATA_RANGE_ID_SHORT, expectedValue);
+		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
+
+		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceUtil.SUBMODEL_TECHNICAL_DATA_RANGE_ID_SHORT);
+
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
+	}
+	
+	@Test
 	public void getFileValue() throws IOException, ParseException {
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceUtil.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 
@@ -183,19 +192,39 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
 	}
+	
+	@Test
+	public void setFileValue() throws IOException, ParseException {
+		String expectedValue = getValueJSON("value/setFileValue.json");
+		
+		CloseableHttpResponse writeResponse = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceUtil.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, expectedValue);
+		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
+
+		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceUtil.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
+
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
+	}
+
+	@Test
+	public void setNonExistingSubmodelElementValue() throws IOException {
+		String valueToWrite = getValueJSON("value/setFileValue.json");
+		
+		CloseableHttpResponse response = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, "nonExisting", valueToWrite);
+		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
+	}
+
+	@Test
+	public void setSubmodelElementValueOfNonExistingSubmodel() throws IOException {
+		String valueToWrite = getValueJSON("value/setFileValue.json");
+		
+		CloseableHttpResponse response = writeSubmodelElementValue("nonExisting", "doesNotMatter", valueToWrite);
+
+		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
+	}
 
 	private CloseableHttpResponse writeSubmodelElementValue(String submodelId, String smeIdShort, String value) throws IOException {
-		String wrappedValue = wrapStringValue(value);
-
-		return BaSyxHttpTestUtils.executePutOnURL(createSubmodelElementValueURL(submodelId, smeIdShort), wrappedValue);
+		return BaSyxHttpTestUtils.executePutOnURL(createSubmodelElementValueURL(submodelId, smeIdShort), value);
 	}
-
-	private String wrapStringValue(String value) {
-		// The value needs to be wrapped to ensure that it is correctly identified as
-		// string and not parsed to another primitive, e.g., int
-		return "\"" + value + "\"";
-	}
-
 
 	private CloseableHttpResponse requestSubmodelElementValue(String submodelId, String smeIdShort) throws IOException {
 		return BaSyxHttpTestUtils.executeGetOnURL(createSubmodelElementValueURL(submodelId, smeIdShort));

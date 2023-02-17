@@ -22,32 +22,22 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.FileValue;
+
+package org.eclipse.digitaltwin.basyx.submodelrepository.http.deserialization.exception;
 
 /**
- * Maps {@link File} value to {@link FileValue} 
+ * Indicates that the provided content for SubmodelELementValue is invalid
  * 
  * @author danish
  *
  */
-public class FileValueMapper implements ValueMapper<FileValue> {
-	private File file;
+public class SubmodelElementValueDeserializationException extends RuntimeException {
 	
-	public FileValueMapper(File file) {
-		this.file = file;
+	private static final long serialVersionUID = 1L;
+
+	public SubmodelElementValueDeserializationException() {
+		super("The provided SubmodelElementValue JSON is not as defined in the Dot AAS Part 2");
 	}
 
-	@Override
-	public FileValue getValue() {
-		return new FileValue(file.getContentType(), file.getValue());
-	}
-
-	@Override
-	public void setValue(FileValue fileValue) {
-		file.setContentType(fileValue.getContentType());
-		file.setValue(fileValue.getValue());
-	}
 }

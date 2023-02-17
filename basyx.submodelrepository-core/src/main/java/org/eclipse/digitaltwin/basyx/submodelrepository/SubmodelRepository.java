@@ -31,11 +31,12 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 
 /**
  * Specifies the overall SubmodelRepository API
  * 
- * @author schnicke
+ * @author schnicke, danish
  *
  */
 public interface SubmodelRepository {
@@ -105,7 +106,7 @@ public interface SubmodelRepository {
 	 * @throws ElementDoesNotExistException
 	 *             if the SubmodelElement or the Submodel does not exist
 	 */
-	public Object getSubmodelElementValue(String submodelId, String smeIdShort) throws ElementDoesNotExistException;
+	public SubmodelElementValue getSubmodelElementValue(String submodelId, String smeIdShort) throws ElementDoesNotExistException;
 
 	/**
 	 * Sets the value of a specific SubmodelElement of a Submodel
@@ -119,5 +120,5 @@ public interface SubmodelRepository {
 	 * @throws ElementDoesNotExistException
 	 *             if the SubmodelElement or the Submodel does not exist
 	 */
-	public void setSubmodelElementValue(String submodelId, String smeIdShort, Object value) throws ElementDoesNotExistException;
+	public void setSubmodelElementValue(String submodelId, String smeIdShort, SubmodelElementValue value) throws ElementDoesNotExistException;
 }

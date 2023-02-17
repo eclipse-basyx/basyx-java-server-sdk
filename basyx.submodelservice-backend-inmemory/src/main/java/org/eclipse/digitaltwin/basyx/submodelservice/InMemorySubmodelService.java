@@ -27,13 +27,13 @@ package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import java.util.Collection;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelservice.pathParsing.HierarchicalSubmodelElementParser;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.factory.SubmodelElementValueFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.factory.SubmodelElementValueMapperFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapper;
 
 
 /**
@@ -73,15 +73,18 @@ public class InMemorySubmodelService implements SubmodelService {
 	}
 
 	@Override
-	public SubmodelElementValue getSubmodelElementValue(String idShortPath) throws ElementDoesNotExistException {
-		SubmodelElementValueFactory submodelElementValueFactory = new SubmodelElementValueFactory();
+	public SubmodelElementValue getSubmodelElementValue(String idShort) throws ElementDoesNotExistException {
+		SubmodelElementValueMapperFactory submodelElementValueFactory = new SubmodelElementValueMapperFactory();
 		
-		return submodelElementValueFactory.create(getSubmodelElement(idShortPath));
+		return submodelElementValueFactory.create(getSubmodelElement(idShort)).getValue();
 	}
 
 	@Override
-	public void setSubmodelElementValue(String idShortPath, Object value) throws ElementDoesNotExistException {
-		Property property = (Property) getSubmodelElement(idShortPath);
-		property.setValue((String) value);
+	public void setSubmodelElementValue(String idShort, SubmodelElementValue value) throws ElementDoesNotExistException {
+		SubmodelElementValueMapperFactory submodelElementValueFactory = new SubmodelElementValueMapperFactory();
+		
+		ValueMapper valueMapper = submodelElementValueFactory.create(getSubmodelElement(idShort));
+		
+		valueMapper.setValue(value);	
 	}
 }

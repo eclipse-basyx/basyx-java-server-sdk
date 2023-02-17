@@ -36,6 +36,11 @@ public class RangeValue implements SubmodelElementValue {
 	private int min;
 	private int max;
 	
+	@SuppressWarnings("unused")
+	private RangeValue() {
+		super();
+	}
+	
 	public RangeValue(int min, int max) {
 		this.min = min;
 		this.max = max;

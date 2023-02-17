@@ -43,7 +43,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 /**
  * In-memory implementation of the SubmodelRepository
  *
- * @author schnicke
+ * @author schnicke, danish
  *
  */
 public class InMemorySubmodelRepository implements SubmodelRepository {
@@ -155,7 +155,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public void setSubmodelElementValue(String submodelId, String smeIdShort, Object value) throws ElementDoesNotExistException {
+	public void setSubmodelElementValue(String submodelId, String smeIdShort, SubmodelElementValue value) throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(submodelId);
 
 		submodelServices.get(submodelId).setSubmodelElementValue(smeIdShort, value);

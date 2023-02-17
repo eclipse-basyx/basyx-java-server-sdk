@@ -36,6 +36,11 @@ public class FileValue implements SubmodelElementValue {
 	private String contentType;
 	private String value;
 	
+	@SuppressWarnings("unused")
+	private FileValue() {
+		super();
+	}
+	
 	public FileValue(String contentType, String value) {
 		this.contentType = contentType;
 		this.value = value;
