@@ -25,10 +25,12 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
@@ -92,6 +94,21 @@ public class MqttAasRepository implements AasRepository {
 	@Override
 	public String getName() {
 		return decorated.getName();
+	}
+
+	@Override
+	public List<Reference> getSubmodelReferences(String aasId) {
+		return decorated.getSubmodelReferences(aasId);
+	}
+
+	@Override
+	public void addSubmodelReference(String aasId, Reference submodelReference) {
+		decorated.addSubmodelReference(aasId, submodelReference);
+	}
+
+	@Override
+	public void removeSubmodelReference(String aasId, String submodelId) {
+		decorated.removeSubmodelReference(aasId, submodelId);
 	}
 
 	private void aasCreated(AssetAdministrationShell shell, String repoId) {

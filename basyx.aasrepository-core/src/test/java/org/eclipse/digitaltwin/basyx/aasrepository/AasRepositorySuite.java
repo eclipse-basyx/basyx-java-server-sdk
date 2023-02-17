@@ -32,7 +32,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.junit.Before;
@@ -49,6 +53,8 @@ public abstract class AasRepositorySuite {
 	private AssetAdministrationShell aas1;
 	private AssetAdministrationShell aas2;
 	private List<AssetAdministrationShell> preconfiguredShells = new ArrayList<>();
+
+	private static final String DUMMY_SUBMODEL_ID = "dummySubmodelId";
 
 	private AasRepository aasRepo;
 
@@ -107,4 +113,66 @@ public abstract class AasRepositorySuite {
 	public void deleteNonExistingAas() {
 		aasRepo.deleteAas("nonExisting");
 	}
+
+	@Test
+	public void getSubmodelReferences() {
+		addDummyReferenceToShell(aas1);
+		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId());
+
+		assertEquals(DUMMY_SUBMODEL_ID, submodelReferences.get(0).getKeys().get(0).getValue());
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void getSubmodelReferencesOfNonExistingAas() {
+		aasRepo.getSubmodelReferences("doesNotMatter");
+	}
+
+	@Test
+	public void addSubmodelReference() {
+		Reference reference = createDummyReference();
+		aasRepo.addSubmodelReference(aas1.getId(), reference);
+
+		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId());
+
+		assertEquals(DUMMY_SUBMODEL_ID, submodelReferences.get(0).getKeys().get(0).getValue());
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void addSubmodelReferenceToNonExistingAas() {
+		Reference reference = createDummyReference();
+		aasRepo.addSubmodelReference("doesNotMatter", reference);
+	}
+
+	@Test
+	public void removeSubmodelReference() {
+		addDummyReferenceToShell(aas1);
+		aasRepo.removeSubmodelReference(aas1.getId(), DUMMY_SUBMODEL_ID);
+
+		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId());
+
+		assertEquals(0, submodelReferences.size());
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void removeNonExistingSubmodelReference() {
+		aasRepo.removeSubmodelReference(aas1.getId(), "doesNotMatter");
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void removeSubmodelReferenceOfNonExistingAas() {
+		aasRepo.removeSubmodelReference("doesNotMatter", "trivial");
+	}
+
+	private void addDummyReferenceToShell(AssetAdministrationShell aas) {
+		List<Reference> submodelReferences = new ArrayList<>();
+		Reference dummyReference = createDummyReference();
+		submodelReferences.add(dummyReference);
+		aas.setSubmodels(submodelReferences);
+	}
+
+	private Reference createDummyReference() {
+		return new DefaultReference.Builder()
+				.keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(DUMMY_SUBMODEL_ID).build()).build();
+	}
+
 }

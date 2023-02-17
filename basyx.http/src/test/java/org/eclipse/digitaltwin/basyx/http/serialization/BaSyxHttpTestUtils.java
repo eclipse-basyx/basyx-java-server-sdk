@@ -108,7 +108,7 @@ public class BaSyxHttpTestUtils {
 	 */
 	public static CloseableHttpResponse executeGetOnURL(String url) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
-		HttpGet getRequest = new HttpGet(url);
+		HttpGet getRequest = createGetRequestWithHeader(url);
 		return client.execute(getRequest);
 	}
 
@@ -176,6 +176,13 @@ public class BaSyxHttpTestUtils {
 
 	private static HttpPost createPostRequestWithHeader(String url) {
 		HttpPost aasCreateRequest = new HttpPost(url);
+		aasCreateRequest.setHeader("Content-type", "application/json");
+		aasCreateRequest.setHeader("Accept", "application/json");
+		return aasCreateRequest;
+	}
+
+	private static HttpGet createGetRequestWithHeader(String url) {
+		HttpGet aasCreateRequest = new HttpGet(url);
 		aasCreateRequest.setHeader("Content-type", "application/json");
 		aasCreateRequest.setHeader("Accept", "application/json");
 		return aasCreateRequest;

@@ -24,7 +24,10 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasservice;
 
+import java.util.List;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 
 /**
  * Specifies the overall AasService API
@@ -40,4 +43,21 @@ public interface AasService {
 	 * @return
 	 */
 	public AssetAdministrationShell getAAS();
+
+	/**
+	 * Retrieves all Submodel References
+	 * 
+	 * @return A List containing all Submodel References
+	 */
+	public List<Reference> getSubmodelReferences();
+
+	/**
+	 * Adds a Submodel Reference
+	 */
+	public void addSubmodelReference(Reference submodelReference);
+
+	/**
+	 * Removes a Submodel Reference
+	 */
+	public void removeSubmodelReference(String submodelId);
 }

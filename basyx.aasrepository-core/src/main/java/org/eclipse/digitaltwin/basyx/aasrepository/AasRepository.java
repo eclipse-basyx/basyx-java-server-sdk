@@ -25,8 +25,10 @@
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 
@@ -76,6 +78,27 @@ public interface AasRepository {
 	 * @param aas
 	 */
 	public void updateAas(AssetAdministrationShell aas);
+
+	/**
+	 * Returns a List of References to Submodels
+	 * 
+	 * @param referenceId
+	 */
+	public List<Reference> getSubmodelReferences(String aasId);
+
+	/**
+	 * Adds a Submodel Reference
+	 * 
+	 * @param submodelReference
+	 */
+	public void addSubmodelReference(String aasId, Reference submodelReference);
+
+	/**
+	 * Removes a Submodel Reference
+	 * 
+	 * @param submodelId
+	 */
+	public void removeSubmodelReference(String aasId, String submodelId);
 
 	public default String getName() {
 		return "aasRepository-default-name";

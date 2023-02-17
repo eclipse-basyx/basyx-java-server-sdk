@@ -24,8 +24,14 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasservice.backend;
 
+import java.util.List;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Key;
+import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 
 /**
  * Implements the AasService as in-memory variant
@@ -48,5 +54,34 @@ public class InMemoryAasService implements AasService {
 	@Override
 	public AssetAdministrationShell getAAS() {
 		return aas;
+	}
+
+	@Override
+	public List<Reference> getSubmodelReferences() {
+		return aas.getSubmodels();
+	}
+
+	@Override
+	public void addSubmodelReference(Reference submodelReference) {
+		aas.getSubmodels().add(submodelReference);
+	}
+
+	@Override
+	public void removeSubmodelReference(String submodelId) {
+		Reference specificSubmodelReference = getSubmodelReferenceById(submodelId);
+
+		aas.getSubmodels().remove(specificSubmodelReference);
+	}
+
+	private Reference getSubmodelReferenceById(String submodelId) {
+		List<Reference> submodelReferences = aas.getSubmodels();
+
+		Reference specificSubmodelReference = submodelReferences.stream().filter(reference -> {
+			List<Key> keys = reference.getKeys();
+			Key foundKey = keys.stream().filter(key -> key.getType().equals(KeyTypes.SUBMODEL)).findFirst().get();
+			return foundKey.getValue().equals(submodelId);
+		}).findFirst().orElseThrow(() -> new ElementDoesNotExistException(submodelId));
+
+		return specificSubmodelReference;
 	}
 }

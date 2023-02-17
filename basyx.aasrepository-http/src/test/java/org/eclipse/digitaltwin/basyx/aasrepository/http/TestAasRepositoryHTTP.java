@@ -32,6 +32,7 @@ import java.io.IOException;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.After;
@@ -76,12 +77,6 @@ public class TestAasRepositoryHTTP {
 
 		CloseableHttpResponse retrievalResponse = getSpecificAas(dummyAasId);
 		BaSyxHttpTestUtils.assertSameJSONContent(aasJsonContent, BaSyxHttpTestUtils.getResponseAsString(retrievalResponse));
-	}
-
-	private String createDummyAasOnServer() throws FileNotFoundException, IOException {
-		String aasJsonContent = getAasJSONString();
-		createAasOnServer(aasJsonContent);
-		return aasJsonContent;
 	}
 
 	@Test
@@ -134,6 +129,80 @@ public class TestAasRepositoryHTTP {
 		assertEquals(HttpStatus.NOT_FOUND.value(), deleteResponse.getCode());
 	}
 
+	@Test
+	public void getSubmodelReference()
+			throws FileNotFoundException, IOException, ParseException, DeserializationException {
+		String json = getSingleSubmodelReference();
+
+		createDummyAasOnServer();
+		addSubmodelReferenceToDummyAas(json);
+
+		CloseableHttpResponse getResponse = BaSyxHttpTestUtils
+				.executeGetOnURL(getSpecificAasAccessURL(dummyAasId) + "/aas/submodels");
+
+		String responseString = BaSyxHttpTestUtils.getResponseAsString(getResponse);
+
+		BaSyxHttpTestUtils.assertSameJSONContent(getSingleSubmodelReferenceAsJsonArray(), responseString);
+	}
+
+	@Test
+	public void postSubmodelReference() throws FileNotFoundException, IOException, ParseException {
+		createDummyAasOnServer();
+
+		String json = getSingleSubmodelReference();
+
+		addSubmodelReferenceToDummyAas(json);
+
+		CloseableHttpResponse getResponse = BaSyxHttpTestUtils
+				.executeGetOnURL(getSpecificAasAccessURL(dummyAasId) + "/aas/submodels");
+
+		BaSyxHttpTestUtils.assertSameJSONContent(getSingleSubmodelReferenceAsJsonArray(),
+				BaSyxHttpTestUtils.getResponseAsString(getResponse));
+	}
+
+	@Test
+	public void removeSubmodelReference() throws FileNotFoundException, IOException, ParseException {
+		createDummyAasOnServer();
+
+		String json = getSingleSubmodelReference();
+
+		addSubmodelReferenceToDummyAas(json);
+
+		String url = getSpecificSubmodelReferenceUrl();
+
+		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(url);
+
+		assertEquals(200, deleteResponse.getCode());
+	}
+
+	@Test
+	public void removeNonExistingSubmodelReference() throws FileNotFoundException, IOException {
+		createDummyAasOnServer();
+		String url = getSpecificSubmodelReferenceUrl();
+		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(url);
+		assertEquals(404, deleteResponse.getCode());
+	}
+
+	private String createDummyAasOnServer() throws FileNotFoundException, IOException {
+		String aasJsonContent = getAasJSONString();
+		createAasOnServer(aasJsonContent);
+		return aasJsonContent;
+	}
+
+	private String getSpecificSubmodelReferenceUrl() {
+		Base64UrlEncodedIdentifier identifier = new Base64UrlEncodedIdentifier(
+				"http://i40.customer.com/type/1/1/testSubmodel");
+		return getSpecificAasAccessURL(dummyAasId) + "/aas/submodels/"
+				+ identifier.getEncodedIdentifier();
+	}
+
+	private void addSubmodelReferenceToDummyAas(String json)
+			throws FileNotFoundException, IOException {
+
+		BaSyxHttpTestUtils
+				.executePostOnServer(getSpecificAasAccessURL(dummyAasId) + "/aas/submodels", json);
+	}
+
 	private String getSpecificAasAccessURL(String aasId) {
 		return aasAccessURL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
 	}
@@ -158,5 +227,13 @@ public class TestAasRepositoryHTTP {
 
 	private String getAasJSONString() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:AasSimple.json");
+	}
+
+	private String getSingleSubmodelReference() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelReference.json");
+	}
+
+	private String getSingleSubmodelReferenceAsJsonArray() throws FileNotFoundException, IOException {
+		return "[" + getSingleSubmodelReference() + "]";
 	}
 }

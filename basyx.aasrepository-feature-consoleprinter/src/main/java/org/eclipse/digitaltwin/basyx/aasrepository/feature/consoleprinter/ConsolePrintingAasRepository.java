@@ -27,8 +27,11 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.consoleprinter;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
@@ -68,6 +71,30 @@ public class ConsolePrintingAasRepository implements AasRepository {
 	public void deleteAas(String aasId) {
 		System.out.println("Deleting shell with id " + aasId);
 		decorated.deleteAas(aasId);
+	}
+
+	@Override
+	public List<Reference> getSubmodelReferences(String aasId) {
+		System.out.println("Getting Submodel References of Shell with id " + aasId);
+		return decorated.getSubmodelReferences(aasId);
+	}
+
+	@Override
+	public void addSubmodelReference(String aasId, Reference submodelReference) {
+		String id = getSubmodelId(submodelReference);
+		System.out.println("Adding Submodel Reference (ID: " + id + ") to Shell with id " + aasId);
+		decorated.addSubmodelReference(aasId, submodelReference);
+	}
+
+	@Override
+	public void removeSubmodelReference(String aasId, String submodelId) {
+		System.out.println("Removing Submodel Reference (ID:" + submodelId + ") from Shell with id " + aasId);
+		decorated.removeSubmodelReference(aasId, submodelId);
+	}
+
+	private String getSubmodelId(Reference submodelReference) {
+		return submodelReference.getKeys().stream().filter(key -> key.getType().equals(KeyTypes.SUBMODEL)).findFirst()
+				.get().getValue();
 	}
 
 }

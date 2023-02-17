@@ -41,25 +41,5 @@
 				}
 			}
 		]
-	},
-	"submodels": [
-		{
-			"keys": [
-				{
-					"type": "Submodel",
-					"value": "http.//i40.customer.com/type/1/1/7A7104BDAB57E184"
-				}
-			],
-			"type": "GlobalReference"
-		},
-		{
-			"keys": [
-				{
-					"type": "Submodel",
-					"value": "http://i40.customer.com/instance/1/1/AC69B1CB44F07935"
-				}
-			],
-			"type": "GlobalReference"
-		}
-	]
+	}
 }

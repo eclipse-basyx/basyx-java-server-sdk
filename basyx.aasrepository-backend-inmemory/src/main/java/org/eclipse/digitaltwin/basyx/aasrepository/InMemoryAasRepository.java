@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -98,6 +99,24 @@ public class InMemoryAasRepository implements AasRepository {
 		if (!aasServices.containsKey(aasId)) {
 			throw new ElementDoesNotExistException(aasId);
 		}
+	}
+
+	@Override
+	public List<Reference> getSubmodelReferences(String aasId) {
+		throwIfAasDoesNotExist(aasId);
+		return aasServices.get(aasId).getSubmodelReferences();
+	}
+
+	@Override
+	public void addSubmodelReference(String aasId, Reference submodelReference) {
+		throwIfAasDoesNotExist(aasId);
+		aasServices.get(aasId).addSubmodelReference(submodelReference);
+	}
+
+	@Override
+	public void removeSubmodelReference(String aasId, String submodelId) {
+		throwIfAasDoesNotExist(aasId);
+		aasServices.get(aasId).removeSubmodelReference(submodelId);
 	}
 
 }

@@ -25,7 +25,10 @@ package org.eclipse.digitaltwin.basyx.aasservice.feature;
  ******************************************************************************/
 
 
+import java.util.List;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 
 public class ConsolePrintingAasService implements AasService {
@@ -41,5 +44,22 @@ public class ConsolePrintingAasService implements AasService {
 		return decorated.getAAS();
 	}
 
+	@Override
+	public List<Reference> getSubmodelReferences() {
+		System.out.println("Getting Submodel References");
+		return decorated.getSubmodelReferences();
+	}
+
+	@Override
+	public void addSubmodelReference(Reference submodelReference) {
+		System.out.println("Adding Submodel Reference");
+		decorated.addSubmodelReference(submodelReference);
+	}
+
+	@Override
+	public void removeSubmodelReference(String submodelId) {
+		System.out.println("Removing Submodel Reference");
+		decorated.removeSubmodelReference(submodelId);
+	}
 
 }

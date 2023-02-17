@@ -70,7 +70,7 @@ public interface AasRepositoryHTTPApi {
 	@RequestMapping(value = "/shells/{aasIdentifier}/aas/submodels/{submodelIdentifier}", method = RequestMethod.DELETE)
 	ResponseEntity<Void> deleteSubmodelReferenceById(
 			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,
-			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") String submodelIdentifier);
+			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier);
 
 
 	@Operation(summary = "Returns all Asset Administration Shells", description = "", tags = { "Asset Administration Shell Repository" })

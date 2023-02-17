@@ -27,9 +27,17 @@
 package org.eclipse.digitaltwin.basyx.aasservice;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -49,20 +57,58 @@ public abstract class AasServiceSuite {
 
 	@Before
 	public void initSuite() {
-		aas = createAASDummy();
+		aas = DummyAssetAdministrationShell.getDummyShell();
 		aasService = getAASServiceFactory().create(aas);
-	}
-
-	private AssetAdministrationShell createAASDummy() {
-		AssetAdministrationShell aas = new DefaultAssetAdministrationShell.Builder()
-				.id("arbitrary")
-				.build();
-
-		return aas;
 	}
 
 	@Test
 	public void aasRetrieval() {
 		assertEquals(aas, aasService.getAAS());
+	}
+
+	@Test
+	public void getSubmodelReference() {
+		DummyAssetAdministrationShell.addDummySubmodelReference(aas);
+		List<Reference> submodelReferences = aasService.getSubmodelReferences();
+		Reference submodelReference = getFirstSubmodelReference(submodelReferences);
+		assertEquals(DummyAssetAdministrationShell.submodelReference, submodelReference);
+	}
+
+	@Test
+	public void addSubmodelReference() {
+		Submodel submodel = createNewSubmodel();
+
+		aasService.addSubmodelReference(submodel.getSemanticId());
+
+		List<Reference> submodelReferences = aasService.getSubmodelReferences();
+
+		Reference submodelReference = getFirstSubmodelReference(submodelReferences);
+
+		assertTrue(
+				submodelReference.getKeys().stream().filter(ref -> ref.getValue() == "testKey").findAny().isPresent());
+	}
+
+	@Test
+	public void removeSubmodelReference() {
+		DummyAssetAdministrationShell.addDummySubmodelReference(aas);
+		List<Reference> submodelReferences = aasService.getSubmodelReferences();
+		aasService.removeSubmodelReference(DummyAssetAdministrationShell.SUBMODEL_ID);
+		assertEquals(0, submodelReferences.size());
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void removeNonExistingSubmodelReference() {
+		aasService.removeSubmodelReference("doesNotMatter");
+	}
+
+	private Reference getFirstSubmodelReference(List<Reference> submodelReferences) {
+		return submodelReferences.get(0);
+	}
+
+	private DefaultSubmodel createNewSubmodel() {
+		return new DefaultSubmodel.Builder()
+				.semanticId(
+						new DefaultReference.Builder().keys(new DefaultKey.Builder().value("testKey").build()).build())
+				.build();
 	}
 }
