@@ -23,17 +23,19 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.http;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.Referable;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.http.serialization.AasJsonDeserializer;
-import org.eclipse.digitaltwin.basyx.http.serialization.ReferableJsonSerializer;
-import org.eclipse.digitaltwin.basyx.http.serialization.SubmodelJsonDeserializer;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.deserialization.EnumDeserializer;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.serialization.EnumSerializer;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.util.ReflectionHelper;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.ReflectionAnnotationIntrospector;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.module.SimpleAbstractTypeResolver;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 /**
  * SerializationExtension integrating the AAS4J serialization in BaSyx
@@ -44,12 +46,39 @@ import org.springframework.stereotype.Component;
 @Component
 public class Aas4JHTTPSerializationExtension implements SerializationExtension {
 
+	protected JsonMapper mapper;
+	protected SimpleAbstractTypeResolver typeResolver;
+
+	public Aas4JHTTPSerializationExtension() {
+        initTypeResolver();
+    }
+
 	@Override
 	public void extend(Jackson2ObjectMapperBuilder builder) {
-		builder.deserializerByType(Submodel.class, new SubmodelJsonDeserializer());
-		builder.deserializerByType(AssetAdministrationShell.class, new AasJsonDeserializer());
+		builder.featuresToEnable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+				.featuresToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .annotationIntrospector(new ReflectionAnnotationIntrospector())
+				.modulesToInstall(buildEnumModule(), buildImplementationModule());
+		ReflectionHelper.JSON_MIXINS.entrySet().forEach(x -> builder.mixIn(x.getKey(), x.getValue()));
+}
 
-		builder.serializerByType(Referable.class, new ReferableJsonSerializer());
+	private void initTypeResolver() {
+		typeResolver = new SimpleAbstractTypeResolver();
+		ReflectionHelper.DEFAULT_IMPLEMENTATIONS.stream()
+				.forEach(x -> typeResolver.addMapping(x.getInterfaceType(), x.getImplementationType()));
+	}
+
+	protected SimpleModule buildEnumModule() {
+		SimpleModule module = new SimpleModule();
+		module.addSerializer(Enum.class, new EnumSerializer());
+		ReflectionHelper.ENUMS.forEach(x -> module.addDeserializer(x, new EnumDeserializer<>(x)));
+		return module;
+	}
+
+	protected SimpleModule buildImplementationModule() {
+		SimpleModule module = new SimpleModule();
+		module.setAbstractTypes(typeResolver);
+		return module;
 	}
 
 }
