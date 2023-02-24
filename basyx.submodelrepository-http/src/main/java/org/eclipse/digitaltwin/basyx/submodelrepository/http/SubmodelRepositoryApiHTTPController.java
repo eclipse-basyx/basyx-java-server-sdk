@@ -98,6 +98,14 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		return new ResponseEntity<Submodel>(body, HttpStatus.CREATED);
 	}
 
+
+	@Override
+	public ResponseEntity<Void> deleteSubmodelById(
+			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier) {
+		repository.deleteSubmodel(submodelIdentifier.getIdentifier());
+		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+	}
+
 	@Override
 	public ResponseEntity<List<SubmodelElement>> getAllSubmodelElementsSubmodelRepo(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,

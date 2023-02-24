@@ -95,6 +95,15 @@ public interface SubmodelRepositoryHTTPApi {
 	@RequestMapping(value = "/submodels", produces = { "application/json" }, consumes = { "application/json" }, method = RequestMethod.POST)
 	ResponseEntity<Submodel> postSubmodel(@Parameter(in = ParameterIn.DEFAULT, description = "Submodel object", required = true, schema = @Schema()) @Valid @RequestBody Submodel body);
 	
+    @Operation(summary = "Deletes a Submodel", description = "", tags={ "Asset Administration Shell Environment API" })
+    @ApiResponses(value = { 
+			@ApiResponse(responseCode = "204", description = "Submodel deleted successfully") })
+    @RequestMapping(value = "/submodels/{submodelIdentifier}",
+        produces = { "application/json" }, 
+        method = RequestMethod.DELETE)
+	ResponseEntity<Void> deleteSubmodelById(
+			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier);
+	
     @Operation(summary = "Returns all submodel elements including their hierarchy", description = "", tags={ "Asset Administration Shell Repository" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "List of found submodel elements", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = SubmodelElement.class)))) })

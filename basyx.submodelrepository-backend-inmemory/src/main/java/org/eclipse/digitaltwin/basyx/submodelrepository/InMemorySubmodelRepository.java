@@ -160,4 +160,11 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 		submodelServices.get(submodelId).setSubmodelElementValue(smeIdShort, value);
 	}
+
+	@Override
+	public void deleteSubmodel(String submodelId) throws ElementDoesNotExistException {
+		throwIfSubmodelDoesNotExist(submodelId);
+
+		submodelServices.remove(submodelId);
+	}
 }

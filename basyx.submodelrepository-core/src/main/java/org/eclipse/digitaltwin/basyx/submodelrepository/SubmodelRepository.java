@@ -75,12 +75,20 @@ public interface SubmodelRepository {
 	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException;
 
 	/**
+	 * Deletes a Submodel
+	 * 
+	 * @param submodelId
+	 * @throws ElementDoesNotExistException
+	 */
+	public void deleteSubmodel(String submodelId) throws ElementDoesNotExistException;
+
+	/**
 	 * Retrieves all SubmodelElements of a Submodel
 	 * 
 	 * @param submodelId
 	 * @return
 	 */
-	public Collection<SubmodelElement> getSubmodelElements(String submodelId);
+	public Collection<SubmodelElement> getSubmodelElements(String submodelId) throws ElementDoesNotExistException;
 
 	/**
 	 * Retrieves a specific SubmodelElement of a Submodel

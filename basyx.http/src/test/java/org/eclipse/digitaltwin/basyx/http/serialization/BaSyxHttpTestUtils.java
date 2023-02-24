@@ -157,6 +157,21 @@ public class BaSyxHttpTestUtils {
 		return client.execute(aasCreateRequest);
 	}
 
+	/**
+	 * Performs a delete request on the passed URL
+	 * 
+	 * @param url
+	 * @return
+	 * @throws IOException
+	 */
+	public static CloseableHttpResponse executeDeleteOnServer(String url) throws IOException {
+		CloseableHttpClient client = HttpClients.createDefault();
+
+		HttpDelete deleteRequest = new HttpDelete(url);
+
+		return client.execute(deleteRequest);
+	}
+
 	private static HttpPut createPutRequestWithHeader(String url) {
 		HttpPut putRequest = new HttpPut(url);
 

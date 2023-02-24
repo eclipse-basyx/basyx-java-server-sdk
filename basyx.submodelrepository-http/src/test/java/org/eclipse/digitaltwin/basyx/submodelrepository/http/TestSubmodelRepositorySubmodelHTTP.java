@@ -31,6 +31,7 @@ import java.io.IOException;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.junit.After;
@@ -127,7 +128,24 @@ public class TestSubmodelRepositorySubmodelHTTP {
 		assertEquals(HttpStatus.CONFLICT.value(), creationResponse.getCode());
 	}
 
-	
+	@Test
+	public void deleteSubmodel() throws IOException {
+		String existingSubmodelId = DummySubmodelFactory.createTechnicalDataSubmodel().getId();
+
+		CloseableHttpResponse deletionResponse = deleteSubmodelById(existingSubmodelId);
+		assertEquals(HttpStatus.NO_CONTENT.value(), deletionResponse.getCode());
+		
+		CloseableHttpResponse getResponse = requestSubmodel(existingSubmodelId);
+		assertEquals(HttpStatus.NOT_FOUND.value(), getResponse.getCode());
+	}
+
+	@Test
+	public void deleteNonExistingSubmodel() throws IOException {
+		CloseableHttpResponse deletionResponse = deleteSubmodelById("nonExisting");
+
+		assertEquals(HttpStatus.NOT_FOUND.value(), deletionResponse.getCode());
+	}
+
 	private void assertSubmodelCreationReponse(String submodelJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JsonProcessingException, JsonMappingException {
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
 		String response = BaSyxHttpTestUtils.getResponseAsString(creationResponse);
@@ -136,6 +154,10 @@ public class TestSubmodelRepositorySubmodelHTTP {
 
 	private CloseableHttpResponse createSubmodel(String submodelJSON) throws IOException {
 		return BaSyxHttpTestUtils.executePostOnServer(BaSyxSubmodelHttpTestUtils.submodelAccessURL, submodelJSON);
+	}
+
+	private CloseableHttpResponse deleteSubmodelById(String submodelId) throws IOException {
+		return BaSyxHttpTestUtils.executeDeleteOnServer(BaSyxSubmodelHttpTestUtils.submodelAccessURL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId));
 	}
 
 	private CloseableHttpResponse putSubmodel(String submodelId, String submodelJSON) throws IOException {

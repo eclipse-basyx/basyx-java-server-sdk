@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.core;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Collection;
 
@@ -131,6 +132,24 @@ public abstract class SubmodelRepositorySuite {
 		Submodel submodel = repo.getSubmodel(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID);
 
 		repo.createSubmodel(submodel);
+	}
+
+	@Test
+	public void deleteSubmodel() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.deleteSubmodel(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID);
+
+		try {
+			repo.getSubmodel(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID);
+			fail();
+		} catch (ElementDoesNotExistException expected) {
+		}
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void deleteNonExistingSubmodel() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.deleteSubmodel("nonExisting");
 	}
 
 	@Test
