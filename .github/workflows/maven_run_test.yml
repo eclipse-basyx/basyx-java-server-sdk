@@ -10,7 +10,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    services:          
+      mongo:
+        image: mongo:5.0.10
+        # Provide mongo config
+        env:
+          ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+          ME_CONFIG_MONGODB_ADMINPASSWORD: admin
+          ME_CONFIG_MONGODB_URL: mongodb://admin:admin@mongo:27017/
+        # Set health checks to wait until mongo has started  
+        options: >-
+                --health-cmd mongo
+                --health-interval 10s
+                --health-timeout 5s
+                --health-retries 5
+        # Maps tcp port to host
+        ports:
+          - 27017:27017
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
@@ -31,6 +47,8 @@ jobs:
       run: mvn clean install -f basyx.aasrepository-core
     - name: Install BaSyx AasRepository InMemory
       run: mvn clean install -f basyx.aasrepository-backend-inmemory
+    - name: Install BaSyx AasRepository MongoDB
+      run: mvn clean install -f basyx.aasrepository-backend-mongodb
     - name: Install BaSyx AasRepository HTTP
       run: mvn clean install -f basyx.aasrepository-http
     - name: Install BaSyx SubmodelService Core

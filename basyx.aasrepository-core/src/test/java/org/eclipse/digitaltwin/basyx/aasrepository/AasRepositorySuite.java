@@ -66,7 +66,7 @@ public abstract class AasRepositorySuite {
 	public void createAasRepoWithDummyAas() {
 		aasRepo = getAasRepositoryFactory().create();
 
-		aas1 = new DefaultAssetAdministrationShell.Builder().id("aas1/s")
+		aas1 = new DefaultAssetAdministrationShell.Builder().id("aas1/s").submodels(createDummyReference())
 				.build();
 
 		aas2 = new DefaultAssetAdministrationShell.Builder().id("aas2")
@@ -119,7 +119,6 @@ public abstract class AasRepositorySuite {
 	@Test
 	public void getSubmodelReferences() {
 		Reference reference = createDummyReference();
-		addDummyReferenceToShell(aas1, reference);
 		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId());
 
 		assertTrue(submodelReferences.contains(reference));
@@ -149,7 +148,6 @@ public abstract class AasRepositorySuite {
 	@Test
 	public void removeSubmodelReference() {
 		Reference reference = createDummyReference();
-		addDummyReferenceToShell(aas1, reference);
 		aasRepo.removeSubmodelReference(aas1.getId(), DUMMY_SUBMODEL_ID);
 
 		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId());
@@ -164,13 +162,7 @@ public abstract class AasRepositorySuite {
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void removeSubmodelReferenceOfNonExistingAas() {
-		aasRepo.removeSubmodelReference("doesNotMatter", "trivial");
-	}
-
-	private void addDummyReferenceToShell(AssetAdministrationShell aas, Reference reference) {
-		List<Reference> submodelReferences = new ArrayList<>();
-		submodelReferences.add(reference);
-		aas.setSubmodels(submodelReferences);
+		aasRepo.removeSubmodelReference("nonExisting", "doesNotMatter");
 	}
 
 	private Reference createDummyReference() {
