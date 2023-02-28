@@ -22,32 +22,41 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
+
+package org.eclipse.digitaltwin.basyx.submodelrepository.http.deserialization;
+
+import java.io.IOException;
+
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIdValue;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Maps {@link File} value to {@link FileBlobValue} 
+ * Serializes a SpecificAssetIdValue as described in DotAAS Part 2
  * 
  * @author danish
  *
  */
-public class FileValueMapper implements ValueMapper<FileBlobValue> {
-	private File file;
-	
-	public FileValueMapper(File file) {
-		this.file = file;
-	}
+public class SpecificAssetIdValueDeserializer extends JsonDeserializer<SpecificAssetIdValue> {
 
 	@Override
-	public FileBlobValue getValue() {
-		return new FileBlobValue(file.getContentType(), file.getValue());
+	public SpecificAssetIdValue deserialize(JsonParser p, DeserializationContext ctxt)
+			throws IOException {
+
+		try {
+			ObjectMapper mapper = (ObjectMapper) p.getCodec();
+			JsonNode node = mapper.readTree(p);
+			
+			String specifiecAssetIdName = node.fieldNames().next();
+			
+			return new SpecificAssetIdValue(specifiecAssetIdName, node.get(specifiecAssetIdName).asText());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	@Override
-	public void setValue(FileBlobValue fileValue) {
-		file.setContentType(fileValue.getContentType());
-		file.setValue(fileValue.getValue());
-	}
 }

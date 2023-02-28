@@ -22,32 +22,41 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
+
+package org.eclipse.digitaltwin.basyx.submodelrepository.http.deserialization;
+
+import java.io.IOException;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.deserialization.factory.SubmodelElementValueDeserializationFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Maps {@link File} value to {@link FileBlobValue} 
+ * Deserializes the ValueOnly as described in DotAAS Part 2
  * 
  * @author danish
  *
  */
-public class FileValueMapper implements ValueMapper<FileBlobValue> {
-	private File file;
+public class ValueOnlyJsonDeserializer extends JsonDeserializer<ValueOnly> {
 	
-	public FileValueMapper(File file) {
-		this.file = file;
-	}
+	private SubmodelElementValueDeserializationFactory submodelElementValueDeserializationFactory = new SubmodelElementValueDeserializationFactory();
 
 	@Override
-	public FileBlobValue getValue() {
-		return new FileBlobValue(file.getContentType(), file.getValue());
-	}
-
-	@Override
-	public void setValue(FileBlobValue fileValue) {
-		file.setContentType(fileValue.getContentType());
-		file.setValue(fileValue.getValue());
+	public ValueOnly deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+		try {
+			ObjectMapper mapper = (ObjectMapper) p.getCodec();
+			JsonNode node = mapper.readTree(p);
+			
+			String idShort = node.fieldNames().next();
+			
+			return new ValueOnly(idShort, submodelElementValueDeserializationFactory.create(mapper, node.get(idShort)));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

@@ -83,7 +83,7 @@ public class InMemorySubmodelService implements SubmodelService {
 	public void setSubmodelElementValue(String idShort, SubmodelElementValue value) throws ElementDoesNotExistException {
 		SubmodelElementValueMapperFactory submodelElementValueFactory = new SubmodelElementValueMapperFactory();
 		
-		ValueMapper valueMapper = submodelElementValueFactory.create(getSubmodelElement(idShort));
+		ValueMapper<SubmodelElementValue> valueMapper = submodelElementValueFactory.create(getSubmodelElement(idShort));
 		
 		valueMapper.setValue(value);	
 	}

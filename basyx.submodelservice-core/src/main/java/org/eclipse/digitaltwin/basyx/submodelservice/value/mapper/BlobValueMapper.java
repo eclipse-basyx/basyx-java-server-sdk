@@ -22,32 +22,47 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+
+
 package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 
 /**
- * Maps {@link File} value to {@link FileBlobValue} 
+ * Maps {@link Blob} value to {@link FileBlobValue} 
  * 
  * @author danish
  *
  */
-public class FileValueMapper implements ValueMapper<FileBlobValue> {
-	private File file;
+public class BlobValueMapper implements ValueMapper<FileBlobValue> {
+	private Blob blob;
 	
-	public FileValueMapper(File file) {
-		this.file = file;
+	public BlobValueMapper(Blob blob) {
+		this.blob = blob;
 	}
 
 	@Override
 	public FileBlobValue getValue() {
-		return new FileBlobValue(file.getContentType(), file.getValue());
+		return new FileBlobValue(blob.getContentType(), getDecodedString(blob.getValue()));
 	}
 
 	@Override
 	public void setValue(FileBlobValue fileValue) {
-		file.setContentType(fileValue.getContentType());
-		file.setValue(fileValue.getValue());
+		blob.setContentType(fileValue.getContentType());
+		blob.setValue(getEncodedByteArray(fileValue.getValue()));
+	}
+
+	private byte[] getEncodedByteArray(String value) {
+		return value.getBytes();
+	}
+	
+	private String getDecodedString(byte[] value) {
+		return new String(value, StandardCharsets.UTF_8);
 	}
 }

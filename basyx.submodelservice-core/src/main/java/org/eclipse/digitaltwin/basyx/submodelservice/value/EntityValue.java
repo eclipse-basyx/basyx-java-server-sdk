@@ -22,32 +22,53 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
+package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
+import java.util.List;
+import java.util.Optional;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
+import org.eclipse.digitaltwin.aas4j.v3.model.EntityType;
 
 /**
- * Maps {@link File} value to {@link FileBlobValue} 
+ * Represents the submodel element {@link Entity} value
  * 
  * @author danish
  *
  */
-public class FileValueMapper implements ValueMapper<FileBlobValue> {
-	private File file;
+public class EntityValue implements SubmodelElementValue {
+	private List<ValueOnly> statements;
+	private EntityType entityType;
+	private Optional<ReferenceValue> globalAssetId;
+	private Optional<List<SpecificAssetIdValue>> specificAssetIds;
 	
-	public FileValueMapper(File file) {
-		this.file = file;
+	@SuppressWarnings("unused")
+	private EntityValue() {
+		super();
+	}
+	
+	public EntityValue(List<ValueOnly> statements, EntityType entityType, ReferenceValue globalAssetId,
+			List<SpecificAssetIdValue> specificAssetIds) {
+		this.statements = statements;
+		this.entityType = entityType;
+		this.globalAssetId = Optional.ofNullable(globalAssetId);
+		this.specificAssetIds = Optional.ofNullable(specificAssetIds);
 	}
 
-	@Override
-	public FileBlobValue getValue() {
-		return new FileBlobValue(file.getContentType(), file.getValue());
+	public List<ValueOnly> getStatements() {
+		return statements;
 	}
 
-	@Override
-	public void setValue(FileBlobValue fileValue) {
-		file.setContentType(fileValue.getContentType());
-		file.setValue(fileValue.getValue());
+	public EntityType getEntityType() {
+		return entityType;
 	}
+
+	public ReferenceValue getGlobalAssetId() {
+		return globalAssetId.orElse(null);
+	}
+
+	public List<SpecificAssetIdValue> getSpecificAssetIds() {
+		return specificAssetIds.orElse(null);
+	}
+	
 }

@@ -24,33 +24,28 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
+import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceElement;
 
 /**
- * Represents the submodel element {@link File} value
+ * Represents the submodel element {@link ReferenceElement} value
  * 
  * @author danish
  *
  */
-public class FileValue implements SubmodelElementValue {
-	private String contentType;
-	private String value;
+public class ReferenceElementValue implements SubmodelElementValue {
+	private ReferenceValue referenceValue;
 	
 	@SuppressWarnings("unused")
-	private FileValue() {
+	private ReferenceElementValue() {
 		super();
 	}
 	
-	public FileValue(String contentType, String value) {
-		this.contentType = contentType;
-		this.value = value;
+	public ReferenceElementValue(ReferenceValue referenceValue) {
+		this.referenceValue = referenceValue;
 	}
 
-	public String getContentType() {
-		return contentType;
+	public ReferenceValue getReferenceValue() {
+		return referenceValue;
 	}
 
-	public String getValue() {
-		return value;
-	}
 }

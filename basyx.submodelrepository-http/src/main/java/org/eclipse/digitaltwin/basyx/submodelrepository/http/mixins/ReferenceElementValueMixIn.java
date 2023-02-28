@@ -22,32 +22,20 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
+package org.eclipse.digitaltwin.basyx.submodelrepository.http.mixins;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceElementValue;
+
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 /**
- * Maps {@link File} value to {@link FileBlobValue} 
+ * A mixin to indicate that {@link ReferenceElementValue} should be serialized "unwrapped" 
  * 
  * @author danish
  *
  */
-public class FileValueMapper implements ValueMapper<FileBlobValue> {
-	private File file;
+public interface ReferenceElementValueMixIn {
 	
-	public FileValueMapper(File file) {
-		this.file = file;
-	}
-
-	@Override
-	public FileBlobValue getValue() {
-		return new FileBlobValue(file.getContentType(), file.getValue());
-	}
-
-	@Override
-	public void setValue(FileBlobValue fileValue) {
-		file.setContentType(fileValue.getContentType());
-		file.setValue(fileValue.getValue());
-	}
+	@JsonUnwrapped
+	public ReferenceElementValue getReferenceValue();
 }

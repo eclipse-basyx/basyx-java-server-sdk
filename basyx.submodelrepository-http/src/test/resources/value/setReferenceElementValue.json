@@ -1,0 +1,9 @@
+{
+    "type": "GlobalReference",
+    "keys": [
+        {
+            "type": "Operation",
+            "value": "OperationType"
+        }
+    ]
+}

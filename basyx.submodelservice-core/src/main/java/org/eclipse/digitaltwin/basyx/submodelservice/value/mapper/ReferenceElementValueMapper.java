@@ -24,30 +24,39 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceElement;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceValue;
 
 /**
- * Maps {@link File} value to {@link FileBlobValue} 
+ * Maps {@link ReferenceElement} value to {@link ReferenceElementValue} 
  * 
  * @author danish
  *
  */
-public class FileValueMapper implements ValueMapper<FileBlobValue> {
-	private File file;
+public class ReferenceElementValueMapper implements ValueMapper<ReferenceElementValue> {
+	private ReferenceElement referenceElement;
 	
-	public FileValueMapper(File file) {
-		this.file = file;
+	public ReferenceElementValueMapper(ReferenceElement referenceElement) {
+		this.referenceElement = referenceElement;
 	}
 
 	@Override
-	public FileBlobValue getValue() {
-		return new FileBlobValue(file.getContentType(), file.getValue());
+	public ReferenceElementValue getValue() {
+		return new ReferenceElementValue(new ReferenceValue(referenceElement.getValue().getType(), referenceElement.getValue().getKeys()));
 	}
 
 	@Override
-	public void setValue(FileBlobValue fileValue) {
-		file.setContentType(fileValue.getContentType());
-		file.setValue(fileValue.getValue());
+	public void setValue(ReferenceElementValue referenceElementValue) {
+		referenceElement.setValue(updateReference(referenceElementValue));
+	}
+
+	private Reference updateReference(ReferenceElementValue referenceElementValue) {
+		Reference reference = referenceElement.getValue();
+		reference.setType(referenceElementValue.getReferenceValue().getType());
+		reference.setKeys(referenceElementValue.getReferenceValue().getKeys());
+		
+		return referenceElement.getValue();
 	}
 }

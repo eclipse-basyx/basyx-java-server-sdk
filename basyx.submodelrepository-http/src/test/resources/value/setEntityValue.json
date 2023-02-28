@@ -1,0 +1,28 @@
+{
+    "statements": [
+        {
+            "MaxRotationSpeed": "2456"
+        },
+        {
+            "RotationSpeedRange": {
+                "min": 1,
+                "max": 10
+            }
+        }
+    ],
+    "entityType": "SelfManagedEntity",
+    "globalAssetId": {
+        "type": "GlobalReference",
+        "keys": [
+            {
+                "type": "Blob",
+                "value": "KeyBlob"
+            }
+        ]
+    },
+    "specificAssetIds": [
+        {
+            "assetName": "assetValue"
+        }
+    ]
+}

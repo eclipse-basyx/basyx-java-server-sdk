@@ -22,32 +22,39 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
+
+package org.eclipse.digitaltwin.basyx.submodelservice.value;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 
 /**
- * Maps {@link File} value to {@link FileBlobValue} 
+ * Represents the {@link SpecificAssetId} value
  * 
  * @author danish
  *
  */
-public class FileValueMapper implements ValueMapper<FileBlobValue> {
-	private File file;
+public class SpecificAssetIdValue {
 	
-	public FileValueMapper(File file) {
-		this.file = file;
+	private String name;
+	private String value;
+	
+	@SuppressWarnings("unused")
+	private SpecificAssetIdValue() {
+		super();
 	}
 
-	@Override
-	public FileBlobValue getValue() {
-		return new FileBlobValue(file.getContentType(), file.getValue());
+	public SpecificAssetIdValue(String name, String value) {
+		this.name = name;
+		this.value = value;
 	}
 
-	@Override
-	public void setValue(FileBlobValue fileValue) {
-		file.setContentType(fileValue.getContentType());
-		file.setValue(fileValue.getValue());
+	public String getName() {
+		return name;
 	}
+
+	public String getValue() {
+		return value;
+	}
+
 }

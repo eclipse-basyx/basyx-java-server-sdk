@@ -25,9 +25,14 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.http.deserialization.factory;
 
-import org.eclipse.digitaltwin.basyx.submodelservice.value.FileValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.AnnotatedRelationshipElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.EntityValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.RangeValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.RelationshipElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,10 +63,18 @@ public class SubmodelElementValueDeserializationFactory {
 			return mapper.convertValue(node, RangeValue.class);
 		} else if (isTypeOfMultiLanguagePropertyValue(node)) {
 			return createMultiLanguagePropertyValue(node);
-		} else if (isTypeOfFileValue(node)) {
-			return mapper.convertValue(node, FileValue.class);
+		} else if (isTypeOfFileBlobValue(node)) {
+			return mapper.convertValue(node, FileBlobValue.class);
 		} else if (isTypeOfPropertyValue(node)) {
 			return mapper.convertValue(node, PropertyValue.class);
+		} else if (isTypeOfEntityValue(node)) {
+			return mapper.convertValue(node, EntityValue.class);
+		} else if (isTypeOfReferenceElementValue(node)) {
+			return new ReferenceElementValue(mapper.convertValue(node, ReferenceValue.class));
+		} else if (isTypeOfRelationshipElementValue(node)) {
+			return mapper.convertValue(node, RelationshipElementValue.class);
+		} else if (isTypeOfAnnotatedRelationshipElementValue(node)) {
+			return mapper.convertValue(node, AnnotatedRelationshipElementValue.class);
 		}
 
 		throw new SubmodelElementValueDeserializationException();

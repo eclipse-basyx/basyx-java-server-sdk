@@ -24,30 +24,41 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.RelationshipElement;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.RelationshipElementValue;
 
 /**
- * Maps {@link File} value to {@link FileBlobValue} 
+ * Maps {@link RelationshipElement} value to {@link RelationshipElementValue} 
  * 
  * @author danish
  *
  */
-public class FileValueMapper implements ValueMapper<FileBlobValue> {
-	private File file;
+public class RelationshipElementValueMapper implements ValueMapper<RelationshipElementValue> {
+	private RelationshipElement relationshipElement;
 	
-	public FileValueMapper(File file) {
-		this.file = file;
+	public RelationshipElementValueMapper(RelationshipElement relationshipElement) {
+		this.relationshipElement = relationshipElement;
 	}
 
 	@Override
-	public FileBlobValue getValue() {
-		return new FileBlobValue(file.getContentType(), file.getValue());
+	public RelationshipElementValue getValue() {
+		return new RelationshipElementValue(createReferenceValue(relationshipElement.getFirst()), createReferenceValue(relationshipElement.getSecond()));
 	}
 
 	@Override
-	public void setValue(FileBlobValue fileValue) {
-		file.setContentType(fileValue.getContentType());
-		file.setValue(fileValue.getValue());
+	public void setValue(RelationshipElementValue relationshipElementValue) {
+		setReferenceValue(relationshipElement.getFirst(), relationshipElementValue.getFirst());
+		setReferenceValue(relationshipElement.getSecond(), relationshipElementValue.getSecond());
+	}
+
+	private void setReferenceValue(Reference reference, ReferenceValue referenceValue) {
+		reference.setType(referenceValue.getType());
+		reference.setKeys(referenceValue.getKeys());
+	}
+	
+	private ReferenceValue createReferenceValue(Reference reference) {
+		return new ReferenceValue(reference.getType(), reference.getKeys());
 	}
 }

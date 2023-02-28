@@ -24,16 +24,26 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelservice.value.factory;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.AnnotatedRelationshipElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
+import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.MultiLanguageProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Range;
+import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.RelationshipElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.exception.ValueMapperNotFoundException;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.AnnotatedRelationshipElementValueMapper;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.BlobValueMapper;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.EntityValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.FileValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.MultiLanguagePropertyValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.PropertyValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.RangeValueMapper;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ReferenceElementValueMapper;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.RelationshipElementValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapper;
 
 /**
@@ -54,6 +64,16 @@ public class SubmodelElementValueMapperFactory {
 			return new MultiLanguagePropertyValueMapper((MultiLanguageProperty) submodelElement);
 		} else if (submodelElement instanceof File) {
 			return new FileValueMapper((File) submodelElement);
+		} else if (submodelElement instanceof Blob) {
+			return new BlobValueMapper((Blob) submodelElement);
+		} else if (submodelElement instanceof Entity) {
+			return new EntityValueMapper((Entity) submodelElement);
+		} else if (submodelElement instanceof ReferenceElement) {
+			return new ReferenceElementValueMapper((ReferenceElement) submodelElement);
+		} else if (submodelElement instanceof AnnotatedRelationshipElement) {
+			return new AnnotatedRelationshipElementValueMapper((AnnotatedRelationshipElement) submodelElement);
+		} else if (submodelElement instanceof RelationshipElement) {
+			return new RelationshipElementValueMapper((RelationshipElement) submodelElement);
 		} else {
 			throw new ValueMapperNotFoundException(submodelElement.getIdShort());
 		}

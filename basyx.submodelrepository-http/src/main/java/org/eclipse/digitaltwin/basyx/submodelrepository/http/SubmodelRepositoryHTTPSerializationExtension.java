@@ -27,10 +27,20 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
 import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.deserialization.SpecificAssetIdValueDeserializer;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.deserialization.SubmodelElementValueJsonDeserializer;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.deserialization.ValueOnlyJsonDeserializer;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.mixins.ReferenceElementValueMixIn;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.MultiLanguagePropertyValueSerializer;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.PropertyValueSerializer;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.SpecificAssetIdValueSerializer;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.ValueOnlySerializer;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIdValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
 
@@ -48,6 +58,12 @@ public class SubmodelRepositoryHTTPSerializationExtension implements Serializati
 	public void extend(Jackson2ObjectMapperBuilder builder) {
 		builder.serializerByType(MultiLanguagePropertyValue.class, new MultiLanguagePropertyValueSerializer());
 		builder.deserializerByType(SubmodelElementValue.class, new SubmodelElementValueJsonDeserializer());
+		builder.deserializerByType(ValueOnly.class, new ValueOnlyJsonDeserializer());
+		builder.deserializerByType(SpecificAssetIdValue.class, new SpecificAssetIdValueDeserializer());
+		builder.serializerByType(SpecificAssetIdValue.class, new SpecificAssetIdValueSerializer());
+		builder.serializerByType(ValueOnly.class, new ValueOnlySerializer());
+		builder.serializerByType(PropertyValue.class, new PropertyValueSerializer());
+		builder.mixIn(ReferenceElementValue.class, ReferenceElementValueMixIn.class);
 	}
 
 }

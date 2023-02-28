@@ -22,32 +22,31 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
+
+package org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization;
+
+import java.io.IOException;
+
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIdValue;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
- * Maps {@link File} value to {@link FileBlobValue} 
+ * Serializes a SpecificAssetIdValue as described in DotAAS Part 2
  * 
  * @author danish
  *
  */
-public class FileValueMapper implements ValueMapper<FileBlobValue> {
-	private File file;
-	
-	public FileValueMapper(File file) {
-		this.file = file;
-	}
+public class SpecificAssetIdValueSerializer extends JsonSerializer<SpecificAssetIdValue> {
 
 	@Override
-	public FileBlobValue getValue() {
-		return new FileBlobValue(file.getContentType(), file.getValue());
+	public void serialize(SpecificAssetIdValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+		gen.writeStartObject();
+        gen.writeStringField(value.getName(), value.getValue());
+        gen.writeEndObject();
 	}
 
-	@Override
-	public void setValue(FileBlobValue fileValue) {
-		file.setContentType(fileValue.getContentType());
-		file.setValue(fileValue.getValue());
-	}
 }

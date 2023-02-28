@@ -22,32 +22,26 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
+package org.eclipse.digitaltwin.basyx.submodelservice.value.exception;
 
 /**
- * Maps {@link File} value to {@link FileBlobValue} 
+ * Indicates that the submodel element value not available for the specified submodel element
  * 
  * @author danish
  *
  */
-public class FileValueMapper implements ValueMapper<FileBlobValue> {
-	private File file;
-	
-	public FileValueMapper(File file) {
-		this.file = file;
+public class SubmodelElementValueNotFoundException extends RuntimeException {
+
+	private static final long serialVersionUID = 1L;
+
+	public SubmodelElementValueNotFoundException() {
 	}
 
-	@Override
-	public FileBlobValue getValue() {
-		return new FileBlobValue(file.getContentType(), file.getValue());
+	public SubmodelElementValueNotFoundException(String idShort) {
+		super(getMsg(idShort));
 	}
 
-	@Override
-	public void setValue(FileBlobValue fileValue) {
-		file.setContentType(fileValue.getContentType());
-		file.setValue(fileValue.getValue());
+	private static String getMsg(String idShort) {
+		return "No submodel element value is found for submodel element " + idShort;
 	}
 }

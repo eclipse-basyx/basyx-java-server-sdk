@@ -22,32 +22,35 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
+package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
+import org.eclipse.digitaltwin.aas4j.v3.model.RelationshipElement;
 
 /**
- * Maps {@link File} value to {@link FileBlobValue} 
+ * Represents the submodel element {@link RelationshipElement} value
  * 
  * @author danish
  *
  */
-public class FileValueMapper implements ValueMapper<FileBlobValue> {
-	private File file;
+public class RelationshipElementValue implements SubmodelElementValue {
+	private ReferenceValue first;
+	private ReferenceValue second;
 	
-	public FileValueMapper(File file) {
-		this.file = file;
+	protected RelationshipElementValue() {
+		super();
+	}
+	
+	public RelationshipElementValue(ReferenceValue first, ReferenceValue second) {
+		this.first = first;
+		this.second = second;
 	}
 
-	@Override
-	public FileBlobValue getValue() {
-		return new FileBlobValue(file.getContentType(), file.getValue());
+	public ReferenceValue getFirst() {
+		return first;
 	}
 
-	@Override
-	public void setValue(FileBlobValue fileValue) {
-		file.setContentType(fileValue.getContentType());
-		file.setValue(fileValue.getValue());
+	public ReferenceValue getSecond() {
+		return second;
 	}
+
 }

@@ -1,0 +1,31 @@
+{
+	"first": {
+		"type": "GlobalReference",
+		"keys": [
+			{
+				"type": "Blob",
+				"value": "BlobKeyType"
+			}
+		]
+	},
+	"second": {
+		"type": "ModelReference",
+		"keys": [
+			{
+				"type": "Capability",
+				"value": "CapabilityType"
+			}
+		]
+	},
+	"annotation": [
+        {
+            "MaxRotationSpeed": "7543"
+        },
+        {
+            "RotationSpeedRange": {
+                "min": 20,
+                "max": 31
+            }
+        }
+    ]
+}

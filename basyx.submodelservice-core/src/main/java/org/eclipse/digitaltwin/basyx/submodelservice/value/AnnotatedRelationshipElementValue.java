@@ -22,32 +22,35 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
+
+package org.eclipse.digitaltwin.basyx.submodelservice.value;
+
+import java.util.List;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.AnnotatedRelationshipElement;
 
 /**
- * Maps {@link File} value to {@link FileBlobValue} 
+ * Represents the submodel element {@link AnnotatedRelationshipElement} value
  * 
  * @author danish
  *
  */
-public class FileValueMapper implements ValueMapper<FileBlobValue> {
-	private File file;
+public class AnnotatedRelationshipElementValue extends RelationshipElementValue implements SubmodelElementValue {
+	private List<ValueOnly> annotation;
 	
-	public FileValueMapper(File file) {
-		this.file = file;
+	@SuppressWarnings("unused")
+	private AnnotatedRelationshipElementValue() {
+		super();
+	}
+	
+	public AnnotatedRelationshipElementValue(ReferenceValue first, ReferenceValue second, List<ValueOnly> annotation) {
+		super(first, second);
+		this.annotation = annotation;
 	}
 
-	@Override
-	public FileBlobValue getValue() {
-		return new FileBlobValue(file.getContentType(), file.getValue());
+	public List<ValueOnly> getAnnotation() {
+		return annotation;
 	}
-
-	@Override
-	public void setValue(FileBlobValue fileValue) {
-		file.setContentType(fileValue.getContentType());
-		file.setValue(fileValue.getValue());
-	}
+	
 }

@@ -1,0 +1,9 @@
+{
+    "type": "ModelReference",
+    "keys": [
+        {
+            "type": "DataElement",
+            "value": "DataElement"
+        }
+    ]
+}
