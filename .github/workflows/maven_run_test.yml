@@ -10,23 +10,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    services:          
-      mongo:
-        image: mongo:5.0.10
-        # Provide mongo config
-        env:
-          ME_CONFIG_MONGODB_ADMINUSERNAME: admin
-          ME_CONFIG_MONGODB_ADMINPASSWORD: admin
-          ME_CONFIG_MONGODB_URL: mongodb://admin:admin@mongo:27017/
-        # Set health checks to wait until mongo has started  
-        options: >-
-                --health-cmd mongo
-                --health-interval 10s
-                --health-timeout 5s
-                --health-retries 5
-        # Maps tcp port to host
-        ports:
-          - 27017:27017
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
@@ -35,6 +18,8 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
         cache: maven
+    - name: Start environment
+      run: docker compose up -d --wait
     - name: Install BaSyx Core
       run: mvn clean install -f basyx.core
     - name: Install BaSyx HTTP
@@ -61,4 +46,7 @@ jobs:
       run: mvn clean install -f basyx.submodelrepository-backend-inmemory
     - name: Install BaSyx SubmodelRepository HTTP
       run: mvn clean install -f basyx.submodelrepository-http
+    - name: Stop environment
+      if: always()
+      run: docker compose down
      
