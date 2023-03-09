@@ -53,6 +53,7 @@ public class ListIndexPathToken implements PathToken {
 		if (index > sml.getValue().size() - 1) {
 			throw new ElementDoesNotExistException(rootElement.getIdShort() + token);
 		}
+
 		return sml.getValue().get(index);
 	}
 
