@@ -22,53 +22,36 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
-import java.util.List;
-import java.util.Optional;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
-import org.eclipse.digitaltwin.aas4j.v3.model.EntityType;
+package org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization;
+
+import java.io.IOException;
+
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollectionValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
- * Represents the submodel element {@link Entity} value
+ * Serializes a {@link SubmodelElementCollectionValue} as described in DotAAS Part 2
  * 
  * @author danish
  *
  */
-public class EntityValue implements SubmodelElementValue {
-	private List<ValueOnly> statements;
-	private EntityType entityType;
-	private Optional<ReferenceValue> globalAssetId = Optional.empty();
-	private Optional<List<SpecificAssetIdValue>> specificAssetIds = Optional.empty();
-	
-	@SuppressWarnings("unused")
-	private EntityValue() {
-		super();
-	}
-	
-	public EntityValue(List<ValueOnly> statements, EntityType entityType, ReferenceValue globalAssetId,
-			List<SpecificAssetIdValue> specificAssetIds) {
-		this.statements = statements;
-		this.entityType = entityType;
-		this.globalAssetId = Optional.ofNullable(globalAssetId);
-		this.specificAssetIds = Optional.ofNullable(specificAssetIds);
+public class SubmodelElementCollectionValueSerializer extends JsonSerializer<SubmodelElementCollectionValue> {
+
+	@Override
+	public void serialize(SubmodelElementCollectionValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+		gen.writeStartArray();
+
+		for (ValueOnly valueOnly : value.getValue()) {
+			gen.writeObject(valueOnly);
+		}
+
+		gen.writeEndArray();
 	}
 
-	public List<ValueOnly> getStatements() {
-		return statements;
-	}
-
-	public EntityType getEntityType() {
-		return entityType;
-	}
-
-	public ReferenceValue getGlobalAssetId() {
-		return globalAssetId.orElse(null);
-	}
-
-	public List<SpecificAssetIdValue> getSpecificAssetIds() {
-		return specificAssetIds.orElse(null);
-	}
-	
 }

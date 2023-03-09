@@ -1,0 +1,28 @@
+{
+    "statements": [
+        {
+            "MaxRotationSpeed": "2300"
+        },
+        {
+            "RotationSpeedRange": {
+                "min": 10,
+                "max": 24
+            }
+        }
+    ],
+    "entityType": "CoManagedEntity",
+    "globalAssetId": {
+        "type": "ModelReference",
+        "keys": [
+            {
+                "type": "DataElement",
+                "value": "DataElement"
+            }
+        ]
+    },
+    "specificAssetIds": [
+        {
+            "specificAssetIdName": "specificValue"
+        }
+    ]
+}

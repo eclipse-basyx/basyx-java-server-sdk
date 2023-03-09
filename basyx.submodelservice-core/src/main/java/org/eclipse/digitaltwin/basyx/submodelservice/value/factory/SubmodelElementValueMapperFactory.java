@@ -34,6 +34,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Range;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.RelationshipElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.exception.ValueMapperNotFoundException;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.AnnotatedRelationshipElementValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.BlobValueMapper;
@@ -44,6 +46,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.PropertyValueM
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.RangeValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ReferenceElementValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.RelationshipElementValueMapper;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.SubmodelElementCollectionValueMapper;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.SubmodelElementListValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapper;
 
 /**
@@ -74,6 +78,10 @@ public class SubmodelElementValueMapperFactory {
 			return new AnnotatedRelationshipElementValueMapper((AnnotatedRelationshipElement) submodelElement);
 		} else if (submodelElement instanceof RelationshipElement) {
 			return new RelationshipElementValueMapper((RelationshipElement) submodelElement);
+		} else if (submodelElement instanceof SubmodelElementCollection) {
+			return new SubmodelElementCollectionValueMapper((SubmodelElementCollection) submodelElement);
+		} else if (submodelElement instanceof SubmodelElementList) {
+			return new SubmodelElementListValueMapper((SubmodelElementList) submodelElement);
 		} else {
 			throw new ValueMapperNotFoundException(submodelElement.getIdShort());
 		}

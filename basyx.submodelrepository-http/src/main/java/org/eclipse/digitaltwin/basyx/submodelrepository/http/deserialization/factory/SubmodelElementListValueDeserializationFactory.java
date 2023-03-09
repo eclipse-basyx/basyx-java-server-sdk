@@ -22,53 +22,47 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value;
+
+
+package org.eclipse.digitaltwin.basyx.submodelrepository.http.deserialization.factory;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
-import org.eclipse.digitaltwin.aas4j.v3.model.EntityType;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementListValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Represents the submodel element {@link Entity} value
+ * Factory class to create deserialized {@link SubmodelElementListValue} based on
+ * the content
  * 
  * @author danish
  *
  */
-public class EntityValue implements SubmodelElementValue {
-	private List<ValueOnly> statements;
-	private EntityType entityType;
-	private Optional<ReferenceValue> globalAssetId = Optional.empty();
-	private Optional<List<SpecificAssetIdValue>> specificAssetIds = Optional.empty();
+public class SubmodelElementListValueDeserializationFactory {
 	
-	@SuppressWarnings("unused")
-	private EntityValue() {
-		super();
-	}
+	private ObjectMapper objectMapper;
+	private JsonNode node;
 	
-	public EntityValue(List<ValueOnly> statements, EntityType entityType, ReferenceValue globalAssetId,
-			List<SpecificAssetIdValue> specificAssetIds) {
-		this.statements = statements;
-		this.entityType = entityType;
-		this.globalAssetId = Optional.ofNullable(globalAssetId);
-		this.specificAssetIds = Optional.ofNullable(specificAssetIds);
-	}
-
-	public List<ValueOnly> getStatements() {
-		return statements;
-	}
-
-	public EntityType getEntityType() {
-		return entityType;
-	}
-
-	public ReferenceValue getGlobalAssetId() {
-		return globalAssetId.orElse(null);
-	}
-
-	public List<SpecificAssetIdValue> getSpecificAssetIds() {
-		return specificAssetIds.orElse(null);
+	public SubmodelElementListValueDeserializationFactory(ObjectMapper objectMapper, JsonNode node) {
+		this.objectMapper = objectMapper;
+		this.node = node;
 	}
 	
+	/**
+	 * Deserializes the corresponding {@link SubmodelElementListValue} based on the
+	 * JSON content
+	 * 
+	 * @return {@link SubmodelElementListValue}
+	 * 
+	 */
+	public SubmodelElementListValue create() throws JsonProcessingException {
+		List<SubmodelElementValue> submodelElementValues = objectMapper.readValue(node.toString(), new TypeReference<List<SubmodelElementValue>>() {});
+		
+		return new SubmodelElementListValue(submodelElementValues);
+	}
+
 }

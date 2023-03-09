@@ -22,53 +22,34 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
-import java.util.List;
-import java.util.Optional;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
-import org.eclipse.digitaltwin.aas4j.v3.model.EntityType;
+package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollectionValue;
 
 /**
- * Represents the submodel element {@link Entity} value
+ * Maps {@link SubmodelElementCollection} value to {@link SubmodelElementCollectionValue} 
  * 
  * @author danish
  *
  */
-public class EntityValue implements SubmodelElementValue {
-	private List<ValueOnly> statements;
-	private EntityType entityType;
-	private Optional<ReferenceValue> globalAssetId = Optional.empty();
-	private Optional<List<SpecificAssetIdValue>> specificAssetIds = Optional.empty();
+public class SubmodelElementCollectionValueMapper implements ValueMapper<SubmodelElementCollectionValue> {
+	private SubmodelElementCollection submodelElementCollection;
 	
-	@SuppressWarnings("unused")
-	private EntityValue() {
-		super();
-	}
-	
-	public EntityValue(List<ValueOnly> statements, EntityType entityType, ReferenceValue globalAssetId,
-			List<SpecificAssetIdValue> specificAssetIds) {
-		this.statements = statements;
-		this.entityType = entityType;
-		this.globalAssetId = Optional.ofNullable(globalAssetId);
-		this.specificAssetIds = Optional.ofNullable(specificAssetIds);
+	public SubmodelElementCollectionValueMapper(SubmodelElementCollection submodelElementCollection) {
+		this.submodelElementCollection = submodelElementCollection;
 	}
 
-	public List<ValueOnly> getStatements() {
-		return statements;
+	@Override
+	public SubmodelElementCollectionValue getValue() {
+		return new SubmodelElementCollectionValue(ValueMapperUtil.createValueOnlyCollection(submodelElementCollection.getValue()));
 	}
 
-	public EntityType getEntityType() {
-		return entityType;
-	}
-
-	public ReferenceValue getGlobalAssetId() {
-		return globalAssetId.orElse(null);
-	}
-
-	public List<SpecificAssetIdValue> getSpecificAssetIds() {
-		return specificAssetIds.orElse(null);
+	@Override
+	public void setValue(SubmodelElementCollectionValue submodelElementCollectionValue) {
+		ValueMapperUtil.setValueOfSubmodelElementWithValueOnly(submodelElementCollection.getValue(), submodelElementCollectionValue.getValue());
 	}
 	
 }

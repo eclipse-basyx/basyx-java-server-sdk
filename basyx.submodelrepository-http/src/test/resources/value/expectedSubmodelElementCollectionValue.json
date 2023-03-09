@@ -1,0 +1,11 @@
+[
+    {
+        "FileData": {
+            "contentType": "application/json",
+            "value": "testFile.json"
+        }
+    },
+    {
+        "MaxRotationSpeed": "5000"
+    }
+]

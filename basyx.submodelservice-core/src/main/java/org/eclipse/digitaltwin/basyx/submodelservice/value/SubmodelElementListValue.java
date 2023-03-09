@@ -22,53 +22,34 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+
+
 package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
-import org.eclipse.digitaltwin.aas4j.v3.model.EntityType;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
 
 /**
- * Represents the submodel element {@link Entity} value
+ * Represents the submodel element {@link SubmodelElementList} value
  * 
  * @author danish
  *
  */
-public class EntityValue implements SubmodelElementValue {
-	private List<ValueOnly> statements;
-	private EntityType entityType;
-	private Optional<ReferenceValue> globalAssetId = Optional.empty();
-	private Optional<List<SpecificAssetIdValue>> specificAssetIds = Optional.empty();
+public class SubmodelElementListValue implements SubmodelElementValue {
+	private List<SubmodelElementValue> submodelElementValues;
 	
 	@SuppressWarnings("unused")
-	private EntityValue() {
+	private SubmodelElementListValue() {
 		super();
 	}
-	
-	public EntityValue(List<ValueOnly> statements, EntityType entityType, ReferenceValue globalAssetId,
-			List<SpecificAssetIdValue> specificAssetIds) {
-		this.statements = statements;
-		this.entityType = entityType;
-		this.globalAssetId = Optional.ofNullable(globalAssetId);
-		this.specificAssetIds = Optional.ofNullable(specificAssetIds);
+
+	public SubmodelElementListValue(List<SubmodelElementValue> submodelElementValues) {
+		this.submodelElementValues = submodelElementValues;
 	}
 
-	public List<ValueOnly> getStatements() {
-		return statements;
+	public List<SubmodelElementValue> getSubmodelElementValues() {
+		return submodelElementValues;
 	}
 
-	public EntityType getEntityType() {
-		return entityType;
-	}
-
-	public ReferenceValue getGlobalAssetId() {
-		return globalAssetId.orElse(null);
-	}
-
-	public List<SpecificAssetIdValue> getSpecificAssetIds() {
-		return specificAssetIds.orElse(null);
-	}
-	
 }

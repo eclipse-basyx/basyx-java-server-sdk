@@ -300,6 +300,110 @@
                 },
                 "category": "PARAMETER",
                 "idShort": "BlobData"
+            },
+            {
+                "modelType": "SubmodelElementCollection",
+                "kind": "Instance",
+                "semanticId": {
+                    "keys": [
+                        {
+                            "type": "ConceptDescription",
+                            "value": "0173-1#02-BAA120#008"
+                        }
+                    ],
+                    "type": "GlobalReference"
+                },
+                "category": "PARAMETER",
+                "idShort": "SubmodelElementCollection",
+                "value": [
+                    {
+                        "modelType": "File",
+                        "contentType": "application/json",
+                        "value": "testFile.json",
+                        "kind": "Instance",
+                        "semanticId": {
+                            "keys": [
+                                {
+                                    "type": "ConceptDescription",
+                                    "value": "0173-1#02-BAA120#008"
+                                }
+                            ],
+                            "type": "GlobalReference"
+                        },
+                        "category": "PARAMETER",
+                        "idShort": "FileData"
+                    },
+                    {
+                        "modelType": "Property",
+                        "kind": "Instance",
+                        "semanticId": {
+                            "keys": [
+                                {
+                                    "type": "ConceptDescription",
+                                    "value": "0173-1#02-BAA120#008"
+                                }
+                            ],
+                            "type": "GlobalReference"
+                        },
+                        "value": "5000",
+                        "valueType": "xs:integer",
+                        "category": "PARAMETER",
+                        "idShort": "MaxRotationSpeed"
+                    }
+                ]
+            },
+            {
+                "modelType": "SubmodelElementList",
+                "kind": "Instance",
+                "semanticId": {
+                    "keys": [
+                        {
+                            "type": "ConceptDescription",
+                            "value": "0173-1#02-BAA120#008"
+                        }
+                    ],
+                    "type": "GlobalReference"
+                },
+                "category": "PARAMETER",
+                "idShort": "SubmodelElementList",
+                "orderRelevant": true,
+                "value": [
+                    {
+                        "modelType": "Range",
+                        "kind": "Instance",
+                        "semanticId": {
+                            "keys": [
+                                {
+                                    "type": "ConceptDescription",
+                                    "value": "0173-1#02-BAA120#008"
+                                }
+                            ],
+                            "type": "GlobalReference"
+                        },
+                        "max": "300",
+                        "min": "200",
+                        "valueType": "xs:integer",
+                        "category": "PARAMETER",
+                        "idShort": "RotationSpeedRange"
+                    },
+                    {
+                        "modelType": "Property",
+                        "kind": "Instance",
+                        "semanticId": {
+                            "keys": [
+                                {
+                                    "type": "ConceptDescription",
+                                    "value": "0173-1#02-BAA120#008"
+                                }
+                            ],
+                            "type": "GlobalReference"
+                        },
+                        "value": "5000",
+                        "valueType": "xs:integer",
+                        "category": "PARAMETER",
+                        "idShort": "MaxRotationSpeed"
+                    }
+                ]
             }
         ]
     },

@@ -25,50 +25,29 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
-import org.eclipse.digitaltwin.aas4j.v3.model.EntityType;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
 
 /**
- * Represents the submodel element {@link Entity} value
+ * Represents the submodel element {@link SubmodelElementCollection} value
  * 
  * @author danish
  *
  */
-public class EntityValue implements SubmodelElementValue {
-	private List<ValueOnly> statements;
-	private EntityType entityType;
-	private Optional<ReferenceValue> globalAssetId = Optional.empty();
-	private Optional<List<SpecificAssetIdValue>> specificAssetIds = Optional.empty();
+public class SubmodelElementCollectionValue implements SubmodelElementValue {
+	private List<ValueOnly> value;
 	
 	@SuppressWarnings("unused")
-	private EntityValue() {
+	private SubmodelElementCollectionValue() {
 		super();
 	}
 	
-	public EntityValue(List<ValueOnly> statements, EntityType entityType, ReferenceValue globalAssetId,
-			List<SpecificAssetIdValue> specificAssetIds) {
-		this.statements = statements;
-		this.entityType = entityType;
-		this.globalAssetId = Optional.ofNullable(globalAssetId);
-		this.specificAssetIds = Optional.ofNullable(specificAssetIds);
+	public SubmodelElementCollectionValue(List<ValueOnly> value) {
+		this.value = value;
 	}
 
-	public List<ValueOnly> getStatements() {
-		return statements;
+	public List<ValueOnly> getValue() {
+		return value;
 	}
 
-	public EntityType getEntityType() {
-		return entityType;
-	}
-
-	public ReferenceValue getGlobalAssetId() {
-		return globalAssetId.orElse(null);
-	}
-
-	public List<SpecificAssetIdValue> getSpecificAssetIds() {
-		return specificAssetIds.orElse(null);
-	}
-	
 }

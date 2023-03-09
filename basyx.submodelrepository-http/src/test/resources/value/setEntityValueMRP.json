@@ -1,0 +1,14 @@
+{
+    "statements": [
+        {
+            "MaxRotationSpeed": "2300"
+        },
+        {
+            "RotationSpeedRange": {
+                "min": 10,
+                "max": 24
+            }
+        }
+    ],
+    "entityType": "CoManagedEntity"
+}

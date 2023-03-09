@@ -48,6 +48,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.RelationshipElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAnnotatedRelationshipElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultBlob;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEntity;
@@ -61,6 +63,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReferenceElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultRelationshipElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
 
 /**
  * Test helper class for SubmodelService
@@ -144,6 +148,16 @@ public class SubmodelServiceHelper {
 	public static final String SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT = "AnnotatedRelationshipElement";
 	public static final String SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_ANNOTATED_RELATIONSHIP_ELEMENT = _0173_1_02_BAA120_008;
 	public static final String SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_CATEGORY = "PARAMETER";
+	
+	// SUBMODEL_ELEMENT_COLLECTION_DATA
+	public static final String SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT = "SubmodelElementCollection";
+	public static final String SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_SUBMODEL_ELEMENT_COLLECTION = _0173_1_02_BAA120_008;
+	public static final String SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_CATEGORY = "PARAMETER";
+	
+	// SUBMODEL_ELEMENT_LIST_DATA
+	public static final String SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_LIST_ID_SHORT = "SubmodelElementList";
+	public static final String SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_SUBMODEL_ELEMENT_LIST = _0173_1_02_BAA120_008;
+	public static final String SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_LIST_CATEGORY = "PARAMETER";
 
 	public static SubmodelElement getDummySubmodelElement(Submodel technicalData, String idShort) {
 		return technicalData.getSubmodelElements().stream().filter(sme -> sme.getIdShort().equals(idShort)).findAny()
@@ -249,11 +263,31 @@ public class SubmodelServiceHelper {
 				.second(new SubmodelServiceHelper().SECOND_REFERENCE)
 				.annotations(Arrays.asList(createPropertySubmodelElement(), createRangeSubmodelElement())).build();
 	}
+	
+	public static SubmodelElementCollection createSubmodelElementCollection() {
+		return new DefaultSubmodelElementCollection.Builder().kind(ModelingKind.INSTANCE)
+				.semanticId(new DefaultReference.Builder()
+						.keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
+								.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_SUBMODEL_ELEMENT_COLLECTION).build())
+						.type(ReferenceTypes.GLOBAL_REFERENCE).build())
+				.idShort(SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT)
+				.category(SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_CATEGORY).value(Arrays.asList(createFileSubmodelElement(), createPropertySubmodelElement())).build();
+	}
+	
+	public static SubmodelElementList createSubmodelElementList() {
+		return new DefaultSubmodelElementList.Builder().kind(ModelingKind.INSTANCE)
+				.semanticId(new DefaultReference.Builder()
+						.keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
+								.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_SUBMODEL_ELEMENT_LIST).build())
+						.type(ReferenceTypes.GLOBAL_REFERENCE).build())
+				.idShort(SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_LIST_ID_SHORT)
+				.category(SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_LIST_CATEGORY).value(Arrays.asList(createRangeSubmodelElement(), createPropertySubmodelElement())).build();
+	}
 
 	public static List<SubmodelElement> getAllSubmodelElements() {
 		return Arrays.asList(createPropertySubmodelElement(), createRangeSubmodelElement(),
 				createMultiLanguagePropertySubmodelElement(), createFileSubmodelElement(),
 				createEntitySubmodelElement(), createReferenceElementSubmodelElement(),
-				createRelationshipElementSubmodelElement(), createAnnotatedRelationshipElementSubmodelElement(), createBlobSubmodelElement());
+				createRelationshipElementSubmodelElement(), createAnnotatedRelationshipElementSubmodelElement(), createBlobSubmodelElement(), createSubmodelElementCollection(), createSubmodelElementList());
 	}
 }

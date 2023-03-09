@@ -34,11 +34,15 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.http.mixins.ReferenceEle
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.MultiLanguagePropertyValueSerializer;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.PropertyValueSerializer;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.SpecificAssetIdValueSerializer;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.SubmodelElementCollectionValueSerializer;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.SubmodelElementListValueSerializer;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.ValueOnlySerializer;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIdValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollectionValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementListValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -63,6 +67,8 @@ public class SubmodelRepositoryHTTPSerializationExtension implements Serializati
 		builder.serializerByType(SpecificAssetIdValue.class, new SpecificAssetIdValueSerializer());
 		builder.serializerByType(ValueOnly.class, new ValueOnlySerializer());
 		builder.serializerByType(PropertyValue.class, new PropertyValueSerializer());
+		builder.serializerByType(SubmodelElementCollectionValue.class, new SubmodelElementCollectionValueSerializer());
+		builder.serializerByType(SubmodelElementListValue.class, new SubmodelElementListValueSerializer());
 		builder.mixIn(ReferenceElementValue.class, ReferenceElementValueMixIn.class);
 	}
 

@@ -34,6 +34,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceElementValue
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.RelationshipElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -56,13 +58,14 @@ public class SubmodelElementValueDeserializationFactory {
 	 * 
 	 * @return SubmodelELementValue
 	 * 
+	 * @throws JsonProcessingException 
 	 * @throws SubmodelElementValueDeserializationException
 	 */
-	public SubmodelElementValue create(ObjectMapper mapper, JsonNode node) {
+	public SubmodelElementValue create(ObjectMapper mapper, JsonNode node) throws JsonProcessingException {
 		if (isTypeOfRangeValue(node)) {
 			return mapper.convertValue(node, RangeValue.class);
 		} else if (isTypeOfMultiLanguagePropertyValue(node)) {
-			return createMultiLanguagePropertyValue(node);
+			return new MultiLanguagePropertyValueDeserializationFactory(node).create();
 		} else if (isTypeOfFileBlobValue(node)) {
 			return mapper.convertValue(node, FileBlobValue.class);
 		} else if (isTypeOfPropertyValue(node)) {
@@ -75,6 +78,10 @@ public class SubmodelElementValueDeserializationFactory {
 			return mapper.convertValue(node, RelationshipElementValue.class);
 		} else if (isTypeOfAnnotatedRelationshipElementValue(node)) {
 			return mapper.convertValue(node, AnnotatedRelationshipElementValue.class);
+		} else if (isTypeOfSubmodelElementCollectionValue(node)) {
+			return new SubmodelElementCollectionValueDeserializationFactory(mapper, node).create();
+		} else if (isTypeOfSubmodelElementListValue(node)) {
+			return new SubmodelElementListValueDeserializationFactory(mapper, node).create();
 		}
 
 		throw new SubmodelElementValueDeserializationException();
