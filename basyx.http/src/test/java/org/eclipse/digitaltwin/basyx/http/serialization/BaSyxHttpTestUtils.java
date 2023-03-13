@@ -121,7 +121,7 @@ public class BaSyxHttpTestUtils {
 	 */
 	public static CloseableHttpResponse executeDeleteOnURL(String url) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
-		HttpDelete deleteRequest = new HttpDelete(url);
+		HttpDelete deleteRequest = createDeleteRequestWithHeader(url);
 		return client.execute(deleteRequest);
 	}
 
@@ -201,5 +201,11 @@ public class BaSyxHttpTestUtils {
 		aasCreateRequest.setHeader("Content-type", "application/json");
 		aasCreateRequest.setHeader("Accept", "application/json");
 		return aasCreateRequest;
+	}
+
+	private static HttpDelete createDeleteRequestWithHeader(String url) {
+		HttpDelete deleteRequest = new HttpDelete(url);
+		deleteRequest.setHeader("Content-type", "application/json");
+		return deleteRequest;
 	}
 }

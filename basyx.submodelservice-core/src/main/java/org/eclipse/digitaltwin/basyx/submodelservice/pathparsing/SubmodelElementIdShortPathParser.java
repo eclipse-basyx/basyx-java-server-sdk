@@ -53,6 +53,7 @@ public class SubmodelElementIdShortPathParser {
 			throw new ElementDoesNotExistException(idShortPath);
 		}
 	}
+	
 
 	private static String[] splitIdShortPathAtDots(String idShortPath) {
 		return idShortPath.split("\\.");

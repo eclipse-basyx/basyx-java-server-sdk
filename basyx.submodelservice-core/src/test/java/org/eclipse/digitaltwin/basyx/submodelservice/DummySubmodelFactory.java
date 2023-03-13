@@ -87,9 +87,17 @@ public class DummySubmodelFactory {
 	public static final String SUBMODEL_ELEMENT_FIRST_LIST = "FirstList";
 	public static final String SUBMODEL_ELEMENT_SECOND_LIST = "SecondList";
 	public static final String SUBMODEL_ELEMENT_COLLECTION_DEEP = "DeepCollection";
+	public static final String SUBMODEL_ELEMENT_LIST_SIMPLE = "SimpleList";
+	public static final String SUBMODEL_ELEMENT_COLLECTION_SIMPLE = "SimpleCollection";
+
+	// SUBMODEL_SIMPLE_DATA_WITH_ONE_COLLECTION
+	public static final String SUBMODEL_SIMPLE_DATA_ID_SHORT = "simpleSubmodel001";
+	public static final String SUBMODEL_SIMPLE_DATA_ID = "simpleSubmodel001";
+	public static final String SUBMODEL_ELEMENT_SIMPLE_DATA_ID_SHORT = "elementToDelete";
+	
 
 	public static Collection<Submodel> getSubmodels() {
-		return Arrays.asList(createTechnicalDataSubmodel(), createOperationalDataSubmodel());
+		return Arrays.asList(createTechnicalDataSubmodel(), createOperationalDataSubmodel(), createSimpleDataSubmodel());
 	}
 
 	public static Submodel createTechnicalDataSubmodel() {
@@ -104,6 +112,10 @@ public class DummySubmodelFactory {
 		return new DefaultSubmodel.Builder().kind(ModelingKind.INSTANCE).idShort(SUBMODEL_OPERATIONAL_DATA_ID_SHORT).id(SUBMODEL_OPERATIONAL_DATA_ID).submodelElements(new DefaultProperty.Builder().kind(ModelingKind.INSTANCE)
 				.semanticId(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION).value(SUBMODEL_OPERATIONAL_DATA_SEMANTIC_ID_PROPERTY).build()).type(ReferenceTypes.GLOBAL_REFERENCE).build())
 				.idShort(SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT).category(SUBMODEL_OPERATIONAL_DATA_PROPERTY_CATEGORY).value(SUBMODEL_OPERATIONAL_DATA_PROPERTY_VALUE).valueType(DataTypeDefXsd.INTEGER).build()).build();
+	}
+
+	public static Submodel createSimpleDataSubmodel() {
+		return new DefaultSubmodel.Builder().kind(ModelingKind.INSTANCE).idShort(SUBMODEL_SIMPLE_DATA_ID_SHORT).id(SUBMODEL_SIMPLE_DATA_ID).submodelElements(createSimpleSubmodelElements()).build();
 	}
 
 	public static Submodel createOperationalDataSubmodelWithHierarchicalSubmodelElements() {
@@ -179,6 +191,26 @@ public class DummySubmodelFactory {
 				.idShort(propertyIdShort).category(SUBMODEL_OPERATIONAL_DATA_PROPERTY_CATEGORY)
 				.value(SUBMODEL_OPERATIONAL_DATA_PROPERTY_VALUE).valueType(DataTypeDefXsd.INTEGER).build();
 		return sme3;
+	}
+
+	private static List<SubmodelElement> createSimpleSubmodelElements() {
+		ArrayList<SubmodelElement> list = new ArrayList<>();
+		Collection<SubmodelElement> smeCollectionValue = new HashSet<>();
+		List<SubmodelElement> smeListValue = new ArrayList<>();
+		SubmodelElementCollection smeCollection = new DefaultSubmodelElementCollection();
+		smeCollection.setIdShort(SUBMODEL_ELEMENT_COLLECTION_SIMPLE);
+		smeCollectionValue.add(createProperty(SUBMODEL_ELEMENT_FIRST_ID_SHORT));
+		
+		SubmodelElementList smeList = new DefaultSubmodelElementList();
+		smeList.setIdShort(SUBMODEL_ELEMENT_LIST_SIMPLE);
+		smeListValue.add(createProperty(SUBMODEL_ELEMENT_SECOND_ID_SHORT));
+		
+		smeCollection.setValue(smeCollectionValue);
+		smeList.setValue(smeListValue);
+		list.add(smeCollection);
+		list.add(smeList);
+		list.add(createProperty(SUBMODEL_ELEMENT_SIMPLE_DATA_ID_SHORT));
+		return list;
 	}
 
 }

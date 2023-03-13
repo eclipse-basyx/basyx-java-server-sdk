@@ -431,5 +431,46 @@
                 "idShort": "RotationSpeed"
             }
         ]
-    }
+    }, {
+		"id": "simpleSubmodel001",
+		"idShort": "simpleSubmodel001",
+		"kind": "Instance",
+		"modelType": "Submodel",
+		"submodelElements": [{
+				"idShort": "SimpleCollection",
+				"kind": "Instance",
+				"modelType": "SubmodelElementCollection",
+				"value": [{
+						"category": "VARIABLE",
+						"idShort": "MyFirstSubmodelElement",
+						"kind": "Instance",
+						"modelType": "Property",
+						"value": "4370",
+						"valueType": "xs:integer"
+					}
+				]
+			}, {
+				"idShort": "SimpleList",
+				"kind": "Instance",
+				"modelType": "SubmodelElementList",
+				"orderRelevant": true,
+				"value": [{
+						"category": "VARIABLE",
+						"idShort": "MySecondSubmodelElement",
+						"kind": "Instance",
+						"modelType": "Property",
+						"value": "4370",
+						"valueType": "xs:integer"
+					}
+				]
+			}, {
+				"category": "VARIABLE",
+				"idShort": "elementToDelete",
+				"kind": "Instance",
+				"modelType": "Property",
+				"value": "4370",
+				"valueType": "xs:integer"
+			}
+		]
+	}
 ]

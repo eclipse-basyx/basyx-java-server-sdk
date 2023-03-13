@@ -41,7 +41,7 @@ public class DummySubmodelRepositoryComponent {
 
 	@Bean
 	public InMemorySubmodelRepository createSubmodelRepository(SubmodelServiceFactory submodelServiceFactory) {
-		Collection<Submodel> submodels = Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createOperationalDataSubmodel());
+		Collection<Submodel> submodels = Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createOperationalDataSubmodel(), DummySubmodelFactory.createSimpleDataSubmodel());
 		return new InMemorySubmodelRepository(submodelServiceFactory, submodels);
 	}
 }

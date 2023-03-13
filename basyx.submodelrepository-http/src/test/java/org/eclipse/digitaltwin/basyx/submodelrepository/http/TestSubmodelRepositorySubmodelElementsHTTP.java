@@ -102,7 +102,7 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 	@Test
 	public void getPropertyValue() throws IOException, ParseException {
 		String expectedValue = wrapStringValue("5000");
-		
+
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT);
 
 		assertEquals(HttpStatus.OK.value(), response.getCode());
@@ -204,7 +204,7 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
 	}
-	
+
 	@Test
 	public void getBlobValue() throws IOException, ParseException {
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_BLOB_ID_SHORT);
@@ -380,6 +380,65 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 	}
 
 	@Test
+	public void createSubmodelElementCollidingId() throws IOException {
+		String element = getJSONValueAsString("SubmodelElement.json");
+		CloseableHttpResponse createdResponse = BaSyxHttpTestUtils.executePostOnServer(createSubmodelElementsURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID), element);
+
+		assertEquals(HttpStatus.CONFLICT.value(), createdResponse.getCode());
+	}
+
+	@Test
+	public void createSubmodelElement() throws FileNotFoundException, IOException, ParseException {
+		String element = getJSONValueAsString("SubmodelElement.json");
+		CloseableHttpResponse createdResponse = BaSyxHttpTestUtils.executePostOnServer(createSubmodelElementsURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID), element);
+
+		CloseableHttpResponse fetchedResponse = requestSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT);
+		assertEquals(HttpStatus.OK.value(), createdResponse.getCode());
+		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedResponse));
+	}
+
+	@Test
+	public void deleteSubmodelElement() throws FileNotFoundException, IOException, ParseException {
+		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_SIMPLE_DATA_ID_SHORT));
+		assertEquals(HttpStatus.OK.value(), deleteResponse.getCode());
+
+		CloseableHttpResponse fetchedResponse = requestSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_SIMPLE_DATA_ID_SHORT);
+		assertEquals(HttpStatus.NOT_FOUND.value(), fetchedResponse.getCode());
+	}
+
+	@Test
+	public void createNestedSubmodelElement() throws FileNotFoundException, IOException, ParseException {
+		String element = getJSONValueAsString("SubmodelElement.json");
+		CloseableHttpResponse createdInCollectionResponse = BaSyxHttpTestUtils.executePostOnServer(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE), element);
+		CloseableHttpResponse createdInListResponse = BaSyxHttpTestUtils.executePostOnServer(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_LIST_SIMPLE), element);
+		assertEquals(HttpStatus.OK.value(), createdInCollectionResponse.getCode());
+		assertEquals(HttpStatus.OK.value(), createdInListResponse.getCode());
+		
+		CloseableHttpResponse fetchedNestedInCollectionResponse = requestSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, createCollectionNestedIdShortPath(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT));
+		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedNestedInCollectionResponse));
+		
+		CloseableHttpResponse fetchedNestedInListResponse = requestSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, createListNestedIdShortPath(1));
+		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedNestedInListResponse));
+	}
+
+	@Test
+	public void deleteNestedSubmodelElement() throws FileNotFoundException, IOException, ParseException {
+		String nestedIdShortPathInCollection = createCollectionNestedIdShortPath(DummySubmodelFactory.SUBMODEL_ELEMENT_FIRST_ID_SHORT);
+		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, nestedIdShortPathInCollection));
+		assertEquals(HttpStatus.OK.value(), deleteResponse.getCode());
+
+		// delete first element of the submodel element list
+		String nestedIdShortSmeList = createListNestedIdShortPath(0);
+		BaSyxHttpTestUtils.executeDeleteOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, nestedIdShortSmeList));
+		assertEquals(HttpStatus.OK.value(), deleteResponse.getCode());
+
+		CloseableHttpResponse fetchedNestedInCollectionResponse = requestSubmodelElement(DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE, DummySubmodelFactory.SUBMODEL_ELEMENT_SIMPLE_DATA_ID_SHORT);
+		assertEquals(HttpStatus.NOT_FOUND.value(), fetchedNestedInCollectionResponse.getCode());
+		CloseableHttpResponse fetchedNestedInListResponse = requestSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, createListNestedIdShortPath(1));
+		assertEquals(HttpStatus.NOT_FOUND.value(), fetchedNestedInListResponse.getCode());
+	}
+
+	@Test
 	public void setNonExistingSubmodelElementValue() throws IOException {
 		String valueToWrite = getJSONValueAsString("value/setFileValue.json");
 
@@ -387,13 +446,13 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
 
-	@Test
-	public void setSubmodelElementValueOfNonExistingSubmodel() throws IOException {
-		String valueToWrite = getJSONValueAsString("value/setFileValue.json");
-
-		CloseableHttpResponse response = writeSubmodelElementValue("nonExisting", "doesNotMatter", valueToWrite);
-
-		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
+	private String createCollectionNestedIdShortPath(String idShort) {
+		return DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE + "." + idShort;
+	}
+	
+	
+	private String createListNestedIdShortPath(int index) {
+		return DummySubmodelFactory.SUBMODEL_ELEMENT_LIST_SIMPLE.concat("%5B"+index+"%5D");
 	}
 	
 	private String wrapStringValue(String value) {

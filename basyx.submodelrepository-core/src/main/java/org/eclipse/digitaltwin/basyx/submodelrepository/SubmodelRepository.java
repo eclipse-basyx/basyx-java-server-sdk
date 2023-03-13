@@ -129,4 +129,36 @@ public interface SubmodelRepository {
 	 *             if the SubmodelElement or the Submodel does not exist
 	 */
 	public void setSubmodelElementValue(String submodelId, String smeIdShort, SubmodelElementValue value) throws ElementDoesNotExistException;
+
+	/**
+	 * Creates a SubmodelElement in a Submodel
+	 * 
+	 * @param submodelId
+	 *            the Submodel id
+	 * @param smElement
+	 *            the SubmodelElement
+	 */
+	public void createSubmodelElement(String submodelId, SubmodelElement smElement);
+
+	/**
+	 * Creates a nested SubmodelElement 
+	 * 
+	 * @param submodelId
+	 *            the Submodel id
+	 * @param idShortPath
+	 *            the SubmodelElement IdShort
+	 * @param smElement
+	 *            the SubmodelElement
+	 */
+	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException;
+
+	/**
+	 * Deletes a SubmodelElement
+	 * 
+	 * @param submodelId
+	 *            the Submodel id
+	 * @param idShortPath
+	 *            the SubmodelElement IdShort
+	 */
+	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException;
 }
