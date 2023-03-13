@@ -22,41 +22,30 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.pathParsing;
+package org.eclipse.digitaltwin.basyx.submodelservice.pathparsing;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 
 /**
- * Implementation of {@link PathToken} for SubmodelElementCollection idShort
- * tokens
+ * Interface for idShortPath Tokens
  * 
  * @author fried
  *
  */
-public class CollectionIdShortPathToken implements PathToken {
+public interface PathToken {
 
-	private final String token;
+	/**
+	 * Retrieve the Nested SubmodelElement from the rootElement
+	 * 
+	 * @param rootElement the SubmodelElement, the nested SubmodelElment is in
+	 * @return the nested SubmodelElement in the rootElement
+	 */
+	public SubmodelElement getSubmodelElement(SubmodelElement rootElement);
 
-	public CollectionIdShortPathToken(String token) {
-		this.token = token;
-	}
-
-	@Override
-	public SubmodelElement getSubmodelElement(SubmodelElement rootElement) {
-		if (!(rootElement instanceof SubmodelElementCollection))
-			throw new ElementDoesNotExistException(token);
-
-		SubmodelElementCollection smc = (SubmodelElementCollection) rootElement;
-
-		return smc.getValue().stream().filter(sme -> sme.getIdShort().equals(token)).findAny()
-				.orElseThrow(() -> new ElementDoesNotExistException(token));
-	}
-
-	@Override
-	public String getToken() {
-		return token;
-	}
-
+	/**
+	 * Returns the token
+	 * 
+	 * @return the token
+	 */
+	public String getToken();
 }

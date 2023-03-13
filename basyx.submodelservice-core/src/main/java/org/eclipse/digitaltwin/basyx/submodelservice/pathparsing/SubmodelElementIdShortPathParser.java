@@ -22,7 +22,7 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.pathParsing;
+package org.eclipse.digitaltwin.basyx.submodelservice.pathparsing;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +69,7 @@ public class SubmodelElementIdShortPathParser {
 			for (int ix = indices.size() - 1; ix >= 0; ix--) {
 				tokenStack.push(new ListIndexPathToken(indices.get(ix).toString()));
 			}
-			tokenStack.push(new CollectionIdShortPathToken(getIdShortWithoutIndices(splitted[i])));
+			tokenStack.push(new HierarchicalSubmodelElementIdShortPathToken(getIdShortWithoutIndices(splitted[i])));
 		}
 		return tokenStack;
 	}
@@ -78,14 +78,14 @@ public class SubmodelElementIdShortPathParser {
 		List<Integer> indices = new ArrayList<>();
 		while (hasOpeningBrackets(idShortToken)) {
 
-			int occurance = getIndexOfOpeningBracket(idShortToken);
+			int occurrence = getIndexOfOpeningBracket(idShortToken);
 			int end = getIndexOfClosingBracket(idShortToken);
 
 			throwExceptionIfClosingBracketIsMissing(end);
 			throwExceptionIfInvalidCharacterAfterClosingBracket(idShortToken, end);
-			throwExceptionIfOpeningBracketIsInsideBrackets(idShortToken, occurance, end);
+			throwExceptionIfOpeningBracketIsInsideBrackets(idShortToken, occurrence, end);
 
-			int index = extractIndex(idShortToken, occurance, end);
+			int index = extractIndex(idShortToken, occurrence, end);
 
 			indices.add(index);
 			idShortToken = idShortToken.substring(end + 1);
@@ -123,15 +123,15 @@ public class SubmodelElementIdShortPathParser {
 		}
 	}
 
-	private static void throwExceptionIfOpeningBracketIsInsideBrackets(String idShort, int occurance, int end)
+	private static void throwExceptionIfOpeningBracketIsInsideBrackets(String idShort, int occurrence, int end)
 			throws ElementDoesNotExistException {
-		if (idShort.substring(occurance + 1, end).indexOf('[') != -1) {
+		if (idShort.substring(occurrence + 1, end).indexOf('[') != -1) {
 			throw new ElementDoesNotExistException();
 		}
 	}
 
-	private static int extractIndex(String idShortToken, int occurance, int end) {
-		String currentIndice = idShortToken.substring(occurance + 1, end);
+	private static int extractIndex(String idShortToken, int occurrence, int end) {
+		String currentIndice = idShortToken.substring(occurrence + 1, end);
 		try {
 			int index = Integer.valueOf(currentIndice);
 			throwExceptionIfIndexIsInvalid(index);

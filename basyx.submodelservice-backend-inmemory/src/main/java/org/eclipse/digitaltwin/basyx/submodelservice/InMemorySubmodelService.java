@@ -30,7 +30,7 @@ import java.util.Collection;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.submodelservice.pathParsing.HierarchicalSubmodelElementParser;
+import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.HierarchicalSubmodelElementParser;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.factory.SubmodelElementValueMapperFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapper;

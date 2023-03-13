@@ -22,48 +22,55 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.pathParsing;
+package org.eclipse.digitaltwin.basyx.submodelservice.pathparsing;
 
+import java.util.Collection;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 
 /**
- * Implementation of {@link PathToken} for List Index Tokens
+ * Implementation of {@link PathToken} for submodel elements capable to
+ * aggregate another submodel elements in a hierarchy <b>except index based
+ * submodel element like {@link SubmodelElementList} which has separate
+ * implementation {@link ListIndexPathToken}</b>
  * 
- * @author fried
+ * @author fried, danish
  *
  */
-public class ListIndexPathToken implements PathToken {
+public class HierarchicalSubmodelElementIdShortPathToken implements PathToken {
 
 	private final String token;
 
-	public ListIndexPathToken(String token) {
+	public HierarchicalSubmodelElementIdShortPathToken(String token) {
 		this.token = token;
 	}
 
 	@Override
 	public SubmodelElement getSubmodelElement(SubmodelElement rootElement) {
-		if (!(rootElement instanceof SubmodelElementList))
-			throw new ElementDoesNotExistException(token);
+		if (rootElement instanceof SubmodelElementCollection) {
+			SubmodelElementCollection smc = (SubmodelElementCollection) rootElement;
 
-		SubmodelElementList sml = (SubmodelElementList) rootElement;
+			return filterSubmodelElement(smc.getValue());
+		} else if (rootElement instanceof Entity) {
+			Entity entity = (Entity) rootElement;
 
-		int index = getIndexFromToken(token);
-		if (index > sml.getValue().size() - 1) {
-			throw new ElementDoesNotExistException(rootElement.getIdShort() + token);
+			return filterSubmodelElement(entity.getStatements());
 		}
 
-		return sml.getValue().get(index);
-	}
-
-	private int getIndexFromToken(String token) {
-		return Integer.valueOf(token);
+		throw new ElementDoesNotExistException(token);
 	}
 
 	@Override
 	public String getToken() {
 		return token;
+	}
+
+	private SubmodelElement filterSubmodelElement(Collection<SubmodelElement> submodelElements) {
+		return submodelElements.stream().filter(sme -> sme.getIdShort().equals(token)).findAny()
+				.orElseThrow(() -> new ElementDoesNotExistException(token));
 	}
 
 }

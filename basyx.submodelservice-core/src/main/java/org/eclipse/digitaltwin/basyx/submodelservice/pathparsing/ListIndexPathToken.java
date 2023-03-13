@@ -22,30 +22,48 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.pathParsing;
+package org.eclipse.digitaltwin.basyx.submodelservice.pathparsing;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 
 /**
- * Interface for idShortPath Tokens
+ * Implementation of {@link PathToken} for List Index Tokens
  * 
  * @author fried
  *
  */
-public interface PathToken {
+public class ListIndexPathToken implements PathToken {
 
-	/**
-	 * Retrieve the Nested SubmodelElement from the rootElement
-	 * 
-	 * @param rootElement the SubmodelElement, the nested SubmodelElment is in
-	 * @return the nested SubmodelElement in the rootElement
-	 */
-	public SubmodelElement getSubmodelElement(SubmodelElement rootElement);
+	private final String token;
 
-	/**
-	 * Returns the token
-	 * 
-	 * @return the token
-	 */
-	public String getToken();
+	public ListIndexPathToken(String token) {
+		this.token = token;
+	}
+
+	@Override
+	public SubmodelElement getSubmodelElement(SubmodelElement rootElement) {
+		if (!(rootElement instanceof SubmodelElementList))
+			throw new ElementDoesNotExistException(token);
+
+		SubmodelElementList sml = (SubmodelElementList) rootElement;
+
+		int index = getIndexFromToken(token);
+		if (index > sml.getValue().size() - 1) {
+			throw new ElementDoesNotExistException(rootElement.getIdShort() + token);
+		}
+		
+		return sml.getValue().get(index);
+	}
+
+	private int getIndexFromToken(String token) {
+		return Integer.valueOf(token);
+	}
+
+	@Override
+	public String getToken() {
+		return token;
+	}
+
 }

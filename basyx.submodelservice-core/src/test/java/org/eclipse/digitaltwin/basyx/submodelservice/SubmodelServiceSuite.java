@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
+import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
 import org.eclipse.digitaltwin.aas4j.v3.model.ModelingKind;
@@ -42,6 +43,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEntity;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangString;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
@@ -130,7 +132,7 @@ public abstract class SubmodelServiceSuite {
 		submodelElementsList.add(submodelElementList);
 
 		operationalData.setSubmodelElements(submodelElementsList);
-		Object submodelElement = getSubmodelService(operationalData).getSubmodelElement("testList[0]");
+		SubmodelElement submodelElement = getSubmodelService(operationalData).getSubmodelElement("testList[0]");
 		assertTrue(submodelElement instanceof Property);
 	}
 
@@ -140,18 +142,30 @@ public abstract class SubmodelServiceSuite {
 
 		List<SubmodelElement> submodelElementsCollection = new ArrayList<>();
 
-		SubmodelElementCollection submodelElementCollection = new DefaultSubmodelElementCollection();
-		submodelElementCollection.setIdShort("test");
+		SubmodelElementCollection submodelElementCollection = createDummySubmodelElementCollection("test");
+		
 		List<SubmodelElement> listElements = new ArrayList<>();
-		Property testProperty = new DefaultProperty.Builder().kind(ModelingKind.INSTANCE).idShort("test")
-				.category("cat1").value("123").valueType(DataTypeDefXsd.INTEGER).build();
+		Property testProperty = createDummyProperty("test");
 
 		listElements.add(testProperty);
 		submodelElementCollection.setValue(listElements);
 		submodelElementsCollection.add(submodelElementCollection);
 		operationalData.setSubmodelElements(submodelElementsCollection);
 
-		Object submodelElement = getSubmodelService(operationalData).getSubmodelElement("test.test");
+		SubmodelElement submodelElement = getSubmodelService(operationalData).getSubmodelElement("test.test");
+
+		assertTrue(submodelElement instanceof DefaultProperty);
+	}
+	
+	@Test
+	public void getHierarchicalSubmodelElementFromEntity() {
+		Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
+
+		List<SubmodelElement> submodelElementsCollection = createHierarchicalSubmodelElement();
+		
+		operationalData.setSubmodelElements(submodelElementsCollection);
+
+		SubmodelElement submodelElement = getSubmodelService(operationalData).getSubmodelElement("test.testList[0].testProperty");
 
 		assertTrue(submodelElement instanceof DefaultProperty);
 	}
@@ -287,6 +301,44 @@ public abstract class SubmodelServiceSuite {
 				+ DummySubmodelFactory.SUBMODEL_ELEMENT_FIRST_LIST + "[0][0]."
 				+ DummySubmodelFactory.SUBMODEL_ELEMENT_FIRST_ID_SHORT;
 		return idShortPath;
+	}
+	
+	private List<SubmodelElement> createHierarchicalSubmodelElement() {
+		List<SubmodelElement> submodelElementsCollection = new ArrayList<>();
+
+		SubmodelElementCollection submodelElementCollection = createDummySubmodelElementCollection("test");
+		
+		SubmodelElementList submodelElementList = createDummySubmodelElementList("testList");
+		
+		Property testProperty = createDummyProperty("testProperty");
+		
+		Entity entity = createDummyEntityWithStatement(testProperty, "entityIdShort");
+		
+		submodelElementList.setValue(Arrays.asList(entity));
+
+		submodelElementCollection.setValue(Arrays.asList(submodelElementList));
+		
+		submodelElementsCollection.add(submodelElementCollection);
+		
+		return submodelElementsCollection;
+	}
+	
+	private DefaultSubmodelElementList createDummySubmodelElementList(String idShort) {
+		return new DefaultSubmodelElementList.Builder().idShort(idShort).build();
+	}
+
+	private SubmodelElementCollection createDummySubmodelElementCollection(String idShort) {
+		return new DefaultSubmodelElementCollection.Builder().idShort(idShort).build();
+	}
+
+	private DefaultEntity createDummyEntityWithStatement(SubmodelElement submodelElement, String idShort) {
+		return new DefaultEntity.Builder().kind(ModelingKind.INSTANCE).idShort(idShort)
+				.category("cat1").statements(submodelElement).build();
+	}
+
+	private DefaultProperty createDummyProperty(String idShort) {
+		return new DefaultProperty.Builder().kind(ModelingKind.INSTANCE).idShort(idShort)
+				.category("cat1").value("123").valueType(DataTypeDefXsd.INTEGER).build();
 	}
 
 }

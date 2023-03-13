@@ -22,7 +22,7 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.pathParsing;
+package org.eclipse.digitaltwin.basyx.submodelservice.pathparsing;
 
 import java.util.Stack;
 

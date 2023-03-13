@@ -29,8 +29,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.Stack;
 
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.submodelservice.pathParsing.PathToken;
-import org.eclipse.digitaltwin.basyx.submodelservice.pathParsing.SubmodelElementIdShortPathParser;
+import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.PathToken;
+import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.SubmodelElementIdShortPathParser;
 import org.junit.Test;
 
 /**
