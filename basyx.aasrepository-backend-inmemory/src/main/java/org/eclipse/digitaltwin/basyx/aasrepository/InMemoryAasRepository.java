@@ -39,7 +39,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 /**
  * In-memory implementation of the AasRepository
  *
- * @author schnicke
+ * @author schnicke, danish
  *
  */
 public class InMemoryAasRepository implements AasRepository {
@@ -85,8 +85,10 @@ public class InMemoryAasRepository implements AasRepository {
 	}
 
 	@Override
-	public void updateAas(AssetAdministrationShell aas) {
-		throw new RuntimeException("Not implemented");
+	public void updateAas(String aasId, AssetAdministrationShell aas) {
+		throwIfAasDoesNotExist(aasId);
+		
+		aasServices.put(aasId, aasServiceFactory.create(aas));
 	}
 
 	private void throwIfAasExists(AssetAdministrationShell aas) {

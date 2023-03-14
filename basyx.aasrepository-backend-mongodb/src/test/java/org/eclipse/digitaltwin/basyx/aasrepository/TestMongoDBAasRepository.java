@@ -28,8 +28,11 @@ package org.eclipse.digitaltwin.basyx.aasrepository;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
@@ -39,7 +42,7 @@ import com.mongodb.client.MongoClients;
 
 /**
  * 
- * @author schnicke
+ * @author schnicke, danish
  *
  */
 public class TestMongoDBAasRepository extends AasRepositorySuite {
@@ -64,11 +67,47 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	@Test
 	public void aasIsPersisted() {
 		AasRepositoryFactory repoFactory = getAasRepositoryFactory();
-		AssetAdministrationShell expectedShell = createDummyShellOnRepo(repoFactory);
+		AssetAdministrationShell expectedShell = createDummyShellOnRepo(repoFactory.create());
 		AssetAdministrationShell retrievedShell = getAasFromNewBackendInstance(repoFactory, expectedShell.getId());
 
 		assertEquals(expectedShell, retrievedShell);
 
+	}
+	
+	@Test
+	public void updatedAasIsPersisted() {
+		AasRepositoryFactory repoFactory = getAasRepositoryFactory();
+		
+		AasRepository mongoDBAasRepository = repoFactory.create();
+		
+		AssetAdministrationShell expectedShell = createDummyShellOnRepo(mongoDBAasRepository);
+		
+		addSubmodelReferenceToAas(expectedShell);
+		
+		updateShellOnRepo(mongoDBAasRepository, expectedShell.getId(), expectedShell);
+		
+		AssetAdministrationShell retrievedShell = getAasFromNewBackendInstance(repoFactory, expectedShell.getId());
+
+		assertEquals(expectedShell, retrievedShell);
+	}
+	
+	@Test(expected = ElementDoesNotExistException.class)
+	public void updateNonExistingAas() {
+		AasRepositoryFactory repoFactory = getAasRepositoryFactory();
+		
+		AasRepository mongoDBAasRepository = repoFactory.create();
+		
+		AssetAdministrationShell expectedShell = createDummyShellOnRepo(mongoDBAasRepository);
+		
+		updateShellOnRepo(mongoDBAasRepository, "nonExistingAasId", expectedShell);
+	}
+
+	private void addSubmodelReferenceToAas(AssetAdministrationShell expectedShell) {
+		expectedShell.setSubmodels(Arrays.asList(AasRepositorySuite.createDummyReference("dummySubmodel")));
+	}
+
+	private void updateShellOnRepo(AasRepository aasRepository, String aasId, AssetAdministrationShell expectedShell) {
+		aasRepository.updateAas(aasId, expectedShell);
 	}
 
 	private AssetAdministrationShell getAasFromNewBackendInstance(AasRepositoryFactory repoFactory, String shellId) {
@@ -76,12 +115,10 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		return retrievedShell;
 	}
 
-	private AssetAdministrationShell createDummyShellOnRepo(AasRepositoryFactory repoFactory) {
-		AasRepository repo = repoFactory.create();
-		
+	private AssetAdministrationShell createDummyShellOnRepo(AasRepository aasRepository) {
 		AssetAdministrationShell expectedShell = new DefaultAssetAdministrationShell.Builder().id("dummy").build();
 		
-		repo.createAas(expectedShell);
+		aasRepository.createAas(expectedShell);
 		return expectedShell;
 	}
 

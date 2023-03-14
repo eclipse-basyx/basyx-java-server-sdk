@@ -79,8 +79,8 @@ public class MqttAasRepository implements AasRepository {
 	}
 
 	@Override
-	public void updateAas(AssetAdministrationShell aas) {
-		decorated.updateAas(aas);
+	public void updateAas(String aasId, AssetAdministrationShell aas) {
+		decorated.updateAas(aasId, aas);
 		aasUpdated(aas, getName());
 	}
 

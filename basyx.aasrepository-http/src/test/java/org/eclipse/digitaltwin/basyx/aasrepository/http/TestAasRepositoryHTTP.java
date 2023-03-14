@@ -187,10 +187,46 @@ public class TestAasRepositoryHTTP {
 		assertEquals(404, deleteResponse.getCode());
 	}
 
+	@Test
+	public void updateAAS() throws JsonMappingException, JsonProcessingException, ParseException, IOException {
+		createDummyAasOnServer();
+		
+		String expectedAasJSON = getUpdatedAasJSONString();
+
+		CloseableHttpResponse creationResponse = updateSpecificAas(dummyAasId, expectedAasJSON);
+		
+		assertEquals(HttpStatus.NO_CONTENT.value(), creationResponse.getCode());
+
+		String aasJson = requestSpecificAasJSON(dummyAasId);
+		
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedAasJSON, aasJson);
+	}
+	
+	@Test
+	public void updateNonExistingAas() throws IOException {
+		String url = getSpecificAasAccessURL("nonExisting");
+		
+		String expectedAasJSON = getAasJSONString();
+		
+		CloseableHttpResponse updateResponse = BaSyxHttpTestUtils.executePutOnURL(url, expectedAasJSON);
+		
+		assertEquals(HttpStatus.NOT_FOUND.value(), updateResponse.getCode());
+	}
+
+	private CloseableHttpResponse updateSpecificAas(String dummyaasid, String aasJsonContent) throws IOException {
+		return BaSyxHttpTestUtils.executePutOnURL(getSpecificAasAccessURL(dummyaasid), aasJsonContent);
+	}
+
 	private String createDummyAasOnServer() throws FileNotFoundException, IOException {
 		String aasJsonContent = getAasJSONString();
 		createAasOnServer(aasJsonContent);
 		return aasJsonContent;
+	}
+	
+	private String requestSpecificAasJSON(String aasId) throws IOException, ParseException {
+		CloseableHttpResponse response = getSpecificAas(aasId);
+
+		return BaSyxHttpTestUtils.getResponseAsString(response);
 	}
 
 	private String getSpecificSubmodelReferenceUrl() {
@@ -235,6 +271,10 @@ public class TestAasRepositoryHTTP {
 
 	private String getSingleSubmodelReference() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelReference.json");
+	}
+	
+	private String getUpdatedAasJSONString() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:UpdatedAasSimple.json");
 	}
 
 	private String getSingleSubmodelReferenceAsJsonArray() throws FileNotFoundException, IOException {

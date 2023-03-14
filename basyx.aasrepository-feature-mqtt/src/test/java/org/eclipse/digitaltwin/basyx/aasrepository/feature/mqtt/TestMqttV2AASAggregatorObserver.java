@@ -28,13 +28,17 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
 import org.eclipse.digitaltwin.basyx.aasrepository.InMemoryAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt.encoding.Base64URLEncoder;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt.encoding.URLEncoder;
@@ -55,7 +59,7 @@ import io.moquette.broker.config.ResourceLoaderConfig;
 /**
  * Tests events emitting with the MqttAASAggregatorObserver
  *
- * @author haque, siebert, schnicke
+ * @author haque, siebert, schnicke, danish
  *
  */
 public class TestMqttV2AASAggregatorObserver {
@@ -85,16 +89,29 @@ public class TestMqttV2AASAggregatorObserver {
 
 	@Test
 	public void createAasEvent() throws DeserializationException {
-		AssetAdministrationShell shell = createAasDummy();
+		AssetAdministrationShell shell = createAasDummy("createAasEventId");
 		aasRepository.createAas(shell);
 
 		assertEquals(topicFactory.createCreateAASTopic(aasRepository.getName()), listener.lastTopic);
 		assertEquals(shell, deserializePayload(listener.lastPayload));
 	}
+	
+	@Test
+	public void updateAasEvent() throws DeserializationException {
+		AssetAdministrationShell shell = createAasDummy("updateAasEventId");
+		aasRepository.createAas(shell);
+		
+		addSubmodelReferenceToAas(shell);
+		
+		aasRepository.updateAas(shell.getId(), shell);
+
+		assertEquals(topicFactory.createUpdateAASTopic(aasRepository.getName()), listener.lastTopic);
+		assertEquals(shell, deserializePayload(listener.lastPayload));
+	}
 
 	@Test
 	public void deleteAasEvent() throws DeserializationException {
-		AssetAdministrationShell shell = createAasDummy();
+		AssetAdministrationShell shell = createAasDummy("deleteAasEventId");
 		aasRepository.createAas(shell);
 		aasRepository.deleteAas(shell.getId());
 
@@ -105,9 +122,14 @@ public class TestMqttV2AASAggregatorObserver {
 	private AssetAdministrationShell deserializePayload(String payload) throws DeserializationException {
 		return new JsonDeserializer().readReferable(payload, AssetAdministrationShell.class);
 	}
+	
+	private void addSubmodelReferenceToAas(AssetAdministrationShell shell) {
+		List<Reference> submodelReferences = Arrays.asList(AasRepositorySuite.createDummyReference("dummySubmodelId1"));
+		shell.setSubmodels(submodelReferences);
+	}
 
-	private AssetAdministrationShell createAasDummy() {
-		return new DefaultAssetAdministrationShell.Builder().id("arbitrary").build();
+	private AssetAdministrationShell createAasDummy(String aasId) {
+		return new DefaultAssetAdministrationShell.Builder().id(aasId).build();
 	}
 
 	private static AasRepository createMqttAasRepository(MqttClient client) {

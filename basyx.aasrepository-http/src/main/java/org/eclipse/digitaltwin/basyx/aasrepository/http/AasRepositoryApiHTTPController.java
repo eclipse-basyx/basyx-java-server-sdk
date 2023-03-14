@@ -59,7 +59,7 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 	private static final Logger log = LoggerFactory.getLogger(AasRepositoryApiHTTPController.class);
 
 	private final ObjectMapper objectMapper;
-
+	
 	private final HttpServletRequest request;
 
 	private final AasRepository aasRepository;
@@ -89,12 +89,8 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 	@Override
 	public ResponseEntity<List<Reference>> getAllSubmodelReferences(
 			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier) {
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
-			List<Reference> submodelReferences = aasRepository.getSubmodelReferences(aasIdentifier.getIdentifier());
-			return new ResponseEntity<List<Reference>>(submodelReferences, HttpStatus.OK);
-		}
-		return new ResponseEntity<List<Reference>>(HttpStatus.BAD_REQUEST);
+		List<Reference> submodelReferences = aasRepository.getSubmodelReferences(aasIdentifier.getIdentifier());
+		return new ResponseEntity<List<Reference>>(submodelReferences, HttpStatus.OK);
 	}
 
 	@Override
@@ -102,17 +98,12 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the request or response kind of the resource", schema = @Schema(allowableValues = { "normal", "trimmed", "value", "reference",
 					"path" }, defaultValue = "normal")) @Valid @RequestParam(value = "content", required = false, defaultValue = "normal") String content) {
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<AssetAdministrationShell>(objectMapper.readValue("\"\"", AssetAdministrationShell.class), HttpStatus.NOT_IMPLEMENTED);
-			} catch (IOException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<AssetAdministrationShell>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+		try {
+			return new ResponseEntity<AssetAdministrationShell>(objectMapper.readValue("\"\"", AssetAdministrationShell.class), HttpStatus.NOT_IMPLEMENTED);
+		} catch (IOException e) {
+			log.error("Couldn't serialize response for content type application/json", e);
+			return new ResponseEntity<AssetAdministrationShell>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-		return new ResponseEntity<AssetAdministrationShell>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	@Override
@@ -124,43 +115,24 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 	@Override
 	public ResponseEntity<AssetAdministrationShell> postAssetAdministrationShell(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Asset Administration Shell object", required = true, schema = @Schema()) @Valid @RequestBody AssetAdministrationShell body) {
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
-			aasRepository.createAas(body);
-			return new ResponseEntity<AssetAdministrationShell>(body, HttpStatus.CREATED);
-		}
-
-		return new ResponseEntity<AssetAdministrationShell>(HttpStatus.BAD_REQUEST);
+		aasRepository.createAas(body);
+		return new ResponseEntity<AssetAdministrationShell>(body, HttpStatus.CREATED);
 	}
 
 	@Override
 	public ResponseEntity<Reference> postSubmodelReference(
 			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Reference to the Submodel", required = true, schema = @Schema()) @Valid @RequestBody Reference body) {
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
-			aasRepository.addSubmodelReference(aasIdentifier.getIdentifier(), body);
-			return new ResponseEntity<Reference>(body, HttpStatus.CREATED);
-		}
-		return new ResponseEntity<Reference>(HttpStatus.BAD_REQUEST);
-	}
-
-	@Override
-	public ResponseEntity<Void> putAssetAdministrationShell(
-			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,
-			@Parameter(in = ParameterIn.DEFAULT, description = "Asset Administration Shell object", required = true, schema = @Schema()) @Valid @RequestBody AssetAdministrationShell body,
-			@Parameter(in = ParameterIn.QUERY, description = "Determines the request or response kind of the resource", schema = @Schema(allowableValues = { "normal", "trimmed", "value", "reference",
-					"path" }, defaultValue = "normal")) @Valid @RequestParam(value = "content", required = false, defaultValue = "normal") String content) {
-		String accept = request.getHeader("Accept");
-		return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+		aasRepository.addSubmodelReference(aasIdentifier.getIdentifier(), body);
+		return new ResponseEntity<Reference>(body, HttpStatus.CREATED);
 	}
 
 	@Override
 	public ResponseEntity<Void> putAssetAdministrationShellById(
 			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Asset Administration Shell object", required = true, schema = @Schema()) @Valid @RequestBody AssetAdministrationShell body) {
-		String accept = request.getHeader("Accept");
-		return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+		aasRepository.updateAas(aasIdentifier.getIdentifier(), body);
+		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 
 	@Override

@@ -95,8 +95,8 @@ public class MongoDBAasRepository implements AasRepository {
 
 
 	@Override
-	public void updateAas(AssetAdministrationShell aas) {
-		Query query = new Query().addCriteria(Criteria.where(IDJSONPATH).is(aas.getId()));
+	public void updateAas(String aasId, AssetAdministrationShell aas) {
+		Query query = new Query().addCriteria(Criteria.where(IDJSONPATH).is(aasId));
 		if (!mongoTemplate.exists(query, AssetAdministrationShell.class, collectionName)) {
 			throw new ElementDoesNotExistException(aas.getId());
 		} else {
@@ -115,7 +115,7 @@ public class MongoDBAasRepository implements AasRepository {
 		InMemoryAasService service = new InMemoryAasService(getAas(aasId));
 		service.addSubmodelReference(submodelReference);
 
-		updateAas(service.getAAS());
+		updateAas(aasId, service.getAAS());
 	}
 
 	@Override
@@ -123,6 +123,6 @@ public class MongoDBAasRepository implements AasRepository {
 		InMemoryAasService service = new InMemoryAasService(getAas(aasId));
 		service.removeSubmodelReference(submodelId);
 
-		updateAas(service.getAAS());
+		updateAas(aasId, service.getAAS());
 	}
 }
