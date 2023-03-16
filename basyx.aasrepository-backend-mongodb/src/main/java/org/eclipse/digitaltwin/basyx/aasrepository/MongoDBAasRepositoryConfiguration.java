@@ -23,25 +23,32 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.component;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+package org.eclipse.digitaltwin.basyx.aasrepository;
+
+import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * Creates and starts the AasRepository off-shelf-component
+ * Provides a InMemoryAasServiceFactory for usage in the MongoDB Aas Repository
+ * backend.<br>
+ * <br>
+ * This is needed to ensure that the AasServiceFeatures are processed correctly
+ * when utilizing MongoDb
  * 
  * @author schnicke
  *
  */
-@SpringBootApplication(
-		scanBasePackages = "org.eclipse.digitaltwin.basyx", 
-		exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
-public class AasRepositoryComponent {
-
-	public static void main(String[] args) {
-		SpringApplication.run(AasRepositoryComponent.class, args);
+@Configuration
+@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
+public class MongoDBAasRepositoryConfiguration {
+	@ConditionalOnMissingBean
+	@Bean
+	public AasServiceFactory getAasServiceFactory() {
+		return new InMemoryAasServiceFactory();
 	}
 }

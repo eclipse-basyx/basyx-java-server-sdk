@@ -32,8 +32,10 @@ import org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt.encoding.URLEnco
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
+@ConditionalOnExpression("#{${" + MqttAasRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
 @Component
 public class MqttAasRepositoryFeature implements AasRepositoryFeature {
 	public final static String FEATURENAME = "basyx.aasrepository.feature.mqtt";

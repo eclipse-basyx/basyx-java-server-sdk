@@ -29,7 +29,8 @@ import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasService;
+import org.eclipse.digitaltwin.basyx.aasservice.AasService;
+import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -47,13 +48,16 @@ import com.mongodb.client.result.DeleteResult;
  *
  */
 public class MongoDBAasRepository implements AasRepository {
-	private MongoTemplate mongoTemplate;
-	private String collectionName;
 	private static String IDJSONPATH = "id";
 
-	public MongoDBAasRepository(MongoTemplate mongoTemplate, String collectionName) {
+	private MongoTemplate mongoTemplate;
+	private String collectionName;
+	private AasServiceFactory aasServiceFactory;
+
+	public MongoDBAasRepository(MongoTemplate mongoTemplate, String collectionName, AasServiceFactory aasServiceFactory) {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
+		this.aasServiceFactory = aasServiceFactory;
 		configureIndexForAasId(mongoTemplate);
 	}
 
@@ -108,12 +112,12 @@ public class MongoDBAasRepository implements AasRepository {
 
 	@Override
 	public List<Reference> getSubmodelReferences(String aasId) {
-		return new InMemoryAasService(getAas(aasId)).getSubmodelReferences();
+		return aasServiceFactory.create(getAas(aasId)).getSubmodelReferences();
 	}
 
 	@Override
 	public void addSubmodelReference(String aasId, Reference submodelReference) {
-		InMemoryAasService service = new InMemoryAasService(getAas(aasId));
+		AasService service = getAasService(aasId);
 		service.addSubmodelReference(submodelReference);
 
 		updateAas(aasId, service.getAAS());
@@ -121,7 +125,7 @@ public class MongoDBAasRepository implements AasRepository {
 
 	@Override
 	public void removeSubmodelReference(String aasId, String submodelId) {
-		InMemoryAasService service = new InMemoryAasService(getAas(aasId));
+		AasService service = getAasService(aasId);
 		service.removeSubmodelReference(submodelId);
 
 		updateAas(aasId, service.getAAS());
@@ -129,7 +133,7 @@ public class MongoDBAasRepository implements AasRepository {
 
 	@Override
 	public void setAssetInformation(String aasId, AssetInformation aasInfo) throws ElementDoesNotExistException {
-		InMemoryAasService service = new InMemoryAasService(getAas(aasId));
+		AasService service = getAasService(aasId);
 		service.setAssetInformation(aasInfo);
 
 		updateAas(aasId, service.getAAS());
@@ -140,4 +144,7 @@ public class MongoDBAasRepository implements AasRepository {
 		return this.getAas(aasId).getAssetInformation();
 	}
 
+	private AasService getAasService(String aasId) {
+		return aasServiceFactory.create(getAas(aasId));
+	}
 }

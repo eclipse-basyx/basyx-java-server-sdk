@@ -26,6 +26,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
+import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -37,20 +38,22 @@ import org.springframework.stereotype.Component;
  * 
  * @author schnicke
  */
-@ConditionalOnExpression("'${basyx.aasrepository.backend}'.equals('MongoDB') or '${basyx.backend}'.equals('MongoDB')")
 @Component
+@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
 public class MongoDBAasRepositoryFactory implements AasRepositoryFactory {
 	private MongoTemplate mongoTemplate;
 	private String collectionName;
+	private AasServiceFactory aasServiceFactory;
 
 	@Autowired
-	public MongoDBAasRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.aasrepository.mongodb.collectionName}") String collectionName) {
+	public MongoDBAasRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName, AasServiceFactory aasServiceFactory) {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
+		this.aasServiceFactory = aasServiceFactory;
 	}
 
 	@Override
 	public AasRepository create() {
-		return new MongoDBAasRepository(mongoTemplate, collectionName);
+		return new MongoDBAasRepository(mongoTemplate, collectionName, aasServiceFactory);
 	}
 }
