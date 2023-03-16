@@ -32,7 +32,7 @@ import java.util.Arrays;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
@@ -57,7 +57,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 
 		clearDatabase(template);
 
-		return new MongoDBAasRepositoryFactory(template, COLLECTION);
+		return new MongoDBAasRepositoryFactory(template, COLLECTION, new InMemoryAasServiceFactory());
 	}
 
 	private void clearDatabase(MongoTemplate template) {
@@ -84,30 +84,15 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		
 		addSubmodelReferenceToAas(expectedShell);
 		
-		updateShellOnRepo(mongoDBAasRepository, expectedShell.getId(), expectedShell);
+		mongoDBAasRepository.updateAas(expectedShell.getId(), expectedShell);
 		
 		AssetAdministrationShell retrievedShell = getAasFromNewBackendInstance(repoFactory, expectedShell.getId());
 
 		assertEquals(expectedShell, retrievedShell);
 	}
 	
-	@Test(expected = ElementDoesNotExistException.class)
-	public void updateNonExistingAas() {
-		AasRepositoryFactory repoFactory = getAasRepositoryFactory();
-		
-		AasRepository mongoDBAasRepository = repoFactory.create();
-		
-		AssetAdministrationShell expectedShell = createDummyShellOnRepo(mongoDBAasRepository);
-		
-		updateShellOnRepo(mongoDBAasRepository, "nonExistingAasId", expectedShell);
-	}
-
 	private void addSubmodelReferenceToAas(AssetAdministrationShell expectedShell) {
 		expectedShell.setSubmodels(Arrays.asList(AasRepositorySuite.createDummyReference("dummySubmodel")));
-	}
-
-	private void updateShellOnRepo(AasRepository aasRepository, String aasId, AssetAdministrationShell expectedShell) {
-		aasRepository.updateAas(aasId, expectedShell);
 	}
 
 	private AssetAdministrationShell getAasFromNewBackendInstance(AasRepositoryFactory repoFactory, String shellId) {
