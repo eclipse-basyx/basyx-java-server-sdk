@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 
@@ -22,7 +24,10 @@ public class DummyAssetAdministrationShell {
 	public static Reference submodelReference = buildDummyReference();
 
 	public static AssetAdministrationShell getDummyShell() {
-		return new DefaultAssetAdministrationShell.Builder().id("arbitrary").build();
+		return new DefaultAssetAdministrationShell.Builder().id("arbitrary")
+				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
+						.globalAssetId(buildDummyReference()).build())
+				.build();
 	}
 
 	/**

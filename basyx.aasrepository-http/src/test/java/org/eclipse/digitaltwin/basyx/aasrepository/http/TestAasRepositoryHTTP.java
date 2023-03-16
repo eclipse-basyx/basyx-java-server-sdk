@@ -184,7 +184,58 @@ public class TestAasRepositoryHTTP {
 		createDummyAasOnServer();
 		String url = getSpecificSubmodelReferenceUrl();
 		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(url);
-		assertEquals(404, deleteResponse.getCode());
+		assertEquals(HttpStatus.NOT_FOUND.value(), deleteResponse.getCode());
+	}
+
+	@Test
+	public void getAssetInformationByIdentifier() throws FileNotFoundException, IOException, ParseException {
+		createDummyAasOnServer();
+		String url = getSpecificAssetInformationAccessURL(dummyAasId);
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(url);
+
+		String expected = BaSyxHttpTestUtils.readJSONStringFromFile("classpath:assetInfoSimple.json");
+
+		BaSyxHttpTestUtils.assertSameJSONContent(expected, BaSyxHttpTestUtils.getResponseAsString(response));
+	}
+
+
+	@Test
+	public void getNonExistingAssetInformationByIdentifier() throws FileNotFoundException, IOException, ParseException {
+		String url = getSpecificAasAccessURL("nonExisting") + "/asset-information";
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(url);
+
+		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
+	}
+
+	@Test
+	public void postAssetInformationByIdentifier() throws FileNotFoundException, IOException, ParseException {
+		createDummyAasOnServer();
+
+		String json = BaSyxHttpTestUtils.readJSONStringFromFile("classpath:exampleAssetInfo.json");
+
+		BaSyxHttpTestUtils.executePostOnServer(getSpecificAssetInformationAccessURL(dummyAasId), json);
+
+		CloseableHttpResponse response = BaSyxHttpTestUtils
+				.executeGetOnURL(getSpecificAssetInformationAccessURL(dummyAasId));
+
+		BaSyxHttpTestUtils.assertSameJSONContent(json, BaSyxHttpTestUtils.getResponseAsString(response));
+	}
+
+	@Test
+	public void postAssetInformationToNonExistingAasByIdentifier()
+			throws FileNotFoundException, IOException, ParseException {
+
+		String json = BaSyxHttpTestUtils.readJSONStringFromFile("classpath:exampleAssetInfo.json");
+
+		CloseableHttpResponse response = BaSyxHttpTestUtils
+				.executeGetOnURL(getSpecificAssetInformationAccessURL("nonExisting"));
+
+		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
+	}
+	
+
+	private String getSpecificAssetInformationAccessURL(String aasID) {
+		return getSpecificAasAccessURL(aasID) + "/asset-information";
 	}
 
 	@Test

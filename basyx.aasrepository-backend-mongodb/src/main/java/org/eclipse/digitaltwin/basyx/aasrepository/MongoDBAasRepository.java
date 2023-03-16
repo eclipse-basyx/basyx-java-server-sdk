@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasService;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -125,4 +126,18 @@ public class MongoDBAasRepository implements AasRepository {
 
 		updateAas(aasId, service.getAAS());
 	}
+
+	@Override
+	public void setAssetInformation(String aasId, AssetInformation aasInfo) throws ElementDoesNotExistException {
+		InMemoryAasService service = new InMemoryAasService(getAas(aasId));
+		service.setAssetInformation(aasInfo);
+
+		updateAas(aasId, service.getAAS());
+	}
+	
+	@Override
+	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException{
+		return this.getAas(aasId).getAssetInformation();
+	}
+
 }

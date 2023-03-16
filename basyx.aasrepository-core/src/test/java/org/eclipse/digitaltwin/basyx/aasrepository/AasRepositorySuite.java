@@ -35,9 +35,12 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -56,6 +59,7 @@ public abstract class AasRepositorySuite {
 	private static final String AAS_1_ID = "aas1/s";
 	private AssetAdministrationShell aas1;
 	private AssetAdministrationShell aas2;
+	private AssetAdministrationShell aas3;
 	private List<AssetAdministrationShell> preconfiguredShells = new ArrayList<>();
 
 	private static final String DUMMY_SUBMODEL_ID = "dummySubmodelId";
@@ -71,8 +75,9 @@ public abstract class AasRepositorySuite {
 		aas1 = new DefaultAssetAdministrationShell.Builder().id(AAS_1_ID).submodels(createDummyReference(DUMMY_SUBMODEL_ID))
 				.build();
 
-		aas2 = new DefaultAssetAdministrationShell.Builder().id("aas2")
-				.build();
+		aas2 = new DefaultAssetAdministrationShell.Builder().id("aas2").build();
+		AssetInformation assetInfo = createDummyAssetInformation();
+		aas2.setAssetInformation(assetInfo);
 
 		preconfiguredShells.add(aas1);
 		preconfiguredShells.add(aas2);
@@ -182,9 +187,36 @@ public abstract class AasRepositorySuite {
 		aasRepo.updateAas("nonExisting", aas1);
 	}
 
+	@Test
+	public void getAssetInformation() {
+		assertEquals(aas2.getAssetInformation(), aasRepo.getAssetInformation(aas2.getId()));
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void getAssetInformationOfNonExistingAas() {
+		aasRepo.getAssetInformation("nonExisting");
+	}
+
+	@Test
+	public void setAssetInformation() {
+		AssetInformation assetInfo = createDummyAssetInformation();
+		aasRepo.setAssetInformation(aas2.getId(), assetInfo);
+		assertEquals(assetInfo, aasRepo.getAssetInformation(aas2.getId()));
+	}
+
+	@Test(expected = ElementDoesNotExistException.class)
+	public void setAssetInformationOfNonExistingAas() {
+		aasRepo.setAssetInformation("nonExisting", createDummyAssetInformation());
+	}	
+
 	public static Reference createDummyReference(String submodelId) {
 		return new DefaultReference.Builder()
 				.keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(submodelId).build()).build();
 	}
 
+	private AssetInformation createDummyAssetInformation() {
+		return new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetId(
+				new DefaultReference.Builder().keys(new DefaultKey.Builder().value("assetIDTestKey").build()).build())
+				.build();
+	}
 }

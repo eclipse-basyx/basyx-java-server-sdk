@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasservice.backend;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Key;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
@@ -73,6 +74,16 @@ public class InMemoryAasService implements AasService {
 		aas.getSubmodels().remove(specificSubmodelReference);
 	}
 
+	@Override
+	public void setAssetInformation(AssetInformation aasInfo) {
+		aas.setAssetInformation(aasInfo);		
+	}
+	
+	@Override
+	public AssetInformation getAssetInformation() {		
+		return aas.getAssetInformation();
+	}
+
 	private Reference getSubmodelReferenceById(String submodelId) {
 		List<Reference> submodelReferences = aas.getSubmodels();
 
@@ -84,4 +95,5 @@ public class InMemoryAasService implements AasService {
 
 		return specificSubmodelReference;
 	}
+	
 }

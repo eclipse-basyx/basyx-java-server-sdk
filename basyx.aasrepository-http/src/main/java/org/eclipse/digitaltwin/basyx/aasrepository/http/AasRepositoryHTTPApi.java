@@ -36,6 +36,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.springframework.http.ResponseEntity;
@@ -121,4 +122,20 @@ public interface AasRepositoryHTTPApi {
 	ResponseEntity<Void> putAssetAdministrationShellById(
 			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Asset Administration Shell object", required = true, schema = @Schema()) @Valid @RequestBody AssetAdministrationShell body);
+
+	@Operation(summary = "Updates the Asset Information of an existing Asset Administration Shell", description = "", tags = { "Asset Administration Shell Repository" })
+	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Asset Information updated successfully") })
+	@RequestMapping(value = "/shells/{aasIdentifier}/asset-information", consumes = { "application/json" }, method = RequestMethod.POST)
+	ResponseEntity<Void> postAssetInformationByAasId(
+			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,
+			@Parameter(in = ParameterIn.DEFAULT, description = "Asset Information object", required = true, schema = @Schema()) @Valid @RequestBody AssetInformation body);
+	
+	@Operation(summary = "Returns the Asset Information of a specific Asset Administration Shell", description = "", tags = { "Asset Administration Shell Repository" })
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Requested Asset Information of Asset Administration Shell", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AssetInformation.class))) })
+	@RequestMapping(value = "/shells/{aasIdentifier}/asset-information", produces = {
+			"application/json" }, method = RequestMethod.GET)
+	ResponseEntity<AssetInformation> getAssetInformationByAasId(
+			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier);
+
+	
 }

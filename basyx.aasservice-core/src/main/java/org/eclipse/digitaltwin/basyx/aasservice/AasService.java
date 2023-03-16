@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasservice;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 
 /**
@@ -60,4 +61,16 @@ public interface AasService {
 	 * Removes a Submodel Reference
 	 */
 	public void removeSubmodelReference(String submodelId);
+	
+	/**
+	 * Sets the asset-information of the AAS contained in the server
+	 */
+	public void setAssetInformation(AssetInformation aasInfo);
+	
+	/**
+	 * Retrieves the asset-information of the AAS contained in the server
+	 * 
+	 * @return the Asset-Information of the AAS
+	 */
+	public AssetInformation getAssetInformation();	
 }

@@ -32,8 +32,11 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
@@ -62,7 +65,7 @@ public abstract class AasServiceSuite {
 	}
 
 	@Test
-	public void aasRetrieval() {
+	public void getAas() {
 		assertEquals(aas, aasService.getAAS());
 	}
 
@@ -76,7 +79,7 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void addSubmodelReference() {
-		Submodel submodel = createNewSubmodel();
+		Submodel submodel = createDummySubmodel();
 
 		aasService.addSubmodelReference(submodel.getSemanticId());
 
@@ -101,11 +104,31 @@ public abstract class AasServiceSuite {
 		aasService.removeSubmodelReference("doesNotMatter");
 	}
 
+	@Test
+	public void getAssetInformation() {
+		assertEquals(aas.getAssetInformation(), aasService.getAssetInformation());
+	}
+	
+	@Test
+	public void setAssetInformation() {
+		AssetInformation assetInfo = createDummyAssetInformation();
+		aasService.setAssetInformation(assetInfo);
+		assertEquals(assetInfo, aasService.getAssetInformation());
+	}
+
+	private AssetInformation createDummyAssetInformation() {
+		AssetInformation assetInfo = new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
+				.globalAssetId(
+						new DefaultReference.Builder().keys(new DefaultKey.Builder().value("assetIDTestKey").build()).build())
+				.build();
+		return assetInfo;
+	}
+
 	private Reference getFirstSubmodelReference(List<Reference> submodelReferences) {
 		return submodelReferences.get(0);
 	}
 
-	private DefaultSubmodel createNewSubmodel() {
+	private DefaultSubmodel createDummySubmodel() {
 		return new DefaultSubmodel.Builder()
 				.semanticId(
 						new DefaultReference.Builder().keys(new DefaultKey.Builder().value("testKey").build()).build())

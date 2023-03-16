@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
@@ -99,6 +100,26 @@ public interface AasRepository {
 	 * @param submodelId
 	 */
 	public void removeSubmodelReference(String aasId, String submodelId);
+
+	/**
+	 * Sets the asset-information of a specific AAS
+	 * 
+	 * @param aasId
+	 *            the id of the AAS
+	 * 
+	 * @return the requested Asset-Information of the specified AAS
+	 */
+	public void setAssetInformation(String aasId, AssetInformation aasInfo) throws ElementDoesNotExistException;
+
+	/**
+	 * Retrieves the asset-information of a specific AAS
+	 * 
+	 * @param aasId
+	 *            the id of the AAS
+	 *            
+	 * @return the requested AAS 
+	 */
+	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException;
 
 	public default String getName() {
 		return "aasRepository-default-name";

@@ -1,0 +1,27 @@
+{
+		"assetKind":"Instance",
+		"globalAssetId":{
+			"keys":[
+				{
+					"type":"AssetAdministrationShell",
+					"value":"http://customer.com/assets/KHBVZJSQKIY"
+				}
+			],
+			"type":"GlobalReference"
+		},
+		"specificAssetIds":[
+			{
+				"name":"EquipmentID",
+				"value":"007",
+				"externalSubjectId":{
+					"keys":[
+						{
+							"type":"GlobalReference",
+							"value":"http://customer.com/Systems/ERP/007"
+						}
+					],
+					"type":"GlobalReference"
+				}
+			}
+		]
+}

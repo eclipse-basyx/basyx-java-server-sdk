@@ -30,6 +30,7 @@ import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -111,6 +112,16 @@ public class MqttAasRepository implements AasRepository {
 		decorated.removeSubmodelReference(aasId, submodelId);
 	}
 
+	@Override
+	public void setAssetInformation(String aasId, AssetInformation aasInfo) throws ElementDoesNotExistException {
+		decorated.setAssetInformation(aasId, aasInfo);
+	}
+	
+	@Override
+	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException{
+		return decorated.getAssetInformation(aasId);
+	}
+
 	private void aasCreated(AssetAdministrationShell shell, String repoId) {
 		sendMqttMessage(topicFactory.createCreateAASTopic(repoId), serializePayload(shell));
 	}
@@ -159,4 +170,5 @@ public class MqttAasRepository implements AasRepository {
 			return new MqttMessage(payload.getBytes());
 		}
 	}
+
 }
