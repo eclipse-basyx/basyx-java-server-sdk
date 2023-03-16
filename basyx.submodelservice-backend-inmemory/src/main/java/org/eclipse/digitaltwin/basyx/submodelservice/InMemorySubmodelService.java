@@ -26,11 +26,16 @@
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.HierarchicalSubmodelElementParser;
+import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.SubmodelElementIdShortHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.factory.SubmodelElementValueMapperFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapper;
@@ -46,6 +51,7 @@ public class InMemorySubmodelService implements SubmodelService {
 
 	private final Submodel submodel;
 	private HierarchicalSubmodelElementParser parser;
+	private SubmodelElementIdShortHelper helper = new SubmodelElementIdShortHelper();
 
 	/**
 	 * Creates the InMemory SubmodelService containing the passed Submodel
@@ -86,5 +92,83 @@ public class InMemorySubmodelService implements SubmodelService {
 		ValueMapper<SubmodelElementValue> valueMapper = submodelElementValueFactory.create(getSubmodelElement(idShort));
 		
 		valueMapper.setValue(value);	
+	}
+
+	@Override
+	public void createSubmodelElement(SubmodelElement submodelElement) throws CollidingIdentifierException {
+		throwIfSubmodelElementExists(submodelElement.getIdShort());
+		
+		List<SubmodelElement> smElements = submodel.getSubmodelElements();
+		smElements.add(submodelElement);
+		submodel.setSubmodelElements(smElements);
+	}
+	
+	private void throwIfSubmodelElementExists(String submodelElementId) {
+		try {
+			getSubmodelElement(submodelElementId);
+			throw new CollidingIdentifierException(submodelElementId); 
+		}catch(ElementDoesNotExistException e) {
+			return;
+		}
+	}
+
+	@Override
+	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException, CollidingIdentifierException {
+		throwIfSubmodelElementExists(submodelElement.getIdShort());
+		
+		SubmodelElement parentSme = parser.getSubmodelElementFromIdShortPath(idShortPath);
+		if(parentSme instanceof SubmodelElementList) {
+			SubmodelElementList list = (SubmodelElementList) parentSme;
+			List<SubmodelElement> submodelElements = list.getValue();
+			submodelElements.add(submodelElement);
+			list.setValue(submodelElements);
+			return;
+		}
+		if (parentSme instanceof SubmodelElementCollection) {
+			SubmodelElementCollection collection = (SubmodelElementCollection) parentSme;
+			Collection<SubmodelElement> submodelElements = collection.getValue();
+			submodelElements.add(submodelElement);
+			collection.setValue(submodelElements);
+			return;
+		}
+	}
+
+	@Override
+	public void deleteSubmodelElement(String idShortPath) throws ElementDoesNotExistException {
+		if (!helper.isNestedIdShortPath(idShortPath)) {
+			deleteFlatSubmodelElement(idShortPath);
+			return;
+		}
+		deleteNestedSubmodelElement(idShortPath);
+	}
+
+	private void deleteNestedSubmodelElement(String idShortPath) {
+		SubmodelElement sm = parser.getSubmodelElementFromIdShortPath(idShortPath);
+		if(helper.isDirectParentASubmodelElementList(idShortPath)) {
+			String collectionId = helper.extractDirectParentSubmodelElementListIdShort(idShortPath);
+			SubmodelElementList list = (SubmodelElementList) parser.getSubmodelElementFromIdShortPath(collectionId);
+			list.getValue().remove(sm);
+		}
+		String collectionId = helper.extractDirectParentSubmodelElementCollectionIdShort(idShortPath);
+		SubmodelElementCollection collection = (SubmodelElementCollection) parser.getSubmodelElementFromIdShortPath(collectionId);
+		collection.getValue().remove(sm);
+	}
+
+	private void deleteFlatSubmodelElement(String idShortPath) throws ElementDoesNotExistException {
+		int index = findIndexOfElementTobeDeleted(idShortPath);
+		if (index >= 0) {
+			submodel.getSubmodelElements().remove(index);
+			return;
+		}
+		throw new ElementDoesNotExistException();
+	}
+
+	private int findIndexOfElementTobeDeleted(String idShortPath) {
+		for (SubmodelElement sme : submodel.getSubmodelElements()) {
+			if (sme.getIdShort().equals(idShortPath)) {
+				return submodel.getSubmodelElements().indexOf(sme);
+			}
+		}
+		return -1;
 	}
 }

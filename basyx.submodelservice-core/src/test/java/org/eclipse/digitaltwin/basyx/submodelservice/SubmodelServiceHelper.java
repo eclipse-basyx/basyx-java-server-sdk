@@ -285,9 +285,11 @@ public class SubmodelServiceHelper {
 	}
 
 	public static List<SubmodelElement> getAllSubmodelElements() {
-		return Arrays.asList(createPropertySubmodelElement(), createRangeSubmodelElement(),
+		List<SubmodelElement> list = new ArrayList<>();
+		list.addAll(Arrays.asList(createPropertySubmodelElement(), createRangeSubmodelElement(),
 				createMultiLanguagePropertySubmodelElement(), createFileSubmodelElement(),
 				createEntitySubmodelElement(), createReferenceElementSubmodelElement(),
-				createRelationshipElementSubmodelElement(), createAnnotatedRelationshipElementSubmodelElement(), createBlobSubmodelElement(), createSubmodelElementCollection(), createSubmodelElementList());
+				createRelationshipElementSubmodelElement(), createAnnotatedRelationshipElementSubmodelElement(), createBlobSubmodelElement(), createSubmodelElementCollection(), createSubmodelElementList()));
+		return list;
 	}
 }

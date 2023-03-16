@@ -167,4 +167,27 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 		submodelServices.remove(submodelId);
 	}
+
+	@Override
+	public void createSubmodelElement(String submodelId, SubmodelElement smElement) {
+		throwIfSubmodelDoesNotExist(submodelId);
+		
+		submodelServices.get(submodelId).createSubmodelElement(smElement);
+	}
+	
+	@Override
+	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
+		throwIfSubmodelDoesNotExist(submodelId);
+		
+		submodelServices.get(submodelId).createSubmodelElement(idShortPath, smElement);
+	}
+
+	@Override
+	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
+		throwIfSubmodelDoesNotExist(submodelId);
+		
+		submodelServices.get(submodelId).deleteSubmodelElement(idShortPath);
+	}
+
+
 }

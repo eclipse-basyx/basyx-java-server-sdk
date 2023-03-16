@@ -32,6 +32,7 @@ import static org.junit.Assert.fail;
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
+import org.eclipse.digitaltwin.aas4j.v3.model.ModelingKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
@@ -41,6 +42,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.junit.Test;
 
@@ -66,7 +68,7 @@ public abstract class SubmodelRepositorySuite {
 	}
 
 	private void assertSubmodelsAreContained(Collection<Submodel> expectedSubmodels, Collection<Submodel> submodels) {
-		assertEquals(2, submodels.size());
+		assertEquals(3, submodels.size());
 		assertTrue(submodels.containsAll(expectedSubmodels));
 	}
 
@@ -239,6 +241,82 @@ public abstract class SubmodelRepositorySuite {
 		
 		repo.setSubmodelElementValue("nonExisting", "doesNotMatter", valueToWrite);
 	}
+	
+	@Test
+	public void createSubmodelElement() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		
+		Property property = new DefaultProperty.Builder().kind(ModelingKind.INSTANCE)
+				.idShort("test321").category("cat1").value("305").valueType(DataTypeDefXsd.INTEGER).build();
+		repo.createSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, property);
+		
+		SubmodelElement sme = repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, "test321");
+		assertEquals("test321", sme.getIdShort());
+		
+	}
+	
+	@Test(expected = ElementDoesNotExistException.class)
+	public void deleteSubmodeleElement() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.deleteSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, "test123");
+		
+		try{
+			repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, "test123");
+			fail();
+		} catch (ElementDoesNotExistException expected) {}
+	}
+	
+	@Test
+	public void createNestedSubmodelELement() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		Property propertyInCollection = new DefaultProperty.Builder().kind(ModelingKind.INSTANCE)
+				.idShort("test654").category("cat1").value("305").valueType(DataTypeDefXsd.INTEGER).build();
+		Property propertyInList = new DefaultProperty.Builder().kind(ModelingKind.INSTANCE)
+				.idShort("test987").category("cat1").value("305").valueType(DataTypeDefXsd.INTEGER).build();
+		
+		String idShortPathPropertyInSmeCol = DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE;
+		String idShortPathPropertyInSmeList = DummySubmodelFactory.SUBMODEL_ELEMENT_LIST_SIMPLE;
+		repo.createSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, idShortPathPropertyInSmeCol, propertyInCollection);
+		repo.createSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, idShortPathPropertyInSmeList, propertyInList);
+		
+		idShortPathPropertyInSmeCol = idShortPathPropertyInSmeCol.concat(".test654");
+		SubmodelElement smeInCollection = repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, idShortPathPropertyInSmeCol);
+		assertEquals("test654", smeInCollection.getIdShort());
+		
+		idShortPathPropertyInSmeList = idShortPathPropertyInSmeList.concat("[1]");
+		SubmodelElement propertyInSmeListCreated = repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, idShortPathPropertyInSmeList);
+		assertEquals("test987", propertyInSmeListCreated.getIdShort());
+	}
+	
+	@Test(expected = ElementDoesNotExistException.class)
+	public void deleteNestedSubmodelElementInSubmodelElementCollection() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+
+		String idShortPathPropertyInSmeCol = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT+DummySubmodelFactory.SUBMODEL_ELEMENT_SECOND_ID_SHORT;
+		
+		repo.deleteSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, idShortPathPropertyInSmeCol);
+		
+		try{
+			repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, idShortPathPropertyInSmeCol);
+			fail();
+		} catch (ElementDoesNotExistException expected) {
+			throw expected;
+		}
+	}
+	
+	@Test(expected = ElementDoesNotExistException.class)
+	public void deleteNestedSubmodelElementInSubmodelElementList() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		
+		repo.deleteSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, generateIdShortPath());
+		
+		try{
+			repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, generateIdShortPath());
+			fail();
+		} catch (ElementDoesNotExistException expected) {
+			throw expected;
+		}
+	}
 
 	private SubmodelElement getExpectedSubmodelElement() {
 		return DummySubmodelFactory.createOperationalDataSubmodel()
@@ -269,6 +347,10 @@ public abstract class SubmodelRepositorySuite {
 
 	private void assertIsEmpty(Collection<Submodel> submodels) {
 		assertTrue(submodels.isEmpty());
+	}
+	
+	private String generateIdShortPath() {
+		return DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT + "." + DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_LIST_ID_SHORT + "[0]";
 	}
 
 }

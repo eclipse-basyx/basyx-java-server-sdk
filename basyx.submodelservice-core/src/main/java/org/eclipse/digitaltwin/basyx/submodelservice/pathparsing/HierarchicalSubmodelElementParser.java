@@ -55,7 +55,8 @@ public class HierarchicalSubmodelElementParser {
 	/**
 	 * Returns the nested SubmodelElement given in the idShortPath
 	 * 
-	 * @param idShortPath the isShortPath of the SubmodelElement
+	 * @param idShortPath
+	 *            the idShortPath of the SubmodelElement
 	 * 
 	 * @return the nested SubmodelElement
 	 * @throws ElementDoesNotExistException

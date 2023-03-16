@@ -82,4 +82,33 @@ public interface SubmodelService {
 	 */
 	public void setSubmodelElementValue(String idShortPath, SubmodelElementValue value) throws ElementDoesNotExistException;
 
+	/**
+	 * Creates a Submodel Element
+	 * 
+	 * @return
+	 */
+	public void createSubmodelElement(SubmodelElement submodelElement);
+
+	/**
+	 * Create a nested submodel element
+	 * 
+	 * @param idShortPath
+	 *            the SubmodelElement IdShortPath
+	 * @param submodelElement
+	 *            the submodel element to be created
+	 * @throws ElementDoesNotExistException
+	 *             If the submodel element defined in the path does not exist
+	 */
+	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException;
+
+	/**
+	 * Delete a submodel element in a submodel
+	 * 
+	 * @param idshortPath
+	 *            the SubmodelElement IdShortPath
+	 * @throws ElementDoesNotExistException
+	 *             If the submodel element defined in the path does not exist
+	 */
+	public void deleteSubmodelElement(String idShortPath) throws ElementDoesNotExistException;
+
 }
