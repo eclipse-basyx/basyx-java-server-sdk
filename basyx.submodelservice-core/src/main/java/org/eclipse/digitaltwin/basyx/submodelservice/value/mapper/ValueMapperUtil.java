@@ -56,6 +56,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.RelationshipElementVa
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollectionValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementListValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.exception.SubmodelElementValueNotFoundException;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.factory.SubmodelElementValueMapperFactory;
@@ -141,10 +142,10 @@ public class ValueMapperUtil {
 	 * @return Map<String, SubmodelElementValue> the created map of value only
 	 * 
 	 */
-	public static Map<String, SubmodelElementValue> createValueOnlyMap(Collection<SubmodelElement> submodelElements) {
+	public static SubmodelValueOnly createValueOnlyMap(Collection<SubmodelElement> submodelElements) {
 		List<ValueOnly> voList = createValueOnlyCollection(submodelElements);
 
-		Map<String, SubmodelElementValue> map = new HashMap<>();
+		SubmodelValueOnly map = new SubmodelValueOnly();
 		for (ValueOnly voEl : voList) {
 			map.put(voEl.getIdShort(), voEl.getSubmodelElementValue());
 		}
