@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -130,6 +131,25 @@ public class ValueMapperUtil {
 	 */
 	public static List<ValueOnly> createValueOnlyCollection(Collection<SubmodelElement> submodelElements) {
 		return submodelElements.stream().map(ValueMapperUtil::toValueOnly).collect(Collectors.toList());
+	}
+	
+	/**
+	 * Creates a {@link ValueOnly} map from the corresponding collection of
+	 * {@link SubmodelElement}
+	 * 
+	 * @param submodelElements collection of submodel elements
+	 * @return Map<String, SubmodelElementValue> the created map of value only
+	 * 
+	 */
+	public static Map<String, SubmodelElementValue> createValueOnlyMap(Collection<SubmodelElement> submodelElements) {
+		List<ValueOnly> voList = createValueOnlyCollection(submodelElements);
+
+		Map<String, SubmodelElementValue> map = new HashMap<>();
+		for (ValueOnly voEl : voList) {
+			map.put(voEl.getIdShort(), voEl.getSubmodelElementValue());
+		}
+
+		return map;
 	}
 	
 	/**
