@@ -36,6 +36,7 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.Prope
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.SpecificAssetIdValueSerializer;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.SubmodelElementCollectionValueSerializer;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.SubmodelElementListValueSerializer;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.SubmodelValueOnlySerializer;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.ValueOnlySerializer;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
@@ -44,6 +45,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIdValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollectionValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementListValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
@@ -70,6 +72,7 @@ public class SubmodelRepositoryHTTPSerializationExtension implements Serializati
 		builder.serializerByType(SubmodelElementCollectionValue.class, new SubmodelElementCollectionValueSerializer());
 		builder.serializerByType(SubmodelElementListValue.class, new SubmodelElementListValueSerializer());
 		builder.mixIn(ReferenceElementValue.class, ReferenceElementValueMixIn.class);
+		builder.serializerByType(SubmodelValueOnly.class, new SubmodelValueOnlySerializer());
 	}
 
 }

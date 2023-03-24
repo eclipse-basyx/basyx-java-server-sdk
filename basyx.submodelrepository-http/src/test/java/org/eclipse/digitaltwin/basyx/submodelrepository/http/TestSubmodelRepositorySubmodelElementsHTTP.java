@@ -445,6 +445,25 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 		CloseableHttpResponse response = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, "nonExisting", valueToWrite);
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
+	
+	@Test
+	public void getValuesSerializationOfSubmodel() throws IOException, ParseException {
+		CloseableHttpResponse response = requestSubmodelValues(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID);
+
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+
+		String expectedValue = getJSONValueAsString("value/expectedValueOnlySerializationOfSubmodel.json");
+
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
+	}
+
+	@Test
+	public void getValuesSerializationOfNonExistingSubmodel() throws IOException, ParseException {
+		CloseableHttpResponse response = requestSubmodelValues("nonExisting");
+
+		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
+	}
+
 
 	private String createCollectionNestedIdShortPath(String idShort) {
 		return DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE + "." + idShort;
@@ -471,6 +490,10 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 
 	}
 
+	private CloseableHttpResponse requestSubmodelValues(String submodelId) throws IOException {
+		return BaSyxHttpTestUtils.executeGetOnURL(createSubmodelValueURL(submodelId));
+	}
+
 	private String requestSubmodelElementsJSON(String id) throws IOException, ParseException {
 		CloseableHttpResponse response = requestSubmodelElements(id);
 
@@ -484,7 +507,15 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 	private String createSubmodelElementValueURL(String submodelId, String smeIdShort) {
 		return createSpecificSubmodelElementURL(submodelId, smeIdShort) + "?content=value";
 	}
-
+	
+	private String createSubmodelValueURL(String submodelId) {
+		return createSubmodelURL(submodelId) + "?content=value";
+	}
+	
+	private String createSubmodelURL(String submodelId) {
+		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(submodelId);
+	}
+	
 	private String createSpecificSubmodelElementURL(String submodelId, String smeIdShort) {
 		return createSubmodelElementsURL(submodelId) + "/" + smeIdShort;
 	}

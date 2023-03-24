@@ -68,7 +68,7 @@ public interface SubmodelRepositoryHTTPApi {
 	@Operation(summary = "Returns the Submodel", description = "", tags = { "Asset Administration Shell Repository" })
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Requested Submodel", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Submodel.class))) })
 	@RequestMapping(value = "/submodels/{submodelIdentifier}/submodel", produces = { "application/json" }, method = RequestMethod.GET)
-	ResponseEntity<Submodel> getSubmodelSubmodelRepo(
+	ResponseEntity<?> getSubmodelSubmodelRepo(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level,

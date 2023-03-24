@@ -36,6 +36,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,7 +72,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	}
 
 	@Override
-	public ResponseEntity<Submodel> getSubmodelSubmodelRepo(
+	public ResponseEntity<?> getSubmodelSubmodelRepo(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level,
@@ -79,10 +80,16 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 					"path" }, defaultValue = "normal")) @Valid @RequestParam(value = "content", required = false, defaultValue = "normal") String content,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" })) @Valid @RequestParam(value = "extent", required = false) String extent) {
-		Submodel retrieved = repository.getSubmodel(submodelIdentifier.getIdentifier());
-		return new ResponseEntity<Submodel>(retrieved, HttpStatus.OK);
+		if (isNormalContentRequest(content)) {
+			return new ResponseEntity<Submodel>(repository.getSubmodel(submodelIdentifier.getIdentifier()),
+					HttpStatus.OK);
+		} else if (isValueContentRequest(content)) {
+			return new ResponseEntity<SubmodelValueOnly>(new SubmodelValueOnly(
+					repository.getSubmodelElements(submodelIdentifier.getIdentifier())), HttpStatus.OK);
+		}
+		return new ResponseEntity<Object>(HttpStatus.NOT_IMPLEMENTED);
 	}
-
+	
 	@Override
 	public ResponseEntity<Void> putSubmodelSubmodelRepo(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
