@@ -11,19 +11,18 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
- * Serializes a {@link SubmodelValueOnly} 
+ * Serializes a {@link SubmodelValueOnly}
  * 
  * @author damm
  *
  */
-
-public class SubmodelValueOnlySerializer extends JsonSerializer<SubmodelValueOnly>{
+public class SubmodelValueOnlySerializer extends JsonSerializer<SubmodelValueOnly> {
 	@Override
 	public void serialize(SubmodelValueOnly values, JsonGenerator gen, SerializerProvider serializers) throws IOException {
 		gen.writeStartObject();
-		Map<String,SubmodelElementValue> vMap = values.getValuesOnlyMap();		
+		Map<String, SubmodelElementValue> vMap = values.getValuesOnlyMap();
 
-		for (String id : vMap.keySet()) {			
+		for (String id : vMap.keySet()) {
 			gen.writePOJOField(id, vMap.get(id));
 		}
 		gen.writeEndObject();

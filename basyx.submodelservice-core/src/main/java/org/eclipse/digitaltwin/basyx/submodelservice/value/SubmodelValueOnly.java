@@ -39,7 +39,6 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapperUti
  * @author damm
  *
  */
-
 public class SubmodelValueOnly {
 
 	private String idShort;
