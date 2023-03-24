@@ -26,17 +26,35 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
 
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapperUtil;
 
 /**
- * Represents the ValueOnly Representation of a Submodel
+ * Represents the ValueOnly-Representation of a Submodel
  * 
  * @author damm
  *
  */
 
-public class SubmodelValueOnly extends HashMap<String, SubmodelElementValue>{
-	private static final long serialVersionUID = 1L;
+public class SubmodelValueOnly {
+
+	private String idShort;
+	private Map<String, SubmodelElementValue> submodelValuesMap;
 	
-	public SubmodelValueOnly() {}
+	public SubmodelValueOnly(Collection<SubmodelElement> submodelElements) {		
+		submodelValuesMap = submodelElements.stream().map(ValueMapperUtil::toValueOnly).collect(Collectors.toMap(ValueOnly::getIdShort,ValueOnly::getSubmodelElementValue));
+	}
+	
+	public String getIdShort() {
+		return idShort;
+	}	
+	
+	public Map<String, SubmodelElementValue> getValuesOnlyMap() {
+		return submodelValuesMap;
+	}	
+	
 }

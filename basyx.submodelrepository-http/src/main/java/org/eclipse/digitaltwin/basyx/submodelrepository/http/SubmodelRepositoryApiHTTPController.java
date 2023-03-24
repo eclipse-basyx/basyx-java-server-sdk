@@ -28,7 +28,6 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -38,7 +37,6 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -86,10 +84,9 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 			return new ResponseEntity<Submodel>(repository.getSubmodel(submodelIdentifier.getIdentifier()),
 					HttpStatus.OK);
 		} else if (isValueContentRequest(content)) {
-			return new ResponseEntity<SubmodelValueOnly>(ValueMapperUtil.createValueOnlyMap(
+			return new ResponseEntity<SubmodelValueOnly>(new SubmodelValueOnly(
 					repository.getSubmodelElements(submodelIdentifier.getIdentifier())), HttpStatus.OK);
 		}
-
 		return new ResponseEntity<Object>(HttpStatus.NOT_IMPLEMENTED);
 	}
 	

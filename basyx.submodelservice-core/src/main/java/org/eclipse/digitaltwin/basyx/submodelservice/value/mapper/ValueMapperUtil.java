@@ -133,26 +133,7 @@ public class ValueMapperUtil {
 	public static List<ValueOnly> createValueOnlyCollection(Collection<SubmodelElement> submodelElements) {
 		return submodelElements.stream().map(ValueMapperUtil::toValueOnly).collect(Collectors.toList());
 	}
-	
-	/**
-	 * Creates a {@link ValueOnly} map from the corresponding collection of
-	 * {@link SubmodelElement}
-	 * 
-	 * @param submodelElements collection of submodel elements
-	 * @return Map<String, SubmodelElementValue> the created map of value only
-	 * 
-	 */
-	public static SubmodelValueOnly createValueOnlyMap(Collection<SubmodelElement> submodelElements) {
-		List<ValueOnly> voList = createValueOnlyCollection(submodelElements);
-
-		SubmodelValueOnly map = new SubmodelValueOnly();
-		for (ValueOnly voEl : voList) {
-			map.put(voEl.getIdShort(), voEl.getSubmodelElementValue());
-		}
-
-		return map;
-	}
-	
+		
 	/**
 	 * Updates the value of {@link SubmodelElement} with its corresponding {@link ValueOnly}
 	 * 
