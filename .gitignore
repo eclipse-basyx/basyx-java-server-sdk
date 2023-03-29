@@ -1,15 +1,14 @@
 .lck
 *.class
 /.vs
-/sdks/dotnet/.vs/BaSyx
+/.vscode
+/.idea
 launchSettings.json
 .project
 *.pubxml
 Properties
-
 .classpath
-.project
-
+**.flattened-pom.xml
 
 target/
 pom.xml.tag
@@ -32,6 +31,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders
+
 
 # External tool builders
 .externalToolBuilders/
