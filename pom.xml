@@ -122,11 +122,23 @@
 				<groupId>org.eclipse.digitaltwin.aas4j</groupId>
 				<artifactId>model</artifactId>
 				<version>1.0.0-milestone-01</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-simple</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.aas4j</groupId>
 				<artifactId>dataformat-json</artifactId>
 				<version>1.0.0-milestone-01</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-simple</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>commons-io</groupId>
