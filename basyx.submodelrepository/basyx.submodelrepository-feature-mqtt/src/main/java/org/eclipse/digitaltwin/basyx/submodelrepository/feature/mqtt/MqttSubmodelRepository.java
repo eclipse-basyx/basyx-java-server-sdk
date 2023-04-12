@@ -2,13 +2,13 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
 import java.util.Collection;
 
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt.serializer.SubmodelElementSerializer;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt.serializer.SubmodelSerializer;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -109,43 +109,27 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	}
 
 	private void submodelCreated(Submodel submodel, String repoId) {
-		sendMqttMessage(topicFactory.createCreateSubmodelTopic(repoId), serializePayload(submodel));
+		sendMqttMessage(topicFactory.createCreateSubmodelTopic(repoId), SubmodelSerializer.serializeSubmodel(submodel));
 	}
 
 	private void submodelUpdated(Submodel submodel, String repoId) {
-		sendMqttMessage(topicFactory.createUpdateSubmodelTopic(repoId), serializePayload(submodel));
+		sendMqttMessage(topicFactory.createUpdateSubmodelTopic(repoId), SubmodelSerializer.serializeSubmodel(submodel));
 	}
 
 	private void submodelDeleted(Submodel submodel, String repoId) {
-		sendMqttMessage(topicFactory.createDeleteSubmodelTopic(repoId), serializePayload(submodel));
+		sendMqttMessage(topicFactory.createDeleteSubmodelTopic(repoId), SubmodelSerializer.serializeSubmodel(submodel));
 	}
 
 	private void submodelElementCreated(SubmodelElement submodelElement, String repoId, String submodelId, String submodelElementId) {
-		sendMqttMessage(topicFactory.createCreateSubmodelElementTopic(repoId, submodelId, submodelElementId), serializePayload(submodelElement));
+		sendMqttMessage(topicFactory.createCreateSubmodelElementTopic(repoId, submodelId, submodelElementId), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
 	}
 
 	private void submodelElementUpdated(SubmodelElement submodelElement, String repoId, String submodelId, String submodelElementId) {
-		sendMqttMessage(topicFactory.createUpdateSubmodelElementTopic(repoId, submodelId, submodelElementId), serializePayload(submodelElement));
+		sendMqttMessage(topicFactory.createUpdateSubmodelElementTopic(repoId, submodelId, submodelElementId), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
 	}
 
 	private void submodelElementDeleted(SubmodelElement submodelElement, String repoId, String submodelId, String submodelElementId) {
-		sendMqttMessage(topicFactory.createDeleteSubmodelElementTopic(repoId, submodelId, submodelElementId), serializePayload(submodelElement));
-	}
-
-	private String serializePayload(Submodel submodel) {
-		try {
-			return new JsonSerializer().write(submodel);
-		} catch (SerializationException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private String serializePayload(SubmodelElement submodelElement) {
-		try {
-			return new JsonSerializer().write(submodelElement);
-		} catch (SerializationException e) {
-			throw new RuntimeException(e);
-		}
+		sendMqttMessage(topicFactory.createDeleteSubmodelElementTopic(repoId, submodelId, submodelElementId), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
 	}
 
 	/**

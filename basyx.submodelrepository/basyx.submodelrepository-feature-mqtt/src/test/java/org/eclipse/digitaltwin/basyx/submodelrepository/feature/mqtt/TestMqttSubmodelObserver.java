@@ -26,21 +26,27 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
  ******************************************************************************/
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
+import org.eclipse.digitaltwin.aas4j.v3.model.Property;
+import org.eclipse.digitaltwin.aas4j.v3.model.Qualifier;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultQualifier;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt.encoding.Base64URLEncoder;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt.encoding.URLEncoder;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt.serializer.SubmodelElementSerializer;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -151,6 +157,28 @@ public class TestMqttSubmodelObserver {
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
 	}
 
+	@Test
+	public void submodelElementWithoutValueEvent() throws DeserializationException {
+		Submodel submodel = createSubmodelDummy("withoutValueEventId");
+		submodelRepository.createSubmodel(submodel);
+		SubmodelElement submodelElement = createSubmodelElementDummy("noValueSubmodelElementEventId");
+		List<Qualifier> qualifierList = createNoValueQualifierList();
+		submodelElement.setQualifiers(qualifierList);
+		submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
+
+		assertEquals(topicFactory.createCreateSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()), listener.lastTopic);
+		assertNotEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
+
+		// remove value for equality check
+		((Property) submodelElement).setValue(null);
+		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
+	}
+
+	private List<Qualifier> createNoValueQualifierList() {
+		Qualifier emptyValueQualifier = new DefaultQualifier.Builder().type(SubmodelElementSerializer.EMPTYVALUEUPDATE_TYPE).value("true").build();
+		return Arrays.asList(emptyValueQualifier);
+	}
+
 	private Submodel deserializeSubmodelPayload(String payload) throws DeserializationException {
 		return new JsonDeserializer().readReferable(payload, Submodel.class);
 	}
@@ -164,7 +192,7 @@ public class TestMqttSubmodelObserver {
 	}
 
 	private SubmodelElement createSubmodelElementDummy(String submodelElementId) {
-		return new DefaultProperty.Builder().idShort(submodelElementId).build();
+		return new DefaultProperty.Builder().idShort(submodelElementId).value("defaultValue").build();
 	}
 
 	private static SubmodelRepository createMqttSubmodelRepository(MqttClient client) {

@@ -23,26 +23,21 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
+package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt.serializer;
 
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
-import org.eclipse.paho.client.mqttv3.IMqttClient;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 
-public class MqttSubmodelRepositoryFactory implements SubmodelRepositoryFactory {
-
-	private SubmodelRepositoryFactory decorated;
-	private IMqttClient client;
-	private MqttSubmodelRepositoryTopicFactory topicFactory;
-
-	public MqttSubmodelRepositoryFactory(SubmodelRepositoryFactory decorated, IMqttClient client, MqttSubmodelRepositoryTopicFactory topicFactory) {
-		this.decorated = decorated;
-		this.client = client;
-		this.topicFactory = topicFactory;
+public class SubmodelSerializer {
+	private SubmodelSerializer() {
 	}
 
-	@Override
-	public SubmodelRepository create() {
-		return new MqttSubmodelRepository(decorated.create(), client, topicFactory);
+	public static String serializeSubmodel(Submodel submodel) {
+		try {
+			return new JsonSerializer().write(submodel);
+		} catch (SerializationException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

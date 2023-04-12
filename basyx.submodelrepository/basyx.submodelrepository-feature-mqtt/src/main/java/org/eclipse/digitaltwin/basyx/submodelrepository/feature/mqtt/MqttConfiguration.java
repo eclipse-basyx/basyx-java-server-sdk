@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
 import org.eclipse.paho.client.mqttv3.IMqttClient;
