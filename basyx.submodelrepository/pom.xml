@@ -16,5 +16,6 @@
 		<module>basyx.submodelrepository-http</module>
 		<module>basyx.submodelrepository-backend-inmemory</module>
 		<module>basyx.submodelrepository.component</module>
+		<module>basyx.submodelrepository-feature-mqtt</module>
 	</modules>
 </project>

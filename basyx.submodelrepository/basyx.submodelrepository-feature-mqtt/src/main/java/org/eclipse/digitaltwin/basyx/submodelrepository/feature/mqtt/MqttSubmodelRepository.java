@@ -1,0 +1,180 @@
+package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
+
+import java.util.Collection;
+
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.eclipse.paho.client.mqttv3.IMqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class MqttSubmodelRepository implements SubmodelRepository {
+	private static Logger logger = LoggerFactory.getLogger(MqttSubmodelRepository.class);
+	private MqttSubmodelRepositoryTopicFactory topicFactory;
+
+	private SubmodelRepository decorated;
+
+	private IMqttClient mqttClient;
+
+	public MqttSubmodelRepository(SubmodelRepository decorated, IMqttClient mqttClient, MqttSubmodelRepositoryTopicFactory topicFactory) {
+		this.topicFactory = topicFactory;
+		this.decorated = decorated;
+		this.mqttClient = mqttClient;
+	}
+
+	@Override
+	public Collection<Submodel> getAllSubmodels() {
+		return decorated.getAllSubmodels();
+	}
+
+	@Override
+	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException {
+		return decorated.getSubmodel(submodelId);
+	}
+
+	@Override
+	public void updateSubmodel(String submodelId, Submodel submodel) throws ElementDoesNotExistException {
+		decorated.updateSubmodel(submodelId, submodel);
+		submodelUpdated(submodel, getName());
+	}
+
+	@Override
+	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
+		decorated.createSubmodel(submodel);
+		submodelCreated(submodel, getName());
+	}
+
+	@Override
+	public void deleteSubmodel(String submodelId) throws ElementDoesNotExistException {
+		Submodel submodel = decorated.getSubmodel(submodelId);
+		decorated.deleteSubmodel(submodelId);
+		submodelDeleted(submodel, getName());
+	}
+
+	@Override
+	public Collection<SubmodelElement> getSubmodelElements(String submodelId) throws ElementDoesNotExistException {
+		return decorated.getSubmodelElements(submodelId);
+	}
+
+	@Override
+	public SubmodelElement getSubmodelElement(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
+		return decorated.getSubmodelElement(submodelId, smeIdShort);
+	}
+
+	@Override
+	public SubmodelElementValue getSubmodelElementValue(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
+		return decorated.getSubmodelElementValue(submodelId, smeIdShort);
+	}
+
+	@Override
+	public void setSubmodelElementValue(String submodelId, String idShortPath, SubmodelElementValue value) throws ElementDoesNotExistException {
+		decorated.setSubmodelElementValue(submodelId, idShortPath, value);
+		SubmodelElement submodelElement = decorated.getSubmodelElement(submodelId, idShortPath);
+		submodelElementUpdated(submodelElement, getName(), submodelId, idShortPath);
+	}
+
+	@Override
+	public void createSubmodelElement(String submodelId, SubmodelElement smElement) {
+		decorated.createSubmodelElement(submodelId, smElement);
+		SubmodelElement submodelElement = decorated.getSubmodelElement(submodelId, smElement.getIdShort());
+		submodelElementCreated(submodelElement, getName(), submodelId, smElement.getIdShort());
+	}
+
+	@Override
+	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
+		decorated.createSubmodelElement(submodelId, smElement);
+		SubmodelElement submodelElement = decorated.getSubmodelElement(submodelId, idShortPath);
+		submodelElementCreated(submodelElement, getName(), submodelId, idShortPath);
+	}
+
+	@Override
+	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
+		SubmodelElement submodelElement = decorated.getSubmodelElement(submodelId, idShortPath);
+		decorated.deleteSubmodelElement(submodelId, idShortPath);
+		submodelElementDeleted(submodelElement, getName(), submodelId, idShortPath);
+	}
+
+	@Override
+	public String getName() {
+		return decorated.getName();
+	}
+
+	private void submodelCreated(Submodel submodel, String repoId) {
+		sendMqttMessage(topicFactory.createCreateSubmodelTopic(repoId), serializePayload(submodel));
+	}
+
+	private void submodelUpdated(Submodel submodel, String repoId) {
+		sendMqttMessage(topicFactory.createUpdateSubmodelTopic(repoId), serializePayload(submodel));
+	}
+
+	private void submodelDeleted(Submodel submodel, String repoId) {
+		sendMqttMessage(topicFactory.createDeleteSubmodelTopic(repoId), serializePayload(submodel));
+	}
+
+	private void submodelElementCreated(SubmodelElement submodelElement, String repoId, String submodelId, String submodelElementId) {
+		sendMqttMessage(topicFactory.createCreateSubmodelElementTopic(repoId, submodelId, submodelElementId), serializePayload(submodelElement));
+	}
+
+	private void submodelElementUpdated(SubmodelElement submodelElement, String repoId, String submodelId, String submodelElementId) {
+		sendMqttMessage(topicFactory.createUpdateSubmodelElementTopic(repoId, submodelId, submodelElementId), serializePayload(submodelElement));
+	}
+
+	private void submodelElementDeleted(SubmodelElement submodelElement, String repoId, String submodelId, String submodelElementId) {
+		sendMqttMessage(topicFactory.createDeleteSubmodelElementTopic(repoId, submodelId, submodelElementId), serializePayload(submodelElement));
+	}
+
+	private String serializePayload(Submodel submodel) {
+		try {
+			return new JsonSerializer().write(submodel);
+		} catch (SerializationException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private String serializePayload(SubmodelElement submodelElement) {
+		try {
+			return new JsonSerializer().write(submodelElement);
+		} catch (SerializationException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Sends MQTT message to connected broker
+	 * 
+	 * @param topic
+	 *            in which the message will be published
+	 * @param payload
+	 *            the actual message
+	 */
+	private void sendMqttMessage(String topic, String payload) {
+		MqttMessage msg = createMqttMessage(payload);
+
+		try {
+			logger.debug("Send MQTT message to " + topic + ": " + payload);
+			mqttClient.publish(topic, msg);
+		} catch (MqttPersistenceException e) {
+			logger.error("Could not persist mqtt message", e);
+		} catch (MqttException e) {
+			logger.error("Could not send mqtt message", e);
+		}
+	}
+
+	private MqttMessage createMqttMessage(String payload) {
+		if (payload == null) {
+			return new MqttMessage();
+		} else {
+			return new MqttMessage(payload.getBytes());
+		}
+	}
+
+}
