@@ -28,7 +28,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization;
 
 import java.io.IOException;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
+import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -47,14 +47,14 @@ public class MultiLanguagePropertyValueSerializer extends JsonSerializer<MultiLa
 	public void serialize(MultiLanguagePropertyValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
 		gen.writeStartArray();
 
-		for (LangString langString : value.getValue()) {
+		for (LangStringTextType langString : value.getValue()) {
 			writeLangString(gen, langString);
 		}
 
 		gen.writeEndArray();
 	}
 
-	private void writeLangString(JsonGenerator gen, LangString langString) throws IOException {
+	private void writeLangString(JsonGenerator gen, LangStringTextType langString) throws IOException {
 		gen.writeStartObject();
 		gen.writeObjectField(langString.getLanguage(), langString.getText());
 		gen.writeEndObject();

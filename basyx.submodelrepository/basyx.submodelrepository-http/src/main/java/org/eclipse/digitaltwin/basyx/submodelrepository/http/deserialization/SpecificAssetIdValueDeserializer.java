@@ -28,7 +28,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.http.deserialization;
 
 import java.io.IOException;
 
-import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIdValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIDValue;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -36,15 +36,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Serializes a SpecificAssetIdValue as described in DotAAS Part 2
+ * Serializes a SpecificAssetIDValue as described in DotAAS Part 2
  * 
  * @author danish
  *
  */
-public class SpecificAssetIdValueDeserializer extends JsonDeserializer<SpecificAssetIdValue> {
+public class SpecificAssetIdValueDeserializer extends JsonDeserializer<SpecificAssetIDValue> {
 
 	@Override
-	public SpecificAssetIdValue deserialize(JsonParser p, DeserializationContext ctxt)
+	public SpecificAssetIDValue deserialize(JsonParser p, DeserializationContext ctxt)
 			throws IOException {
 
 		try {
@@ -53,7 +53,7 @@ public class SpecificAssetIdValueDeserializer extends JsonDeserializer<SpecificA
 			
 			String specifiecAssetIdName = node.fieldNames().next();
 			
-			return new SpecificAssetIdValue(specifiecAssetIdName, node.get(specifiecAssetIdName).asText());
+			return new SpecificAssetIDValue(specifiecAssetIdName, node.get(specifiecAssetIdName).asText());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

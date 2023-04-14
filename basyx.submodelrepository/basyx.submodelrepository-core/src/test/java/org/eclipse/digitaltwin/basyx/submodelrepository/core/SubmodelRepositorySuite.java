@@ -31,8 +31,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Collection;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
-import org.eclipse.digitaltwin.aas4j.v3.model.ModelingKind;
+import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXSD;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
@@ -42,7 +41,6 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.junit.Test;
 
@@ -246,8 +244,8 @@ public abstract class SubmodelRepositorySuite {
 	public void createSubmodelElement() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		
-		Property property = new DefaultProperty.Builder().kind(ModelingKind.INSTANCE)
-				.idShort("test321").category("cat1").value("305").valueType(DataTypeDefXsd.INTEGER).build();
+		Property property = new DefaultProperty.Builder()
+				.idShort("test321").category("cat1").value("305").valueType(DataTypeDefXSD.INTEGER).build();
 		repo.createSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, property);
 		
 		SubmodelElement sme = repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, "test321");
@@ -269,10 +267,8 @@ public abstract class SubmodelRepositorySuite {
 	@Test
 	public void createNestedSubmodelELement() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		Property propertyInCollection = new DefaultProperty.Builder().kind(ModelingKind.INSTANCE)
-				.idShort("test654").category("cat1").value("305").valueType(DataTypeDefXsd.INTEGER).build();
-		Property propertyInList = new DefaultProperty.Builder().kind(ModelingKind.INSTANCE)
-				.idShort("test987").category("cat1").value("305").valueType(DataTypeDefXsd.INTEGER).build();
+		Property propertyInCollection = new DefaultProperty.Builder().idShort("test654").category("cat1").value("305").valueType(DataTypeDefXSD.INTEGER).build();
+		Property propertyInList = new DefaultProperty.Builder().idShort("test987").category("cat1").value("305").valueType(DataTypeDefXSD.INTEGER).build();
 		
 		String idShortPathPropertyInSmeCol = DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE;
 		String idShortPathPropertyInSmeList = DummySubmodelFactory.SUBMODEL_ELEMENT_LIST_SIMPLE;
@@ -335,7 +331,7 @@ public abstract class SubmodelRepositorySuite {
 					new DefaultProperty.Builder()
 					.idShort("prop")
 					.value("testValue")
-					.valueType(DataTypeDefXsd.STRING).build()
+					.valueType(DataTypeDefXSD.STRING).build()
 				).build();
 	}
 

@@ -26,7 +26,7 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
 
 /**
  * Represents the {@link SpecificAssetId} value
@@ -34,19 +34,19 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
  * @author danish
  *
  */
-public class SpecificAssetIdValue {
+public class SpecificAssetIDValue {
 	
 	private String name;
 	private String value;
 	
 	@SuppressWarnings("unused")
-	private SpecificAssetIdValue() {
+	private SpecificAssetIDValue() {
 		super();
 	}
 
-	public SpecificAssetIdValue(String name, String value) {
-		this.name = name;
-		this.value = value;
+	public SpecificAssetIDValue(SpecificAssetID specificAssetID) {
+		this.name = specificAssetID.getName();
+		this.value = specificAssetID.getValue();
 	}
 
 	public String getName() {

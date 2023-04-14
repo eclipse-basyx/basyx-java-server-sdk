@@ -32,13 +32,13 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AnnotatedRelationshipElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
-import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
+import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXSD;
 import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
 import org.eclipse.digitaltwin.aas4j.v3.model.EntityType;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.Key;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
-import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
+import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.MultiLanguageProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Range;
@@ -49,7 +49,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangString;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.AnnotatedRelationshipElementValueMapper;
@@ -78,12 +78,12 @@ public class TestMappedSubmodelElementValue {
 			new ValueOnly(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT, new PropertyValue("120")),
 			new ValueOnly(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_RANGE_ID_SHORT, new RangeValue(20, 40)));
 	private EntityType testEntityType = EntityType.CO_MANAGED_ENTITY;
-	private ReferenceValue referenceValue_first = new ReferenceValue(ReferenceTypes.GLOBAL_REFERENCE,
+	private ReferenceValue referenceValue_first = new ReferenceValue(ReferenceTypes.EXTERNAL_REFERENCE,
 			Arrays.asList(new DefaultKey.Builder().type(KeyTypes.CAPABILITY).value("CapabilityType").build()));
 	private ReferenceValue referenceValue_second = new ReferenceValue(ReferenceTypes.MODEL_REFERENCE, Arrays
 			.asList(new DefaultKey.Builder().type(KeyTypes.RELATIONSHIP_ELEMENT).value("RelationshipElement").build()));
-	private List<SpecificAssetIdValue> specificAssetIdValues = Arrays
-			.asList(new SpecificAssetIdValue("TestSpecificId", "TestSpecificAssetIdValue"));
+	private List<SpecificAssetIDValue> specificAssetIDValues = Arrays
+			.asList(new SpecificAssetIDValue("TestSpecificId", "TestSpecificAssetIdValue"));
 	private List<Key> referenceKeys = Arrays
 			.asList(new DefaultKey.Builder().type(KeyTypes.REFERENCE_ELEMENT).value("ReferenceElementKey").build());
 	private List<ValueOnly> submodelElementCollectionValueOnlies = Arrays.asList(new ValueOnly(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, new FileBlobValue("application/json", "SampleTestFile.json")), new ValueOnly(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT, new PropertyValue("4500")));
@@ -93,7 +93,7 @@ public class TestMappedSubmodelElementValue {
 	public void mappedGetRangeValue() {
 		Range expected = SubmodelServiceHelper.createRangeSubmodelElement();
 
-		RangeValue retrievedValue = (RangeValue) new RangeValueMapper(expected).getValue();
+		RangeValue retrievedValue = new RangeValueMapper(expected).getValue();
 
 		assertEquals(expected.getMin(), String.valueOf(retrievedValue.getMin()));
 
@@ -118,7 +118,7 @@ public class TestMappedSubmodelElementValue {
 	public void mappedGetPropertyValue() {
 		String expectedValue = "200";
 
-		Property property = new DefaultProperty.Builder().value(expectedValue).valueType(DataTypeDefXsd.INTEGER)
+		Property property = new DefaultProperty.Builder().value(expectedValue).valueType(DataTypeDefXSD.INTEGER)
 				.build();
 
 		ValueMapper<PropertyValue> rangeValueMapper = new PropertyValueMapper(property);
@@ -139,8 +139,9 @@ public class TestMappedSubmodelElementValue {
 
 	@Test
 	public void mappedGetMultiLanguagePropertyValue() {
-		List<LangString> expectedValue = Arrays.asList(new DefaultLangString("Hello", "en"),
-				new DefaultLangString("Hallo", "de"));
+		List<LangStringTextType> expectedValue = Arrays.asList(
+				new DefaultLangStringTextType.Builder().text("Hello").language("en").build(),
+				new DefaultLangStringTextType.Builder().text("Hallo").language("de").build());
 
 		MultiLanguageProperty multiLanguageProperty = SubmodelServiceHelper.createMultiLanguagePropertySubmodelElement();
 
@@ -148,14 +149,15 @@ public class TestMappedSubmodelElementValue {
 				multiLanguageProperty);
 
 		assertEquals(expectedValue.get(0).getLanguage(),
-				((MultiLanguagePropertyValue) multiLanguagePropertyValueMapper.getValue()).getValue().get(0)
+				multiLanguagePropertyValueMapper.getValue().getValue().get(0)
 						.getLanguage());
 	}
 
 	@Test
 	public void mappedSetMultiLanguagePropertyValue() {
-		List<LangString> expectedValue = Arrays.asList(new DefaultLangString("Bonjour", "fr"),
-				new DefaultLangString("Hola", "es"));
+		List<LangStringTextType> expectedValue = Arrays.asList(
+				new DefaultLangStringTextType.Builder().text("Bonjour").language("fr").build(),
+				new DefaultLangStringTextType.Builder().text("Hola").language("es").build());
 
 		MultiLanguageProperty multiLanguageProperty = SubmodelServiceHelper.createMultiLanguagePropertySubmodelElement();
 
@@ -172,7 +174,7 @@ public class TestMappedSubmodelElementValue {
 
 		FileValueMapper fileValueMapper = new FileValueMapper(file);
 
-		assertEquals(expectedValue, ((FileBlobValue) fileValueMapper.getValue()).getValue());
+		assertEquals(expectedValue, fileValueMapper.getValue().getValue());
 	}
 
 	@Test
@@ -197,7 +199,7 @@ public class TestMappedSubmodelElementValue {
 
 		BlobValueMapper fileValueMapper = new BlobValueMapper(blob);
 
-		assertEquals(expectedValue, ((FileBlobValue) fileValueMapper.getValue()).getValue());
+		assertEquals(expectedValue, fileValueMapper.getValue().getValue());
 	}
 
 	@Test
@@ -228,11 +230,11 @@ public class TestMappedSubmodelElementValue {
 		Entity entity = SubmodelServiceHelper.createEntitySubmodelElement();
 		
 		EntityValue entityValue = new EntityValue(valueOnlies, testEntityType, referenceValue_first,
-				specificAssetIdValues);
+				specificAssetIDValues);
 
 		setReferenceElementValue(entity, entityValue);
 
-		assertValuesAreEqual(valueOnlies, testEntityType, referenceValue_first, specificAssetIdValues, entity);
+		assertValuesAreEqual(valueOnlies, testEntityType, referenceValue_first, specificAssetIDValues, entity);
 	}
 
 	@Test
@@ -250,13 +252,13 @@ public class TestMappedSubmodelElementValue {
 	public void mappedSetReferenceElementValue() {
 		ReferenceElement entity = SubmodelServiceHelper.createReferenceElementSubmodelElement();
 
-		ReferenceValue referenceValue = new ReferenceValue(ReferenceTypes.GLOBAL_REFERENCE, referenceKeys);
+		ReferenceValue referenceValue = new ReferenceValue(ReferenceTypes.EXTERNAL_REFERENCE, referenceKeys);
 
 		ReferenceElementValue referenceElementValue = new ReferenceElementValue(referenceValue);
 
 		setReferenceElementValue(entity, referenceElementValue);
 
-		assertEquals(ReferenceTypes.GLOBAL_REFERENCE, entity.getValue().getType());
+		assertEquals(ReferenceTypes.EXTERNAL_REFERENCE, entity.getValue().getType());
 
 		assertEquals(referenceKeys, entity.getValue().getKeys());
 	}
@@ -367,7 +369,7 @@ public class TestMappedSubmodelElementValue {
 	}
 
 	private static void assertValuesAreEqual(List<ValueOnly> expectedValueOnlies, EntityType expectedEntityType,
-			ReferenceValue expectedReferenceValue, List<SpecificAssetIdValue> expectedSpecificAssetIdValues,
+			String expectedGlobalAssetID, List<SpecificAssetIDValue> expectedSpecificAssetIdValues,
 			Entity entity) {
 		assertEquals(((PropertyValue) expectedValueOnlies.get(0).getSubmodelElementValue()).getValue(),
 				((Property) entity.getStatements().get(0)).getValue());
@@ -380,13 +382,12 @@ public class TestMappedSubmodelElementValue {
 
 		assertEquals(expectedEntityType, entity.getEntityType());
 
-		assertEquals(expectedReferenceValue.getKeys(), entity.getGlobalAssetId().getKeys());
+		assertEquals(expectedGlobalAssetID, entity.getGlobalAssetID());
 
-		assertEquals(expectedReferenceValue.getType(), entity.getGlobalAssetId().getType());
 
-		assertEquals(expectedSpecificAssetIdValues.get(0).getName(), entity.getSpecificAssetId().getName());
+		assertEquals(expectedSpecificAssetIdValues.get(0).getName(), entity.getSpecificAssetIds().getName());
 
-		assertEquals(expectedSpecificAssetIdValues.get(0).getValue(), entity.getSpecificAssetId().getValue());
+		assertEquals(expectedSpecificAssetIdValues.get(0).getValue(), entity.getSpecificAssetIds().getValue());
 	}
 
 	private static void assertValuesAreEqual(ReferenceValue first, ReferenceValue second,
@@ -549,7 +550,7 @@ public class TestMappedSubmodelElementValue {
 		propertyValueMapper.setValue(propertyValue);
 	}
 
-	private void setMultiLanguagePropertyValue(List<LangString> valueToWrite,
+	private void setMultiLanguagePropertyValue(List<LangStringTextType> valueToWrite,
 			MultiLanguageProperty multiLanguageProperty) {
 		MultiLanguagePropertyValue multiLanguagePropertyValue = new MultiLanguagePropertyValue(valueToWrite);
 

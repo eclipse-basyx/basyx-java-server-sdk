@@ -39,16 +39,16 @@ import org.eclipse.digitaltwin.aas4j.v3.model.EntityType;
 public class EntityValue implements SubmodelElementValue {
 	private List<ValueOnly> statements;
 	private EntityType entityType;
-	private Optional<ReferenceValue> globalAssetId = Optional.empty();
-	private Optional<List<SpecificAssetIdValue>> specificAssetIds = Optional.empty();
+	private Optional<String> globalAssetId = Optional.empty();
+	private Optional<List<SpecificAssetIDValue>> specificAssetIds = Optional.empty();
 	
 	@SuppressWarnings("unused")
 	private EntityValue() {
 		super();
 	}
 	
-	public EntityValue(List<ValueOnly> statements, EntityType entityType, ReferenceValue globalAssetId,
-			List<SpecificAssetIdValue> specificAssetIds) {
+	public EntityValue(List<ValueOnly> statements, EntityType entityType, String globalAssetId,
+			List<SpecificAssetIDValue> specificAssetIds) {
 		this.statements = statements;
 		this.entityType = entityType;
 		this.globalAssetId = Optional.ofNullable(globalAssetId);
@@ -63,11 +63,11 @@ public class EntityValue implements SubmodelElementValue {
 		return entityType;
 	}
 
-	public ReferenceValue getGlobalAssetId() {
+	public String getGlobalAssetId() {
 		return globalAssetId.orElse(null);
 	}
 
-	public List<SpecificAssetIdValue> getSpecificAssetIds() {
+	public List<SpecificAssetIDValue> getSpecificAssetIds() {
 		return specificAssetIds.orElse(null);
 	}
 	

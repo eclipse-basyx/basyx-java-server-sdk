@@ -30,9 +30,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangString;
+import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
@@ -58,13 +59,13 @@ public class MultiLanguagePropertyValueDeserializationFactory {
 	 * 
 	 */
 	public MultiLanguagePropertyValue create() {
-		List<LangString> langStrings = createLangStrings(node);
+		List<LangStringTextType> langStrings = createLangStrings(node);
 
 		return new MultiLanguagePropertyValue(langStrings);
 	}
 	
-	private static List<LangString> createLangStrings(JsonNode node) {
-		List<LangString> langStrings = new ArrayList<>();
+	private static List<LangStringTextType> createLangStrings(JsonNode node) {
+		List<LangStringTextType> langStrings = new ArrayList<>();
 
 		for (JsonNode element : node) {
 			langStrings.add(createLangString(element));
@@ -73,12 +74,12 @@ public class MultiLanguagePropertyValueDeserializationFactory {
 		return langStrings;
 	}
 
-	private static DefaultLangString createLangString(JsonNode arrayNode) {
+	private static DefaultLangStringTextType createLangString(JsonNode arrayNode) {
 		Iterator<String> fieldNames = arrayNode.fieldNames();
 		String language = fieldNames.next();
 		String text = arrayNode.get(language).asText();
 
-		return new DefaultLangString(text, language);
+		return new DefaultLangStringTextType.Builder().text(text).language(language).build();
 	}
 
 }

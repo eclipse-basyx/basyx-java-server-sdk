@@ -30,14 +30,13 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AnnotatedRelationshipElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
-import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
+import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXSD;
 import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
 import org.eclipse.digitaltwin.aas4j.v3.model.EntityType;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.Key;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
-import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
-import org.eclipse.digitaltwin.aas4j.v3.model.ModelingKind;
+import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.MultiLanguageProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Range;
@@ -45,7 +44,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.RelationshipElement;
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
@@ -55,14 +54,14 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultBlob;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEntity;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultFile;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangString;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultMultiLanguageProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultRange;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReferenceElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultRelationshipElement;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetID;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
 
@@ -86,7 +85,7 @@ public class SubmodelServiceHelper {
 	public final Reference FIRST_REFERENCE = new DefaultReference.Builder().type(ReferenceTypes.MODEL_REFERENCE)
 			.keys(FIRST_KEYS).build();
 	public final Reference SECOND_REFERENCE = new DefaultReference.Builder()
-			.type(ReferenceTypes.GLOBAL_REFERENCE).keys(SECOND_KEYS).build();
+			.type(ReferenceTypes.EXTERNAL_REFERENCE).keys(SECOND_KEYS).build();
 
 	// SUBMODEL_ELEMENT_PROPERTY_DATA
 	public static final String SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT = MAX_ROTATION_SPEED;
@@ -104,8 +103,9 @@ public class SubmodelServiceHelper {
 	public static final String SUBMODEL_TECHNICAL_DATA_RANGE_VALUETYPE = "integer";
 
 	// SUBMODEL_ELEMENT_MULTI_LANGUAGE_DATA
-	public static final List<LangString> MULTI_LANGUAGE_VALUE = new ArrayList<>(
-			Arrays.asList(new DefaultLangString("Hello", "en"), new DefaultLangString("Hallo", "de")));
+	public static final List<LangStringTextType> MULTI_LANGUAGE_VALUE = Arrays.asList(
+					new DefaultLangStringTextType.Builder().text("Hello").language("en").build(), 
+					new DefaultLangStringTextType.Builder().text("Hallo").language("de").build());
 	public static final String SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_MULTI_LANG = _0173_1_02_BAA120_008;
 	public static final String SUBMODEL_TECHNICAL_DATA_MULTI_LANG_PROP_ID_SHORT = "MultiLanguage";
 	public static final String SUBMODEL_TECHNICAL_DATA_MULTI_LANG_PROP_CATEGORY = "PARAM";
@@ -131,7 +131,7 @@ public class SubmodelServiceHelper {
 	public static final String SUBMODEL_TECHNICAL_DATA_ENTITY_CATEGORY = "Entity";
 	public static final String SPECIFIC_ASSET_ID_VALUE = "specificValue";
 	public static final String SPECIFIC_ASSET_ID_NAME = "specificAssetIdName";
-	private final SpecificAssetId ENTITY_SPECIFIC_ASSET_ID = new DefaultSpecificAssetId.Builder()
+	private final SpecificAssetID ENTITY_SPECIFIC_ASSET_ID = new DefaultSpecificAssetID.Builder()
 			.name(SPECIFIC_ASSET_ID_NAME).value(SPECIFIC_ASSET_ID_VALUE).build();
 
 	// SUBMODEL_ELEMENT_REFERENCE_ELEMENT_DATA
@@ -165,76 +165,76 @@ public class SubmodelServiceHelper {
 	}
 
 	public static Property createPropertySubmodelElement() {
-		return new DefaultProperty.Builder().kind(ModelingKind.INSTANCE)
-				.semanticId(new DefaultReference.Builder()
+		return new DefaultProperty.Builder()
+				.semanticID(new DefaultReference.Builder()
 						.keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 								.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_PROPERTY).build())
-						.type(ReferenceTypes.GLOBAL_REFERENCE).build())
+						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT).category(SUBMODEL_TECHNICAL_DATA_PROPERTY_CATEGORY)
-				.value(SUBMODEL_TECHNICAL_DATA_PROPERTY_VALUE).valueType(DataTypeDefXsd.INTEGER).build();
+				.value(SUBMODEL_TECHNICAL_DATA_PROPERTY_VALUE).valueType(DataTypeDefXSD.INTEGER).build();
 	}
 
 	public static Range createRangeSubmodelElement() {
-		return new DefaultRange.Builder().kind(ModelingKind.INSTANCE)
-				.semanticId(new DefaultReference.Builder()
+		return new DefaultRange.Builder()
+				.semanticID(new DefaultReference.Builder()
 						.keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 								.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_RANGE).build())
-						.type(ReferenceTypes.GLOBAL_REFERENCE).build())
+						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_RANGE_ID_SHORT).category(SUBMODEL_TECHNICAL_DATA_RANGE_CATEGORY)
-				.min(SUBMODEL_TECHNICAL_DATA_RANGE_MIN_VALUE).valueType(DataTypeDefXsd.INTEGER)
-				.max(SUBMODEL_TECHNICAL_DATA_RANGE_MAX_VALUE).valueType(DataTypeDefXsd.INTEGER).build();
+				.min(SUBMODEL_TECHNICAL_DATA_RANGE_MIN_VALUE).valueType(DataTypeDefXSD.INTEGER)
+				.max(SUBMODEL_TECHNICAL_DATA_RANGE_MAX_VALUE).valueType(DataTypeDefXSD.INTEGER).build();
 	}
 
 	public static MultiLanguageProperty createMultiLanguagePropertySubmodelElement() {
-		return new DefaultMultiLanguageProperty.Builder().kind(ModelingKind.INSTANCE)
-				.semanticId(new DefaultReference.Builder()
+		return new DefaultMultiLanguageProperty.Builder()
+				.semanticID(new DefaultReference.Builder()
 						.keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 								.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_MULTI_LANG).build())
-						.type(ReferenceTypes.GLOBAL_REFERENCE).build())
+						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_MULTI_LANG_PROP_ID_SHORT)
 				.category(SUBMODEL_TECHNICAL_DATA_MULTI_LANG_PROP_CATEGORY).value(MULTI_LANGUAGE_VALUE).build();
 	}
 
 	public static File createFileSubmodelElement() {
-		return new DefaultFile.Builder().kind(ModelingKind.INSTANCE)
+		return new DefaultFile.Builder()
 				.semanticId(new DefaultReference.Builder()
 						.keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 								.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_FILE).build())
-						.type(ReferenceTypes.GLOBAL_REFERENCE).build())
+						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT).category(SUBMODEL_TECHNICAL_DATA_FILE_CATEGORY)
 				.value(SUBMODEL_TECHNICAL_DATA_FILE_VALUE).contentType(SUBMODEL_TECHNICAL_DATA_FILE_CONTENT_TYPE)
 				.build();
 	}
 	
 	public static Blob createBlobSubmodelElement() {
-		return new DefaultBlob.Builder().kind(ModelingKind.INSTANCE)
-				.semanticId(new DefaultReference.Builder()
+		return new DefaultBlob.Builder()
+				.semanticID(new DefaultReference.Builder()
 						.keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 								.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_BLOB).build())
-						.type(ReferenceTypes.GLOBAL_REFERENCE).build())
+						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_BLOB_ID_SHORT).category(SUBMODEL_TECHNICAL_DATA_BLOB_CATEGORY)
 				.value(SUBMODEL_TECHNICAL_DATA_BLOB_VALUE.getBytes()).contentType(SUBMODEL_TECHNICAL_DATA_BLOB_CONTENT_TYPE)
 				.build();
 	}
 
 	public static Entity createEntitySubmodelElement() {
-		return new DefaultEntity.Builder().kind(ModelingKind.INSTANCE)
-				.semanticId(new DefaultReference.Builder()
+		return new DefaultEntity.Builder()
+				.semanticID(new DefaultReference.Builder()
 						.keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 								.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_ENTITY).build())
-						.type(ReferenceTypes.GLOBAL_REFERENCE).build())
+						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_ENTITY_ID_SHORT).category(SUBMODEL_TECHNICAL_DATA_ENTITY_CATEGORY)
 				.statements(Arrays.asList(createPropertySubmodelElement(), createRangeSubmodelElement()))
-				.entityType(EntityType.CO_MANAGED_ENTITY).globalAssetId(new SubmodelServiceHelper().FIRST_REFERENCE)
+				.entityType(EntityType.CO_MANAGED_ENTITY).globalAssetID(new SubmodelServiceHelper().FIRST_REFERENCE)
 				.specificAssetId(new SubmodelServiceHelper().ENTITY_SPECIFIC_ASSET_ID).build();
 	}
 
 	public static ReferenceElement createReferenceElementSubmodelElement() {
-		return new DefaultReferenceElement.Builder().kind(ModelingKind.INSTANCE)
-				.semanticId(new DefaultReference.Builder()
+		return new DefaultReferenceElement.Builder()
+				.semanticID(new DefaultReference.Builder()
 						.keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 								.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_REFERENCE_ELEMENT).build())
-						.type(ReferenceTypes.GLOBAL_REFERENCE).build())
+						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_REFERENCE_ELEMENT_ID_SHORT)
 				.category(SUBMODEL_TECHNICAL_DATA_REFERENCE_ELEMENT_CATEGORY)
 				.value(new SubmodelServiceHelper().FIRST_REFERENCE)
@@ -242,22 +242,22 @@ public class SubmodelServiceHelper {
 	}
 
 	public static RelationshipElement createRelationshipElementSubmodelElement() {
-		return new DefaultRelationshipElement.Builder().kind(ModelingKind.INSTANCE)
-				.semanticId(new DefaultReference.Builder()
+		return new DefaultRelationshipElement.Builder()
+				.semanticID(new DefaultReference.Builder()
 						.keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 								.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_RELATIONSHIP_ELEMENT).build())
-						.type(ReferenceTypes.GLOBAL_REFERENCE).build())
+						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_RELATIONSHIP_ELEMENT_ID_SHORT)
 				.category(SUBMODEL_TECHNICAL_DATA_RELATIONSHIP_ELEMENT_CATEGORY).first(new SubmodelServiceHelper().FIRST_REFERENCE)
 				.second(new SubmodelServiceHelper().SECOND_REFERENCE).build();
 	}
 
 	public static AnnotatedRelationshipElement createAnnotatedRelationshipElementSubmodelElement() {
-		return new DefaultAnnotatedRelationshipElement.Builder().kind(ModelingKind.INSTANCE)
-				.semanticId(new DefaultReference.Builder()
+		return new DefaultAnnotatedRelationshipElement.Builder()
+				.semanticID(new DefaultReference.Builder()
 						.keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 								.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_ANNOTATED_RELATIONSHIP_ELEMENT).build())
-						.type(ReferenceTypes.GLOBAL_REFERENCE).build())
+						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT)
 				.category(SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_CATEGORY).first(new SubmodelServiceHelper().FIRST_REFERENCE)
 				.second(new SubmodelServiceHelper().SECOND_REFERENCE)
@@ -265,21 +265,21 @@ public class SubmodelServiceHelper {
 	}
 	
 	public static SubmodelElementCollection createSubmodelElementCollection() {
-		return new DefaultSubmodelElementCollection.Builder().kind(ModelingKind.INSTANCE)
-				.semanticId(new DefaultReference.Builder()
+		return new DefaultSubmodelElementCollection.Builder()
+				.semanticID(new DefaultReference.Builder()
 						.keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 								.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_SUBMODEL_ELEMENT_COLLECTION).build())
-						.type(ReferenceTypes.GLOBAL_REFERENCE).build())
+						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT)
 				.category(SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_CATEGORY).value(Arrays.asList(createFileSubmodelElement(), createPropertySubmodelElement())).build();
 	}
 	
 	public static SubmodelElementList createSubmodelElementList() {
-		return new DefaultSubmodelElementList.Builder().kind(ModelingKind.INSTANCE)
-				.semanticId(new DefaultReference.Builder()
+		return new DefaultSubmodelElementList.Builder()
+				.semanticID(new DefaultReference.Builder()
 						.keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 								.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_SUBMODEL_ELEMENT_LIST).build())
-						.type(ReferenceTypes.GLOBAL_REFERENCE).build())
+						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_LIST_ID_SHORT)
 				.category(SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_LIST_CATEGORY).value(Arrays.asList(createRangeSubmodelElement(), createPropertySubmodelElement())).build();
 	}
