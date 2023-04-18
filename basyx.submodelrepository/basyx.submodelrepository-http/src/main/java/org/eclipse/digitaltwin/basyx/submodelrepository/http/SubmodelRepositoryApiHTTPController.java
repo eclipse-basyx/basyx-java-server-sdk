@@ -81,15 +81,17 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" })) @Valid @RequestParam(value = "extent", required = false) String extent) {
 		if (isNormalContentRequest(content)) {
-			return new ResponseEntity<Submodel>(repository.getSubmodel(submodelIdentifier.getIdentifier()),
-					HttpStatus.OK);
+			return new ResponseEntity<Submodel>(repository.getSubmodel(submodelIdentifier.getIdentifier()), HttpStatus.OK);
 		} else if (isValueContentRequest(content)) {
-			return new ResponseEntity<SubmodelValueOnly>(new SubmodelValueOnly(
-					repository.getSubmodelElements(submodelIdentifier.getIdentifier())), HttpStatus.OK);
+			return new ResponseEntity<SubmodelValueOnly>(new SubmodelValueOnly(repository.getSubmodelElements(submodelIdentifier.getIdentifier())), HttpStatus.OK);
+		} else if (isMetadataContentRequest(content)) {
+			Submodel submodel = repository.getSubmodel(submodelIdentifier.getIdentifier());
+			submodel.setSubmodelElements(null);
+			return new ResponseEntity<Submodel>(submodel, HttpStatus.OK);
 		}
 		return new ResponseEntity<Object>(HttpStatus.NOT_IMPLEMENTED);
 	}
-	
+
 	@Override
 	public ResponseEntity<Void> putSubmodelSubmodelRepo(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
@@ -230,5 +232,9 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 	private boolean isNormalContentRequest(String content) {
 		return content.equals("normal");
+	}
+
+	private boolean isMetadataContentRequest(String content) {
+		return content.equals("metadata");
 	}
 }

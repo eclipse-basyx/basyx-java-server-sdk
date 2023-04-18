@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
@@ -31,7 +30,7 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 /**
  * Supports the tests working with the HTTP/REST API of Submodels
  * 
- * @author schnicke
+ * @author schnicke, fischer
  *
  */
 public class BaSyxSubmodelHttpTestUtils {
@@ -39,5 +38,9 @@ public class BaSyxSubmodelHttpTestUtils {
 
 	public static String getSpecificSubmodelAccessPath(String submodelId) {
 		return submodelAccessURL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId) + "/submodel";
+	}
+
+	public static String getSpecificSubmodelAccessPathWithContentParameter(String submodelId, String contentParamter) {
+		return getSpecificSubmodelAccessPath(submodelId) + "?content=" + contentParamter;
 	}
 }
