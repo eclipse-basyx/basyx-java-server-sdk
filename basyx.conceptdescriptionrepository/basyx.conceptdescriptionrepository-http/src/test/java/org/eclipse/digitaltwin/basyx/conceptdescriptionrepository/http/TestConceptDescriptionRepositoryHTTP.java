@@ -52,7 +52,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  * @author danish
  *
  */
-public class TestConceptDescriptionRepositoryConceptDescriptionHTTP {
+public class TestConceptDescriptionRepositoryHTTP {
 	private ConfigurableApplicationContext appContext;
 
 	@Before
