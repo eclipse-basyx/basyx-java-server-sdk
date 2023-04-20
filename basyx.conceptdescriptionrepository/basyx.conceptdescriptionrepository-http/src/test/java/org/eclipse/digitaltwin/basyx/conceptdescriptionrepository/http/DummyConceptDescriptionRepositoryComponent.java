@@ -31,10 +31,10 @@ import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.InMemoryConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionservice.ConceptDescriptionServiceFactory;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionservice.DummyConceptDescriptionFactory;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.DummyConceptDescriptionFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+
 /**
  * Spring application configured for tests.
  * 
@@ -45,8 +45,8 @@ import org.springframework.context.annotation.Bean;
 public class DummyConceptDescriptionRepositoryComponent {
 
 	@Bean
-	public InMemoryConceptDescriptionRepository createConceptDescriptionRepository(ConceptDescriptionServiceFactory conceptDescriptionServiceFactory) {
+	public InMemoryConceptDescriptionRepository createConceptDescriptionRepository() {
 		Collection<ConceptDescription> conceptDescriptions = Arrays.asList(DummyConceptDescriptionFactory.createConceptDescription(), DummyConceptDescriptionFactory.createBasicConceptDescription());
-		return new InMemoryConceptDescriptionRepository(conceptDescriptionServiceFactory, conceptDescriptions);
+		return new InMemoryConceptDescriptionRepository(conceptDescriptions);
 	}
 }

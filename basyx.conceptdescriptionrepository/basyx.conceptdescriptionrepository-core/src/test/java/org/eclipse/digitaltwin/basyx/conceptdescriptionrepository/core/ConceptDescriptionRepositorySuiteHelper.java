@@ -22,7 +22,7 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.conceptdescriptionservice;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,12 +40,12 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangString;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 
 /**
- * Test helper class for {@link ConceptDescriptionService}
+ * Test helper class for {@link ConceptDescriptionRepositorySuite}
  * 
  * @author danish
  *
  */
-public class ConceptDescriptionServiceHelper {
+public class ConceptDescriptionRepositorySuiteHelper {
 
 	//CONCEPT_DESCRIPTION
 	public static final String CONCEPT_DESCRIPTION_ID_SHORT = "ConceptDescription";

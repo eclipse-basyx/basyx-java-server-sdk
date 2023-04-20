@@ -19,7 +19,6 @@
 		<module>basyx.aasrepository</module>
 		<module>basyx.aasenvironment</module>
 		<module>basyx.conceptdescriptionrepository</module>
-		<module>basyx.conceptdescriptionservice</module>
 	</modules>
 	<name>BaSyx Parent</name>
 	<description>Parent POM for Eclipse BaSyx</description>

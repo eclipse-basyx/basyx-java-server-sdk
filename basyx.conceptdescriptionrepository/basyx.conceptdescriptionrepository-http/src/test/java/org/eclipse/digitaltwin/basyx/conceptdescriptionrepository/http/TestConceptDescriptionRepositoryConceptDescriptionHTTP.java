@@ -32,8 +32,8 @@ import java.io.IOException;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionservice.ConceptDescriptionServiceHelper;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionservice.DummyConceptDescriptionFactory;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.ConceptDescriptionRepositorySuiteHelper;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.DummyConceptDescriptionFactory;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.After;
@@ -90,7 +90,7 @@ public class TestConceptDescriptionRepositoryConceptDescriptionHTTP {
 
 	@Test
 	public void updateExistingConceptDescription() throws IOException, ParseException {
-		String id = ConceptDescriptionServiceHelper.BASIC_CONCEPT_DESCRIPTION_ID;
+		String id = ConceptDescriptionRepositorySuiteHelper.BASIC_CONCEPT_DESCRIPTION_ID;
 		String expectedConceptDescriptionJSON = getUpdatedConceptDescriptionJSON();
 
 		CloseableHttpResponse creationResponse = putConceptDescription(id, expectedConceptDescriptionJSON);

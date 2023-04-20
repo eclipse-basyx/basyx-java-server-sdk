@@ -33,8 +33,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionservice.ConceptDescriptionService;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionservice.ConceptDescriptionServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 
@@ -46,44 +44,36 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
  */
 public class InMemoryConceptDescriptionRepository implements ConceptDescriptionRepository {
 
-	private Map<String, ConceptDescriptionService> conceptDescriptionServices = new LinkedHashMap<>();
-	private ConceptDescriptionServiceFactory conceptDescriptionServiceFactory;
-
+	private Map<String, ConceptDescription> conceptDescriptions = new LinkedHashMap<>();
+	
 	/**
-	 * Creates the InMemoryConceptDescriptionRepository utilizing the passed
-	 * {@link ConceptDescriptionServiceFactory} for creating new ConceptDescription services
+	 * Creates the InMemoryConceptDescriptionRepository
 	 * 
-	 * @param conceptDescriptionServiceFactory
 	 */
-	public InMemoryConceptDescriptionRepository(ConceptDescriptionServiceFactory conceptDescriptionServiceFactory) {
-		this.conceptDescriptionServiceFactory = conceptDescriptionServiceFactory;
-	}
+	public InMemoryConceptDescriptionRepository() { }
 
 	/**
-	 * Creates the InMemoryConceptDescriptionRepository utilizing the passed
-	 * {@link ConceptDescriptionServiceFactory} for creating new ConceptDescription services and preconfiguring
+	 * Creates the InMemoryConceptDescriptionRepository and preconfiguring
 	 * it with the passed ConceptDescriptions
 	 * 
-	 * @param conceptDescriptionServiceFactory
 	 * @param conceptDescriptions
 	 */
-	public InMemoryConceptDescriptionRepository(ConceptDescriptionServiceFactory conceptDescriptionServiceFactory, Collection<ConceptDescription> conceptDescriptions) {
-		this(conceptDescriptionServiceFactory);
+	public InMemoryConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions) {
 		assertIdUniqueness(conceptDescriptions);
 
-		conceptDescriptionServices = createServices(conceptDescriptions);
+	    this.conceptDescriptions.putAll(mapConceptDescriptions(conceptDescriptions));
 	}
 
 	@Override
 	public Collection<ConceptDescription> getAllConceptDescriptions() {
-		return conceptDescriptionServices.values().stream().map(ConceptDescriptionService::getConceptDescription).collect(Collectors.toList());
+		return conceptDescriptions.values().stream().collect(Collectors.toList());
 	}
 
 	@Override
 	public ConceptDescription getConceptDescription(String conceptDescriptionId) throws ElementDoesNotExistException {
 		throwIfConceptDescriptionDoesNotExist(conceptDescriptionId);
 
-		return conceptDescriptionServices.get(conceptDescriptionId).getConceptDescription();
+		return conceptDescriptions.get(conceptDescriptionId);
 	}
 
 	@Override
@@ -91,28 +81,21 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 			throws ElementDoesNotExistException {
 		throwIfConceptDescriptionDoesNotExist(conceptDescriptionId);
 
-		conceptDescriptionServices.put(conceptDescriptionId, conceptDescriptionServiceFactory.create(conceptDescription));
+		conceptDescriptions.put(conceptDescriptionId, conceptDescription);
 	}
 
 	@Override
 	public void createConceptDescription(ConceptDescription conceptDescription) throws CollidingIdentifierException {
 		throwIfConceptDescriptionExists(conceptDescription.getId());
 
-		conceptDescriptionServices.put(conceptDescription.getId(), conceptDescriptionServiceFactory.create(conceptDescription));
+		conceptDescriptions.put(conceptDescription.getId(), conceptDescription);
 	}
 
 	@Override
 	public void deleteConceptDescription(String conceptDescriptionId) throws ElementDoesNotExistException {
 		throwIfConceptDescriptionDoesNotExist(conceptDescriptionId);
 
-		conceptDescriptionServices.remove(conceptDescriptionId);
-	}
-	
-	private Map<String, ConceptDescriptionService> createServices(Collection<ConceptDescription> conceptDescriptions) {
-		Map<String, ConceptDescriptionService> map = new LinkedHashMap<>();
-		conceptDescriptions.forEach(conceptDescription -> map.put(conceptDescription.getId(), conceptDescriptionServiceFactory.create(conceptDescription)));
-
-		return map;
+		conceptDescriptions.remove(conceptDescriptionId);
 	}
 
 	private static void assertIdUniqueness(Collection<ConceptDescription> conceptDescriptionsToCheck) {
@@ -127,14 +110,19 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 			}
 		}
 	}
+	
+	private Map<String, ConceptDescription> mapConceptDescriptions(
+			Collection<ConceptDescription> conceptDescriptions) {
+		return conceptDescriptions.stream().collect(Collectors.toMap(ConceptDescription::getId, conceptDescription -> conceptDescription));
+	}
 
 	private void throwIfConceptDescriptionExists(String id) {
-		if (conceptDescriptionServices.containsKey(id))
+		if (conceptDescriptions.containsKey(id))
 			throw new CollidingIdentifierException(id);
 	}
 
 	private void throwIfConceptDescriptionDoesNotExist(String id) {
-		if (!conceptDescriptionServices.containsKey(id))
+		if (!conceptDescriptions.containsKey(id))
 			throw new ElementDoesNotExistException(id);
 	}
 

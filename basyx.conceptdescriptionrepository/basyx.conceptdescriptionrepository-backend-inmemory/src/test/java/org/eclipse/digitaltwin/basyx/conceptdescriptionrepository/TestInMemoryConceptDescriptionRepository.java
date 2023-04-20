@@ -31,8 +31,7 @@ import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.ConceptDescriptionRepositorySuite;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionservice.DummyConceptDescriptionFactory;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionservice.InMemoryConceptDescriptionServiceFactory;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.DummyConceptDescriptionFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.junit.Test;
 
@@ -46,18 +45,18 @@ public class TestInMemoryConceptDescriptionRepository extends ConceptDescription
 
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository() {
-		return new InMemoryConceptDescriptionRepository(new InMemoryConceptDescriptionServiceFactory());
+		return new InMemoryConceptDescriptionRepository();
 	}
 
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions) {
-		return new InMemoryConceptDescriptionRepository(new InMemoryConceptDescriptionServiceFactory(), conceptDescriptions);
+		return new InMemoryConceptDescriptionRepository(conceptDescriptions);
 	}
 
 	@Test(expected = CollidingIdentifierException.class)
 	public void idCollisionDuringConstruction() {
 		Collection<ConceptDescription> conceptDescriptionsWithCollidingIds = createConceptDescriptionCollectionWithCollidingIds();
-		new InMemoryConceptDescriptionRepository(new InMemoryConceptDescriptionServiceFactory(), conceptDescriptionsWithCollidingIds);
+		new InMemoryConceptDescriptionRepository(conceptDescriptionsWithCollidingIds);
 	}
 
 	private Collection<ConceptDescription> createConceptDescriptionCollectionWithCollidingIds() {

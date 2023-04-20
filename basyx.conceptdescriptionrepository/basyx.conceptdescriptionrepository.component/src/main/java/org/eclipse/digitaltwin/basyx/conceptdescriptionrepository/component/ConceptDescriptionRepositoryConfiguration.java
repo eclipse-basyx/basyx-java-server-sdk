@@ -31,19 +31,13 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.ConceptDescriptionRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.DecoratedConceptDescriptionRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionservice.ConceptDescriptionService;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionservice.ConceptDescriptionServiceFactory;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionservice.feature.ConceptDescriptionServiceFeature;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionservice.feature.DecoratedConceptDescriptionServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
 /**
- * Provides the spring bean configuration for the {@link ConceptDescriptionRepository} and
- * {@link ConceptDescriptionService} utilizing all found features for the respective
- * services
+ * Provides the spring bean configuration for the {@link ConceptDescriptionRepository}
+ * utilizing all found features for the respective services
  * 
  * @author danish
  *
@@ -60,11 +54,5 @@ public class ConceptDescriptionRepositoryConfiguration {
 	public static ConceptDescriptionRepository getSubmodelRepository(ConceptDescriptionRepositoryFactory aasRepositoryFactory, List<ConceptDescriptionRepositoryFeature> features) {
 		return new DecoratedConceptDescriptionRepositoryFactory(aasRepositoryFactory, features).create();
 	}
-
-	@Primary
-	@Bean
-	@Autowired
-	public static ConceptDescriptionServiceFactory getSubmodelService(ConceptDescriptionServiceFactory aasServiceFactory, List<ConceptDescriptionServiceFeature> features) {
-		return new DecoratedConceptDescriptionServiceFactory(aasServiceFactory, features);
-	}
+	
 }

@@ -33,6 +33,7 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
  * 
  */
 public interface ConceptDescriptionRepositoryFactory {
+	
 	/**
 	 * Creates a new ConceptDescriptionRepository
 	 * 

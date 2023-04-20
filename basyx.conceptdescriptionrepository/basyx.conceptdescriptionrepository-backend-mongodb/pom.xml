@@ -19,24 +19,7 @@
 		
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.conceptdescriptionservice-core</artifactId>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.conceptdescriptionservice-backend-inmemory</artifactId>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.conceptdescriptionrepository-core</artifactId>
-			<classifier>tests</classifier>
-			<scope>test</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.conceptdescriptionservice-core</artifactId>
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>

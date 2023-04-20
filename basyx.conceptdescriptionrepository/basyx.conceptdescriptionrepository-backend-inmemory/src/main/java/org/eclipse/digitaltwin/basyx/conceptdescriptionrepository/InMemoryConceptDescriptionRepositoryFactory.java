@@ -24,8 +24,6 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
 
-import org.eclipse.digitaltwin.basyx.conceptdescriptionservice.ConceptDescriptionServiceFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -35,16 +33,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class InMemoryConceptDescriptionRepositoryFactory implements ConceptDescriptionRepositoryFactory {
-	private ConceptDescriptionServiceFactory conceptDescriptionServiceFactory;
-
-	@Autowired
-	public InMemoryConceptDescriptionRepositoryFactory(ConceptDescriptionServiceFactory conceptDescriptionServiceFactory) {
-		this.conceptDescriptionServiceFactory = conceptDescriptionServiceFactory;
-	}
 
 	@Override
 	public ConceptDescriptionRepository create() {
-		return new InMemoryConceptDescriptionRepository(conceptDescriptionServiceFactory);
+		return new InMemoryConceptDescriptionRepository();
 	}
 
 }

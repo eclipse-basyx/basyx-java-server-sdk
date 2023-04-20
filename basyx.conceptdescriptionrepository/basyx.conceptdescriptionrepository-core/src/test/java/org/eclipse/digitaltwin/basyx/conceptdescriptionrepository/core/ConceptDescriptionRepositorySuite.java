@@ -44,8 +44,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangString;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionservice.ConceptDescriptionServiceHelper;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionservice.DummyConceptDescriptionFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.junit.Test;
@@ -97,7 +95,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 
 	@Test
 	public void updateExistingConceptDescription() {
-		String id = ConceptDescriptionServiceHelper.CONCEPT_DESCRIPTION_ID;
+		String id = ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID;
 		ConceptDescription expected = createDummyConceptDescription(id);
 
 		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
@@ -130,7 +128,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 	@Test(expected = CollidingIdentifierException.class)
 	public void createConceptDescriptionWithCollidingId() {
 		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		ConceptDescription conceptDescription = repo.getConceptDescription(ConceptDescriptionServiceHelper.CONCEPT_DESCRIPTION_ID);
+		ConceptDescription conceptDescription = repo.getConceptDescription(ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID);
 
 		repo.createConceptDescription(conceptDescription);
 	}
@@ -138,10 +136,10 @@ public abstract class ConceptDescriptionRepositorySuite {
 	@Test
 	public void deleteConceptDescription() {
 		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		repo.deleteConceptDescription(ConceptDescriptionServiceHelper.CONCEPT_DESCRIPTION_ID);
+		repo.deleteConceptDescription(ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID);
 
 		try {
-			repo.getConceptDescription(ConceptDescriptionServiceHelper.CONCEPT_DESCRIPTION_ID);
+			repo.getConceptDescription(ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID);
 			fail();
 		} catch (ElementDoesNotExistException expected) {
 		}
@@ -155,25 +153,25 @@ public abstract class ConceptDescriptionRepositorySuite {
 
 	@Test
 	public void getReferences() {
-		ConceptDescriptionServiceHelper helper = new ConceptDescriptionServiceHelper();
+		ConceptDescriptionRepositorySuiteHelper helper = new ConceptDescriptionRepositorySuiteHelper();
 		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		
-		List<Reference> references = repo.getConceptDescription(ConceptDescriptionServiceHelper.CONCEPT_DESCRIPTION_ID).getIsCaseOf();
+		List<Reference> references = repo.getConceptDescription(ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID).getIsCaseOf();
 		
 		assertEqualReferences(helper, references);
 	}
 	
 	@Test
 	public void getAdministrativeInformation() {
-		ConceptDescriptionServiceHelper helper = new ConceptDescriptionServiceHelper();
+		ConceptDescriptionRepositorySuiteHelper helper = new ConceptDescriptionRepositorySuiteHelper();
 		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		
-		AdministrativeInformation administrativeInformation = repo.getConceptDescription(ConceptDescriptionServiceHelper.CONCEPT_DESCRIPTION_ID).getAdministration();
+		AdministrativeInformation administrativeInformation = repo.getConceptDescription(ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID).getAdministration();
 		
 		assertEqualAdministrativeInformation(helper, administrativeInformation);
 	}
 	
-	private void assertEqualReferences(ConceptDescriptionServiceHelper helper,
+	private void assertEqualReferences(ConceptDescriptionRepositorySuiteHelper helper,
 			List<Reference> references) {
 		assertEquals(2, references.size());
 
@@ -189,7 +187,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 		assertTrue(actualConceptDescriptions.containsAll(expectedConceptDescriptions));
 	}
 
-	private void assertEqualAdministrativeInformation(ConceptDescriptionServiceHelper helper,
+	private void assertEqualAdministrativeInformation(ConceptDescriptionRepositorySuiteHelper helper,
 			AdministrativeInformation administrativeInformation) {
 		assertEquals(helper.CD_ADMINISTRATIVE_INFORMATION.getVersion(), administrativeInformation.getVersion());
 		assertEquals(helper.CD_ADMINISTRATIVE_INFORMATION.getRevision(), administrativeInformation.getRevision());

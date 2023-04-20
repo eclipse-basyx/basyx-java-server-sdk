@@ -18,10 +18,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.conceptdescriptionservice-backend-inmemory</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.conceptdescriptionrepository-backend-inmemory</artifactId>
 		</dependency>
 		<dependency>

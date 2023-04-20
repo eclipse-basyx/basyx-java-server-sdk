@@ -76,17 +76,13 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 		return conceptDescriptionRepository;
 	}
 
-	private void clearDatabase(MongoTemplate template) {
-		template.remove(new Query(), COLLECTION);
-	}
-
 	@Test
 	public void conceptDescriptionIsPersisted() {
 		ConceptDescriptionRepository conceptDescriptionRepository = getConceptDescriptionRepository();
-		ConceptDescription expecteConceptDescription = createDummyConceptDescriptionOnRepo(conceptDescriptionRepository);
-		ConceptDescription retrievedConceptDescription = getConceptDescriptionFromNewBackendInstance(conceptDescriptionRepository, expecteConceptDescription.getId());
+		ConceptDescription expectedConceptDescription = createDummyConceptDescriptionOnRepo(conceptDescriptionRepository);
+		ConceptDescription retrievedConceptDescription = getConceptDescriptionFromNewBackendInstance(conceptDescriptionRepository, expectedConceptDescription.getId());
 
-		assertEquals(expecteConceptDescription, retrievedConceptDescription);
+		assertEquals(expectedConceptDescription, retrievedConceptDescription);
 	}
 	
 	@Test
@@ -128,6 +124,10 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 		MongoTemplate template = new MongoTemplate(client, "BaSyxTestDb");
 		
 		return template;
+	}
+	
+	private void clearDatabase(MongoTemplate template) {
+		template.remove(new Query(), COLLECTION);
 	}
 
 }
