@@ -275,8 +275,7 @@
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasenvironment.component</artifactId>
 				<version>${revision}</version>
-			</dependency>
-			
+			</dependency>			
 			<!-- basyx.conceptdescriptionservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
