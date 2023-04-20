@@ -1,19 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.7.10</version>
 		<relativePath />
 	</parent>
-
 	<groupId>org.eclipse.digitaltwin.basyx</groupId>
 	<artifactId>basyx.parent</artifactId>
 	<version>${revision}</version>
 	<packaging>pom</packaging>
-
 	<modules>
 		<module>basyx.common</module>
 		<module>basyx.submodelservice</module>
@@ -24,18 +21,15 @@
 		<module>basyx.conceptdescriptionrepository</module>
 		<module>basyx.conceptdescriptionservice</module>
 	</modules>
-
 	<name>BaSyx Parent</name>
 	<description>Parent POM for Eclipse BaSyx</description>
 	<url>https://www.eclipse.org/basyx/</url>
-
 	<licenses>
 		<license>
 			<name>MIT</name>
 			<url>https://opensource.org/licenses/MIT</url>
 		</license>
 	</licenses>
-
 	<developers>
 		<developer>
 			<organization>Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V.</organization>
@@ -44,16 +38,38 @@
 			<email>frank.schnicke@iese.fraunhofer.de</email>
 		</developer>
 	</developers>
-
 	<properties>
 		<java.version>11</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<revision>2.0.0-SNAPSHOT</revision>
 	</properties>
-
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+				<version>1.4.1</version>
+				<configuration></configuration>
+				<executions>
+					<!-- enable flattening -->
+					<execution>
+						<id>flatten</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>flatten</goal>
+						</goals>
+					</execution>
+					<!-- ensure proper cleanup -->
+					<execution>
+						<id>flatten.clean</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -63,7 +79,6 @@
 					<target>${java.version}</target>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -81,7 +96,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -95,7 +109,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -117,7 +130,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -168,7 +180,6 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-
 			<!-- basyx.common -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -264,8 +275,7 @@
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasenvironment.component</artifactId>
 				<version>${revision}</version>
-			</dependency>
-			
+			</dependency>			
 			<!-- basyx.conceptdescriptionservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -455,7 +465,6 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
