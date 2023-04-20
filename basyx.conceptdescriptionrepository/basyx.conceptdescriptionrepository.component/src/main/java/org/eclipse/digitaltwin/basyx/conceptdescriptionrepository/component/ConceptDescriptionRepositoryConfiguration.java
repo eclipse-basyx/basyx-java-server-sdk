@@ -31,7 +31,6 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.ConceptDescriptionRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.DecoratedConceptDescriptionRepositoryFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -50,7 +49,6 @@ public class ConceptDescriptionRepositoryConfiguration {
 	}
 
 	@Bean
-	@Autowired
 	public static ConceptDescriptionRepository getSubmodelRepository(ConceptDescriptionRepositoryFactory aasRepositoryFactory, List<ConceptDescriptionRepositoryFeature> features) {
 		return new DecoratedConceptDescriptionRepositoryFactory(aasRepositoryFactory, features).create();
 	}

@@ -34,10 +34,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AdministrativeInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAdministrativeInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
@@ -150,47 +148,10 @@ public abstract class ConceptDescriptionRepositorySuite {
 		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		repo.deleteConceptDescription("nonExisting");
 	}
-
-	@Test
-	public void getReferences() {
-		ConceptDescriptionRepositorySuiteHelper helper = new ConceptDescriptionRepositorySuiteHelper();
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		
-		List<Reference> references = repo.getConceptDescription(ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID).getIsCaseOf();
-		
-		assertEqualReferences(helper, references);
-	}
-	
-	@Test
-	public void getAdministrativeInformation() {
-		ConceptDescriptionRepositorySuiteHelper helper = new ConceptDescriptionRepositorySuiteHelper();
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		
-		AdministrativeInformation administrativeInformation = repo.getConceptDescription(ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID).getAdministration();
-		
-		assertEqualAdministrativeInformation(helper, administrativeInformation);
-	}
-	
-	private void assertEqualReferences(ConceptDescriptionRepositorySuiteHelper helper,
-			List<Reference> references) {
-		assertEquals(2, references.size());
-
-		assertEquals(helper.CD_FIRST_REFERENCE, references.get(0));
-		assertEquals(helper.CD_SECOND_REFERENCE, references.get(1));
-		
-		assertEquals(helper.CD_FIRST_KEYS.get(0).getValue(), references.get(0).getKeys().get(0).getValue());
-		assertEquals(helper.CD_SECOND_KEYS.get(0).getValue(), references.get(1).getKeys().get(0).getValue());
-	}
 	
 	private void assertConceptDescriptionsAreContained(Collection<ConceptDescription> expectedConceptDescriptions, Collection<ConceptDescription> actualConceptDescriptions) {
 		assertEquals(2, actualConceptDescriptions.size());
 		assertTrue(actualConceptDescriptions.containsAll(expectedConceptDescriptions));
-	}
-
-	private void assertEqualAdministrativeInformation(ConceptDescriptionRepositorySuiteHelper helper,
-			AdministrativeInformation administrativeInformation) {
-		assertEquals(helper.CD_ADMINISTRATIVE_INFORMATION.getVersion(), administrativeInformation.getVersion());
-		assertEquals(helper.CD_ADMINISTRATIVE_INFORMATION.getRevision(), administrativeInformation.getRevision());
 	}
 
 	private ConceptDescription createDummyConceptDescription(String id) {

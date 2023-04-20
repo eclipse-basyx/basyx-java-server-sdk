@@ -24,6 +24,7 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 /**
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Component;
  * @author schnicke, danish
  */
 @Component
+@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
 public class InMemoryConceptDescriptionRepositoryFactory implements ConceptDescriptionRepositoryFactory {
 
 	@Override

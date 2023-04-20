@@ -86,12 +86,12 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 	}
 	
 	@Test
-	public void updatedAasIsPersisted() {
+	public void updatedConceptDescriptionIsPersisted() {
 		ConceptDescriptionRepository mongoDBConceptDescriptionRepository = getConceptDescriptionRepository();
 		
 		ConceptDescription expectedConceptDescription = createDummyConceptDescriptionOnRepo(mongoDBConceptDescriptionRepository);
 		
-		addSubmodelReferenceToAas(expectedConceptDescription);
+		addDescriptionToConceptDescription(expectedConceptDescription);
 		
 		mongoDBConceptDescriptionRepository.updateConceptDescription(expectedConceptDescription.getId(), expectedConceptDescription);
 		
@@ -100,7 +100,7 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 		assertEquals(expectedConceptDescription, retrievedConceptDescription);
 	}
 	
-	private void addSubmodelReferenceToAas(ConceptDescription expectedConceptDescription) {
+	private void addDescriptionToConceptDescription(ConceptDescription expectedConceptDescription) {
 		expectedConceptDescription.setDescription(ConceptDescriptionRepositorySuite.createDummyDescriptions());
 	}
 
