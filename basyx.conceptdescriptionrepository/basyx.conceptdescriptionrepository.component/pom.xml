@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
-	<name>Concept Description Repository</name>
+	<name>Concept Description Repository Component</name>
 
 	<dependencies>
 		<dependency>
