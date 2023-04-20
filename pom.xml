@@ -18,6 +18,7 @@
 		<module>basyx.aasservice</module>
 		<module>basyx.aasrepository</module>
 		<module>basyx.aasenvironment</module>
+		<module>basyx.conceptdescriptionrepository</module>
 	</modules>
 	<name>BaSyx Parent</name>
 	<description>Parent POM for Eclipse BaSyx</description>
@@ -273,7 +274,40 @@
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasenvironment.component</artifactId>
 				<version>${revision}</version>
+			</dependency>			
+			<!-- basyx.conceptdescriptionservice -->
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionservice-core</artifactId>
+				<version>${revision}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionservice-backend-inmemory</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<!-- basyx.conceptdescriptionrepository -->
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository-core</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository-http</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository-backend-inmemory</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
+				<version>${revision}</version>
+			</dependency>
+
 			<!-- tests -->
 			<!-- basyx.common -->
 			<dependency>
@@ -386,6 +420,45 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasenvironment.component</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			
+			<!-- basyx.conceptdescriptionservice -->
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionservice-core</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionservice-backend-inmemory</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<!-- basyx.conceptdescriptionrepository -->
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository-core</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository-http</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository-backend-inmemory</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
