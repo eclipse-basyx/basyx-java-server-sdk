@@ -1,0 +1,54 @@
+[
+	{
+		"modelType": "ConceptDescription",
+		"id": "7A7104BDA6544322",
+		"category": "PROPERTY",
+		"idShort": "BasicConDescCommonIsCaseOf",
+		"isCaseOf": [
+			{
+				"keys": [
+					{
+						"type": "Entity",
+						"value": "EntityKey"
+					}
+				],
+				"type": "GlobalReference"
+			},
+			{
+				"keys": [
+					{
+						"type": "Capability",
+						"value": "CapabilityKey"
+					}
+				],
+				"type": "ModelReference"
+			}
+		]
+	},
+	{
+		"modelType": "ConceptDescription",
+		"id": "7A7104BDAH56TH2",
+		"category": "PROPERTY",
+		"idShort": "BasicConceptDescription",
+		"isCaseOf": [
+			{
+				"keys": [
+					{
+						"type": "ConceptDescription",
+						"value": "ConceptDescriptionKey"
+					}
+				],
+				"type": "GlobalReference"
+			},
+			{
+				"keys": [
+					{
+						"type": "Capability",
+						"value": "CapabilityKey"
+					}
+				],
+				"type": "ModelReference"
+			}
+		]
+	}
+]

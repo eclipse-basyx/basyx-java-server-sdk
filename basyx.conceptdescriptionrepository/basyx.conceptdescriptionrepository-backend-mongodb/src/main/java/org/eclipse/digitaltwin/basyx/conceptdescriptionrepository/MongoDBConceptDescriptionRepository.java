@@ -24,7 +24,12 @@
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
 
 import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
+import org.eclipse.digitaltwin.aas4j.v3.model.EmbeddedDataSpecification;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -56,6 +61,21 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 	@Override
 	public Collection<ConceptDescription> getAllConceptDescriptions() {
 		return mongoTemplate.findAll(ConceptDescription.class, collectionName);
+	}
+	
+	@Override
+	public Collection<ConceptDescription> getAllConceptDescriptionsByIdShort(String idShort) {
+		return getAllConceptDescriptions().stream().filter(conceptDescription -> conceptDescription.getIdShort().equals(idShort)).collect(Collectors.toList());
+	}
+
+	@Override
+	public Collection<ConceptDescription> getAllConceptDescriptionsByIsCaseOf(Reference reference) {
+		return getAllConceptDescriptions().stream().filter(conceptDescription -> hasMatchingReference(conceptDescription, reference)).collect(Collectors.toList());
+	}
+
+	@Override
+	public Collection<ConceptDescription> getAllConceptDescriptionsByDataSpecificationReference(Reference reference) {
+		return getAllConceptDescriptions().stream().filter(conceptDescription -> hasMatchingDataSpecificationReference(conceptDescription, reference)).collect(Collectors.toList());
 	}
 
 	@Override
@@ -105,6 +125,18 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 	private void configureIndexForConceptDescriptionId(MongoTemplate mongoTemplate) {
 		TextIndexDefinition idIndex = TextIndexDefinition.builder().onField(IDJSONPATH).build();
 		mongoTemplate.indexOps(ConceptDescription.class).ensureIndex(idIndex);
+	}
+	
+	private boolean hasMatchingReference(ConceptDescription cd, Reference reference) {
+		Optional<Reference> optionalReference = cd.getIsCaseOf().stream().filter(ref -> ref.equals(reference)).findAny();
+		
+		return optionalReference.isPresent();
+	}
+	
+	private boolean hasMatchingDataSpecificationReference(ConceptDescription cd, Reference reference) {
+		Optional<EmbeddedDataSpecification> optionalReference = cd.getEmbeddedDataSpecifications().stream().filter(eds -> eds.getDataSpecification().equals(reference)).findAny();
+		
+		return optionalReference.isPresent();
 	}
 	
 }

@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 
@@ -45,6 +46,30 @@ public interface ConceptDescriptionRepository {
 	 * @return a collection of all found ConceptDescriptions
 	 */
 	public Collection<ConceptDescription> getAllConceptDescriptions();
+	
+	/**
+	 * Retrieves all ConceptDescriptions from the repository matching the passed idShort
+	 * 
+	 * @param idShort
+	 * @return a collection of all matched ConceptDescriptions
+	 */
+	public Collection<ConceptDescription> getAllConceptDescriptionsByIdShort(String idShort);
+	
+	/**
+	 * Retrieves all ConceptDescriptions from the repository matching the passed isCaseOf
+	 * 
+	 * @param isCaseOf
+	 * @return a collection of all matched ConceptDescriptions
+	 */
+	public Collection<ConceptDescription> getAllConceptDescriptionsByIsCaseOf(Reference isCaseOf);
+	
+	/**
+	 * Retrieves all ConceptDescriptions from the repository matching the passed dataSpecificationReference
+	 * 
+	 * @param dataSpecificationReference
+	 * @return a collection of all matched ConceptDescriptions
+	 */
+	public Collection<ConceptDescription> getAllConceptDescriptionsByDataSpecificationReference(Reference dataSpecificationReference);
 
 	/**
 	 * Retrieves the ConceptDescription with the specific id

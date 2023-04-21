@@ -43,7 +43,7 @@ public interface ConceptDescriptionRepositoryHTTPApi {
     @RequestMapping(value = "/concept-descriptions",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<ConceptDescription>> getAllConceptDescriptions(@Parameter(in = ParameterIn.QUERY, description = "The Concept Description’s IdShort" ,schema=@Schema()) @Valid @RequestParam(value = "idShort", required = false) String idShort, @Parameter(in = ParameterIn.QUERY, description = "IsCaseOf reference (BASE64-URL-encoded)" ,schema=@Schema()) @Valid @RequestParam(value = "isCaseOf", required = false) String isCaseOf, @Parameter(in = ParameterIn.QUERY, description = "DataSpecification reference (BASE64-URL-encoded)" ,schema=@Schema()) @Valid @RequestParam(value = "dataSpecificationRef", required = false) String dataSpecificationRef);
+    ResponseEntity<List<ConceptDescription>> getAllConceptDescriptions(@Parameter(in = ParameterIn.QUERY, description = "The Concept Description’s IdShort" ,schema=@Schema()) @Valid @RequestParam(value = "idShort", required = false) Base64UrlEncodedIdentifier idShort, @Parameter(in = ParameterIn.QUERY, description = "IsCaseOf reference (BASE64-URL-encoded)" ,schema=@Schema()) @Valid @RequestParam(value = "isCaseOf", required = false) Base64UrlEncodedIdentifier isCaseOf, @Parameter(in = ParameterIn.QUERY, description = "DataSpecification reference (BASE64-URL-encoded)" ,schema=@Schema()) @Valid @RequestParam(value = "dataSpecificationRef", required = false) Base64UrlEncodedIdentifier dataSpecificationRef);
 
 
     @Operation(summary = "Returns a specific Concept Description", description = "", tags={ "Concept Description Repository Interface" })

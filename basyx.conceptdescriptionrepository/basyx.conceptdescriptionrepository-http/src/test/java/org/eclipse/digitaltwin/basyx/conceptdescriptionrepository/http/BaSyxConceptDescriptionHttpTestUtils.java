@@ -40,4 +40,16 @@ public class BaSyxConceptDescriptionHttpTestUtils {
 	public static String getSpecificConceptDescriptionAccessPath(String conceptDescriptionId) {
 		return CONCEPT_DESCRIPTION_ACCESS_URL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(conceptDescriptionId);
 	}
+	
+	public static String getAllConceptDescriptionsWithIdShortParameterAccessPath(String idShort) {
+		return CONCEPT_DESCRIPTION_ACCESS_URL + "?idShort=" + Base64UrlEncodedIdentifier.encodeIdentifier(idShort);
+	}
+	
+	public static String getAllConceptDescriptionsWithIsCaseOfParameterAccessPath(String isCaseOf) {
+		return CONCEPT_DESCRIPTION_ACCESS_URL + "?isCaseOf=" + Base64UrlEncodedIdentifier.encodeIdentifier(isCaseOf);
+	}
+	
+	public static String getAllConceptDescriptionsWithDataSpecRefParameterAccessPath(String dataSpecificationRef) {
+		return CONCEPT_DESCRIPTION_ACCESS_URL + "?dataSpecificationRef=" + Base64UrlEncodedIdentifier.encodeIdentifier(dataSpecificationRef);
+	}
 }

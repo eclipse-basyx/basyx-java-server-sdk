@@ -1,78 +1,143 @@
 [
-    {
-        "modelType": "ConceptDescription",
-        "administration": {
-            "revision": "2",
-            "version": "1.2"
-        },
-        "id": "7A7104BDAB57E184",
-        "category": "PROPERTY",
-        "idShort": "ConceptDescription",
-        "isCaseOf": [
-            {
-                "keys": [
-                    {
-                        "type": "DataElement",
-                        "value": "DataElement"
-                    }
-                ],
-                "type": "ModelReference"
-            },
-            {
-                "keys": [
-                    {
-                        "type": "BasicEventElement",
-                        "value": "BasicEventElement"
-                    }
-                ],
-                "type": "GlobalReference"
-            }
-        ],
-        "description": [
-            {
-                "language": "en",
-                "text": "Hello"
-            },
-            {
-                "language": "de",
-                "text": "Hallo"
-            }
-        ],
-        "displayName": [
-            {
-                "language": "en",
-                "text": "Concept Description"
-            },
-            {
-                "language": "de",
-                "text": "Konzeptbeschreibung"
-            }
-        ]
-    },
-    {
-        "modelType": "ConceptDescription",
-        "id": "7A7104BDAH56TH2",
-        "category": "PROPERTY",
-        "idShort": "BasicConceptDescription",
-        "isCaseOf": [
-            {
-                "keys": [
-                    {
-                        "type": "ConceptDescription",
-                        "value": "ConceptDescriptionKey"
-                    }
-                ],
-                "type": "GlobalReference"
-            },
-            {
-                "keys": [
-                    {
-                        "type": "Capability",
-                        "value": "CapabilityKey"
-                    }
-                ],
-                "type": "ModelReference"
-            }
-        ]
-    }
+	{
+		"modelType": "ConceptDescription",
+		"administration": {
+			"revision": "2",
+			"version": "1.2"
+		},
+		"id": "7A7104BDAB57E184",
+		"category": "PROPERTY",
+		"idShort": "ConceptDescription",
+		"isCaseOf": [
+			{
+				"keys": [
+					{
+						"type": "DataElement",
+						"value": "DataElement"
+					}
+				],
+				"type": "ModelReference"
+			},
+			{
+				"keys": [
+					{
+						"type": "BasicEventElement",
+						"value": "BasicEventElement"
+					}
+				],
+				"type": "GlobalReference"
+			}
+		],
+		"description": [
+			{
+				"language": "en",
+				"text": "Hello"
+			},
+			{
+				"language": "de",
+				"text": "Hallo"
+			}
+		],
+		"displayName": [
+			{
+				"language": "en",
+				"text": "Concept Description"
+			},
+			{
+				"language": "de",
+				"text": "Konzeptbeschreibung"
+			}
+		]
+	},
+	{
+		"modelType": "ConceptDescription",
+		"id": "7A7104BDA6544322",
+		"category": "PROPERTY",
+		"idShort": "BasicConDescCommonIsCaseOf",
+		"isCaseOf": [
+			{
+				"keys": [
+					{
+						"type": "Entity",
+						"value": "EntityKey"
+					}
+				],
+				"type": "GlobalReference"
+			},
+			{
+				"keys": [
+					{
+						"type": "Capability",
+						"value": "CapabilityKey"
+					}
+				],
+				"type": "ModelReference"
+			}
+		]
+	},
+	{
+		"modelType": "ConceptDescription",
+		"id": "7A7104IHTREFN4322",
+		"category": "PROPERTY",
+		"idShort": "ConDescWithDataSpec",
+		"isCaseOf": [
+			{
+				"keys": [
+					{
+						"type": "Entity",
+						"value": "EntityKey"
+					}
+				],
+				"type": "GlobalReference"
+			},
+			{
+				"keys": [
+					{
+						"type": "DataElement",
+						"value": "DataElement"
+					}
+				],
+				"type": "ModelReference"
+			}
+		],
+		"embeddedDataSpecifications": [
+			{
+				"dataSpecification": {
+					"keys": [
+						{
+							"type": "ReferenceElement",
+							"value": "ReferenceElementKey"
+						}
+					],
+					"type": "GlobalReference"
+				}
+			}
+		]
+	},
+	{
+		"modelType": "ConceptDescription",
+		"id": "7A7104BDAH56TH2",
+		"category": "PROPERTY",
+		"idShort": "BasicConceptDescription",
+		"isCaseOf": [
+			{
+				"keys": [
+					{
+						"type": "ConceptDescription",
+						"value": "ConceptDescriptionKey"
+					}
+				],
+				"type": "GlobalReference"
+			},
+			{
+				"keys": [
+					{
+						"type": "Capability",
+						"value": "CapabilityKey"
+					}
+				],
+				"type": "ModelReference"
+			}
+		]
+	}
 ]

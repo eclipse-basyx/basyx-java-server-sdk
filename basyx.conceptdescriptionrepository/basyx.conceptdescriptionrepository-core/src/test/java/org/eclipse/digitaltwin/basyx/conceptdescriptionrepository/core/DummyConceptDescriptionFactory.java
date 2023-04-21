@@ -39,7 +39,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
 public class DummyConceptDescriptionFactory {
 
 	public static Collection<ConceptDescription> getConceptDescriptions() {
-		return Arrays.asList(createConceptDescription(), createBasicConceptDescription());
+		return Arrays.asList(createConceptDescription(), createBasicConceptDescription(), createBasicConceptDescriptionHavingCommonIsCaseOf(), createBasicConceptDescriptionWithDataSpecification());
 	}
 
 	public static ConceptDescription createConceptDescription() {
@@ -58,6 +58,22 @@ public class DummyConceptDescriptionFactory {
 		return new DefaultConceptDescription.Builder().id(ConceptDescriptionRepositorySuiteHelper.BASIC_CONCEPT_DESCRIPTION_ID)
 				.idShort(ConceptDescriptionRepositorySuiteHelper.BASIC_CONCEPT_DESCRIPTION_ID_SHORT)
 				.isCaseOf(Arrays.asList(helper.BCD_FIRST_REFERENCE, helper.BCD_SECOND_REFERENCE)).build();
+	}
+	
+	public static ConceptDescription createBasicConceptDescriptionHavingCommonIsCaseOf() {
+		ConceptDescriptionRepositorySuiteHelper helper = new ConceptDescriptionRepositorySuiteHelper();
+		
+		return new DefaultConceptDescription.Builder().id(ConceptDescriptionRepositorySuiteHelper.BASIC_CONCEPT_DESCRIPTION_COMMON_IS_CASEOF_ID)
+				.idShort(ConceptDescriptionRepositorySuiteHelper.BASIC_CONCEPT_DESCRIPTION_COMMON_IS_CASEOF_ID_SHORT)
+				.isCaseOf(Arrays.asList(helper.NOT_COMMON_REFERENCE, helper.BCD_SECOND_REFERENCE)).build();
+	}
+	
+	public static ConceptDescription createBasicConceptDescriptionWithDataSpecification() {
+		ConceptDescriptionRepositorySuiteHelper helper = new ConceptDescriptionRepositorySuiteHelper();
+		
+		return new DefaultConceptDescription.Builder().id(ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_WITH_DS_ID)
+				.idShort(ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_WITH_DS_ID_SHORT).embeddedDataSpecifications(helper.embeddedDataSpecification)
+				.isCaseOf(Arrays.asList(helper.NOT_COMMON_REFERENCE, helper.CD_FIRST_REFERENCE)).build();
 	}
 
 }
