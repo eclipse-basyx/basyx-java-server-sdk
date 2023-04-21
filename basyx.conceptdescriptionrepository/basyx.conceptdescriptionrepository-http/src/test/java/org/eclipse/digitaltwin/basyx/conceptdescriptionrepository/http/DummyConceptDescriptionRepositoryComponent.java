@@ -26,12 +26,7 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.InMemoryConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.DummyConceptDescriptionFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
@@ -46,7 +41,6 @@ public class DummyConceptDescriptionRepositoryComponent {
 
 	@Bean
 	public InMemoryConceptDescriptionRepository createConceptDescriptionRepository() {
-		Collection<ConceptDescription> conceptDescriptions = Arrays.asList(DummyConceptDescriptionFactory.createConceptDescription(), DummyConceptDescriptionFactory.createBasicConceptDescription());
-		return new InMemoryConceptDescriptionRepository(conceptDescriptions);
+		return new InMemoryConceptDescriptionRepository();
 	}
 }

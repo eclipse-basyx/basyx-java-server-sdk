@@ -28,16 +28,20 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
+import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.ConceptDescriptionRepositorySuiteHelper;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.DummyConceptDescriptionFactory;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -53,21 +57,38 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  *
  */
 public class TestConceptDescriptionRepositoryHTTP {
-	private ConfigurableApplicationContext appContext;
+	private static ConfigurableApplicationContext appContext;
 
-	@Before
-	public void startConceptDescriptionRepo() throws Exception {
+	@BeforeClass
+	public static void startConceptDescriptionRepo() throws Exception {
 		appContext = new SpringApplication(DummyConceptDescriptionRepositoryComponent.class).run(new String[] {});
 	}
 
-	@After
-	public void shutdownConceptDescriptionRepo() {
+	@Before
+	public void populateRepository() {
+		ConceptDescriptionRepository repo = appContext.getBean(ConceptDescriptionRepository.class);
+		Collection<ConceptDescription> conceptDescriptions = createConceptDescriptions();
+		resetRepoToDefaultConceptDescriptions(repo, conceptDescriptions);
+	}
+
+	private void resetRepoToDefaultConceptDescriptions(ConceptDescriptionRepository repo, Collection<ConceptDescription> conceptDescriptions) {
+		repo.getAllConceptDescriptions().stream().map(s -> s.getId()).forEach(repo::deleteConceptDescription);
+
+		conceptDescriptions.forEach(repo::createConceptDescription);
+	}
+
+	private Collection<ConceptDescription> createConceptDescriptions() {
+		return Arrays.asList(DummyConceptDescriptionFactory.createConceptDescription(), DummyConceptDescriptionFactory.createBasicConceptDescription());
+	}
+
+	@AfterClass
+	public static void shutdownConceptDescriptionRepo() {
 		appContext.close();
 	}
 
 	@Test
 	public void getAllConceptDescriptionsPreconfigured() throws IOException, ParseException {
-		String conceptDescriptionsJSON = getAllConceptDescriptionsJSON();
+		String conceptDescriptionsJSON = requestAllConceptDescriptions();
 		String expectedConceptDescriptionsJSON = getAllConceptDescriptionJSON();
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionsJSON, conceptDescriptionsJSON);
 	}
@@ -90,7 +111,7 @@ public class TestConceptDescriptionRepositoryHTTP {
 
 	@Test
 	public void updateExistingConceptDescription() throws IOException, ParseException {
-		String id = ConceptDescriptionRepositorySuiteHelper.BASIC_CONCEPT_DESCRIPTION_ID;
+		String id = ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID;
 		String expectedConceptDescriptionJSON = getUpdatedConceptDescriptionJSON();
 
 		CloseableHttpResponse creationResponse = putConceptDescription(id, expectedConceptDescriptionJSON);
@@ -176,7 +197,7 @@ public class TestConceptDescriptionRepositoryHTTP {
 		return BaSyxHttpTestUtils.executeGetOnURL(BaSyxConceptDescriptionHttpTestUtils.getSpecificConceptDescriptionAccessPath(conceptDescriptionId));
 	}
 
-	private String getAllConceptDescriptionsJSON() throws IOException, ParseException {
+	private String requestAllConceptDescriptions() throws IOException, ParseException {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxConceptDescriptionHttpTestUtils.CONCEPT_DESCRIPTION_ACCESS_URL);
 
 		return BaSyxHttpTestUtils.getResponseAsString(response);

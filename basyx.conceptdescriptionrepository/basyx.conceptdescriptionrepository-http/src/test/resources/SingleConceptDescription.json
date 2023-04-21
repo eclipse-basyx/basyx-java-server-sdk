@@ -5,7 +5,6 @@
         "version": "1.2"
     },
     "id": "7A7104BDAB57E184",
-    "category": "PROPERTY",
     "idShort": "ConceptDescription",
     "isCaseOf": [
         {
@@ -24,7 +23,7 @@
                     "value": "BasicEventElement"
                 }
             ],
-            "type": "GlobalReference"
+            "type": "ExternalReference"
         }
     ],
     "description": [

@@ -29,17 +29,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
-import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAdministrativeInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangString;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -156,13 +151,9 @@ public abstract class ConceptDescriptionRepositorySuite {
 
 	private ConceptDescription createDummyConceptDescription(String id) {
 		return new DefaultConceptDescription.Builder().id(id)
-				.isCaseOf(new DefaultReference.Builder().type(ReferenceTypes.GLOBAL_REFERENCE).build())
+				.isCaseOf(new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.administration(new DefaultAdministrativeInformation.Builder().revision("6").version("2.4.5").build())
 				.build();
-	}
-	
-	protected static List<LangString> createDummyDescriptions() {
-		return new ArrayList<>(Arrays.asList(new DefaultLangString("Hola", "es"), new DefaultLangString("Hallo", "de")));
 	}
 
 	private ConceptDescriptionRepository getConceptDescriptionRepositoryWithDummyConceptDescriptions() {

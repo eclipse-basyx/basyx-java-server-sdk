@@ -15,7 +15,7 @@
                     "value": "DataElement"
                 }
             ],
-            "type": "GlobalReference"
+            "type": "ExternalReference"
         }
     ],
     "displayName": [
