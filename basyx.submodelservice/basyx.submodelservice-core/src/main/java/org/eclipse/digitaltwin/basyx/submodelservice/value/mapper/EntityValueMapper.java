@@ -56,15 +56,15 @@ public class EntityValueMapper implements ValueMapper<EntityValue> {
 		ValueMapperUtil.setValueOfSubmodelElementWithValueOnly(entity.getStatements(), entityValue.getStatements());
 		entity.setEntityType(entityValue.getEntityType());
 		setGlobalAssetID(entityValue.getGlobalAssetId());
-		setSpecificAssetId(entityValue.getSpecificAssetIds());
+		setSpecificAssetIDs(entityValue.getSpecificAssetIds());
 	}
 
-	private void setSpecificAssetId(List<SpecificAssetIDValue> specificAssetIds) {
-		if (specificAssetIds == null || entity.getSpecificAssetID() == null)
+	private void setSpecificAssetIDs(List<SpecificAssetIDValue> specificAssetIdValues) {
+		if (specificAssetIdValues == null)
 			return;
 
-		entity.getSpecificAssetID().setName(specificAssetIds.get(0).getName());
-		entity.getSpecificAssetID().setValue(specificAssetIds.get(0).getValue());
+		List<SpecificAssetID> specificAssetIds = specificAssetIdValues.stream().map(SpecificAssetIDValue::toSpecificAssetID).collect(Collectors.toList());
+		entity.setSpecificAssetIds(specificAssetIds);
 	}
 
 	private void setGlobalAssetID(String value) {

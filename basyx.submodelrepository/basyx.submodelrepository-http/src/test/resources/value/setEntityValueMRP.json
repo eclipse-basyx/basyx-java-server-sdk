@@ -10,5 +10,6 @@
             }
         }
     ],
-    "entityType": "CoManagedEntity"
+    "entityType": "CoManagedEntity",
+    "globalAssetId": "globalAssetId"
 }

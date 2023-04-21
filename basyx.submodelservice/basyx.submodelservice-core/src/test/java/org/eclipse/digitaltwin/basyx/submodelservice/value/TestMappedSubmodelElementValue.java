@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AnnotatedRelationshipElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
@@ -51,6 +52,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetID;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.AnnotatedRelationshipElementValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.BlobValueMapper;
@@ -80,10 +83,20 @@ public class TestMappedSubmodelElementValue {
 	private EntityType testEntityType = EntityType.CO_MANAGED_ENTITY;
 	private ReferenceValue referenceValue_first = new ReferenceValue(ReferenceTypes.EXTERNAL_REFERENCE,
 			Arrays.asList(new DefaultKey.Builder().type(KeyTypes.CAPABILITY).value("CapabilityType").build()));
+	private String globalAssetID = "globalAssetID";
 	private ReferenceValue referenceValue_second = new ReferenceValue(ReferenceTypes.MODEL_REFERENCE, Arrays
 			.asList(new DefaultKey.Builder().type(KeyTypes.RELATIONSHIP_ELEMENT).value("RelationshipElement").build()));
 	private List<SpecificAssetIDValue> specificAssetIDValues = Arrays
-			.asList(new SpecificAssetIDValue("TestSpecificId", "TestSpecificAssetIdValue"));
+			.asList(new SpecificAssetIDValue(new DefaultSpecificAssetID.Builder().value("value").name("name")
+					.externalSubjectID(new DefaultReference.Builder()
+							.type(ReferenceTypes.EXTERNAL_REFERENCE)
+							.keys(
+									new DefaultKey.Builder()
+									.value("keyValue")
+									.type(KeyTypes.GLOBAL_REFERENCE)
+									.build())
+							.build())
+					.build()));
 	private List<Key> referenceKeys = Arrays
 			.asList(new DefaultKey.Builder().type(KeyTypes.REFERENCE_ELEMENT).value("ReferenceElementKey").build());
 	private List<ValueOnly> submodelElementCollectionValueOnlies = Arrays.asList(new ValueOnly(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, new FileBlobValue("application/json", "SampleTestFile.json")), new ValueOnly(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT, new PropertyValue("4500")));
@@ -229,12 +242,12 @@ public class TestMappedSubmodelElementValue {
 	public void mappedSetEntityValue() {
 		Entity entity = SubmodelServiceHelper.createEntitySubmodelElement();
 		
-		EntityValue entityValue = new EntityValue(valueOnlies, testEntityType, referenceValue_first,
+		EntityValue entityValue = new EntityValue(valueOnlies, testEntityType, globalAssetID,
 				specificAssetIDValues);
 
 		setReferenceElementValue(entity, entityValue);
 
-		assertValuesAreEqual(valueOnlies, testEntityType, referenceValue_first, specificAssetIDValues, entity);
+		assertValuesAreEqual(valueOnlies, testEntityType, globalAssetID, specificAssetIDValues, entity);
 	}
 
 	@Test
@@ -384,10 +397,7 @@ public class TestMappedSubmodelElementValue {
 
 		assertEquals(expectedGlobalAssetID, entity.getGlobalAssetID());
 
-
-		assertEquals(expectedSpecificAssetIdValues.get(0).getName(), entity.getSpecificAssetIds().getName());
-
-		assertEquals(expectedSpecificAssetIdValues.get(0).getValue(), entity.getSpecificAssetIds().getValue());
+		assertEquals(expectedSpecificAssetIdValues.stream().map(SpecificAssetIDValue::toSpecificAssetID).collect(Collectors.toList()), entity.getSpecificAssetIds());
 	}
 
 	private static void assertValuesAreEqual(ReferenceValue first, ReferenceValue second,

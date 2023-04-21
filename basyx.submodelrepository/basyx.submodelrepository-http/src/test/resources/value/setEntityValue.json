@@ -11,18 +11,20 @@
         }
     ],
     "entityType": "SelfManagedEntity",
-    "globalAssetId": {
-        "type": "GlobalReference",
-        "keys": [
-            {
-                "type": "Blob",
-                "value": "KeyBlob"
-            }
-        ]
-    },
+    "globalAssetId": "globalAssetId",
     "specificAssetIds": [
         {
-            "assetName": "assetValue"
+            "name": "assetName",
+            "value": "assetValue",
+            "externalSubjectId": {
+            	"type": "ExternalReference",
+				"keys": [
+							{
+								"type": "GlobalReference",
+								"value": "keyValue"
+							}
+						]
+            }
         }
     ]
 }

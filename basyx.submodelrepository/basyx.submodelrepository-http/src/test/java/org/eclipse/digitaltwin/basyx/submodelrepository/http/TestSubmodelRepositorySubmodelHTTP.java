@@ -28,14 +28,20 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -51,21 +57,38 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  *
  */
 public class TestSubmodelRepositorySubmodelHTTP {
-	private ConfigurableApplicationContext appContext;
+	private static ConfigurableApplicationContext appContext;
 
-	@Before
-	public void startAASRepo() throws Exception {
+	@BeforeClass
+	public static void startAASRepo() throws Exception {
 		appContext = new SpringApplication(DummySubmodelRepositoryComponent.class).run(new String[] {});
 	}
 
-	@After
-	public void shutdownAASRepo() {
+	@Before
+	public void populateRepository() {
+		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
+		Collection<Submodel> submodels = createSubmodels();
+		resetRepoToDefaultSubmodels(repo, submodels);
+	}
+
+	private void resetRepoToDefaultSubmodels(SubmodelRepository repo, Collection<Submodel> submodels) {
+		repo.getAllSubmodels().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
+
+		submodels.forEach(repo::createSubmodel);
+	}
+
+	private List<Submodel> createSubmodels() {
+		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createOperationalDataSubmodel(), DummySubmodelFactory.createSimpleDataSubmodel());
+	}
+
+	@AfterClass
+	public static void shutdownAASRepo() {
 		appContext.close();
 	}
 
 	@Test
 	public void getAllSubmodelsPreconfigured() throws IOException, ParseException {
-		String submodelsJSON = getAllSubmodelsJSON();
+		String submodelsJSON = requestAllSubmodels();
 		String expectedSubmodelsJSON = getAllSubmodelJSON();
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelsJSON, submodelsJSON);
 	}
@@ -174,7 +197,7 @@ public class TestSubmodelRepositorySubmodelHTTP {
 		return BaSyxHttpTestUtils.executeGetOnURL(BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(submodelId));
 	}
 
-	private String getAllSubmodelsJSON() throws IOException, ParseException {
+	private String requestAllSubmodels() throws IOException, ParseException {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxSubmodelHttpTestUtils.submodelAccessURL);
 
 		return BaSyxHttpTestUtils.getResponseAsString(response);

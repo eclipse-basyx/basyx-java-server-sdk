@@ -26,7 +26,6 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -56,7 +55,6 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.RelationshipElementVa
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollectionValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementListValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.exception.SubmodelElementValueNotFoundException;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.factory.SubmodelElementValueMapperFactory;

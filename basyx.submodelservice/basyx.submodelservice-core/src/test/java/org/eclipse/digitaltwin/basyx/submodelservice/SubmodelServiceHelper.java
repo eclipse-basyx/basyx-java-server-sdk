@@ -78,14 +78,13 @@ public class SubmodelServiceHelper {
 	private static final String MAX_ROTATION_SPEED = "MaxRotationSpeed";
 	public static final String SUBMODEL_TECHNICAL_DATA_ID_SHORT = "TechnicalData";
 	public static final String SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID = "0173-1#01-AFZ615#016";
-	public final List<Key> FIRST_KEYS = Arrays
+	public static final List<Key> FIRST_KEYS = Arrays
 			.asList(new DefaultKey.Builder().type(KeyTypes.DATA_ELEMENT).value("DataElement").build());
-	public final List<Key> SECOND_KEYS = Arrays
+	public static final List<Key> SECOND_KEYS = Arrays
 			.asList(new DefaultKey.Builder().type(KeyTypes.BASIC_EVENT_ELEMENT).value("BasicEventElement").build());
-	public final Reference FIRST_REFERENCE = new DefaultReference.Builder().type(ReferenceTypes.MODEL_REFERENCE)
-			.keys(FIRST_KEYS).build();
-	public final Reference SECOND_REFERENCE = new DefaultReference.Builder()
-			.type(ReferenceTypes.EXTERNAL_REFERENCE).keys(SECOND_KEYS).build();
+	public static final Reference FIRST_REFERENCE = createFirstReference();
+
+	public static final Reference SECOND_REFERENCE = createSecondReference();
 
 	// SUBMODEL_ELEMENT_PROPERTY_DATA
 	public static final String SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT = MAX_ROTATION_SPEED;
@@ -131,8 +130,9 @@ public class SubmodelServiceHelper {
 	public static final String SUBMODEL_TECHNICAL_DATA_ENTITY_CATEGORY = "Entity";
 	public static final String SPECIFIC_ASSET_ID_VALUE = "specificValue";
 	public static final String SPECIFIC_ASSET_ID_NAME = "specificAssetIdName";
-	private final SpecificAssetID ENTITY_SPECIFIC_ASSET_ID = new DefaultSpecificAssetID.Builder()
+	private static final SpecificAssetID ENTITY_SPECIFIC_ASSET_ID = new DefaultSpecificAssetID.Builder()
 			.name(SPECIFIC_ASSET_ID_NAME).value(SPECIFIC_ASSET_ID_VALUE).build();
+	public static final String GLOBAL_ASSET_ID = "globalAssetID";
 
 	// SUBMODEL_ELEMENT_REFERENCE_ELEMENT_DATA
 	public static final String SUBMODEL_TECHNICAL_DATA_REFERENCE_ELEMENT_ID_SHORT = "ReferenceElement";
@@ -197,7 +197,7 @@ public class SubmodelServiceHelper {
 
 	public static File createFileSubmodelElement() {
 		return new DefaultFile.Builder()
-				.semanticId(new DefaultReference.Builder()
+				.semanticID(new DefaultReference.Builder()
 						.keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 								.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_FILE).build())
 						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
@@ -225,8 +225,8 @@ public class SubmodelServiceHelper {
 						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_ENTITY_ID_SHORT).category(SUBMODEL_TECHNICAL_DATA_ENTITY_CATEGORY)
 				.statements(Arrays.asList(createPropertySubmodelElement(), createRangeSubmodelElement()))
-				.entityType(EntityType.CO_MANAGED_ENTITY).globalAssetID(new SubmodelServiceHelper().FIRST_REFERENCE)
-				.specificAssetId(new SubmodelServiceHelper().ENTITY_SPECIFIC_ASSET_ID).build();
+				.entityType(EntityType.CO_MANAGED_ENTITY).globalAssetID(GLOBAL_ASSET_ID)
+				.specificAssetIds(ENTITY_SPECIFIC_ASSET_ID).build();
 	}
 
 	public static ReferenceElement createReferenceElementSubmodelElement() {
@@ -237,7 +237,7 @@ public class SubmodelServiceHelper {
 						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_REFERENCE_ELEMENT_ID_SHORT)
 				.category(SUBMODEL_TECHNICAL_DATA_REFERENCE_ELEMENT_CATEGORY)
-				.value(new SubmodelServiceHelper().FIRST_REFERENCE)
+				.value(createFirstReference())
 				.build();
 	}
 
@@ -248,8 +248,8 @@ public class SubmodelServiceHelper {
 								.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_RELATIONSHIP_ELEMENT).build())
 						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_RELATIONSHIP_ELEMENT_ID_SHORT)
-				.category(SUBMODEL_TECHNICAL_DATA_RELATIONSHIP_ELEMENT_CATEGORY).first(new SubmodelServiceHelper().FIRST_REFERENCE)
-				.second(new SubmodelServiceHelper().SECOND_REFERENCE).build();
+				.category(SUBMODEL_TECHNICAL_DATA_RELATIONSHIP_ELEMENT_CATEGORY).first(createFirstReference())
+				.second(createSecondReference()).build();
 	}
 
 	public static AnnotatedRelationshipElement createAnnotatedRelationshipElementSubmodelElement() {
@@ -259,8 +259,8 @@ public class SubmodelServiceHelper {
 								.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_ANNOTATED_RELATIONSHIP_ELEMENT).build())
 						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT)
-				.category(SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_CATEGORY).first(new SubmodelServiceHelper().FIRST_REFERENCE)
-				.second(new SubmodelServiceHelper().SECOND_REFERENCE)
+				.category(SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_CATEGORY).first(createFirstReference())
+				.second(createSecondReference())
 				.annotations(Arrays.asList(createPropertySubmodelElement(), createRangeSubmodelElement())).build();
 	}
 	
@@ -291,5 +291,13 @@ public class SubmodelServiceHelper {
 				createEntitySubmodelElement(), createReferenceElementSubmodelElement(),
 				createRelationshipElementSubmodelElement(), createAnnotatedRelationshipElementSubmodelElement(), createBlobSubmodelElement(), createSubmodelElementCollection(), createSubmodelElementList()));
 		return list;
+	}
+
+	private static DefaultReference createFirstReference() {
+		return new DefaultReference.Builder().type(ReferenceTypes.MODEL_REFERENCE).keys(FIRST_KEYS).build();
+	}
+
+	private static DefaultReference createSecondReference() {
+		return new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE).keys(SECOND_KEYS).build();
 	}
 }
