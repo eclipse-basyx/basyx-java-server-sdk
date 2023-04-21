@@ -28,8 +28,6 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.factory;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
@@ -44,13 +42,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Factory class to create filtered ConceptDescriptions response based on parameters
+ * Factory class to create filtered ConceptDescriptions response based on
+ * parameters
  * 
  * @author danish
  *
  */
 public class FilteredConceptDescriptionResponseFactory {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(FilteredConceptDescriptionResponseFactory.class);
 
 	private ConceptDescriptionRepository repository;
@@ -59,7 +58,8 @@ public class FilteredConceptDescriptionResponseFactory {
 	private String dataSpecificationRef;
 	private final ObjectMapper objectMapper;
 
-	public FilteredConceptDescriptionResponseFactory(ConceptDescriptionRepository conceptDescriptionRepository, Base64UrlEncodedIdentifier idShort, Base64UrlEncodedIdentifier isCaseOf,
+	public FilteredConceptDescriptionResponseFactory(ConceptDescriptionRepository conceptDescriptionRepository,
+			Base64UrlEncodedIdentifier idShort, Base64UrlEncodedIdentifier isCaseOf,
 			Base64UrlEncodedIdentifier dataSpecificationRef, ObjectMapper objectMapper) {
 		super();
 		this.repository = conceptDescriptionRepository;
@@ -70,17 +70,14 @@ public class FilteredConceptDescriptionResponseFactory {
 	}
 
 	public ResponseEntity<List<ConceptDescription>> create() {
-		if (allParametersSet(idShort, isCaseOf, dataSpecificationRef)
-				|| !hasPermittedParameters(idShort, isCaseOf, dataSpecificationRef)) {
+		if (!hasPermittedParameters(idShort, isCaseOf, dataSpecificationRef)) {
 			logger.error("Only one parameter should be set per request");
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
-		if (idShortParamSet(idShort)) {
-			return new ResponseEntity<>(
-					new ArrayList<>(repository.getAllConceptDescriptionsByIdShort(idShort)), HttpStatus.OK);
-
-		}
+		if (idShortParamSet(idShort))
+			return new ResponseEntity<>(new ArrayList<>(repository.getAllConceptDescriptionsByIdShort(idShort)),
+					HttpStatus.OK);
 
 		if (isCaseOfParamSet(isCaseOf)) {
 			Reference reference = getReference(isCaseOf);
@@ -88,8 +85,8 @@ public class FilteredConceptDescriptionResponseFactory {
 			if (reference == null)
 				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
-			return new ResponseEntity<>(
-					new ArrayList<>(repository.getAllConceptDescriptionsByIsCaseOf(reference)), HttpStatus.OK);
+			return new ResponseEntity<>(new ArrayList<>(repository.getAllConceptDescriptionsByIsCaseOf(reference)),
+					HttpStatus.OK);
 		}
 
 		if (dataSpecificationRefSet(dataSpecificationRef)) {
@@ -103,15 +100,15 @@ public class FilteredConceptDescriptionResponseFactory {
 					HttpStatus.OK);
 		}
 
-		return new ResponseEntity<>(new ArrayList<>(repository.getAllConceptDescriptions()),
-				HttpStatus.OK);
+		return new ResponseEntity<>(new ArrayList<>(repository.getAllConceptDescriptions()), HttpStatus.OK);
 	}
 
-	private boolean hasPermittedParameters(@Valid String idShort, @Valid String isCaseOf,
-			@Valid String dataSpecificationRef) {
+	private boolean hasPermittedParameters(String idShort, String isCaseOf, String dataSpecificationRef) {
 
-		return allParametersEmpty(idShort, isCaseOf, dataSpecificationRef) || (idShortParamSet(idShort)
-				^ isCaseOfParamSet(isCaseOf) ^ dataSpecificationRefSet(dataSpecificationRef));
+		return !allParametersSet(idShort, isCaseOf, dataSpecificationRef)
+				&& (allParametersEmpty(idShort, isCaseOf, dataSpecificationRef)
+				|| (idShortParamSet(idShort) ^ isCaseOfParamSet(isCaseOf)
+						^ dataSpecificationRefSet(dataSpecificationRef)));
 	}
 
 	private boolean allParametersEmpty(String idShort, String isCaseOf, String dataSpecificationRef) {
@@ -119,8 +116,7 @@ public class FilteredConceptDescriptionResponseFactory {
 				&& !dataSpecificationRefSet(dataSpecificationRef);
 	}
 
-	private boolean allParametersSet(@Valid String idShort, @Valid String isCaseOf,
-			@Valid String dataSpecificationRef) {
+	private boolean allParametersSet(String idShort, String isCaseOf, String dataSpecificationRef) {
 		return idShortParamSet(idShort) && isCaseOfParamSet(isCaseOf) && dataSpecificationRefSet(dataSpecificationRef);
 	}
 

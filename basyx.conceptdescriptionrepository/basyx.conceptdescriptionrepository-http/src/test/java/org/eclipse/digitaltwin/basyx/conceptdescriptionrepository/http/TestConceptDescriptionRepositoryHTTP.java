@@ -100,6 +100,20 @@ public class TestConceptDescriptionRepositoryHTTP {
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionJSON, actualConceptDescriptionJSON);
 	}
+	
+	@Test
+	public void setTwoParametersInRequest() throws IOException {
+		CloseableHttpResponse response = requestWithTwoParameters("doesntMatterIdShort", "doesntMatterDataSpec");
+
+		assertEquals(HttpStatus.BAD_REQUEST.value(), response.getCode());
+	}
+	
+	@Test
+	public void setAllParametersInRequest() throws IOException {
+		CloseableHttpResponse response = requestWithAllParameters("doesntMatterIdShort", "doesntMatterIdShort", "doesntMatterDataSpec");
+
+		assertEquals(HttpStatus.BAD_REQUEST.value(), response.getCode());
+	}
 
 	@Test
 	public void getSpecificConceptDescriptionNonExisting() throws IOException {
@@ -219,6 +233,14 @@ public class TestConceptDescriptionRepositoryHTTP {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxConceptDescriptionHttpTestUtils.getAllConceptDescriptionsWithDataSpecRefParameterAccessPath(dataSpecificationRef));
 		
 		return BaSyxHttpTestUtils.getResponseAsString(response);
+	}
+	
+	private CloseableHttpResponse requestWithTwoParameters(String idShort, String dataSpecRef) throws IOException {
+		return BaSyxHttpTestUtils.executeGetOnURL(BaSyxConceptDescriptionHttpTestUtils.getAllConceptDescriptionsWithTwoParametersAccessPath(idShort, dataSpecRef));
+	}
+	
+	private CloseableHttpResponse requestWithAllParameters(String idShort, String isCaseOf, String dataSpecRef) throws IOException {
+		return BaSyxHttpTestUtils.executeGetOnURL(BaSyxConceptDescriptionHttpTestUtils.getAllConceptDescriptionsWithAllParametersAccessPath(idShort, isCaseOf, dataSpecRef));
 	}
 
 	private String getUpdatedConceptDescriptionJSON() throws IOException {
