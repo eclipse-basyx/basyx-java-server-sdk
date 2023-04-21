@@ -1,0 +1,31 @@
+{
+    "modelType": "ConceptDescription",
+    "administration": {
+        "revision": "1",
+        "version": "2.7"
+    },
+    "id": "newConceptDescription",
+    "category": "PROPERTY",
+    "idShort": "newConceptDescriptionIdShort",
+    "isCaseOf": [
+        {
+            "keys": [
+                {
+                    "type": "DataElement",
+                    "value": "DataElement"
+                }
+            ],
+            "type": "ModelReference"
+        }
+    ],
+    "displayName": [
+        {
+            "language": "en",
+            "text": "New Concept Description"
+        },
+        {
+            "language": "de",
+            "text": "Neu Konzeptbeschreibung"
+        }
+    ]
+}
