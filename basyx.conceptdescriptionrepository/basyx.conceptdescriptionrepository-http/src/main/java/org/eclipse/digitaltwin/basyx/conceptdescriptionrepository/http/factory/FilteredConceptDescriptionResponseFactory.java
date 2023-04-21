@@ -75,11 +75,11 @@ public class FilteredConceptDescriptionResponseFactory {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
-		if (idShortParamSet(idShort))
+		if (isIdShortParamSet(idShort))
 			return new ResponseEntity<>(new ArrayList<>(repository.getAllConceptDescriptionsByIdShort(idShort)),
 					HttpStatus.OK);
 
-		if (isCaseOfParamSet(isCaseOf)) {
+		if (isIsCaseOfParamSet(isCaseOf)) {
 			Reference reference = getReference(isCaseOf);
 
 			if (reference == null)
@@ -89,7 +89,7 @@ public class FilteredConceptDescriptionResponseFactory {
 					HttpStatus.OK);
 		}
 
-		if (dataSpecificationRefSet(dataSpecificationRef)) {
+		if (isDataSpecificationRefSet(dataSpecificationRef)) {
 			Reference reference = getReference(dataSpecificationRef);
 
 			if (reference == null)
@@ -105,30 +105,30 @@ public class FilteredConceptDescriptionResponseFactory {
 
 	private boolean hasPermittedParameters(String idShort, String isCaseOf, String dataSpecificationRef) {
 
-		return !allParametersSet(idShort, isCaseOf, dataSpecificationRef)
-				&& (allParametersEmpty(idShort, isCaseOf, dataSpecificationRef)
-				|| (idShortParamSet(idShort) ^ isCaseOfParamSet(isCaseOf)
-						^ dataSpecificationRefSet(dataSpecificationRef)));
+		return !areAllParametersSet(idShort, isCaseOf, dataSpecificationRef)
+				&& (areAllParametersEmpty(idShort, isCaseOf, dataSpecificationRef)
+				|| (isIdShortParamSet(idShort) ^ isIsCaseOfParamSet(isCaseOf)
+						^ isDataSpecificationRefSet(dataSpecificationRef)));
 	}
 
-	private boolean allParametersEmpty(String idShort, String isCaseOf, String dataSpecificationRef) {
-		return !idShortParamSet(idShort) && !isCaseOfParamSet(isCaseOf)
-				&& !dataSpecificationRefSet(dataSpecificationRef);
+	private boolean areAllParametersEmpty(String idShort, String isCaseOf, String dataSpecificationRef) {
+		return !isIdShortParamSet(idShort) && !isIsCaseOfParamSet(isCaseOf)
+				&& !isDataSpecificationRefSet(dataSpecificationRef);
 	}
 
-	private boolean allParametersSet(String idShort, String isCaseOf, String dataSpecificationRef) {
-		return idShortParamSet(idShort) && isCaseOfParamSet(isCaseOf) && dataSpecificationRefSet(dataSpecificationRef);
+	private boolean areAllParametersSet(String idShort, String isCaseOf, String dataSpecificationRef) {
+		return isIdShortParamSet(idShort) && isIsCaseOfParamSet(isCaseOf) && isDataSpecificationRefSet(dataSpecificationRef);
 	}
 
-	private boolean dataSpecificationRefSet(String dataSpecificationRef) {
+	private boolean isDataSpecificationRefSet(String dataSpecificationRef) {
 		return dataSpecificationRef != null && !dataSpecificationRef.isBlank();
 	}
 
-	private boolean isCaseOfParamSet(String isCaseOf) {
+	private boolean isIsCaseOfParamSet(String isCaseOf) {
 		return isCaseOf != null && !isCaseOf.isBlank();
 	}
 
-	private boolean idShortParamSet(String idShort) {
+	private boolean isIdShortParamSet(String idShort) {
 		return idShort != null && !idShort.isBlank();
 	}
 

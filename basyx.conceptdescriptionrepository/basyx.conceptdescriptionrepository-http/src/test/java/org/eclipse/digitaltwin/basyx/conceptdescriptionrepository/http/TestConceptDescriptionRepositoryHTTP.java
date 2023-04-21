@@ -110,7 +110,7 @@ public class TestConceptDescriptionRepositoryHTTP {
 	
 	@Test
 	public void setAllParametersInRequest() throws IOException {
-		CloseableHttpResponse response = requestWithAllParameters("doesntMatterIdShort", "doesntMatterIdShort", "doesntMatterDataSpec");
+		CloseableHttpResponse response = requestWithAllParameters("doesntMatterIdShort", "doesntMatterIsCaseOf", "doesntMatterDataSpec");
 
 		assertEquals(HttpStatus.BAD_REQUEST.value(), response.getCode());
 	}
