@@ -45,7 +45,7 @@ public class BaSyxConceptDescriptionHttpTestUtils {
 	}
 	
 	public static String getAllConceptDescriptionsWithIdShortParameterAccessPath(String idShort) {
-		return CONCEPT_DESCRIPTION_ACCESS_URL + "?" + ID_SHORT_PARAM_NAME + "=" + Base64UrlEncodedIdentifier.encodeIdentifier(idShort);
+		return CONCEPT_DESCRIPTION_ACCESS_URL + "?" + ID_SHORT_PARAM_NAME + "=" + idShort;
 	}
 	
 	public static String getAllConceptDescriptionsWithIsCaseOfParameterAccessPath(String isCaseOf) {
@@ -57,14 +57,14 @@ public class BaSyxConceptDescriptionHttpTestUtils {
 	}
 	
 	public static String getAllConceptDescriptionsWithTwoParametersAccessPath(String idShort, String dataSpecificationRef) {
-		String idShortOption = ID_SHORT_PARAM_NAME + "=" + Base64UrlEncodedIdentifier.encodeIdentifier(idShort);
+		String idShortOption = ID_SHORT_PARAM_NAME + "=" + idShort;
 		String dataSpecOption = DATA_SPEC_REF_PARAM_NAME + "=" + Base64UrlEncodedIdentifier.encodeIdentifier(dataSpecificationRef);
 		
 		return CONCEPT_DESCRIPTION_ACCESS_URL + "?" + idShortOption + "&" + dataSpecOption;
 	}
 	
 	public static String getAllConceptDescriptionsWithAllParametersAccessPath(String idShort, String isCaseOf, String dataSpecificationRef) {
-		String idShortOption = ID_SHORT_PARAM_NAME + "=" + Base64UrlEncodedIdentifier.encodeIdentifier(idShort);
+		String idShortOption = ID_SHORT_PARAM_NAME + "=" + idShort;
 		String isCaseOfOption = IS_CASE_OF_PARAM_NAME + "=" + Base64UrlEncodedIdentifier.encodeIdentifier(isCaseOf);
 		String dataSpecOption = DATA_SPEC_REF_PARAM_NAME + "=" + Base64UrlEncodedIdentifier.encodeIdentifier(dataSpecificationRef);
 		
