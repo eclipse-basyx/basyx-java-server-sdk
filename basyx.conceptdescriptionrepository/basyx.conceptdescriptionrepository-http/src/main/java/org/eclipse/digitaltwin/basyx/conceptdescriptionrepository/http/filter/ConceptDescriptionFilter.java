@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.factory;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.filter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,19 +33,19 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 
 /**
- * Factory class to create filtered ConceptDescriptions
+ * Filters ConceptDescriptions based on parameters
  * 
  * @author danish
  *
  */
-public class FilterConceptDescriptionFactory {
+public class ConceptDescriptionFilter {
 
 	private ConceptDescriptionRepository repository;
 	private String idShort;
 	private Reference isCaseOf;
 	private Reference dataSpecificationRef;
 
-	public FilterConceptDescriptionFactory(ConceptDescriptionRepository conceptDescriptionRepository,
+	public ConceptDescriptionFilter(ConceptDescriptionRepository conceptDescriptionRepository,
 			String idShort, Reference isCaseOf,
 			Reference dataSpecificationRef) {
 		super();
@@ -62,7 +62,7 @@ public class FilterConceptDescriptionFactory {
 	 * 
 	 * @return a filtered collection of ConceptDescriptions
 	 */
-	public List<ConceptDescription> create() {
+	public List<ConceptDescription> filter() {
 		if (idShort != null)
 			return repository.getAllConceptDescriptionsByIdShort(idShort).stream().collect(Collectors.toList());
 			

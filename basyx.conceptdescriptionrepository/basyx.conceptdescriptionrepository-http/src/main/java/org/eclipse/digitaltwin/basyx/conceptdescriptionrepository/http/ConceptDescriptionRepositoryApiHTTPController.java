@@ -8,7 +8,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.factory.FilterConceptDescriptionFactory;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.filter.ConceptDescriptionFilter;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,14 +31,15 @@ import java.util.List;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-03-21T12:35:49.719724407Z[GMT]")
 @RestController
 public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDescriptionRepositoryHTTPApi {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ConceptDescriptionRepositoryApiHTTPController.class);
-	
+
 	private final ObjectMapper objectMapper;
 	private ConceptDescriptionRepository repository;
-	
+
 	@Autowired
-	public ConceptDescriptionRepositoryApiHTTPController(ConceptDescriptionRepository conceptDescriptionRepository, ObjectMapper objectMapper) {
+	public ConceptDescriptionRepositoryApiHTTPController(ConceptDescriptionRepository conceptDescriptionRepository,
+			ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
 		this.repository = conceptDescriptionRepository;
 	}
@@ -49,38 +50,44 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 
-	public ResponseEntity<List<ConceptDescription>> getAllConceptDescriptions(@Parameter(in = ParameterIn.QUERY, description = "The Concept Description’s IdShort" ,schema=@Schema()) @Valid @RequestParam(value = "idShort", required = false) String idShort,@Parameter(in = ParameterIn.QUERY, description = "IsCaseOf reference (BASE64-URL-encoded)" ,schema=@Schema()) @Valid @RequestParam(value = "isCaseOf", required = false) Base64UrlEncodedIdentifier isCaseOf,@Parameter(in = ParameterIn.QUERY, description = "DataSpecification reference (BASE64-URL-encoded)" ,schema=@Schema()) @Valid @RequestParam(value = "dataSpecificationRef", required = false) Base64UrlEncodedIdentifier dataSpecificationRef) {
-		
-		if (!hasPermittedParameters(idShort, getDecodedIdentifier(isCaseOf), getDecodedIdentifier(dataSpecificationRef))) {
+	public ResponseEntity<List<ConceptDescription>> getAllConceptDescriptions(
+			@Parameter(in = ParameterIn.QUERY, description = "The Concept Description’s IdShort", schema = @Schema()) @Valid @RequestParam(value = "idShort", required = false) String idShort,
+			@Parameter(in = ParameterIn.QUERY, description = "IsCaseOf reference (BASE64-URL-encoded)", schema = @Schema()) @Valid @RequestParam(value = "isCaseOf", required = false) Base64UrlEncodedIdentifier isCaseOf,
+			@Parameter(in = ParameterIn.QUERY, description = "DataSpecification reference (BASE64-URL-encoded)", schema = @Schema()) @Valid @RequestParam(value = "dataSpecificationRef", required = false) Base64UrlEncodedIdentifier dataSpecificationRef) {
+
+		if (!hasPermittedParameters(idShort, getDecodedIdentifier(isCaseOf),
+				getDecodedIdentifier(dataSpecificationRef))) {
 			logger.error("Only one parameter should be set per request");
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		
-		FilterConceptDescriptionFactory factory = new FilterConceptDescriptionFactory(repository, idShort, getReference(getDecodedIdentifier(isCaseOf)), getReference(getDecodedIdentifier(dataSpecificationRef)));
-		
+
+		ConceptDescriptionFilter factory = new ConceptDescriptionFilter(repository, idShort,
+				getReference(getDecodedIdentifier(isCaseOf)), getReference(getDecodedIdentifier(dataSpecificationRef)));
+
 		if (isIdShortParamSet(idShort))
-			return new ResponseEntity<List<ConceptDescription>>(factory.create(), HttpStatus.OK);
-		
+			return new ResponseEntity<List<ConceptDescription>>(factory.filter(), HttpStatus.OK);
+
 		if (isIsCaseOfParamSet(getDecodedIdentifier(isCaseOf))) {
 			Reference reference = getReference(getDecodedIdentifier(isCaseOf));
-			
+
 			if (reference == null)
 				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			
-			return new ResponseEntity<List<ConceptDescription>>(factory.create(), HttpStatus.OK);
+
+			return new ResponseEntity<List<ConceptDescription>>(factory.filter(), HttpStatus.OK);
 		}
-		
+
 		if (isDataSpecificationRefSet(getDecodedIdentifier(dataSpecificationRef))) {
 			Reference reference = getReference(getDecodedIdentifier(dataSpecificationRef));
-			
+
 			if (reference == null)
 				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			
-			return new ResponseEntity<List<ConceptDescription>>(factory.create(), HttpStatus.OK);
+
+			return new ResponseEntity<List<ConceptDescription>>(factory.filter(), HttpStatus.OK);
 		}
-			
-		return new ResponseEntity<List<ConceptDescription>>(new ArrayList<>(repository.getAllConceptDescriptions()), HttpStatus.OK);
-    }
+
+		return new ResponseEntity<List<ConceptDescription>>(new ArrayList<>(repository.getAllConceptDescriptions()),
+				HttpStatus.OK);
+	}
 
 	public ResponseEntity<ConceptDescription> getConceptDescriptionById(
 			@Parameter(in = ParameterIn.PATH, description = "The Concept Description’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("cdIdentifier") Base64UrlEncodedIdentifier cdIdentifier) {
@@ -100,13 +107,16 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 		repository.updateConceptDescription(cdIdentifier.getIdentifier(), body);
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
-	
+
 	private boolean hasPermittedParameters(String idShort, String isCaseOf, String dataSpecificationRef) {
 
-		return !areAllParametersSet(idShort, isCaseOf, dataSpecificationRef)
-				&& (areAllParametersEmpty(idShort, isCaseOf, dataSpecificationRef)
-				|| (isIdShortParamSet(idShort) ^ isIsCaseOfParamSet(isCaseOf)
-						^ isDataSpecificationRefSet(dataSpecificationRef)));
+		return areAllParametersEmpty(idShort, isCaseOf, dataSpecificationRef)
+				|| isOnlySingleParameterSet(idShort, isCaseOf, dataSpecificationRef);
+	}
+
+	private boolean isOnlySingleParameterSet(String idShort, String isCaseOf, String dataSpecificationRef) {
+		return !areAllParametersSet(idShort, isCaseOf, dataSpecificationRef) && (isIdShortParamSet(idShort)
+				^ isIsCaseOfParamSet(isCaseOf) ^ isDataSpecificationRefSet(dataSpecificationRef));
 	}
 
 	private boolean areAllParametersEmpty(String idShort, String isCaseOf, String dataSpecificationRef) {
@@ -115,7 +125,8 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 	}
 
 	private boolean areAllParametersSet(String idShort, String isCaseOf, String dataSpecificationRef) {
-		return isIdShortParamSet(idShort) && isIsCaseOfParamSet(isCaseOf) && isDataSpecificationRefSet(dataSpecificationRef);
+		return isIdShortParamSet(idShort) && isIsCaseOfParamSet(isCaseOf)
+				&& isDataSpecificationRefSet(dataSpecificationRef);
 	}
 
 	private boolean isDataSpecificationRefSet(String dataSpecificationRef) {
