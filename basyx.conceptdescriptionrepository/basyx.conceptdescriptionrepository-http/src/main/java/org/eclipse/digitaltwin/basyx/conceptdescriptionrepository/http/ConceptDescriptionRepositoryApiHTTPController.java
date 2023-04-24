@@ -3,6 +3,7 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
@@ -15,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -47,18 +47,15 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 
+
 	@Override
-	public ResponseEntity<List<ConceptDescription>> getAllConceptDescriptions(
-			@Parameter(in = ParameterIn.QUERY, description = "The Concept Description’s IdShort", schema = @Schema()) @Valid @RequestParam(value = "idShort", required = false) String idShort,
-			@Parameter(in = ParameterIn.QUERY, description = "IsCaseOf reference (BASE64-URL-encoded)", schema = @Schema()) @Valid @RequestParam(value = "isCaseOf", required = false) Base64UrlEncodedIdentifier isCaseOf,
-			@Parameter(in = ParameterIn.QUERY, description = "DataSpecification reference (BASE64-URL-encoded)", schema = @Schema()) @Valid @RequestParam(value = "dataSpecificationRef", required = false) Base64UrlEncodedIdentifier dataSpecificationRef) {
-		
-		
+	public ResponseEntity<List<ConceptDescription>> getAllConceptDescriptions(@Valid String idShort, @Valid Base64UrlEncodedIdentifier isCaseOf, @Valid Base64UrlEncodedIdentifier dataSpecificationRef, @Min(1) @Valid Integer limit,
+			@Valid String cursor) {
 		Reference isCaseOfReference = getReference(getDecodedValue(isCaseOf));
 		Reference dataSpecificationReference = getReference(getDecodedValue(dataSpecificationRef));
-		
+
 		List<ConceptDescription> filtered = repoFilter.filter(idShort, isCaseOfReference, dataSpecificationReference);
-		
+
 		return new ResponseEntity<>(filtered, HttpStatus.OK);
 	}
 
