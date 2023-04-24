@@ -176,11 +176,11 @@ public class TestSubmodelRepositorySubmodelHTTP {
 	}
 
 	private CloseableHttpResponse createSubmodel(String submodelJSON) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnServer(BaSyxSubmodelHttpTestUtils.submodelAccessURL, submodelJSON);
+		return BaSyxHttpTestUtils.executePostOnURL(BaSyxSubmodelHttpTestUtils.submodelAccessURL, submodelJSON);
 	}
 
 	private CloseableHttpResponse deleteSubmodelById(String submodelId) throws IOException {
-		return BaSyxHttpTestUtils.executeDeleteOnServer(BaSyxSubmodelHttpTestUtils.submodelAccessURL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId));
+		return BaSyxHttpTestUtils.executeDeleteOnURL(BaSyxSubmodelHttpTestUtils.submodelAccessURL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId));
 	}
 
 	private CloseableHttpResponse putSubmodel(String submodelId, String submodelJSON) throws IOException {

@@ -406,7 +406,7 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 	@Test
 	public void createSubmodelElementCollidingId() throws IOException {
 		String element = getJSONValueAsString("SubmodelElement.json");
-		CloseableHttpResponse createdResponse = BaSyxHttpTestUtils.executePostOnServer(createSubmodelElementsURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID), element);
+		CloseableHttpResponse createdResponse = BaSyxHttpTestUtils.executePostOnURL(createSubmodelElementsURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID), element);
 
 		assertEquals(HttpStatus.CONFLICT.value(), createdResponse.getCode());
 	}
@@ -414,7 +414,7 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 	@Test
 	public void createSubmodelElement() throws FileNotFoundException, IOException, ParseException {
 		String element = getJSONValueAsString("SubmodelElement.json");
-		CloseableHttpResponse createdResponse = BaSyxHttpTestUtils.executePostOnServer(createSubmodelElementsURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID), element);
+		CloseableHttpResponse createdResponse = BaSyxHttpTestUtils.executePostOnURL(createSubmodelElementsURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID), element);
 
 		CloseableHttpResponse fetchedResponse = requestSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT);
 		assertEquals(HttpStatus.OK.value(), createdResponse.getCode());
@@ -433,9 +433,9 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 	@Test
 	public void createNestedSubmodelElement() throws FileNotFoundException, IOException, ParseException {
 		String element = getJSONValueAsString("SubmodelElement.json");
-		CloseableHttpResponse createdInCollectionResponse = BaSyxHttpTestUtils.executePostOnServer(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE),
+		CloseableHttpResponse createdInCollectionResponse = BaSyxHttpTestUtils.executePostOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE),
 				element);
-		CloseableHttpResponse createdInListResponse = BaSyxHttpTestUtils.executePostOnServer(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_LIST_SIMPLE), element);
+		CloseableHttpResponse createdInListResponse = BaSyxHttpTestUtils.executePostOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_LIST_SIMPLE), element);
 		assertEquals(HttpStatus.OK.value(), createdInCollectionResponse.getCode());
 		assertEquals(HttpStatus.OK.value(), createdInListResponse.getCode());
 

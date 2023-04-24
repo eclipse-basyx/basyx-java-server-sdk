@@ -206,11 +206,11 @@ public class TestConceptDescriptionRepositoryHTTP {
 	}
 
 	private CloseableHttpResponse createConceptDescription(String conceptDescriptionJSON) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnServer(BaSyxConceptDescriptionHttpTestUtils.CONCEPT_DESCRIPTION_ACCESS_URL, conceptDescriptionJSON);
+		return BaSyxHttpTestUtils.executePostOnURL(BaSyxConceptDescriptionHttpTestUtils.CONCEPT_DESCRIPTION_ACCESS_URL, conceptDescriptionJSON);
 	}
 
 	private CloseableHttpResponse deleteConceptDescriptionById(String conceptDescriptionId) throws IOException {
-		return BaSyxHttpTestUtils.executeDeleteOnServer(BaSyxConceptDescriptionHttpTestUtils.CONCEPT_DESCRIPTION_ACCESS_URL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(conceptDescriptionId));
+		return BaSyxHttpTestUtils.executeDeleteOnURL(BaSyxConceptDescriptionHttpTestUtils.CONCEPT_DESCRIPTION_ACCESS_URL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(conceptDescriptionId));
 	}
 
 	private CloseableHttpResponse putConceptDescription(String conceptDescriptionId, String conceptDescriptionJSON) throws IOException {
