@@ -1,6 +1,5 @@
 {
     "modelType": "Submodel",
-    "kind": "Instance",
     "semanticId": {
         "keys": [
             {
@@ -8,14 +7,13 @@
                 "value": "0173-1#01-AFZ615#016"
             }
         ],
-        "type": "GlobalReference"
+        "type": "ExternalReference"
     },
     "id": "7A7104BDAB57E184",
     "idShort": "TechnicalData",
     "submodelElements": [
         {
             "modelType": "Property",
-            "kind": "Instance",
             "semanticId": {
                 "keys": [
                     {
@@ -23,7 +21,7 @@
                         "value": "0173-1#02-BAA120#008"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             },
             "value": "5000",
             "valueType": "xs:integer",
@@ -32,7 +30,6 @@
         },
         {
             "modelType": "Range",
-            "kind": "Instance",
             "semanticId": {
                 "keys": [
                     {
@@ -40,7 +37,7 @@
                         "value": "0173-1#02-BAA120#008"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             },
             "max": "300",
             "min": "200",
@@ -50,7 +47,6 @@
         },
         {
             "modelType": "MultiLanguageProperty",
-            "kind": "Instance",
             "semanticId": {
                 "keys": [
                     {
@@ -58,7 +54,7 @@
                         "value": "0173-1#02-BAA120#008"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             },
             "category": "PARAM",
             "idShort": "MultiLanguage",
@@ -77,7 +73,6 @@
             "modelType": "File",
             "contentType": "application/json",
             "value": "testFile.json",
-            "kind": "Instance",
             "semanticId": {
                 "keys": [
                     {
@@ -85,7 +80,7 @@
                         "value": "0173-1#02-BAA120#008"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             },
             "category": "PARAMETER",
             "idShort": "FileData"
@@ -93,23 +88,14 @@
         {
             "modelType": "Entity",
             "entityType": "CoManagedEntity",
-            "globalAssetId": {
-                "keys": [
-                    {
-                        "type": "DataElement",
-                        "value": "DataElement"
-                    }
-                ],
-                "type": "ModelReference"
-            },
-            "specificAssetId": {
+            "globalAssetId": "globalAssetID",
+            "specificAssetIds": [{
                 "name": "specificAssetIdName",
                 "value": "specificValue"
-            },
+            }],
             "statements": [
                 {
                     "modelType": "Property",
-                    "kind": "Instance",
                     "semanticId": {
                         "keys": [
                             {
@@ -117,7 +103,7 @@
                                 "value": "0173-1#02-BAA120#008"
                             }
                         ],
-                        "type": "GlobalReference"
+                        "type": "ExternalReference"
                     },
                     "value": "5000",
                     "valueType": "xs:integer",
@@ -126,7 +112,6 @@
                 },
                 {
                     "modelType": "Range",
-                    "kind": "Instance",
                     "semanticId": {
                         "keys": [
                             {
@@ -134,7 +119,7 @@
                                 "value": "0173-1#02-BAA120#008"
                             }
                         ],
-                        "type": "GlobalReference"
+                        "type": "ExternalReference"
                     },
                     "max": "300",
                     "min": "200",
@@ -143,7 +128,6 @@
                     "idShort": "RotationSpeedRange"
                 }
             ],
-            "kind": "Instance",
             "semanticId": {
                 "keys": [
                     {
@@ -151,14 +135,13 @@
                         "value": "0173-1#02-BAA120#008"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             },
             "category": "Entity",
             "idShort": "EntityData"
         },
         {
             "modelType": "ReferenceElement",
-            "kind": "Instance",
             "semanticId": {
                 "keys": [
                     {
@@ -166,7 +149,7 @@
                         "value": "0173-1#02-BAA120#008"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             },
             "category": "PARAMETER",
             "idShort": "ReferenceElement",
@@ -182,7 +165,6 @@
         },
         {
             "modelType": "RelationshipElement",
-            "kind": "Instance",
             "semanticId": {
                 "keys": [
                     {
@@ -190,7 +172,7 @@
                         "value": "0173-1#02-BAA120#008"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             },
             "category": "PARAMETER",
             "idShort": "RelationshipElement",
@@ -210,12 +192,11 @@
                         "value": "BasicEventElement"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             }
         },
         {
             "modelType": "AnnotatedRelationshipElement",
-            "kind": "Instance",
             "semanticId": {
                 "keys": [
                     {
@@ -223,7 +204,7 @@
                         "value": "0173-1#02-BAA120#008"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             },
             "category": "PARAMETER",
             "idShort": "AnnotatedRelationshipElement",
@@ -243,12 +224,11 @@
                         "value": "BasicEventElement"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             },
             "annotations": [
                 {
                     "modelType": "Property",
-                    "kind": "Instance",
                     "semanticId": {
                         "keys": [
                             {
@@ -256,7 +236,7 @@
                                 "value": "0173-1#02-BAA120#008"
                             }
                         ],
-                        "type": "GlobalReference"
+                        "type": "ExternalReference"
                     },
                     "value": "5000",
                     "valueType": "xs:integer",
@@ -265,7 +245,6 @@
                 },
                 {
                     "modelType": "Range",
-                    "kind": "Instance",
                     "semanticId": {
                         "keys": [
                             {
@@ -273,7 +252,7 @@
                                 "value": "0173-1#02-BAA120#008"
                             }
                         ],
-                        "type": "GlobalReference"
+                        "type": "ExternalReference"
                     },
                     "max": "300",
                     "min": "200",
@@ -287,7 +266,6 @@
             "modelType": "Blob",
             "contentType": "application/xml",
             "value": "VGVzdCBjb250ZW50IG9mIFhNTCBmaWxl",
-            "kind": "Instance",
             "semanticId": {
                 "keys": [
                     {
@@ -295,14 +273,13 @@
                         "value": "0173-1#02-BAA120#008"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             },
             "category": "PARAMETER",
             "idShort": "BlobData"
         },
         {
             "modelType": "SubmodelElementCollection",
-            "kind": "Instance",
             "semanticId": {
                 "keys": [
                     {
@@ -310,7 +287,7 @@
                         "value": "0173-1#02-BAA120#008"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             },
             "category": "PARAMETER",
             "idShort": "SubmodelElementCollection",
@@ -319,7 +296,6 @@
                     "modelType": "File",
                     "contentType": "application/json",
                     "value": "testFile.json",
-                    "kind": "Instance",
                     "semanticId": {
                         "keys": [
                             {
@@ -327,14 +303,13 @@
                                 "value": "0173-1#02-BAA120#008"
                             }
                         ],
-                        "type": "GlobalReference"
+                        "type": "ExternalReference"
                     },
                     "category": "PARAMETER",
                     "idShort": "FileData"
                 },
                 {
                     "modelType": "Property",
-                    "kind": "Instance",
                     "semanticId": {
                         "keys": [
                             {
@@ -342,7 +317,7 @@
                                 "value": "0173-1#02-BAA120#008"
                             }
                         ],
-                        "type": "GlobalReference"
+                        "type": "ExternalReference"
                     },
                     "value": "5000",
                     "valueType": "xs:integer",
@@ -353,7 +328,6 @@
         },
         {
             "modelType": "SubmodelElementList",
-            "kind": "Instance",
             "semanticId": {
                 "keys": [
                     {
@@ -361,15 +335,14 @@
                         "value": "0173-1#02-BAA120#008"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             },
             "category": "PARAMETER",
             "idShort": "SubmodelElementList",
-            "orderRelevant": true,
+            "orderRelevant": false,
             "value": [
                 {
                     "modelType": "Range",
-                    "kind": "Instance",
                     "semanticId": {
                         "keys": [
                             {
@@ -377,7 +350,7 @@
                                 "value": "0173-1#02-BAA120#008"
                             }
                         ],
-                        "type": "GlobalReference"
+                        "type": "ExternalReference"
                     },
                     "max": "300",
                     "min": "200",
@@ -387,7 +360,6 @@
                 },
                 {
                     "modelType": "Property",
-                    "kind": "Instance",
                     "semanticId": {
                         "keys": [
                             {
@@ -395,7 +367,7 @@
                                 "value": "0173-1#02-BAA120#008"
                             }
                         ],
-                        "type": "GlobalReference"
+                        "type": "ExternalReference"
                     },
                     "value": "5000",
                     "valueType": "xs:integer",

@@ -81,7 +81,7 @@ public abstract class AasServiceSuite {
 	public void addSubmodelReference() {
 		Submodel submodel = createDummySubmodel();
 
-		aasService.addSubmodelReference(submodel.getSemanticId());
+		aasService.addSubmodelReference(submodel.getSemanticID());
 
 		List<Reference> submodelReferences = aasService.getSubmodelReferences();
 
@@ -118,8 +118,7 @@ public abstract class AasServiceSuite {
 
 	private AssetInformation createDummyAssetInformation() {
 		AssetInformation assetInfo = new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
-				.globalAssetId(
-						new DefaultReference.Builder().keys(new DefaultKey.Builder().value("assetIDTestKey").build()).build())
+				.globalAssetID("assetIDTestKey")
 				.build();
 		return assetInfo;
 	}
@@ -130,7 +129,7 @@ public abstract class AasServiceSuite {
 
 	private DefaultSubmodel createDummySubmodel() {
 		return new DefaultSubmodel.Builder()
-				.semanticId(
+				.semanticID(
 						new DefaultReference.Builder().keys(new DefaultKey.Builder().value("testKey").build()).build())
 				.build();
 	}

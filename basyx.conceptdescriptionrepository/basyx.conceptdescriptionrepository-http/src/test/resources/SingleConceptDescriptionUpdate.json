@@ -1,0 +1,31 @@
+{
+    "modelType": "ConceptDescription",
+    "administration": {
+        "revision": "4",
+        "version": "2.3"
+    },
+    "id": "7A7104BDAB57E184",
+    "category": "PROPERTY",
+    "idShort": "ConceptDescription",
+    "isCaseOf": [
+        {
+            "keys": [
+                {
+                    "type": "DataElement",
+                    "value": "DataElement"
+                }
+            ],
+            "type": "ExternalReference"
+        }
+    ],
+    "displayName": [
+        {
+            "language": "en",
+            "text": "Updated Concept Description"
+        },
+        {
+            "language": "de",
+            "text": "Aktualisierte Konzeptbeschreibung"
+        }
+    ]
+}

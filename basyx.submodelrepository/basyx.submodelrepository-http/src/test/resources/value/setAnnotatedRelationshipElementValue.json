@@ -1,6 +1,6 @@
 {
 	"first": {
-		"type": "GlobalReference",
+		"type": "ExternalReference",
 		"keys": [
 			{
 				"type": "Blob",

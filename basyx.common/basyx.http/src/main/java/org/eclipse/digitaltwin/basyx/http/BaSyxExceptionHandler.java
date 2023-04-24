@@ -46,11 +46,16 @@ public class BaSyxExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(ElementDoesNotExistException.class)
 	public <T> ResponseEntity<T> handleElementNotFoundException(ElementDoesNotExistException exception, WebRequest request) {
-		return new ResponseEntity<T>(HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(CollidingIdentifierException.class)
 	public <T> ResponseEntity<T> handleCollidingIdentifierException(CollidingIdentifierException exception, WebRequest request) {
-		return new ResponseEntity<T>(HttpStatus.CONFLICT);
+		return new ResponseEntity<>(HttpStatus.CONFLICT);
+	}
+
+	@ExceptionHandler(IllegalArgumentException.class)
+	public <T> ResponseEntity<T> handleIllegalArgumentException(IllegalArgumentException exception) {
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 }
