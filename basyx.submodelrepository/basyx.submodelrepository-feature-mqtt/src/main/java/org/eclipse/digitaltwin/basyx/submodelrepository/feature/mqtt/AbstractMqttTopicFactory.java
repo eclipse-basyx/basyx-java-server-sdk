@@ -28,7 +28,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt.encoding.Encoder;
 
 /**
- * Abstract base class for all Mqtt topic factories
+ * Abstract base class for all MQTT topic factories.
  */
 public abstract class AbstractMqttTopicFactory {
 	private Encoder encoder;

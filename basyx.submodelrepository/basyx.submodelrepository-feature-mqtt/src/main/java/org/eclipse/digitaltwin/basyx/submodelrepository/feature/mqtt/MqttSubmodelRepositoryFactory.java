@@ -29,6 +29,11 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 
+/**
+ * Repository factory for the MQTT eventing on the submodel level.
+ * 
+ * @author fischer
+ */
 public class MqttSubmodelRepositoryFactory implements SubmodelRepositoryFactory {
 
 	private SubmodelRepositoryFactory decorated;

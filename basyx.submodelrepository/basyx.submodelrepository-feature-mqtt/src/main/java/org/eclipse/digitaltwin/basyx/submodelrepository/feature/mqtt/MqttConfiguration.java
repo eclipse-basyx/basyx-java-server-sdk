@@ -36,6 +36,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * MQTT configuration to allow for the automatic enablement of the feature using
+ * the config file.
+ */
 @ConditionalOnExpression("#{${" + MqttSubmodelRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
 @Configuration
 public class MqttConfiguration {

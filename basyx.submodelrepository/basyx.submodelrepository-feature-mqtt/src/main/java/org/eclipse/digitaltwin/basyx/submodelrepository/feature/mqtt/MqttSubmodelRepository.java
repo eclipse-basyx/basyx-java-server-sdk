@@ -17,6 +17,11 @@ import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Repository decorator for the MQTT eventing on the submodel level.
+ * 
+ * @author fischer
+ */
 public class MqttSubmodelRepository implements SubmodelRepository {
 	private static Logger logger = LoggerFactory.getLogger(MqttSubmodelRepository.class);
 	private MqttSubmodelRepositoryTopicFactory topicFactory;

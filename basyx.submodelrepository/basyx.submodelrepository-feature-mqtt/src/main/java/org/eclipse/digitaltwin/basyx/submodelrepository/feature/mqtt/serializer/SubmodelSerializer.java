@@ -29,10 +29,21 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 
+/**
+ * Serializer for the submodel.
+ * 
+ * @author fischer
+ */
 public class SubmodelSerializer {
 	private SubmodelSerializer() {
 	}
 
+	/**
+	 * Serializer to create a JSON String for the given submodel.
+	 * 
+	 * @param submodel
+	 * @return serialized submodel as JSON String
+	 */
 	public static String serializeSubmodel(Submodel submodel) {
 		try {
 			return new JsonSerializer().write(submodel);

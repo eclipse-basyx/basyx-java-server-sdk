@@ -41,12 +41,23 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
 
+/**
+ * Serializer for the submodel element.
+ * 
+ * @author fischer
+ */
 public class SubmodelElementSerializer {
 	public static final String EMPTYVALUEUPDATE_TYPE = "emptyValueUpdateEvent";
 
 	private SubmodelElementSerializer() {
 	}
 
+	/**
+	 * Serializer to create a JSON String for the given submodel element.
+	 * 
+	 * @param submodelElement
+	 * @return serialized submodelElement as JSON String
+	 */
 	public static String serializeSubmodelElement(SubmodelElement submodelElement) {
 		try {
 			SubmodelElement localElement;
@@ -62,6 +73,14 @@ public class SubmodelElementSerializer {
 		}
 	}
 
+	/**
+	 * Generator to create a copy of a submodelElement without its value.
+	 * 
+	 * @param submodelElement
+	 * @return submodelElement without value
+	 * @throws SerializationException
+	 * @throws DeserializationException
+	 */
 	private static SubmodelElement getSubmodelElementWithoutValue(SubmodelElement submodelElement) throws SerializationException, DeserializationException {
 		// Copy the SubmodelElement to not modify the original.
 		String jsonToCopy = new JsonSerializer().write(submodelElement);
@@ -88,7 +107,7 @@ public class SubmodelElementSerializer {
 
 	/**
 	 * Returns true if the submodelElement has an EmptyValueUpdateEvent with a value
-	 * of true
+	 * of true.
 	 */
 	private static boolean shouldSendEmptyValueEvent(SubmodelElement submodelElement) {
 		Optional<Qualifier> qualifier = submodelElement.getQualifiers().stream().filter(c -> c instanceof Qualifier).map(Qualifier.class::cast).filter(q -> q.getType().equals(EMPTYVALUEUPDATE_TYPE)).findAny();

@@ -34,6 +34,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
+/**
+ * Repository feature for the MQTT eventing on the submodel level.
+ * 
+ * @author fischer
+ */
 @ConditionalOnExpression("#{${" + MqttSubmodelRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
 @Component
 public class MqttSubmodelRepositoryFeature implements SubmodelRepositoryFeature {

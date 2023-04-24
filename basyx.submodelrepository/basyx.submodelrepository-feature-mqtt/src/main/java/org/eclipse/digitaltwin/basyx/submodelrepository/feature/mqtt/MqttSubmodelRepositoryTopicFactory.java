@@ -29,6 +29,11 @@ import java.util.StringJoiner;
 
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt.encoding.Encoder;
 
+/**
+ * MQTT topic factory for the eventing on the submodel level.
+ * 
+ * @author fischer
+ */
 public class MqttSubmodelRepositoryTopicFactory extends AbstractMqttTopicFactory {
 	private static final String SUBMODELREPOSITORY = "sm-repository";
 	private static final String SUBMODELS = "submodels";
