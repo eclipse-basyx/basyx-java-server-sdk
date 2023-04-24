@@ -168,7 +168,7 @@ public class TestSubmodelRepositorySubmodelHTTP {
 	}
 
 	private void submodelContentFlagTest(String contentParameter, String expectedSubmodelJSON) throws ParseException, IOException {
-		String submodelJSON = requestSpecificSubmodelJSONWithContentParameter(DummySubmodelFactory.createTechnicalDataSubmodel().getId(), contentParameter);
+		String submodelJSON = requestSubmodel(DummySubmodelFactory.createTechnicalDataSubmodel().getId(), contentParameter);
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelJSON, submodelJSON);
 
@@ -196,14 +196,14 @@ public class TestSubmodelRepositorySubmodelHTTP {
 		return BaSyxHttpTestUtils.executeGetOnURL(BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(submodelId));
 	}
 
-	private String requestSpecificSubmodelJSONWithContentParameter(String submodelId, String contentParameter) throws IOException, ParseException {
+	private String requestSubmodel(String submodelId, String contentParameter) throws IOException, ParseException {
 		CloseableHttpResponse response = requestSubmodelWithContentParameter(submodelId, contentParameter);
 
 		return BaSyxHttpTestUtils.getResponseAsString(response);
 	}
 
 	private CloseableHttpResponse requestSubmodelWithContentParameter(String submodelId, String contentParameter) throws IOException {
-		String submodelPathWithContentParameter = BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPathWithContentParameter(submodelId, contentParameter);
+		String submodelPathWithContentParameter = BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(submodelId, contentParameter);
 		return BaSyxHttpTestUtils.executeGetOnURL(submodelPathWithContentParameter);
 	}
 

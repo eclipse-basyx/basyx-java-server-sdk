@@ -40,7 +40,7 @@ public class BaSyxSubmodelHttpTestUtils {
 		return submodelAccessURL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId) + "/submodel";
 	}
 
-	public static String getSpecificSubmodelAccessPathWithContentParameter(String submodelId, String contentParamter) {
+	public static String getSpecificSubmodelAccessPath(String submodelId, String contentParamter) {
 		return getSpecificSubmodelAccessPath(submodelId) + "?content=" + contentParamter;
 	}
 }
