@@ -506,7 +506,7 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 
 	private CloseableHttpResponse writeSubmodelElementValue(String submodelId, String smeIdShort, String value)
 			throws IOException {
-		return BaSyxHttpTestUtils.executePutOnURL(createSubmodelElementValueURL(submodelId, smeIdShort), value);
+		return BaSyxHttpTestUtils.executePatchOnURL(createSubmodelElementValueURL(submodelId, smeIdShort), value);
 	}
 
 	private CloseableHttpResponse requestSubmodelElementValue(String submodelId, String smeIdShort) throws IOException {
@@ -529,11 +529,11 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 	}
 
 	private String createSubmodelElementValueURL(String submodelId, String smeIdShort) {
-		return createSpecificSubmodelElementURL(submodelId, smeIdShort) + "?content=value";
+		return createSpecificSubmodelElementURL(submodelId, smeIdShort) + "/$value";
 	}
 	
 	private String createSubmodelValueURL(String submodelId) {
-		return createSubmodelURL(submodelId) + "?content=value";
+		return createSubmodelURL(submodelId) + "/$value";
 	}
 	
 	private String createSubmodelURL(String submodelId) {
