@@ -1,0 +1,41 @@
+[
+	{
+		"modelType": "ConceptDescription",
+		"id": "7A7104IHTREFN4322",
+		"category": "PROPERTY",
+		"idShort": "ConDescWithDataSpec",
+		"isCaseOf": [
+			{
+				"keys": [
+					{
+						"type": "Entity",
+						"value": "EntityKey"
+					}
+				],
+				"type": "GlobalReference"
+			},
+			{
+				"keys": [
+					{
+						"type": "DataElement",
+						"value": "DataElement"
+					}
+				],
+				"type": "ModelReference"
+			}
+		],
+		"embeddedDataSpecifications": [
+			{
+				"dataSpecification": {
+					"keys": [
+						{
+							"type": "ReferenceElement",
+							"value": "ReferenceElementKey"
+						}
+					],
+					"type": "GlobalReference"
+				}
+			}
+		]
+	}
+]

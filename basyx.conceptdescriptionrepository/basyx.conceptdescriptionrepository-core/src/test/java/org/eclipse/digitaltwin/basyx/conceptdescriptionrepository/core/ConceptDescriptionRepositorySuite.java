@@ -35,10 +35,13 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
+import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAdministrativeInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangString;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
@@ -64,7 +67,48 @@ public abstract class ConceptDescriptionRepositorySuite {
 		ConceptDescriptionRepository repo = getConceptDescriptionRepository(expectedConceptDescriptions);
 		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptions();
 
+		assertEquals(4, actualConceptDescriptions.size());
 		assertConceptDescriptionsAreContained(expectedConceptDescriptions, actualConceptDescriptions);
+	}
+	
+	@Test
+	public void getAllConceptDescriptionsWithIdShortPreconfigured() {
+		Collection<ConceptDescription> allConceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
+		Collection<ConceptDescription> expectedDescriptions = Arrays.asList(DummyConceptDescriptionFactory.createBasicConceptDescription());
+
+		ConceptDescriptionRepository repo = getConceptDescriptionRepository(allConceptDescriptions);
+		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIdShort("BasicConceptDescription");
+
+		assertEquals(1, actualConceptDescriptions.size());
+		assertConceptDescriptionsAreContained(expectedDescriptions, actualConceptDescriptions);
+	}
+	
+	@Test
+	public void getAllConceptDescriptionsWithIsCaseOfPreconfigured() {
+		Reference reference = new DefaultReference.Builder().keys(Arrays.asList(new DefaultKey.Builder().type(KeyTypes.DATA_ELEMENT).value("DataElement").build())).type(ReferenceTypes.MODEL_REFERENCE).build();
+		
+		Collection<ConceptDescription> allConceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
+		Collection<ConceptDescription> expectedDescriptions = Arrays.asList(DummyConceptDescriptionFactory.createConceptDescription(), DummyConceptDescriptionFactory.createBasicConceptDescriptionWithDataSpecification());
+
+		ConceptDescriptionRepository repo = getConceptDescriptionRepository(allConceptDescriptions);
+		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIsCaseOf(reference);
+
+		assertEquals(2, actualConceptDescriptions.size());
+		assertConceptDescriptionsAreContained(expectedDescriptions, actualConceptDescriptions);
+	}
+	
+	@Test
+	public void getAllConceptDescriptionsWithDataSpecPreconfigured() {
+		Reference reference = new DefaultReference.Builder().keys(Arrays.asList(new DefaultKey.Builder().type(KeyTypes.REFERENCE_ELEMENT).value("ReferenceElementKey").build())).type(ReferenceTypes.GLOBAL_REFERENCE).build();
+		
+		Collection<ConceptDescription> allConceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
+		Collection<ConceptDescription> expectedDescriptions = Arrays.asList(DummyConceptDescriptionFactory.createBasicConceptDescriptionWithDataSpecification());
+
+		ConceptDescriptionRepository repo = getConceptDescriptionRepository(allConceptDescriptions);
+		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByDataSpecificationReference(reference);
+
+		assertEquals(1, actualConceptDescriptions.size());
+		assertConceptDescriptionsAreContained(expectedDescriptions, actualConceptDescriptions);
 	}
 
 	@Test
@@ -150,7 +194,6 @@ public abstract class ConceptDescriptionRepositorySuite {
 	}
 	
 	private void assertConceptDescriptionsAreContained(Collection<ConceptDescription> expectedConceptDescriptions, Collection<ConceptDescription> actualConceptDescriptions) {
-		assertEquals(2, actualConceptDescriptions.size());
 		assertTrue(actualConceptDescriptions.containsAll(expectedConceptDescriptions));
 	}
 

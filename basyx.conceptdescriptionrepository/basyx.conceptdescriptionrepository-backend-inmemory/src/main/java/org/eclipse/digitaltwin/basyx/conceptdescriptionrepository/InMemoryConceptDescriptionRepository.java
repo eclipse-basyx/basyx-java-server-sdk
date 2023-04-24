@@ -29,10 +29,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
+import org.eclipse.digitaltwin.aas4j.v3.model.EmbeddedDataSpecification;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 
@@ -67,6 +70,21 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 	@Override
 	public Collection<ConceptDescription> getAllConceptDescriptions() {
 		return conceptDescriptions.values().stream().collect(Collectors.toList());
+	}
+	
+	@Override
+	public Collection<ConceptDescription> getAllConceptDescriptionsByIdShort(String idShort) {
+		return conceptDescriptions.values().stream().filter(conceptDescription -> conceptDescription.getIdShort().equals(idShort)).collect(Collectors.toList());
+	}
+
+	@Override
+	public Collection<ConceptDescription> getAllConceptDescriptionsByIsCaseOf(Reference reference) {
+		return conceptDescriptions.values().stream().filter(conceptDescription -> hasMatchingReference(conceptDescription, reference)).collect(Collectors.toList());
+	}
+
+	@Override
+	public Collection<ConceptDescription> getAllConceptDescriptionsByDataSpecificationReference(Reference reference) {
+		return conceptDescriptions.values().stream().filter(conceptDescription -> hasMatchingDataSpecificationReference(conceptDescription, reference)).collect(Collectors.toList());
 	}
 
 	@Override
@@ -124,6 +142,18 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 	private void throwIfConceptDescriptionDoesNotExist(String id) {
 		if (!conceptDescriptions.containsKey(id))
 			throw new ElementDoesNotExistException(id);
+	}
+	
+	private boolean hasMatchingReference(ConceptDescription cd, Reference reference) {
+		Optional<Reference> optionalReference = cd.getIsCaseOf().stream().filter(ref -> ref.equals(reference)).findAny();
+		
+		return optionalReference.isPresent();
+	}
+	
+	private boolean hasMatchingDataSpecificationReference(ConceptDescription cd, Reference reference) {
+		Optional<EmbeddedDataSpecification> optionalReference = cd.getEmbeddedDataSpecifications().stream().filter(eds -> eds.getDataSpecification().equals(reference)).findAny();
+		
+		return optionalReference.isPresent();
 	}
 
 }

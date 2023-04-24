@@ -1,12 +1,31 @@
 [
     {
-        "modelType": "ConceptDescription",
         "administration": {
             "revision": "2",
             "version": "1.2"
         },
-        "id": "7A7104BDAB57E184",
         "category": "PROPERTY",
+        "description": [
+            {
+                "language": "en",
+                "text": "Hello"
+            },
+            {
+                "language": "de",
+                "text": "Hallo"
+            }
+        ],
+        "displayName": [
+            {
+                "language": "en",
+                "text": "Concept Description"
+            },
+            {
+                "language": "de",
+                "text": "Konzeptbeschreibung"
+            }
+        ],
+        "id": "7A7104BDAB57E184",
         "idShort": "ConceptDescription",
         "isCaseOf": [
             {
@@ -28,31 +47,11 @@
                 "type": "GlobalReference"
             }
         ],
-        "description": [
-            {
-                "language": "en",
-                "text": "Hello"
-            },
-            {
-                "language": "de",
-                "text": "Hallo"
-            }
-        ],
-        "displayName": [
-            {
-                "language": "en",
-                "text": "Concept Description"
-            },
-            {
-                "language": "de",
-                "text": "Konzeptbeschreibung"
-            }
-        ]
+        "modelType": "ConceptDescription"
     },
     {
-        "modelType": "ConceptDescription",
-        "id": "7A7104BDAH56TH2",
         "category": "PROPERTY",
+        "id": "7A7104BDAH56TH2",
         "idShort": "BasicConceptDescription",
         "isCaseOf": [
             {
@@ -73,6 +72,72 @@
                 ],
                 "type": "ModelReference"
             }
-        ]
+        ],
+        "modelType": "ConceptDescription"
+    },
+    {
+        "category": "PROPERTY",
+        "id": "7A7104BDA6544322",
+        "idShort": "BasicConDescCommonIsCaseOf",
+        "isCaseOf": [
+            {
+                "keys": [
+                    {
+                        "type": "Entity",
+                        "value": "EntityKey"
+                    }
+                ],
+                "type": "GlobalReference"
+            },
+            {
+                "keys": [
+                    {
+                        "type": "Capability",
+                        "value": "CapabilityKey"
+                    }
+                ],
+                "type": "ModelReference"
+            }
+        ],
+        "modelType": "ConceptDescription"
+    },
+    {
+        "category": "PROPERTY",
+        "embeddedDataSpecifications": [
+            {
+                "dataSpecification": {
+                    "keys": [
+                        {
+                            "type": "ReferenceElement",
+                            "value": "ReferenceElementKey"
+                        }
+                    ],
+                    "type": "GlobalReference"
+                }
+            }
+        ],
+        "id": "7A7104IHTREFN4322",
+        "idShort": "ConDescWithDataSpec",
+        "isCaseOf": [
+            {
+                "keys": [
+                    {
+                        "type": "Entity",
+                        "value": "EntityKey"
+                    }
+                ],
+                "type": "GlobalReference"
+            },
+            {
+                "keys": [
+                    {
+                        "type": "DataElement",
+                        "value": "DataElement"
+                    }
+                ],
+                "type": "ModelReference"
+            }
+        ],
+        "modelType": "ConceptDescription"
     }
 ]
