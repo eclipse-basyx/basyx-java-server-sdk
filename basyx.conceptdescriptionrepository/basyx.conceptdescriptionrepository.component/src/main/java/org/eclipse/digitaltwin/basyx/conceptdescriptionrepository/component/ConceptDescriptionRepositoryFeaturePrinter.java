@@ -24,39 +24,34 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.http.deserialization;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.component;
 
-import java.io.IOException;
+import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIdValue;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.ConceptDescriptionRepositoryFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
- * Serializes a SpecificAssetIdValue as described in DotAAS Part 2
+ * Prints all ConceptDescriptionRepository features that are on the classpath
  * 
- * @author danish
+ * @author schnicke, danish
  *
  */
-public class SpecificAssetIdValueDeserializer extends JsonDeserializer<SpecificAssetIdValue> {
+@Service
+public class ConceptDescriptionRepositoryFeaturePrinter {
 
-	@Override
-	public SpecificAssetIdValue deserialize(JsonParser p, DeserializationContext ctxt)
-			throws IOException {
+	private static final Logger logger = LoggerFactory.getLogger(ConceptDescriptionRepositoryFeaturePrinter.class);
 
-		try {
-			ObjectMapper mapper = (ObjectMapper) p.getCodec();
-			JsonNode node = mapper.readTree(p);
-			
-			String specifiecAssetIdName = node.fieldNames().next();
-			
-			return new SpecificAssetIdValue(specifiecAssetIdName, node.get(specifiecAssetIdName).asText());
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+	@Autowired
+	public ConceptDescriptionRepositoryFeaturePrinter(List<ConceptDescriptionRepositoryFeature> features) {
+		logger.info("-------------------- Concept Description Repository Features: --------------------");
+		for (ConceptDescriptionRepositoryFeature feature : features) {
+			logger.info("BaSyxFeature " + feature.getName() + " is enabled: " + feature.isEnabled());
 		}
-	}
 
+		logger.info("----------------------------------------------------------------- ");
+	}
 }

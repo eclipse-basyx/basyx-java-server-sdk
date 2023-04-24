@@ -19,18 +19,11 @@
       }
     ],
     "entityType": "CoManagedEntity",
-    "globalAssetId": {
-      "type": "ModelReference",
-      "keys": [
-        {
-          "type": "DataElement",
-          "value": "DataElement"
-        }
-      ]
-    },
+    "globalAssetId": "globalAssetID",
     "specificAssetIds": [
       {
-        "specificAssetIdName": "specificValue"
+        "name": "specificAssetIdName",
+        "value": "specificValue"
       }
     ]
   },
@@ -45,7 +38,7 @@
       ]
     },
     "second": {
-      "type": "GlobalReference",
+      "type": "ExternalReference",
       "keys": [
         {
           "type": "BasicEventElement",
@@ -102,7 +95,7 @@
       ]
     },
     "second": {
-      "type": "GlobalReference",
+      "type": "ExternalReference",
       "keys": [
         {
           "type": "BasicEventElement",

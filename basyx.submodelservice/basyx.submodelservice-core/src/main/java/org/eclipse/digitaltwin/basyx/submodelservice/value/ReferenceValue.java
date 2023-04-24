@@ -29,6 +29,7 @@ import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.Key;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 
 /**
  * Represents the model element {@link Reference} value
@@ -50,11 +51,20 @@ public class ReferenceValue {
 		this.keys = keys;
 	}
 
+	public ReferenceValue(Reference reference) {
+		this.type = reference.getType();
+		this.keys = reference.getKeys();
+	}
+
 	public ReferenceTypes getType() {
 		return type;
 	}
 
 	public List<Key> getKeys() {
 		return keys;
+	}
+
+	public Reference toReference() {
+		return new DefaultReference.Builder().type(type).keys(keys).build();
 	}
 }

@@ -26,7 +26,7 @@ package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
+import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.MultiLanguageProperty;
 
 /**
@@ -36,18 +36,18 @@ import org.eclipse.digitaltwin.aas4j.v3.model.MultiLanguageProperty;
  *
  */
 public class MultiLanguagePropertyValue implements SubmodelElementValue {
-	private List<LangString> value;
+	private List<LangStringTextType> value;
 	
 	@SuppressWarnings("unused")
 	private MultiLanguagePropertyValue() {
 		super();
 	}
 	
-	public MultiLanguagePropertyValue(List<LangString> list) {
+	public MultiLanguagePropertyValue(List<LangStringTextType> list) {
 		this.value = list;
 	}
 
-	public List<LangString> getValue() {
+	public List<LangStringTextType> getValue() {
 		return this.value;
 	}
 }

@@ -4,29 +4,6 @@
 	"id": "customIdentifier",
 	"assetInformation": {
 		"assetKind": "Instance",
-		"globalAssetId": {
-			"keys": [
-				{
-					"type": "AssetAdministrationShell",
-					"value": "http://example.com/assets/POKHGTR"
-				}
-			],
-			"type": "ModelReference"
-		},
-		"specificAssetIds": [
-			{
-				"name": "EquipmentID",
-				"value": "538fd1b3-f99f-4a52-9c75-72e9fa921270",
-				"externalSubjectId": {
-					"keys": [
-						{
-							"type": "GlobalReference",
-							"value": "http://customer.com/Systems/ERP/012"
-						}
-					],
-					"type": "GlobalReference"
-				}
-			}
-		]
+		"globalAssetId": "updated"
 	}
 }

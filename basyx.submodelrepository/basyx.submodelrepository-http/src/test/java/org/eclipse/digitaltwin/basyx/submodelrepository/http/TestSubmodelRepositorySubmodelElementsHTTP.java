@@ -29,13 +29,20 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -49,15 +56,32 @@ import org.springframework.http.HttpStatus;
  *
  */
 public class TestSubmodelRepositorySubmodelElementsHTTP {
-	private ConfigurableApplicationContext appContext;
+	private static ConfigurableApplicationContext appContext;
 
-	@Before
-	public void startAASRepo() throws Exception {
+	@BeforeClass
+	public static void startAASRepo() throws Exception {
 		appContext = new SpringApplication(DummySubmodelRepositoryComponent.class).run(new String[] {});
 	}
 
-	@After
-	public void shutdownAASRepo() {
+	@Before
+	public void populateRepository() {
+		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
+		Collection<Submodel> submodels = createSubmodels();
+		resetRepoToDefaultSubmodels(repo, submodels);
+	}
+
+	private void resetRepoToDefaultSubmodels(SubmodelRepository repo, Collection<Submodel> submodels) {
+		repo.getAllSubmodels().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
+
+		submodels.forEach(repo::createSubmodel);
+	}
+
+	private List<Submodel> createSubmodels() {
+		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createOperationalDataSubmodel(), DummySubmodelFactory.createSimpleDataSubmodel());
+	}
+
+	@AfterClass
+	public static void shutdownAASRepo() {
 		appContext.close();
 	}
 
@@ -250,7 +274,7 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
 	}
-	
+
 	@Test
 	public void setEntityValueMRP() throws IOException, ParseException {
 		String minimumRequestPayloadValue = getJSONValueAsString("value/setEntityValueMRP.json");
@@ -332,7 +356,7 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
 	}
-	
+
 	@Test
 	public void getSubmodelElementCollectionValue() throws IOException, ParseException {
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT);
@@ -355,7 +379,7 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
 	}
-	
+
 	@Test
 	public void getSubmodelElementListValue() throws IOException, ParseException {
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_LIST_ID_SHORT);
@@ -409,14 +433,15 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 	@Test
 	public void createNestedSubmodelElement() throws FileNotFoundException, IOException, ParseException {
 		String element = getJSONValueAsString("SubmodelElement.json");
-		CloseableHttpResponse createdInCollectionResponse = BaSyxHttpTestUtils.executePostOnServer(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE), element);
+		CloseableHttpResponse createdInCollectionResponse = BaSyxHttpTestUtils.executePostOnServer(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE),
+				element);
 		CloseableHttpResponse createdInListResponse = BaSyxHttpTestUtils.executePostOnServer(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_LIST_SIMPLE), element);
 		assertEquals(HttpStatus.OK.value(), createdInCollectionResponse.getCode());
 		assertEquals(HttpStatus.OK.value(), createdInListResponse.getCode());
-		
+
 		CloseableHttpResponse fetchedNestedInCollectionResponse = requestSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, createCollectionNestedIdShortPath(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT));
 		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedNestedInCollectionResponse));
-		
+
 		CloseableHttpResponse fetchedNestedInListResponse = requestSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, createListNestedIdShortPath(1));
 		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedNestedInListResponse));
 	}
@@ -445,7 +470,7 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 		CloseableHttpResponse response = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, "nonExisting", valueToWrite);
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
-	
+
 	@Test
 	public void getValuesSerializationOfSubmodel() throws IOException, ParseException {
 		CloseableHttpResponse response = requestSubmodelValues(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID);
@@ -463,7 +488,6 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
-
 
 	private String createCollectionNestedIdShortPath(String idShort) {
 		return DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE + "." + idShort;

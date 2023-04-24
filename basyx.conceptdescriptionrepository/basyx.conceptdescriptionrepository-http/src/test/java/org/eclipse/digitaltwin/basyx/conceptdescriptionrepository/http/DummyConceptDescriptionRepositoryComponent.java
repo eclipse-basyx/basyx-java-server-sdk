@@ -24,37 +24,23 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.submodelservice.value;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.InMemoryConceptDescriptionRepository;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 /**
- * Represents the {@link SpecificAssetId} value
+ * Spring application configured for tests.
  * 
- * @author danish
+ * @author schnicke, danish
  *
  */
-public class SpecificAssetIdValue {
-	
-	private String name;
-	private String value;
-	
-	@SuppressWarnings("unused")
-	private SpecificAssetIdValue() {
-		super();
-	}
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
+public class DummyConceptDescriptionRepositoryComponent {
 
-	public SpecificAssetIdValue(String name, String value) {
-		this.name = name;
-		this.value = value;
+	@Bean
+	public InMemoryConceptDescriptionRepository createConceptDescriptionRepository() {
+		return new InMemoryConceptDescriptionRepository();
 	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
 }

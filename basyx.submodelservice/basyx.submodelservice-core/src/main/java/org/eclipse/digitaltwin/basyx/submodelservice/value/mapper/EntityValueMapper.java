@@ -24,14 +24,13 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.EntityValue;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceValue;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIdValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIDValue;
 
 /**
  * Maps {@link Entity} value to {@link EntityValue}
@@ -49,38 +48,30 @@ public class EntityValueMapper implements ValueMapper<EntityValue> {
 	@Override
 	public EntityValue getValue() {
 		return new EntityValue(ValueMapperUtil.createValueOnlyCollection(entity.getStatements()), entity.getEntityType(),
-				createReferenceValue(entity.getGlobalAssetId()), getSpecificAssetIdValue(entity.getSpecificAssetId()));
+				entity.getGlobalAssetID(), getSpecificAssetIdValue(entity.getSpecificAssetIds()));
 	}
 
 	@Override
 	public void setValue(EntityValue entityValue) {
 		ValueMapperUtil.setValueOfSubmodelElementWithValueOnly(entity.getStatements(), entityValue.getStatements());
 		entity.setEntityType(entityValue.getEntityType());
-		setGlobalAssetId(entityValue.getGlobalAssetId());
-		setSpecificAssetId(entityValue.getSpecificAssetIds());
+		setGlobalAssetID(entityValue.getGlobalAssetId());
+		setSpecificAssetIDs(entityValue.getSpecificAssetIds());
 	}
 
-	private void setSpecificAssetId(List<SpecificAssetIdValue> specificAssetIds) {
-		if (specificAssetIds == null || entity.getSpecificAssetId() == null)
+	private void setSpecificAssetIDs(List<SpecificAssetIDValue> specificAssetIdValues) {
+		if (specificAssetIdValues == null)
 			return;
 
-		entity.getSpecificAssetId().setName(specificAssetIds.get(0).getName());
-		entity.getSpecificAssetId().setValue(specificAssetIds.get(0).getValue());
+		List<SpecificAssetID> specificAssetIds = specificAssetIdValues.stream().map(SpecificAssetIDValue::toSpecificAssetID).collect(Collectors.toList());
+		entity.setSpecificAssetIds(specificAssetIds);
 	}
 
-	private void setGlobalAssetId(ReferenceValue referenceValue) {
-		if (referenceValue == null || entity.getGlobalAssetId() == null)
-			return;
-
-		entity.getGlobalAssetId().setType(referenceValue.getType());
-		entity.getGlobalAssetId().setKeys(referenceValue.getKeys());
+	private void setGlobalAssetID(String value) {
+		entity.setGlobalAssetID(value);
 	}
 
-	private ReferenceValue createReferenceValue(Reference globalAssetId) {
-		return new ReferenceValue(globalAssetId.getType(), globalAssetId.getKeys());
-	}
-
-	private List<SpecificAssetIdValue> getSpecificAssetIdValue(SpecificAssetId specificAssetId) {
-		return Arrays.asList(new SpecificAssetIdValue(specificAssetId.getName(), specificAssetId.getValue()));
+	private List<SpecificAssetIDValue> getSpecificAssetIdValue(List<SpecificAssetID> specificAssetIds) {
+		return specificAssetIds.stream().map(specificAssetId -> new SpecificAssetIDValue(specificAssetId)).collect(Collectors.toList());
 	}
 }

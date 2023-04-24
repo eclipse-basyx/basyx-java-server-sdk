@@ -31,7 +31,6 @@
 			<artifactId>basyx.aasservice-backend-inmemory</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
 			<artifactId>dataformat-json</artifactId>
@@ -48,6 +47,10 @@
 			<groupId>io.moquette</groupId>
 			<artifactId>moquette-broker</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
+			<artifactId>dataformat-json</artifactId>
 		</dependency>
 	</dependencies>
 </project>

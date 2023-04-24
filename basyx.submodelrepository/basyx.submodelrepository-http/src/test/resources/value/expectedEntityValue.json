@@ -11,18 +11,11 @@
         }
     ],
     "entityType": "CoManagedEntity",
-    "globalAssetId": {
-        "type": "ModelReference",
-        "keys": [
-            {
-                "type": "DataElement",
-                "value": "DataElement"
-            }
-        ]
-    },
+    "globalAssetId": "globalAssetID",
     "specificAssetIds": [
         {
-            "specificAssetIdName": "specificValue"
+            "name": "specificAssetIdName",
+            "value": "specificValue"
         }
     ]
 }

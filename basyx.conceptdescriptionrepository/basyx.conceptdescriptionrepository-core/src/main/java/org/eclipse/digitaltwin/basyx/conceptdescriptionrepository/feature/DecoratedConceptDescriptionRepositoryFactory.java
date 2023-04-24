@@ -23,30 +23,28 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature;
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization;
+import java.util.List;
 
-import java.io.IOException;
-
-import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIdValue;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.core.DecoratedFactory;
 
 /**
- * Serializes a SpecificAssetIdValue as described in DotAAS Part 2
+ * Factory for {@link ConceptDescriptionRepository} decoration
  * 
- * @author danish
+ * @author schnicke, danish
  *
  */
-public class SpecificAssetIdValueSerializer extends JsonSerializer<SpecificAssetIdValue> {
+public class DecoratedConceptDescriptionRepositoryFactory extends DecoratedFactory<ConceptDescriptionRepositoryFactory, ConceptDescriptionRepositoryFeature> implements ConceptDescriptionRepositoryFactory {
 
-	@Override
-	public void serialize(SpecificAssetIdValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		gen.writeStartObject();
-        gen.writeStringField(value.getName(), value.getValue());
-        gen.writeEndObject();
+	public DecoratedConceptDescriptionRepositoryFactory(ConceptDescriptionRepositoryFactory toDecorate, List<ConceptDescriptionRepositoryFeature> features) {
+		super(toDecorate, features);
 	}
 
+	@Override
+	public ConceptDescriptionRepository create() {
+		return getDecorated().create();
+	}
 }

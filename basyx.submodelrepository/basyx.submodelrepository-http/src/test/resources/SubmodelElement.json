@@ -1,6 +1,5 @@
 {
 	"modelType": "Property",
-	"kind": "Instance",
 	"semanticId": {
 		"keys": [
 			{
@@ -8,7 +7,7 @@
 				"value": "0173-1#02-BAA120#008"
 			}
 		],
-		"type": "GlobalReference"
+		"type": "ExternalReference"
 	},
 	"value": "5000",
 	"valueType": "xs:integer",

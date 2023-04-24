@@ -1,6 +1,5 @@
 {
 	"modelType": "Submodel",
-	"kind": "Instance",
 	"semanticId":
 	{
 		"keys": [
@@ -9,8 +8,16 @@
 				"value": "0173-1#01-AFZ615#016"
 			}
 		],
-		"type": "GlobalReference"
+		"type": "ExternalReference"
 	},
 	"id": "7A7104BDAB57E184",
-	"idShort": "TechnicalData"
+	"idShort": "TechnicalData",
+	"submodelElements": [
+		{
+            "modelType": "Property",
+            "value": "http://acplt.org/ValueId/ACPLT",
+            "valueType": "xs:string",
+            "idShort": "ManufacturerName"
+        }
+	]
 }
