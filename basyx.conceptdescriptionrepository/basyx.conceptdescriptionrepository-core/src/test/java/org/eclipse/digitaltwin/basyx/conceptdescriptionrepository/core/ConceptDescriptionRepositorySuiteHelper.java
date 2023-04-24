@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AdministrativeInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.EmbeddedDataSpecification;
 import org.eclipse.digitaltwin.aas4j.v3.model.Key;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.LangStringNameType;
@@ -36,6 +37,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAdministrativeInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEmbeddedDataSpecification;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringNameType;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
@@ -86,5 +88,25 @@ public class ConceptDescriptionRepositorySuiteHelper {
 			.keys(BCD_FIRST_KEYS).build();
 	public final Reference BCD_SECOND_REFERENCE = new DefaultReference.Builder()
 			.type(ReferenceTypes.MODEL_REFERENCE).keys(BCD_SECOND_KEYS).build();
+	
+	//BASIC_CONCEPT_DESCRIPTION_WITH_COMMON_ISCASEOF
+	public static final String BASIC_CONCEPT_DESCRIPTION_COMMON_IS_CASEOF_ID_SHORT = "BasicConDescCommonIsCaseOf";
+	public static final String BASIC_CONCEPT_DESCRIPTION_COMMON_IS_CASEOF_ID = "7A7104BDA6544322";
+	
+	public final List<Key> NOT_COMMON_KEYS = Arrays
+			.asList(new DefaultKey.Builder().type(KeyTypes.ENTITY).value("EntityKey").build());
+	public final Reference NOT_COMMON_REFERENCE = new DefaultReference.Builder()
+			.type(ReferenceTypes.GLOBAL_REFERENCE).keys(NOT_COMMON_KEYS).build();
+	
+	//CONCEPT_DESCRIPTION_WITH_DATA_SPECIFICATION
+	public static final String CONCEPT_DESCRIPTION_WITH_DS_ID_SHORT = "ConDescWithDataSpec";
+	public static final String CONCEPT_DESCRIPTION_WITH_DS_ID = "7A7104IHTREFN4322";
+	
+	public final List<Key> CD_WITH_DS_KEYS = Arrays
+			.asList(new DefaultKey.Builder().type(KeyTypes.REFERENCE_ELEMENT).value("ReferenceElementKey").build());
+	public final Reference CD_WITH_DS_REFERENCE = new DefaultReference.Builder().type(ReferenceTypes.GLOBAL_REFERENCE)
+			.keys(CD_WITH_DS_KEYS).build();
+	
+	public final EmbeddedDataSpecification embeddedDataSpecification = new DefaultEmbeddedDataSpecification.Builder().dataSpecification(CD_WITH_DS_REFERENCE).build();
 		
 }
