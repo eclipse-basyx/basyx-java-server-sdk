@@ -27,7 +27,6 @@
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.aasrepository-core</artifactId>
 			<classifier>tests</classifier>
-			<version>${revision}</version>
 			<scope>test</scope>
 		</dependency>
 
