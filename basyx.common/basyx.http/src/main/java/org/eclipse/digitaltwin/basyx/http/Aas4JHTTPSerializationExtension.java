@@ -63,6 +63,7 @@ public class Aas4JHTTPSerializationExtension implements SerializationExtension {
 		ReflectionHelper.JSON_MIXINS.entrySet().forEach(x -> builder.mixIn(x.getKey(), x.getValue()));
 }
 
+@SuppressWarnings("unchecked")
 	private void initTypeResolver() {
 		typeResolver = new SimpleAbstractTypeResolver();
 		ReflectionHelper.DEFAULT_IMPLEMENTATIONS.stream()

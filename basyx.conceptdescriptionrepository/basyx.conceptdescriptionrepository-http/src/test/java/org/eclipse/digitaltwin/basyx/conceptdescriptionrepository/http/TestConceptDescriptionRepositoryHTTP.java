@@ -28,7 +28,6 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;

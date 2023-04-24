@@ -96,7 +96,7 @@ public class ConceptDescriptionRepositorySuiteHelper {
 	public final List<Key> NOT_COMMON_KEYS = Arrays
 			.asList(new DefaultKey.Builder().type(KeyTypes.ENTITY).value("EntityKey").build());
 	public final Reference NOT_COMMON_REFERENCE = new DefaultReference.Builder()
-			.type(ReferenceTypes.GLOBAL_REFERENCE).keys(NOT_COMMON_KEYS).build();
+			.type(ReferenceTypes.EXTERNAL_REFERENCE).keys(NOT_COMMON_KEYS).build();
 	
 	//CONCEPT_DESCRIPTION_WITH_DATA_SPECIFICATION
 	public static final String CONCEPT_DESCRIPTION_WITH_DS_ID_SHORT = "ConDescWithDataSpec";
@@ -104,7 +104,7 @@ public class ConceptDescriptionRepositorySuiteHelper {
 	
 	public final List<Key> CD_WITH_DS_KEYS = Arrays
 			.asList(new DefaultKey.Builder().type(KeyTypes.REFERENCE_ELEMENT).value("ReferenceElementKey").build());
-	public final Reference CD_WITH_DS_REFERENCE = new DefaultReference.Builder().type(ReferenceTypes.GLOBAL_REFERENCE)
+	public final Reference CD_WITH_DS_REFERENCE = new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE)
 			.keys(CD_WITH_DS_KEYS).build();
 	
 	public final EmbeddedDataSpecification embeddedDataSpecification = new DefaultEmbeddedDataSpecification.Builder().dataSpecification(CD_WITH_DS_REFERENCE).build();

@@ -29,17 +29,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
-import org.eclipse.digitaltwin.aas4j.v3.model.LangString;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAdministrativeInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangString;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -96,7 +95,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 	
 	@Test
 	public void getAllConceptDescriptionsWithDataSpecPreconfigured() {
-		Reference reference = new DefaultReference.Builder().keys(Arrays.asList(new DefaultKey.Builder().type(KeyTypes.REFERENCE_ELEMENT).value("ReferenceElementKey").build())).type(ReferenceTypes.GLOBAL_REFERENCE).build();
+		Reference reference = new DefaultReference.Builder().keys(Arrays.asList(new DefaultKey.Builder().type(KeyTypes.REFERENCE_ELEMENT).value("ReferenceElementKey").build())).type(ReferenceTypes.EXTERNAL_REFERENCE).build();
 		
 		Collection<ConceptDescription> allConceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
 		Collection<ConceptDescription> expectedDescriptions = Arrays.asList(DummyConceptDescriptionFactory.createBasicConceptDescriptionWithDataSpecification());
