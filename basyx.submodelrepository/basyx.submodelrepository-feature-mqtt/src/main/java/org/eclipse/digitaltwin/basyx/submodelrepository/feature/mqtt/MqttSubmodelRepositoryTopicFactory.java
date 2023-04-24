@@ -27,7 +27,8 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
 import java.util.StringJoiner;
 
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt.encoding.Encoder;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.AbstractMqttTopicFactory;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Encoder;
 
 /**
  * MQTT topic factory for the eventing on the submodel level.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2022 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,29 +23,28 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
+package org.eclipse.digitaltwin.basyx.common.mqttcore.encoding;
 
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt.encoding.Encoder;
+import java.io.UnsupportedEncodingException;
 
 /**
- * Abstract base class for all MQTT topic factories.
+ * Encoder supporting URL encoding
+ * 
+ * @author schnicke
+ *
  */
-public abstract class AbstractMqttTopicFactory {
-	private Encoder encoder;
+public class URLEncoder implements Encoder {
 
-	/**
-	 * @param encoder
-	 *            Used for encoding the aasId/submodelId
-	 */
-	public AbstractMqttTopicFactory(Encoder encoder) {
-		this.encoder = encoder;
+	@Override
+	public String encode(String toEncode) {
+		return encodePathElement(toEncode);
 	}
 
-	protected String encodeId(String id) {
-		if (id == null) {
-			return "<empty>";
+	private static String encodePathElement(String elem) {
+		try {
+			return java.net.URLEncoder.encode(elem, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
 		}
-
-		return encoder.encode(id);
 	}
 }

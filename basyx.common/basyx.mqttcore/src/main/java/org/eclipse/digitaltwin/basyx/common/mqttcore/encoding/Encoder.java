@@ -23,29 +23,20 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt.encoding;
-
-import java.io.UnsupportedEncodingException;
+package org.eclipse.digitaltwin.basyx.common.mqttcore.encoding;
 
 /**
- * Encoder supporting URL encoding
+ * Simple encoder interface used for encoding strings
  * 
  * @author schnicke
  *
  */
-public class URLEncoder implements Encoder {
+public interface Encoder {
 
-	@Override
-	public String encode(String toEncode) {
-		return encodePathElement(toEncode);
-	}
-
-	private static String encodePathElement(String elem) {
-		try {
-			return java.net.URLEncoder.encode(elem, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
-	}
+	/**
+	 * Encodes the passed string
+	 * 
+	 * @param toEncode
+	 */
+	public String encode(String toEncode);
 }

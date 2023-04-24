@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2022 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,22 +23,29 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt.encoding;
+package org.eclipse.digitaltwin.basyx.common.mqttcore;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Encoder;
 
 /**
- * Encoder supporting Base64URL encoding
- * 
- * @author schnicke
- *
+ * Abstract base class for all MQTT topic factories.
  */
-public class Base64URLEncoder implements Encoder {
+public abstract class AbstractMqttTopicFactory {
+	private Encoder encoder;
 
-	@Override
-	public String encode(String toEncode) {
-		return Base64.getUrlEncoder().withoutPadding().encodeToString(toEncode.getBytes(StandardCharsets.UTF_8));
+	/**
+	 * @param encoder
+	 *            Used for encoding the aasId/submodelId
+	 */
+	public AbstractMqttTopicFactory(Encoder encoder) {
+		this.encoder = encoder;
 	}
 
+	protected String encodeId(String id) {
+		if (id == null) {
+			return "<empty>";
+		}
+
+		return encoder.encode(id);
+	}
 }

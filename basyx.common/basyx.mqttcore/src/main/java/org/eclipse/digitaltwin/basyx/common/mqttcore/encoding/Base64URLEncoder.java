@@ -23,20 +23,22 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt.encoding;
+package org.eclipse.digitaltwin.basyx.common.mqttcore.encoding;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 /**
- * Simple encoder interface used for encoding strings
+ * Encoder supporting Base64URL encoding
  * 
  * @author schnicke
  *
  */
-public interface Encoder {
+public class Base64URLEncoder implements Encoder {
 
-	/**
-	 * Encodes the passed string
-	 * 
-	 * @param toEncode
-	 */
-	public String encode(String toEncode);
+	@Override
+	public String encode(String toEncode) {
+		return Base64.getUrlEncoder().withoutPadding().encodeToString(toEncode.getBytes(StandardCharsets.UTF_8));
+	}
+
 }

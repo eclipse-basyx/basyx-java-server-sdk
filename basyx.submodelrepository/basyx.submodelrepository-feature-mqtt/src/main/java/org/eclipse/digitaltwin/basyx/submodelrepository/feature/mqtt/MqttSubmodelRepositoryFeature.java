@@ -27,7 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.SubmodelRepositoryFeature;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt.encoding.URLEncoder;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

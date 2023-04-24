@@ -28,7 +28,7 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt.encoding.URLEncoder;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

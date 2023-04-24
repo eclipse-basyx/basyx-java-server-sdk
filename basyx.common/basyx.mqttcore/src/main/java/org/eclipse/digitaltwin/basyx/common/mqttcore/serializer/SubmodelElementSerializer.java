@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt.serializer;
+package org.eclipse.digitaltwin.basyx.common.mqttcore.serializer;
 
 import java.util.Optional;
 
