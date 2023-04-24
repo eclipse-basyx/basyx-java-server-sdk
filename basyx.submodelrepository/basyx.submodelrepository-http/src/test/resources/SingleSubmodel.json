@@ -3,7 +3,7 @@
     "semanticId": {
         "keys": [
             {
-                "type": "Submodel",
+                "type": "GlobalReference",
                 "value": "0173-1#01-AFZ615#016"
             }
         ],

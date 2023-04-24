@@ -101,7 +101,7 @@ public class DummySubmodelFactory {
 
 	public static Submodel createTechnicalDataSubmodel() {
 		return new DefaultSubmodel.Builder()
-				.semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID).build()).type(ReferenceTypes.EXTERNAL_REFERENCE).build())
+				.semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.GLOBAL_REFERENCE).value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID).build()).type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_ID_SHORT).id(SUBMODEL_TECHNICAL_DATA_ID)
 				.submodelElements(SubmodelServiceHelper.getAllSubmodelElements())
 				.build();
