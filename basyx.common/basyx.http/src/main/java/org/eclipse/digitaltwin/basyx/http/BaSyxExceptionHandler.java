@@ -53,4 +53,9 @@ public class BaSyxExceptionHandler extends ResponseEntityExceptionHandler {
 	public <T> ResponseEntity<T> handleCollidingIdentifierException(CollidingIdentifierException exception, WebRequest request) {
 		return new ResponseEntity<T>(HttpStatus.CONFLICT);
 	}
+
+	@ExceptionHandler(IllegalArgumentException.class)
+	public <T> ResponseEntity<T> handleIllegalArgumentException(IllegalArgumentException exception) {
+		return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
+	}
 }

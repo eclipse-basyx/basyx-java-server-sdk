@@ -25,6 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.filter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,38 +39,67 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
  * @author danish
  *
  */
-public class ConceptDescriptionFilter {
+public class ConceptDescriptionRepositoryFilter {
 
+	private static final int MAX_NUM_OF_EXPECTED_PARAMETERS = 1;
 	private ConceptDescriptionRepository repository;
-	private String idShort;
-	private Reference isCaseOf;
-	private Reference dataSpecificationRef;
 
-	public ConceptDescriptionFilter(ConceptDescriptionRepository conceptDescriptionRepository,
-			String idShort, Reference isCaseOf,
-			Reference dataSpecificationRef) {
-		super();
+	public ConceptDescriptionRepositoryFilter(ConceptDescriptionRepository conceptDescriptionRepository) {
 		this.repository = conceptDescriptionRepository;
-		this.idShort = idShort;
-		this.isCaseOf = isCaseOf;
-		this.dataSpecificationRef = dataSpecificationRef;
 	}
 	
 	/**
 	 * Filters ConceptDescriptions from repository
 	 * 
-	 * @apiNote Atleast one attribute should be set
 	 * 
 	 * @return a filtered collection of ConceptDescriptions
 	 */
-	public List<ConceptDescription> filter() {
+	public List<ConceptDescription> filter(String idShort, Reference isCaseOf, Reference dataSpecificationRef) {
+		if (!hasPermittedNumberOfParameters(idShort, isCaseOf, dataSpecificationRef)) {
+			throw new IllegalArgumentException("ConceptDescriptionFilter was called with the wrong number of arguments");
+		}
+
 		if (idShort != null)
 			return repository.getAllConceptDescriptionsByIdShort(idShort).stream().collect(Collectors.toList());
 			
 		if (isCaseOf != null)
 			return repository.getAllConceptDescriptionsByIsCaseOf(isCaseOf).stream().collect(Collectors.toList());
 		
-		return repository.getAllConceptDescriptionsByDataSpecificationReference(dataSpecificationRef).stream().collect(Collectors.toList());
+		if (dataSpecificationRef != null)
+			return repository.getAllConceptDescriptionsByDataSpecificationReference(dataSpecificationRef).stream().collect(Collectors.toList());
+
+		return new ArrayList<>(repository.getAllConceptDescriptions());
+	}
+
+	private boolean hasPermittedNumberOfParameters(String idShort, Reference isCaseOf, Reference dataSpecificationRef) {
+		int setParameters = 0;
+
+		if (isIdShortParamSet(idShort))
+			setParameters++;
+
+		if (isIsCaseOfParamSet(isCaseOf))
+			setParameters++;
+
+		if (isDataSpecificationRefSet(dataSpecificationRef))
+			setParameters++;
+
+		return isNumberOfParametersValid(setParameters);
+	}
+
+	private boolean isNumberOfParametersValid(int setParameters) {
+		return setParameters <= MAX_NUM_OF_EXPECTED_PARAMETERS;
+	}
+
+	private boolean isDataSpecificationRefSet(Reference dataSpecificationRef) {
+		return dataSpecificationRef != null;
+	}
+
+	private boolean isIsCaseOfParamSet(Reference isCaseOf) {
+		return isCaseOf != null;
+	}
+
+	private boolean isIdShortParamSet(String idShort) {
+		return idShort != null && !idShort.isBlank();
 	}
 
 }
