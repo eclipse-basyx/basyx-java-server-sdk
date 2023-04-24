@@ -2,7 +2,6 @@
 	{
 		"modelType": "ConceptDescription",
 		"id": "7A7104IHTREFN4322",
-		"category": "PROPERTY",
 		"idShort": "ConDescWithDataSpec",
 		"isCaseOf": [
 			{
@@ -12,7 +11,7 @@
 						"value": "EntityKey"
 					}
 				],
-				"type": "GlobalReference"
+				"type": "ExternalReference"
 			},
 			{
 				"keys": [
@@ -33,7 +32,7 @@
 							"value": "ReferenceElementKey"
 						}
 					],
-					"type": "GlobalReference"
+					"type": "ExternalReference"
 				}
 			}
 		]

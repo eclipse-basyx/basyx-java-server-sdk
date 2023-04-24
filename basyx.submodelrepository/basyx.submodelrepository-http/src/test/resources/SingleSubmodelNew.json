@@ -1,6 +1,5 @@
 {
 	"modelType": "Submodel",
-	"kind": "Instance",
 	"semanticId":
 	{
 		"keys": [
@@ -9,7 +8,7 @@
 				"value": "0173-1#01-AFZ615#016"
 			}
 		],
-		"type": "GlobalReference"
+		"type": "ExternalReference"
 	},
 	"id": "newSubmodel",
 	"idShort": "newSubmodelIdShort"

@@ -32,6 +32,7 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.ReflectionAnnotationIntr
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleAbstractTypeResolver;
@@ -56,12 +57,13 @@ public class Aas4JHTTPSerializationExtension implements SerializationExtension {
 	@Override
 	public void extend(Jackson2ObjectMapperBuilder builder) {
 		builder.featuresToEnable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+				.serializationInclusion(JsonInclude.Include.NON_NULL)
 				.featuresToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        .annotationIntrospector(new ReflectionAnnotationIntrospector())
-				.modulesToInstall(buildEnumModule(), buildImplementationModule());
+				.annotationIntrospector(new ReflectionAnnotationIntrospector()).modulesToInstall(buildEnumModule(), buildImplementationModule());
 		ReflectionHelper.JSON_MIXINS.entrySet().forEach(x -> builder.mixIn(x.getKey(), x.getValue()));
 }
 
+@SuppressWarnings("unchecked")
 	private void initTypeResolver() {
 		typeResolver = new SimpleAbstractTypeResolver();
 		ReflectionHelper.DEFAULT_IMPLEMENTATIONS.stream()

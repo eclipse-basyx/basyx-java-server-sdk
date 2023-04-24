@@ -1,6 +1,5 @@
 [
     {
-        "category": "PROPERTY",
         "id": "7A7104BDAH56TH2",
         "idShort": "BasicConceptDescription",
         "isCaseOf": [
@@ -11,7 +10,7 @@
                         "value": "ConceptDescriptionKey"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             },
             {
                 "keys": [
@@ -26,7 +25,6 @@
         "modelType": "ConceptDescription"
     },
     {
-        "category": "PROPERTY",
         "id": "7A7104BDA6544322",
         "idShort": "BasicConDescCommonIsCaseOf",
         "isCaseOf": [
@@ -37,7 +35,7 @@
                         "value": "EntityKey"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             },
             {
                 "keys": [

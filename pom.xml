@@ -134,7 +134,7 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.aas4j</groupId>
 				<artifactId>model</artifactId>
-				<version>1.0.0-milestone-01</version>
+				<version>1.0.0-milestone-03</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -145,7 +145,7 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.aas4j</groupId>
 				<artifactId>dataformat-json</artifactId>
-				<version>1.0.0-milestone-01</version>
+				<version>1.0.0-milestone-03</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>

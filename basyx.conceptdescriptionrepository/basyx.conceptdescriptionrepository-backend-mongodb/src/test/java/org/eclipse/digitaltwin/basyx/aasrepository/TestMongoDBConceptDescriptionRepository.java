@@ -28,10 +28,12 @@ package org.eclipse.digitaltwin.basyx.aasrepository;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.MongoDBConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.MongoDBConceptDescriptionRepositoryFactory;
@@ -101,7 +103,7 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 	}
 	
 	private void addDescriptionToConceptDescription(ConceptDescription expectedConceptDescription) {
-		expectedConceptDescription.setDescription(ConceptDescriptionRepositorySuite.createDummyDescriptions());
+		expectedConceptDescription.setDescription(Arrays.asList(new DefaultLangStringTextType.Builder().text("description").language("en").build()));
 	}
 
 	private ConceptDescription getConceptDescriptionFromNewBackendInstance(ConceptDescriptionRepository conceptDescriptionRepository, String conceptDescriptionId) {

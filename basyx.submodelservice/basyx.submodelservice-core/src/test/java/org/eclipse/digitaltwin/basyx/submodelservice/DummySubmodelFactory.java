@@ -31,9 +31,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
+import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXSD;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
-import org.eclipse.digitaltwin.aas4j.v3.model.ModelingKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
@@ -102,24 +101,24 @@ public class DummySubmodelFactory {
 
 	public static Submodel createTechnicalDataSubmodel() {
 		return new DefaultSubmodel.Builder()
-				.semanticId(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.GLOBAL_REFERENCE).value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID).build()).type(ReferenceTypes.GLOBAL_REFERENCE).build())
-				.kind(ModelingKind.INSTANCE).idShort(SUBMODEL_TECHNICAL_DATA_ID_SHORT).id(SUBMODEL_TECHNICAL_DATA_ID)
+				.semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.GLOBAL_REFERENCE).value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID).build()).type(ReferenceTypes.EXTERNAL_REFERENCE).build())
+				.idShort(SUBMODEL_TECHNICAL_DATA_ID_SHORT).id(SUBMODEL_TECHNICAL_DATA_ID)
 				.submodelElements(SubmodelServiceHelper.getAllSubmodelElements())
 				.build();
 	}
 
 	public static Submodel createOperationalDataSubmodel() {
-		return new DefaultSubmodel.Builder().kind(ModelingKind.INSTANCE).idShort(SUBMODEL_OPERATIONAL_DATA_ID_SHORT).id(SUBMODEL_OPERATIONAL_DATA_ID).submodelElements(new DefaultProperty.Builder().kind(ModelingKind.INSTANCE)
-				.semanticId(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION).value(SUBMODEL_OPERATIONAL_DATA_SEMANTIC_ID_PROPERTY).build()).type(ReferenceTypes.GLOBAL_REFERENCE).build())
-				.idShort(SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT).category(SUBMODEL_OPERATIONAL_DATA_PROPERTY_CATEGORY).value(SUBMODEL_OPERATIONAL_DATA_PROPERTY_VALUE).valueType(DataTypeDefXsd.INTEGER).build()).build();
+		return new DefaultSubmodel.Builder().idShort(SUBMODEL_OPERATIONAL_DATA_ID_SHORT).id(SUBMODEL_OPERATIONAL_DATA_ID).submodelElements(new DefaultProperty.Builder()
+				.semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION).value(SUBMODEL_OPERATIONAL_DATA_SEMANTIC_ID_PROPERTY).build()).type(ReferenceTypes.EXTERNAL_REFERENCE).build())
+				.idShort(SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT).category(SUBMODEL_OPERATIONAL_DATA_PROPERTY_CATEGORY).value(SUBMODEL_OPERATIONAL_DATA_PROPERTY_VALUE).valueType(DataTypeDefXSD.INTEGER).build()).build();
 	}
 
 	public static Submodel createSimpleDataSubmodel() {
-		return new DefaultSubmodel.Builder().kind(ModelingKind.INSTANCE).idShort(SUBMODEL_SIMPLE_DATA_ID_SHORT).id(SUBMODEL_SIMPLE_DATA_ID).submodelElements(createSimpleSubmodelElements()).build();
+		return new DefaultSubmodel.Builder().idShort(SUBMODEL_SIMPLE_DATA_ID_SHORT).id(SUBMODEL_SIMPLE_DATA_ID).submodelElements(createSimpleSubmodelElements()).build();
 	}
 
 	public static Submodel createOperationalDataSubmodelWithHierarchicalSubmodelElements() {
-		return new DefaultSubmodel.Builder().kind(ModelingKind.INSTANCE).idShort(SUBMODEL_OPERATIONAL_DATA_ID_SHORT)
+		return new DefaultSubmodel.Builder().idShort(SUBMODEL_OPERATIONAL_DATA_ID_SHORT)
 				.id(SUBMODEL_OPERATIONAL_DATA_ID).submodelElements(createOperationalDataSubmodelElements()).build();
 	}
 
@@ -187,9 +186,9 @@ public class DummySubmodelFactory {
 	}
 
 	private static SubmodelElement createProperty(String propertyIdShort) {
-		SubmodelElement sme3 = new DefaultProperty.Builder().kind(ModelingKind.INSTANCE)
+		SubmodelElement sme3 = new DefaultProperty.Builder()
 				.idShort(propertyIdShort).category(SUBMODEL_OPERATIONAL_DATA_PROPERTY_CATEGORY)
-				.value(SUBMODEL_OPERATIONAL_DATA_PROPERTY_VALUE).valueType(DataTypeDefXsd.INTEGER).build();
+				.value(SUBMODEL_OPERATIONAL_DATA_PROPERTY_VALUE).valueType(DataTypeDefXSD.INTEGER).build();
 		return sme3;
 	}
 

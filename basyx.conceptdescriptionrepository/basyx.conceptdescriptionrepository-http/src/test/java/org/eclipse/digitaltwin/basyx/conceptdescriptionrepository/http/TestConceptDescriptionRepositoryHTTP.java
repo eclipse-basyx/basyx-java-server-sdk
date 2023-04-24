@@ -83,7 +83,7 @@ public class TestConceptDescriptionRepositoryHTTP {
 
 	@Test
 	public void getAllConceptDescriptionsPreconfigured() throws IOException, ParseException {
-		String conceptDescriptionsJSON = getAllConceptDescriptionsJSON();
+		String conceptDescriptionsJSON = requestAllConceptDescriptions();
 		String expectedConceptDescriptionsJSON = getAllConceptDescriptionJSON();
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionsJSON, conceptDescriptionsJSON);
 	}
@@ -227,7 +227,7 @@ public class TestConceptDescriptionRepositoryHTTP {
 		return BaSyxHttpTestUtils.executeGetOnURL(BaSyxConceptDescriptionHttpTestUtils.getSpecificConceptDescriptionAccessPath(conceptDescriptionId));
 	}
 
-	private String getAllConceptDescriptionsJSON() throws IOException, ParseException {
+	private String requestAllConceptDescriptions() throws IOException, ParseException {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxConceptDescriptionHttpTestUtils.CONCEPT_DESCRIPTION_ACCESS_URL);
 
 		return BaSyxHttpTestUtils.getResponseAsString(response);

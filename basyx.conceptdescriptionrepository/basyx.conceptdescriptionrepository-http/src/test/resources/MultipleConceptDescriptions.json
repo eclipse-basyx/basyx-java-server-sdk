@@ -4,7 +4,6 @@
             "revision": "2",
             "version": "1.2"
         },
-        "category": "PROPERTY",
         "description": [
             {
                 "language": "en",
@@ -44,13 +43,12 @@
                         "value": "BasicEventElement"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             }
         ],
         "modelType": "ConceptDescription"
     },
     {
-        "category": "PROPERTY",
         "id": "7A7104BDAH56TH2",
         "idShort": "BasicConceptDescription",
         "isCaseOf": [
@@ -61,7 +59,7 @@
                         "value": "ConceptDescriptionKey"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             },
             {
                 "keys": [
@@ -76,7 +74,6 @@
         "modelType": "ConceptDescription"
     },
     {
-        "category": "PROPERTY",
         "id": "7A7104BDA6544322",
         "idShort": "BasicConDescCommonIsCaseOf",
         "isCaseOf": [
@@ -87,7 +84,7 @@
                         "value": "EntityKey"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             },
             {
                 "keys": [
@@ -102,7 +99,6 @@
         "modelType": "ConceptDescription"
     },
     {
-        "category": "PROPERTY",
         "embeddedDataSpecifications": [
             {
                 "dataSpecification": {
@@ -112,7 +108,7 @@
                             "value": "ReferenceElementKey"
                         }
                     ],
-                    "type": "GlobalReference"
+                    "type": "ExternalReference"
                 }
             }
         ],
@@ -126,7 +122,7 @@
                         "value": "EntityKey"
                     }
                 ],
-                "type": "GlobalReference"
+                "type": "ExternalReference"
             },
             {
                 "keys": [

@@ -9,7 +9,7 @@
         ]
     },
     "second": {
-        "type": "GlobalReference",
+        "type": "ExternalReference",
         "keys": [
             {
                 "type": "BasicEventElement",
