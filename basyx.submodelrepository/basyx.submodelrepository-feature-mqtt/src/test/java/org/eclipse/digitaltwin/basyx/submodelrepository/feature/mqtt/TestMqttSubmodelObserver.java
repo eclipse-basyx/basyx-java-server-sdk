@@ -158,7 +158,7 @@ public class TestMqttSubmodelObserver {
 	}
 
 	@Test
-	public void submodelElementWithoutValueEvent() throws DeserializationException {
+	public void createSubmodelElementWithoutValueEvent() throws DeserializationException {
 		Submodel submodel = createSubmodelDummy("withoutValueEventId");
 		submodelRepository.createSubmodel(submodel);
 		SubmodelElement submodelElement = createSubmodelElementDummy("noValueSubmodelElementEventId");
