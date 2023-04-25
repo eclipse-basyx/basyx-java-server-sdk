@@ -29,7 +29,6 @@ package org.eclipse.digitaltwin.basyx.aasrepository;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -46,7 +45,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
 public class MongoDBAasRepositoryConfiguration {
-	@ConditionalOnMissingBean
 	@Bean
 	public AasServiceFactory getAasServiceFactory() {
 		return new InMemoryAasServiceFactory();
