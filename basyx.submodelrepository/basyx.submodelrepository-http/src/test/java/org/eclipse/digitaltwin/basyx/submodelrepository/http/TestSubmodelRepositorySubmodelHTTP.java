@@ -102,12 +102,21 @@ public class TestSubmodelRepositorySubmodelHTTP {
 	}
 
 	@Test
+	public void getSpecificSubmodelMetadata() throws ParseException, IOException {
+		String expectedSubmodelJSON = getSingleSubmodelMetadataJSON();
+
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSubmodelMetadataURL(DummySubmodelFactory.createTechnicalDataSubmodel().getId()));
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelJSON, BaSyxHttpTestUtils.getResponseAsString(response));
+	}
+
+	@Test
 	public void getSpecificSubmodelNonExisting() throws IOException {
 		CloseableHttpResponse response = requestSubmodel("nonExisting");
 
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
-
 
 	@Test
 	public void updateExistingSubmodel() throws IOException, ParseException {
@@ -157,7 +166,7 @@ public class TestSubmodelRepositorySubmodelHTTP {
 
 		CloseableHttpResponse deletionResponse = deleteSubmodelById(existingSubmodelId);
 		assertEquals(HttpStatus.NO_CONTENT.value(), deletionResponse.getCode());
-		
+
 		CloseableHttpResponse getResponse = requestSubmodel(existingSubmodelId);
 		assertEquals(HttpStatus.NOT_FOUND.value(), getResponse.getCode());
 	}
@@ -173,6 +182,10 @@ public class TestSubmodelRepositorySubmodelHTTP {
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
 		String response = BaSyxHttpTestUtils.getResponseAsString(creationResponse);
 		BaSyxHttpTestUtils.assertSameJSONContent(submodelJSON, response);
+	}
+
+	private String createSubmodelMetadataURL(String id) {
+		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(id) + "/$metadata";
 	}
 
 	private CloseableHttpResponse createSubmodel(String submodelJSON) throws IOException {
@@ -213,6 +226,10 @@ public class TestSubmodelRepositorySubmodelHTTP {
 
 	private String getSingleSubmodelJSON() throws IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodel.json");
+	}
+
+	private String getSingleSubmodelMetadataJSON() throws IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelMetadata.json");
 	}
 
 	private String getAllSubmodelJSON() throws IOException {

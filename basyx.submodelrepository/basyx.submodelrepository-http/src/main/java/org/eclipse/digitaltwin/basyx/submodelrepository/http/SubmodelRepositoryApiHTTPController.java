@@ -137,6 +137,13 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		return new ResponseEntity<SubmodelValueOnly>(new SubmodelValueOnly(repository.getSubmodelElements(submodelIdentifier.getIdentifier())), HttpStatus.OK);
 	}
 
+	@Override
+	public ResponseEntity<Submodel> getSubmodelByIdMetadata(Base64UrlEncodedIdentifier submodelIdentifier, @Valid String level) {
+		Submodel submodel = repository.getSubmodel(submodelIdentifier.getIdentifier());
+		submodel.setSubmodelElements(null);
+		return new ResponseEntity<Submodel>(submodel, HttpStatus.OK);
+	}
+
 	private ResponseEntity<Void> handleSubmodelElementValueSetRequest(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, SubmodelElementValue body) {
 		repository.setSubmodelElementValue(submodelIdentifier.getIdentifier(), idShortPath, body);
 		return new ResponseEntity<Void>(HttpStatus.OK);
