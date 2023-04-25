@@ -43,13 +43,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class ConceptDescriptionRepositoryConfiguration {
-	
-	private ConceptDescriptionRepositoryConfiguration() {
-		throw new IllegalStateException("Configuration class");
-	}
 
 	@Bean
-	public static ConceptDescriptionRepository getSubmodelRepository(ConceptDescriptionRepositoryFactory aasRepositoryFactory, List<ConceptDescriptionRepositoryFeature> features) {
+	public static ConceptDescriptionRepository getConceptDescriptionRepository(ConceptDescriptionRepositoryFactory aasRepositoryFactory, List<ConceptDescriptionRepositoryFeature> features) {
 		return new DecoratedConceptDescriptionRepositoryFactory(aasRepositoryFactory, features).create();
 	}
 	
