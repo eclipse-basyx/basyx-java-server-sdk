@@ -23,11 +23,10 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
-
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.SubmodelRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +34,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
-@ConditionalOnExpression("#{${" + MqttAasRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
+/**
+ * Repository feature for the MQTT eventing on the submodel level.
+ * 
+ * @author fischer
+ */
+@ConditionalOnExpression("#{${" + MqttSubmodelRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
 @Component
-public class MqttAasRepositoryFeature implements AasRepositoryFeature {
-	public final static String FEATURENAME = "basyx.aasrepository.feature.mqtt";
+public class MqttSubmodelRepositoryFeature implements SubmodelRepositoryFeature {
+	public final static String FEATURENAME = "basyx.submodelrepository.feature.mqtt";
 
 	@Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
 	private boolean enabled;
@@ -46,13 +50,13 @@ public class MqttAasRepositoryFeature implements AasRepositoryFeature {
 	private IMqttClient mqttClient;
 
 	@Autowired
-	public MqttAasRepositoryFeature(IMqttClient mqttClient) {
+	public MqttSubmodelRepositoryFeature(IMqttClient mqttClient) {
 		this.mqttClient = mqttClient;
 	}
 
 	@Override
-	public AasRepositoryFactory decorate(AasRepositoryFactory aasServiceFactory) {
-		return new MqttAasRepositoryFactory(aasServiceFactory, mqttClient, new MqttAasRepositoryTopicFactory(new URLEncoder()));
+	public SubmodelRepositoryFactory decorate(SubmodelRepositoryFactory aasServiceFactory) {
+		return new MqttSubmodelRepositoryFactory(aasServiceFactory, mqttClient, new MqttSubmodelRepositoryTopicFactory(new URLEncoder()));
 	}
 
 	@Override
@@ -66,7 +70,7 @@ public class MqttAasRepositoryFeature implements AasRepositoryFeature {
 
 	@Override
 	public String getName() {
-		return "AasRepository MQTT";
+		return "SubmodelRepository MQTT";
 	}
 
 	@Override

@@ -23,54 +23,41 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
-
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
-import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@ConditionalOnExpression("#{${" + MqttAasRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
-@Component
-public class MqttAasRepositoryFeature implements AasRepositoryFeature {
-	public final static String FEATURENAME = "basyx.aasrepository.feature.mqtt";
+/**
+ * MQTT configuration to allow for the automatic enablement of the feature using
+ * the config file.
+ */
+@ConditionalOnExpression("#{${" + MqttSubmodelRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
+@Configuration
+public class MqttConfiguration {
 
-	@Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
-	private boolean enabled;
+	@ConditionalOnMissingBean
+	@Bean
+	public IMqttClient mqttClient(@Value("${mqtt.clientId}") String clientId, @Value("${mqtt.hostname}") String hostname, @Value("${mqtt.port}") int port) throws MqttException {
+		IMqttClient mqttClient = new MqttClient("tcp://" + hostname + ":" + port, clientId);
 
-	private IMqttClient mqttClient;
+		mqttClient.connect(mqttConnectOptions());
 
-	@Autowired
-	public MqttAasRepositoryFeature(IMqttClient mqttClient) {
-		this.mqttClient = mqttClient;
+		return mqttClient;
 	}
 
-	@Override
-	public AasRepositoryFactory decorate(AasRepositoryFactory aasServiceFactory) {
-		return new MqttAasRepositoryFactory(aasServiceFactory, mqttClient, new MqttAasRepositoryTopicFactory(new URLEncoder()));
-	}
-
-	@Override
-	public void initialize() {
-	}
-
-	@Override
-	public void cleanUp() {
-
-	}
-
-	@Override
-	public String getName() {
-		return "AasRepository MQTT";
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
+	@ConditionalOnMissingBean
+	@Bean
+	@ConfigurationProperties(prefix = "mqtt")
+	public MqttConnectOptions mqttConnectOptions() {
+		return new MqttConnectOptions();
 	}
 }

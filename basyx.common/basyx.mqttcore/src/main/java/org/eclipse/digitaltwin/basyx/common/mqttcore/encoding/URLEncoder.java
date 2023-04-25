@@ -23,8 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt.encoding;
+package org.eclipse.digitaltwin.basyx.common.mqttcore.encoding;
 
 import java.io.UnsupportedEncodingException;
 

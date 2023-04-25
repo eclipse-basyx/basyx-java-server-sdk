@@ -26,7 +26,8 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
 
 import java.util.StringJoiner;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt.encoding.Encoder;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.AbstractMqttTopicFactory;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Encoder;
 
 /**
  * A helper class containing methods that create topics used by the

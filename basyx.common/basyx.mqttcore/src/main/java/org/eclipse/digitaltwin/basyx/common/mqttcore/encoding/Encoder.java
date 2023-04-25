@@ -23,33 +23,20 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
-
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt.encoding.Encoder;
+package org.eclipse.digitaltwin.basyx.common.mqttcore.encoding;
 
 /**
- * Abstrac base class for all MqttV2Topic factories
+ * Simple encoder interface used for encoding strings
  * 
  * @author schnicke
  *
  */
-public abstract class AbstractMqttTopicFactory {
-	private Encoder encoder;
+public interface Encoder {
 
 	/**
-	 * @param encoder
-	 *            Used for encoding the aasId/submodelId
+	 * Encodes the passed string
+	 * 
+	 * @param toEncode
 	 */
-	public AbstractMqttTopicFactory(Encoder encoder) {
-		this.encoder = encoder;
-	}
-
-	protected String encodeId(String id) {
-		if (id == null) {
-			return "<empty>";
-		}
-
-		return encoder.encode(id);
-	}
+	public String encode(String toEncode);
 }

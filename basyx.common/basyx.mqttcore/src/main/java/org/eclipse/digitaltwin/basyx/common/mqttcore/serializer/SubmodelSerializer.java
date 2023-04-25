@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2022 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,23 +23,32 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.common.mqttcore.serializer;
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt.encoding;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 
 /**
- * Encoder supporting Base64URL encoding
+ * Serializer for the submodel.
  * 
- * @author schnicke
- *
+ * @author fischer
  */
-public class Base64URLEncoder implements Encoder {
-
-	@Override
-	public String encode(String toEncode) {
-		return Base64.getUrlEncoder().withoutPadding().encodeToString(toEncode.getBytes(StandardCharsets.UTF_8));
+public class SubmodelSerializer {
+	private SubmodelSerializer() {
 	}
 
+	/**
+	 * Serializer to create a JSON String for the given submodel.
+	 * 
+	 * @param submodel
+	 * @return serialized submodel as JSON String
+	 */
+	public static String serializeSubmodel(Submodel submodel) {
+		try {
+			return new JsonSerializer().write(submodel);
+		} catch (SerializationException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

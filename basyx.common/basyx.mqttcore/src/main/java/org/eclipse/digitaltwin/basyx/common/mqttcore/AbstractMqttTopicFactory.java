@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2022 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,22 +23,29 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.common.mqttcore;
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt.encoding;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Encoder;
 
 /**
- * Simple encoder interface used for encoding strings
- * 
- * @author schnicke
- *
+ * Abstract base class for all MQTT topic factories.
  */
-public interface Encoder {
+public abstract class AbstractMqttTopicFactory {
+	private Encoder encoder;
 
 	/**
-	 * Encodes the passed string
-	 * 
-	 * @param toEncode
-	 * @return
+	 * @param encoder
+	 *            Used for encoding the aasId/submodelId
 	 */
-	public String encode(String toEncode);
+	public AbstractMqttTopicFactory(Encoder encoder) {
+		this.encoder = encoder;
+	}
+
+	protected String encodeId(String id) {
+		if (id == null) {
+			return "<empty>";
+		}
+
+		return encoder.encode(id);
+	}
 }

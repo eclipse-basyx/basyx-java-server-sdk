@@ -141,7 +141,7 @@ public interface SubmodelRepository {
 	public void createSubmodelElement(String submodelId, SubmodelElement smElement);
 
 	/**
-	 * Creates a nested SubmodelElement 
+	 * Creates a nested SubmodelElement
 	 * 
 	 * @param submodelId
 	 *            the Submodel id
@@ -161,4 +161,11 @@ public interface SubmodelRepository {
 	 *            the SubmodelElement IdShort
 	 */
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException;
+
+	/**
+	 * Returns the name of the submodel repository
+	 */
+	public default String getName() {
+		return "submodelRepository-default-name";
+	}
 }
