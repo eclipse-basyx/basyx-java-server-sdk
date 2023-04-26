@@ -5,8 +5,22 @@ docker run XXX
 
 It supports DotAAS Part 1 V3 and the following HTTP/REST endpoints defined in [DotAAS Part 2 V3 - Submodel Repository](https://app.swaggerhub.com/apis/Plattform_i40/SubmodelRepositoryServiceSpecification/V3.0_SSP-001):
 
-* Endpoints..
+* Submodel Repository
+  * GetAllSubmodels
+  * GetSubmodelById (including ValueOnly, Metadata)
+  * PostSubmodel
+  * PutSubmodelById
+  * DeleteSubmodelById
+* Submodel Service
+  * GetAllSubmodelElements
+  * GetSubmodelElementByPath (including ValueOnly)
+  * PostSubmodelElement
+  * PostSubmodelElementByPath
+  * DeleteSubmodelElementByPath
+  * PatchSubmodelElementByPath
+  * GetSubmodelElementValueByPath
 
+Right now, no additional input parameters modifying the output (e.g., cursor, serializationModifier) are supported, if not specified otherwise.
 
 In addition, it supports the following backends:
 * InMemory
