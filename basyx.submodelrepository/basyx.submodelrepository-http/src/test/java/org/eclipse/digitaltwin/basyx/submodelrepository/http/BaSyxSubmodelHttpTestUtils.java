@@ -37,10 +37,6 @@ public class BaSyxSubmodelHttpTestUtils {
 	public static final String submodelAccessURL = "http://localhost:8080/submodels";
 
 	public static String getSpecificSubmodelAccessPath(String submodelId) {
-		return submodelAccessURL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId) + "/submodel";
-	}
-
-	public static String getSpecificSubmodelAccessPath(String submodelId, String contentParamter) {
-		return getSpecificSubmodelAccessPath(submodelId) + "?content=" + contentParamter;
+		return submodelAccessURL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
 	}
 }

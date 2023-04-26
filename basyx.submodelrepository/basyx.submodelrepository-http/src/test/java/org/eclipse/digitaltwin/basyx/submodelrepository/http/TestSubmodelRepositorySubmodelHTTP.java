@@ -103,18 +103,12 @@ public class TestSubmodelRepositorySubmodelHTTP {
 
 	@Test
 	public void getSpecificSubmodelMetadata() throws ParseException, IOException {
-		String contentParameter = "metadata";
 		String expectedSubmodelJSON = getSingleSubmodelMetadataJSON();
 
-		submodelContentFlagTest(contentParameter, expectedSubmodelJSON);
-	}
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSubmodelMetadataURL(DummySubmodelFactory.createTechnicalDataSubmodel().getId()));
+		assertEquals(HttpStatus.OK.value(), response.getCode());
 
-	@Test
-	public void getSpecificSubmodelValue() throws ParseException, IOException {
-		String contentParameter = "value";
-		String expectedSubmodelJSON = getSingleSubmodelValueJSON();
-
-		submodelContentFlagTest(contentParameter, expectedSubmodelJSON);
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelJSON, BaSyxHttpTestUtils.getResponseAsString(response));
 	}
 
 	@Test
@@ -190,19 +184,16 @@ public class TestSubmodelRepositorySubmodelHTTP {
 		BaSyxHttpTestUtils.assertSameJSONContent(submodelJSON, response);
 	}
 
-	private void submodelContentFlagTest(String contentParameter, String expectedSubmodelJSON) throws ParseException, IOException {
-		String submodelJSON = requestSubmodel(DummySubmodelFactory.createTechnicalDataSubmodel().getId(), contentParameter);
-
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelJSON, submodelJSON);
-
+	private String createSubmodelMetadataURL(String id) {
+		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(id) + "/$metadata";
 	}
 
 	private CloseableHttpResponse createSubmodel(String submodelJSON) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnServer(BaSyxSubmodelHttpTestUtils.submodelAccessURL, submodelJSON);
+		return BaSyxHttpTestUtils.executePostOnURL(BaSyxSubmodelHttpTestUtils.submodelAccessURL, submodelJSON);
 	}
 
 	private CloseableHttpResponse deleteSubmodelById(String submodelId) throws IOException {
-		return BaSyxHttpTestUtils.executeDeleteOnServer(BaSyxSubmodelHttpTestUtils.submodelAccessURL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId));
+		return BaSyxHttpTestUtils.executeDeleteOnURL(BaSyxSubmodelHttpTestUtils.submodelAccessURL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId));
 	}
 
 	private CloseableHttpResponse putSubmodel(String submodelId, String submodelJSON) throws IOException {
@@ -217,17 +208,6 @@ public class TestSubmodelRepositorySubmodelHTTP {
 
 	private CloseableHttpResponse requestSubmodel(String submodelId) throws IOException {
 		return BaSyxHttpTestUtils.executeGetOnURL(BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(submodelId));
-	}
-
-	private String requestSubmodel(String submodelId, String contentParameter) throws IOException, ParseException {
-		CloseableHttpResponse response = requestSubmodelWithContentParameter(submodelId, contentParameter);
-
-		return BaSyxHttpTestUtils.getResponseAsString(response);
-	}
-
-	private CloseableHttpResponse requestSubmodelWithContentParameter(String submodelId, String contentParameter) throws IOException {
-		String submodelPathWithContentParameter = BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(submodelId, contentParameter);
-		return BaSyxHttpTestUtils.executeGetOnURL(submodelPathWithContentParameter);
 	}
 
 	private String requestAllSubmodels() throws IOException, ParseException {
@@ -250,10 +230,6 @@ public class TestSubmodelRepositorySubmodelHTTP {
 
 	private String getSingleSubmodelMetadataJSON() throws IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelMetadata.json");
-	}
-
-	private String getSingleSubmodelValueJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelValue.json");
 	}
 
 	private String getAllSubmodelJSON() throws IOException {
