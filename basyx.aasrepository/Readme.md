@@ -1,7 +1,7 @@
 # Eclipse BaSyx - AssetAdministrationShell Repository 
 Eclipse BaSyx provides the AssetAdministrationShell Repository as off-the-shelf component:
 
-docker run XXX
+    docker run --name=aas-repo -p:8081:8081 -v C:/tmp:/usr/share/config eclipsebasyx/aas-repository:2.0.0-SNAPSHOT 
 
 It supports DotAAS Part 1 V3 and the following HTTP/REST endpoints defined in [DotAAS Part 2 V3 - AssetAdministrationShell Repository](https://app.swaggerhub.com/apis/Plattform_i40/AssetAdministrationShellRepositoryServiceSpecification/V3.0_SSP-001):
 
