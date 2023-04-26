@@ -25,9 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
+import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Base64URLEncoder;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.SubmodelRepositoryFeature;
-import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,7 +56,7 @@ public class MqttSubmodelRepositoryFeature implements SubmodelRepositoryFeature 
 
 	@Override
 	public SubmodelRepositoryFactory decorate(SubmodelRepositoryFactory aasServiceFactory) {
-		return new MqttSubmodelRepositoryFactory(aasServiceFactory, mqttClient, new MqttSubmodelRepositoryTopicFactory(new URLEncoder()));
+		return new MqttSubmodelRepositoryFactory(aasServiceFactory, mqttClient, new MqttSubmodelRepositoryTopicFactory(new Base64URLEncoder()));
 	}
 
 	@Override
