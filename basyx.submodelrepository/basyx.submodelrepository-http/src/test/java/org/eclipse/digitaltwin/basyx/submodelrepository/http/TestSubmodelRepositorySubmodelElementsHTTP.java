@@ -424,7 +424,7 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 	@Test
 	public void deleteSubmodelElement() throws FileNotFoundException, IOException, ParseException {
 		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_SIMPLE_DATA_ID_SHORT));
-		assertEquals(HttpStatus.OK.value(), deleteResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());
 
 		CloseableHttpResponse fetchedResponse = requestSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_SIMPLE_DATA_ID_SHORT);
 		assertEquals(HttpStatus.NOT_FOUND.value(), fetchedResponse.getCode());
@@ -450,12 +450,12 @@ public class TestSubmodelRepositorySubmodelElementsHTTP {
 	public void deleteNestedSubmodelElement() throws FileNotFoundException, IOException, ParseException {
 		String nestedIdShortPathInCollection = createCollectionNestedIdShortPath(DummySubmodelFactory.SUBMODEL_ELEMENT_FIRST_ID_SHORT);
 		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, nestedIdShortPathInCollection));
-		assertEquals(HttpStatus.OK.value(), deleteResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());
 
 		// delete first element of the submodel element list
 		String nestedIdShortSmeList = createListNestedIdShortPath(0);
 		BaSyxHttpTestUtils.executeDeleteOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, nestedIdShortSmeList));
-		assertEquals(HttpStatus.OK.value(), deleteResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());
 
 		CloseableHttpResponse fetchedNestedInCollectionResponse = requestSubmodelElement(DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE, DummySubmodelFactory.SUBMODEL_ELEMENT_SIMPLE_DATA_ID_SHORT);
 		assertEquals(HttpStatus.NOT_FOUND.value(), fetchedNestedInCollectionResponse.getCode());

@@ -154,7 +154,7 @@ public class TestAasRepositoryHTTP {
 	}
 
 	@Test
-	public void postSubmodelReference() throws FileNotFoundException, IOException, ParseException {
+	public void createSubmodelReference() throws FileNotFoundException, IOException, ParseException {
 		createDummyAasOnServer();
 
 		String json = getSingleSubmodelReference();
@@ -216,7 +216,7 @@ public class TestAasRepositoryHTTP {
 	}
 
 	@Test
-	public void postAssetInformationByIdentifier() throws FileNotFoundException, IOException, ParseException {
+	public void updateAssetInformationByIdentifier() throws FileNotFoundException, IOException, ParseException {
 		createDummyAasOnServer();
 
 		String json = BaSyxHttpTestUtils.readJSONStringFromFile("classpath:assetInfoUpdate.json");
@@ -230,7 +230,7 @@ public class TestAasRepositoryHTTP {
 	}
 
 	@Test
-	public void postAssetInformationToNonExistingAasByIdentifier()
+	public void updateAssetInformationToNonExistingAasByIdentifier()
 			throws FileNotFoundException, IOException, ParseException {
 		CloseableHttpResponse response = BaSyxHttpTestUtils
 				.executeGetOnURL(getSpecificAssetInformationAccessURL("nonExisting"));

@@ -42,7 +42,7 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 
 	@Override
 	public ResponseEntity<Void> deleteConceptDescriptionById(
-			@Parameter(in = ParameterIn.PATH, description = "The Concept Description’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("cdIdentifier") Base64UrlEncodedIdentifier cdIdentifier) {
+			@Parameter(in = ParameterIn.PATH, description = "The Concept Description’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("cdIdentifier") Base64UrlEncodedIdentifier cdIdentifier) {
 		repository.deleteConceptDescription(cdIdentifier.getIdentifier());
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
@@ -61,7 +61,7 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 
 	@Override
 	public ResponseEntity<ConceptDescription> getConceptDescriptionById(
-			@Parameter(in = ParameterIn.PATH, description = "The Concept Description’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("cdIdentifier") Base64UrlEncodedIdentifier cdIdentifier) {
+			@Parameter(in = ParameterIn.PATH, description = "The Concept Description’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("cdIdentifier") Base64UrlEncodedIdentifier cdIdentifier) {
 		return new ResponseEntity<ConceptDescription>(repository.getConceptDescription(cdIdentifier.getIdentifier()),
 				HttpStatus.OK);
 	}
@@ -75,7 +75,7 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 
 	@Override
 	public ResponseEntity<Void> putConceptDescriptionById(
-			@Parameter(in = ParameterIn.PATH, description = "The Concept Description’s unique id (BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("cdIdentifier") Base64UrlEncodedIdentifier cdIdentifier,
+			@Parameter(in = ParameterIn.PATH, description = "The Concept Description’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("cdIdentifier") Base64UrlEncodedIdentifier cdIdentifier,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Concept Description object", required = true, schema = @Schema()) @Valid @RequestBody ConceptDescription body) {
 		repository.updateConceptDescription(cdIdentifier.getIdentifier(), body);
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
