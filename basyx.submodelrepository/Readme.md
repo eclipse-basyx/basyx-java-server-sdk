@@ -10,7 +10,6 @@ It supports DotAAS Part 1 V3 and the following HTTP/REST endpoints defined in [D
 
 In addition, it supports the following backends:
 * InMemory
-* MongoDB
 
 Furthermore, the following features are provided:
 * [MQTT eventing](basyx.submodelrepository-feature-mqtt)
