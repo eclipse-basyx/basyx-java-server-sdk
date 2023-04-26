@@ -32,6 +32,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.EmbeddedDataSpecification;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -92,10 +93,9 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 	public void updateConceptDescription(String conceptDescriptionId, ConceptDescription conceptDescription)
 			throws ElementDoesNotExistException {
 		
-		Query query = new Query().addCriteria(Criteria.where(IDJSONPATH).is(conceptDescriptionId));
+		throwIfMismatchIds(conceptDescriptionId, conceptDescription);
 		
-		if (!mongoTemplate.exists(query, ConceptDescription.class, collectionName))
-			throw new ElementDoesNotExistException(conceptDescription.getId());
+		Query query = new Query().addCriteria(Criteria.where(IDJSONPATH).is(conceptDescriptionId));
 		
 		mongoTemplate.remove(query, ConceptDescription.class, collectionName);
 		mongoTemplate.save(conceptDescription, collectionName);
@@ -137,6 +137,12 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 		Optional<EmbeddedDataSpecification> optionalReference = cd.getEmbeddedDataSpecifications().stream().filter(eds -> eds.getDataSpecification().equals(reference)).findAny();
 		
 		return optionalReference.isPresent();
+	}
+	private void throwIfMismatchIds(String conceptDescriptionId, ConceptDescription newConceptDescription) {
+		ConceptDescription oldConceptDescription = getConceptDescription(conceptDescriptionId);
+
+		if (!ConceptDescriptionRepositoryUtil.haveSameIdentifications(oldConceptDescription, newConceptDescription))
+			throw new IdentificationMismatchException();
 	}
 	
 }

@@ -43,6 +43,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.junit.Test;
 
 /**
@@ -134,7 +135,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 	@Test
 	public void updateExistingConceptDescription() {
 		String id = ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID;
-		ConceptDescription expected = createDummyConceptDescription(id);
+		ConceptDescription expected = createDummyConceptDescription(id, ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID_SHORT);
 
 		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		repo.updateConceptDescription(id, expected);
@@ -145,16 +146,34 @@ public abstract class ConceptDescriptionRepositorySuite {
 	@Test(expected = ElementDoesNotExistException.class)
 	public void updateNonExistingConceptDescription() {
 		String id = "notExisting";
-		ConceptDescription doesNotExist = createDummyConceptDescription(id);
+		ConceptDescription doesNotExist = createDummyConceptDescription(id, "cdIdShort");
 
 		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		repo.updateConceptDescription(id, doesNotExist);
+	}
+	
+	@Test(expected = IdentificationMismatchException.class)
+	public void updateExistingCDWithMismatchId() {
+		String id = ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID;
+		ConceptDescription newCd = createDummyConceptDescription("mismatchId", ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID_SHORT);
+
+		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+		repo.updateConceptDescription(id, newCd);
+	}
+	
+	@Test(expected = IdentificationMismatchException.class)
+	public void updateExistingCDWithMismatchIdShort() {
+		String id = ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID;
+		ConceptDescription newCd = createDummyConceptDescription(id, "mismatchIdShort");
+
+		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+		repo.updateConceptDescription(id, newCd);
 	}
 
 	@Test
 	public void createConceptDescription() {
 		String id = "newConceptDescription";
-		ConceptDescription expectedConceptDescription = createDummyConceptDescription(id);
+		ConceptDescription expectedConceptDescription = createDummyConceptDescription(id, "cdIdShort");
 
 		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		repo.createConceptDescription(expectedConceptDescription);
@@ -193,8 +212,8 @@ public abstract class ConceptDescriptionRepositorySuite {
 		assertTrue(actualConceptDescriptions.containsAll(expectedConceptDescriptions));
 	}
 
-	private ConceptDescription createDummyConceptDescription(String id) {
-		return new DefaultConceptDescription.Builder().id(id)
+	private ConceptDescription createDummyConceptDescription(String id, String idShort) {
+		return new DefaultConceptDescription.Builder().id(id).idShort(idShort)
 				.isCaseOf(new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE).build())
 				.administration(new DefaultAdministrativeInformation.Builder().revision("6").version("2.4.5").build())
 				.build();

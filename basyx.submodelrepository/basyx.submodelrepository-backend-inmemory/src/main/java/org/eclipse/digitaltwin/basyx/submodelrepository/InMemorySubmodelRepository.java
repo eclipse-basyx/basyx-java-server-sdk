@@ -36,6 +36,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -110,7 +111,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void updateSubmodel(String id, Submodel submodel) throws ElementDoesNotExistException {
-		throwIfSubmodelDoesNotExist(id);
+		throwIfMismatchIds(id, submodel);
 
 		submodelServices.put(id, submodelServiceFactory.create(submodel));
 	}
@@ -188,6 +189,12 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		
 		submodelServices.get(submodelId).deleteSubmodelElement(idShortPath);
 	}
+	
+	private void throwIfMismatchIds(String smId, Submodel newSubmodel) {
+		Submodel oldSubmodel = getSubmodel(smId);
 
+		if (!SubmodelRepositoryUtil.haveSameIdentifications(oldSubmodel, newSubmodel))
+			throw new IdentificationMismatchException();
+	}
 
 }

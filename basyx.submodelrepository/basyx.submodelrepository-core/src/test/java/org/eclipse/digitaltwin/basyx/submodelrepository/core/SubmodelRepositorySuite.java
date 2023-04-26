@@ -39,6 +39,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
@@ -97,7 +98,7 @@ public abstract class SubmodelRepositorySuite {
 	@Test
 	public void updateExistingSubmodel() {
 		String id = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID;
-		Submodel expected = buildDummySubmodel(id);
+		Submodel expected = buildDummySubmodel(id, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID_SHORT);
 
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.updateSubmodel(id, expected);
@@ -108,16 +109,34 @@ public abstract class SubmodelRepositorySuite {
 	@Test(expected = ElementDoesNotExistException.class)
 	public void updateNonExistingSubmodel() {
 		String id = "notExisting";
-		Submodel doesNotExist = buildDummySubmodel(id);
+		Submodel doesNotExist = buildDummySubmodel(id, "smIdShort");
 
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.updateSubmodel(id, doesNotExist);
+	}
+	
+	@Test(expected = IdentificationMismatchException.class)
+	public void updateExistingSubmodelWithMismatchId() {
+		String id = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID;
+		Submodel newSm = buildDummySubmodel("mismatchId", DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID_SHORT);
+
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.updateSubmodel(id, newSm);
+	}
+	
+	@Test(expected = IdentificationMismatchException.class)
+	public void updateExistingSubmodelWithMismatchIdShort() {
+		String id = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID;
+		Submodel newSm = buildDummySubmodel(id, "mismatchIdShort");
+
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.updateSubmodel(id, newSm);
 	}
 
 	@Test
 	public void createSubmodel() {
 		String id = "newSubmodel";
-		Submodel expectedSubmodel = buildDummySubmodel(id);
+		Submodel expectedSubmodel = buildDummySubmodel(id, "smIdShort");
 
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.createSubmodel(expectedSubmodel);
@@ -324,9 +343,10 @@ public abstract class SubmodelRepositorySuite {
 				.get();
 	}
 
-	private Submodel buildDummySubmodel(String id) {
+	private Submodel buildDummySubmodel(String id, String idShort) {
 		return new DefaultSubmodel.Builder()
 				.id(id)
+				.idShort(idShort)
 				.submodelElements(
 					new DefaultProperty.Builder()
 					.idShort("prop")

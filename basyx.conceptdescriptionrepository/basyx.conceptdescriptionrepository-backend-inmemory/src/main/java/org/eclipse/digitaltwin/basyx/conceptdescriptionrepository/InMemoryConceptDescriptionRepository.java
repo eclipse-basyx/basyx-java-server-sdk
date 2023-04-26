@@ -38,6 +38,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.EmbeddedDataSpecification;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 
 /**
  * In-memory implementation of the ConceptDescriptionRepository
@@ -97,7 +98,7 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 	@Override
 	public void updateConceptDescription(String conceptDescriptionId, ConceptDescription conceptDescription)
 			throws ElementDoesNotExistException {
-		throwIfConceptDescriptionDoesNotExist(conceptDescriptionId);
+		throwIfMismatchIds(conceptDescriptionId, conceptDescription);
 
 		conceptDescriptions.put(conceptDescriptionId, conceptDescription);
 	}
@@ -154,6 +155,13 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 		Optional<EmbeddedDataSpecification> optionalReference = cd.getEmbeddedDataSpecifications().stream().filter(eds -> eds.getDataSpecification().equals(reference)).findAny();
 		
 		return optionalReference.isPresent();
+	}
+	
+	private void throwIfMismatchIds(String conceptDescriptionId, ConceptDescription newConceptDescription) {
+		ConceptDescription oldConceptDescription = getConceptDescription(conceptDescriptionId);
+
+		if (!ConceptDescriptionRepositoryUtil.haveSameIdentifications(oldConceptDescription, newConceptDescription))
+			throw new IdentificationMismatchException();
 	}
 
 }

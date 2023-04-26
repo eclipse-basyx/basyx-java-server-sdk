@@ -45,6 +45,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -57,6 +58,7 @@ import org.junit.Test;
 public abstract class AasRepositorySuite {
 
 	private static final String AAS_1_ID = "aas1/s";
+	private static final String AAS_1_ID_SHORT = "idShortAas1";
 	private AssetAdministrationShell aas1;
 	private AssetAdministrationShell aas2;
 	private AssetAdministrationShell aas3;
@@ -72,7 +74,7 @@ public abstract class AasRepositorySuite {
 	public void createAasRepoWithDummyAas() {
 		aasRepo = getAasRepositoryFactory().create();
 
-		aas1 = new DefaultAssetAdministrationShell.Builder().id(AAS_1_ID).submodels(createDummyReference(DUMMY_SUBMODEL_ID))
+		aas1 = new DefaultAssetAdministrationShell.Builder().id(AAS_1_ID).idShort(AAS_1_ID_SHORT).submodels(createDummyReference(DUMMY_SUBMODEL_ID))
 				.build();
 
 		aas2 = new DefaultAssetAdministrationShell.Builder().id("aas2").build();
@@ -185,6 +187,26 @@ public abstract class AasRepositorySuite {
 	@Test(expected = ElementDoesNotExistException.class)
 	public void updateNonExistingAas() {
 		aasRepo.updateAas("nonExisting", aas1);
+	}
+	
+	@Test(expected = IdentificationMismatchException.class)
+	public void updateExistingAasWithMismatchedIdentifier() {
+		AssetAdministrationShell aas = new DefaultAssetAdministrationShell.Builder().id("mismatchId").submodels(createDummyReference(DUMMY_SUBMODEL_ID))
+				.build();
+		List<Reference> submodelReferences = Arrays.asList(createDummyReference("dummySubmodelId1"), createDummyReference("dummySubmodelId2"));
+		aas.setSubmodels(submodelReferences);
+		
+		aasRepo.updateAas(AAS_1_ID, aas);
+	}
+	
+	@Test(expected = IdentificationMismatchException.class)
+	public void updateExistingAasWithMismatchedIdShort() {
+		AssetAdministrationShell aas = new DefaultAssetAdministrationShell.Builder().id(AAS_1_ID).idShort("mismatchedIdShort").submodels(createDummyReference(DUMMY_SUBMODEL_ID))
+				.build();
+		List<Reference> submodelReferences = Arrays.asList(createDummyReference("dummySubmodelId1"), createDummyReference("dummySubmodelId2"));
+		aas.setSubmodels(submodelReferences);
+		
+		aasRepo.updateAas(AAS_1_ID, aas);
 	}
 
 	@Test
