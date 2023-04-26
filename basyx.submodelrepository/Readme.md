@@ -1,7 +1,7 @@
 # Eclipse BaSyx - Submodel Repository 
 Eclipse BaSyx provides the Submodel Repository as off-the-shelf component:
 
-docker run XXX
+    docker run --name=sm-repo -p:8081:8081 -v C:/tmp:/usr/share/config eclipsebasyx/submodel-repository:2.0.0-SNAPSHOT 
 
 It supports DotAAS Part 1 V3 and the following HTTP/REST endpoints defined in [DotAAS Part 2 V3 - Submodel Repository](https://app.swaggerhub.com/apis/Plattform_i40/SubmodelRepositoryServiceSpecification/V3.0_SSP-001):
 
