@@ -98,6 +98,8 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 	@Override
 	public void updateConceptDescription(String conceptDescriptionId, ConceptDescription conceptDescription)
 			throws ElementDoesNotExistException {
+		throwIfConceptDescriptionDoesNotExist(conceptDescriptionId);
+		
 		throwIfMismatchIds(conceptDescriptionId, conceptDescription);
 
 		conceptDescriptions.put(conceptDescriptionId, conceptDescription);
@@ -158,9 +160,9 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 	}
 	
 	private void throwIfMismatchIds(String conceptDescriptionId, ConceptDescription newConceptDescription) {
-		ConceptDescription oldConceptDescription = getConceptDescription(conceptDescriptionId);
-
-		if (!ConceptDescriptionRepositoryUtil.haveSameIdentifications(oldConceptDescription, newConceptDescription))
+		String newConceptDescriptionId = newConceptDescription.getId();
+		
+		if (!conceptDescriptionId.equals(newConceptDescriptionId))
 			throw new IdentificationMismatchException();
 	}
 

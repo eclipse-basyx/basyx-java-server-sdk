@@ -1,0 +1,9 @@
+{
+	"modelType": "AssetAdministrationShell",
+	"idShort": "ExampleMotor",
+	"id": "mismatchId",
+	"assetInformation": {
+		"assetKind": "Instance",
+		"globalAssetId": "updated"
+	}
+}

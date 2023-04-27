@@ -111,6 +111,8 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void updateSubmodel(String id, Submodel submodel) throws ElementDoesNotExistException {
+		throwIfSubmodelDoesNotExist(id);
+
 		throwIfMismatchIds(id, submodel);
 
 		submodelServices.put(id, submodelServiceFactory.create(submodel));
@@ -141,22 +143,24 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public SubmodelElement getSubmodelElement(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
+	public SubmodelElement getSubmodelElement(String submodelId, String smeIdShort)
+			throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(submodelId);
 
-		return submodelServices.get(submodelId)
-				.getSubmodelElement(smeIdShort);
+		return submodelServices.get(submodelId).getSubmodelElement(smeIdShort);
 	}
 
 	@Override
-	public SubmodelElementValue getSubmodelElementValue(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
+	public SubmodelElementValue getSubmodelElementValue(String submodelId, String smeIdShort)
+			throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(submodelId);
 
 		return submodelServices.get(submodelId).getSubmodelElementValue(smeIdShort);
 	}
 
 	@Override
-	public void setSubmodelElementValue(String submodelId, String smeIdShort, SubmodelElementValue value) throws ElementDoesNotExistException {
+	public void setSubmodelElementValue(String submodelId, String smeIdShort, SubmodelElementValue value)
+			throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(submodelId);
 
 		submodelServices.get(submodelId).setSubmodelElementValue(smeIdShort, value);
@@ -172,28 +176,29 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	@Override
 	public void createSubmodelElement(String submodelId, SubmodelElement smElement) {
 		throwIfSubmodelDoesNotExist(submodelId);
-		
+
 		submodelServices.get(submodelId).createSubmodelElement(smElement);
 	}
-	
+
 	@Override
-	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
+	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement)
+			throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(submodelId);
-		
+
 		submodelServices.get(submodelId).createSubmodelElement(idShortPath, smElement);
 	}
 
 	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(submodelId);
-		
+
 		submodelServices.get(submodelId).deleteSubmodelElement(idShortPath);
 	}
-	
-	private void throwIfMismatchIds(String smId, Submodel newSubmodel) {
-		Submodel oldSubmodel = getSubmodel(smId);
 
-		if (!SubmodelRepositoryUtil.haveSameIdentifications(oldSubmodel, newSubmodel))
+	private void throwIfMismatchIds(String smId, Submodel newSubmodel) {
+		String newSubmodelId = newSubmodel.getId();
+
+		if (!smId.equals(newSubmodelId))
 			throw new IdentificationMismatchException();
 	}
 

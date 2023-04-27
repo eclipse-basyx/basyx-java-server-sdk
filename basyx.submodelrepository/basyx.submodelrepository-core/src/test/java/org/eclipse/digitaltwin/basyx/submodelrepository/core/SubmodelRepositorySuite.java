@@ -98,7 +98,7 @@ public abstract class SubmodelRepositorySuite {
 	@Test
 	public void updateExistingSubmodel() {
 		String id = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID;
-		Submodel expected = buildDummySubmodel(id, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID_SHORT);
+		Submodel expected = buildDummySubmodel(id);
 
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.updateSubmodel(id, expected);
@@ -109,7 +109,7 @@ public abstract class SubmodelRepositorySuite {
 	@Test(expected = ElementDoesNotExistException.class)
 	public void updateNonExistingSubmodel() {
 		String id = "notExisting";
-		Submodel doesNotExist = buildDummySubmodel(id, "smIdShort");
+		Submodel doesNotExist = buildDummySubmodel(id);
 
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.updateSubmodel(id, doesNotExist);
@@ -118,16 +118,7 @@ public abstract class SubmodelRepositorySuite {
 	@Test(expected = IdentificationMismatchException.class)
 	public void updateExistingSubmodelWithMismatchId() {
 		String id = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID;
-		Submodel newSm = buildDummySubmodel("mismatchId", DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID_SHORT);
-
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		repo.updateSubmodel(id, newSm);
-	}
-	
-	@Test(expected = IdentificationMismatchException.class)
-	public void updateExistingSubmodelWithMismatchIdShort() {
-		String id = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID;
-		Submodel newSm = buildDummySubmodel(id, "mismatchIdShort");
+		Submodel newSm = buildDummySubmodel("mismatchId");
 
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.updateSubmodel(id, newSm);
@@ -136,7 +127,7 @@ public abstract class SubmodelRepositorySuite {
 	@Test
 	public void createSubmodel() {
 		String id = "newSubmodel";
-		Submodel expectedSubmodel = buildDummySubmodel(id, "smIdShort");
+		Submodel expectedSubmodel = buildDummySubmodel(id);
 
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.createSubmodel(expectedSubmodel);
@@ -343,10 +334,9 @@ public abstract class SubmodelRepositorySuite {
 				.get();
 	}
 
-	private Submodel buildDummySubmodel(String id, String idShort) {
+	private Submodel buildDummySubmodel(String id) {
 		return new DefaultSubmodel.Builder()
 				.id(id)
-				.idShort(idShort)
 				.submodelElements(
 					new DefaultProperty.Builder()
 					.idShort("prop")

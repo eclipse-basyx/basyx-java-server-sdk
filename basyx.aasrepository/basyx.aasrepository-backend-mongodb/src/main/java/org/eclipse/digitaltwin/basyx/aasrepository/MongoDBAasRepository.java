@@ -99,12 +99,13 @@ public class MongoDBAasRepository implements AasRepository {
 		}
 	}
 
-
 	@Override
 	public void updateAas(String aasId, AssetAdministrationShell aas) {
-		throwIfMismatchIds(aasId, aas);
-		
 		Query query = new Query().addCriteria(Criteria.where(IDJSONPATH).is(aasId));
+		
+		throwIfAasDoesNotExist(query, aasId);
+		
+		throwIfMismatchIds(aasId, aas);
 
 		mongoTemplate.remove(query, AssetAdministrationShell.class, collectionName);
 		mongoTemplate.save(aas, collectionName);
@@ -148,10 +149,15 @@ public class MongoDBAasRepository implements AasRepository {
 		return aasServiceFactory.create(getAas(aasId));
 	}
 	
+	private void throwIfAasDoesNotExist(Query query, String aasId) {
+		if (!mongoTemplate.exists(query, AssetAdministrationShell.class, collectionName))
+			throw new ElementDoesNotExistException(aasId);
+	}
+	
 	private void throwIfMismatchIds(String aasId, AssetAdministrationShell newAas) {
-		AssetAdministrationShell oldAas = getAas(aasId);
-
-		if (!AasRepositoryUtil.haveSameIdentifications(oldAas, newAas))
+		String newAasId = newAas.getId();
+		
+		if (!aasId.equals(newAasId))
 			throw new IdentificationMismatchException();
 	}
 

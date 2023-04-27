@@ -93,9 +93,11 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 	public void updateConceptDescription(String conceptDescriptionId, ConceptDescription conceptDescription)
 			throws ElementDoesNotExistException {
 		
-		throwIfMismatchIds(conceptDescriptionId, conceptDescription);
-		
 		Query query = new Query().addCriteria(Criteria.where(IDJSONPATH).is(conceptDescriptionId));
+		
+		throwIfConceptDescriptionDoesNotExist(query, conceptDescriptionId);
+		
+		throwIfMismatchIds(conceptDescriptionId, conceptDescription);
 		
 		mongoTemplate.remove(query, ConceptDescription.class, collectionName);
 		mongoTemplate.save(conceptDescription, collectionName);
@@ -138,10 +140,16 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 		
 		return optionalReference.isPresent();
 	}
+	
+	private void throwIfConceptDescriptionDoesNotExist(Query query, String conceptDescriptionId) {
+		if (!mongoTemplate.exists(query, ConceptDescription.class, collectionName))
+			throw new ElementDoesNotExistException(conceptDescriptionId);
+	}
+	
 	private void throwIfMismatchIds(String conceptDescriptionId, ConceptDescription newConceptDescription) {
-		ConceptDescription oldConceptDescription = getConceptDescription(conceptDescriptionId);
-
-		if (!ConceptDescriptionRepositoryUtil.haveSameIdentifications(oldConceptDescription, newConceptDescription))
+		String newConceptDescriptionId = newConceptDescription.getId();
+		
+		if (!conceptDescriptionId.equals(newConceptDescriptionId))
 			throw new IdentificationMismatchException();
 	}
 	

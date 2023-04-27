@@ -33,6 +33,7 @@ import java.io.IOException;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
@@ -47,6 +48,12 @@ import org.springframework.http.HttpStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+/**
+ * Tests the {@link AssetAdministrationShell} specific parts of the {@link AasRepository} HTTP/REST API
+ * 
+ * @author schnicke, danish
+ *
+ */
 public class TestAasRepositoryHTTP {
 	private static final String aasAccessURL = "http://localhost:8080/shells";
 
@@ -263,6 +270,17 @@ public class TestAasRepositoryHTTP {
 		
 		assertEquals(HttpStatus.NOT_FOUND.value(), updateResponse.getCode());
 	}
+	
+	@Test
+	public void updateAasWithIdMismatch() throws IOException {
+		createDummyAasOnServer();
+		
+		String expectedAasJSON = getUpdatedAasIdMismatchJSONString();
+
+		CloseableHttpResponse creationResponse = updateSpecificAas(dummyAasId, expectedAasJSON);
+		
+		assertEquals(HttpStatus.BAD_REQUEST.value(), creationResponse.getCode());
+	}
 
 	private CloseableHttpResponse updateSpecificAas(String dummyaasid, String aasJsonContent) throws IOException {
 		return BaSyxHttpTestUtils.executePutOnURL(getSpecificAasAccessURL(dummyaasid), aasJsonContent);
@@ -334,6 +352,10 @@ public class TestAasRepositoryHTTP {
 	
 	private String getUpdatedAasJSONString() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:UpdatedAasSimple.json");
+	}
+	
+	private String getUpdatedAasIdMismatchJSONString() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:UpdatedAasIdMismatch.json");
 	}
 
 	private String getSingleSubmodelReferenceAsJsonArray() throws FileNotFoundException, IOException {

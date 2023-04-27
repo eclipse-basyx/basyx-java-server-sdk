@@ -87,6 +87,8 @@ public class InMemoryAasRepository implements AasRepository {
 
 	@Override
 	public void updateAas(String aasId, AssetAdministrationShell aas) {
+		throwIfAasDoesNotExist(aasId);
+		
 		throwIfMismatchIds(aasId, aas);
 
 		aasServices.put(aasId, aasServiceFactory.create(aas));
@@ -135,9 +137,9 @@ public class InMemoryAasRepository implements AasRepository {
 	}
 	
 	private void throwIfMismatchIds(String aasId, AssetAdministrationShell newAas) {
-		AssetAdministrationShell oldAas = getAas(aasId);
-
-		if (!AasRepositoryUtil.haveSameIdentifications(oldAas, newAas))
+		String newAasId = newAas.getId();
+		
+		if (!aasId.equals(newAasId))
 			throw new IdentificationMismatchException();
 	}
 
