@@ -36,6 +36,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -112,6 +113,8 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	public void updateSubmodel(String id, Submodel submodel) throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(id);
 
+		throwIfMismatchingIds(id, submodel);
+
 		submodelServices.put(id, submodelServiceFactory.create(submodel));
 	}
 
@@ -140,22 +143,24 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public SubmodelElement getSubmodelElement(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
+	public SubmodelElement getSubmodelElement(String submodelId, String smeIdShort)
+			throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(submodelId);
 
-		return submodelServices.get(submodelId)
-				.getSubmodelElement(smeIdShort);
+		return submodelServices.get(submodelId).getSubmodelElement(smeIdShort);
 	}
 
 	@Override
-	public SubmodelElementValue getSubmodelElementValue(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
+	public SubmodelElementValue getSubmodelElementValue(String submodelId, String smeIdShort)
+			throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(submodelId);
 
 		return submodelServices.get(submodelId).getSubmodelElementValue(smeIdShort);
 	}
 
 	@Override
-	public void setSubmodelElementValue(String submodelId, String smeIdShort, SubmodelElementValue value) throws ElementDoesNotExistException {
+	public void setSubmodelElementValue(String submodelId, String smeIdShort, SubmodelElementValue value)
+			throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(submodelId);
 
 		submodelServices.get(submodelId).setSubmodelElementValue(smeIdShort, value);
@@ -171,23 +176,30 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	@Override
 	public void createSubmodelElement(String submodelId, SubmodelElement smElement) {
 		throwIfSubmodelDoesNotExist(submodelId);
-		
+
 		submodelServices.get(submodelId).createSubmodelElement(smElement);
 	}
-	
+
 	@Override
-	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
+	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement)
+			throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(submodelId);
-		
+
 		submodelServices.get(submodelId).createSubmodelElement(idShortPath, smElement);
 	}
 
 	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(submodelId);
-		
+
 		submodelServices.get(submodelId).deleteSubmodelElement(idShortPath);
 	}
 
+	private void throwIfMismatchingIds(String smId, Submodel newSubmodel) {
+		String newSubmodelId = newSubmodel.getId();
+
+		if (!smId.equals(newSubmodelId))
+			throw new IdentificationMismatchException();
+	}
 
 }

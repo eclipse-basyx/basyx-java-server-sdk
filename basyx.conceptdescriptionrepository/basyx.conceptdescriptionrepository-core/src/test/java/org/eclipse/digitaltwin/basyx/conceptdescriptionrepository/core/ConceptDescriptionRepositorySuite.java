@@ -43,6 +43,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.junit.Test;
 
 /**
@@ -149,6 +150,15 @@ public abstract class ConceptDescriptionRepositorySuite {
 
 		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		repo.updateConceptDescription(id, doesNotExist);
+	}
+	
+	@Test(expected = IdentificationMismatchException.class)
+	public void updateExistingCDWithMismatchId() {
+		String id = ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID;
+		ConceptDescription newCd = createDummyConceptDescription("mismatchId");
+
+		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+		repo.updateConceptDescription(id, newCd);
 	}
 
 	@Test

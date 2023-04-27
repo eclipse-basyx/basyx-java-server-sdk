@@ -45,6 +45,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -185,6 +186,14 @@ public abstract class AasRepositorySuite {
 	@Test(expected = ElementDoesNotExistException.class)
 	public void updateNonExistingAas() {
 		aasRepo.updateAas("nonExisting", aas1);
+	}
+	
+	@Test(expected = IdentificationMismatchException.class)
+	public void updateExistingAasWithMismatchedIdentifier() {
+		AssetAdministrationShell aas = new DefaultAssetAdministrationShell.Builder().id("mismatchId").submodels(createDummyReference(DUMMY_SUBMODEL_ID))
+				.build();
+		
+		aasRepo.updateAas(AAS_1_ID, aas);
 	}
 
 	@Test

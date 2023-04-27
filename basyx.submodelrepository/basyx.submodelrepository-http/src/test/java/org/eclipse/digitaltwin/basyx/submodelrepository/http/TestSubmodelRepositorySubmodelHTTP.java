@@ -53,7 +53,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 /**
  * Tests the Submodel specific parts of the SubmodelRepository HTTP/REST API
  * 
- * @author schnicke
+ * @author schnicke, danish
  *
  */
 public class TestSubmodelRepositorySubmodelHTTP {
@@ -140,6 +140,16 @@ public class TestSubmodelRepositorySubmodelHTTP {
 
 		assertEquals(HttpStatus.NOT_FOUND.value(), updateResponse.getCode());
 	}
+	
+	@Test
+	public void updateSubmodelWithMismatchId() throws IOException, ParseException {
+		String id = "7A7104BDAB57E184";
+		String submodelUpdateJson = getUpdatedSubmodelWithMismatchIdJSON();
+
+		CloseableHttpResponse creationResponse = putSubmodel(id, submodelUpdateJson);
+
+		assertEquals(HttpStatus.BAD_REQUEST.value(), creationResponse.getCode());
+	}
 
 	@Test
 	public void createSubmodelNewId() throws IOException, ParseException {
@@ -218,6 +228,10 @@ public class TestSubmodelRepositorySubmodelHTTP {
 
 	private String getUpdatedSubmodelJSON() throws IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelUpdate.json");
+	}
+	
+	private String getUpdatedSubmodelWithMismatchIdJSON() throws IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelUpdateMismatchId.json");
 	}
 
 	private String getNewSubmodelJSON() throws IOException {

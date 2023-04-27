@@ -161,6 +161,16 @@ public class TestConceptDescriptionRepositoryHTTP {
 
 		assertEquals(HttpStatus.NOT_FOUND.value(), updateResponse.getCode());
 	}
+	
+	@Test
+	public void updateConceptDescriptionWithMismatchId() throws IOException, ParseException {
+		String id = ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID;
+		String conceptDescriptionUpdateJson = getUpdatedConceptDescriptionWithMismatchIdJSON();
+
+		CloseableHttpResponse creationResponse = putConceptDescription(id, conceptDescriptionUpdateJson);
+
+		assertEquals(HttpStatus.BAD_REQUEST.value(), creationResponse.getCode());
+	}
 
 	@Test
 	public void createConceptDescriptionNewId() throws IOException, ParseException {
@@ -261,6 +271,10 @@ public class TestConceptDescriptionRepositoryHTTP {
 
 	private String getUpdatedConceptDescriptionJSON() throws IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleConceptDescriptionUpdate.json");
+	}
+	
+	private String getUpdatedConceptDescriptionWithMismatchIdJSON() throws IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleCDUpdateMismatchId.json");
 	}
 
 	private String getNewConceptDescriptionJSON() throws IOException {

@@ -33,6 +33,7 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -98,16 +99,16 @@ public class MongoDBAasRepository implements AasRepository {
 		}
 	}
 
-
 	@Override
 	public void updateAas(String aasId, AssetAdministrationShell aas) {
 		Query query = new Query().addCriteria(Criteria.where(IDJSONPATH).is(aasId));
-		if (!mongoTemplate.exists(query, AssetAdministrationShell.class, collectionName)) {
-			throw new ElementDoesNotExistException(aas.getId());
-		} else {
-			mongoTemplate.remove(query, AssetAdministrationShell.class, collectionName);
-			mongoTemplate.save(aas, collectionName);
-		}
+		
+		throwIfAasDoesNotExist(query, aasId);
+		
+		throwIfMismatchingIds(aasId, aas);
+
+		mongoTemplate.remove(query, AssetAdministrationShell.class, collectionName);
+		mongoTemplate.save(aas, collectionName);
 	}
 
 	@Override
@@ -147,4 +148,17 @@ public class MongoDBAasRepository implements AasRepository {
 	private AasService getAasService(String aasId) {
 		return aasServiceFactory.create(getAas(aasId));
 	}
+	
+	private void throwIfAasDoesNotExist(Query query, String aasId) {
+		if (!mongoTemplate.exists(query, AssetAdministrationShell.class, collectionName))
+			throw new ElementDoesNotExistException(aasId);
+	}
+	
+	private void throwIfMismatchingIds(String aasId, AssetAdministrationShell newAas) {
+		String newAasId = newAas.getId();
+		
+		if (!aasId.equals(newAasId))
+			throw new IdentificationMismatchException();
+	}
+
 }

@@ -32,6 +32,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.EmbeddedDataSpecification;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -94,8 +95,9 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 		
 		Query query = new Query().addCriteria(Criteria.where(IDJSONPATH).is(conceptDescriptionId));
 		
-		if (!mongoTemplate.exists(query, ConceptDescription.class, collectionName))
-			throw new ElementDoesNotExistException(conceptDescription.getId());
+		throwIfConceptDescriptionDoesNotExist(query, conceptDescriptionId);
+		
+		throwIfMismatchingIds(conceptDescriptionId, conceptDescription);
 		
 		mongoTemplate.remove(query, ConceptDescription.class, collectionName);
 		mongoTemplate.save(conceptDescription, collectionName);
@@ -137,6 +139,18 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 		Optional<EmbeddedDataSpecification> optionalReference = cd.getEmbeddedDataSpecifications().stream().filter(eds -> eds.getDataSpecification().equals(reference)).findAny();
 		
 		return optionalReference.isPresent();
+	}
+	
+	private void throwIfConceptDescriptionDoesNotExist(Query query, String conceptDescriptionId) {
+		if (!mongoTemplate.exists(query, ConceptDescription.class, collectionName))
+			throw new ElementDoesNotExistException(conceptDescriptionId);
+	}
+	
+	private void throwIfMismatchingIds(String conceptDescriptionId, ConceptDescription newConceptDescription) {
+		String newConceptDescriptionId = newConceptDescription.getId();
+		
+		if (!conceptDescriptionId.equals(newConceptDescriptionId))
+			throw new IdentificationMismatchException();
 	}
 	
 }

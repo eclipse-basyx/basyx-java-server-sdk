@@ -36,6 +36,7 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 
 /**
  * In-memory implementation of the AasRepository
@@ -52,8 +53,7 @@ public class InMemoryAasRepository implements AasRepository {
 	/**
 	 * Creates the AasRepository using an in-memory backend.
 	 * 
-	 * @param aasServiceFactory
-	 *            Used for creating the AasService for new AAS
+	 * @param aasServiceFactory Used for creating the AasService for new AAS
 	 */
 	public InMemoryAasRepository(AasServiceFactory aasServiceFactory) {
 		this.aasServiceFactory = aasServiceFactory;
@@ -61,7 +61,7 @@ public class InMemoryAasRepository implements AasRepository {
 
 	@Override
 	public List<AssetAdministrationShell> getAllAas() {
-		return aasServices.values().stream().map(p -> p.getAAS()).collect(Collectors.toList());
+		return aasServices.values().stream().map(AasService::getAAS).collect(Collectors.toList());
 	}
 
 	@Override
@@ -89,6 +89,8 @@ public class InMemoryAasRepository implements AasRepository {
 	public void updateAas(String aasId, AssetAdministrationShell aas) {
 		throwIfAasDoesNotExist(aasId);
 		
+		throwIfMismatchingIds(aasId, aas);
+
 		aasServices.put(aasId, aasServiceFactory.create(aas));
 	}
 
@@ -127,11 +129,18 @@ public class InMemoryAasRepository implements AasRepository {
 		throwIfAasDoesNotExist(aasId);
 		aasServices.get(aasId).getAAS().setAssetInformation(aasInfo);
 	}
-	
+
 	@Override
-	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException{
+	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException {
 		throwIfAasDoesNotExist(aasId);
 		return aasServices.get(aasId).getAAS().getAssetInformation();
+	}
+	
+	private void throwIfMismatchingIds(String aasId, AssetAdministrationShell newAas) {
+		String newAasId = newAas.getId();
+		
+		if (!aasId.equals(newAasId))
+			throw new IdentificationMismatchException();
 	}
 
 }

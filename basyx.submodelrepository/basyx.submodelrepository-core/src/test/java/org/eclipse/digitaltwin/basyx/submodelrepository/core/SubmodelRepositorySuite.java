@@ -39,6 +39,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
@@ -112,6 +113,15 @@ public abstract class SubmodelRepositorySuite {
 
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.updateSubmodel(id, doesNotExist);
+	}
+	
+	@Test(expected = IdentificationMismatchException.class)
+	public void updateExistingSubmodelWithMismatchId() {
+		String id = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID;
+		Submodel newSm = buildDummySubmodel("mismatchId");
+
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.updateSubmodel(id, newSm);
 	}
 
 	@Test

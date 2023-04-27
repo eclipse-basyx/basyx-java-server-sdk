@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.http;
 
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -56,6 +57,11 @@ public class BaSyxExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(IllegalArgumentException.class)
 	public <T> ResponseEntity<T> handleIllegalArgumentException(IllegalArgumentException exception) {
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(IdentificationMismatchException.class)
+	public <T> ResponseEntity<T> handleIdMismatchException(IdentificationMismatchException exception) {
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 }
