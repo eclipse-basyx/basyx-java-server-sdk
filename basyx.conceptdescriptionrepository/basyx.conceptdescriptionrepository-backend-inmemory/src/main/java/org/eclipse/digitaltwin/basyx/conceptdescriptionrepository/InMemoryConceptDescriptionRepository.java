@@ -100,7 +100,7 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 			throws ElementDoesNotExistException {
 		throwIfConceptDescriptionDoesNotExist(conceptDescriptionId);
 		
-		throwIfMismatchIds(conceptDescriptionId, conceptDescription);
+		throwIfMismatchingIds(conceptDescriptionId, conceptDescription);
 
 		conceptDescriptions.put(conceptDescriptionId, conceptDescription);
 	}
@@ -159,7 +159,7 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 		return optionalReference.isPresent();
 	}
 	
-	private void throwIfMismatchIds(String conceptDescriptionId, ConceptDescription newConceptDescription) {
+	private void throwIfMismatchingIds(String conceptDescriptionId, ConceptDescription newConceptDescription) {
 		String newConceptDescriptionId = newConceptDescription.getId();
 		
 		if (!conceptDescriptionId.equals(newConceptDescriptionId))

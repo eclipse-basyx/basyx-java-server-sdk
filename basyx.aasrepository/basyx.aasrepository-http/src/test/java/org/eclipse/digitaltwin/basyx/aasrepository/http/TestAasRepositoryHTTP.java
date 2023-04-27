@@ -275,9 +275,9 @@ public class TestAasRepositoryHTTP {
 	public void updateAasWithIdMismatch() throws IOException {
 		createDummyAasOnServer();
 		
-		String expectedAasJSON = getUpdatedAasIdMismatchJSONString();
+		String aasUpdateJson = getUpdatedAasIdMismatchJSONString();
 
-		CloseableHttpResponse creationResponse = updateSpecificAas(dummyAasId, expectedAasJSON);
+		CloseableHttpResponse creationResponse = updateSpecificAas(dummyAasId, aasUpdateJson);
 		
 		assertEquals(HttpStatus.BAD_REQUEST.value(), creationResponse.getCode());
 	}

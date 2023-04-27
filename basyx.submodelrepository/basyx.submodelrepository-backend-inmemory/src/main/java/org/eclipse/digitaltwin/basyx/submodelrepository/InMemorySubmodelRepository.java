@@ -113,7 +113,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	public void updateSubmodel(String id, Submodel submodel) throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(id);
 
-		throwIfMismatchIds(id, submodel);
+		throwIfMismatchingIds(id, submodel);
 
 		submodelServices.put(id, submodelServiceFactory.create(submodel));
 	}
@@ -195,7 +195,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		submodelServices.get(submodelId).deleteSubmodelElement(idShortPath);
 	}
 
-	private void throwIfMismatchIds(String smId, Submodel newSubmodel) {
+	private void throwIfMismatchingIds(String smId, Submodel newSubmodel) {
 		String newSubmodelId = newSubmodel.getId();
 
 		if (!smId.equals(newSubmodelId))

@@ -144,9 +144,9 @@ public class TestSubmodelRepositorySubmodelHTTP {
 	@Test
 	public void updateSubmodelWithMismatchId() throws IOException, ParseException {
 		String id = "7A7104BDAB57E184";
-		String expectedSubmodelJSON = getUpdatedSubmodelWithMismatchIdJSON();
+		String submodelUpdateJson = getUpdatedSubmodelWithMismatchIdJSON();
 
-		CloseableHttpResponse creationResponse = putSubmodel(id, expectedSubmodelJSON);
+		CloseableHttpResponse creationResponse = putSubmodel(id, submodelUpdateJson);
 
 		assertEquals(HttpStatus.BAD_REQUEST.value(), creationResponse.getCode());
 	}

@@ -97,7 +97,7 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 		
 		throwIfConceptDescriptionDoesNotExist(query, conceptDescriptionId);
 		
-		throwIfMismatchIds(conceptDescriptionId, conceptDescription);
+		throwIfMismatchingIds(conceptDescriptionId, conceptDescription);
 		
 		mongoTemplate.remove(query, ConceptDescription.class, collectionName);
 		mongoTemplate.save(conceptDescription, collectionName);
@@ -146,7 +146,7 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 			throw new ElementDoesNotExistException(conceptDescriptionId);
 	}
 	
-	private void throwIfMismatchIds(String conceptDescriptionId, ConceptDescription newConceptDescription) {
+	private void throwIfMismatchingIds(String conceptDescriptionId, ConceptDescription newConceptDescription) {
 		String newConceptDescriptionId = newConceptDescription.getId();
 		
 		if (!conceptDescriptionId.equals(newConceptDescriptionId))

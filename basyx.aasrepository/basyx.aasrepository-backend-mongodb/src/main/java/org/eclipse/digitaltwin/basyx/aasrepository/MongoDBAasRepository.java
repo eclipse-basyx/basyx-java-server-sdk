@@ -105,7 +105,7 @@ public class MongoDBAasRepository implements AasRepository {
 		
 		throwIfAasDoesNotExist(query, aasId);
 		
-		throwIfMismatchIds(aasId, aas);
+		throwIfMismatchingIds(aasId, aas);
 
 		mongoTemplate.remove(query, AssetAdministrationShell.class, collectionName);
 		mongoTemplate.save(aas, collectionName);
@@ -154,7 +154,7 @@ public class MongoDBAasRepository implements AasRepository {
 			throw new ElementDoesNotExistException(aasId);
 	}
 	
-	private void throwIfMismatchIds(String aasId, AssetAdministrationShell newAas) {
+	private void throwIfMismatchingIds(String aasId, AssetAdministrationShell newAas) {
 		String newAasId = newAas.getId();
 		
 		if (!aasId.equals(newAasId))

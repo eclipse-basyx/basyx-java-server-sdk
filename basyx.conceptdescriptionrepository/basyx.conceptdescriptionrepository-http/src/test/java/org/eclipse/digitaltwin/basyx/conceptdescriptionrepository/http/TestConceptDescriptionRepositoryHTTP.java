@@ -165,9 +165,9 @@ public class TestConceptDescriptionRepositoryHTTP {
 	@Test
 	public void updateConceptDescriptionWithMismatchId() throws IOException, ParseException {
 		String id = ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID;
-		String expectedConceptDescriptionJSON = getUpdatedConceptDescriptionWithMismatchIdJSON();
+		String conceptDescriptionUpdateJson = getUpdatedConceptDescriptionWithMismatchIdJSON();
 
-		CloseableHttpResponse creationResponse = putConceptDescription(id, expectedConceptDescriptionJSON);
+		CloseableHttpResponse creationResponse = putConceptDescription(id, conceptDescriptionUpdateJson);
 
 		assertEquals(HttpStatus.BAD_REQUEST.value(), creationResponse.getCode());
 	}
