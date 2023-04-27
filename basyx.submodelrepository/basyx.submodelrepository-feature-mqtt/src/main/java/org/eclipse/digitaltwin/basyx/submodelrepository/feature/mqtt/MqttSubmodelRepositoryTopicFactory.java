@@ -84,7 +84,7 @@ public class MqttSubmodelRepositoryTopicFactory extends AbstractMqttTopicFactory
 	 * @param repoId
 	 */
 	public String createCreateSubmodelElementTopic(String repoId, String submodelId, String submodelElementId) {
-		return new StringJoiner("/", "", "").add(SUBMODELREPOSITORY).add(repoId).add(SUBMODELS).add(submodelId).add(SUBMODELELEMENTS).add(submodelElementId).add(CREATED).toString();
+		return new StringJoiner("/", "", "").add(SUBMODELREPOSITORY).add(repoId).add(SUBMODELS).add(encodeId(submodelId)).add(SUBMODELELEMENTS).add(submodelElementId).add(CREATED).toString();
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class MqttSubmodelRepositoryTopicFactory extends AbstractMqttTopicFactory
 	 * @param repoId
 	 */
 	public String createUpdateSubmodelElementTopic(String repoId, String submodelId, String submodelElementId) {
-		return new StringJoiner("/", "", "").add(SUBMODELREPOSITORY).add(repoId).add(SUBMODELS).add(submodelId).add(SUBMODELELEMENTS).add(submodelElementId).add(UPDATED).toString();
+		return new StringJoiner("/", "", "").add(SUBMODELREPOSITORY).add(repoId).add(SUBMODELS).add(encodeId(submodelId)).add(SUBMODELELEMENTS).add(submodelElementId).add(UPDATED).toString();
 	}
 
 	/**
@@ -102,6 +102,6 @@ public class MqttSubmodelRepositoryTopicFactory extends AbstractMqttTopicFactory
 	 * @param repoId
 	 */
 	public String createDeleteSubmodelElementTopic(String repoId, String submodelId, String submodelElementId) {
-		return new StringJoiner("/", "", "").add(SUBMODELREPOSITORY).add(repoId).add(SUBMODELS).add(submodelId).add(SUBMODELELEMENTS).add(submodelElementId).add(DELETED).toString();
+		return new StringJoiner("/", "", "").add(SUBMODELREPOSITORY).add(repoId).add(SUBMODELS).add(encodeId(submodelId)).add(SUBMODELELEMENTS).add(submodelElementId).add(DELETED).toString();
 	}
 }

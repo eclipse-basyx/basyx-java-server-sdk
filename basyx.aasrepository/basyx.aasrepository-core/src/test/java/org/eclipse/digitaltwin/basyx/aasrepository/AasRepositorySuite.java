@@ -61,7 +61,7 @@ public abstract class AasRepositorySuite {
 	private static final String AAS_1_ID_SHORT = "idShortAas1";
 	private AssetAdministrationShell aas1;
 	private AssetAdministrationShell aas2;
-	private AssetAdministrationShell aas3;
+
 	private List<AssetAdministrationShell> preconfiguredShells = new ArrayList<>();
 
 	private static final String DUMMY_SUBMODEL_ID = "dummySubmodelId";

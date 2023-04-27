@@ -146,7 +146,7 @@ public class TestAasRepositoryHTTP {
 		addSubmodelReferenceToDummyAas(json);
 
 		CloseableHttpResponse getResponse = BaSyxHttpTestUtils
-				.executeGetOnURL(getSpecificAasAccessURL(dummyAasId) + "/aas/submodels");
+				.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(dummyAasId));
 
 		String responseString = BaSyxHttpTestUtils.getResponseAsString(getResponse);
 
@@ -154,7 +154,7 @@ public class TestAasRepositoryHTTP {
 	}
 
 	@Test
-	public void postSubmodelReference() throws FileNotFoundException, IOException, ParseException {
+	public void createSubmodelReference() throws FileNotFoundException, IOException, ParseException {
 		createDummyAasOnServer();
 
 		String json = getSingleSubmodelReference();
@@ -162,7 +162,7 @@ public class TestAasRepositoryHTTP {
 		addSubmodelReferenceToDummyAas(json);
 
 		CloseableHttpResponse getResponse = BaSyxHttpTestUtils
-				.executeGetOnURL(getSpecificAasAccessURL(dummyAasId) + "/aas/submodels");
+				.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(dummyAasId));
 
 		BaSyxHttpTestUtils.assertSameJSONContent(getSingleSubmodelReferenceAsJsonArray(),
 				BaSyxHttpTestUtils.getResponseAsString(getResponse));
@@ -180,7 +180,7 @@ public class TestAasRepositoryHTTP {
 
 		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(url);
 		CloseableHttpResponse getResponse = BaSyxHttpTestUtils
-				.executeGetOnURL(getSpecificAasAccessURL(dummyAasId) + "/aas/submodels");
+				.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(dummyAasId));
 
 		assertEquals(200, deleteResponse.getCode());
 		BaSyxHttpTestUtils.assertSameJSONContent("[]", BaSyxHttpTestUtils.getResponseAsString(getResponse));
@@ -216,12 +216,12 @@ public class TestAasRepositoryHTTP {
 	}
 
 	@Test
-	public void postAssetInformationByIdentifier() throws FileNotFoundException, IOException, ParseException {
+	public void updateAssetInformationByIdentifier() throws FileNotFoundException, IOException, ParseException {
 		createDummyAasOnServer();
 
 		String json = BaSyxHttpTestUtils.readJSONStringFromFile("classpath:assetInfoUpdate.json");
 
-		BaSyxHttpTestUtils.executePostOnServer(getSpecificAssetInformationAccessURL(dummyAasId), json);
+		BaSyxHttpTestUtils.executePutOnURL(getSpecificAssetInformationAccessURL(dummyAasId), json);
 
 		CloseableHttpResponse response = BaSyxHttpTestUtils
 				.executeGetOnURL(getSpecificAssetInformationAccessURL(dummyAasId));
@@ -230,22 +230,14 @@ public class TestAasRepositoryHTTP {
 	}
 
 	@Test
-	public void postAssetInformationToNonExistingAasByIdentifier()
+	public void updateAssetInformationToNonExistingAasByIdentifier()
 			throws FileNotFoundException, IOException, ParseException {
-
-		String json = BaSyxHttpTestUtils.readJSONStringFromFile("classpath:assetInfoUpdate.json");
-
 		CloseableHttpResponse response = BaSyxHttpTestUtils
 				.executeGetOnURL(getSpecificAssetInformationAccessURL("nonExisting"));
 
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
 	
-
-	private String getSpecificAssetInformationAccessURL(String aasID) {
-		return getSpecificAasAccessURL(aasID) + "/asset-information";
-	}
-
 	@Test
 	public void updateAAS() throws JsonMappingException, JsonProcessingException, ParseException, IOException {
 		createDummyAasOnServer();
@@ -291,18 +283,26 @@ public class TestAasRepositoryHTTP {
 	private String getSpecificSubmodelReferenceUrl() {
 		Base64UrlEncodedIdentifier identifier = new Base64UrlEncodedIdentifier(
 				"http://i40.customer.com/type/1/1/testSubmodel");
-		return getSpecificAasAccessURL(dummyAasId) + "/aas/submodels/"
+		return getSpecificAasSubmodelRefAccessURL(dummyAasId) + "/"
 				+ identifier.getEncodedIdentifier();
+	}
+
+	private static String getSpecificAasSubmodelRefAccessURL(String aasId) {
+		return getSpecificAasAccessURL(aasId) + "/submodel-refs";
+	}
+
+	private String getSpecificAssetInformationAccessURL(String aasID) {
+		return getSpecificAasAccessURL(aasID) + "/asset-information";
 	}
 
 	private void addSubmodelReferenceToDummyAas(String json)
 			throws FileNotFoundException, IOException {
 
 		BaSyxHttpTestUtils
-				.executePostOnServer(getSpecificAasAccessURL(dummyAasId) + "/aas/submodels", json);
+				.executePostOnURL(getSpecificAasSubmodelRefAccessURL(dummyAasId), json);
 	}
 
-	private String getSpecificAasAccessURL(String aasId) {
+	private static String getSpecificAasAccessURL(String aasId) {
 		return aasAccessURL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
 	}
 
@@ -321,7 +321,7 @@ public class TestAasRepositoryHTTP {
 	}
 
 	private CloseableHttpResponse createAasOnServer(String aasJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnServer(aasAccessURL, aasJsonContent);
+		return BaSyxHttpTestUtils.executePostOnURL(aasAccessURL, aasJsonContent);
 	}
 
 	private String getAasJSONString() throws FileNotFoundException, IOException {

@@ -37,6 +37,7 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPatch;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -135,9 +136,7 @@ public class BaSyxHttpTestUtils {
 	 */
 	public static CloseableHttpResponse executePutOnURL(String url, String content) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
-		HttpPut putRequest = createPutRequestWithHeader(url);
-
-		putRequest.setEntity(new StringEntity(content));
+		HttpPut putRequest = createPutRequestWithHeader(url, content);
 
 		return client.execute(putRequest);
 	}
@@ -150,7 +149,7 @@ public class BaSyxHttpTestUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static CloseableHttpResponse executePostOnServer(String url, String content) throws IOException {
+	public static CloseableHttpResponse executePostOnURL(String url, String content) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpPost aasCreateRequest = createPostRequest(url, content);
 
@@ -158,24 +157,34 @@ public class BaSyxHttpTestUtils {
 	}
 
 	/**
-	 * Performs a delete request on the passed URL
+	 * Performs a patch request on the passed URL with the passed content
 	 * 
 	 * @param url
+	 * @param content
 	 * @return
 	 * @throws IOException
 	 */
-	public static CloseableHttpResponse executeDeleteOnServer(String url) throws IOException {
+	public static CloseableHttpResponse executePatchOnURL(String url, String content) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
+		HttpPatch patchRequest = createPatchRequestWithHeader(url, content);
 
-		HttpDelete deleteRequest = new HttpDelete(url);
-
-		return client.execute(deleteRequest);
+		return client.execute(patchRequest);
 	}
 
-	private static HttpPut createPutRequestWithHeader(String url) {
+	private static HttpPatch createPatchRequestWithHeader(String url, String content) {
+		HttpPatch patchRequest = new HttpPatch(url);
+
+		patchRequest.setHeader("Content-type", "application/json");
+		patchRequest.setEntity(new StringEntity(content));
+
+		return patchRequest;
+	}
+
+	private static HttpPut createPutRequestWithHeader(String url, String content) {
 		HttpPut putRequest = new HttpPut(url);
 
 		putRequest.setHeader("Content-type", "application/json");
+		putRequest.setEntity(new StringEntity(content));
 
 		return putRequest;
 	}
