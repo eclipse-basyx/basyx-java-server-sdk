@@ -3,7 +3,7 @@ Eclipse BaSyx provides the Submodel Repository as off-the-shelf component:
 
     docker run --name=sm-repo -p:8081:8081 -v C:/tmp:/usr/share/config eclipsebasyx/submodel-repository:2.0.0-SNAPSHOT 
 
-The API Endpoint documentation is available at:
+The API endpoint documentation is available at:
 
 	http://{host}:{port}/v3/api-docs
 	
