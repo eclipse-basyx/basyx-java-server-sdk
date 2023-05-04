@@ -41,7 +41,7 @@ public class RepositoryApiDocumentationConfiguration {
 
 	private static final String TITLE = "BaSyx Repository";
 	private static final String DESCRIPTION = "BaSyx Components API";
-	private static final String VERSION = "2.0";
+	protected static final String VERSION = "2.0";
 	private static final String LICENSE = "MIT Licence";
 	private static final String LICENSE_URL = "https://opensource.org/licenses/mit-license.php";
 	private static final String CONTACT_URL = "https://www.eclipse.org/basyx/";

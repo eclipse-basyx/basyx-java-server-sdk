@@ -39,19 +39,14 @@ import io.swagger.v3.oas.models.info.Info;
  */
 @Configuration
 public class CDRepositoryApiDocumentationConfiguration extends RepositoryApiDocumentationConfiguration {
-	
+
 	private static final String TITLE = "BaSyx Concept Description Repository";
 	private static final String DESCRIPTION = "Concept Description API";
-	private static final String VERSION = "2.0";
-	
-    @Override
-    protected Info apiInfo() {
-        return new Info()
-                .title(TITLE)
-                .description(DESCRIPTION)
-                .version(VERSION)
-                .contact(apiContact())
-                .license(apiLicence());
-    }
+
+	@Override
+	protected Info apiInfo() {
+		return new Info().title(TITLE).description(DESCRIPTION).version(VERSION).contact(apiContact())
+				.license(apiLicence());
+	}
 
 }

@@ -23,8 +23,11 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.http.documentation;
+package org.eclipse.digitaltwin.basyx.aasenvironment.component.documentation;
 
+import org.eclipse.digitaltwin.basyx.aasenvironment.component.AasEnvironmentComponent;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.http.documentation.RepositoryApiDocumentationConfiguration;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.springframework.context.annotation.Configuration;
@@ -32,16 +35,18 @@ import org.springframework.context.annotation.Configuration;
 import io.swagger.v3.oas.models.info.Info;
 
 /**
- * API documentation configuration for {@link SubmodelRepository}
+ * API documentation configuration for {@link AasEnvironmentComponent} i.e.
+ * aggregation of API documents from {@link AasRepository},
+ * {@link SubmodelRepository} and {@link ConceptDescriptionRepository}
  * 
  * @author danish
  *
  */
 @Configuration
-public class SubmodelRepositoryApiDocumentationConfiguration extends RepositoryApiDocumentationConfiguration {
+public class AasEnvironmentApiDocumentationConfiguration extends RepositoryApiDocumentationConfiguration {
 
-	private static final String TITLE = "BaSyx Submodel Repository";
-	private static final String DESCRIPTION = "Submodel API";
+	private static final String TITLE = "BaSyx AAS Environment Component";
+	private static final String DESCRIPTION = "AAS Environment API";
 
 	@Override
 	protected Info apiInfo() {

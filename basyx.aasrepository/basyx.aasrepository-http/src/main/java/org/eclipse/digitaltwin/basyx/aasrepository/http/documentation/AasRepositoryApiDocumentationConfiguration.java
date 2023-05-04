@@ -39,19 +39,14 @@ import io.swagger.v3.oas.models.info.Info;
  */
 @Configuration
 public class AasRepositoryApiDocumentationConfiguration extends RepositoryApiDocumentationConfiguration {
-	
+
 	private static final String TITLE = "BaSyx AAS Repository";
 	private static final String DESCRIPTION = "Asset Administration Shell API";
-	private static final String VERSION = "2.0";
 
 	@Override
-    protected Info apiInfo() {
-        return new Info()
-                .title(TITLE)
-                .description(DESCRIPTION)
-                .version(VERSION)
-                .contact(apiContact())
-                .license(apiLicence());
-    }
+	protected Info apiInfo() {
+		return new Info().title(TITLE).description(DESCRIPTION).version(VERSION).contact(apiContact())
+				.license(apiLicence());
+	}
 
 }
