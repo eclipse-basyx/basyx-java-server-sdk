@@ -45,8 +45,8 @@ public class RepositoryApiDocumentationConfiguration {
 	private static final String LICENSE = "MIT Licence";
 	private static final String LICENSE_URL = "https://opensource.org/licenses/mit-license.php";
 	private static final String CONTACT_URL = "https://www.eclipse.org/basyx/";
-	private static final String CONTACT_EMAIL = "some-email@iese.fraunhofer.de";
-	private static final String CONTACT_NAME = "Frank Schnicke";
+	private static final String CONTACT_EMAIL = "basyx-dev@eclipse.org";
+	private static final String CONTACT_NAME = "The BaSyx Developers";
 
 	@Bean
 	public OpenAPI customOpenAPI() {
