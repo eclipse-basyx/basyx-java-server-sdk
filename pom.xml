@@ -1,5 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -159,9 +160,9 @@
 				<version>2.11.0</version>
 			</dependency>
 			<dependency>
-				<groupId>io.springfox</groupId>
-				<artifactId>springfox-oas</artifactId>
-				<version>3.0.0</version>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-ui</artifactId>
+				<version>1.7.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.paho</groupId>
@@ -284,7 +285,7 @@
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasenvironment.component</artifactId>
 				<version>${revision}</version>
-			</dependency>			
+			</dependency>
 			<!-- basyx.conceptdescriptionservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -433,7 +434,7 @@
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
-			
+
 			<!-- basyx.conceptdescriptionservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
