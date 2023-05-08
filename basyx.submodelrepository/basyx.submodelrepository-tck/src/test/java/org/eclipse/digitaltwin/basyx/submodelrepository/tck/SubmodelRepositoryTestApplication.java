@@ -1,5 +1,6 @@
+package org.eclipse.digitaltwin.basyx.submodelrepository.tck;
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,34 +24,45 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
-import java.io.IOException;
-
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.core5.http.ParseException;
-import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
-import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
+import org.junit.internal.TextListener;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 
 /**
- * Supports the tests working with the HTTP/REST API of Submodels
+ * Application for testing a Submodel Repository. The first argument is the
+ * server URL.
  * 
- * @author schnicke, fischer
+ * @author schnicke
  *
  */
-public class BaSyxSubmodelHttpTestUtils {
-	public static String getSpecificSubmodelAccessPath(String submodelRepoURL, String submodelId) {
-		return submodelRepoURL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
+public class SubmodelRepositoryTestApplication {
+
+	public static void main(String[] args) throws Exception {
+		String url = getSubmodelRepositoryUrl(args);
+
+		Result result = runTests(url);
+
+		printResults(result);
 	}
 
-	public static CloseableHttpResponse createSubmodel(String url, String submodelJSON) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(url, submodelJSON);
+	private static void printResults(Result result) {
+		System.out.println("Finished. Result: Failures: " + result.getFailureCount() + ". Ignored: " + result.getIgnoreCount() + ". Tests run: " + result.getRunCount() + ". Time: " + result.getRunTime() + "ms.");
 	}
 
-	public static String requestAllSubmodels(String url) throws IOException, ParseException {
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(url);
+	private static Result runTests(String url) {
+		SubmodelRepositorySubmodelTestDefinedURL.url = url;
+		SubmodelRepositorySubmodelElementsTestDefinedURL.url = url;
 
-		return BaSyxHttpTestUtils.getResponseAsString(response);
+		JUnitCore junit = new JUnitCore();
+		junit.addListener(new TextListener(System.out));
+
+		return junit.run(SubmodelRepositorySubmodelTestDefinedURL.class, SubmodelRepositorySubmodelElementsTestDefinedURL.class);
+	}
+
+	private static String getSubmodelRepositoryUrl(String[] args) {
+		String url = args[0];
+		return url;
 	}
 
 }
