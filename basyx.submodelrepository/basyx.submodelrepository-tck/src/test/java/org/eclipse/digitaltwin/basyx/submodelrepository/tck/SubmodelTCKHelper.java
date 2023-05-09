@@ -30,9 +30,11 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
@@ -40,6 +42,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.BaSyxSubmodelHttpTestUtils;
 import org.springframework.http.HttpStatus;
+
+import com.google.gson.Gson;
 
 /**
  * 
@@ -49,6 +53,7 @@ import org.springframework.http.HttpStatus;
 public class SubmodelTCKHelper {
 	private static JsonSerializer serializer = new JsonSerializer();
 	private static JsonDeserializer deserializer = new JsonDeserializer();
+	private static Gson gson = new Gson();
 
 	public static void createSubmodelOnRepository(String url, Submodel submodel) {
 		try {
@@ -80,11 +85,30 @@ public class SubmodelTCKHelper {
 
 	private static List<String> getAllSubmodelIds(String url) {
 		try {
-			String jsonResponse = BaSyxSubmodelHttpTestUtils.requestAllSubmodels(url);
+			String jsonResponse = getJsonResponse(url);
+
 			List<Submodel> submodels = deserializer.readReferables(jsonResponse, Submodel.class);
 			return submodels.stream().map(Submodel::getId).collect(Collectors.toList());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private static String getJsonResponse(String url) throws IOException, ParseException {
+		String rawResponse = BaSyxSubmodelHttpTestUtils.requestAllSubmodels(url);
+
+		Object obj = gson.fromJson(rawResponse, Object.class);
+
+		if (obj instanceof List)
+			return rawResponse;
+
+		return handlePaginationResultWrapper(obj);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static String handlePaginationResultWrapper(Object obj) {
+		Map<String, ?> jsonMap = (Map<String, ?>) obj;
+		
+		return gson.toJson(jsonMap.get("result"));
 	}
 }

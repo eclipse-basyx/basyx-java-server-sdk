@@ -28,13 +28,17 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.AasRepositoryHTTPSuite;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
+
+import com.google.gson.Gson;
 
 /**
  * 
@@ -47,6 +51,7 @@ public class AasRepositoryTestDefinedURL extends AasRepositoryHTTPSuite {
 	public static String url = "http://localhost:8081/shells";
 
 	private static JsonDeserializer deserializer = new JsonDeserializer();
+	private static Gson gson = new Gson();
 
 	@Override
 	protected String getURL() {
@@ -72,12 +77,30 @@ public class AasRepositoryTestDefinedURL extends AasRepositoryHTTPSuite {
 	private List<String> getAllAasIds() {
 		try {
 			CloseableHttpResponse response = getAllAas();
-			String jsonResponse = BaSyxHttpTestUtils.getResponseAsString(response);
+			String jsonResponse = getJsonResponse(response);
 			List<AssetAdministrationShell> shells = deserializer.readReferables(jsonResponse, AssetAdministrationShell.class);
 			return shells.stream().map(AssetAdministrationShell::getId).collect(Collectors.toList());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private String getJsonResponse(CloseableHttpResponse response) throws IOException, ParseException {
+		String rawResponse = BaSyxHttpTestUtils.getResponseAsString(response);
+
+		Object obj = gson.fromJson(rawResponse, Object.class);
+
+		if (obj instanceof List)
+			return rawResponse;
+
+		return handlePaginationResultWrapper(obj);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static String handlePaginationResultWrapper(Object obj) {
+		Map<String, ?> jsonMap = (Map<String, ?>) obj;
+
+		return gson.toJson(jsonMap.get("result"));
 	}
 
 }
