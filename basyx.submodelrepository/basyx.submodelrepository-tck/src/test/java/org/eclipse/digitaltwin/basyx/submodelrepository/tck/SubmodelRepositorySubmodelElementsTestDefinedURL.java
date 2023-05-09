@@ -23,53 +23,32 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
-import java.util.Collection;
+package org.eclipse.digitaltwin.basyx.submodelrepository.tck;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.SubmodelRepositorySubmodelElementsTestSuiteHTTP;
 
 /**
- * Tests the SubmodelElement specific parts of the SubmodelRepository HTTP/REST
- * API
  * 
- * @author schnicke, danish
+ * @author schnicke
  *
  */
-public class TestSubmodelRepositorySubmodelElementsHTTP extends SubmodelRepositorySubmodelElementsTestSuiteHTTP {
-	private static ConfigurableApplicationContext appContext;
+public class SubmodelRepositorySubmodelElementsTestDefinedURL extends SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 
-	@BeforeClass
-	public static void startAASRepo() throws Exception {
-		appContext = new SpringApplication(DummySubmodelRepositoryComponent.class).run(new String[] {});
+	public static String url = "http://localhost:8081/submodels";
+
+	@Override
+	public void resetRepository() {
+		SubmodelTCKHelper.deleteAllSubmodelsOnRepository(getURL());
 	}
 
 	@Override
 	public void populateRepository() {
-		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
-		Collection<Submodel> submodels = createSubmodels();
-		submodels.forEach(repo::createSubmodel);
-	}
-
-	@Override
-	public void resetRepository() {
-		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
-		repo.getAllSubmodels().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
-	}
-
-	@AfterClass
-	public static void shutdownAASRepo() {
-		appContext.close();
+		createSubmodels().forEach(s -> SubmodelTCKHelper.createSubmodelOnRepository(getURL(), s));
 	}
 
 	@Override
 	protected String getURL() {
-		return "http://localhost:8080/submodels";
+		return url;
 	}
-
 }

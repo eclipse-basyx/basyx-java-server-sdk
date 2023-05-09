@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,44 +22,45 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasrepository.tck;
 
-package org.eclipse.digitaltwin.basyx.aasrepository.http;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.junit.internal.TextListener;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 
 /**
- * Tests the {@link AssetAdministrationShell} specific parts of the {@link AasRepository} HTTP/REST API
+ * Application for testing an AAS Repository. The first argument is the server
+ * URL.
  * 
- * @author schnicke, danish
+ * @author schnicke
  *
  */
-public class TestAasRepositoryHTTP extends AasRepositoryHTTPSuite {
-	private static ConfigurableApplicationContext appContext;
+public class AasRepositoryTestApplication {
 
-	@BeforeClass
-	public static void startAasRepo() throws Exception {
-		appContext = new SpringApplication(DummyAasRepositoryComponent.class).run(new String[] {});
+	public static void main(String[] args) throws Exception {
+		String url = getAasRepositoryUrl(args);
+
+		Result result = runTests(url);
+
+		printResults(result);
 	}
 
-	@Override
-	public void resetRepository() {
-		AasRepository repo = appContext.getBean(AasRepository.class);
-		repo.getAllAas().stream().map(a -> a.getId()).forEach(repo::deleteAas);
+	private static void printResults(Result result) {
+		System.out.println("Finished. Result: Failures: " + result.getFailureCount() + ". Ignored: " + result.getIgnoreCount() + ". Tests run: " + result.getRunCount() + ". Time: " + result.getRunTime() + "ms.");
 	}
 
-	@AfterClass
-	public static void shutdownAasRepo() {
-		appContext.close();
+	private static Result runTests(String url) {
+		AasRepositoryTestDefinedURL.url = url;
+
+		JUnitCore junit = new JUnitCore();
+		junit.addListener(new TextListener(System.out));
+
+		return junit.run(AasRepositoryTestDefinedURL.class);
 	}
 
-	@Override
-	protected String getURL() {
-		return "http://localhost:8080/shells";
+	private static String getAasRepositoryUrl(String[] args) {
+		String url = args[0];
+		return url;
 	}
 
 }
