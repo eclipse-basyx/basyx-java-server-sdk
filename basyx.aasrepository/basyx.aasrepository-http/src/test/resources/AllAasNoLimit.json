@@ -1,0 +1,89 @@
+[
+    {
+        "modelType": "AssetAdministrationShell",
+        "assetInformation": {
+            "assetKind": "Instance",
+            "globalAssetId": "DummySubmodelID"
+        },
+        "id": "arbitrary"
+    },
+    {
+        "modelType": "AssetAdministrationShell",
+        "assetInformation": {
+            "assetKind": "Instance",
+            "globalAssetId": "DummyAssetId1"
+        },
+        "id": "arbitraryAAS1"
+    },
+    {
+        "modelType": "AssetAdministrationShell",
+        "assetInformation": {
+            "assetKind": "Type",
+            "globalAssetId": "DummyAssetId2"
+        },
+        "id": "arbitraryAAS2"
+    },
+    {
+        "modelType": "AssetAdministrationShell",
+        "assetInformation": {
+            "assetKind": "NotApplicable",
+            "globalAssetId": "DummyAssetId3"
+        },
+        "id": "arbitraryAAS3"
+    },
+    {
+        "modelType": "AssetAdministrationShell",
+        "assetInformation": {
+            "assetKind": "Type",
+            "globalAssetId": "DummyAssetId4"
+        },
+        "submodels": [
+            {
+                "keys": [
+                    {
+                        "type": "Submodel",
+                        "value": "DummySubmodelID"
+                    }
+                ],
+                "type": "ExternalReference"
+            },
+            {
+                "keys": [
+                    {
+                        "type": "Submodel",
+                        "value": "DummyAssetId1"
+                    }
+                ],
+                "type": "ExternalReference"
+            },
+            {
+                "keys": [
+                    {
+                        "type": "Submodel",
+                        "value": "DummyAssetId2"
+                    }
+                ],
+                "type": "ExternalReference"
+            },
+            {
+                "keys": [
+                    {
+                        "type": "Submodel",
+                        "value": "DummyAssetId3"
+                    }
+                ],
+                "type": "ExternalReference"
+            },
+            {
+                "keys": [
+                    {
+                        "type": "Submodel",
+                        "value": "DummyAssetId4"
+                    }
+                ],
+                "type": "ExternalReference"
+            }
+        ],
+        "id": "arbitraryAAS4"
+    }
+]

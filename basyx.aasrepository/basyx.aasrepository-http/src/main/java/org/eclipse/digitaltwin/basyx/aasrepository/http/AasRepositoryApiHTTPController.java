@@ -36,6 +36,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.PaginatedAssetAdministrationShell;
+import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.PaginatedSubmodelReference;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,6 +54,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @RestController
 public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 	private final AasRepository aasRepository;
+	private static final Integer DEFAULT_LIMIT = 25;
 
 	@Autowired
 	public AasRepositoryApiHTTPController(AasRepository aasRepository) {
@@ -94,13 +97,31 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 
 	@Override
 	public ResponseEntity<List<AssetAdministrationShell>> getAllAssetAdministrationShells(@Valid List<SpecificAssetID> assetIds, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid String cursor) {
-		return new ResponseEntity<List<AssetAdministrationShell>>(new ArrayList<>(aasRepository.getAllAas()), HttpStatus.OK);
+		PaginatedAssetAdministrationShell paginatedAAS;
+		
+		if (limit == null) {
+			paginatedAAS = new PaginatedAssetAdministrationShell(new ArrayList<>(aasRepository.getAllAas()), DEFAULT_LIMIT, cursor);
+			return new ResponseEntity<List<AssetAdministrationShell>>(paginatedAAS.getPaginatedAdministrationShells(), HttpStatus.OK);
+		}
+		
+		paginatedAAS = new PaginatedAssetAdministrationShell(new ArrayList<>(aasRepository.getAllAas()), limit, cursor);
+		
+		return new ResponseEntity<List<AssetAdministrationShell>>(paginatedAAS.getPaginatedAdministrationShells(), HttpStatus.OK);
 	}
 
 	@Override
 	public ResponseEntity<List<Reference>> getAllSubmodelReferencesAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Min(1) @Valid Integer limit, @Valid String cursor) {
 		List<Reference> submodelReferences = aasRepository.getSubmodelReferences(aasIdentifier.getIdentifier());
-		return new ResponseEntity<List<Reference>>(submodelReferences, HttpStatus.OK);
+		PaginatedSubmodelReference paginatedSubmodelReferenceReference;
+		
+		if (limit == null) {
+			paginatedSubmodelReferenceReference = new PaginatedSubmodelReference(submodelReferences, DEFAULT_LIMIT, cursor);
+			return new ResponseEntity<List<Reference>>(paginatedSubmodelReferenceReference.getPaginatedSubmodelReferences(), HttpStatus.OK);
+		}
+		
+		paginatedSubmodelReferenceReference = new PaginatedSubmodelReference(submodelReferences, limit, cursor);
+		
+		return new ResponseEntity<List<Reference>>(paginatedSubmodelReferenceReference.getPaginatedSubmodelReferences(), HttpStatus.OK);
 	}
 
 	@Override

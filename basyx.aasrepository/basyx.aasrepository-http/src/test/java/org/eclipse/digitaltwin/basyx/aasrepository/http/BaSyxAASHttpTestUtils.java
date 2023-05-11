@@ -23,47 +23,33 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+
 package org.eclipse.digitaltwin.basyx.aasrepository.http;
 
-import java.util.Collection;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
-
 /**
- * Tests the {@link AssetAdministrationShell} specific parts of the {@link AasRepository} HTTP/REST API
+ * Supports the tests working with the HTTP/REST API of AAS
  * 
  * @author schnicke, danish
  *
  */
-public class TestAasRepositoryHTTP extends AasRepositoryHTTPSuite {
-	private static ConfigurableApplicationContext appContext;
-
-	@BeforeClass
-	public static void startAasRepo() throws Exception {
-		appContext = new SpringApplication(DummyAasRepositoryComponent.class).run(new String[] {});
-	}
-
-	@Override
-	public void resetRepository() {
-		AasRepository repo = appContext.getBean(AasRepository.class);
-		repo.getAllAas().stream().map(a -> a.getId()).forEach(repo::deleteAas);
+public class BaSyxAASHttpTestUtils {
+	public static final String AAS_URL = "http://localhost:8080/shells";
+	private static final String LIMIT_PARAM_NAME = "limit";
+	private static final String CURSOR_PARAM_NAME = "cursor";
+	
+	protected static String getURL() {
+		return AAS_URL;
 	}
 	
-	@Override
-	public void populateRepository() {
-		AasRepository repo = appContext.getBean(AasRepository.class);
-		Collection<AssetAdministrationShell> assetAdministrationShells = createDummyAssetAdministrationShells();
-		assetAdministrationShells.forEach(repo::createAas);
+	public static String getAllAasURLWithLimit(Integer limit) {
+		return AAS_URL + "?" + LIMIT_PARAM_NAME + "=" + limit;
 	}
-
-	@AfterClass
-	public static void shutdownAasRepo() {
-		appContext.close();
+	
+	public static String getAllAasURLWithLimitAndCursor(Integer limit, String cursor) {
+		return AAS_URL + "?" + LIMIT_PARAM_NAME + "=" + limit + "&" + CURSOR_PARAM_NAME + "=" + cursor;
 	}
-
+	
+	public static String getAllAasURLWithNoLimitAndCursor(String cursor) {
+		return AAS_URL + "?" + CURSOR_PARAM_NAME + "=" + cursor;
+	}
 }

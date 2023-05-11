@@ -27,13 +27,18 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.http;
 
 import static org.junit.Assert.assertEquals;
-
+import static org.eclipse.digitaltwin.basyx.aasrepository.http.BaSyxAASHttpTestUtils.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShell;
+import org.eclipse.digitaltwin.basyx.aasservice.DummySubmodelReference;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.After;
@@ -52,10 +57,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  */
 public abstract class AasRepositoryHTTPSuite {
 	private static final String dummyAasId = "customIdentifier";
-
-	protected abstract String getURL();
-
+	
 	@Before
+	public abstract void populateRepository();
+	
 	@After
 	public abstract void resetRepository();
 
@@ -102,10 +107,64 @@ public abstract class AasRepositoryHTTPSuite {
 	}
 
 	@Test
-	public void getAllAasWhenEmpty() throws IOException {
+	public void getAllAasWhenEmpty() throws IOException, ParseException {
+		resetRepository();
+		
 		CloseableHttpResponse retrievalResponse = getAllAas();
 
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+	}
+	
+	@Test
+	public void getAllAasWithLimitAndNoCursor() throws IOException, ParseException {
+		int limit = 2;
+		String expectedJsonFromFile = getAasJsonWithLimit2AndNoCursor();
+		
+		CloseableHttpResponse retrievalResponse = getAllAasWithLimitAndNoCursor(getAllAasURLWithLimit(limit));
+		
+		String actualJsonFromServer = BaSyxHttpTestUtils.getResponseAsString(retrievalResponse);
+		
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedJsonFromFile, actualJsonFromServer);
+	}
+	
+	@Test
+	public void getAllAasWithLimitAndExistingCursor() throws IOException, ParseException {
+		String expectedJsonFromFile = getAasJsonWithLimit3AndCursor();
+		
+		CloseableHttpResponse retrievalResponse = getAllAasWithLimitAndCursor(3, "arbitraryAAS1");
+		
+		String actualJsonFromServer = BaSyxHttpTestUtils.getResponseAsString(retrievalResponse);
+		
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedJsonFromFile, actualJsonFromServer);
+	}
+	
+	@Test
+	public void getAllAasWithLimitAndNonExistingCursor() throws IOException, ParseException {		
+		CloseableHttpResponse retrievalResponse = getAllAasWithLimitAndCursor(2, "nonExisting");
+		
+		assertEquals(HttpStatus.NOT_FOUND.value(), retrievalResponse.getCode());
+	}
+	
+	@Test
+	public void getAllAasWithNoLimitAndExistingCursor() throws IOException, ParseException {
+		String expectedJsonFromFile = getAllAasJsonWithNoLimitAndExistingCursor();
+		
+		CloseableHttpResponse retrievalResponse = getAllAasWithNoLimitAndExistingCursor("arbitrary");
+		
+		String actualJsonFromServer = BaSyxHttpTestUtils.getResponseAsString(retrievalResponse);
+		
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedJsonFromFile, actualJsonFromServer);
+	}
+	
+	@Test
+	public void getAllAasWithNoLimitAndNoCursor() throws IOException, ParseException {
+		String expectedJsonFromFile = getAllAasJsonWithNoLimitAndNoCursor();
+		
+		CloseableHttpResponse retrievalResponse = getAllAas();
+		
+		String actualJsonFromServer = BaSyxHttpTestUtils.getResponseAsString(retrievalResponse);
+		
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedJsonFromFile, actualJsonFromServer);
 	}
 
 	@Test
@@ -127,36 +186,40 @@ public abstract class AasRepositoryHTTPSuite {
 	}
 
 	@Test
-	public void getSubmodelReference() throws FileNotFoundException, IOException, ParseException, DeserializationException {
+	public void getSubmodelReferenceNoLimitAndNoCursor() throws FileNotFoundException, IOException, ParseException, DeserializationException {
 		String json = getSingleSubmodelReference();
 
-		createDummyAasOnServer();
 		addSubmodelReferenceToDummyAas(json);
 
-		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(dummyAasId));
+		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(DummyAssetAdministrationShell.AAS_ID));
 
 		String responseString = BaSyxHttpTestUtils.getResponseAsString(getResponse);
 
 		BaSyxHttpTestUtils.assertSameJSONContent(getSingleSubmodelReferenceAsJsonArray(), responseString);
 	}
+	
+	@Test
+	public void getSubmodelReferenceWithLimitAndNoCursor() throws FileNotFoundException, IOException, ParseException, DeserializationException {
+		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(DummyAssetAdministrationShell.AAS_ID_4));
+
+		String responseString = BaSyxHttpTestUtils.getResponseAsString(getResponse);
+
+		BaSyxHttpTestUtils.assertSameJSONContent(getMultipleSubmodelReference(), responseString);
+	}
 
 	@Test
 	public void createSubmodelReference() throws FileNotFoundException, IOException, ParseException {
-		createDummyAasOnServer();
-
 		String json = getSingleSubmodelReference();
 
 		addSubmodelReferenceToDummyAas(json);
 
-		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(dummyAasId));
+		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(DummyAssetAdministrationShell.AAS_ID));
 
 		BaSyxHttpTestUtils.assertSameJSONContent(getSingleSubmodelReferenceAsJsonArray(), BaSyxHttpTestUtils.getResponseAsString(getResponse));
 	}
 
 	@Test
 	public void removeSubmodelReference() throws FileNotFoundException, IOException, ParseException {
-		createDummyAasOnServer();
-
 		String json = getSingleSubmodelReference();
 
 		addSubmodelReferenceToDummyAas(json);
@@ -164,7 +227,7 @@ public abstract class AasRepositoryHTTPSuite {
 		String url = getSpecificSubmodelReferenceUrl();
 
 		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(url);
-		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(dummyAasId));
+		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(DummyAssetAdministrationShell.AAS_ID));
 
 		assertEquals(200, deleteResponse.getCode());
 		BaSyxHttpTestUtils.assertSameJSONContent("[]", BaSyxHttpTestUtils.getResponseAsString(getResponse));
@@ -273,7 +336,7 @@ public abstract class AasRepositoryHTTPSuite {
 
 	private String getSpecificSubmodelReferenceUrl() {
 		Base64UrlEncodedIdentifier identifier = new Base64UrlEncodedIdentifier("http://i40.customer.com/type/1/1/testSubmodel");
-		return getSpecificAasSubmodelRefAccessURL(dummyAasId) + "/" + identifier.getEncodedIdentifier();
+		return getSpecificAasSubmodelRefAccessURL(DummyAssetAdministrationShell.AAS_ID) + "/" + identifier.getEncodedIdentifier();
 	}
 
 	private String getSpecificAasSubmodelRefAccessURL(String aasId) {
@@ -285,7 +348,7 @@ public abstract class AasRepositoryHTTPSuite {
 	}
 
 	private void addSubmodelReferenceToDummyAas(String json) throws FileNotFoundException, IOException {
-		BaSyxHttpTestUtils.executePostOnURL(getSpecificAasSubmodelRefAccessURL(dummyAasId), json);
+		BaSyxHttpTestUtils.executePostOnURL(getSpecificAasSubmodelRefAccessURL(DummyAssetAdministrationShell.AAS_ID), json);
 	}
 
 	protected String getSpecificAasAccessURL(String aasId) {
@@ -299,6 +362,18 @@ public abstract class AasRepositoryHTTPSuite {
 
 	protected CloseableHttpResponse getAllAas() throws IOException {
 		return BaSyxHttpTestUtils.executeGetOnURL(getURL());
+	}
+	
+	protected CloseableHttpResponse getAllAasWithLimitAndNoCursor(String url) throws IOException {
+		return BaSyxHttpTestUtils.executeGetOnURL(url);
+	}
+	
+	protected CloseableHttpResponse getAllAasWithLimitAndCursor(Integer limit, String cursor) throws IOException {
+		return BaSyxHttpTestUtils.executeGetOnURL(getAllAasURLWithLimitAndCursor(limit, cursor));
+	}
+	
+	protected CloseableHttpResponse getAllAasWithNoLimitAndExistingCursor(String cursor) throws IOException {
+		return BaSyxHttpTestUtils.executeGetOnURL(getAllAasURLWithNoLimitAndCursor(cursor));
 	}
 
 	private CloseableHttpResponse getSpecificAas(String aasId) throws IOException {
@@ -317,6 +392,26 @@ public abstract class AasRepositoryHTTPSuite {
 	private String getSingleSubmodelReference() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelReference.json");
 	}
+	
+	private String getMultipleSubmodelReference() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:MultipleSubmodelReference.json");
+	}
+	
+	private String getAasJsonWithLimit2AndNoCursor() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:AasWithLimit2.json");
+	}
+	
+	private String getAasJsonWithLimit3AndCursor() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:AasWithLimit3AndCursor.json");
+	}
+	
+	private String getAllAasJsonWithNoLimitAndNoCursor() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:AllAasNoLimit.json");
+	}
+	
+	private String getAllAasJsonWithNoLimitAndExistingCursor() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:AllAasNoLimitAndExistingCursor.json");
+	}
 
 	private String getUpdatedAasJSONString() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:UpdatedAasSimple.json");
@@ -328,6 +423,10 @@ public abstract class AasRepositoryHTTPSuite {
 
 	private String getSingleSubmodelReferenceAsJsonArray() throws FileNotFoundException, IOException {
 		return "[" + getSingleSubmodelReference() + "]";
+	}
+	
+	protected List<AssetAdministrationShell> createDummyAssetAdministrationShells() {
+		return DummyAssetAdministrationShell.getAllDummyAASs().stream().collect(Collectors.toList());
 	}
 
 }
