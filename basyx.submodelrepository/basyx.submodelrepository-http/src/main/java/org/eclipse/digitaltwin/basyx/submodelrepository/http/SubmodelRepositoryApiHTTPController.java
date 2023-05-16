@@ -37,6 +37,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination.PaginatedSubmodel;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination.PaginatedSubmodelElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-10T15:59:05.892Z[GMT]")
 @RestController
 public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHTTPApi {
+	private static final Integer DEFAULT_LIMIT = 25;
 	private SubmodelRepository repository;
 
 	@Autowired
@@ -85,6 +88,16 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	@Override
 	public ResponseEntity<List<Submodel>> getAllSubmodels(@Size(min = 1, max = 3072) @Valid Base64UrlEncodedIdentifier semanticId, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid String cursor, @Valid String level,
 			@Valid String extent) {
+		PaginatedSubmodel paginatedSubmodel;
+
+		if (limit == null) {
+			paginatedSubmodel = new PaginatedSubmodel(new ArrayList<>(repository.getAllSubmodels()),
+					DEFAULT_LIMIT, cursor);
+			return new ResponseEntity<List<Submodel>>(paginatedSubmodel.getPaginatedSubmodels(), HttpStatus.OK);
+		}
+
+		paginatedSubmodel = new PaginatedSubmodel(new ArrayList<>(repository.getAllSubmodels()), limit, cursor);
+
 		return new ResponseEntity<List<Submodel>>(new ArrayList<>(repository.getAllSubmodels()), HttpStatus.OK);
 	}
 
@@ -102,6 +115,18 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	@Override
 	public ResponseEntity<List<SubmodelElement>> getAllSubmodelElements(Base64UrlEncodedIdentifier submodelIdentifier, @Min(1) @Valid Integer limit, @Valid String cursor, @Valid String level, @Valid String extent) {
 		Collection<SubmodelElement> submodelElements = repository.getSubmodelElements(submodelIdentifier.getIdentifier());
+		
+		PaginatedSubmodelElement paginatedSubmodelElement;
+
+		if (limit == null) {
+			paginatedSubmodelElement = new PaginatedSubmodelElement(new ArrayList<>(submodelElements), DEFAULT_LIMIT,
+					cursor);
+			return new ResponseEntity<List<SubmodelElement>>(paginatedSubmodelElement.getPaginatedSubmodelElements(),
+					HttpStatus.OK);
+		}
+
+		paginatedSubmodelElement = new PaginatedSubmodelElement(new ArrayList<>(submodelElements), limit, cursor);
+
 		return new ResponseEntity<List<SubmodelElement>>(new ArrayList<>(submodelElements), HttpStatus.OK);
 	}
 

@@ -10,6 +10,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.filter.ConceptDescriptionRepositoryFilter;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.pagination.PaginatedConceptDescription;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-03-21T12:35:49.719724407Z[GMT]")
 @RestController
 public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDescriptionRepositoryHTTPApi {
+	
+	private static final Integer DEFAULT_LIMIT = 25;
+	
 	private final ObjectMapper objectMapper;
 	private ConceptDescriptionRepository repository;
 	private ConceptDescriptionRepositoryFilter repoFilter;
@@ -56,7 +60,16 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 
 		List<ConceptDescription> filtered = repoFilter.filter(idShort, isCaseOfReference, dataSpecificationReference);
 
-		return new ResponseEntity<>(filtered, HttpStatus.OK);
+		PaginatedConceptDescription paginatedConceptDescription;
+		
+		if (limit == null) {
+			paginatedConceptDescription = new PaginatedConceptDescription(filtered, DEFAULT_LIMIT, cursor);
+			return new ResponseEntity<List<ConceptDescription>>(paginatedConceptDescription.getPaginatedConceptDescriptions(), HttpStatus.OK);
+		}
+		
+		paginatedConceptDescription = new PaginatedConceptDescription(filtered, limit, cursor);
+		
+		return new ResponseEntity<List<ConceptDescription>>(paginatedConceptDescription.getPaginatedConceptDescriptions(), HttpStatus.OK);
 	}
 
 	@Override
