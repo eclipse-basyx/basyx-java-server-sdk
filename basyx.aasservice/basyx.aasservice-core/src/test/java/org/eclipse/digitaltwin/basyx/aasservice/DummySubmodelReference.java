@@ -3,7 +3,6 @@ package org.eclipse.digitaltwin.basyx.aasservice;
 import static org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShell.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;

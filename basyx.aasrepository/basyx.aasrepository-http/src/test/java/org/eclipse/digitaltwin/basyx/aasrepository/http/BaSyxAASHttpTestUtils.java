@@ -26,6 +26,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.http;
 
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+
 /**
  * Supports the tests working with the HTTP/REST API of AAS
  * 
@@ -39,6 +41,23 @@ public class BaSyxAASHttpTestUtils {
 	
 	protected static String getURL() {
 		return AAS_URL;
+	}
+	
+	protected static String getSpecificAasAccessURL(String aasId) {
+		return getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
+	}
+	
+	protected static String getSpecificAasSubmodelRefAccessURL(String aasId) {
+		return getSpecificAasAccessURL(aasId) + "/submodel-refs";
+	}
+	
+	public static String getSpecificAasSubmodelReferenceUrl(String aasId, String submodelId) {
+		Base64UrlEncodedIdentifier identifier = new Base64UrlEncodedIdentifier(submodelId);
+		return getSpecificAasSubmodelRefAccessURL(aasId) + "/" + identifier.getEncodedIdentifier();
+	}
+	
+	public static String getSpecificAssetInformationAccessURL(String aasID) {
+		return getSpecificAasAccessURL(aasID) + "/asset-information";
 	}
 	
 	public static String getAllAasURLWithLimit(Integer limit) {
