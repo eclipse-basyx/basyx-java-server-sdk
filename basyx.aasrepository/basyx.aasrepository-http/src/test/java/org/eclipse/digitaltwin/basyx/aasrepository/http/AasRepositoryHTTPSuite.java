@@ -61,6 +61,8 @@ public abstract class AasRepositoryHTTPSuite {
 	
 	@After
 	public abstract void resetRepository();
+	
+	protected abstract String getURL();
 
 	@Test
 	public void aasUpload() throws IOException, ParseException {
@@ -177,7 +179,7 @@ public abstract class AasRepositoryHTTPSuite {
 	public void deleteAas() throws IOException {
 		createDummyAasOnServer();
 
-		String url = getSpecificAasAccessURL(dummyAasId);
+		String url = getSpecificAasAccessURL(getURL(), dummyAasId);
 		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(url);
 		assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());
 
@@ -186,7 +188,7 @@ public abstract class AasRepositoryHTTPSuite {
 
 	@Test
 	public void deleteNonExistingAas() throws IOException {
-		String url = getSpecificAasAccessURL("nonExisting");
+		String url = getSpecificAasAccessURL(getURL(), "nonExisting");
 		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(url);
 		assertEquals(HttpStatus.NOT_FOUND.value(), deleteResponse.getCode());
 	}
@@ -197,7 +199,7 @@ public abstract class AasRepositoryHTTPSuite {
 
 		addSubmodelReferenceToDummyAas(json);
 
-		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(DummyAssetAdministrationShell.AAS_ID));
+		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(getURL(), DummyAssetAdministrationShell.AAS_ID));
 
 		String responseString = BaSyxHttpTestUtils.getResponseAsString(getResponse);
 
@@ -206,7 +208,7 @@ public abstract class AasRepositoryHTTPSuite {
 	
 	@Test
 	public void getSubmodelReferenceWithLimitAndNoCursor() throws FileNotFoundException, IOException, ParseException, DeserializationException {
-		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(DummyAssetAdministrationShell.AAS_ID_4));
+		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(getURL(), DummyAssetAdministrationShell.AAS_ID_4));
 
 		String responseString = BaSyxHttpTestUtils.getResponseAsString(getResponse);
 
@@ -219,7 +221,7 @@ public abstract class AasRepositoryHTTPSuite {
 
 		addSubmodelReferenceToDummyAas(json);
 
-		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(DummyAssetAdministrationShell.AAS_ID));
+		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(getURL(), DummyAssetAdministrationShell.AAS_ID));
 
 		BaSyxHttpTestUtils.assertSameJSONContent(getSingleSubmodelReferenceAsJsonArray(), BaSyxHttpTestUtils.getResponseAsString(getResponse));
 	}
@@ -232,10 +234,10 @@ public abstract class AasRepositoryHTTPSuite {
 
 		String submodelId = "http://i40.customer.com/type/1/1/testSubmodel";
 		
-		String url = getSpecificAasSubmodelReferenceUrl(DummyAssetAdministrationShell.AAS_ID, submodelId);
+		String url = getSpecificAasSubmodelReferenceUrl(getURL(), DummyAssetAdministrationShell.AAS_ID, submodelId);
 
 		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(url);
-		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(DummyAssetAdministrationShell.AAS_ID));
+		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(getURL(), DummyAssetAdministrationShell.AAS_ID));
 
 		assertEquals(200, deleteResponse.getCode());
 		BaSyxHttpTestUtils.assertSameJSONContent("[]", BaSyxHttpTestUtils.getResponseAsString(getResponse));
@@ -248,7 +250,7 @@ public abstract class AasRepositoryHTTPSuite {
 		
 		String submodelId = "http://i40.customer.com/type/1/1/testSubmodel";
 		
-		String url = getSpecificAasSubmodelReferenceUrl(DummyAssetAdministrationShell.AAS_ID, submodelId);
+		String url = getSpecificAasSubmodelReferenceUrl(getURL(), DummyAssetAdministrationShell.AAS_ID, submodelId);
 		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(url);
 		assertEquals(HttpStatus.NOT_FOUND.value(), deleteResponse.getCode());
 	}
@@ -256,7 +258,7 @@ public abstract class AasRepositoryHTTPSuite {
 	@Test
 	public void getAssetInformationByIdentifier() throws FileNotFoundException, IOException, ParseException {
 		createDummyAasOnServer();
-		String url = getSpecificAssetInformationAccessURL(dummyAasId);
+		String url = getSpecificAssetInformationAccessURL(getURL(), dummyAasId);
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(url);
 
 		String expected = BaSyxHttpTestUtils.readJSONStringFromFile("classpath:assetInfoSimple.json");
@@ -266,7 +268,7 @@ public abstract class AasRepositoryHTTPSuite {
 
 	@Test
 	public void getNonExistingAssetInformationByIdentifier() throws FileNotFoundException, IOException, ParseException {
-		String url = getSpecificAasAccessURL("nonExisting") + "/asset-information";
+		String url = getSpecificAasAccessURL(getURL(), "nonExisting") + "/asset-information";
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(url);
 
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
@@ -278,16 +280,16 @@ public abstract class AasRepositoryHTTPSuite {
 
 		String json = BaSyxHttpTestUtils.readJSONStringFromFile("classpath:assetInfoUpdate.json");
 
-		BaSyxHttpTestUtils.executePutOnURL(getSpecificAssetInformationAccessURL(dummyAasId), json);
+		BaSyxHttpTestUtils.executePutOnURL(getSpecificAssetInformationAccessURL(getURL(), dummyAasId), json);
 
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAssetInformationAccessURL(dummyAasId));
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAssetInformationAccessURL(getURL(), dummyAasId));
 
 		BaSyxHttpTestUtils.assertSameJSONContent(json, BaSyxHttpTestUtils.getResponseAsString(response));
 	}
 
 	@Test
 	public void updateAssetInformationToNonExistingAasByIdentifier() throws FileNotFoundException, IOException, ParseException {
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAssetInformationAccessURL("nonExisting"));
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAssetInformationAccessURL(getURL(), "nonExisting"));
 
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
@@ -309,7 +311,7 @@ public abstract class AasRepositoryHTTPSuite {
 
 	@Test
 	public void updateNonExistingAas() throws IOException {
-		String url = getSpecificAasAccessURL("nonExisting");
+		String url = getSpecificAasAccessURL(getURL(), "nonExisting");
 
 		String expectedAasJSON = getAasJSONString();
 
@@ -330,7 +332,7 @@ public abstract class AasRepositoryHTTPSuite {
 	}
 
 	private CloseableHttpResponse updateSpecificAas(String dummyaasid, String aasJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePutOnURL(getSpecificAasAccessURL(dummyaasid), aasJsonContent);
+		return BaSyxHttpTestUtils.executePutOnURL(getSpecificAasAccessURL(getURL(), dummyaasid), aasJsonContent);
 	}
 
 	private String createDummyAasOnServer() throws FileNotFoundException, IOException {
@@ -346,7 +348,7 @@ public abstract class AasRepositoryHTTPSuite {
 	}
 
 	private void addSubmodelReferenceToDummyAas(String json) throws FileNotFoundException, IOException {
-		BaSyxHttpTestUtils.executePostOnURL(getSpecificAasSubmodelRefAccessURL(DummyAssetAdministrationShell.AAS_ID), json);
+		BaSyxHttpTestUtils.executePostOnURL(getSpecificAasSubmodelRefAccessURL(getURL(), DummyAssetAdministrationShell.AAS_ID), json);
 	}
 
 	private void assertAasIsNotOnServer(String aasId) throws IOException {
@@ -359,7 +361,7 @@ public abstract class AasRepositoryHTTPSuite {
 	}
 
 	private CloseableHttpResponse getSpecificAas(String aasId) throws IOException {
-		String url = getSpecificAasAccessURL(aasId);
+		String url = getSpecificAasAccessURL(getURL(), aasId);
 		return BaSyxHttpTestUtils.executeGetOnURL(url);
 	}
 

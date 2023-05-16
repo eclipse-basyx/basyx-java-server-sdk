@@ -65,5 +65,10 @@ public class TestAasRepositoryHTTP extends AasRepositoryHTTPSuite {
 	public static void shutdownAasRepo() {
 		appContext.close();
 	}
+	
+	@Override
+	protected String getURL() {
+		return "http://localhost:8080/shells";
+	}
 
 }

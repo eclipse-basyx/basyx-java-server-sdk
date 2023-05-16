@@ -39,25 +39,21 @@ public class BaSyxAASHttpTestUtils {
 	private static final String LIMIT_PARAM_NAME = "limit";
 	private static final String CURSOR_PARAM_NAME = "cursor";
 	
-	protected static String getURL() {
-		return AAS_URL;
+	public static String getSpecificAasAccessURL(String baseUrl, String aasId) {
+		return baseUrl + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
 	}
 	
-	protected static String getSpecificAasAccessURL(String aasId) {
-		return getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
+	protected static String getSpecificAasSubmodelRefAccessURL(String baseUrl, String aasId) {
+		return getSpecificAasAccessURL(baseUrl, aasId) + "/submodel-refs";
 	}
 	
-	protected static String getSpecificAasSubmodelRefAccessURL(String aasId) {
-		return getSpecificAasAccessURL(aasId) + "/submodel-refs";
-	}
-	
-	public static String getSpecificAasSubmodelReferenceUrl(String aasId, String submodelId) {
+	public static String getSpecificAasSubmodelReferenceUrl(String baseUrl, String aasId, String submodelId) {
 		Base64UrlEncodedIdentifier identifier = new Base64UrlEncodedIdentifier(submodelId);
-		return getSpecificAasSubmodelRefAccessURL(aasId) + "/" + identifier.getEncodedIdentifier();
+		return getSpecificAasSubmodelRefAccessURL(baseUrl, aasId) + "/" + identifier.getEncodedIdentifier();
 	}
 	
-	public static String getSpecificAssetInformationAccessURL(String aasID) {
-		return getSpecificAasAccessURL(aasID) + "/asset-information";
+	public static String getSpecificAssetInformationAccessURL(String baseUrl, String aasID) {
+		return getSpecificAasAccessURL(baseUrl, aasID) + "/asset-information";
 	}
 	
 	public static String getAllAasURLWithLimit(Integer limit) {

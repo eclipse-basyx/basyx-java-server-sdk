@@ -25,6 +25,7 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.tck;
 
 import static org.junit.Assert.fail;
+import static org.eclipse.digitaltwin.basyx.aasrepository.http.BaSyxAASHttpTestUtils.getSpecificAasAccessURL;
 
 import java.io.IOException;
 import java.util.List;
@@ -65,7 +66,7 @@ public class AasRepositoryTestDefinedURL extends AasRepositoryHTTPSuite {
 
 	private void deleteAas(String id) {
 		try {
-			String url = getSpecificAasAccessURL(id);
+			String url = getSpecificAasAccessURL(getURL(), id);
 			CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(url);
 
 			System.out.println("Deleting aas with id " + id + ", ResponseCode is " + deleteResponse.getCode());
@@ -101,6 +102,12 @@ public class AasRepositoryTestDefinedURL extends AasRepositoryHTTPSuite {
 		Map<String, ?> jsonMap = (Map<String, ?>) obj;
 
 		return gson.toJson(jsonMap.get("result"));
+	}
+
+	@Override
+	public void populateRepository() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
