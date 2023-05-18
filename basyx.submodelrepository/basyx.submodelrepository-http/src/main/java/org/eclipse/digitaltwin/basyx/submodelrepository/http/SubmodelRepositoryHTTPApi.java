@@ -40,6 +40,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.model.Result;
+import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.http.ResponseEntity;
@@ -74,7 +75,7 @@ public interface SubmodelRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
 	@RequestMapping(value = "/submodels", produces = { "application/json" }, method = RequestMethod.GET)
-	ResponseEntity<List<Submodel>> getAllSubmodels(
+	ResponseEntity<PagedResult<Submodel>> getAllSubmodels(
 			@Size(min = 1, max = 3072) @Parameter(in = ParameterIn.QUERY, description = "The value of the semantic id reference (UTF8-BASE64-URL-encoded)", schema = @Schema()) @Valid @RequestParam(value = "semanticId", required = false) Base64UrlEncodedIdentifier semanticId,
 			@Parameter(in = ParameterIn.QUERY, description = "The Asset Administration Shell’s IdShort", schema = @Schema()) @Valid @RequestParam(value = "idShort", required = false) String idShort,
 			@Min(1) @Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array", schema = @Schema(allowableValues = {
@@ -223,7 +224,7 @@ public interface SubmodelRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
 	@RequestMapping(value = "/submodels/{submodelIdentifier}/submodel-elements", produces = { "application/json" }, method = RequestMethod.GET)
-	ResponseEntity<List<SubmodelElement>> getAllSubmodelElements(
+	ResponseEntity<PagedResult<SubmodelElement>> getAllSubmodelElements(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
 			@Min(1) @Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array", schema = @Schema(allowableValues = {
 					"1" }, minimum = "1")) @Valid @RequestParam(value = "limit", required = false) Integer limit,

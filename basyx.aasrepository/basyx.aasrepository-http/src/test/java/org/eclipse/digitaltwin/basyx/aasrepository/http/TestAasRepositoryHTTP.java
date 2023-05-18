@@ -25,8 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.http;
 
-import java.util.Collection;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.junit.AfterClass;
@@ -52,13 +50,6 @@ public class TestAasRepositoryHTTP extends AasRepositoryHTTPSuite {
 	public void resetRepository() {
 		AasRepository repo = appContext.getBean(AasRepository.class);
 		repo.getAllAas().stream().map(a -> a.getId()).forEach(repo::deleteAas);
-	}
-	
-	@Override
-	public void populateRepository() {
-		AasRepository repo = appContext.getBean(AasRepository.class);
-		Collection<AssetAdministrationShell> assetAdministrationShells = createDummyAssetAdministrationShells();
-		assetAdministrationShells.forEach(repo::createAas);
 	}
 
 	@AfterClass

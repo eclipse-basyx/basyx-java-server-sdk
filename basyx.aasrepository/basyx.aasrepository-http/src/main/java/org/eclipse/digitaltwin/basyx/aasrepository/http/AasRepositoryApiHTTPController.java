@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.http;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -39,6 +39,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.PaginatedAssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.PaginatedSubmodelReference;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +55,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @RestController
 public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 	private final AasRepository aasRepository;
-	private static final Integer DEFAULT_LIMIT = 25;
 
 	@Autowired
 	public AasRepositoryApiHTTPController(AasRepository aasRepository) {
@@ -96,32 +96,25 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 	}
 
 	@Override
-	public ResponseEntity<List<AssetAdministrationShell>> getAllAssetAdministrationShells(@Valid List<SpecificAssetID> assetIds, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid String cursor) {
-		PaginatedAssetAdministrationShell paginatedAAS;
+	public ResponseEntity<PagedResult<AssetAdministrationShell>> getAllAssetAdministrationShells(@Valid List<SpecificAssetID> assetIds, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid String cursor) {
+		PagedResult<AssetAdministrationShell> paginatedAAS = new PaginatedAssetAdministrationShell();
+		paginatedAAS.setItems(aasRepository.getAllAas().stream().collect(Collectors.toList()));
+		paginatedAAS.setNextCursor("nextAasCursor");
+		paginatedAAS.setLimit(limit);
 		
-		if (limit == null) {
-			paginatedAAS = new PaginatedAssetAdministrationShell(new ArrayList<>(aasRepository.getAllAas()), DEFAULT_LIMIT, cursor);
-			return new ResponseEntity<List<AssetAdministrationShell>>(paginatedAAS.getPaginatedAdministrationShells(), HttpStatus.OK);
-		}
-		
-		paginatedAAS = new PaginatedAssetAdministrationShell(new ArrayList<>(aasRepository.getAllAas()), limit, cursor);
-		
-		return new ResponseEntity<List<AssetAdministrationShell>>(paginatedAAS.getPaginatedAdministrationShells(), HttpStatus.OK);
+		return new ResponseEntity<PagedResult<AssetAdministrationShell>>(paginatedAAS, HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<List<Reference>> getAllSubmodelReferencesAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Min(1) @Valid Integer limit, @Valid String cursor) {
+	public ResponseEntity<PagedResult<Reference>> getAllSubmodelReferencesAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Min(1) @Valid Integer limit, @Valid String cursor) {
 		List<Reference> submodelReferences = aasRepository.getSubmodelReferences(aasIdentifier.getIdentifier());
-		PaginatedSubmodelReference paginatedSubmodelReferenceReference;
+				
+		PagedResult<Reference> paginatedSubmodelReference = new PaginatedSubmodelReference();
+		paginatedSubmodelReference.setItems(submodelReferences);
+		paginatedSubmodelReference.setNextCursor("nextSmRefCursor");
+		paginatedSubmodelReference.setLimit(limit);
 		
-		if (limit == null) {
-			paginatedSubmodelReferenceReference = new PaginatedSubmodelReference(submodelReferences, DEFAULT_LIMIT, cursor);
-			return new ResponseEntity<List<Reference>>(paginatedSubmodelReferenceReference.getPaginatedSubmodelReferences(), HttpStatus.OK);
-		}
-		
-		paginatedSubmodelReferenceReference = new PaginatedSubmodelReference(submodelReferences, limit, cursor);
-		
-		return new ResponseEntity<List<Reference>>(paginatedSubmodelReferenceReference.getPaginatedSubmodelReferences(), HttpStatus.OK);
+		return new ResponseEntity<PagedResult<Reference>>(paginatedSubmodelReference, HttpStatus.OK);
 	}
 
 	@Override

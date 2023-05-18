@@ -1,0 +1,23 @@
+{
+	"items": [
+		{
+			"modelType": "AssetAdministrationShell",
+			"assetInformation": {
+				"assetKind": "Instance",
+				"globalAssetId": "globalAssetId"
+			},
+			"id": "customIdentifier",
+			"idShort": "ExampleMotor"
+		},
+		{
+			"modelType": "AssetAdministrationShell",
+			"assetInformation": {
+				"assetKind": "Instance",
+				"globalAssetId": "dummyAasAssetId"
+			},
+			"id": "dummyAasIdentifier",
+			"idShort": "DummyAas"
+		}
+	],
+	"nextCursor": "nextAasCursor"
+}

@@ -12,6 +12,7 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.filter.ConceptDescriptionRepositoryFilter;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.pagination.PaginatedConceptDescription;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +30,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-03-21T12:35:49.719724407Z[GMT]")
 @RestController
 public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDescriptionRepositoryHTTPApi {
-	
-	private static final Integer DEFAULT_LIMIT = 25;
 	
 	private final ObjectMapper objectMapper;
 	private ConceptDescriptionRepository repository;
@@ -53,23 +52,19 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 
 
 	@Override
-	public ResponseEntity<List<ConceptDescription>> getAllConceptDescriptions(@Valid String idShort, @Valid Base64UrlEncodedIdentifier isCaseOf, @Valid Base64UrlEncodedIdentifier dataSpecificationRef, @Min(1) @Valid Integer limit,
+	public ResponseEntity<PagedResult<ConceptDescription>> getAllConceptDescriptions(@Valid String idShort, @Valid Base64UrlEncodedIdentifier isCaseOf, @Valid Base64UrlEncodedIdentifier dataSpecificationRef, @Min(1) @Valid Integer limit,
 			@Valid String cursor) {
 		Reference isCaseOfReference = getReference(getDecodedValue(isCaseOf));
 		Reference dataSpecificationReference = getReference(getDecodedValue(dataSpecificationRef));
 
 		List<ConceptDescription> filtered = repoFilter.filter(idShort, isCaseOfReference, dataSpecificationReference);
 
-		PaginatedConceptDescription paginatedConceptDescription;
+		PagedResult<ConceptDescription> paginatedConceptDescription = new PaginatedConceptDescription();
+		paginatedConceptDescription.setItems(filtered);
+		paginatedConceptDescription.setLimit(limit);
+		paginatedConceptDescription.setNextCursor("nextConceptDescriptionCursor");
 		
-		if (limit == null) {
-			paginatedConceptDescription = new PaginatedConceptDescription(filtered, DEFAULT_LIMIT, cursor);
-			return new ResponseEntity<List<ConceptDescription>>(paginatedConceptDescription.getPaginatedConceptDescriptions(), HttpStatus.OK);
-		}
-		
-		paginatedConceptDescription = new PaginatedConceptDescription(filtered, limit, cursor);
-		
-		return new ResponseEntity<List<ConceptDescription>>(paginatedConceptDescription.getPaginatedConceptDescriptions(), HttpStatus.OK);
+		return new ResponseEntity<PagedResult<ConceptDescription>>(paginatedConceptDescription, HttpStatus.OK);
 	}
 
 	@Override

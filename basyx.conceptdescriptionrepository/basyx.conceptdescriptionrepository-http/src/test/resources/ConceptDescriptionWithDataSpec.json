@@ -1,40 +1,43 @@
-[
-	{
-		"modelType": "ConceptDescription",
-		"id": "7A7104IHTREFN4322",
-		"idShort": "ConDescWithDataSpec",
-		"isCaseOf": [
-			{
-				"keys": [
-					{
-						"type": "Entity",
-						"value": "EntityKey"
-					}
-				],
-				"type": "ExternalReference"
-			},
-			{
-				"keys": [
-					{
-						"type": "DataElement",
-						"value": "DataElement"
-					}
-				],
-				"type": "ModelReference"
-			}
-		],
-		"embeddedDataSpecifications": [
-			{
-				"dataSpecification": {
+{
+	"items": [
+		{
+			"modelType": "ConceptDescription",
+			"id": "7A7104IHTREFN4322",
+			"idShort": "ConDescWithDataSpec",
+			"isCaseOf": [
+				{
 					"keys": [
 						{
-							"type": "ReferenceElement",
-							"value": "ReferenceElementKey"
+							"type": "Entity",
+							"value": "EntityKey"
 						}
 					],
 					"type": "ExternalReference"
+				},
+				{
+					"keys": [
+						{
+							"type": "DataElement",
+							"value": "DataElement"
+						}
+					],
+					"type": "ModelReference"
 				}
-			}
-		]
-	}
-]
+			],
+			"embeddedDataSpecifications": [
+				{
+					"dataSpecification": {
+						"keys": [
+							{
+								"type": "ReferenceElement",
+								"value": "ReferenceElementKey"
+							}
+						],
+						"type": "ExternalReference"
+					}
+				}
+			]
+		}
+	],
+	"nextCursor": "nextConceptDescriptionCursor"
+}

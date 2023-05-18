@@ -42,6 +42,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.model.Result;
+import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -111,7 +112,7 @@ public interface AasRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
 	@RequestMapping(value = "/shells", produces = { "application/json" }, method = RequestMethod.GET)
-	ResponseEntity<List<AssetAdministrationShell>> getAllAssetAdministrationShells(
+	ResponseEntity<PagedResult<AssetAdministrationShell>> getAllAssetAdministrationShells(
 			@Parameter(in = ParameterIn.QUERY, description = "A list of specific Asset identifiers", schema = @Schema()) @Valid @RequestParam(value = "assetIds", required = false) List<SpecificAssetID> assetIds,
 			@Parameter(in = ParameterIn.QUERY, description = "The Asset Administration Shell’s IdShort", schema = @Schema()) @Valid @RequestParam(value = "idShort", required = false) String idShort,
 			@Min(1) @Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array", schema = @Schema(allowableValues = {
@@ -133,7 +134,7 @@ public interface AasRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
 	@RequestMapping(value = "/shells/{aasIdentifier}/submodel-refs", produces = { "application/json" }, method = RequestMethod.GET)
-	ResponseEntity<List<Reference>> getAllSubmodelReferencesAasRepository(
+	ResponseEntity<PagedResult<Reference>> getAllSubmodelReferencesAasRepository(
 			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,
 			@Min(1) @Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array", schema = @Schema(allowableValues = {
 					"1" }, minimum = "1")) @Valid @RequestParam(value = "limit", required = false) Integer limit,
