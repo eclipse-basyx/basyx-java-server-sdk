@@ -57,7 +57,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-10T15:59:05.892Z[GMT]")
 @RestController
 public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHTTPApi {
-	private static final Integer DEFAULT_LIMIT = 25;
 	private SubmodelRepository repository;
 
 	@Autowired

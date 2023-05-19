@@ -27,7 +27,6 @@
 package org.eclipse.digitaltwin.basyx.http;
 
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.CursorNotFoundException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.springframework.http.HttpStatus;
@@ -64,10 +63,5 @@ public class BaSyxExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(IdentificationMismatchException.class)
 	public <T> ResponseEntity<T> handleIdMismatchException(IdentificationMismatchException exception) {
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-	}
-	
-	@ExceptionHandler(CursorNotFoundException.class)
-	public <T> ResponseEntity<T> handleIdCursorNotFoundException(CursorNotFoundException exception) {
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 }
