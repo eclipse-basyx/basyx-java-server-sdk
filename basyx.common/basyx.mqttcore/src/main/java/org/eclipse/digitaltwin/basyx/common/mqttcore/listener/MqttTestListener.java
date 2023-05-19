@@ -22,7 +22,7 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
+package org.eclipse.digitaltwin.basyx.common.mqttcore.listener;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
