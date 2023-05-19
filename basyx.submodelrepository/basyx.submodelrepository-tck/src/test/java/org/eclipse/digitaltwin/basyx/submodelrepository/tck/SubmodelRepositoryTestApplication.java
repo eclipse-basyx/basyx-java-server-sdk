@@ -1,6 +1,5 @@
-package org.eclipse.digitaltwin.basyx.submodelrepository.tck;
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -24,6 +23,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.tck;
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.submodelrepository.tck;
 
 import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
@@ -61,8 +61,7 @@ public class SubmodelRepositoryTestApplication {
 	}
 
 	private static String getSubmodelRepositoryUrl(String[] args) {
-		String url = args[0];
-		return url;
+		return args[0];
 	}
 
 }

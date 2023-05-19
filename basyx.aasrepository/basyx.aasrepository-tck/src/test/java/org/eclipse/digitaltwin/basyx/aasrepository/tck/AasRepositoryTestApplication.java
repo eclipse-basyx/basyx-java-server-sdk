@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -59,8 +59,7 @@ public class AasRepositoryTestApplication {
 	}
 
 	private static String getAasRepositoryUrl(String[] args) {
-		String url = args[0];
-		return url;
+		return args[0];
 	}
 
 }
