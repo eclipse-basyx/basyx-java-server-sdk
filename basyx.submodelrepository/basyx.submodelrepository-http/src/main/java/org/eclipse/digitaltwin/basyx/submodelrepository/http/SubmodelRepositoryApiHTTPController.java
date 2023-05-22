@@ -27,9 +27,6 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
@@ -38,6 +35,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
+import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination.PaginatedSubmodel;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination.PaginatedSubmodelElement;
@@ -87,14 +85,13 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 
 	@Override
-	public ResponseEntity<PagedResult<Submodel>> getAllSubmodels(@Size(min = 1, max = 3072) @Valid Base64UrlEncodedIdentifier semanticId, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid String cursor, @Valid String level,
+	public ResponseEntity<PagedResult> getAllSubmodels(@Size(min = 1, max = 3072) @Valid Base64UrlEncodedIdentifier semanticId, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid String cursor, @Valid String level,
 			@Valid String extent) {
-		PagedResult<Submodel> paginatedSubmodel = new PaginatedSubmodel();
-		paginatedSubmodel.setItems(repository.getAllSubmodels().stream().collect(Collectors.toList()));
-		paginatedSubmodel.setLimit(limit);
-		paginatedSubmodel.setNextCursor("nextSubmodelCursor");
+		PaginatedSubmodel paginatedSubmodel = new PaginatedSubmodel();
+		paginatedSubmodel.result(new ArrayList<>(repository.getAllSubmodels()));
+		paginatedSubmodel.setPagingMetadata(new PagedResultPagingMetadata().cursor("nextSubmodelCursor"));
 
-		return new ResponseEntity<PagedResult<Submodel>>(paginatedSubmodel, HttpStatus.OK);
+		return new ResponseEntity<PagedResult>(paginatedSubmodel, HttpStatus.OK);
 	}
 
 	@Override
@@ -109,15 +106,14 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	}
 
 	@Override
-	public ResponseEntity<PagedResult<SubmodelElement>> getAllSubmodelElements(Base64UrlEncodedIdentifier submodelIdentifier, @Min(1) @Valid Integer limit, @Valid String cursor, @Valid String level, @Valid String extent) {
+	public ResponseEntity<PagedResult> getAllSubmodelElements(Base64UrlEncodedIdentifier submodelIdentifier, @Min(1) @Valid Integer limit, @Valid String cursor, @Valid String level, @Valid String extent) {
 		Collection<SubmodelElement> submodelElements = repository.getSubmodelElements(submodelIdentifier.getIdentifier());
 		
-		PagedResult<SubmodelElement> paginatedSubmodelElement = new PaginatedSubmodelElement();
-		paginatedSubmodelElement.setItems(submodelElements.stream().collect(Collectors.toList()));
-		paginatedSubmodelElement.setLimit(limit);
-		paginatedSubmodelElement.setNextCursor("nextSubmodelElementCursor");
+		PaginatedSubmodelElement paginatedSubmodelElement = new PaginatedSubmodelElement();
+		paginatedSubmodelElement.setResult(new ArrayList<>(submodelElements));
+		paginatedSubmodelElement.setPagingMetadata(new PagedResultPagingMetadata().cursor("nextSubmodelElementCursor"));
 
-		return new ResponseEntity<PagedResult<SubmodelElement>>(paginatedSubmodelElement, HttpStatus.OK);
+		return new ResponseEntity<PagedResult>(paginatedSubmodelElement, HttpStatus.OK);
 	}
 
 	@Override

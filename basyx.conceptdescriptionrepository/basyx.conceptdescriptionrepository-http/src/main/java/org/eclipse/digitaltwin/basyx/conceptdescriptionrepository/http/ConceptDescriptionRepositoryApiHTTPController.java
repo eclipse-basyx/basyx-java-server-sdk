@@ -13,6 +13,7 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.filter.Co
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.pagination.PaginatedConceptDescription;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
+import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,19 +53,18 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 
 
 	@Override
-	public ResponseEntity<PagedResult<ConceptDescription>> getAllConceptDescriptions(@Valid String idShort, @Valid Base64UrlEncodedIdentifier isCaseOf, @Valid Base64UrlEncodedIdentifier dataSpecificationRef, @Min(1) @Valid Integer limit,
+	public ResponseEntity<PagedResult> getAllConceptDescriptions(@Valid String idShort, @Valid Base64UrlEncodedIdentifier isCaseOf, @Valid Base64UrlEncodedIdentifier dataSpecificationRef, @Min(1) @Valid Integer limit,
 			@Valid String cursor) {
 		Reference isCaseOfReference = getReference(getDecodedValue(isCaseOf));
 		Reference dataSpecificationReference = getReference(getDecodedValue(dataSpecificationRef));
 
 		List<ConceptDescription> filtered = repoFilter.filter(idShort, isCaseOfReference, dataSpecificationReference);
 
-		PagedResult<ConceptDescription> paginatedConceptDescription = new PaginatedConceptDescription();
-		paginatedConceptDescription.setItems(filtered);
-		paginatedConceptDescription.setLimit(limit);
-		paginatedConceptDescription.setNextCursor("nextConceptDescriptionCursor");
+		PaginatedConceptDescription paginatedConceptDescription = new PaginatedConceptDescription();
+		paginatedConceptDescription.setResult(filtered);
+		paginatedConceptDescription.setPagingMetadata(new PagedResultPagingMetadata().cursor("nextConceptDescriptionCursor"));
 		
-		return new ResponseEntity<PagedResult<ConceptDescription>>(paginatedConceptDescription, HttpStatus.OK);
+		return new ResponseEntity<PagedResult>(paginatedConceptDescription, HttpStatus.OK);
 	}
 
 	@Override

@@ -1,4 +1,6 @@
 {
-    "items": [],
-    "nextCursor": "nextSmRefCursor"
+	"paging_metadata": {
+		"cursor": "nextSmRefCursor"
+	},
+	"result": []
 }

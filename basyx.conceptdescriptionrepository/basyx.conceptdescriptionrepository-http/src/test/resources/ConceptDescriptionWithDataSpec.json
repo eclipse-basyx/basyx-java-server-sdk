@@ -1,5 +1,8 @@
 {
-	"items": [
+	"paging_metadata": {
+		"cursor": "nextConceptDescriptionCursor"
+	},
+	"result": [
 		{
 			"modelType": "ConceptDescription",
 			"id": "7A7104IHTREFN4322",
@@ -38,6 +41,5 @@
 				}
 			]
 		}
-	],
-	"nextCursor": "nextConceptDescriptionCursor"
+	]
 }

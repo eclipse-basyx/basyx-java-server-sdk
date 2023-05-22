@@ -23,57 +23,41 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination;
+package org.eclipse.digitaltwin.basyx.http.pagination;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
 
 /**
- * Paginated wrapper for {@link SubmodelRepository#getAllSubmodels()}
+ * Paged result metadata
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-05-22T07:02:56.105163402Z[GMT]")
 
-public class PaginatedSubmodel extends PagedResult {
-	@JsonProperty("result")
-	@Valid
-	private List<Submodel> result = null;
+public class PagedResultPagingMetadata {
+	@JsonProperty("cursor")
+	private String cursor = null;
 
-	public PaginatedSubmodel result(List<Submodel> result) {
-		this.result = result;
-		return this;
-	}
-
-	public PaginatedSubmodel addResultItem(Submodel resultItem) {
-		if (this.result == null) {
-			this.result = new ArrayList<Submodel>();
-		}
-		this.result.add(resultItem);
+	public PagedResultPagingMetadata cursor(String cursor) {
+		this.cursor = cursor;
 		return this;
 	}
 
 	/**
-	 * Get result
+	 * Get cursor
 	 * 
-	 * @return result
+	 * @return cursor
 	 **/
-	@Schema(description = "")
-	@Valid
-	public List<Submodel> getResult() {
-		return result;
+	@Schema(example = "wJlCDLIl6KTWypN7T6vc6nWEmEYe99Hjf1XY1xmqV-M=#", description = "")
+
+	public String getCursor() {
+		return cursor;
 	}
 
-	public void setResult(List<Submodel> result) {
-		this.result = result;
+	public void setCursor(String cursor) {
+		this.cursor = cursor;
 	}
 
 	@Override
@@ -84,21 +68,21 @@ public class PaginatedSubmodel extends PagedResult {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		PaginatedSubmodel getSubmodelsResult = (PaginatedSubmodel) o;
-		return Objects.equals(this.result, getSubmodelsResult.result) && super.equals(o);
+		PagedResultPagingMetadata pagedResultPagingMetadata = (PagedResultPagingMetadata) o;
+		return Objects.equals(this.cursor, pagedResultPagingMetadata.cursor);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(result, super.hashCode());
+		return Objects.hash(cursor);
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("class GetSubmodelsResult {\n");
-		sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-		sb.append("    result: ").append(toIndentedString(result)).append("\n");
+		sb.append("class PagedResultPagingMetadata {\n");
+
+		sb.append("    cursor: ").append(toIndentedString(cursor)).append("\n");
 		sb.append("}");
 		return sb.toString();
 	}

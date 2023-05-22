@@ -1,5 +1,8 @@
 {
-	"items": [
+	"paging_metadata": {
+		"cursor": "nextSubmodelElementCursor"
+	},
+	"result": [
 		{
 			"category": "PARAMETER",
 			"idShort": "MaxRotationSpeed",
@@ -366,6 +369,5 @@
 				}
 			]
 		}
-	],
-	"nextCursor": "nextSubmodelElementCursor"
+	]
 }

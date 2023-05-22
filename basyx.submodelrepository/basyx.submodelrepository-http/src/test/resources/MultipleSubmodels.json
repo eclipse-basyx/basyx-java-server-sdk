@@ -1,5 +1,8 @@
 {
-	"items": [
+	"paging_metadata": {
+		"cursor": "nextSubmodelCursor"
+	},
+	"result": [
 		{
 			"id": "7A7104BDAB57E184",
 			"idShort": "TechnicalData",
@@ -446,6 +449,5 @@
 				}
 			]
 		}
-	],
-	"nextCursor": "nextSubmodelCursor"
+	]
 }

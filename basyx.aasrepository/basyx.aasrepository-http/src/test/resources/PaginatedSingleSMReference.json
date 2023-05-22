@@ -1,5 +1,8 @@
 {
-	"items": [
+	"paging_metadata": {
+		"cursor": "nextSmRefCursor"
+	},
+	"result": [
 		{
 			"keys": [
 				{
@@ -9,6 +12,5 @@
 			],
 			"type": "ExternalReference"
 		}
-	],
-	"nextCursor": "nextSmRefCursor"
+	]
 }
