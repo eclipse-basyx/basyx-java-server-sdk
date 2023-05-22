@@ -32,6 +32,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 
 /**
  * Specifies the overall SubmodelRepository API
@@ -168,4 +169,22 @@ public interface SubmodelRepository {
 	public default String getName() {
 		return "submodelRepository-default-name";
 	}
+
+	/**
+	 * Retrieves the Submodel as Value-Only_representation with the specific id
+	 * 
+	 * @param submodelId
+	 * @return
+	 * @throws ElementDoesNotExistException
+	 */
+	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) throws ElementDoesNotExistException;
+
+	/**
+	 * Retrieves only the Metadata of a submodel
+	 * 
+	 * @param submodelId
+	 * @return
+	 * @throws ElementDoesNotExistException
+	 */
+	public Submodel getSubmodelByIdMetadata(String submodelId) throws ElementDoesNotExistException;
 }
