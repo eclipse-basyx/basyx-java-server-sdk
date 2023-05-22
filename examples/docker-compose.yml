@@ -1,5 +1,18 @@
 version: "3.9"
 services:
+##############################################################################
+##############################################################################
+###
+### Do forget to start docker-compose in basyx.parent to get a running mongodb
+###
+##############################################################################
+##############################################################################
+  emqx:
+    image: emqx/emqx:5.0.25
+    ports:
+      - 1883:1883
+    networks:
+      - basyx-java-server-sdk
   aas-env:
     image: basyx.aasenvironment.component
     volumes:
