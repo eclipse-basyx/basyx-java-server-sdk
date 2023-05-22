@@ -10,7 +10,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.filter.ConceptDescriptionRepositoryFilter;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.pagination.PaginatedConceptDescription;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.pagination.GetConceptDescriptionsResult;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
@@ -60,7 +60,7 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 
 		List<ConceptDescription> filtered = repoFilter.filter(idShort, isCaseOfReference, dataSpecificationReference);
 
-		PaginatedConceptDescription paginatedConceptDescription = new PaginatedConceptDescription();
+		GetConceptDescriptionsResult paginatedConceptDescription = new GetConceptDescriptionsResult();
 		paginatedConceptDescription.setResult(filtered);
 		paginatedConceptDescription.setPagingMetadata(new PagedResultPagingMetadata().cursor("nextConceptDescriptionCursor"));
 		

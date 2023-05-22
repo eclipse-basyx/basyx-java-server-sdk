@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.http.pagination;
+package org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,31 +31,31 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 
 /**
- * Paginated wrapper for {@link AasRepository#getAllAas()}
+ * Paginated wrapper for {@link SubmodelRepository#getAllSubmodels()}
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-05-22T07:02:56.105163402Z[GMT]")
 
-public class PaginatedAssetAdministrationShell extends PagedResult {
+public class GetSubmodelsResult extends PagedResult {
 	@JsonProperty("result")
 	@Valid
-	private List<AssetAdministrationShell> result = null;
+	private List<Submodel> result = null;
 
-	public PaginatedAssetAdministrationShell result(List<AssetAdministrationShell> result) {
+	public GetSubmodelsResult result(List<Submodel> result) {
 		this.result = result;
 		return this;
 	}
 
-	public PaginatedAssetAdministrationShell addResultItem(AssetAdministrationShell resultItem) {
+	public GetSubmodelsResult addResultItem(Submodel resultItem) {
 		if (this.result == null) {
-			this.result = new ArrayList<AssetAdministrationShell>();
+			this.result = new ArrayList<Submodel>();
 		}
 		this.result.add(resultItem);
 		return this;
@@ -68,11 +68,11 @@ public class PaginatedAssetAdministrationShell extends PagedResult {
 	 **/
 	@Schema(description = "")
 	@Valid
-	public List<AssetAdministrationShell> getResult() {
+	public List<Submodel> getResult() {
 		return result;
 	}
 
-	public void setResult(List<AssetAdministrationShell> result) {
+	public void setResult(List<Submodel> result) {
 		this.result = result;
 	}
 
@@ -84,8 +84,8 @@ public class PaginatedAssetAdministrationShell extends PagedResult {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		PaginatedAssetAdministrationShell getAssetAdministrationShellsResult = (PaginatedAssetAdministrationShell) o;
-		return Objects.equals(this.result, getAssetAdministrationShellsResult.result) && super.equals(o);
+		GetSubmodelsResult getSubmodelsResult = (GetSubmodelsResult) o;
+		return Objects.equals(this.result, getSubmodelsResult.result) && super.equals(o);
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class PaginatedAssetAdministrationShell extends PagedResult {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("class GetAssetAdministrationShellsResult {\n");
+		sb.append("class GetSubmodelsResult {\n");
 		sb.append("    ").append(toIndentedString(super.toString())).append("\n");
 		sb.append("    result: ").append(toIndentedString(result)).append("\n");
 		sb.append("}");

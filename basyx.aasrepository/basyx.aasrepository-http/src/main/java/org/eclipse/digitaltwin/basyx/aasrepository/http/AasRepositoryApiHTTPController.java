@@ -35,8 +35,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.PaginatedAssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.PaginatedSubmodelReference;
+import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetAssetAdministrationShellsResult;
+import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetReferencesResult;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
@@ -97,7 +97,7 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 
 	@Override
 	public ResponseEntity<PagedResult> getAllAssetAdministrationShells(@Valid List<SpecificAssetID> assetIds, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid String cursor) {
-		PaginatedAssetAdministrationShell paginatedAAS = new PaginatedAssetAdministrationShell();
+		GetAssetAdministrationShellsResult paginatedAAS = new GetAssetAdministrationShellsResult();
 		paginatedAAS.setResult(new ArrayList<>(aasRepository.getAllAas()));
 		paginatedAAS.setPagingMetadata(new PagedResultPagingMetadata().cursor("nextAasCursor"));
 		
@@ -108,7 +108,7 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 	public ResponseEntity<PagedResult> getAllSubmodelReferencesAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Min(1) @Valid Integer limit, @Valid String cursor) {
 		List<Reference> submodelReferences = aasRepository.getSubmodelReferences(aasIdentifier.getIdentifier());
 				
-		PaginatedSubmodelReference paginatedSubmodelReference = new PaginatedSubmodelReference();
+		GetReferencesResult paginatedSubmodelReference = new GetReferencesResult();
 		paginatedSubmodelReference.setResult(submodelReferences);
 		paginatedSubmodelReference.setPagingMetadata(new PagedResultPagingMetadata().cursor("nextSmRefCursor"));
 		

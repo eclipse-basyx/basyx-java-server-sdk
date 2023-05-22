@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.pagination;
+package org.eclipse.digitaltwin.basyx.aasrepository.http.pagination;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,32 +31,31 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 
 /**
- * Paginated wrapper for
- * {@link ConceptDescriptionRepository#getAllConceptDescriptions()}
+ * Paginated wrapper for {@link AasRepository#getAllAas()}
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-05-22T07:02:56.105163402Z[GMT]")
 
-public class PaginatedConceptDescription extends PagedResult {
+public class GetAssetAdministrationShellsResult extends PagedResult {
 	@JsonProperty("result")
 	@Valid
-	private List<ConceptDescription> result = null;
+	private List<AssetAdministrationShell> result = null;
 
-	public PaginatedConceptDescription result(List<ConceptDescription> result) {
+	public GetAssetAdministrationShellsResult result(List<AssetAdministrationShell> result) {
 		this.result = result;
 		return this;
 	}
 
-	public PaginatedConceptDescription addResultItem(ConceptDescription resultItem) {
+	public GetAssetAdministrationShellsResult addResultItem(AssetAdministrationShell resultItem) {
 		if (this.result == null) {
-			this.result = new ArrayList<ConceptDescription>();
+			this.result = new ArrayList<AssetAdministrationShell>();
 		}
 		this.result.add(resultItem);
 		return this;
@@ -69,11 +68,11 @@ public class PaginatedConceptDescription extends PagedResult {
 	 **/
 	@Schema(description = "")
 	@Valid
-	public List<ConceptDescription> getResult() {
+	public List<AssetAdministrationShell> getResult() {
 		return result;
 	}
 
-	public void setResult(List<ConceptDescription> result) {
+	public void setResult(List<AssetAdministrationShell> result) {
 		this.result = result;
 	}
 
@@ -85,8 +84,8 @@ public class PaginatedConceptDescription extends PagedResult {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		PaginatedConceptDescription getConceptDescriptionsResult = (PaginatedConceptDescription) o;
-		return Objects.equals(this.result, getConceptDescriptionsResult.result) && super.equals(o);
+		GetAssetAdministrationShellsResult getAssetAdministrationShellsResult = (GetAssetAdministrationShellsResult) o;
+		return Objects.equals(this.result, getAssetAdministrationShellsResult.result) && super.equals(o);
 	}
 
 	@Override
@@ -97,7 +96,7 @@ public class PaginatedConceptDescription extends PagedResult {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("class GetConceptDescriptionsResult {\n");
+		sb.append("class GetAssetAdministrationShellsResult {\n");
 		sb.append("    ").append(toIndentedString(super.toString())).append("\n");
 		sb.append("    result: ").append(toIndentedString(result)).append("\n");
 		sb.append("}");

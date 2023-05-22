@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.pagination;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,31 +31,32 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 
 /**
- * Paginated wrapper for {@link SubmodelRepository#getAllSubmodels()}
+ * Paginated wrapper for
+ * {@link ConceptDescriptionRepository#getAllConceptDescriptions()}
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-05-22T07:02:56.105163402Z[GMT]")
 
-public class PaginatedSubmodel extends PagedResult {
+public class GetConceptDescriptionsResult extends PagedResult {
 	@JsonProperty("result")
 	@Valid
-	private List<Submodel> result = null;
+	private List<ConceptDescription> result = null;
 
-	public PaginatedSubmodel result(List<Submodel> result) {
+	public GetConceptDescriptionsResult result(List<ConceptDescription> result) {
 		this.result = result;
 		return this;
 	}
 
-	public PaginatedSubmodel addResultItem(Submodel resultItem) {
+	public GetConceptDescriptionsResult addResultItem(ConceptDescription resultItem) {
 		if (this.result == null) {
-			this.result = new ArrayList<Submodel>();
+			this.result = new ArrayList<ConceptDescription>();
 		}
 		this.result.add(resultItem);
 		return this;
@@ -68,11 +69,11 @@ public class PaginatedSubmodel extends PagedResult {
 	 **/
 	@Schema(description = "")
 	@Valid
-	public List<Submodel> getResult() {
+	public List<ConceptDescription> getResult() {
 		return result;
 	}
 
-	public void setResult(List<Submodel> result) {
+	public void setResult(List<ConceptDescription> result) {
 		this.result = result;
 	}
 
@@ -84,8 +85,8 @@ public class PaginatedSubmodel extends PagedResult {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		PaginatedSubmodel getSubmodelsResult = (PaginatedSubmodel) o;
-		return Objects.equals(this.result, getSubmodelsResult.result) && super.equals(o);
+		GetConceptDescriptionsResult getConceptDescriptionsResult = (GetConceptDescriptionsResult) o;
+		return Objects.equals(this.result, getConceptDescriptionsResult.result) && super.equals(o);
 	}
 
 	@Override
@@ -96,7 +97,7 @@ public class PaginatedSubmodel extends PagedResult {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("class GetSubmodelsResult {\n");
+		sb.append("class GetConceptDescriptionsResult {\n");
 		sb.append("    ").append(toIndentedString(super.toString())).append("\n");
 		sb.append("    result: ").append(toIndentedString(result)).append("\n");
 		sb.append("}");

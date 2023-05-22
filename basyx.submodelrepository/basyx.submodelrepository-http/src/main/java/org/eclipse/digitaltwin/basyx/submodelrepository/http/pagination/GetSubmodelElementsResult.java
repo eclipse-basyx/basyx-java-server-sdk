@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.http.pagination;
+package org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,31 +31,31 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 
 /**
- * Paginated wrapper for {@link AasRepository#getSubmodelReferences(String)}
+ * Paginated wrapper for {@link SubmodelRepository#getSubmodelElements(String)}
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-05-22T07:02:56.105163402Z[GMT]")
 
-public class PaginatedSubmodelReference extends PagedResult {
+public class GetSubmodelElementsResult extends PagedResult {
 	@JsonProperty("result")
 	@Valid
-	private List<Reference> result = null;
+	private List<SubmodelElement> result = null;
 
-	public PaginatedSubmodelReference result(List<Reference> result) {
+	public GetSubmodelElementsResult result(List<SubmodelElement> result) {
 		this.result = result;
 		return this;
 	}
 
-	public PaginatedSubmodelReference addResultItem(Reference resultItem) {
+	public GetSubmodelElementsResult addResultItem(SubmodelElement resultItem) {
 		if (this.result == null) {
-			this.result = new ArrayList<Reference>();
+			this.result = new ArrayList<SubmodelElement>();
 		}
 		this.result.add(resultItem);
 		return this;
@@ -68,11 +68,11 @@ public class PaginatedSubmodelReference extends PagedResult {
 	 **/
 	@Schema(description = "")
 	@Valid
-	public List<Reference> getResult() {
+	public List<SubmodelElement> getResult() {
 		return result;
 	}
 
-	public void setResult(List<Reference> result) {
+	public void setResult(List<SubmodelElement> result) {
 		this.result = result;
 	}
 
@@ -84,8 +84,8 @@ public class PaginatedSubmodelReference extends PagedResult {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		PaginatedSubmodelReference getReferencesResult = (PaginatedSubmodelReference) o;
-		return Objects.equals(this.result, getReferencesResult.result) && super.equals(o);
+		GetSubmodelElementsResult getSubmodelElementsResult = (GetSubmodelElementsResult) o;
+		return Objects.equals(this.result, getSubmodelElementsResult.result) && super.equals(o);
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class PaginatedSubmodelReference extends PagedResult {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("class GetReferencesResult {\n");
+		sb.append("class GetSubmodelElementsResult {\n");
 		sb.append("    ").append(toIndentedString(super.toString())).append("\n");
 		sb.append("    result: ").append(toIndentedString(result)).append("\n");
 		sb.append("}");
