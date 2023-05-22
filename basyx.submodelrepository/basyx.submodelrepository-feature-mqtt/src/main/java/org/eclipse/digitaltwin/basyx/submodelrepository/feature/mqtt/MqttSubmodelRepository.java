@@ -116,12 +116,12 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) {
-		return new SubmodelValueOnly(getSubmodelElements(submodelId));
+		return new SubmodelValueOnly(decorated.getSubmodelElements(submodelId));
 	}
 
 	@Override
 	public Submodel getSubmodelByIdMetadata(String submodelId) {
-		Submodel submodel = getSubmodel(submodelId);
+		Submodel submodel = decorated.getSubmodel(submodelId);
 		submodel.setSubmodelElements(null);
 		return submodel;
 	}
