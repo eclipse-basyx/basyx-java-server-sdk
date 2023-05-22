@@ -16,3 +16,17 @@ services:
     # Maps tcp port to host
     ports:
       - 27017:27017
+    networks:
+      - basyx-java-server-sdk
+  emqx:
+    image: emqx/emqx:5.0.25
+    ports:
+      - 1883:1883
+    networks:
+      - basyx-java-server-sdk
+
+
+networks:
+  basyx-java-server-sdk:
+    name: basyx-java-server-sdk
+    driver: bridge

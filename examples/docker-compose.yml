@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  aas-env:
+    image: basyx.aasenvironment.component
+    volumes:
+      - ./aas-env.properties:/application/application.properties
+      #- ./aas-env.properties:/usr/share/config/application.properties
+    ports:
+      - 8081:8081
+  aas-repo:
+    image: basyx.aasrepository.component
+    volumes:
+      - ./aas-repo.properties:/application/application.properties
+      #- ./aas-repo.properties:/usr/share/config/application.properties
+    ports:
+      - 8082:8082
