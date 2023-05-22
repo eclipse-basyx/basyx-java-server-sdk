@@ -61,7 +61,7 @@ public abstract class AasRepositoryHTTPSuite {
 
 	@Test
 	public void aasUpload() throws IOException, ParseException {
-		String aasJsonContent = getAasJSONString();
+		String aasJsonContent = getAas1JSONString();
 		CloseableHttpResponse creationResponse = createAasOnServer(aasJsonContent);
 
 		assertEquals(201, creationResponse.getCode());
@@ -70,7 +70,7 @@ public abstract class AasRepositoryHTTPSuite {
 
 	@Test
 	public void aasRoundtrip() throws JsonMappingException, ParseException, JsonProcessingException, IOException {
-		String aasJsonContent = createDummyAasOnServer();
+		String aasJsonContent = createDummyAasOnServer(getAas1JSONString());
 
 		CloseableHttpResponse retrievalResponse = getSpecificAas(dummyAasId);
 		BaSyxHttpTestUtils.assertSameJSONContent(aasJsonContent, BaSyxHttpTestUtils.getResponseAsString(retrievalResponse));
@@ -78,7 +78,7 @@ public abstract class AasRepositoryHTTPSuite {
 
 	@Test
 	public void aasIdentifierCollision() throws FileNotFoundException, IOException {
-		String aasJsonContent = createDummyAasOnServer();
+		String aasJsonContent = createDummyAasOnServer(getAas1JSONString());
 
 		CloseableHttpResponse creationResponse = createAasOnServer(aasJsonContent);
 
@@ -87,7 +87,7 @@ public abstract class AasRepositoryHTTPSuite {
 
 	@Test
 	public void getAasByIdentifier() throws FileNotFoundException, IOException, ParseException {
-		String aasJsonContent = createDummyAasOnServer();
+		String aasJsonContent = createDummyAasOnServer(getAas1JSONString());
 
 		CloseableHttpResponse response = getSpecificAas(dummyAasId);
 
@@ -107,10 +107,22 @@ public abstract class AasRepositoryHTTPSuite {
 
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
+	
+	@Test
+	public void getAllPaginatedAas() throws IOException, ParseException {
+		createMultipleAasOnServer();
+		
+		CloseableHttpResponse retrievalResponse = getAllAas();
+		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+		
+		String actualJsonFromServer = BaSyxHttpTestUtils.getResponseAsString(retrievalResponse);
+		
+		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedAasJSONString(), actualJsonFromServer);
+	}
 
 	@Test
 	public void deleteAas() throws IOException {
-		createDummyAasOnServer();
+		createDummyAasOnServer(getAas1JSONString());
 
 		String url = getSpecificAasAccessURL(dummyAasId);
 		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(url);
@@ -130,19 +142,19 @@ public abstract class AasRepositoryHTTPSuite {
 	public void getSubmodelReference() throws FileNotFoundException, IOException, ParseException, DeserializationException {
 		String json = getSingleSubmodelReference();
 
-		createDummyAasOnServer();
+		createDummyAasOnServer(getAas1JSONString());
 		addSubmodelReferenceToDummyAas(json);
 
 		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(dummyAasId));
 
 		String responseString = BaSyxHttpTestUtils.getResponseAsString(getResponse);
 
-		BaSyxHttpTestUtils.assertSameJSONContent(getSingleSubmodelReferenceAsJsonArray(), responseString);
+		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedSingleSMReferenceJson(), responseString);
 	}
 
 	@Test
 	public void createSubmodelReference() throws FileNotFoundException, IOException, ParseException {
-		createDummyAasOnServer();
+		createDummyAasOnServer(getAas1JSONString());
 
 		String json = getSingleSubmodelReference();
 
@@ -150,12 +162,12 @@ public abstract class AasRepositoryHTTPSuite {
 
 		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(dummyAasId));
 
-		BaSyxHttpTestUtils.assertSameJSONContent(getSingleSubmodelReferenceAsJsonArray(), BaSyxHttpTestUtils.getResponseAsString(getResponse));
+		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedSingleSMReferenceJson(), BaSyxHttpTestUtils.getResponseAsString(getResponse));
 	}
 
 	@Test
 	public void removeSubmodelReference() throws FileNotFoundException, IOException, ParseException {
-		createDummyAasOnServer();
+		createDummyAasOnServer(getAas1JSONString());
 
 		String json = getSingleSubmodelReference();
 
@@ -167,13 +179,13 @@ public abstract class AasRepositoryHTTPSuite {
 		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(dummyAasId));
 
 		assertEquals(200, deleteResponse.getCode());
-		BaSyxHttpTestUtils.assertSameJSONContent("[]", BaSyxHttpTestUtils.getResponseAsString(getResponse));
+		BaSyxHttpTestUtils.assertSameJSONContent(getSMReferenceRemovalJson(), BaSyxHttpTestUtils.getResponseAsString(getResponse));
 
 	}
 
 	@Test
 	public void removeNonExistingSubmodelReference() throws FileNotFoundException, IOException {
-		createDummyAasOnServer();
+		createDummyAasOnServer(getAas1JSONString());
 		String url = getSpecificSubmodelReferenceUrl();
 		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(url);
 		assertEquals(HttpStatus.NOT_FOUND.value(), deleteResponse.getCode());
@@ -181,7 +193,7 @@ public abstract class AasRepositoryHTTPSuite {
 
 	@Test
 	public void getAssetInformationByIdentifier() throws FileNotFoundException, IOException, ParseException {
-		createDummyAasOnServer();
+		createDummyAasOnServer(getAas1JSONString());
 		String url = getSpecificAssetInformationAccessURL(dummyAasId);
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(url);
 
@@ -200,7 +212,7 @@ public abstract class AasRepositoryHTTPSuite {
 
 	@Test
 	public void updateAssetInformationByIdentifier() throws FileNotFoundException, IOException, ParseException {
-		createDummyAasOnServer();
+		createDummyAasOnServer(getAas1JSONString());
 
 		String json = BaSyxHttpTestUtils.readJSONStringFromFile("classpath:assetInfoUpdate.json");
 
@@ -220,7 +232,7 @@ public abstract class AasRepositoryHTTPSuite {
 
 	@Test
 	public void updateAAS() throws JsonMappingException, JsonProcessingException, ParseException, IOException {
-		createDummyAasOnServer();
+		createDummyAasOnServer(getAas1JSONString());
 
 		String expectedAasJSON = getUpdatedAasJSONString();
 
@@ -237,7 +249,7 @@ public abstract class AasRepositoryHTTPSuite {
 	public void updateNonExistingAas() throws IOException {
 		String url = getSpecificAasAccessURL("nonExisting");
 
-		String expectedAasJSON = getAasJSONString();
+		String expectedAasJSON = getAas1JSONString();
 
 		CloseableHttpResponse updateResponse = BaSyxHttpTestUtils.executePutOnURL(url, expectedAasJSON);
 
@@ -246,7 +258,7 @@ public abstract class AasRepositoryHTTPSuite {
 
 	@Test
 	public void updateAasWithIdMismatch() throws IOException {
-		createDummyAasOnServer();
+		createDummyAasOnServer(getAas1JSONString());
 
 		String aasUpdateJson = getUpdatedAasIdMismatchJSONString();
 
@@ -258,9 +270,13 @@ public abstract class AasRepositoryHTTPSuite {
 	private CloseableHttpResponse updateSpecificAas(String dummyaasid, String aasJsonContent) throws IOException {
 		return BaSyxHttpTestUtils.executePutOnURL(getSpecificAasAccessURL(dummyaasid), aasJsonContent);
 	}
+	
+	private void createMultipleAasOnServer() throws FileNotFoundException, IOException {
+		createAasOnServer(getAas1JSONString());
+		createAasOnServer(getAas2JSONString());
+	}
 
-	private String createDummyAasOnServer() throws FileNotFoundException, IOException {
-		String aasJsonContent = getAasJSONString();
+	private String createDummyAasOnServer(String aasJsonContent) throws FileNotFoundException, IOException {
 		createAasOnServer(aasJsonContent);
 		return aasJsonContent;
 	}
@@ -310,12 +326,24 @@ public abstract class AasRepositoryHTTPSuite {
 		return BaSyxHttpTestUtils.executePostOnURL(getURL(), aasJsonContent);
 	}
 
-	private String getAasJSONString() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:AasSimple.json");
+	private String getAas1JSONString() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:AasSimple_1.json");
+	}
+	
+	private String getPaginatedAasJSONString() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:AllPaginatedAas.json");
+	}
+	
+	private String getAas2JSONString() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:AasSimple_2.json");
 	}
 
 	private String getSingleSubmodelReference() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelReference.json");
+	}
+	
+	private String getSMReferenceRemovalJson() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SMReferenceRemovalResponse.json");
 	}
 
 	private String getUpdatedAasJSONString() throws FileNotFoundException, IOException {
@@ -325,9 +353,9 @@ public abstract class AasRepositoryHTTPSuite {
 	private String getUpdatedAasIdMismatchJSONString() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:UpdatedAasIdMismatch.json");
 	}
-
-	private String getSingleSubmodelReferenceAsJsonArray() throws FileNotFoundException, IOException {
-		return "[" + getSingleSubmodelReference() + "]";
+	
+	private String getPaginatedSingleSMReferenceJson() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:PaginatedSingleSMReference.json");
 	}
 
 }

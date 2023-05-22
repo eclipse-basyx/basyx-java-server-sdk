@@ -1,0 +1,16 @@
+{
+	"paging_metadata": {
+		"cursor": "nextSmRefCursor"
+	},
+	"result": [
+		{
+			"keys": [
+				{
+					"type": "Submodel",
+					"value": "http://i40.customer.com/type/1/1/testSubmodel"
+				}
+			],
+			"type": "ExternalReference"
+		}
+	]
+}

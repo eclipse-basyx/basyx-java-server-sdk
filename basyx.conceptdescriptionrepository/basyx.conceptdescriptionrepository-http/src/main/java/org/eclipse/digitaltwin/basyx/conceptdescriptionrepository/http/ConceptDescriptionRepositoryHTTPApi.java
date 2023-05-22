@@ -13,6 +13,7 @@ import javax.validation.constraints.Min;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.model.Result;
+import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,7 +61,7 @@ public interface ConceptDescriptionRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
 	@RequestMapping(value = "/concept-descriptions", produces = { "application/json" }, method = RequestMethod.GET)
-	ResponseEntity<List<ConceptDescription>> getAllConceptDescriptions(
+	ResponseEntity<PagedResult> getAllConceptDescriptions(
 			@Parameter(in = ParameterIn.QUERY, description = "The Concept Description’s IdShort", schema = @Schema()) @Valid @RequestParam(value = "idShort", required = false) String idShort,
 			@Parameter(in = ParameterIn.QUERY, description = "IsCaseOf reference (UTF8-BASE64-URL-encoded)", schema = @Schema()) @Valid @RequestParam(value = "isCaseOf", required = false) Base64UrlEncodedIdentifier isCaseOf,
 			@Parameter(in = ParameterIn.QUERY, description = "DataSpecification reference (UTF8-BASE64-URL-encoded)", schema = @Schema()) @Valid @RequestParam(value = "dataSpecificationRef", required = false) Base64UrlEncodedIdentifier dataSpecificationRef,

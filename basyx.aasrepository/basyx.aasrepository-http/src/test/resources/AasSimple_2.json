@@ -1,0 +1,9 @@
+{
+	"modelType": "AssetAdministrationShell",
+	"idShort": "DummyAas",
+	"id": "dummyAasIdentifier",
+	"assetInformation": {
+		"assetKind": "Instance",
+		"globalAssetId": "dummyAasAssetId"
+	}
+}
