@@ -5,7 +5,7 @@
     <artifactId>basyx.common</artifactId>
     <version>${revision}</version>
   </parent>
-  <artifactId>basyx.mongocore</artifactId>
+  <artifactId>basyx.mongodbcore</artifactId>
   
   <dependencies>
 	  <dependency>
