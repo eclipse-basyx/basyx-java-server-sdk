@@ -192,6 +192,11 @@
 				<artifactId>basyx.mqttcore</artifactId>
 				<version>${revision}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.mongodbcore</artifactId>
+				<version>${revision}</version>
+			</dependency>
 			<!-- basyx.submodelservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
