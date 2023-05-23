@@ -4,12 +4,13 @@ import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelElementSerializer;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelSerializer;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelElementSerializer;
-import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelSerializer;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -111,6 +112,16 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	@Override
 	public String getName() {
 		return decorated.getName();
+	}
+
+	@Override
+	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) {
+		return decorated.getSubmodelByIdValueOnly(submodelId);
+	}
+
+	@Override
+	public Submodel getSubmodelByIdMetadata(String submodelId) {
+		return decorated.getSubmodelByIdMetadata(submodelId);
 	}
 
 	private void submodelCreated(Submodel submodel, String repoId) {
