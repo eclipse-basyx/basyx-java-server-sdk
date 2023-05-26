@@ -22,41 +22,57 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasservice.feature.mqtt;
 
-
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
-
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.feature.AasServiceFeature;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@ConditionalOnExpression("#{${" + MqttAasRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
-@Configuration
-public class MqttConfiguration {
+@ConditionalOnExpression("#{${" + MqttAasServiceFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
+@Component
+public class MqttAasServiceFeature implements AasServiceFeature {
+	public final static String FEATURENAME = "basyx.aasservice.feature.mqtt";
 
-	@ConditionalOnMissingBean
-	@Bean
-	public IMqttClient mqttClient(@Value("${mqtt.clientId}") String clientId, @Value("${mqtt.hostname}") String hostname, @Value("${mqtt.port}") int port) throws MqttException {
-		IMqttClient mqttClient = new MqttClient("tcp://" + hostname + ":" + port, clientId);
+	@Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
+	private boolean enabled;
 
-		mqttClient.connect(mqttConnectOptions());
+	private IMqttClient mqttClient;
 
-		return mqttClient;
+	private String repoId;
+
+	@Autowired
+	public MqttAasServiceFeature(IMqttClient mqttClient, AasRepository repo) {
+		this.mqttClient = mqttClient;
+		this.repoId = repo.getName();
 	}
 
-	@ConditionalOnMissingBean
-	@Bean
-	@ConfigurationProperties(prefix = "mqtt")
-	public MqttConnectOptions mqttConnectOptions() {
-		MqttConnectOptions mqttConceptOptions = new MqttConnectOptions();
-		mqttConceptOptions.setAutomaticReconnect(true);
-		return mqttConceptOptions;
+	@Override
+	public AasServiceFactory decorate(AasServiceFactory aasServiceFactory) {
+		return new MqttAasServiceFactory(aasServiceFactory, mqttClient, new MqttAasServiceTopicFactory(new URLEncoder()), repoId);
 	}
+
+	@Override
+	public void initialize() {
+	}
+
+	@Override
+	public void cleanUp() {
+	}
+
+	@Override
+	public String getName() {
+		return "AasService MQTT";
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
+
 }

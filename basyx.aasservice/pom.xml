@@ -14,5 +14,6 @@
 	<modules>
 		<module>basyx.aasservice-core</module>
 		<module>basyx.aasservice-backend-inmemory</module>
+		<module>basyx.aasservice-feature-mqtt</module>
 	</modules>
 </project>

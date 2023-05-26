@@ -40,9 +40,10 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
 import org.eclipse.digitaltwin.basyx.aasrepository.InMemoryAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Base64URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
@@ -95,14 +96,14 @@ public class TestMqttV2AASAggregatorObserver {
 		assertEquals(topicFactory.createCreateAASTopic(aasRepository.getName()), listener.lastTopic);
 		assertEquals(shell, deserializePayload(listener.lastPayload));
 	}
-	
+
 	@Test
 	public void updateAasEvent() throws DeserializationException {
 		AssetAdministrationShell shell = createAasDummy("updateAasEventId");
 		aasRepository.createAas(shell);
-		
+
 		addSubmodelReferenceToAas(shell);
-		
+
 		aasRepository.updateAas(shell.getId(), shell);
 
 		assertEquals(topicFactory.createUpdateAASTopic(aasRepository.getName()), listener.lastTopic);
@@ -122,14 +123,15 @@ public class TestMqttV2AASAggregatorObserver {
 	private AssetAdministrationShell deserializePayload(String payload) throws DeserializationException {
 		return new JsonDeserializer().readReferable(payload, AssetAdministrationShell.class);
 	}
-	
+
 	private void addSubmodelReferenceToAas(AssetAdministrationShell shell) {
 		List<Reference> submodelReferences = Arrays.asList(AasRepositorySuite.createDummyReference("dummySubmodelId1"));
 		shell.setSubmodels(submodelReferences);
 	}
 
 	private AssetAdministrationShell createAasDummy(String aasId) {
-		return new DefaultAssetAdministrationShell.Builder().id(aasId).build();
+		return new DefaultAssetAdministrationShell.Builder().id(aasId)
+				.build();
 	}
 
 	private static AasRepository createMqttAasRepository(MqttClient client) {

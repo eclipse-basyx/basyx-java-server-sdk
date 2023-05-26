@@ -22,9 +22,7 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-
-
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
+package org.eclipse.digitaltwin.basyx.aasservice.feature.mqtt;
 
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -37,7 +35,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@ConditionalOnExpression("#{${" + MqttAasRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
+@ConditionalOnExpression("#{${" + MqttAasServiceFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
 @Configuration
 public class MqttConfiguration {
 

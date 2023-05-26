@@ -245,6 +245,11 @@
 				<artifactId>basyx.aasservice-backend-inmemory</artifactId>
 				<version>${revision}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasservice-feature-mqtt</artifactId>
+				<version>${revision}</version>
+			</dependency>
 			<!-- basyx.aasrepository -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -382,6 +387,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasservice-backend-inmemory</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasservice-feature-mqtt</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
