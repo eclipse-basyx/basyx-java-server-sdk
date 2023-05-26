@@ -41,7 +41,7 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceSuite;
 import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
-import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Base64URLEncoder;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -65,7 +65,7 @@ public class TestMqttAasService extends AasServiceSuite {
 	private static Server mqttBroker;
 	private static MqttClient mqttClient;
 	private static MqttTestListener listener;
-	private static MqttAasServiceTopicFactory topicFactory = new MqttAasServiceTopicFactory(new Base64URLEncoder());
+	private static MqttAasServiceTopicFactory topicFactory = new MqttAasServiceTopicFactory(new URLEncoder());
 
 	private static AasRepository aasRepository;
 	private static AasServiceFactory mqttAasServiceFactory;
