@@ -54,7 +54,7 @@ public class MqttAasServiceTopicFactory extends AbstractMqttTopicFactory {
 		return new StringJoiner("/", "", "").add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
-				.add(shellId)
+				.add(encodeId(shellId))
 				.add(ASSET_INFORMATION)
 				.add(UPDATED)
 				.toString();
@@ -70,7 +70,7 @@ public class MqttAasServiceTopicFactory extends AbstractMqttTopicFactory {
 		return new StringJoiner("/", "", "").add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
-				.add(shellId)
+				.add(encodeId(shellId))
 				.add(SUBMODEL_REFERENCES)
 				.add(CREATED)
 				.toString();
@@ -86,7 +86,7 @@ public class MqttAasServiceTopicFactory extends AbstractMqttTopicFactory {
 		return new StringJoiner("/", "", "").add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
-				.add(shellId)
+				.add(encodeId(shellId))
 				.add(SUBMODEL_REFERENCES)
 				.add(DELETED)
 				.toString();

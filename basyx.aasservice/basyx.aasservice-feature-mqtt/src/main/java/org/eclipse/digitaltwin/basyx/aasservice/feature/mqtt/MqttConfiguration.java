@@ -53,6 +53,8 @@ public class MqttConfiguration {
 	@Bean
 	@ConfigurationProperties(prefix = "mqtt")
 	public MqttConnectOptions mqttConnectOptions() {
-		return new MqttConnectOptions();
+		MqttConnectOptions mqttConceptOptions = new MqttConnectOptions();
+		mqttConceptOptions.setAutomaticReconnect(true);
+		return mqttConceptOptions;
 	}
 }
