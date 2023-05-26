@@ -15,5 +15,6 @@
 		<module>basyx.core</module>
 		<module>basyx.http</module>
 		<module>basyx.mqttcore</module>
+		<module>basyx.mongocore</module>
 	</modules>
 </project>

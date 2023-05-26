@@ -25,7 +25,12 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
+import java.io.IOException;
+
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 
 /**
  * Supports the tests working with the HTTP/REST API of Submodels
@@ -34,9 +39,18 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
  *
  */
 public class BaSyxSubmodelHttpTestUtils {
-	public static final String submodelAccessURL = "http://localhost:8080/submodels";
-
-	public static String getSpecificSubmodelAccessPath(String submodelId) {
-		return submodelAccessURL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
+	public static String getSpecificSubmodelAccessPath(String submodelRepoURL, String submodelId) {
+		return submodelRepoURL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
 	}
+
+	public static CloseableHttpResponse createSubmodel(String url, String submodelJSON) throws IOException {
+		return BaSyxHttpTestUtils.executePostOnURL(url, submodelJSON);
+	}
+
+	public static String requestAllSubmodels(String url) throws IOException, ParseException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(url);
+
+		return BaSyxHttpTestUtils.getResponseAsString(response);
+	}
+
 }

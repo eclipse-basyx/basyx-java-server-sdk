@@ -23,21 +23,30 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.submodelrepository.http.documentation;
 
-package org.eclipse.digitaltwin.basyx.aasrepository;
-
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.eclipse.digitaltwin.basyx.http.documentation.RepositoryApiDocumentationConfiguration;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.springframework.context.annotation.Configuration;
 
+import io.swagger.v3.oas.models.info.Info;
+
 /**
- * Disables automatic MongoDB configuration if it is not configured
+ * API documentation configuration for {@link SubmodelRepository}
  * 
- * @author schnicke
+ * @author danish
  *
  */
 @Configuration
-@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-public class CustomMongoAutoConfiguration extends MongoAutoConfiguration {
+public class SubmodelRepositoryApiDocumentationConfiguration extends RepositoryApiDocumentationConfiguration {
+
+	private static final String TITLE = "BaSyx Submodel Repository";
+	private static final String DESCRIPTION = "Submodel API";
+
+	@Override
+	protected Info apiInfo() {
+		return new Info().title(TITLE).description(DESCRIPTION).version(VERSION).contact(apiContact())
+				.license(apiLicence());
+	}
 
 }

@@ -25,30 +25,14 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
-import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.http.HttpStatus;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * Tests the Submodel specific parts of the SubmodelRepository HTTP/REST API
@@ -56,7 +40,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  * @author schnicke, danish
  *
  */
-public class TestSubmodelRepositorySubmodelHTTP {
+public class TestSubmodelRepositorySubmodelHTTP extends SubmodelRepositorySubmodelHTTPTestSuite {
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
@@ -64,21 +48,17 @@ public class TestSubmodelRepositorySubmodelHTTP {
 		appContext = new SpringApplication(DummySubmodelRepositoryComponent.class).run(new String[] {});
 	}
 
-	@Before
+	@Override
+	public void resetRepository() {
+		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
+		repo.getAllSubmodels().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
+	}
+
+	@Override
 	public void populateRepository() {
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
 		Collection<Submodel> submodels = createSubmodels();
-		resetRepoToDefaultSubmodels(repo, submodels);
-	}
-
-	private void resetRepoToDefaultSubmodels(SubmodelRepository repo, Collection<Submodel> submodels) {
-		repo.getAllSubmodels().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
-
 		submodels.forEach(repo::createSubmodel);
-	}
-
-	private List<Submodel> createSubmodels() {
-		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createOperationalDataSubmodel(), DummySubmodelFactory.createSimpleDataSubmodel());
 	}
 
 	@AfterClass
@@ -86,168 +66,8 @@ public class TestSubmodelRepositorySubmodelHTTP {
 		appContext.close();
 	}
 
-	@Test
-	public void getAllSubmodelsPreconfigured() throws IOException, ParseException {
-		String submodelsJSON = requestAllSubmodels();
-		String expectedSubmodelsJSON = getAllSubmodelJSON();
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelsJSON, submodelsJSON);
+	@Override
+	protected String getURL() {
+		return "http://localhost:8080/submodels";
 	}
-
-	@Test
-	public void getSpecificSubmodel() throws ParseException, IOException {
-		String submodelJSON = requestSpecificSubmodelJSON(DummySubmodelFactory.createTechnicalDataSubmodel().getId());
-		String expectedSubmodelJSON = getSingleSubmodelJSON();
-
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelJSON, submodelJSON);
-	}
-
-	@Test
-	public void getSpecificSubmodelMetadata() throws ParseException, IOException {
-		String expectedSubmodelJSON = getSingleSubmodelMetadataJSON();
-
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSubmodelMetadataURL(DummySubmodelFactory.createTechnicalDataSubmodel().getId()));
-		assertEquals(HttpStatus.OK.value(), response.getCode());
-
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelJSON, BaSyxHttpTestUtils.getResponseAsString(response));
-	}
-
-	@Test
-	public void getSpecificSubmodelNonExisting() throws IOException {
-		CloseableHttpResponse response = requestSubmodel("nonExisting");
-
-		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
-	}
-
-	@Test
-	public void updateExistingSubmodel() throws IOException, ParseException {
-		String id = "7A7104BDAB57E184";
-		String expectedSubmodelJSON = getUpdatedSubmodelJSON();
-
-		CloseableHttpResponse creationResponse = putSubmodel(id, expectedSubmodelJSON);
-
-		assertEquals(HttpStatus.NO_CONTENT.value(), creationResponse.getCode());
-
-		String submodelJSON = requestSpecificSubmodelJSON(id);
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelJSON, submodelJSON);
-	}
-
-	@Test
-	public void updateNonExistingSubmodel() throws IOException {
-		String id = "nonExisting";
-		String expectedSubmodelJSON = getUpdatedSubmodelJSON();
-
-		CloseableHttpResponse updateResponse = putSubmodel(id, expectedSubmodelJSON);
-
-		assertEquals(HttpStatus.NOT_FOUND.value(), updateResponse.getCode());
-	}
-	
-	@Test
-	public void updateSubmodelWithMismatchId() throws IOException, ParseException {
-		String id = "7A7104BDAB57E184";
-		String submodelUpdateJson = getUpdatedSubmodelWithMismatchIdJSON();
-
-		CloseableHttpResponse creationResponse = putSubmodel(id, submodelUpdateJson);
-
-		assertEquals(HttpStatus.BAD_REQUEST.value(), creationResponse.getCode());
-	}
-
-	@Test
-	public void createSubmodelNewId() throws IOException, ParseException {
-		String submodelJSON = getNewSubmodelJSON();
-		CloseableHttpResponse creationResponse = createSubmodel(submodelJSON);
-
-		assertSubmodelCreationReponse(submodelJSON, creationResponse);
-
-		String requestedSubmodel = requestSpecificSubmodelJSON("newSubmodel");
-		BaSyxHttpTestUtils.assertSameJSONContent(submodelJSON, requestedSubmodel);
-	}
-
-	@Test
-	public void createSubmodelCollidingId() throws IOException {
-		String submodelJSON = getSingleSubmodelJSON();
-		CloseableHttpResponse creationResponse = createSubmodel(submodelJSON);
-
-		assertEquals(HttpStatus.CONFLICT.value(), creationResponse.getCode());
-	}
-
-	@Test
-	public void deleteSubmodel() throws IOException {
-		String existingSubmodelId = DummySubmodelFactory.createTechnicalDataSubmodel().getId();
-
-		CloseableHttpResponse deletionResponse = deleteSubmodelById(existingSubmodelId);
-		assertEquals(HttpStatus.NO_CONTENT.value(), deletionResponse.getCode());
-
-		CloseableHttpResponse getResponse = requestSubmodel(existingSubmodelId);
-		assertEquals(HttpStatus.NOT_FOUND.value(), getResponse.getCode());
-	}
-
-	@Test
-	public void deleteNonExistingSubmodel() throws IOException {
-		CloseableHttpResponse deletionResponse = deleteSubmodelById("nonExisting");
-
-		assertEquals(HttpStatus.NOT_FOUND.value(), deletionResponse.getCode());
-	}
-
-	private void assertSubmodelCreationReponse(String submodelJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JsonProcessingException, JsonMappingException {
-		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
-		String response = BaSyxHttpTestUtils.getResponseAsString(creationResponse);
-		BaSyxHttpTestUtils.assertSameJSONContent(submodelJSON, response);
-	}
-
-	private String createSubmodelMetadataURL(String id) {
-		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(id) + "/$metadata";
-	}
-
-	private CloseableHttpResponse createSubmodel(String submodelJSON) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(BaSyxSubmodelHttpTestUtils.submodelAccessURL, submodelJSON);
-	}
-
-	private CloseableHttpResponse deleteSubmodelById(String submodelId) throws IOException {
-		return BaSyxHttpTestUtils.executeDeleteOnURL(BaSyxSubmodelHttpTestUtils.submodelAccessURL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId));
-	}
-
-	private CloseableHttpResponse putSubmodel(String submodelId, String submodelJSON) throws IOException {
-		return BaSyxHttpTestUtils.executePutOnURL(BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(submodelId), submodelJSON);
-	}
-
-	private String requestSpecificSubmodelJSON(String submodelId) throws IOException, ParseException {
-		CloseableHttpResponse response = requestSubmodel(submodelId);
-
-		return BaSyxHttpTestUtils.getResponseAsString(response);
-	}
-
-	private CloseableHttpResponse requestSubmodel(String submodelId) throws IOException {
-		return BaSyxHttpTestUtils.executeGetOnURL(BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(submodelId));
-	}
-
-	private String requestAllSubmodels() throws IOException, ParseException {
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxSubmodelHttpTestUtils.submodelAccessURL);
-
-		return BaSyxHttpTestUtils.getResponseAsString(response);
-	}
-
-	private String getUpdatedSubmodelJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelUpdate.json");
-	}
-	
-	private String getUpdatedSubmodelWithMismatchIdJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelUpdateMismatchId.json");
-	}
-
-	private String getNewSubmodelJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelNew.json");
-	}
-
-	private String getSingleSubmodelJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodel.json");
-	}
-
-	private String getSingleSubmodelMetadataJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelMetadata.json");
-	}
-
-	private String getAllSubmodelJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:MultipleSubmodels.json");
-	}
-
 }

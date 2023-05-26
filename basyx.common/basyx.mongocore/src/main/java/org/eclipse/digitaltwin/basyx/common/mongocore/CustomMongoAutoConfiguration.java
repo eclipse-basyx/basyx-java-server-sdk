@@ -24,10 +24,10 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
+package org.eclipse.digitaltwin.basyx.common.mongocore;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -38,6 +38,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-public class CustomMongoDataAutoConfiguration extends MongoDataAutoConfiguration {
+public class CustomMongoAutoConfiguration extends MongoAutoConfiguration {
 
 }

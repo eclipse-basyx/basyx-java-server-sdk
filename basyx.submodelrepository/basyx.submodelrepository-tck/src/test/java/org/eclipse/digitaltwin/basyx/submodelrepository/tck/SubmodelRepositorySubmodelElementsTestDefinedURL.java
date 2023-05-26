@@ -24,20 +24,31 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
+package org.eclipse.digitaltwin.basyx.submodelrepository.tck;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.SubmodelRepositorySubmodelElementsTestSuiteHTTP;
 
 /**
- * Disables automatic MongoDB configuration if it is not configured
  * 
  * @author schnicke
  *
  */
-@Configuration
-@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-public class CustomMongoAutoConfiguration extends MongoAutoConfiguration {
+public class SubmodelRepositorySubmodelElementsTestDefinedURL extends SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 
+	public static String url = "http://localhost:8081/submodels";
+
+	@Override
+	public void resetRepository() {
+		SubmodelTCKHelper.deleteAllSubmodelsOnRepository(getURL());
+	}
+
+	@Override
+	public void populateRepository() {
+		createSubmodels().forEach(s -> SubmodelTCKHelper.createSubmodelOnRepository(getURL(), s));
+	}
+
+	@Override
+	protected String getURL() {
+		return url;
+	}
 }

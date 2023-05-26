@@ -16,3 +16,11 @@ services:
     # Maps tcp port to host
     ports:
       - 27017:27017
+    networks:
+      - basyx-java-server-sdk
+
+
+networks:
+  basyx-java-server-sdk:
+    name: basyx-java-server-sdk
+    driver: bridge

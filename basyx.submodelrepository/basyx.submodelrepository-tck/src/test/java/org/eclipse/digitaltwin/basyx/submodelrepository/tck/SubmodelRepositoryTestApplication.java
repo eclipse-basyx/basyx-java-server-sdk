@@ -23,21 +23,45 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.submodelrepository.tck;
 
-package org.eclipse.digitaltwin.basyx.aasrepository;
-
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.junit.internal.TextListener;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 
 /**
- * Disables automatic MongoDB configuration if it is not configured
+ * Application for testing a Submodel Repository. The first argument is the
+ * server URL.
  * 
  * @author schnicke
  *
  */
-@Configuration
-@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-public class CustomMongoDataAutoConfiguration extends MongoDataAutoConfiguration {
+public class SubmodelRepositoryTestApplication {
+
+	public static void main(String[] args) throws Exception {
+		String url = getSubmodelRepositoryUrl(args);
+
+		Result result = runTests(url);
+
+		printResults(result);
+	}
+
+	private static void printResults(Result result) {
+		System.out.println("Finished. Result: Failures: " + result.getFailureCount() + ". Ignored: " + result.getIgnoreCount() + ". Tests run: " + result.getRunCount() + ". Time: " + result.getRunTime() + "ms.");
+	}
+
+	private static Result runTests(String url) {
+		SubmodelRepositorySubmodelTestDefinedURL.url = url;
+		SubmodelRepositorySubmodelElementsTestDefinedURL.url = url;
+
+		JUnitCore junit = new JUnitCore();
+		junit.addListener(new TextListener(System.out));
+
+		return junit.run(SubmodelRepositorySubmodelTestDefinedURL.class, SubmodelRepositorySubmodelElementsTestDefinedURL.class);
+	}
+
+	private static String getSubmodelRepositoryUrl(String[] args) {
+		return args[0];
+	}
 
 }

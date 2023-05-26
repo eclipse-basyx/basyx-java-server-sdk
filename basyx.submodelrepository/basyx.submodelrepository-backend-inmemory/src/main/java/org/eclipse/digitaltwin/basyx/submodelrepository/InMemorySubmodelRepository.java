@@ -40,6 +40,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchExcep
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 
 /**
  * In-memory implementation of the SubmodelRepository
@@ -193,6 +194,18 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		throwIfSubmodelDoesNotExist(submodelId);
 
 		submodelServices.get(submodelId).deleteSubmodelElement(idShortPath);
+	}
+
+	@Override
+	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) {
+		return new SubmodelValueOnly(getSubmodelElements(submodelId));
+	}
+
+	@Override
+	public Submodel getSubmodelByIdMetadata(String submodelId) {
+		Submodel submodel = getSubmodel(submodelId);
+		submodel.setSubmodelElements(null);
+		return submodel;
 	}
 
 	private void throwIfMismatchingIds(String smId, Submodel newSubmodel) {
