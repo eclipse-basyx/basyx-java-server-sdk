@@ -1,0 +1,72 @@
+[
+	{
+		"id": "identification_2",
+		"submodelDescriptors": [
+			{
+				"id": "identification_2_1",
+				"endpoints": [
+					{
+						"protocolInformation": {
+							"endpointProtocolVersion": [
+								"2_0_1",
+								"2_2_2",
+								"2_3_9"
+							]
+						}
+					},
+					{
+						"protocolInformation": {
+							"endpointProtocolVersion": [
+								"3_0_1",
+								"3_2_2",
+								"3_3_9"
+							]
+						}
+					}
+				]
+			},
+			{
+				"id": "identification_2_2",
+				"endpoints": [
+					{
+						"protocolInformation": {
+							"endpointProtocolVersion": [
+								"22_0_1",
+								"22_2_2",
+								"22_3_9"
+							]
+						}
+					},
+					{
+						"protocolInformation": {
+							"endpointProtocolVersion": [
+								"3_0_1",
+								"3_2_2",
+								"3_3_9"
+							]
+						}
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "identification_3",
+		"submodelDescriptors": [
+			{
+				"id": "identification_3_1",
+				"endpoints": [
+					{
+						"protocolInformation": {
+							"endpointProtocolVersion": [
+								"4_0_1",
+								"4_2_2",
+								"4_3_9"
+							]
+						}
+					}
+				]
+			}
+		]
+	}
+]

@@ -1,0 +1,16 @@
+array:
+   $LIST_PROCESS_INSTRUCTION$:
+      replace:
+         0: elem_One
+      remove: 
+         - 1
+      overlay:
+         3: 
+           elem3:
+             name: hello
+             this: 
+               is: 
+                 a: test
+         4: 
+           just:
+              an: example

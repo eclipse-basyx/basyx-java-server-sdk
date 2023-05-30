@@ -1,0 +1,29 @@
+[
+	{
+		"id": "identification_1",
+		"submodelDescriptors": [
+			{
+				"id": "robot_1",
+				"idShort": "ROBOT_123_1_23"
+			}
+		]
+	},
+	{
+		"id": "identification_2",
+		"submodelDescriptors": [
+			{
+				"id": "robot_2",
+				"idShort": "ROBOT_12_1_24"
+			}
+		]
+	},
+	{
+		"id": "identification_3",
+		"submodelDescriptors": [
+			{
+				"id": "mir_3",
+				"idShort": "MIR_3_123"
+			}
+		]
+	}
+]

@@ -1,0 +1,12 @@
+array:
+   - elem_One
+   - element_number_2
+   - elem3:
+      name: hello
+      this:
+         is:
+            a: test
+            an: example
+     thirdElem: test
+   - just:
+       an: example
