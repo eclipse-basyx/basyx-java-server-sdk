@@ -92,7 +92,6 @@
 							<library>spring-boot</library>
 							<output>${project.basedir}/${generated.folder}</output>
 
-							<templateDirectory>${project.basedir}/templates</templateDirectory>
 							<!-- See https://openapi-generator.tech/docs/generators/spring -->
 							<configOptions>
 								<openApiNullable>false</openApiNullable>
