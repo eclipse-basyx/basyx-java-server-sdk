@@ -1,0 +1,10 @@
+this:
+   is:
+      not:
+         a: "dummy"
+      a: "test"
+      an:
+         array:
+            - "a"
+            - "b"
+            - "c"

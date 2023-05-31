@@ -1,0 +1,15 @@
+[
+	{
+		"id": "identification_2",
+		"submodelId": "identification_2.1",
+		"type": "SUBMODEL_UNREGISTERED"
+	},
+	{
+		"id": "identification_2",
+		"submodelId": "identification_new",
+		"type": "SUBMODEL_REGISTERED",
+		"submodelDescriptor": {
+			"id": "identification_new"
+		}
+	}
+]

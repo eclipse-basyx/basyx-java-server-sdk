@@ -1,0 +1,15 @@
+array:
+   - name: elem0
+     index: 0
+   - elem1
+   - element_number_2
+   - elem3:
+      name: Element 3
+      this: 
+         is:
+            an: "example"
+     thirdElem: test
+   - elem4
+             
+        
+        

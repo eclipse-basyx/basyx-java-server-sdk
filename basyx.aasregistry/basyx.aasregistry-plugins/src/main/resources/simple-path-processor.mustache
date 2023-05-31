@@ -1,0 +1,308 @@
+/*******************************************************************************
+ * Copyright (C) 2023 DFKI GmbH (https://www.dfki.de/en/web)
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
+ ******************************************************************************/
+{{#info}}
+package {{processorTarget.packageName}}; 
+
+import java.util.ArrayDeque;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.function.BiFunction;
+
+{{#allModels}}
+import {{inputClassPackageName}}.{{name}};
+{{/allModels}}
+
+public class {{processorTarget.className}} {
+
+	private final {{rootModel.name}} subject;
+
+	public {{processorTarget.className}}({{rootModel.name}} subject) {
+		this.subject = subject;
+	}
+
+	public void visitValuesAtPath(String path, {{rootModel.name}}Visitor visitor) {
+		InternalPathProcessor processor = new InternalPathProcessor(visitor, path);
+		processor.visitObject(subject, processor::visit{{rootModel.name}});
+	}
+	
+	
+	public static void visitPath(String path, {{rootModel.name}}PathVisitor visitor) {
+		visitor = new InternalPathRunner.LeafPathChecker(visitor);
+		InternalPathRunner runner = new InternalPathRunner(visitor, path);
+		visitor.startObjectSegment(path, "", "");
+		runner.visit{{rootModel.name}}Path("", 0);
+		visitor.endObjectSegment(path, "", "");
+	}
+
+	public static interface {{rootModel.name}}Visitor {
+
+		default ProcessInstruction visitResolvedPathValue(String path, Object[] objectPathToValue, String value) {
+			return ProcessInstruction.CONTINUE;
+		}
+	}
+
+	public static interface {{rootModel.name}}PathVisitor {
+		
+		default void startObjectListSegment(String targetPath, String currentPath, String currentSegment) {
+		}
+		
+		default void startObjectSegment(String targetPath, String currentPath, String currentSegment) {
+		}
+		
+		default void visitPrimitiveListSegment(String targetPath, String currentPath, String currentSegment, String rangeType) {
+		}
+		
+		default void visitPrimitiveSegment(String targetPath, String currentPath, String currentSegment, String rangeType) {
+		}
+		
+		default void endObjectListSegment(String targetPath, String currentPath, String currentSegment) {
+		}
+		
+		default void endObjectSegment(String targetPath, String currentPath, String currentSegment) {
+		}
+					
+	}
+	
+	public enum ProcessInstruction {
+		ABORT, CONTINUE
+	}
+
+
+	public static class UnknownLeafPathException extends RuntimeException {
+	
+		private static final long serialVersionUID = 1L;
+	
+		public UnknownLeafPathException(String path) {
+			super ("'" + path +"' in not a known path to a leaf!");
+		}
+	}
+
+	private static final class InternalPathRunner {
+
+		private final {{rootModel.name}}PathVisitor visitor;
+		private final String[] pathAsArray;
+		private final String targetPath;
+
+		public InternalPathRunner({{rootModel.name}}PathVisitor visitor, String path) {
+			this.visitor = visitor;
+			this.targetPath = path;
+			pathAsArray = path.split("\\.");
+		}
+		
+		{{#allModels}}
+		public void visit{{name}}Path(String prefix, int pos) {
+			if (pos >= pathAsArray.length) {
+				throw new UnknownLeafPathException(prefix);
+			}
+			String current = pathAsArray[pos];	
+			String newPrefix = prefix.isEmpty() ? current : prefix + "." + current;
+			switch (current) {
+			{{#complexRangeRelations}}
+			case {{info.pathsTarget.className}}.SEGMENT_{{attributeNameUpper}}:
+				{{#isListRange}}
+				visitor.startObjectListSegment(targetPath, newPrefix, current);
+				visit{{modelName}}Path(newPrefix, pos + 1); 
+				visitor.endObjectListSegment(targetPath, newPrefix, current);
+				{{/isListRange}}
+				{{^isListRange}}
+				visitor.startObjectSegment(targetPath, newPrefix, current);
+				visit{{modelName}}Path(newPrefix, pos + 1);
+				visitor.endObjectSegment(targetPath, newPrefix, current);
+				{{/isListRange}}
+				break;
+			{{/complexRangeRelations}}
+			{{#primitiveRangeRelations}}
+			case {{info.pathsTarget.className}}.SEGMENT_{{attributeNameUpper}}:
+				{{#isListRange}}
+				visitor.visitPrimitiveListSegment(targetPath, newPrefix, current, "{{typeName}}");
+				{{/isListRange}}
+				{{^isListRange}}
+				visitor.visitPrimitiveSegment(targetPath, newPrefix, current, "{{typeName}}");
+				{{/isListRange}}
+				break;
+			{{/primitiveRangeRelations}}
+			default:				
+				{{#subModels}}
+				 visit{{.}}Path(prefix, pos);
+				{{/subModels}}
+			}
+		}
+		
+		{{/allModels}}
+		
+		private static class LeafPathChecker implements {{rootModel.name}}PathVisitor {
+	
+			private boolean leafReached;	
+			private final {{rootModel.name}}PathVisitor decorated;
+			
+			private LeafPathChecker({{rootModel.name}}PathVisitor decorated)  {
+				this.decorated = decorated;
+			}
+			
+			@Override
+			public void startObjectListSegment(String targetPath, String currentPath, String currentSegment) {
+				if (decorated != null) {
+					decorated.startObjectListSegment(targetPath, currentPath, currentSegment);
+				}
+			}
+			
+			@Override
+			public void startObjectSegment(String targetPath, String currentPath, String currentSegment) {
+				if (currentPath.isEmpty()) { 
+					leafReached = false;
+				}
+				if (decorated != null) {
+					decorated.startObjectSegment(targetPath, currentPath, currentSegment);
+				}
+			}
+		
+			@Override
+			public void visitPrimitiveListSegment(String targetPath, String currentPath, String currentSegment, String rangeType) {
+				leafReached = true;
+				if (decorated != null) {
+					decorated.visitPrimitiveListSegment(targetPath, currentPath, currentSegment, rangeType);
+				}
+			}
+			
+			@Override
+			public void visitPrimitiveSegment(String targetPath, String currentPath, String currentSegment, String rangeType) {
+				leafReached = true;
+				if (decorated != null) {
+					decorated.visitPrimitiveSegment(targetPath, currentPath, currentSegment, rangeType);
+				}
+			}
+			
+			@Override
+			public void endObjectListSegment(String targetPath, String currentPath, String currentSegment) {
+				if (decorated != null) {
+					decorated.endObjectListSegment(targetPath, currentPath, currentSegment);
+				}
+			}
+			
+			@Override
+			public void endObjectSegment(String targetPath, String currentPath, String currentSegment) {
+				if (currentPath.isEmpty() && !leafReached) {
+					throw new UnknownLeafPathException(targetPath);
+				}
+				if (decorated != null) {
+					decorated.endObjectSegment(targetPath, currentPath, currentSegment);
+				}
+			}
+		}
+	}
+
+	private static final class InternalPathProcessor {
+
+		private final {{rootModel.name}}Visitor visitor;
+		private final ArrayDeque<Object> currentPathElements = new ArrayDeque<>();
+		private final String path;
+		private final ListIterator<String> pathIterator;
+
+		public InternalPathProcessor({{rootModel.name}}Visitor visitor, String path) {
+			this.visitor = visitor;
+			this.path = path;
+			String[] pathAsArray = path.split("\\.");
+			pathIterator = List.of(pathAsArray).listIterator();
+		}
+
+		{{#allModels}}
+		public ProcessInstruction visit{{name}}({{name}} toVisit, String segment) {
+			switch (segment) {
+			{{#complexRangeRelations}}
+			case {{info.pathsTarget.className}}.SEGMENT_{{attributeNameUpper}}:
+				{{#isListRange}}
+				return visitObjectList(toVisit.{{getterPrefix}}{{attributeNameUpperFirst}}(), this::visit{{modelName}});
+				{{/isListRange}}
+				{{^isListRange}}
+				return visitObject(toVisit.{{getterPrefix}}{{attributeNameUpperFirst}}(), this::visit{{modelName}});
+				{{/isListRange}}
+			{{/complexRangeRelations}}
+			{{#primitiveRangeRelations}}
+			case {{info.pathsTarget.className}}.SEGMENT_{{attributeNameUpper}}:
+				{{#isListRange}}
+				return visitPrimitiveValueList(toVisit.{{getterPrefix}}{{attributeNameUpperFirst}}());
+				{{/isListRange}}
+				{{^isListRange}}
+				return visitPrimitiveValue(toVisit.{{getterPrefix}}{{attributeNameUpperFirst}}());
+				{{/isListRange}}
+			{{/primitiveRangeRelations}}
+			default:
+				{{#subModels}}
+				if (toVisit instanceof {{.}}) {
+					return visit{{.}}(({{.}}) toVisit, segment);
+				}
+				{{/subModels}}
+				return ProcessInstruction.CONTINUE;
+			}
+		}
+		
+		{{/allModels}}
+		private <T> ProcessInstruction visitObjectList(List<T> list,
+				BiFunction<T, String, ProcessInstruction> processor) {
+			if (list != null) {
+				for (T eachValue : list) {
+					if (visitObject(eachValue, processor) == ProcessInstruction.ABORT) {
+						return ProcessInstruction.ABORT;
+					}
+				}
+			}
+			return ProcessInstruction.CONTINUE;
+		}
+		
+		private <T> ProcessInstruction visitObject(T object, BiFunction<T, String, ProcessInstruction> processor) {
+			if (object != null && pathIterator.hasNext()) {
+				String token = pathIterator.next();
+				currentPathElements.addLast(object);
+				ProcessInstruction instruction = processor.apply(object, token);
+				currentPathElements.removeLast();
+				pathIterator.previous();
+				return instruction;
+			}
+			return ProcessInstruction.CONTINUE;
+		}
+
+		private ProcessInstruction visitPrimitiveValue(Object value) {
+			if (value != null) {
+				Object[] objectPath = currentPathElements.toArray();
+				return visitor.visitResolvedPathValue(path, objectPath, value.toString());
+			}
+			return ProcessInstruction.CONTINUE;
+		}
+
+		private ProcessInstruction visitPrimitiveValueList(List<?> values) {
+			if (values != null) {
+				Object[] objectPath = currentPathElements.toArray();
+				for (Object eachValue : values) {
+					ProcessInstruction instruction = visitor.visitResolvedPathValue(path, objectPath, eachValue.toString());
+					if (instruction == ProcessInstruction.ABORT) {
+						return ProcessInstruction.ABORT;
+					}
+				}
+			}
+			return ProcessInstruction.CONTINUE;
+		}
+	}
+}
+{{/info}}

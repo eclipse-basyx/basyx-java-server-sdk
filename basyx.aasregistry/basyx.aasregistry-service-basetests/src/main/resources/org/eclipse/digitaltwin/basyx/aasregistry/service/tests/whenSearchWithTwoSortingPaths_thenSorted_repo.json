@@ -1,0 +1,24 @@
+[
+	{
+		"id": "identification_1",
+		"administration": {
+			 "version" : "1",
+			 "revision" : "2"
+		}
+	},
+	{
+		"id": "identification_2",
+		"administration": {
+			 "version" : "1",
+			 "revision" : "1"
+		},
+		"submodelDescriptors": [
+			{
+				"id": "identification_2.1"
+			},
+			{
+				"id": "identification_2.2"
+			}
+		]
+	}
+]

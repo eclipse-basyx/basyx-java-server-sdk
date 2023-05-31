@@ -1,0 +1,73 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.eclipse.digitaltwin.basyx</groupId>
+		<artifactId>basyx.aasregistry</artifactId>
+		<version>${revision}</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<artifactId>basyx.aasregistry-paths</artifactId>
+
+	<packaging>jar</packaging>
+
+	<properties>
+		<openapi.result.file>${project.basedir}/../${openapi.folder.name}/${openapi.name}</openapi.result.file>
+	</properties>
+
+	<build>
+		<sourceDirectory>src/generated/java</sourceDirectory>
+		<plugins>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${project.basedir}/${generated.folder}</directory>
+							<excludes>
+								<exclude>**/.gitkeep</exclude>
+							</excludes>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-plugins</artifactId>
+				<executions>
+					<execution>
+						<id>paths</id>
+						<goals>
+							<goal>simple-path-generator</goal>
+						</goals>
+						<configuration>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<pathsTargetClassName>AasRegistryPaths</pathsTargetClassName>
+					<processorTargetClassName>AasRegistryPathProcessor</processorTargetClassName>
+					<className>org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor</className>
+					<targetSourceFolder>${project.basedir}/src/generated/java</targetSourceFolder>
+					<targetPackageName>org.eclipse.digitaltwin.basyx.aasregistry.paths</targetPackageName>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasregistry-service-basemodel</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+</project>
