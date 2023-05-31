@@ -22,25 +22,32 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasenvironment;
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.component;
+import java.io.IOException;
+import java.util.List;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
 
 /**
- * Creates and starts the AasEnvironment off-shelf-component.
+ * Specifies the overall AasEnvironment serialization API
  * 
- * @author schnicke
+ * @author zhangzai
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
-public class AasEnvironmentComponent {
+public interface AasEnvironmentSerialization {
 
-	public static void main(String[] args) {
-		SpringApplication.run(AasEnvironmentComponent.class, args);
-	}
+	/**
+	 * Generate serialization from given aas and
+	 * 
+	 * @param aasIds
+	 * @param submodelIds
+	 * @return
+	 * @throws SerializationException
+	 */
+	public String createAASEnvironmentSerializationFromJSON(List<String> aasIds, List<String> submodelIds) throws SerializationException;
 
+	public String createAASEnvironmentSerializationFromXML(List<String> aasIds, List<String> submodelIds) throws SerializationException;
+
+	public byte[] createAASEnvironmentSerializationFromAASX(List<String> aasIds, List<String> submodelIds) throws SerializationException, IOException;
 }

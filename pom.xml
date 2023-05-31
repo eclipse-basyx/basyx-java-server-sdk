@@ -152,6 +152,28 @@
 				</exclusions>
 			</dependency>
 			<dependency>
+				<groupId>org.eclipse.digitaltwin.aas4j</groupId>
+				<artifactId>dataformat-xml</artifactId>
+				<version>1.0.0-milestone-03</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-simple</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.aas4j</groupId>
+				<artifactId>dataformat-aasx</artifactId>
+				<version>1.0.0-milestone-03</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-simple</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
 				<version>2.11.0</version>
@@ -291,6 +313,16 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasenvironment.component</artifactId>
+				<version>${revision}</version>
+			</dependency>
+				<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasenvironment-core</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasenvironment-http</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<!-- basyx.conceptdescriptionservice -->
@@ -447,7 +479,18 @@
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
-
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasenvironment-core</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasenvironment-http</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
 			<!-- basyx.conceptdescriptionservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
