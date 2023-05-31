@@ -54,7 +54,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetID;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
+import org.eclipse.digitaltwin.basyx.helper.submodel.service.SubmodelServiceHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.AnnotatedRelationshipElementValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.BlobValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.EntityValueMapper;
@@ -77,29 +77,29 @@ import org.junit.Test;
  */
 public class TestMappedSubmodelElementValue {
 
-	private List<ValueOnly> valueOnlies = Arrays.asList(
-			new ValueOnly(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT, new PropertyValue("120")),
+	private List<ValueOnly> valueOnlies = Arrays.asList(new ValueOnly(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT, new PropertyValue("120")),
 			new ValueOnly(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_RANGE_ID_SHORT, new RangeValue(20, 40)));
 	private EntityType testEntityType = EntityType.CO_MANAGED_ENTITY;
-	private ReferenceValue referenceValue_first = new ReferenceValue(ReferenceTypes.EXTERNAL_REFERENCE,
-			Arrays.asList(new DefaultKey.Builder().type(KeyTypes.CAPABILITY).value("CapabilityType").build()));
+	private ReferenceValue referenceValue_first = new ReferenceValue(ReferenceTypes.EXTERNAL_REFERENCE, Arrays.asList(new DefaultKey.Builder().type(KeyTypes.CAPABILITY)
+			.value("CapabilityType")
+			.build()));
 	private String globalAssetID = "globalAssetID";
-	private ReferenceValue referenceValue_second = new ReferenceValue(ReferenceTypes.MODEL_REFERENCE, Arrays
-			.asList(new DefaultKey.Builder().type(KeyTypes.RELATIONSHIP_ELEMENT).value("RelationshipElement").build()));
-	private List<SpecificAssetIDValue> specificAssetIDValues = Arrays
-			.asList(new SpecificAssetIDValue(new DefaultSpecificAssetID.Builder().value("value").name("name")
-					.externalSubjectID(new DefaultReference.Builder()
-							.type(ReferenceTypes.EXTERNAL_REFERENCE)
-							.keys(
-									new DefaultKey.Builder()
-									.value("keyValue")
-									.type(KeyTypes.GLOBAL_REFERENCE)
-									.build())
+	private ReferenceValue referenceValue_second = new ReferenceValue(ReferenceTypes.MODEL_REFERENCE, Arrays.asList(new DefaultKey.Builder().type(KeyTypes.RELATIONSHIP_ELEMENT)
+			.value("RelationshipElement")
+			.build()));
+	private List<SpecificAssetIDValue> specificAssetIDValues = Arrays.asList(new SpecificAssetIDValue(new DefaultSpecificAssetID.Builder().value("value")
+			.name("name")
+			.externalSubjectID(new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE)
+					.keys(new DefaultKey.Builder().value("keyValue")
+							.type(KeyTypes.GLOBAL_REFERENCE)
 							.build())
-					.build()));
-	private List<Key> referenceKeys = Arrays
-			.asList(new DefaultKey.Builder().type(KeyTypes.REFERENCE_ELEMENT).value("ReferenceElementKey").build());
-	private List<ValueOnly> submodelElementCollectionValueOnlies = Arrays.asList(new ValueOnly(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, new FileBlobValue("application/json", "SampleTestFile.json")), new ValueOnly(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT, new PropertyValue("4500")));
+					.build())
+			.build()));
+	private List<Key> referenceKeys = Arrays.asList(new DefaultKey.Builder().type(KeyTypes.REFERENCE_ELEMENT)
+			.value("ReferenceElementKey")
+			.build());
+	private List<ValueOnly> submodelElementCollectionValueOnlies = Arrays.asList(new ValueOnly(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, new FileBlobValue("application/json", "SampleTestFile.json")),
+			new ValueOnly(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT, new PropertyValue("4500")));
 	private List<SubmodelElementValue> submodelElementValues = Arrays.asList(new RangeValue(12, 14), new PropertyValue("TestProperty"));
 
 	@Test
@@ -131,12 +131,14 @@ public class TestMappedSubmodelElementValue {
 	public void mappedGetPropertyValue() {
 		String expectedValue = "200";
 
-		Property property = new DefaultProperty.Builder().value(expectedValue).valueType(DataTypeDefXSD.INTEGER)
+		Property property = new DefaultProperty.Builder().value(expectedValue)
+				.valueType(DataTypeDefXSD.INTEGER)
 				.build();
 
 		ValueMapper<PropertyValue> rangeValueMapper = new PropertyValueMapper(property);
 
-		assertEquals(expectedValue, rangeValueMapper.getValue().getValue());
+		assertEquals(expectedValue, rangeValueMapper.getValue()
+				.getValue());
 	}
 
 	@Test
@@ -152,25 +154,33 @@ public class TestMappedSubmodelElementValue {
 
 	@Test
 	public void mappedGetMultiLanguagePropertyValue() {
-		List<LangStringTextType> expectedValue = Arrays.asList(
-				new DefaultLangStringTextType.Builder().text("Hello").language("en").build(),
-				new DefaultLangStringTextType.Builder().text("Hallo").language("de").build());
+		List<LangStringTextType> expectedValue = Arrays.asList(new DefaultLangStringTextType.Builder().text("Hello")
+				.language("en")
+				.build(),
+				new DefaultLangStringTextType.Builder().text("Hallo")
+						.language("de")
+						.build());
 
 		MultiLanguageProperty multiLanguageProperty = SubmodelServiceHelper.createMultiLanguagePropertySubmodelElement();
 
-		MultiLanguagePropertyValueMapper multiLanguagePropertyValueMapper = new MultiLanguagePropertyValueMapper(
-				multiLanguageProperty);
+		MultiLanguagePropertyValueMapper multiLanguagePropertyValueMapper = new MultiLanguagePropertyValueMapper(multiLanguageProperty);
 
-		assertEquals(expectedValue.get(0).getLanguage(),
-				multiLanguagePropertyValueMapper.getValue().getValue().get(0)
+		assertEquals(expectedValue.get(0)
+				.getLanguage(),
+				multiLanguagePropertyValueMapper.getValue()
+						.getValue()
+						.get(0)
 						.getLanguage());
 	}
 
 	@Test
 	public void mappedSetMultiLanguagePropertyValue() {
-		List<LangStringTextType> expectedValue = Arrays.asList(
-				new DefaultLangStringTextType.Builder().text("Bonjour").language("fr").build(),
-				new DefaultLangStringTextType.Builder().text("Hola").language("es").build());
+		List<LangStringTextType> expectedValue = Arrays.asList(new DefaultLangStringTextType.Builder().text("Bonjour")
+				.language("fr")
+				.build(),
+				new DefaultLangStringTextType.Builder().text("Hola")
+						.language("es")
+						.build());
 
 		MultiLanguageProperty multiLanguageProperty = SubmodelServiceHelper.createMultiLanguagePropertySubmodelElement();
 
@@ -187,7 +197,8 @@ public class TestMappedSubmodelElementValue {
 
 		FileValueMapper fileValueMapper = new FileValueMapper(file);
 
-		assertEquals(expectedValue, fileValueMapper.getValue().getValue());
+		assertEquals(expectedValue, fileValueMapper.getValue()
+				.getValue());
 	}
 
 	@Test
@@ -203,7 +214,7 @@ public class TestMappedSubmodelElementValue {
 
 		assertEquals(expectedValue, file.getValue());
 	}
-	
+
 	@Test
 	public void mappedGetBlobValue() {
 		String expectedValue = SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_BLOB_VALUE;
@@ -212,7 +223,8 @@ public class TestMappedSubmodelElementValue {
 
 		BlobValueMapper fileValueMapper = new BlobValueMapper(blob);
 
-		assertEquals(expectedValue, fileValueMapper.getValue().getValue());
+		assertEquals(expectedValue, fileValueMapper.getValue()
+				.getValue());
 	}
 
 	@Test
@@ -241,9 +253,8 @@ public class TestMappedSubmodelElementValue {
 	@Test
 	public void mappedSetEntityValue() {
 		Entity entity = SubmodelServiceHelper.createEntitySubmodelElement();
-		
-		EntityValue entityValue = new EntityValue(valueOnlies, testEntityType, globalAssetID,
-				specificAssetIDValues);
+
+		EntityValue entityValue = new EntityValue(valueOnlies, testEntityType, globalAssetID, specificAssetIDValues);
 
 		setReferenceElementValue(entity, entityValue);
 
@@ -256,9 +267,17 @@ public class TestMappedSubmodelElementValue {
 
 		ReferenceElementValueMapper referenceValueMapper = new ReferenceElementValueMapper(expected);
 
-		assertEquals(expected.getValue().getType(), referenceValueMapper.getValue().getReferenceValue().getType());
+		assertEquals(expected.getValue()
+				.getType(),
+				referenceValueMapper.getValue()
+						.getReferenceValue()
+						.getType());
 
-		assertEquals(expected.getValue().getKeys(), referenceValueMapper.getValue().getReferenceValue().getKeys());
+		assertEquals(expected.getValue()
+				.getKeys(),
+				referenceValueMapper.getValue()
+						.getReferenceValue()
+						.getKeys());
 	}
 
 	@Test
@@ -271,9 +290,11 @@ public class TestMappedSubmodelElementValue {
 
 		setReferenceElementValue(entity, referenceElementValue);
 
-		assertEquals(ReferenceTypes.EXTERNAL_REFERENCE, entity.getValue().getType());
+		assertEquals(ReferenceTypes.EXTERNAL_REFERENCE, entity.getValue()
+				.getType());
 
-		assertEquals(referenceKeys, entity.getValue().getKeys());
+		assertEquals(referenceKeys, entity.getValue()
+				.getKeys());
 	}
 
 	@Test
@@ -289,8 +310,7 @@ public class TestMappedSubmodelElementValue {
 	public void mappedSetRelationshipElementValue() {
 		RelationshipElement relationshipElement = SubmodelServiceHelper.createRelationshipElementSubmodelElement();
 
-		RelationshipElementValue relationshipElementValue = new RelationshipElementValue(referenceValue_first,
-				referenceValue_second);
+		RelationshipElementValue relationshipElementValue = new RelationshipElementValue(referenceValue_first, referenceValue_second);
 
 		setRelationshipElementValue(relationshipElement, relationshipElementValue);
 
@@ -301,25 +321,22 @@ public class TestMappedSubmodelElementValue {
 	public void mappedGetAnnotatedRelationshipElementValue() {
 		AnnotatedRelationshipElement expected = SubmodelServiceHelper.createAnnotatedRelationshipElementSubmodelElement();
 
-		AnnotatedRelationshipElementValueMapper relationshipElementValueMapper = new AnnotatedRelationshipElementValueMapper(
-				expected);
+		AnnotatedRelationshipElementValueMapper relationshipElementValueMapper = new AnnotatedRelationshipElementValueMapper(expected);
 
 		assertValuesAreEqual(expected, relationshipElementValueMapper);
 	}
 
 	@Test
 	public void mappedSetAnnotatedRelationshipElementValue() {
-		AnnotatedRelationshipElement annotatedRelationshipElement = SubmodelServiceHelper
-				.createAnnotatedRelationshipElementSubmodelElement();
+		AnnotatedRelationshipElement annotatedRelationshipElement = SubmodelServiceHelper.createAnnotatedRelationshipElementSubmodelElement();
 
-		AnnotatedRelationshipElementValue relationshipElementValue = new AnnotatedRelationshipElementValue(
-				referenceValue_first, referenceValue_second, valueOnlies);
+		AnnotatedRelationshipElementValue relationshipElementValue = new AnnotatedRelationshipElementValue(referenceValue_first, referenceValue_second, valueOnlies);
 
 		setReferenceElementValue(annotatedRelationshipElement, relationshipElementValue);
 
 		assertValuesAreEqual(valueOnlies, referenceValue_first, referenceValue_second, annotatedRelationshipElement);
 	}
-	
+
 	@Test
 	public void mappedGetSubmodelElementCollectionValue() {
 		SubmodelElementCollection expected = SubmodelServiceHelper.createSubmodelElementCollection();
@@ -331,8 +348,7 @@ public class TestMappedSubmodelElementValue {
 
 	@Test
 	public void mappedSetSubmodelElementCollectionValue() {
-		SubmodelElementCollection submodelElementCollection = SubmodelServiceHelper
-				.createSubmodelElementCollection();
+		SubmodelElementCollection submodelElementCollection = SubmodelServiceHelper.createSubmodelElementCollection();
 
 		SubmodelElementCollectionValue submodelElementCollectionValue = new SubmodelElementCollectionValue(submodelElementCollectionValueOnlies);
 
@@ -340,7 +356,7 @@ public class TestMappedSubmodelElementValue {
 
 		assertValuesAreEqual(submodelElementCollectionValueOnlies, submodelElementCollection);
 	}
-	
+
 	@Test
 	public void mappedGetSubmodelElementListValue() {
 		SubmodelElementList expected = SubmodelServiceHelper.createSubmodelElementList();
@@ -352,8 +368,7 @@ public class TestMappedSubmodelElementValue {
 
 	@Test
 	public void mappedSetSubmodelElementListValue() {
-		SubmodelElementList submodelElementList = SubmodelServiceHelper
-				.createSubmodelElementList();
+		SubmodelElementList submodelElementList = SubmodelServiceHelper.createSubmodelElementList();
 
 		SubmodelElementListValue submodelElementListValue = new SubmodelElementListValue(submodelElementValues);
 
@@ -361,163 +376,234 @@ public class TestMappedSubmodelElementValue {
 
 		assertValuesAreEqual(submodelElementValues, submodelElementList);
 	}
-	
-	private static void assertValuesAreEqual(List<ValueOnly> expectedValueOnlies,
-			ReferenceValue expectedFirst, ReferenceValue expectedSecond,
-			AnnotatedRelationshipElement annotatedRelationshipElement) {
-		assertEquals(((PropertyValue) expectedValueOnlies.get(0).getSubmodelElementValue()).getValue(),
-				((Property) annotatedRelationshipElement.getAnnotations().get(0)).getValue());
 
-		assertEquals(((RangeValue) expectedValueOnlies.get(1).getSubmodelElementValue()).getMin(),
-				Integer.parseInt(((Range) annotatedRelationshipElement.getAnnotations().get(1)).getMin()));
+	private static void assertValuesAreEqual(List<ValueOnly> expectedValueOnlies, ReferenceValue expectedFirst, ReferenceValue expectedSecond, AnnotatedRelationshipElement annotatedRelationshipElement) {
+		assertEquals(((PropertyValue) expectedValueOnlies.get(0)
+				.getSubmodelElementValue()).getValue(),
+				((Property) annotatedRelationshipElement.getAnnotations()
+						.get(0)).getValue());
 
-		assertEquals(((RangeValue) expectedValueOnlies.get(1).getSubmodelElementValue()).getMax(),
-				Integer.parseInt(((Range) annotatedRelationshipElement.getAnnotations().get(1)).getMax()));
+		assertEquals(((RangeValue) expectedValueOnlies.get(1)
+				.getSubmodelElementValue()).getMin(), Integer.parseInt(
+						((Range) annotatedRelationshipElement.getAnnotations()
+								.get(1)).getMin()));
 
-		assertEquals(expectedFirst.getKeys(), annotatedRelationshipElement.getFirst().getKeys());
-		assertEquals(expectedFirst.getType(), annotatedRelationshipElement.getFirst().getType());
+		assertEquals(((RangeValue) expectedValueOnlies.get(1)
+				.getSubmodelElementValue()).getMax(), Integer.parseInt(
+						((Range) annotatedRelationshipElement.getAnnotations()
+								.get(1)).getMax()));
 
-		assertEquals(expectedSecond.getKeys(), annotatedRelationshipElement.getSecond().getKeys());
-		assertEquals(expectedSecond.getType(), annotatedRelationshipElement.getSecond().getType());
+		assertEquals(expectedFirst.getKeys(), annotatedRelationshipElement.getFirst()
+				.getKeys());
+		assertEquals(expectedFirst.getType(), annotatedRelationshipElement.getFirst()
+				.getType());
+
+		assertEquals(expectedSecond.getKeys(), annotatedRelationshipElement.getSecond()
+				.getKeys());
+		assertEquals(expectedSecond.getType(), annotatedRelationshipElement.getSecond()
+				.getType());
 	}
 
-	private static void assertValuesAreEqual(List<ValueOnly> expectedValueOnlies, EntityType expectedEntityType,
-			String expectedGlobalAssetID, List<SpecificAssetIDValue> expectedSpecificAssetIdValues,
-			Entity entity) {
-		assertEquals(((PropertyValue) expectedValueOnlies.get(0).getSubmodelElementValue()).getValue(),
-				((Property) entity.getStatements().get(0)).getValue());
+	private static void assertValuesAreEqual(List<ValueOnly> expectedValueOnlies, EntityType expectedEntityType, String expectedGlobalAssetID, List<SpecificAssetIDValue> expectedSpecificAssetIdValues, Entity entity) {
+		assertEquals(((PropertyValue) expectedValueOnlies.get(0)
+				.getSubmodelElementValue()).getValue(),
+				((Property) entity.getStatements()
+						.get(0)).getValue());
 
-		assertEquals(((RangeValue) expectedValueOnlies.get(1).getSubmodelElementValue()).getMin(),
-				Integer.parseInt(((Range) entity.getStatements().get(1)).getMin()));
+		assertEquals(((RangeValue) expectedValueOnlies.get(1)
+				.getSubmodelElementValue()).getMin(), Integer.parseInt(
+						((Range) entity.getStatements()
+								.get(1)).getMin()));
 
-		assertEquals(((RangeValue) expectedValueOnlies.get(1).getSubmodelElementValue()).getMax(),
-				Integer.parseInt(((Range) entity.getStatements().get(1)).getMax()));
+		assertEquals(((RangeValue) expectedValueOnlies.get(1)
+				.getSubmodelElementValue()).getMax(), Integer.parseInt(
+						((Range) entity.getStatements()
+								.get(1)).getMax()));
 
 		assertEquals(expectedEntityType, entity.getEntityType());
 
 		assertEquals(expectedGlobalAssetID, entity.getGlobalAssetID());
 
-		assertEquals(expectedSpecificAssetIdValues.stream().map(SpecificAssetIDValue::toSpecificAssetID).collect(Collectors.toList()), entity.getSpecificAssetIds());
+		assertEquals(expectedSpecificAssetIdValues.stream()
+				.map(SpecificAssetIDValue::toSpecificAssetID)
+				.collect(Collectors.toList()), entity.getSpecificAssetIds());
 	}
 
-	private static void assertValuesAreEqual(ReferenceValue first, ReferenceValue second,
-			RelationshipElement relationshipElement) {
-		assertEquals(first.getType(), relationshipElement.getFirst().getType());
-		assertEquals(first.getKeys(), relationshipElement.getFirst().getKeys());
+	private static void assertValuesAreEqual(ReferenceValue first, ReferenceValue second, RelationshipElement relationshipElement) {
+		assertEquals(first.getType(), relationshipElement.getFirst()
+				.getType());
+		assertEquals(first.getKeys(), relationshipElement.getFirst()
+				.getKeys());
 
-		assertEquals(second.getType(), relationshipElement.getSecond().getType());
-		assertEquals(second.getKeys(), relationshipElement.getSecond().getKeys());
+		assertEquals(second.getType(), relationshipElement.getSecond()
+				.getType());
+		assertEquals(second.getKeys(), relationshipElement.getSecond()
+				.getKeys());
 	}
 
-	private static void assertValuesAreEqual(RelationshipElement expected,
-			RelationshipElementValueMapper referenceValueMapper) {
-		assertEquals(expected.getFirst().getType(), referenceValueMapper.getValue().getFirst().getType());
-		assertEquals(expected.getFirst().getKeys(), referenceValueMapper.getValue().getFirst().getKeys());
+	private static void assertValuesAreEqual(RelationshipElement expected, RelationshipElementValueMapper referenceValueMapper) {
+		assertEquals(expected.getFirst()
+				.getType(),
+				referenceValueMapper.getValue()
+						.getFirst()
+						.getType());
+		assertEquals(expected.getFirst()
+				.getKeys(),
+				referenceValueMapper.getValue()
+						.getFirst()
+						.getKeys());
 
-		assertEquals(expected.getSecond().getType(), referenceValueMapper.getValue().getSecond().getType());
-		assertEquals(expected.getSecond().getKeys(), referenceValueMapper.getValue().getSecond().getKeys());
+		assertEquals(expected.getSecond()
+				.getType(),
+				referenceValueMapper.getValue()
+						.getSecond()
+						.getType());
+		assertEquals(expected.getSecond()
+				.getKeys(),
+				referenceValueMapper.getValue()
+						.getSecond()
+						.getKeys());
 	}
 
-	private static void assertValuesAreEqual(AnnotatedRelationshipElement expected,
-			AnnotatedRelationshipElementValueMapper relationshipElementValueMapper) {
-		assertEquals(expected.getFirst().getType(), relationshipElementValueMapper.getValue().getFirst().getType());
-		assertEquals(expected.getFirst().getKeys(), relationshipElementValueMapper.getValue().getFirst().getKeys());
+	private static void assertValuesAreEqual(AnnotatedRelationshipElement expected, AnnotatedRelationshipElementValueMapper relationshipElementValueMapper) {
+		assertEquals(expected.getFirst()
+				.getType(),
+				relationshipElementValueMapper.getValue()
+						.getFirst()
+						.getType());
+		assertEquals(expected.getFirst()
+				.getKeys(),
+				relationshipElementValueMapper.getValue()
+						.getFirst()
+						.getKeys());
 
-		assertEquals(expected.getSecond().getType(), relationshipElementValueMapper.getValue().getSecond().getType());
-		assertEquals(expected.getSecond().getKeys(), relationshipElementValueMapper.getValue().getSecond().getKeys());
+		assertEquals(expected.getSecond()
+				.getType(),
+				relationshipElementValueMapper.getValue()
+						.getSecond()
+						.getType());
+		assertEquals(expected.getSecond()
+				.getKeys(),
+				relationshipElementValueMapper.getValue()
+						.getSecond()
+						.getKeys());
 
-		assertEquals(expected.getAnnotations().size(),
-				relationshipElementValueMapper.getValue().getAnnotation().size());
+		assertEquals(expected.getAnnotations()
+				.size(),
+				relationshipElementValueMapper.getValue()
+						.getAnnotation()
+						.size());
 
-		assertEquals(((Property) expected.getAnnotations().get(0)).getValue(),
-				((PropertyValue) relationshipElementValueMapper.getValue().getAnnotation().get(0)
+		assertEquals(((Property) expected.getAnnotations()
+				.get(0)).getValue(),
+				((PropertyValue) relationshipElementValueMapper.getValue()
+						.getAnnotation()
+						.get(0)
 						.getSubmodelElementValue()).getValue());
 
-		assertEquals(((Range) expected.getAnnotations().get(1)).getMin(),
-				String.valueOf(((RangeValue) relationshipElementValueMapper.getValue().getAnnotation().get(1)
-						.getSubmodelElementValue()).getMin()));
+		assertEquals(((Range) expected.getAnnotations()
+				.get(1)).getMin(), String.valueOf(
+						((RangeValue) relationshipElementValueMapper.getValue()
+								.getAnnotation()
+								.get(1)
+								.getSubmodelElementValue()).getMin()));
 
-		assertEquals(((Range) expected.getAnnotations().get(1)).getMax(),
-				String.valueOf(((RangeValue) relationshipElementValueMapper.getValue().getAnnotation().get(1)
-						.getSubmodelElementValue()).getMax()));
+		assertEquals(((Range) expected.getAnnotations()
+				.get(1)).getMax(), String.valueOf(
+						((RangeValue) relationshipElementValueMapper.getValue()
+								.getAnnotation()
+								.get(1)
+								.getSubmodelElementValue()).getMax()));
 	}
 
 	private static void assertValuesAreEqual(Entity expected, EntityValueMapper fileValueMapper) {
-		assertEquals(expected.getStatements().size(), fileValueMapper.getValue().getStatements().size());
+		assertEquals(expected.getStatements()
+				.size(),
+				fileValueMapper.getValue()
+						.getStatements()
+						.size());
 
-		assertEquals(((Property) expected.getStatements().get(0)).getValue(),
-				String.valueOf(
-						((PropertyValue) fileValueMapper.getValue().getStatements().get(0).getSubmodelElementValue())
-								.getValue()));
+		assertEquals(((Property) expected.getStatements()
+				.get(0)).getValue(), String.valueOf(
+						((PropertyValue) fileValueMapper.getValue()
+								.getStatements()
+								.get(0)
+								.getSubmodelElementValue()).getValue()));
 
-		assertEquals(((Range) expected.getStatements().get(1)).getMin(), String.valueOf(
-				((RangeValue) fileValueMapper.getValue().getStatements().get(1).getSubmodelElementValue()).getMin()));
+		assertEquals(((Range) expected.getStatements()
+				.get(1)).getMin(), String.valueOf(
+						((RangeValue) fileValueMapper.getValue()
+								.getStatements()
+								.get(1)
+								.getSubmodelElementValue()).getMin()));
 
-		assertEquals(((Range) expected.getStatements().get(1)).getMax(), String.valueOf(
-				((RangeValue) fileValueMapper.getValue().getStatements().get(1).getSubmodelElementValue()).getMax()));
+		assertEquals(((Range) expected.getStatements()
+				.get(1)).getMax(), String.valueOf(
+						((RangeValue) fileValueMapper.getValue()
+								.getStatements()
+								.get(1)
+								.getSubmodelElementValue()).getMax()));
 	}
-	
-	private void assertValuesAreEqual(SubmodelElementCollection expected,
-			SubmodelElementCollectionValue actual) {
-		
+
+	private void assertValuesAreEqual(SubmodelElementCollection expected, SubmodelElementCollectionValue actual) {
+
 		assertEquals(getSubmodelElementAtIndex(expected, 0).getIdShort(), getValueOnlyAtIndex(actual, 0).getIdShort());
 		assertEquals(getSubmodelElementAtIndex(expected, 1).getIdShort(), getValueOnlyAtIndex(actual, 1).getIdShort());
-		
-		assertEquals(((File) getSubmodelElementAtIndex(expected, 0)).getContentType(), ((FileBlobValue) getValueOnlyAtIndex(actual, 0).getSubmodelElementValue()).getContentType());
-		assertEquals(((File) getSubmodelElementAtIndex(expected, 0)).getValue(), ((FileBlobValue) getValueOnlyAtIndex(actual, 0).getSubmodelElementValue()).getValue());		
 
-		assertEquals(((Property) getSubmodelElementAtIndex(expected, 1)).getValue(), ((PropertyValue) getValueOnlyAtIndex(actual, 1).getSubmodelElementValue()).getValue());		
+		assertEquals(((File) getSubmodelElementAtIndex(expected, 0)).getContentType(), ((FileBlobValue) getValueOnlyAtIndex(actual, 0).getSubmodelElementValue()).getContentType());
+		assertEquals(((File) getSubmodelElementAtIndex(expected, 0)).getValue(), ((FileBlobValue) getValueOnlyAtIndex(actual, 0).getSubmodelElementValue()).getValue());
+
+		assertEquals(((Property) getSubmodelElementAtIndex(expected, 1)).getValue(), ((PropertyValue) getValueOnlyAtIndex(actual, 1).getSubmodelElementValue()).getValue());
 	}
-	
-	private void assertValuesAreEqual(SubmodelElementList expected,
-			SubmodelElementListValue actual) {
-		
+
+	private void assertValuesAreEqual(SubmodelElementList expected, SubmodelElementListValue actual) {
+
 		assertEquals(((Range) getSubmodelElementAtIndex(expected, 0)).getMin(), String.valueOf(((RangeValue) getSubmodelElementValueAtIndex(actual, 0)).getMin()));
 		assertEquals(((Range) getSubmodelElementAtIndex(expected, 0)).getMax(), String.valueOf(((RangeValue) getSubmodelElementValueAtIndex(actual, 0)).getMax()));
-		
+
 		assertEquals(((Property) getSubmodelElementAtIndex(expected, 1)).getValue(), ((PropertyValue) getSubmodelElementValueAtIndex(actual, 1)).getValue());
 	}
-	
-	private void assertValuesAreEqual(List<ValueOnly> expected, SubmodelElementCollection actual) {
-		assertEquals(expected.get(0).getIdShort(), getSubmodelElementAtIndex(actual, 0).getIdShort());
-		assertEquals(expected.get(1).getIdShort(), getSubmodelElementAtIndex(actual, 1).getIdShort());
-		
-		assertEquals(((FileBlobValue) expected.get(0).getSubmodelElementValue()).getContentType(), ((File) getSubmodelElementAtIndex(actual, 0)).getContentType());
-		assertEquals(((FileBlobValue) expected.get(0).getSubmodelElementValue()).getValue(), ((File) getSubmodelElementAtIndex(actual, 0)).getValue());		
 
-		assertEquals(((PropertyValue) expected.get(1).getSubmodelElementValue()).getValue(), ((Property) getSubmodelElementAtIndex(actual, 1)).getValue());		
+	private void assertValuesAreEqual(List<ValueOnly> expected, SubmodelElementCollection actual) {
+		assertEquals(expected.get(0)
+				.getIdShort(), getSubmodelElementAtIndex(actual, 0).getIdShort());
+		assertEquals(expected.get(1)
+				.getIdShort(), getSubmodelElementAtIndex(actual, 1).getIdShort());
+
+		assertEquals(((FileBlobValue) expected.get(0)
+				.getSubmodelElementValue()).getContentType(), ((File) getSubmodelElementAtIndex(actual, 0)).getContentType());
+		assertEquals(((FileBlobValue) expected.get(0)
+				.getSubmodelElementValue()).getValue(), ((File) getSubmodelElementAtIndex(actual, 0)).getValue());
+
+		assertEquals(((PropertyValue) expected.get(1)
+				.getSubmodelElementValue()).getValue(), ((Property) getSubmodelElementAtIndex(actual, 1)).getValue());
 	}
-	
+
 	private void assertValuesAreEqual(List<SubmodelElementValue> expected, SubmodelElementList actual) {
 		assertEquals(String.valueOf(((RangeValue) expected.get(0)).getMin()), ((Range) getSubmodelElementAtIndex(actual, 0)).getMin());
 		assertEquals(String.valueOf(((RangeValue) expected.get(0)).getMax()), ((Range) getSubmodelElementAtIndex(actual, 0)).getMax());
-		
+
 		assertEquals(((PropertyValue) expected.get(1)).getValue(), ((Property) getSubmodelElementAtIndex(actual, 1)).getValue());
 	}
 
-	private void setSubmodelElementCollectionValue(SubmodelElementCollection submodelElementCollection,
-			SubmodelElementCollectionValue submodelElementCollectionValue) {
+	private void setSubmodelElementCollectionValue(SubmodelElementCollection submodelElementCollection, SubmodelElementCollectionValue submodelElementCollectionValue) {
 		SubmodelElementCollectionValueMapper submodelElementCollectionValueMapper = new SubmodelElementCollectionValueMapper(submodelElementCollection);
-		
+
 		submodelElementCollectionValueMapper.setValue(submodelElementCollectionValue);
 	}
-	
-	private void setSubmodelElementListValue(SubmodelElementList submodelElementList,
-			SubmodelElementListValue submodelElementListValue) {
+
+	private void setSubmodelElementListValue(SubmodelElementList submodelElementList, SubmodelElementListValue submodelElementListValue) {
 		SubmodelElementListValueMapper submodelElementListValueMapper = new SubmodelElementListValueMapper(submodelElementList);
-		
+
 		submodelElementListValueMapper.setValue(submodelElementListValue);
 	}
 
-	private void setReferenceElementValue(AnnotatedRelationshipElement annotatedRelationshipElement,
-			AnnotatedRelationshipElementValue annotatedrelationshipElementValue) {
-		AnnotatedRelationshipElementValueMapper annotatedRelationshipElementValueMapper = new AnnotatedRelationshipElementValueMapper(
-				annotatedRelationshipElement);
+	private void setReferenceElementValue(AnnotatedRelationshipElement annotatedRelationshipElement, AnnotatedRelationshipElementValue annotatedrelationshipElementValue) {
+		AnnotatedRelationshipElementValueMapper annotatedRelationshipElementValueMapper = new AnnotatedRelationshipElementValueMapper(annotatedRelationshipElement);
 		annotatedRelationshipElementValueMapper.setValue(annotatedrelationshipElementValue);
 	}
 
-	private void setRelationshipElementValue(RelationshipElement relationshipElement,
-			RelationshipElementValue relationshipElementValue) {
+	private void setRelationshipElementValue(RelationshipElement relationshipElement, RelationshipElementValue relationshipElementValue) {
 		RelationshipElementValueMapper referenceValueMapper = new RelationshipElementValueMapper(relationshipElement);
 		referenceValueMapper.setValue(relationshipElementValue);
 	}
@@ -538,7 +624,7 @@ public class TestMappedSubmodelElementValue {
 		FileValueMapper fileValueMapper = new FileValueMapper(file);
 		fileValueMapper.setValue(fileValue);
 	}
-	
+
 	private void setBlobValue(String expectedContentType, String expectedValue, Blob blob) {
 		FileBlobValue blobValue = new FileBlobValue(expectedContentType, expectedValue);
 
@@ -560,8 +646,7 @@ public class TestMappedSubmodelElementValue {
 		propertyValueMapper.setValue(propertyValue);
 	}
 
-	private void setMultiLanguagePropertyValue(List<LangStringTextType> valueToWrite,
-			MultiLanguageProperty multiLanguageProperty) {
+	private void setMultiLanguagePropertyValue(List<LangStringTextType> valueToWrite, MultiLanguageProperty multiLanguageProperty) {
 		MultiLanguagePropertyValue multiLanguagePropertyValue = new MultiLanguagePropertyValue(valueToWrite);
 
 		MultiLanguagePropertyValueMapper multiLanguagePropertyValueMapper = new MultiLanguagePropertyValueMapper(multiLanguageProperty);
@@ -571,16 +656,19 @@ public class TestMappedSubmodelElementValue {
 	private SubmodelElement getSubmodelElementAtIndex(SubmodelElementCollection submodelElementCollection, int index) {
 		return ((List<SubmodelElement>) submodelElementCollection.getValue()).get(index);
 	}
-	
+
 	private SubmodelElement getSubmodelElementAtIndex(SubmodelElementList submodelElementList, int index) {
-		return submodelElementList.getValue().get(index);
+		return submodelElementList.getValue()
+				.get(index);
 	}
-	
+
 	private ValueOnly getValueOnlyAtIndex(SubmodelElementCollectionValue submodelElementCollectionValue, int index) {
-		return submodelElementCollectionValue.getValue().get(index);
+		return submodelElementCollectionValue.getValue()
+				.get(index);
 	}
-	
+
 	private SubmodelElementValue getSubmodelElementValueAtIndex(SubmodelElementListValue submodelElementListValue, int index) {
-		return submodelElementListValue.getSubmodelElementValues().get(index);
+		return submodelElementListValue.getSubmodelElementValues()
+				.get(index);
 	}
 }

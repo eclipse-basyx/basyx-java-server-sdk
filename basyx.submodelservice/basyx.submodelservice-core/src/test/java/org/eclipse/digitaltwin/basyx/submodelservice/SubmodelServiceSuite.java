@@ -49,6 +49,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.helper.submodel.dummy.DummySubmodelFactory;
+import org.eclipse.digitaltwin.basyx.helper.submodel.service.SubmodelServiceHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
@@ -122,7 +124,11 @@ public abstract class SubmodelServiceSuite {
 		SubmodelElementList submodelElementList = new DefaultSubmodelElementList();
 		submodelElementList.setIdShort("testList");
 		List<SubmodelElement> listElements = new ArrayList<>();
-		Property testProperty = new DefaultProperty.Builder().idShort("propIdShort").category("cat1").value("123").valueType(DataTypeDefXSD.INTEGER).build();
+		Property testProperty = new DefaultProperty.Builder().idShort("propIdShort")
+				.category("cat1")
+				.value("123")
+				.valueType(DataTypeDefXSD.INTEGER)
+				.build();
 		listElements.add(testProperty);
 		submodelElementList.setValue(listElements);
 		submodelElementsList.add(submodelElementList);
@@ -255,9 +261,12 @@ public abstract class SubmodelServiceSuite {
 	public void getMultiLanguagePropertyValue() {
 		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
 
-		List<LangStringTextType> expectedValue = Arrays.asList(
-				new DefaultLangStringTextType.Builder().text("Hello").language("en").build(), 
-				new DefaultLangStringTextType.Builder().text("Hallo").language("de").build());
+		List<LangStringTextType> expectedValue = Arrays.asList(new DefaultLangStringTextType.Builder().text("Hello")
+				.language("en")
+				.build(),
+				new DefaultLangStringTextType.Builder().text("Hallo")
+						.language("de")
+						.build());
 
 		MultiLanguagePropertyValue submodelElementValue = (MultiLanguagePropertyValue) getSubmodelService(technicalData).getSubmodelElementValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_MULTI_LANG_PROP_ID_SHORT);
 
@@ -307,9 +316,17 @@ public abstract class SubmodelServiceSuite {
 		Submodel operationDataSubmodel = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
 		SubmodelService submodelService = getSubmodelService(operationDataSubmodel);
 
-		Property propertyInSmeCol = new DefaultProperty.Builder().idShort("test123").category("cat1").value("305").valueType(DataTypeDefXSD.INTEGER).build();
+		Property propertyInSmeCol = new DefaultProperty.Builder().idShort("test123")
+				.category("cat1")
+				.value("305")
+				.valueType(DataTypeDefXSD.INTEGER)
+				.build();
 
-		Property propertyInSmeList = new DefaultProperty.Builder().idShort("test456").category("cat1").value("305").valueType(DataTypeDefXSD.INTEGER).build();
+		Property propertyInSmeList = new DefaultProperty.Builder().idShort("test456")
+				.category("cat1")
+				.value("305")
+				.valueType(DataTypeDefXSD.INTEGER)
+				.build();
 
 		String idShortPathPropertyInSmeCol = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT;
 		submodelService.createSubmodelElement(idShortPathPropertyInSmeCol, propertyInSmeCol);
@@ -325,7 +342,7 @@ public abstract class SubmodelServiceSuite {
 		SubmodelElement propertyInSmeListCreated = submodelService.getSubmodelElement(idShortPathPropertyInSmeList);
 		assertEquals("test456", propertyInSmeListCreated.getIdShort());
 	}
-	
+
 	@Test(expected = ElementDoesNotExistException.class)
 	public void deleteNestedSubmodelElementInSubmodelElementCollection() {
 		Submodel operationDataSubmodel = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
@@ -391,21 +408,29 @@ public abstract class SubmodelServiceSuite {
 		return idShortPath;
 	}
 
-
 	private DefaultSubmodelElementList createDummySubmodelElementList(String idShort) {
-		return new DefaultSubmodelElementList.Builder().idShort(idShort).build();
+		return new DefaultSubmodelElementList.Builder().idShort(idShort)
+				.build();
 	}
-	
+
 	private SubmodelElementCollection createDummySubmodelElementCollection(String idShort) {
-		return new DefaultSubmodelElementCollection.Builder().idShort(idShort).build();
+		return new DefaultSubmodelElementCollection.Builder().idShort(idShort)
+				.build();
 	}
 
 	private DefaultEntity createDummyEntityWithStatement(SubmodelElement submodelElement, String idShort) {
-		return new DefaultEntity.Builder().idShort(idShort).category("cat1").statements(submodelElement).build();
+		return new DefaultEntity.Builder().idShort(idShort)
+				.category("cat1")
+				.statements(submodelElement)
+				.build();
 	}
 
 	private DefaultProperty createDummyProperty(String idShort) {
-		return new DefaultProperty.Builder().idShort(idShort).category("cat1").value("123").valueType(DataTypeDefXSD.INTEGER).build();
+		return new DefaultProperty.Builder().idShort(idShort)
+				.category("cat1")
+				.value("123")
+				.valueType(DataTypeDefXSD.INTEGER)
+				.build();
 	}
 
 }

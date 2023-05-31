@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
 import static org.junit.Assert.assertEquals;
@@ -35,9 +34,9 @@ import java.util.List;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.helper.submodel.dummy.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
-import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,7 +69,8 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 
 	@Test
 	public void getSpecificSubmodel() throws ParseException, IOException {
-		String submodelJSON = requestSpecificSubmodelJSON(DummySubmodelFactory.createTechnicalDataSubmodel().getId());
+		String submodelJSON = requestSpecificSubmodelJSON(DummySubmodelFactory.createTechnicalDataSubmodel()
+				.getId());
 		String expectedSubmodelJSON = getSingleSubmodelJSON();
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelJSON, submodelJSON);
@@ -80,7 +80,8 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	public void getSpecificSubmodelMetadata() throws ParseException, IOException {
 		String expectedSubmodelJSON = getSingleSubmodelMetadataJSON();
 
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSubmodelMetadataURL(DummySubmodelFactory.createTechnicalDataSubmodel().getId()));
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSubmodelMetadataURL(DummySubmodelFactory.createTechnicalDataSubmodel()
+				.getId()));
 		assertEquals(HttpStatus.OK.value(), response.getCode());
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelJSON, BaSyxHttpTestUtils.getResponseAsString(response));
@@ -147,7 +148,8 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 
 	@Test
 	public void deleteSubmodel() throws IOException {
-		String existingSubmodelId = DummySubmodelFactory.createTechnicalDataSubmodel().getId();
+		String existingSubmodelId = DummySubmodelFactory.createTechnicalDataSubmodel()
+				.getId();
 
 		CloseableHttpResponse deletionResponse = deleteSubmodelById(existingSubmodelId);
 		assertEquals(HttpStatus.NO_CONTENT.value(), deletionResponse.getCode());
@@ -172,7 +174,6 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	private String createSubmodelMetadataURL(String id) {
 		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(getURL(), id) + "/$metadata";
 	}
-
 
 	private CloseableHttpResponse deleteSubmodelById(String submodelId) throws IOException {
 		return BaSyxHttpTestUtils.executeDeleteOnURL(getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId));
