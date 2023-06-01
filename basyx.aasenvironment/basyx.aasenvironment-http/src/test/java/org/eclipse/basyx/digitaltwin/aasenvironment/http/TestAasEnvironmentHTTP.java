@@ -105,11 +105,11 @@ public class TestAasEnvironmentHTTP {
 		return aasCreateRequest;
 	}
 
-	protected String getURL() {
+	private String getURL() {
 		return "http://localhost:8081";
 	}
 
-	protected String getSerializationURL(Collection<String> aasIds, Collection<String> submodelIds) {
+	private String getSerializationURL(Collection<String> aasIds, Collection<String> submodelIds) {
 		String aasIdsArrayString = createIdsArrayString(aasIds);
 		String submodelIdsArrayString = createIdsArrayString(submodelIds);
 
@@ -124,10 +124,6 @@ public class TestAasEnvironmentHTTP {
 			idsArrayString = idsArrayString.concat(Base64UrlEncodedIdentifier.encodeIdentifier(id));
 		}
 		return idsArrayString;
-	}
-
-	protected String getSpecificAasAccessURL(String aasId) {
-		return getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
 	}
 
 	private List<String> createIdCollection(String... ids) {

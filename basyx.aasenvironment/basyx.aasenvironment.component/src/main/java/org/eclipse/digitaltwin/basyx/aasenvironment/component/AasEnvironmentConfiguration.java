@@ -25,20 +25,23 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentSerialization;
+import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironmentSerialization;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * Creates and starts the AasEnvironment off-shelf-component.
+ * Configuration for aas environment for dependency injection
  * 
- * @author schnicke
+ * @author zhangzai
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
-public class AasEnvironmentComponent {
-	public static void main(String[] args) {
-		SpringApplication.run(AasEnvironmentComponent.class, args);
+@Configuration
+public class AasEnvironmentConfiguration {
+	@Bean
+	public AasEnvironmentSerialization createAasEnvironmentSerialization(AasRepository aasRepository, SubmodelRepository submodelRepository) {
+		return new DefaultAASEnvironmentSerialization(aasRepository, submodelRepository);
 	}
 }

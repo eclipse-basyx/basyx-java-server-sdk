@@ -72,27 +72,27 @@ public class SerializationApiController implements AASEnvironmentHTTPApi {
 			@Parameter(in = ParameterIn.QUERY, description = "Include Concept Descriptions?", schema = @Schema(defaultValue = "true")) @Valid @RequestParam(value = "includeConceptDescriptions", required = false, defaultValue = "true") Boolean includeConceptDescriptions) {
 		String accept = request.getHeader("Accept");
 
-		if (areParametersValid(accept, aasIds, submodelIds)) {
-			try {
-				if (accept.equals(ACCEPT_AASX)) {
-					byte[] serialization = aasEnvironment.createAASEnvironmentSerializationFromAASX(getOriginalIds(aasIds), getOriginalIds(submodelIds));
-					return new ResponseEntity<Resource>(new ByteArrayResource(serialization), HttpStatus.OK);
-				}
+		if (!areParametersValid(accept, aasIds, submodelIds))
+			return new ResponseEntity<Resource>(HttpStatus.BAD_REQUEST);
 
-				if (accept.equals(ACCEPT_XML)) {
-					String serialization = aasEnvironment.createAASEnvironmentSerializationFromXML(getOriginalIds(aasIds), getOriginalIds(submodelIds));
-					return new ResponseEntity<Resource>(new ByteArrayResource(serialization.getBytes()), HttpStatus.OK);
-				}
+		try {
+			if (accept.equals(ACCEPT_AASX)) {
+				byte[] serialization = aasEnvironment.createAASXAASEnvironmentSerialization(getOriginalIds(aasIds), getOriginalIds(submodelIds));
+				return new ResponseEntity<Resource>(new ByteArrayResource(serialization), HttpStatus.OK);
+			}
 
-				String serialization = aasEnvironment.createAASEnvironmentSerializationFromJSON(getOriginalIds(aasIds), getOriginalIds(submodelIds));
+			if (accept.equals(ACCEPT_XML)) {
+				String serialization = aasEnvironment.createXMLAASEnvironmentSerialization(getOriginalIds(aasIds), getOriginalIds(submodelIds));
 				return new ResponseEntity<Resource>(new ByteArrayResource(serialization.getBytes()), HttpStatus.OK);
-			} catch (ElementDoesNotExistException e) {
-				return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
-			} catch (SerializationException | IOException e) {
-				return new ResponseEntity<Resource>(HttpStatus.INTERNAL_SERVER_ERROR);
-			} 
+			}
+
+			String serialization = aasEnvironment.createJSONAASEnvironmentSerialization(getOriginalIds(aasIds), getOriginalIds(submodelIds));
+			return new ResponseEntity<Resource>(new ByteArrayResource(serialization.getBytes()), HttpStatus.OK);
+		} catch (ElementDoesNotExistException e) {
+			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
+		} catch (SerializationException | IOException e) {
+			return new ResponseEntity<Resource>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return new ResponseEntity<Resource>(HttpStatus.BAD_REQUEST);
 	}
 
 	private List<String> getOriginalIds(List<String> ids) {

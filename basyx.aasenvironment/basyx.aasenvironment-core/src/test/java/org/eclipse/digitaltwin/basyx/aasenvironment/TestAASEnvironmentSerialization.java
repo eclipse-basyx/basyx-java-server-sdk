@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -80,30 +81,26 @@ public class TestAASEnvironmentSerialization {
 
 	@Test
 	public void testAASEnviromentSerializationWithJSON() throws SerializationException, IOException, DeserializationException {
-		String jsonSerialization = aasEnvironment.createAASEnvironmentSerializationFromJSON(getShellIds(createDummyShells()), getSubmodelIds(createDummySubmodels()));
-
+		String jsonSerialization = aasEnvironment.createJSONAASEnvironmentSerialization(getShellIds(createDummyShells()), getSubmodelIds(createDummySubmodels()));
 		validateJSON(jsonSerialization);
 	}
 
 	@Test
 	public void testAASEnviromentSerializationWithXML() throws SerializationException, IOException, SAXException, DeserializationException {
-		String xmlSerialization = aasEnvironment.createAASEnvironmentSerializationFromXML(getShellIds(createDummyShells()), getSubmodelIds(createDummySubmodels()));
-
+		String xmlSerialization = aasEnvironment.createXMLAASEnvironmentSerialization(getShellIds(createDummyShells()), getSubmodelIds(createDummySubmodels()));
 		validateXml(xmlSerialization);
 	}
 
 	@Test
 	public void testAASEnviromentSerializationWithAASX() throws SerializationException, IOException, InvalidOperationException, InvalidFormatException, DeserializationException {
-		byte[] serialization = aasEnvironment.createAASEnvironmentSerializationFromAASX(getShellIds(createDummyShells()), getSubmodelIds(createDummySubmodels()));
+		byte[] serialization = aasEnvironment.createAASXAASEnvironmentSerialization(getShellIds(createDummyShells()), getSubmodelIds(createDummySubmodels()));
 		checkAASX(new ByteArrayInputStream(serialization));
 	}
 
 	public static void validateJSON(String actual) throws DeserializationException {
 		Deserializer jsonDeserializer = new JsonDeserializer();
 		Environment aasEnvironment = jsonDeserializer.read(actual);
-
 		checkAASEnvironment(aasEnvironment);
-
 	}
 
 	private static void checkAASEnvironment(Environment aasEnvironment) {
@@ -121,7 +118,6 @@ public class TestAASEnvironmentSerialization {
 		Environment aasEnvironment = xmlDeserializer.read(actual);
 
 		checkAASEnvironment(aasEnvironment);
-
 	}
 
 	private static List<String> retrieveSubmodelIds(Environment aasEnvironment) {
@@ -150,19 +146,11 @@ public class TestAASEnvironmentSerialization {
 	}
 
 	private List<String> getSubmodelIds(Collection<Submodel> submodels) {
-		List<String> ids = new ArrayList<>();
-		submodels.forEach(sm -> {
-			ids.add(((DefaultSubmodel) sm).getId());
-		});
-		return ids;
+		return submodels.stream().map(sm -> ((DefaultSubmodel) sm).getId()).collect(Collectors.toList());
 	}
 
 	private List<String> getShellIds(Collection<AssetAdministrationShell> shells) {
-		List<String> ids = new ArrayList<>();
-		shells.forEach(shell -> {
-			ids.add(((DefaultAssetAdministrationShell) shell).getId());
-		});
-		return ids;
+		return shells.stream().map(shell -> ((DefaultAssetAdministrationShell) shell).getId()).collect(Collectors.toList());
 	}
 
 }

@@ -45,9 +45,9 @@ public interface AasEnvironmentSerialization {
 	 * @return
 	 * @throws SerializationException
 	 */
-	public String createAASEnvironmentSerializationFromJSON(List<String> aasIds, List<String> submodelIds) throws SerializationException;
+	public String createJSONAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds) throws SerializationException;
 
-	public String createAASEnvironmentSerializationFromXML(List<String> aasIds, List<String> submodelIds) throws SerializationException;
+	public String createXMLAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds) throws SerializationException;
 
-	public byte[] createAASEnvironmentSerializationFromAASX(List<String> aasIds, List<String> submodelIds) throws SerializationException, IOException;
+	public byte[] createAASXAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds) throws SerializationException, IOException;
 }

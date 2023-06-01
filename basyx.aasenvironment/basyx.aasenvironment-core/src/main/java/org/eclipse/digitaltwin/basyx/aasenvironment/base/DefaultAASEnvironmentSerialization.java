@@ -26,8 +26,8 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.base;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -46,48 +46,42 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 
 public class DefaultAASEnvironmentSerialization implements AasEnvironmentSerialization {
 	private AasRepository aasRepository;
-	private SubmodelRepository submodelRespository;
+	private SubmodelRepository submodelRepository;
+	private Serializer jsonSerializer = new JsonSerializer();
+	private Serializer xmlSerializer = new XmlSerializer();
+	private AASXSerializer aasxSerializer = new AASXSerializer();
 
 	public DefaultAASEnvironmentSerialization(AasRepository aasRepository, SubmodelRepository submodelRepository) {
 		this.aasRepository = aasRepository;
-		this.submodelRespository = submodelRepository;
+		this.submodelRepository = submodelRepository;
 	}
 
 	@Override
-	public String createAASEnvironmentSerializationFromJSON(@Valid List<String> aasIds, @Valid List<String> submodelIds) throws SerializationException {
+	public String createJSONAASEnvironmentSerialization(@Valid List<String> aasIds, @Valid List<String> submodelIds) throws SerializationException {
 		Environment aasEnvironment = extractShellsAndSubmodels(aasIds, submodelIds);
-		Serializer jsonSerializer = new JsonSerializer();
 		return jsonSerializer.write(aasEnvironment);
 	}
 
 	@Override
-	public String createAASEnvironmentSerializationFromXML(@Valid List<String> aasIds, @Valid List<String> submodelIds) throws SerializationException {
+	public String createXMLAASEnvironmentSerialization(@Valid List<String> aasIds, @Valid List<String> submodelIds) throws SerializationException {
 		Environment aasEnvironment = extractShellsAndSubmodels(aasIds, submodelIds);
-		Serializer xmlSerializer = new XmlSerializer();
+
 		return xmlSerializer.write(aasEnvironment);
 	}
 
 	@Override
-	public byte[] createAASEnvironmentSerializationFromAASX(@Valid List<String> aasIds, @Valid List<String> submodelIds) throws SerializationException, IOException {
+	public byte[] createAASXAASEnvironmentSerialization(@Valid List<String> aasIds, @Valid List<String> submodelIds) throws SerializationException, IOException {
 		Environment aasEnvironment = extractShellsAndSubmodels(aasIds, submodelIds);
 
-		AASXSerializer aasxSerializer = new AASXSerializer();
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		aasxSerializer.write(aasEnvironment, null, outputStream);
 		return outputStream.toByteArray();
 	}
 
 	private Environment extractShellsAndSubmodels(List<String> aasIds, List<String> submodelIds) {
-		List<AssetAdministrationShell> shells = new ArrayList<>();
-		List<Submodel> submodels = new ArrayList<Submodel>();
+		List<AssetAdministrationShell> shells = aasIds.stream().map(aasRepository::getAas).collect(Collectors.toList());
+		List<Submodel> submodels = submodelIds.stream().map(submodelRepository::getSubmodel).collect(Collectors.toList());
 		Environment aasEnvironment = new DefaultEnvironment();
-		aasIds.forEach(aasId -> {
-			shells.add(aasRepository.getAas(aasId));
-		});
-
-		submodelIds.forEach(submodelId -> {
-			submodels.add(submodelRespository.getSubmodel(submodelId));
-		});
 		aasEnvironment.setAssetAdministrationShells(shells);
 		aasEnvironment.setSubmodels(submodels);
 		return aasEnvironment;
