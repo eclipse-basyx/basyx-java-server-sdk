@@ -50,6 +50,7 @@
 		<dependency>
 			<groupId>io.moquette</groupId>
 			<artifactId>moquette-broker</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
