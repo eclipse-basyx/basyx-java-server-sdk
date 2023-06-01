@@ -18,5 +18,6 @@
 		<module>basyx.submodelrepository-feature-mqtt</module>
 		<module>basyx.submodelrepository-tck</module>
 		<module>basyx.submodelrepository.component</module>
+		<module>basyx.submodelrepository-backend-mongodb</module>
 	</modules>
 </project>

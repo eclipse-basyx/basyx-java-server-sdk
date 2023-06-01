@@ -22,7 +22,7 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.helper.submodel.dummy;
+package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +43,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
-import org.eclipse.digitaltwin.basyx.helper.submodel.service.SubmodelServiceHelper;
 
 /**
  * 
@@ -212,7 +211,7 @@ public class DummySubmodelFactory {
 
 	private static List<SubmodelElement> createSimpleSubmodelElements() {
 		ArrayList<SubmodelElement> list = new ArrayList<>();
-		Collection<SubmodelElement> smeCollectionValue = new HashSet<>();
+		Collection<SubmodelElement> smeCollectionValue = new ArrayList<>();
 		List<SubmodelElement> smeListValue = new ArrayList<>();
 		SubmodelElementCollection smeCollection = new DefaultSubmodelElementCollection();
 		smeCollection.setIdShort(SUBMODEL_ELEMENT_COLLECTION_SIMPLE);

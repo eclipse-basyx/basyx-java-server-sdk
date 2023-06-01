@@ -83,11 +83,5 @@
 			<artifactId>commons-io</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.helper</artifactId>
-			<classifier>tests</classifier>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 </project>

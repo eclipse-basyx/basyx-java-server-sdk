@@ -22,7 +22,7 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.helper.submodel.service;
+package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import java.util.ArrayList;
 import java.util.Arrays;

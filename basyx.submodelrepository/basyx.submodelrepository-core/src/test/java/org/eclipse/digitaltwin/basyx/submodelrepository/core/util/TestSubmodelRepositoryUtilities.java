@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -19,46 +19,45 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-
-package org.eclipse.digitaltwin.basyx.submodelrepository;
+package org.eclipse.digitaltwin.basyx.submodelrepository.core.util;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
+import org.eclipse.digitaltwin.basyx.submodelrepository.util.SubmodelRepositoryUtilities;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.junit.Test;
+import org.junit.Test.None;
 
 /**
  * 
- * @author schnicke
+ * @author jungjan
  *
  */
-public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
-
-	@Override
-	protected SubmodelRepository getSubmodelRepository() {
-		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
-	}
-
-	@Override
-	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
-		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodels);
-	}
+public class TestSubmodelRepositoryUtilities {
 
 	@Test(expected = CollidingIdentifierException.class)
-	public void idCollisionDuringConstruction() {
+	public void assertIdUniquenessColliding() {
 		Collection<Submodel> submodelsWithCollidingIds = createSubmodelCollectionWithCollidingIds();
-		new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodelsWithCollidingIds);
+		SubmodelRepositoryUtilities.assertIdUniqueness(submodelsWithCollidingIds);
+	}
+
+	@Test(expected = None.class)
+	public void assertIdUniquenessUniquess() {
+		Collection<Submodel> submodelsWithUniqueIds = createSubmodelCollectionWithUniqueIds();
+		SubmodelRepositoryUtilities.assertIdUniqueness(submodelsWithUniqueIds);
 	}
 
 	private Collection<Submodel> createSubmodelCollectionWithCollidingIds() {
 		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
+	}
+
+	private Collection<Submodel> createSubmodelCollectionWithUniqueIds() {
+		return Arrays.asList(DummySubmodelFactory.createSimpleDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
 	}
 }

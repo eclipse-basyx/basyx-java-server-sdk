@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -19,46 +19,32 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
-import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
-import org.junit.Test;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
+ * Provides a InMemorySubmodelServiceFactory for usage in the MongoDB Submodel
+ * Repository backend.<br>
+ * <br>
+ * This is needed to ensure that the SubmodelServiceFeatures are processed
+ * correctly when utilizing MongoDb
  * 
- * @author schnicke
+ * @author jungjan
  *
  */
-public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
-
-	@Override
-	protected SubmodelRepository getSubmodelRepository() {
-		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
-	}
-
-	@Override
-	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
-		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodels);
-	}
-
-	@Test(expected = CollidingIdentifierException.class)
-	public void idCollisionDuringConstruction() {
-		Collection<Submodel> submodelsWithCollidingIds = createSubmodelCollectionWithCollidingIds();
-		new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodelsWithCollidingIds);
-	}
-
-	private Collection<Submodel> createSubmodelCollectionWithCollidingIds() {
-		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
+@Configuration
+@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
+public class MongoDBSubmodelRepositoryConfiguration {
+	@Bean
+	public SubmodelServiceFactory getSubmodelServiceFactory() {
+		return new InMemorySubmodelServiceFactory();
 	}
 }

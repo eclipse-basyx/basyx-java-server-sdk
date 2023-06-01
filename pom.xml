@@ -197,11 +197,6 @@
 				<artifactId>basyx.mongodbcore</artifactId>
 				<version>${revision}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.helper</artifactId>
-				<version>${revision}</version>
-			</dependency>
 			<!-- basyx.submodelservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -237,6 +232,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelrepository.component</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-backend-mongodb</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<!-- basyx.aasservice -->
@@ -339,12 +339,6 @@
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.helper</artifactId>
-				<version>${revision}</version>
-				<classifier>tests</classifier>
-			</dependency>
 			<!-- basyx.submodelservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -380,6 +374,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelrepository.component</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-backend-mongodb</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
