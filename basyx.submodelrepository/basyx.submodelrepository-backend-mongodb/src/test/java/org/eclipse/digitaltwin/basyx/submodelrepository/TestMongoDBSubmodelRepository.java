@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -19,57 +19,41 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
+import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
-import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
-import org.junit.Test;
-import org.junit.Test.None;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
-/**
- * 
- * @author schnicke
- *
- */
-public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+
+public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
+	private final String COLLECTION = "submodelTestCollection";
+	private final String CONNECTION_URL = "mongodb://127.0.0.1:27017/";
+	private final MongoClient CLIENT = MongoClients.create(CONNECTION_URL);
+	private final MongoTemplate TEMPLATE = new MongoTemplate(CLIENT, "BaSyxTestDb");
+	private final InMemorySubmodelServiceFactory SUBMODEL_SERVICE_FACTORY = new InMemorySubmodelServiceFactory();
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository() {
-		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
+		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
+
+		return new MongoDBSubmodelRepositoryFactory(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY).create();
 	}
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
-		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodels);
+		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
+
+		return new MongoDBSubmodelRepositoryFactory(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, submodels).create();
 	}
 
-	@Test(expected = CollidingIdentifierException.class)
-	public void idCollisionDuringConstruction() {
-		Collection<Submodel> submodelsWithCollidingIds = createSubmodelCollectionWithCollidingIds();
-		new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodelsWithCollidingIds);
-	}
-
-	@Test(expected = None.class)
-	public void assertIdUniqueness() {
-		Collection<Submodel> submodelsWithUniqueIds = createSubmodelCollectionWithUniqueIds();
-		new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodelsWithUniqueIds);
-	}
-
-	private Collection<Submodel> createSubmodelCollectionWithCollidingIds() {
-		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
-	}
-
-	private Collection<Submodel> createSubmodelCollectionWithUniqueIds() {
-		return Arrays.asList(DummySubmodelFactory.createSimpleDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
-	}
 }

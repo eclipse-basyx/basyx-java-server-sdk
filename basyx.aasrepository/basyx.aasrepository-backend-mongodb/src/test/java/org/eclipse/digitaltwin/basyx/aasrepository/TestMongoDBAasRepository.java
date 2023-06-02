@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
 import static org.junit.Assert.assertEquals;
@@ -33,9 +32,9 @@ import java.util.Arrays;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -55,13 +54,9 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		MongoClient client = MongoClients.create(connectionURL);
 		MongoTemplate template = new MongoTemplate(client, "BaSyxTestDb");
 
-		clearDatabase(template);
+		MongoDBUtilities.clearCollection(template, COLLECTION);
 
 		return new MongoDBAasRepositoryFactory(template, COLLECTION, new InMemoryAasServiceFactory());
-	}
-
-	private void clearDatabase(MongoTemplate template) {
-		template.remove(new Query(), COLLECTION);
 	}
 
 	@Test
@@ -73,36 +68,33 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		assertEquals(expectedShell, retrievedShell);
 
 	}
-	
+
 	@Test
 	public void updatedAasIsPersisted() {
 		AasRepositoryFactory repoFactory = getAasRepositoryFactory();
-		
 		AasRepository mongoDBAasRepository = repoFactory.create();
-		
 		AssetAdministrationShell expectedShell = createDummyShellOnRepo(mongoDBAasRepository);
-		
 		addSubmodelReferenceToAas(expectedShell);
-		
 		mongoDBAasRepository.updateAas(expectedShell.getId(), expectedShell);
-		
 		AssetAdministrationShell retrievedShell = getAasFromNewBackendInstance(repoFactory, expectedShell.getId());
 
 		assertEquals(expectedShell, retrievedShell);
 	}
-	
+
 	private void addSubmodelReferenceToAas(AssetAdministrationShell expectedShell) {
 		expectedShell.setSubmodels(Arrays.asList(AasRepositorySuite.createDummyReference("dummySubmodel")));
 	}
 
 	private AssetAdministrationShell getAasFromNewBackendInstance(AasRepositoryFactory repoFactory, String shellId) {
-		AssetAdministrationShell retrievedShell = repoFactory.create().getAas(shellId);
+		AssetAdministrationShell retrievedShell = repoFactory.create()
+				.getAas(shellId);
 		return retrievedShell;
 	}
 
 	private AssetAdministrationShell createDummyShellOnRepo(AasRepository aasRepository) {
-		AssetAdministrationShell expectedShell = new DefaultAssetAdministrationShell.Builder().id("dummy").build();
-		
+		AssetAdministrationShell expectedShell = new DefaultAssetAdministrationShell.Builder().id("dummy")
+				.build();
+
 		aasRepository.createAas(expectedShell);
 		return expectedShell;
 	}
