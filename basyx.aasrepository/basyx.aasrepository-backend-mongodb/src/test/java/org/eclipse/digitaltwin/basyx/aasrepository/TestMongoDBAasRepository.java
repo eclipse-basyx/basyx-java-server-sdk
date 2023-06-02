@@ -72,15 +72,10 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	@Test
 	public void updatedAasIsPersisted() {
 		AasRepositoryFactory repoFactory = getAasRepositoryFactory();
-
 		AasRepository mongoDBAasRepository = repoFactory.create();
-
 		AssetAdministrationShell expectedShell = createDummyShellOnRepo(mongoDBAasRepository);
-
 		addSubmodelReferenceToAas(expectedShell);
-
 		mongoDBAasRepository.updateAas(expectedShell.getId(), expectedShell);
-
 		AssetAdministrationShell retrievedShell = getAasFromNewBackendInstance(repoFactory, expectedShell.getId());
 
 		assertEquals(expectedShell, retrievedShell);
