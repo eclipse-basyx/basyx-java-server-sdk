@@ -5,6 +5,9 @@ Eclipse BaSyx provides the AAS Environment as off-the-shelf component:
 
 It aggregates the AAS Repository, Submodel Repository and ConceptDescription Repository into a single component. For its features and configuration, see the documentation of the respective components.
 
+In addition, it supports the following endpoint defined in DotAAS Part 2 V3 - Serialization Interface:
+- GenerateSerializationByIds (excluding ConceptDescription parameter for now)
+
 The Aggregated API endpoint documentation is available at:
 
 	http://{host}:{port}/v3/api-docs
