@@ -60,7 +60,7 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	}
 
 	@Test(expected = None.class)
-	public void assertIdUniquenessUniquess() {
+	public void assertIdUniqueness() {
 		Collection<Submodel> submodelsWithUniqueIds = createSubmodelCollectionWithUniqueIds();
 		new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodelsWithUniqueIds);
 	}
