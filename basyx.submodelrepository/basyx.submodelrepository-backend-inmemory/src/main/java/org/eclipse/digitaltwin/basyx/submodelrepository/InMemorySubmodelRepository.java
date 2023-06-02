@@ -26,8 +26,10 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -35,7 +37,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
-import org.eclipse.digitaltwin.basyx.submodelrepository.util.SubmodelRepositoryUtilities;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -72,9 +73,21 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	 */
 	public InMemorySubmodelRepository(SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels) {
 		this(submodelServiceFactory);
-		SubmodelRepositoryUtilities.assertIdUniqueness(submodels);
+		throwIfHasCollidingIds(submodels);
 
 		submodelServices = createServices(submodels);
+	}
+
+	private void throwIfHasCollidingIds(Collection<Submodel> submodelsToCheck) {
+		Set<String> ids = new HashSet<>();
+
+		submodelsToCheck.stream()
+				.map(submodel -> submodel.getId())
+				.filter(id -> !ids.add(id))
+				.findAny()
+				.ifPresent(id -> {
+					throw new CollidingIdentifierException(id);
+				});
 	}
 
 	private Map<String, SubmodelService> createServices(Collection<Submodel> submodels) {

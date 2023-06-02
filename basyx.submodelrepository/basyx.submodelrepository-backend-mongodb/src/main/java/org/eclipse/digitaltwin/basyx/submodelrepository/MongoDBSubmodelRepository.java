@@ -31,7 +31,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
-import org.eclipse.digitaltwin.basyx.submodelrepository.util.SubmodelRepositoryUtilities;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -90,7 +89,6 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 		if (submodels == null || submodels.isEmpty()) {
 			return;
 		}
-		SubmodelRepositoryUtilities.assertIdUniqueness(submodels);
 		submodels.forEach(this::createSubmodel);
 	}
 
@@ -122,21 +120,20 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 		Query query = new Query().addCriteria(Criteria.where(ID_JSON_PATH)
 				.is(submodelId));
 
-		assertSubmodelExists(query, submodelId);
-		assertMatchingIds(submodelId, submodel);
+		throwIfSubmodelDoesNotExist(query, submodelId);
+		throwIfMismatchingIds(submodelId, submodel);
 
 		mongoTemplate.remove(query, Submodel.class, collectionName);
 		mongoTemplate.save(submodel, collectionName);
-
 	}
 
-	private void assertSubmodelExists(Query query, String submodelId) {
+	private void throwIfSubmodelDoesNotExist(Query query, String submodelId) {
 		if (!mongoTemplate.exists(query, Submodel.class, collectionName))
 			throw new ElementDoesNotExistException(submodelId);
 
 	}
 
-	private void assertMatchingIds(String submodelId, Submodel submodel) {
+	private void throwIfMismatchingIds(String submodelId, Submodel submodel) {
 		String newSubmodelId = submodel.getId();
 
 		if (!submodelId.equals(newSubmodelId))
@@ -146,11 +143,11 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
-		assertRemoteIdUniqueness(submodel);
+		throwIfCollidesWithRemoteId(submodel);
 		mongoTemplate.save(submodel, collectionName);
 	}
 
-	private void assertRemoteIdUniqueness(Submodel submodel) {
+	private void throwIfCollidesWithRemoteId(Submodel submodel) {
 		if (mongoTemplate.exists(new Query().addCriteria(Criteria.where(ID_JSON_PATH)
 				.is(submodel.getId())), Submodel.class, collectionName)) {
 			throw new CollidingIdentifierException(submodel.getId());

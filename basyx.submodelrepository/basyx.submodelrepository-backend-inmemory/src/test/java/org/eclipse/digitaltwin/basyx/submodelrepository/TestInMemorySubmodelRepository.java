@@ -34,6 +34,7 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositoryS
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.junit.Test;
+import org.junit.Test.None;
 
 /**
  * 
@@ -58,7 +59,17 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 		new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodelsWithCollidingIds);
 	}
 
+	@Test(expected = None.class)
+	public void assertIdUniquenessUniquess() {
+		Collection<Submodel> submodelsWithUniqueIds = createSubmodelCollectionWithUniqueIds();
+		new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodelsWithUniqueIds);
+	}
+
 	private Collection<Submodel> createSubmodelCollectionWithCollidingIds() {
 		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
+	}
+
+	private Collection<Submodel> createSubmodelCollectionWithUniqueIds() {
+		return Arrays.asList(DummySubmodelFactory.createSimpleDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
 	}
 }
