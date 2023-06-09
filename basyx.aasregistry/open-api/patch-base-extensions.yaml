@@ -1,0 +1,211 @@
+- op: replace
+  path: /servers
+  value: []
+- op: add
+  path: /paths/~1shell-descriptors/get/parameters/3/x-utf8-base64-url-encoded-as-string
+  value: true 
+- op: replace
+  path: /paths/~1shell-descriptors/get/tags
+  value:
+  - Registry and Discovery Interface 
+- op: replace
+  path: /paths/~1shell-descriptors/post/tags
+  value:
+  - Registry and Discovery Interface  
+- op: add
+  path: /paths/~1shell-descriptors/delete
+  value:
+    tags:
+    - Registry and Discovery Interface
+    summary: Deletes all Asset Administration Shell Descriptors
+    operationId: DeleteAllShellDescriptors
+    responses:
+      '204':
+        description: No content
+#    x-semanticIds:
+#    - https://admin-shell.io/aas/API/GetAllAssetAdministrationShellDescriptors/1/0/RC03      
+- op: add
+  path: /paths/~1shell-descriptors~1{aasIdentifier}/get/parameters/0/x-utf8-base64-url-encoded-as-string
+  value: true 
+- op: replace
+  path: /paths/~1shell-descriptors~1{aasIdentifier}/get/tags
+  value:
+  - Registry and Discovery Interface  
+- op: add
+  path: /paths/~1shell-descriptors~1{aasIdentifier}/put/parameters/0/x-utf8-base64-url-encoded-as-string
+  value: true 
+- op: replace
+  path: /paths/~1shell-descriptors~1{aasIdentifier}/put/tags
+  value:
+  - Registry and Discovery Interface  
+- op: add
+  path: /paths/~1shell-descriptors~1{aasIdentifier}/delete/parameters/0/x-utf8-base64-url-encoded-as-string
+  value: true 
+- op: replace
+  path: /paths/~1shell-descriptors~1{aasIdentifier}/delete/tags
+  value:
+  - Registry and Discovery Interface
+- op: add
+  path: /paths/~1shell-descriptors~1{aasIdentifier}~1submodel-descriptors/get/parameters/0/x-utf8-base64-url-encoded-as-string
+  value: true 
+- op: replace
+  path: /paths/~1shell-descriptors~1{aasIdentifier}~1submodel-descriptors/get/tags
+  value:
+  - Registry and Discovery Interface
+- op: add
+  path: /paths/~1shell-descriptors~1{aasIdentifier}~1submodel-descriptors/post/parameters/0/x-utf8-base64-url-encoded-as-string
+  value: true 
+- op: replace
+  path: /paths/~1shell-descriptors~1{aasIdentifier}~1submodel-descriptors/post/tags
+  value:
+  - Registry and Discovery Interface  
+- op: add
+  path: /paths/~1shell-descriptors~1{aasIdentifier}~1submodel-descriptors~1{submodelIdentifier}/get/parameters/0/x-utf8-base64-url-encoded-as-string
+  value: true 
+- op: add
+  path: /paths/~1shell-descriptors~1{aasIdentifier}~1submodel-descriptors~1{submodelIdentifier}/get/parameters/1/x-utf8-base64-url-encoded-as-string
+  value: true 
+- op: replace
+  path: /paths/~1shell-descriptors~1{aasIdentifier}~1submodel-descriptors~1{submodelIdentifier}/get/tags
+  value:
+  - Registry and Discovery Interface  
+- op: add
+  path: /paths/~1shell-descriptors~1{aasIdentifier}~1submodel-descriptors~1{submodelIdentifier}/put/parameters/0/x-utf8-base64-url-encoded-as-string
+  value: true 
+- op: add
+  path: /paths/~1shell-descriptors~1{aasIdentifier}~1submodel-descriptors~1{submodelIdentifier}/put/parameters/1/x-utf8-base64-url-encoded-as-string
+  value: true 
+- op: replace
+  path: /paths/~1shell-descriptors~1{aasIdentifier}~1submodel-descriptors~1{submodelIdentifier}/put/tags
+  value:
+  - Registry and Discovery Interface
+- op: add
+  path: /paths/~1shell-descriptors~1{aasIdentifier}~1submodel-descriptors~1{submodelIdentifier}/delete/parameters/0/x-utf8-base64-url-encoded-as-string
+  value: true 
+- op: add
+  path: /paths/~1shell-descriptors~1{aasIdentifier}~1submodel-descriptors~1{submodelIdentifier}/delete/parameters/1/x-utf8-base64-url-encoded-as-string
+  value: true 
+- op: replace
+  path: /paths/~1shell-descriptors~1{aasIdentifier}~1submodel-descriptors~1{submodelIdentifier}/delete/tags
+  value:
+  - Registry and Discovery Interface
+- op: replace
+  path: /paths/~1description/get/tags
+  value:
+  - Registry and Discovery Interface  
+- op: add
+  path: /paths/~1search
+  value:
+    post: 
+      operationId: SearchShellDescriptors
+      tags:
+      - Registry and Discovery Interface
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShellDescriptorSearchRequest'
+        required: true
+      responses:
+        '200':
+          description: Search response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShellDescriptorSearchResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+- op: add
+  path: /components/schemas/Endpoint/properties/interface/x-field-extra-annotation
+  value: '@JsonProperty("interface")'
+- op: add
+  path: /components/schemas/PagedResult_paging_metadata/x-field-extra-annotation
+  value: '@JsonProperty("paging_metadata")'
+- op: add
+  path: /components/schemas/ShellDescriptorSearchRequest
+  value:
+    type: object
+    properties:
+      page:
+        $ref: '#/components/schemas/Page'
+      sortBy: 
+        $ref: '#/components/schemas/Sorting'
+      query:
+        $ref: '#/components/schemas/ShellDescriptorQuery'
+- op: add
+  path: /components/schemas/ShellDescriptorQuery
+  value:   
+    required:
+    - path
+    - value
+    properties:
+      path:
+        type: string
+      value:
+        type: string
+      queryType:
+        type: string
+        enum: ['match', 'regex']
+        default: 'match'
+- op: add
+  path: /components/schemas/Page
+  value: 
+    type: object
+    required:
+       - index
+       - size
+    properties:
+       index:
+          type: integer
+          minimum: 0
+       size: 
+          type: integer
+          minimum: 1
+          maximum: 10000 
+- op: add
+  path: /components/schemas/Sorting
+  value:    
+    type: object
+    required:
+    - path
+    properties:
+      direction:
+        $ref: '#/components/schemas/SortDirection'
+      path:
+        type: array
+        items:
+           $ref: '#/components/schemas/SortingPath'
+- op: add
+  path: /components/schemas/SortingPath
+  value:    
+    type: string
+    enum: 
+    - idShort
+    - id
+    - administration.revision
+    - administration.version
+- op: add
+  path: /components/schemas/SortDirection
+  value:    
+    type: string
+    enum: [ "ASC", "DESC"]
+- op: add
+  path: /components/schemas/ShellDescriptorSearchResponse
+  value:    
+    type: object
+    required:
+    - hits
+    - total
+    properties:
+      total:
+        type: integer
+        format: int64
+        minimum: 0
+      hits:
+        type: array
+        items: 
+          $ref: '#/components/schemas/AssetAdministrationShellDescriptor'

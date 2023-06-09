@@ -16,10 +16,10 @@
 	<properties>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>
 		<openapi.folder>${project.basedir}/${openapi.folder.name}</openapi.folder>
-		<openapi.mongodb.file.name>mongodb-annotations.yaml</openapi.mongodb.file.name>
 		<openapi.mongodb.file>${openapi.folder}/${openapi.mongodb.file.name}</openapi.mongodb.file>
 		<openapi.extensions.result.file>${openapi.folder}/temporary-extensions-result-file.yaml</openapi.extensions.result.file>
 		<openapi.result.file>${openapi.folder}/${openapi.name}</openapi.result.file>
+		<patch.mongo-extensions.name>patch-mongodb-annotations.yaml</patch.mongo-extensions.name>
 	</properties>
 
 	<build>
@@ -39,37 +39,41 @@
 							<directory>${openapi.folder}</directory>
 							<excludes>
 								<exclude>.gitkeep</exclude>
-								<exclude>${openapi.mongodb.file.name}</exclude>
+								<exclude>${patch.mongo-extensions.name}</exclude>
 							</excludes>
 							<followSymlinks>false</followSymlinks>
 						</fileset>
 					</filesets>
 				</configuration>
 			</plugin>
+			
 			<plugin>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.aasregistry-plugins</artifactId>
+				<groupId>de.dfki.cos.basys.common</groupId>
+				<artifactId>jsonpatch-maven-plugin</artifactId>
+				<version>${jsonpatch.plugin.version}</version>
 				<executions>
 					<execution>
-						<id>search-api</id>
+						<id>base-extensions</id>
+						<phase>generate-sources</phase>
 						<goals>
-							<goal>yaml-overlay</goal>
+							<goal>jsonpatch-maven-plugin</goal>
 						</goals>
 						<configuration>
-							<base>${project.basedir}/../${openapi.folder.name}/${openapi.base.name}</base>
-							<overlay>${project.basedir}/../${openapi.folder.name}/${openapi.extensions.name}</overlay>
-							<out>${openapi.extensions.result.file}</out>
+							<input>${project.basedir}/../${openapi.folder.name}/${openapi.base.name}</input>
+							<patch>${project.basedir}/../${openapi.folder.name}/${patch.base-extensions.name}</patch>
+							<output>${openapi.extensions.result.file}</output>
 						</configuration>
 					</execution>
 					<execution>
-						<id>mongodb-annotations</id>
+						<id>mongodb-annotation-extensions</id>
+						<phase>generate-sources</phase>
 						<goals>
-							<goal>yaml-overlay</goal>
+							<goal>jsonpatch-maven-plugin</goal>
 						</goals>
 						<configuration>
-							<base>${openapi.extensions.result.file}</base>
-							<overlay>${openapi.mongodb.file}</overlay>
-							<out>${openapi.result.file}</out>
+							<input>${openapi.extensions.result.file}</input>
+							<patch>${project.basedir}/${openapi.folder.name}/${patch.mongo-extensions.name}</patch>
+							<output>${openapi.result.file}</output>
 						</configuration>
 					</execution>
 				</executions>

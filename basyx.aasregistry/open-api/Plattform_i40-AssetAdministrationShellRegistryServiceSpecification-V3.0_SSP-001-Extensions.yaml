@@ -3,104 +3,104 @@ openapi: 3.0.3
 servers: []
 paths:
   /shell-descriptors:
-    get:
-      tags:
-         - Registry and Discovery Interface
-      parameters:
-        $LIST_PROCESS_INSTRUCTION$:
-           overlay:
-              3:
-                 x-utf8-base64-url-encoded-as-string: true
-    post:
-      tags:
-         - Registry and Discovery Interface
-    delete:
-      tags:
-         - Registry and Discovery Interface
-      summary: Deletes all Asset Administration Shell Descriptors
-      operationId: DeleteAllShellDescriptors
-      responses:
-        '204':
-          description: No content
-      x-semanticIds:
-      - https://admin-shell.io/aas/API/GetAllAssetAdministrationShellDescriptors/1/0/RC03
-  /shell-descriptors/{aasIdentifier}:
-    get:
-      tags:
-         - Registry and Discovery Interface
-      parameters:
-        $LIST_PROCESS_INSTRUCTION$:
-           overlay:
-              0:
-                 x-utf8-base64-url-encoded-as-string: true
-    put:
-      tags:
-         - Registry and Discovery Interface
-      parameters:
-        $LIST_PROCESS_INSTRUCTION$:
-          overlay:
-             0:
-                x-utf8-base64-url-encoded-as-string: true
-    delete:
-      tags:
-         - Registry and Discovery Interface
-      parameters:
-        $LIST_PROCESS_INSTRUCTION$:
-           overlay:
-              0:
-                 x-utf8-base64-url-encoded-as-string: true
-  /shell-descriptors/{aasIdentifier}/submodel-descriptors:
-    get:
-      tags:
-         - Registry and Discovery Interface
-      parameters:
-        $LIST_PROCESS_INSTRUCTION$:
-           overlay:
-              0:
-                 x-utf8-base64-url-encoded-as-string: true  
-    post:
-      tags:
-         - Registry and Discovery Interface
-      parameters:
-        $LIST_PROCESS_INSTRUCTION$:
-           overlay:
-              0:
-                 x-utf8-base64-url-encoded-as-string: true
-  /shell-descriptors/{aasIdentifier}/submodel-descriptors/{submodelIdentifier}:
-    get:
-      tags:
-         - Registry and Discovery Interface
-      parameters:
-        $LIST_PROCESS_INSTRUCTION$:
-           overlay:
-              0:
-                 x-utf8-base64-url-encoded-as-string: true
-              1:
-                 x-utf8-base64-url-encoded-as-string: true
-    put:
-      tags:
-         - Registry and Discovery Interface
-      parameters:
-        $LIST_PROCESS_INSTRUCTION$:
-           overlay:
-              0:
-                 x-utf8-base64-url-encoded-as-string: true
-              1:
-                 x-utf8-base64-url-encoded-as-string: true
-    delete:
-      tags:
-         - Registry and Discovery Interface
-      parameters:
-        $LIST_PROCESS_INSTRUCTION$:
-           overlay:
-              0:
-                 x-utf8-base64-url-encoded-as-string: true
-              1:
-                 x-utf8-base64-url-encoded-as-string: true
-  /description:
-    get:
-      tags:
-        - Registry and Discovery Interface
+#    get:
+#      tags:
+#         - Registry and Discovery Interface
+#      parameters:
+#        $LIST_PROCESS_INSTRUCTION$:
+#           overlay:
+#              3:
+#                 x-utf8-base64-url-encoded-as-string: true
+#    post:
+#      tags:
+#         - Registry and Discovery Interface
+#    delete:
+#      tags:
+#         - Registry and Discovery Interface
+#      summary: Deletes all Asset Administration Shell Descriptors
+#      operationId: DeleteAllShellDescriptors
+#      responses:
+#        '204':
+#          description: No content
+#      x-semanticIds:
+#      - https://admin-shell.io/aas/API/GetAllAssetAdministrationShellDescriptors/1/0/RC03
+#  /shell-descriptors/{aasIdentifier}:
+#    get:
+#      tags:
+#         - Registry and Discovery Interface
+#      parameters:
+#        $LIST_PROCESS_INSTRUCTION$:
+#           overlay:
+#              0:
+#                 x-utf8-base64-url-encoded-as-string: true
+#    put:
+#      tags:
+#         - Registry and Discovery Interface
+#      parameters:
+#        $LIST_PROCESS_INSTRUCTION$:
+#          overlay:
+#             0:
+#                x-utf8-base64-url-encoded-as-string: true
+#    delete:
+#      tags:
+#         - Registry and Discovery Interface
+#      parameters:
+#        $LIST_PROCESS_INSTRUCTION$:
+#           overlay:
+#              0:
+#                 x-utf8-base64-url-encoded-as-string: true
+#  /shell-descriptors/{aasIdentifier}/submodel-descriptors:
+#    get:
+#      tags:
+#         - Registry and Discovery Interface
+#      parameters:
+#        $LIST_PROCESS_INSTRUCTION$:
+#           overlay:
+#              0:
+#                 x-utf8-base64-url-encoded-as-string: true  
+#    post:
+#      tags:
+#         - Registry and Discovery Interface
+#      parameters:
+#        $LIST_PROCESS_INSTRUCTION$:
+#           overlay:
+#              0:
+#                 x-utf8-base64-url-encoded-as-string: true
+#  /shell-descriptors/{aasIdentifier}/submodel-descriptors/{submodelIdentifier}:
+#    get:
+#      tags:
+#         - Registry and Discovery Interface
+#      parameters:
+#        $LIST_PROCESS_INSTRUCTION$:
+#           overlay:
+#              0:
+#                 x-utf8-base64-url-encoded-as-string: true
+#              1:
+#                 x-utf8-base64-url-encoded-as-string: true
+#    put:
+#      tags:
+#         - Registry and Discovery Interface
+#      parameters:
+#        $LIST_PROCESS_INSTRUCTION$:
+#           overlay:
+#              0:
+#                 x-utf8-base64-url-encoded-as-string: true
+#              1:
+#                 x-utf8-base64-url-encoded-as-string: true
+#    delete:
+#      tags:
+#         - Registry and Discovery Interface
+#      parameters:
+#        $LIST_PROCESS_INSTRUCTION$:
+#           overlay:
+#              0:
+#                 x-utf8-base64-url-encoded-as-string: true
+#              1:
+#                 x-utf8-base64-url-encoded-as-string: true
+#  /description:
+#    get:
+#      tags:
+#        - Registry and Discovery Interface
   /search:
     post:
       operationId: SearchShellDescriptors
