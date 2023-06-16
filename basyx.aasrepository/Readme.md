@@ -3,7 +3,7 @@ Eclipse BaSyx provides the AssetAdministrationShell Repository as off-the-shelf 
 
     docker run --name=aas-repo -p:8081:8081 -v C:/tmp:/usr/share/config eclipsebasyx/aas-repository:2.0.0-SNAPSHOT 
 
-> *Disclaimer*: configuration files shall be located locally in `C:/tmp`
+> *Disclaimer*: In this example, configuration files are located in `C:/tmp`
 
 > *Disclaimer*: The binding of volume `C:/tmp` to `/usr/share/config` is tested using Windows Powershell. Other terminals might run into an error.
 
@@ -40,7 +40,7 @@ Furthermore, the following features are provided:
 * [AAS Repository MQTT eventing](basyx.aasrepository-feature-mqtt/)
 * [AAS Service MQTT eventing](../basyx.aasservice/basyx.aasservice-feature-mqtt/Rea)
 
-The health Endpoint to dertermine to check weather the server is up and running is available at:
+The health endpoint to check whether the server is up and running is available at:
 
 	http://{host}:{port}/health
 

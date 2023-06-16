@@ -3,7 +3,7 @@ Eclipse BaSyx provides the Submodel Repository as off-the-shelf component:
 
     docker run --name=sm-repo -p:8081:8081 -v C:/tmp:/usr/share/config eclipsebasyx/submodel-repository:2.0.0-SNAPSHOT 
 
-> *Disclaimer*: configuration files shall be located locally in `C:/tmp`
+> *Disclaimer*: In this example, configuration files are located in `C:/tmp`
 
 > *Disclaimer*: The binding of volume `C:/tmp` to `/usr/share/config` is tested using Windows Powershell. Other terminals might run into an error.
 
@@ -39,17 +39,13 @@ In addition, it supports the following backends:
 Furthermore, the following features are provided:
 * [MQTT eventing](basyx.submodelrepository-feature-mqtt)
 
-The health Endpoint to dertermine to check weather the server is up and running is available at:
+The health endpoint to check whether the server is up and running is available at:
 
 	http://{host}:{port}/health
 
 For a configuration example, see [application.properties](basyx.submodelrepository.component/src/main/resources/application.properties)
 
 Cross-Site Resource Sharing (CORS) is enabled by setting the `management.endpoints.web.cors.allowed-origins` property.
-
-The health Endpoint to dertermine to check weather the server is up and running is available at:
-
-	http://{host}:{port}/health
 
 Cross-Site Resource Sharing options can be configured under [application.properties](.basyx.submodelrepository.component/src/main/resources/application.properties) with the following attributes: (As seen on https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.endpoints.cors)
 
