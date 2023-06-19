@@ -23,8 +23,8 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.TestAASEnvironmentSerialization;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -36,61 +36,83 @@ public class TestAasEnvironmentHTTP {
 	private static final String ACCEPT_XML = "application/xml";
 	private static final String ACCEPT_AASX = "application/asset-administration-shell-package+xml";
 
-	private static ConfigurableApplicationContext appContext;
+	private ConfigurableApplicationContext appContext;
 
-	@BeforeClass
-	public static void startAasRepo() throws Exception {
+	@Before
+	public void startAasRepo() throws Exception {
 		appContext = new SpringApplication(DummyAASEnvironmentComponent.class).run(new String[] {});
 	}
 
 	@Test
 	public void testAASEnvironmentSertializationWithJSON() throws IOException, ParseException, DeserializationException {
-		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(), ACCEPT_JSON);
+		boolean includeConceptDescription = true;
+		
+		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), ACCEPT_JSON);
 		String actual = BaSyxHttpTestUtils.getResponseAsString(response);
-		TestAASEnvironmentSerialization.validateJSON(actual);
+		TestAASEnvironmentSerialization.validateJSON(actual, includeConceptDescription);
 	}
 
 	@Test
 	public void testAASEnvironmentSertializationWithXML() throws IOException, ParseException, DeserializationException {
-		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(), ACCEPT_XML);
+		boolean includeConceptDescription = true;
+		
+		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), ACCEPT_XML);
 		String actual = BaSyxHttpTestUtils.getResponseAsString(response);
-		TestAASEnvironmentSerialization.validateXml(actual);
+		TestAASEnvironmentSerialization.validateXml(actual, includeConceptDescription);
 	}
 
 	@Test
 	public void testAASEnvironmentSertializationWithAASX() throws IOException, ParseException, DeserializationException, InvalidFormatException {
-		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(), ACCEPT_AASX);
+		boolean includeConceptDescription = true;
+		
+		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), ACCEPT_AASX);
 		assertEquals(HttpStatus.OK.value(), response.getCode());
 
-		TestAASEnvironmentSerialization.checkAASX(response.getEntity().getContent());
+		TestAASEnvironmentSerialization.checkAASX(response.getEntity().getContent(), includeConceptDescription);
+	}
+	
+	@Test
+	public void testAASEnvironmentSertializationWithAASXExcludeCD() throws IOException, ParseException, DeserializationException, InvalidFormatException {
+		boolean includeConceptDescription = false;
+		
+		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), ACCEPT_AASX);
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+
+		TestAASEnvironmentSerialization.checkAASX(response.getEntity().getContent(), includeConceptDescription);
 	}
 
 	@Test
 	public void testAASEnvironmentWithWrongParameter() throws IOException {
-		CloseableHttpResponse response = executeGetOnURL(getSerializationURL(new ArrayList<String>(), new ArrayList<String>()), ACCEPT_JSON);
+		boolean includeConceptDescription = true;
+		
+		CloseableHttpResponse response = executeGetOnURL(getSerializationURL(new ArrayList<String>(), new ArrayList<String>(), includeConceptDescription), ACCEPT_JSON);
 		assertEquals(HttpStatus.BAD_REQUEST.value(), response.getCode());
 	}
 
 	@Test
 	public void testAASEnvironmentWithWrongAcceptHeader() throws IOException {
-		CloseableHttpResponse response = executeGetOnURL(getSerializationURL(new ArrayList<String>(), new ArrayList<String>()), "");
+		boolean includeConceptDescription = true;
+		
+		CloseableHttpResponse response = executeGetOnURL(getSerializationURL(new ArrayList<String>(), new ArrayList<String>(), includeConceptDescription), "");
 		assertEquals(HttpStatus.BAD_REQUEST.value(), response.getCode());
 	}
 
 	@Test
 	public void testAASEnvironmentWithWrongId() throws IOException {
+		boolean includeConceptDescription = true;
+		
 		List<String> aasIds = new ArrayList<>();
 		List<String> submodelIds = new ArrayList<>();
 
 		aasIds.add("wrongAasId");
 		submodelIds.add("wrongSubmodelId");
-		CloseableHttpResponse response = executeGetOnURL(getSerializationURL(aasIds, submodelIds), ACCEPT_JSON);
+		CloseableHttpResponse response = executeGetOnURL(getSerializationURL(aasIds, submodelIds, includeConceptDescription), ACCEPT_JSON);
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
 
-	private String createSerializationURL() {
+	private String createSerializationURL(Boolean includeConceptDescription) {
 		return getSerializationURL(createIdCollection(DummyAASEnvironmentComponent.AAS_TECHNICAL_DATA_ID, DummyAASEnvironmentComponent.AAS_OPERATIONAL_DATA_ID),
-				createIdCollection(DummyAASEnvironmentComponent.SUBMODEL_OPERATIONAL_DATA_ID, DummyAASEnvironmentComponent.SUBMODEL_TECHNICAL_DATA_ID));
+				createIdCollection(DummyAASEnvironmentComponent.SUBMODEL_OPERATIONAL_DATA_ID, DummyAASEnvironmentComponent.SUBMODEL_TECHNICAL_DATA_ID), includeConceptDescription);
 	}
 
 	public static CloseableHttpResponse executeGetOnURL(String url, String header) throws IOException {
@@ -109,11 +131,11 @@ public class TestAasEnvironmentHTTP {
 		return "http://localhost:8081";
 	}
 
-	private String getSerializationURL(Collection<String> aasIds, Collection<String> submodelIds) {
+	private String getSerializationURL(Collection<String> aasIds, Collection<String> submodelIds, Boolean includeConceptDescription) {
 		String aasIdsArrayString = createIdsArrayString(aasIds);
 		String submodelIdsArrayString = createIdsArrayString(submodelIds);
 
-		return getURL() + "/serialization?aasIds=" + aasIdsArrayString + "&submodelIds=" + submodelIdsArrayString;
+		return getURL() + "/serialization?aasIds=" + aasIdsArrayString + "&submodelIds=" + submodelIdsArrayString + "&includeConceptDescriptions=" + includeConceptDescription;
 	}
 
 	private String createIdsArrayString(Collection<String> ids) {
@@ -140,8 +162,8 @@ public class TestAasEnvironmentHTTP {
 		return IOUtils.toString(in, StandardCharsets.UTF_8.name());
 	}
 
-	@AfterClass
-	public static void shutdown() {
+	@After
+	public void shutdown() {
 		appContext.close();
 	}
 

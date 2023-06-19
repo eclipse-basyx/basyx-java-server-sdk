@@ -51,6 +51,10 @@
 			<artifactId>dataformat-aasx</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
+			<artifactId>dataformat-core</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.submodelservice-core</artifactId>
 			<classifier>tests</classifier>
