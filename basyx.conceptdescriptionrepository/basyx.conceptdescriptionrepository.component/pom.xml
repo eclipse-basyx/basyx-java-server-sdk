@@ -10,6 +10,10 @@
 	<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
 	<name>Concept Description Repository Component</name>
 
+	<properties>
+		<docker.image.name>conceptdescriptionrepository</docker.image.name>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -63,4 +67,18 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<profiles>
+		<profile>
+			<id>docker</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -44,6 +42,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<revision>2.0.0-SNAPSHOT</revision>
+		<docker.username>eclipsebasyx</docker.username>
+		<docker.image.tag>${revision}</docker.image.tag>
 	</properties>
 	<build>
 		<plugins>
@@ -126,6 +126,39 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!-- Build the docker image -->
+				<plugin>
+					<groupId>io.fabric8</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<version>0.43.0</version>
+					<configuration>
+						<images>
+							<image>
+								<name>${docker.username}/${docker.image.name}</name>
+								<build>
+									<tags>
+										<tag>${docker.image.tag}</tag>
+									</tags>
+									<contextDir>${project.basedir}</contextDir>
+								</build>
+							</image>
+						</images>
+						<verbose>true</verbose>
+					</configuration>
+					<executions>
+						<execution>
+							<id>docker:build</id>
+							<phase>package</phase>
+							<goals>
+								<goal>build</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 	<dependencyManagement>
 		<dependencies>
@@ -320,7 +353,7 @@
 				<artifactId>basyx.aasenvironment.component</artifactId>
 				<version>${revision}</version>
 			</dependency>
-				<dependency>
+			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasenvironment-core</artifactId>
 				<version>${revision}</version>

@@ -9,6 +9,10 @@
 
 	<artifactId>basyx.aasrepository.component</artifactId>
 
+	<properties>
+		<docker.image.name>aasrepository</docker.image.name>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -65,4 +69,18 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<profiles>
+		<profile>
+			<id>docker</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
