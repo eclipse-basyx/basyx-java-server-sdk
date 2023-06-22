@@ -26,14 +26,21 @@ package org.eclipse.digitaltwin.basyx.aasregistry.service.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import org.bson.Document;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetKind;
+import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorQuery;
+import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorQuery.QueryTypeEnum;
+import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.MongoDbConfiguration;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.ShellDescriptorSearchRequests;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.ShellDescriptorSearchRequests.GroupedQueries;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.MongoDbAasRegistryStorage;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.SearchQueryBuilder;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +90,40 @@ public class MongoDbAasRegistryStorageTest extends AasRegistryStorageTest {
 	}
 
 	@Test
+	public void whenSearchByShellExtension_NotAllDocumentsScannedButIndexUsed() {
+		SearchQueryBuilder builder = new SearchQueryBuilder();
+
+		ShellDescriptorQuery query = new ShellDescriptorQuery(AasRegistryPaths.extensions().value(), "TAG");
+		query.value("AB");
+		Criteria criteria = builder.buildCriteria(ShellDescriptorSearchRequests.groupQueries(query));
+		testIndexFilter(criteria);
+	}
+
+	@Test
+	public void whenSearchBySmExtension_NotAllDocumentsScannedButIndexUsed() {
+		SearchQueryBuilder builder = new SearchQueryBuilder();
+		ShellDescriptorQuery query = new ShellDescriptorQuery(AasRegistryPaths.submodelDescriptors().extensions().value(), "TAG");
+		query.value("AB");
+		Criteria criteria = builder.buildCriteria(ShellDescriptorSearchRequests.groupQueries(query));
+		testIndexFilter(criteria);
+	}
+
+	@Test
+	public void whenSearchBySmExtensionCombinded_NotAllDocumentsScannedButIndexUsed() {
+		SearchQueryBuilder builder = new SearchQueryBuilder();
+		ShellDescriptorQuery shellQuery1 = new ShellDescriptorQuery(AasRegistryPaths.extensions().value(), "TAG").value("A");
+		ShellDescriptorQuery shellQuery2 = new ShellDescriptorQuery(AasRegistryPaths.extensions().value(), "TAG").value("B");
+		ShellDescriptorQuery smQuery1 = new ShellDescriptorQuery(AasRegistryPaths.submodelDescriptors().extensions().value(), "TAG").value("C");
+		ShellDescriptorQuery smQuery2 = new ShellDescriptorQuery(AasRegistryPaths.submodelDescriptors().extensions().value(), "COLOR").value("R\\.*D").queryType(QueryTypeEnum.REGEX);
+		shellQuery1.combinedWith(shellQuery2);
+		shellQuery2.combinedWith(smQuery1);
+		smQuery1.combinedWith(smQuery2);
+
+		Criteria criteria = builder.buildCriteria(ShellDescriptorSearchRequests.groupQueries(shellQuery1));
+		testIndexFilter(criteria);
+	}
+
+	@Test
 	public void whenGetByAasID_NotAllDocumentsScannedButIndexUsed() {
 		MongoCollection<Document> collection = template.getCollection("aasdescriptors");
 		Document doc = collection.find(new Document("_id", "11")).explain(ExplainVerbosity.QUERY_PLANNER);
@@ -94,6 +135,10 @@ public class MongoDbAasRegistryStorageTest extends AasRegistryStorageTest {
 		Optional<Criteria> criteriaOpt = storage.createFilterCriteria(new DescriptorFilter(kind, type));
 		assertThat(criteriaOpt).isNotEmpty();
 		Criteria criteria = criteriaOpt.get();
+		testIndexFilter(criteria);
+	}
+
+	private void testIndexFilter(Criteria criteria) {
 		MongoCollection<Document> collection = template.getCollection("aasdescriptors");
 		Document doc = collection.find(Query.query(criteria).getQueryObject()).explain(ExplainVerbosity.QUERY_PLANNER);
 		assertThat(doc.toJson()).doesNotContain("\"COLLSCAN\"");

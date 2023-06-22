@@ -30,6 +30,7 @@ import java.util.List;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorQuery;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
@@ -54,7 +55,7 @@ public class ShellDescriptorSearchRequests {
 	
 	
 	@Getter
-	@RequiredArgsConstructor
+	@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 	public static class GroupedQueries {
 		
 		
