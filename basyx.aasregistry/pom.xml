@@ -45,7 +45,7 @@
 	</properties>
 
 	<modules>
-		<module>basyx.aasregistry-plugins</module> 
+		<module>basyx.aasregistry-plugins</module>
 		<module>basyx.aasregistry-service-basemodel</module>
 		<module>basyx.aasregistry-client-native</module>
 		<module>basyx.aasregistry-paths</module>
@@ -231,6 +231,23 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>add-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>src/main/generated</source>
+									</sources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
 						<groupId>org.projectlombok</groupId>
 						<artifactId>lombok-maven-plugin</artifactId>
 						<executions>
@@ -261,7 +278,7 @@
 				<plugins>
 					<plugin>
 						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-maven-plugin</artifactId>						
+						<artifactId>spring-boot-maven-plugin</artifactId>
 						<configuration>
 							<layers>
 								<enabled>true</enabled>
