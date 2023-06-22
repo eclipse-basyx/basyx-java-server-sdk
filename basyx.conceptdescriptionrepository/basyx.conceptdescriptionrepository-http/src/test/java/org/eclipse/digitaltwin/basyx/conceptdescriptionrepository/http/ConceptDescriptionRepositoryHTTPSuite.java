@@ -191,11 +191,11 @@ public abstract class ConceptDescriptionRepositoryHTTPSuite {
 		BaSyxHttpTestUtils.assertSameJSONContent(conceptDescriptionJSON, response);
 	}
 
-	private CloseableHttpResponse createConceptDescription(String conceptDescriptionJSON) throws IOException {
+	protected CloseableHttpResponse createConceptDescription(String conceptDescriptionJSON) throws IOException {
 		return BaSyxHttpTestUtils.executePostOnURL(getURL(), conceptDescriptionJSON);
 	}
 
-	private CloseableHttpResponse deleteConceptDescriptionById(String conceptDescriptionId) throws IOException {
+	protected CloseableHttpResponse deleteConceptDescriptionById(String conceptDescriptionId) throws IOException {
 		return BaSyxHttpTestUtils.executeDeleteOnURL(getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(conceptDescriptionId));
 	}
 
@@ -213,7 +213,7 @@ public abstract class ConceptDescriptionRepositoryHTTPSuite {
 		return BaSyxHttpTestUtils.executeGetOnURL(BaSyxConceptDescriptionHttpTestUtils.getSpecificConceptDescriptionAccessPath(getURL(), conceptDescriptionId));
 	}
 
-	private String requestAllConceptDescriptions() throws IOException, ParseException {
+	protected String requestAllConceptDescriptions() throws IOException, ParseException {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(getURL());
 
 		return BaSyxHttpTestUtils.getResponseAsString(response);
