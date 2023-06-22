@@ -157,6 +157,55 @@
 						</execution>
 					</executions>
 				</plugin>
+				<!-- Create integration test environment -->
+				<plugin>
+					<groupId>com.dkanejs.maven.plugins</groupId>
+					<artifactId>docker-compose-maven-plugin</artifactId>
+					<version>4.0.0</version>
+					<configuration>
+						<composeFile>${project.basedir}/docker-compose.yml</composeFile>
+						<detachedMode>true</detachedMode>
+						<envFile>${project.basedir}/src/test/resources/.env</envFile>
+						<envVars>
+							<BASYX_IMAGE_TAG>${docker.image.tag}</BASYX_IMAGE_TAG>
+							<BASYX_IMAGE_NAME>${docker.username}/${docker.image.name}</BASYX_IMAGE_NAME>
+							<BASYX_CONTAINER_NAME>${BASYX_CONTAINER_NAME}</BASYX_CONTAINER_NAME>
+							<BASYX_CONTAINER_PORT>${BASYX_CONTAINER_PORT}</BASYX_CONTAINER_PORT>
+							<BASYX_HOST_PORT>${BASYX_HOST_PORT}</BASYX_HOST_PORT>
+						</envVars>
+					</configuration>
+					<executions>
+						<execution>
+							<id>docker-compose-up</id>
+							<phase>pre-integration-test</phase>
+							<goals>
+								<goal>up</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>docker-compose-down</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>down</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<!-- Run integration tests -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>3.0.0</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>integration-test</goal>
+								<goal>verify</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -277,6 +326,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-tck</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelrepository-backend-inmemory</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -324,6 +378,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-tck</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-backend-inmemory</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -363,17 +422,6 @@
 				<artifactId>basyx.aasenvironment-http</artifactId>
 				<version>${revision}</version>
 			</dependency>
-			<!-- basyx.conceptdescriptionservice -->
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.conceptdescriptionservice-core</artifactId>
-				<version>${revision}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.conceptdescriptionservice-backend-inmemory</artifactId>
-				<version>${revision}</version>
-			</dependency>
 			<!-- basyx.conceptdescriptionrepository -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -387,7 +435,17 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository-tck</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.conceptdescriptionrepository-backend-inmemory</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository-backend-mongodb</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -438,6 +496,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-tck</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelrepository-backend-inmemory</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
@@ -483,6 +547,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-http</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-tck</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -535,19 +605,6 @@
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
-			<!-- basyx.conceptdescriptionservice -->
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.conceptdescriptionservice-core</artifactId>
-				<version>${revision}</version>
-				<classifier>tests</classifier>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.conceptdescriptionservice-backend-inmemory</artifactId>
-				<version>${revision}</version>
-				<classifier>tests</classifier>
-			</dependency>
 			<!-- basyx.conceptdescriptionrepository -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -563,7 +620,19 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository-tck</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.conceptdescriptionrepository-backend-inmemory</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository-backend-mongodb</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
