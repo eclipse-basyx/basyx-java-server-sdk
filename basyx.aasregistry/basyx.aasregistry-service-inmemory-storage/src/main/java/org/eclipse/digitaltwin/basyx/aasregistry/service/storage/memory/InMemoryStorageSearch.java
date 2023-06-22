@@ -43,7 +43,6 @@ import org.eclipse.digitaltwin.basyx.aasregistry.model.Sorting;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SortingPath;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPathProcessor;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPathProcessor.AssetAdministrationShellDescriptorVisitor;
-import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPathProcessor.ProcessInstruction;
 
 import lombok.RequiredArgsConstructor;
 
@@ -129,11 +128,10 @@ class InMemoryStorageSearch {
 			private String value = ""; // for comparing we need non-null values so use an empty string
 
 			@Override
-			public ProcessInstruction visitResolvedPathValue(String path, Object[] objectPathToValue, String value) {
-				// we do not sort by list content for now so just abort on the first (and only)
-				// path
-				this.value = value;
-				return ProcessInstruction.ABORT;
+			public void visitResolvedPathValue(String path, Object[] objectPathToValue, String value) {
+				if (this.value == null || this.value.isEmpty()) {
+					this.value = value;
+				}
 			}
 		}
 	}

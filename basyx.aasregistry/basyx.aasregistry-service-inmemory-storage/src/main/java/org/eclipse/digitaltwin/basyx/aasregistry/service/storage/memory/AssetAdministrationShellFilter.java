@@ -40,7 +40,6 @@ import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchRequ
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPathProcessor;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPathProcessor.AssetAdministrationShellDescriptorVisitor;
-import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPathProcessor.ProcessInstruction;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorCopies;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.ShellDescriptorSearchRequests;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.ShellDescriptorSearchRequests.GroupedQueries;
@@ -134,11 +133,10 @@ public class AssetAdministrationShellFilter {
 		private boolean wasMatching;
 
 		@Override
-		public ProcessInstruction visitResolvedPathValue(String path, Object[] objectPathToValue, String value) {
+		public void visitResolvedPathValue(String path, Object[] objectPathToValue, String value) {
 			if (matcher.test(objectPathToValue, value)) {
 				wasMatching = true;
 			}
-			return ProcessInstruction.CONTINUE;
 		}
 
 		public boolean wasMatching() {
@@ -161,7 +159,7 @@ public class AssetAdministrationShellFilter {
 		}
 
 		@Override
-		public ProcessInstruction visitResolvedPathValue(String path, Object[] objectPathToValue, String value) {
+		public void visitResolvedPathValue(String path, Object[] objectPathToValue, String value) {
 			SubmodelDescriptor current = (SubmodelDescriptor) objectPathToValue[1];
 			List<BiPredicate<Object[], String>> remaining = submodelsWithRemainingMatchers.get(current);
 			Iterator<BiPredicate<Object[], String>> remainingIter = remaining.iterator();
@@ -171,7 +169,6 @@ public class AssetAdministrationShellFilter {
 					remainingIter.remove();
 				}
 			}
-			return ProcessInstruction.CONTINUE;
 		}
 
 		public List<SubmodelDescriptor> getMatchingSubmodels() {
