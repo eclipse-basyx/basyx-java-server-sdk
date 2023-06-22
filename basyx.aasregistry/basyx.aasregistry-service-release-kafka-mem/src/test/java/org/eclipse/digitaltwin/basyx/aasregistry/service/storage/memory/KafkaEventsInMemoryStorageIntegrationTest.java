@@ -24,9 +24,19 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.storage.memory;
 
+import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ShellDescriptorQuery;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ShellDescriptorQuery.QueryTypeEnum;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ShellDescriptorSearchRequest;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ShellDescriptorSearchResponse;
+import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.BaseEventListener;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.BaseIntegrationTest;
 import org.junit.ClassRule;
+import org.junit.Test;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -34,6 +44,10 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @TestPropertySource(properties = { "registry.type=inMemory", "events.sink=kafka" })

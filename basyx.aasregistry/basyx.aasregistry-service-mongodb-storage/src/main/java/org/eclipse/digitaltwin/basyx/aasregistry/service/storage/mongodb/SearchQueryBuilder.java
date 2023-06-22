@@ -39,6 +39,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.model.SortDirection;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.Sorting;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SortingPath;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.ShellDescriptorSearchRequests.GroupedQueries;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
@@ -48,7 +49,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 
-class SearchQueryBuilder {
+public class SearchQueryBuilder {
 
 	private final Map<String, String> pathMappings;
 
@@ -59,15 +60,17 @@ class SearchQueryBuilder {
 		pathMappings.put(AasRegistryPaths.submodelDescriptors().id(), AasRegistryPaths.submodelDescriptors() + "." + "_id");
 	}
 
-	public Criteria buildCriteria(ShellDescriptorQuery query) {
-		if (query == null) {
-			String idPath = AasRegistryPaths.id();
-			idPath = pathMappings.getOrDefault(idPath, idPath);
-			return Criteria.where(pathMappings.getOrDefault(idPath, idPath)).exists(true);
+	public Criteria buildCriteria(GroupedQueries grouped) {
+		SearchPathCriteriaBuilder builder = new SearchPathCriteriaBuilder(pathMappings);
+		List<Criteria> criterias = builder.buildCriterias(grouped);
+		if (criterias.isEmpty()) {
+			return Criteria.where(pathMappings.get(AasRegistryPaths.id())).exists(true);
 		}
-		String path = query.getPath();
-		SearchPathCriteriaBuilder criteriaBuilder = new SearchPathCriteriaBuilder(pathMappings);
-		return criteriaBuilder.buildSearchPathCriteria(path, query.getValue(), query.getQueryType());
+		if (criterias.size() == 1) {
+			return criterias.get(0);
+		}
+		return new Criteria().andOperator(criterias);
+
 	}
 
 	public void withSorting(Sorting sorting, List<AggregationOperation> aggregationOps) {
@@ -140,13 +143,10 @@ class SearchQueryBuilder {
 			aggregations.add(Aggregation.limit(size));
 		}
 	}
-	
-	public void withProjection(ShellDescriptorQuery query, List<AggregationOperation> ops) {
-		if (query == null) {
-			return;
-		}
+
+	public void withProjection(List<ShellDescriptorQuery> submodelQueries, List<AggregationOperation> ops) {
 		SearchPathProjectionBuilder projBuilder = new SearchPathProjectionBuilder(pathMappings);
-		Optional<AggregationExpression> filterOpt = projBuilder.buildSubmodelFilter(query.getPath(), query.getValue(), query.getQueryType());
+		Optional<AggregationExpression> filterOpt = projBuilder.buildSubmodelFilter(submodelQueries);
 		if (filterOpt.isPresent()) {
 			AggregationExpression filter = filterOpt.get();
 			ops.add(Aggregation.project(AssetAdministrationShellDescriptor.class).and(filter).as(AasRegistryPaths.SEGMENT_SUBMODEL_DESCRIPTORS));

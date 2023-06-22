@@ -27,41 +27,35 @@ package org.eclipse.digitaltwin.basyx.aasregistry.service.storage.memory;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.Page;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorQuery;
-import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorQuery.QueryTypeEnum;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchRequest;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchResponse;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SortDirection;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.Sorting;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SortingPath;
-import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPathProcessor;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPathProcessor.AssetAdministrationShellDescriptorVisitor;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPathProcessor.ProcessInstruction;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorCopies;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 class InMemoryStorageSearch {
 
-	private final Collection<AssetAdministrationShellDescriptor> aasDecriptors;
+	private final Collection<AssetAdministrationShellDescriptor> aasDescriptors;
 
 	public ShellDescriptorSearchResponse performSearch(ShellDescriptorSearchRequest request) {
-		ShellDescriptorQuery query = request.getQuery();
-		Stream<AssetAdministrationShellDescriptor> matchingDescriptors = resolveMatchingDescriptors(query).stream();
+
+		Stream<AssetAdministrationShellDescriptor> matchingDescriptors = resolveMatchingDescriptors(request).stream();
+
 		Stream<AssetAdministrationShellDescriptor> sorted = applySorting(matchingDescriptors, request.getSortBy());
 		List<AssetAdministrationShellDescriptor> items = sorted.collect(Collectors.toList());
 		long totalSizeOverAllPages = items.size();
@@ -71,7 +65,7 @@ class InMemoryStorageSearch {
 
 	private Stream<AssetAdministrationShellDescriptor> applySorting(Stream<AssetAdministrationShellDescriptor> matchingDescriptors, Sorting sortBy) {
 		if (sortBy == null) {
-			return matchingDescriptors;
+			sortBy = getDefaultSorting();
 		}
 		List<SortingPath> sortingPath = sortBy.getPath();
 		Comparator<AssetAdministrationShellDescriptor> comparator = null;
@@ -91,6 +85,10 @@ class InMemoryStorageSearch {
 		}
 	}
 
+	private Sorting getDefaultSorting() {
+		 return new Sorting(List.of(SortingPath.ID)).direction(SortDirection.ASC);
+	}
+
 	private List<AssetAdministrationShellDescriptor> applyPagination(List<AssetAdministrationShellDescriptor> descriptors, Page page) {
 		if (page == null) {
 			return descriptors;
@@ -101,28 +99,17 @@ class InMemoryStorageSearch {
 		return descriptors.stream().skip(startIndex).limit(size).collect(Collectors.toList());
 	}
 
-	private Collection<AssetAdministrationShellDescriptor> resolveMatchingDescriptors(ShellDescriptorQuery query) {
-		if (query == null) { // match all
-			return aasDecriptors;
+	private Collection<AssetAdministrationShellDescriptor> resolveMatchingDescriptors(ShellDescriptorSearchRequest request) {
+		Collection<AssetAdministrationShellDescriptor> toFilter = new LinkedList<>(aasDescriptors);
+		if (request == null) { // match all
+			return toFilter;
 		}
-		String queryPath = query.getPath();
-		Predicate<String> matcher = createMatcher(query.getQueryType(), query.getValue());
-		List<AssetAdministrationShellDescriptor> matchingDescriptors = new LinkedList<>();
-		for (AssetAdministrationShellDescriptor eachDescriptor : aasDecriptors) {
-			MatchingVisitor visitor = new MatchingVisitor(matcher);
-			AasRegistryPathProcessor processor = new AasRegistryPathProcessor(eachDescriptor);
-			processor.visitValuesAtPath(queryPath, visitor);
-			visitor.getResultClone().ifPresent(matchingDescriptors::add);
+		ShellDescriptorQuery query = request.getQuery();
+		if (query == null) {
+			return toFilter;
 		}
-		return matchingDescriptors;
-	}
-
-	private Predicate<String> createMatcher(QueryTypeEnum queryType, String value) {
-		if (queryType == QueryTypeEnum.REGEX) {
-			return Pattern.compile(value).asMatchPredicate();
-		} else {
-			return Predicate.isEqual(value);
-		}
+		AssetAdministrationShellFilter filter = new AssetAdministrationShellFilter(aasDescriptors);
+		return filter.filterByRequest(request);
 	}
 
 	@RequiredArgsConstructor
@@ -163,54 +150,6 @@ class InMemoryStorageSearch {
 		public String resolveValue(AssetAdministrationShellDescriptor descriptor) {
 			Map<String, String> result = cachedValues.computeIfAbsent(descriptor, k -> new HashMap<>());
 			return result.computeIfAbsent(path, k -> super.resolveValue(descriptor));
-		}
-
-	}
-
-	@RequiredArgsConstructor
-	private static final class MatchingVisitor implements AssetAdministrationShellDescriptorVisitor {
-
-		private final Predicate<String> matcher;
-		private AssetAdministrationShellDescriptor aasDescriptor;
-		// if multiple values of a submodel property fire (possible in list-properties)
-		// we will have multiple invocations with a submodel
-		// thus we need a set here to avoid duplicates
-		private LinkedHashSet<SubmodelDescriptor> submodels;
-
-		@Override
-		public ProcessInstruction visitResolvedPathValue(String path, Object[] objectPathToValue, String value) {
-			if (matcher.test(value)) {
-				aasDescriptor = (AssetAdministrationShellDescriptor) objectPathToValue[0];
-				if (wasInSubmodel(objectPathToValue)) {
-					if (submodels == null) {
-						submodels = new LinkedHashSet<>();
-					}
-					submodels.add((SubmodelDescriptor) objectPathToValue[1]);
-					return ProcessInstruction.CONTINUE; // do also other submodels match?
-				} else {
-					// found a value -> we will choose the hole AasDescriptor
-					return ProcessInstruction.ABORT;
-				}
-			} else { // continue searching
-				return ProcessInstruction.CONTINUE;
-			}
-		}
-
-		private boolean wasInSubmodel(Object[] objectPathToValue) {
-			return objectPathToValue.length >= 2 && objectPathToValue[1] instanceof SubmodelDescriptor;
-		}
-
-		public Optional<AssetAdministrationShellDescriptor> getResultClone() {
-			if (aasDescriptor == null) {
-				return Optional.empty();
-			} else {
-				// we alter the storage object so we need a copy here
-				AssetAdministrationShellDescriptor toReturn = DescriptorCopies.deepClone(aasDescriptor);
-				if (submodels != null) {
-					toReturn.setSubmodelDescriptors(new LinkedList<>(submodels));
-				}
-				return Optional.of(toReturn);
-			}
 		}
 	}
 }

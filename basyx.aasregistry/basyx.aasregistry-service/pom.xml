@@ -75,7 +75,6 @@
 
 							<inputSpec>${openapi.result.file}</inputSpec>
 							<generatorName>spring</generatorName>
-							<language>spring</language>
 							<library>spring-boot</library>
 							<output>${project.basedir}/${generated.folder}</output>
 
@@ -178,6 +177,11 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>

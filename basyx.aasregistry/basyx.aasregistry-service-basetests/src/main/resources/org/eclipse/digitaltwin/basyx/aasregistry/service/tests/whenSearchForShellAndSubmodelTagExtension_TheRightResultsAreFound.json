@@ -1,0 +1,43 @@
+[
+	{
+		"id": "identification_2",
+		"extensions": [
+			{
+				"name": "TAG",
+				"value": "BLUE"
+			},
+			{
+				"name": "DEPRECATED",
+				"value": "true"
+			}
+		],
+		"submodelDescriptors": [
+			{
+				"id" : "2.2",
+				"extensions": [
+					{
+						"name": "TAG",
+						"value": "RED"
+					},
+					{
+						"name": "TAG",
+						"value": "BLUE"
+					}
+				]
+			},
+			{
+				"id" : "2.3",
+				"extensions": [
+					{
+						"name": "TAG",
+						"value": "GREEN"
+					},
+					{
+						"name": "TAG",
+						"value": "BLUE"
+					}
+				]
+			}
+		]
+	}
+]

@@ -147,10 +147,17 @@
         type: string
       value:
         type: string
+      extensionName:
+        type: string
+        description: |
+          If this property is set, the query applies only to the extension of this name. In this case,
+          the path must reference the value property of the extension object.
       queryType:
         type: string
         enum: ['match', 'regex']
         default: 'match'
+      combinedWith: 
+        $ref: '#/components/schemas/ShellDescriptorQuery'
 - op: add
   path: /components/schemas/Page
   value: 

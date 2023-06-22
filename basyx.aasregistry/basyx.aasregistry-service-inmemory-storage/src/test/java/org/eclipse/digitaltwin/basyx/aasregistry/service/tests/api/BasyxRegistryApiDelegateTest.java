@@ -279,7 +279,7 @@ public class BasyxRegistryApiDelegateTest {
 	@Test
 	public void whenMatchSearchForAasDescriptor_thenReturnResult() {
 		AssetAdministrationShellDescriptor input = new AssetAdministrationShellDescriptor(ID_2);
-		input.submodelDescriptors(List.of((SubmodelDescriptor) new SubmodelDescriptor(ID_2_1, List.of())));
+		input.addSubmodelDescriptorsItem(new SubmodelDescriptor(ID_2_1, List.of()));
 		ResponseEntity<Void> response = aasController.putAssetAdministrationShellDescriptorById(encode(ID_2), input);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
@@ -294,7 +294,7 @@ public class BasyxRegistryApiDelegateTest {
 	@Test
 	public void whenRegexSearchForAasDescriptor_thenReturnResult() {
 		AssetAdministrationShellDescriptor input = new AssetAdministrationShellDescriptor(ID_2);
-		input.submodelDescriptors(List.of((SubmodelDescriptor) new SubmodelDescriptor(ID_2_1, List.of()).idShort(ID_2_1)));
+		input.addSubmodelDescriptorsItem(new SubmodelDescriptor(ID_2_1, List.of()).idShort(ID_2_1));
 		ResponseEntity<Void> response = aasController.putAssetAdministrationShellDescriptorById(encode(ID_2), input);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 

@@ -1,0 +1,88 @@
+[
+	{
+		"id": "identification_1",
+		"submodelDescriptors": [
+			{
+				"id" : "1.1",
+				"extensions": [
+					{
+						"name": "COLOR",
+						"value": "RED"
+					},
+					{
+						"name": "COLOR",
+						"value": "GREEN"
+					},
+					{
+						"name": "SHAPE",
+						"value": "CIRCLE"
+					}
+				]
+			},
+			{
+				"id" : "1.2",
+				"extensions": [
+					{
+						"name": "COLOR",
+						"value": "RED"
+					},
+					{
+						"name": "COLOR",
+						"value": "BLUE"
+					},
+					{
+						"name": "SHAPE",
+						"value": "RECTANGLE"
+					},
+					{
+						"name": "SHAPE",
+						"value": "SQUARE"
+					}
+				]
+			},
+			{
+				"id" : "1.3",
+				"extensions": [
+					{
+						"name": "COLOR",
+						"value": "GREEN"
+					},
+					{
+						"name": "COLOR",
+						"value": "BLUE"
+					},
+					{
+						"name": "SHAPE",
+						"value": "CIRCLE"
+					}
+				]
+			},
+			{
+				"id" : "1.4",
+				"extensions": [
+					{
+						"name": "MY_FAVORITE_COLOR",
+						"value": "BLUE"
+					},
+					{
+						"name": "SHAPE",
+						"value": "RECTANGLE"
+					}
+				]
+			},
+			{
+				"id" : "1.5",
+				"extensions": [
+					{
+						"name": "SHAPE",
+						"value": "RECTANGLE"
+					},
+					{
+						"name": "COLOR",
+						"value": "BLUE"
+					}
+				]
+			}
+		]
+	}
+]
