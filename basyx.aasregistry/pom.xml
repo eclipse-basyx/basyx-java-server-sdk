@@ -40,7 +40,7 @@
 		<openapitools.version>6.6.0</openapitools.version>
 		<openapitools.jacksonnullable.version>0.2.6</openapitools.jacksonnullable.version>
 		<jsr305.version>3.0.2</jsr305.version>
-		<jsonpatch.plugin.version>0.5.0-SNAPSHOT</jsonpatch.plugin.version>
+		<jsonpatch.plugin.version>0.5.0</jsonpatch.plugin.version>
 		<patch.base-extensions.name>patch-base-extensions.yaml</patch.base-extensions.name>
 	</properties>
 
@@ -105,6 +105,11 @@
 					<groupId>io.fabric8</groupId>
 					<artifactId>docker-maven-plugin</artifactId>
 					<version>${docker.maven.plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>de.dfki.cos.basys.common</groupId>
+					<artifactId>jsonpatch-maven-plugin</artifactId>
+					<version>${jsonpatch.plugin.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -207,11 +212,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-plugin-plugin</artifactId>
 				<version>${maven-plugin.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.yaml</groupId>
-				<artifactId>snakeyaml</artifactId>
-				<version>${snakeyaml.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.github.spullara.mustache.java</groupId>

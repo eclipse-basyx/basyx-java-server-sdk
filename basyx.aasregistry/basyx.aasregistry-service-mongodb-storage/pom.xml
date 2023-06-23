@@ -50,7 +50,6 @@
 			<plugin>
 				<groupId>de.dfki.cos.basys.common</groupId>
 				<artifactId>jsonpatch-maven-plugin</artifactId>
-				<version>${jsonpatch.plugin.version}</version>
 				<executions>
 					<execution>
 						<id>base-extensions</id>

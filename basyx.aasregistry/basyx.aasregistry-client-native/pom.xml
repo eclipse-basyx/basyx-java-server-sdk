@@ -44,10 +44,9 @@
 			<plugin>
 				<groupId>de.dfki.cos.basys.common</groupId>
 				<artifactId>jsonpatch-maven-plugin</artifactId>
-				<version>${jsonpatch.plugin.version}</version>
 				<executions>
 					<execution>
-					<phase>generate-sources</phase>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>jsonpatch-maven-plugin</goal>
 						</goals>
