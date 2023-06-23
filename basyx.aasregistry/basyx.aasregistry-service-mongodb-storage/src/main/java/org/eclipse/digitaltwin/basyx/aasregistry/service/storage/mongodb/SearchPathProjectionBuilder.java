@@ -24,12 +24,14 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.bson.Document;
+import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorQuery;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorQuery.QueryTypeEnum;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.SegmentBlocksBuilder.SegmentBlock;
@@ -37,9 +39,11 @@ import org.springframework.data.mongodb.core.aggregation.AggregationExpression;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperationContext;
 import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.data.mongodb.core.aggregation.ArrayOperators.Filter;
+import org.springframework.data.mongodb.core.aggregation.BooleanOperators;
 import org.springframework.data.mongodb.core.aggregation.ComparisonOperators;
 import org.springframework.data.mongodb.core.aggregation.ConditionalOperators;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -47,51 +51,90 @@ public class SearchPathProjectionBuilder {
 
 	private final Map<String, String> pathMappings;
 
-	public Optional<AggregationExpression> buildSubmodelFilter(String searchPath, String value, QueryTypeEnum queryType) {
-		if (!searchPath.startsWith(AasRegistryPaths.SEGMENT_SUBMODEL_DESCRIPTORS + ".")) {
-			return Optional.empty(); // we just want to shrink the matching submodules
+	public Optional<AggregationExpression> buildSubmodelFilter(List<ShellDescriptorQuery> submodelQueries) {
+		SimpleVarNameProvider varNameProvider = new SimpleVarNameProvider();
+		String variableName = varNameProvider.next();
+
+		String pathReference = "$" + AasRegistryPaths.SEGMENT_SUBMODEL_DESCRIPTORS;
+
+		List<AggregationExpression> expressions = new ArrayList<>();
+		for (ShellDescriptorQuery eachQuery : submodelQueries) {
+			AggregationExpression expression = buildSubmodelFilter(varNameProvider, eachQuery, variableName);
+			if (expression != null) {
+				expressions.add(expression);
+			}
 		}
+		if (expressions.isEmpty()) {
+			return Optional.empty();
+		}
+		if (expressions.size() == 1) {
+			AggregationExpression inner = expressions.get(0);
+			return Optional.of(ArrayOperators.Filter.filter(pathReference).as(variableName).by(inner));
+		}
+		BooleanOperators.And and = BooleanOperators.And.and();
+		for (AggregationExpression eachExpression : expressions) {
+			and = and.andExpression(eachExpression);
+		}
+		return Optional.of(ArrayOperators.Filter.filter(pathReference).as(variableName).by(and));
+	}
+
+	private AggregationExpression buildSubmodelFilter(SimpleVarNameProvider varNameProvider, ShellDescriptorQuery query, String variableName) {
 		SegmentBlocksBuilder sbBuilder = new SegmentBlocksBuilder(pathMappings);
-		List<SegmentBlock> blockSegements = sbBuilder.buildSegmentBlocks(searchPath);
-		FilterBuilder builder = new FilterBuilder(value, queryType, blockSegements);
-		return Optional.of(builder.buildSubmodelFilter());
-		
+		List<SegmentBlock> blockSegments = sbBuilder.buildSegmentBlocks(query.getPath());
+		Iterator<SegmentBlock> blockSegmentIter = blockSegments.iterator();
+		// skip submodelDescriptor segment
+		SegmentBlock block = blockSegmentIter.next();
+		if (!AasRegistryPaths.SEGMENT_SUBMODEL_DESCRIPTORS.equals(block.getSegment())) {
+			return null;
+		}
+
+		FilterRecursionContext context = new FilterRecursionContext(blockSegmentIter, query.getValue(), query.getQueryType(), query.getExtensionName());
+
+		FilterBuilder builder = new FilterBuilder(varNameProvider);
+		AggregationExpression expr = builder.buildFilterRecursively(context, variableName);
+		if (expr instanceof Filter) {
+			ConditionalOperators.IfNull ifNullEmptySet = ConditionalOperators.ifNull(expr).then(List.of());
+			ArrayOperators.Size sizeOp = ArrayOperators.Size.lengthOfArray(ifNullEmptySet);
+			return ComparisonOperators.Ne.valueOf(sizeOp).notEqualToValue(0);
+		}
+		return expr;
 	}
 
 	@RequiredArgsConstructor
 	private static class FilterBuilder {
 
-		private final String value;
-		private final QueryTypeEnum queryType;
-		private final List<SegmentBlock> segments;
+		private final SimpleVarNameProvider varNameProvider;
 
-		public AggregationExpression buildSubmodelFilter() {
-			SimpleVarNameProvider varNameProvider = new SimpleVarNameProvider();
-			return buildFilterRecursively(varNameProvider, segments.iterator(), null);
-		}
-
-		private AggregationExpression buildFilterRecursively(SimpleVarNameProvider varNameProvider, Iterator<SegmentBlock> filters, String parentVariableName) {
-			SegmentBlock segmentBlock = filters.next();
+		private AggregationExpression buildFilterRecursively(FilterRecursionContext context, String parentVariableName) {
+			SegmentBlock segmentBlock = context.segmentsIter.next();
 			String segment = segmentBlock.getSegment();
 			String pathReference = getPathReferenceByParentVariable(segment, parentVariableName);
+
 			String variableName = varNameProvider.next();
 			if (segmentBlock.isListLeaf()) {
 				String variableNameRef = "$$" + variableName;
 				AggregationExpression inner;
-				if (queryType == QueryTypeEnum.REGEX) {
-					inner = new SimpleRegexMatch(variableNameRef, value);
+				if (context.getQueryType() == QueryTypeEnum.REGEX) {
+					inner = new SimpleRegexMatch(variableNameRef, context.getValue());
 				} else {
-					inner = ComparisonOperators.Eq.valueOf(variableNameRef).equalToValue(value);
+					inner = ComparisonOperators.Eq.valueOf(variableNameRef).equalToValue(context.getValue());
 				}
 				return ArrayOperators.Filter.filter(pathReference).as(variableName).by(inner);
 			} else if (segmentBlock.isLeaf()) {
-				if (queryType == QueryTypeEnum.REGEX) {
-					return new SimpleRegexMatch(pathReference, value);
+				AggregationExpression expression;
+				if (context.getQueryType() == QueryTypeEnum.REGEX) {
+					expression = new SimpleRegexMatch(pathReference, context.value);
 				} else {
-					return ComparisonOperators.Eq.valueOf(pathReference).equalToValue(value);
+					expression = ComparisonOperators.Eq.valueOf(pathReference).equalToValue(context.value);
 				}
+				if (context.getExtensionName() != null) {
+					String extensionReference = getPathReferenceByParentVariable(AasRegistryPaths.SEGMENT_NAME, parentVariableName);
+					AggregationExpression extensionNameExpr = ComparisonOperators.Eq.valueOf(extensionReference).equalToValue(context.getExtensionName());
+					return BooleanOperators.And.and(extensionNameExpr, expression);
+				}
+				return expression;
 			} else {
-				AggregationExpression innerFilter = buildFilterRecursively(varNameProvider, filters, variableName);
+				AggregationExpression innerFilter = buildFilterRecursively(context, variableName);
 				if (innerFilter instanceof Filter) {
 					ConditionalOperators.IfNull ifNullEmptySet = ConditionalOperators.ifNull(innerFilter).then(List.of());
 					ArrayOperators.Size sizeOp = ArrayOperators.Size.lengthOfArray(ifNullEmptySet);
@@ -109,6 +152,17 @@ public class SearchPathProjectionBuilder {
 				return "$$" + parentVariableName + "." + segment;
 			}
 		}
+	}
+
+	@RequiredArgsConstructor
+	@Data
+	private static class FilterRecursionContext {
+
+		private final Iterator<SegmentBlock> segmentsIter;
+		private final String value;
+		private final QueryTypeEnum queryType;
+		private final String extensionName;
+
 	}
 
 	@RequiredArgsConstructor

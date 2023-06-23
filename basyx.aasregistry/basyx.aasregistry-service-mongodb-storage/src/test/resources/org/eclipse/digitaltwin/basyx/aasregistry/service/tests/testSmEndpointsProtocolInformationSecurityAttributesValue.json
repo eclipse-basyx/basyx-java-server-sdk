@@ -1,0 +1,15 @@
+{
+	"submodelDescriptors": {
+		"$elemMatch": {
+			"endpoints": {
+				"$elemMatch": {
+					"protocolInformation.securityAttributes": {
+						"$elemMatch": {
+							"value": "attrValue"
+						}
+					}
+				}
+			}
+		}
+	}
+}

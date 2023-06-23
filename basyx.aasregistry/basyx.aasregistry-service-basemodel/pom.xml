@@ -20,6 +20,7 @@
 	</properties>
 
 	<build>
+		<sourceDirectory>${generated.folder}/java</sourceDirectory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
@@ -32,24 +33,32 @@
 							</excludes>
 							<followSymlinks>false</followSymlinks>
 						</fileset>
+						<fileset>
+							<directory>${openapi.folder}</directory>
+							<excludes>
+								<exclude>.gitkeep</exclude>
+							</excludes>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
 					</filesets>
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.aasregistry-plugins</artifactId>
+				<groupId>de.dfki.cos.basys.common</groupId>
+				<artifactId>jsonpatch-maven-plugin</artifactId>
 				<executions>
 					<execution>
+						<phase>generate-sources</phase>
 						<goals>
-							<goal>yaml-overlay</goal>
+							<goal>jsonpatch-maven-plugin</goal>
 						</goals>
+						<configuration>
+							<input>${project.basedir}/../${openapi.folder.name}/${openapi.base.name}</input>
+							<patch>${project.basedir}/../${openapi.folder.name}/${patch.base-extensions.name}</patch>
+							<output>${openapi.result.file}</output>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<base>${project.basedir}/../${openapi.folder.name}/${openapi.base.name}</base>
-					<overlay>${project.basedir}/../${openapi.folder.name}/${openapi.extensions.name}</overlay>
-					<out>${openapi.result.file}</out>
-				</configuration>
 			</plugin>
  			<plugin>
 				<groupId>org.openapitools</groupId>
@@ -77,6 +86,7 @@
 								<oas3>true</oas3>
 								<useSpringController>true</useSpringController>
 								<modelPackage>org.eclipse.digitaltwin.basyx.aasregistry.model</modelPackage>
+								<instantiationTypes>array=ArrayList,map=HashMap</instantiationTypes>
 							</configOptions>
 						</configuration>
 					</execution>

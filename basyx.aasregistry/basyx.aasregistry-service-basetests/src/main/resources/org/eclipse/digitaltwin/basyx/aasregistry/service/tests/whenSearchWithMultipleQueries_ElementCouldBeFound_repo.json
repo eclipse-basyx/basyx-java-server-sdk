@@ -1,0 +1,49 @@
+[
+	{
+		"id": "identification_1",
+		"description": [
+		{
+		  "language": "de-DE", 
+		  "text": "a"
+		},
+		{
+		  "language": "de-DE", 
+		  "text": "b"
+		}
+		]
+	},
+	{
+		"id": "identification_2",
+		"description": [
+		{
+		  "language": "de-DE", 
+		  "text": "a"
+		},
+		{
+		  "language": "de-DE", 
+		  "text": "b"
+		},
+		{
+		  "language": "de-DE", 
+		  "text": "c"
+		}
+		]
+	},
+	{
+		"id": "identification_3",
+		"description": [
+		{
+		  "language": "de-DE", 
+		  "text": "b"
+		},
+		{
+		  "language": "de-DE", 
+		  "text": "c"
+		},
+		{
+		  "language": "de-DE", 
+		  "text": "d"
+		}
+		]
+	}	
+]

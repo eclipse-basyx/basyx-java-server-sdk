@@ -26,13 +26,19 @@ package org.eclipse.digitaltwin.basyx.aasregistry.service.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
+import org.bson.json.JsonWriterSettings;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetKind;
+import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorQuery;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorQuery.QueryTypeEnum;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.SearchPathCriteriaBuilder;
+import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.ShellDescriptorSearchRequests;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.ShellDescriptorSearchRequests.GroupedQueries;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.SearchQueryBuilder;
+import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -41,105 +47,92 @@ public class SearchPathCriteriaBuilderTest {
 
 	private static Map<String, String> PATH_MAPPINGS = new HashMap<>();
 
+	@Rule
+	public final TestResourcesLoader loader = new TestResourcesLoader();
+
 	static {
 		PATH_MAPPINGS.put(AasRegistryPaths.id(), "_id");
 		PATH_MAPPINGS.put(AasRegistryPaths.submodelDescriptors().id(), AasRegistryPaths.submodelDescriptors() + "." + "_id");
 	}
 
-	private SearchPathCriteriaBuilder builder = new SearchPathCriteriaBuilder(PATH_MAPPINGS);
+	private SearchQueryBuilder builder = new SearchQueryBuilder();
 
 	@Test
-	public void testId() {
-		String path = AasRegistryPaths.id();
-		String value = "myId";
-
-		String result = buildSearchPathQuery(path, value);
-		String expected = "{\"_id\": \"myId\"}";
-		assertThat(result).isEqualTo(expected);
+	public void testId() throws IOException {
+		checkSearchPathMatchResult(AasRegistryPaths.id(), "myId");	
+	}
+	
+	@Test
+	public void testIdShort() throws IOException {
+		checkSearchPathMatchResult(AasRegistryPaths.idShort(), "myIdShort");
 	}
 
 	@Test
-	public void testIdShort() {
-		String path = AasRegistryPaths.idShort();
-		String value = "myIdShort";
-		String result = buildSearchPathQuery(path, value);
-		String expected = "{\"idShort\": \"myIdShort\"}";
-		assertThat(result).isEqualToIgnoringWhitespace(expected);
-	}
-
-	@Test
-	public void testAssetKindEnum() {
-		String path = AasRegistryPaths.assetKind();
+	public void testAssetKindEnum() throws IOException {
 		String value = AssetKind.INSTANCE.toString();
 		assertThat(value).isEqualTo("Instance");
-		String result = buildSearchPathQuery(path, value);
-		String expected = "{\"assetKind\": \"Instance\"}";
-		assertThat(result).isEqualToIgnoringWhitespace(expected);
+		checkSearchPathMatchResult(AasRegistryPaths.assetKind(), value);
 	}
 
 	@Test
-	public void testSubmodelIdShort() {
-		String path = AasRegistryPaths.submodelDescriptors().idShort();
-		String value = "myId";
-		String result = buildSearchPathQuery(path, value);
-		String expected = "{\"submodelDescriptors\": {\"$elemMatch\": {\"idShort\": \"myId\"}}}";
-		assertThat(result).isEqualTo(expected);
+	public void testSubmodelIdShort() throws IOException {
+		checkSearchPathMatchResult(AasRegistryPaths.submodelDescriptors().idShort(), "myId");
 	}
 
 	@Test
-	public void testSubmodelId() {
-		String path = AasRegistryPaths.submodelDescriptors().id();
-		String value = "myId";
-		String result = buildSearchPathQuery(path, value);
-		String expected = "{\"submodelDescriptors\": {\"$elemMatch\": {\"_id\": \"myId\"}}}";
-		assertThat(result).isEqualToIgnoringWhitespace(expected);
+	public void testSubmodelId() throws IOException {
+		checkSearchPathMatchResult(AasRegistryPaths.submodelDescriptors().id(), "myId");
 	}
 
 	@Test
-	public void testAdministrationCreatorKeysType() {
-		String path = AasRegistryPaths.administration().creator().keys().type();
-		String value = "key1";
-		String result = buildSearchPathQuery(path, value);
-		String expected = "{\"administration.creator.keys\": {\"$elemMatch\": {\"type\": \"key1\"}}}";
-		assertThat(result).isEqualToIgnoringWhitespace(expected);
+	public void testAdministrationCreatorKeysType() throws IOException {
+		checkSearchPathMatchResult(AasRegistryPaths.administration().creator().keys().type(), "key1");
 	}
 
 	@Test
-	public void testSubmodelDescriptorsEndpointsProtocolInformationSecurityAttributesValue() {
-		String path = AasRegistryPaths.submodelDescriptors().endpoints().protocolInformation().securityAttributes().value();
-		String value = "attrValue";
-		String result = buildSearchPathQuery(path, value);
-		String expected = "{\"submodelDescriptors\": { \"$elemMatch\": {\"endpoints\": {\"$elemMatch\": { \"protocolInformation.securityAttributes\": {\"$elemMatch\": {\"value\": \"attrValue\" }}}}}}}";
-		assertThat(result).isEqualToIgnoringWhitespace(expected);
-
+	public void testSmEndpointsProtocolInformationSecurityAttributesValue() throws IOException {
+		checkSearchPathMatchResult(AasRegistryPaths.submodelDescriptors().endpoints().protocolInformation().securityAttributes().value(), "attrValue");
 	}
 
 	@Test
-	public void testEndpointsProtocolInformationEndpointProtocolVersion() {
-		String path = AasRegistryPaths.endpoints().protocolInformation().endpointProtocolVersion();
-		String value = "1";
-		String result = buildSearchPathQuery(path, value);
-		// TODO check if this is correct
-		String expected = "{\"endpoints\": {\"$elemMatch\": { \"protocolInformation.endpointProtocolVersion\": {\"$in\" : [ \"1\" ]} }}}";
-		assertThat(result).isEqualToIgnoringWhitespace(expected);
+	public void testEndpointsProtocolInformationEndpointProtocolVersion() throws IOException {
+		checkSearchPathMatchResult(AasRegistryPaths.endpoints().protocolInformation().endpointProtocolVersion(), "1");
+	}
+	
+	@Test
+	public void testEndpointsProtocolInformationEndpointProtocolVersionRegex() throws IOException {
+		checkSearchPathRegexResult(AasRegistryPaths.endpoints().protocolInformation().endpointProtocolVersion(), "a.*c");
+	}
+
+	
+	@Test
+	public void testShellExtensionName() throws IOException {
+		ShellDescriptorQuery query = new ShellDescriptorQuery(AasRegistryPaths.extensions().value(), "RED").extensionName("COLOR");
+		checkSearchPathResult(query);
 	}
 
 	@Test
-	public void testEndpointsProtocolInformationEndpointProtocolVersionRegex() {
-		String path = AasRegistryPaths.endpoints().protocolInformation().endpointProtocolVersion();
-		String value = "a.*c";
-		String result = buildSearchPathQuery(path, value, QueryTypeEnum.REGEX);
-		String expected = "{\"endpoints\": {\"$elemMatch\": {\"protocolInformation.endpointProtocolVersion\": {\"$in\" : [{\"$regularExpression\": {\"pattern\": \"a.*c\", \"options\": \"\"}}]}}}}";
-		assertThat(result).isEqualToIgnoringWhitespace(expected);
+	public void testMultipleShellExtensions() throws IOException {
+		String path = AasRegistryPaths.extensions().value();
+		ShellDescriptorQuery query = new ShellDescriptorQuery(path, "RED").extensionName("COLOR").combinedWith(new ShellDescriptorQuery(path, "BLUE").extensionName("COLOR"));
+		checkSearchPathResult(query);
 	}
 
-	private String buildSearchPathQuery(String path, String value) {
-		return buildSearchPathQuery(path, value, QueryTypeEnum.MATCH);
+	private void checkSearchPathMatchResult(String path, String value) throws IOException {
+		checkSearchPathResult(new ShellDescriptorQuery(path, value));
 	}
-
-	private String buildSearchPathQuery(String path, String value,QueryTypeEnum queryType) {
-		Criteria criteria = builder.buildSearchPathCriteria(path, value, queryType);
+	
+	private void checkSearchPathRegexResult(String path, String value) throws IOException {
+		checkSearchPathResult(new ShellDescriptorQuery(path, value).queryType(QueryTypeEnum.REGEX));
+	}
+	
+	private void checkSearchPathResult(ShellDescriptorQuery sdQuery) throws IOException {
+		GroupedQueries queries = ShellDescriptorSearchRequests.groupQueries(sdQuery);
+		Criteria criteria = builder.buildCriteria(queries);
 		Query query = Query.query(criteria);
-		return query.getQueryObject().toJson();	
+		String result = query.getQueryObject().toJson(JsonWriterSettings.builder().indent(true).build());
+		String exprected = loader.loadJsonAsString();
+		assertThat(result).isEqualToIgnoringWhitespace(exprected);
 	}
+
 }

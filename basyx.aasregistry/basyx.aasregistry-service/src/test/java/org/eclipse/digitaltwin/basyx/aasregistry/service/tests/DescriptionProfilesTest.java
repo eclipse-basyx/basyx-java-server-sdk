@@ -36,9 +36,9 @@ import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.BasyxDescriptionApiDelegate;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.BasyxDescriptionApiDelegate.ProfileNotFoundException;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventSink;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.DescriptionApiController;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.DescriptionApiDelegate;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventSink;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
 import org.junit.Test;
 import org.junit.runner.RunWith;

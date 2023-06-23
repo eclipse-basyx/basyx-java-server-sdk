@@ -1,0 +1,128 @@
+[
+	{
+		"id": "identification_1",
+		"extensions": [
+			{
+				"name": "TAG",
+				"value": "RED"
+			},
+			{
+				"name": "TAG",
+				"value": "GREEN"
+			}
+		],
+		"submodelDescriptors": [
+			{
+				"id" : "1.1",
+				"extensions": [
+					{
+						"name": "TAG",
+						"value": "RED"
+					},
+					{
+						"name": "TAG",
+						"value": "GREEN"
+					}
+				]
+			},
+			{
+				"id" : "1.2",
+				"extensions": [
+					{
+						"name": "TAG",
+						"value": "RED"
+					},
+					{
+						"name": "TAG",
+						"value": "BLUE"
+					}
+				]
+			},
+			{
+				"id" : "1.3",
+				"extensions": [
+					{
+						"name": "TAG",
+						"value": "GREEN"
+					},
+					{
+						"name": "TAG",
+						"value": "BLUE"
+					}
+				]
+			},
+			{
+				"id" : "1.4",
+				"extensions": [
+					{
+						"name": "MY_FAVORITE_COLOR",
+						"value": "BLUE"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "identification_2",
+		"extensions": [
+			{
+				"name": "TAG",
+				"value": "BLUE"
+			},
+			{
+				"name": "DEPRECATED",
+				"value": "true"
+			}
+		],
+		"submodelDescriptors": [
+			{
+				"id" : "2.1",
+				"extensions": [
+					{
+						"name": "TAG",
+						"value": "RED"
+					},
+					{
+						"name": "TAG",
+						"value": "GREEN"
+					}
+				]
+			},
+			{
+				"id" : "2.2",
+				"extensions": [
+					{
+						"name": "TAG",
+						"value": "RED"
+					},
+					{
+						"name": "TAG",
+						"value": "BLUE"
+					}
+				]
+			},
+			{
+				"id" : "2.3",
+				"extensions": [
+					{
+						"name": "TAG",
+						"value": "GREEN"
+					},
+					{
+						"name": "TAG",
+						"value": "BLUE"
+					}
+				]
+			},
+			{
+				"id" : "2.4",
+				"extensions": [
+					{
+						"name": "MY_FAVORITE_COLOR",
+						"value": "BLUE"
+					}
+				]
+			}
+		]
+	}
+]

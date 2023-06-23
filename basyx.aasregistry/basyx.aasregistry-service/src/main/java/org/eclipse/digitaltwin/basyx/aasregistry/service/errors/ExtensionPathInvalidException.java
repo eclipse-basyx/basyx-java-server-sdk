@@ -22,30 +22,17 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasregistry.service.tests;
+package org.eclipse.digitaltwin.basyx.aasregistry.service.errors;
 
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.utility.DockerImageName;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
-public class MongoDbContainer extends GenericContainer<MongoDbContainer> {
+public class ExtensionPathInvalidException extends ResponseStatusException {
 
-	private static final DockerImageName DEFAULT_IMAGE = DockerImageName.parse("mongo:6.0.5");
+	private static final long serialVersionUID = 1L;
 
-	private final String connectionStringTemplate;
-
-
-	public MongoDbContainer(String userName, String password) {
-		this(DEFAULT_IMAGE, userName, password);
+	public ExtensionPathInvalidException(String path) {
+		super(HttpStatus.BAD_REQUEST ,"The query path '" + path + "' does not point to an extension value.");
 	}
 	
-	public MongoDbContainer(DockerImageName image, String userName, String password) {
-		super(image);
-		this.connectionStringTemplate = "mongodb://" + userName + ":" + password + "@%s:%d/%s";
-		withExposedPorts(27017).withEnv("MONGO_INITDB_ROOT_USERNAME", userName).withEnv("MONGO_INITDB_ROOT_PASSWORD", password);
-	}
-
-	public String getMongoDbUri(String database) {
-		return String.format(connectionStringTemplate, getHost(), getFirstMappedPort(), database);
-	}
-
 }
