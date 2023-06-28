@@ -246,43 +246,43 @@ public abstract class ConceptDescriptionRepositoryHTTPSuite {
 	}
 
 	private String getUpdatedConceptDescriptionJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleConceptDescriptionUpdate.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleConceptDescriptionUpdate.json");
 	}
 	
 	private String getUpdatedConceptDescriptionWithMismatchIdJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleCDUpdateMismatchId.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleCDUpdateMismatchId.json");
 	}
 
 	private String getNewConceptDescriptionJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleConceptDescriptionNew.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleConceptDescriptionNew.json");
 	}
 
 	private String getSingleConceptDescriptionJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleConceptDescription.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleConceptDescription.json");
 	}
 
 	private String getAllConceptDescriptionJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:MultipleConceptDescriptions.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("MultipleConceptDescriptions.json");
 	}
 	
 	private String getConceptDescriptionsWithIdShort() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:ConceptDescriptionsWithIdShort.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("ConceptDescriptionsWithIdShort.json");
 	}
 	
 	private String getConceptDescriptionsWithIsCaseOf() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:ConceptDescriptionWithIsCaseOf.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("ConceptDescriptionWithIsCaseOf.json");
 	}
 	
 	private String getConceptDescriptionsWithDataSpecRef() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:ConceptDescriptionWithDataSpec.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("ConceptDescriptionWithDataSpec.json");
 	}
 	
 	private String getReferenceJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:Reference.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("Reference.json");
 	}
 	
 	private String getDataSpecReferenceJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:DataSpecificationReference.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("DataSpecificationReference.json");
 	}
 
 }
