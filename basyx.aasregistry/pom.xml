@@ -40,10 +40,12 @@
 		<openapitools.version>6.6.0</openapitools.version>
 		<openapitools.jacksonnullable.version>0.2.6</openapitools.jacksonnullable.version>
 		<jsr305.version>3.0.2</jsr305.version>
+		<jsonpatch.plugin.version>0.5.0</jsonpatch.plugin.version>
+		<patch.base-extensions.name>patch-base-extensions.yaml</patch.base-extensions.name>
 	</properties>
 
 	<modules>
-		<module>basyx.aasregistry-plugins</module> 
+		<module>basyx.aasregistry-plugins</module>
 		<module>basyx.aasregistry-service-basemodel</module>
 		<module>basyx.aasregistry-client-native</module>
 		<module>basyx.aasregistry-paths</module>
@@ -103,6 +105,11 @@
 					<groupId>io.fabric8</groupId>
 					<artifactId>docker-maven-plugin</artifactId>
 					<version>${docker.maven.plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>de.dfki.cos.basys.common</groupId>
+					<artifactId>jsonpatch-maven-plugin</artifactId>
+					<version>${jsonpatch.plugin.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -207,11 +214,6 @@
 				<version>${maven-plugin.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.yaml</groupId>
-				<artifactId>snakeyaml</artifactId>
-				<version>${snakeyaml.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>com.github.spullara.mustache.java</groupId>
 				<artifactId>compiler</artifactId>
 				<version>${mustache.compiler.version}</version>
@@ -228,6 +230,23 @@
 			</activation>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>add-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>src/main/generated</source>
+									</sources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 					<plugin>
 						<groupId>org.projectlombok</groupId>
 						<artifactId>lombok-maven-plugin</artifactId>
@@ -259,7 +278,7 @@
 				<plugins>
 					<plugin>
 						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-maven-plugin</artifactId>						
+						<artifactId>spring-boot-maven-plugin</artifactId>
 						<configuration>
 							<layers>
 								<enabled>true</enabled>

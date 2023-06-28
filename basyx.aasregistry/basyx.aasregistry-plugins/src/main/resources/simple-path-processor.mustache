@@ -28,7 +28,7 @@ package {{processorTarget.packageName}};
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.function.BiFunction;
+import java.util.function.BiConsumer;
 
 {{#allModels}}
 import {{inputClassPackageName}}.{{name}};
@@ -58,8 +58,7 @@ public class {{processorTarget.className}} {
 
 	public static interface {{rootModel.name}}Visitor {
 
-		default ProcessInstruction visitResolvedPathValue(String path, Object[] objectPathToValue, String value) {
-			return ProcessInstruction.CONTINUE;
+		default void visitResolvedPathValue(String path, Object[] objectPathToValue, String value) {
 		}
 	}
 
@@ -84,11 +83,6 @@ public class {{processorTarget.className}} {
 		}
 					
 	}
-	
-	public enum ProcessInstruction {
-		ABORT, CONTINUE
-	}
-
 
 	public static class UnknownLeafPathException extends RuntimeException {
 	
@@ -228,80 +222,71 @@ public class {{processorTarget.className}} {
 		}
 
 		{{#allModels}}
-		public ProcessInstruction visit{{name}}({{name}} toVisit, String segment) {
+		public void visit{{name}}({{name}} toVisit, String segment) {
 			switch (segment) {
 			{{#complexRangeRelations}}
 			case {{info.pathsTarget.className}}.SEGMENT_{{attributeNameUpper}}:
 				{{#isListRange}}
-				return visitObjectList(toVisit.{{getterPrefix}}{{attributeNameUpperFirst}}(), this::visit{{modelName}});
+				visitObjectList(toVisit.{{getterPrefix}}{{attributeNameUpperFirst}}(), this::visit{{modelName}});
 				{{/isListRange}}
 				{{^isListRange}}
-				return visitObject(toVisit.{{getterPrefix}}{{attributeNameUpperFirst}}(), this::visit{{modelName}});
+				visitObject(toVisit.{{getterPrefix}}{{attributeNameUpperFirst}}(), this::visit{{modelName}});
 				{{/isListRange}}
+				return;
 			{{/complexRangeRelations}}
 			{{#primitiveRangeRelations}}
 			case {{info.pathsTarget.className}}.SEGMENT_{{attributeNameUpper}}:
 				{{#isListRange}}
-				return visitPrimitiveValueList(toVisit.{{getterPrefix}}{{attributeNameUpperFirst}}());
+				visitPrimitiveValueList(toVisit.{{getterPrefix}}{{attributeNameUpperFirst}}());
 				{{/isListRange}}
 				{{^isListRange}}
-				return visitPrimitiveValue(toVisit.{{getterPrefix}}{{attributeNameUpperFirst}}());
+				visitPrimitiveValue(toVisit.{{getterPrefix}}{{attributeNameUpperFirst}}());
 				{{/isListRange}}
+				return;
 			{{/primitiveRangeRelations}}
 			default:
 				{{#subModels}}
 				if (toVisit instanceof {{.}}) {
-					return visit{{.}}(({{.}}) toVisit, segment);
+					visit{{.}}(({{.}}) toVisit, segment);
+					return;
 				}
 				{{/subModels}}
-				return ProcessInstruction.CONTINUE;
 			}
 		}
 		
 		{{/allModels}}
-		private <T> ProcessInstruction visitObjectList(List<T> list,
-				BiFunction<T, String, ProcessInstruction> processor) {
+		private <T> void visitObjectList(List<T> list, BiConsumer<T, String> processor) {
 			if (list != null) {
 				for (T eachValue : list) {
-					if (visitObject(eachValue, processor) == ProcessInstruction.ABORT) {
-						return ProcessInstruction.ABORT;
-					}
+					visitObject(eachValue, processor);
 				}
 			}
-			return ProcessInstruction.CONTINUE;
 		}
 		
-		private <T> ProcessInstruction visitObject(T object, BiFunction<T, String, ProcessInstruction> processor) {
+		private <T> void visitObject(T object, BiConsumer<T, String> processor) {
 			if (object != null && pathIterator.hasNext()) {
 				String token = pathIterator.next();
 				currentPathElements.addLast(object);
-				ProcessInstruction instruction = processor.apply(object, token);
+				processor.accept(object, token);
 				currentPathElements.removeLast();
 				pathIterator.previous();
-				return instruction;
 			}
-			return ProcessInstruction.CONTINUE;
 		}
 
-		private ProcessInstruction visitPrimitiveValue(Object value) {
+		private void visitPrimitiveValue(Object value) {
 			if (value != null) {
 				Object[] objectPath = currentPathElements.toArray();
-				return visitor.visitResolvedPathValue(path, objectPath, value.toString());
+				visitor.visitResolvedPathValue(path, objectPath, value.toString());
 			}
-			return ProcessInstruction.CONTINUE;
 		}
 
-		private ProcessInstruction visitPrimitiveValueList(List<?> values) {
+		private void visitPrimitiveValueList(List<?> values) {
 			if (values != null) {
 				Object[] objectPath = currentPathElements.toArray();
 				for (Object eachValue : values) {
-					ProcessInstruction instruction = visitor.visitResolvedPathValue(path, objectPath, eachValue.toString());
-					if (instruction == ProcessInstruction.ABORT) {
-						return ProcessInstruction.ABORT;
-					}
+					visitor.visitResolvedPathValue(path, objectPath, eachValue.toString());
 				}
 			}
-			return ProcessInstruction.CONTINUE;
 		}
 	}
 }

@@ -32,3 +32,21 @@ new ShellDescriptorQuery().queryType(QueryTypeEnum.REGEX).path(AasRegistryPaths.
 
 As response to a search query, the client will receive a list of the filtered *AssetAdministrationShellDescriptors*. If you have enabled pagination, the list will only contain a subset of all results. By addressing an attribute of a submodel descriptor, the matching descriptors are shrunk so that they contain only matching submodels.
 
+
+It is also possible to filter by shell and submodel extensions. Define the *extensionName*, reference the extension value property and define the value for equals or regex matching:
+
+```java
+new ShellDescriptorQuery().path(AasRegistryPaths.extensions().value()).extensionName("TAG").value("private");
+```
+
+If you have multiple queries that you want to aggregate in the request, use *combinedWith* to chain the requests: 
+
+```java
+ShellDescriptorQuery queryA = new ShellDescriptorQuery().queryType(QueryTypeEnum.REGEX).path(AasRegistryPaths.idShort()).value("short-id");
+ShellDescriptorQuery queryB = new ShellDescriptorQuery().queryType(QueryTypeEnum.REGEX).path(AasRegistryPaths.extensions().value()).extensionName("TAG").value("private");
+ShellDescriptorQuery queryC = new ShellDescriptorQuery().queryType(QueryTypeEnum.REGEX).path(AasRegistryPaths.submodelDescriptors().isShort()).value("sm_id_short");
+queryA.combinedWith(queryB);
+queryB.combinedWith(queryC);
+```
+
+The query matches, if all shell-related queries match and ,if there are also queries to submodel content (path starts with *"submodelDescriptors."*), there is at least one submodel that matches all submodel queries.

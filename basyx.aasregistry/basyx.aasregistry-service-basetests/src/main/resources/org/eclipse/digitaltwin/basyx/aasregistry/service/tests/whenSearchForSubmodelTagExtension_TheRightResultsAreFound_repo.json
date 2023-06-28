@@ -1,0 +1,55 @@
+[
+	{
+		"id": "identification_1",
+		"submodelDescriptors": [
+			{
+				"id" : "1.1",
+				"extensions": [
+					{
+						"name": "TAG",
+						"value": "RED"
+					},
+					{
+						"name": "TAG",
+						"value": "GREEN"
+					}
+				]
+			},
+			{
+				"id" : "1.2",
+				"extensions": [
+					{
+						"name": "TAG",
+						"value": "RED"
+					},
+					{
+						"name": "TAG",
+						"value": "BLUE"
+					}
+				]
+			},
+			{
+				"id" : "1.3",
+				"extensions": [
+					{
+						"name": "TAG",
+						"value": "GREEN"
+					},
+					{
+						"name": "TAG",
+						"value": "BLUE"
+					}
+				]
+			},
+			{
+				"id" : "1.4",
+				"extensions": [
+					{
+						"name": "MY_FAVORITE_COLOR",
+						"value": "BLUE"
+					}
+				]
+			}
+		]
+	}
+]

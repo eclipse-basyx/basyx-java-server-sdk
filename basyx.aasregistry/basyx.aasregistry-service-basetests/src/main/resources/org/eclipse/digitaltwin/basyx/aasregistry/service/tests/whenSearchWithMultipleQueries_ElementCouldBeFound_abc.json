@@ -1,0 +1,19 @@
+[
+	{
+		"id": "identification_2",
+		"description": [
+		{
+		  "language": "de-DE", 
+		  "text": "a"
+		},
+		{
+		  "language": "de-DE", 
+		  "text": "b"
+		},
+		{
+		  "language": "de-DE", 
+		  "text": "c"
+		}
+		]
+	}
+]

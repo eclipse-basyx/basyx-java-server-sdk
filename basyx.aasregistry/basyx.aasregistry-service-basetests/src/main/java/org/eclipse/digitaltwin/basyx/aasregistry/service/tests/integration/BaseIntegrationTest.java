@@ -126,7 +126,6 @@ public abstract class BaseIntegrationTest {
 
 	private static final int NOT_FOUND = 404;
 
-	
 	@Value("${local.server.port}")
 	private int port;
 
@@ -136,7 +135,7 @@ public abstract class BaseIntegrationTest {
 	@Autowired
 	private BaseEventListener listener;
 
-	private RegistryAndDiscoveryInterfaceApi api;
+	protected RegistryAndDiscoveryInterfaceApi api;
 
 	@Before
 	public void initClient() throws ApiException {
@@ -509,6 +508,16 @@ public abstract class BaseIntegrationTest {
 		api.searchShellDescriptors(new ShellDescriptorSearchRequest());
 	}
 
+	@Test 
+	public void whenInvalidExtensionSettings_thenException() throws Exception {
+		initialize();
+		ShellDescriptorQuery query1 = new ShellDescriptorQuery().extensionName("TAG").path(AasRegistryPaths.extensions().value()).value("A");
+		ShellDescriptorQuery query2 = new ShellDescriptorQuery().extensionName("TAG").path(AasRegistryPaths.submodelDescriptors().endpoints().protocolInformation().endpointProtocolVersion()).value("B");
+		
+		ShellDescriptorSearchRequest request = new ShellDescriptorSearchRequest().query(query1.combinedWith(query2));
+		assertThrowsApiException(()->api.searchShellDescriptors(request), BAD_REQUEST);
+	}
+
 	@Test
 	public void whenSendFullObjectStructure_ItemIsProcessedProperly() throws ApiException {
 		LangStringTextType dType = new LangStringTextType().language(LANG_DE_DE).text("description");
@@ -523,7 +532,8 @@ public abstract class BaseIntegrationTest {
 		SpecificAssetId saId = new SpecificAssetId().addSupplementalSemanticIdsItem(reference).externalSubjectId(reference).name("said").semanticId(reference).value("value");
 		DataSpecificationIec61360 dsContent = new DataSpecificationIec61360();
 		dsContent.addDefinitionItem(new LangStringDefinitionTypeIec61360().language(LANG_DE_DE).text("def")).addPreferredNameItem(new LangStringPreferredNameTypeIec61360().language(LANG_DE_DE).text("prefName"))
-				.addShortNameItem(new LangStringShortNameTypeIec61360().language(LANG_DE_DE).text("sn")).dataType(DataTypeIec61360.FILE).levelType(new LevelType().max(true).min(false).nom(false).typ(true)).sourceOfDefinition("sod").symbol("$$");
+				.addShortNameItem(new LangStringShortNameTypeIec61360().language(LANG_DE_DE).text("sn")).dataType(DataTypeIec61360.FILE).levelType(new LevelType().max(true).min(false).nom(false).typ(true)).sourceOfDefinition("sod")
+				.symbol("$$");
 		EmbeddedDataSpecification edSpec = new EmbeddedDataSpecification().dataSpecification(reference).dataSpecificationContent(new DataSpecificationContent(dsContent));
 
 		AdministrativeInformation aInfo = new AdministrativeInformation().addEmbeddedDataSpecificationsItem(edSpec);

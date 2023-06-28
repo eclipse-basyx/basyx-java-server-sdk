@@ -25,8 +25,11 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.api;
 
+import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorQuery;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchRequest;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchResponse;
+import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.ExtensionPathInvalidException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventSink;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.RegistrationEventSendingAasRegistryStorage;
@@ -41,10 +44,27 @@ public class BasyxSearchApiDelegate implements SearchApiDelegate {
 	public BasyxSearchApiDelegate(AasRegistryStorage storage, RegistryEventSink eventSink) {
 		this.storage = new RegistrationEventSendingAasRegistryStorage(storage, eventSink);
 	}
-	
+
 	@Override
 	public ResponseEntity<ShellDescriptorSearchResponse> searchShellDescriptors(ShellDescriptorSearchRequest request) {
+		assertSearchResultIsSetupCorrectly(request.getQuery());
 		ShellDescriptorSearchResponse result = storage.searchAasDescriptors(request);
 		return ResponseEntity.ok(result);
+	}
+	
+	private void assertSearchResultIsSetupCorrectly(ShellDescriptorQuery query) {
+		if (query == null) {
+			return;
+		}
+		String extensionName = query.getExtensionName();
+		if (extensionName == null) {
+			return;
+		}
+		String path = query.getPath();
+		String validExtensionValueSuffix = "." + AasRegistryPaths.SEGMENT_EXTENSIONS + "." + AasRegistryPaths.SEGMENT_VALUE; 
+		if (!path.endsWith(validExtensionValueSuffix)) {
+			throw new ExtensionPathInvalidException(path);
+		}
+		assertSearchResultIsSetupCorrectly(query.getCombinedWith());
 	}
 }

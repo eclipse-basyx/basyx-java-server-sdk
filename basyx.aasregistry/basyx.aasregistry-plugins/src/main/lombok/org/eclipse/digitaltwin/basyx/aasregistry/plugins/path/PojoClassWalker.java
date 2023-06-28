@@ -127,19 +127,14 @@ class PojoClassWalker {
 		List<Field> fields = new LinkedList<>();
 		Set<String> duplicateFieldNameFilter = new HashSet<>();
 		getFields(cls, fields, duplicateFieldNameFilter);
-//		System.out.println(duplicateFieldNameFilter);
 		return fields;
 	}
 
 	private static void getFields(Class<?> cls, List<Field> fields, Set<String> duplicateFieldNameFilter) {
 		if (cls != null) {
 			for (Field eachField: cls.getDeclaredFields()) {
-				//System.out.println(eachField.getName());
 				if (duplicateFieldNameFilter.add(eachField.getName())) {
 					fields.add(eachField);
-				}
-				if (eachField.getName().equals("extensions")){
-					System.out.println(" " + eachField.getName() + "-" + eachField.getType() + "-" + eachField.getClass());
 				}
 			}
 			getFields(cls.getSuperclass(), fields, duplicateFieldNameFilter);
