@@ -24,15 +24,11 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.configuration;
 
-import java.util.Map;
-
-import org.bson.Document;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.CursorEncodingRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.MongoDbAasRegistryStorage;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,8 +36,8 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.CompoundIndexDefinition;
 import org.springframework.data.mongodb.core.index.Index;
+import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @Configuration
@@ -56,11 +52,34 @@ public class MongoDbConfiguration {
 	}
 
 	private void initializeIndices(MongoTemplate template) {
-		Index index = new Index(AasRegistryPaths.assetKind(), Direction.ASC);
-		template.indexOps(AssetAdministrationShellDescriptor.class).ensureIndex(index);
-		Document doc = new Document(Map.of(AasRegistryPaths.assetType(), 1, AasRegistryPaths.assetKind(), 1));
-		CompoundIndexDefinition compound = new CompoundIndexDefinition(doc);
-		template.indexOps(AssetAdministrationShellDescriptor.class).ensureIndex(compound);
+		IndexOperations ops = template.indexOps(AssetAdministrationShellDescriptor.class);
+		initializeGetShellDescriptorsIndices(ops);
+		initializeExtensionIndices(ops);
+	}
+
+	private void initializeGetShellDescriptorsIndices(IndexOperations ops) {
+		initializeSingleAscIndex(ops, AasRegistryPaths.assetKind());
+		initializeSingleAscIndex(ops, AasRegistryPaths.assetType());
+	}
+
+	private void initializeExtensionIndices(IndexOperations ops) {
+		initializeShellExtensionIndices(ops);
+		initializeSubmodelExtensionIndices(ops);
+	}
+
+	private void initializeShellExtensionIndices(IndexOperations ops) {
+		initializeSingleAscIndex(ops, AasRegistryPaths.extensions().name());
+		initializeSingleAscIndex(ops, AasRegistryPaths.extensions().value());	
+	}
+
+	private void initializeSubmodelExtensionIndices(IndexOperations ops) {
+		initializeSingleAscIndex(ops, AasRegistryPaths.submodelDescriptors().extensions().name());
+		initializeSingleAscIndex(ops, AasRegistryPaths.submodelDescriptors().extensions().value());
+	}
+	
+	private void initializeSingleAscIndex(IndexOperations ops, String path) {
+		Index smValueIndex = new Index(path, Direction.ASC);
+		ops.ensureIndex(smValueIndex);
 	}
 
 	@Bean

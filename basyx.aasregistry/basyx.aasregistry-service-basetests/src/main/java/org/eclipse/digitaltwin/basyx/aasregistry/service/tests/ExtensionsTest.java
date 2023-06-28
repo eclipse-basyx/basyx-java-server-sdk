@@ -31,8 +31,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEvent;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.Page;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorQuery;
@@ -42,8 +40,15 @@ import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchResp
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SortDirection;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.Sorting;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SortingPath;
+import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEvent;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 
 public abstract class ExtensionsTest extends BaseInterfaceTest {
 
@@ -112,19 +117,15 @@ public abstract class ExtensionsTest extends BaseInterfaceTest {
 		assertThat(oldState).isNotEmpty();
 		Set<String> aasIdsOfRemovedDescriptors = storage.clear();
 		// listener is invoked for each removal
-		Mockito.verify(getEventSink(), Mockito.times(aasIdsOfRemovedDescriptors.size())).consumeEvent(Mockito.any(RegistryEvent.class));
+		Mockito.verify(getEventSink(), Mockito.times(aasIdsOfRemovedDescriptors.size())).consumeEvent(ArgumentMatchers.any(RegistryEvent.class));
 		List<AssetAdministrationShellDescriptor> newState = getAllAasDescriptors();
 		assertThat(newState).isEmpty();
 	}
 
 	@Test
 	public void whenMatchSearchBySubModel_thenReturnDescriptorList() throws IOException {
-		ShellDescriptorSearchRequest request = new ShellDescriptorSearchRequest().query(new ShellDescriptorQuery(AasRegistryPaths.submodelDescriptors().id(), IDENTIFICATION_2_1).queryType(QueryTypeEnum.MATCH));
-		ShellDescriptorSearchResponse result = storage.searchAasDescriptors(request);
-		AssetAdministrationShellDescriptor descriptor = testResourcesLoader.load(AssetAdministrationShellDescriptor.class);
-
-		assertThat(result.getTotal()).isEqualTo(1);
-		assertThat(result.getHits().get(0)).isEqualTo(descriptor);
+		ShellDescriptorQuery query = new ShellDescriptorQuery(AasRegistryPaths.submodelDescriptors().id(), IDENTIFICATION_2_1).queryType(QueryTypeEnum.MATCH);
+		searchByQuery(query);
 	}
 
 	@Test
@@ -137,11 +138,8 @@ public abstract class ExtensionsTest extends BaseInterfaceTest {
 
 	@Test
 	public void whenRegexSearchBySubModel_thenReturnDescriptorList() throws IOException {
-		ShellDescriptorSearchRequest request = new ShellDescriptorSearchRequest().query(new ShellDescriptorQuery(AasRegistryPaths.submodelDescriptors().idShort(), ".*_24").queryType(QueryTypeEnum.REGEX));
-		ShellDescriptorSearchResponse result = storage.searchAasDescriptors(request);
-		AssetAdministrationShellDescriptor descriptor = testResourcesLoader.load(AssetAdministrationShellDescriptor.class);
-		assertThat(result.getTotal()).isEqualTo(1);
-		assertThat(result.getHits().get(0)).isEqualTo(descriptor);
+		ShellDescriptorQuery query = new ShellDescriptorQuery(AasRegistryPaths.submodelDescriptors().idShort(), ".*_24").queryType(QueryTypeEnum.REGEX);
+		searchByQuery(query);
 	}
 
 	@Test
@@ -154,21 +152,114 @@ public abstract class ExtensionsTest extends BaseInterfaceTest {
 
 	@Test
 	public void whenSearchForSubmodelEndpointsProtocolInformationEndpointProtocolVersion_whenSubmodelsFound() throws IOException {
-		whenSearchForSubmodelEndpointsProtocolInformationEndpointProtocolVersion_whenSubmodelsFound(QueryTypeEnum.MATCH, "2_2_2");
+		ShellDescriptorQuery query = new ShellDescriptorQuery(AasRegistryPaths.submodelDescriptors().endpoints().protocolInformation().endpointProtocolVersion(), "2_2_2").queryType(QueryTypeEnum.MATCH);
+		searchByQuery(query);
 	}
 
 	@Test
 	public void whenRegexSearchForSubmodelEndpointsProtocolInformationEndpointProtocolVersion_whenSubmodelsFound() throws IOException {
-		whenSearchForSubmodelEndpointsProtocolInformationEndpointProtocolVersion_whenSubmodelsFound(QueryTypeEnum.REGEX, "^[4|3]_0_1$");
+		ShellDescriptorQuery query = new ShellDescriptorQuery(AasRegistryPaths.submodelDescriptors().endpoints().protocolInformation().endpointProtocolVersion(), "^[4|3]_0_1$").queryType(QueryTypeEnum.REGEX);
+		searchByQuery(query);
 	}
 
-	private void whenSearchForSubmodelEndpointsProtocolInformationEndpointProtocolVersion_whenSubmodelsFound(QueryTypeEnum type, String value) throws IOException {
-		String path = AasRegistryPaths.submodelDescriptors().endpoints().protocolInformation().endpointProtocolVersion();
-		ShellDescriptorSearchRequest query = new ShellDescriptorSearchRequest().query(new ShellDescriptorQuery(path, value).queryType(type));
-		List<AssetAdministrationShellDescriptor> expected = this.testResourcesLoader.loadList(AssetAdministrationShellDescriptor.class);
-		ShellDescriptorSearchResponse result = storage.searchAasDescriptors(query);
+	@Test
+	public void whenSearchWithMultipleQueries_ElementCouldBeFound() throws IOException {
+		whenSearchWithMultipleQueries_ElementsAreFiltered(AasRegistryPaths.description().text());
+	}
+
+	@Test
+	public void whenSearchWithMultipleQueries_SubmodelsAreFiltered() throws IOException {
+		whenSearchWithMultipleQueries_ElementsAreFiltered(AasRegistryPaths.submodelDescriptors().description().text());
+	}
+
+	private void whenSearchWithMultipleQueries_ElementsAreFiltered(String path) throws IOException {
+		ShellDescriptorQuery queryA = new ShellDescriptorQuery(path, "a");
+		ShellDescriptorQuery queryB = new ShellDescriptorQuery(path, "b");
+		ShellDescriptorQuery queryC = new ShellDescriptorQuery(path, "c");
+
+		
+		searchByQuery(queryA.combinedWith(queryB).combinedWith(queryC), "abc");
+		searchByQuery(queryC, "c");
+	}
+
+	@Test
+	public void whenSearchWithMultipleQueriesAndNoSubmodelMatches_NoResultFound() {
+		// with default repository
+		ShellDescriptorQuery queryA = new ShellDescriptorQuery(AasRegistryPaths.description().language(), "en-US");
+		ShellDescriptorQuery queryB = new ShellDescriptorQuery(AasRegistryPaths.description().language(), "en-GB");
+
+		ShellDescriptorSearchRequest request = new ShellDescriptorSearchRequest().query(queryA.combinedWith(queryB));
+		assertThat(storage.searchAasDescriptors(request).getTotal()).isEqualTo(0);
+	}
+
+	@Test
+	public void whenSearchWithMultipleQueriesRegexAndSubmodelMatches_ResultsFound() throws IOException {
+		// with default repository
+		ShellDescriptorQuery queryA = new ShellDescriptorQuery(AasRegistryPaths.submodelDescriptors().description().language(), "de\\-.*").queryType(QueryTypeEnum.REGEX);
+		ShellDescriptorQuery queryB = new ShellDescriptorQuery(AasRegistryPaths.submodelDescriptors().description().language(), ".*\\-DE").queryType(QueryTypeEnum.REGEX);
+		searchByQuery(queryA.combinedWith(queryB));
+	}
+
+	@Test
+	public void whenSearchForShellTagExtension_TheRightResultsAreFound() throws IOException {
+		ShellDescriptorQuery query = new ShellDescriptorQuery(AasRegistryPaths.extensions().value(), "BLUE").queryType(QueryTypeEnum.MATCH).extensionName("TAG");
+		searchByQuery(query);
+	}
+
+	@Test
+	public void whenSearchForShellTagExtensionRegex_TheRightResultsAreFound() throws IOException {
+		ShellDescriptorQuery query = new ShellDescriptorQuery(AasRegistryPaths.extensions().value(), "B.*E").queryType(QueryTypeEnum.REGEX).extensionName("TAG");
+		searchByQuery(query);
+	}
+
+	@Test
+	public void whenSearchShellExtValueAndExtNameIsNotSetInQuery_AllWithValueReturned() throws IOException {
+		ShellDescriptorQuery query = new ShellDescriptorQuery(AasRegistryPaths.extensions().value(), "V.*").queryType(QueryTypeEnum.REGEX);
+		searchByQuery(query);
+	}
+	
+	@Test
+	public void whenSearchForSubmodelTagExtension_TheRightResultsAreFound() throws IOException {
+		ShellDescriptorQuery query = new ShellDescriptorQuery(AasRegistryPaths.submodelDescriptors().extensions().value(), "BLUE").extensionName("TAG");
+		searchByQuery(query);
+	}
+
+	@Test
+	public void whenSearchForShellAndSubmodelTagExtension_TheRightResultsAreFound() throws IOException {
+		ShellDescriptorQuery queryAas = new ShellDescriptorQuery(AasRegistryPaths.extensions().value(), "BLUE").extensionName("TAG");
+		ShellDescriptorQuery querySm = new ShellDescriptorQuery(AasRegistryPaths.submodelDescriptors().extensions().value(), "BLUE").extensionName("TAG");
+		
+		searchByQuery(queryAas.combinedWith(querySm));
+	}
+	
+	@Test
+	public void whenCombinedAndFilteredOnlyMatchingAreReturned() throws IOException {
+		ShellDescriptorQuery outer = new ShellDescriptorQuery(AasRegistryPaths.extensions().value(), "RED").extensionName("COLOR");
+		ShellDescriptorQuery smAB = new ShellDescriptorQuery(AasRegistryPaths.submodelDescriptors().extensions().value(), "AB").extensionName("TAG");
+		ShellDescriptorQuery smAC = new ShellDescriptorQuery(AasRegistryPaths.submodelDescriptors().extensions().value(), "AC").extensionName("TAG");				
+		searchByQuery(outer.combinedWith(smAB.combinedWith(smAC)));		
+	}
+	
+	@Test
+	public void whenSearchInSubmodelPath_SubmodelsMustMatchAllQueries() throws IOException {
+		ShellDescriptorQuery querySm1 = new ShellDescriptorQuery(AasRegistryPaths.submodelDescriptors().extensions().value(), "BLUE").extensionName("COLOR");
+		ShellDescriptorQuery querySm2 = new ShellDescriptorQuery(AasRegistryPaths.submodelDescriptors().extensions().value(), "RECTANGLE").extensionName("SHAPE");
+	
+		searchByQuery(querySm1.combinedWith(querySm2));
+	}
+
+	private void searchByQuery(ShellDescriptorQuery query) throws IOException {
+		searchByQuery(query, null);
+	}
+	
+	private void searchByQuery(ShellDescriptorQuery query, String suffix) throws IOException {
+		ShellDescriptorSearchRequest request = new ShellDescriptorSearchRequest().query(query);
+		List<AssetAdministrationShellDescriptor> expected = testResourcesLoader.loadList(AssetAdministrationShellDescriptor.class, suffix);
+		ShellDescriptorSearchResponse result = storage.searchAasDescriptors(request);
+		String resultStr = new ObjectMapper().setSerializationInclusion(Include.NON_NULL).writerWithDefaultPrettyPrinter().writeValueAsString(result.getHits());
+		String expectedStr = new ObjectMapper().setSerializationInclusion(Include.NON_NULL).writerWithDefaultPrettyPrinter().writeValueAsString(expected);
+		assertThat(resultStr).isEqualTo(expectedStr);
 		assertThat(result.getHits()).asList().isEqualTo(expected);
-		assertThat(result.getTotal()).isEqualTo(2);
-	}
-
+		assertThat(result.getTotal()).isEqualTo(expected.size());
+	}	
 }

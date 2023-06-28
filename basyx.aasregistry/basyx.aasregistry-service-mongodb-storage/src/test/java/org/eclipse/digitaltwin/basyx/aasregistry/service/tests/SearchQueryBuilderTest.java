@@ -35,12 +35,13 @@ import org.mockito.Mockito;
 
 public class SearchQueryBuilderTest {
 
+	private static final String EMPTY_STRING = "";
 	private static final String STRING = "String";
 
 	@Test
 	public void testUnknownLeafPaths() {
 		assertThrows(UnknownLeafPathException.class, ()-> AasRegistryPathProcessor.visitPath("unknown", null));
-		assertThrows(UnknownLeafPathException.class, ()-> AasRegistryPathProcessor.visitPath("", null));
+		assertThrows(UnknownLeafPathException.class, ()-> AasRegistryPathProcessor.visitPath(EMPTY_STRING, null));
 		assertThrows(UnknownLeafPathException.class, ()-> AasRegistryPathProcessor.visitPath(".", null));
 		assertThrows(UnknownLeafPathException.class, ()-> AasRegistryPathProcessor.visitPath("...", null));
 		assertThrows(UnknownLeafPathException.class, ()-> AasRegistryPathProcessor.visitPath(".unknown..", null));
@@ -51,9 +52,9 @@ public class SearchQueryBuilderTest {
 		AssetAdministrationShellDescriptorPathVisitor mvisitor = Mockito.mock(AssetAdministrationShellDescriptorPathVisitor.class);
 		String targetPath = AasRegistryPaths.id();
 		AasRegistryPathProcessor.visitPath(targetPath, mvisitor);
-		Mockito.verify(mvisitor, Mockito.times(1)).startObjectSegment(targetPath, "", "");
+		Mockito.verify(mvisitor, Mockito.times(1)).startObjectSegment(targetPath, EMPTY_STRING, EMPTY_STRING);
 		Mockito.verify(mvisitor, Mockito.times(1)).visitPrimitiveSegment(targetPath, targetPath , AasRegistryPaths.SEGMENT_ID, STRING);		
-		Mockito.verify(mvisitor, Mockito.times(1)).endObjectSegment(targetPath, "", "");
+		Mockito.verify(mvisitor, Mockito.times(1)).endObjectSegment(targetPath, EMPTY_STRING, EMPTY_STRING);
 		Mockito.verifyNoMoreInteractions(mvisitor);
 	}
 	
@@ -63,11 +64,11 @@ public class SearchQueryBuilderTest {
 		String targetPath = AasRegistryPaths.administration().revision();
 		String administrationPath = AasRegistryPaths.administration().toString();
 		AasRegistryPathProcessor.visitPath(targetPath, mvisitor);
-		Mockito.verify(mvisitor, Mockito.times(1)).startObjectSegment(targetPath, "", "");
+		Mockito.verify(mvisitor, Mockito.times(1)).startObjectSegment(targetPath, EMPTY_STRING, EMPTY_STRING);
 		Mockito.verify(mvisitor, Mockito.times(1)).startObjectSegment(targetPath, administrationPath, AasRegistryPaths.SEGMENT_ADMINISTRATION);
 		Mockito.verify(mvisitor, Mockito.times(1)).visitPrimitiveSegment(targetPath, targetPath, AasRegistryPaths.SEGMENT_REVISION, STRING);
 		Mockito.verify(mvisitor, Mockito.times(1)).endObjectSegment(targetPath, administrationPath, AasRegistryPaths.SEGMENT_ADMINISTRATION);		
-		Mockito.verify(mvisitor, Mockito.times(1)).endObjectSegment(targetPath, "", "");
+		Mockito.verify(mvisitor, Mockito.times(1)).endObjectSegment(targetPath, EMPTY_STRING, EMPTY_STRING);
 		Mockito.verifyNoMoreInteractions(mvisitor);	
 	}
 	
@@ -77,11 +78,11 @@ public class SearchQueryBuilderTest {
 		String targetPath = AasRegistryPaths.submodelDescriptors().id();
 		String submodelPath = AasRegistryPaths.submodelDescriptors().toString();
 		AasRegistryPathProcessor.visitPath(targetPath, mvisitor);
-		Mockito.verify(mvisitor, Mockito.times(1)).startObjectSegment(targetPath, "", "");
+		Mockito.verify(mvisitor, Mockito.times(1)).startObjectSegment(targetPath, EMPTY_STRING, EMPTY_STRING);
 		Mockito.verify(mvisitor, Mockito.times(1)).startObjectListSegment(targetPath, submodelPath, AasRegistryPaths.SEGMENT_SUBMODEL_DESCRIPTORS);
 		Mockito.verify(mvisitor, Mockito.times(1)).visitPrimitiveSegment(targetPath, targetPath, AasRegistryPaths.SEGMENT_ID, STRING);
 		Mockito.verify(mvisitor, Mockito.times(1)).endObjectListSegment(targetPath, submodelPath, AasRegistryPaths.SEGMENT_SUBMODEL_DESCRIPTORS);		
-		Mockito.verify(mvisitor, Mockito.times(1)).endObjectSegment(targetPath, "", "");
+		Mockito.verify(mvisitor, Mockito.times(1)).endObjectSegment(targetPath, EMPTY_STRING, EMPTY_STRING);
 		Mockito.verifyNoMoreInteractions(mvisitor);	
 	}
 	

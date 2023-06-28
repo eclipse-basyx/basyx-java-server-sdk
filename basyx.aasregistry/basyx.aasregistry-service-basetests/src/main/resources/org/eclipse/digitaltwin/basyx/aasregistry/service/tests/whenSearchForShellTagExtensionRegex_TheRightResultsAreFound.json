@@ -1,0 +1,32 @@
+[
+	{
+		"id": "identification_2",
+		"extensions": [
+			{
+				"name": "TAG",
+				"value": "BLUE"
+			},
+			{
+				"name": "DEPRECATED",
+				"value": "true"
+			}
+		]
+	},
+	{
+		"id": "identification_3",
+		"extensions": [
+			{
+				"name": "TAG",
+				"value": "RED"
+			},
+			{
+				"name": "TAG",
+				"value": "GREEN"
+			},
+			{
+				"name": "TAG",
+				"value": "BLUE"
+			}
+		]
+	}
+]

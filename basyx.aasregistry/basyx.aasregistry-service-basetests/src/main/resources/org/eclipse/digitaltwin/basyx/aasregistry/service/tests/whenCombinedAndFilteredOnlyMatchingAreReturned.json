@@ -1,0 +1,30 @@
+[
+	{
+		"id": "identification_1",
+		"extensions": [
+			{
+				"name": "COLOR",
+				"value": "RED"
+			},
+			{
+				"name": "SHAPE",
+				"value": "RECTANGLE"
+			}
+		],
+		"submodelDescriptors": [
+			{
+				"id": "sm2",
+				"extensions": [
+					{
+						"name": "TAG",
+						"value": "AB"
+					},
+					{
+						"name": "TAG",
+						"value": "AC"
+					}
+				]
+			}
+		]
+	}
+]

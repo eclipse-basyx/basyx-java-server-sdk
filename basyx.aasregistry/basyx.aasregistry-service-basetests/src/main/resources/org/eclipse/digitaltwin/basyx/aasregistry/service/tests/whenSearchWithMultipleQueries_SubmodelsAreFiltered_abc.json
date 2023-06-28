@@ -1,0 +1,46 @@
+[
+	{
+		"id": "identification_2",
+		"submodelDescriptors": [
+			{
+				"id": "sm2_1",
+				"description": [
+					{
+						"language": "de-DE",
+						"text": "a"
+					},
+					{
+						"language": "de-DE",
+						"text": "b"
+					},
+					{
+						"language": "de-DE",
+						"text": "c"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "identification_3",
+		"submodelDescriptors": [
+			{
+				"id": "sm3_1",
+				"description": [
+					{
+						"language": "de-DE",
+						"text": "b"
+					},
+					{
+						"language": "de-DE",
+						"text": "c"
+					},
+					{
+						"language": "de-DE",
+						"text": "a"
+					}
+				]
+			}
+		]
+	}
+]

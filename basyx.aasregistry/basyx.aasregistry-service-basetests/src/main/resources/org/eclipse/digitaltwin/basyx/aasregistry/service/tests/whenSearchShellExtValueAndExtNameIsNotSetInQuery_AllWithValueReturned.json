@@ -1,0 +1,41 @@
+[
+	{
+		"id": "identification_2",
+		"extensions": [
+			{
+				"name": "TAG",
+				"value": "VANILLA"
+			},
+			{
+				"name": "DEPRECATED_SINCE",
+				"value": "VERSION_2.8"
+			}
+		]
+	},
+	{
+		"id": "identification_3",
+		"extensions": [
+			{
+				"name": "TAG",
+				"value": "RED"
+			},
+			{
+				"name": "TAG",
+				"value": "VANILLA"
+			},
+			{
+				"name": "TAG",
+				"value": "BLUE"
+			}
+		]
+	},
+	{
+		"id": "identification_4",
+		"extensions": [
+			{
+				"name": "DEPRECATED_SINCE",
+				"value": "VERSION_2.3"
+			}
+		]
+	}
+]

@@ -15,7 +15,7 @@
 	<properties>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>
 		<start-class> org.eclipse.digitaltwin.basyx.aasregistry.service.OpenApiGeneratorApplication</start-class>
-	<docker.image.name>aas-registry-log-mem</docker.image.name>
+		<docker.image.name>aas-registry-log-mem</docker.image.name>
 	</properties>
 	<dependencies>
 		<dependency>

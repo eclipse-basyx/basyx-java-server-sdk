@@ -1,0 +1,14 @@
+{
+	"extensions": {
+		"$elemMatch": {
+			"$and": [
+				{
+					"value": "RED"
+				},
+				{
+					"name": "COLOR"
+				}
+			]
+		}
+	}
+}

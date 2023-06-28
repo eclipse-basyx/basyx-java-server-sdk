@@ -1,0 +1,16 @@
+{
+	"endpoints": {
+		"$elemMatch": {
+			"protocolInformation.endpointProtocolVersion": {
+				"$in": [
+					{
+						"$regularExpression": {
+							"pattern": "a.*c",
+							"options": ""
+						}
+					}
+				]
+			}
+		}
+	}
+}

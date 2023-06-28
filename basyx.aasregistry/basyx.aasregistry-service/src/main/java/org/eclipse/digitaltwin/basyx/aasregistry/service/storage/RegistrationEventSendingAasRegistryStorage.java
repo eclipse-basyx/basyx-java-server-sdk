@@ -34,8 +34,8 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorAlr
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEvent;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventSink;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEvent.EventType;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventSink;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
