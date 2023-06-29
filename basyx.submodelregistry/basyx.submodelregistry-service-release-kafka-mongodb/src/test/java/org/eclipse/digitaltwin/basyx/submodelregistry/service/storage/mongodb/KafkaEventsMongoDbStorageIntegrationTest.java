@@ -24,12 +24,15 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.mongodb;
 
+import java.time.Duration;
 import java.util.stream.Stream;
 
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.BaseEventListener;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.BaseIntegrationTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -39,20 +42,26 @@ import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.utility.DockerImageName;
 
 @TestPropertySource(properties = { "registry.type=mongodb", "events.sink=kafka", "spring.data.mongodb.database=submodel-registry" })
 public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTest {
 
+	private static Logger logger = LoggerFactory.getLogger("KAFKA");
+	private static Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(logger);
+	
 	@Value("${spring.data.mongodb.database}")
 	private static String DATABASE_NAME;
 	
-	public static KafkaContainer KAFKA = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.2.1"));
+	public static KafkaContainer KAFKA = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.2.1")).withStartupTimeout(Duration.ofSeconds(120));;
 
 	public static final MongoDBContainer MONGODB_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:5.0.10"));
 
 	@DynamicPropertySource
 	static void assignAdditionalProperties(DynamicPropertyRegistry registry) {
+		KAFKA.followOutput(logConsumer);
+		logger.info("Connecting to KAFKA on: " + KAFKA.getBootstrapServers());
 		String uri = MONGODB_CONTAINER.getConnectionString() + "/" + DATABASE_NAME;
 		registry.add("spring.data.mongodb.uri", () -> uri);
 		registry.add("spring.kafka.bootstrap-servers", KAFKA::getBootstrapServers);
