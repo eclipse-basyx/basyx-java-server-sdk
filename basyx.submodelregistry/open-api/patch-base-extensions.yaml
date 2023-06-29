@@ -1,0 +1,54 @@
+- op: replace
+  path: /servers
+  value: []
+- op: add
+  path: /paths/~1submodel-descriptors~1{submodelIdentifier}/get/parameters/0/x-utf8-base64-url-encoded-as-string
+  value: true
+- op: add
+  path: /paths/~1submodel-descriptors~1{submodelIdentifier}/put/parameters/0/x-utf8-base64-url-encoded-as-string
+  value: true
+- op: add
+  path: /paths/~1submodel-descriptors~1{submodelIdentifier}/delete/parameters/0/x-utf8-base64-url-encoded-as-string
+  value: true
+- op: add
+  path: /paths/~1submodel-descriptors/delete
+  value:
+     tags:
+     - Submodel Registry
+     summary: Deletes all Submodel Descriptors
+     operationId: DeleteAllSubmodelDescriptors
+     responses:
+        '204':
+           description: No content
+- op: add
+  path: /paths/~1description/get/tags
+  value:
+  - Description
+- op: replace
+  path: /paths/~1submodel-descriptors/get/tags
+  value:
+  - Submodel Registry
+- op: replace
+  path: /paths/~1submodel-descriptors/delete/tags
+  value:
+  - Submodel Registry
+- op: replace
+  path: /paths/~1submodel-descriptors/post/tags
+  value:
+  - Submodel Registry
+- op: replace
+  path: /paths/~1submodel-descriptors~1{submodelIdentifier}/get/tags
+  value:
+  - Submodel Registry
+- op: replace
+  path: /paths/~1submodel-descriptors~1{submodelIdentifier}/put/tags
+  value:
+  - Submodel Registry
+- op: replace
+  path: /paths/~1submodel-descriptors~1{submodelIdentifier}/delete/tags
+  value:
+  - Submodel Registry
+- op: replace
+  path: /paths/~1description/get/tags
+  value:
+  - Submodel Registry

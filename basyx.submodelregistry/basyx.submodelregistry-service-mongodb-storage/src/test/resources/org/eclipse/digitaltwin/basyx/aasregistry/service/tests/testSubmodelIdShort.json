@@ -1,0 +1,7 @@
+{
+	"submodelDescriptors": {
+		"$elemMatch": {
+			"idShort": "myId"
+		}
+	}
+}

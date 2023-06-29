@@ -1,0 +1,14 @@
+{
+	"id": "sm2",
+	"idShort": "2",
+	"endpoints": [
+		{
+			"protocolInformation": {
+				"href": "http://127.0.0.1:8099/submodel",
+				"endpointProtocol": "HTTP",
+				"subprotocol": "AAS"
+			},
+			"interface": "https://admin-shell.io/aas/API/3/0/SubmodelServiceSpecification/SSP-003"
+		}
+	]
+}
