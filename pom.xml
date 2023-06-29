@@ -16,6 +16,7 @@
 		<module>basyx.common</module>
 		<module>basyx.submodelservice</module>
 		<module>basyx.submodelrepository</module>
+		<module>basyx.submodelregistry</module>
 		<module>basyx.aasservice</module>
 		<module>basyx.aasrepository</module>
 		<module>basyx.aasregistry</module>
