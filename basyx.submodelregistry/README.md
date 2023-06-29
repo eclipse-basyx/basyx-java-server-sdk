@@ -1,0 +1,63 @@
+# Basyx Submodel Registry
+
+This is a Java-based implementation of the Submodel Registry server and client based on the corresponding [Open-API specification](ttps://app.swaggerhub.com/apis/Plattform_i40/SubmodelRegistryServiceSpecification/V3.0.1_SSP-001) of the German Plattform Industrie 4.0.
+
+[basyx.submodelregistry-client-native](basyx.submodelregistry-client-native/README.md) can be used to interact with the backend to register or unregister descriptors and submodels or perform search operations.
+
+[basyx.submodelregistry-service](basyx.submodelregistry-service/README.md) provides the application server to access the submodel descriptor storage and offers an API for REST-based communication.
+
+[basyx.submodelregistry-service-basemodel](basyx.submodelregistry-service-basemodel/README.md) provides a base model implementation that should be used if you do not need specific model annotations for your storage. It is used for the in-memory storage implementation and you need to add it explicitly as dependency for your server deployment as it is defined as 'provided' dependency in the [basyx.submodelregistry-service](basyx.submodelregistry-service/README.md) POM.
+
+[basyx.submodelregistry-service-basetests](basyx.submodelregistry-service-basetests/README.md) provides helper classes and abstract test classes that can be extended in storage tests or integration tests. The abstract test classes already define test methods so that you will get a good test coverage without writing any additional test cases.
+
+[basyx.submodelregistry-service-mongodb-storage](basyx.submodelregistry-service-mongodb-storage/README.md) provides a registry-storage implementation based on mongoDB that could be used as storage for [submodelregistry-service](basyx.submodelregistry-service/README.md). It comes with java-based model classes, annotated with mongoDB annotations.
+
+[basyx.submodelregistry-service-inmemory-storage](basyx.submodelregistry-service-inmemory-storage/README.md) provides a non-persistent registry-storage implementation where instances are stored in hash maps. It can be used as storage for [submodelregistry-service](basyx.submodelregistry-service/README.md).
+
+[basyx.submodelregistry-service-kafka-events](basyx.submodelregistry-service-kafka-events/README.md) extends basyx.submodelregistry-service with a registry-event-sink implementation that delivers shell descriptor and submodel registration events using Apache Kafka. The default provided by submodelregistry-service just logs the events.
+
+[basyx.submodelregistry-service-release-kafka-mongodb](basyx.submodelregistry-service-release-kafka-mongodb/README.md) is used to combine the server artifacts to a release image that uses [Apache Kafka](https://kafka.apache.org/) as event sink and [MongoDB](https://www.mongodb.com/) as storage.
+
+[basyx.submodelregistry-service-release-kafka-mem](basyx.submodelregistry-service-release-kafka-mem/README.md) is used to combine the server artifacts to a release image that uses Apache Kafka as event sink and an in-memory storage.
+
+[basyx.submodelregistry-service-release-log-mongodb](basyx.submodelregistry-service-release-log-mongodb/README.md) is used to combine the server artifacts to a release image that logs registry events and uses MongoDB as data storage.
+
+[basyx.submodelregistry-service-release-log-mem](basyx.submodelregistry-service-release-log-mem/README.md) is used to combine the server artifacts to a release image that logs registry events and an in-memory storage.
+
+A docker-compose file that illustrates the setup can be found in the [docker-compose](docker-compose/docker-compose.yml) folder.
+
+
+# Important
+
+The REST API and the client implementation will not be modified - if not a SNAPSHOT version - until a new major version is released or an update of the openAPI definition. All server-side classes and the plugins are not intended to be used as programming library. They could be updated or removed then a new minor version is released.
+
+# Build Resources
+
+To build the images run these commands from this folder or for the parent project pom:
+
+Install maven generate jars:
+
+``` shell 
+mvn clean install
+```
+
+In order to build the docker images, you need to specify *docker.username* and *docker.password* properties (here without running tests):
+
+``` shell
+MAVEN_OPS='-Xmx2048 -Xms1024' mvn clean install -DskipTests -Ddocker.username=eclipsebasyx -Ddocker.password=""
+```
+
+You can now check your images from command-line and push the images:
+``` shell 
+docker images   ...
+```
+Or you can directly push them from maven. 
+
+``` shell 
+MAVEN_OPS='-Xmx2048 -Xms1024' mvn deploy -Ddocker.registry=docker.io -Ddocker.username=eclipsebasyx -Ddocker.password=pwd
+```
+In addition, maven deploy will also deploy your maven artifacts, so you can do everything in one step.
+
+Have a look at the *docker-compose* sub-folder to see how the created images could be referenced in docker-compose files.
+
+Consider updating the [image name pattern](pom.xml#L16) if you want a different image name.

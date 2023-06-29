@@ -12,11 +12,11 @@ This is a Java-based implementation of the Asset Administration Shell Registry s
 
 [basyx.aasregistry-service-basemodel](basyx.aasregistry-service-basemodel/README.md) provides a base model implementation that should be used if you do not need specific model annotations for your storage. It is used for the in-memory storage implementation and you need to add it explicitly as dependency for your server deployment as it is defined as 'provided' dependency in the [basyx.aasregistry-service](basyx.aasregistry-service/README.md) POM.
 
-[basyx.aasregistry-service-base-tests](basyx.aasregistry-service-base-tests/README.md) provides helper classes and abstract test classes that can be extended in storage tests or integration tests. The abstract test classes already define test methods so that you will get a good test coverage without writing any additional test cases.
+[basyx.aasregistry-service-basetests](basyx.aasregistry-service-basetests/README.md) provides helper classes and abstract test classes that can be extended in storage tests or integration tests. The abstract test classes already define test methods so that you will get a good test coverage without writing any additional test cases.
 
-[basyx.aasregistry-service-mongodb-storage](basyx.aasregistry-service-mongodb-storage/README.md) provides a registry-storage implementation based on mongoDB that could be used as storage for [aasregistry-service](aasregistry-service/README.md). It comes with java-based model classes, annotated with mongoDB annotations.
+[basyx.aasregistry-service-mongodb-storage](basyx.aasregistry-service-mongodb-storage/README.md) provides a registry-storage implementation based on mongoDB that could be used as storage for [aasregistry-service](basyx.aasregistry-service/README.md). It comes with java-based model classes, annotated with mongoDB annotations.
 
-[basyx.aasregistry-service-inmemory-storage](basyx.aasregistry-service-inmemory-storage/README.md) provides a non-persistent registry-storage implementation where instances are stored in hash maps. It can be used as storage for [aasregistry-service](aasregistry-service/README.md).
+[basyx.aasregistry-service-inmemory-storage](basyx.aasregistry-service-inmemory-storage/README.md) provides a non-persistent registry-storage implementation where instances are stored in hash maps. It can be used as storage for [aasregistry-service](basyx.aasregistry-service/README.md).
 
 [basyx.aasregistry-service-kafka-events](basyx.aasregistry-service-kafka-events/README.md) extends basyx.aasregistry-service with a registry-event-sink implementation that delivers shell descriptor and submodel registration events using Apache Kafka. The default provided by aasregistry-service just logs the events.
 
@@ -33,7 +33,7 @@ A docker-compose file that illustrates the setup can be found in the [docker-com
 
 # Important
 
-The REST API and the client implementation will not be modified until a new major version is released or an update of the openAPI definition. All server-side classes and the plugins are not intended to be used as programming library. They could be updated or removed then a new minor version is released.
+The REST API and the client implementation will not be modified - if not a SNAPSHOT version - until a new major version is released or an update of the openAPI definition. All server-side classes and the plugins are not intended to be used as programming library. They could be updated or removed then a new minor version is released.
 
 # Build Resources
 
@@ -60,7 +60,7 @@ Or you can directly push them from maven.
 ``` shell 
 MAVEN_OPS='-Xmx2048 -Xms1024' mvn deploy -Ddocker.registry=docker.io -Ddocker.username=eclipsebasyx -Ddocker.password=pwd
 ```
-In addition maven deploy will also deploy your maven artifacts, so you can do everything in one step.
+In addition, maven deploy will also deploy your maven artifacts, so you can do everything in one step.
 
 Have a look at the *docker-compose* sub-folder to see how the created images could be referenced in docker-compose files.
 
