@@ -11,14 +11,14 @@
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.submodelrepository-http</artifactId>
-			<scope>test</scope>
 			<classifier>tests</classifier>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.http</artifactId>
-			<scope>test</scope>
 			<classifier>tests</classifier>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
@@ -36,5 +36,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 </project>

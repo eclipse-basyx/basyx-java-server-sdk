@@ -11,7 +11,7 @@
 
 	<properties>
 		<docker.image.name>aasrepository</docker.image.name>
-		<docker.container.waitforendpoint>http://localhost:${docker.host.port}/shells</docker.container.waitforendpoint>
+		<docker.container.waitForEndpoint>http://localhost:${docker.host.port}/shells</docker.container.waitForEndpoint>
 	</properties>
 
 	<dependencies>
@@ -38,8 +38,8 @@
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.aasrepository-http</artifactId>
-			<scope>test</scope>
 			<classifier>tests</classifier>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -54,8 +54,8 @@
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.http</artifactId>
-			<scope>test</scope>
 			<classifier>tests</classifier>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>

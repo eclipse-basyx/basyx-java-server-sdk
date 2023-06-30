@@ -150,7 +150,7 @@
 										<port>${docker.host.port}:${docker.container.port}</port>
 									</ports>
 									<wait>
-										<url>${docker.container.waitforendpoint}</url>
+										<url>${docker.container.waitForEndpoint}</url>
 										<time>60000</time>
 									</wait>
 								</run>
