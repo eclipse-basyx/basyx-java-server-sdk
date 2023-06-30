@@ -1,0 +1,6 @@
+---
+events:
+  sink: kafka
+spring:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}

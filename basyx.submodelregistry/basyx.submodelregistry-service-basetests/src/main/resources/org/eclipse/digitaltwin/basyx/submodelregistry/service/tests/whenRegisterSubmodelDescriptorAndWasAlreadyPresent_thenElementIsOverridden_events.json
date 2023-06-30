@@ -1,0 +1,15 @@
+[
+	{
+		"id": "sm2",
+		"type": "SUBMODEL_REGISTERED",
+		"submodelDescriptor": {
+			"id": "sm2",
+			"description": [
+				{
+					"language": "de-DE",
+					"text": "Overridden"
+				}
+			]
+		}
+	}
+]

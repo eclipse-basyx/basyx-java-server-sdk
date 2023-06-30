@@ -1,0 +1,11 @@
+{
+	"endpoints": {
+		"$elemMatch": {
+			"protocolInformation.endpointProtocolVersion": {
+				"$in": [
+					"1"
+				]
+			}
+		}
+	}
+}
