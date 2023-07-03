@@ -197,7 +197,7 @@ public abstract class AasRepositoryHTTPSuite {
 		String url = getSpecificAssetInformationAccessURL(dummyAasId);
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(url);
 
-		String expected = BaSyxHttpTestUtils.readJSONStringFromFile("classpath:assetInfoSimple.json");
+		String expected = BaSyxHttpTestUtils.readJSONStringFromClasspath("assetInfoSimple.json");
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expected, BaSyxHttpTestUtils.getResponseAsString(response));
 	}
@@ -214,7 +214,7 @@ public abstract class AasRepositoryHTTPSuite {
 	public void updateAssetInformationByIdentifier() throws FileNotFoundException, IOException, ParseException {
 		createDummyAasOnServer(getAas1JSONString());
 
-		String json = BaSyxHttpTestUtils.readJSONStringFromFile("classpath:assetInfoUpdate.json");
+		String json = BaSyxHttpTestUtils.readJSONStringFromClasspath("assetInfoUpdate.json");
 
 		BaSyxHttpTestUtils.executePutOnURL(getSpecificAssetInformationAccessURL(dummyAasId), json);
 
@@ -327,35 +327,35 @@ public abstract class AasRepositoryHTTPSuite {
 	}
 
 	private String getAas1JSONString() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:AasSimple_1.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AasSimple_1.json");
 	}
 	
 	private String getPaginatedAasJSONString() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:AllPaginatedAas.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AllPaginatedAas.json");
 	}
 	
 	private String getAas2JSONString() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:AasSimple_2.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AasSimple_2.json");
 	}
 
 	private String getSingleSubmodelReference() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelReference.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelReference.json");
 	}
 	
 	private String getSMReferenceRemovalJson() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SMReferenceRemovalResponse.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SMReferenceRemovalResponse.json");
 	}
 
 	private String getUpdatedAasJSONString() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:UpdatedAasSimple.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("UpdatedAasSimple.json");
 	}
 
 	private String getUpdatedAasIdMismatchJSONString() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:UpdatedAasIdMismatch.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("UpdatedAasIdMismatch.json");
 	}
 	
 	private String getPaginatedSingleSMReferenceJson() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:PaginatedSingleSMReference.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("PaginatedSingleSMReference.json");
 	}
 
 }

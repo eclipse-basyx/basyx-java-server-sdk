@@ -25,37 +25,25 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
 import java.util.Collection;
 
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.core5.http.ParseException;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.ConceptDescriptionRepositorySuiteHelper;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.DummyConceptDescriptionFactory;
-import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
-import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.http.HttpStatus;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
- * Tests the ConceptDescription specific parts of the {@link ConceptDescriptionRepository} HTTP/REST API
+ * Tests the {@link AssetAdministrationShell} specific parts of the
+ * {@link AasRepository} HTTP/REST API
  * 
- * @author danish
+ * @author schnicke, danish
  *
  */
-public class TestConceptDescriptionRepositoryHTTP {
+public class TestConceptDescriptionRepositoryHTTP extends ConceptDescriptionRepositoryHTTPSuite {
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
@@ -63,8 +51,8 @@ public class TestConceptDescriptionRepositoryHTTP {
 		appContext = new SpringApplication(DummyConceptDescriptionRepositoryComponent.class).run(new String[] {});
 	}
 
-	@Before
-	public void populateRepository() {
+	@Override
+	public void resetRepository() {
 		ConceptDescriptionRepository repo = appContext.getBean(ConceptDescriptionRepository.class);
 		Collection<ConceptDescription> conceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
 		resetRepoToDefaultConceptDescriptions(repo, conceptDescriptions);
@@ -77,236 +65,13 @@ public class TestConceptDescriptionRepositoryHTTP {
 	}
 
 	@AfterClass
-	public static void shutdownConceptDescriptionRepo() {
+	public static void shutdownAasRepo() {
 		appContext.close();
 	}
 
-	@Test
-	public void getAllConceptDescriptionsPreconfigured() throws IOException, ParseException {
-		String conceptDescriptionsJSON = requestAllConceptDescriptions();
-		String expectedConceptDescriptionsJSON = getAllConceptDescriptionJSON();
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionsJSON, conceptDescriptionsJSON);
-	}
-	
-	@Test
-	public void getAllConceptDescriptionsByIdShortPreconfigured() throws IOException, ParseException {
-		String conceptDescriptionsJSON = getAllConceptDescriptionsByIdShortJSON("ConceptDescription");
-		String expectedConceptDescriptionsJSON = getConceptDescriptionsWithIdShort();
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionsJSON, conceptDescriptionsJSON);
-	}
-	
-	@Test
-	public void getAllConceptDescriptionsByIsCaseOfPreconfigured() throws IOException, ParseException {
-		String conceptDescriptionsJSON = getAllConceptDescriptionsByIsCaseOfJSON(getReferenceJSON());
-		String expectedConceptDescriptionsJSON = getConceptDescriptionsWithIsCaseOf();
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionsJSON, conceptDescriptionsJSON);
-	}
-	
-	@Test
-	public void getAllConceptDescriptionsByDataSpecRefPreconfigured() throws IOException, ParseException {
-		String conceptDescriptionsJSON = getAllConceptDescriptionsByDataSpecRefJSON(getDataSpecReferenceJSON());
-		String expectedConceptDescriptionsJSON = getConceptDescriptionsWithDataSpecRef();
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionsJSON, conceptDescriptionsJSON);
-	}
-
-	@Test
-	public void getSpecificConceptDescription() throws ParseException, IOException {
-		String actualConceptDescriptionJSON = requestSpecificConceptDescriptionJSON(DummyConceptDescriptionFactory.createConceptDescription().getId());
-		String expectedConceptDescriptionJSON = getSingleConceptDescriptionJSON();
-
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionJSON, actualConceptDescriptionJSON);
-	}
-	
-	@Test
-	public void setTwoParametersInRequest() throws IOException {
-		CloseableHttpResponse response = requestWithTwoParameters("doesntMatterIdShort", "doesntMatterDataSpec");
-
-		assertEquals(HttpStatus.BAD_REQUEST.value(), response.getCode());
-	}
-	
-	@Test
-	public void setAllParametersInRequest() throws IOException {
-		CloseableHttpResponse response = requestWithAllParameters("doesntMatterIdShort", "doesntMatterIsCaseOf", "doesntMatterDataSpec");
-
-		assertEquals(HttpStatus.BAD_REQUEST.value(), response.getCode());
-	}
-
-	@Test
-	public void getSpecificConceptDescriptionNonExisting() throws IOException {
-		CloseableHttpResponse response = requestConceptDescription("nonExisting");
-
-		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
-	}
-
-
-	@Test
-	public void updateExistingConceptDescription() throws IOException, ParseException {
-		String id = ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID;
-		String expectedConceptDescriptionJSON = getUpdatedConceptDescriptionJSON();
-
-		CloseableHttpResponse creationResponse = putConceptDescription(id, expectedConceptDescriptionJSON);
-
-		assertEquals(HttpStatus.NO_CONTENT.value(), creationResponse.getCode());
-
-		String actualConceptDescriptionJSON = requestSpecificConceptDescriptionJSON(id);
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionJSON, actualConceptDescriptionJSON);
-	}
-
-	@Test
-	public void updateNonExistingConceptDescription() throws IOException {
-		String id = "nonExisting";
-		String expectedConceptDescriptionJSON = getUpdatedConceptDescriptionJSON();
-
-		CloseableHttpResponse updateResponse = putConceptDescription(id, expectedConceptDescriptionJSON);
-
-		assertEquals(HttpStatus.NOT_FOUND.value(), updateResponse.getCode());
-	}
-	
-	@Test
-	public void updateConceptDescriptionWithMismatchId() throws IOException, ParseException {
-		String id = ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID;
-		String conceptDescriptionUpdateJson = getUpdatedConceptDescriptionWithMismatchIdJSON();
-
-		CloseableHttpResponse creationResponse = putConceptDescription(id, conceptDescriptionUpdateJson);
-
-		assertEquals(HttpStatus.BAD_REQUEST.value(), creationResponse.getCode());
-	}
-
-	@Test
-	public void createConceptDescriptionNewId() throws IOException, ParseException {
-		String expectedConceptDescriptionJSON = getNewConceptDescriptionJSON();
-		CloseableHttpResponse creationResponse = createConceptDescription(expectedConceptDescriptionJSON);
-
-		assertConceptDescriptionCreationReponse(expectedConceptDescriptionJSON, creationResponse);
-
-		String actualConceptDescription = requestSpecificConceptDescriptionJSON("newConceptDescription");
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionJSON, actualConceptDescription);
-	}
-
-	@Test
-	public void createSubmodelCollidingId() throws IOException {
-		String conceptDescriptionJSON = getSingleConceptDescriptionJSON();
-		CloseableHttpResponse creationResponse = createConceptDescription(conceptDescriptionJSON);
-
-		assertEquals(HttpStatus.CONFLICT.value(), creationResponse.getCode());
-	}
-
-	@Test
-	public void deleteConceptDescription() throws IOException {
-		String existingConceptDescriptionId = DummyConceptDescriptionFactory.createConceptDescription().getId();
-
-		CloseableHttpResponse deletionResponse = deleteConceptDescriptionById(existingConceptDescriptionId);
-		assertEquals(HttpStatus.NO_CONTENT.value(), deletionResponse.getCode());
-		
-		CloseableHttpResponse getResponse = requestConceptDescription(existingConceptDescriptionId);
-		assertEquals(HttpStatus.NOT_FOUND.value(), getResponse.getCode());
-	}
-
-	@Test
-	public void deleteNonExistingConceptDescription() throws IOException {
-		CloseableHttpResponse deletionResponse = deleteConceptDescriptionById("nonExisting");
-
-		assertEquals(HttpStatus.NOT_FOUND.value(), deletionResponse.getCode());
-	}
-
-	private void assertConceptDescriptionCreationReponse(String conceptDescriptionJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JsonProcessingException, JsonMappingException {
-		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
-		String response = BaSyxHttpTestUtils.getResponseAsString(creationResponse);
-		BaSyxHttpTestUtils.assertSameJSONContent(conceptDescriptionJSON, response);
-	}
-
-	private CloseableHttpResponse createConceptDescription(String conceptDescriptionJSON) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(BaSyxConceptDescriptionHttpTestUtils.CONCEPT_DESCRIPTION_ACCESS_URL, conceptDescriptionJSON);
-	}
-
-	private CloseableHttpResponse deleteConceptDescriptionById(String conceptDescriptionId) throws IOException {
-		return BaSyxHttpTestUtils.executeDeleteOnURL(BaSyxConceptDescriptionHttpTestUtils.CONCEPT_DESCRIPTION_ACCESS_URL + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(conceptDescriptionId));
-	}
-
-	private CloseableHttpResponse putConceptDescription(String conceptDescriptionId, String conceptDescriptionJSON) throws IOException {
-		return BaSyxHttpTestUtils.executePutOnURL(BaSyxConceptDescriptionHttpTestUtils.getSpecificConceptDescriptionAccessPath(conceptDescriptionId), conceptDescriptionJSON);
-	}
-
-	private String requestSpecificConceptDescriptionJSON(String conceptDescriptionId) throws IOException, ParseException {
-		CloseableHttpResponse response = requestConceptDescription(conceptDescriptionId);
-
-		return BaSyxHttpTestUtils.getResponseAsString(response);
-	}
-
-	private CloseableHttpResponse requestConceptDescription(String conceptDescriptionId) throws IOException {
-		return BaSyxHttpTestUtils.executeGetOnURL(BaSyxConceptDescriptionHttpTestUtils.getSpecificConceptDescriptionAccessPath(conceptDescriptionId));
-	}
-
-	private String requestAllConceptDescriptions() throws IOException, ParseException {
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxConceptDescriptionHttpTestUtils.CONCEPT_DESCRIPTION_ACCESS_URL);
-
-		return BaSyxHttpTestUtils.getResponseAsString(response);
-	}
-	
-	private String getAllConceptDescriptionsByIdShortJSON(String idShort) throws IOException, ParseException {
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxConceptDescriptionHttpTestUtils.getAllConceptDescriptionsWithIdShortParameterAccessPath(idShort));
-
-		return BaSyxHttpTestUtils.getResponseAsString(response);
-	}
-	
-	private String getAllConceptDescriptionsByIsCaseOfJSON(String reference) throws IOException, ParseException {
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxConceptDescriptionHttpTestUtils.getAllConceptDescriptionsWithIsCaseOfParameterAccessPath(reference));
-		
-		return BaSyxHttpTestUtils.getResponseAsString(response);
-	}
-	
-	private String getAllConceptDescriptionsByDataSpecRefJSON(String dataSpecificationRef) throws IOException, ParseException {
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxConceptDescriptionHttpTestUtils.getAllConceptDescriptionsWithDataSpecRefParameterAccessPath(dataSpecificationRef));
-		
-		return BaSyxHttpTestUtils.getResponseAsString(response);
-	}
-	
-	private CloseableHttpResponse requestWithTwoParameters(String idShort, String dataSpecRef) throws IOException {
-		return BaSyxHttpTestUtils.executeGetOnURL(BaSyxConceptDescriptionHttpTestUtils.getAllConceptDescriptionsWithTwoParametersAccessPath(idShort, dataSpecRef));
-	}
-	
-	private CloseableHttpResponse requestWithAllParameters(String idShort, String isCaseOf, String dataSpecRef) throws IOException {
-		return BaSyxHttpTestUtils.executeGetOnURL(BaSyxConceptDescriptionHttpTestUtils.getAllConceptDescriptionsWithAllParametersAccessPath(idShort, isCaseOf, dataSpecRef));
-	}
-
-	private String getUpdatedConceptDescriptionJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleConceptDescriptionUpdate.json");
-	}
-	
-	private String getUpdatedConceptDescriptionWithMismatchIdJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleCDUpdateMismatchId.json");
-	}
-
-	private String getNewConceptDescriptionJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleConceptDescriptionNew.json");
-	}
-
-	private String getSingleConceptDescriptionJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleConceptDescription.json");
-	}
-
-	private String getAllConceptDescriptionJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:MultipleConceptDescriptions.json");
-	}
-	
-	private String getConceptDescriptionsWithIdShort() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:ConceptDescriptionsWithIdShort.json");
-	}
-	
-	private String getConceptDescriptionsWithIsCaseOf() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:ConceptDescriptionWithIsCaseOf.json");
-	}
-	
-	private String getConceptDescriptionsWithDataSpecRef() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:ConceptDescriptionWithDataSpec.json");
-	}
-	
-	private String getReferenceJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:Reference.json");
-	}
-	
-	private String getDataSpecReferenceJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:DataSpecificationReference.json");
+	@Override
+	protected String getURL() {
+		return "http://localhost:8080/concept-descriptions";
 	}
 
 }

@@ -27,8 +27,6 @@ package org.eclipse.digitaltwin.basyx.http.serialization;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,7 +44,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
-import org.springframework.util.ResourceUtils;
+import org.springframework.core.io.ClassPathResource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -61,16 +59,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class BaSyxHttpTestUtils {
 
 	/**
-	 * Reads the JSON String from a JSON file
+	 * Reads the JSON String from a JSON file in the classpath
 	 * 
 	 * @param fileName
 	 * @return
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public static String readJSONStringFromFile(String fileName) throws FileNotFoundException, IOException {
-		File file = ResourceUtils.getFile(fileName);
-		InputStream in = new FileInputStream(file);
+	public static String readJSONStringFromClasspath(String fileName) throws FileNotFoundException, IOException {
+		ClassPathResource classPathResource = new ClassPathResource(fileName);
+		InputStream in = classPathResource.getInputStream();
 		return IOUtils.toString(in, StandardCharsets.UTF_8.name());
 	}
 
