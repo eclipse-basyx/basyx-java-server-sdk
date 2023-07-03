@@ -46,9 +46,9 @@ public interface AasEnvironmentSerialization {
 	 * @return
 	 * @throws SerializationException
 	 */
-	public String createJSONAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, Boolean includeConceptDescriptions) throws SerializationException;
+	public String createJSONAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException;
 
-	public String createXMLAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, Boolean includeConceptDescriptions) throws SerializationException;
+	public String createXMLAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException;
 
-	public byte[] createAASXAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, Boolean includeConceptDescriptions) throws SerializationException, IOException;
+	public byte[] createAASXAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException, IOException;
 }

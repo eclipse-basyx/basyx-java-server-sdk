@@ -23,8 +23,8 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.TestAASEnvironmentSerialization;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -36,10 +36,10 @@ public class TestAasEnvironmentHTTP {
 	private static final String ACCEPT_XML = "application/xml";
 	private static final String ACCEPT_AASX = "application/asset-administration-shell-package+xml";
 
-	private ConfigurableApplicationContext appContext;
+	private static ConfigurableApplicationContext appContext;
 
-	@Before
-	public void startAasRepo() throws Exception {
+	@BeforeClass
+	public static void startAasRepo() throws Exception {
 		appContext = new SpringApplication(DummyAASEnvironmentComponent.class).run(new String[] {});
 	}
 
@@ -110,7 +110,7 @@ public class TestAasEnvironmentHTTP {
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
 
-	private String createSerializationURL(Boolean includeConceptDescription) {
+	private String createSerializationURL(boolean includeConceptDescription) {
 		return getSerializationURL(createIdCollection(DummyAASEnvironmentComponent.AAS_TECHNICAL_DATA_ID, DummyAASEnvironmentComponent.AAS_OPERATIONAL_DATA_ID),
 				createIdCollection(DummyAASEnvironmentComponent.SUBMODEL_OPERATIONAL_DATA_ID, DummyAASEnvironmentComponent.SUBMODEL_TECHNICAL_DATA_ID), includeConceptDescription);
 	}
@@ -131,7 +131,7 @@ public class TestAasEnvironmentHTTP {
 		return "http://localhost:8081";
 	}
 
-	private String getSerializationURL(Collection<String> aasIds, Collection<String> submodelIds, Boolean includeConceptDescription) {
+	private String getSerializationURL(Collection<String> aasIds, Collection<String> submodelIds, boolean includeConceptDescription) {
 		String aasIdsArrayString = createIdsArrayString(aasIds);
 		String submodelIdsArrayString = createIdsArrayString(submodelIds);
 
@@ -162,8 +162,8 @@ public class TestAasEnvironmentHTTP {
 		return IOUtils.toString(in, StandardCharsets.UTF_8.name());
 	}
 
-	@After
-	public void shutdown() {
+	@AfterClass
+	public static void shutdown() {
 		appContext.close();
 	}
 
