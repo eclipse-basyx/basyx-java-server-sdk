@@ -1,0 +1,50 @@
+{
+	"$filter": {
+		"input": "$submodelDescriptors",
+		"as": "a",
+		"cond": {
+			"$ne": [
+				{
+					"$size": {
+						"$ifNull": [
+							{
+								"$filter": {
+									"input": "$$a.endpoints",
+									"as": "b",
+									"cond": {
+										"$ne": [
+											{
+												"$size": {
+													"$ifNull": [
+														{
+															"$filter": {
+																"input": "$$b.protocolInformation.endpointProtocolVersion",
+																"as": "c",
+																"cond": {
+																	"$eq": [
+																		"$$c",
+																		"2.0.0"
+																	]
+																}
+															}
+														},
+														[
+														]
+													]
+												}
+											},
+											0
+										]
+									}
+								}
+							},
+							[
+							]
+						]
+					}
+				},
+				0
+			]
+		}
+	}
+}

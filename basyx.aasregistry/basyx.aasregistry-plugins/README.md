@@ -1,30 +1,6 @@
 # Basyx AAS Registry Plugins
 
-This project provides two maven plugins.
-
-Using the first plugin, you can perform an overlay operation based on two YAML files. This could be quite useful when you want to extend existing openAPI definitions or want to enhance a definition with annotations that should be processed by an openAPI-generator.
-
-To use the plugin embed this snippet into your POM file and specify an appropriate version:
-
-``` xml
-<plugin>
-	<groupId>	org.eclipse.digitaltwin.basyx.aasregistry.service</groupId>
-	<artifactId>basyx.aasregistry-plugins</artifactId>
-	<executions>
-		<execution>
-			<goals>
-				<goal>yaml-overlay</goal>
-			</goals>
-		</execution>
-	</executions>
-	<configuration>
-		<base>${project.basedir}/base.yaml</base>
-		<overlay>${project.basedir}/overlay.yaml</overlay>
-		<out>${project.basedir}/result.yaml</out>
-	</configuration>
-</plugin>
-```
-The other maven plugin can be used to generate builder classes that create search paths for the registry-service-based POJO classes. The plugin traverses the referenced class and its fields and generates a class that can be used to set up these search paths.
+This project provides a maven plugin that can be used to generate builder classes that create search paths for the registry-service-based POJO classes. The plugin traverses the referenced class and its fields and generates a class that can be used to set up these search paths.
 
 As we use the same search path in our AAS registry client, this generator can also be used there. The main benefit is that we will avoid typos when using the generated client and do not need to specify the string directly. 
 
