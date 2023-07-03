@@ -5,7 +5,7 @@ The components
 * [aasenvironment](../basyx.aasenvironment/)
 * [aasenvironment](../basyx.conceptdescriptionrepository/)
 
-offer common mchanisms to check the current health status of the application and configure Cross-Origin Resource Sharing (CORS) options.
+offer common mechanisms to check the current health status of the application and configure Cross-Origin Resource Sharing (CORS) options.
 
 ## Health Endpoint
 The health endpoint to check whether the server is up and running is available at:
@@ -28,7 +28,7 @@ Comma-separated list of origin patterns to allow. Unlike allowed origins which o
   management.endpoints.web.cors.allowed-origin-patterns=https://*.example.com
   ```
 * Allowed Methods:<br>
-Comma-separated list of methods to allow. '*' allows all methods. When not set,defaults to GET.
+Comma-separated list of methods to allow. '*' allows all methods. When not set, defaults to GET.
   ```
   management.endpoints.web.cors.allowed-methods=
   ```
