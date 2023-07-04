@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -45,6 +43,11 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<revision>2.0.0-SNAPSHOT</revision>
+		<docker.username>eclipsebasyx</docker.username>
+		<docker.image.tag>${revision}</docker.image.tag>
+		<docker.host.port>8081</docker.host.port>
+		<docker.container.port>8081</docker.container.port>
+		<aas4j-version>1.0.0-milestone-03.1</aas4j-version>
 	</properties>
 	<build>
 		<plugins>
@@ -127,13 +130,97 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!-- Build the docker image -->
+				<plugin>
+					<groupId>io.fabric8</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<version>0.43.0</version>
+					<configuration>
+						<images>
+							<image>
+								<name>${docker.username}/${docker.image.name}</name>
+								<build>
+									<tags>
+										<tag>${docker.image.tag}</tag>
+									</tags>
+									<contextDir>${project.basedir}</contextDir>
+								</build>
+								<run>
+									<ports>
+										<port>${docker.host.port}:${docker.container.port}</port>
+									</ports>
+									<wait>
+										<url>${docker.container.waitForEndpoint}</url>
+										<time>60000</time>
+									</wait>
+								</run>
+							</image>
+						</images>
+						<verbose>true</verbose>
+					</configuration>
+					<executions>
+						<execution>
+							<id>docker:build</id>
+							<phase>package</phase>
+							<goals>
+								<goal>build</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>docker-compose-up</id>
+							<phase>pre-integration-test</phase>
+							<goals>
+								<goal>start</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>docker-compose-down</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>stop</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<!-- Run integration tests -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>3.1.2</version>
+					<dependencies>
+						<dependency>
+							<groupId>org.apache.maven.surefire</groupId>
+							<artifactId>surefire-junit47</artifactId>
+							<version>3.1.2</version>
+						</dependency>
+					</dependencies>
+					<executions>
+						<execution>
+							<id>integration-test</id>
+							<goals>
+								<goal>integration-test</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>verify</id>
+							<goals>
+								<goal>verify</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.aas4j</groupId>
 				<artifactId>model</artifactId>
-				<version>1.0.0-milestone-03</version>
+				<version>${aas4j-version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -144,7 +231,7 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.aas4j</groupId>
 				<artifactId>dataformat-json</artifactId>
-				<version>1.0.0-milestone-03</version>
+				<version>${aas4j-version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -155,7 +242,7 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.aas4j</groupId>
 				<artifactId>dataformat-xml</artifactId>
-				<version>1.0.0-milestone-03</version>
+				<version>${aas4j-version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -166,7 +253,7 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.aas4j</groupId>
 				<artifactId>dataformat-aasx</artifactId>
-				<version>1.0.0-milestone-03</version>
+				<version>${aas4j-version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -245,6 +332,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-tck</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelrepository-backend-inmemory</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -292,6 +384,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-tck</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-backend-inmemory</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -321,7 +418,7 @@
 				<artifactId>basyx.aasenvironment.component</artifactId>
 				<version>${revision}</version>
 			</dependency>
-				<dependency>
+			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasenvironment-core</artifactId>
 				<version>${revision}</version>
@@ -329,17 +426,6 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasenvironment-http</artifactId>
-				<version>${revision}</version>
-			</dependency>
-			<!-- basyx.conceptdescriptionservice -->
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.conceptdescriptionservice-core</artifactId>
-				<version>${revision}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.conceptdescriptionservice-backend-inmemory</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<!-- basyx.conceptdescriptionrepository -->
@@ -355,7 +441,17 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository-tck</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.conceptdescriptionrepository-backend-inmemory</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository-backend-mongodb</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -406,6 +502,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-tck</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelrepository-backend-inmemory</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
@@ -451,6 +553,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-http</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-tck</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -503,19 +611,6 @@
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
-			<!-- basyx.conceptdescriptionservice -->
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.conceptdescriptionservice-core</artifactId>
-				<version>${revision}</version>
-				<classifier>tests</classifier>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.conceptdescriptionservice-backend-inmemory</artifactId>
-				<version>${revision}</version>
-				<classifier>tests</classifier>
-			</dependency>
 			<!-- basyx.conceptdescriptionrepository -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -531,7 +626,19 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository-tck</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.conceptdescriptionrepository-backend-inmemory</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository-backend-mongodb</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
