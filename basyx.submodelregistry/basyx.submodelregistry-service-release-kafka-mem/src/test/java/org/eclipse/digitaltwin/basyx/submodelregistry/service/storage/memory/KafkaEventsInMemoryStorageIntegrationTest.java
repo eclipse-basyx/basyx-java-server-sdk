@@ -38,6 +38,8 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.containers.wait.strategy.WaitStrategy;
 import org.testcontainers.utility.DockerImageName;
 
 @TestPropertySource(properties = { "registry.type=inMemory", "events.sink=kafka" })
@@ -48,15 +50,20 @@ public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTe
 	private static Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(logger);
 
 	@ClassRule
-	public static KafkaContainer KAFKA = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.2.1")).withStartupTimeout(Duration.ofSeconds(180));
-
-
+	public static KafkaContainer KAFKA = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.2.1")) {
+		protected void waitUntilContainerStarted() {
+			super.waitUntilContainerStarted();
+			WaitStrategy strategy = Wait.forLogMessage(".*Kafka startTimeMs.*", 1);
+			strategy.withStartupTimeout(Duration.ofMinutes(10));
+			strategy.waitUntilReady(this);
+		}
+	}.withLogConsumer(logConsumer);
+			
+			
+			
 	@DynamicPropertySource
 	static void assignAdditionalProperties(DynamicPropertyRegistry registry) {
-		KAFKA.followOutput(logConsumer);
-		logger.info("Connecting to KAFKA on: " + KAFKA.getBootstrapServers());
 		registry.add("spring.kafka.bootstrap-servers", KAFKA::getBootstrapServers);
-
 	}
 
 	@Component
