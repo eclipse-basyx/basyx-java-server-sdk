@@ -3,6 +3,10 @@ Eclipse BaSyx provides the AssetAdministrationShell Repository as off-the-shelf 
 
     docker run --name=aas-repo -p:8081:8081 -v C:/tmp:/usr/share/config eclipsebasyx/aas-repository:2.0.0-SNAPSHOT 
 
+> *Disclaimer*: In this example, configuration files are located in `C:/tmp`
+
+> *Disclaimer*: The binding of volume `C:/tmp` to `/usr/share/config` is tested using Windows Powershell. Other terminals might run into an error.
+
 The API endpoint documentation is available at:
 
 	http://{host}:{port}/v3/api-docs
@@ -33,7 +37,9 @@ In addition, it supports the following backends:
 * MongoDB
 
 Furthermore, the following features are provided:
-* [AAS Repository MQTT eventing](basyx.aasrepository-feature-mqtt/Readme.md)
-* [AAS Service MQTT eventing](../basyx.aasservice/basyx.aasservice-feature-mqtt/Readme.md)
+* [AAS Repository MQTT eventing](basyx.aasrepository-feature-mqtt/)
+* [AAS Service MQTT eventing](../basyx.aasservice/basyx.aasservice-feature-mqtt/Rea)
 
 For a configuration example, see [application.properties](basyx.aasrepository.component/src/main/resources/application.properties)
+
+The Health Endpoint and CORS Documentation can be found [here](../docs/Readme.md). 

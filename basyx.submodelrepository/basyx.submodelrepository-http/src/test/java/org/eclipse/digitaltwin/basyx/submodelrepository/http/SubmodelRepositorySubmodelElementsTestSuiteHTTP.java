@@ -525,15 +525,15 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 	}
 
 	private String getSubmodelElementsJSON() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SubmodelElements.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SubmodelElements.json");
 	}
 
 	private String getSubmodelElementJSON() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SubmodelElement.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SubmodelElement.json");
 	}
 
 	private String getJSONValueAsString(String fileName) throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:" + fileName);
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath(fileName);
 	}
 
 	protected List<Submodel> createSubmodels() {

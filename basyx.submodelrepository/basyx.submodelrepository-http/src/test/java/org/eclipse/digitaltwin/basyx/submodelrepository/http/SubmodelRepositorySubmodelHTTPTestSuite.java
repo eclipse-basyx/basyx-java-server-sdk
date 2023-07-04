@@ -194,27 +194,27 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	}
 
 	private String getUpdatedSubmodelJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelUpdate.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelUpdate.json");
 	}
 
 	private String getUpdatedSubmodelWithMismatchIdJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelUpdateMismatchId.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelUpdateMismatchId.json");
 	}
 
 	private String getNewSubmodelJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelNew.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelNew.json");
 	}
 
 	private String getSingleSubmodelJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodel.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodel.json");
 	}
 
 	private String getSingleSubmodelMetadataJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:SingleSubmodelMetadata.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelMetadata.json");
 	}
 
 	private String getAllSubmodelJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromFile("classpath:MultipleSubmodels.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("MultipleSubmodels.json");
 	}
 
 	protected List<Submodel> createSubmodels() {
