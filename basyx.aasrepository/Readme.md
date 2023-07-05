@@ -1,11 +1,11 @@
 # Eclipse BaSyx - AssetAdministrationShell Repository 
 Eclipse BaSyx provides the AssetAdministrationShell Repository as off-the-shelf component:
 
-    docker run --name=aas-repo -p:8081:8081 -v C:/tmp:/usr/share/config eclipsebasyx/aas-repository:2.0.0-SNAPSHOT 
+    docker run --name=aas-repo -p:8081:8081 -v C:/tmp:/application eclipsebasyx/aas-repository:2.0.0-SNAPSHOT 
 
 > *Disclaimer*: In this example, configuration files are located in `C:/tmp`
 
-> *Disclaimer*: The binding of volume `C:/tmp` to `/usr/share/config` is tested using Windows Powershell. Other terminals might run into an error.
+> *Disclaimer*: The binding of volume `C:/tmp` to `/application` is tested using Windows Powershell. Other terminals might run into an error.
 
 The API endpoint documentation is available at:
 
