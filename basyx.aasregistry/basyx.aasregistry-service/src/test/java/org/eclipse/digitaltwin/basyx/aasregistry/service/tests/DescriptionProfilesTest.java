@@ -55,7 +55,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @RunWith(SpringRunner.class)
 @WebMvcTest(DescriptionApiController.class)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-@TestPropertySource(properties = { "description.profiles=RegistryServiceSpecification/V3.0,RegistryServiceSpecification/V3.0-AssetAdministrationShellRegistry,RegistryServiceSpecification/V3.0-SubmodelRegistry" })
+@TestPropertySource(properties = { "description.profiles=https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-001,https://admin-shell.io/aas/API/3/0/SubmodelRegistryServiceSpecification/SSP-001" })
 public class DescriptionProfilesTest {
 
 	@MockBean
@@ -66,22 +66,18 @@ public class DescriptionProfilesTest {
 
 	@Autowired
 	public DescriptionApiDelegate delegate;
-	
+
 	@Autowired
 	private MockMvc mvc;
-	
+
 	@Test
 	public void whenGetDescription_ThenSuccess() throws Exception {
-		this.mvc.perform(get("/description").accept(MediaType.APPLICATION_JSON))
-		.andExpect(status().isOk())
-		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-		.andExpect(jsonPath("$.profiles").value(getDefinedProfiles()));
+		this.mvc.perform(get("/description").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.profiles").value(getDefinedProfiles()));
 	}
 
 	@Test
 	public void whenWrongConfiguration_FailedToMapToEnum() {
-		assertThrows(ProfileNotFoundException.class,
-				() -> ((BasyxDescriptionApiDelegate) delegate).setValues(new String[] { "Unknown-Value" }));
+		assertThrows(ProfileNotFoundException.class, () -> ((BasyxDescriptionApiDelegate) delegate).setValues(new String[] { "Unknown-Value" }));
 	}
 
 	private List<String> getDefinedProfiles() {

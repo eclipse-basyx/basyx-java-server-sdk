@@ -2,14 +2,14 @@
 openapi: 3.0.3
 info:
   title: DotAAS Part 2 | HTTP/REST | Asset Administration Shell Registry Service Specification
-  description: "The Full Profile of the Asset Administration Shell Registry Service Specification as part of the Specification of the Asset Administration Shell: Part 2. Publisher: Industrial Digital Twin Association (IDTA) April 2023"
+  description: "The Full Profile of the Asset Administration Shell Registry Service Specification as part of the [Specification of the Asset Administration Shell: Part 2](http://industrialdigitaltwin.org/en/content-hub).  \nPublisher: Industrial Digital Twin Association (IDTA) 2023"
   contact:
     name: Industrial Digital Twin Association (IDTA)
     email: info@idtwin.org
   license:
     name: CC BY 4.0
     url: https://creativecommons.org/licenses/by/4.0/
-  version: V3.0_SSP-001
+  version: V3.0.1_SSP-001
 servers:
 - url: "{protocol}://{host_name}:{port}/api/{version_prefix}"
   variables:
@@ -118,6 +118,13 @@ paths:
       responses:
         "201":
           description: Asset Administration Shell Descriptor created successfully
+          headers:
+            Location:
+              description: URL of the newly created resource
+              style: simple
+              explode: false
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -403,6 +410,13 @@ paths:
       responses:
         "201":
           description: Submodel Descriptor created successfully
+          headers:
+            Location:
+              description: URL of the newly created resource
+              style: simple
+              explode: false
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -681,7 +695,7 @@ components:
       required:
       - id
       type: object
-      example: "{ \"id\": \"https://example.org/aas/motor\", \"endpoints\": [ { \"protocolInformation\": { \"endpointAddress\": \"https://localhost:1234\", \"endpointProtocolVersion\": \"1.1\" }, \"interface\": \"AAS-1.0\" }, { \"protocolInformation\": { \"endpointAddress\": \"opc.tcp://localhost:4840\" }, \"interface\": \"AAS-1.0\" }, { \"protocolInformation\": { \"endpointAddress\": \"https://localhost:5678\", \"endpointProtocolVersion\": \"1.1\", \"subprotocol\": \"OPC UA Basic SOAP\", \"subprotocolBody\": \"ns=2;s=MyAAS\", \"subprotocolBodyEncoding\": \"application/soap+xml\" }, \"interface\": \"AAS-1.0\" } ] }"
+      example: "{ \"id\": \"https://example.org/aas/motor\", \"endpoints\": [ { \"protocolInformation\": { \"href\": \"https://localhost:1234/api/v3.0/aas\", \"endpointProtocol\": \"HTTP\", \"endpointProtocolVersion\": [\"1.1\"] }, \"interface\": \"AAS-3.0\" }, { \"protocolInformation\": { \"href\": \"opc.tcp://localhost:4840\" }, \"interface\": \"AAS-3.0\" }, { \"protocolInformation\": { \"href\": \"https://localhost:5678\", \"endpointProtocol\": \"HTTP\", \"endpointProtocolVersion\": [\"1.1\"], \"subprotocol\": \"OPC UA Basic SOAP\", \"subprotocolBody\": \"ns=2;s=MyAAS\", \"subprotocolBodyEncoding\": \"application/soap+xml\" }, \"interface\": \"AAS-3.0\" } ] }"
       allOf:
       - $ref: '#/components/schemas/Descriptor'
       - properties:
@@ -737,14 +751,31 @@ components:
           items:
             $ref: '#/components/schemas/Extension'
       example: "{ \"endpoints\": [ { \"protocolInformation\": { \"href\": \"https://localhost:1234/api/v3.0/aas\", \"endpointProtocolVersion\": [\"1.1\"] }, \"interface\": \"AAS-3.0\" }, { \"protocolInformation\": { \"href\": \"opc.tcp://localhost:4840\" }, \"interface\": \"AAS-3.0\" }, { \"protocolInformation\": { \"href\": \"https://localhost:5678\", \"endpointProtocolVersion\": [\"1.1\"], \"subprotocol\": \"OPC UA Basic SOAP\", \"subprotocolBody\": \"ns=2;s=MyAAS\", \"subprotocolBodyEncoding\": \"application/soap+xml\" }, \"interface\": \"AAS-3.0\" } ] }"
-    HasExtensions:
+    LangStringTextType:
+      allOf:
+      - $ref: '#/components/schemas/AbstractLangString'
+      - properties:
+          text:
+            maxLength: 1023
+    AbstractLangString:
+      required:
+      - language
+      - text
       type: object
       properties:
-        extensions:
-          minItems: 1
-          type: array
-          items:
-            $ref: '#/components/schemas/Extension'
+        language:
+          pattern: "^(([a-zA-Z]{2,3}(-[a-zA-Z]{3}(-[a-zA-Z]{3}){2})?|[a-zA-Z]{4}|[a-zA-Z]{5,8})(-[a-zA-Z]{4})?(-([a-zA-Z]{2}|[0-9]{3}))?(-(([a-zA-Z0-9]){5,8}|[0-9]([a-zA-Z0-9]){3}))*(-[0-9A-WY-Za-wy-z](-([a-zA-Z0-9]){2,8})+)*(-[xX](-([a-zA-Z0-9]){1,8})+)?|[xX](-([a-zA-Z0-9]){1,8})+|((en-GB-oed|i-ami|i-bnn|i-default|i-enochian|i-hak|i-klingon|i-lux|i-mingo|i-navajo|i-pwn|i-tao|i-tay|i-tsu|sgn-BE-FR|sgn-BE-NL|sgn-CH-DE)|(art-lojban|cel-gaulish|no-bok|no-nyn|zh-guoyu|zh-hakka|zh-min|zh-min-nan|zh-xiang)))$"
+          type: string
+        text:
+          minLength: 1
+          pattern: "^([\\t\\n\\r -퟿-�]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+          type: string
+    LangStringNameType:
+      allOf:
+      - $ref: '#/components/schemas/AbstractLangString'
+      - properties:
+          text:
+            maxLength: 128
     Extension:
       allOf:
       - $ref: '#/components/schemas/HasSemantics'
@@ -785,6 +816,7 @@ components:
       required:
       - keys
       - type
+      type: object
       properties:
         type:
           $ref: '#/components/schemas/ReferenceTypes'
@@ -871,31 +903,6 @@ components:
       - xs:unsignedInt
       - xs:unsignedLong
       - xs:unsignedShort
-    LangStringTextType:
-      allOf:
-      - $ref: '#/components/schemas/AbstractLangString'
-      - properties:
-          text:
-            maxLength: 1023
-    AbstractLangString:
-      required:
-      - language
-      - text
-      type: object
-      properties:
-        language:
-          pattern: "^(([a-zA-Z]{2,3}(-[a-zA-Z]{3}(-[a-zA-Z]{3}){2})?|[a-zA-Z]{4}|[a-zA-Z]{5,8})(-[a-zA-Z]{4})?(-([a-zA-Z]{2}|[0-9]{3}))?(-(([a-zA-Z0-9]){5,8}|[0-9]([a-zA-Z0-9]){3}))*(-[0-9A-WY-Za-wy-z](-([a-zA-Z0-9]){2,8})+)*(-[xX](-([a-zA-Z0-9]){1,8})+)?|[xX](-([a-zA-Z0-9]){1,8})+|((en-GB-oed|i-ami|i-bnn|i-default|i-enochian|i-hak|i-klingon|i-lux|i-mingo|i-navajo|i-pwn|i-tao|i-tay|i-tsu|sgn-BE-FR|sgn-BE-NL|sgn-CH-DE)|(art-lojban|cel-gaulish|no-bok|no-nyn|zh-guoyu|zh-hakka|zh-min|zh-min-nan|zh-xiang)))$"
-          type: string
-        text:
-          minLength: 1
-          pattern: "^([\\t\\n\\r -퟿-�]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
-          type: string
-    LangStringNameType:
-      allOf:
-      - $ref: '#/components/schemas/AbstractLangString'
-      - properties:
-          text:
-            maxLength: 128
     AdministrativeInformation:
       allOf:
       - $ref: '#/components/schemas/HasDataSpecification'
@@ -1190,7 +1197,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Reference'
-      example: "{ \"id\": \"https://admin-shell.io/zvei/nameplate/1/0/Nameplate\", \"endpoints\": [ { \"protocolInformation\": { \"endpointAddress\": \"https://localhost:1234\", \"endpointProtocolVersion\": \"1.1\" }, \"interface\": \"AAS-1.0\" }, { \"protocolInformation\": { \"endpointAddress\": \"opc.tcp://localhost:4840\" }, \"interface\": \"AAS-1.0\" }, { \"protocolInformation\": { \"endpointAddress\": \"https://localhost:5678\", \"endpointProtocolVersion\": \"1.1\", \"subprotocol\": \"OPC UA Basic SOAP\", \"subprotocolBody\": \"ns=2;s=MyAAS\", \"subprotocolBodyEncoding\": \"application/soap+xml\" }, \"interface\": \"AAS-1.0\" } ] }"
+      example: "{ \"id\": \"https://admin-shell.io/zvei/nameplate/1/0/Nameplate\", \"endpoints\": [ { \"href\": { \"href\": \"https://localhost:1234/api/v3.0/submodel\", \"endpointProtocol\": \"HTTP\", \"endpointProtocolVersion\": [\"1.1\"] }, \"interface\": \"AAS-3.0\" }, { \"protocolInformation\": { \"href\": \"opc.tcp://localhost:4840\" }, \"interface\": \"AAS-3.0\" }, { \"protocolInformation\": { \"href\": \"https://localhost:5678\", \"endpointProtocol\": \"HTTP\", \"endpointProtocolVersion\": [\"1.1\"], \"subprotocol\": \"OPC UA Basic SOAP\", \"subprotocolBody\": \"ns=2;s=MyAAS\", \"subprotocolBodyEncoding\": \"application/soap+xml\" }, \"interface\": \"AAS-3.0\" } ] }"
       allOf:
       - $ref: '#/components/schemas/Descriptor'
     Result:
@@ -1242,28 +1249,30 @@ components:
           items:
             type: string
             enum:
-            - AssetAdministrationShellServiceSpecification/V3.0
-            - AssetAdministrationShellServiceSpecification/V3.0-MinimalProfile
-            - SubmodelServiceSpecification/V3.0
-            - SubmodelServiceSpecification/V3.0-ValueProfile
-            - SubmodelServiceSpecification/V3.0-MinimalProfile
-            - AasxFileServerServiceSpecification/V3.0
-            - RegistryServiceSpecification/V3.0
-            - RegistryServiceSpecification/V3.0-AssetAdministrationShellRegistry
-            - RegistryServiceSpecification/V3.0-SubmodelRegistry
-            - RepositoryServiceSpecification/V3.0
-            - RepositoryServiceSpecification/V3.0-MinimalProfile
-            - AssetAdministrationShellRepositoryServiceSpecification/V3.0
-            - AssetAdministrationShellRepositoryServiceSpecification/V3.0-MinimalProfile
-            - SubmodelRepositoryServiceSpecification/V3.0
-            - SubmodelRepositoryServiceSpecification/V3.0-MinimalProfile
-            - RegistryAndDiscoveryServiceSpecification/V3.0
+            - https://admin-shell.io/aas/API/3/0/AssetAdministrationShellServiceSpecification/SSP-001
+            - https://admin-shell.io/aas/API/3/0/AssetAdministrationShellServiceSpecification/SSP-002
+            - https://admin-shell.io/aas/API/3/0/SubmodelServiceSpecification/SSP-001
+            - https://admin-shell.io/aas/API/3/0/SubmodelServiceSpecification/SSP-002
+            - https://admin-shell.io/aas/API/3/0/SubmodelServiceSpecification/SSP-003
+            - https://admin-shell.io/aas/API/3/0/AasxFileServerServiceSpecification/SSP-001
+            - https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-001
+            - https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-002
+            - https://admin-shell.io/aas/API/3/0/SubmodelRegistryServiceSpecification/SSP-001
+            - https://admin-shell.io/aas/API/3/0/SubmodelRegistryServiceSpecification/SSP-002
+            - https://admin-shell.io/aas/API/3/0/DiscoveryServiceSpecification/SSP-001
+            - https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRepositoryServiceSpecification/SSP-001
+            - https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRepositoryServiceSpecification/SSP-002
+            - https://admin-shell.io/aas/API/3/0/SubmodelRepositoryServiceSpecification/SSP-001
+            - https://admin-shell.io/aas/API/3/0/SubmodelRepositoryServiceSpecification/SSP-002
+            - https://admin-shell.io/aas/API/3/0/SubmodelRepositoryServiceSpecification/SSP-003
+            - https://admin-shell.io/aas/API/3/0/SubmodelRepositoryServiceSpecification/SSP-004
+            - https://admin-shell.io/aas/API/3/0/ConceptDescriptionServiceSpecification/SSP-001
       description: "The Description object enables servers to present their capabilities to the clients, in particular which profiles they implement. At least one defined profile is required. Additional, proprietary attributes might be included. Nevertheless, the server must not expect that a regular client understands them."
       example: |-
         {
           "profiles": [
-            "RepositoryServiceSpecification/V3.0-MinimalProfile",
-            "RegistryServiceSpecification/V3.0"
+            "https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-002",
+            "https://admin-shell.io/aas/API/3/0/SubmodelRegistryServiceSpecification/SSP-002"
           ]
         }
     PagedResult_paging_metadata:
@@ -1271,7 +1280,7 @@ components:
       properties:
         cursor:
           type: string
-      example: wJlCDLIl6KTWypN7T6vc6nWEmEYe99Hjf1XY1xmqV-M=#
+          example: wJlCDLIl6KTWypN7T6vc6nWEmEYe99Hjf1XY1xmqV-M=#
     ProtocolInformation_securityAttributes:
       required:
       - key
