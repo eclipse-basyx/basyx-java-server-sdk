@@ -21,7 +21,7 @@ jobs:
     - name: Start environment
       run: docker compose up -d --wait
     - name: Dependencies
-      run: mvn dependency:analyze
+      run: mvn dependency:tree
     - name: Install BaSyx
       run: mvn clean install
     - name: Stop environment
