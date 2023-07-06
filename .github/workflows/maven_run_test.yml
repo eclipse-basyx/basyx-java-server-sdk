@@ -20,6 +20,8 @@ jobs:
         cache: maven
     - name: Start environment
       run: docker compose up -d --wait
+    - name: Dependencies
+      run: mvn dependency:analyze
     - name: Install BaSyx
       run: mvn clean install
     - name: Stop environment
