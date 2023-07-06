@@ -1,11 +1,11 @@
 # Eclipse BaSyx - AAS Environment
 Eclipse BaSyx provides the AAS Environment as off-the-shelf component:
 
-    docker run --name=aas-env -p:8081:8081 -v C:/tmp:/application eclipsebasyx/aas-environment:2.0.0-SNAPSHOT 
+    docker run --name=aas-env -p:8081:8081 -v C:/tmp/application.properties:/application/application.properties eclipsebasyx/aas-environment:2.0.0-SNAPSHOT 
 
 > *Disclaimer*: In this example, configuration files are located in `C:/tmp`
 
-> *Disclaimer*: The binding of volume `C:/tmp` to `/application` is tested using Windows Powershell. Other terminals might run into an error.
+> *Disclaimer*: The binding of volume `C:/tmp/application.properties` to `/application/application.properties` is tested using Windows Powershell. Other terminals might run into an error.
 
 It aggregates the AAS Repository, Submodel Repository and ConceptDescription Repository into a single component. For its features and configuration, see the documentation of the respective components.
 
