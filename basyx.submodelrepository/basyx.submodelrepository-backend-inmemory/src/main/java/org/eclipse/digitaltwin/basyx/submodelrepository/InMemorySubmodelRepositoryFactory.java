@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
  * 
  * @author schnicke
  */
-@ConditionalOnExpression("'${basyx.aasrepository.backend}'.equals('InMemory') or '${basyx.backend}'.equals('InMemory')")
+@ConditionalOnExpression("'${basyx.submodelrepository.backend}'.equals('InMemory') or '${basyx.backend}'.equals('InMemory')")
 @Component
 public class InMemorySubmodelRepositoryFactory implements SubmodelRepositoryFactory {
 	private SubmodelServiceFactory submodelServiceFactory;
