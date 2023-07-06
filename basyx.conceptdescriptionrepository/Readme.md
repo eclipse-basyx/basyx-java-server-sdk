@@ -1,11 +1,11 @@
 # Eclipse BaSyx - ConceptDescription Repository 
 Eclipse BaSyx provides the ConceptDescription Repository as off-the-shelf component:
 
-    docker run --name=cd-repo -p:8081:8081 -v C:/tmp:/application eclipsebasyx/conceptdescription-repository:2.0.0-SNAPSHOT 
+    docker run --name=cd-repo -p:8081:8081 -v C:/tmp/application.properties:/application/application.properties eclipsebasyx/conceptdescription-repository:2.0.0-SNAPSHOT 
 
 > *Disclaimer*: In this example, configuration files are located in `C:/tmp`
 
-> *Disclaimer*: The binding of volume `C:/tmp` to `/application` is tested using Windows Powershell. Other terminals might run into an error.
+> *Disclaimer*: The binding of volume `C:/tmp/application.properties` to `/application/application.properties` is tested using Windows Powershell. Other terminals might run into an error.
 
 The API endpoint documentation is available at:
 
