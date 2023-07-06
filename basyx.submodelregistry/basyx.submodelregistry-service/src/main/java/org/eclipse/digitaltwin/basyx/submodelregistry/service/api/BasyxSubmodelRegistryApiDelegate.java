@@ -24,6 +24,9 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.api;
 
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.GetSubmodelDescriptorsResult;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.PagedResultPagingMetadata;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
@@ -35,44 +38,49 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRe
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Component
 public class BasyxSubmodelRegistryApiDelegate implements SubmodelDescriptorsApiDelegate {
 
 	private final SubmodelRegistryStorage storage;
+	
+	private final LocationBuilder locationBuilder;
 
-	public BasyxSubmodelRegistryApiDelegate(SubmodelRegistryStorage storage, RegistryEventSink eventSink) {
+	public BasyxSubmodelRegistryApiDelegate(SubmodelRegistryStorage storage, RegistryEventSink eventSink, LocationBuilder locationBuilder) {
 		this.storage = new RegistrationEventSendingSubmodelRegistryStorage(storage, eventSink);
+		this.locationBuilder = locationBuilder;
 	}
 
 	@Override
 	public ResponseEntity<Void> deleteAllSubmodelDescriptors() {
 		storage.clear();
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 
 	@Override
 	public ResponseEntity<SubmodelDescriptor> getSubmodelDescriptorById(String submodelIdentifier) {
 		SubmodelDescriptor submodelDescriptor = storage.getSubmodelDescriptor(submodelIdentifier);
-		return new ResponseEntity<>(submodelDescriptor, HttpStatus.OK);
+		return ResponseEntity.ok(submodelDescriptor);
 	}
 
 	@Override
 	public ResponseEntity<Void> deleteSubmodelDescriptorById(String submodelIdentifier) {
 		storage.removeSubmodelDescriptor(submodelIdentifier);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 
 	@Override
 	public ResponseEntity<SubmodelDescriptor> postSubmodelDescriptor(SubmodelDescriptor submodelDescriptor) {
 		storage.insertSubmodelDescriptor(submodelDescriptor);
-		return new ResponseEntity<>(submodelDescriptor, HttpStatus.CREATED);
+		URI location = locationBuilder.getSubmodelLocation(submodelDescriptor.getId());		
+		return ResponseEntity.created(location).body(submodelDescriptor);
 	}
 
 	@Override
 	public ResponseEntity<Void> putSubmodelDescriptorById(String submodelIdentifier, SubmodelDescriptor submodelDescriptor) {
 		storage.replaceSubmodelDescriptor(submodelIdentifier, submodelDescriptor);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 
 	@Override
@@ -82,29 +90,6 @@ public class BasyxSubmodelRegistryApiDelegate implements SubmodelDescriptorsApiD
 		GetSubmodelDescriptorsResult gsdResult = new GetSubmodelDescriptorsResult();
 		gsdResult.setPagingMetadata(new PagedResultPagingMetadata().cursor(cResult.getCursor()));
 		gsdResult.setResult(cResult.getResult());
-		return new ResponseEntity<>(gsdResult, HttpStatus.OK);
+		return ResponseEntity.ok(gsdResult);
 	}
-
-//	private PagedResultPagingMetadata resolvePagingMeta(CursorResult result) {
-//		PagedResultPagingMetadata meta = new PagedResultPagingMetadata();
-//		String encodedCursor = encodeCursor(result.getCursor());
-//		meta.setCursor(encodedCursor);
-//		return meta;
-//	}
-	//
-	// // we encode and decode the cursor as it is passed as url param and could
-	// hava invalid chars
-	// private String encodeCursor(String cursor) {
-	// if (cursor == null) {
-	// return null;
-	// }
-	// return URLEncoder.encode(cursor, StandardCharsets.UTF_8);
-	// }
-	//
-	// private String decodeCursor(String cursor) {
-	// if (cursor == null) {
-	// return null;
-	// }
-	// return URLDecoder.decode(cursor, StandardCharsets.UTF_8);
-	// }
 }

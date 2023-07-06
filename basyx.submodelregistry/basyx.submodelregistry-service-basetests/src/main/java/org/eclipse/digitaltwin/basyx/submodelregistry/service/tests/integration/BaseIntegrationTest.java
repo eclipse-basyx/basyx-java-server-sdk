@@ -27,6 +27,8 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -282,11 +284,31 @@ public abstract class BaseIntegrationTest {
 		SubmodelDescriptor descr = api.postSubmodelDescriptor(sm);
 		assertThat(descr).isEqualTo(sm);
 	}
+	
+	@Test
+	public void whenPostSubmodelDescriptor_LocationIsReturned() throws ApiException, IOException {
+		SubmodelDescriptor sm =  new SubmodelDescriptor().id("https://sm.id").addEndpointsItem(defaultClientEndpoint());
+		ApiResponse<SubmodelDescriptor>  response = api.postSubmodelDescriptorWithHttpInfo(sm);
+		List<String> locations = response.getHeaders().get("Location");
+		assertThat(locations).hasSize(1);
+		String location = locations.get(0);
+		
+		String expectedSuffix = "/api/v3.0/submodel-descriptors/aHR0cHM6Ly9zbS5pZA==";
+		assertThat(location).endsWith(expectedSuffix);
+		assertRestResourceAvailable(location);
+	}
+
+	private void assertRestResourceAvailable(String location) throws IOException {
+		URL url = new URL(location);
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setRequestMethod("GET");
+		int status = con.getResponseCode();
+		assertThat(status).isEqualTo(200);			
+	}	
 
 	private void deleteSubmodelDescriptor(String submodelId) throws ApiException {
 		listener.reset();
 		int response = api.deleteSubmodelDescriptorByIdWithHttpInfo(submodelId).getStatusCode();
-		//int response = api.deleteSubmodelDescriptorByIdWithHttpInfo(URLEncoder.encode(submodelId, StandardCharsets.UTF_8)).getStatusCode();
 		assertThat(response).isEqualTo(NO_CONTENT);
 		assertThatEventWasSend(RegistryEvent.builder().id(submodelId).type(EventType.SUBMODEL_UNREGISTERED).build());
 	}

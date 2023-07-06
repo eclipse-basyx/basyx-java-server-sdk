@@ -24,33 +24,27 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration;
 
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.api.LocationBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.SerializationFeature;
+class DefaultLocationBuilder implements LocationBuilder {
 
-@Configuration
-public class RestConfiguration {
-	
-	@Bean
-	public LocationBuilder locationBuilder() {
-		return new DefaultLocationBuilder();
-	}
-	
-	@Bean
-	public RestTemplate restTemplate() {
-		return new RestTemplate();
+	private static final String SM_ID_PARAM = "/{sm-id}";
+	private static final String SUBMODEL_DESCRIPTORS = "/submodel-descriptors";
+
+	@Override
+	public URI getSubmodelLocation(String submodelId) {
+		String encodedSmId = encode(submodelId);
+		return ServletUriComponentsBuilder.fromCurrentContextPath().path(SUBMODEL_DESCRIPTORS).path(SM_ID_PARAM).buildAndExpand(encodedSmId).toUri();
 	}
 
-	@Bean
-	public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
-		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL);
-		builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		return new MappingJackson2HttpMessageConverter(builder.build());
+	private String encode(String value) {
+		if (value == null) {
+			return null;
+		}
+		return new String(java.util.Base64.getUrlEncoder().encode(value.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
 	}
 }
