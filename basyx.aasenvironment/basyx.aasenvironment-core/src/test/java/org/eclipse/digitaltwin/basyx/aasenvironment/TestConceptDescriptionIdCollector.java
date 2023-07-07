@@ -20,9 +20,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
@@ -34,115 +32,100 @@ import com.google.common.collect.Sets;
  */
 public class TestConceptDescriptionIdCollector {
 	
-	/**
-	 * Tests the ConceptDescriptionIdCollector with default environment setup
-	 */
-	@Nested
-	class TestConceptDescriptionIdCollectorDefaultSetup {
+	private Environment environment;
+	
+	@Test
+	public void getAllConceptDescriptionIdsWithDefaultSetup() {
+		defaultSetup();
 		
-		private Environment environment;
+		Set<String> expectedCDIDs = Sets.newHashSet("0173-1#02-BAA120#008", "http://customer.com/cd/1/1/18EBD56F6B43D895");
 		
-		@BeforeEach
-		void setup() {
-			Submodel dummySM1 = DummySubmodelFactory.createTechnicalDataSubmodel();
-			
-			Submodel dummySM2 = DummySubmodelFactory.createOperationalDataSubmodel();
-
-			AssetAdministrationShell dummyAAS1 = new DefaultAssetAdministrationShell.Builder().id("dummyAAS1Id")
-					.idShort("dummyAAS1IdShort")
-					.submodels(new DefaultReference.Builder()
-							.keys(Arrays.asList(createDefaultSubmodelKey(dummySM1.getId()), createDefaultSubmodelKey(dummySM2.getId()))).build())
-					.build();
-			
-			environment = new DefaultEnvironment.Builder().assetAdministrationShells(dummyAAS1).submodels(Arrays.asList(dummySM1, dummySM2)).build();
-		}
+		ConceptDescriptionIdCollector cdIdCollector = new ConceptDescriptionIdCollector(environment);
 		
-		@Test
-		void getAllConceptDescriptionIds() {
-			Set<String> expectedCDIDs = Sets.newHashSet("0173-1#02-BAA120#008", "http://customer.com/cd/1/1/18EBD56F6B43D895");
-			
-			ConceptDescriptionIdCollector cdIdCollector = new ConceptDescriptionIdCollector(environment);
-			
-			assertEquals(expectedCDIDs, cdIdCollector.collect());
-		}
-		
+		assertEquals(expectedCDIDs, cdIdCollector.collect());
 	}
 	
-	/**
-	 * Tests the ConceptDescriptionIdCollector with custom environment setup
-	 */
-	@Nested
-	class TestConceptDescriptionIdCollectorCustomSetup {
+	@Test
+	public void getAllConceptDescriptionIdsWithCustomtSetup() {
+		customSetup();
 		
-		private Environment environment;
+		Set<String> expectedCDIDs = Sets.newHashSet("dummyProperty1CDId", "dummySMC1CDId", "dummyProperty3CDId");
 		
-		@BeforeEach
-		void setup() {
-			Submodel dummySM1 = new DefaultSubmodel.Builder().submodelElements(createDummySMEs()).idShort("dummySM1IdShort")
-					.id("dummySM1Id").build();
-			
-			Submodel dummySM2 = new DefaultSubmodel.Builder().submodelElements(createDummySMEWithoutCDSemantic()).idShort("dummySM2IdShort")
-					.id("dummySM2Id").build();
+		ConceptDescriptionIdCollector cdIdCollector = new ConceptDescriptionIdCollector(environment);
+		
+		assertEquals(expectedCDIDs, cdIdCollector.collect());
+	}
+	
+	private void defaultSetup() {
+		Submodel dummySM1 = DummySubmodelFactory.createTechnicalDataSubmodel();
+		
+		Submodel dummySM2 = DummySubmodelFactory.createOperationalDataSubmodel();
 
-			AssetAdministrationShell dummyAAS1 = new DefaultAssetAdministrationShell.Builder().id("dummyAAS1Id")
-					.idShort("dummyAAS1IdShort")
-					.submodels(new DefaultReference.Builder()
-							.keys(Arrays.asList(createDefaultSubmodelKey("dummySM1Id"), createDefaultSubmodelKey("dummySM2Id"))).build())
-					.build();
-			
-			environment = new DefaultEnvironment.Builder().assetAdministrationShells(dummyAAS1).submodels(Arrays.asList(dummySM1, dummySM2)).build();
-		}
+		AssetAdministrationShell dummyAAS1 = new DefaultAssetAdministrationShell.Builder().id("dummyAAS1Id")
+				.idShort("dummyAAS1IdShort")
+				.submodels(new DefaultReference.Builder()
+						.keys(Arrays.asList(createDefaultSubmodelKey(dummySM1.getId()), createDefaultSubmodelKey(dummySM2.getId()))).build())
+				.build();
 		
-		@Test
-		void getAllConceptDescriptionIds() {
-			Set<String> expectedCDIDs = Sets.newHashSet("dummyProperty1CDId", "dummySMC1CDId", "dummyProperty3CDId");
-			
-			ConceptDescriptionIdCollector cdIdCollector = new ConceptDescriptionIdCollector(environment);
-			
-			assertEquals(expectedCDIDs, cdIdCollector.collect());
-		}
+		environment = new DefaultEnvironment.Builder().assetAdministrationShells(dummyAAS1).submodels(Arrays.asList(dummySM1, dummySM2)).build();
+	}
+	
+	private void customSetup() {
+		Submodel dummySM1 = new DefaultSubmodel.Builder().submodelElements(createDummySMEs()).idShort("dummySM1IdShort")
+				.id("dummySM1Id").build();
 		
-		private List<SubmodelElement> createDummySMEs() {
-			Property dummyProperty1 = new DefaultProperty.Builder().idShort("dummyProperty1IdShort")
-					.value("dummyProperty1Value")
-					.semanticID(new DefaultReference.Builder().keys(
-							new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION).value("dummyProperty1CDId").build())
-							.build())
-					.build();
-			Property dummyProperty2 = new DefaultProperty.Builder().idShort("dummyProperty2IdShort")
-					.value("dummyProperty2Value")
-					.semanticID(new DefaultReference.Builder().keys(
-							new DefaultKey.Builder().type(KeyTypes.CAPABILITY).value("dummyProperty2CapabilityId").build())
-							.build())
-					.build();
-			Property dummyProperty3 = new DefaultProperty.Builder().idShort("dummyProperty3IdShort")
-					.value("dummyProperty3Value")
-					.semanticID(new DefaultReference.Builder().keys(
-							new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION).value("dummyProperty3CDId").build())
-							.build())
-					.build();
-			SubmodelElementCollection dummySMC1 = new DefaultSubmodelElementCollection.Builder().idShort("dummySMC1IdShort")
-					.value(dummyProperty3)
-					.semanticID(new DefaultReference.Builder().keys(
-							new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION).value("dummySMC1CDId").build())
-							.build())
-					.build();
+		Submodel dummySM2 = new DefaultSubmodel.Builder().submodelElements(createDummySMEWithoutCDSemantic()).idShort("dummySM2IdShort")
+				.id("dummySM2Id").build();
 
-			return Arrays.asList(dummyProperty1, dummyProperty2, dummySMC1);
-		}
-
-		private SubmodelElement createDummySMEWithoutCDSemantic() {
-			return new DefaultProperty.Builder().idShort("dummyNoCDSemanticPropertyIdShort")
-					.value("dummyNoCDSemanticPropertyValue")
-					.semanticID(new DefaultReference.Builder().keys(
-							new DefaultKey.Builder().type(KeyTypes.BLOB).value("dummyNoCDSemanticPropertyBlobId").build())
-							.build())
-					.build();
-		}
+		AssetAdministrationShell dummyAAS1 = new DefaultAssetAdministrationShell.Builder().id("dummyAAS1Id")
+				.idShort("dummyAAS1IdShort")
+				.submodels(new DefaultReference.Builder()
+						.keys(Arrays.asList(createDefaultSubmodelKey("dummySM1Id"), createDefaultSubmodelKey("dummySM2Id"))).build())
+				.build();
+		
+		environment = new DefaultEnvironment.Builder().assetAdministrationShells(dummyAAS1).submodels(Arrays.asList(dummySM1, dummySM2)).build();
 	}
 	
 	private DefaultKey createDefaultSubmodelKey(String submodelId) {
 		return new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(submodelId).build();
 	}
+	
+	private List<SubmodelElement> createDummySMEs() {
+		Property dummyProperty1 = new DefaultProperty.Builder().idShort("dummyProperty1IdShort")
+				.value("dummyProperty1Value")
+				.semanticID(new DefaultReference.Builder().keys(
+						new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION).value("dummyProperty1CDId").build())
+						.build())
+				.build();
+		Property dummyProperty2 = new DefaultProperty.Builder().idShort("dummyProperty2IdShort")
+				.value("dummyProperty2Value")
+				.semanticID(new DefaultReference.Builder().keys(
+						new DefaultKey.Builder().type(KeyTypes.CAPABILITY).value("dummyProperty2CapabilityId").build())
+						.build())
+				.build();
+		Property dummyProperty3 = new DefaultProperty.Builder().idShort("dummyProperty3IdShort")
+				.value("dummyProperty3Value")
+				.semanticID(new DefaultReference.Builder().keys(
+						new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION).value("dummyProperty3CDId").build())
+						.build())
+				.build();
+		SubmodelElementCollection dummySMC1 = new DefaultSubmodelElementCollection.Builder().idShort("dummySMC1IdShort")
+				.value(dummyProperty3)
+				.semanticID(new DefaultReference.Builder().keys(
+						new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION).value("dummySMC1CDId").build())
+						.build())
+				.build();
 
+		return Arrays.asList(dummyProperty1, dummyProperty2, dummySMC1);
+	}
+	
+	private SubmodelElement createDummySMEWithoutCDSemantic() {
+		return new DefaultProperty.Builder().idShort("dummyNoCDSemanticPropertyIdShort")
+				.value("dummyNoCDSemanticPropertyValue")
+				.semanticID(new DefaultReference.Builder().keys(
+						new DefaultKey.Builder().type(KeyTypes.BLOB).value("dummyNoCDSemanticPropertyBlobId").build())
+						.build())
+				.build();
+	}
+	
 }

@@ -79,27 +79,27 @@ public class DefaultAASEnvironmentSerialization implements AasEnvironmentSeriali
 
 	@Override
 	public String createJSONAASEnvironmentSerialization(@Valid List<String> aasIds, @Valid List<String> submodelIds, @Valid boolean includeConceptDescriptions) throws SerializationException {
-		Environment aasEnvironment = extractShellsAndSubmodels(aasIds, submodelIds, includeConceptDescriptions);
+		Environment aasEnvironment = createEnvironment(aasIds, submodelIds, includeConceptDescriptions);
 		return jsonSerializer.write(aasEnvironment);
 	}
 
 	@Override
 	public String createXMLAASEnvironmentSerialization(@Valid List<String> aasIds, @Valid List<String> submodelIds, @Valid boolean includeConceptDescriptions) throws SerializationException {
-		Environment aasEnvironment = extractShellsAndSubmodels(aasIds, submodelIds, includeConceptDescriptions);
+		Environment aasEnvironment = createEnvironment(aasIds, submodelIds, includeConceptDescriptions);
 
 		return xmlSerializer.write(aasEnvironment);
 	}
 
 	@Override
 	public byte[] createAASXAASEnvironmentSerialization(@Valid List<String> aasIds, @Valid List<String> submodelIds, @Valid boolean includeConceptDescriptions) throws SerializationException, IOException {
-		Environment aasEnvironment = extractShellsAndSubmodels(aasIds, submodelIds, includeConceptDescriptions);
+		Environment aasEnvironment = createEnvironment(aasIds, submodelIds, includeConceptDescriptions);
 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		aasxSerializer.write(aasEnvironment, null, outputStream);
 		return outputStream.toByteArray();
 	}
 
-	private Environment extractShellsAndSubmodels(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) {
+	private Environment createEnvironment(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) {
 		List<AssetAdministrationShell> shells = aasIds.stream().map(aasRepository::getAas).collect(Collectors.toList());
 		List<Submodel> submodels = submodelIds.stream().map(submodelRepository::getSubmodel).collect(Collectors.toList());
 		
