@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+  cd-repo:
+    # get the image from dockerhub
+    image: eclipsebasyx/conceptdescription-repository:2.0.0-SNAPSHOT
+    # if you already build it locally, you can use your local image
+    # image: basyx.conceptdescriptionrepository.component:latest
+    # for manual local build `mvn clean install -DskipTests`
+    # then navigate to `basyx.conceptdescriptionrepository>component`
+    # build it with `docker build -t basyx.conceptdescriptionrepository.component .
+    volumes:
+      - ./cd-repo.properties:/application/application.properties
+    ports:
+      - 8081:8081
+    networks:
+      - basyx-java-server-sdk
+
+networks:
+  basyx-java-server-sdk:
+    external: true
