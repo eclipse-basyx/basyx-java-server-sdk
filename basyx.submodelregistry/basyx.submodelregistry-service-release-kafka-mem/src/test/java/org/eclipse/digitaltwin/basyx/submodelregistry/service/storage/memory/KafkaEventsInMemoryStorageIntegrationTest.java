@@ -60,7 +60,6 @@ public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTe
 	}.withLogConsumer(logConsumer);
 			
 			
-			
 	@DynamicPropertySource
 	static void assignAdditionalProperties(DynamicPropertyRegistry registry) {
 		registry.add("spring.kafka.bootstrap-servers", KAFKA::getBootstrapServers);

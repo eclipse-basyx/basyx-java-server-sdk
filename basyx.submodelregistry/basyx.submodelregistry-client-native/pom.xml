@@ -18,7 +18,7 @@
 		<openapi.result.file>${openapi.result.folder}/${openapi.name}</openapi.result.file>
 	</properties>
 	<build>
-		<sourceDirectory>${generated.folder}/java</sourceDirectory>
+		<sourceDirectory>src/generated/java</sourceDirectory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>

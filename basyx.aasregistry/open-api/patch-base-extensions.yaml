@@ -1,9 +1,5 @@
 ## # openapi fixes
 
-## remove trailing zeros from pattern and upper U
-- op: replace
-  path: /paths/~1shell-descriptors/get/parameters/3/schema/pattern
-  value: "^[\\x09\\x0A\\x0D\\x20-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*$"
 ## alter AssetAdministrationShellDescriptor
 - op: remove
   path: /components/schemas/AssetAdministrationShellDescriptor/example
@@ -226,6 +222,10 @@
 ##  
 ##  
   
+## remove trailing zeros from pattern and upper U
+- op: replace
+  path: /paths/~1shell-descriptors/get/parameters/3/schema/pattern
+  value: "^[\\x09\\x0A\\x0D\\x20-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*$"
 ## ## additions
 - op: replace
   path: /servers

@@ -57,6 +57,7 @@ public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTes
 	@Value("${spring.data.mongodb.database}")
 	private static String DATABASE_NAME;
 
+	@ClassRule
 	public static KafkaContainer KAFKA = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.2.1")) {
 		protected void waitUntilContainerStarted() {
 			super.waitUntilContainerStarted();
@@ -66,6 +67,7 @@ public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTes
 		}
 	}.withLogConsumer(logConsumer);
 
+	@ClassRule
 	public static final MongoDBContainer MONGODB_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:5.0.10"));
 
 	@DynamicPropertySource
@@ -74,17 +76,6 @@ public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTes
 		String uri = MONGODB_CONTAINER.getConnectionString() + "/" + DATABASE_NAME;
 		registry.add("spring.data.mongodb.uri", () -> uri);
 		registry.add("spring.kafka.bootstrap-servers", KAFKA::getBootstrapServers);
-	}
-
-	@BeforeClass
-	public static void startContainersInParallel() {
-		Stream.of(KAFKA, MONGODB_CONTAINER).parallel().forEach(GenericContainer::start);
-	}
-
-	@AfterClass
-	public static void stopContainersInParallel() {
-		Stream.of(KAFKA, MONGODB_CONTAINER).parallel().forEach(GenericContainer::stop);
-
 	}
 
 	@Component
