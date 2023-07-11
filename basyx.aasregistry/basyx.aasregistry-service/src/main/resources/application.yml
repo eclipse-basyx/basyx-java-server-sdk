@@ -2,7 +2,7 @@
 events:
   sink:
 description:
-  profiles: RegistryServiceSpecification/V3.0
+  profiles: https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-001
 springdoc:
    api-docs:
       path: /api-docs

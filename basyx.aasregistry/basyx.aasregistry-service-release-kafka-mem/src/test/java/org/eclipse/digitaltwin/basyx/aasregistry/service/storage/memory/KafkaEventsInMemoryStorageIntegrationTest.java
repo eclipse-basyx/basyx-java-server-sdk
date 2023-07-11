@@ -24,40 +24,43 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.storage.memory;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ShellDescriptorQuery;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ShellDescriptorQuery.QueryTypeEnum;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ShellDescriptorSearchRequest;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ShellDescriptorSearchResponse;
-import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
+import java.time.Duration;
+
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.BaseEventListener;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.BaseIntegrationTest;
 import org.junit.ClassRule;
-import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.containers.wait.strategy.WaitStrategy;
 import org.testcontainers.utility.DockerImageName;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-
 @TestPropertySource(properties = { "registry.type=inMemory", "events.sink=kafka" })
-public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTest {	
+public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTest {
+
+	private static Logger logger = LoggerFactory.getLogger("KAFKA");
+	private static Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(logger);
 
 	@ClassRule
-	public static KafkaContainer KAFKA = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.2.1"));
-	
+	public static final KafkaContainer KAFKA = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.2.1")) {
+		protected void waitUntilContainerStarted() {
+			super.waitUntilContainerStarted();
+			WaitStrategy strategy = Wait.forLogMessage(".*Kafka startTimeMs.*", 1);
+			strategy.withStartupTimeout(Duration.ofMinutes(10));
+			strategy.waitUntilReady(this);
+		}
+	}.withLogConsumer(logConsumer);
+
 	@DynamicPropertySource
 	static void assignAdditionalProperties(DynamicPropertyRegistry registry) {
+		logger.info("Connecting to KAFKA on: " + KAFKA.getBootstrapServers());
 		registry.add("spring.kafka.bootstrap-servers", KAFKA::getBootstrapServers);
 	}
 
@@ -65,7 +68,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTe
 	public static class KafkaEventListener extends BaseEventListener {
 
 		@KafkaListener(topics = "aas-registry", groupId = "test")
-		public void receive(String message) {			
+		public void receive(String message) {
 			super.offer(message);
 		}
 	}

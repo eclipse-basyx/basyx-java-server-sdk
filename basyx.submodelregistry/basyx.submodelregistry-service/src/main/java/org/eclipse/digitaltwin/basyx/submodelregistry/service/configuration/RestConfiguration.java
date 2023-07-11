@@ -24,6 +24,7 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration;
 
+import org.eclipse.digitaltwin.basyx.submodelregistry.service.api.LocationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -35,7 +36,12 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Configuration
 public class RestConfiguration {
-
+	
+	@Bean
+	public LocationBuilder locationBuilder() {
+		return new DefaultLocationBuilder();
+	}
+	
 	@Bean
 	public RestTemplate restTemplate() {
 		return new RestTemplate();

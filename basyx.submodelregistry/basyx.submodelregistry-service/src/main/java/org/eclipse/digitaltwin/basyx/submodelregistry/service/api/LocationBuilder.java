@@ -22,35 +22,12 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasregistry.service.configuration;
+package org.eclipse.digitaltwin.basyx.submodelregistry.service.api;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.service.api.LocationBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
+import java.net.URI;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.SerializationFeature;
+public interface LocationBuilder {
 
-@Configuration
-public class RestConfiguration {
+	URI getSubmodelLocation(String submodelId);
 
-	@Bean
-	public LocationBuilder locationBuilder() {
-		return new DefaultLocationBuilder();
-	}
-	
-	@Bean
-	public RestTemplate restTemplate() {
-		return new RestTemplate();
-	}
-
-	@Bean
-	public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
-		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL);
-		builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		return new MappingJackson2HttpMessageConverter(builder.build());
-	}
 }

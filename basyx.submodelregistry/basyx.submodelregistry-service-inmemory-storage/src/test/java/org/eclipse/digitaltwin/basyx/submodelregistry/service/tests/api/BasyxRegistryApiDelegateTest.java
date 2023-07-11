@@ -35,6 +35,7 @@ import java.util.List;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.GetSubmodelDescriptorsResult;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.api.BasyxSubmodelRegistryApiDelegate;
+import org.eclipse.digitaltwin.basyx.submodelregistry.service.api.LocationBuilder;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.api.SubmodelDescriptorsApiController;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration.InMemorySubmodelStorageConfiguration;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNotFoundException;
@@ -76,6 +77,9 @@ public class BasyxRegistryApiDelegateTest {
 
 	@MockBean
 	private RegistryEventSink listener;
+	
+	@MockBean
+	private LocationBuilder locationBuilder;	
 
 	@Autowired
 	private SubmodelRegistryStorage storage;
