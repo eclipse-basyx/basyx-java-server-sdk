@@ -35,7 +35,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 /**
  * Specifies the overall ConceptDescriptionRepository API
  * 
- * @author danish
+ * @author danish, kammognie
  *
  */
 public interface ConceptDescriptionRepository {
@@ -104,5 +104,10 @@ public interface ConceptDescriptionRepository {
 	 * @throws ElementDoesNotExistException
 	 */
 	public void deleteConceptDescription(String conceptDescriptionId) throws ElementDoesNotExistException;
+	
+	/**
+	 * Returns the name of the ConceptDescription repository
+	 */
+	public String getName();
 	
 }

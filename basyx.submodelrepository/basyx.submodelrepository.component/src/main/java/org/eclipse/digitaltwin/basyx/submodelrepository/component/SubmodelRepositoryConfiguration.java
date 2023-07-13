@@ -51,6 +51,7 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 public class SubmodelRepositoryConfiguration {
 	@Bean
+	@Primary
 	@Autowired
 	public static SubmodelRepository getSubmodelRepository(SubmodelRepositoryFactory aasRepositoryFactory, List<SubmodelRepositoryFeature> features) {
 		return new DecoratedSubmodelRepositoryFactory(aasRepositoryFactory, features).create();

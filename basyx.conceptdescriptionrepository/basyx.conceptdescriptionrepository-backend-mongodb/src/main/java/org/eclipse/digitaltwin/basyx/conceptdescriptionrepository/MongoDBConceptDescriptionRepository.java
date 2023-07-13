@@ -33,6 +33,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -44,7 +45,7 @@ import com.mongodb.client.result.DeleteResult;
  * 
  * MongoDB implementation of the ConceptDescriptionRepository
  *
- * @author danish
+ * @author danish, kammognie
  *
  */
 public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRepository {
@@ -52,6 +53,9 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 
 	private MongoTemplate mongoTemplate;
 	private String collectionName;
+	
+	@Value("${basyx.cdrepo.name:cd-repo}")
+	private String cdRepositoryName;
 
 	public MongoDBConceptDescriptionRepository(MongoTemplate mongoTemplate, String collectionName) {
 		this.mongoTemplate = mongoTemplate;
@@ -122,6 +126,11 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 		if (result.getDeletedCount() == 0)
 			throw new ElementDoesNotExistException(conceptDescriptionId);
 		
+	}
+	
+	@Override
+	public String getName() {
+		return cdRepositoryName;
 	}
 	
 	private void configureIndexForConceptDescriptionId(MongoTemplate mongoTemplate) {

@@ -41,17 +41,21 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * In-memory implementation of the SubmodelRepository
  *
- * @author schnicke, danish
+ * @author schnicke, danish, kammognie
  *
  */
 public class InMemorySubmodelRepository implements SubmodelRepository {
 
 	private Map<String, SubmodelService> submodelServices = new LinkedHashMap<>();
 	private SubmodelServiceFactory submodelServiceFactory;
+	
+	@Value("${basyx.smrepo.name:sm-repo}")
+	private String smRepositoryName;
 
 	/**
 	 * Creates the InMemorySubmodelRepository utilizing the passed
@@ -212,6 +216,11 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		Submodel submodel = getSubmodel(submodelId);
 		submodel.setSubmodelElements(null);
 		return submodel;
+	}
+	
+	@Override
+	public String getName() {
+		return smRepositoryName;
 	}
 
 	private void throwIfMismatchingIds(String smId, Submodel newSubmodel) {

@@ -37,7 +37,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 /**
  * Specifies the overall SubmodelRepository API
  * 
- * @author schnicke, danish
+ * @author schnicke, danish,kammognie
  *
  */
 public interface SubmodelRepository {
@@ -166,9 +166,7 @@ public interface SubmodelRepository {
 	/**
 	 * Returns the name of the submodel repository
 	 */
-	public default String getName() {
-		return "submodelRepository-default-name";
-	}
+	public String getName();
 
 	/**
 	 * Retrieves the Submodel as Value-Only_representation with the specific id

@@ -36,11 +36,10 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 /**
  * Specifies the overall AasRepository API
  * 
- * @author schnicke
+ * @author schnicke, kammognie
  *
  */
 public interface AasRepository {
-
 	/**
 	 * Retrieves all Asset Administration Shells from the repository
 	 * 
@@ -120,8 +119,10 @@ public interface AasRepository {
 	 * @return the requested AAS 
 	 */
 	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException;
-
-	public default String getName() {
-		return "aasRepository-default-name";
-	}
+    
+	/**
+	 * Returns the name of the AAS repository
+	 */
+	public String getName();
+	
 }

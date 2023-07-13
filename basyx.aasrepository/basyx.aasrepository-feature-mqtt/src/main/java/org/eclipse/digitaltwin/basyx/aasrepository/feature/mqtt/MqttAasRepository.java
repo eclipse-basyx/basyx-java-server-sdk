@@ -41,12 +41,13 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Observer for the AASAggregator that triggers MQTT events for different
  * operations on the aggregator.
  *
- * @author haque, jungjan, fischer, siebert
+ * @author haque, jungjan, fischer, siebert, kammognie
  *
  */
 public class MqttAasRepository implements AasRepository {
@@ -54,8 +55,10 @@ public class MqttAasRepository implements AasRepository {
 	private MqttAasRepositoryTopicFactory topicFactory;
 
 	private AasRepository decorated;
-
 	private IMqttClient mqttClient;
+	
+	@Value("${basyx.aasrepo.name:aas-repo}")
+	private String aasRepositoryName;
 
 	public MqttAasRepository(AasRepository decorated, IMqttClient mqttClient, MqttAasRepositoryTopicFactory topicFactory) {
 		this.topicFactory = topicFactory;
@@ -94,7 +97,7 @@ public class MqttAasRepository implements AasRepository {
 
 	@Override
 	public String getName() {
-		return decorated.getName();
+		return aasRepositoryName;
 	}
 
 	@Override

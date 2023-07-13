@@ -39,16 +39,20 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * In-memory implementation of the ConceptDescriptionRepository
  *
- * @author danish
+ * @author danish, kammognie
  *
  */
 public class InMemoryConceptDescriptionRepository implements ConceptDescriptionRepository {
 
 	private Map<String, ConceptDescription> conceptDescriptions = new LinkedHashMap<>();
+	
+	@Value("${basyx.cdrepo.name:cd-repo}")
+	private String cdRepositoryName;
 	
 	/**
 	 * Creates the InMemoryConceptDescriptionRepository
@@ -117,6 +121,11 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 		throwIfConceptDescriptionDoesNotExist(conceptDescriptionId);
 
 		conceptDescriptions.remove(conceptDescriptionId);
+	}
+	
+	@Override
+	public String getName() {
+		return cdRepositoryName;
 	}
 
 	private static void assertIdUniqueness(Collection<ConceptDescription> conceptDescriptionsToCheck) {

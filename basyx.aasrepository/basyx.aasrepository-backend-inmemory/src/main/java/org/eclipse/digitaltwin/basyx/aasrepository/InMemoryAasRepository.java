@@ -37,11 +37,12 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * In-memory implementation of the AasRepository
  *
- * @author schnicke, danish
+ * @author schnicke, danish, kammognie
  *
  */
 public class InMemoryAasRepository implements AasRepository {
@@ -49,7 +50,10 @@ public class InMemoryAasRepository implements AasRepository {
 	private Map<String, AasService> aasServices = new LinkedHashMap<>();
 
 	private AasServiceFactory aasServiceFactory;
-
+	
+	@Value("${basyx.aasrepo.name:aas-repo}")
+	private String aasRepositoryName;
+	
 	/**
 	 * Creates the AasRepository using an in-memory backend.
 	 * 
@@ -134,6 +138,11 @@ public class InMemoryAasRepository implements AasRepository {
 	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException {
 		throwIfAasDoesNotExist(aasId);
 		return aasServices.get(aasId).getAAS().getAssetInformation();
+	}
+	
+	@Override
+	public String getName() {
+		return aasRepositoryName;
 	}
 	
 	private void throwIfMismatchingIds(String aasId, AssetAdministrationShell newAas) {

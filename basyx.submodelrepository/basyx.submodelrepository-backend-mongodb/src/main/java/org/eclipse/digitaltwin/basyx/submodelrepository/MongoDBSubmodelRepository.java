@@ -35,6 +35,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -45,7 +46,7 @@ import com.mongodb.client.result.DeleteResult;
 /**
  * MongoDB implementation of the SubmodelRepository
  * 
- * @author jungjan
+ * @author jungjan, kammognie
  *
  */
 public class MongoDBSubmodelRepository implements SubmodelRepository {
@@ -54,6 +55,9 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	private MongoTemplate mongoTemplate;
 	private String collectionName;
 	private SubmodelServiceFactory submodelServiceFactory;
+	
+	@Value("${basyx.smrepo.name:sm-repo}")
+	private String smRepositoryName;
 
 	/**
 	 * Creates the MongoDBSubmodelRepository utilizing the passed
@@ -226,6 +230,11 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 		Submodel submodel = getSubmodel(submodelId);
 		submodel.setSubmodelElements(null);
 		return submodel;
+	}
+
+	@Override
+	public String getName() {
+		return smRepositoryName;
 	}
 
 }
