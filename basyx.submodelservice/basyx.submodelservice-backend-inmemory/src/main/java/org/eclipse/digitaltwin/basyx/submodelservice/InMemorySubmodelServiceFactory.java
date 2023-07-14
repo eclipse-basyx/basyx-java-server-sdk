@@ -27,6 +27,7 @@
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 /**
@@ -35,6 +36,7 @@ import org.springframework.stereotype.Component;
  * @author schnicke
  *
  */
+@ConditionalOnExpression("'${basyx.submodelservice.backend}'.equals('InMemory') or '${basyx.backend}'.equals('InMemory')")
 @Component
 public class InMemorySubmodelServiceFactory implements SubmodelServiceFactory {
 

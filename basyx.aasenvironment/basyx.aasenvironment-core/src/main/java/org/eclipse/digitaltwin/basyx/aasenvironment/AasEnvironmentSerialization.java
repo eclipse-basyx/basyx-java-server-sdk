@@ -32,7 +32,7 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
 /**
  * Specifies the overall AasEnvironment serialization API
  * 
- * @author zhangzai
+ * @author zhangzai, danish
  *
  */
 public interface AasEnvironmentSerialization {
@@ -42,12 +42,13 @@ public interface AasEnvironmentSerialization {
 	 * 
 	 * @param aasIds
 	 * @param submodelIds
+	 * @param includeConceptDescriptions
 	 * @return
 	 * @throws SerializationException
 	 */
-	public String createJSONAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds) throws SerializationException;
+	public String createJSONAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException;
 
-	public String createXMLAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds) throws SerializationException;
+	public String createXMLAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException;
 
-	public byte[] createAASXAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds) throws SerializationException, IOException;
+	public byte[] createAASXAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException, IOException;
 }
