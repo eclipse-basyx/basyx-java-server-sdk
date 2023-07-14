@@ -606,6 +606,34 @@ public abstract class BaseIntegrationTest {
 		assertThat(location).endsWith(expectedSuffix);
 		assertRestResourceAvailable(location);
 	}
+	
+	@Test
+	public void whenPostShellDescriptor_LocationIsReturned() throws ApiException, IOException {
+		AssetAdministrationShellDescriptor descr = new AssetAdministrationShellDescriptor().id("https://test.id");
+		ApiResponse<AssetAdministrationShellDescriptor>  response = api.postAssetAdministrationShellDescriptorWithHttpInfo(descr);
+		List<String> locations = response.getHeaders().get("Location");
+		assertThat(locations).hasSize(1);
+		String location = locations.get(0);
+		
+		String expectedSuffix = "/api/v3.0/shell-descriptors/aHR0cHM6Ly90ZXN0Lmlk";
+		assertThat(location).endsWith(expectedSuffix);
+		assertRestResourceAvailable(location);
+	}
+	
+	@Test
+	public void whenPostSubmodelDescriptor_LocationIsReturned() throws ApiException, IOException {
+		AssetAdministrationShellDescriptor shell = new AssetAdministrationShellDescriptor().id("https://shell.id");
+		api.postAssetAdministrationShellDescriptor(shell);
+		SubmodelDescriptor sm =  new SubmodelDescriptor().id("https://sm.id").addEndpointsItem(defaultEndpoint());
+		ApiResponse<SubmodelDescriptor>  response = api.postSubmodelDescriptorThroughSuperpathWithHttpInfo(shell.getId(), sm);
+		List<String> locations = response.getHeaders().get("Location");
+		assertThat(locations).hasSize(1);
+		String location = locations.get(0);
+		
+		String expectedSuffix = "/api/v3.0/shell-descriptors/aHR0cHM6Ly9zaGVsbC5pZA==/submodel-descriptors/aHR0cHM6Ly9zbS5pZA==";
+		assertThat(location).endsWith(expectedSuffix);
+		assertRestResourceAvailable(location);
+	}
 
 	private void assertRestResourceAvailable(String location) throws IOException {
 		URL url = new URL(location);

@@ -304,6 +304,27 @@ public abstract class BaseIntegrationTest {
 		
 		assertThatEventWasSend(new RegistryEvent(descr.getId(), EventType.SUBMODEL_REGISTERED, convert(sm)));
 	}
+	
+	@Test
+	public void whenPostSubmodelDescriptor_LocationIsReturned() throws ApiException, IOException {
+		SubmodelDescriptor sm =  new SubmodelDescriptor().id("https://sm.id").addEndpointsItem(defaultClientEndpoint());
+		ApiResponse<SubmodelDescriptor>  response = api.postSubmodelDescriptorWithHttpInfo(sm);
+		List<String> locations = response.getHeaders().get("Location");
+		assertThat(locations).hasSize(1);
+		String location = locations.get(0);
+		
+		String expectedSuffix = "/api/v3.0/submodel-descriptors/aHR0cHM6Ly9zbS5pZA==";
+		assertThat(location).endsWith(expectedSuffix);
+		assertRestResourceAvailable(location);
+	}
+
+	private void assertRestResourceAvailable(String location) throws IOException {
+		URL url = new URL(location);
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setRequestMethod("GET");
+		int status = con.getResponseCode();
+		assertThat(status).isEqualTo(200);			
+	}	
 
 	private org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor convert(SubmodelDescriptor sm) throws JsonProcessingException {
 		String data = mapper.writerFor(SubmodelDescriptor.class).writeValueAsString(sm);
