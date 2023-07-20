@@ -31,7 +31,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders
-META-INF/*
+**/META-INF/*
 
 # External tool builders
 .externalToolBuilders/
@@ -78,3 +78,8 @@ META-INF/*
 .worksheet
 
 .moquette_uuid
+
+# generated API files
+**/open-api/Plattform_i40-Registry-and-Discovery.yaml
+**/open-api/Plattform_i40-SubmodelRegistry-and-Discovery.yaml
+**/open-api/temporary-extensions-result-file.yaml

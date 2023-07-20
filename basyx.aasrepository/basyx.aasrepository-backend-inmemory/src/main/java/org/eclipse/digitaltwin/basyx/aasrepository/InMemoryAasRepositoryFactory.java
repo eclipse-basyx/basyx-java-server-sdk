@@ -26,6 +26,7 @@ package org.eclipse.digitaltwin.basyx.aasrepository;
 
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +40,9 @@ import org.springframework.stereotype.Component;
 public class InMemoryAasRepositoryFactory implements AasRepositoryFactory {
 
 	private AasServiceFactory aasApiFactory;
+	
+	@Value("${basyx.aasrepo.name:aas-repo}")
+	private String aasRepositoryName;
 
 	@Autowired
 	public InMemoryAasRepositoryFactory(AasServiceFactory aasApiFactory) {
@@ -47,6 +51,7 @@ public class InMemoryAasRepositoryFactory implements AasRepositoryFactory {
 
 	@Override
 	public AasRepository create() {
-		return new InMemoryAasRepository(aasApiFactory);
+		return new InMemoryAasRepository(aasApiFactory, aasRepositoryName);
 	}
+
 }

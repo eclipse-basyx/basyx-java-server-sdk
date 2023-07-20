@@ -108,6 +108,8 @@ public interface ConceptDescriptionRepository {
 	/**
 	 * Returns the name of the ConceptDescription repository
 	 */
-	public String getName();
+	public default String getName() {
+		return "cd-repo";
+	}
 	
 }

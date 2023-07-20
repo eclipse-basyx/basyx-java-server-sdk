@@ -34,7 +34,6 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -55,8 +54,6 @@ public class MongoDBAasRepository implements AasRepository {
 	private MongoTemplate mongoTemplate;
 	private String collectionName;
 	private AasServiceFactory aasServiceFactory;
-	
-	@Value("${basyx.aasrepo.name:aas-repo}")
 	private String aasRepositoryName;
 
 	public MongoDBAasRepository(MongoTemplate mongoTemplate, String collectionName, AasServiceFactory aasServiceFactory) {
@@ -64,6 +61,12 @@ public class MongoDBAasRepository implements AasRepository {
 		this.collectionName = collectionName;
 		this.aasServiceFactory = aasServiceFactory;
 		configureIndexForAasId(mongoTemplate);
+	}
+	
+	public MongoDBAasRepository(MongoTemplate mongoTemplate, String collectionName, AasServiceFactory aasServiceFactory, String aasRepositoryName) {
+		this(mongoTemplate, collectionName, aasServiceFactory);
+		
+		this.aasRepositoryName = aasRepositoryName;
 	}
 
 	private void configureIndexForAasId(MongoTemplate mongoTemplate) {
@@ -151,7 +154,7 @@ public class MongoDBAasRepository implements AasRepository {
 	
 	@Override
 	public String getName() {
-		return aasRepositoryName;
+		return aasRepositoryName == null ? AasRepository.super.getName() : aasRepositoryName;
 	}
 
 	private AasService getAasService(String aasId) {

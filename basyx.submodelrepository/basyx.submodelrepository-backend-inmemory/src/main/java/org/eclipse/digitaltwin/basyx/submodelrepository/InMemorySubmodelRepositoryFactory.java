@@ -26,6 +26,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +39,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class InMemorySubmodelRepositoryFactory implements SubmodelRepositoryFactory {
 	private SubmodelServiceFactory submodelServiceFactory;
+	
+	@Value("${basyx.smrepo.name:sm-repo}")
+	private String smRepositoryName;
 
 	@Autowired
 	public InMemorySubmodelRepositoryFactory(SubmodelServiceFactory submodelServiceFactory) {
@@ -46,7 +50,7 @@ public class InMemorySubmodelRepositoryFactory implements SubmodelRepositoryFact
 
 	@Override
 	public SubmodelRepository create() {
-		return new InMemorySubmodelRepository(submodelServiceFactory);
+		return new InMemorySubmodelRepository(submodelServiceFactory, smRepositoryName);
 	}
 
 }

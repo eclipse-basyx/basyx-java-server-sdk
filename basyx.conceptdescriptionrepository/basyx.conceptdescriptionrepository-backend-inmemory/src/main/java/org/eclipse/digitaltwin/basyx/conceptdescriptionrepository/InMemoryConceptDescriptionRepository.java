@@ -39,7 +39,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * In-memory implementation of the ConceptDescriptionRepository
@@ -51,7 +50,6 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 
 	private Map<String, ConceptDescription> conceptDescriptions = new LinkedHashMap<>();
 	
-	@Value("${basyx.cdrepo.name:cd-repo}")
 	private String cdRepositoryName;
 	
 	/**
@@ -59,6 +57,15 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 	 * 
 	 */
 	public InMemoryConceptDescriptionRepository() { }
+	
+	/**
+	 * Creates the InMemoryConceptDescriptionRepository
+	 * 
+	 * @param cdRepositoryName Name of the CDRepository
+	 */
+	public InMemoryConceptDescriptionRepository(String cdRepositoryName) {
+		this.cdRepositoryName = cdRepositoryName;
+	}
 
 	/**
 	 * Creates the InMemoryConceptDescriptionRepository and preconfiguring
@@ -70,6 +77,18 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 		assertIdUniqueness(conceptDescriptions);
 
 	    this.conceptDescriptions.putAll(mapConceptDescriptions(conceptDescriptions));
+	}
+	
+	/**
+	 * Creates the InMemoryConceptDescriptionRepository and preconfiguring
+	 * it with the passed ConceptDescriptions
+	 * 
+	 * @param conceptDescriptions
+	 * @param cdRepositoryName
+	 */
+	public InMemoryConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions, String cdRepositoryName) {
+		this(conceptDescriptions);
+		this.cdRepositoryName = cdRepositoryName;
 	}
 
 	@Override
@@ -125,7 +144,7 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 	
 	@Override
 	public String getName() {
-		return cdRepositoryName;
+		return cdRepositoryName == null ? ConceptDescriptionRepository.super.getName() : cdRepositoryName;
 	}
 
 	private static void assertIdUniqueness(Collection<ConceptDescription> conceptDescriptionsToCheck) {

@@ -40,6 +40,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
  *
  */
 public interface AasRepository {
+	
 	/**
 	 * Retrieves all Asset Administration Shells from the repository
 	 * 
@@ -123,6 +124,8 @@ public interface AasRepository {
 	/**
 	 * Returns the name of the AAS repository
 	 */
-	public String getName();
+	public default String getName() {
+		return "aas-repo";
+	}
 	
 }

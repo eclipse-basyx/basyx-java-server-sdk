@@ -35,7 +35,7 @@ import org.springframework.stereotype.Component;
 /**
  * ConceptDescriptionRepository factory returning a MongoDb backend ConceptDescriptionRepository
  * 
- * @author schnicke, danish
+ * @author schnicke, danish, kammognie
  */
 @Component
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
@@ -43,6 +43,9 @@ public class MongoDBConceptDescriptionRepositoryFactory implements ConceptDescri
 	
 	private MongoTemplate mongoTemplate;
 	private String collectionName;
+	
+	@Value("${basyx.cdrepo.name:cd-repo}")
+	private String cdRepositoryName;
 	
 	@Autowired
 	public MongoDBConceptDescriptionRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.conceptdescriptionrepository.mongodb.collectionName:conceptdescription-repo}") String collectionName) {
@@ -52,6 +55,6 @@ public class MongoDBConceptDescriptionRepositoryFactory implements ConceptDescri
 
 	@Override
 	public ConceptDescriptionRepository create() {
-		return new MongoDBConceptDescriptionRepository(mongoTemplate, collectionName);
+		return new MongoDBConceptDescriptionRepository(mongoTemplate, collectionName, cdRepositoryName);
 	}
 }

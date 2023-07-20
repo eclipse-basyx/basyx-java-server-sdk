@@ -1,0 +1,17 @@
+README.md
+java/org/eclipse/digitaltwin/basyx/submodelregistry/service/OpenApiGeneratorApplication.java
+java/org/eclipse/digitaltwin/basyx/submodelregistry/service/RFC3339DateFormat.java
+java/org/eclipse/digitaltwin/basyx/submodelregistry/service/api/ApiUtil.java
+java/org/eclipse/digitaltwin/basyx/submodelregistry/service/api/DescriptionApi.java
+java/org/eclipse/digitaltwin/basyx/submodelregistry/service/api/DescriptionApiController.java
+java/org/eclipse/digitaltwin/basyx/submodelregistry/service/api/DescriptionApiDelegate.java
+java/org/eclipse/digitaltwin/basyx/submodelregistry/service/api/SubmodelDescriptorsApi.java
+java/org/eclipse/digitaltwin/basyx/submodelregistry/service/api/SubmodelDescriptorsApiController.java
+java/org/eclipse/digitaltwin/basyx/submodelregistry/service/api/SubmodelDescriptorsApiDelegate.java
+java/org/eclipse/digitaltwin/basyx/submodelregistry/service/configuration/EnumConverterConfiguration.java
+java/org/eclipse/digitaltwin/basyx/submodelregistry/service/configuration/HomeController.java
+java/org/eclipse/digitaltwin/basyx/submodelregistry/service/configuration/SpringDocConfiguration.java
+pom.xml
+src/main/resources/application.properties
+src/main/resources/openapi.yaml
+src/test/java/org/eclipse/digitaltwin/basyx/submodelregistry/service/OpenApiGeneratorApplicationTests.java

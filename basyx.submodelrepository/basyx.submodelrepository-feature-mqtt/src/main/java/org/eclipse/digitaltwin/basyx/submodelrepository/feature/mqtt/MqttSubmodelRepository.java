@@ -17,12 +17,11 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Repository decorator for the MQTT eventing on the submodel level.
  * 
- * @author fischer,kammognie
+ * @author fischer, kammognie
  */
 public class MqttSubmodelRepository implements SubmodelRepository {
 	private static Logger logger = LoggerFactory.getLogger(MqttSubmodelRepository.class);
@@ -31,9 +30,6 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	private SubmodelRepository decorated;
 
 	private IMqttClient mqttClient;
-	
-	@Value("${basyx.smrepo.name:sm-repo}")
-	private String smRepositoryName;
 
 	public MqttSubmodelRepository(SubmodelRepository decorated, IMqttClient mqttClient, MqttSubmodelRepositoryTopicFactory topicFactory) {
 		this.topicFactory = topicFactory;
@@ -115,7 +111,7 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public String getName() {
-		return smRepositoryName;
+		return decorated.getName();
 	}
 
 	@Override

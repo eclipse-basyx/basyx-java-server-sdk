@@ -166,7 +166,9 @@ public interface SubmodelRepository {
 	/**
 	 * Returns the name of the submodel repository
 	 */
-	public String getName();
+	public default String getName() {
+		return "sm-repo";
+	}
 
 	/**
 	 * Retrieves the Submodel as Value-Only_representation with the specific id

@@ -37,7 +37,6 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * In-memory implementation of the AasRepository
@@ -51,7 +50,6 @@ public class InMemoryAasRepository implements AasRepository {
 
 	private AasServiceFactory aasServiceFactory;
 	
-	@Value("${basyx.aasrepo.name:aas-repo}")
 	private String aasRepositoryName;
 	
 	/**
@@ -61,6 +59,18 @@ public class InMemoryAasRepository implements AasRepository {
 	 */
 	public InMemoryAasRepository(AasServiceFactory aasServiceFactory) {
 		this.aasServiceFactory = aasServiceFactory;
+	}
+	
+	/**
+	 * Creates the AasRepository using an in-memory backend.
+	 * 
+	 * @param aasServiceFactory Used for creating the AasService for new AAS
+	 * @param aasRepositoryName Name of the AASRepository
+	 */
+	public InMemoryAasRepository(AasServiceFactory aasServiceFactory, String aasRepositoryName) {
+		this(aasServiceFactory);
+		
+		this.aasRepositoryName = aasRepositoryName;
 	}
 
 	@Override
@@ -142,7 +152,7 @@ public class InMemoryAasRepository implements AasRepository {
 	
 	@Override
 	public String getName() {
-		return aasRepositoryName;
+		return aasRepositoryName == null ? AasRepository.super.getName() : aasRepositoryName;
 	}
 	
 	private void throwIfMismatchingIds(String aasId, AssetAdministrationShell newAas) {

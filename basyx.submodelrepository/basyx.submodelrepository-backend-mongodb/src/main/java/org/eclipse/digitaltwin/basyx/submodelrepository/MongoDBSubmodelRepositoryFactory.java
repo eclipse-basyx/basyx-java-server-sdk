@@ -48,18 +48,24 @@ public class MongoDBSubmodelRepositoryFactory implements SubmodelRepositoryFacto
 	private String collectionName;
 	private SubmodelServiceFactory submodelServiceFactory;
 	private Collection<Submodel> submodels;
+	
+	@Value("${basyx.smrepo.name:sm-repo}")
+	private String smRepositoryName;
 
 	@Autowired(required = false)
-	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory) {
+	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate,
+			@Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName,
+			SubmodelServiceFactory submodelServiceFactory) {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
 		this.submodelServiceFactory = submodelServiceFactory;
+
 	}
 
-
 	@Autowired(required = false)
-	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory,
-			Collection<Submodel> submodels) {
+	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate,
+			@Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName,
+			SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels) {
 		this(mongoTemplate, collectionName, submodelServiceFactory);
 		this.submodels = submodels;
 	}
@@ -67,9 +73,9 @@ public class MongoDBSubmodelRepositoryFactory implements SubmodelRepositoryFacto
 	@Override
 	public SubmodelRepository create() {
 		if (this.submodels == null || this.submodels.isEmpty()) {
-			return new MongoDBSubmodelRepository(mongoTemplate, collectionName, submodelServiceFactory);
+			return new MongoDBSubmodelRepository(mongoTemplate, collectionName, submodelServiceFactory, smRepositoryName);
 		}
-		return new MongoDBSubmodelRepository(mongoTemplate, collectionName, submodelServiceFactory, submodels);
+		return new MongoDBSubmodelRepository(mongoTemplate, collectionName, submodelServiceFactory, submodels, smRepositoryName);
 
 	}
 }

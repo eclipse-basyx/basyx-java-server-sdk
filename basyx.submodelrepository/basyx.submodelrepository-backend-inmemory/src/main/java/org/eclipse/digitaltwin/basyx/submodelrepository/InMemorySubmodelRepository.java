@@ -41,7 +41,6 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * In-memory implementation of the SubmodelRepository
@@ -53,8 +52,6 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 	private Map<String, SubmodelService> submodelServices = new LinkedHashMap<>();
 	private SubmodelServiceFactory submodelServiceFactory;
-	
-	@Value("${basyx.smrepo.name:sm-repo}")
 	private String smRepositoryName;
 
 	/**
@@ -65,6 +62,18 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	 */
 	public InMemorySubmodelRepository(SubmodelServiceFactory submodelServiceFactory) {
 		this.submodelServiceFactory = submodelServiceFactory;
+	}
+	
+	/**
+	 * Creates the InMemorySubmodelRepository utilizing the passed
+	 * SubmodelServiceFactory for creating new SubmodelServices
+	 * 
+	 * @param submodelServiceFactory
+	 * @param smRepositoryName
+	 */
+	public InMemorySubmodelRepository(SubmodelServiceFactory submodelServiceFactory, String smRepositoryName) {
+		this(submodelServiceFactory);
+		this.smRepositoryName = smRepositoryName;
 	}
 
 	/**
@@ -80,6 +89,21 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		throwIfHasCollidingIds(submodels);
 
 		submodelServices = createServices(submodels);
+	}
+	
+	/**
+	 * Creates the InMemorySubmodelRepository utilizing the passed
+	 * SubmodelServiceFactory for creating new SubmodelServices and preconfiguring
+	 * it with the passed Submodels
+	 * 
+	 * @param submodelServiceFactory
+	 * @param submodels
+	 * @param smRepositoryName
+	 */
+	public InMemorySubmodelRepository(SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels, String smRepositoryName) {
+		this(submodelServiceFactory, submodels);
+		
+		this.smRepositoryName = smRepositoryName;
 	}
 
 	private void throwIfHasCollidingIds(Collection<Submodel> submodelsToCheck) {
@@ -220,7 +244,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	
 	@Override
 	public String getName() {
-		return smRepositoryName;
+		return smRepositoryName == null ? SubmodelRepository.super.getName() : smRepositoryName;
 	}
 
 	private void throwIfMismatchingIds(String smId, Submodel newSubmodel) {
