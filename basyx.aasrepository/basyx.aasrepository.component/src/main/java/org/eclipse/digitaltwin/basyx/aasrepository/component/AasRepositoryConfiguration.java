@@ -43,7 +43,7 @@ import org.springframework.context.annotation.Primary;
  * Provides the spring bean configuration for the {@link AasRepository} and
  * {@link AasService} utilizing all found features for the respective services
  * 
- * @author schnicke
+ * @author schnicke, kammognie
  *
  */
 @Configuration

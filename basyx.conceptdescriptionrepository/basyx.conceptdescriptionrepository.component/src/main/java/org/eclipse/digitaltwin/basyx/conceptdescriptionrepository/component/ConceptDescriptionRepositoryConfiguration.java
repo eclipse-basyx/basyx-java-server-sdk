@@ -33,7 +33,6 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.Concep
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.DecoratedConceptDescriptionRepositoryFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
 /**
  * Provides the spring bean configuration for the {@link ConceptDescriptionRepository}
@@ -46,7 +45,6 @@ import org.springframework.context.annotation.Primary;
 public class ConceptDescriptionRepositoryConfiguration {
 
 	@Bean
-	@Primary
 	public static ConceptDescriptionRepository getConceptDescriptionRepository(ConceptDescriptionRepositoryFactory aasRepositoryFactory, List<ConceptDescriptionRepositoryFeature> features) {
 		return new DecoratedConceptDescriptionRepositoryFactory(aasRepositoryFactory, features).create();
 	}

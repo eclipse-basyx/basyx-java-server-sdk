@@ -32,7 +32,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * Creates and starts the SubmodelRepository off-shelf-component
  * 
- * @author schnicke
+ * @author schnicke, kammognie
  *
  */
 @SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
