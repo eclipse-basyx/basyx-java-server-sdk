@@ -1,19 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<parent>
 		<groupId>org.eclipse.digitaltwin.basyx</groupId>
 		<artifactId>basyx.submodelservice</artifactId>
 		<version>${revision}</version>
 	</parent>
-
 	<artifactId>basyx.submodelservice.component</artifactId>
-	
 	<properties>
 		<docker.image.name>submodelservice</docker.image.name>
 		<docker.container.waitForEndpoint>http://localhost:${docker.host.port}/submodel</docker.container.waitForEndpoint>
 	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -28,7 +24,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.submodelservice-core</artifactId>
@@ -56,7 +51,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -66,9 +60,17 @@
 					<classifier>exec</classifier>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<usedDependencies>
+						<dependency>org.eclipse.digitaltwin.basyx:basyx.submodelservice-http</dependency>
+					</usedDependencies>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-	
 	<profiles>
 		<profile>
 			<id>docker</id>
