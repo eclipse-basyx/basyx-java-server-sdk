@@ -42,6 +42,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,8 +60,13 @@ public class SubmodelServiceConfiguration {
 	@Primary
 	@Bean
 	@Autowired
-	public static SubmodelService getSubmodelService(Submodel submodel) {
-		return new InMemorySubmodelServiceFactory().create(submodel);
+	public SubmodelService getSubmodelService(Submodel submodel) {
+		return getSubmodelServiceFactory().create(submodel);
+	}
+
+	@Bean
+	static SubmodelServiceFactory getSubmodelServiceFactory() {
+		return new InMemorySubmodelServiceFactory();
 	}
 
 	@Bean
