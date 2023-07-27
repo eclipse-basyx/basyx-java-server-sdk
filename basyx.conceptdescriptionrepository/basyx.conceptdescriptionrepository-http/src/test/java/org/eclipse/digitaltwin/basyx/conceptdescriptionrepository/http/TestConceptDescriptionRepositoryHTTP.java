@@ -31,6 +31,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.DummyConceptDescriptionFactory;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.springframework.boot.SpringApplication;
@@ -59,7 +60,11 @@ public class TestConceptDescriptionRepositoryHTTP extends ConceptDescriptionRepo
 	}
 
 	private void resetRepoToDefaultConceptDescriptions(ConceptDescriptionRepository repo, Collection<ConceptDescription> conceptDescriptions) {
-		repo.getAllConceptDescriptions().stream().map(s -> s.getId()).forEach(repo::deleteConceptDescription);
+		repo.getAllConceptDescriptions(new PaginationInfo(0, null))
+				.getResult()
+				.stream()
+				.map(s -> s.getId())
+				.forEach(repo::deleteConceptDescription);
 
 		conceptDescriptions.forEach(repo::createConceptDescription);
 	}

@@ -25,11 +25,13 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 
 /**
@@ -51,7 +53,7 @@ public interface SubmodelService {
 	 * 
 	 * @return
 	 */
-	public Collection<SubmodelElement> getSubmodelElements();
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo);
 
 	/**
 	 * Retrieve specific SubmodelElement of the Submodel

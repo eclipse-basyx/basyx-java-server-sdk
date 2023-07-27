@@ -65,6 +65,7 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 		String requestedSubmodelElements = requestSubmodelElementsJSON(id);
 
 		String submodelElementJSON = getSubmodelElementsJSON();
+		System.out.println(requestedSubmodelElements);
 		BaSyxHttpTestUtils.assertSameJSONContent(submodelElementJSON, requestedSubmodelElements);
 	}
 

@@ -31,6 +31,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
@@ -44,6 +45,8 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Test;
 
 /**
@@ -57,52 +60,66 @@ public abstract class ConceptDescriptionRepositorySuite {
 
 	protected abstract ConceptDescriptionRepository getConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions);
 
+	private final PaginationInfo noLimitPaginationInfo = new PaginationInfo(0, "");
+
 	@Test
 	public void getAllConceptDescriptionsPreconfigured() {
 		Collection<ConceptDescription> expectedConceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
 
 		ConceptDescriptionRepository repo = getConceptDescriptionRepository(expectedConceptDescriptions);
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptions();
+		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptions(noLimitPaginationInfo)
+				.getResult();
 
 		assertEquals(4, actualConceptDescriptions.size());
 		assertConceptDescriptionsAreContained(expectedConceptDescriptions, actualConceptDescriptions);
 	}
-	
+
 	@Test
 	public void getAllConceptDescriptionsWithIdShortPreconfigured() {
 		Collection<ConceptDescription> allConceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
 		Collection<ConceptDescription> expectedDescriptions = Arrays.asList(DummyConceptDescriptionFactory.createBasicConceptDescription());
 
 		ConceptDescriptionRepository repo = getConceptDescriptionRepository(allConceptDescriptions);
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIdShort("BasicConceptDescription");
+		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIdShort("BasicConceptDescription", noLimitPaginationInfo)
+				.getResult();
 
 		assertEquals(1, actualConceptDescriptions.size());
 		assertConceptDescriptionsAreContained(expectedDescriptions, actualConceptDescriptions);
 	}
-	
+
 	@Test
 	public void getAllConceptDescriptionsWithIsCaseOfPreconfigured() {
-		Reference reference = new DefaultReference.Builder().keys(Arrays.asList(new DefaultKey.Builder().type(KeyTypes.DATA_ELEMENT).value("DataElement").build())).type(ReferenceTypes.MODEL_REFERENCE).build();
-		
+		Reference reference = new DefaultReference.Builder().keys(Arrays.asList(new DefaultKey.Builder().type(KeyTypes.DATA_ELEMENT)
+				.value("DataElement")
+				.build()))
+				.type(ReferenceTypes.MODEL_REFERENCE)
+				.build();
+
 		Collection<ConceptDescription> allConceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
 		Collection<ConceptDescription> expectedDescriptions = Arrays.asList(DummyConceptDescriptionFactory.createConceptDescription(), DummyConceptDescriptionFactory.createBasicConceptDescriptionWithDataSpecification());
 
 		ConceptDescriptionRepository repo = getConceptDescriptionRepository(allConceptDescriptions);
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIsCaseOf(reference);
+		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIsCaseOf(reference, noLimitPaginationInfo)
+				.getResult();
 
 		assertEquals(2, actualConceptDescriptions.size());
 		assertConceptDescriptionsAreContained(expectedDescriptions, actualConceptDescriptions);
 	}
-	
+
 	@Test
 	public void getAllConceptDescriptionsWithDataSpecPreconfigured() {
-		Reference reference = new DefaultReference.Builder().keys(Arrays.asList(new DefaultKey.Builder().type(KeyTypes.REFERENCE_ELEMENT).value("ReferenceElementKey").build())).type(ReferenceTypes.EXTERNAL_REFERENCE).build();
-		
+		Reference reference = new DefaultReference.Builder().keys(Arrays.asList(new DefaultKey.Builder().type(KeyTypes.REFERENCE_ELEMENT)
+				.value("ReferenceElementKey")
+				.build()))
+				.type(ReferenceTypes.EXTERNAL_REFERENCE)
+				.build();
+
 		Collection<ConceptDescription> allConceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
 		Collection<ConceptDescription> expectedDescriptions = Arrays.asList(DummyConceptDescriptionFactory.createBasicConceptDescriptionWithDataSpecification());
 
 		ConceptDescriptionRepository repo = getConceptDescriptionRepository(allConceptDescriptions);
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByDataSpecificationReference(reference);
+		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByDataSpecificationReference(reference, noLimitPaginationInfo)
+				.getResult();
 
 		assertEquals(1, actualConceptDescriptions.size());
 		assertConceptDescriptionsAreContained(expectedDescriptions, actualConceptDescriptions);
@@ -111,7 +128,8 @@ public abstract class ConceptDescriptionRepositorySuite {
 	@Test
 	public void getAllConceptDescriptionsEmpty() {
 		ConceptDescriptionRepository repo = getConceptDescriptionRepository();
-		Collection<ConceptDescription> conceptDescriptions = repo.getAllConceptDescriptions();
+		Collection<ConceptDescription> conceptDescriptions = repo.getAllConceptDescriptions(noLimitPaginationInfo)
+				.getResult();
 
 		assertIsEmpty(conceptDescriptions);
 	}
@@ -151,7 +169,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		repo.updateConceptDescription(id, doesNotExist);
 	}
-	
+
 	@Test(expected = IdentificationMismatchException.class)
 	public void updateExistingCDWithMismatchId() {
 		String id = ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID;
@@ -198,15 +216,63 @@ public abstract class ConceptDescriptionRepositorySuite {
 		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		repo.deleteConceptDescription("nonExisting");
 	}
-	
+
+	@Test
+	public void allContextDescriptionWithoutCursorPaginated() {
+		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+		PaginationInfo pInfo = new PaginationInfo(1, "");
+		CursorResult<List<ConceptDescription>> paginatedConceptDescriptions = repo.getAllConceptDescriptions(pInfo);
+		assertEquals(1, paginatedConceptDescriptions.getResult()
+				.size());
+	}
+
+	@Test
+	public void allContextDescriptionWithCursorPaginated() {
+		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+		PaginationInfo pInfo = new PaginationInfo(1, ConceptDescriptionRepositorySuiteHelper.BASIC_CONCEPT_DESCRIPTION_COMMON_IS_CASEOF_ID);
+		CursorResult<List<ConceptDescription>> paginatedConceptDescriptions = repo.getAllConceptDescriptions(pInfo);
+		assertEquals(1, paginatedConceptDescriptions.getResult()
+				.size());
+		assertEquals(ConceptDescriptionRepositorySuiteHelper.BASIC_CONCEPT_DESCRIPTION_COMMON_IS_CASEOF_ID, paginatedConceptDescriptions.getResult()
+				.stream()
+				.findFirst()
+				.get()
+				.getId());
+	}
+
+	@Test
+	public void paginatedGetAllConceptDescriptionsWithIsCaseOfPreconfigured() {
+		Reference reference = new DefaultReference.Builder().keys(Arrays.asList(new DefaultKey.Builder().type(KeyTypes.DATA_ELEMENT)
+				.value("DataElement")
+				.build()))
+				.type(ReferenceTypes.MODEL_REFERENCE)
+				.build();
+
+		Collection<ConceptDescription> allConceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
+		ConceptDescription expectedDescription = DummyConceptDescriptionFactory.createConceptDescription();
+
+		ConceptDescriptionRepository repo = getConceptDescriptionRepository(allConceptDescriptions);
+		PaginationInfo pInfo = new PaginationInfo(1, "");
+		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIsCaseOf(reference, pInfo)
+				.getResult();
+
+		assertEquals(1, actualConceptDescriptions.size());
+		assertEquals(expectedDescription, actualConceptDescriptions.stream()
+				.findFirst()
+				.get());
+	}
+
 	private void assertConceptDescriptionsAreContained(Collection<ConceptDescription> expectedConceptDescriptions, Collection<ConceptDescription> actualConceptDescriptions) {
 		assertTrue(actualConceptDescriptions.containsAll(expectedConceptDescriptions));
 	}
 
 	private ConceptDescription createDummyConceptDescription(String id) {
 		return new DefaultConceptDescription.Builder().id(id)
-				.isCaseOf(new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE).build())
-				.administration(new DefaultAdministrativeInformation.Builder().revision("6").version("2.4.5").build())
+				.isCaseOf(new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE)
+						.build())
+				.administration(new DefaultAdministrativeInformation.Builder().revision("6")
+						.version("2.4.5")
+						.build())
 				.build();
 	}
 

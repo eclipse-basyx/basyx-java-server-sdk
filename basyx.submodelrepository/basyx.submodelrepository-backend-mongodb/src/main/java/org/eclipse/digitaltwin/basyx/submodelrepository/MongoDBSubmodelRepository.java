@@ -25,12 +25,18 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -49,6 +55,7 @@ import com.mongodb.client.result.DeleteResult;
  *
  */
 public class MongoDBSubmodelRepository implements SubmodelRepository {
+	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static String ID_JSON_PATH = "id";
 
 	private MongoTemplate mongoTemplate;
@@ -101,8 +108,14 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public Collection<Submodel> getAllSubmodels() {
-		return mongoTemplate.findAll(Submodel.class, collectionName);
+	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
+		List<Submodel> allSubmodels = mongoTemplate.findAll(Submodel.class, collectionName);
+		TreeMap<String, Submodel> submodelMap = allSubmodels.stream()
+				.collect(Collectors.toMap(Submodel::getId, aas -> aas, (a, b) -> a, TreeMap::new));
+
+		PaginationSupport<Submodel> paginationSupport = new PaginationSupport<>(submodelMap, Submodel::getId);
+		CursorResult<List<Submodel>> paginatedSubmodels = paginationSupport.getPaged(pInfo);
+		return paginatedSubmodels;
 	}
 
 	@Override
@@ -159,8 +172,9 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public Collection<SubmodelElement> getSubmodelElements(String submodelId) throws ElementDoesNotExistException {
-		return getSubmodelService(submodelId).getSubmodelElements();
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo)
+			throws ElementDoesNotExistException {
+		return getSubmodelService(submodelId).getSubmodelElements(pInfo);
 	}
 
 	@Override
@@ -218,7 +232,7 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) throws ElementDoesNotExistException {
-		return new SubmodelValueOnly(getSubmodelElements(submodelId));
+		return new SubmodelValueOnly(getSubmodelElements(submodelId, NO_LIMIT_PAGINATION_INFO).getResult());
 	}
 
 	@Override

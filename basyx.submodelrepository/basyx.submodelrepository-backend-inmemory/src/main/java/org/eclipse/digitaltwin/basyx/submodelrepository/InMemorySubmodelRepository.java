@@ -28,8 +28,10 @@ package org.eclipse.digitaltwin.basyx.submodelrepository;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -37,6 +39,9 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -50,6 +55,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
  */
 public class InMemorySubmodelRepository implements SubmodelRepository {
 
+	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private Map<String, SubmodelService> submodelServices = new LinkedHashMap<>();
 	private SubmodelServiceFactory submodelServiceFactory;
 
@@ -98,11 +104,18 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public Collection<Submodel> getAllSubmodels() {
-		return submodelServices.values()
+	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
+		List<Submodel> allSubmodels = submodelServices.values()
 				.stream()
 				.map(service -> service.getSubmodel())
 				.collect(Collectors.toList());
+
+		TreeMap<String, Submodel> submodelMap = allSubmodels.stream()
+				.collect(Collectors.toMap(Submodel::getId, aas -> aas, (a, b) -> a, TreeMap::new));
+
+		PaginationSupport<Submodel> paginationSupport = new PaginationSupport<>(submodelMap, Submodel::getId);
+		CursorResult<List<Submodel>> paginatedSubmodels = paginationSupport.getPaged(pInfo);
+		return paginatedSubmodels;
 	}
 
 	@Override
@@ -140,11 +153,11 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public Collection<SubmodelElement> getSubmodelElements(String submodelId) {
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo) {
 		throwIfSubmodelDoesNotExist(submodelId);
 
 		return submodelServices.get(submodelId)
-				.getSubmodelElements();
+				.getSubmodelElements(pInfo);
 	}
 
 	@Override
@@ -204,7 +217,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) {
-		return new SubmodelValueOnly(getSubmodelElements(submodelId));
+		return new SubmodelValueOnly(getSubmodelElements(submodelId, NO_LIMIT_PAGINATION_INFO).getResult());
 	}
 
 	@Override
