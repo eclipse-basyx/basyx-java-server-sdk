@@ -49,7 +49,7 @@ import org.junit.Test;
 /**
  * Testsuite for implementations of the ConceptDescriptionRepository interface
  * 
- * @author schnicke, danish
+ * @author schnicke, danish, kammognie
  *
  */
 public abstract class ConceptDescriptionRepositorySuite {
@@ -197,6 +197,12 @@ public abstract class ConceptDescriptionRepositorySuite {
 	public void deleteNonExistingConceptDescription() {
 		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		repo.deleteConceptDescription("nonExisting");
+	}
+	
+	@Test
+	public void getDefaultConceptDescriptionRepositoryName() {
+		ConceptDescriptionRepository repo = getConceptDescriptionRepository();
+		assertEquals("cd-repo", repo.getName());
 	}
 	
 	private void assertConceptDescriptionsAreContained(Collection<ConceptDescription> expectedConceptDescriptions, Collection<ConceptDescription> actualConceptDescriptions) {

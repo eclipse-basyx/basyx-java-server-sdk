@@ -48,11 +48,11 @@ import com.mongodb.client.MongoClients;
 /**
  * Tests the {@link MongoDBConceptDescriptionRepository}
  * 
- * @author danish
+ * @author danish, kammognie
  *
  */
 public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionRepositorySuite {
-
+	private static final String CONFIGURED_CD_REPO_NAME = "configured-cd-repo-name";
 	private final String COLLECTION = "conceptDescTestCollection";
 	
 	@Override
@@ -76,6 +76,15 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 		conceptDescriptions.forEach(conceptDescriptionRepository::createConceptDescription);
 		
 		return conceptDescriptionRepository;
+	}
+	
+	@Test
+	public void testConfiguredMongoDBConceptDescriptionRepositoryName() {
+        MongoTemplate template = createTemplate();
+		
+		clearDatabase(template);
+		ConceptDescriptionRepository repo = new MongoDBConceptDescriptionRepository(template, COLLECTION, CONFIGURED_CD_REPO_NAME);
+		assertEquals(CONFIGURED_CD_REPO_NAME, repo.getName());
 	}
 
 	@Test
