@@ -24,8 +24,7 @@
 		<swagger.codegen.version>3.0.42</swagger.codegen.version>
 		<spring.fox.version>3.0.0</spring.fox.version>
 		<openapi.folder.name>open-api</openapi.folder.name>
-		<openapi.base.name>Plattform_i40-AssetAdministrationShellRegistryServiceSpecification-V3.0_SSP-001-resolved-altered.yaml</openapi.base.name>
-		<openapi.extensions.name>Plattform_i40-AssetAdministrationShellRegistryServiceSpecification-V3.0_SSP-001-Extensions.yaml</openapi.extensions.name>
+		<openapi.base.name>Plattform_i40-AssetAdministrationShellRegistryServiceSpecification-V3.0.1_SSP-001-resolved.yaml</openapi.base.name>
 		<openapi.name>Plattform_i40-Registry-and-Discovery.yaml</openapi.name>
 		<guava.version>31.0.1-jre</guava.version>
 		<maven-plugin.version>3.6.0</maven-plugin.version>

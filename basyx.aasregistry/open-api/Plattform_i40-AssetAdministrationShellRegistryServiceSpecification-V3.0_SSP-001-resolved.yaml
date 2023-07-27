@@ -736,9 +736,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Extension'
-      example: "{ \"endpoints\": [ { \"protocolInformation\": { \"endpointAddress\": \"https://localhost:1234\", \"endpointProtocolVersion\": \"1.1\" }, \"interface\": \"AAS-1.0\" }, { \"protocolInformation\": { \"endpointAddress\": \"opc.tcp://localhost:4840\" }, \"interface\": \"AAS-1.0\" }, { \"protocolInformation\": { \"endpointAddress\": \"https://localhost:5678\", \"endpointProtocolVersion\": \"1.1\", \"subprotocol\": \"OPC UA Basic SOAP\", \"subprotocolBody\": \"ns=2;s=MyAAS\", \"subprotocolBodyEncoding\": \"application/soap+xml\" }, \"interface\": \"AAS-1.0\" } ] }"
-      allOf:
-      - $ref: '#/components/schemas/HasExtensions'
+      example: "{ \"endpoints\": [ { \"protocolInformation\": { \"href\": \"https://localhost:1234/api/v3.0/aas\", \"endpointProtocolVersion\": [\"1.1\"] }, \"interface\": \"AAS-3.0\" }, { \"protocolInformation\": { \"href\": \"opc.tcp://localhost:4840\" }, \"interface\": \"AAS-3.0\" }, { \"protocolInformation\": { \"href\": \"https://localhost:5678\", \"endpointProtocolVersion\": [\"1.1\"], \"subprotocol\": \"OPC UA Basic SOAP\", \"subprotocolBody\": \"ns=2;s=MyAAS\", \"subprotocolBodyEncoding\": \"application/soap+xml\" }, \"interface\": \"AAS-3.0\" } ] }"
     HasExtensions:
       type: object
       properties:
@@ -1251,7 +1249,7 @@ components:
             - SubmodelServiceSpecification/V3.0-MinimalProfile
             - AasxFileServerServiceSpecification/V3.0
             - RegistryServiceSpecification/V3.0
-            - RegistryServiceSpecification/V3.0- AssetAdministrationShellRegistry
+            - RegistryServiceSpecification/V3.0-AssetAdministrationShellRegistry
             - RegistryServiceSpecification/V3.0-SubmodelRegistry
             - RepositoryServiceSpecification/V3.0
             - RepositoryServiceSpecification/V3.0-MinimalProfile
@@ -1273,7 +1271,7 @@ components:
       properties:
         cursor:
           type: string
-          example: wJlCDLIl6KTWypN7T6vc6nWEmEYe99Hjf1XY1xmqV-M=#
+      example: wJlCDLIl6KTWypN7T6vc6nWEmEYe99Hjf1XY1xmqV-M=#
     ProtocolInformation_securityAttributes:
       required:
       - key

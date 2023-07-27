@@ -27,6 +27,8 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -78,6 +80,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
@@ -106,8 +109,10 @@ public abstract class BaseIntegrationTest {
 	@Value("${local.server.port}")
 	private int port;
 
+	private ObjectMapper mapper = new ObjectMapper();
+	
 	@Rule
-	public TestResourcesLoader resourceLoader = new TestResourcesLoader(BaseIntegrationTest.class.getPackageName(), new ObjectMapper());
+	public TestResourcesLoader resourceLoader = new TestResourcesLoader(BaseIntegrationTest.class.getPackageName(), mapper);
 
 	@Autowired
 	private BaseEventListener listener;
@@ -117,13 +122,19 @@ public abstract class BaseIntegrationTest {
 	@Before
 	public void initClient() throws ApiException {
 		api = new SubmodelRegistryApi("http", "127.0.0.1", port);
+		// there should be no descriptor
 		api.deleteAllSubmodelDescriptors();
 		listener.assertNoAdditionalMessage();
 	}
 
 	@After
 	public void cleanup() throws ApiException {
-		api.deleteAllSubmodelDescriptors();
+		listener.assertNoAdditionalMessage();
+		GetSubmodelDescriptorsResult result = api.getAllSubmodelDescriptors(null, null);
+		for (SubmodelDescriptor eachDescriptor : result.getResult()) {
+			api.deleteSubmodelDescriptorById(eachDescriptor.getId());
+			assertThatEventWasSend(RegistryEvent.builder().id(eachDescriptor.getId()).type(EventType.SUBMODEL_UNREGISTERED).build());
+		}
 	}
 
 	@Test
@@ -137,12 +148,15 @@ public abstract class BaseIntegrationTest {
 
 	@Test
 	public void whenWritingParallel_transactionManagementWorks() throws ApiException {
-		IntStream.iterate(0, i -> i + 1).limit(300).parallel().forEach(this::postSubmodel);
+		IntStream.iterate(0, i -> i + 1).limit(300).parallel().forEach(this::postSubmodel);		
 		assertThat(api.getAllSubmodelDescriptors(null, null).getResult()).hasSize(300);
+		for (int i = 0; i < 300; i++) {
+			listener.poll();
+		}
 	}
 
 	private void postSubmodel(int id) {
-		SubmodelDescriptor descr = new SubmodelDescriptor().id(id+"").addEndpointsItem(defaultClientEndpoint());
+		SubmodelDescriptor descr = new SubmodelDescriptor().id(id + "").addEndpointsItem(defaultClientEndpoint());
 		try {
 			api.postSubmodelDescriptor(descr);
 		} catch (ApiException e) {
@@ -160,7 +174,8 @@ public abstract class BaseIntegrationTest {
 			ApiResponse<SubmodelDescriptor> response = api.postSubmodelDescriptorWithHttpInfo(descr);
 			assertThat(response.getStatusCode()).isEqualTo(201);
 			// we need a mapping here
-			assertThatEventWasSend(RegistryEvent.builder().id(id).submodelDescriptor(new org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor(id, List.of(defaultServerEndpoint()))).type(EventType.SUBMODEL_REGISTERED).build());
+			assertThatEventWasSend(
+					RegistryEvent.builder().id(id).submodelDescriptor(new org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor(id, List.of(defaultServerEndpoint()))).type(EventType.SUBMODEL_REGISTERED).build());
 		}
 		List<SubmodelDescriptor> all = api.getAllSubmodelDescriptors(null, null).getResult();
 		assertThat(all.size()).isEqualTo(DELETE_ALL_TEST_INSTANCE_COUNT);
@@ -197,7 +212,6 @@ public abstract class BaseIntegrationTest {
 		listener.assertNoAdditionalMessage();
 	}
 
-
 	@Test
 	public void whenInvalidInput_thenSuccessfullyValidated() throws Exception {
 		initialize();
@@ -212,8 +226,9 @@ public abstract class BaseIntegrationTest {
 		descriptor.addEndpointsItem(defaultClientEndpoint());
 		int status = api.postSubmodelDescriptorWithHttpInfo(descriptor).getStatusCode();
 		assertThat(status).isEqualTo(201);
-		assertThatEventWasSend(RegistryEvent.builder().id(descriptor.getId()).submodelDescriptor(new org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor(descriptor.getId(), List.of(defaultServerEndpoint())).idShort(descriptor.getIdShort()))
-				.type(EventType.SUBMODEL_REGISTERED).build());
+		assertThatEventWasSend(RegistryEvent.builder().id(descriptor.getId())
+				.submodelDescriptor(new org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor(descriptor.getId(), List.of(defaultServerEndpoint())).idShort(descriptor.getIdShort())).type(EventType.SUBMODEL_REGISTERED)
+				.build());
 	}
 
 	@Test
@@ -222,12 +237,15 @@ public abstract class BaseIntegrationTest {
 		SubmodelDescriptor descr = new SubmodelDescriptor().id(IDENTIFICATION_9).addEndpointsItem(defaultClientEndpoint());
 		ApiResponse<Void> putResult = api.putSubmodelDescriptorByIdWithHttpInfo(IDENTIFICATION_7, descr);
 		assertThat(putResult.getStatusCode()).isEqualTo(NO_CONTENT);
+		
+		assertThatEventWasSend(new RegistryEvent(IDENTIFICATION_7, EventType.SUBMODEL_UNREGISTERED, null));
+		assertThatEventWasSend(new RegistryEvent(descr.getId(), EventType.SUBMODEL_REGISTERED, convert(descr)));
+		
 		assertThrowsApiException(() -> api.getSubmodelDescriptorByIdWithHttpInfo(IDENTIFICATION_7), NOT_FOUND);
 		ApiResponse<SubmodelDescriptor> getResult = api.getSubmodelDescriptorByIdWithHttpInfo(IDENTIFICATION_9);
 		assertThat(getResult.getStatusCode()).isEqualTo(OK);
 		assertThat(descr).isEqualTo(getResult.getData());
 	}
-
 
 	@Test
 	public void whenPutUnknownSubmodelDescriptor_thenNotFound() throws Exception {
@@ -259,9 +277,8 @@ public abstract class BaseIntegrationTest {
 		assertThat(postedDescriptorsSorted.get(4)).isEqualTo(body2.get(0));
 	}
 
-
 	@Test
-	public void whenSendFullObjectStructure_ItemIsProcessedProperly() throws ApiException {
+	public void whenSendFullObjectStructure_ItemIsProcessedProperly() throws ApiException, JsonProcessingException {
 		LangStringTextType dType = new LangStringTextType().language(LANG_DE_DE).text("description");
 		LangStringNameType nType = new LangStringNameType().language(LANG_DE_DE).text("display");
 		ProtocolInformation protInfo = new ProtocolInformation();
@@ -280,21 +297,49 @@ public abstract class BaseIntegrationTest {
 		SubmodelDescriptor sm = new SubmodelDescriptor().id("sm").id("short").addDescriptionItem(dType).addDisplayNameItem(nType).addEndpointsItem(ep).addExtensionsItem(ext).addSupplementalSemanticIdItem(reference);
 		sm.setAdministration(aInfo);
 		SubmodelDescriptor descr = api.postSubmodelDescriptor(sm);
+		
 		assertThat(descr).isEqualTo(sm);
+		
+		assertThatEventWasSend(new RegistryEvent(descr.getId(), EventType.SUBMODEL_REGISTERED, convert(sm)));
 	}
+
+	private org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor convert(SubmodelDescriptor sm) throws JsonProcessingException {
+		String data = mapper.writerFor(SubmodelDescriptor.class).writeValueAsString(sm);
+		return mapper.readerFor(org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor.class).readValue(data);
+	}
+
+	@Test
+	public void whenPostSubmodelDescriptor_LocationIsReturned() throws ApiException, IOException {
+		SubmodelDescriptor sm = new SubmodelDescriptor().id("https://sm.id").addEndpointsItem(defaultClientEndpoint());
+		ApiResponse<SubmodelDescriptor> response = api.postSubmodelDescriptorWithHttpInfo(sm);
+		assertThatEventWasSend(new RegistryEvent(sm.getId(), EventType.SUBMODEL_REGISTERED, convert(sm)));
+		List<String> locations = response.getHeaders().get("Location");
+		assertThat(locations).hasSize(1);
+		String location = locations.get(0);
+		
+		String expectedSuffix = "/api/v3.0/submodel-descriptors/aHR0cHM6Ly9zbS5pZA==";
+		assertThat(location).endsWith(expectedSuffix);
+		assertRestResourceAvailable(location);
+	}
+
+	private void assertRestResourceAvailable(String location) throws IOException {
+		URL url = new URL(location);
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setRequestMethod("GET");
+		int status = con.getResponseCode();
+		assertThat(status).isEqualTo(200);			
+	}	
 
 	private void deleteSubmodelDescriptor(String submodelId) throws ApiException {
 		listener.reset();
 		int response = api.deleteSubmodelDescriptorByIdWithHttpInfo(submodelId).getStatusCode();
-		//int response = api.deleteSubmodelDescriptorByIdWithHttpInfo(URLEncoder.encode(submodelId, StandardCharsets.UTF_8)).getStatusCode();
 		assertThat(response).isEqualTo(NO_CONTENT);
 		assertThatEventWasSend(RegistryEvent.builder().id(submodelId).type(EventType.SUBMODEL_UNREGISTERED).build());
 	}
 
 	private List<SubmodelDescriptor> initialize() throws IOException, InterruptedException, TimeoutException, ApiException {
 		List<SubmodelDescriptor> descriptors = resourceLoader.loadRepositoryDefinition(SubmodelDescriptor.class);
-		List<org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor> repoContent = resourceLoader
-				.loadRepositoryDefinition(org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor.class);
+		List<org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor> repoContent = resourceLoader.loadRepositoryDefinition(org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor.class);
 
 		for (int i = 0, len = descriptors.size(); i < len; i++) {
 			SubmodelDescriptor eachDescriptor = descriptors.get(i);
@@ -318,10 +363,10 @@ public abstract class BaseIntegrationTest {
 	}
 	
 	public org.eclipse.digitaltwin.basyx.submodelregistry.model.Endpoint defaultServerEndpoint() {
-		org.eclipse.digitaltwin.basyx.submodelregistry.model.ProtocolInformation protocolInfo = new org.eclipse.digitaltwin.basyx.submodelregistry.model.ProtocolInformation("http://127.0.0.1:8099/submodel").endpointProtocol("HTTP").subprotocol("AAS");
+		org.eclipse.digitaltwin.basyx.submodelregistry.model.ProtocolInformation protocolInfo = new org.eclipse.digitaltwin.basyx.submodelregistry.model.ProtocolInformation("http://127.0.0.1:8099/submodel").endpointProtocol("HTTP")
+				.subprotocol("AAS");
 		return new org.eclipse.digitaltwin.basyx.submodelregistry.model.Endpoint("https://admin-shell.io/aas/API/3/0/SubmodelServiceSpecification/SSP-003", protocolInfo);
 	}
-
 
 	public LangStringTextType description(String description) {
 		return new LangStringTextType().language(LANG_DE_DE).text(description);

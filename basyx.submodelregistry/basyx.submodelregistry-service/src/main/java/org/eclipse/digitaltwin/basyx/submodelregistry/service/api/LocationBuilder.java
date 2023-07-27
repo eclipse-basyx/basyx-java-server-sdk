@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 DFKI GmbH (https://www.dfki.de/en/web)
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,27 +22,12 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.submodelregistry.service.api;
 
+import java.net.URI;
 
-package org.eclipse.digitaltwin.basyx.submodelservice;
+public interface LocationBuilder {
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.stereotype.Component;
-
-/**
- * SubmodelService factory returning an in-memory backend SubmodelService
- * 
- * @author schnicke
- *
- */
-@ConditionalOnExpression("'${basyx.submodelservice.backend}'.equals('InMemory') or '${basyx.backend}'.equals('InMemory')")
-@Component
-public class InMemorySubmodelServiceFactory implements SubmodelServiceFactory {
-
-	@Override
-	public SubmodelService create(Submodel submodel) {
-		return new InMemorySubmodelService(submodel);
-	}
+	URI getSubmodelLocation(String submodelId);
 
 }

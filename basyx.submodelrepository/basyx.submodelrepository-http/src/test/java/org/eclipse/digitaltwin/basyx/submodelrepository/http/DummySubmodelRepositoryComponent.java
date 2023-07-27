@@ -27,6 +27,7 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
 import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +36,7 @@ import org.springframework.context.annotation.Bean;
 public class DummySubmodelRepositoryComponent {
 
 	@Bean
-	public InMemorySubmodelRepository createSubmodelRepository(SubmodelServiceFactory submodelServiceFactory) {
-		return new InMemorySubmodelRepository(submodelServiceFactory);
+	public InMemorySubmodelRepository createSubmodelRepository() {
+		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
 	}
 }

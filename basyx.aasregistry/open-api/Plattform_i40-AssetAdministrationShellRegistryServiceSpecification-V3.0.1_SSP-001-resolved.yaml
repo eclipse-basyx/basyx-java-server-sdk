@@ -1,8 +1,8 @@
 ---
 openapi: 3.0.3
 info:
-  title: DotAAS Part 2 | HTTP/REST | Submodel Registry Service Specification
-  description: "The Full Profile of the Submodel Registry Service Specification as part of the [Specification of the Asset Administration Shell: Part 2](http://industrialdigitaltwin.org/en/content-hub).  \nPublisher: Industrial Digital Twin Association (IDTA) April 2023"
+  title: DotAAS Part 2 | HTTP/REST | Asset Administration Shell Registry Service Specification
+  description: "The Full Profile of the Asset Administration Shell Registry Service Specification as part of the [Specification of the Asset Administration Shell: Part 2](http://industrialdigitaltwin.org/en/content-hub).  \nPublisher: Industrial Digital Twin Association (IDTA) 2023"
   contact:
     name: Industrial Digital Twin Association (IDTA)
     email: info@idtwin.org
@@ -33,13 +33,306 @@ servers:
       enum:
       - v3.0
 paths:
-  /submodel-descriptors:
+  /shell-descriptors:
     get:
       tags:
-      - Submodel Registry API
-      summary: Returns all Submodel Descriptors
-      operationId: GetAllSubmodelDescriptors
+      - Asset Administration Shell Registry API
+      summary: Returns all Asset Administration Shell Descriptors
+      operationId: GetAllAssetAdministrationShellDescriptors
       parameters:
+      - name: limit
+        in: query
+        description: The maximum number of elements in the response array
+        required: false
+        schema:
+          minimum: 1
+          type: integer
+      - name: cursor
+        in: query
+        description: A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue
+        required: false
+        schema:
+          type: string
+      - name: assetKind
+        in: query
+        description: The Asset's kind (Instance or Type)
+        required: false
+        schema:
+          $ref: '#/components/schemas/AssetKind'
+      - name: assetType
+        in: query
+        description: The Asset's type (UTF8-BASE64-URL-encoded)
+        required: false
+        schema:
+          maxLength: 2000
+          minLength: 1
+          pattern: "^[\\x09\\x0A\\x0D\\x20-\\uD7FF\\uE000-\\uFFFD\\U00010000-\\U0010FFFF]*$"
+          type: string
+      responses:
+        "200":
+          description: Requested Asset Administration Shell Descriptors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAssetAdministrationShellDescriptorsResult'
+        "400":
+          description: "Bad Request, e.g. the request parameters of the format of the request body is wrong."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          description: Default error handling for unmentioned status codes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+      x-semanticIds:
+      - https://admin-shell.io/aas/API/GetAllAssetAdministrationShellDescriptors/3/0
+      - https://admin-shell.io/aas/API/GetAllAssetAdministrationShellDescriptorsByAssetKind/3/0
+      - https://admin-shell.io/aas/API/GetAllAssetAdministrationShellDescriptorsByAssetType/3/0
+    post:
+      tags:
+      - Asset Administration Shell Registry API
+      summary: "Creates a new Asset Administration Shell Descriptor, i.e. registers an AAS"
+      operationId: PostAssetAdministrationShellDescriptor
+      requestBody:
+        description: Asset Administration Shell Descriptor object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetAdministrationShellDescriptor'
+        required: true
+      responses:
+        "201":
+          description: Asset Administration Shell Descriptor created successfully
+          headers:
+            Location:
+              description: URL of the newly created resource
+              style: simple
+              explode: false
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetAdministrationShellDescriptor'
+        "400":
+          description: "Bad Request, e.g. the request parameters of the format of the request body is wrong."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        "409":
+          description: "Conflict, a resource which shall be created exists already. Might be thrown if a Submodel or SubmodelElement with the same ShortId is contained in a POST request."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          description: Default error handling for unmentioned status codes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+      x-semanticIds:
+      - https://admin-shell.io/aas/API/PostAssetAdministrationShellDescriptor/3/0
+  /shell-descriptors/{aasIdentifier}:
+    get:
+      tags:
+      - Asset Administration Shell Registry API
+      summary: Returns a specific Asset Administration Shell Descriptor
+      operationId: GetAssetAdministrationShellDescriptorById
+      parameters:
+      - name: aasIdentifier
+        in: path
+        description: The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: byte
+      responses:
+        "200":
+          description: Requested Asset Administration Shell Descriptor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetAdministrationShellDescriptor'
+        "400":
+          description: "Bad Request, e.g. the request parameters of the format of the request body is wrong."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          description: Default error handling for unmentioned status codes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+      x-semanticIds:
+      - https://admin-shell.io/aas/API/GetAssetAdministrationShellDescriptorById/3/0
+    put:
+      tags:
+      - Asset Administration Shell Registry API
+      summary: Updates an existing Asset Administration Shell Descriptor
+      operationId: PutAssetAdministrationShellDescriptorById
+      parameters:
+      - name: aasIdentifier
+        in: path
+        description: The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: byte
+      requestBody:
+        description: Asset Administration Shell Descriptor object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetAdministrationShellDescriptor'
+        required: true
+      responses:
+        "204":
+          description: Asset Administration Shell Descriptor updated successfully
+        "400":
+          description: "Bad Request, e.g. the request parameters of the format of the request body is wrong."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          description: Default error handling for unmentioned status codes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+      x-semanticIds:
+      - https://admin-shell.io/aas/API/PutAssetAdministrationShellDescriptorById/3/0
+    delete:
+      tags:
+      - Asset Administration Shell Registry API
+      summary: "Deletes an Asset Administration Shell Descriptor, i.e. de-registers an AAS"
+      operationId: DeleteAssetAdministrationShellDescriptorById
+      parameters:
+      - name: aasIdentifier
+        in: path
+        description: The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: byte
+      responses:
+        "204":
+          description: Asset Administration Shell Descriptor deleted successfully
+        "400":
+          description: "Bad Request, e.g. the request parameters of the format of the request body is wrong."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          description: Default error handling for unmentioned status codes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+      x-semanticIds:
+      - https://admin-shell.io/aas/API/DeleteAssetAdministrationShellDescriptorById/3/0
+  /shell-descriptors/{aasIdentifier}/submodel-descriptors:
+    get:
+      tags:
+      - Asset Administration Shell Registry API
+      summary: Returns all Submodel Descriptors
+      operationId: GetAllSubmodelDescriptorsThroughSuperpath
+      parameters:
+      - name: aasIdentifier
+        in: path
+        description: The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: byte
       - name: limit
         in: query
         description: The maximum number of elements in the response array
@@ -94,9 +387,19 @@ paths:
       - https://admin-shell.io/aas/API/GetAllSubmodelDescriptors/3/0
     post:
       tags:
-      - Submodel Registry API
+      - Asset Administration Shell Registry API
       summary: "Creates a new Submodel Descriptor, i.e. registers a submodel"
-      operationId: PostSubmodelDescriptor
+      operationId: PostSubmodelDescriptor-ThroughSuperpath
+      parameters:
+      - name: aasIdentifier
+        in: path
+        description: The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: byte
       requestBody:
         description: Submodel Descriptor object
         content:
@@ -130,8 +433,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Result'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
         "409":
           description: "Conflict, a resource which shall be created exists already. Might be thrown if a Submodel or SubmodelElement with the same ShortId is contained in a POST request."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        "500":
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -144,13 +459,22 @@ paths:
                 $ref: '#/components/schemas/Result'
       x-semanticIds:
       - https://admin-shell.io/aas/API/PostSubmodelDescriptor/3/0
-  /submodel-descriptors/{submodelIdentifier}:
+  /shell-descriptors/{aasIdentifier}/submodel-descriptors/{submodelIdentifier}:
     get:
       tags:
-      - Submodel Registry API
+      - Asset Administration Shell Registry API
       summary: Returns a specific Submodel Descriptor
-      operationId: GetSubmodelDescriptorById
+      operationId: GetSubmodelDescriptorByIdThroughSuperpath
       parameters:
+      - name: aasIdentifier
+        in: path
+        description: The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: byte
       - name: submodelIdentifier
         in: path
         description: The Submodel’s unique id (UTF8-BASE64-URL-encoded)
@@ -201,10 +525,19 @@ paths:
       - https://admin-shell.io/aas/API/GetSubmodelDescriptorById/3/0
     put:
       tags:
-      - Submodel Registry API
+      - Asset Administration Shell Registry API
       summary: Updates an existing Submodel Descriptor
-      operationId: PutSubmodelDescriptorById
+      operationId: PutSubmodelDescriptorByIdThroughSuperpath
       parameters:
+      - name: aasIdentifier
+        in: path
+        description: The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: byte
       - name: submodelIdentifier
         in: path
         description: The Submodel’s unique id (UTF8-BASE64-URL-encoded)
@@ -258,10 +591,19 @@ paths:
       - https://admin-shell.io/aas/API/PutSubmodelDescriptorById/3/0
     delete:
       tags:
-      - Submodel Registry API
+      - Asset Administration Shell Registry API
       summary: "Deletes a Submodel Descriptor, i.e. de-registers a submodel"
-      operationId: DeleteSubmodelDescriptorById
+      operationId: DeleteSubmodelDescriptorByIdThroughSuperpath
       parameters:
+      - name: aasIdentifier
+        in: path
+        description: The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: byte
       - name: submodelIdentifier
         in: path
         description: The Submodel’s unique id (UTF8-BASE64-URL-encoded)
@@ -280,12 +622,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Result'
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Result'
         "404":
           description: Not Found
           content:
@@ -294,6 +630,12 @@ paths:
                 $ref: '#/components/schemas/Result'
         "500":
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          description: Default error handling for unmentioned status codes
           content:
             application/json:
               schema:
@@ -329,7 +671,13 @@ paths:
       - https://admin-shell.io/aas/API/Descriptor/GetDescription/3/0
 components:
   schemas:
-    GetSubmodelDescriptorsResult:
+    AssetKind:
+      type: string
+      enum:
+      - Instance
+      - NotApplicable
+      - Type
+    GetAssetAdministrationShellDescriptorsResult:
       allOf:
       - $ref: '#/components/schemas/PagedResult'
       - type: object
@@ -337,42 +685,55 @@ components:
           result:
             type: array
             items:
-              $ref: '#/components/schemas/SubmodelDescriptor'
+              $ref: '#/components/schemas/AssetAdministrationShellDescriptor'
     PagedResult:
       type: object
       properties:
         paging_metadata:
           $ref: '#/components/schemas/PagedResult_paging_metadata'
-    SubmodelDescriptor:
+    AssetAdministrationShellDescriptor:
       required:
-      - endpoints
       - id
+      type: object
+      example: "{ \"id\": \"https://example.org/aas/motor\", \"endpoints\": [ { \"protocolInformation\": { \"href\": \"https://localhost:1234/api/v3.0/aas\", \"endpointProtocol\": \"HTTP\", \"endpointProtocolVersion\": [\"1.1\"] }, \"interface\": \"AAS-3.0\" }, { \"protocolInformation\": { \"href\": \"opc.tcp://localhost:4840\" }, \"interface\": \"AAS-3.0\" }, { \"protocolInformation\": { \"href\": \"https://localhost:5678\", \"endpointProtocol\": \"HTTP\", \"endpointProtocolVersion\": [\"1.1\"], \"subprotocol\": \"OPC UA Basic SOAP\", \"subprotocolBody\": \"ns=2;s=MyAAS\", \"subprotocolBodyEncoding\": \"application/soap+xml\" }, \"interface\": \"AAS-3.0\" } ] }"
       allOf:
       - $ref: '#/components/schemas/Descriptor'
-      - type: object
-        properties:
-          id:
-            maxLength: 2000
-            minLength: 1
-            pattern: "^[\\x09\\x0A\\x0D\\x20-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*$"
-            type: string
+      - properties:
           administration:
             $ref: '#/components/schemas/AdministrativeInformation'
+          assetKind:
+            $ref: '#/components/schemas/AssetKind'
+          assetType:
+            maxLength: 2000
+            minLength: 1
+            pattern: "^[\\x09\\x0A\\x0D\\x20-\\uD7FF\\uE000-\\uFFFD\\U00010000-\\U0010FFFF]*$"
+            type: string
           endpoints:
             minItems: 1
             type: array
             items:
               $ref: '#/components/schemas/Endpoint'
+          globalAssetId:
+            maxLength: 2000
+            minLength: 1
+            pattern: "^[\\x09\\x0A\\x0D\\x20-\\uD7FF\\uE000-\\uFFFD\\U00010000-\\U0010FFFF]*$"
+            type: string
           idShort:
             maxLength: 128
             type: string
-          semanticId:
-            $ref: '#/components/schemas/Reference'
-          supplementalSemanticId:
-            minItems: 1
+          id:
+            maxLength: 2000
+            minLength: 1
+            pattern: "^[\\x09\\x0A\\x0D\\x20-\\uD7FF\\uE000-\\uFFFD\\U00010000-\\U0010FFFF]*$"
+            type: string
+          specificAssetIds:
             type: array
             items:
-              $ref: '#/components/schemas/Reference'    
+              $ref: '#/components/schemas/SpecificAssetId'
+          submodelDescriptors:
+            type: array
+            items:
+              $ref: '#/components/schemas/SubmodelDescriptor'
     Descriptor:
       type: object
       properties:
@@ -389,36 +750,32 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Extension'
+      example: "{ \"endpoints\": [ { \"protocolInformation\": { \"href\": \"https://localhost:1234/api/v3.0/aas\", \"endpointProtocolVersion\": [\"1.1\"] }, \"interface\": \"AAS-3.0\" }, { \"protocolInformation\": { \"href\": \"opc.tcp://localhost:4840\" }, \"interface\": \"AAS-3.0\" }, { \"protocolInformation\": { \"href\": \"https://localhost:5678\", \"endpointProtocolVersion\": [\"1.1\"], \"subprotocol\": \"OPC UA Basic SOAP\", \"subprotocolBody\": \"ns=2;s=MyAAS\", \"subprotocolBodyEncoding\": \"application/soap+xml\" }, \"interface\": \"AAS-3.0\" } ] }"
     LangStringTextType:
       allOf:
       - $ref: '#/components/schemas/AbstractLangString'
-      - required:
-        - text
-        properties:
+      - properties:
           text:
-            minLength: 1
             maxLength: 1023
-            pattern: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
-            type: string
     AbstractLangString:
       required:
       - language
+      - text
       type: object
       properties:
         language:
           pattern: "^(([a-zA-Z]{2,3}(-[a-zA-Z]{3}(-[a-zA-Z]{3}){2})?|[a-zA-Z]{4}|[a-zA-Z]{5,8})(-[a-zA-Z]{4})?(-([a-zA-Z]{2}|[0-9]{3}))?(-(([a-zA-Z0-9]){5,8}|[0-9]([a-zA-Z0-9]){3}))*(-[0-9A-WY-Za-wy-z](-([a-zA-Z0-9]){2,8})+)*(-[xX](-([a-zA-Z0-9]){1,8})+)?|[xX](-([a-zA-Z0-9]){1,8})+|((en-GB-oed|i-ami|i-bnn|i-default|i-enochian|i-hak|i-klingon|i-lux|i-mingo|i-navajo|i-pwn|i-tao|i-tay|i-tsu|sgn-BE-FR|sgn-BE-NL|sgn-CH-DE)|(art-lojban|cel-gaulish|no-bok|no-nyn|zh-guoyu|zh-hakka|zh-min|zh-min-nan|zh-xiang)))$"
           type: string
+        text:
+          minLength: 1
+          pattern: "^([\\t\\n\\r -퟿-�]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+          type: string
     LangStringNameType:
       allOf:
       - $ref: '#/components/schemas/AbstractLangString'
-      - required:
-        - text
-        properties:
+      - properties:
           text:
-            minLength: 1
             maxLength: 128
-            pattern: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
-            type: string
     Extension:
       allOf:
       - $ref: '#/components/schemas/HasSemantics'
@@ -428,7 +785,7 @@ components:
           name:
             maxLength: 128
             minLength: 1
-            pattern: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+            pattern: "^([\\t\\n\\r -퟿-�]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
             type: string
           valueType:
             $ref: '#/components/schemas/DataTypeDefXsd'
@@ -484,7 +841,7 @@ components:
         value:
           maxLength: 2000
           minLength: 1
-          pattern: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+          pattern: "^([\\t\\n\\r -퟿-�]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
           type: string
     KeyTypes:
       type: string
@@ -552,16 +909,24 @@ components:
       - properties:
           version:
             type: string
-            pattern: "^(0|[1-9][0-9]{1,3})$"
+            allOf:
+            - maxLength: 4
+              minLength: 1
+            - pattern: "^([\\t\\n\\r -퟿-�]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+            - pattern: "^(0|[1-9][0-9]*)$"
           revision:
             type: string
-            pattern: "^(0|[1-9][0-9]{1,3})$"
+            allOf:
+            - maxLength: 4
+              minLength: 1
+            - pattern: "^([\\t\\n\\r -퟿-�]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+            - pattern: "^(0|[1-9][0-9]*)$"
           creator:
             $ref: '#/components/schemas/Reference'
           templateId:
             maxLength: 2000
             minLength: 1
-            pattern: "^([\\t\\n\\r \\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+            pattern: "^([\\t\\n\\r -퟿-�]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
             type: string
     HasDataSpecification:
       type: object
@@ -580,68 +945,70 @@ components:
         dataSpecification:
           $ref: '#/components/schemas/Reference'
         dataSpecificationContent:
-          $ref: '#/components/schemas/DataSpecificationContent'
-    DataSpecificationIec61360:
-      type: object
-      required:
-      - preferredName
-      - modelType
-      properties:
-        modelType:
-          default: DataSpecificationIec61360
-          type: string
-        preferredName:
-          minItems: 1
-          type: array
-          items:
-            $ref: '#/components/schemas/LangStringPreferredNameTypeIec61360'
-        shortName:
-          minItems: 1
-          type: array
-          items:
-            $ref: '#/components/schemas/LangStringShortNameTypeIec61360'
-        unit:
-          minLength: 1
-          pattern: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
-          type: string
-        unitId:
-          $ref: '#/components/schemas/Reference'
-        sourceOfDefinition:
-          minLength: 1
-          pattern: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
-          type: string
-        symbol:
-          minLength: 1
-          pattern: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
-          type: string
-        dataType:
-          $ref: '#/components/schemas/DataTypeIec61360'
-        definition:
-          minItems: 1
-          type: array
-          items:
-            $ref: '#/components/schemas/LangStringDefinitionTypeIec61360'
-        valueFormat:
-          minLength: 1
-          pattern: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
-          type: string
-        valueList:
-          $ref: '#/components/schemas/ValueList'
-        value:
-          maxLength: 2000
-          minLength: 1
-          pattern: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
-          type: string
-        levelType:
-          $ref: '#/components/schemas/LevelType'
-    DataSpecificationContent:
-      type: object
-      required:
-      - modelType
+          $ref: '#/components/schemas/DataSpecificationContent_choice'
+    DataSpecificationContent_choice:
       oneOf:
       - $ref: '#/components/schemas/DataSpecificationIec61360'
-      discriminator:
-        propertyName: modelType
+    DataSpecificationIec61360:
+      allOf:
+      - $ref: '#/components/schemas/DataSpecificationContent'
+      - required:
+        - preferredName
+        properties:
+          preferredName:
+            minItems: 1
+            type: array
+            items:
+              $ref: '#/components/schemas/LangStringPreferredNameTypeIec61360'
+          shortName:
+            minItems: 1
+            type: array
+            items:
+              $ref: '#/components/schemas/LangStringShortNameTypeIec61360'
+          unit:
+            minLength: 1
+            pattern: "^([\\t\\n\\r -퟿-�]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+            type: string
+          unitId:
+            $ref: '#/components/schemas/Reference'
+          sourceOfDefinition:
+            minLength: 1
+            pattern: "^([\\t\\n\\r -퟿-�]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+            type: string
+          symbol:
+            minLength: 1
+            pattern: "^([\\t\\n\\r -퟿-�]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+            type: string
+          dataType:
+            $ref: '#/components/schemas/DataTypeIec61360'
+          definition:
+            minItems: 1
+            type: array
+            items:
+              $ref: '#/components/schemas/LangStringDefinitionTypeIec61360'
+          valueFormat:
+            minLength: 1
+            pattern: "^([\\t\\n\\r -퟿-�]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+            type: string
+          valueList:
+            $ref: '#/components/schemas/ValueList'
+          value:
+            maxLength: 2000
+            minLength: 1
+            pattern: "^([\\t\\n\\r -퟿-�]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+            type: string
+          levelType:
+            $ref: '#/components/schemas/LevelType'
+          modelType:
+            pattern: DataSpecificationIec61360
+            type: string
+    DataSpecificationContent:
+      required:
+      - modelType
+      type: object
+      properties:
+        modelType:
+          $ref: '#/components/schemas/ModelType'
     ModelType:
       type: string
       enum:
@@ -666,25 +1033,15 @@ components:
     LangStringPreferredNameTypeIec61360:
       allOf:
       - $ref: '#/components/schemas/AbstractLangString'
-      - required:
-        - text
-        properties:
+      - properties:
           text:
-            minLength: 1
             maxLength: 255
-            pattern: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
-            type: string
     LangStringShortNameTypeIec61360:
       allOf:
       - $ref: '#/components/schemas/AbstractLangString'
-      - required:
-        - text
-        properties:
+      - properties:
           text:
-            minLength: 1
             maxLength: 18
-            pattern: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
-            type: string
     DataTypeIec61360:
       type: string
       enum:
@@ -710,14 +1067,9 @@ components:
     LangStringDefinitionTypeIec61360:
       allOf:
       - $ref: '#/components/schemas/AbstractLangString'
-      - required:
-        - text
-        properties:
+      - properties:
           text:
-            minLength: 1
             maxLength: 1023
-            pattern: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
-            type: string
     ValueList:
       required:
       - valueReferencePairs
@@ -737,7 +1089,7 @@ components:
         value:
           maxLength: 2000
           minLength: 1
-          pattern: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+          pattern: "^([\\t\\n\\r -퟿-�]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
           type: string
         valueId:
           $ref: '#/components/schemas/Reference'
@@ -798,6 +1150,56 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProtocolInformation_securityAttributes'
+    SpecificAssetId:
+      allOf:
+      - $ref: '#/components/schemas/HasSemantics'
+      - required:
+        - name
+        - value
+        properties:
+          name:
+            maxLength: 64
+            minLength: 1
+            pattern: "^([\\t\\n\\r -퟿-�]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+            type: string
+          value:
+            maxLength: 2000
+            minLength: 1
+            pattern: "^([\\t\\n\\r -퟿-�]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+            type: string
+          externalSubjectId:
+            $ref: '#/components/schemas/Reference'
+    SubmodelDescriptor:
+      required:
+      - endpoints
+      - id
+      type: object
+      properties:
+        administration:
+          $ref: '#/components/schemas/AdministrativeInformation'
+        endpoints:
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint'
+        idShort:
+          maxLength: 128
+          type: string
+        id:
+          maxLength: 2000
+          minLength: 1
+          pattern: "^[\\x09\\x0A\\x0D\\x20-\\uD7FF\\uE000-\\uFFFD\\U00010000-\\U0010FFFF]*$"
+          type: string
+        semanticId:
+          $ref: '#/components/schemas/Reference'
+        supplementalSemanticId:
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/Reference'
+      example: "{ \"id\": \"https://admin-shell.io/zvei/nameplate/1/0/Nameplate\", \"endpoints\": [ { \"href\": { \"href\": \"https://localhost:1234/api/v3.0/submodel\", \"endpointProtocol\": \"HTTP\", \"endpointProtocolVersion\": [\"1.1\"] }, \"interface\": \"AAS-3.0\" }, { \"protocolInformation\": { \"href\": \"opc.tcp://localhost:4840\" }, \"interface\": \"AAS-3.0\" }, { \"protocolInformation\": { \"href\": \"https://localhost:5678\", \"endpointProtocol\": \"HTTP\", \"endpointProtocolVersion\": [\"1.1\"], \"subprotocol\": \"OPC UA Basic SOAP\", \"subprotocolBody\": \"ns=2;s=MyAAS\", \"subprotocolBodyEncoding\": \"application/soap+xml\" }, \"interface\": \"AAS-3.0\" } ] }"
+      allOf:
+      - $ref: '#/components/schemas/Descriptor'
     Result:
       type: object
       properties:
@@ -827,8 +1229,17 @@ components:
         text:
           type: string
         timestamp:
-          format: date-time
+          pattern: "^-?(([1-9][0-9][0-9][0-9]+)|(0[0-9][0-9][0-9]))-((0[1-9])|(1[0-2]))-((0[1-9])|([12][0-9])|(3[01]))T(((([01][0-9])|(2[0-3])):[0-5][0-9]:([0-5][0-9])(\\.[0-9]+)?)|24:00:00(\\.0+)?)(Z|\\+00:00|-00:00)$"
           type: string
+    GetSubmodelDescriptorsResult:
+      allOf:
+      - $ref: '#/components/schemas/PagedResult'
+      - type: object
+        properties:
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/SubmodelDescriptor'
     ServiceDescription:
       type: object
       properties:
@@ -857,19 +1268,19 @@ components:
             - https://admin-shell.io/aas/API/3/0/SubmodelRepositoryServiceSpecification/SSP-004
             - https://admin-shell.io/aas/API/3/0/ConceptDescriptionServiceSpecification/SSP-001
       description: "The Description object enables servers to present their capabilities to the clients, in particular which profiles they implement. At least one defined profile is required. Additional, proprietary attributes might be included. Nevertheless, the server must not expect that a regular client understands them."
-#      example: |-
-#        {
-#          "profiles": [
-#            "https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-002",
-#            "https://admin-shell.io/aas/API/3/0/SubmodelRegistryServiceSpecification/SSP-002"
-#          ]
-#        }
+      example: |-
+        {
+          "profiles": [
+            "https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-002",
+            "https://admin-shell.io/aas/API/3/0/SubmodelRegistryServiceSpecification/SSP-002"
+          ]
+        }
     PagedResult_paging_metadata:
       type: object
       properties:
         cursor:
           type: string
-#          example: wJlCDLIl6KTWypN7T6vc6nWEmEYe99Hjf1XY1xmqV-M=#
+          example: wJlCDLIl6KTWypN7T6vc6nWEmEYe99Hjf1XY1xmqV-M=#
     ProtocolInformation_securityAttributes:
       required:
       - key
@@ -900,12 +1311,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Result'
-    not-found:
-      description: Not Found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Result'
     internal-server-error:
       description: Internal Server Error
       content:
@@ -920,6 +1325,12 @@ components:
             $ref: '#/components/schemas/Result'
     conflict:
       description: "Conflict, a resource which shall be created exists already. Might be thrown if a Submodel or SubmodelElement with the same ShortId is contained in a POST request."
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Result'
+    not-found:
+      description: Not Found
       content:
         application/json:
           schema:
@@ -940,6 +1351,33 @@ components:
       required: false
       schema:
         type: string
+    AssetKind:
+      name: assetKind
+      in: query
+      description: The Asset's kind (Instance or Type)
+      required: false
+      schema:
+        $ref: '#/components/schemas/AssetKind'
+    AssetType:
+      name: assetType
+      in: query
+      description: The Asset's type (UTF8-BASE64-URL-encoded)
+      required: false
+      schema:
+        maxLength: 2000
+        minLength: 1
+        pattern: "^[\\x09\\x0A\\x0D\\x20-\\uD7FF\\uE000-\\uFFFD\\U00010000-\\U0010FFFF]*$"
+        type: string
+    AssetAdministrationShellIdentifier:
+      name: aasIdentifier
+      in: path
+      description: The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        format: byte
     SubmodelIdentifier:
       name: submodelIdentifier
       in: path

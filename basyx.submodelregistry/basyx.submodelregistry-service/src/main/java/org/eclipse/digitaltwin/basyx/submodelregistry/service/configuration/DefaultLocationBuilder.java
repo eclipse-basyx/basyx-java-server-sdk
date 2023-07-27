@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 DFKI GmbH (https://www.dfki.de/en/web)
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,27 +22,29 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration;
 
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 
-package org.eclipse.digitaltwin.basyx.submodelservice;
+import org.eclipse.digitaltwin.basyx.submodelregistry.service.api.LocationBuilder;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.stereotype.Component;
+class DefaultLocationBuilder implements LocationBuilder {
 
-/**
- * SubmodelService factory returning an in-memory backend SubmodelService
- * 
- * @author schnicke
- *
- */
-@ConditionalOnExpression("'${basyx.submodelservice.backend}'.equals('InMemory') or '${basyx.backend}'.equals('InMemory')")
-@Component
-public class InMemorySubmodelServiceFactory implements SubmodelServiceFactory {
+	private static final String SM_ID_PARAM = "/{sm-id}";
+	private static final String SUBMODEL_DESCRIPTORS = "/submodel-descriptors";
 
 	@Override
-	public SubmodelService create(Submodel submodel) {
-		return new InMemorySubmodelService(submodel);
+	public URI getSubmodelLocation(String submodelId) {
+		String encodedSmId = encode(submodelId);
+		return ServletUriComponentsBuilder.fromCurrentContextPath().path(SUBMODEL_DESCRIPTORS).path(SM_ID_PARAM).buildAndExpand(encodedSmId).toUri();
 	}
 
+	private String encode(String value) {
+		if (value == null) {
+			return null;
+		}
+		return new String(java.util.Base64.getUrlEncoder().encode(value.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+	}
 }
