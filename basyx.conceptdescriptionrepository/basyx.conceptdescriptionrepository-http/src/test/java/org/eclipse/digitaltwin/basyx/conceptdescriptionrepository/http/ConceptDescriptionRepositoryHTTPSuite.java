@@ -182,7 +182,8 @@ public abstract class ConceptDescriptionRepositoryHTTPSuite {
 
 	@Test
 	public void paginatedResult() throws ParseException, IOException {
-		String conceptDescriptionsJSON = requestPaginatedConceptDescriptions(1, "7A7104IHTREFN4322");
+		String id = new Base64UrlEncodedIdentifier("7A7104IHTREFN4322").getEncodedIdentifier();
+		String conceptDescriptionsJSON = requestPaginatedConceptDescriptions(1, id);
 		String expectedDescriptionJson = getConceptDescriptionsWithDataSpecRef();
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedDescriptionJson, conceptDescriptionsJSON);
 	}

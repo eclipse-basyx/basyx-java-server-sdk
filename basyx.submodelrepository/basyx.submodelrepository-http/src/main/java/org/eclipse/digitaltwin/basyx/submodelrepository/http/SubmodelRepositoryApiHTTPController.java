@@ -88,13 +88,15 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 
 	@Override
-	public ResponseEntity<PagedResult> getAllSubmodels(@Size(min = 1, max = 3072) @Valid Base64UrlEncodedIdentifier semanticId, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid String cursor, @Valid String level,
+	public ResponseEntity<PagedResult> getAllSubmodels(
+			@Size(min = 1, max = 3072) @Valid Base64UrlEncodedIdentifier semanticId, @Valid String idShort,
+			@Min(1) @Valid Integer limit, @Valid Base64UrlEncodedIdentifier cursor, @Valid String level,
 			@Valid String extent) {
 		if (limit == null)
 			limit = 100;
 		if (cursor == null)
-			cursor = "";
-		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
+			cursor = new Base64UrlEncodedIdentifier("");
+		PaginationInfo pInfo = new PaginationInfo(limit, cursor.getIdentifier());
 		CursorResult<List<Submodel>> cursorResult = repository.getAllSubmodels(pInfo);
 
 		GetSubmodelsResult paginatedSubmodel = new GetSubmodelsResult();
@@ -116,12 +118,14 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	}
 
 	@Override
-	public ResponseEntity<PagedResult> getAllSubmodelElements(Base64UrlEncodedIdentifier submodelIdentifier, @Min(1) @Valid Integer limit, @Valid String cursor, @Valid String level, @Valid String extent) {
+	public ResponseEntity<PagedResult> getAllSubmodelElements(Base64UrlEncodedIdentifier submodelIdentifier,
+			@Min(1) @Valid Integer limit, @Valid Base64UrlEncodedIdentifier cursor, @Valid String level,
+			@Valid String extent) {
 		if (limit == null)
 			limit = 100;
 		if (cursor == null)
-			cursor = "";
-		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
+			cursor = new Base64UrlEncodedIdentifier("");
+		PaginationInfo pInfo = new PaginationInfo(limit, cursor.getIdentifier());
 		CursorResult<List<SubmodelElement>> submodelElements = repository
 				.getSubmodelElements(submodelIdentifier.getIdentifier(), pInfo);
 		
