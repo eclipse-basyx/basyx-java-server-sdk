@@ -78,3 +78,11 @@ META-INF/*
 .worksheet
 
 .moquette_uuid
+
+# generated sources files (client-native...)
+**/generated/
+
+# generated API files
+**/open-api/Plattform_i40-Registry-and-Discovery.yaml
+**/open-api/Plattform_i40-SubmodelRegistry-and-Discovery.yaml
+**/open-api/temporary-extensions-result-file.yaml
