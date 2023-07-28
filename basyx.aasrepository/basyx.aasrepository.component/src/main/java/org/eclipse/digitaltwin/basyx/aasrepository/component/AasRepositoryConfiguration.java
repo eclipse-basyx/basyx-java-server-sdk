@@ -49,13 +49,13 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 public class AasRepositoryConfiguration {
 	@Bean
-	public static AasRepository getAasRepository(AasRepositoryFactory aasRepositoryFactory, List<AasRepositoryFeature> features) {
+	public AasRepository getAasRepository(AasRepositoryFactory aasRepositoryFactory, List<AasRepositoryFeature> features) {
 		return new DecoratedAasRepositoryFactory(aasRepositoryFactory, features).create();
 	}
 
 	@Primary
 	@Bean
-	public static AasServiceFactory getAasService(AasServiceFactory aasServiceFactory, List<AasServiceFeature> features) {
+	public AasServiceFactory getAasService(AasServiceFactory aasServiceFactory, List<AasServiceFeature> features) {
 		return new DecoratedAasServiceFactory(aasServiceFactory, features);
 	}
 }
