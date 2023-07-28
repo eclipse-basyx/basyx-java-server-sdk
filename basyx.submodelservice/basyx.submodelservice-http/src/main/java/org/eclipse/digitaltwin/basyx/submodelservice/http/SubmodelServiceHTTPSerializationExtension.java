@@ -25,16 +25,16 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.http;
 
+import org.eclipse.digitaltwin.basyx.deserialization.SubmodelElementValueJsonDeserializer;
+import org.eclipse.digitaltwin.basyx.deserialization.ValueOnlyJsonDeserializer;
 import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
-import org.eclipse.digitaltwin.basyx.submodelservice.http.deserialization.SubmodelElementValueJsonDeserializer;
-import org.eclipse.digitaltwin.basyx.submodelservice.http.deserialization.ValueOnlyJsonDeserializer;
-import org.eclipse.digitaltwin.basyx.submodelservice.http.mixins.ReferenceElementValueMixIn;
-import org.eclipse.digitaltwin.basyx.submodelservice.http.serialization.MultiLanguagePropertyValueSerializer;
-import org.eclipse.digitaltwin.basyx.submodelservice.http.serialization.PropertyValueSerializer;
-import org.eclipse.digitaltwin.basyx.submodelservice.http.serialization.SubmodelElementCollectionValueSerializer;
-import org.eclipse.digitaltwin.basyx.submodelservice.http.serialization.SubmodelElementListValueSerializer;
-import org.eclipse.digitaltwin.basyx.submodelservice.http.serialization.SubmodelValueOnlySerializer;
-import org.eclipse.digitaltwin.basyx.submodelservice.http.serialization.ValueOnlySerializer;
+import org.eclipse.digitaltwin.basyx.mixins.ReferenceElementValueMixIn;
+import org.eclipse.digitaltwin.basyx.serialization.MultiLanguagePropertyValueSerializer;
+import org.eclipse.digitaltwin.basyx.serialization.PropertyValueSerializer;
+import org.eclipse.digitaltwin.basyx.serialization.SubmodelElementCollectionValueSerializer;
+import org.eclipse.digitaltwin.basyx.serialization.SubmodelElementListValueSerializer;
+import org.eclipse.digitaltwin.basyx.serialization.SubmodelValueOnlySerializer;
+import org.eclipse.digitaltwin.basyx.serialization.ValueOnlySerializer;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceElementValue;
@@ -51,7 +51,7 @@ import org.springframework.stereotype.Component;
  * serialization
  * 
  * @author schnicke, danish
- *
+ * 
  */
 @Component
 public class SubmodelServiceHTTPSerializationExtension implements SerializationExtension {

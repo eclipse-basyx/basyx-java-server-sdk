@@ -24,40 +24,38 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.submodelservice.http.serialization;
+package org.eclipse.digitaltwin.basyx.deserialization;
 
 import java.io.IOException;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
+import org.eclipse.digitaltwin.basyx.deserialization.factory.SubmodelElementValueDeserializationFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Serializes a MultiLanguagePropertyValue as described in DotAAS Part 2
+ * Deserializes a SubmodelElementValue as described in DotAAS Part 2
  * 
- * @author schnicke
+ * @author danish
  *
  */
-public class MultiLanguagePropertyValueSerializer extends JsonSerializer<MultiLanguagePropertyValue> {
+public class SubmodelElementValueJsonDeserializer extends JsonDeserializer<SubmodelElementValue> {
+	
+	private SubmodelElementValueDeserializationFactory submodelElementValueDeserializationFactory = new SubmodelElementValueDeserializationFactory();
 
 	@Override
-	public void serialize(MultiLanguagePropertyValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		gen.writeStartArray();
+	public SubmodelElementValue deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+		try {
+			ObjectMapper mapper = (ObjectMapper) p.getCodec();
+			JsonNode node = mapper.readTree(p);
 
-		for (LangStringTextType langString : value.getValue()) {
-			writeLangString(gen, langString);
+			return submodelElementValueDeserializationFactory.create(mapper, node);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
-
-		gen.writeEndArray();
 	}
-
-	private void writeLangString(JsonGenerator gen, LangStringTextType langString) throws IOException {
-		gen.writeStartObject();
-		gen.writeObjectField(langString.getLanguage(), langString.getText());
-		gen.writeEndObject();
-	}
-
 }

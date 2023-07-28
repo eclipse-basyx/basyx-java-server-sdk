@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelservice.http.pagination;
+package org.eclipse.digitaltwin.basyx.pagination;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * Paginated wrapper for {@link SubmodelRepository#getSubmodelElements(String)}
+ * Paginated wrapper for getSubmodelElements
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-05-22T07:02:56.105163402Z[GMT]")
@@ -99,12 +99,8 @@ public class GetSubmodelElementsResult extends PagedResult {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("class GetSubmodelElementsResult {\n");
-		sb.append("    ")
-				.append(toIndentedString(super.toString()))
-				.append("\n");
-		sb.append("    result: ")
-				.append(toIndentedString(result))
-				.append("\n");
+		sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+		sb.append("    result: ").append(toIndentedString(result)).append("\n");
 		sb.append("}");
 		return sb.toString();
 	}
@@ -117,7 +113,6 @@ public class GetSubmodelElementsResult extends PagedResult {
 		if (o == null) {
 			return "null";
 		}
-		return o.toString()
-				.replace("\n", "\n    ");
+		return o.toString().replace("\n", "\n    ");
 	}
 }

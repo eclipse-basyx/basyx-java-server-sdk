@@ -1,4 +1,4 @@
-package org.eclipse.digitaltwin.basyx.submodelservice.http.serialization;
+package org.eclipse.digitaltwin.basyx.serialization;
 
 import java.io.IOException;
 import java.util.Map;

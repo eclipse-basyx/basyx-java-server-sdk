@@ -24,46 +24,62 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.submodelservice.http.deserialization.factory;
+package org.eclipse.digitaltwin.basyx.deserialization.factory;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollectionValue;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
+import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Factory class to create deserialized {@link SubmodelElementCollectionValue} based on
+ * Factory class to create deserialized {@link MultiLanguagePropertyValue} based on
  * the content
  * 
  * @author danish
  *
  */
-public class SubmodelElementCollectionValueDeserializationFactory {
+public class MultiLanguagePropertyValueDeserializationFactory {
 	
-	private ObjectMapper objectMapper;
 	private JsonNode node;
 	
-	public SubmodelElementCollectionValueDeserializationFactory(ObjectMapper objectMapper, JsonNode node) {
-		this.objectMapper = objectMapper;
+	public MultiLanguagePropertyValueDeserializationFactory(JsonNode node) {
 		this.node = node;
 	}
 	
 	/**
-	 * Deserializes the corresponding {@link SubmodelElementCollectionValue} based on the
+	 * Deserializes the corresponding {@link MultiLanguagePropertyValue} based on the
 	 * JSON content
 	 * 
-	 * @return {@link SubmodelElementCollectionValue}
+	 * @return {@link MultiLanguagePropertyValue}
 	 * 
 	 */
-	public SubmodelElementCollectionValue create() throws JsonProcessingException {
-		List<ValueOnly> valueOnlies = objectMapper.readValue(node.toString(), new TypeReference<List<ValueOnly>>() {});
+	public MultiLanguagePropertyValue create() {
+		List<LangStringTextType> langStrings = createLangStrings(node);
 
-		return new SubmodelElementCollectionValue(valueOnlies);
+		return new MultiLanguagePropertyValue(langStrings);
+	}
+	
+	private static List<LangStringTextType> createLangStrings(JsonNode node) {
+		List<LangStringTextType> langStrings = new ArrayList<>();
+
+		for (JsonNode element : node) {
+			langStrings.add(createLangString(element));
+		}
+
+		return langStrings;
+	}
+
+	private static DefaultLangStringTextType createLangString(JsonNode arrayNode) {
+		Iterator<String> fieldNames = arrayNode.fieldNames();
+		String language = fieldNames.next();
+		String text = arrayNode.get(language).asText();
+
+		return new DefaultLangStringTextType.Builder().text(text).language(language).build();
 	}
 
 }

@@ -24,34 +24,34 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization;
+package org.eclipse.digitaltwin.basyx.serialization;
 
 import java.io.IOException;
 
-import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementListValue;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollectionValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
- * Serializes a {@link SubmodelElementListValue} as described in DotAAS Part 2
+ * Serializes a {@link SubmodelElementCollectionValue} as described in DotAAS Part 2
  * 
  * @author danish
  *
  */
-public class SubmodelElementListValueSerializer extends JsonSerializer<SubmodelElementListValue> {
+public class SubmodelElementCollectionValueSerializer extends JsonSerializer<SubmodelElementCollectionValue> {
 
 	@Override
-	public void serialize(SubmodelElementListValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+	public void serialize(SubmodelElementCollectionValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
 		gen.writeStartArray();
-		
-        for (SubmodelElementValue element : value.getSubmodelElementValues()) {
-            gen.writeObject(element);
-        }
-        
-        gen.writeEndArray();
+
+		for (ValueOnly valueOnly : value.getValue()) {
+			gen.writeObject(valueOnly);
+		}
+
+		gen.writeEndArray();
 	}
 
 }

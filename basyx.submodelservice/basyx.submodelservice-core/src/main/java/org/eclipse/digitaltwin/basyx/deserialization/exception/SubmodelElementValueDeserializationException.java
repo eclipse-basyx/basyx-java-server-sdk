@@ -24,38 +24,20 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.submodelservice.http.deserialization;
-
-import java.io.IOException;
-
-import org.eclipse.digitaltwin.basyx.submodelservice.http.deserialization.factory.SubmodelElementValueDeserializationFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
-
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+package org.eclipse.digitaltwin.basyx.deserialization.exception;
 
 /**
- * Deserializes a SubmodelElementValue as described in DotAAS Part 2
+ * Indicates that the provided content for SubmodelELementValue is invalid
  * 
  * @author danish
  *
  */
-public class SubmodelElementValueJsonDeserializer extends JsonDeserializer<SubmodelElementValue> {
+public class SubmodelElementValueDeserializationException extends RuntimeException {
 	
-	private SubmodelElementValueDeserializationFactory submodelElementValueDeserializationFactory = new SubmodelElementValueDeserializationFactory();
+	private static final long serialVersionUID = 1L;
 
-	@Override
-	public SubmodelElementValue deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-		try {
-			ObjectMapper mapper = (ObjectMapper) p.getCodec();
-			JsonNode node = mapper.readTree(p);
-
-			return submodelElementValueDeserializationFactory.create(mapper, node);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+	public SubmodelElementValueDeserializationException() {
+		super("The provided SubmodelElementValue JSON is not as defined in the Dot AAS Part 2");
 	}
+
 }

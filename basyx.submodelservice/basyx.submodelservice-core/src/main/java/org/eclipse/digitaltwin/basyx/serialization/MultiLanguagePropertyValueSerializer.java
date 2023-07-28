@@ -24,29 +24,40 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.submodelservice.http.serialization;
+package org.eclipse.digitaltwin.basyx.serialization;
 
 import java.io.IOException;
 
-import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
+import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
- * Serializes a {@link ValueOnly} as described in DotAAS Part 2
+ * Serializes a MultiLanguagePropertyValue as described in DotAAS Part 2
  * 
- * @author danish
+ * @author schnicke
  *
  */
-public class ValueOnlySerializer extends JsonSerializer<ValueOnly> {
+public class MultiLanguagePropertyValueSerializer extends JsonSerializer<MultiLanguagePropertyValue> {
 
 	@Override
-	public void serialize(ValueOnly value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+	public void serialize(MultiLanguagePropertyValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+		gen.writeStartArray();
+
+		for (LangStringTextType langString : value.getValue()) {
+			writeLangString(gen, langString);
+		}
+
+		gen.writeEndArray();
+	}
+
+	private void writeLangString(JsonGenerator gen, LangStringTextType langString) throws IOException {
 		gen.writeStartObject();
-        gen.writePOJOField(value.getIdShort(), value.getSubmodelElementValue());
-        gen.writeEndObject();
+		gen.writeObjectField(langString.getLanguage(), langString.getText());
+		gen.writeEndObject();
 	}
 
 }

@@ -22,20 +22,31 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.http.mixins;
 
-import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceElementValue;
 
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+package org.eclipse.digitaltwin.basyx.serialization;
+
+import java.io.IOException;
+
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
- * A mixin to indicate that {@link ReferenceElementValue} should be serialized "unwrapped" 
+ * Serializes a {@link ValueOnly} as described in DotAAS Part 2
  * 
  * @author danish
  *
  */
-public interface ReferenceElementValueMixIn {
-	
-	@JsonUnwrapped
-	public ReferenceElementValue getReferenceValue();
+public class ValueOnlySerializer extends JsonSerializer<ValueOnly> {
+
+	@Override
+	public void serialize(ValueOnly value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+		gen.writeStartObject();
+        gen.writePOJOField(value.getIdShort(), value.getSubmodelElementValue());
+        gen.writeEndObject();
+	}
+
 }

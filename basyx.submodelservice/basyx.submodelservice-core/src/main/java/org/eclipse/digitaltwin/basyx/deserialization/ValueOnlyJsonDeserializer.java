@@ -24,26 +24,40 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.submodelservice.http.serialization;
+package org.eclipse.digitaltwin.basyx.deserialization;
 
 import java.io.IOException;
 
-import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import org.eclipse.digitaltwin.basyx.deserialization.factory.SubmodelElementValueDeserializationFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Serializes a {@link PropertyValue} as described in DotAAS Part 2
+ * Deserializes the ValueOnly as described in DotAAS Part 2
  * 
  * @author danish
  *
  */
-public class PropertyValueSerializer extends JsonSerializer<PropertyValue> {
+public class ValueOnlyJsonDeserializer extends JsonDeserializer<ValueOnly> {
+	
+	private SubmodelElementValueDeserializationFactory submodelElementValueDeserializationFactory = new SubmodelElementValueDeserializationFactory();
 
 	@Override
-	public void serialize(PropertyValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		gen.writeString(value.getValue());
+	public ValueOnly deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+		try {
+			ObjectMapper mapper = (ObjectMapper) p.getCodec();
+			JsonNode node = mapper.readTree(p);
+			
+			String idShort = node.fieldNames().next();
+			
+			return new ValueOnly(idShort, submodelElementValueDeserializationFactory.create(mapper, node.get(idShort)));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
-
 }

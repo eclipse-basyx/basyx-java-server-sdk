@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelservice.http.deserialization.util;
+package org.eclipse.digitaltwin.basyx.deserialization.util;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;

@@ -24,34 +24,45 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.submodelservice.http.serialization;
+package org.eclipse.digitaltwin.basyx.deserialization.factory;
 
-import java.io.IOException;
+import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollectionValue;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementListValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Serializes a {@link SubmodelElementCollectionValue} as described in DotAAS Part 2
+ * Factory class to create deserialized {@link SubmodelElementListValue} based on
+ * the content
  * 
  * @author danish
  *
  */
-public class SubmodelElementCollectionValueSerializer extends JsonSerializer<SubmodelElementCollectionValue> {
-
-	@Override
-	public void serialize(SubmodelElementCollectionValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		gen.writeStartArray();
-
-		for (ValueOnly valueOnly : value.getValue()) {
-			gen.writeObject(valueOnly);
-		}
-
-		gen.writeEndArray();
+public class SubmodelElementListValueDeserializationFactory {
+	
+	private ObjectMapper objectMapper;
+	private JsonNode node;
+	
+	public SubmodelElementListValueDeserializationFactory(ObjectMapper objectMapper, JsonNode node) {
+		this.objectMapper = objectMapper;
+		this.node = node;
+	}
+	
+	/**
+	 * Deserializes the corresponding {@link SubmodelElementListValue} based on the
+	 * JSON content
+	 * 
+	 * @return {@link SubmodelElementListValue}
+	 * 
+	 */
+	public SubmodelElementListValue create() throws JsonProcessingException {
+		List<SubmodelElementValue> submodelElementValues = objectMapper.readValue(node.toString(), new TypeReference<List<SubmodelElementValue>>() {});
+		
+		return new SubmodelElementListValue(submodelElementValues);
 	}
 
 }

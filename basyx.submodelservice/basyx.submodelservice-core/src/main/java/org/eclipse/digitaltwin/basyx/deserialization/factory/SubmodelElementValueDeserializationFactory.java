@@ -23,11 +23,20 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelservice.http.deserialization.factory;
+package org.eclipse.digitaltwin.basyx.deserialization.factory;
 
-import static org.eclipse.digitaltwin.basyx.submodelservice.http.deserialization.util.SubmodelElementValueDeserializationUtil.*;
+import static org.eclipse.digitaltwin.basyx.deserialization.util.SubmodelElementValueDeserializationUtil.isTypeOfAnnotatedRelationshipElementValue;
+import static org.eclipse.digitaltwin.basyx.deserialization.util.SubmodelElementValueDeserializationUtil.isTypeOfEntityValue;
+import static org.eclipse.digitaltwin.basyx.deserialization.util.SubmodelElementValueDeserializationUtil.isTypeOfFileBlobValue;
+import static org.eclipse.digitaltwin.basyx.deserialization.util.SubmodelElementValueDeserializationUtil.isTypeOfMultiLanguagePropertyValue;
+import static org.eclipse.digitaltwin.basyx.deserialization.util.SubmodelElementValueDeserializationUtil.isTypeOfPropertyValue;
+import static org.eclipse.digitaltwin.basyx.deserialization.util.SubmodelElementValueDeserializationUtil.isTypeOfRangeValue;
+import static org.eclipse.digitaltwin.basyx.deserialization.util.SubmodelElementValueDeserializationUtil.isTypeOfReferenceElementValue;
+import static org.eclipse.digitaltwin.basyx.deserialization.util.SubmodelElementValueDeserializationUtil.isTypeOfRelationshipElementValue;
+import static org.eclipse.digitaltwin.basyx.deserialization.util.SubmodelElementValueDeserializationUtil.isTypeOfSubmodelElementCollectionValue;
+import static org.eclipse.digitaltwin.basyx.deserialization.util.SubmodelElementValueDeserializationUtil.isTypeOfSubmodelElementListValue;
 
-import org.eclipse.digitaltwin.basyx.submodelservice.http.deserialization.exception.SubmodelElementValueDeserializationException;
+import org.eclipse.digitaltwin.basyx.deserialization.exception.SubmodelElementValueDeserializationException;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.AnnotatedRelationshipElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.EntityValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;

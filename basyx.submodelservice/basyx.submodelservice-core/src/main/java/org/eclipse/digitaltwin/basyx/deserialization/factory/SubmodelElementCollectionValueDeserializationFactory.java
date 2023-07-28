@@ -24,40 +24,46 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.submodelservice.http.deserialization;
+package org.eclipse.digitaltwin.basyx.deserialization.factory;
 
-import java.io.IOException;
+import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.submodelservice.http.deserialization.factory.SubmodelElementValueDeserializationFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollectionValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Deserializes the ValueOnly as described in DotAAS Part 2
+ * Factory class to create deserialized {@link SubmodelElementCollectionValue} based on
+ * the content
  * 
  * @author danish
  *
  */
-public class ValueOnlyJsonDeserializer extends JsonDeserializer<ValueOnly> {
+public class SubmodelElementCollectionValueDeserializationFactory {
 	
-	private SubmodelElementValueDeserializationFactory submodelElementValueDeserializationFactory = new SubmodelElementValueDeserializationFactory();
-
-	@Override
-	public ValueOnly deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-		try {
-			ObjectMapper mapper = (ObjectMapper) p.getCodec();
-			JsonNode node = mapper.readTree(p);
-			
-			String idShort = node.fieldNames().next();
-			
-			return new ValueOnly(idShort, submodelElementValueDeserializationFactory.create(mapper, node.get(idShort)));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+	private ObjectMapper objectMapper;
+	private JsonNode node;
+	
+	public SubmodelElementCollectionValueDeserializationFactory(ObjectMapper objectMapper, JsonNode node) {
+		this.objectMapper = objectMapper;
+		this.node = node;
 	}
+	
+	/**
+	 * Deserializes the corresponding {@link SubmodelElementCollectionValue} based on the
+	 * JSON content
+	 * 
+	 * @return {@link SubmodelElementCollectionValue}
+	 * 
+	 */
+	public SubmodelElementCollectionValue create() throws JsonProcessingException {
+		List<ValueOnly> valueOnlies = objectMapper.readValue(node.toString(), new TypeReference<List<ValueOnly>>() {});
+
+		return new SubmodelElementCollectionValue(valueOnlies);
+	}
+
 }
