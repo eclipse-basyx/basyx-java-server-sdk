@@ -35,22 +35,26 @@ import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactor
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
-
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
 /**
  * 
- * @author schnicke, danish
+ * @author schnicke, danish, kammognie
  *
  */
 public class TestMongoDBAasRepository extends AasRepositorySuite {
 
 	private final String COLLECTION = "aasTestCollection";
+	private final String CONNECTION_URL = "mongodb://localhost:27017";
+	private final MongoClient CLIENT = MongoClients.create(CONNECTION_URL);
+	private final MongoTemplate TEMPLATE = new MongoTemplate(CLIENT, "BaSyxTestDb");
+	private final InMemoryAasServiceFactory AAS_SERVICE_FACTORY = new InMemoryAasServiceFactory();
+	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
 
 	@Override
 	protected AasRepositoryFactory getAasRepositoryFactory() {
-		String connectionURL = "mongodb://localhost:27017";
+		String connectionURL = CONNECTION_URL;
 		MongoClient client = MongoClients.create(connectionURL);
 		MongoTemplate template = new MongoTemplate(client, "BaSyxTestDb");
 
@@ -58,7 +62,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 
 		return new MongoDBAasRepositoryFactory(template, COLLECTION, new InMemoryAasServiceFactory());
 	}
-
+	
 	@Test
 	public void aasIsPersisted() {
 		AasRepositoryFactory repoFactory = getAasRepositoryFactory();
@@ -79,6 +83,12 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		AssetAdministrationShell retrievedShell = getAasFromNewBackendInstance(repoFactory, expectedShell.getId());
 
 		assertEquals(expectedShell, retrievedShell);
+	}
+	
+	@Test
+	public void getConfiguredMongoDBAasRepositoryName() {
+		AasRepository repo = new MongoDBAasRepository(TEMPLATE, COLLECTION, AAS_SERVICE_FACTORY, CONFIGURED_AAS_REPO_NAME);
+		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
 	}
 
 	private void addSubmodelReferenceToAas(AssetAdministrationShell expectedShell) {

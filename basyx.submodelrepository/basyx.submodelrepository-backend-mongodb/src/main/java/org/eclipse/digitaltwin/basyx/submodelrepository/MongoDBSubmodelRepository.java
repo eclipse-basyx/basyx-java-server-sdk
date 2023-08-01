@@ -110,6 +110,7 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	 * SubmodelServiceFactory for creating new SubmodelServices and uses a
 	 * collectionName and a mongoTemplate for operating MongoDB. Additionally
 	 * initializes the MongoDB collection with a collection of submodels.
+	 * And configures the SubmodelRepository name.
 	 * 
 	 * @param mongoTemplate
 	 * @param collectionName
@@ -269,7 +270,7 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public String getName() {
-		return smRepositoryName;
+		return smRepositoryName == null ? SubmodelRepository.super.getName() : smRepositoryName;
 	}
 
 }

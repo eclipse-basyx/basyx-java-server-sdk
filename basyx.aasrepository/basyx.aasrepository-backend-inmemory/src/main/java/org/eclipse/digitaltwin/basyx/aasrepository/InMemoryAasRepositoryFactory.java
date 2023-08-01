@@ -22,6 +22,7 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
@@ -33,7 +34,7 @@ import org.springframework.stereotype.Component;
 /**
  * AasRepository factory returning an in-memory backend AasRepository
  * 
- * @author schnicke
+ * @author schnicke, kammognie
  */
 @ConditionalOnExpression("'${basyx.aasrepository.backend}'.equals('InMemory') or '${basyx.backend}'.equals('InMemory')")
 @Component

@@ -50,7 +50,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
   AdministrativeInformationAllOf.JSON_PROPERTY_CREATOR,
   AdministrativeInformationAllOf.JSON_PROPERTY_TEMPLATE_ID
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-07-18T15:02:01.566475800+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-07-27T16:45:05.776121+02:00[Europe/Berlin]")
 public class AdministrativeInformationAllOf {
   public static final String JSON_PROPERTY_VERSION = "version";
   private String version;

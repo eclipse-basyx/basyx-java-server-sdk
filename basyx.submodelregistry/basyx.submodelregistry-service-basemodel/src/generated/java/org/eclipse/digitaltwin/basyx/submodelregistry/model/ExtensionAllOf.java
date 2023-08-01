@@ -26,7 +26,7 @@ import javax.annotation.Generated;
  */
 
 @JsonTypeName("Extension_allOf")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-07-18T15:01:40.984482400+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-07-27T16:44:41.955927700+02:00[Europe/Berlin]")
 public class ExtensionAllOf implements Serializable {
 
   private static final long serialVersionUID = 1L;

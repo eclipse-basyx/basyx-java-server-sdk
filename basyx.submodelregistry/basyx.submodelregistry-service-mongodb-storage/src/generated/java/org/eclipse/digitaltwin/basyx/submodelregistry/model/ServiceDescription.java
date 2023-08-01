@@ -22,7 +22,7 @@ import javax.annotation.Generated;
  */
 
 @Schema(name = "ServiceDescription", description = "The Description object enables servers to present their capabilities to the clients, in particular which profiles they implement. At least one defined profile is required. Additional, proprietary attributes might be included. Nevertheless, the server must not expect that a regular client understands them.")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-07-18T15:02:35.777401700+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-07-27T16:46:10.102240900+02:00[Europe/Berlin]")
 public class ServiceDescription implements Serializable {
 
   private static final long serialVersionUID = 1L;

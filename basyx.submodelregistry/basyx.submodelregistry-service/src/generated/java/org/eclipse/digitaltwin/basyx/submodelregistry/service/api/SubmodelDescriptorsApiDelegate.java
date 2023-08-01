@@ -18,7 +18,7 @@ import javax.annotation.Generated;
  * A delegate to be called by the {@link SubmodelDescriptorsApiController}}.
  * Implement this interface with a {@link org.springframework.stereotype.Service} annotated class.
  */
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-07-18T15:01:47.322351200+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-07-27T16:44:56.230082400+02:00[Europe/Berlin]")
 public interface SubmodelDescriptorsApiDelegate {
 
     default Optional<NativeWebRequest> getRequest() {

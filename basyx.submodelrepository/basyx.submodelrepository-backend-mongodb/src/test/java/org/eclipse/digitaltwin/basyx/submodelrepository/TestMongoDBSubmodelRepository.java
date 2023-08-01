@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -31,7 +33,7 @@ import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
-
+import org.junit.Test;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
@@ -41,6 +43,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	private final MongoClient CLIENT = MongoClients.create(CONNECTION_URL);
 	private final MongoTemplate TEMPLATE = new MongoTemplate(CLIENT, "BaSyxTestDb");
 	private final InMemorySubmodelServiceFactory SUBMODEL_SERVICE_FACTORY = new InMemorySubmodelServiceFactory();
+	private static final String CONFIGURED_SM_REPO_NAME = "configured-sm-repo-name";
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository() {
@@ -54,6 +57,12 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
 
 		return new MongoDBSubmodelRepositoryFactory(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, submodels).create();
+	}
+	
+	@Test
+	public void getConfiguredMongoDBSmRepositoryName() {
+		SubmodelRepository repo = new MongoDBSubmodelRepository(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, CONFIGURED_SM_REPO_NAME);
+		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
 	}
 
 }

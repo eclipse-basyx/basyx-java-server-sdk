@@ -336,6 +336,12 @@ public abstract class SubmodelRepositorySuite {
 			throw expected;
 		}
 	}
+	
+	@Test
+	public void getDefaultSubmodelRepositoryName() {
+		SubmodelRepository repo = getSubmodelRepository();
+		assertEquals("sm-repo", repo.getName());
+	}
 
 	private SubmodelElement getExpectedSubmodelElement() {
 		return DummySubmodelFactory.createOperationalDataSubmodel()

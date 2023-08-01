@@ -47,7 +47,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
   LangStringShortNameTypeIec61360.JSON_PROPERTY_LANGUAGE,
   LangStringShortNameTypeIec61360.JSON_PROPERTY_TEXT
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-07-18T15:02:01.566475800+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-07-27T16:45:05.776121+02:00[Europe/Berlin]")
 public class LangStringShortNameTypeIec61360 {
   public static final String JSON_PROPERTY_LANGUAGE = "language";
   private String language;

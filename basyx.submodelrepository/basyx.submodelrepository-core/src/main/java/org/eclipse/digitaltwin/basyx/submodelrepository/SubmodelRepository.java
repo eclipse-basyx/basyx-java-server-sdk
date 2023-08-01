@@ -37,7 +37,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 /**
  * Specifies the overall SubmodelRepository API
  * 
- * @author schnicke, danish,kammognie
+ * @author schnicke, danish, kammognie
  *
  */
 public interface SubmodelRepository {

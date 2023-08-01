@@ -32,7 +32,7 @@ import javax.annotation.Generated;
  * DataSpecificationIec61360
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-07-18T15:01:40.984482400+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-07-27T16:44:41.955927700+02:00[Europe/Berlin]")
 public class DataSpecificationIec61360 implements Serializable, DataSpecificationContent {
 
   private static final long serialVersionUID = 1L;

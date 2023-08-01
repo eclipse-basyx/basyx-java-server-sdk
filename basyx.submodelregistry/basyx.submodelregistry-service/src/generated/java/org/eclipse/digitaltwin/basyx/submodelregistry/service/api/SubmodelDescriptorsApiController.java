@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-07-18T15:01:47.322351200+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-07-27T16:44:56.230082400+02:00[Europe/Berlin]")
 @Controller
 @RequestMapping("${openapi.dotAASPart2HTTPRESTSubmodelRegistryServiceSpecification.base-path:}")
 public class SubmodelDescriptorsApiController implements SubmodelDescriptorsApi {

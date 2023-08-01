@@ -38,7 +38,7 @@ import javax.annotation.Generated;
   @JsonSubTypes.Type(value = DataSpecificationIec61360.class, name = "DataSpecificationIec61360")
 })
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-07-18T15:02:35.777401700+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-07-27T16:46:10.102240900+02:00[Europe/Berlin]")
 public interface DataSpecificationContent extends Serializable {
     public String getModelType();
 }
