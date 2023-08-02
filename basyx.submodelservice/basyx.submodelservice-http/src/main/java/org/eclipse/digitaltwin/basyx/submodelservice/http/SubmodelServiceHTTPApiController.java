@@ -97,20 +97,6 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		return new ResponseEntity<Collection<SubmodelElement>>(result, HttpStatus.OK);
 	}
 
-	public ResponseEntity<List<Reference>> getAllSubmodelElementsReference(
-			@Min(1) @Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array", schema = @Schema(allowableValues = {
-					"1" }, minimum = "1")) @Valid @RequestParam(value = "limit", required = false) Integer limit,
-			@Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue", schema = @Schema()) @Valid @RequestParam(value = "cursor", required = false) String cursor,
-			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
-					"core" }, defaultValue = "core")) @Valid @RequestParam(value = "level", required = false, defaultValue = "core") String level) {
-		Collection<SubmodelElement> submodelElements = service.getSubmodelElements();
-		ArrayList<Reference> result = new ArrayList<>();
-		submodelElements.stream()
-				.forEach(sme -> result.add(sme.getSemanticID()));
-
-		return new ResponseEntity<List<Reference>>(result, HttpStatus.OK);
-	}
-
 	public ResponseEntity<Submodel> getSubmodel(
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level,
@@ -137,19 +123,6 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		return new ResponseEntity<SubmodelElement>(submodelElement, HttpStatus.OK);
 	}
 
-	public ResponseEntity<Reference> getSubmodelElementByPathReference(
-			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") Base64UrlEncodedIdentifier idShortPath,
-			@Min(1) @Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array", schema = @Schema(allowableValues = {
-					"1" }, minimum = "1")) @Valid @RequestParam(value = "limit", required = false) Integer limit,
-			@Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue", schema = @Schema()) @Valid @RequestParam(value = "cursor", required = false) String cursor,
-			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
-					"core" }, defaultValue = "core")) @Valid @RequestParam(value = "level", required = false, defaultValue = "core") String level) {
-
-		SubmodelElement submodelElement = service.getSubmodelElement(idShortPath.getIdentifier());
-
-		return new ResponseEntity<Reference>(submodelElement.getSemanticID(), HttpStatus.OK);
-	}
-
 	public ResponseEntity<SubmodelElementValue> getSubmodelElementByPathValueOnly(
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") Base64UrlEncodedIdentifier idShortPath,
 			@Min(1) @Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array", schema = @Schema(allowableValues = {
@@ -174,16 +147,6 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		return new ResponseEntity<Submodel>(submodel, HttpStatus.OK);
 	}
 
-	public ResponseEntity<Reference> getSubmodelReference(@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
-			"core" }, defaultValue = "core")) @Valid @RequestParam(value = "level", required = false, defaultValue = "core") String level) {
-		String accept = request.getHeader("Accept");
-
-		Reference result = service.getSubmodel()
-				.getSemanticID();
-
-		return new ResponseEntity<Reference>(result, HttpStatus.OK);
-	}
-
 	public ResponseEntity<SubmodelValueOnly> getSubmodelValueOnly(
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level,
@@ -193,16 +156,6 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		SubmodelValueOnly result = new SubmodelValueOnly(service.getSubmodelElements());
 
 		return new ResponseEntity<SubmodelValueOnly>(result, HttpStatus.OK);
-	}
-
-	public ResponseEntity<Void> patchSubmodelElementByPath(
-			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") Base64UrlEncodedIdentifier idShortPath,
-			@Parameter(in = ParameterIn.DEFAULT, description = "SubmodelElement object", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElement body,
-			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
-					"core" }, defaultValue = "core")) @Valid @RequestParam(value = "level", required = false, defaultValue = "core") String level) {
-		service.deleteSubmodelElement(idShortPath.getIdentifier());
-		service.createSubmodelElement(body);
-		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 
 	public ResponseEntity<Void> patchSubmodelElementByPathValueOnly(
@@ -229,24 +182,6 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 			@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElement body) {
 		service.createSubmodelElement(idShortPath.getIdentifier(), body);
 		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
-	}
-
-	public ResponseEntity<Void> putSubmodel(@Parameter(in = ParameterIn.DEFAULT, description = "Submodel object", required = true, schema = @Schema()) @Valid @RequestBody Submodel body,
-			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
-					"deep" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level) {
-
-		service = serviceFactory.create(body);
-		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-	}
-
-	public ResponseEntity<Void> putSubmodelElementByPath(
-			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") Base64UrlEncodedIdentifier idShortPath,
-			@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElement body,
-			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
-					"deep" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level) {
-		service.deleteSubmodelElement(idShortPath.getIdentifier());
-		service.createSubmodelElement(idShortPath.getIdentifier(), body);
-		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 
 }

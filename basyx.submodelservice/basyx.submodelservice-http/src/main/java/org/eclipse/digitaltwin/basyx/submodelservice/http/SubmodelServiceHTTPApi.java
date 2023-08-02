@@ -101,26 +101,6 @@ public interface SubmodelServiceHTTPApi {
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" }, defaultValue = "withoutBlobValue")) @Valid @RequestParam(value = "extent", required = false, defaultValue = "withoutBlobValue") String extent);
 
-	@Operation(summary = "Returns the References of all submodel elements", description = "", tags = { "Submodel API" })
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "List of found submodel elements", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Reference.class))),
-
-			@ApiResponse(responseCode = "400", description = "Bad Request, e.g. the request parameters of the format of the request body is wrong.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "401", description = "Unauthorized, e.g. the server refused the authorization attempt.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
-	@RequestMapping(value = "/submodel/submodel-elements/$reference", produces = { "application/json" }, method = RequestMethod.GET)
-	ResponseEntity<List<Reference>> getAllSubmodelElementsReference(
-			@Min(1) @Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array", schema = @Schema(allowableValues = {
-					"1" }, minimum = "1")) @Valid @RequestParam(value = "limit", required = false) Integer limit,
-			@Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue", schema = @Schema()) @Valid @RequestParam(value = "cursor", required = false) String cursor,
-			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
-					"core" }, defaultValue = "core")) @Valid @RequestParam(value = "level", required = false, defaultValue = "core") String level);
-
 	@Operation(summary = "Returns the Submodel", description = "", tags = { "Submodel API" })
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Requested Submodel", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Submodel.class))),
 
@@ -165,29 +145,6 @@ public interface SubmodelServiceHTTPApi {
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" }, defaultValue = "withoutBlobValue")) @Valid @RequestParam(value = "extent", required = false, defaultValue = "withoutBlobValue") String extent);
 
-	@Operation(summary = "Returns the Referene of a specific submodel element from the Submodel at a specified path", description = "", tags = { "Submodel API" })
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Requested submodel element", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Reference.class))),
-
-			@ApiResponse(responseCode = "400", description = "Bad Request, e.g. the request parameters of the format of the request body is wrong.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "401", description = "Unauthorized, e.g. the server refused the authorization attempt.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
-	@RequestMapping(value = "/submodel/submodel-elements/{idShortPath}/$reference", produces = { "application/json" }, method = RequestMethod.GET)
-	ResponseEntity<Reference> getSubmodelElementByPathReference(
-			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") Base64UrlEncodedIdentifier idShortPath,
-			@Min(1) @Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array", schema = @Schema(allowableValues = {
-					"1" }, minimum = "1")) @Valid @RequestParam(value = "limit", required = false) Integer limit,
-			@Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue", schema = @Schema()) @Valid @RequestParam(value = "cursor", required = false) String cursor,
-			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
-					"core" }, defaultValue = "core")) @Valid @RequestParam(value = "level", required = false, defaultValue = "core") String level);
-
 	@Operation(summary = "Returns a specific submodel element from the Submodel at a specified path in the ValueOnly representation", description = "", tags = { "Submodel API" })
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Requested submodel element", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SubmodelElementValue.class))),
 
@@ -229,22 +186,6 @@ public interface SubmodelServiceHTTPApi {
 	ResponseEntity<Submodel> getSubmodelMetadata(@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 			"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level);
 
-	@Operation(summary = "Returns the Reference of the Submodel", description = "", tags = { "Submodel API" })
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Requested Reference", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Reference.class))),
-
-			@ApiResponse(responseCode = "400", description = "Bad Request, e.g. the request parameters of the format of the request body is wrong.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "401", description = "Unauthorized, e.g. the server refused the authorization attempt.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
-	@RequestMapping(value = "/submodel/$reference", produces = { "application/json" }, method = RequestMethod.GET)
-	ResponseEntity<Reference> getSubmodelReference(@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
-			"core" }, defaultValue = "core")) @Valid @RequestParam(value = "level", required = false, defaultValue = "core") String level);
-
 	@Operation(summary = "Returns the Submodel in the ValueOnly representation", description = "", tags = { "Submodel API" })
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "ValueOnly representation of the Submodel", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SubmodelValueOnly.class))),
 
@@ -263,27 +204,6 @@ public interface SubmodelServiceHTTPApi {
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" }, defaultValue = "withoutBlobValue")) @Valid @RequestParam(value = "extent", required = false, defaultValue = "withoutBlobValue") String extent);
-
-	@Operation(summary = "Updates an existing SubmodelElement", description = "", tags = { "Submodel API" })
-	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "SubmodelElement updated successfully"),
-
-			@ApiResponse(responseCode = "400", description = "Bad Request, e.g. the request parameters of the format of the request body is wrong.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "401", description = "Unauthorized, e.g. the server refused the authorization attempt.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
-	@RequestMapping(value = "/submodel/submodel-elements/{idShortPath}", produces = { "application/json" }, consumes = { "application/json" }, method = RequestMethod.PATCH)
-	ResponseEntity<Void> patchSubmodelElementByPath(
-			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") Base64UrlEncodedIdentifier idShortPath,
-			@Parameter(in = ParameterIn.DEFAULT, description = "SubmodelElement object", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElement body,
-			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
-					"core" }, defaultValue = "core")) @Valid @RequestParam(value = "level", required = false, defaultValue = "core") String level);
 
 	@Operation(summary = "Updates the value of an existing SubmodelElement", description = "", tags = { "Submodel API" })
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Submodel updated successfully"),
@@ -348,43 +268,5 @@ public interface SubmodelServiceHTTPApi {
 	ResponseEntity<SubmodelElement> postSubmodelElementByPath(
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") Base64UrlEncodedIdentifier idShortPath,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElement body);
-
-	@Operation(summary = "Updates the Submodel", description = "", tags = { "Submodel API" })
-	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Submodel updated successfully"),
-
-			@ApiResponse(responseCode = "400", description = "Bad Request, e.g. the request parameters of the format of the request body is wrong.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "401", description = "Unauthorized, e.g. the server refused the authorization attempt.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
-	@RequestMapping(value = "/submodel", produces = { "application/json" }, consumes = { "application/json" }, method = RequestMethod.PUT)
-	ResponseEntity<Void> putSubmodel(@Parameter(in = ParameterIn.DEFAULT, description = "Submodel object", required = true, schema = @Schema()) @Valid @RequestBody Submodel body,
-			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
-					"deep" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level);
-
-	@Operation(summary = "Updates an existing submodel element at a specified path within submodel elements hierarchy", description = "", tags = { "Submodel API" })
-	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Submodel element updated successfully"),
-
-			@ApiResponse(responseCode = "400", description = "Bad Request, e.g. the request parameters of the format of the request body is wrong.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "401", description = "Unauthorized, e.g. the server refused the authorization attempt.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
-	@RequestMapping(value = "/submodel/submodel-elements/{idShortPath}", produces = { "application/json" }, consumes = { "application/json" }, method = RequestMethod.PUT)
-	ResponseEntity<Void> putSubmodelElementByPath(
-			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") Base64UrlEncodedIdentifier idShortPath,
-			@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElement body,
-			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
-					"deep" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level);
 
 }
