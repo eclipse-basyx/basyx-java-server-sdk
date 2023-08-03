@@ -1,0 +1,20 @@
+{
+    "first": {
+        "type": "ModelReference",
+        "keys": [
+            {
+                "type": "DataElement",
+                "value": "DataElement"
+            }
+        ]
+    },
+    "second": {
+        "type": "ExternalReference",
+        "keys": [
+            {
+                "type": "BasicEventElement",
+                "value": "BasicEventElement"
+            }
+        ]
+    }
+}

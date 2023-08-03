@@ -1,0 +1,20 @@
+{
+    "first": {
+        "type": "ExternalReference",
+        "keys": [
+            {
+                "type": "Blob",
+                "value": "BlobType"
+            }
+        ]
+    },
+    "second": {
+        "type": "ModelReference",
+        "keys": [
+            {
+                "type": "Entity",
+                "value": "EntityType"
+            }
+        ]
+    }
+}

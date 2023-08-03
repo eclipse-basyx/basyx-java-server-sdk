@@ -421,7 +421,8 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 	}
 
 	@Test
-	public void deleteNestedSubmodelElement() throws FileNotFoundException, IOException, ParseException {
+	public void deleteNestedSubmodelElementFromSubmodelElementCollection()
+			throws FileNotFoundException, IOException, ParseException {
 		String nestedIdShortPathInCollection = createCollectionNestedIdShortPath(DummySubmodelFactory.SUBMODEL_ELEMENT_FIRST_ID_SHORT);
 		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, nestedIdShortPathInCollection));
 		assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());
