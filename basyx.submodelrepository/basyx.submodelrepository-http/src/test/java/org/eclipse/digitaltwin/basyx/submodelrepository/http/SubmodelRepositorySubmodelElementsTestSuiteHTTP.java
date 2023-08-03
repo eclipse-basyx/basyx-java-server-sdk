@@ -127,7 +127,7 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 		String expectedValue = wrapStringValue("2567");
 
 		CloseableHttpResponse writeResponse = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT, expectedValue);
-		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), writeResponse.getCode());
 
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT);
 
@@ -150,7 +150,7 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 		String expectedValue = getJSONValueAsString("value/setMultiLanguagePropertyValue.json");
 
 		CloseableHttpResponse writeResponse = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_MULTI_LANG_PROP_ID_SHORT, expectedValue);
-		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), writeResponse.getCode());
 
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_MULTI_LANG_PROP_ID_SHORT);
 
@@ -173,7 +173,7 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 		String expectedValue = getJSONValueAsString("value/setRangeValue.json");
 
 		CloseableHttpResponse writeResponse = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_RANGE_ID_SHORT, expectedValue);
-		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), writeResponse.getCode());
 
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_RANGE_ID_SHORT);
 
@@ -196,7 +196,7 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 		String expectedValue = getJSONValueAsString("value/setFileValue.json");
 
 		CloseableHttpResponse writeResponse = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, expectedValue);
-		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), writeResponse.getCode());
 
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 
@@ -219,7 +219,7 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 		String expectedValue = getJSONValueAsString("value/setBlobValue.json");
 
 		CloseableHttpResponse writeResponse = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_BLOB_ID_SHORT, expectedValue);
-		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), writeResponse.getCode());
 
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_BLOB_ID_SHORT);
 
@@ -242,7 +242,7 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 		String expectedValue = getJSONValueAsString("value/setEntityValue.json");
 
 		CloseableHttpResponse writeResponse = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ENTITY_ID_SHORT, expectedValue);
-		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), writeResponse.getCode());
 
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ENTITY_ID_SHORT);
 
@@ -255,7 +255,7 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 		String expectedValue = getJSONValueAsString("value/expectedUpdatedMRPEntityValue.json");
 
 		CloseableHttpResponse writeResponse = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ENTITY_ID_SHORT, minimumRequestPayloadValue);
-		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), writeResponse.getCode());
 
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ENTITY_ID_SHORT);
 
@@ -278,7 +278,7 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 		String expectedValue = getJSONValueAsString("value/setReferenceElementValue.json");
 
 		CloseableHttpResponse writeResponse = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_REFERENCE_ELEMENT_ID_SHORT, expectedValue);
-		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), writeResponse.getCode());
 
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_REFERENCE_ELEMENT_ID_SHORT);
 
@@ -301,7 +301,7 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 		String expectedValue = getJSONValueAsString("value/setRelationshipElementValue.json");
 
 		CloseableHttpResponse writeResponse = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_RELATIONSHIP_ELEMENT_ID_SHORT, expectedValue);
-		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), writeResponse.getCode());
 
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_RELATIONSHIP_ELEMENT_ID_SHORT);
 
@@ -324,7 +324,7 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 		String expectedValue = getJSONValueAsString("value/setAnnotatedRelationshipElementValue.json");
 
 		CloseableHttpResponse writeResponse = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT, expectedValue);
-		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), writeResponse.getCode());
 
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT);
 
@@ -347,7 +347,7 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 		String expectedValue = getJSONValueAsString("value/setSubmodelElementCollectionValue.json");
 
 		CloseableHttpResponse writeResponse = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT, expectedValue);
-		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), writeResponse.getCode());
 
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT);
 
@@ -370,7 +370,7 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 		String expectedValue = getJSONValueAsString("value/setSubmodelElementListValue.json");
 
 		CloseableHttpResponse writeResponse = writeSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_LIST_ID_SHORT, expectedValue);
-		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), writeResponse.getCode());
 
 		CloseableHttpResponse response = requestSubmodelElementValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_LIST_ID_SHORT);
 
@@ -391,7 +391,7 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 		CloseableHttpResponse createdResponse = BaSyxHttpTestUtils.executePostOnURL(createSubmodelElementsURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID), element);
 
 		CloseableHttpResponse fetchedResponse = requestSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT);
-		assertEquals(HttpStatus.OK.value(), createdResponse.getCode());
+		assertEquals(HttpStatus.CREATED.value(), createdResponse.getCode());
 		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedResponse));
 	}
 
@@ -410,8 +410,8 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 		CloseableHttpResponse createdInCollectionResponse = BaSyxHttpTestUtils.executePostOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE),
 				element);
 		CloseableHttpResponse createdInListResponse = BaSyxHttpTestUtils.executePostOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_LIST_SIMPLE), element);
-		assertEquals(HttpStatus.OK.value(), createdInCollectionResponse.getCode());
-		assertEquals(HttpStatus.OK.value(), createdInListResponse.getCode());
+		assertEquals(HttpStatus.CREATED.value(), createdInCollectionResponse.getCode());
+		assertEquals(HttpStatus.CREATED.value(), createdInListResponse.getCode());
 
 		CloseableHttpResponse fetchedNestedInCollectionResponse = requestSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, createCollectionNestedIdShortPath(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT));
 		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedNestedInCollectionResponse));
@@ -426,13 +426,21 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, nestedIdShortPathInCollection));
 		assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());
 
+		CloseableHttpResponse fetchedNestedInCollectionResponse = requestSubmodelElement(
+				DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE,
+				DummySubmodelFactory.SUBMODEL_ELEMENT_SIMPLE_DATA_ID_SHORT);
+		assertEquals(HttpStatus.NOT_FOUND.value(), fetchedNestedInCollectionResponse.getCode());
+
+	}
+
+	@Test
+	public void deleteNestedSubmodelElementFromSubmodelElementList() throws IOException {
 		// delete first element of the submodel element list
 		String nestedIdShortSmeList = createListNestedIdShortPath(0);
-		BaSyxHttpTestUtils.executeDeleteOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, nestedIdShortSmeList));
+		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(
+				createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, nestedIdShortSmeList));
 		assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());
 
-		CloseableHttpResponse fetchedNestedInCollectionResponse = requestSubmodelElement(DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE, DummySubmodelFactory.SUBMODEL_ELEMENT_SIMPLE_DATA_ID_SHORT);
-		assertEquals(HttpStatus.NOT_FOUND.value(), fetchedNestedInCollectionResponse.getCode());
 		CloseableHttpResponse fetchedNestedInListResponse = requestSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, createListNestedIdShortPath(1));
 		assertEquals(HttpStatus.NOT_FOUND.value(), fetchedNestedInListResponse.getCode());
 	}

@@ -125,13 +125,13 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	@Override
 	public ResponseEntity<SubmodelElement> postSubmodelElementByPathSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid SubmodelElement body, @Valid String level, @Valid String extent) {
 		repository.createSubmodelElement(submodelIdentifier.getIdentifier(), idShortPath, body);
-		return new ResponseEntity<SubmodelElement>(HttpStatus.OK);
+		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
 	}
 
 	@Override
 	public ResponseEntity<SubmodelElement> postSubmodelElementSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, @Valid SubmodelElement body) {
 		repository.createSubmodelElement(submodelIdentifier.getIdentifier(), body);
-		return new ResponseEntity<SubmodelElement>(HttpStatus.OK);
+		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
 	}
 
 	@Override
@@ -156,7 +156,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 	private ResponseEntity<Void> handleSubmodelElementValueSetRequest(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, SubmodelElementValue body) {
 		repository.setSubmodelElementValue(submodelIdentifier.getIdentifier(), idShortPath, body);
-		return new ResponseEntity<Void>(HttpStatus.OK);
+		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 
 	private ResponseEntity<SubmodelElementValue> handleSubmodelElementValueGetRequest(String submodelIdentifier, String idShortPath) {
