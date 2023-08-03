@@ -1,9 +1,0 @@
-{
-    "type": "ExternalReference",
-    "keys": [
-        {
-            "type": "Operation",
-            "value": "OperationType"
-        }
-    ]
-}

@@ -32,6 +32,7 @@ import java.io.IOException;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
@@ -51,6 +52,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 
 	protected abstract String getURL();
+
+	public static Submodel createSubmodel() {
+		return DummySubmodelFactory.createSubmodelWithAllSubmodelElements();
+	}
 
 	@Test
 	public void getSubmodelElements() throws FileNotFoundException, IOException, ParseException {
@@ -450,9 +455,8 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 	}
 
 	@Test
-	public void delteNestedSubmodelElementFromSubmodelElementList()
+	public void deleteNestedSubmodelElementFromSubmodelElementList()
 			throws IOException {
-		// delete first element of the submodel element list
 		String nestedIdShortSmeList = createListNestedIdShortPath(0);
 		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils
 				.executeDeleteOnURL(createSpecificSubmodelElementURL(nestedIdShortSmeList));

@@ -61,6 +61,9 @@ public class DummySubmodelFactory {
 	public static final String AAS_ID = "ExampleMotor";
 	public static final String AAS_IDENTIFIER = "http://customer.com/aas/9175_7013_7091_9168";
 
+	// SUBMODEL_ALL_SUBMODEL_ELEMENTS
+	public static final String SUBMODEL_ALL_SUBMODEL_ELEMENTS_ID = "8A7104BDAB57E185";
+
 	// SUBMODEL_TECHNICAL_DATA
 	public static final String SUBMODEL_TECHNICAL_DATA_ID_SHORT = "TechnicalData";
 	public static final String SUBMODEL_TECHNICAL_DATA_ID = "7A7104BDAB57E184";
@@ -103,11 +106,7 @@ public class DummySubmodelFactory {
 		List<SubmodelElement> submodelElements = getAllSubmodelElementsList();
 
 		Submodel submodel = new DefaultSubmodel.Builder()
-				.semanticID(new DefaultReference.Builder()
-						.keys(new DefaultKey.Builder().type(KeyTypes.GLOBAL_REFERENCE)
-								.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID).build())
-						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
-				.idShort(SUBMODEL_TECHNICAL_DATA_ID_SHORT).id(SUBMODEL_TECHNICAL_DATA_ID)
+				.idShort("AllSubmodelElementsIdShort").id(SUBMODEL_ALL_SUBMODEL_ELEMENTS_ID)
 				.submodelElements(submodelElements).build();
 
 
