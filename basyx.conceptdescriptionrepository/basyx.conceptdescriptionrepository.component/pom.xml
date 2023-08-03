@@ -67,7 +67,7 @@
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
-	    <dependency>
+		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.conceptdescriptionrepository-tck</artifactId>
 			<classifier>tests</classifier>
