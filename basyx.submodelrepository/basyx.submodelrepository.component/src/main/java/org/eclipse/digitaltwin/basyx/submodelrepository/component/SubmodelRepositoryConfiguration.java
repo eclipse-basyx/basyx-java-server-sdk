@@ -35,6 +35,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.DecoratedSubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.SubmodelServiceFeature;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -56,7 +57,9 @@ public class SubmodelRepositoryConfiguration {
 
 	@Primary
 	@Bean
-	public SubmodelServiceFactory getSubmodelService(SubmodelServiceFactory aasServiceFactory, List<SubmodelServiceFeature> features) {
+	@Autowired
+	public static SubmodelServiceFactory getSubmodelServiceFactory(SubmodelServiceFactory aasServiceFactory,
+			List<SubmodelServiceFeature> features) {
 		return new DecoratedSubmodelServiceFactory(aasServiceFactory, features);
 	}
 }

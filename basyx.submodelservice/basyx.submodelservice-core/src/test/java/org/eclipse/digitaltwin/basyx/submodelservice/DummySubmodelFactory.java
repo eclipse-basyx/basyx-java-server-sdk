@@ -29,6 +29,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXSD;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
@@ -58,6 +60,9 @@ public class DummySubmodelFactory {
 	// AAS
 	public static final String AAS_ID = "ExampleMotor";
 	public static final String AAS_IDENTIFIER = "http://customer.com/aas/9175_7013_7091_9168";
+
+	// SUBMODEL_ALL_SUBMODEL_ELEMENTS
+	public static final String SUBMODEL_ALL_SUBMODEL_ELEMENTS_ID = "8A7104BDAB57E185";
 
 	// SUBMODEL_TECHNICAL_DATA
 	public static final String SUBMODEL_TECHNICAL_DATA_ID_SHORT = "TechnicalData";
@@ -97,6 +102,17 @@ public class DummySubmodelFactory {
 		return Arrays.asList(createTechnicalDataSubmodel(), createOperationalDataSubmodel(), createSimpleDataSubmodel());
 	}
 
+	public static Submodel createSubmodelWithAllSubmodelElements() {
+		List<SubmodelElement> submodelElements = getAllSubmodelElementsList();
+
+		Submodel submodel = new DefaultSubmodel.Builder()
+				.idShort("AllSubmodelElementsIdShort").id(SUBMODEL_ALL_SUBMODEL_ELEMENTS_ID)
+				.submodelElements(submodelElements).build();
+
+
+		return submodel;
+	}
+
 	public static Submodel createTechnicalDataSubmodel() {
 		return new DefaultSubmodel.Builder().semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.GLOBAL_REFERENCE)
 				.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID)
@@ -112,31 +128,36 @@ public class DummySubmodelFactory {
 	public static Submodel createOperationalDataSubmodel() {
 		return new DefaultSubmodel.Builder().idShort(SUBMODEL_OPERATIONAL_DATA_ID_SHORT)
 				.id(SUBMODEL_OPERATIONAL_DATA_ID)
-				.submodelElements(new DefaultProperty.Builder().semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
-						.value(SUBMODEL_OPERATIONAL_DATA_SEMANTIC_ID_PROPERTY)
-						.build())
-						.type(ReferenceTypes.EXTERNAL_REFERENCE)
-						.build())
-						.idShort(SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT)
-						.category(SUBMODEL_OPERATIONAL_DATA_PROPERTY_CATEGORY)
-						.value(SUBMODEL_OPERATIONAL_DATA_PROPERTY_VALUE)
-						.valueType(DataTypeDefXSD.INTEGER)
-						.build())
-				.build();
+				.submodelElements(getOperationalDataSubmodelElements()).build();
 	}
 
 	public static Submodel createSimpleDataSubmodel() {
-		return new DefaultSubmodel.Builder().idShort(SUBMODEL_SIMPLE_DATA_ID_SHORT)
-				.id(SUBMODEL_SIMPLE_DATA_ID)
-				.submodelElements(createSimpleSubmodelElements())
-				.build();
+		return new DefaultSubmodel.Builder().idShort(SUBMODEL_SIMPLE_DATA_ID_SHORT).id(SUBMODEL_SIMPLE_DATA_ID)
+				.submodelElements(createSimpleSubmodelElements()).build();
 	}
 
 	public static Submodel createOperationalDataSubmodelWithHierarchicalSubmodelElements() {
 		return new DefaultSubmodel.Builder().idShort(SUBMODEL_OPERATIONAL_DATA_ID_SHORT)
-				.id(SUBMODEL_OPERATIONAL_DATA_ID)
-				.submodelElements(createOperationalDataSubmodelElements())
-				.build();
+				.id(SUBMODEL_OPERATIONAL_DATA_ID).submodelElements(createOperationalDataSubmodelElements()).build();
+	}
+
+	private static List<SubmodelElement> getAllSubmodelElementsList() {
+		return Stream.of(SubmodelServiceHelper.getAllSubmodelElements(), getOperationalDataSubmodelElements(),
+				createSimpleSubmodelElements()).flatMap(Collection::stream).collect(Collectors.toList());
+	}
+
+	private static List<SubmodelElement> getOperationalDataSubmodelElements() {
+		List<SubmodelElement> submodelElements = new ArrayList<>();
+		submodelElements.add(new DefaultProperty.Builder()
+				.semanticID(new DefaultReference.Builder()
+						.keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
+								.value(SUBMODEL_OPERATIONAL_DATA_SEMANTIC_ID_PROPERTY).build())
+						.type(ReferenceTypes.EXTERNAL_REFERENCE).build())
+				.idShort(SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT)
+				.category(SUBMODEL_OPERATIONAL_DATA_PROPERTY_CATEGORY).value(SUBMODEL_OPERATIONAL_DATA_PROPERTY_VALUE)
+				.valueType(DataTypeDefXSD.INTEGER)
+				.build());
+		return submodelElements;
 	}
 
 	private static List<SubmodelElement> createOperationalDataSubmodelElements() {
