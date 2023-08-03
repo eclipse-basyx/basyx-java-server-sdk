@@ -67,26 +67,16 @@ public class InMemoryAasService implements AasService {
 	public CursorResult<List<Reference>> getSubmodelReferences(PaginationInfo pInfo) {
 		List<Reference> submodelReferences = aas.getSubmodels();
 
-		// Extract the ID using KeyTypes.SUBMODEL from the Reference
-		Function<Reference, String> idResolver = reference -> {
-			List<Key> keys = reference.getKeys();
-			for (Key key : keys) {
-				if (key.getType() == KeyTypes.SUBMODEL) {
-					return key.getValue();
-				}
-			}
-			return ""; // Return an empty string if no ID is found
-		};
+		Function<Reference, String> idResolver = extractSubmodelID();
 
-		// Convert the list to a TreeMap using the reference ID as the key
-		TreeMap<String, Reference> submodelRefMap = submodelReferences.stream().collect(Collectors
-				.toMap(reference -> idResolver.apply(reference), ref -> ref, (ref1, ref2) -> ref1, TreeMap::new));
+		TreeMap<String, Reference> submodelRefMap = convertToTreeMap(submodelReferences, idResolver);
 
 		PaginationSupport<Reference> paginationSupport = new PaginationSupport<>(submodelRefMap, idResolver);
 		CursorResult<List<Reference>> paginatedSubmodelReference = paginationSupport.getPaged(pInfo);
 
 		return paginatedSubmodelReference;
 	}
+
 
 	@Override
 	public void addSubmodelReference(Reference submodelReference) {
@@ -120,6 +110,24 @@ public class InMemoryAasService implements AasService {
 		}).findFirst().orElseThrow(() -> new ElementDoesNotExistException(submodelId));
 
 		return specificSubmodelReference;
+	}
+
+	private TreeMap<String, Reference> convertToTreeMap(List<Reference> submodelReferences,
+			Function<Reference, String> idResolver) {
+		return submodelReferences.stream().collect(Collectors
+				.toMap(reference -> idResolver.apply(reference), ref -> ref, (ref1, ref2) -> ref1, TreeMap::new));
+	}
+
+	private Function<Reference, String> extractSubmodelID() {
+		return reference -> {
+			List<Key> keys = reference.getKeys();
+			for (Key key : keys) {
+				if (key.getType() == KeyTypes.SUBMODEL) {
+					return key.getValue();
+				}
+			}
+			return ""; // Return an empty string if no ID is found
+		};
 	}
 	
 }
