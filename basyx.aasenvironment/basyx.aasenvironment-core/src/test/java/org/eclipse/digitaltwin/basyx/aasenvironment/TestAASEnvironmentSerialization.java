@@ -222,10 +222,10 @@ public class TestAASEnvironmentSerialization {
 	}
 	
 	private void validateRepositoriesState() {
-		assertTrue(aasRepository.getAllAas(new PaginationInfo(0, null)).getResult().containsAll(createDummyShells()));
+		assertTrue(aasRepository.getAllAas(NO_LIMIT_PAGINATION_INFO).getResult().containsAll(createDummyShells()));
 		assertTrue(submodelRepository.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult()
 				.containsAll(createDummySubmodels()));
-		assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(new PaginationInfo(0, null)).getResult()
+		assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO).getResult()
 				.containsAll(createDummyConceptDescriptions()));
 	}
 

@@ -41,6 +41,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  *
  */
 public class TestAasRepositoryHTTP extends AasRepositoryHTTPSuite {
+	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
@@ -51,7 +52,7 @@ public class TestAasRepositoryHTTP extends AasRepositoryHTTPSuite {
 	@Override
 	public void resetRepository() {
 		AasRepository repo = appContext.getBean(AasRepository.class);
-		repo.getAllAas(new PaginationInfo(0, null))
+		repo.getAllAas(NO_LIMIT_PAGINATION_INFO)
 				.getResult()
 				.stream()
 				.map(a -> a.getId())
