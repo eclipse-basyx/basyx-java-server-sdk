@@ -98,14 +98,13 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 	}
 
 	@Override
-	public ResponseEntity<PagedResult> getAllAssetAdministrationShells(@Valid List<SpecificAssetID> assetIds,
-			@Valid String idShort, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedIdentifier cursor) {
+	public ResponseEntity<PagedResult> getAllAssetAdministrationShells(@Valid List<SpecificAssetID> assetIds, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid String cursor) {
 		if (limit == null)
 			limit = 100;
 		if (cursor == null)
-			cursor = new Base64UrlEncodedIdentifier("");
+			cursor = "";
 
-		PaginationInfo paginationInfo = new PaginationInfo(limit, cursor.getIdentifier());
+		PaginationInfo paginationInfo = new PaginationInfo(limit, cursor);
 		CursorResult<List<AssetAdministrationShell>> paginatedAAS = aasRepository.getAllAas(paginationInfo);
 
 		GetAssetAdministrationShellsResult result = new GetAssetAdministrationShellsResult();
@@ -116,14 +115,13 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 	}
 
 	@Override
-	public ResponseEntity<PagedResult> getAllSubmodelReferencesAasRepository(Base64UrlEncodedIdentifier aasIdentifier,
-			@Min(1) @Valid Integer limit, @Valid Base64UrlEncodedIdentifier cursor) {
+	public ResponseEntity<PagedResult> getAllSubmodelReferencesAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Min(1) @Valid Integer limit, @Valid String cursor) {
 		if (limit == null)
 			limit = 100;
 		if (cursor == null)
-			cursor = new Base64UrlEncodedIdentifier("");
+			cursor = "";
 
-		PaginationInfo paginationInfo = new PaginationInfo(limit, cursor.getIdentifier());
+		PaginationInfo paginationInfo = new PaginationInfo(limit, cursor);
 		CursorResult<List<Reference>> submodelReferences = aasRepository.getSubmodelReferences(aasIdentifier.getIdentifier(), paginationInfo);
 
 		GetReferencesResult result = new GetReferencesResult();

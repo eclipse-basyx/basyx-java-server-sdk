@@ -54,15 +54,15 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 
 	@Override
 	public ResponseEntity<PagedResult> getAllConceptDescriptions(@Valid String idShort, @Valid Base64UrlEncodedIdentifier isCaseOf, @Valid Base64UrlEncodedIdentifier dataSpecificationRef, @Min(1) @Valid Integer limit,
-			@Valid Base64UrlEncodedIdentifier cursor) {
+			@Valid String cursor) {
 		if (limit == null)
 			limit = 100;
 		if (cursor == null)
-			cursor = new Base64UrlEncodedIdentifier("");
+			cursor = "";
 		Reference isCaseOfReference = getReference(getDecodedValue(isCaseOf));
 		Reference dataSpecificationReference = getReference(getDecodedValue(dataSpecificationRef));
 
-		PaginationInfo pInfo = new PaginationInfo(limit, cursor.getIdentifier());
+		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
 
 		CursorResult<List<ConceptDescription>> filteredResult = repoFilter.filter(idShort, isCaseOfReference, dataSpecificationReference, pInfo);
 

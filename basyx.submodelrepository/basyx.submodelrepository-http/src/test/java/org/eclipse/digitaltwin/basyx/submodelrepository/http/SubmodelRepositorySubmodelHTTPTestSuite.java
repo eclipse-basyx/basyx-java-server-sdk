@@ -168,9 +168,8 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 
 	@Test
 	public void getPaginatedSubmodel() throws ParseException, IOException {
-		String id = new Base64UrlEncodedIdentifier("7A7104BDAB57E184").getEncodedIdentifier();
 		String submodelsJSON = BaSyxSubmodelHttpTestUtils
-				.requestAllSubmodels(getURL() + "?limit=1&cursor=" + id);
+				.requestAllSubmodels(getURL() + "?limit=1&cursor=7A7104BDAB57E184");
 		String expected = getSingleSubmodelPaginatedJson();
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expected, submodelsJSON);
