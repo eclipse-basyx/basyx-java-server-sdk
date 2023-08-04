@@ -33,8 +33,9 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.TextIndexDefinition;
+import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -136,7 +137,7 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 	}
 	
 	private void configureIndexForConceptDescriptionId(MongoTemplate mongoTemplate) {
-		TextIndexDefinition idIndex = TextIndexDefinition.builder().onField(IDJSONPATH).build();
+		Index idIndex = new Index().on(IDJSONPATH, Direction.ASC);
 		mongoTemplate.indexOps(ConceptDescription.class).ensureIndex(idIndex);
 	}
 	

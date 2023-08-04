@@ -56,7 +56,9 @@ public class SubmodelRepositoryConfiguration {
 
 	@Primary
 	@Bean
-	public SubmodelServiceFactory getSubmodelService(SubmodelServiceFactory aasServiceFactory, List<SubmodelServiceFeature> features) {
+	@Autowired
+	public static SubmodelServiceFactory getSubmodelServiceFactory(SubmodelServiceFactory aasServiceFactory,
+			List<SubmodelServiceFeature> features) {
 		return new DecoratedSubmodelServiceFactory(aasServiceFactory, features);
 	}
 }

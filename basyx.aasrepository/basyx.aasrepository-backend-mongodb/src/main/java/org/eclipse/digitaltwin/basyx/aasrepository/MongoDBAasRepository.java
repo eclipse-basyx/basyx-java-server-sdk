@@ -34,8 +34,9 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.TextIndexDefinition;
+import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -70,7 +71,7 @@ public class MongoDBAasRepository implements AasRepository {
 	}
 
 	private void configureIndexForAasId(MongoTemplate mongoTemplate) {
-		TextIndexDefinition idIndex = TextIndexDefinition.builder().onField(IDJSONPATH).build();
+		Index idIndex = new Index().on(IDJSONPATH, Direction.ASC);
 		mongoTemplate.indexOps(AssetAdministrationShell.class).ensureIndex(idIndex);
 	}
 

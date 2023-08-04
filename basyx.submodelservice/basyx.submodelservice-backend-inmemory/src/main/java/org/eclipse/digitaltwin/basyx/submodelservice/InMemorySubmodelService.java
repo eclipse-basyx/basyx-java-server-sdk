@@ -145,12 +145,22 @@ public class InMemorySubmodelService implements SubmodelService {
 	private void deleteNestedSubmodelElement(String idShortPath) {
 		SubmodelElement sm = parser.getSubmodelElementFromIdShortPath(idShortPath);
 		if(helper.isDirectParentASubmodelElementList(idShortPath)) {
-			String collectionId = helper.extractDirectParentSubmodelElementListIdShort(idShortPath);
-			SubmodelElementList list = (SubmodelElementList) parser.getSubmodelElementFromIdShortPath(collectionId);
-			list.getValue().remove(sm);
+			deleteNestedSubmodelElementFromList(idShortPath, sm);
+		} else {
+			deleteNestedSubmodelElementFromCollection(idShortPath, sm);
 		}
+	}
+
+	private void deleteNestedSubmodelElementFromList(String idShortPath, SubmodelElement sm) {
+		String collectionId = helper.extractDirectParentSubmodelElementListIdShort(idShortPath);
+		SubmodelElementList list = (SubmodelElementList) parser.getSubmodelElementFromIdShortPath(collectionId);
+		list.getValue().remove(sm);
+	}
+
+	private void deleteNestedSubmodelElementFromCollection(String idShortPath, SubmodelElement sm) {
 		String collectionId = helper.extractDirectParentSubmodelElementCollectionIdShort(idShortPath);
-		SubmodelElementCollection collection = (SubmodelElementCollection) parser.getSubmodelElementFromIdShortPath(collectionId);
+		SubmodelElementCollection collection = (SubmodelElementCollection) parser
+				.getSubmodelElementFromIdShortPath(collectionId);
 		collection.getValue().remove(sm);
 	}
 
