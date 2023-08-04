@@ -23,8 +23,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
@@ -34,6 +34,9 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.Index;
@@ -45,13 +48,13 @@ import com.mongodb.client.result.DeleteResult;
 /**
  * 
  * MongoDB implementation of the AasRepository
- *
+ * 
  * @author schnicke, kevinbck
  *
  */
 public class MongoDBAasRepository implements AasRepository {
 	private static String IDJSONPATH = "id";
-
+	private static final String ID = "_id";
 	private MongoTemplate mongoTemplate;
 	private String collectionName;
 	private AasServiceFactory aasServiceFactory;
@@ -69,13 +72,21 @@ public class MongoDBAasRepository implements AasRepository {
 	}
 
 	@Override
-	public Collection<AssetAdministrationShell> getAllAas() {
-		return mongoTemplate.findAll(AssetAdministrationShell.class, collectionName);
+	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
+		Query query = new Query();
+		applySorting(query, pInfo);
+		applyPagination(query, pInfo);
+		List<AssetAdministrationShell> foundDescriptors = mongoTemplate.find(query, AssetAdministrationShell.class,
+				collectionName);
+
+		String cursor = resolveCursor(pInfo, foundDescriptors, AssetAdministrationShell::getId);
+		return new CursorResult<List<AssetAdministrationShell>>(cursor, foundDescriptors);
 	}
 
 	@Override
 	public AssetAdministrationShell getAas(String aasId) throws ElementDoesNotExistException {
-		AssetAdministrationShell aas = mongoTemplate.findOne(new Query().addCriteria(Criteria.where(IDJSONPATH).is(aasId)), AssetAdministrationShell.class, collectionName);
+		AssetAdministrationShell aas = mongoTemplate.findOne(new Query().addCriteria(Criteria.where(IDJSONPATH)
+				.is(aasId)), AssetAdministrationShell.class, collectionName);
 		if (aas == null) {
 			throw new ElementDoesNotExistException(aasId);
 		}
@@ -84,7 +95,8 @@ public class MongoDBAasRepository implements AasRepository {
 
 	@Override
 	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException {
-		if (mongoTemplate.exists(new Query().addCriteria(Criteria.where(IDJSONPATH).is(aas.getId())), AssetAdministrationShell.class, collectionName)) {
+		if (mongoTemplate.exists(new Query().addCriteria(Criteria.where(IDJSONPATH)
+				.is(aas.getId())), AssetAdministrationShell.class, collectionName)) {
 			throw new CollidingIdentifierException(aas.getId());
 		} else {
 			mongoTemplate.save(aas, collectionName);
@@ -93,7 +105,8 @@ public class MongoDBAasRepository implements AasRepository {
 
 	@Override
 	public void deleteAas(String aasId) {
-		DeleteResult result = mongoTemplate.remove(new Query().addCriteria(Criteria.where(IDJSONPATH).is(aasId)), AssetAdministrationShell.class, collectionName);
+		DeleteResult result = mongoTemplate.remove(new Query().addCriteria(Criteria.where(IDJSONPATH)
+				.is(aasId)), AssetAdministrationShell.class, collectionName);
 
 		if (result.getDeletedCount() == 0) {
 			throw new ElementDoesNotExistException(aasId);
@@ -102,10 +115,11 @@ public class MongoDBAasRepository implements AasRepository {
 
 	@Override
 	public void updateAas(String aasId, AssetAdministrationShell aas) {
-		Query query = new Query().addCriteria(Criteria.where(IDJSONPATH).is(aasId));
-		
+		Query query = new Query().addCriteria(Criteria.where(IDJSONPATH)
+				.is(aasId));
+
 		throwIfAasDoesNotExist(query, aasId);
-		
+
 		throwIfMismatchingIds(aasId, aas);
 
 		mongoTemplate.remove(query, AssetAdministrationShell.class, collectionName);
@@ -113,8 +127,11 @@ public class MongoDBAasRepository implements AasRepository {
 	}
 
 	@Override
-	public List<Reference> getSubmodelReferences(String aasId) {
-		return aasServiceFactory.create(getAas(aasId)).getSubmodelReferences();
+	public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo) {
+		CursorResult<List<Reference>> paginatedSubmodelReferences = aasServiceFactory.create(getAas(aasId))
+				.getSubmodelReferences(pInfo);
+
+		return paginatedSubmodelReferences;
 	}
 
 	@Override
@@ -140,26 +157,49 @@ public class MongoDBAasRepository implements AasRepository {
 
 		updateAas(aasId, service.getAAS());
 	}
-	
+
 	@Override
-	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException{
-		return this.getAas(aasId).getAssetInformation();
+	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException {
+		return this.getAas(aasId)
+				.getAssetInformation();
 	}
 
 	private AasService getAasService(String aasId) {
 		return aasServiceFactory.create(getAas(aasId));
 	}
-	
+
 	private void throwIfAasDoesNotExist(Query query, String aasId) {
 		if (!mongoTemplate.exists(query, AssetAdministrationShell.class, collectionName))
 			throw new ElementDoesNotExistException(aasId);
 	}
-	
+
 	private void throwIfMismatchingIds(String aasId, AssetAdministrationShell newAas) {
 		String newAasId = newAas.getId();
-		
+
 		if (!aasId.equals(newAasId))
 			throw new IdentificationMismatchException();
+	}
+
+	private <T> String resolveCursor(PaginationInfo pRequest, List<T> foundDescriptors,
+			Function<T, String> idResolver) {
+		if (foundDescriptors.isEmpty() || !pRequest.isPaged()) {
+			return null;
+		}
+		T last = foundDescriptors.get(foundDescriptors.size() - 1);
+		return idResolver.apply(last);
+	}
+
+	private void applySorting(Query query, PaginationInfo pInfo) {
+		query.with(Sort.by(Direction.ASC, ID));
+	}
+
+	private void applyPagination(Query query, PaginationInfo pInfo) {
+		if (pInfo.getCursor() != null) {
+			query.addCriteria(Criteria.where(ID).gt(pInfo.getCursor()));
+		}
+		if (pInfo.getLimit() != null) {
+			query.limit(pInfo.getLimit());
+		}
 	}
 
 }

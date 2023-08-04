@@ -41,6 +41,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,6 +52,8 @@ import org.junit.Test;
  *
  */
 public abstract class AasServiceSuite {
+
+	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 
 	private AasService aasService;
 	
@@ -72,7 +75,7 @@ public abstract class AasServiceSuite {
 	@Test
 	public void getSubmodelReference() {
 		DummyAssetAdministrationShell.addDummySubmodelReference(aas);
-		List<Reference> submodelReferences = aasService.getSubmodelReferences();
+		List<Reference> submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
 		Reference submodelReference = getFirstSubmodelReference(submodelReferences);
 		assertEquals(DummyAssetAdministrationShell.submodelReference, submodelReference);
 	}
@@ -83,7 +86,7 @@ public abstract class AasServiceSuite {
 
 		aasService.addSubmodelReference(submodel.getSemanticID());
 
-		List<Reference> submodelReferences = aasService.getSubmodelReferences();
+		List<Reference> submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
 
 		Reference submodelReference = getFirstSubmodelReference(submodelReferences);
 
@@ -94,8 +97,9 @@ public abstract class AasServiceSuite {
 	@Test
 	public void removeSubmodelReference() {
 		DummyAssetAdministrationShell.addDummySubmodelReference(aas);
-		List<Reference> submodelReferences = aasService.getSubmodelReferences();
+		List<Reference> submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
 		aasService.removeSubmodelReference(DummyAssetAdministrationShell.SUBMODEL_ID);
+		submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
 		assertEquals(0, submodelReferences.size());
 	}
 

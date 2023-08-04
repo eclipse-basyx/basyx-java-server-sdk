@@ -26,15 +26,16 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.memory;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNotFoundException;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.CursorResult;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
 
 import lombok.NonNull;
@@ -45,7 +46,7 @@ public class InMemorySubmodelRegistryStorage implements SubmodelRegistryStorage 
 	private final TreeMap<String, SubmodelDescriptor> sortedSubmodelMap = new TreeMap<>();
 
 	@Override
-	public CursorResult getAllSubmodelDescriptors(@NonNull PaginationInfo pRequest) {
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(@NonNull PaginationInfo pRequest) {
 		PaginationSupport paginationSupport = new PaginationSupport(sortedSubmodelMap);
 		return paginationSupport.getDescriptorsPaged(pRequest);
 	}

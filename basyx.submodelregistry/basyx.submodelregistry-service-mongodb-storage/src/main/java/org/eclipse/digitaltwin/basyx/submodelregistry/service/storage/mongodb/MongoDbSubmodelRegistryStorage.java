@@ -30,11 +30,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNotFoundException;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.CursorResult;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Sort.Direction;
@@ -61,14 +61,14 @@ public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage {
 	private final MongoTemplate template;
 
 	@Override
-	public CursorResult getAllSubmodelDescriptors(@NonNull PaginationInfo pRequest) {
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(@NonNull PaginationInfo pRequest) {
 		List<AggregationOperation> allAggregations = new LinkedList<>();
 		applySorting(allAggregations);
 		applyPagination(pRequest, allAggregations);
 		AggregationResults<SubmodelDescriptor> results = template.aggregate(Aggregation.newAggregation(allAggregations), SubmodelDescriptor.class, SubmodelDescriptor.class);
 		List<SubmodelDescriptor> foundDescriptors = results.getMappedResults();
 		String cursor = resolveCursor(pRequest, foundDescriptors);
-		return new CursorResult(cursor, foundDescriptors);
+		return new CursorResult<List<SubmodelDescriptor>>(cursor, foundDescriptors);
 	}
 	
 	@Override
@@ -148,8 +148,11 @@ public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage {
 	}
 
 	private void applyPagination(PaginationInfo pRequest, List<AggregationOperation> allAggregations) {
-		if (pRequest.getCursor() != null) {
-			allAggregations.add(Aggregation.match(Criteria.where(ID).gt(pRequest.getCursor())));
+		String cursor = pRequest.getCursor();
+		if (cursor != null) {
+			String id2 = ID;
+			Criteria gt = Criteria.where(id2).gt(cursor);
+			allAggregations.add(Aggregation.match(gt));
 		}
 		if (pRequest.getLimit() != null) {
 			allAggregations.add(Aggregation.limit(pRequest.getLimit()));

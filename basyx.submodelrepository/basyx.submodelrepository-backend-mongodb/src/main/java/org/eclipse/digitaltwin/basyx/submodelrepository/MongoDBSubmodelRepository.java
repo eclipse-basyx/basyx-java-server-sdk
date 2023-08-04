@@ -25,16 +25,21 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.Index;
@@ -50,6 +55,8 @@ import com.mongodb.client.result.DeleteResult;
  *
  */
 public class MongoDBSubmodelRepository implements SubmodelRepository {
+	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
+	private static final String ID = "_id";
 	private static String ID_JSON_PATH = "id";
 
 	private MongoTemplate mongoTemplate;
@@ -100,8 +107,14 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public Collection<Submodel> getAllSubmodels() {
-		return mongoTemplate.findAll(Submodel.class, collectionName);
+	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
+		Query query = new Query();
+		applySorting(query, pInfo);
+		applyPagination(query, pInfo);
+		List<Submodel> foundDescriptors = mongoTemplate.find(query, Submodel.class, collectionName);
+
+		String cursor = resolveCursor(pInfo, foundDescriptors, Submodel::getId);
+		return new CursorResult<List<Submodel>>(cursor, foundDescriptors);
 	}
 
 	@Override
@@ -158,8 +171,9 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public Collection<SubmodelElement> getSubmodelElements(String submodelId) throws ElementDoesNotExistException {
-		return getSubmodelService(submodelId).getSubmodelElements();
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo)
+			throws ElementDoesNotExistException {
+		return getSubmodelService(submodelId).getSubmodelElements(pInfo);
 	}
 
 	@Override
@@ -217,7 +231,7 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) throws ElementDoesNotExistException {
-		return new SubmodelValueOnly(getSubmodelElements(submodelId));
+		return new SubmodelValueOnly(getSubmodelElements(submodelId, NO_LIMIT_PAGINATION_INFO).getResult());
 	}
 
 	@Override
@@ -225,6 +239,28 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 		Submodel submodel = getSubmodel(submodelId);
 		submodel.setSubmodelElements(null);
 		return submodel;
+	}
+
+	private <T> String resolveCursor(PaginationInfo pRequest, List<T> foundDescriptors,
+			Function<T, String> idResolver) {
+		if (foundDescriptors.isEmpty() || !pRequest.isPaged()) {
+			return null;
+		}
+		T last = foundDescriptors.get(foundDescriptors.size() - 1);
+		return idResolver.apply(last);
+	}
+
+	private void applySorting(Query query, PaginationInfo pInfo) {
+		query.with(Sort.by(Direction.ASC, ID));
+	}
+
+	private void applyPagination(Query query, PaginationInfo pInfo) {
+		if (pInfo.getCursor() != null) {
+			query.addCriteria(Criteria.where(ID).gt(pInfo.getCursor()));
+		}
+		if (pInfo.getLimit() != null) {
+			query.limit(pInfo.getLimit());
+		}
 	}
 
 }

@@ -31,11 +31,11 @@ import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEvent;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEventSink;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.CursorResult;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.RegistrationEventSendingSubmodelRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
 import org.junit.After;
@@ -110,7 +110,7 @@ public abstract class BaseInterfaceTest {
 		return storage.getAllSubmodelDescriptors(new PaginationInfo(null, null)).getResult();
 	}
 
-	protected CursorResult getAllSubmodelsWithPagination(int limit, String cursor) {
+	protected CursorResult<List<SubmodelDescriptor>> getAllSubmodelsWithPagination(int limit, String cursor) {
 		return storage.getAllSubmodelDescriptors(new PaginationInfo(limit, cursor));
 	}
 

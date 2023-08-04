@@ -11,6 +11,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.filter.ConceptDescriptionRepositoryFilter;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.pagination.GetConceptDescriptionsResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
@@ -31,14 +33,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-03-21T12:35:49.719724407Z[GMT]")
 @RestController
 public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDescriptionRepositoryHTTPApi {
-	
+
 	private final ObjectMapper objectMapper;
 	private ConceptDescriptionRepository repository;
 	private ConceptDescriptionRepositoryFilter repoFilter;
 
 	@Autowired
-	public ConceptDescriptionRepositoryApiHTTPController(ConceptDescriptionRepository conceptDescriptionRepository,
-			ObjectMapper objectMapper) {
+	public ConceptDescriptionRepositoryApiHTTPController(ConceptDescriptionRepository conceptDescriptionRepository, ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
 		this.repository = conceptDescriptionRepository;
 		repoFilter = new ConceptDescriptionRepositoryFilter(repository);
@@ -51,32 +52,35 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 
-
 	@Override
 	public ResponseEntity<PagedResult> getAllConceptDescriptions(@Valid String idShort, @Valid Base64UrlEncodedIdentifier isCaseOf, @Valid Base64UrlEncodedIdentifier dataSpecificationRef, @Min(1) @Valid Integer limit,
 			@Valid String cursor) {
+		if (limit == null)
+			limit = 100;
+		if (cursor == null)
+			cursor = "";
 		Reference isCaseOfReference = getReference(getDecodedValue(isCaseOf));
 		Reference dataSpecificationReference = getReference(getDecodedValue(dataSpecificationRef));
 
-		List<ConceptDescription> filtered = repoFilter.filter(idShort, isCaseOfReference, dataSpecificationReference);
+		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
+
+		CursorResult<List<ConceptDescription>> filteredResult = repoFilter.filter(idShort, isCaseOfReference, dataSpecificationReference, pInfo);
 
 		GetConceptDescriptionsResult paginatedConceptDescription = new GetConceptDescriptionsResult();
-		paginatedConceptDescription.setResult(filtered);
-		paginatedConceptDescription.setPagingMetadata(new PagedResultPagingMetadata().cursor("nextConceptDescriptionCursor"));
-		
+		paginatedConceptDescription.setResult(filteredResult.getResult());
+		paginatedConceptDescription.setPagingMetadata(new PagedResultPagingMetadata().cursor(filteredResult.getCursor()));
+
 		return new ResponseEntity<PagedResult>(paginatedConceptDescription, HttpStatus.OK);
 	}
 
 	@Override
 	public ResponseEntity<ConceptDescription> getConceptDescriptionById(
 			@Parameter(in = ParameterIn.PATH, description = "The Concept Description’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("cdIdentifier") Base64UrlEncodedIdentifier cdIdentifier) {
-		return new ResponseEntity<ConceptDescription>(repository.getConceptDescription(cdIdentifier.getIdentifier()),
-				HttpStatus.OK);
+		return new ResponseEntity<ConceptDescription>(repository.getConceptDescription(cdIdentifier.getIdentifier()), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<ConceptDescription> postConceptDescription(
-			@Parameter(in = ParameterIn.DEFAULT, description = "Concept Description object", required = true, schema = @Schema()) @Valid @RequestBody ConceptDescription body) {
+	public ResponseEntity<ConceptDescription> postConceptDescription(@Parameter(in = ParameterIn.DEFAULT, description = "Concept Description object", required = true, schema = @Schema()) @Valid @RequestBody ConceptDescription body) {
 		repository.createConceptDescription(body);
 		return new ResponseEntity<ConceptDescription>(body, HttpStatus.CREATED);
 	}

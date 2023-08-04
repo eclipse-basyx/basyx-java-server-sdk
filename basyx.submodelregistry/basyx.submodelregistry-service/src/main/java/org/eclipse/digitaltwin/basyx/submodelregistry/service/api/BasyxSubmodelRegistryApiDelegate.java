@@ -25,26 +25,24 @@
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.api;
 
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
+import java.util.List;
 
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.GetSubmodelDescriptorsResult;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.PagedResultPagingMetadata;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEventSink;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.CursorResult;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.RegistrationEventSendingSubmodelRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Component
 public class BasyxSubmodelRegistryApiDelegate implements SubmodelDescriptorsApiDelegate {
 
 	private final SubmodelRegistryStorage storage;
-	
+
 	private final LocationBuilder locationBuilder;
 
 	public BasyxSubmodelRegistryApiDelegate(SubmodelRegistryStorage storage, RegistryEventSink eventSink, LocationBuilder locationBuilder) {
@@ -86,7 +84,7 @@ public class BasyxSubmodelRegistryApiDelegate implements SubmodelDescriptorsApiD
 	@Override
 	public ResponseEntity<GetSubmodelDescriptorsResult> getAllSubmodelDescriptors(Integer limit, String cursor) {
 		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
-		CursorResult cResult = storage.getAllSubmodelDescriptors(pInfo);
+		CursorResult<List<SubmodelDescriptor>> cResult = storage.getAllSubmodelDescriptors(pInfo);
 		GetSubmodelDescriptorsResult gsdResult = new GetSubmodelDescriptorsResult();
 		gsdResult.setPagingMetadata(new PagedResultPagingMetadata().cursor(cResult.getCursor()));
 		gsdResult.setResult(cResult.getResult());

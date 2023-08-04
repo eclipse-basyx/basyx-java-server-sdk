@@ -24,15 +24,18 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage;
 
+import java.util.List;
 import java.util.Set;
 
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNotFoundException;
 
 public interface SubmodelRegistryStorage {
 
-	CursorResult getAllSubmodelDescriptors(PaginationInfo pRequest);
+	CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest);
 
 	SubmodelDescriptor getSubmodelDescriptor(String submodelId) throws SubmodelNotFoundException;
 

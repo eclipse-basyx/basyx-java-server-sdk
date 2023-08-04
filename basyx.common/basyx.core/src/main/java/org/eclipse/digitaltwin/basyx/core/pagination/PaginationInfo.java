@@ -1,5 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 DFKI GmbH (https://www.dfki.de/en/web)
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,17 +23,35 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasregistry.service.storage;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+package org.eclipse.digitaltwin.basyx.core.pagination;
 
-@Data
-@RequiredArgsConstructor
-public class CursorResult<T> {
+public class PaginationInfo {
+	private Integer limit;
+	private String cursor;
 
-	final String cursor;
+	public PaginationInfo(Integer limit, String cursor) {
+		this.limit = limit;
+		this.cursor = cursor;
+	}
 
-	final T result;
+	public Integer getLimit() {
+		return limit;
+	}
 
+	public String getCursor() {
+		return cursor;
+	}
+
+	public boolean hasLimit() {
+		return limit != null && limit != 0;
+	}
+
+	public boolean hasCursor() {
+		return cursor != null && !cursor.isEmpty();
+	}
+
+	public boolean isPaged() {
+		return hasLimit() || hasCursor();
+	}
 }
