@@ -31,6 +31,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.DummyConceptDescriptionFactory;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.springframework.boot.SpringApplication;
@@ -44,6 +45,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  *
  */
 public class TestConceptDescriptionRepositoryHTTP extends ConceptDescriptionRepositoryHTTPSuite {
+	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
@@ -59,7 +61,11 @@ public class TestConceptDescriptionRepositoryHTTP extends ConceptDescriptionRepo
 	}
 
 	private void resetRepoToDefaultConceptDescriptions(ConceptDescriptionRepository repo, Collection<ConceptDescription> conceptDescriptions) {
-		repo.getAllConceptDescriptions().stream().map(s -> s.getId()).forEach(repo::deleteConceptDescription);
+		repo.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO)
+				.getResult()
+				.stream()
+				.map(s -> s.getId())
+				.forEach(repo::deleteConceptDescription);
 
 		conceptDescriptions.forEach(repo::createConceptDescription);
 	}

@@ -39,6 +39,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
@@ -46,6 +47,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -57,9 +60,12 @@ import org.junit.Test;
  */
 public abstract class AasRepositorySuite {
 
+	private static final String AAS2 = "aas2";
 	private static final String AAS_1_ID = "aas1/s";
 	private AssetAdministrationShell aas1;
 	private AssetAdministrationShell aas2;
+
+	private final PaginationInfo noLimitPaginationInfo = new PaginationInfo(0, "");
 
 	private List<AssetAdministrationShell> preconfiguredShells = new ArrayList<>();
 
@@ -73,10 +79,12 @@ public abstract class AasRepositorySuite {
 	public void createAasRepoWithDummyAas() {
 		aasRepo = getAasRepositoryFactory().create();
 
-		aas1 = new DefaultAssetAdministrationShell.Builder().id(AAS_1_ID).submodels(createDummyReference(DUMMY_SUBMODEL_ID))
+		aas1 = new DefaultAssetAdministrationShell.Builder().id(AAS_1_ID)
+				.submodels(createDummyReference(DUMMY_SUBMODEL_ID))
 				.build();
 
-		aas2 = new DefaultAssetAdministrationShell.Builder().id("aas2").build();
+		aas2 = new DefaultAssetAdministrationShell.Builder().id(AAS2)
+				.build();
 		AssetInformation assetInfo = createDummyAssetInformation();
 		aas2.setAssetInformation(assetInfo);
 
@@ -93,7 +101,9 @@ public abstract class AasRepositorySuite {
 
 	@Test
 	public void allAasRetrieval() throws Exception {
-		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas();
+		PaginationInfo pInfo = new PaginationInfo(2, null);
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(pInfo)
+				.getResult();
 		assertEquals(preconfiguredShells, coll);
 	}
 
@@ -112,11 +122,11 @@ public abstract class AasRepositorySuite {
 	public void createWithCollidingAasIdentifiers() throws CollidingIdentifierException {
 		aasRepo.createAas(aas1);
 	}
-	
+
 	@Test
 	public void deleteAas() {
 		aasRepo.deleteAas(aas1.getId());
-		
+
 		try {
 			aasRepo.getAas(aas1.getId());
 			fail();
@@ -132,14 +142,16 @@ public abstract class AasRepositorySuite {
 	@Test
 	public void getSubmodelReferences() {
 		Reference reference = createDummyReference(DUMMY_SUBMODEL_ID);
-		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId());
 
+		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo)
+				.getResult();
 		assertTrue(submodelReferences.contains(reference));
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getSubmodelReferencesOfNonExistingAas() {
-		aasRepo.getSubmodelReferences("doesNotMatter");
+		aasRepo.getSubmodelReferences("doesNotMatter", noLimitPaginationInfo)
+				.getResult();
 	}
 
 	@Test
@@ -147,7 +159,8 @@ public abstract class AasRepositorySuite {
 		Reference reference = createDummyReference(DUMMY_SUBMODEL_ID);
 		aasRepo.addSubmodelReference(aas1.getId(), reference);
 
-		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId());
+		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo)
+				.getResult();
 
 		assertTrue(submodelReferences.contains(reference));
 	}
@@ -163,7 +176,8 @@ public abstract class AasRepositorySuite {
 		Reference reference = createDummyReference(DUMMY_SUBMODEL_ID);
 		aasRepo.removeSubmodelReference(aas1.getId(), DUMMY_SUBMODEL_ID);
 
-		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId());
+		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo)
+				.getResult();
 
 		assertFalse(submodelReferences.contains(reference));
 	}
@@ -177,27 +191,28 @@ public abstract class AasRepositorySuite {
 	public void removeSubmodelReferenceOfNonExistingAas() {
 		aasRepo.removeSubmodelReference("nonExisting", "doesNotMatter");
 	}
-	
+
 	@Test
 	public void updateAas() {
 		List<Reference> submodelReferences = Arrays.asList(createDummyReference("dummySubmodelId1"), createDummyReference("dummySubmodelId2"));
 		aas1.setSubmodels(submodelReferences);
-		
+
 		aasRepo.updateAas(AAS_1_ID, aas1);
 
 		assertEquals(aas1, aasRepo.getAas(AAS_1_ID));
 	}
-	
+
 	@Test(expected = ElementDoesNotExistException.class)
 	public void updateNonExistingAas() {
 		aasRepo.updateAas("nonExisting", aas1);
 	}
-	
+
 	@Test(expected = IdentificationMismatchException.class)
 	public void updateExistingAasWithMismatchedIdentifier() {
-		AssetAdministrationShell aas = new DefaultAssetAdministrationShell.Builder().id("mismatchId").submodels(createDummyReference(DUMMY_SUBMODEL_ID))
+		AssetAdministrationShell aas = new DefaultAssetAdministrationShell.Builder().id("mismatchId")
+				.submodels(createDummyReference(DUMMY_SUBMODEL_ID))
 				.build();
-		
+
 		aasRepo.updateAas(AAS_1_ID, aas);
 	}
 
@@ -221,15 +236,79 @@ public abstract class AasRepositorySuite {
 	@Test(expected = ElementDoesNotExistException.class)
 	public void setAssetInformationOfNonExistingAas() {
 		aasRepo.setAssetInformation("nonExisting", createDummyAssetInformation());
-	}	
+	}
+
+	@Test
+	public void getPaginatedAssetAdministrationShell() {
+		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null));
+		List<AssetAdministrationShell> resultList = result.getResult();
+		assertEquals(1, resultList.size());
+		assertEquals(AAS_1_ID, resultList.stream()
+				.findFirst()
+				.get()
+				.getId());
+	}
+
+	@Test
+	public void getPaginatedAssetAdministrationShellIterating() {
+		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null));
+		String cursor = result.getCursor();
+
+		result = aasRepo.getAllAas(new PaginationInfo(1, cursor));
+		List<AssetAdministrationShell> resultList = result.getResult();
+		assertEquals(1, resultList.size());
+		assertEquals(AAS2, resultList.stream()
+				.findFirst()
+				.get()
+				.getId());
+	}
+
+	@Test
+	public void getPaginatedSubmodelReferencesPaginated() {
+		List<Reference> submodelReferences = createDummyReferences();
+		AssetAdministrationShell aas = new DefaultAssetAdministrationShell.Builder().id("paginatedAAS")
+				.submodels(submodelReferences)
+				.build();
+		aasRepo.createAas(aas);
+		PaginationInfo pInfo = new PaginationInfo(1, "");
+		CursorResult<List<Reference>> paginatedReferences = aasRepo.getSubmodelReferences("paginatedAAS", pInfo);
+		assertEquals(1, paginatedReferences.getResult()
+				.size());
+		assertEquals(submodelReferences.stream()
+				.findFirst()
+				.get(),
+				paginatedReferences.getResult()
+						.stream()
+						.findFirst()
+						.get());
+	}
 
 	public static Reference createDummyReference(String submodelId) {
-		return new DefaultReference.Builder()
-				.keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(submodelId).build()).build();
+		return new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL)
+				.value(submodelId)
+				.build())
+				.build();
 	}
 
 	private AssetInformation createDummyAssetInformation() {
-		return new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetID("assetIDTestKey")
+		return new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
+				.globalAssetID("assetIDTestKey")
 				.build();
+	}
+
+	/**
+	 * @return 5 References each with value of smRef_(0-4)
+	 */
+	private List<Reference> createDummyReferences() {
+		List<Reference> referenceList = new ArrayList<>();
+		for (int i = 0; i < 5; i++) {
+			Reference ref = new DefaultReference.Builder().type(ReferenceTypes.MODEL_REFERENCE)
+					.keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL)
+							.value("smRef_" + i)
+							.build())
+					.build();
+			referenceList.add(ref);
+		}
+		return referenceList;
 	}
 }

@@ -29,6 +29,8 @@ import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 /**
  * Specifies the overall AasService API
@@ -50,7 +52,7 @@ public interface AasService {
 	 * 
 	 * @return A List containing all Submodel References
 	 */
-	public List<Reference> getSubmodelReferences();
+	public CursorResult<List<Reference>> getSubmodelReferences(PaginationInfo pInfo);
 
 	/**
 	 * Adds a Submodel Reference

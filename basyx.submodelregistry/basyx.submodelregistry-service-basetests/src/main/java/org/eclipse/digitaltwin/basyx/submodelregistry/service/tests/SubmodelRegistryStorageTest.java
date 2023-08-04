@@ -32,11 +32,11 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.LangStringTextType;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNotFoundException;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.CursorResult;
 import org.junit.Test;
 
 public abstract class SubmodelRegistryStorageTest extends ExtensionsTest {
@@ -91,16 +91,17 @@ public abstract class SubmodelRegistryStorageTest extends ExtensionsTest {
 
 	@Test
 	public void whenGetAllSubmodelDescriptorsOverTwoPages_thenReturnPageStepByStep() throws IOException {
-		CursorResult firstResult = getAllSubmodelsWithPagination(2, null);
+		CursorResult<List<SubmodelDescriptor>> firstResult = getAllSubmodelsWithPagination(2, null);
 		List<SubmodelDescriptor> expected = testResourcesLoader.loadRepositoryDefinition(SubmodelDescriptor.class);
 
-		CursorResult secondResult = getAllSubmodelsWithPagination(2, firstResult.getCursor());
+		CursorResult<List<SubmodelDescriptor>> secondResult = getAllSubmodelsWithPagination(2, firstResult.getCursor());
 
 		assertThat(firstResult.getResult()).containsExactlyInAnyOrderElementsOf(expected.subList(0, 2));
 		assertThat(secondResult.getResult()).containsExactlyInAnyOrderElementsOf(expected.subList(2, 4));
 
 		if (secondResult.getCursor() != null) { // implementation specific
-			CursorResult thirdResult = getAllSubmodelsWithPagination(2, secondResult.getCursor());
+			CursorResult<List<SubmodelDescriptor>> thirdResult = getAllSubmodelsWithPagination(2,
+					secondResult.getCursor());
 			assertThat(thirdResult.getResult()).isEmpty();
 		}
 		verifyNoEventSent();

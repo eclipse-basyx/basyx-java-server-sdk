@@ -25,12 +25,14 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 /**
  * Specifies the overall ConceptDescriptionRepository API
@@ -43,33 +45,36 @@ public interface ConceptDescriptionRepository {
 	/**
 	 * Retrieves all ConceptDescriptions from the repository
 	 * 
-	 * @return a collection of all found ConceptDescriptions
+	 * @return a list of all found ConceptDescriptions
 	 */
-	public Collection<ConceptDescription> getAllConceptDescriptions();
-	
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptions(PaginationInfo pInfo);
+
 	/**
-	 * Retrieves all ConceptDescriptions from the repository matching the passed idShort
+	 * Retrieves all ConceptDescriptions from the repository matching the passed
+	 * idShort
 	 * 
 	 * @param idShort
-	 * @return a collection of all matched ConceptDescriptions
+	 * @return a list of all matched ConceptDescriptions
 	 */
-	public Collection<ConceptDescription> getAllConceptDescriptionsByIdShort(String idShort);
-	
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIdShort(String idShort, PaginationInfo pInfo);
+
 	/**
-	 * Retrieves all ConceptDescriptions from the repository matching the passed isCaseOf
+	 * Retrieves all ConceptDescriptions from the repository matching the passed
+	 * isCaseOf
 	 * 
 	 * @param isCaseOf
-	 * @return a collection of all matched ConceptDescriptions
+	 * @return a list of all matched ConceptDescriptions
 	 */
-	public Collection<ConceptDescription> getAllConceptDescriptionsByIsCaseOf(Reference isCaseOf);
-	
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIsCaseOf(Reference isCaseOf, PaginationInfo pInfo);
+
 	/**
-	 * Retrieves all ConceptDescriptions from the repository matching the passed dataSpecificationReference
+	 * Retrieves all ConceptDescriptions from the repository matching the passed
+	 * dataSpecificationReference
 	 * 
 	 * @param dataSpecificationReference
-	 * @return a collection of all matched ConceptDescriptions
+	 * @return a list of all matched ConceptDescriptions
 	 */
-	public Collection<ConceptDescription> getAllConceptDescriptionsByDataSpecificationReference(Reference dataSpecificationReference);
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByDataSpecificationReference(Reference dataSpecificationReference, PaginationInfo pInfo);
 
 	/**
 	 * Retrieves the ConceptDescription with the specific id
@@ -111,5 +116,5 @@ public interface ConceptDescriptionRepository {
 	public default String getName() {
 		return "cd-repo";
 	}
-	
+  
 }

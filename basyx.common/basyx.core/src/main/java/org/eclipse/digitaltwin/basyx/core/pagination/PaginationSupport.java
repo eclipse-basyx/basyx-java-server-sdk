@@ -1,5 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 DFKI GmbH (https://www.dfki.de/en/web)
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,56 +23,38 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasregistry.service.storage.memory;
 
-import java.util.Collections;
+package org.eclipse.digitaltwin.basyx.core.pagination;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
-import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
-import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
 public class PaginationSupport<T extends Object> {
 
-	private final TreeMap<String, T> sortedDescriptorMap;
-	
-	private final Function<T, String> idResolver; 
+	private final TreeMap<String, T> sortedMap;
+	private final Function<T, String> idResolver;
 
-	public CursorResult<List<T>> getDescriptorsPaged(PaginationInfo pInfo) {
-		return getDescriptorsPagedAndFiltered(pInfo, null, null);
+	public PaginationSupport(TreeMap<String, T> sortedMap, Function<T, String> idResolver) {
+		this.sortedMap = sortedMap;
+		this.idResolver = idResolver;
 	}
-	
-	public CursorResult<List<T>> getDescriptorsPagedAndFiltered(PaginationInfo pInfo, DescriptorFilter filter, Predicate<T> filterMethod) {
-				
+
+	public CursorResult<List<T>> getPaged(PaginationInfo pInfo) {
 		Map<String, T> cursorView = getCursorView(pInfo);
-		Stream<Entry<String, T>> eStream = cursorView.entrySet().stream();
-		
-		eStream = applyFilter(filter, e -> filterMethod.test(e.getValue()), eStream);
+		Stream<Entry<String, T>> eStream = cursorView.entrySet()
+				.stream();
+
 		Stream<T> tStream = eStream.map(Entry::getValue);
 		tStream = applyLimit(pInfo, tStream);
-		
-		List<T> descriptorList = tStream.collect(Collectors.toList());
-		
-		String cursor = computeNextCursor(descriptorList);
-		return new CursorResult<>(cursor, Collections.unmodifiableList(descriptorList));
-	}
 
-
-	private Stream<Entry<String, T>> applyFilter(DescriptorFilter filter, Predicate<Entry<String, T>> filterMethod, Stream<Entry<String, T>> aStream) {
-		if (filter != null && filter.isFiltered()) {
-			return aStream.filter(filterMethod);
-		}
-		return aStream;
+		List<T> resultList = tStream.collect(Collectors.toList());
+		String cursor = computeNextCursor(resultList);
+		return new CursorResult<>(cursor, resultList);
 	}
 
 	private Stream<T> applyLimit(PaginationInfo info, Stream<T> aStream) {
@@ -81,20 +64,21 @@ public class PaginationSupport<T extends Object> {
 		return aStream;
 	}
 
-	private String computeNextCursor(List<T> descriptorList) {
-		if (!descriptorList.isEmpty()) {
-			T last = descriptorList.get(descriptorList.size()-1);
+	private String computeNextCursor(List<T> list) {
+		if (!list.isEmpty()) {
+			T last = list.get(list.size() - 1);
 			String lastId = idResolver.apply(last);
-			return sortedDescriptorMap.higherKey(lastId);
+			return sortedMap.higherKey(lastId);
 		}
 		return null;
 	}
 
 	private Map<String, T> getCursorView(PaginationInfo info) {
 		if (info.hasCursor()) {
-			return sortedDescriptorMap.tailMap(info.getCursor());
+			return sortedMap.tailMap(info.getCursor());
 		} else {
-			return sortedDescriptorMap;
+			return sortedMap;
 		}
 	}
+
 }

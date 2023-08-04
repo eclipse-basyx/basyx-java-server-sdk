@@ -24,13 +24,14 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.memory;
 
+import java.util.List;
 import java.util.Set;
 
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNotFoundException;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.CursorResult;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
 
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,7 @@ public class ThreadSafeSubmodelRegistryStorageDecorator implements SubmodelRegis
 	private final ThreadSafeAccess access = new ThreadSafeAccess();
 	
 	@Override
-	public CursorResult getAllSubmodelDescriptors(PaginationInfo pRequest) {
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest) {
 		return access.read(storage::getAllSubmodelDescriptors, pRequest);
 	}
 	

@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -165,6 +166,15 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 		assertEquals(HttpStatus.NOT_FOUND.value(), deletionResponse.getCode());
 	}
 
+	@Test
+	public void getPaginatedSubmodel() throws ParseException, IOException {
+		String submodelsJSON = BaSyxSubmodelHttpTestUtils
+				.requestAllSubmodels(getURL() + "?limit=1&cursor=7A7104BDAB57E184");
+		String expected = getSingleSubmodelPaginatedJson();
+
+		BaSyxHttpTestUtils.assertSameJSONContent(expected, submodelsJSON);
+	}
+
 	private void assertSubmodelCreationReponse(String submodelJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JsonProcessingException, JsonMappingException {
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
 		String response = BaSyxHttpTestUtils.getResponseAsString(creationResponse);
@@ -215,6 +225,10 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 
 	private String getAllSubmodelJSON() throws IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("MultipleSubmodels.json");
+	}
+
+	private String getSingleSubmodelPaginatedJson() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelPaginated.json");
 	}
 
 	protected List<Submodel> createSubmodels() {

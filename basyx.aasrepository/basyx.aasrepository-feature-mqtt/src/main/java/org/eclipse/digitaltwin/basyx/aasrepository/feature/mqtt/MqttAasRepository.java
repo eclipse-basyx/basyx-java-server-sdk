@@ -24,7 +24,6 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
@@ -35,6 +34,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -63,8 +64,8 @@ public class MqttAasRepository implements AasRepository {
 	}
 
 	@Override
-	public Collection<AssetAdministrationShell> getAllAas() {
-		return decorated.getAllAas();
+	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
+		return decorated.getAllAas(pInfo);
 	}
 
 	@Override
@@ -97,8 +98,8 @@ public class MqttAasRepository implements AasRepository {
 	}
 
 	@Override
-	public List<Reference> getSubmodelReferences(String aasId) {
-		return decorated.getSubmodelReferences(aasId);
+	public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo) {
+		return decorated.getSubmodelReferences(aasId, pInfo);
 	}
 
 	@Override
@@ -115,9 +116,9 @@ public class MqttAasRepository implements AasRepository {
 	public void setAssetInformation(String aasId, AssetInformation aasInfo) throws ElementDoesNotExistException {
 		decorated.setAssetInformation(aasId, aasInfo);
 	}
-	
+
 	@Override
-	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException{
+	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException {
 		return decorated.getAssetInformation(aasId);
 	}
 
