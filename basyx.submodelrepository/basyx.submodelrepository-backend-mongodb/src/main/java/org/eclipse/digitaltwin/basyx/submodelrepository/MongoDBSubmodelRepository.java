@@ -42,7 +42,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.TextIndexDefinition;
+import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -101,9 +101,7 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	}
 
 	private void configureIndexForSubmodelId(MongoTemplate mongoTemplate) {
-		TextIndexDefinition idIndex = TextIndexDefinition.builder()
-				.onField(ID_JSON_PATH)
-				.build();
+		Index idIndex = new Index().on(ID_JSON_PATH, Direction.ASC);
 		mongoTemplate.indexOps(Submodel.class)
 				.ensureIndex(idIndex);
 	}
@@ -113,7 +111,6 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 		Query query = new Query();
 		applySorting(query, pInfo);
 		applyPagination(query, pInfo);
-
 		List<Submodel> foundDescriptors = mongoTemplate.find(query, Submodel.class, collectionName);
 
 		String cursor = resolveCursor(pInfo, foundDescriptors, Submodel::getId);

@@ -53,7 +53,6 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStor
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 
 import lombok.RequiredArgsConstructor;
 

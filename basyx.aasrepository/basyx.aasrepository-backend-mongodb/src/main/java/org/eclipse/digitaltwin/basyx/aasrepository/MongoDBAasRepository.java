@@ -39,7 +39,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.TextIndexDefinition;
+import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -67,11 +67,8 @@ public class MongoDBAasRepository implements AasRepository {
 	}
 
 	private void configureIndexForAasId(MongoTemplate mongoTemplate) {
-		TextIndexDefinition idIndex = TextIndexDefinition.builder()
-				.onField(IDJSONPATH)
-				.build();
-		mongoTemplate.indexOps(AssetAdministrationShell.class)
-				.ensureIndex(idIndex);
+		Index idIndex = new Index().on(IDJSONPATH, Direction.ASC);
+		mongoTemplate.indexOps(AssetAdministrationShell.class).ensureIndex(idIndex);
 	}
 
 	@Override
@@ -79,7 +76,6 @@ public class MongoDBAasRepository implements AasRepository {
 		Query query = new Query();
 		applySorting(query, pInfo);
 		applyPagination(query, pInfo);
-
 		List<AssetAdministrationShell> foundDescriptors = mongoTemplate.find(query, AssetAdministrationShell.class,
 				collectionName);
 
