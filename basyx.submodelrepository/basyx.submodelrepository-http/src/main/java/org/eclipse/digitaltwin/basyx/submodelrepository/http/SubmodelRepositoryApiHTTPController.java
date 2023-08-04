@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collection;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -39,6 +40,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
+import org.eclipse.digitaltwin.basyx.pagination.GetSubmodelElementsResult;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination.GetSubmodelElementsResult;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination.GetSubmodelsResult;
@@ -141,13 +143,13 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	@Override
 	public ResponseEntity<SubmodelElement> postSubmodelElementByPathSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid SubmodelElement body, @Valid String level, @Valid String extent) {
 		repository.createSubmodelElement(submodelIdentifier.getIdentifier(), idShortPath, body);
-		return new ResponseEntity<SubmodelElement>(HttpStatus.OK);
+		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
 	}
 
 	@Override
 	public ResponseEntity<SubmodelElement> postSubmodelElementSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, @Valid SubmodelElement body) {
 		repository.createSubmodelElement(submodelIdentifier.getIdentifier(), body);
-		return new ResponseEntity<SubmodelElement>(HttpStatus.OK);
+		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
 	}
 
 	@Override
@@ -172,7 +174,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 	private ResponseEntity<Void> handleSubmodelElementValueSetRequest(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, SubmodelElementValue body) {
 		repository.setSubmodelElementValue(submodelIdentifier.getIdentifier(), idShortPath, body);
-		return new ResponseEntity<Void>(HttpStatus.OK);
+		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 
 	private ResponseEntity<SubmodelElementValue> handleSubmodelElementValueGetRequest(String submodelIdentifier, String idShortPath) {

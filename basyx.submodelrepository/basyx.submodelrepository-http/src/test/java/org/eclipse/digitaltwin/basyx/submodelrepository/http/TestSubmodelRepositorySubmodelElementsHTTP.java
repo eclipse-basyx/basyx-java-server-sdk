@@ -30,7 +30,10 @@ import java.util.Collection;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelservice.http.SubmodelServiceSubmodelElementsTestSuiteHTTP;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -42,7 +45,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @author schnicke, danish
  *
  */
-public class TestSubmodelRepositorySubmodelElementsHTTP extends SubmodelRepositorySubmodelElementsTestSuiteHTTP {
+public class TestSubmodelRepositorySubmodelElementsHTTP extends SubmodelServiceSubmodelElementsTestSuiteHTTP {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static ConfigurableApplicationContext appContext;
 
@@ -51,15 +54,14 @@ public class TestSubmodelRepositorySubmodelElementsHTTP extends SubmodelReposito
 		appContext = new SpringApplication(DummySubmodelRepositoryComponent.class).run(new String[] {});
 	}
 
-	@Override
-	public void populateRepository() {
+	@Before
+	public void createSubmodelOnRepo() {
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
-		Collection<Submodel> submodels = createSubmodels();
-		submodels.forEach(repo::createSubmodel);
+		repo.createSubmodel(createSubmodel());
 	}
 
-	@Override
-	public void resetRepository() {
+	@After
+	public void removeSubmodelFromRepo() {
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
 		repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult().stream().map(s -> s.getId())
 				.forEach(repo::deleteSubmodel);
@@ -72,7 +74,9 @@ public class TestSubmodelRepositorySubmodelElementsHTTP extends SubmodelReposito
 
 	@Override
 	protected String getURL() {
-		return "http://localhost:8080/submodels";
+
+		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath("http://localhost:8080/submodels",
+				createSubmodel().getId());
 	}
 
 }
