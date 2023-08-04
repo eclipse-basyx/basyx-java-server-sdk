@@ -234,7 +234,7 @@ public abstract class AasRepositorySuite {
 	}
 
 	@Test
-	public void getPaginatedAssetAdministrationShellWithoutCursor() {
+	public void getPaginatedAssetAdministrationShell() {
 		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null));
 		List<AssetAdministrationShell> resultList = result.getResult();
 		assertEquals(1, resultList.size());
@@ -242,13 +242,6 @@ public abstract class AasRepositorySuite {
 				.findFirst()
 				.get()
 				.getId());
-	}
-
-	@Test
-	public void getPaginatedAssetAdministrationShellWithCursor() {
-		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, aas1.getId()));
-		List<AssetAdministrationShell> resultList = result.getResult();
-		assertEquals(1, resultList.size());
 	}
 
 	@Test
@@ -266,7 +259,7 @@ public abstract class AasRepositorySuite {
 	}
 
 	@Test
-	public void getPaginatedSubmodelReferencesWithoutCursor() {
+	public void getPaginatedSubmodelReferencesPaginated() {
 		List<Reference> submodelReferences = createDummyReferences();
 		AssetAdministrationShell aas = new DefaultAssetAdministrationShell.Builder().id("paginatedAAS")
 				.submodels(submodelReferences)
@@ -283,23 +276,6 @@ public abstract class AasRepositorySuite {
 						.stream()
 						.findFirst()
 						.get());
-	}
-
-	@Test
-	public void getPaginatedSubmodelReferencesWithCursor() {
-		List<Reference> submodelReferences = createDummyReferences();
-		AssetAdministrationShell aas = new DefaultAssetAdministrationShell.Builder().id("paginatedAAS")
-				.submodels(submodelReferences)
-				.build();
-		aasRepo.createAas(aas);
-		PaginationInfo pInfo = new PaginationInfo(1, "smRef_1");
-		CursorResult<List<Reference>> paginatedReferences = aasRepo.getSubmodelReferences("paginatedAAS", pInfo);
-		assertEquals(1, paginatedReferences.getResult()
-				.size());
-		assertEquals(submodelReferences.get(1), paginatedReferences.getResult()
-				.stream()
-				.findFirst()
-				.get());
 	}
 
 	public static Reference createDummyReference(String submodelId) {

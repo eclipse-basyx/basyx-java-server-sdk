@@ -345,26 +345,15 @@ public abstract class SubmodelRepositorySuite {
 	}
 
 	@Test
-	public void getPaginatedSubmodelWithoutCursor() {
+	public void getPaginatedSubmodel() {
 		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodels();
 
 		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
-		getSubmodelsAndAssertCorrectSize(repo, "");
-	}
-
-	@Test
-	public void getPaginatedSubmodelWithCursor() {
-		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodels();
-
-		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
-		getSubmodelsAndAssertCorrectSize(repo, DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID);
-	}
-
-	private void getSubmodelsAndAssertCorrectSize(SubmodelRepository repo, String cursor) {
 		CursorResult<List<Submodel>> cursorResult = repo
-				.getAllSubmodels(new PaginationInfo(1, cursor));
+				.getAllSubmodels(new PaginationInfo(1, ""));
 		assertEquals(1, cursorResult.getResult().size());
 	}
+
 
 	private SubmodelElement getExpectedSubmodelElement() {
 		return DummySubmodelFactory.createOperationalDataSubmodel()

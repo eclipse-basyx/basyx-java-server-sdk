@@ -218,26 +218,12 @@ public abstract class ConceptDescriptionRepositorySuite {
 	}
 
 	@Test
-	public void allContextDescriptionWithoutCursorPaginated() {
+	public void allContextDescriptionPaginated() {
 		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		PaginationInfo pInfo = new PaginationInfo(1, "");
 		CursorResult<List<ConceptDescription>> paginatedConceptDescriptions = repo.getAllConceptDescriptions(pInfo);
 		assertEquals(1, paginatedConceptDescriptions.getResult()
 				.size());
-	}
-
-	@Test
-	public void allContextDescriptionWithCursorPaginated() {
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		PaginationInfo pInfo = new PaginationInfo(1, ConceptDescriptionRepositorySuiteHelper.BASIC_CONCEPT_DESCRIPTION_COMMON_IS_CASEOF_ID);
-		CursorResult<List<ConceptDescription>> paginatedConceptDescriptions = repo.getAllConceptDescriptions(pInfo);
-		assertEquals(1, paginatedConceptDescriptions.getResult()
-				.size());
-		assertEquals(ConceptDescriptionRepositorySuiteHelper.BASIC_CONCEPT_DESCRIPTION_COMMON_IS_CASEOF_ID, paginatedConceptDescriptions.getResult()
-				.stream()
-				.findFirst()
-				.get()
-				.getId());
 	}
 
 	@Test

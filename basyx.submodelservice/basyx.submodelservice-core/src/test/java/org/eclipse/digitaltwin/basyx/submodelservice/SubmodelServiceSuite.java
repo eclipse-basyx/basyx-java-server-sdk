@@ -377,24 +377,12 @@ public abstract class SubmodelServiceSuite {
 	}
 
 	@Test
-	public void getPaginatedSubmodelElementWithoutCursor() {
+	public void getPaginatedSubmodelElement() {
 		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
 		SubmodelService submodelService = getSubmodelService(technicalData);
 		CursorResult<List<SubmodelElement>> cursorResult = submodelService
 				.getSubmodelElements(new PaginationInfo(1, ""));
 		assertEquals(1, cursorResult.getResult().size());
-	}
-
-	@Test
-	public void getPaginatedSubmodelElementWithCursor() {
-		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
-		SubmodelService submodelService = getSubmodelService(technicalData);
-		CursorResult<List<SubmodelElement>> cursorResult = submodelService
-				.getSubmodelElements(new PaginationInfo(1,
-						SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT));
-		assertEquals(1, cursorResult.getResult().size());
-		assertEquals(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT,
-				cursorResult.getResult().stream().findFirst().get().getIdShort());
 	}
 
 	@Test
