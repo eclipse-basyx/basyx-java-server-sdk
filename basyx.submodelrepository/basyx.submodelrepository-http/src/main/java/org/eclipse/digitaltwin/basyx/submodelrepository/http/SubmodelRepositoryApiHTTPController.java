@@ -27,7 +27,6 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Collection;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -42,7 +41,6 @@ import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.eclipse.digitaltwin.basyx.pagination.GetSubmodelElementsResult;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination.GetSubmodelElementsResult;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination.GetSubmodelsResult;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;

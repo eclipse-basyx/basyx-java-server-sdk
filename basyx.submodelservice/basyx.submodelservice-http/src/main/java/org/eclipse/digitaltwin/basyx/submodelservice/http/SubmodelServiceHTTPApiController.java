@@ -25,14 +25,15 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.http;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.eclipse.digitaltwin.basyx.pagination.GetSubmodelElementsResult;
@@ -54,6 +55,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @RestController
 public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi {
 
+	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private SubmodelService service;
 
 	@org.springframework.beans.factory.annotation.Autowired
@@ -75,12 +77,17 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" }, defaultValue = "withoutBlobValue")) @Valid @RequestParam(value = "extent", required = false, defaultValue = "withoutBlobValue") String extent) {
-
-		Collection<SubmodelElement> submodelElements = service.getSubmodelElements();
+		if (limit == null)
+			limit = 100;
+		if (cursor == null)
+			cursor = "";
+		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
+		CursorResult<List<SubmodelElement>> submodelElements = service.getSubmodelElements(pInfo);
 
 		GetSubmodelElementsResult paginatedSubmodelElement = new GetSubmodelElementsResult();
-		paginatedSubmodelElement.setResult(new ArrayList<>(submodelElements));
-		paginatedSubmodelElement.setPagingMetadata(new PagedResultPagingMetadata().cursor("nextSubmodelElementCursor"));
+		paginatedSubmodelElement.setResult(submodelElements.getResult());
+		paginatedSubmodelElement
+				.setPagingMetadata(new PagedResultPagingMetadata().cursor(submodelElements.getCursor()));
 
 		return new ResponseEntity<PagedResult>(paginatedSubmodelElement, HttpStatus.OK);
 	}
@@ -141,7 +148,8 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" }, defaultValue = "withoutBlobValue")) @Valid @RequestParam(value = "extent", required = false, defaultValue = "withoutBlobValue") String extent) {
 
-		SubmodelValueOnly result = new SubmodelValueOnly(service.getSubmodelElements());
+		SubmodelValueOnly result = new SubmodelValueOnly(
+				service.getSubmodelElements(NO_LIMIT_PAGINATION_INFO).getResult());
 
 		return new ResponseEntity<SubmodelValueOnly>(result, HttpStatus.OK);
 	}

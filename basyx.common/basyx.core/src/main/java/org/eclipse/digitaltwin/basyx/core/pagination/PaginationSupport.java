@@ -1,4 +1,5 @@
 /*******************************************************************************
+ * Copyright (C) 2023 DFKI GmbH (https://www.dfki.de/en/web)
  * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
