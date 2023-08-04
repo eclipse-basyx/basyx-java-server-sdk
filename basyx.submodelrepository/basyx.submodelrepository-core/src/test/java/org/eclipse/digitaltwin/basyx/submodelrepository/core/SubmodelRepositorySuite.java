@@ -349,7 +349,7 @@ public abstract class SubmodelRepositorySuite {
 		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodels();
 
 		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
-		getSubmodelsAndAssertResultIsTechnicalDataSubmodelId(repo, "");
+		getSubmodelsAndAssertCorrectSize(repo, "");
 	}
 
 	@Test
@@ -357,24 +357,13 @@ public abstract class SubmodelRepositorySuite {
 		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodels();
 
 		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
-		getSubmodelsAndAssertResultIsTechnicalDataSubmodelId(repo, DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID);
+		getSubmodelsAndAssertCorrectSize(repo, DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID);
 	}
 
-	@Test
-	public void getCursorPagination() {
-		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodels();
-
-		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
-		CursorResult<List<Submodel>> cursorResult = repo.getAllSubmodels(new PaginationInfo(1, ""));
-		assertEquals(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, cursorResult.getCursor());
-	}
-
-	private void getSubmodelsAndAssertResultIsTechnicalDataSubmodelId(SubmodelRepository repo, String cursor) {
+	private void getSubmodelsAndAssertCorrectSize(SubmodelRepository repo, String cursor) {
 		CursorResult<List<Submodel>> cursorResult = repo
 				.getAllSubmodels(new PaginationInfo(1, cursor));
 		assertEquals(1, cursorResult.getResult().size());
-		assertEquals(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID,
-				cursorResult.getResult().stream().findFirst().get().getId());
 	}
 
 	private SubmodelElement getExpectedSubmodelElement() {

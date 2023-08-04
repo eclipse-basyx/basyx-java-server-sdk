@@ -30,6 +30,8 @@ import java.util.List;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNotFoundException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

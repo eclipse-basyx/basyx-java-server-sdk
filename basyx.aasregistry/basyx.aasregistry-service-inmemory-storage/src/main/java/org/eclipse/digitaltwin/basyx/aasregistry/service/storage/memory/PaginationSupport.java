@@ -34,9 +34,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.CursorResult;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 import lombok.RequiredArgsConstructor;
 

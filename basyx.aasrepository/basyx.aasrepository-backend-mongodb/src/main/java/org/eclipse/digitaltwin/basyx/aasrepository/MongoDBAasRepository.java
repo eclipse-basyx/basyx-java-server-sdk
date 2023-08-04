@@ -24,8 +24,7 @@
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
 import java.util.List;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
@@ -37,7 +36,8 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -54,7 +54,7 @@ import com.mongodb.client.result.DeleteResult;
  */
 public class MongoDBAasRepository implements AasRepository {
 	private static String IDJSONPATH = "id";
-
+	private static final String ID = "_id";
 	private MongoTemplate mongoTemplate;
 	private String collectionName;
 	private AasServiceFactory aasServiceFactory;
@@ -76,13 +76,15 @@ public class MongoDBAasRepository implements AasRepository {
 
 	@Override
 	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
-		List<AssetAdministrationShell> allAas = mongoTemplate.findAll(AssetAdministrationShell.class, collectionName);
-		TreeMap<String, AssetAdministrationShell> aasMap = allAas.stream()
-				.collect(Collectors.toMap(AssetAdministrationShell::getId, aas -> aas, (a, b) -> a, TreeMap::new));
+		Query query = new Query();
+		applySorting(query, pInfo);
+		applyPagination(query, pInfo);
 
-		PaginationSupport<AssetAdministrationShell> paginationSupport = new PaginationSupport<>(aasMap, AssetAdministrationShell::getId);
-		CursorResult<List<AssetAdministrationShell>> paginatedAAS = paginationSupport.getPaged(pInfo);
-		return paginatedAAS;
+		List<AssetAdministrationShell> foundDescriptors = mongoTemplate.find(query, AssetAdministrationShell.class,
+				collectionName);
+
+		String cursor = resolveCursor(pInfo, foundDescriptors, AssetAdministrationShell::getId);
+		return new CursorResult<List<AssetAdministrationShell>>(cursor, foundDescriptors);
 	}
 
 	@Override
@@ -180,6 +182,28 @@ public class MongoDBAasRepository implements AasRepository {
 
 		if (!aasId.equals(newAasId))
 			throw new IdentificationMismatchException();
+	}
+
+	private <T> String resolveCursor(PaginationInfo pRequest, List<T> foundDescriptors,
+			Function<T, String> idResolver) {
+		if (foundDescriptors.isEmpty() || !pRequest.isPaged()) {
+			return null;
+		}
+		T last = foundDescriptors.get(foundDescriptors.size() - 1);
+		return idResolver.apply(last);
+	}
+
+	private void applySorting(Query query, PaginationInfo pInfo) {
+		query.with(Sort.by(Direction.ASC, ID));
+	}
+
+	private void applyPagination(Query query, PaginationInfo pInfo) {
+		if (pInfo.getCursor() != null) {
+			query.addCriteria(Criteria.where(ID).gt(pInfo.getCursor()));
+		}
+		if (pInfo.getLimit() != null) {
+			query.limit(pInfo.getLimit());
+		}
 	}
 
 }

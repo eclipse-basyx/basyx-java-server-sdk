@@ -29,7 +29,7 @@ public class PaginationInfo {
 	private Integer limit;
 	private String cursor;
 
-	public PaginationInfo(int limit, String cursor) {
+	public PaginationInfo(Integer limit, String cursor) {
 		this.limit = limit;
 		this.cursor = cursor;
 	}
@@ -43,7 +43,7 @@ public class PaginationInfo {
 	}
 
 	public boolean hasLimit() {
-		return limit > 0;
+		return limit != null && limit != 0;
 	}
 
 	public boolean hasCursor() {

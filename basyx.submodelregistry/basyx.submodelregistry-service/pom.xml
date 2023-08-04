@@ -165,6 +165,10 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.core</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.openapitools</groupId>
 			<artifactId>jackson-databind-nullable</artifactId>
 		</dependency>

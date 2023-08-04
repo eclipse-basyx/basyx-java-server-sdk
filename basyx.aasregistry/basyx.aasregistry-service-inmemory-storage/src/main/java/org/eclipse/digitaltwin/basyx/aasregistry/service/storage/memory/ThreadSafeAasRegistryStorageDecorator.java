@@ -37,9 +37,9 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorAlr
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.CursorResult;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

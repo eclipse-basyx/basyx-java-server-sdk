@@ -32,9 +32,9 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.CursorResult;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.PaginationInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -43,14 +43,14 @@ public class PaginationSupport {
 
 	private final TreeMap<String, SubmodelDescriptor> sortedMap;
 	
-	public CursorResult getDescriptorsPaged(PaginationInfo pInfo) {
+	public CursorResult<List<SubmodelDescriptor>> getDescriptorsPaged(PaginationInfo pInfo) {
 		Map<String, SubmodelDescriptor> cursorView = getCursorView(pInfo);
 		Stream<Entry<String, SubmodelDescriptor>> eStream = cursorView.entrySet().stream();
 		Stream<SubmodelDescriptor> tStream = eStream.map(Entry::getValue);
 		tStream = applyLimit(pInfo, tStream);		
 		List<SubmodelDescriptor> descriptorList = tStream.collect(Collectors.toList());
 		String cursor = computeNextCursor(descriptorList);
-		return new CursorResult(cursor, Collections.unmodifiableList(descriptorList));
+		return new CursorResult<List<SubmodelDescriptor>>(cursor, Collections.unmodifiableList(descriptorList));
 	}
 
 	private Stream<SubmodelDescriptor> applyLimit(PaginationInfo info, Stream<SubmodelDescriptor> aStream) {

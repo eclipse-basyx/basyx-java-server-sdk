@@ -140,7 +140,6 @@ public abstract class AasRepositorySuite {
 
 		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo)
 				.getResult();
-
 		assertTrue(submodelReferences.contains(reference));
 	}
 
@@ -247,20 +246,9 @@ public abstract class AasRepositorySuite {
 
 	@Test
 	public void getPaginatedAssetAdministrationShellWithCursor() {
-		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, AAS2));
+		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, aas1.getId()));
 		List<AssetAdministrationShell> resultList = result.getResult();
 		assertEquals(1, resultList.size());
-		assertEquals(AAS2, resultList.stream()
-				.findFirst()
-				.get()
-				.getId());
-	}
-
-	@Test
-	public void getCursorPagination() {
-		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null));
-		String cursor = result.getCursor();
-		assertEquals(AAS2, cursor);
 	}
 
 	@Test

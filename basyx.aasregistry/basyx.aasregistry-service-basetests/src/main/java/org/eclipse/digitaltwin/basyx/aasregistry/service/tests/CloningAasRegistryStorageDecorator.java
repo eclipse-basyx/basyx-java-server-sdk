@@ -29,10 +29,10 @@ import java.util.List;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.CursorResult;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorCopies;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
