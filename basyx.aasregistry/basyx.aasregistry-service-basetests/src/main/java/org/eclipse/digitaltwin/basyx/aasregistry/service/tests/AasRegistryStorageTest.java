@@ -41,8 +41,8 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNot
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.DescriptorNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelNotFoundException;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.CursorResult;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorCopies;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.junit.Test;
 
 public abstract class AasRegistryStorageTest extends ExtensionsTest {

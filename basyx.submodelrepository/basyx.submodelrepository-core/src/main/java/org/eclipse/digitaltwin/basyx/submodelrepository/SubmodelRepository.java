@@ -25,12 +25,14 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 
@@ -45,9 +47,9 @@ public interface SubmodelRepository {
 	/**
 	 * Retrieves all Submodels from the repository
 	 * 
-	 * @return a collection of all found Submodels
+	 * @return a list of all found Submodels
 	 */
-	public Collection<Submodel> getAllSubmodels();
+	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo);
 
 	/**
 	 * Retrieves the Submodel with the specific id
@@ -89,7 +91,8 @@ public interface SubmodelRepository {
 	 * @param submodelId
 	 * @return
 	 */
-	public Collection<SubmodelElement> getSubmodelElements(String submodelId) throws ElementDoesNotExistException;
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo)
+			throws ElementDoesNotExistException;
 
 	/**
 	 * Retrieves a specific SubmodelElement of a Submodel

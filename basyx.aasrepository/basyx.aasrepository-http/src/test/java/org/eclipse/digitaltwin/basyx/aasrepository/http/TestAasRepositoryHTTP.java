@@ -27,18 +27,21 @@ package org.eclipse.digitaltwin.basyx.aasrepository.http;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
- * Tests the {@link AssetAdministrationShell} specific parts of the {@link AasRepository} HTTP/REST API
+ * Tests the {@link AssetAdministrationShell} specific parts of the
+ * {@link AasRepository} HTTP/REST API
  * 
  * @author schnicke, danish
  *
  */
 public class TestAasRepositoryHTTP extends AasRepositoryHTTPSuite {
+	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
@@ -49,7 +52,11 @@ public class TestAasRepositoryHTTP extends AasRepositoryHTTPSuite {
 	@Override
 	public void resetRepository() {
 		AasRepository repo = appContext.getBean(AasRepository.class);
-		repo.getAllAas().stream().map(a -> a.getId()).forEach(repo::deleteAas);
+		repo.getAllAas(NO_LIMIT_PAGINATION_INFO)
+				.getResult()
+				.stream()
+				.map(a -> a.getId())
+				.forEach(repo::deleteAas);
 	}
 
 	@AfterClass

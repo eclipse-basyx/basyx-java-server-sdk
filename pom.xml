@@ -277,6 +277,16 @@
 				<artifactId>basyx.submodelservice-backend-inmemory</artifactId>
 				<version>${revision}</version>
 			</dependency>
+			<dependency>
+			    <groupId>org.eclipse.digitaltwin.basyx</groupId>
+			    <artifactId>basyx.submodelservice.component</artifactId>
+			    <version>${revision}</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.eclipse.digitaltwin.basyx</groupId>
+			    <artifactId>basyx.submodelservice-http</artifactId>
+			    <version>${revision}</version>
+			</dependency>
 			<!-- basyx.submodelrepository -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -444,6 +454,18 @@
 				<artifactId>basyx.submodelservice-backend-inmemory</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+			    <groupId>org.eclipse.digitaltwin.basyx</groupId>
+			    <artifactId>basyx.submodelservice.component</artifactId>
+			    <version>${revision}</version>
+			    <classifier>tests</classifier>
+			</dependency>
+			<dependency>
+			    <groupId>org.eclipse.digitaltwin.basyx</groupId>
+			    <artifactId>basyx.submodelservice-http</artifactId>
+			    <version>${revision}</version>
+			    <classifier>tests</classifier>
 			</dependency>
 			<!-- basyx.submodelrepository -->
 			<dependency>

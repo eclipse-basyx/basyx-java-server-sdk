@@ -1,0 +1,1 @@
+{"modelType":"Submodel","kind":"Instance","id":"TestID","category":"TestCategory","idShort":"test","submodelElements":[{"modelType":"Property","value":"test","idShort":"test"}],"semanticId":{"keys":[{"type":null,"value":"123"}],"type":null},"description":[{"language":"de-DE","text":"Test"}],"displayName":[{"language":"de-DE","text":"Test"}]}

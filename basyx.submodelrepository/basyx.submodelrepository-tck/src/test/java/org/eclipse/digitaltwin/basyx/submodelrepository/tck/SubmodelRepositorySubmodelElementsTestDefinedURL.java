@@ -26,29 +26,32 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.tck;
 
-import org.eclipse.digitaltwin.basyx.submodelrepository.http.SubmodelRepositorySubmodelElementsTestSuiteHTTP;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.BaSyxSubmodelHttpTestUtils;
+import org.eclipse.digitaltwin.basyx.submodelservice.http.SubmodelServiceSubmodelElementsTestSuiteHTTP;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * 
  * @author schnicke
  *
  */
-public class SubmodelRepositorySubmodelElementsTestDefinedURL extends SubmodelRepositorySubmodelElementsTestSuiteHTTP {
+public class SubmodelRepositorySubmodelElementsTestDefinedURL extends SubmodelServiceSubmodelElementsTestSuiteHTTP {
 
 	public static String url = "http://localhost:8081/submodels";
 
-	@Override
-	public void resetRepository() {
+	@Before
+	public void createSubmodelOnRepo() {
+		SubmodelTCKHelper.createSubmodelOnRepository(getURL(), createSubmodel());
+	}
+
+	@After
+	public void removeSubmodelFromRepo() {
 		SubmodelTCKHelper.deleteAllSubmodelsOnRepository(getURL());
 	}
 
 	@Override
-	public void populateRepository() {
-		createSubmodels().forEach(s -> SubmodelTCKHelper.createSubmodelOnRepository(getURL(), s));
-	}
-
-	@Override
 	protected String getURL() {
-		return url;
+		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(url, createSubmodel().getId());
 	}
 }

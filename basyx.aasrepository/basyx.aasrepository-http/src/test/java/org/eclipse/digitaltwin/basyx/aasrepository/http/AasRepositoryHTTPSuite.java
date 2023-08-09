@@ -267,6 +267,18 @@ public abstract class AasRepositoryHTTPSuite {
 		assertEquals(HttpStatus.BAD_REQUEST.value(), creationResponse.getCode());
 	}
 
+	@Test
+	public void paginationResult() throws FileNotFoundException, IOException, ParseException {
+		createMultipleAasOnServer();
+		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getURL() + "?limit=1");
+		String response = BaSyxHttpTestUtils.getResponseAsString(getResponse);
+		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedAas1JSONString(), response);
+	}
+
+	private String getPaginatedAas1JSONString() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("PaginatedAasSimple_1.json");
+	}
+
 	private CloseableHttpResponse updateSpecificAas(String dummyaasid, String aasJsonContent) throws IOException {
 		return BaSyxHttpTestUtils.executePutOnURL(getSpecificAasAccessURL(dummyaasid), aasJsonContent);
 	}

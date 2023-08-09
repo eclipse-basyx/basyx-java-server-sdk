@@ -23,8 +23,9 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
@@ -33,8 +34,12 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.TextIndexDefinition;
+import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -60,97 +65,138 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 	}
 
 	@Override
-	public Collection<ConceptDescription> getAllConceptDescriptions() {
-		return mongoTemplate.findAll(ConceptDescription.class, collectionName);
-	}
-	
-	@Override
-	public Collection<ConceptDescription> getAllConceptDescriptionsByIdShort(String idShort) {
-		return getAllConceptDescriptions().stream().filter(conceptDescription -> conceptDescription.getIdShort().equals(idShort)).collect(Collectors.toList());
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptions(PaginationInfo pInfo) {
+		List<ConceptDescription> cdList = mongoTemplate.findAll(ConceptDescription.class, collectionName);
+		CursorResult<List<ConceptDescription>> paginatedCD = paginateList(pInfo, cdList);
+		return paginatedCD;
 	}
 
 	@Override
-	public Collection<ConceptDescription> getAllConceptDescriptionsByIsCaseOf(Reference reference) {
-		return getAllConceptDescriptions().stream().filter(conceptDescription -> hasMatchingReference(conceptDescription, reference)).collect(Collectors.toList());
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIdShort(String idShort, PaginationInfo pInfo) {
+		List<ConceptDescription> allDescriptions = mongoTemplate.findAll(ConceptDescription.class, collectionName);
+
+		List<ConceptDescription> filtered = allDescriptions.stream()
+				.filter(conceptDescription -> conceptDescription.getIdShort()
+						.equals(idShort))
+				.collect(Collectors.toList());
+		CursorResult<List<ConceptDescription>> result = paginateList(pInfo, filtered);
+		return result;
 	}
 
 	@Override
-	public Collection<ConceptDescription> getAllConceptDescriptionsByDataSpecificationReference(Reference reference) {
-		return getAllConceptDescriptions().stream().filter(conceptDescription -> hasMatchingDataSpecificationReference(conceptDescription, reference)).collect(Collectors.toList());
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIsCaseOf(Reference reference, PaginationInfo pInfo) {
+		List<ConceptDescription> allDescriptions = mongoTemplate.findAll(ConceptDescription.class, collectionName);
+		List<ConceptDescription> filtered = allDescriptions.stream()
+				.filter(conceptDescription -> hasMatchingReference(conceptDescription, reference))
+				.collect(Collectors.toList());
+
+		CursorResult<List<ConceptDescription>> result = paginateList(pInfo, filtered);
+		return result;
+	}
+
+	@Override
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByDataSpecificationReference(Reference reference, PaginationInfo pInfo) {
+		List<ConceptDescription> allDescriptions = mongoTemplate.findAll(ConceptDescription.class, collectionName);
+
+		List<ConceptDescription> filtered = allDescriptions.stream()
+				.filter(conceptDescription -> hasMatchingDataSpecificationReference(conceptDescription, reference))
+				.collect(Collectors.toList());
+
+		CursorResult<List<ConceptDescription>> result = paginateList(pInfo, filtered);
+		return result;
 	}
 
 	@Override
 	public ConceptDescription getConceptDescription(String conceptDescriptionId) throws ElementDoesNotExistException {
-		ConceptDescription conceptDescription = mongoTemplate.findOne(new Query().addCriteria(Criteria.where(IDJSONPATH).is(conceptDescriptionId)), ConceptDescription.class, collectionName);
-		
+		ConceptDescription conceptDescription = mongoTemplate.findOne(new Query().addCriteria(Criteria.where(IDJSONPATH)
+				.is(conceptDescriptionId)), ConceptDescription.class, collectionName);
+
 		if (conceptDescription == null)
 			throw new ElementDoesNotExistException(conceptDescriptionId);
-		
+
 		return conceptDescription;
 	}
 
 	@Override
-	public void updateConceptDescription(String conceptDescriptionId, ConceptDescription conceptDescription)
-			throws ElementDoesNotExistException {
-		
-		Query query = new Query().addCriteria(Criteria.where(IDJSONPATH).is(conceptDescriptionId));
-		
+	public void updateConceptDescription(String conceptDescriptionId, ConceptDescription conceptDescription) throws ElementDoesNotExistException {
+
+		Query query = new Query().addCriteria(Criteria.where(IDJSONPATH)
+				.is(conceptDescriptionId));
+
 		throwIfConceptDescriptionDoesNotExist(query, conceptDescriptionId);
-		
+
 		throwIfMismatchingIds(conceptDescriptionId, conceptDescription);
-		
+
 		mongoTemplate.remove(query, ConceptDescription.class, collectionName);
 		mongoTemplate.save(conceptDescription, collectionName);
 	}
 
 	@Override
 	public void createConceptDescription(ConceptDescription conceptDescription) throws CollidingIdentifierException {
-		Query query = new Query().addCriteria(Criteria.where(IDJSONPATH).is(conceptDescription.getId()));
-		
+		Query query = new Query().addCriteria(Criteria.where(IDJSONPATH)
+				.is(conceptDescription.getId()));
+
 		if (mongoTemplate.exists(query, ConceptDescription.class, collectionName))
 			throw new CollidingIdentifierException(conceptDescription.getId());
-			
+
 		mongoTemplate.save(conceptDescription, collectionName);
 	}
 
 	@Override
 	public void deleteConceptDescription(String conceptDescriptionId) throws ElementDoesNotExistException {
-		Query query = new Query().addCriteria(Criteria.where(IDJSONPATH).is(conceptDescriptionId));
-		
+		Query query = new Query().addCriteria(Criteria.where(IDJSONPATH)
+				.is(conceptDescriptionId));
+
 		DeleteResult result = mongoTemplate.remove(query, ConceptDescription.class, collectionName);
 
 		if (result.getDeletedCount() == 0)
 			throw new ElementDoesNotExistException(conceptDescriptionId);
-		
+
 	}
-	
+
 	private void configureIndexForConceptDescriptionId(MongoTemplate mongoTemplate) {
-		TextIndexDefinition idIndex = TextIndexDefinition.builder().onField(IDJSONPATH).build();
+		Index idIndex = new Index().on(IDJSONPATH, Direction.ASC);
 		mongoTemplate.indexOps(ConceptDescription.class).ensureIndex(idIndex);
 	}
-	
+
 	private boolean hasMatchingReference(ConceptDescription cd, Reference reference) {
-		Optional<Reference> optionalReference = cd.getIsCaseOf().stream().filter(ref -> ref.equals(reference)).findAny();
-		
+		Optional<Reference> optionalReference = cd.getIsCaseOf()
+				.stream()
+				.filter(ref -> ref.equals(reference))
+				.findAny();
+
 		return optionalReference.isPresent();
 	}
-	
+
 	private boolean hasMatchingDataSpecificationReference(ConceptDescription cd, Reference reference) {
-		Optional<EmbeddedDataSpecification> optionalReference = cd.getEmbeddedDataSpecifications().stream().filter(eds -> eds.getDataSpecification().equals(reference)).findAny();
-		
+		Optional<EmbeddedDataSpecification> optionalReference = cd.getEmbeddedDataSpecifications()
+				.stream()
+				.filter(eds -> eds.getDataSpecification()
+						.equals(reference))
+				.findAny();
+
 		return optionalReference.isPresent();
 	}
-	
+
 	private void throwIfConceptDescriptionDoesNotExist(Query query, String conceptDescriptionId) {
 		if (!mongoTemplate.exists(query, ConceptDescription.class, collectionName))
 			throw new ElementDoesNotExistException(conceptDescriptionId);
 	}
-	
+
 	private void throwIfMismatchingIds(String conceptDescriptionId, ConceptDescription newConceptDescription) {
 		String newConceptDescriptionId = newConceptDescription.getId();
-		
+
 		if (!conceptDescriptionId.equals(newConceptDescriptionId))
 			throw new IdentificationMismatchException();
 	}
-	
+
+	private CursorResult<List<ConceptDescription>> paginateList(PaginationInfo pInfo, List<ConceptDescription> cdList) {
+		TreeMap<String, ConceptDescription> cdMap = cdList.stream()
+				.collect(Collectors.toMap(ConceptDescription::getId, aas -> aas, (a, b) -> a, TreeMap::new));
+
+		PaginationSupport<ConceptDescription> paginationSupport = new PaginationSupport<>(cdMap, ConceptDescription::getId);
+		CursorResult<List<ConceptDescription>> paginatedCD = paginationSupport.getPaged(pInfo);
+		return paginatedCD;
+	}
+
 }

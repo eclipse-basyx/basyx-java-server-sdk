@@ -34,6 +34,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.InMemoryAasRepository;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.InMemoryConceptDescriptionRepository;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
@@ -44,6 +45,7 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 public class TestAASEnvironmentSerialization {
+	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, "");
 	public static final String AAS_TECHNICAL_DATA_ID = "shell001";
 	public static final String AAS_OPERATIONAL_DATA_ID = "shell002";
 	public static final String SUBMODEL_TECHNICAL_DATA_ID = "7A7104BDAB57E184";
@@ -220,9 +222,11 @@ public class TestAASEnvironmentSerialization {
 	}
 	
 	private void validateRepositoriesState() {
-		assertTrue(aasRepository.getAllAas().containsAll(createDummyShells()));
-		assertTrue(submodelRepository.getAllSubmodels().containsAll(createDummySubmodels()));
-		assertTrue(conceptDescriptionRepository.getAllConceptDescriptions().containsAll(createDummyConceptDescriptions()));
+		assertTrue(aasRepository.getAllAas(NO_LIMIT_PAGINATION_INFO).getResult().containsAll(createDummyShells()));
+		assertTrue(submodelRepository.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult()
+				.containsAll(createDummySubmodels()));
+		assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO).getResult()
+				.containsAll(createDummyConceptDescriptions()));
 	}
 
 }

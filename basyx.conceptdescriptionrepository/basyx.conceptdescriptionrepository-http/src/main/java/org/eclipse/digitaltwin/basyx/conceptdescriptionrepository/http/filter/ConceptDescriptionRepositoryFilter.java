@@ -25,13 +25,13 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.filter;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 /**
  * Filters ConceptDescriptions based on parameters
@@ -47,28 +47,28 @@ public class ConceptDescriptionRepositoryFilter {
 	public ConceptDescriptionRepositoryFilter(ConceptDescriptionRepository conceptDescriptionRepository) {
 		this.repository = conceptDescriptionRepository;
 	}
-	
+
 	/**
 	 * Filters ConceptDescriptions from repository
 	 * 
 	 * 
 	 * @return a filtered collection of ConceptDescriptions
 	 */
-	public List<ConceptDescription> filter(String idShort, Reference isCaseOf, Reference dataSpecificationRef) {
+	public CursorResult<List<ConceptDescription>> filter(String idShort, Reference isCaseOf, Reference dataSpecificationRef, PaginationInfo pInfo) {
 		if (!hasPermittedNumberOfParameters(idShort, isCaseOf, dataSpecificationRef)) {
 			throw new IllegalArgumentException("ConceptDescriptionFilter was called with the wrong number of arguments");
 		}
 
 		if (idShort != null)
-			return repository.getAllConceptDescriptionsByIdShort(idShort).stream().collect(Collectors.toList());
-			
-		if (isCaseOf != null)
-			return repository.getAllConceptDescriptionsByIsCaseOf(isCaseOf).stream().collect(Collectors.toList());
-		
-		if (dataSpecificationRef != null)
-			return repository.getAllConceptDescriptionsByDataSpecificationReference(dataSpecificationRef).stream().collect(Collectors.toList());
+			return repository.getAllConceptDescriptionsByIdShort(idShort, pInfo);
 
-		return new ArrayList<>(repository.getAllConceptDescriptions());
+		if (isCaseOf != null)
+			return repository.getAllConceptDescriptionsByIsCaseOf(isCaseOf, pInfo);
+
+		if (dataSpecificationRef != null)
+			return repository.getAllConceptDescriptionsByDataSpecificationReference(dataSpecificationRef, pInfo);
+
+		return repository.getAllConceptDescriptions(pInfo);
 	}
 
 	private boolean hasPermittedNumberOfParameters(String idShort, Reference isCaseOf, Reference dataSpecificationRef) {

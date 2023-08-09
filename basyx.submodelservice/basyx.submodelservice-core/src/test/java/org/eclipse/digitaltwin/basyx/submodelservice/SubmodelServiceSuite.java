@@ -49,6 +49,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
@@ -62,7 +64,7 @@ import org.junit.Test;
  *
  */
 public abstract class SubmodelServiceSuite {
-
+	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	protected abstract SubmodelService getSubmodelService(Submodel submodel);
 
 	@Test
@@ -78,7 +80,8 @@ public abstract class SubmodelServiceSuite {
 		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
 		SubmodelService smService = getSubmodelService(technicalData);
 
-		assertEquals(technicalData.getSubmodelElements(), smService.getSubmodelElements());
+		assertTrue(technicalData.getSubmodelElements()
+				.containsAll(smService.getSubmodelElements(NO_LIMIT_PAGINATION_INFO).getResult()));
 	}
 
 	@Test
@@ -371,6 +374,24 @@ public abstract class SubmodelServiceSuite {
 		} catch (ElementDoesNotExistException expected) {
 			throw expected;
 		}
+	}
+
+	@Test
+	public void getPaginatedSubmodelElement() {
+		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
+		SubmodelService submodelService = getSubmodelService(technicalData);
+		CursorResult<List<SubmodelElement>> cursorResult = submodelService
+				.getSubmodelElements(new PaginationInfo(1, ""));
+		assertEquals(1, cursorResult.getResult().size());
+	}
+
+	@Test
+	public void paginationCursor() {
+		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
+		SubmodelService submodelService = getSubmodelService(technicalData);
+		CursorResult<List<SubmodelElement>> cursorResult = submodelService.getSubmodelElements(new PaginationInfo(1,
+				SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT));
+		assertEquals(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_BLOB_ID_SHORT, cursorResult.getCursor());
 	}
 
 	private List<SubmodelElement> createHierarchicalSubmodelElement() {
