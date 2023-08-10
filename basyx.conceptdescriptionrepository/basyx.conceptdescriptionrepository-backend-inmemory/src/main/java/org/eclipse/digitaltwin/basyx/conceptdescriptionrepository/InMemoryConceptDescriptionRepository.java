@@ -88,8 +88,8 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 	 * Creates the InMemoryConceptDescriptionRepository and preconfiguring
 	 * it with the passed ConceptDescriptions
 	 * 
-	 * @param conceptDescriptions
-	 * @param cdRepositoryName
+	 * @param conceptDescriptions 
+	 * @param cdRepositoryName Name of the CDRepository
 	 */
 	public InMemoryConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions, String cdRepositoryName) {
 		this(conceptDescriptions);

@@ -60,6 +60,7 @@ public class TestInMemoryConceptDescriptionRepository extends ConceptDescription
 	@Test
     public void getConfiguredInMemoryConceptDescriptionRepositoryName() {
 		ConceptDescriptionRepository repo = new InMemoryConceptDescriptionRepository(CONFIGURED_CD_REPO_NAME);
+		
 		assertEquals(CONFIGURED_CD_REPO_NAME, repo.getName());
 	}
 

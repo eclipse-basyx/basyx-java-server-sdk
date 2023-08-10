@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -19,44 +19,71 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
 package org.eclipse.digitaltwin.basyx.aasrepository.component;
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.DecoratedAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasservice.AasService;
-import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
-import org.eclipse.digitaltwin.basyx.aasservice.feature.AasServiceFeature;
-import org.eclipse.digitaltwin.basyx.aasservice.feature.DecoratedAasServiceFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.junit.Test;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
- * Provides the spring bean configuration for the {@link AasRepository} and
- * {@link AasService} utilizing all found features for the respective services
  * 
- * @author schnicke
+ * Test the configuration of the AasRepository's name
+ *
+ * @author danish, kammognie
  *
  */
-@Configuration
-public class AasRepositoryConfiguration {
-	
-	@Bean
-	public static AasRepository getAasRepository(AasRepositoryFactory aasRepositoryFactory, List<AasRepositoryFeature> features) {
-		return new DecoratedAasRepositoryFactory(aasRepositoryFactory, features).create();
+public class TestAasRepositoryName {
+	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
+	private static final String BASYX_AASREPO_NAME_KEY = "basyx.aasrepo.name";
+	private static ConfigurableApplicationContext appContext;
+
+	public void startContext() {
+		appContext = new SpringApplication(AasRepositoryComponent.class).run(new String[] {});
 	}
 
-	@Primary
-	@Bean
-	public static AasServiceFactory getAasService(AasServiceFactory aasServiceFactory, List<AasServiceFeature> features) {
-		return new DecoratedAasServiceFactory(aasServiceFactory, features);
+	public static void closeContext() {
+		appContext.close();
 	}
+
+	@Test
+	public void getDefaultRepoName() {
+		startContext();
+		
+		AasRepository repo = appContext.getBean(AasRepository.class);
+		
+		assertEquals("aas-repo", repo.getName());
+		
+		closeContext();
+	}
+
+	@Test
+	public void getConfiguredRepoName() {
+		configureRepoNamePropertyAndStartContext();
+		
+		AasRepository repo = appContext.getBean(AasRepository.class);
+		
+		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
+		
+		resetRepoNamePropertyAndCloseContext();
+	}
+
+	private void resetRepoNamePropertyAndCloseContext() {
+		System.clearProperty(BASYX_AASREPO_NAME_KEY);
+		
+		closeContext();
+	}
+
+	private void configureRepoNamePropertyAndStartContext() {
+		System.setProperty(BASYX_AASREPO_NAME_KEY, CONFIGURED_AAS_REPO_NAME);
+		
+		startContext();
+	}
+
 }

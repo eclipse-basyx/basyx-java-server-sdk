@@ -60,6 +60,7 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	@Test
     public void getConfiguredInMemorySmRepositoryName() {
 		SubmodelRepository repo = new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), CONFIGURED_SM_REPO_NAME);
+		
 		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
 	}
 	

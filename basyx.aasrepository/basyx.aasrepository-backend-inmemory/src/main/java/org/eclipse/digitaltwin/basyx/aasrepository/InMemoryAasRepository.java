@@ -74,7 +74,6 @@ public class InMemoryAasRepository implements AasRepository {
 	 */
 	public InMemoryAasRepository(AasServiceFactory aasServiceFactory, String aasRepositoryName) {
 		this(aasServiceFactory);
-		
 		this.aasRepositoryName = aasRepositoryName;
 	}
 

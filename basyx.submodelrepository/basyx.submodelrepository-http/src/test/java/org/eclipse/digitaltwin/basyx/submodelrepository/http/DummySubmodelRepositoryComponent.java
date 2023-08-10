@@ -36,4 +36,3 @@ public class DummySubmodelRepositoryComponent {
 		SpringApplication.run(DummySubmodelRepositoryComponent.class, args);
 	}
 }
-

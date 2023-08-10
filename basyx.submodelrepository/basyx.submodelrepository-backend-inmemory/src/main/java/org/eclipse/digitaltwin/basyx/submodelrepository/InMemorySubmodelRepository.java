@@ -74,8 +74,8 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	 * Creates the InMemorySubmodelRepository utilizing the passed
 	 * SubmodelServiceFactory for creating new SubmodelServices
 	 * 
-	 * @param submodelServiceFactory
-	 * @param smRepositoryName
+	 * @param submodelServiceFactory 
+	 * @param smRepositoryName Name of the SubmodelRepository
 	 */
 	public InMemorySubmodelRepository(SubmodelServiceFactory submodelServiceFactory, String smRepositoryName) {
 		this(submodelServiceFactory);
@@ -102,13 +102,12 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	 * SubmodelServiceFactory for creating new SubmodelServices and preconfiguring
 	 * it with the passed Submodels
 	 * 
-	 * @param submodelServiceFactory
-	 * @param submodels
-	 * @param smRepositoryName
+	 * @param submodelServiceFactory 
+	 * @param submodels 
+	 * @param smRepositoryName Name of the SubmodelRepository
 	 */
 	public InMemorySubmodelRepository(SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels, String smRepositoryName) {
 		this(submodelServiceFactory, submodels);
-		
 		this.smRepositoryName = smRepositoryName;
 	}
 

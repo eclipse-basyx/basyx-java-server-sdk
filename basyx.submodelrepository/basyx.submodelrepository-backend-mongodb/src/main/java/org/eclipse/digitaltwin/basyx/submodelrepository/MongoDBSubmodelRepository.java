@@ -86,15 +86,14 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	 * SubmodelServiceFactory for creating new SubmodelServices and uses a
 	 * collectionName and a mongoTemplate for operating MongoDB
 	 * 
-	 * @param mongoTemplate
-	 * @param collectionName
-	 * @param submodelServiceFactory
-	 * @param smRepositoryName
+	 * @param mongoTemplate 
+	 * @param collectionName 
+	 * @param submodelServiceFactory 
+	 * @param smRepositoryName Name of the SubmodelRepository
 	 */
 	public MongoDBSubmodelRepository(MongoTemplate mongoTemplate, String collectionName,
 			SubmodelServiceFactory submodelServiceFactory, String smRepositoryName) {
 		this(mongoTemplate, collectionName, submodelServiceFactory);
-		
 		this.smRepositoryName = smRepositoryName;
 	}
 
@@ -124,7 +123,7 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	 * @param collectionName
 	 * @param submodelServiceFactory
 	 * @param submodels
-	 * @param smRepositoryName
+	 * @param smRepositoryName Name of the SubmodelRepository
 	 */
 	public MongoDBSubmodelRepository(MongoTemplate mongoTemplate, String collectionName,
 			SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels, String smRepositoryName) {

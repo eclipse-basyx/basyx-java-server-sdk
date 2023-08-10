@@ -123,7 +123,7 @@ public interface AasRepository {
 	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException;
     
 	/**
-	 * Returns the name of the AAS repository
+	 * @return the name of the AAS repository
 	 */
 	public default String getName() {
 		return "aas-repo";

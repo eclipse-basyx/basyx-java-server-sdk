@@ -83,7 +83,9 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
         MongoTemplate template = createTemplate();
 		
 		clearDatabase(template);
+		
 		ConceptDescriptionRepository repo = new MongoDBConceptDescriptionRepository(template, COLLECTION, CONFIGURED_CD_REPO_NAME);
+		
 		assertEquals(CONFIGURED_CD_REPO_NAME, repo.getName());
 	}
 

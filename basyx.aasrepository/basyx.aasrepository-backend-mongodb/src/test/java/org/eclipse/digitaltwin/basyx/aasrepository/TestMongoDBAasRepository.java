@@ -44,23 +44,24 @@ import com.mongodb.client.MongoClients;
  *
  */
 public class TestMongoDBAasRepository extends AasRepositorySuite {
-
 	private final String COLLECTION = "aasTestCollection";
-	private final String CONNECTION_URL = "mongodb://localhost:27017";
-	private final MongoClient CLIENT = MongoClients.create(CONNECTION_URL);
-	private final MongoTemplate TEMPLATE = new MongoTemplate(CLIENT, "BaSyxTestDb");
-	private final InMemoryAasServiceFactory AAS_SERVICE_FACTORY = new InMemoryAasServiceFactory();
+
 	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
 
 	@Override
 	protected AasRepositoryFactory getAasRepositoryFactory() {
-		String connectionURL = CONNECTION_URL;
-		MongoClient client = MongoClients.create(connectionURL);
-		MongoTemplate template = new MongoTemplate(client, "BaSyxTestDb");
+		MongoTemplate template = createMongoTemplate();
 
 		MongoDBUtilities.clearCollection(template, COLLECTION);
 
 		return new MongoDBAasRepositoryFactory(template, COLLECTION, new InMemoryAasServiceFactory());
+	}
+
+	private MongoTemplate createMongoTemplate() {
+		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
+		MongoClient client = MongoClients.create(connectionURL);
+		MongoTemplate template = new MongoTemplate(client, "BaSyxTestDb");
+		return template;
 	}
 	
 	@Test
@@ -87,7 +88,8 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	
 	@Test
 	public void getConfiguredMongoDBAasRepositoryName() {
-		AasRepository repo = new MongoDBAasRepository(TEMPLATE, COLLECTION, AAS_SERVICE_FACTORY, CONFIGURED_AAS_REPO_NAME);
+		AasRepository repo = new MongoDBAasRepository(createMongoTemplate(), COLLECTION, new InMemoryAasServiceFactory(), CONFIGURED_AAS_REPO_NAME);
+		
 		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
 	}
 

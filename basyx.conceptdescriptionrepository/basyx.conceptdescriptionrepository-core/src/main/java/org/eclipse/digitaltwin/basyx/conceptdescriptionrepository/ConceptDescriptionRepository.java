@@ -111,7 +111,7 @@ public interface ConceptDescriptionRepository {
 	public void deleteConceptDescription(String conceptDescriptionId) throws ElementDoesNotExistException;
 	
 	/**
-	 * Returns the name of the ConceptDescription repository
+	 * @return the name of the ConceptDescription repository
 	 */
 	public default String getName() {
 		return "cd-repo";

@@ -69,7 +69,6 @@ public class MongoDBAasRepository implements AasRepository {
 	
 	public MongoDBAasRepository(MongoTemplate mongoTemplate, String collectionName, AasServiceFactory aasServiceFactory, String aasRepositoryName) {
 		this(mongoTemplate, collectionName, aasServiceFactory);
-		
 		this.aasRepositoryName = aasRepositoryName;
 	}
 

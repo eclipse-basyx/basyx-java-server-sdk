@@ -31,7 +31,8 @@ import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactor
 import org.junit.Test;
 
 /**
- * 
+ * Testing the InMemoryAasRepository's name configured through the constructor
+ *  
  * @author schnicke, kammognie
  *
  */
@@ -45,7 +46,7 @@ public class TestInMemoryAasRepository extends AasRepositorySuite {
 	
 	@Test
     public void getConfiguredInMemoryAasRepositoryName() {
-		AasRepository repo = new InMemoryAasRepository(new InMemoryAasServiceFactory(), CONFIGURED_AAS_REPO_NAME );
+		AasRepository repo = new InMemoryAasRepository(new InMemoryAasServiceFactory(), CONFIGURED_AAS_REPO_NAME);
 		
 		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
 	}

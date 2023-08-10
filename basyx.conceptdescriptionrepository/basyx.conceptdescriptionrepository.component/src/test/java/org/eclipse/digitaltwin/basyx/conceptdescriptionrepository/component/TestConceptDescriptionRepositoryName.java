@@ -23,32 +23,32 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.component;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.component;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * 
- * Test the configuration of the SubmodelRepository's name
+ * Test the configuration of the AasRepository's name
  *
  * @author danish, kammognie
  *
  */
-public class TestSubmodelRepositoryName {
-	private static final String CONFIGURED_SM_REPO_NAME = "configured-sm-repo-name";
-	private static final String BASYX_SMREPO_NAME_KEY = "basyx.smrepo.name";
+public class TestConceptDescriptionRepositoryName {
+	private static final String CONFIGURED_CD_REPO_NAME = "configured-cd-repo-name";
+	private static final String BASYX_CDREPO_NAME_KEY = "basyx.cdrepo.name";
 	private static ConfigurableApplicationContext appContext;
 
-	private void startContext() {
-		appContext = new SpringApplication(SubmodelRepositoryComponent.class).run(new String[] {});
+	public void startContext() {
+		appContext = new SpringApplication(ConceptDescriptionRepositoryComponent.class).run(new String[] {});
 	}
 
-	private void closeContext() {
+	public static void closeContext() {
 		appContext.close();
 	}
 
@@ -56,9 +56,9 @@ public class TestSubmodelRepositoryName {
 	public void getDefaultRepoName() {
 		startContext();
 		
-		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
+		ConceptDescriptionRepository repo = appContext.getBean(ConceptDescriptionRepository.class);
 		
-		assertEquals("sm-repo", repo.getName());
+		assertEquals("cd-repo", repo.getName());
 		
 		closeContext();
 	}
@@ -67,21 +67,21 @@ public class TestSubmodelRepositoryName {
 	public void getConfiguredRepoName() {
 		configureRepoNamePropertyAndStartContext();
 		
-		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
+		ConceptDescriptionRepository repo = appContext.getBean(ConceptDescriptionRepository.class);
 		
-		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
+		assertEquals(CONFIGURED_CD_REPO_NAME, repo.getName());
 		
 		resetRepoNamePropertyAndCloseContext();
 	}
 
 	private void resetRepoNamePropertyAndCloseContext() {
-		System.clearProperty(BASYX_SMREPO_NAME_KEY);
+		System.clearProperty(BASYX_CDREPO_NAME_KEY);
 		
 		closeContext();
 	}
 
 	private void configureRepoNamePropertyAndStartContext() {
-		System.setProperty(BASYX_SMREPO_NAME_KEY, CONFIGURED_SM_REPO_NAME);
+		System.setProperty(BASYX_CDREPO_NAME_KEY, CONFIGURED_CD_REPO_NAME);
 		
 		startContext();
 	}

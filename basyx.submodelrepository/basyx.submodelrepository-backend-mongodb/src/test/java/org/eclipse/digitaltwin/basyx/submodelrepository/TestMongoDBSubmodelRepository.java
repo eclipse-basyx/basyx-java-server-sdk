@@ -39,7 +39,7 @@ import com.mongodb.client.MongoClients;
 
 public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	private final String COLLECTION = "submodelTestCollection";
-	private final String CONNECTION_URL = "mongodb://localhost:27017";
+	private final String CONNECTION_URL = "mongodb://mongoAdmin:mongoPassword@localhost:27017";
 	private final MongoClient CLIENT = MongoClients.create(CONNECTION_URL);
 	private final MongoTemplate TEMPLATE = new MongoTemplate(CLIENT, "BaSyxTestDb");
 	private final InMemorySubmodelServiceFactory SUBMODEL_SERVICE_FACTORY = new InMemorySubmodelServiceFactory();
@@ -62,6 +62,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	@Test
 	public void getConfiguredMongoDBSmRepositoryName() {
 		SubmodelRepository repo = new MongoDBSubmodelRepository(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, CONFIGURED_SM_REPO_NAME);
+		
 		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
 	}
 
