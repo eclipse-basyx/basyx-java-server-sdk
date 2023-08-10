@@ -11,7 +11,7 @@
 	<name>Concept Description Repository Component</name>
 
 	<properties>
-		<docker.image.name>conceptdescriptionrepository</docker.image.name>
+		<docker.image.name>conceptdescription-repository</docker.image.name>
 		<docker.container.waitForEndpoint>http://localhost:${docker.host.port}/concept-descriptions</docker.container.waitForEndpoint>
 	</properties>
 
