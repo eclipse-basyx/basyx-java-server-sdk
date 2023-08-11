@@ -26,7 +26,6 @@
 package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -54,8 +53,8 @@ public class AasEnvironmentConfiguration {
 	@Autowired
 	ResourceLoader resourceLoader;
 
-	@Value("${basyx.environment}")
-	private List<String> filesToLoad = new ArrayList<>();
+	@Value("${basyx.environment:#{null}}")
+	private List<String> filesToLoad;
 
 	@Bean
 	public AasEnvironmentSerialization createAasEnvironmentSerialization(AasRepository aasRepository,
