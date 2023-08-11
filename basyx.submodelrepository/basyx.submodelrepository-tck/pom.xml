@@ -35,5 +35,11 @@
 			<artifactId>gson</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelservice-http</artifactId>
+			<scope>test</scope>
+			<classifier>tests</classifier>
+		</dependency>
 	</dependencies>
 </project>
