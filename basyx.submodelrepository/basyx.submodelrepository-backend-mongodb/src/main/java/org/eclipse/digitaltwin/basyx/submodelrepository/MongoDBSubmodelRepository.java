@@ -26,6 +26,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import java.util.Collection;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -225,6 +226,24 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 		Submodel submodel = getSubmodel(submodelId);
 		submodel.setSubmodelElements(null);
 		return submodel;
+	}
+
+	@Override
+	public java.io.File GetFileByPathSubmodel(String submodelId, String idShortPath) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setFileValue(String submodelId, String idShortPath, java.io.File file) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteFileValue(String identifier, String idShortPath) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

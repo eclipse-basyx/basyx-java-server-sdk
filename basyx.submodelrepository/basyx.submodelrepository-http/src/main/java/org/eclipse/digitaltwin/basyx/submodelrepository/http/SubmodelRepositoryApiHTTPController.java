@@ -31,6 +31,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
@@ -153,6 +154,23 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		return new ResponseEntity<Submodel>(repository.getSubmodelByIdMetadata(submodelIdentifier.getIdentifier()), HttpStatus.OK);
 	}
 
+	@Override
+	public ResponseEntity<java.io.File> GetFileByPathSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath) {
+		java.io.File value = repository.GetFileByPathSubmodel(submodelIdentifier.getIdentifier(), idShortPath);
+		return new ResponseEntity<java.io.File>(value, HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Void> PutFileByPathSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid java.io.File file) {
+		repository.setFileValue(submodelIdentifier.getIdentifier(), idShortPath, file);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Void> deleteFileByPathSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath) {
+		repository.deleteFileValue(submodelIdentifier.getIdentifier(), idShortPath);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
 	private ResponseEntity<Void> handleSubmodelElementValueSetRequest(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, SubmodelElementValue body) {
 		repository.setSubmodelElementValue(submodelIdentifier.getIdentifier(), idShortPath, body);
 		return new ResponseEntity<Void>(HttpStatus.OK);
@@ -167,4 +185,5 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		SubmodelElement submodelElement = repository.getSubmodelElement(submodelIdentifier, idShortPath);
 		return new ResponseEntity<SubmodelElement>(submodelElement, HttpStatus.OK);
 	}
+
 }

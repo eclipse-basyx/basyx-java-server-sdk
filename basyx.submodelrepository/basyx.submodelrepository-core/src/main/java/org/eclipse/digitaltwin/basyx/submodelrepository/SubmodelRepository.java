@@ -27,10 +27,12 @@ package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import java.util.Collection;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 
@@ -187,4 +189,42 @@ public interface SubmodelRepository {
 	 * @throws ElementDoesNotExistException
 	 */
 	public Submodel getSubmodelByIdMetadata(String submodelId) throws ElementDoesNotExistException;
+	
+	/**
+	 * Retrieves the file of a file submodelelement
+	 * 
+	 * @param submodelId
+	 *            the Submodel id
+	 * @param idShortPath
+	 *            the IdShort of the file element
+	 * @return
+	 * @throws ElementDoesNotExistException
+	 */
+	public java.io.File GetFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException;
+	
+	/**
+	 * Uploads a file to a file submodelelement
+	 * 
+	 * @param submodelId
+	 *            the Submodel id
+	 * @param idShortPath
+	 *            the IdShort of the file element
+	 * @param file           
+	 *            the file object to upload
+	 * @return
+	 * @throws ElementDoesNotExistException
+	 */
+	public void setFileValue(String submodelId, String idShortPath, java.io.File file) throws ElementDoesNotExistException,IdentificationMismatchException;
+
+	/**
+	 * Deletes the file of a file submodelelement
+	 * 
+	 * @param submodelId
+	 *            the Submodel id
+	 * @param idShortPath
+	 *            the IdShort of the file element
+	 * @return
+	 * @throws ElementDoesNotExistException
+	 */
+	public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException;
 }

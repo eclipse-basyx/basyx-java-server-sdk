@@ -2,6 +2,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
 import java.util.Collection;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelElementSerializer;
@@ -175,6 +176,24 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 		} else {
 			return new MqttMessage(payload.getBytes());
 		}
+	}
+
+	@Override
+	public java.io.File GetFileByPathSubmodel(String submodelId, String idShortPath) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setFileValue(String submodelId, String idShortPath, java.io.File file) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteFileValue(String identifier, String idShortPath) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

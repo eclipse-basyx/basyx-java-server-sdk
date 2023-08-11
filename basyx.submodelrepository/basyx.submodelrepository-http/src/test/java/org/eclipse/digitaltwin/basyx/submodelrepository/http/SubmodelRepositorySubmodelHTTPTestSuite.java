@@ -27,11 +27,21 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.hc.client5.http.ClientProtocolException;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.mime.FileBody;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
@@ -41,6 +51,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.ResourceUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -164,6 +175,44 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 
 		assertEquals(HttpStatus.NOT_FOUND.value(), deletionResponse.getCode());
 	}
+	
+	@Test
+	public void uploadFileToNonFileSubmodelElement()
+			throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
+		String submodelJSON = BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodel4FileTest.json");
+		BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
+		CloseableHttpResponse submodelElementFileUploadResponse = uploadFileToSubmodelElement("NonFileParameter");
+		assertEquals(HttpStatus.BAD_REQUEST.value(), submodelElementFileUploadResponse.getCode());
+	}
+	
+	@Test
+	public void uploadFileToFileSubmodelElement() throws IOException {
+		String submodelJSON = BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodel4FileTest.json");
+		BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
+		CloseableHttpResponse submodelElementFileUploadResponse = uploadFileToSubmodelElement("FileData");
+		assertEquals(HttpStatus.OK.value(), submodelElementFileUploadResponse.getCode());
+
+	}
+	
+	private CloseableHttpResponse uploadFileToSubmodelElement(String submodelElementIdShort) throws IOException {
+		CloseableHttpClient client = HttpClients.createDefault();
+
+		java.io.File file = ResourceUtils.getFile("src/test/resources/BaSyx-Logo.png");
+		
+		HttpPost uploadFile = new HttpPost(
+				getURL() + "/basyx.examples.test/aas/submodels/FileTests/submodel/submodelElements/"
+						+ submodelElementIdShort + "/PutFileByPath");
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+
+		builder.addPart("file", new FileBody(file));
+		builder.setContentType(ContentType.MULTIPART_FORM_DATA);
+
+		HttpEntity multipart = builder.build();
+		uploadFile.setEntity(multipart);
+
+		return client.execute(uploadFile);
+	}
+
 
 	private void assertSubmodelCreationReponse(String submodelJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JsonProcessingException, JsonMappingException {
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());

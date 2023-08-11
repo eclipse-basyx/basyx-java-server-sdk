@@ -32,8 +32,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultFile;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
@@ -93,7 +95,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	private Map<String, SubmodelService> createServices(Collection<Submodel> submodels) {
 		Map<String, SubmodelService> map = new LinkedHashMap<>();
 		submodels.forEach(submodel -> map.put(submodel.getId(), submodelServiceFactory.create(submodel)));
-
+	
 		return map;
 	}
 
@@ -213,6 +215,44 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		submodel.setSubmodelElements(null);
 		return submodel;
 	}
+
+
+	@Override
+	public java.io.File GetFileByPathSubmodel(String submodelId, String idShortPath) {
+		// TODO Auto-generated method stub
+		throwIfSubmodelDoesNotExist(submodelId);	
+		SubmodelElement submodelElement = submodelServices.get(submodelId).getSubmodelElement(idShortPath);
+		return null;
+	}
+
+	@Override
+	public void setFileValue(String submodelId, String idShortPath, java.io.File file) throws IdentificationMismatchException{
+		// TODO Auto-generated method stub
+		throwIfSubmodelDoesNotExist(submodelId);
+		
+		SubmodelElement submodelElement = submodelServices.get(submodelId).getSubmodelElement(idShortPath);
+		
+		File f = new DefaultFile();
+
+		if (submodelElement.getCategory().compareTo(f.getCategory())==0) {
+			submodelServices.get(submodelId)
+					.setSubmodelElementValue(idShortPath, (SubmodelElementValue) file);
+		} else {
+			throw new IdentificationMismatchException(
+					"The request is invalid for a SubmodelElement with category '" + submodelElement.getCategory() + "'");
+		}		
+	}
+
+	@Override
+	public void deleteFileValue(String submodelId, String idShortPath) {
+		// TODO Auto-generated method stub
+		throwIfSubmodelDoesNotExist(submodelId);	
+		SubmodelElement submodelElement = submodelServices.get(submodelId).getSubmodelElement(idShortPath);
+		
+		java.io.File tmpFile = new java.io.File(((File)submodelElement).getValue());
+		tmpFile.delete();
+		
+	}	
 
 	private void throwIfMismatchingIds(String smId, Submodel newSubmodel) {
 		String newSubmodelId = newSubmodel.getId();
