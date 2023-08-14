@@ -1,0 +1,38 @@
+{
+  "paging_metadata" : {
+    "cursor" : "simpleSubmodel001"
+  },
+  "result" : [ {
+    "modelType" : "Submodel",
+    "id" : "simpleSubmodel001",
+    "idShort" : "simpleSubmodel001",
+    "submodelElements" : [ {
+      "modelType" : "SubmodelElementCollection",
+      "idShort" : "SimpleCollection",
+      "value" : [ {
+        "modelType" : "Property",
+        "value" : "4370",
+        "valueType" : "xs:integer",
+        "category" : "VARIABLE",
+        "idShort" : "MyFirstSubmodelElement"
+      } ]
+    }, {
+      "modelType" : "SubmodelElementList",
+      "idShort" : "SimpleList",
+      "orderRelevant" : false,
+      "value" : [ {
+        "modelType" : "Property",
+        "value" : "4370",
+        "valueType" : "xs:integer",
+        "category" : "VARIABLE",
+        "idShort" : "MySecondSubmodelElement"
+      } ]
+    }, {
+      "modelType" : "Property",
+      "value" : "4370",
+      "valueType" : "xs:integer",
+      "category" : "VARIABLE",
+      "idShort" : "elementToDelete"
+    } ]
+  } ]
+}

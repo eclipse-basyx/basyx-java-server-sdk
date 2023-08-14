@@ -48,7 +48,7 @@ public class PaginationInfo {
 	}
 
 	public boolean hasCursor() {
-		return cursor != null && !cursor.isEmpty();
+		return cursor != null && !cursor.isEmpty() && !cursor.equals("null");
 	}
 
 	public boolean isPaged() {
