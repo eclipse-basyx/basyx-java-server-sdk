@@ -25,7 +25,12 @@
 
 package org.eclipse.digitaltwin.basyx.http.documentation;
 
+import org.springdoc.core.SpringDocUtils;
+import org.springdoc.core.converters.models.MonetaryAmount;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+
+import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
@@ -47,10 +52,20 @@ public class RepositoryApiDocumentationConfiguration {
 	private static final String CONTACT_URL = "https://www.eclipse.org/basyx/";
 	private static final String CONTACT_EMAIL = "basyx-dev@eclipse.org";
 	private static final String CONTACT_NAME = "The BaSyx Developers";
+	
+	static {
+		/** Required to make openapi work: https://github.com/springdoc/springdoc-openapi/issues/457 */
+		SpringDocUtils.getConfig().replaceWithClass(MonetaryAmount.class, org.springdoc.core.converters.models.MonetaryAmount.class);
+	}
 
 	@Bean
 	public OpenAPI customOpenAPI() {
 		return new OpenAPI().info(apiInfo());
+	}
+	
+	@Bean
+	public ModelResolver modelResolver(Jackson2ObjectMapperBuilder builder) {
+		return new ModelResolver(builder.build());
 	}
 
 	protected Info apiInfo() {
