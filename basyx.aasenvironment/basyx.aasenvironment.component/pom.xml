@@ -10,7 +10,7 @@
 	<artifactId>basyx.aasenvironment.component</artifactId>
 
 	<properties>
-		<docker.image.name>aasenvironment</docker.image.name>
+		<docker.image.name>aas-environment</docker.image.name>
 	</properties>
 
 	<dependencies>
