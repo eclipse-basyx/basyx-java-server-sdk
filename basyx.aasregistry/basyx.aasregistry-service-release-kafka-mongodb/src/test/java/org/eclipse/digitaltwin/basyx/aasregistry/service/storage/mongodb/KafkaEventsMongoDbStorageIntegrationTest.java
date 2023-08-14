@@ -24,58 +24,17 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb;
 
-import java.time.Duration;
-import java.util.stream.Stream;
-
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.BaseEventListener;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.BaseIntegrationTest;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.KafkaContainer;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.containers.output.Slf4jLogConsumer;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.containers.wait.strategy.WaitStrategy;
-import org.testcontainers.utility.DockerImageName;
 
-@TestPropertySource(properties = { "registry.type=mongodb", "events.sink=kafka", "spring.data.mongodb.database=aasregistry" })
+@TestPropertySource(properties = { "registry.type=mongodb", "events.sink=kafka"
+		, "spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092"
+		, "spring.data.mongodb.database=aasregistry" , "spring.data.mongodb.uri=mongodb://mongoAdmin:mongoPassword@localhost:27017/" })
 public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTest {
 
-	private static Logger logger = LoggerFactory.getLogger("KAFKA");
-	private static Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(logger);
-	
-	@Value("${spring.data.mongodb.database}")
-	private static String DATABASE_NAME;
-	
-	@ClassRule
-	public static final KafkaContainer KAFKA = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.2.1")) {
-		protected void waitUntilContainerStarted() {
-			super.waitUntilContainerStarted();
-			WaitStrategy strategy = Wait.forLogMessage(".*Kafka startTimeMs.*", 1);
-			strategy.withStartupTimeout(Duration.ofMinutes(10));
-			strategy.waitUntilReady(this);
-		}
-	}.withLogConsumer(logConsumer);
-
-	@ClassRule
-	public static final MongoDBContainer MONGODB_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:5.0.10"));
-
-	@DynamicPropertySource
-	static void assignAdditionalProperties(DynamicPropertyRegistry registry) {
-		String uri = MONGODB_CONTAINER.getConnectionString() + "/" + DATABASE_NAME;
-		registry.add("spring.data.mongodb.uri", () -> uri);
-		registry.add("spring.kafka.bootstrap-servers", KAFKA::getBootstrapServers);
-	}
 
 	@Component
 	public static class KafkaEventListener extends BaseEventListener {
