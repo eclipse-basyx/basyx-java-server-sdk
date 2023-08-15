@@ -55,6 +55,7 @@ public class MqttAasRepository implements AasRepository {
 	private MqttAasRepositoryTopicFactory topicFactory;
 
 	private AasRepository decorated;
+
 	private IMqttClient mqttClient;
 
 	public MqttAasRepository(AasRepository decorated, IMqttClient mqttClient, MqttAasRepositoryTopicFactory topicFactory) {

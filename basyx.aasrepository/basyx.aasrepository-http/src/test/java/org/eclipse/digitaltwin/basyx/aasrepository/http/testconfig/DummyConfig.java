@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 
 
 /**
- * Create an InMemoryAasRepository bean for test sake
+ * Configurations for tests
  * 
  * @author danish, kammognie
  *

@@ -31,7 +31,7 @@ import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactor
 import org.junit.Test;
 
 /**
- * Testing the InMemoryAasRepository's name configured through the constructor
+ * "Tests the @link InMemoryAasRepository name"
  *  
  * @author schnicke, kammognie
  *

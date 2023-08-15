@@ -29,6 +29,12 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * Spring application configured for tests.
+ * 
+ * @author schnicke, danish, kammognie
+ *
+ */
 @SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
 public class DummySubmodelRepositoryComponent {
 

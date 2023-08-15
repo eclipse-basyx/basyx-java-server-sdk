@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Create an InMemoryConceptDescriptionRepository bean for test sake
+ *Configurations for tests
  * 
  * @author danish, kammognie
  *

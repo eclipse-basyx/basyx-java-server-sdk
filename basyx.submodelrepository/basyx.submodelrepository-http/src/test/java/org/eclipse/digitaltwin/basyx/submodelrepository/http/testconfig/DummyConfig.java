@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- *  Create an InMemorySubmodelRepository bean for test sake
+ *  Configurations for tests  
  * 
  * @author danish, kammognie
  *

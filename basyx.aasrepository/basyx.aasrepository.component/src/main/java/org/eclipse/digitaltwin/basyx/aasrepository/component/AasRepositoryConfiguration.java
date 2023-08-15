@@ -48,7 +48,6 @@ import org.springframework.context.annotation.Primary;
  */
 @Configuration
 public class AasRepositoryConfiguration {
-	
 	@Bean
 	public static AasRepository getAasRepository(AasRepositoryFactory aasRepositoryFactory, List<AasRepositoryFeature> features) {
 		return new DecoratedAasRepositoryFactory(aasRepositoryFactory, features).create();

@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Repository decorator for the MQTT eventing on the submodel level.
  * 
- * @author fischer, kammognie
+ * @author fischer
  */
 public class MqttSubmodelRepository implements SubmodelRepository {
 	private static Logger logger = LoggerFactory.getLogger(MqttSubmodelRepository.class);

@@ -220,6 +220,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 	@Test
 	public void getDefaultConceptDescriptionRepositoryName() {
 		ConceptDescriptionRepository repo = getConceptDescriptionRepository();
+		
 		assertEquals("cd-repo", repo.getName());
 	}
 
