@@ -24,53 +24,49 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
+import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
+import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNotFoundException;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.Delegate;
 
+@RequiredArgsConstructor
+public class SubmodelRegistryStorageDecorator implements SubmodelRegistryStorage {
 
-public class CursorEncodingRegistryStorage extends SubmodelRegistryStorageDecorator {
-
-	public CursorEncodingRegistryStorage(SubmodelRegistryStorage storage) {
-		super(storage);
-	}
+	protected final SubmodelRegistryStorage storage;
 	
 	@Override
-	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(@NonNull PaginationInfo pRequest) {
-		PaginationInfo decoded = decodeCursor(pRequest);
-		CursorResult<List<SubmodelDescriptor>> result = storage.getAllSubmodelDescriptors(decoded);
-		return encodeCursor(result);
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest) {
+		return storage.getAllSubmodelDescriptors(pRequest);
 	}
 
-
-	private CursorResult<List<SubmodelDescriptor>> encodeCursor(CursorResult<List<SubmodelDescriptor>> result) {
-		String encodedCursor = encodeCursor(result.getCursor());
-		return new CursorResult<List<SubmodelDescriptor>>(encodedCursor, result.getResult());
-	}
-	
-	private PaginationInfo decodeCursor(PaginationInfo info) {
-		String cursor = decodeCursor(info.getCursor());
-		return new PaginationInfo(info.getLimit(), cursor);
+	@Override
+	public SubmodelDescriptor getSubmodelDescriptor(String submodelId) throws SubmodelNotFoundException {
+		return storage.getSubmodelDescriptor(submodelId);
 	}
 
-	private String decodeCursor(String cursor) {
-		if (cursor == null) {
-			return null;
-		}
-		return new String(java.util.Base64.getUrlDecoder().decode(cursor), StandardCharsets.UTF_8);
+	@Override
+	public void insertSubmodelDescriptor(SubmodelDescriptor descr) throws SubmodelAlreadyExistsException {
+		storage.insertSubmodelDescriptor(descr);
 	}
 
-	private String encodeCursor(String cursor) {
-		if (cursor == null) {
-			return null;
-		}
-		return new String(java.util.Base64.getUrlEncoder().encode(cursor.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);		
-	}	
+	@Override
+	public void replaceSubmodelDescriptor(String submodelId, SubmodelDescriptor descr) throws SubmodelNotFoundException {
+		storage.replaceSubmodelDescriptor(submodelId, descr);
+	}
+
+	@Override
+	public void removeSubmodelDescriptor(String submodelId) throws SubmodelNotFoundException {
+		storage.removeSubmodelDescriptor(submodelId);
+	}
+
+	@Override
+	public Set<String> clear() {
+		return storage.clear();
+	}
 }
