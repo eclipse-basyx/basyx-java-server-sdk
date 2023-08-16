@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -31,32 +31,28 @@ import java.util.Arrays;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
-import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.data.mongodb.core.MongoTemplate;
-
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
+ * Tests the {@link MongoDBAasRepository}
  * 
  * @author schnicke, danish
  *
  */
 public class TestMongoDBAasRepository extends AasRepositorySuite {
+	private static ConfigurableApplicationContext appContext;
 
-	private final String COLLECTION = "aasTestCollection";
+	@BeforeClass
+	public static void startAasRepo() throws Exception {
+		appContext = new SpringApplication(DummyMongoDBAasRepositoryComponent.class).run(new String[] {});
+	}
 
 	@Override
 	protected AasRepositoryFactory getAasRepositoryFactory() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-		MongoClient client = MongoClients.create(connectionURL);
-		MongoTemplate template = new MongoTemplate(client, "BaSyxTestDb");
-
-		MongoDBUtilities.clearCollection(template, COLLECTION);
-
-		return new MongoDBAasRepositoryFactory(template, COLLECTION, new InMemoryAasServiceFactory());
+		return appContext.getBean(AasRepositoryFactory.class);
 	}
 
 	@Test
@@ -66,7 +62,6 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		AssetAdministrationShell retrievedShell = getAasFromNewBackendInstance(repoFactory, expectedShell.getId());
 
 		assertEquals(expectedShell, retrievedShell);
-
 	}
 
 	@Test
@@ -77,7 +72,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		addSubmodelReferenceToAas(expectedShell);
 		mongoDBAasRepository.updateAas(expectedShell.getId(), expectedShell);
 		AssetAdministrationShell retrievedShell = getAasFromNewBackendInstance(repoFactory, expectedShell.getId());
-
+		
 		assertEquals(expectedShell, retrievedShell);
 	}
 
