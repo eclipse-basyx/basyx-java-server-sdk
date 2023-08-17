@@ -24,6 +24,7 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
@@ -37,9 +38,15 @@ import org.springframework.stereotype.Component;
 @ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
 public class InMemoryConceptDescriptionRepositoryFactory implements ConceptDescriptionRepositoryFactory {
 	
-	@Value("${basyx.cdrepo.name:cd-repo}")
 	private String cdRepositoryName;
-	 
+	
+	@Autowired(required = false)
+	public InMemoryConceptDescriptionRepositoryFactory() { }
+	
+	@Autowired(required = false)
+	public InMemoryConceptDescriptionRepositoryFactory(@Value("${basyx.cdrepo.name:cd-repo}") String cdRepositoryName) { 
+		this.cdRepositoryName = cdRepositoryName;
+	}
 
 	@Override
 	public ConceptDescriptionRepository create() {

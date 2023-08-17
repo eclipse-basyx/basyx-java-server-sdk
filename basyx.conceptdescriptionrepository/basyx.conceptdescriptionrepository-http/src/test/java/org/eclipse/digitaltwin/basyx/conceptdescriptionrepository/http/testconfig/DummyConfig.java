@@ -25,12 +25,14 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.testconfig;
 
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.InMemoryConceptDescriptionRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- *Configurations for tests
+ * Configuration for tests
  * 
  * @author danish, kammognie
  *
@@ -39,7 +41,8 @@ import org.springframework.context.annotation.Configuration;
 public class DummyConfig {
 
 		@Bean
-		public InMemoryConceptDescriptionRepository createConceptDescriptionRepository() {
+		@ConditionalOnMissingBean
+		public ConceptDescriptionRepository createConceptDescriptionRepository() {
 			return new InMemoryConceptDescriptionRepository();
 		}
 }

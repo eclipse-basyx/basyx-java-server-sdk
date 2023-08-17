@@ -49,7 +49,6 @@ public class MongoDBSubmodelRepositoryFactory implements SubmodelRepositoryFacto
 	private SubmodelServiceFactory submodelServiceFactory;
 	private Collection<Submodel> submodels;
 	
-	@Value("${basyx.smrepo.name:sm-repo}")
 	private String smRepositoryName;
 
 	@Autowired(required = false)
@@ -59,7 +58,13 @@ public class MongoDBSubmodelRepositoryFactory implements SubmodelRepositoryFacto
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
 		this.submodelServiceFactory = submodelServiceFactory;
-
+	}
+	
+	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate,
+			@Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName,
+			SubmodelServiceFactory submodelServiceFactory, @Value("${basyx.smrepo.name:sm-repo}") String smRepositoryName) {
+		this(mongoTemplate, collectionName, submodelServiceFactory);
+		this.smRepositoryName = smRepositoryName;
 	}
 
 	@Autowired(required = false)
@@ -68,6 +73,13 @@ public class MongoDBSubmodelRepositoryFactory implements SubmodelRepositoryFacto
 			SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels) {
 		this(mongoTemplate, collectionName, submodelServiceFactory);
 		this.submodels = submodels;
+	}
+	
+	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate,
+			@Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName,
+			SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels, @Value("${basyx.smrepo.name:sm-repo}") String smRepositoryName) {
+		this(mongoTemplate, collectionName, submodelServiceFactory, submodels);
+		this.smRepositoryName = smRepositoryName;
 	}
 
 	@Override

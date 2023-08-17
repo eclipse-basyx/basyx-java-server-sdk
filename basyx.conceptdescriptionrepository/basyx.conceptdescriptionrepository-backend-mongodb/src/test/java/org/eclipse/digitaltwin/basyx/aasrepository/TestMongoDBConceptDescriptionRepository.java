@@ -132,11 +132,11 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 	}
 	
 	private MongoTemplate createTemplate() {
-		String connectionURL = "mongodb://localhost:27017";
-		MongoClient client = MongoClients.create(connectionURL);
-		MongoTemplate template = new MongoTemplate(client, "BaSyxTestDb");
+		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
 		
-		return template;
+		MongoClient client = MongoClients.create(connectionURL);
+		
+		return new MongoTemplate(client, "BaSyxTestDb");
 	}
 	
 	private void clearDatabase(MongoTemplate template) {

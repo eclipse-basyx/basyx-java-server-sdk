@@ -123,7 +123,9 @@ public interface AasRepository {
 	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException;
     
 	/**
-	 * @return the name of the AAS repository
+	 * Returns the name of the repository
+	 * 
+	 * @return repoName
 	 */
 	public default String getName() {
 		return "aas-repo";

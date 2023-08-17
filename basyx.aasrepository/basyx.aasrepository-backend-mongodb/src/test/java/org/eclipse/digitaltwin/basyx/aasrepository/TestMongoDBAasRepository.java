@@ -105,10 +105,11 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	}
 
 	private MongoTemplate createMongoTemplate() {
-		String connectionURL = "mongodb://127.0.0.1:27017/";
+		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
+		
 		MongoClient client = MongoClients.create(connectionURL);
-		MongoTemplate template = new MongoTemplate(client, "BaSyxTestDb");
-		return template;
+		
+		return new MongoTemplate(client, "BaSyxTestDb");
 	}
 	
 }

@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,24 +32,32 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
 /**
- * ConceptDescriptionRepository factory returning a MongoDb backend ConceptDescriptionRepository
+ * ConceptDescriptionRepository factory returning a MongoDb backend
+ * ConceptDescriptionRepository
  * 
  * @author schnicke, danish, kammognie
  */
 @Component
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
 public class MongoDBConceptDescriptionRepositoryFactory implements ConceptDescriptionRepositoryFactory {
-	
+
 	private MongoTemplate mongoTemplate;
 	private String collectionName;
-	
-	@Value("${basyx.cdrepo.name:cd-repo}")
 	private String cdRepositoryName;
-	
+
 	@Autowired
-	public MongoDBConceptDescriptionRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.conceptdescriptionrepository.mongodb.collectionName:conceptdescription-repo}") String collectionName) {
+	public MongoDBConceptDescriptionRepositoryFactory(MongoTemplate mongoTemplate,
+			@Value("${basyx.conceptdescriptionrepository.mongodb.collectionName:conceptdescription-repo}") String collectionName) {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
+	}
+
+	@Autowired
+	public MongoDBConceptDescriptionRepositoryFactory(MongoTemplate mongoTemplate,
+			@Value("${basyx.conceptdescriptionrepository.mongodb.collectionName:conceptdescription-repo}") String collectionName,
+			@Value("${basyx.cdrepo.name:cd-repo}") String cdRepositoryName) {
+		this(mongoTemplate, collectionName);
+		this.cdRepositoryName = cdRepositoryName;
 	}
 
 	@Override

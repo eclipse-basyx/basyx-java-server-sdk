@@ -31,7 +31,7 @@ import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactor
 import org.junit.Test;
 
 /**
- * "Tests the @link InMemoryAasRepository name"
+ * Tests the {@link InMemoryAasRepository} name
  *  
  * @author schnicke, kammognie
  *

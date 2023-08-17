@@ -42,12 +42,17 @@ public class InMemoryAasRepositoryFactory implements AasRepositoryFactory {
 
 	private AasServiceFactory aasApiFactory;
 	
-	@Value("${basyx.aasrepo.name:aas-repo}")
 	private String aasRepositoryName;
 
-	@Autowired
+	@Autowired(required = false)
 	public InMemoryAasRepositoryFactory(AasServiceFactory aasApiFactory) {
 		this.aasApiFactory = aasApiFactory;
+	}
+	
+	@Autowired(required = false)
+	public InMemoryAasRepositoryFactory(AasServiceFactory aasApiFactory, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
+		this(aasApiFactory);
+		this.aasRepositoryName = aasRepositoryName;
 	}
 
 	@Override

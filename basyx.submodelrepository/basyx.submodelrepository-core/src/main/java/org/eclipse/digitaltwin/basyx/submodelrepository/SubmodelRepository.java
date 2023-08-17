@@ -167,7 +167,9 @@ public interface SubmodelRepository {
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException;
 
 	/**
-	 * @return the name of the submodel repository
+	 * Returns the name of the repository
+	 * 
+	 * @return repoName
 	 */
 	public default String getName() {
 		return "sm-repo";

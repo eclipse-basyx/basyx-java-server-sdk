@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 
 
 /**
- * Configurations for tests
+ * Configuration for tests
  * 
  * @author danish, kammognie
  *

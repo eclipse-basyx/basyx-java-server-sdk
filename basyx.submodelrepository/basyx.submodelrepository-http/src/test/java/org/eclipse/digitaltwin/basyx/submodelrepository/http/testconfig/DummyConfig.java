@@ -27,12 +27,14 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.http.testconfig;
 
 import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- *  Configurations for tests  
+ * Configuration for tests  
  * 
  * @author danish, kammognie
  *
@@ -41,7 +43,8 @@ import org.springframework.context.annotation.Configuration;
 public class DummyConfig {
 
 	@Bean
-	public InMemorySubmodelRepository createSubmodelRepository() {
+	@ConditionalOnMissingBean
+	public SubmodelRepository createSubmodelRepository() {
 		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
 	}
 }
