@@ -28,10 +28,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
@@ -261,6 +263,11 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 		if (pInfo.getLimit() != null) {
 			query.limit(pInfo.getLimit());
 		}
+	}
+
+	@Override
+	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
+		throw new FeatureNotSupportedException("Operation Invocation");
 	}
 
 }

@@ -37,6 +37,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXSD;
 import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Range;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -392,6 +393,21 @@ public abstract class SubmodelServiceSuite {
 		CursorResult<List<SubmodelElement>> cursorResult = submodelService.getSubmodelElements(new PaginationInfo(1,
 				SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT));
 		assertEquals(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_BLOB_ID_SHORT, cursorResult.getCursor());
+	}
+
+	// Has to be overwritten if backend does not support operations
+	@Test
+	public void invokeOperation() {
+		Submodel invokableSubmodel = DummySubmodelFactory.createSubmodelWithAllSubmodelElements();
+		SubmodelService submodelService = getSubmodelService(invokableSubmodel);
+		
+		Property val = new DefaultProperty.Builder().idShort("in").value("2").build();
+		
+		OperationVariable[] result = submodelService.invokeOperation(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_OPERATION_ID, new OperationVariable[] { SubmodelServiceHelper.createOperationVariable(val) });
+
+		Property ret = (Property) result[0].getValue();
+		
+		assertEquals("4", ret.getValue());
 	}
 
 	private List<SubmodelElement> createHierarchicalSubmodelElement() {

@@ -2,6 +2,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
 import java.util.List;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelElementSerializer;
@@ -178,6 +179,11 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 		} else {
 			return new MqttMessage(payload.getBytes());
 		}
+	}
+
+	@Override
+	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
+		return decorated.invokeOperation(submodelId, idShortPath, input);
 	}
 
 }

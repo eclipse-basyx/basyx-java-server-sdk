@@ -26,12 +26,14 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
@@ -42,6 +44,8 @@ import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.eclipse.digitaltwin.basyx.pagination.GetSubmodelElementsResult;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination.GetSubmodelsResult;
+import org.eclipse.digitaltwin.basyx.submodelservice.OperationRequest;
+import org.eclipse.digitaltwin.basyx.submodelservice.OperationResult;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,5 +187,19 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	private ResponseEntity<SubmodelElement> handleSubmodelElementValueNormalGetRequest(String submodelIdentifier, String idShortPath) {
 		SubmodelElement submodelElement = repository.getSubmodelElement(submodelIdentifier, idShortPath);
 		return new ResponseEntity<SubmodelElement>(submodelElement, HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<OperationResult> invokeOperationSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid OperationRequest body, @Valid Boolean async) {
+		OperationVariable[] result = repository.invokeOperation(submodelIdentifier.getIdentifier(), idShortPath, body.getInputArguments().toArray(new OperationVariable[0]));
+
+		return new ResponseEntity<OperationResult>(createOperationResult(result), HttpStatus.OK);
+
+	}
+
+	private OperationResult createOperationResult(OperationVariable[] result) {
+		OperationResult operationResult = new OperationResult();
+		operationResult.setOutputArguments(Arrays.asList(result));
+		return operationResult;
 	}
 }

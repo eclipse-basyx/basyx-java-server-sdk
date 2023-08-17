@@ -416,6 +416,28 @@
 			"valueType": "xs:integer",
 			"category": "VARIABLE",
 			"idShort": "elementToDelete"
-		}
+		},
+		{
+            "modelType": "Operation",
+            "idShort": "square",
+            "inputVariables": [
+                {
+                    "value": {
+                        "modelType": "Property",
+                        "valueType": "xs:int",
+                        "idShort": "input"
+                    }
+                }
+            ],
+            "outputVariables": [
+                {
+                    "value": {
+                        "modelType": "Property",
+                        "valueType": "xs:int",
+                        "idShort": "output"
+                    }
+                }
+            ]
+        }
 	]
 }

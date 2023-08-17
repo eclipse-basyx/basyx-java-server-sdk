@@ -24,10 +24,15 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
+import static org.junit.Assert.fail;
+
 import java.util.Collection;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.InvokableOperation;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -53,7 +58,25 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
 		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
 
+		submodels.forEach(this::removeInvokableFromInvokableOperation);
+
 		return new MongoDBSubmodelRepositoryFactory(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, submodels).create();
+	}
+
+	@Override
+	public void invokeOperation() {
+		try {
+			getSubmodelRepository().invokeOperation("doesNotMatter", "doesNotMatter", new OperationVariable[0]);
+			fail();
+		} catch (FeatureNotSupportedException expected) {
+		}
+	}
+
+	private void removeInvokableFromInvokableOperation(Submodel sm) {
+		sm.getSubmodelElements().stream()
+		.filter(InvokableOperation.class::isInstance)
+		.map(InvokableOperation.class::cast)
+		.forEach(o -> o.setInvokable(null));
 	}
 
 }

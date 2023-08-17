@@ -23,42 +23,58 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
+package org.eclipse.digitaltwin.basyx;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapperUtil;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
+import org.eclipse.digitaltwin.aas4j.v3.model.builder.OperationBuilder;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperation;
 
 /**
- * Represents the ValueOnly-Representation of a Submodel
+ * Invokable variant of the DefaultOperation
  * 
- * @author damm
+ * @author schnicke
  *
  */
-public class SubmodelValueOnly {
-
-	private String idShort;
-	private Map<String, SubmodelElementValue> submodelValuesMap;
+public class InvokableOperation extends DefaultOperation {
+	private Function<OperationVariable[], OperationVariable[]> invokable;
 	
-	public SubmodelValueOnly(Collection<SubmodelElement> submodelElements) {		
-		submodelValuesMap = submodelElements.stream().filter(SubmodelValueOnly::hasValueOnlyDefined).map(ValueMapperUtil::toValueOnly).collect(Collectors.toMap(ValueOnly::getIdShort, ValueOnly::getSubmodelElementValue));
+	/**
+	 * Invokes the operation with the passed arguments
+	 * 
+	 * @param arguments
+	 * @return
+	 */
+	public OperationVariable[] invoke(OperationVariable[] arguments) {
+		return invokable.apply(arguments);
 	}
 
-	private static boolean hasValueOnlyDefined(SubmodelElement element) {
-		return !(element instanceof Operation);
+	/**
+	 * Sets the function to call on operation invocation
+	 * 
+	 * @param invokable
+	 */
+	public void setInvokable(Function<OperationVariable[], OperationVariable[]> invokable) {
+		this.invokable = invokable;
 	}
-	
-	public String getIdShort() {
-		return idShort;
-	}	
-	
-	public Map<String, SubmodelElementValue> getValuesOnlyMap() {
-		return submodelValuesMap;
-	}	
-	
+
+	public static class Builder extends OperationBuilder<InvokableOperation, Builder> {
+
+		@Override
+		protected Builder getSelf() {
+			return this;
+		}
+
+		@Override
+		protected InvokableOperation newBuildingInstance() {
+			return new InvokableOperation();
+		}
+
+		public Builder invokable(Function<OperationVariable[], OperationVariable[]> invokable) {
+			getBuildingInstance().setInvokable(invokable);
+			return getSelf();
+		}
+	}
 }
