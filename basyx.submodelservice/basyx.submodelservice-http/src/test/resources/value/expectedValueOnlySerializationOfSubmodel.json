@@ -16,8 +16,7 @@
 		"globalAssetId": "globalAssetID",
 		"specificAssetIds": [
 			{
-				"name": "specificAssetIdName",
-				"value": "specificValue"
+				"specificAssetIdName": "specificValue"
 			}
 		]
 	},

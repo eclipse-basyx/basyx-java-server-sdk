@@ -38,6 +38,7 @@ import org.eclipse.digitaltwin.basyx.serialization.ValueOnlySerializer;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIDValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollectionValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementListValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -67,6 +68,8 @@ public class SubmodelServiceHTTPSerializationExtension implements SerializationE
 		builder.serializerByType(SubmodelElementListValue.class, new SubmodelElementListValueSerializer());
 		builder.mixIn(ReferenceElementValue.class, ReferenceElementValueMixIn.class);
 		builder.serializerByType(SubmodelValueOnly.class, new SubmodelValueOnlySerializer());
+		builder.serializerByType(SpecificAssetIDValue.class, new SpecificAssetIDValueValueOnlySerializer());
+
 	}
 
 }
