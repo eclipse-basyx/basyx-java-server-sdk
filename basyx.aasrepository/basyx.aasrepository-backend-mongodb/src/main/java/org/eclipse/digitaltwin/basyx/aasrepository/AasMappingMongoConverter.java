@@ -27,6 +27,8 @@ package org.eclipse.digitaltwin.basyx.aasrepository;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.common.mongocore.CustomMappingMongoConverter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.stereotype.Component;
@@ -39,6 +41,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 @Component
+@ConditionalOnProperty(prefix = "basyx", name = "backend", havingValue = "MongoDB")
 public class AasMappingMongoConverter extends CustomMappingMongoConverter {
 
 	public AasMappingMongoConverter(MongoDatabaseFactory databaseFactory, MongoMappingContext mappingContext,
