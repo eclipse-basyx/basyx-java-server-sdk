@@ -41,7 +41,7 @@ public class SpecificAssetIDValueValueOnlySerializer extends JsonSerializer<Spec
 	@Override
 	public void serialize(SpecificAssetIDValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
 		gen.writeStartObject();
-		gen.writePOJOField(value.getValue(), value.getName());
+		gen.writePOJOField(value.getName(), value.getValue());
 		gen.writeEndObject();
 	}
 
