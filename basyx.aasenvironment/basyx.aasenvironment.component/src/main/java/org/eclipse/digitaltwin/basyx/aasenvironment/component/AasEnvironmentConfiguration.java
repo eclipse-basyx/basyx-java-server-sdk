@@ -25,21 +25,13 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentSerialization;
 import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironmentSerialization;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ResourceLoader;
 
 /**
  * Configuration for aas environment for dependency injection
@@ -49,29 +41,8 @@ import org.springframework.core.io.ResourceLoader;
  */
 @Configuration
 public class AasEnvironmentConfiguration {
-
-	@Autowired
-	ResourceLoader resourceLoader;
-
-	@Value("${basyx.environment:#{null}}")
-	private List<String> filesToLoad;
-
 	@Bean
-	public AasEnvironmentSerialization createAasEnvironmentSerialization(AasRepository aasRepository,
-			SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository)
-			throws IOException, InvalidFormatException, DeserializationException {
-		loadEnvironmentIfNeeded(aasRepository, submodelRepository, conceptDescriptionRepository);
+	public AasEnvironmentSerialization createAasEnvironmentSerialization(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
 		return new DefaultAASEnvironmentSerialization(aasRepository, submodelRepository, conceptDescriptionRepository);
 	}
-
-	private void loadEnvironmentIfNeeded(AasRepository aasRepository, SubmodelRepository submodelRepository,
-			ConceptDescriptionRepository conceptDescriptionRepository)
-			throws IOException, InvalidFormatException, DeserializationException {
-		AasEnvironmentPreconfigurationLoader loader = new AasEnvironmentPreconfigurationLoader(resourceLoader,
-				filesToLoad);
-		if (loader.shouldLoadPreconfiguredEnvironment()) {
-			loader.loadPrefconfiguredEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository);
-		}
-	}
-
 }

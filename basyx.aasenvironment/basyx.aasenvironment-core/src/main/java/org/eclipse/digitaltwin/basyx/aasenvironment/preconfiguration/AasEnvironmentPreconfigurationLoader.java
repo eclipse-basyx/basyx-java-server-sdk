@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,11 +19,11 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.component;
+package org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,14 +41,27 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Component;
 
+/**
+ * Loader for AAS environment pre-configuration
+ *
+ * @author fried, mateusmolina, despen
+ *
+ */
+@Component
 public class AasEnvironmentPreconfigurationLoader {
 
+	@Value("${basyx.environment:#{null}}")
 	private List<String> filesToLoad;
+
 	private ResourceLoader resourceLoader;
 
+	@Autowired
 	public AasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, List<String> filesToLoad) {
 		this.resourceLoader = resourceLoader;
 		this.filesToLoad = filesToLoad;
@@ -60,7 +73,7 @@ public class AasEnvironmentPreconfigurationLoader {
 
 	public void loadPrefconfiguredEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository,
 			ConceptDescriptionRepository conceptDescriptionRepository)
-			throws IOException, DeserializationException, InvalidFormatException {
+					throws IOException, DeserializationException, InvalidFormatException {
 		for (String filePath : filesToLoad) {
 
 			InputStream fileStream = getFileInputStream(filePath);
