@@ -22,53 +22,35 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.value;
+
+package org.eclipse.digitaltwin.basyx.submodelservice.value.decorator;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
-import org.eclipse.digitaltwin.aas4j.v3.model.EntityType;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.EntityValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIDValueValueOnly;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
-/**
- * Represents the submodel element {@link Entity} value
- * 
- * @author danish
- *
- */
-public class EntityValue implements SubmodelElementValue {
-	private List<ValueOnly> statements;
-	private EntityType entityType;
-	private Optional<String> globalAssetId = Optional.empty();
-	private Optional<List<? extends SpecificAssetIDValue>> specificAssetIds = Optional.empty();
-	
-	@SuppressWarnings("unused")
-	private EntityValue() {
-		super();
-	}
-	
-	public EntityValue(List<ValueOnly> statements, EntityType entityType, String globalAssetId,
-			List<? extends SpecificAssetIDValue> specificAssetIds) {
-		this.statements = statements;
-		this.entityType = entityType;
-		this.globalAssetId = Optional.ofNullable(globalAssetId);
-		this.specificAssetIds = Optional.ofNullable(specificAssetIds);
+public class EntityValueValueOnlyDecorator extends EntityValue {
+	private EntityValue entityValue;
+
+	public EntityValueValueOnlyDecorator(EntityValue entityValue) {
+		super(entityValue.getStatements(), entityValue.getEntityType(), entityValue.getGlobalAssetId(), entityValue.getSpecificAssetIds());
+		this.entityValue = entityValue;
 	}
 
-	public List<ValueOnly> getStatements() {
-		return statements;
+	/**
+	 * returns a ValueOnly Serializable Verison of the SpecificAssetIds this is
+	 * achieved through a simple conversion of each SpecificAssetIdValue to
+	 * SpecificAssetIDValueValueOnly which is used by custom serializer in
+	 * {@link SubmodelServiceHTTPSerializationExtension#extend(Jackson2ObjectMapperBuilder)}
+	 */
+	@Override
+	public List<? extends SpecificAssetIDValueValueOnly> getSpecificAssetIds() {
+		return entityValue.getSpecificAssetIds()
+				.stream()
+				.map(specificAssetIdValue -> new SpecificAssetIDValueValueOnly(specificAssetIdValue.toSpecificAssetID()))
+				.collect(Collectors.toList());
 	}
-
-	public EntityType getEntityType() {
-		return entityType;
-	}
-
-	public String getGlobalAssetId() {
-		return globalAssetId.orElse(null);
-	}
-
-	public List<? extends SpecificAssetIDValue> getSpecificAssetIds() {
-		return specificAssetIds.orElse(null);
-	}
-	
 }

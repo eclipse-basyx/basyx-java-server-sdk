@@ -59,7 +59,7 @@ public class EntityValueMapper implements ValueMapper<EntityValue> {
 		setSpecificAssetIDs(entityValue.getSpecificAssetIds());
 	}
 
-	private void setSpecificAssetIDs(List<SpecificAssetIDValue> specificAssetIdValues) {
+	private void setSpecificAssetIDs(List<? extends SpecificAssetIDValue> specificAssetIdValues) {
 		if (specificAssetIdValues == null)
 			return;
 

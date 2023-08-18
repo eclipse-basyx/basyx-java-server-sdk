@@ -23,60 +23,22 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetID;
 
-/**
- * Represents the {@link SpecificAssetId} value
- * 
- * @author danish
- *
- */
-public class SpecificAssetIDValue {
-	
-	private String name;
-	private String value;
-	private ReferenceValue externalSubjectId;
-	
+public class SpecificAssetIDValueValueOnly extends SpecificAssetIDValue {
+
 	@SuppressWarnings("unused")
-	protected SpecificAssetIDValue() {
+	private SpecificAssetIDValueValueOnly() {
 		super();
 	}
-
-	public SpecificAssetIDValue(String name, String value, ReferenceValue externalSubjectId) {
-		this.name = name;
-		this.value = value;
-		this.externalSubjectId = externalSubjectId;
+	
+	public SpecificAssetIDValueValueOnly(String name, String value, ReferenceValue externalSubjectId) {
+		super(name, value, externalSubjectId);
 	}
 
-	public SpecificAssetIDValue(SpecificAssetID specificAssetID) {
-		this.name = specificAssetID.getName();
-		this.value = specificAssetID.getValue();
-		if (specificAssetID.getExternalSubjectID() != null) {
-			this.externalSubjectId = new ReferenceValue(specificAssetID.getExternalSubjectID());
-		}
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public Reference getExternalSubjectId() {
-		if (externalSubjectId == null)
-			return null;
-		
-		return externalSubjectId.toReference();
-	}
-
-	public SpecificAssetID toSpecificAssetID() {
-		return new DefaultSpecificAssetID.Builder().externalSubjectID(getExternalSubjectId()).name(getName()).value(getValue()).build();
+	public SpecificAssetIDValueValueOnly(SpecificAssetID specificAssetID) {
+		super(specificAssetID);
 	}
 }

@@ -33,16 +33,16 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
+/**
+ * @author witt, jungjan
+ */
 public class SpecificAssetIDValueValueOnlySerializer extends JsonSerializer<SpecificAssetIDValue> {
 
 	@Override
 	public void serialize(SpecificAssetIDValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
 		gen.writeStartObject();
-
 		gen.writePOJOField(value.getValue(), value.getName());
-
 		gen.writeEndObject();
-
 	}
 
 }

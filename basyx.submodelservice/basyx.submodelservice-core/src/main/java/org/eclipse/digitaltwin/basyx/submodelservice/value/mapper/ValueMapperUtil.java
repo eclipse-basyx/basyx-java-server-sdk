@@ -52,10 +52,13 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.RangeValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.RelationshipElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIDValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIDValueValueOnly;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollectionValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementListValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.decorator.EntityValueValueOnlyDecorator;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.exception.SubmodelElementValueNotFoundException;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.factory.SubmodelElementValueMapperFactory;
 
@@ -96,8 +99,16 @@ public class ValueMapperUtil {
 		String idShort = submodelElement.getIdShort();
 		SubmodelElementValue submodelElementValue = new SubmodelElementValueMapperFactory().create(submodelElement)
 				.getValue();
-
+			
+		if(submodelElementValue instanceof EntityValue) {
+			submodelElementValue = getValueOnlySerializableEntityValue((EntityValue) submodelElementValue);	
+		}
+		
 		return new ValueOnly(idShort, submodelElementValue);
+	}
+
+	private static EntityValueValueOnlyDecorator getValueOnlySerializableEntityValue(EntityValue entityValue) {
+		return new EntityValueValueOnlyDecorator(entityValue);
 	}
 
 	/**
