@@ -69,9 +69,11 @@ public class PreconfigurationLoaderInitializer implements InitializingBean {
 	}
 
 	private void loadPreconfiguredEnvironment() throws IOException, InvalidFormatException, DeserializationException {
-		if (preconfigurationLoader.shouldLoadPreconfiguredEnvironment()) {
-			preconfigurationLoader.loadPrefconfiguredEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository);
+		if (!preconfigurationLoader.shouldLoadPreconfiguredEnvironment()) {
+			return;
 		}
+
+		preconfigurationLoader.loadPreconfiguredEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository);
 	}
 
 }

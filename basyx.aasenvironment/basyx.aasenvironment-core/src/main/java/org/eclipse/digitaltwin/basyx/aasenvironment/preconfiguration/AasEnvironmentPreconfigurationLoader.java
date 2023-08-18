@@ -71,7 +71,7 @@ public class AasEnvironmentPreconfigurationLoader {
 		return filesToLoad != null;
 	}
 
-	public void loadPrefconfiguredEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository,
+	public void loadPreconfiguredEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository,
 			ConceptDescriptionRepository conceptDescriptionRepository)
 					throws IOException, DeserializationException, InvalidFormatException {
 		for (String filePath : filesToLoad) {
