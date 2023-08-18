@@ -23,34 +23,53 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository;
+package org.eclipse.digitaltwin.basyx.aasrepository.config;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.common.mongocore.CustomMappingMongoConverter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.eclipse.digitaltwin.basyx.aasrepository.MongoDBAasRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
-import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
-import org.springframework.stereotype.Component;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 
 /**
- * Custom mongodb mapping converter for {@link MongoDBAasRepository}
+ * Test configurations for {@link MongoDBAasRepository}
  * 
  * @author danish
  *
  */
-@Component
-@ConditionalOnProperty(prefix = "basyx", name = "backend", havingValue = "MongoDB")
-public class AasMappingMongoConverter extends CustomMappingMongoConverter {
+@Configuration
+public class TestConfiguration {
 
-	public AasMappingMongoConverter(MongoDatabaseFactory databaseFactory, MongoMappingContext mappingContext,
-			ObjectMapper mapper) {
-		super(databaseFactory, mappingContext, mapper);
+	@Value("${spring.data.mongodb.host}")
+	private String host;
+
+	@Value("${spring.data.mongodb.port}")
+	private int port;
+
+	@Value("${spring.data.mongodb.username}")
+	private String userName;
+
+	@Value("${spring.data.mongodb.password}")
+	private String password;
+
+	@Value("${spring.data.mongodb.database}")
+	private String database;
+
+	@Bean
+	public MongoDatabaseFactory databaseFactory() {
+		String connectionString = createConnectionString();
+
+		MongoClient client = MongoClients.create(connectionString.toString());
+
+		return new SimpleMongoClientDatabaseFactory(client, database);
 	}
 
-	@Override
-	protected String getMetamodelId(Object source) {
-		return ((AssetAdministrationShell) source).getId();
+	private String createConnectionString() {
+		return String.format("mongodb://%s:%s@%s:%s", userName, password, host, port);
 	}
 
 }
