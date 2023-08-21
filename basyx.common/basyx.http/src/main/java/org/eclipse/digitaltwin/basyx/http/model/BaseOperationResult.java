@@ -1,10 +1,9 @@
-package org.eclipse.digitaltwin.basyx.submodelservice;
+package org.eclipse.digitaltwin.basyx.http.model;
 
 import java.util.Objects;
 
 import javax.validation.Valid;
 
-import org.eclipse.digitaltwin.basyx.http.model.Result;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

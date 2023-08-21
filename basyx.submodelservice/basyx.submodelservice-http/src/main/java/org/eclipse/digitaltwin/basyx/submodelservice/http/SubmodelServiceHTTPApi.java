@@ -30,11 +30,11 @@ import javax.validation.constraints.Min;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.basyx.http.model.OperationRequest;
+import org.eclipse.digitaltwin.basyx.http.model.OperationResult;
 import org.eclipse.digitaltwin.basyx.http.model.Result;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.pagination.GetSubmodelElementsResult;
-import org.eclipse.digitaltwin.basyx.submodelservice.OperationRequest;
-import org.eclipse.digitaltwin.basyx.submodelservice.OperationResult;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.http.ResponseEntity;
