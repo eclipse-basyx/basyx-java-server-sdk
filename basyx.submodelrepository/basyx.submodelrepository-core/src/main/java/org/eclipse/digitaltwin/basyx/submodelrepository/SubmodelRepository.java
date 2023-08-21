@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import java.util.List;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -165,6 +166,21 @@ public interface SubmodelRepository {
 	 *            the SubmodelElement IdShort
 	 */
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException;
+
+	/**
+	 * Invokes an operation
+	 * 
+	 * @param submodelId
+	 *            the Submodel id
+	 * @param idShortPath
+	 *            the Operation IdShortPath
+	 * @param input
+	 *            value to be passed to the invoked operation
+	 * @throws ElementDoesNotExistException
+	 *             If the operation defined in the idShortPath does not exist
+	 * @return
+	 */
+	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException;
 
 	/**
 	 * Returns the name of the submodel repository

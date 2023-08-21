@@ -23,42 +23,29 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+
 package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
+import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapperUtil;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperation;
+import org.junit.Test;
 
 /**
- * Represents the ValueOnly-Representation of a Submodel
  * 
- * @author damm
+ * @author schnicke
  *
  */
-public class SubmodelValueOnly {
+public class TestSubmodelValueOnly {
 
-	private String idShort;
-	private Map<String, SubmodelElementValue> submodelValuesMap;
-	
-	public SubmodelValueOnly(Collection<SubmodelElement> submodelElements) {		
-		submodelValuesMap = submodelElements.stream().filter(SubmodelValueOnly::hasValueOnlyDefined).map(ValueMapperUtil::toValueOnly).collect(Collectors.toMap(ValueOnly::getIdShort, ValueOnly::getSubmodelElementValue));
-	}
+	@Test
+	public void operationExcluded() {
+		Operation operation = new DefaultOperation.Builder().idShort("doesNotMatter").build();
+		SubmodelValueOnly submodelValueOnly = new SubmodelValueOnly(Collections.singleton(operation));
 
-	private static boolean hasValueOnlyDefined(SubmodelElement element) {
-		return !(element instanceof Operation);
+		assertTrue(submodelValueOnly.getValuesOnlyMap().isEmpty());
 	}
-	
-	public String getIdShort() {
-		return idShort;
-	}	
-	
-	public Map<String, SubmodelElementValue> getValuesOnlyMap() {
-		return submodelValuesMap;
-	}	
-	
 }

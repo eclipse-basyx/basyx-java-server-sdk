@@ -23,42 +23,19 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
+package org.eclipse.digitaltwin.basyx.core.exceptions;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapperUtil;
-
-/**
- * Represents the ValueOnly-Representation of a Submodel
- * 
- * @author damm
- *
- */
-public class SubmodelValueOnly {
-
-	private String idShort;
-	private Map<String, SubmodelElementValue> submodelValuesMap;
-	
-	public SubmodelValueOnly(Collection<SubmodelElement> submodelElements) {		
-		submodelValuesMap = submodelElements.stream().filter(SubmodelValueOnly::hasValueOnlyDefined).map(ValueMapperUtil::toValueOnly).collect(Collectors.toMap(ValueOnly::getIdShort, ValueOnly::getSubmodelElementValue));
+@SuppressWarnings("serial")
+public class NotInvokableException extends RuntimeException {
+	public NotInvokableException() {
 	}
 
-	private static boolean hasValueOnlyDefined(SubmodelElement element) {
-		return !(element instanceof Operation);
+	public NotInvokableException(String idShortPath) {
+		super(getMessage(idShortPath));
 	}
-	
-	public String getIdShort() {
-		return idShort;
-	}	
-	
-	public Map<String, SubmodelElementValue> getValuesOnlyMap() {
-		return submodelValuesMap;
-	}	
-	
+
+	private static String getMessage(String idShortPath) {
+		return "Element " + idShortPath + " is not invokable";
+	}
 }

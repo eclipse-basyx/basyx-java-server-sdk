@@ -23,42 +23,25 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapperUtil;
+package org.eclipse.digitaltwin.basyx.core.exceptions;
 
 /**
- * Represents the ValueOnly-Representation of a Submodel
+ * Indicates that a requested feature is not supported
  * 
- * @author damm
+ * @author schnicke
  *
  */
-public class SubmodelValueOnly {
-
-	private String idShort;
-	private Map<String, SubmodelElementValue> submodelValuesMap;
-	
-	public SubmodelValueOnly(Collection<SubmodelElement> submodelElements) {		
-		submodelValuesMap = submodelElements.stream().filter(SubmodelValueOnly::hasValueOnlyDefined).map(ValueMapperUtil::toValueOnly).collect(Collectors.toMap(ValueOnly::getIdShort, ValueOnly::getSubmodelElementValue));
+@SuppressWarnings("serial")
+public class FeatureNotSupportedException extends RuntimeException {
+	public FeatureNotSupportedException() {
 	}
 
-	private static boolean hasValueOnlyDefined(SubmodelElement element) {
-		return !(element instanceof Operation);
+	public FeatureNotSupportedException(String featureName) {
+		super(getMessage(featureName));
 	}
-	
-	public String getIdShort() {
-		return idShort;
-	}	
-	
-	public Map<String, SubmodelElementValue> getValuesOnlyMap() {
-		return submodelValuesMap;
-	}	
-	
+
+	private static String getMessage(String featureName) {
+		return "Feature " + featureName + " is not supported by the current configuration";
+	}
 }

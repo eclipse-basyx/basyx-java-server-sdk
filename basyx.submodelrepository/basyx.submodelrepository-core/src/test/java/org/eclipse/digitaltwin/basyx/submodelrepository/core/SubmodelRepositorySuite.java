@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXSD;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
@@ -41,10 +42,12 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.junit.Test;
 
@@ -352,6 +355,29 @@ public abstract class SubmodelRepositorySuite {
 		CursorResult<List<Submodel>> cursorResult = repo
 				.getAllSubmodels(new PaginationInfo(1, ""));
 		assertEquals(1, cursorResult.getResult().size());
+	}
+
+	// Has to be overwritten if backend does not support operations
+	@Test
+	public void invokeOperation() {
+		SubmodelRepository submodelRepo = getSubmodelRepositoryWithDummySubmodels();
+
+		Property val = new DefaultProperty.Builder().idShort("in").value("2").build();
+
+		OperationVariable[] result = submodelRepo.invokeOperation(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_OPERATION_ID,
+				new OperationVariable[] { SubmodelServiceHelper.createOperationVariable(val) });
+
+		Property ret = (Property) result[0].getValue();
+
+		assertEquals("4", ret.getValue());
+	}
+
+	// Has to be overwritten if backend does not support operations
+	@Test(expected = NotInvokableException.class)
+	public void invokeNonOperation() {
+		SubmodelRepository submodelRepo = getSubmodelRepositoryWithDummySubmodels();
+
+		submodelRepo.invokeOperation(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT, new OperationVariable[0]);
 	}
 
 
