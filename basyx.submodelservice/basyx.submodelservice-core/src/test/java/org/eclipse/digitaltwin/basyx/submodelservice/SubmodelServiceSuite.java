@@ -50,6 +50,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
@@ -408,6 +409,15 @@ public abstract class SubmodelServiceSuite {
 		Property ret = (Property) result[0].getValue();
 		
 		assertEquals("4", ret.getValue());
+	}
+
+	// Has to be overwritten if backend does not support operations
+	@Test(expected = NotInvokableException.class)
+	public void invokeNonOperation() {
+		Submodel invokableSubmodel = DummySubmodelFactory.createSubmodelWithAllSubmodelElements();
+		SubmodelService submodelService = getSubmodelService(invokableSubmodel);
+
+		submodelService.invokeOperation(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT, new OperationVariable[0]);
 	}
 
 	private List<SubmodelElement> createHierarchicalSubmodelElement() {

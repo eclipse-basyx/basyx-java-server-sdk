@@ -42,6 +42,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -356,6 +357,7 @@ public abstract class SubmodelRepositorySuite {
 		assertEquals(1, cursorResult.getResult().size());
 	}
 
+	// Has to be overwritten if backend does not support operations
 	@Test
 	public void invokeOperation() {
 		SubmodelRepository submodelRepo = getSubmodelRepositoryWithDummySubmodels();
@@ -368,6 +370,14 @@ public abstract class SubmodelRepositorySuite {
 		Property ret = (Property) result[0].getValue();
 
 		assertEquals("4", ret.getValue());
+	}
+
+	// Has to be overwritten if backend does not support operations
+	@Test(expected = NotInvokableException.class)
+	public void invokeNonOperation() {
+		SubmodelRepository submodelRepo = getSubmodelRepositoryWithDummySubmodels();
+
+		submodelRepo.invokeOperation(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT, new OperationVariable[0]);
 	}
 
 

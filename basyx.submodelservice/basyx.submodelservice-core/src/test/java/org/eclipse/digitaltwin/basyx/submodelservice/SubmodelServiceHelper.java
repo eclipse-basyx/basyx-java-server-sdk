@@ -338,7 +338,7 @@ public class SubmodelServiceHelper {
 	}
 
 	private static Operation createInvokableOperation() {
-		return new InvokableOperation.Builder().idShort(SUBMODEL_TECHNICAL_DATA_OPERATION_ID).inputVariables(createIntOperationVariable("input")).outputVariables(createIntOperationVariable("output"))
+		return new InvokableOperation.Builder().idShort(SUBMODEL_TECHNICAL_DATA_OPERATION_ID).inputVariables(createIntOperationVariable("input")).outputVariables(createIntOperationVariable("result"))
 				.invokable(SubmodelServiceHelper::square).build();
 	}
 
@@ -347,6 +347,7 @@ public class SubmodelServiceHelper {
 		Integer val = Integer.valueOf(in.getValue());
 		Integer squared = val * val;
 		in.setValue(squared.toString());
+		in.setIdShort("result");
 		return new OperationVariable[] { createOperationVariable(in) };
 	}
 

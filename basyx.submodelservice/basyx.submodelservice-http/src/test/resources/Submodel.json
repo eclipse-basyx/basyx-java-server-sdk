@@ -386,7 +386,7 @@
                     "value": {
                         "modelType": "Property",
                         "valueType": "xs:int",
-                        "idShort": "output"
+                        "idShort": "result"
                     }
                 }
             ]

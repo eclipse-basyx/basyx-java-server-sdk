@@ -23,25 +23,19 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+
 package org.eclipse.digitaltwin.basyx.core.exceptions;
 
-/**
- * Indicates that an entity has a identifier that is already in use
- * 
- * @author schnicke
- *
- */
 @SuppressWarnings("serial")
-public class CollidingIdentifierException extends RuntimeException {
-	public CollidingIdentifierException() {
+public class NotInvokableException extends RuntimeException {
+	public NotInvokableException() {
 	}
 
-	public CollidingIdentifierException(String id) {
-		super(getMessage(id));
+	public NotInvokableException(String idShortPath) {
+		super(getMessage(idShortPath));
 	}
 
-	private static String getMessage(String id) {
-		return "Duplicate element id detected with id " + id;
+	private static String getMessage(String idShortPath) {
+		return "Element " + idShortPath + " is not invokable";
 	}
-
 }

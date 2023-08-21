@@ -38,10 +38,10 @@ public class FeatureNotSupportedException extends RuntimeException {
 	}
 
 	public FeatureNotSupportedException(String featureName) {
-		super(getMsg(featureName));
+		super(getMessage(featureName));
 	}
 
-	private static String getMsg(String featureName) {
+	private static String getMessage(String featureName) {
 		return "Feature " + featureName + " is not supported by the current configuration";
 	}
 }
