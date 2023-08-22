@@ -43,7 +43,7 @@ public class SpecificAssetIDValue {
 	private ReferenceValue externalSubjectId;
 	
 	@SuppressWarnings("unused")
-	protected SpecificAssetIDValue() {
+	private SpecificAssetIDValue() {
 		super();
 	}
 
