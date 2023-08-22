@@ -21,6 +21,7 @@
 		<module>basyx.aasregistry</module>
 		<module>basyx.aasenvironment</module>
 		<module>basyx.conceptdescriptionrepository</module>
+		<module>basyx.aasxfileserver</module>		
 	</modules>
 	<name>BaSyx Parent</name>
 	<description>Parent POM for Eclipse BaSyx</description>
@@ -362,6 +363,23 @@
 				<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
 				<version>${revision}</version>
 			</dependency>
+			
+			<!-- basyx.aasxfileserver -->
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasxfileserver-core</artifactId>
+				<version>${revision}</version>
+			</dependency>			
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasxfileserver-backend-inmemory</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasxfileserver.component</artifactId>
+				<version>${revision}</version>
+			</dependency>			
 
 			<!-- tests -->
 			<!-- basyx.common -->
@@ -537,6 +555,13 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<!-- basyx.aasxfileserver -->
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasxfileserver-core</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
