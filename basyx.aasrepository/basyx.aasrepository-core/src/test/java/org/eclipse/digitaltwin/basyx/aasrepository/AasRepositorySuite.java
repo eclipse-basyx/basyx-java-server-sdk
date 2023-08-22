@@ -55,7 +55,7 @@ import org.junit.Test;
 /**
  * Testsuite for implementations of the AasRepository interface
  * 
- * @author schnicke
+ * @author schnicke, kammognie
  *
  */
 public abstract class AasRepositorySuite {
@@ -74,7 +74,7 @@ public abstract class AasRepositorySuite {
 	private AasRepository aasRepo;
 
 	protected abstract AasRepositoryFactory getAasRepositoryFactory();
-
+	
 	@Before
 	public void createAasRepoWithDummyAas() {
 		aasRepo = getAasRepositoryFactory().create();
@@ -92,6 +92,11 @@ public abstract class AasRepositorySuite {
 		preconfiguredShells.add(aas2);
 
 		preconfiguredShells.forEach(shell -> aasRepo.createAas(shell));
+	}
+	
+	@Test
+	public void getDefaultAasRepositoryName() {
+		assertEquals("aas-repo", aasRepo.getName());
 	}
 
 	@Test

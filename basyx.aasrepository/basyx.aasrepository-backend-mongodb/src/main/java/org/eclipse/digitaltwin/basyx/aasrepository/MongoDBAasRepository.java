@@ -48,8 +48,8 @@ import com.mongodb.client.result.DeleteResult;
 /**
  * 
  * MongoDB implementation of the AasRepository
- * 
- * @author schnicke, kevinbck
+ *
+ * @author schnicke, kevinbck, kammognie
  *
  */
 public class MongoDBAasRepository implements AasRepository {
@@ -58,12 +58,18 @@ public class MongoDBAasRepository implements AasRepository {
 	private MongoTemplate mongoTemplate;
 	private String collectionName;
 	private AasServiceFactory aasServiceFactory;
+	private String aasRepositoryName;
 
 	public MongoDBAasRepository(MongoTemplate mongoTemplate, String collectionName, AasServiceFactory aasServiceFactory) {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
 		this.aasServiceFactory = aasServiceFactory;
 		configureIndexForAasId(mongoTemplate);
+	}
+	
+	public MongoDBAasRepository(MongoTemplate mongoTemplate, String collectionName, AasServiceFactory aasServiceFactory, String aasRepositoryName) {
+		this(mongoTemplate, collectionName, aasServiceFactory);
+		this.aasRepositoryName = aasRepositoryName;
 	}
 
 	private void configureIndexForAasId(MongoTemplate mongoTemplate) {
@@ -162,6 +168,11 @@ public class MongoDBAasRepository implements AasRepository {
 	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException {
 		return this.getAas(aasId)
 				.getAssetInformation();
+	}
+	
+	@Override
+	public String getName() {
+		return aasRepositoryName == null ? AasRepository.super.getName() : aasRepositoryName;
 	}
 
 	private AasService getAasService(String aasId) {

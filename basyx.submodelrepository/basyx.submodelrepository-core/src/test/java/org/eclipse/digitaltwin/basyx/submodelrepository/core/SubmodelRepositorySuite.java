@@ -54,7 +54,7 @@ import org.junit.Test;
 /**
  * Testsuite for implementations of the SubmodelRepository interface
  * 
- * @author schnicke, danish
+ * @author schnicke, danish, kammognie
  *
  */
 public abstract class SubmodelRepositorySuite {
@@ -345,6 +345,13 @@ public abstract class SubmodelRepositorySuite {
 		} catch (ElementDoesNotExistException expected) {
 			throw expected;
 		}
+	}
+	
+	@Test
+	public void getDefaultSubmodelRepositoryName() {
+		SubmodelRepository repo = getSubmodelRepository();
+		
+		assertEquals("sm-repo", repo.getName());
 	}
 
 	@Test

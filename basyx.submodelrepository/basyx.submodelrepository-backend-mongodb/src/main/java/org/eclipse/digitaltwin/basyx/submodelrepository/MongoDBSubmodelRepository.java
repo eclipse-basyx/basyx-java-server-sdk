@@ -53,7 +53,7 @@ import com.mongodb.client.result.DeleteResult;
 /**
  * MongoDB implementation of the SubmodelRepository
  * 
- * @author jungjan
+ * @author jungjan, kammognie
  *
  */
 public class MongoDBSubmodelRepository implements SubmodelRepository {
@@ -64,6 +64,7 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	private MongoTemplate mongoTemplate;
 	private String collectionName;
 	private SubmodelServiceFactory submodelServiceFactory;
+	private String smRepositoryName;
 
 	/**
 	 * Creates the MongoDBSubmodelRepository utilizing the passed
@@ -74,11 +75,28 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	 * @param collectionName
 	 * @param submodelServiceFactory
 	 */
-	public MongoDBSubmodelRepository(MongoTemplate mongoTemplate, String collectionName, SubmodelServiceFactory submodelServiceFactory) {
+	public MongoDBSubmodelRepository(MongoTemplate mongoTemplate, String collectionName,
+			SubmodelServiceFactory submodelServiceFactory) {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
 		this.submodelServiceFactory = submodelServiceFactory;
 		configureIndexForSubmodelId(mongoTemplate);
+	}
+
+	/**
+	 * Creates the MongoDBSubmodelRepository utilizing the passed
+	 * SubmodelServiceFactory for creating new SubmodelServices and uses a
+	 * collectionName and a mongoTemplate for operating MongoDB
+	 * 
+	 * @param mongoTemplate 
+	 * @param collectionName 
+	 * @param submodelServiceFactory 
+	 * @param smRepositoryName Name of the SubmodelRepository
+	 */
+	public MongoDBSubmodelRepository(MongoTemplate mongoTemplate, String collectionName,
+			SubmodelServiceFactory submodelServiceFactory, String smRepositoryName) {
+		this(mongoTemplate, collectionName, submodelServiceFactory);
+		this.smRepositoryName = smRepositoryName;
 	}
 
 	/**
@@ -90,9 +108,30 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	 * @param submodelServiceFactory
 	 * @param submodels
 	 */
-	public MongoDBSubmodelRepository(MongoTemplate mongoTemplate, String collectionName, SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels) {
+	public MongoDBSubmodelRepository(MongoTemplate mongoTemplate, String collectionName,
+			SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels) {
 		this(mongoTemplate, collectionName, submodelServiceFactory);
 		initializeRemoteCollection(submodels);
+	}
+
+	/**
+	 * Creates the MongoDBSubmodelRepository utilizing the passed
+	 * SubmodelServiceFactory for creating new SubmodelServices and uses a
+	 * collectionName and a mongoTemplate for operating MongoDB. Additionally
+	 * initializes the MongoDB collection with a collection of submodels.
+	 * And configures the SubmodelRepository name.
+	 * 
+	 * @param mongoTemplate
+	 * @param collectionName
+	 * @param submodelServiceFactory
+	 * @param submodels
+	 * @param smRepositoryName Name of the SubmodelRepository
+	 */
+	public MongoDBSubmodelRepository(MongoTemplate mongoTemplate, String collectionName,
+			SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels, String smRepositoryName) {
+		this(mongoTemplate, collectionName, submodelServiceFactory, submodels);
+		
+		this.smRepositoryName = smRepositoryName;
 	}
 
 	private void initializeRemoteCollection(Collection<Submodel> submodels) {
@@ -121,8 +160,8 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException {
-		Submodel submodel = mongoTemplate.findOne(new Query().addCriteria(Criteria.where(ID_JSON_PATH)
-				.is(submodelId)), Submodel.class, collectionName);
+		Submodel submodel = mongoTemplate.findOne(new Query().addCriteria(Criteria.where(ID_JSON_PATH).is(submodelId)),
+				Submodel.class, collectionName);
 		if (submodel == null) {
 			throw new ElementDoesNotExistException(submodelId);
 		}
@@ -131,8 +170,7 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void updateSubmodel(String submodelId, Submodel submodel) throws ElementDoesNotExistException {
-		Query query = new Query().addCriteria(Criteria.where(ID_JSON_PATH)
-				.is(submodelId));
+		Query query = new Query().addCriteria(Criteria.where(ID_JSON_PATH).is(submodelId));
 
 		throwIfSubmodelDoesNotExist(query, submodelId);
 		throwIfMismatchingIds(submodelId, submodel);
@@ -162,8 +200,8 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	}
 
 	private void throwIfCollidesWithRemoteId(Submodel submodel) {
-		if (mongoTemplate.exists(new Query().addCriteria(Criteria.where(ID_JSON_PATH)
-				.is(submodel.getId())), Submodel.class, collectionName)) {
+		if (mongoTemplate.exists(new Query().addCriteria(Criteria.where(ID_JSON_PATH).is(submodel.getId())),
+				Submodel.class, collectionName)) {
 			throw new CollidingIdentifierException(submodel.getId());
 		}
 	}
@@ -179,17 +217,20 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public SubmodelElement getSubmodelElement(String submodelId, String submodelElementIdShort) throws ElementDoesNotExistException {
+	public SubmodelElement getSubmodelElement(String submodelId, String submodelElementIdShort)
+			throws ElementDoesNotExistException {
 		return getSubmodelService(submodelId).getSubmodelElement(submodelElementIdShort);
 	}
 
 	@Override
-	public SubmodelElementValue getSubmodelElementValue(String submodelId, String submodelElementIdShort) throws ElementDoesNotExistException {
+	public SubmodelElementValue getSubmodelElementValue(String submodelId, String submodelElementIdShort)
+			throws ElementDoesNotExistException {
 		return getSubmodelService(submodelId).getSubmodelElementValue(submodelElementIdShort);
 	}
 
 	@Override
-	public void setSubmodelElementValue(String submodelId, String submodelElementIdShort, SubmodelElementValue value) throws ElementDoesNotExistException {
+	public void setSubmodelElementValue(String submodelId, String submodelElementIdShort, SubmodelElementValue value)
+			throws ElementDoesNotExistException {
 		SubmodelService submodelService = getSubmodelService(submodelId);
 		submodelService.setSubmodelElementValue(submodelElementIdShort, value);
 
@@ -198,8 +239,8 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void deleteSubmodel(String submodelId) throws ElementDoesNotExistException {
-		DeleteResult result = mongoTemplate.remove(new Query().addCriteria(Criteria.where(ID_JSON_PATH)
-				.is(submodelId)), Submodel.class, collectionName);
+		DeleteResult result = mongoTemplate.remove(new Query().addCriteria(Criteria.where(ID_JSON_PATH).is(submodelId)),
+				Submodel.class, collectionName);
 
 		if (result.getDeletedCount() == 0) {
 			throw new ElementDoesNotExistException(submodelId);
@@ -216,7 +257,8 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
+	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement)
+			throws ElementDoesNotExistException {
 		SubmodelService submodelService = getSubmodelService(submodelId);
 		submodelService.createSubmodelElement(idShortPath, submodelElement);
 
@@ -243,6 +285,11 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 		return submodel;
 	}
 
+	@Override
+	public String getName() {
+		return smRepositoryName == null ? SubmodelRepository.super.getName() : smRepositoryName;
+  }
+  
 	private <T> String resolveCursor(PaginationInfo pRequest, List<T> foundDescriptors,
 			Function<T, String> idResolver) {
 		if (foundDescriptors.isEmpty() || !pRequest.isPaged()) {

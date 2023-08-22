@@ -23,22 +23,29 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.aasrepository.http.testconfig;
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.eclipse.digitaltwin.basyx.aasrepository.InMemoryAasRepository;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 
 /**
- * Spring application configured for tests.
+ * Configuration for tests
  * 
- * @author schnicke, danish, kammognie
+ * @author danish, kammognie
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
-public class DummyConceptDescriptionRepositoryComponent {
-	
-	public static void main(String[] args) {
-		SpringApplication.run(DummyConceptDescriptionRepositoryComponent.class, args);
-	}
+@Configuration
+public class DummyConfig {
+
+	@Bean
+    @ConditionalOnMissingBean
+    public AasRepository createAasRepository() {
+        return new InMemoryAasRepository(new InMemoryAasServiceFactory());
+    }
 }

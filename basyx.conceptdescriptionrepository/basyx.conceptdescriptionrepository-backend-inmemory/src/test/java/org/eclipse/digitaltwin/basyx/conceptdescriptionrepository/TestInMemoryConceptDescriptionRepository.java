@@ -26,6 +26,8 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -38,10 +40,12 @@ import org.junit.Test;
 /**
  * Tests the {@link InMemoryConceptDescriptionRepository}
  * 
- * @author danish
+ * @author danish, kammognie
  *
  */
 public class TestInMemoryConceptDescriptionRepository extends ConceptDescriptionRepositorySuite {
+	
+	private static final String CONFIGURED_CD_REPO_NAME = "configured-cd-repo-name";
 
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository() {
@@ -51,6 +55,13 @@ public class TestInMemoryConceptDescriptionRepository extends ConceptDescription
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions) {
 		return new InMemoryConceptDescriptionRepository(conceptDescriptions);
+	}
+	
+	@Test
+    public void getConfiguredInMemoryConceptDescriptionRepositoryName() {
+		ConceptDescriptionRepository repo = new InMemoryConceptDescriptionRepository(CONFIGURED_CD_REPO_NAME);
+		
+		assertEquals(CONFIGURED_CD_REPO_NAME, repo.getName());
 	}
 
 	@Test(expected = CollidingIdentifierException.class)

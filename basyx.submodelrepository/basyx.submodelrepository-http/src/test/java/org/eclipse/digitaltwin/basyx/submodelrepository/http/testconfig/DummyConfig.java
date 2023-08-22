@@ -24,21 +24,27 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http;
+package org.eclipse.digitaltwin.basyx.submodelrepository.http.testconfig;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * Spring application configured for tests.
+ * Configuration for tests  
  * 
- * @author schnicke, danish, kammognie
+ * @author danish, kammognie
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
-public class DummyConceptDescriptionRepositoryComponent {
-	
-	public static void main(String[] args) {
-		SpringApplication.run(DummyConceptDescriptionRepositoryComponent.class, args);
+@Configuration
+public class DummyConfig {
+
+	@Bean
+	@ConditionalOnMissingBean
+	public SubmodelRepository createSubmodelRepository() {
+		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
 	}
 }

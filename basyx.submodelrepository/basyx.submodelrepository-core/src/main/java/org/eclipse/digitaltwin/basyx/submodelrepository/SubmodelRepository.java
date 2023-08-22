@@ -40,7 +40,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 /**
  * Specifies the overall SubmodelRepository API
  * 
- * @author schnicke, danish
+ * @author schnicke, danish, kammognie
  *
  */
 public interface SubmodelRepository {
@@ -168,6 +168,15 @@ public interface SubmodelRepository {
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException;
 
 	/**
+	 * Returns the name of the repository
+	 * 
+	 * @return repoName
+	 */
+	public default String getName() {
+		return "sm-repo";
+	}
+
+	/**
 	 * Invokes an operation
 	 * 
 	 * @param submodelId
@@ -181,13 +190,6 @@ public interface SubmodelRepository {
 	 * @return
 	 */
 	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException;
-
-	/**
-	 * Returns the name of the submodel repository
-	 */
-	public default String getName() {
-		return "submodelRepository-default-name";
-	}
 
 	/**
 	 * Retrieves the Submodel as Value-Only_representation with the specific id

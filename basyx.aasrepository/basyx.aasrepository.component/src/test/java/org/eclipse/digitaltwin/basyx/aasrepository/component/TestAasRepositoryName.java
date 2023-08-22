@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -19,36 +19,71 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
-package org.eclipse.digitaltwin.basyx.aasrepository;
+package org.eclipse.digitaltwin.basyx.aasrepository.component;
 
 import static org.junit.Assert.assertEquals;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.junit.Test;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
- * Tests the {@link InMemoryAasRepository} name
- *  
- * @author schnicke, kammognie
+ * 
+ * Test the configuration of the AasRepository's name
+ *
+ * @author danish, kammognie
  *
  */
-public class TestInMemoryAasRepository extends AasRepositorySuite {
+public class TestAasRepositoryName {
 	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
-	
-	@Override
-	protected AasRepositoryFactory getAasRepositoryFactory() {
-		return new InMemoryAasRepositoryFactory(new InMemoryAasServiceFactory());
+	private static final String BASYX_AASREPO_NAME_KEY = "basyx.aasrepo.name";
+	private static ConfigurableApplicationContext appContext;
+
+	public void startContext() {
+		appContext = new SpringApplication(AasRepositoryComponent.class).run(new String[] {});
 	}
-	
+
+	public static void closeContext() {
+		appContext.close();
+	}
+
 	@Test
-    public void getConfiguredInMemoryAasRepositoryName() {
-		AasRepository repo = new InMemoryAasRepository(new InMemoryAasServiceFactory(), CONFIGURED_AAS_REPO_NAME);
+	public void getDefaultRepoName() {
+		startContext();
+		
+		AasRepository repo = appContext.getBean(AasRepository.class);
+		
+		assertEquals("aas-repo", repo.getName());
+		
+		closeContext();
+	}
+
+	@Test
+	public void getConfiguredRepoName() {
+		configureRepoNamePropertyAndStartContext();
+		
+		AasRepository repo = appContext.getBean(AasRepository.class);
 		
 		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
+		
+		resetRepoNamePropertyAndCloseContext();
+	}
+
+	private void resetRepoNamePropertyAndCloseContext() {
+		System.clearProperty(BASYX_AASREPO_NAME_KEY);
+		
+		closeContext();
+	}
+
+	private void configureRepoNamePropertyAndStartContext() {
+		System.setProperty(BASYX_AASREPO_NAME_KEY, CONFIGURED_AAS_REPO_NAME);
+		
+		startContext();
 	}
 
 }

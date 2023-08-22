@@ -7,15 +7,14 @@
 		<artifactId>basyx.submodelservice</artifactId>
 		<version>${revision}</version>
 	</parent>
-
+	
 	<artifactId>basyx.submodelservice-core</artifactId>
 
-	<dependencies>
-		<dependency>
+	<dependencies>	
+	    <dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.core</artifactId>
-		</dependency>
-
+		</dependency>	
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
 			<artifactId>model</artifactId>
