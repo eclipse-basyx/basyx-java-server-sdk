@@ -24,24 +24,18 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.http;
+package org.eclipse.digitaltwin.basyx.core.exceptions;
 
+@SuppressWarnings("serial")
+public class NotInvokableException extends RuntimeException {
+	public NotInvokableException() {
+	}
 
-import org.springframework.boot.SpringApplication;
-import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+	public NotInvokableException(String idShortPath) {
+		super(getMessage(idShortPath));
+	}
 
-/**
- * Spring application configured for tests.
- * 
- * @author schnicke, danish, kammognie
- *
- */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
-public class DummySubmodelRepositoryComponent {
-
-	public static void main(String[] args) {
-		SpringApplication.run(DummySubmodelRepositoryComponent.class, args);
+	private static String getMessage(String idShortPath) {
+		return "Element " + idShortPath + " is not invokable";
 	}
 }

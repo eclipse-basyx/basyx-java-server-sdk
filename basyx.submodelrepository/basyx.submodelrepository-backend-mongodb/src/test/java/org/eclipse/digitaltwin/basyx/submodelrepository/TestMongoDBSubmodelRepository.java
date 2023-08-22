@@ -29,9 +29,12 @@ import static org.junit.Assert.assertEquals;
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.InvokableOperation;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
+import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.junit.Test;
 import com.mongodb.client.MongoClient;
@@ -56,6 +59,9 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
 		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
 
+		// TODO: Remove this after MongoDB uses AAS4J serializer
+		submodels.forEach(this::removeInvokableFromInvokableOperation);
+
 		return new MongoDBSubmodelRepositoryFactory(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, submodels).create();
 	}
 	
@@ -64,6 +70,25 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 		SubmodelRepository repo = new MongoDBSubmodelRepository(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, CONFIGURED_SM_REPO_NAME);
 		
 		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
+	}
+
+	@Test(expected = FeatureNotSupportedException.class)
+	@Override
+	public void invokeOperation() {
+		super.invokeOperation();
+	}
+
+	@Test(expected = FeatureNotSupportedException.class)
+	@Override
+	public void invokeNonOperation() {
+		super.invokeNonOperation();
+	}
+
+	private void removeInvokableFromInvokableOperation(Submodel sm) {
+		sm.getSubmodelElements().stream()
+		.filter(InvokableOperation.class::isInstance)
+		.map(InvokableOperation.class::cast)
+		.forEach(o -> o.setInvokable(null));
 	}
 
 }

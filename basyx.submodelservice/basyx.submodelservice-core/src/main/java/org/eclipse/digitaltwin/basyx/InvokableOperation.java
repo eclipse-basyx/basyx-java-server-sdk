@@ -24,24 +24,57 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.http;
+package org.eclipse.digitaltwin.basyx;
 
+import java.util.function.Function;
 
-import org.springframework.boot.SpringApplication;
-import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
+import org.eclipse.digitaltwin.aas4j.v3.model.builder.OperationBuilder;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperation;
 
 /**
- * Spring application configured for tests.
+ * Invokable variant of the DefaultOperation
  * 
- * @author schnicke, danish, kammognie
+ * @author schnicke
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
-public class DummySubmodelRepositoryComponent {
+public class InvokableOperation extends DefaultOperation {
+	private Function<OperationVariable[], OperationVariable[]> invokable;
+	
+	/**
+	 * Invokes the operation with the passed arguments
+	 * 
+	 * @param arguments
+	 * @return
+	 */
+	public OperationVariable[] invoke(OperationVariable[] arguments) {
+		return invokable.apply(arguments);
+	}
 
-	public static void main(String[] args) {
-		SpringApplication.run(DummySubmodelRepositoryComponent.class, args);
+	/**
+	 * Sets the function to call on operation invocation
+	 * 
+	 * @param invokable
+	 */
+	public void setInvokable(Function<OperationVariable[], OperationVariable[]> invokable) {
+		this.invokable = invokable;
+	}
+
+	public static class Builder extends OperationBuilder<InvokableOperation, Builder> {
+
+		@Override
+		protected Builder getSelf() {
+			return this;
+		}
+
+		@Override
+		protected InvokableOperation newBuildingInstance() {
+			return new InvokableOperation();
+		}
+
+		public Builder invokable(Function<OperationVariable[], OperationVariable[]> invokable) {
+			getBuildingInstance().setInvokable(invokable);
+			return getSelf();
+		}
 	}
 }

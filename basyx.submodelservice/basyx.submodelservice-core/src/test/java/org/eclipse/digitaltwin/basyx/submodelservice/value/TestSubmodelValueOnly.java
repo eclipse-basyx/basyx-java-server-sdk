@@ -24,24 +24,28 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.http;
+package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
+import static org.junit.Assert.assertTrue;
 
-import org.springframework.boot.SpringApplication;
-import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.util.Collections;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperation;
+import org.junit.Test;
 
 /**
- * Spring application configured for tests.
  * 
- * @author schnicke, danish, kammognie
+ * @author schnicke
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
-public class DummySubmodelRepositoryComponent {
+public class TestSubmodelValueOnly {
 
-	public static void main(String[] args) {
-		SpringApplication.run(DummySubmodelRepositoryComponent.class, args);
+	@Test
+	public void operationExcluded() {
+		Operation operation = new DefaultOperation.Builder().idShort("doesNotMatter").build();
+		SubmodelValueOnly submodelValueOnly = new SubmodelValueOnly(Collections.singleton(operation));
+
+		assertTrue(submodelValueOnly.getValuesOnlyMap().isEmpty());
 	}
 }

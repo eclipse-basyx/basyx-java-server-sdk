@@ -24,24 +24,24 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.http;
-
-
-import org.springframework.boot.SpringApplication;
-import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+package org.eclipse.digitaltwin.basyx.core.exceptions;
 
 /**
- * Spring application configured for tests.
+ * Indicates that a requested feature is not supported
  * 
- * @author schnicke, danish, kammognie
+ * @author schnicke
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
-public class DummySubmodelRepositoryComponent {
+@SuppressWarnings("serial")
+public class FeatureNotSupportedException extends RuntimeException {
+	public FeatureNotSupportedException() {
+	}
 
-	public static void main(String[] args) {
-		SpringApplication.run(DummySubmodelRepositoryComponent.class, args);
+	public FeatureNotSupportedException(String featureName) {
+		super(getMessage(featureName));
+	}
+
+	private static String getMessage(String featureName) {
+		return "Feature " + featureName + " is not supported by the current configuration";
 	}
 }
