@@ -47,8 +47,7 @@ public class EntityValueMapper implements ValueMapper<EntityValue> {
 
 	@Override
 	public EntityValue getValue() {
-		return new EntityValue(ValueMapperUtil.createValueOnlyCollection(entity.getStatements()), entity.getEntityType(),
-				entity.getGlobalAssetID(), getSpecificAssetIdValue(entity.getSpecificAssetIds()));
+		return new EntityValue(ValueMapperUtil.createValueOnlyCollection(entity.getStatements()), entity.getEntityType(), entity.getGlobalAssetID(), getSpecificAssetIdValue(entity.getSpecificAssetIds()));
 	}
 
 	@Override
