@@ -46,7 +46,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public abstract class CustomMappingMongoConverter extends MappingMongoConverter {
 
-	private static final String METAMODEL_ID_KEY = "id";
 	private static final String MONGODB_ID_KEY = "_id";
 
 	private ObjectMapper mapper;
@@ -63,9 +62,7 @@ public abstract class CustomMappingMongoConverter extends MappingMongoConverter 
 	public <S> S read(Class<S> clazz, Bson source) {
 		Document doc = (Document) source;
 
-		Object id = doc.get(MONGODB_ID_KEY);
 		doc.remove(MONGODB_ID_KEY);
-		doc.put(METAMODEL_ID_KEY, id);
 
 		String metamodelJson = doc.toJson();
 
@@ -82,7 +79,6 @@ public abstract class CustomMappingMongoConverter extends MappingMongoConverter 
 
 		document.put(MONGODB_ID_KEY, id);
 		document.putAll(Document.parse(json));
-		document.remove(METAMODEL_ID_KEY);
 	}
 
 	private String serializeMetamodel(Object source) {
