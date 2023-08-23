@@ -31,18 +31,26 @@ import java.util.Arrays;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 
 /**
  * Tests the {@link MongoDBAasRepository}
  * 
- * @author schnicke, danish
+ * @author schnicke, danish, kammognie
  *
  */
 public class TestMongoDBAasRepository extends AasRepositorySuite {
+	
+	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
+	private final String COLLECTION = "aasTestCollection";
+
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
@@ -54,7 +62,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	protected AasRepositoryFactory getAasRepositoryFactory() {
 		return appContext.getBean(AasRepositoryFactory.class);
 	}
-
+	
 	@Test
 	public void aasIsPersisted() {
 		AasRepositoryFactory repoFactory = getAasRepositoryFactory();
@@ -75,6 +83,13 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		
 		assertEquals(expectedShell, retrievedShell);
 	}
+	
+	@Test
+	public void getConfiguredMongoDBAasRepositoryName() {
+		AasRepository repo = new MongoDBAasRepository(createMongoTemplate(), COLLECTION, new InMemoryAasServiceFactory(), CONFIGURED_AAS_REPO_NAME);
+		
+		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
+	}
 
 	private void addSubmodelReferenceToAas(AssetAdministrationShell expectedShell) {
 		expectedShell.setSubmodels(Arrays.asList(AasRepositorySuite.createDummyReference("dummySubmodel")));
@@ -94,4 +109,12 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		return expectedShell;
 	}
 
+	private MongoTemplate createMongoTemplate() {
+		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
+		
+		MongoClient client = MongoClients.create(connectionURL);
+		
+		return new MongoTemplate(client, "BaSyxTestDb");
+	}
+	
 }

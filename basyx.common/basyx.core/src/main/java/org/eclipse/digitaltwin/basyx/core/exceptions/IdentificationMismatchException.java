@@ -40,10 +40,10 @@ public class IdentificationMismatchException extends RuntimeException {
 	}
 
 	public IdentificationMismatchException(String elementId) {
-		super(getMsg(elementId));
+		super(getMessage(elementId));
 	}
 
-	private static String getMsg(String elementId) {
+	private static String getMessage(String elementId) {
 		return "The provided element " + elementId
 				+ " has mismatched identifiers than the existing element that needs to be updated";
 	}
