@@ -44,7 +44,7 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
 public class MongoDBSubmodelRepositoryConfiguration {
 	@Bean
-	public SubmodelServiceFactory getSubmodelServiceFactory() {
+	public SubmodelServiceFactory getInMemorySubmodelServiceFactory() {
 		return new InMemorySubmodelServiceFactory();
 	}
 }
