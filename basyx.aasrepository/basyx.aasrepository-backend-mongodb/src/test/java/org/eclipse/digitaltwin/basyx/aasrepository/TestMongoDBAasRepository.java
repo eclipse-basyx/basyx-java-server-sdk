@@ -28,15 +28,23 @@ package org.eclipse.digitaltwin.basyx.aasrepository;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
-import org.junit.BeforeClass;
+import org.eclipse.digitaltwin.basyx.common.mongocore.CustomIdentifiableMappingMongoConverter;
+import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
+import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
+import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
+import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
 import org.junit.Test;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
+import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
@@ -50,17 +58,14 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	
 	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
 	private final String COLLECTION = "aasTestCollection";
-
-	private static ConfigurableApplicationContext appContext;
-
-	@BeforeClass
-	public static void startAasRepo() throws Exception {
-		appContext = new SpringApplication(DummyMongoDBAasRepositoryComponent.class).run(new String[] {});
-	}
-
+	
 	@Override
 	protected AasRepositoryFactory getAasRepositoryFactory() {
-		return appContext.getBean(AasRepositoryFactory.class);
+		MongoTemplate template = createMongoTemplate();
+
+		MongoDBUtilities.clearCollection(template, COLLECTION);
+
+		return new MongoDBAasRepositoryFactory(template, COLLECTION, new InMemoryAasServiceFactory());
 	}
 	
 	@Test
@@ -110,11 +115,25 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	}
 
 	private MongoTemplate createMongoTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
+		List<SerializationExtension> extensions = Arrays.asList(new Aas4JHTTPSerializationExtension());
 		
-		MongoClient client = MongoClients.create(connectionURL);
+		ObjectMapper mapper = new BaSyxHTTPConfiguration().jackson2ObjectMapperBuilder(extensions).build();
 		
-		return new MongoTemplate(client, "BaSyxTestDb");
+		MongoDatabaseFactory databaseFactory = createDatabaseFactory();
+		
+		return new MongoTemplate(databaseFactory, new CustomIdentifiableMappingMongoConverter(databaseFactory, new MongoMappingContext(), mapper));
+	}
+	
+	private MongoDatabaseFactory createDatabaseFactory() {
+		String connectionString = createConnectionString();
+
+		MongoClient client = MongoClients.create(connectionString.toString());
+
+		return new SimpleMongoClientDatabaseFactory(client, "test");
+	}
+
+	private String createConnectionString() {
+		return String.format("mongodb://%s:%s@%s:%s", "mongoAdmin", "mongoPassword", "127.0.0.1", "27017");
 	}
 	
 }

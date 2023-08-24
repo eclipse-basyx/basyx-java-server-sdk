@@ -29,10 +29,13 @@ import java.io.IOException;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.eclipse.digitaltwin.aas4j.v3.model.Identifiable;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,15 +47,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author danish
  *
  */
-public abstract class CustomMappingMongoConverter extends MappingMongoConverter {
+@Component
+@ConditionalOnProperty(prefix = "basyx", name = "backend", havingValue = "MongoDB")
+public class CustomIdentifiableMappingMongoConverter extends MappingMongoConverter {
 
 	private static final String MONGODB_ID_KEY = "_id";
 
 	private ObjectMapper mapper;
 
-	protected abstract String getMetamodelId(Object source);
-
-	protected CustomMappingMongoConverter(MongoDatabaseFactory databaseFactory, MongoMappingContext mappingContext,
+	public CustomIdentifiableMappingMongoConverter(MongoDatabaseFactory databaseFactory, MongoMappingContext mappingContext,
 			ObjectMapper mapper) {
 		super(new DefaultDbRefResolver(databaseFactory), mappingContext);
 		this.mapper = mapper;
@@ -73,7 +76,7 @@ public abstract class CustomMappingMongoConverter extends MappingMongoConverter 
 	public void write(Object source, Bson target) {
 		Document document = (Document) target;
 
-		String id = getMetamodelId(source);
+		String id = ((Identifiable) source).getId();
 
 		String json = serializeMetamodel(source);
 

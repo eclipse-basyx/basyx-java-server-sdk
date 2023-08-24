@@ -49,7 +49,6 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -61,8 +60,6 @@ import org.junit.Test;
  */
 public abstract class AasRepositorySuite {
 
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
-	
 	private static final String AAS2 = "aas2";
 	private static final String AAS_1_ID = "aas1/s";
 	private AssetAdministrationShell aas1;
@@ -95,12 +92,6 @@ public abstract class AasRepositorySuite {
 		preconfiguredShells.add(aas2);
 
 		preconfiguredShells.forEach(shell -> aasRepo.createAas(shell));
-	}
-	
-	@After
-	public void resetRepo() {
-		aasRepo.getAllAas(NO_LIMIT_PAGINATION_INFO).getResult().stream().map(a -> a.getId())
-				.forEach(aasRepo::deleteAas);
 	}
 	
 	@Test
