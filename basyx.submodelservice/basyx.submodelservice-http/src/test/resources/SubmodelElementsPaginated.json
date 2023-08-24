@@ -1,0 +1,64 @@
+{
+	"paging_metadata": {
+		"cursor": "RmlsZURhdGE"
+	},
+	"result": [
+		{
+			"modelType": "Entity",
+			"entityType": "CoManagedEntity",
+			"specificAssetIds": [
+				{
+					"name": "specificAssetIdName",
+					"value": "specificValue"
+				}
+			],
+			"statements": [
+				{
+					"modelType": "Property",
+					"value": "5000",
+					"valueType": "xs:integer",
+					"category": "PARAMETER",
+					"idShort": "MaxRotationSpeed",
+					"semanticId": {
+						"keys": [
+							{
+								"type": "ConceptDescription",
+								"value": "0173-1#02-BAA120#008"
+							}
+						],
+						"type": "ExternalReference"
+					}
+				},
+				{
+					"modelType": "Range",
+					"max": "300",
+					"min": "200",
+					"valueType": "xs:integer",
+					"category": "PARAMETER",
+					"idShort": "RotationSpeedRange",
+					"semanticId": {
+						"keys": [
+							{
+								"type": "ConceptDescription",
+								"value": "0173-1#02-BAA120#008"
+							}
+						],
+						"type": "ExternalReference"
+					}
+				}
+			],
+			"category": "Entity",
+			"idShort": "EntityData",
+			"globalAssetId": "globalAssetID",
+			"semanticId": {
+				"keys": [
+					{
+						"type": "ConceptDescription",
+						"value": "0173-1#02-BAA120#008"
+					}
+				],
+				"type": "ExternalReference"
+			}
+		}
+	]
+}
