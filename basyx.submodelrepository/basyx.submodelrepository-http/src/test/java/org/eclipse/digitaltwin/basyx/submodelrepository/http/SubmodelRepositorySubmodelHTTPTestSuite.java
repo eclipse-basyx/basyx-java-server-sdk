@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,7 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
@@ -29,7 +29,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -48,7 +50,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * Base testsuite for all Submodel Repository HTTP tests
- * 
+ *
  * @author schnicke
  *
  */
@@ -60,6 +62,9 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	public abstract void resetRepository();
 
 	protected abstract String getURL();
+
+	private final String CURSOR = "7A7104BDAB57E184";
+	private final String ENCODED_CURSOR = encodeCursor(CURSOR);
 
 	@Test
 	public void getAllSubmodelsPreconfigured() throws IOException, ParseException {
@@ -169,7 +174,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	@Test
 	public void getPaginatedSubmodel() throws ParseException, IOException {
 		String submodelsJSON = BaSyxSubmodelHttpTestUtils
-				.requestAllSubmodels(getURL() + "?limit=1&cursor=7A7104BDAB57E184");
+				.requestAllSubmodels(getURL() + "?limit=1&cursor=" + ENCODED_CURSOR);
 		String expected = getSingleSubmodelPaginatedJson();
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expected, submodelsJSON);
@@ -228,10 +233,14 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	}
 
 	private String getSingleSubmodelPaginatedJson() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelPaginated.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelEncodedPaginated.json");
 	}
 
 	protected List<Submodel> createSubmodels() {
 		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createOperationalDataSubmodel(), DummySubmodelFactory.createSimpleDataSubmodel());
+	}
+
+	private static String encodeCursor(String cursor) {
+		return new String(Base64.getUrlEncoder().encode(cursor.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
 	}
 }
