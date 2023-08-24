@@ -29,15 +29,14 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.junit.After;
@@ -64,7 +63,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	protected abstract String getURL();
 
 	private final String CURSOR = "7A7104BDAB57E184";
-	private final String ENCODED_CURSOR = encodeCursor(CURSOR);
+	private final String ENCODED_CURSOR = Base64UrlEncodedCursor.encodeCursor(CURSOR);
 
 	@Test
 	public void getAllSubmodelsPreconfigured() throws IOException, ParseException {
@@ -175,6 +174,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	public void getPaginatedSubmodel() throws ParseException, IOException {
 		String submodelsJSON = BaSyxSubmodelHttpTestUtils
 				.requestAllSubmodels(getURL() + "?limit=1&cursor=" + ENCODED_CURSOR);
+		System.out.println(getURL() + "?limit=1&cursor=" + ENCODED_CURSOR);
 		String expected = getSingleSubmodelPaginatedJson();
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expected, submodelsJSON);
@@ -240,7 +240,4 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createOperationalDataSubmodel(), DummySubmodelFactory.createSimpleDataSubmodel());
 	}
 
-	private static String encodeCursor(String cursor) {
-		return new String(Base64.getUrlEncoder().encode(cursor.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
-	}
 }
