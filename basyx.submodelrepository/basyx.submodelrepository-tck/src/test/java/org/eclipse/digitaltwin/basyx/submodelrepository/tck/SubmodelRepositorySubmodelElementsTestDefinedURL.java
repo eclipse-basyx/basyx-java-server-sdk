@@ -26,6 +26,10 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.tck;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.BaSyxSubmodelHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelservice.http.SubmodelServiceSubmodelElementsTestSuiteHTTP;
 import org.junit.After;
@@ -42,16 +46,21 @@ public class SubmodelRepositorySubmodelElementsTestDefinedURL extends SubmodelSe
 
 	@Before
 	public void createSubmodelOnRepo() {
-		SubmodelTCKHelper.createSubmodelOnRepository(getURL(), createSubmodel());
+		SubmodelTCKHelper.createSubmodelOnRepository(url, createSubmodel());
 	}
 
 	@After
 	public void removeSubmodelFromRepo() {
-		SubmodelTCKHelper.deleteAllSubmodelsOnRepository(getURL());
+		SubmodelTCKHelper.deleteAllSubmodelsOnRepository(url);
 	}
 
 	@Override
 	protected String getURL() {
 		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(url, createSubmodel().getId());
+	}
+
+	@Override
+	public void invokeOperation() throws FileNotFoundException, IOException, ParseException {
+		// Not supported on OTS Components for now
 	}
 }
