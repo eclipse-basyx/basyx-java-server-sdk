@@ -126,7 +126,7 @@ public abstract class AasxFileServerSuite {
 	}	
 	
 	@Test(expected = ElementDoesNotExistException.class)
-	public void deleteNonExistingConceptDescription() {
+	public void deleteNonExistingAasxFileServer() {
 		
 		AasxFileServer server = getAasxFileServer();
 		server.deleteAASXPackageById("nonExisting");

@@ -31,98 +31,93 @@ import java.util.List;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Specifies the PackageDescription for  AasxFileServer
+ * Specifies the PackageDescription for AasxFileServer
  * 
- *  
- *
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-06-22T10:58:56.694021713Z[GMT]")
 
+public class PackageDescription {
 
-public class PackageDescription   {
+	private List<String> aasIds = null;
 
-  private List<String> aasIds = null;
+	private String packageId = null;
 
+	public PackageDescription aasIds(List<String> aasIds) {
+		this.aasIds = aasIds;
+		return this;
+	}
 
-  private String packageId = null;
-  
-  public PackageDescription aasIds(List<String> aasIds) {
-    this.aasIds = aasIds;
-    return this;
-  }
+	public PackageDescription addAasIdsItem(String aasIdsItem) {
+		if (this.aasIds == null) {
+			this.aasIds = new ArrayList<String>();
+		}
+		this.aasIds.add(aasIdsItem);
+		return this;
+	}
 
-  public PackageDescription addAasIdsItem(String aasIdsItem) {
-    if (this.aasIds == null) {
-      this.aasIds = new ArrayList<String>();
-    }
-    this.aasIds.add(aasIdsItem);
-    return this;
-  }
+	public List<String> getAasIds() {
+		return aasIds;
+	}
 
-    public List<String> getAasIds() {
-    return aasIds;
-  }
+	public void setAasIds(List<String> aasIds) {
+		this.aasIds = aasIds;
+	}
 
-  public void setAasIds(List<String> aasIds) {
-    this.aasIds = aasIds;
-  }
+	public PackageDescription packageId(String packageId) {
+		this.packageId = packageId;
+		return this;
+	}
 
-  public PackageDescription packageId(String packageId) {
-    this.packageId = packageId;
-    return this;
-  }
-   
-  public String getPackageId() {
-    return packageId;
-  }
+	public String getPackageId() {
+		return packageId;
+	}
 
-  public void setPackageId(String packageId) {
-    this.packageId = packageId;
-  } 
+	public void setPackageId(String packageId) {
+		this.packageId = packageId;
+	}
 
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    PackageDescription packageDescription = (PackageDescription) o;
-    return Objects.equals(this.aasIds, packageDescription.aasIds) &&
-        Objects.equals(this.packageId, packageDescription.packageId);
-  }
+	@Override
+	public boolean equals(java.lang.Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		PackageDescription packageDescription = (PackageDescription) o;
+		return Objects.equals(this.aasIds, packageDescription.aasIds)
+				&& Objects.equals(this.packageId, packageDescription.packageId);
+	}
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(aasIds, packageId);
-  }
+	@Override
+	public int hashCode() {
+		return Objects.hash(aasIds, packageId);
+	}
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class PackageDescription {\n");
-    
-    sb.append("  aasIds: ").append(toIndentedString(aasIds)).append("\n");
-    sb.append("  packageId: ").append(toIndentedString(packageId)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("class PackageDescription {\n");
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
-  }
+		sb.append("  aasIds: ").append(toIndentedString(aasIds)).append("\n");
+		sb.append("  packageId: ").append(toIndentedString(packageId)).append("\n");
+		sb.append("}");
+		return sb.toString();
+	}
 
-public boolean isEmpty() {
+	/**
+	 * Convert the given object to string with each line indented by 4 spaces
+	 * (except the first line).
+	 */
+	private String toIndentedString(java.lang.Object o) {
+		if (o == null) {
+			return "null";
+		}
+		return o.toString().replace("\n", "\n    ");
+	}
+
+	public boolean isEmpty() {
 		return false;
+	}
 }
-}
-

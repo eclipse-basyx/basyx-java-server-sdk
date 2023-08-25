@@ -30,7 +30,7 @@ import org.eclipse.digitaltwin.basyx.aasxfileserver.AasxFileServerFactory;
 import org.eclipse.digitaltwin.basyx.core.BaSyxFeature;
 
 /**
- * Base interface for all features for the ConceptDescription
+ * Base interface for all features for the AASX File Server
  * 
  * @author schnicke, chaithra
  *
