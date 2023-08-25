@@ -127,7 +127,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	private MongoDatabaseFactory createDatabaseFactory() {
 		String connectionString = createConnectionString();
 
-		MongoClient client = MongoClients.create(connectionString.toString());
+		MongoClient client = MongoClients.create(connectionString);
 
 		return new SimpleMongoClientDatabaseFactory(client, "test");
 	}
