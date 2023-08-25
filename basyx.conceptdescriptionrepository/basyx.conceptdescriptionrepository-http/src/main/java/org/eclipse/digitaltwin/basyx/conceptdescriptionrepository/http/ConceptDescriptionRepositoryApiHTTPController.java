@@ -14,6 +14,7 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.paginatio
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,21 +55,26 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 
 	@Override
 	public ResponseEntity<PagedResult> getAllConceptDescriptions(@Valid String idShort, @Valid Base64UrlEncodedIdentifier isCaseOf, @Valid Base64UrlEncodedIdentifier dataSpecificationRef, @Min(1) @Valid Integer limit,
-			@Valid String cursor) {
+			@Valid Base64UrlEncodedCursor cursor) {
 		if (limit == null)
 			limit = 100;
-		if (cursor == null)
-			cursor = "";
+
+		String decodedCursor = "";
+		if (cursor != null)
+			decodedCursor = cursor.getDecodedCursor();
+
 		Reference isCaseOfReference = getReference(getDecodedValue(isCaseOf));
 		Reference dataSpecificationReference = getReference(getDecodedValue(dataSpecificationRef));
 
-		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
+		PaginationInfo pInfo = new PaginationInfo(limit, decodedCursor);
 
 		CursorResult<List<ConceptDescription>> filteredResult = repoFilter.filter(idShort, isCaseOfReference, dataSpecificationReference, pInfo);
 
+		String encodedCursor = getEncodedCursor(filteredResult);
+
 		GetConceptDescriptionsResult paginatedConceptDescription = new GetConceptDescriptionsResult();
 		paginatedConceptDescription.setResult(filteredResult.getResult());
-		paginatedConceptDescription.setPagingMetadata(new PagedResultPagingMetadata().cursor(filteredResult.getCursor()));
+		paginatedConceptDescription.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
 
 		return new ResponseEntity<PagedResult>(paginatedConceptDescription, HttpStatus.OK);
 	}
@@ -106,6 +112,13 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 
 	private String getDecodedValue(Base64UrlEncodedIdentifier identifier) {
 		return identifier == null ? null : identifier.getIdentifier();
+	}
+
+	private String getEncodedCursor(CursorResult<?> cursorResult) {
+		if (cursorResult.getCursor() == null)
+			return null;
+
+		return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
 	}
 
 }
