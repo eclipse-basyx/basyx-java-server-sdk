@@ -122,13 +122,6 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	private String getEncodedCursor(CursorResult<?> cursorResult) {
-		if (cursorResult.getCursor() == null)
-			return null;
-
-		return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
-	}
-
 	@Override
 	public ResponseEntity<PagedResult> getAllSubmodelReferencesAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor) {
 		if (limit == null)
@@ -168,4 +161,10 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
+	private String getEncodedCursor(CursorResult<?> cursorResult) {
+		if (cursorResult.getCursor() == null)
+			return null;
+
+		return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
+	}
 }

@@ -97,7 +97,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 
 		GetSubmodelElementsResult paginatedSubmodelElement = new GetSubmodelElementsResult();
 
-		String encodedCursor = Base64UrlEncodedCursor.encodeCursor(submodelElements.getCursor());
+		String encodedCursor = getEncodedCursor(submodelElements);
 
 		paginatedSubmodelElement.setResult(submodelElements.getResult());
 		paginatedSubmodelElement.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
@@ -215,6 +215,13 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		OperationResult operationResult = new OperationResult();
 		operationResult.setOutputArguments(Arrays.asList(result));
 		return operationResult;
+	}
+
+	private String getEncodedCursor(CursorResult<?> cursorResult) {
+		if (cursorResult.getCursor() == null)
+			return null;
+
+		return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
 	}
 
 }

@@ -108,7 +108,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 		GetSubmodelsResult paginatedSubmodel = new GetSubmodelsResult();
 
-		String encodedCursor = Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
+		String encodedCursor = getEncodedCursor(cursorResult);
 
 		paginatedSubmodel.result(new ArrayList<>(cursorResult.getResult()));
 		paginatedSubmodel.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
@@ -141,7 +141,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 				.getSubmodelElements(submodelIdentifier.getIdentifier(), pInfo);
 
 		GetSubmodelElementsResult paginatedSubmodelElement = new GetSubmodelElementsResult();
-		String encodedCursor = Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
+		String encodedCursor = getEncodedCursor(cursorResult);
 
 		paginatedSubmodelElement.result(new ArrayList<>(cursorResult.getResult()));
 		paginatedSubmodelElement.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
@@ -213,5 +213,12 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		OperationResult operationResult = new OperationResult();
 		operationResult.setOutputArguments(Arrays.asList(result));
 		return operationResult;
+	}
+
+	private String getEncodedCursor(CursorResult<?> cursorResult) {
+		if (cursorResult.getCursor() == null)
+			return null;
+
+		return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
 	}
 }
