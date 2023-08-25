@@ -18,6 +18,7 @@
 		<openapi.result.file>${openapi.result.folder}/${openapi.name}</openapi.result.file>
 	</properties>
 	<build>
+		<sourceDirectory>src/generated/java</sourceDirectory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
@@ -40,24 +41,24 @@
 					</filesets>
 				</configuration>
 			</plugin>
-
 			<plugin>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.aasregistry-plugins</artifactId>
+				<groupId>de.dfki.cos.basys.common</groupId>
+				<artifactId>jsonpatch-maven-plugin</artifactId>
 				<executions>
 					<execution>
+						<phase>generate-sources</phase>
 						<goals>
-							<goal>yaml-overlay</goal>
+							<goal>jsonpatch-maven-plugin</goal>
 						</goals>
+						<configuration>
+							<input>${project.basedir}/../${openapi.folder.name}/${openapi.base.name}</input>
+							<patch>${project.basedir}/../${openapi.folder.name}/${patch.base-extensions.name}</patch>
+							<output>${openapi.result.file}</output>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<base>${project.basedir}/../${openapi.folder.name}/${openapi.base.name}</base>
-					<overlay>${project.basedir}/../${openapi.folder.name}/${openapi.extensions.name}</overlay>
-					<out>${openapi.result.file}</out>
-				</configuration>
 			</plugin>
-			<plugin>
+		 	<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
 				<executions>
@@ -90,8 +91,17 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
+			
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-plugin-plugin</artifactId>
+					<version>3.9.0</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<dependencies>

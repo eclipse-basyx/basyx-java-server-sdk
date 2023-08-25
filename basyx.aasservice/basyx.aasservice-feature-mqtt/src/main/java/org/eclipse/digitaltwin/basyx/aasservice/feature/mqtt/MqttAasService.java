@@ -32,6 +32,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Key;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -50,6 +52,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 public class MqttAasService implements AasService {
+	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static Logger logger = LoggerFactory.getLogger(MqttAasService.class);
 	private MqttAasServiceTopicFactory topicFactory;
 
@@ -109,8 +112,8 @@ public class MqttAasService implements AasService {
 	}
 
 	@Override
-	public List<Reference> getSubmodelReferences() {
-		return decorated.getSubmodelReferences();
+	public CursorResult<List<Reference>> getSubmodelReferences(PaginationInfo pInfo) {
+		return decorated.getSubmodelReferences(pInfo);
 	}
 
 	@Override
@@ -148,7 +151,7 @@ public class MqttAasService implements AasService {
 	}
 
 	private Reference extractSubmodelReferenceById(String submodelId) {
-		List<Reference> submodelsReferences = getSubmodelReferences();
+		List<Reference> submodelsReferences = getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
 
 		return submodelsReferences.stream()
 				.filter(reference -> containsSubmodelId(reference, submodelId))

@@ -27,13 +27,21 @@ package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
+import org.eclipse.digitaltwin.basyx.InvokableOperation;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.HierarchicalSubmodelElementParser;
 import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.SubmodelElementIdShortHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -69,8 +77,16 @@ public class InMemorySubmodelService implements SubmodelService {
 	}
 
 	@Override
-	public Collection<SubmodelElement> getSubmodelElements() {
-		return submodel.getSubmodelElements();
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo) {
+		List<SubmodelElement> allSubmodels = submodel.getSubmodelElements();
+
+		TreeMap<String, SubmodelElement> submodelMap = allSubmodels.stream()
+				.collect(Collectors.toMap(SubmodelElement::getIdShort, aas -> aas, (a, b) -> a, TreeMap::new));
+
+		PaginationSupport<SubmodelElement> paginationSupport = new PaginationSupport<>(submodelMap,
+				SubmodelElement::getIdShort);
+		CursorResult<List<SubmodelElement>> paginatedSubmodels = paginationSupport.getPaged(pInfo);
+		return paginatedSubmodels;
 	}
 
 	@Override
@@ -145,12 +161,22 @@ public class InMemorySubmodelService implements SubmodelService {
 	private void deleteNestedSubmodelElement(String idShortPath) {
 		SubmodelElement sm = parser.getSubmodelElementFromIdShortPath(idShortPath);
 		if(helper.isDirectParentASubmodelElementList(idShortPath)) {
-			String collectionId = helper.extractDirectParentSubmodelElementListIdShort(idShortPath);
-			SubmodelElementList list = (SubmodelElementList) parser.getSubmodelElementFromIdShortPath(collectionId);
-			list.getValue().remove(sm);
+			deleteNestedSubmodelElementFromList(idShortPath, sm);
+		} else {
+			deleteNestedSubmodelElementFromCollection(idShortPath, sm);
 		}
+	}
+
+	private void deleteNestedSubmodelElementFromList(String idShortPath, SubmodelElement sm) {
+		String collectionId = helper.extractDirectParentSubmodelElementListIdShort(idShortPath);
+		SubmodelElementList list = (SubmodelElementList) parser.getSubmodelElementFromIdShortPath(collectionId);
+		list.getValue().remove(sm);
+	}
+
+	private void deleteNestedSubmodelElementFromCollection(String idShortPath, SubmodelElement sm) {
 		String collectionId = helper.extractDirectParentSubmodelElementCollectionIdShort(idShortPath);
-		SubmodelElementCollection collection = (SubmodelElementCollection) parser.getSubmodelElementFromIdShortPath(collectionId);
+		SubmodelElementCollection collection = (SubmodelElementCollection) parser
+				.getSubmodelElementFromIdShortPath(collectionId);
 		collection.getValue().remove(sm);
 	}
 
@@ -170,5 +196,16 @@ public class InMemorySubmodelService implements SubmodelService {
 			}
 		}
 		return -1;
+	}
+
+	@Override
+	public OperationVariable[] invokeOperation(String idShortPath, OperationVariable[] input) {
+		SubmodelElement sme = getSubmodelElement(idShortPath);
+		
+		if (!(sme instanceof InvokableOperation))
+			throw new NotInvokableException(idShortPath);
+		
+		InvokableOperation operation = (InvokableOperation) sme;
+		return operation.invoke(input);
 	}
 }

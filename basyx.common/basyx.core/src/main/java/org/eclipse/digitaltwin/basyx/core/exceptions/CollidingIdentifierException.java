@@ -37,10 +37,10 @@ public class CollidingIdentifierException extends RuntimeException {
 	}
 
 	public CollidingIdentifierException(String id) {
-		super(getMsg(id));
+		super(getMessage(id));
 	}
 
-	private static String getMsg(String id) {
+	private static String getMessage(String id) {
 		return "Duplicate element id detected with id " + id;
 	}
 

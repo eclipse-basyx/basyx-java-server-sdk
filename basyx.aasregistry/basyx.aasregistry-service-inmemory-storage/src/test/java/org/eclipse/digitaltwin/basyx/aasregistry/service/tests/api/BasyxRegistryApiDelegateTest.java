@@ -28,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
@@ -43,6 +44,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.BasyxRegistryApiDelegate;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.BasyxSearchApiDelegate;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.api.LocationBuilder;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.SearchApiController;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.ShellDescriptorsApiController;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.InMemoryAasStorageConfiguration;
@@ -56,9 +58,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestComponent;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.MockBeans;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
@@ -67,7 +73,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = { BasyxSearchApiDelegate.class, BasyxRegistryApiDelegate.class, SearchApiController.class, ShellDescriptorsApiController.class, InMemoryAasStorageConfiguration.class })
+@ContextConfiguration(classes = {  BasyxSearchApiDelegate.class, BasyxRegistryApiDelegate.class, SearchApiController.class, ShellDescriptorsApiController.class, InMemoryAasStorageConfiguration.class })
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @TestPropertySource(properties = { "registry.type=inMemory" })
 public class BasyxRegistryApiDelegateTest {
@@ -86,6 +92,10 @@ public class BasyxRegistryApiDelegateTest {
 
 	@MockBean
 	private RegistryEventSink listener;
+	
+	@MockBean
+	private LocationBuilder locationBuilder;
+
 
 	@Autowired
 	private AasRegistryStorage storage;
@@ -279,7 +289,7 @@ public class BasyxRegistryApiDelegateTest {
 	@Test
 	public void whenMatchSearchForAasDescriptor_thenReturnResult() {
 		AssetAdministrationShellDescriptor input = new AssetAdministrationShellDescriptor(ID_2);
-		input.submodelDescriptors(List.of((SubmodelDescriptor) new SubmodelDescriptor(ID_2_1, List.of())));
+		input.addSubmodelDescriptorsItem(new SubmodelDescriptor(ID_2_1, List.of()));
 		ResponseEntity<Void> response = aasController.putAssetAdministrationShellDescriptorById(encode(ID_2), input);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
@@ -294,7 +304,7 @@ public class BasyxRegistryApiDelegateTest {
 	@Test
 	public void whenRegexSearchForAasDescriptor_thenReturnResult() {
 		AssetAdministrationShellDescriptor input = new AssetAdministrationShellDescriptor(ID_2);
-		input.submodelDescriptors(List.of((SubmodelDescriptor) new SubmodelDescriptor(ID_2_1, List.of()).idShort(ID_2_1)));
+		input.addSubmodelDescriptorsItem(new SubmodelDescriptor(ID_2_1, List.of()).idShort(ID_2_1));
 		ResponseEntity<Void> response = aasController.putAssetAdministrationShellDescriptorById(encode(ID_2), input);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
@@ -305,7 +315,7 @@ public class BasyxRegistryApiDelegateTest {
 		assertThat(result.size()).isEqualTo(1);
 		assertThat(result.get(0)).isEqualTo(input);
 	}
-
+	
 	private byte[] encode(String id) {
 		return Base64.getUrlEncoder().encode(id.getBytes(StandardCharsets.UTF_8));
 	}

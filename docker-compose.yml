@@ -3,10 +3,10 @@ services:
   mongo:
     image: mongo:5.0.10
     # Provide mongo config
+    restart: always
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
-      ME_CONFIG_MONGODB_ADMINPASSWORD: admin
-      ME_CONFIG_MONGODB_URL: mongodb://admin:admin@mongo:27017/
+      MONGO_INITDB_ROOT_USERNAME: mongoAdmin
+      MONGO_INITDB_ROOT_PASSWORD: mongoPassword
     # Set health checks to wait until mongo has started
     healthcheck:
       test: mongo
@@ -18,7 +18,6 @@ services:
       - 27017:27017
     networks:
       - basyx-java-server-sdk
-
 
 networks:
   basyx-java-server-sdk:

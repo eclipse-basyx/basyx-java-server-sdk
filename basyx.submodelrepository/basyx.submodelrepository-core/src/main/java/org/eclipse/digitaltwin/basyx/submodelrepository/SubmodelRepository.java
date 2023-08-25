@@ -25,19 +25,22 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import java.util.Collection;
+import java.util.List;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 
 /**
  * Specifies the overall SubmodelRepository API
  * 
- * @author schnicke, danish
+ * @author schnicke, danish, kammognie
  *
  */
 public interface SubmodelRepository {
@@ -45,9 +48,9 @@ public interface SubmodelRepository {
 	/**
 	 * Retrieves all Submodels from the repository
 	 * 
-	 * @return a collection of all found Submodels
+	 * @return a list of all found Submodels
 	 */
-	public Collection<Submodel> getAllSubmodels();
+	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo);
 
 	/**
 	 * Retrieves the Submodel with the specific id
@@ -89,7 +92,8 @@ public interface SubmodelRepository {
 	 * @param submodelId
 	 * @return
 	 */
-	public Collection<SubmodelElement> getSubmodelElements(String submodelId) throws ElementDoesNotExistException;
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo)
+			throws ElementDoesNotExistException;
 
 	/**
 	 * Retrieves a specific SubmodelElement of a Submodel
@@ -164,11 +168,28 @@ public interface SubmodelRepository {
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException;
 
 	/**
-	 * Returns the name of the submodel repository
+	 * Returns the name of the repository
+	 * 
+	 * @return repoName
 	 */
 	public default String getName() {
-		return "submodelRepository-default-name";
+		return "sm-repo";
 	}
+
+	/**
+	 * Invokes an operation
+	 * 
+	 * @param submodelId
+	 *            the Submodel id
+	 * @param idShortPath
+	 *            the Operation IdShortPath
+	 * @param input
+	 *            value to be passed to the invoked operation
+	 * @throws ElementDoesNotExistException
+	 *             If the operation defined in the idShortPath does not exist
+	 * @return
+	 */
+	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException;
 
 	/**
 	 * Retrieves the Submodel as Value-Only_representation with the specific id

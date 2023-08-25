@@ -24,23 +24,29 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.InvokableOperation;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
+import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
-
+import org.junit.Test;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
 public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	private final String COLLECTION = "submodelTestCollection";
-	private final String CONNECTION_URL = "mongodb://127.0.0.1:27017/";
+	private final String CONNECTION_URL = "mongodb://mongoAdmin:mongoPassword@localhost:27017";
 	private final MongoClient CLIENT = MongoClients.create(CONNECTION_URL);
 	private final MongoTemplate TEMPLATE = new MongoTemplate(CLIENT, "BaSyxTestDb");
 	private final InMemorySubmodelServiceFactory SUBMODEL_SERVICE_FACTORY = new InMemorySubmodelServiceFactory();
+	private static final String CONFIGURED_SM_REPO_NAME = "configured-sm-repo-name";
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository() {
@@ -53,7 +59,36 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
 		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
 
+		// TODO: Remove this after MongoDB uses AAS4J serializer
+		submodels.forEach(this::removeInvokableFromInvokableOperation);
+
 		return new MongoDBSubmodelRepositoryFactory(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, submodels).create();
+	}
+	
+	@Test
+	public void getConfiguredMongoDBSmRepositoryName() {
+		SubmodelRepository repo = new MongoDBSubmodelRepository(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, CONFIGURED_SM_REPO_NAME);
+		
+		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
+	}
+
+	@Test(expected = FeatureNotSupportedException.class)
+	@Override
+	public void invokeOperation() {
+		super.invokeOperation();
+	}
+
+	@Test(expected = FeatureNotSupportedException.class)
+	@Override
+	public void invokeNonOperation() {
+		super.invokeNonOperation();
+	}
+
+	private void removeInvokableFromInvokableOperation(Submodel sm) {
+		sm.getSubmodelElements().stream()
+		.filter(InvokableOperation.class::isInstance)
+		.map(InvokableOperation.class::cast)
+		.forEach(o -> o.setInvokable(null));
 	}
 
 }

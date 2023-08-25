@@ -26,29 +26,41 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.tck;
 
-import org.eclipse.digitaltwin.basyx.submodelrepository.http.SubmodelRepositorySubmodelElementsTestSuiteHTTP;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.apache.hc.core5.http.ParseException;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.BaSyxSubmodelHttpTestUtils;
+import org.eclipse.digitaltwin.basyx.submodelservice.http.SubmodelServiceSubmodelElementsTestSuiteHTTP;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * 
  * @author schnicke
  *
  */
-public class SubmodelRepositorySubmodelElementsTestDefinedURL extends SubmodelRepositorySubmodelElementsTestSuiteHTTP {
+public class SubmodelRepositorySubmodelElementsTestDefinedURL extends SubmodelServiceSubmodelElementsTestSuiteHTTP {
 
 	public static String url = "http://localhost:8081/submodels";
 
-	@Override
-	public void resetRepository() {
-		SubmodelTCKHelper.deleteAllSubmodelsOnRepository(getURL());
+	@Before
+	public void createSubmodelOnRepo() {
+		SubmodelTCKHelper.createSubmodelOnRepository(url, createSubmodel());
 	}
 
-	@Override
-	public void populateRepository() {
-		createSubmodels().forEach(s -> SubmodelTCKHelper.createSubmodelOnRepository(getURL(), s));
+	@After
+	public void removeSubmodelFromRepo() {
+		SubmodelTCKHelper.deleteAllSubmodelsOnRepository(url);
 	}
 
 	@Override
 	protected String getURL() {
-		return url;
+		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(url, createSubmodel().getId());
+	}
+
+	@Override
+	public void invokeOperation() throws FileNotFoundException, IOException, ParseException {
+		// Not supported on OTS Components for now
 	}
 }

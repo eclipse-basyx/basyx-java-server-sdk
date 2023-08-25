@@ -1,13 +1,16 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
-import java.util.Collection;
+import java.util.List;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelElementSerializer;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelSerializer;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
@@ -38,8 +41,8 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public Collection<Submodel> getAllSubmodels() {
-		return decorated.getAllSubmodels();
+	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
+		return decorated.getAllSubmodels(pInfo);
 	}
 
 	@Override
@@ -67,8 +70,9 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public Collection<SubmodelElement> getSubmodelElements(String submodelId) throws ElementDoesNotExistException {
-		return decorated.getSubmodelElements(submodelId);
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo)
+			throws ElementDoesNotExistException {
+		return decorated.getSubmodelElements(submodelId, pInfo);
 	}
 
 	@Override
@@ -175,6 +179,11 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 		} else {
 			return new MqttMessage(payload.getBytes());
 		}
+	}
+
+	@Override
+	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
+		return decorated.invokeOperation(submodelId, idShortPath, input);
 	}
 
 }

@@ -72,6 +72,7 @@ public class TestResourcesLoader extends TestName {
 	}
 
 	public <T> List<T> loadList(Class<T> cls, String suffix) throws IOException {
+		
 		return load(mapper.readerForListOf(cls), suffix != null ? "_" + suffix : "");
 	}
 	

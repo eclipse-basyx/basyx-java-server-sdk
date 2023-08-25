@@ -26,6 +26,8 @@ package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 /**
@@ -33,18 +35,27 @@ import org.springframework.stereotype.Component;
  * 
  * @author schnicke
  */
+@ConditionalOnExpression("'${basyx.submodelrepository.backend}'.equals('InMemory') or '${basyx.backend}'.equals('InMemory')")
 @Component
 public class InMemorySubmodelRepositoryFactory implements SubmodelRepositoryFactory {
 	private SubmodelServiceFactory submodelServiceFactory;
+	
+	private String smRepositoryName;
 
-	@Autowired
+	@Autowired(required = false)
 	public InMemorySubmodelRepositoryFactory(SubmodelServiceFactory submodelServiceFactory) {
 		this.submodelServiceFactory = submodelServiceFactory;
+	}
+	
+	@Autowired(required = false)
+	public InMemorySubmodelRepositoryFactory(SubmodelServiceFactory submodelServiceFactory, @Value("${basyx.smrepo.name:sm-repo}") String smRepositoryName) {
+		this(submodelServiceFactory);
+		this.smRepositoryName = smRepositoryName;
 	}
 
 	@Override
 	public SubmodelRepository create() {
-		return new InMemorySubmodelRepository(submodelServiceFactory);
+		return new InMemorySubmodelRepository(submodelServiceFactory, smRepositoryName);
 	}
 
 }

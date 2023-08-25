@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -49,9 +50,9 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNot
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.CursorResult;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -117,7 +118,7 @@ public class InMemoryAasRegistryStorage implements AasRegistryStorage {
 	}
 	
 	private TreeMap<String, SubmodelDescriptor> toSubmodelLookupMap(List<SubmodelDescriptor> submodelDescriptors) {
-		return Optional.ofNullable(submodelDescriptors).orElseGet(List::of).stream().collect(Collectors.toMap(SubmodelDescriptor::getId, Function.identity(), this::mergeSubmodels, TreeMap::new));
+		return Optional.ofNullable(submodelDescriptors).orElseGet(LinkedList::new).stream().collect(Collectors.toMap(SubmodelDescriptor::getId, Function.identity(), this::mergeSubmodels, TreeMap::new));
 	}
 
 	private SubmodelDescriptor mergeSubmodels(SubmodelDescriptor descr1, SubmodelDescriptor descr2) {

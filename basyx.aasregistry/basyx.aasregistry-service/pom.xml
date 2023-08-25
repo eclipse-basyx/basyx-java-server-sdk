@@ -23,6 +23,23 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${generated.folder}/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
 				<configuration>
 					<filesets>
@@ -44,18 +61,18 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.aasregistry-plugins</artifactId>
+				<groupId>de.dfki.cos.basys.common</groupId>
+				<artifactId>jsonpatch-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>search-api</id>
+						<phase>generate-sources</phase>
 						<goals>
-							<goal>yaml-overlay</goal>
+							<goal>jsonpatch-maven-plugin</goal>
 						</goals>
 						<configuration>
-							<base>${project.basedir}/../${openapi.folder.name}/${openapi.base.name}</base>
-							<overlay>${project.basedir}/../${openapi.folder.name}/${openapi.extensions.name}</overlay>
-							<out>${openapi.result.file}</out>
+							<input>${project.basedir}/../${openapi.folder.name}/${openapi.base.name}</input>
+							<patch>${project.basedir}/../${openapi.folder.name}/${patch.base-extensions.name}</patch>
+							<output>${openapi.result.file}</output>
 						</configuration>
 					</execution>
 				</executions>
@@ -74,7 +91,6 @@
 
 							<inputSpec>${openapi.result.file}</inputSpec>
 							<generatorName>spring</generatorName>
-							<language>spring</language>
 							<library>spring-boot</library>
 							<output>${project.basedir}/${generated.folder}</output>
 
@@ -156,6 +172,10 @@
 			<groupId>org.openapitools</groupId>
 			<artifactId>jackson-databind-nullable</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.core</artifactId>
+		</dependency>	
 
 		<!-- Test configuration -->
 		<dependency>
@@ -178,6 +198,11 @@
 			<artifactId>commons-lang3</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -190,5 +215,5 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
+
 </project>

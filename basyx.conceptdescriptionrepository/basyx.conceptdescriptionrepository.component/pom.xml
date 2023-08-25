@@ -10,6 +10,11 @@
 	<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
 	<name>Concept Description Repository Component</name>
 
+	<properties>
+		<docker.image.name>conceptdescription-repository</docker.image.name>
+		<docker.container.waitForEndpoint>http://localhost:${docker.host.port}/concept-descriptions</docker.container.waitForEndpoint>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -26,7 +31,6 @@
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.conceptdescriptionrepository-backend-mongodb</artifactId>
-			<version>${revision}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -43,12 +47,57 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.conceptdescriptionrepository-core</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.conceptdescriptionrepository-http</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.conceptdescriptionrepository-tck</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.http</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -62,5 +111,80 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		
+		<pluginManagement>
+			<plugins>
+				<!-- Build the docker image -->
+				<plugin>
+					<groupId>io.fabric8</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<version>0.43.0</version>
+					<configuration>
+						<images>
+							<image>
+								<name>${docker.username}/${docker.image.name}</name>
+								<build>
+									<tags>
+										<tag>${docker.image.tag}</tag>
+									</tags>
+									<contextDir>${project.basedir}</contextDir>
+								</build>
+								<run>
+									<ports>
+										<port>${docker.host.port}:${docker.container.port}</port>
+									</ports>
+									<wait>
+										<url>${docker.container.waitForEndpoint}</url>
+										<time>60000</time>
+									</wait>
+								</run>
+							</image>
+						</images>
+						<verbose>true</verbose>
+					</configuration>
+					<executions>
+						<execution>
+							<id>docker:build</id>
+							<phase>package</phase>
+							<goals>
+								<goal>build</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>docker-compose-up</id>
+							<phase>pre-integration-test</phase>
+							<goals>
+								<goal>start</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>docker-compose-down</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>stop</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>docker</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

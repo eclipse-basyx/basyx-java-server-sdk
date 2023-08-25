@@ -37,6 +37,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXSD;
 import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Range;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -49,6 +50,9 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
@@ -62,7 +66,7 @@ import org.junit.Test;
  *
  */
 public abstract class SubmodelServiceSuite {
-
+	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	protected abstract SubmodelService getSubmodelService(Submodel submodel);
 
 	@Test
@@ -78,7 +82,8 @@ public abstract class SubmodelServiceSuite {
 		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
 		SubmodelService smService = getSubmodelService(technicalData);
 
-		assertEquals(technicalData.getSubmodelElements(), smService.getSubmodelElements());
+		assertTrue(technicalData.getSubmodelElements()
+				.containsAll(smService.getSubmodelElements(NO_LIMIT_PAGINATION_INFO).getResult()));
 	}
 
 	@Test
@@ -371,6 +376,48 @@ public abstract class SubmodelServiceSuite {
 		} catch (ElementDoesNotExistException expected) {
 			throw expected;
 		}
+	}
+
+	@Test
+	public void getPaginatedSubmodelElement() {
+		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
+		SubmodelService submodelService = getSubmodelService(technicalData);
+		CursorResult<List<SubmodelElement>> cursorResult = submodelService
+				.getSubmodelElements(new PaginationInfo(1, ""));
+		assertEquals(1, cursorResult.getResult().size());
+	}
+
+	@Test
+	public void paginationCursor() {
+		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
+		SubmodelService submodelService = getSubmodelService(technicalData);
+		CursorResult<List<SubmodelElement>> cursorResult = submodelService.getSubmodelElements(new PaginationInfo(1,
+				SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT));
+		assertEquals(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_BLOB_ID_SHORT, cursorResult.getCursor());
+	}
+
+	// Has to be overwritten if backend does not support operations
+	@Test
+	public void invokeOperation() {
+		Submodel invokableSubmodel = DummySubmodelFactory.createSubmodelWithAllSubmodelElements();
+		SubmodelService submodelService = getSubmodelService(invokableSubmodel);
+		
+		Property val = new DefaultProperty.Builder().idShort("in").value("2").build();
+		
+		OperationVariable[] result = submodelService.invokeOperation(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_OPERATION_ID, new OperationVariable[] { SubmodelServiceHelper.createOperationVariable(val) });
+
+		Property ret = (Property) result[0].getValue();
+		
+		assertEquals("4", ret.getValue());
+	}
+
+	// Has to be overwritten if backend does not support operations
+	@Test(expected = NotInvokableException.class)
+	public void invokeNonOperation() {
+		Submodel invokableSubmodel = DummySubmodelFactory.createSubmodelWithAllSubmodelElements();
+		SubmodelService submodelService = getSubmodelService(invokableSubmodel);
+
+		submodelService.invokeOperation(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT, new OperationVariable[0]);
 	}
 
 	private List<SubmodelElement> createHierarchicalSubmodelElement() {

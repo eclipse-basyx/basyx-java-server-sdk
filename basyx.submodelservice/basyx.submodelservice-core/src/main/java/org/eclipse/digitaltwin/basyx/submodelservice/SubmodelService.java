@@ -25,11 +25,14 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
-import java.util.Collection;
+import java.util.List;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 
 /**
@@ -51,7 +54,7 @@ public interface SubmodelService {
 	 * 
 	 * @return
 	 */
-	public Collection<SubmodelElement> getSubmodelElements();
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo);
 
 	/**
 	 * Retrieve specific SubmodelElement of the Submodel
@@ -110,5 +113,18 @@ public interface SubmodelService {
 	 *             If the submodel element defined in the path does not exist
 	 */
 	public void deleteSubmodelElement(String idShortPath) throws ElementDoesNotExistException;
+
+	/**
+	 * Invokes an operation
+	 * 
+	 * @param idShortPath
+	 *            the Operation IdShortPath
+	 * @param input
+	 *            value to be passed to the invoked operation
+	 * @throws ElementDoesNotExistException
+	 *             If the operation defined in the idShortPath does not exist
+	 * @return
+	 */
+	public OperationVariable[] invokeOperation(String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException;
 
 }

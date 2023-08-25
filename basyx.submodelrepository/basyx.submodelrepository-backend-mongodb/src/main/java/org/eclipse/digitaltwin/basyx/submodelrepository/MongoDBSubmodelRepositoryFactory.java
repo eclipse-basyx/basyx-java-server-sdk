@@ -30,7 +30,9 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.stereotype.Component;
 
 /**
  * SubmodelRepository factory returning a MongoDb backend SubmodelRepository
@@ -38,33 +40,54 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  * @author jungjan
  *
  */
+@Component
+@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
 public class MongoDBSubmodelRepositoryFactory implements SubmodelRepositoryFactory {
 
 	private MongoTemplate mongoTemplate;
 	private String collectionName;
 	private SubmodelServiceFactory submodelServiceFactory;
 	private Collection<Submodel> submodels;
+	
+	private String smRepositoryName;
 
-	@Autowired
-	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory) {
+	@Autowired(required = false)
+	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate,
+			@Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName,
+			SubmodelServiceFactory submodelServiceFactory) {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
 		this.submodelServiceFactory = submodelServiceFactory;
 	}
+	
+	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate,
+			@Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName,
+			SubmodelServiceFactory submodelServiceFactory, @Value("${basyx.smrepo.name:sm-repo}") String smRepositoryName) {
+		this(mongoTemplate, collectionName, submodelServiceFactory);
+		this.smRepositoryName = smRepositoryName;
+	}
 
-	@Autowired
-	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory,
-			Collection<Submodel> submodels) {
+	@Autowired(required = false)
+	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate,
+			@Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName,
+			SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels) {
 		this(mongoTemplate, collectionName, submodelServiceFactory);
 		this.submodels = submodels;
+	}
+	
+	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate,
+			@Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName,
+			SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels, @Value("${basyx.smrepo.name:sm-repo}") String smRepositoryName) {
+		this(mongoTemplate, collectionName, submodelServiceFactory, submodels);
+		this.smRepositoryName = smRepositoryName;
 	}
 
 	@Override
 	public SubmodelRepository create() {
 		if (this.submodels == null || this.submodels.isEmpty()) {
-			return new MongoDBSubmodelRepository(mongoTemplate, collectionName, submodelServiceFactory);
+			return new MongoDBSubmodelRepository(mongoTemplate, collectionName, submodelServiceFactory, smRepositoryName);
 		}
-		return new MongoDBSubmodelRepository(mongoTemplate, collectionName, submodelServiceFactory, submodels);
+		return new MongoDBSubmodelRepository(mongoTemplate, collectionName, submodelServiceFactory, submodels, smRepositoryName);
 
 	}
 }

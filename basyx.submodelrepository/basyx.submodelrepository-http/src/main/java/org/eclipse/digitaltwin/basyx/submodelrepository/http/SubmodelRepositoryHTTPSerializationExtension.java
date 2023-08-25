@@ -23,22 +23,24 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
+import org.eclipse.digitaltwin.basyx.deserialization.SubmodelElementValueJsonDeserializer;
+import org.eclipse.digitaltwin.basyx.deserialization.ValueOnlyJsonDeserializer;
+import org.eclipse.digitaltwin.basyx.deserialization.SpecificAssetIDValueJsonDeserializer;
 import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
-import org.eclipse.digitaltwin.basyx.submodelrepository.http.deserialization.SubmodelElementValueJsonDeserializer;
-import org.eclipse.digitaltwin.basyx.submodelrepository.http.deserialization.ValueOnlyJsonDeserializer;
-import org.eclipse.digitaltwin.basyx.submodelrepository.http.mixins.ReferenceElementValueMixIn;
-import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.MultiLanguagePropertyValueSerializer;
-import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.PropertyValueSerializer;
-import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.SubmodelElementCollectionValueSerializer;
-import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.SubmodelElementListValueSerializer;
-import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.SubmodelValueOnlySerializer;
-import org.eclipse.digitaltwin.basyx.submodelrepository.http.serialization.ValueOnlySerializer;
+import org.eclipse.digitaltwin.basyx.mixins.ReferenceElementValueMixIn;
+import org.eclipse.digitaltwin.basyx.serialization.MultiLanguagePropertyValueSerializer;
+import org.eclipse.digitaltwin.basyx.serialization.PropertyValueSerializer;
+import org.eclipse.digitaltwin.basyx.serialization.SpecificAssetIDValueSerializer;
+import org.eclipse.digitaltwin.basyx.serialization.SubmodelElementCollectionValueSerializer;
+import org.eclipse.digitaltwin.basyx.serialization.SubmodelElementListValueSerializer;
+import org.eclipse.digitaltwin.basyx.serialization.SubmodelValueOnlySerializer;
+import org.eclipse.digitaltwin.basyx.serialization.ValueOnlySerializer;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIDValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollectionValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementListValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -68,6 +70,8 @@ public class SubmodelRepositoryHTTPSerializationExtension implements Serializati
 		builder.serializerByType(SubmodelElementListValue.class, new SubmodelElementListValueSerializer());
 		builder.mixIn(ReferenceElementValue.class, ReferenceElementValueMixIn.class);
 		builder.serializerByType(SubmodelValueOnly.class, new SubmodelValueOnlySerializer());
+		builder.deserializerByType(SpecificAssetIDValue.class, new SpecificAssetIDValueJsonDeserializer());
+		builder.serializerByType(SpecificAssetIDValue.class, new SpecificAssetIDValueSerializer());
 	}
 
 }

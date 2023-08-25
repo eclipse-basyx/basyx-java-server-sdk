@@ -1,0 +1,18 @@
+{
+	"idShort": "submodel_1",
+	"id": "submodel1",
+	"description": [{
+		"language": "de-DE",
+		"text": "Second Sub model descriptor."
+	}],
+	
+	"endpoints": [
+		{
+			"protocolInformation": {
+				"href": "http://127.0.0.1:8099/submodel",
+				"endpointProtocol": "HTTP",
+				"subprotocol": "AAS"
+			},
+			"interface": "https://admin-shell.io/aas/API/3/0/SubmodelServiceSpecification/SSP-003"
+		}
+	]}

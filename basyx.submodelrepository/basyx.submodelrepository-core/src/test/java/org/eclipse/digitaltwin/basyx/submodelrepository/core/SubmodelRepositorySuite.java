@@ -30,8 +30,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXSD;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
@@ -40,18 +42,24 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.junit.Test;
 
 /**
  * Testsuite for implementations of the SubmodelRepository interface
  * 
- * @author schnicke, danish
+ * @author schnicke, danish, kammognie
  *
  */
 public abstract class SubmodelRepositorySuite {
+	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
+
 	protected abstract SubmodelRepository getSubmodelRepository();
 
 	protected abstract SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels);
@@ -61,7 +69,7 @@ public abstract class SubmodelRepositorySuite {
 		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodels();
 
 		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
-		Collection<Submodel> submodels = repo.getAllSubmodels();
+		Collection<Submodel> submodels = repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult();
 
 		assertSubmodelsAreContained(expectedSubmodels, submodels);
 	}
@@ -74,7 +82,7 @@ public abstract class SubmodelRepositorySuite {
 	@Test
 	public void getAllSubmodelsEmpty() {
 		SubmodelRepository repo = getSubmodelRepository();
-		Collection<Submodel> submodels = repo.getAllSubmodels();
+		Collection<Submodel> submodels = repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult();
 
 		assertIsEmpty(submodels);
 	}
@@ -165,7 +173,9 @@ public abstract class SubmodelRepositorySuite {
 	@Test
 	public void getSubmodelElements() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		Collection<SubmodelElement> elements = repo.getSubmodelElements(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID);
+		Collection<SubmodelElement> elements = repo
+				.getSubmodelElements(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, NO_LIMIT_PAGINATION_INFO)
+				.getResult();
 		Collection<SubmodelElement> expectedElements = DummySubmodelFactory.createOperationalDataSubmodel()
 				.getSubmodelElements();
 		assertEquals(expectedElements, elements);
@@ -174,7 +184,7 @@ public abstract class SubmodelRepositorySuite {
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getSubmodelElementsOfNonExistingSubmodel() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		repo.getSubmodelElements("notExisting");
+		repo.getSubmodelElements("notExisting", NO_LIMIT_PAGINATION_INFO).getResult();
 
 	}
 
@@ -336,6 +346,47 @@ public abstract class SubmodelRepositorySuite {
 			throw expected;
 		}
 	}
+	
+	@Test
+	public void getDefaultSubmodelRepositoryName() {
+		SubmodelRepository repo = getSubmodelRepository();
+		
+		assertEquals("sm-repo", repo.getName());
+	}
+
+	@Test
+	public void getPaginatedSubmodel() {
+		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodels();
+
+		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
+		CursorResult<List<Submodel>> cursorResult = repo
+				.getAllSubmodels(new PaginationInfo(1, ""));
+		assertEquals(1, cursorResult.getResult().size());
+	}
+
+	// Has to be overwritten if backend does not support operations
+	@Test
+	public void invokeOperation() {
+		SubmodelRepository submodelRepo = getSubmodelRepositoryWithDummySubmodels();
+
+		Property val = new DefaultProperty.Builder().idShort("in").value("2").build();
+
+		OperationVariable[] result = submodelRepo.invokeOperation(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_OPERATION_ID,
+				new OperationVariable[] { SubmodelServiceHelper.createOperationVariable(val) });
+
+		Property ret = (Property) result[0].getValue();
+
+		assertEquals("4", ret.getValue());
+	}
+
+	// Has to be overwritten if backend does not support operations
+	@Test(expected = NotInvokableException.class)
+	public void invokeNonOperation() {
+		SubmodelRepository submodelRepo = getSubmodelRepositoryWithDummySubmodels();
+
+		submodelRepo.invokeOperation(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT, new OperationVariable[0]);
+	}
+
 
 	private SubmodelElement getExpectedSubmodelElement() {
 		return DummySubmodelFactory.createOperationalDataSubmodel()

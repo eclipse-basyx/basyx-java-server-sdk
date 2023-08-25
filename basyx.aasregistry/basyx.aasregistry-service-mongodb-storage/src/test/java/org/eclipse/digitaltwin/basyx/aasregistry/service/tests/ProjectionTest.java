@@ -35,8 +35,9 @@ import java.util.stream.Collectors;
 
 import org.bson.Document;
 import org.bson.json.JsonWriterSettings;
-import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
+import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorQuery;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorQuery.QueryTypeEnum;
+import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.SearchPathProjectionBuilder;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.SegmentBlocksBuilder;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.SegmentBlocksBuilder.SegmentBlock;
@@ -62,7 +63,6 @@ public class ProjectionTest {
 		assertSegmentBlocksCreated(path, true, "submodelDescriptors", "endpoints", "protocolInformation.endpointProtocolVersion");
 	}
 	
-
 	@Test
 	public void testSegmentBlockCollectorDataSpecificationContentDefinition() {
 		String path = AasRegistryPaths.submodelDescriptors().administration().embeddedDataSpecifications().dataSpecificationContent().asDataSpecificationIec61360().definition().text();
@@ -91,23 +91,21 @@ public class ProjectionTest {
 	public void testRegexSubmodelListProjection() throws IOException {
 		SearchPathProjectionBuilder projBuilder = new SearchPathProjectionBuilder(Map.of("id", "_id", "submodelDescriptors.id", "submodelDescriptors._id"));
 		String path = AasRegistryPaths.submodelDescriptors().endpoints().protocolInformation().endpointProtocolVersion();
-		Optional<AggregationExpression> filterOpt = projBuilder.buildSubmodelFilter(path, "^a_.*$", QueryTypeEnum.REGEX);
-		assertFilter(filterOpt.get());
+		assertFilter(projBuilder, new ShellDescriptorQuery(path, "^a_.*$").queryType(QueryTypeEnum.REGEX));
 	}
 	
 	@Test
 	public void testMatchSubmodelListProjection() throws IOException {
 		SearchPathProjectionBuilder projBuilder = new SearchPathProjectionBuilder(Map.of("id", "_id", "submodelDescriptors.id", "submodelDescriptors._id"));
 		String path = AasRegistryPaths.submodelDescriptors().endpoints().protocolInformation().endpointProtocolVersion();
-		Optional<AggregationExpression> filterOpt = projBuilder.buildSubmodelFilter(path, "2.0.0", QueryTypeEnum.MATCH);
-		assertFilter(filterOpt.get());
+		assertFilter(projBuilder, new ShellDescriptorQuery(path, "2.0.0"));
 	}
 	
 	@Test
 	public void testProjectionOutsideSubmodel_ThenNoFilterReturned() throws IOException {
 		SearchPathProjectionBuilder projBuilder = new SearchPathProjectionBuilder(Map.of("id", "_id", "submodelDescriptors.id", "submodelDescriptors._id"));
 		String path = AasRegistryPaths.administration().embeddedDataSpecifications().dataSpecification().type();
-		Optional<AggregationExpression> filterOpt = projBuilder.buildSubmodelFilter(path, "type", QueryTypeEnum.MATCH);
+		Optional<AggregationExpression> filterOpt = projBuilder.buildSubmodelFilter(List.of(new ShellDescriptorQuery(path, "type")));
 		assertThat(filterOpt).isEmpty();
 	}
 	
@@ -115,20 +113,20 @@ public class ProjectionTest {
 	public void testRegexSubmodelFunctionalProjection() throws IOException {
 		SearchPathProjectionBuilder projBuilder = new SearchPathProjectionBuilder(Map.of("id", "_id", "submodelDescriptors.id", "submodelDescriptors._id"));
 		String path = AasRegistryPaths.submodelDescriptors().endpoints().protocolInformation().endpointProtocol();
-		Optional<AggregationExpression> filterOpt = projBuilder.buildSubmodelFilter(path, "^a_.*$", QueryTypeEnum.REGEX);
-		assertFilter(filterOpt.get());
+		assertFilter(projBuilder, new ShellDescriptorQuery(path, "^a_.*$").queryType(QueryTypeEnum.REGEX));
 	}
 	
 	@Test
 	public void testMatchSubmodelFunctionalProjection() throws IOException {
 		SearchPathProjectionBuilder projBuilder = new SearchPathProjectionBuilder(Map.of("id", "_id", "submodelDescriptors.id", "submodelDescriptors._id"));
 		String path = AasRegistryPaths.submodelDescriptors().endpoints().protocolInformation().endpointProtocol();
-		Optional<AggregationExpression> filterOpt = projBuilder.buildSubmodelFilter(path, "2.0.0", QueryTypeEnum.MATCH);
-		assertFilter(filterOpt.get());
+		assertFilter(projBuilder, new ShellDescriptorQuery(path, "2.0.0"));
 	}
 
-	private void assertFilter(AggregationExpression filter) throws IOException {
-		Document doc = filter.toDocument();
+	private void assertFilter(SearchPathProjectionBuilder projBuilder, ShellDescriptorQuery... queries) throws IOException {
+		Optional<AggregationExpression> filterOpt = projBuilder.buildSubmodelFilter(List.of(queries));
+		assertThat(filterOpt).isPresent();
+		Document doc = filterOpt.get().toDocument();
 		String jsonString = resourceLoader.loadJsonAsString();
 		Document expected = Document.parse(jsonString);
 		assertThat(docToJsonPretty(doc)).isEqualTo(docToJsonPretty(expected));

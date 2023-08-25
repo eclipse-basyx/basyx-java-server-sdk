@@ -1,12 +1,16 @@
 # Eclipse BaSyx - AAS Environment
 Eclipse BaSyx provides the AAS Environment as off-the-shelf component:
 
-    docker run --name=aas-env -p:8081:8081 -v C:/tmp:/usr/share/config eclipsebasyx/aas-environment:2.0.0-SNAPSHOT 
+    docker run --name=aas-env -p:8081:8081 -v C:/tmp/application.properties:/application/application.properties eclipsebasyx/aas-environment:2.0.0-SNAPSHOT 
+
+> *Disclaimer*: In this example, configuration files are located in `C:/tmp`
+
+> *Disclaimer*: The binding of volume `C:/tmp/application.properties` to `/application/application.properties` is tested using Windows Powershell. Other terminals might run into an error.
 
 It aggregates the AAS Repository, Submodel Repository and ConceptDescription Repository into a single component. For its features and configuration, see the documentation of the respective components.
 
 In addition, it supports the following endpoint defined in DotAAS Part 2 V3 - Serialization Interface:
-- GenerateSerializationByIds (excluding ConceptDescription parameter for now)
+- GenerateSerializationByIds
 
 The Aggregated API endpoint documentation is available at:
 
@@ -15,3 +19,9 @@ The Aggregated API endpoint documentation is available at:
 The Aggregated Swagger UI for the endpoint is available at:
 
 	http://{host}:{port}/swagger-ui/index.html
+
+For a configuration example, see [application.properties](./basyx.aasenvironment.component/src/main/resources/application.properties)
+The Health Endpoint an
+d CORS Documentation can be found [here](../docs/Readme.md). 
+
+Right now, no additional input parameters modifying the output (e.g., cursor, serializationModifier) are supported.

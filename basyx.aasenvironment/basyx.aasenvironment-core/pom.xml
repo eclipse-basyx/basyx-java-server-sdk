@@ -30,14 +30,43 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.aasservice-core</artifactId>
+			<artifactId>basyx.submodelrepository-backend-inmemory</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.aasservice-core</artifactId>
+			<artifactId>basyx.submodelservice-core</artifactId>
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelservice-backend-inmemory</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasservice-backend-inmemory</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.conceptdescriptionrepository-backend-inmemory</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasrepository-backend-inmemory</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelrepository-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasrepository-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.conceptdescriptionrepository-core</artifactId>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
 			<artifactId>dataformat-json</artifactId>
@@ -51,21 +80,53 @@
 			<artifactId>dataformat-aasx</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.submodelservice-core</artifactId>
-			<classifier>tests</classifier>
-			<scope>test</scope>
+			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
+			<artifactId>dataformat-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.http</artifactId>
-			<classifier>tests</classifier>
-			<scope>test</scope>
-		</dependency>
+			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
+			<artifactId>model</artifactId>
+        </dependency>
+		
 		<dependency>
-			<groupId>org.apache.httpcomponents.client5</groupId>
-			<artifactId>httpclient5</artifactId>
-			<scope>test</scope>
-		</dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+            </dependency>
+		
+		<dependency>
+	       <groupId>org.slf4j</groupId>
+	       <artifactId>slf4j-api</artifactId>
+	    </dependency>
+	    
+	    <dependency>
+	       <groupId>com.google.guava</groupId>
+	       <artifactId>guava</artifactId>
+	       <version>30.1.1-jre</version>
+	    </dependency>
+	    
+	     <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>4.1.2</version>
+        </dependency>
+        
+	     <dependency>
+	        <groupId>junit</groupId>
+	        <artifactId>junit</artifactId>
+	     </dependency>
 	</dependencies>
+	
+	<build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId> 
+          <artifactId>maven-dependency-plugin</artifactId>  
+          <configuration> 
+            <usedDependencies>  
+              <dependency>groupId:artifactId</dependency>  
+            </usedDependencies>  
+          </configuration>  
+        </plugin> 
+      </plugins>
+    </build>
 </project>

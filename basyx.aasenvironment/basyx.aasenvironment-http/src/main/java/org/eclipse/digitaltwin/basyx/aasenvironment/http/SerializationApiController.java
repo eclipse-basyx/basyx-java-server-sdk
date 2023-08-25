@@ -77,16 +77,16 @@ public class SerializationApiController implements AASEnvironmentHTTPApi {
 
 		try {
 			if (accept.equals(ACCEPT_AASX)) {
-				byte[] serialization = aasEnvironment.createAASXAASEnvironmentSerialization(getOriginalIds(aasIds), getOriginalIds(submodelIds));
+				byte[] serialization = aasEnvironment.createAASXAASEnvironmentSerialization(getOriginalIds(aasIds), getOriginalIds(submodelIds), includeConceptDescriptions);
 				return new ResponseEntity<Resource>(new ByteArrayResource(serialization), HttpStatus.OK);
 			}
 
 			if (accept.equals(ACCEPT_XML)) {
-				String serialization = aasEnvironment.createXMLAASEnvironmentSerialization(getOriginalIds(aasIds), getOriginalIds(submodelIds));
+				String serialization = aasEnvironment.createXMLAASEnvironmentSerialization(getOriginalIds(aasIds), getOriginalIds(submodelIds), includeConceptDescriptions);
 				return new ResponseEntity<Resource>(new ByteArrayResource(serialization.getBytes()), HttpStatus.OK);
 			}
 
-			String serialization = aasEnvironment.createJSONAASEnvironmentSerialization(getOriginalIds(aasIds), getOriginalIds(submodelIds));
+			String serialization = aasEnvironment.createJSONAASEnvironmentSerialization(getOriginalIds(aasIds), getOriginalIds(submodelIds), includeConceptDescriptions);
 			return new ResponseEntity<Resource>(new ByteArrayResource(serialization.getBytes()), HttpStatus.OK);
 		} catch (ElementDoesNotExistException e) {
 			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);

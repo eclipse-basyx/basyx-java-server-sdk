@@ -24,9 +24,7 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.api;
 
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -39,10 +37,10 @@ import org.eclipse.digitaltwin.basyx.aasregistry.model.PagedResultPagingMetadata
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventSink;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.CursorResult;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.RegistrationEventSendingAasRegistryStorage;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -51,15 +49,17 @@ import org.springframework.stereotype.Component;
 public class BasyxRegistryApiDelegate implements ShellDescriptorsApiDelegate {
 
 	private final AasRegistryStorage storage;
+	
+	private final LocationBuilder locationBuilder;
 
-	public BasyxRegistryApiDelegate(AasRegistryStorage storage, RegistryEventSink eventSink) {
+	public BasyxRegistryApiDelegate(AasRegistryStorage storage, RegistryEventSink eventSink, LocationBuilder builder) {
 		this.storage = new RegistrationEventSendingAasRegistryStorage(storage, eventSink);
-		
+		this.locationBuilder = builder;
 	}
 
 	@Override
 	public ResponseEntity<Void> deleteAssetAdministrationShellDescriptorById(String aasIdentifier) {
-		storage.removeAasDescriptor(aasIdentifier);		
+		storage.removeAasDescriptor(aasIdentifier);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
@@ -71,11 +71,11 @@ public class BasyxRegistryApiDelegate implements ShellDescriptorsApiDelegate {
 
 	@Override
 	public ResponseEntity<GetAssetAdministrationShellDescriptorsResult> getAllAssetAdministrationShellDescriptors(Integer limit, String cursor, AssetKind assetKind, String assetType) {
-		PaginationInfo pInfo = new PaginationInfo(limit, decodeCursor(cursor));
+		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
 		DescriptorFilter filter = new DescriptorFilter(assetKind, assetType);
 		CursorResult<List<AssetAdministrationShellDescriptor>> allDescriptors = storage.getAllAasDescriptors(pInfo, filter);
 
-		GetAssetAdministrationShellDescriptorsResult result = new GetAssetAdministrationShellDescriptorsResult();		
+		GetAssetAdministrationShellDescriptorsResult result = new GetAssetAdministrationShellDescriptorsResult();
 		result.setPagingMetadata(resolvePagingMeta(allDescriptors));
 		result.setResult(allDescriptors.getResult());
 
@@ -84,7 +84,7 @@ public class BasyxRegistryApiDelegate implements ShellDescriptorsApiDelegate {
 
 	@Override
 	public ResponseEntity<GetSubmodelDescriptorsResult> getAllSubmodelDescriptorsThroughSuperpath(String aasIdentifier, Integer limit, String cursor) {
-		PaginationInfo pInfo = new PaginationInfo(limit, decodeCursor(cursor));
+		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
 		CursorResult<List<SubmodelDescriptor>> allSubmodels = storage.getAllSubmodels(aasIdentifier, pInfo);
 		
 		GetSubmodelDescriptorsResult result = new GetSubmodelDescriptorsResult();
@@ -106,11 +106,11 @@ public class BasyxRegistryApiDelegate implements ShellDescriptorsApiDelegate {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	
 	@Override
 	public ResponseEntity<SubmodelDescriptor> postSubmodelDescriptorThroughSuperpath(String aasIdentifier, SubmodelDescriptor body) {
 		storage.insertSubmodel(aasIdentifier, body);
-		return new ResponseEntity<>(body, HttpStatus.CREATED);
+		URI location = locationBuilder.getSubmodelLocation(aasIdentifier, body.getId());		
+		return ResponseEntity.created(location).body(body);
 	}
 
 	@Override
@@ -122,9 +122,9 @@ public class BasyxRegistryApiDelegate implements ShellDescriptorsApiDelegate {
 	@Override
 	public ResponseEntity<AssetAdministrationShellDescriptor> postAssetAdministrationShellDescriptor(@Valid AssetAdministrationShellDescriptor body) {
 		storage.insertAasDescriptor(body);
-		return new ResponseEntity<>(body, HttpStatus.CREATED);
+		URI location = locationBuilder.getAasLocation(body.getId());
+		return ResponseEntity.created(location).body(body);
 	}
-
 
 	@Override
 	public ResponseEntity<Void> putSubmodelDescriptorByIdThroughSuperpath(String aasIdentifier, String submodelIdentifier, SubmodelDescriptor descriptor) {
@@ -140,23 +140,7 @@ public class BasyxRegistryApiDelegate implements ShellDescriptorsApiDelegate {
 
 	private <T> PagedResultPagingMetadata resolvePagingMeta(CursorResult<T> result) {
 		PagedResultPagingMetadata meta = new PagedResultPagingMetadata();
-		String encodedCursor = encodeCursor(result.getCursor());
-		meta.setCursor(encodedCursor);
+		meta.setCursor(result.getCursor());
 		return meta;
-	}
-	
-	// we encode and decode the cursor as it is passed as url param and could hava invalid chars
-	private String encodeCursor(String cursor) {
-		if (cursor == null) {
-			return null;
-		}
-		return URLEncoder.encode(cursor, StandardCharsets.UTF_8);
-	}
-	
-	private String decodeCursor(String cursor) {
-		if (cursor == null) {
-			return null;
-		}
-		return URLDecoder.decode(cursor, StandardCharsets.UTF_8);
 	}
 }

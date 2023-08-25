@@ -1,0 +1,38 @@
+{
+	"idShort": "identification_5",
+	"id": "identification_5",
+	"assetType": "tp",
+	"assetKind": "Type",
+	"administration": {
+		"revision": "11"
+	},
+	"description": [
+		{
+			"language": "de-DE",
+			"text": "identification_5"
+		}]
+	,
+	"submodelDescriptors": [
+		{
+			"idShort": "sm3",
+			"id": "submodel3",
+			"description": [
+				{
+					"language": "de-DE",
+					"text": "G2"
+				}
+			],
+			
+			"endpoints" : [
+				{ 
+					"protocolInformation": {
+						"href": "http://127.0.0.1:8099/submodel",
+						"endpointProtocol": "HTTP",
+						"subprotocol": "AAS"
+					},
+					"interface": "https://admin-shell.io/aas/API/3/0/SubmodelServiceSpecification/SSP-003"				
+				}
+			]
+		}
+	]
+}

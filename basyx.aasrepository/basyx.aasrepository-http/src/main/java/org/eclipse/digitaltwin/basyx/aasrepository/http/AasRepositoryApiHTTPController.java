@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.http;
 
-import java.util.ArrayList;
 import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
@@ -37,6 +37,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetAssetAdministrationShellsResult;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetReferencesResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
@@ -97,22 +99,36 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 
 	@Override
 	public ResponseEntity<PagedResult> getAllAssetAdministrationShells(@Valid List<SpecificAssetID> assetIds, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid String cursor) {
-		GetAssetAdministrationShellsResult paginatedAAS = new GetAssetAdministrationShellsResult();
-		paginatedAAS.setResult(new ArrayList<>(aasRepository.getAllAas()));
-		paginatedAAS.setPagingMetadata(new PagedResultPagingMetadata().cursor("nextAasCursor"));
-		
-		return new ResponseEntity<PagedResult>(paginatedAAS, HttpStatus.OK);
+		if (limit == null)
+			limit = 100;
+		if (cursor == null)
+			cursor = "";
+
+		PaginationInfo paginationInfo = new PaginationInfo(limit, cursor);
+		CursorResult<List<AssetAdministrationShell>> paginatedAAS = aasRepository.getAllAas(paginationInfo);
+
+		GetAssetAdministrationShellsResult result = new GetAssetAdministrationShellsResult();
+		result.setResult(paginatedAAS.getResult());
+		result.setPagingMetadata(new PagedResultPagingMetadata().cursor(paginatedAAS.getCursor()));
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@Override
 	public ResponseEntity<PagedResult> getAllSubmodelReferencesAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Min(1) @Valid Integer limit, @Valid String cursor) {
-		List<Reference> submodelReferences = aasRepository.getSubmodelReferences(aasIdentifier.getIdentifier());
-				
-		GetReferencesResult paginatedSubmodelReference = new GetReferencesResult();
-		paginatedSubmodelReference.setResult(submodelReferences);
-		paginatedSubmodelReference.setPagingMetadata(new PagedResultPagingMetadata().cursor("nextSmRefCursor"));
-		
-		return new ResponseEntity<PagedResult>(paginatedSubmodelReference, HttpStatus.OK);
+		if (limit == null)
+			limit = 100;
+		if (cursor == null)
+			cursor = "";
+
+		PaginationInfo paginationInfo = new PaginationInfo(limit, cursor);
+		CursorResult<List<Reference>> submodelReferences = aasRepository.getSubmodelReferences(aasIdentifier.getIdentifier(), paginationInfo);
+
+		GetReferencesResult result = new GetReferencesResult();
+		result.setResult(submodelReferences.getResult());
+		result.setPagingMetadata(new PagedResultPagingMetadata().cursor(submodelReferences.getCursor()));
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@Override

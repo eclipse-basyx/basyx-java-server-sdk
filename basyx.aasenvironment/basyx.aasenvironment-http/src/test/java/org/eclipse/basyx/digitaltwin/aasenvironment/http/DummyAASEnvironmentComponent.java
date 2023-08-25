@@ -9,10 +9,13 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentSerialization;
+import org.eclipse.digitaltwin.basyx.aasenvironment.TestAASEnvironmentSerialization;
 import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironmentSerialization;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.InMemoryAasRepository;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.InMemoryConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
@@ -26,10 +29,13 @@ public class DummyAASEnvironmentComponent {
 	public static final String AAS_OPERATIONAL_DATA_ID = "shell002";
 	public static final String SUBMODEL_TECHNICAL_DATA_ID = "7A7104BDAB57E184";
 	public static final String SUBMODEL_OPERATIONAL_DATA_ID = "AC69B1CB44F07935";
+	public static final String CONCEPT_DESCRIPTION_ID_NOT_INCLUDED_IN_ENV = "IdNotToBeIncludedInSerializedEnv";
 	@Bean
 	public AasEnvironmentSerialization createAasEnvironment() {
 		SubmodelRepository submodelRepository = new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
 		AasRepository aasRepository = new InMemoryAasRepository(new InMemoryAasServiceFactory());
+		ConceptDescriptionRepository conceptDescriptionRepository = new InMemoryConceptDescriptionRepository(TestAASEnvironmentSerialization.createDummyConceptDescriptions());
+		
 		for (Submodel submodel : createDummySubmodels()) {
 			submodelRepository.createSubmodel(submodel);
 		}
@@ -38,7 +44,7 @@ public class DummyAASEnvironmentComponent {
 			aasRepository.createAas(shell);
 		}
 
-		return new DefaultAASEnvironmentSerialization(aasRepository, submodelRepository);
+		return new DefaultAASEnvironmentSerialization(aasRepository, submodelRepository, conceptDescriptionRepository);
 	}
 
 	private Collection<Submodel> createDummySubmodels() {

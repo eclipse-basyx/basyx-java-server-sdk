@@ -1,0 +1,245 @@
+## alter Descriptor
+- op: remove
+  path: /components/schemas/Descriptor/example
+## alter Extension
+- op: replace
+  path: /components/schemas/Extension/allOf/1/properties/name/pattern
+  value: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+## alter Key
+- op: replace
+  path: /components/schemas/Key/properties/value/pattern
+  value: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+##  LangStringTextType
+- op: add
+  path: /components/schemas/LangStringTextType/allOf/1/required
+  value:  
+  - text
+- op: add
+  path: /components/schemas/LangStringTextType/allOf/1/properties/text/minLength
+  value: 1
+- op: add
+  path: /components/schemas/LangStringTextType/allOf/1/properties/text/type
+  value: "string"
+- op: add
+  path: /components/schemas/LangStringTextType/allOf/1/properties/text/pattern
+  value: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+## AbstractLangString
+- op: remove
+  path: /components/schemas/AbstractLangString/required/1 
+- op: remove
+  path: /components/schemas/AbstractLangString/properties/text 
+## alter LangStringNameType
+- op: add
+  path: /components/schemas/LangStringNameType/allOf/1/required
+  value:
+  - text
+- op: add
+  path: /components/schemas/LangStringNameType/allOf/1/properties/text/minLength
+  value: 1    
+- op: add
+  path: /components/schemas/LangStringNameType/allOf/1/properties/text/pattern
+  value: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+- op: add
+  path: /components/schemas/LangStringNameType/allOf/1/properties/text/type
+  value: string 
+## LangStringDefinitionTypeIec61360
+- op: add
+  path: /components/schemas/LangStringDefinitionTypeIec61360/allOf/1/required
+  value: 
+  - text
+- op: add
+  path: /components/schemas/LangStringDefinitionTypeIec61360/allOf/1/properties/text/minLength
+  value: 1    
+- op: add
+  path: /components/schemas/LangStringDefinitionTypeIec61360/allOf/1/properties/text/pattern
+  value: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+- op: add
+  path: /components/schemas/LangStringDefinitionTypeIec61360/allOf/1/properties/text/type
+  value: string 
+## LangStringPreferredNameTypeIec61360
+- op: add
+  path: /components/schemas/LangStringPreferredNameTypeIec61360/allOf/1/required
+  value: 
+  - text
+- op: add
+  path: /components/schemas/LangStringPreferredNameTypeIec61360/allOf/1/properties/text/minLength
+  value: 1
+- op: add
+  path: /components/schemas/LangStringPreferredNameTypeIec61360/allOf/1/properties/text/pattern
+  value: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+- op: add
+  path: /components/schemas/LangStringPreferredNameTypeIec61360/allOf/1/properties/text/type
+  value: string
+## LangStringShortNameTypeIec61360
+- op: add
+  path: /components/schemas/LangStringShortNameTypeIec61360/allOf/1/required
+  value: 
+  - text
+- op: add
+  path: /components/schemas/LangStringShortNameTypeIec61360/allOf/1/properties/text/minLength
+  value: 1
+- op: add
+  path: /components/schemas/LangStringShortNameTypeIec61360/allOf/1/properties/text/pattern
+  value: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+- op: add
+  path: /components/schemas/LangStringShortNameTypeIec61360/allOf/1/properties/text/type
+  value: string
+## alter AdministrativeInformation
+- op: remove
+  path: /components/schemas/AdministrativeInformation/allOf/1/properties/version/allOf
+- op: add
+  path: /components/schemas/AdministrativeInformation/allOf/1/properties/version/pattern
+  value: "^(0|[1-9][0-9]{1,3})$"
+- op: remove
+  path: /components/schemas/AdministrativeInformation/allOf/1/properties/revision/allOf
+- op: add
+  path: /components/schemas/AdministrativeInformation/allOf/1/properties/revision/pattern
+  value: "^(0|[1-9][0-9]{1,3})$"
+- op: replace
+  path: /components/schemas/AdministrativeInformation/allOf/1/properties/templateId/pattern
+  value: "^([\\t\\n\\r \\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+## EmbeddedDataSpecification
+- op: replace
+  path: /components/schemas/EmbeddedDataSpecification/properties/dataSpecificationContent/$ref
+  value: "#/components/schemas/DataSpecificationContent"
+## DataSpecificationContent_choice
+- op: remove  
+  path: /components/schemas/DataSpecificationContent_choice
+## DataSpecificationContent  
+- op: remove  
+  path: /components/schemas/DataSpecificationContent/properties
+- op: add  
+  path: /components/schemas/DataSpecificationContent/oneOf
+  value:
+  - $ref: "#/components/schemas/DataSpecificationIec61360"
+- op: add  
+  path: /components/schemas/DataSpecificationContent/discriminator
+  value:
+    propertyName: "modelType"
+## DataSpecificationIec61360
+- op: add
+  path: /components/schemas/DataSpecificationIec61360/type
+  value: object
+- op: move
+  from: /components/schemas/DataSpecificationIec61360/allOf/1/required
+  path: /components/schemas/DataSpecificationIec61360/required
+- op: add
+  path: /components/schemas/DataSpecificationIec61360/required/1
+  value: modelType
+- op: move
+  from: /components/schemas/DataSpecificationIec61360/allOf/1/properties
+  path: /components/schemas/DataSpecificationIec61360/properties
+- op: remove
+  path: /components/schemas/DataSpecificationIec61360/allOf
+- op: remove
+  path: /components/schemas/DataSpecificationIec61360/properties/modelType/pattern
+- op: add
+  path: /components/schemas/DataSpecificationIec61360/properties/modelType/default      
+  value: "DataSpecificationIec61360"
+- op: replace
+  path: /components/schemas/DataSpecificationIec61360/properties/value/pattern      
+  value: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+- op: replace
+  path: /components/schemas/DataSpecificationIec61360/properties/valueFormat/pattern      
+  value: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+- op: replace
+  path: /components/schemas/DataSpecificationIec61360/properties/symbol/pattern      
+  value: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+- op: replace
+  path: /components/schemas/DataSpecificationIec61360/properties/sourceOfDefinition/pattern      
+  value: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
+- op: replace
+  path: /components/schemas/DataSpecificationIec61360/properties/unit/pattern      
+  value: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$" 
+## Submodel descriptor
+- op: add
+  path: /components/schemas/SubmodelDescriptor/allOf/1
+  value: {}
+- op: move
+  from: /components/schemas/SubmodelDescriptor/type
+  path: /components/schemas/SubmodelDescriptor/allOf/1/type
+- op: move
+  from: /components/schemas/SubmodelDescriptor/properties
+  path: /components/schemas/SubmodelDescriptor/allOf/1/properties
+- op: remove
+  path: /components/schemas/SubmodelDescriptor/example  
+- op: replace
+  path: /components/schemas/SubmodelDescriptor/allOf/1/properties/id/pattern  
+  value: "^[\\x09\\x0A\\x0D\\x20-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*$"
+## We want to have endpoints at the end because of the arguments of generated class constructors
+- op: move
+  from: /components/schemas/SubmodelDescriptor/allOf/1/properties/endpoints  
+  path: /components/schemas/SubmodelDescriptor/allOf/1/properties/tmp
+- op: move
+  from: /components/schemas/SubmodelDescriptor/allOf/1/properties/tmp  
+  path: /components/schemas/SubmodelDescriptor/allOf/1/properties/endpoints
+## alter ValueReferencePair
+- op: replace
+  path: /components/schemas/ValueReferencePair/properties/value/pattern
+  value: "^([\\t\\n\\r -\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"  
+##  alter message timestamp
+- op: remove
+  path: /components/schemas/Message/properties/timestamp/pattern
+- op: add
+  path: /components/schemas/Message/properties/timestamp/format
+  value: date-time
+##  alter ServiceDescription
+- op: remove
+  path: /components/schemas/ServiceDescription/example
+##  PagedResult_paging_metadata
+- op: remove
+  path: /components/schemas/PagedResult_paging_metadata/properties/cursor/example  
+- op: replace
+  path: /servers
+  value: []
+- op: add
+  path: /paths/~1submodel-descriptors~1{submodelIdentifier}/get/parameters/0/x-utf8-base64-url-encoded-as-string
+  value: true
+- op: add
+  path: /paths/~1submodel-descriptors~1{submodelIdentifier}/put/parameters/0/x-utf8-base64-url-encoded-as-string
+  value: true
+- op: add
+  path: /paths/~1submodel-descriptors~1{submodelIdentifier}/delete/parameters/0/x-utf8-base64-url-encoded-as-string
+  value: true
+- op: add
+  path: /paths/~1submodel-descriptors/delete
+  value:
+     tags:
+     - Submodel Registry
+     summary: Deletes all Submodel Descriptors
+     operationId: DeleteAllSubmodelDescriptors
+     responses:
+        '204':
+           description: No content
+- op: add
+  path: /paths/~1description/get/tags
+  value:
+  - Description
+- op: replace
+  path: /paths/~1submodel-descriptors/get/tags
+  value:
+  - Submodel Registry
+- op: replace
+  path: /paths/~1submodel-descriptors/delete/tags
+  value:
+  - Submodel Registry
+- op: replace
+  path: /paths/~1submodel-descriptors/post/tags
+  value:
+  - Submodel Registry
+- op: replace
+  path: /paths/~1submodel-descriptors~1{submodelIdentifier}/get/tags
+  value:
+  - Submodel Registry
+- op: replace
+  path: /paths/~1submodel-descriptors~1{submodelIdentifier}/put/tags
+  value:
+  - Submodel Registry
+- op: replace
+  path: /paths/~1submodel-descriptors~1{submodelIdentifier}/delete/tags
+  value:
+  - Submodel Registry
+- op: replace
+  path: /paths/~1description/get/tags
+  value:
+  - Submodel Registry

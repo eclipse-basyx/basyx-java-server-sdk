@@ -1,0 +1,48 @@
+---
+events:
+  sink:
+description:
+  profiles: https://admin-shell.io/aas/API/3/0/SubmodelRegistryServiceSpecification/SSP-001
+springdoc:
+   api-docs:
+      path: /api-docs
+springfox:
+  documentation:
+    enabled: true
+  #  open-api.v3.path: /api-docs
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics"
+logging:
+  level:
+    root: INFO
+server:
+  port: 8080
+  servlet:
+    contextPath: /api/v3.0
+  error:
+    whitelabel:
+      enabled: false
+servlet:
+  headers: []
+spring:
+  application:
+    name: Basyx Submodel Registry
+  jackson:
+    date-format: org.eclipse.digitaltwin.basyx.submodelregistry.service.RFC3339DateFormat
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+  cloud:
+    stream:
+      bindings:
+        default:
+          key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+          value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        registryBinding:
+          destination: submodel-registry
+          content-type: application/json
+          producer:
+            partitionKeyExpression: payload.id
+            partitionCount: 1            
