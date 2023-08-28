@@ -28,20 +28,39 @@ package org.eclipse.digitaltwin.basyx.aasrepository;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+import org.bson.Document;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
+import org.eclipse.digitaltwin.basyx.common.mongocore.CustomIdentifiableMappingMongoConverter;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.MongoDBConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.MongoDBConceptDescriptionRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.ConceptDescriptionRepositorySuite;
+import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
+import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
+import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
+import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
@@ -57,7 +76,7 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 	
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository() {
-		MongoTemplate template = createTemplate();
+		MongoTemplate template = createMongoTemplate();
 
 		clearDatabase(template);
 
@@ -67,7 +86,7 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository(
 			Collection<ConceptDescription> conceptDescriptions) {
-		MongoTemplate template = createTemplate();
+		MongoTemplate template = createMongoTemplate();
 		
 		clearDatabase(template);
 		
@@ -80,7 +99,7 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 	
 	@Test
 	public void testConfiguredMongoDBConceptDescriptionRepositoryName() {
-        MongoTemplate template = createTemplate();
+        MongoTemplate template = createMongoTemplate();
 		
 		clearDatabase(template);
 		
@@ -113,6 +132,26 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 		assertEquals(expectedConceptDescription, retrievedConceptDescription);
 	}
 	
+	@Test
+	public void retrieveRawJson() throws FileNotFoundException, IOException {
+		MongoTemplate template = createMongoTemplate();
+		
+		createDummyConceptDescriptionOnRepo(getConceptDescriptionRepository());
+		
+		String expectedCDJson = getDummyCDJSONString();
+		
+		Document cdDocument = template.findOne(new Query().addCriteria(Criteria.where("id").is("dummy")),
+				Document.class, COLLECTION);
+		
+		assertSameJSONContent(expectedCDJson, cdDocument.toJson());
+	}
+	
+	private void assertSameJSONContent(String expectedCDJson, String json) throws JsonMappingException, JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
+
+		assertEquals(mapper.readTree(expectedCDJson), mapper.readTree(json));
+	}
+	
 	private void addDescriptionToConceptDescription(ConceptDescription expectedConceptDescription) {
 		expectedConceptDescription.setDescription(Arrays.asList(new DefaultLangStringTextType.Builder().text("description").language("en").build()));
 	}
@@ -131,16 +170,37 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 		return expectedConceptDescription;
 	}
 	
-	private MongoTemplate createTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-		
-		MongoClient client = MongoClients.create(connectionURL);
-		
-		return new MongoTemplate(client, "BaSyxTestDb");
-	}
-	
 	private void clearDatabase(MongoTemplate template) {
 		template.remove(new Query(), COLLECTION);
+	}
+	
+	private MongoTemplate createMongoTemplate() {
+		List<SerializationExtension> extensions = Arrays.asList(new Aas4JHTTPSerializationExtension());
+		
+		ObjectMapper mapper = new BaSyxHTTPConfiguration().jackson2ObjectMapperBuilder(extensions).build();
+		
+		MongoDatabaseFactory databaseFactory = createDatabaseFactory();
+		
+		return new MongoTemplate(databaseFactory, new CustomIdentifiableMappingMongoConverter(databaseFactory, new MongoMappingContext(), mapper));
+	}
+	
+	private MongoDatabaseFactory createDatabaseFactory() {
+		String connectionString = createConnectionString();
+
+		MongoClient client = MongoClients.create(connectionString);
+
+		return new SimpleMongoClientDatabaseFactory(client, "BaSyxTestDb");
+	}
+
+	private String createConnectionString() {
+		return String.format("mongodb://%s:%s@%s:%s", "mongoAdmin", "mongoPassword", "127.0.0.1", "27017");
+	}
+	
+	private String getDummyCDJSONString() throws FileNotFoundException, IOException {
+		ClassPathResource classPathResource = new ClassPathResource("DummyCD.json");
+		InputStream in = classPathResource.getInputStream();
+		
+		return IOUtils.toString(in, StandardCharsets.UTF_8.name());
 	}
 
 }
