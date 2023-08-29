@@ -43,114 +43,114 @@ import org.springframework.validation.annotation.Validated;
 
 public class PackagesBody   {
 	
-  private List<String> aasIds = null;
-
-  private InputStream file = null;
-
-
-  private String fileName = null;
-  
-  private String packageId = null;
-
-  public PackagesBody aasIds(List<String> aasIds) {
-    this.aasIds = aasIds;
-    return this;
-  }
-
-  public PackagesBody addAasIdsItem(String aasIdsItem) {
-    if (this.aasIds == null) {
-      this.aasIds = new ArrayList<String>();
-    }
-    this.aasIds.add(aasIdsItem);
-    return this;
-  }
-  
-    public List<String> getAasIds() {
-    return aasIds;
-  }
-
-  public void setAasIds(List<String> aasIds) {
-    this.aasIds = aasIds;
-  }
-
-  public PackagesBody file(InputStream file) {
-    this.file = file;
-    return this;
-  }
- 
-    public InputStream getFile() {
-    return file;
-  }
-
-  public void setFile(InputStream file) {
-    this.file = file;
-  }
-
-  public PackagesBody fileName(String fileName) {
-    this.fileName = fileName;
-    return this;
-  }
-  
-    public String getFileName() {
-    return fileName;
-  }
-
-  public void setFileName(String fileName) {
-    this.fileName = fileName;
-  }
-  
-  public PackagesBody packageId(String packageId) {
-	    this.packageId = packageId;
+	  private List<String> aasIds = null;
+	
+	  private InputStream file = null;
+	
+	
+	  private String fileName = null;
+	  
+	  private String packageId = null;
+	
+	  public PackagesBody aasIds(List<String> aasIds) {
+	    this.aasIds = aasIds;
+	    return this;
+	  }
+	
+	  public PackagesBody addAasIdsItem(String aasIdsItem) {
+	    if (this.aasIds == null) {
+	      this.aasIds = new ArrayList<String>();
+	    }
+	    this.aasIds.add(aasIdsItem);
 	    return this;
 	  }
 	  
-  public String getPackageId() {
-	    return packageId;
+	    public List<String> getAasIds() {
+	    return aasIds;
 	  }
-
-  public void setPackageId(String packageId) {
-	    this.packageId = packageId;
-	  }	  
+	
+	  public void setAasIds(List<String> aasIds) {
+	    this.aasIds = aasIds;
+	  }
+	
+	  public PackagesBody file(InputStream file) {
+	    this.file = file;
+	    return this;
+	  }
+	 
+	    public InputStream getFile() {
+	    return file;
+	  }
+	
+	  public void setFile(InputStream file) {
+	    this.file = file;
+	  }
+	
+	  public PackagesBody fileName(String fileName) {
+	    this.fileName = fileName;
+	    return this;
+	  }
 	  
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    PackagesBody packagesBody = (PackagesBody) o;
-    return Objects.equals(this.aasIds, packagesBody.aasIds) &&
-        Objects.equals(this.file, packagesBody.file) &&
-        Objects.equals(this.fileName, packagesBody.fileName);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(aasIds, file, fileName);
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class PackagesBody {\n");
-    
-    sb.append("    aasIds: ").append(toIndentedString(aasIds)).append("\n");
-    sb.append("    file: ").append(toIndentedString(file)).append("\n");
-    sb.append("    fileName: ").append(toIndentedString(fileName)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
-  }
+	    public String getFileName() {
+	    return fileName;
+	  }
+	
+	  public void setFileName(String fileName) {
+	    this.fileName = fileName;
+	  }
+	  
+	  public PackagesBody packageId(String packageId) {
+		    this.packageId = packageId;
+		    return this;
+		  }
+		  
+	  public String getPackageId() {
+		    return packageId;
+		  }
+	
+	  public void setPackageId(String packageId) {
+		    this.packageId = packageId;
+		  }	  
+		  
+	  @Override
+	  public boolean equals(java.lang.Object o) {
+	    if (this == o) {
+	      return true;
+	    }
+	    if (o == null || getClass() != o.getClass()) {
+	      return false;
+	    }
+	    PackagesBody packagesBody = (PackagesBody) o;
+	    return Objects.equals(this.aasIds, packagesBody.aasIds) &&
+	        Objects.equals(this.file, packagesBody.file) &&
+	        Objects.equals(this.fileName, packagesBody.fileName);
+	  }
+	
+	  @Override
+	  public int hashCode() {
+	    return Objects.hash(aasIds, file, fileName);
+	  }
+	
+	  @Override
+	  public String toString() {
+	    StringBuilder sb = new StringBuilder();
+	    sb.append("class PackagesBody {\n");
+	    
+	    sb.append("    aasIds: ").append(toIndentedString(aasIds)).append("\n");
+	    sb.append("    file: ").append(toIndentedString(file)).append("\n");
+	    sb.append("    fileName: ").append(toIndentedString(fileName)).append("\n");
+	    sb.append("}");
+	    return sb.toString();
+	  }
+	
+	  /**
+	   * Convert the given object to string with each line indented by 4 spaces
+	   * (except the first line).
+	   */
+	  private String toIndentedString(java.lang.Object o) {
+	    if (o == null) {
+	      return "null";
+	    }
+	    return o.toString().replace("\n", "\n    ");
+	  }
 }
