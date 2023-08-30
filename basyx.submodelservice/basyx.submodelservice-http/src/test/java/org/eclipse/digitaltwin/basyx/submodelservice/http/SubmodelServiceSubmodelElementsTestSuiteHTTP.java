@@ -485,6 +485,21 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
 	}
 
+	@Test
+	public void invokeOperation() throws FileNotFoundException, IOException, ParseException {
+		String parameters = getJSONValueAsString("operation/parameters.json");
+		CloseableHttpResponse response = requestOperationInvocation(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_OPERATION_ID, parameters);
+
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+		String expectedValue = getJSONValueAsString("operation/result.json");
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
+
+	}
+
+	private CloseableHttpResponse requestOperationInvocation(String operationId, String parameters) throws IOException {
+		return BaSyxHttpTestUtils.executePostOnURL(createSpecificSubmodelElementURL(operationId) + "/invoke", parameters);
+	}
+
 	private String createCollectionNestedIdShortPath(String idShort) {
 		return DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE + "." + idShort;
 	}

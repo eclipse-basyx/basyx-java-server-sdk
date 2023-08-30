@@ -45,15 +45,17 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 /**
  * In-memory implementation of the AasRepository
  *
- * @author schnicke, danish
- * 
+ * @author schnicke, danish, kammognie
+ *
  */
 public class InMemoryAasRepository implements AasRepository {
 
 	private Map<String, AasService> aasServices = new LinkedHashMap<>();
 
 	private AasServiceFactory aasServiceFactory;
-
+	
+	private String aasRepositoryName;
+	
 	/**
 	 * Creates the AasRepository using an in-memory backend.
 	 * 
@@ -62,6 +64,17 @@ public class InMemoryAasRepository implements AasRepository {
 	 */
 	public InMemoryAasRepository(AasServiceFactory aasServiceFactory) {
 		this.aasServiceFactory = aasServiceFactory;
+	}
+	
+	/**
+	 * Creates the AasRepository using an in-memory backend.
+	 * 
+	 * @param aasServiceFactory Used for creating the AasService for new AAS
+	 * @param aasRepositoryName Name of the AASRepository
+	 */
+	public InMemoryAasRepository(AasServiceFactory aasServiceFactory, String aasRepositoryName) {
+		this(aasServiceFactory);
+		this.aasRepositoryName = aasRepositoryName;
 	}
 
 	@Override
@@ -160,7 +173,12 @@ public class InMemoryAasRepository implements AasRepository {
 				.getAAS()
 				.getAssetInformation();
 	}
-
+  
+	@Override
+	public String getName() {
+		return aasRepositoryName == null ? AasRepository.super.getName() : aasRepositoryName;
+	}
+  
 	private void throwIfMismatchingIds(String aasId, AssetAdministrationShell newAas) {
 		String newAasId = newAas.getId();
 

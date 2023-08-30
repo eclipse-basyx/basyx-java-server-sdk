@@ -26,21 +26,19 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http;
 
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.InMemoryConceptDescriptionRepository;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 /**
  * Spring application configured for tests.
  * 
- * @author schnicke, danish
+ * @author schnicke, danish, kammognie
  *
  */
 @SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
 public class DummyConceptDescriptionRepositoryComponent {
-
-	@Bean
-	public InMemoryConceptDescriptionRepository createConceptDescriptionRepository() {
-		return new InMemoryConceptDescriptionRepository();
+	
+	public static void main(String[] args) {
+		SpringApplication.run(DummyConceptDescriptionRepositoryComponent.class, args);
 	}
 }

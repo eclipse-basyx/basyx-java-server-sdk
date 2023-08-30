@@ -49,7 +49,7 @@ import com.mongodb.client.result.DeleteResult;
  * 
  * MongoDB implementation of the ConceptDescriptionRepository
  *
- * @author danish
+ * @author danish, kammognie
  *
  */
 public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRepository {
@@ -57,11 +57,17 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 
 	private MongoTemplate mongoTemplate;
 	private String collectionName;
+	private String cdRepositoryName;
 
 	public MongoDBConceptDescriptionRepository(MongoTemplate mongoTemplate, String collectionName) {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
 		configureIndexForConceptDescriptionId(mongoTemplate);
+	}
+	
+	public MongoDBConceptDescriptionRepository(MongoTemplate mongoTemplate, String collectionName, String cdRepositoryName) {
+		this(mongoTemplate, collectionName);
+		this.cdRepositoryName = cdRepositoryName;
 	}
 
 	@Override
@@ -152,6 +158,11 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 		if (result.getDeletedCount() == 0)
 			throw new ElementDoesNotExistException(conceptDescriptionId);
 
+	}
+	
+	@Override
+	public String getName() {
+		return cdRepositoryName == null ? ConceptDescriptionRepository.super.getName() : cdRepositoryName;
 	}
 
 	private void configureIndexForConceptDescriptionId(MongoTemplate mongoTemplate) {
