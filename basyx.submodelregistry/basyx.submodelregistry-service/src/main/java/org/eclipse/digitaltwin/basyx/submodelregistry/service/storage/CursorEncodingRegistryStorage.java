@@ -24,26 +24,26 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
+import lombok.NonNull;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 
-import lombok.NonNull;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
  
 
-public class CursorEncodingRegistryStorage extends SubmodelRegistryStorageDecorator {
+public class CursorEncodingRegistryStorage<FilterType> extends SubmodelRegistryStorageDecorator<FilterType> {
 
-	public CursorEncodingRegistryStorage(SubmodelRegistryStorage storage) {
+	public CursorEncodingRegistryStorage(SubmodelRegistryStorage<FilterType> storage) {
 		super(storage);
 	}
 	
 	@Override
-	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(@NonNull PaginationInfo pRequest) {
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(@NonNull PaginationInfo pRequest, FilterInfo<FilterType> filterInfo) {
 		PaginationInfo decoded = decodeCursor(pRequest);
-		CursorResult<List<SubmodelDescriptor>> result = storage.getAllSubmodelDescriptors(decoded);
+		CursorResult<List<SubmodelDescriptor>> result = storage.getAllSubmodelDescriptors(decoded, filterInfo);
 		return encodeCursor(result);
 	}
 

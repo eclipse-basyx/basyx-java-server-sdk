@@ -62,9 +62,9 @@ public abstract class BaseInterfaceTest {
 	private RegistryEventSink eventSink = Mockito.mock(RegistryEventSink.class);
 
 	@Autowired
-	public SubmodelRegistryStorage baseStorage;
+	public SubmodelRegistryStorage<?> baseStorage;
 
-	protected RegistrationEventSendingSubmodelRegistryStorage storage;
+	protected RegistrationEventSendingSubmodelRegistryStorage<?> storage;
 
 	@Rule
 	public TestResourcesLoader testResourcesLoader = new TestResourcesLoader();
@@ -75,7 +75,7 @@ public abstract class BaseInterfaceTest {
 
 	@Before
 	public void setUp() throws IOException {
-		storage = new RegistrationEventSendingSubmodelRegistryStorage(baseStorage, eventSink);
+		storage = new RegistrationEventSendingSubmodelRegistryStorage<>(baseStorage, eventSink);
 		List<SubmodelDescriptor> submodels = testResourcesLoader.loadRepositoryDefinition(SubmodelDescriptor.class);
 		submodels.forEach(baseStorage::insertSubmodelDescriptor);
 	}
@@ -107,11 +107,11 @@ public abstract class BaseInterfaceTest {
 	}
 
 	protected List<SubmodelDescriptor> getAllSubmodels() {
-		return storage.getAllSubmodelDescriptors(new PaginationInfo(null, null)).getResult();
+		return storage.getAllSubmodelDescriptors(new PaginationInfo(null, null), null).getResult();
 	}
 
 	protected CursorResult<List<SubmodelDescriptor>> getAllSubmodelsWithPagination(int limit, String cursor) {
-		return storage.getAllSubmodelDescriptors(new PaginationInfo(limit, cursor));
+		return storage.getAllSubmodelDescriptors(new PaginationInfo(limit, cursor), null);
 	}
 
 }

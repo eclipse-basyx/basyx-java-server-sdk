@@ -26,7 +26,9 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.memory;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
@@ -37,17 +39,22 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRe
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class ThreadSafeSubmodelRegistryStorageDecorator implements SubmodelRegistryStorage {
+public class ThreadSafeSubmodelRegistryStorageDecorator<FilterType> implements SubmodelRegistryStorage<FilterType> {
 
-	private final SubmodelRegistryStorage storage;
+	private final SubmodelRegistryStorage<FilterType> storage;
 
 	private final ThreadSafeAccess access = new ThreadSafeAccess();
 	
 	@Override
-	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest) {
-		return access.read(storage::getAllSubmodelDescriptors, pRequest);
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest, FilterInfo<FilterType> filterInfo) {
+		return access.read(storage::getAllSubmodelDescriptors, pRequest, filterInfo);
 	}
-	
+
+	@Override
+	public Set<String> clear(FilterInfo<FilterType> filterInfo) {
+		return access.writeFunc(storage::clear, filterInfo);
+	}
+
 	@Override
 	public Set<String> clear() {
 		return access.write(storage::clear);
@@ -67,7 +74,7 @@ public class ThreadSafeSubmodelRegistryStorageDecorator implements SubmodelRegis
 	public void removeSubmodelDescriptor(String submodelId) throws SubmodelNotFoundException {
 		access.write(storage::removeSubmodelDescriptor, submodelId);
 	}
-	
+
 	@Override
 	public void replaceSubmodelDescriptor(String submodelId, SubmodelDescriptor descr) throws SubmodelNotFoundException {
 		access.write(storage::replaceSubmodelDescriptor, submodelId, descr);

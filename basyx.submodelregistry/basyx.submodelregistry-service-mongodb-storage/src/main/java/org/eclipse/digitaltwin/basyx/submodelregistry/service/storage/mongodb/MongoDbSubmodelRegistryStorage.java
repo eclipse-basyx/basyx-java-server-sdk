@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
@@ -40,10 +41,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SessionScoped;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.SortOperation;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -53,7 +51,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage {
+public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage<Criteria> {
 
 	// mongodb maps all id fields internally to _id
 	private static final String ID = "_id";
@@ -61,8 +59,9 @@ public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage {
 	private final MongoTemplate template;
 
 	@Override
-	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(@NonNull PaginationInfo pRequest) {
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(@NonNull PaginationInfo pRequest, FilterInfo<Criteria> filterInfo) {
 		List<AggregationOperation> allAggregations = new LinkedList<>();
+		applyFiltering(filterInfo, allAggregations);
 		applySorting(allAggregations);
 		applyPagination(pRequest, allAggregations);
 		AggregationResults<SubmodelDescriptor> results = template.aggregate(Aggregation.newAggregation(allAggregations), SubmodelDescriptor.class, SubmodelDescriptor.class);
@@ -70,7 +69,18 @@ public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage {
 		String cursor = resolveCursor(pRequest, foundDescriptors);
 		return new CursorResult<List<SubmodelDescriptor>>(cursor, foundDescriptors);
 	}
-	
+
+	@Override
+	public Set<String> clear(FilterInfo<Criteria> filterInfo) {
+		Query query = Query.query(Criteria.where(ID).exists(true));
+		if (filterInfo != null) {
+			query.addCriteria(filterInfo.getFilter());
+		}
+		query.fields().include(ID);
+		List<SubmodelDescriptor> list = template.findAllAndRemove(query, SubmodelDescriptor.class);
+		return list.stream().map(SubmodelDescriptor::getId).collect(Collectors.toSet());
+	}
+
 	@Override
 	public Set<String> clear() {
 		Query query = Query.query(Criteria.where(ID).exists(true));
@@ -131,6 +141,13 @@ public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage {
 		});
 		if (!removed) {
 			throw new SubmodelNotFoundException(submodelId);
+		}
+	}
+
+	private void applyFiltering(FilterInfo<Criteria> filterInfo, List<AggregationOperation> allAggregations) {
+		if (filterInfo != null) {
+			MatchOperation matchOp = Aggregation.match(filterInfo.getFilter());
+			allAggregations.add(matchOp);
 		}
 	}
 

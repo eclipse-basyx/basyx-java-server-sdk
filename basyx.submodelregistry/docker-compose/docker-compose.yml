@@ -144,6 +144,9 @@ services:
     pull_policy: never
     ports:
       - "8041:8080"
+      - "8042:5800"
+    environment:
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:5800,server=y,suspend=y
     restart: always
     networks:
       - basyx-submodel
@@ -154,10 +157,12 @@ services:
     pull_policy: never
     ports:
       - "8051:8080"
+      - "8052:5800"
     depends_on:
       - mongodb
     restart: always
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://admin:admin@mongodb:27017
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:5800,server=y,suspend=y
     networks:
       - basyx-submodel

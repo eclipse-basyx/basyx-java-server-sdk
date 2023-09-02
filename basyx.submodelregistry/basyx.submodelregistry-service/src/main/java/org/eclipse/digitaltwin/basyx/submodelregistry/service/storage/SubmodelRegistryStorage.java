@@ -28,14 +28,15 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNotFoundException;
 
-public interface SubmodelRegistryStorage {
+public interface SubmodelRegistryStorage<FilterType> {
 
-	CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest);
+	CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest, FilterInfo<FilterType> filterInfo);
 
 	SubmodelDescriptor getSubmodelDescriptor(String submodelId) throws SubmodelNotFoundException;
 
@@ -44,6 +45,8 @@ public interface SubmodelRegistryStorage {
 	void replaceSubmodelDescriptor(String submodelId, SubmodelDescriptor descr) throws SubmodelNotFoundException;
 
 	void removeSubmodelDescriptor(String submodelId) throws SubmodelNotFoundException;
+
+	Set<String> clear(FilterInfo<FilterType> filterInfo);
 
 	Set<String> clear();
 

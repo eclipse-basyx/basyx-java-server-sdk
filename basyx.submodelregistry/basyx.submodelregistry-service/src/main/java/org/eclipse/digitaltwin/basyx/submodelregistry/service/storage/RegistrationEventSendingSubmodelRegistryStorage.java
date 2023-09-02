@@ -24,24 +24,22 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage;
 
-import java.util.Set;
-
+import lombok.NonNull;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNotFoundException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEvent;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEventSink;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import java.util.Set;
 
 
-public class RegistrationEventSendingSubmodelRegistryStorage extends SubmodelRegistryStorageDecorator {
+public class RegistrationEventSendingSubmodelRegistryStorage<FilterType> extends SubmodelRegistryStorageDecorator<FilterType> {
 
 	@NonNull
 	private final RegistryEventSink eventSink;
 	
-	public RegistrationEventSendingSubmodelRegistryStorage(SubmodelRegistryStorage storage, RegistryEventSink sink) {
+	public RegistrationEventSendingSubmodelRegistryStorage(SubmodelRegistryStorage<FilterType> storage, RegistryEventSink sink) {
 		super(storage);
 		this.eventSink = sink;
 	}
@@ -66,7 +64,6 @@ public class RegistrationEventSendingSubmodelRegistryStorage extends SubmodelReg
 		}
 		submodelRegistered(descr);
 	}
-
 	
 	@Override
 	public Set<String> clear() {

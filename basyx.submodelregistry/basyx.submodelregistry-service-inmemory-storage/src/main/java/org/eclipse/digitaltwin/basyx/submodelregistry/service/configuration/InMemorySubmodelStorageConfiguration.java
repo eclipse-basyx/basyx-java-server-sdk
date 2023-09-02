@@ -24,21 +24,47 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration;
 
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.IRbacStorage;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.PathTargetInformation;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleSet;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleSetDeserializer;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.CursorEncodingRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.memory.InMemorySubmodelRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.memory.ThreadSafeSubmodelRegistryStorageDecorator;
+import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.memory.authorization.InMemoryAuthorizationRbacStorage;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
 
 @Configuration
 public class InMemorySubmodelStorageConfiguration {
 
 	@Bean
 	@ConditionalOnProperty(prefix = "registry", name = "type", havingValue = "inMemory")
-	public SubmodelRegistryStorage storage() {
-		return new ThreadSafeSubmodelRegistryStorageDecorator(new CursorEncodingRegistryStorage(new InMemorySubmodelRegistryStorage()));
+	public SubmodelRegistryStorage<?> storage() {
+		return new ThreadSafeSubmodelRegistryStorageDecorator<>(new CursorEncodingRegistryStorage<>(new InMemorySubmodelRegistryStorage()));
 	}
 
+	@Bean
+	@ConditionalOnProperty(prefix = "registry", name = "type", havingValue = "inMemory")
+	public IRbacStorage rbacStorage() {
+		return new InMemoryAuthorizationRbacStorage(getRbacRuleSet());
+	}
+
+	final static String RBAC_RULES_FILE_PATH = "/rbac_rules.json";
+
+	private RbacRuleSet getRbacRuleSet() {
+		try {
+			return new RbacRuleSetDeserializer(objectMapper -> {
+				objectMapper.registerSubtypes(new NamedType(PathTargetInformation.class, "path"));
+			}).fromFile(RBAC_RULES_FILE_PATH);
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
 }

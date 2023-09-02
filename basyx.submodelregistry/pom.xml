@@ -55,7 +55,8 @@
 		<module>basyx.submodelregistry-service-release-kafka-mem</module>
 		<module>basyx.submodelregistry-service-release-log-mongodb</module>
 		<module>basyx.submodelregistry-service-release-kafka-mongodb</module>
-	</modules>
+        <module>basyx.submodelregistry-service-authorization</module>
+    </modules>
 
 	<developers>
 		<developer>
@@ -120,6 +121,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelregistry-service</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelregistry-service-authorization</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

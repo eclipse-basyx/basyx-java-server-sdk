@@ -16,8 +16,9 @@
 		<module>basyx.aasrepository-backend-inmemory</module>
 		<module>basyx.aasrepository-backend-mongodb</module>
 		<module>basyx.aasrepository-feature-aasxupload</module>
+		<module>basyx.aasrepository-feature-authorization</module>
 		<module>basyx.aasrepository-feature-mqtt</module>
 		<module>basyx.aasrepository-tck</module>
 		<module>basyx.aasrepository.component</module>
-	</modules>
+    </modules>
 </project>

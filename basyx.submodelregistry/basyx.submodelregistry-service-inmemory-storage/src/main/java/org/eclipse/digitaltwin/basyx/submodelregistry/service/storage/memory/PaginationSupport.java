@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,37 +41,52 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class PaginationSupport {
+public class PaginationSupport<T> {
+	private final TreeMap<String, T> sortedMap;
 
-	private final TreeMap<String, SubmodelDescriptor> sortedMap;
+	private final Function<T, String> idResolver;
 	
-	public CursorResult<List<SubmodelDescriptor>> getDescriptorsPaged(PaginationInfo pInfo) {
-		Map<String, SubmodelDescriptor> cursorView = getCursorView(pInfo);
-		Stream<Entry<String, SubmodelDescriptor>> eStream = cursorView.entrySet().stream();
-		Stream<SubmodelDescriptor> tStream = eStream.map(Entry::getValue);
-		tStream = applyLimit(pInfo, tStream);		
-		List<SubmodelDescriptor> descriptorList = tStream.collect(Collectors.toList());
-		String cursor = computeNextCursor(descriptorList);
-		return new CursorResult<List<SubmodelDescriptor>>(cursor, Collections.unmodifiableList(descriptorList));
+	public CursorResult<List<T>> getDescriptorsPaged(PaginationInfo pInfo) {
+		return getDescriptorsPagedAndFiltered(pInfo, null);
 	}
 
-	private Stream<SubmodelDescriptor> applyLimit(PaginationInfo info, Stream<SubmodelDescriptor> aStream) {
+	public CursorResult<List<T>> getDescriptorsPagedAndFiltered(PaginationInfo pInfo, Predicate<T> filterMethod) {
+		Map<String, T> cursorView = getCursorView(pInfo);
+		Stream<Entry<String, T>> eStream = cursorView.entrySet().stream();
+
+		if (filterMethod != null) {
+			eStream = applyFilter(e -> filterMethod.test(e.getValue()), eStream);
+		}
+		Stream<T> tStream = eStream.map(Entry::getValue);
+		tStream = applyLimit(pInfo, tStream);
+
+		List<T> descriptorList = tStream.collect(Collectors.toList());
+
+		String cursor = computeNextCursor(descriptorList);
+		return new CursorResult<>(cursor, Collections.unmodifiableList(descriptorList));
+	}
+
+	private Stream<Entry<String, T>> applyFilter(Predicate<Entry<String, T>> filterMethod, Stream<Entry<String, T>> aStream) {
+		return aStream.filter(filterMethod);
+	}
+
+	private Stream<T> applyLimit(PaginationInfo info, Stream<T> aStream) {
 		if (info.hasLimit()) {
 			return aStream.limit(info.getLimit());
 		}
 		return aStream;
 	}
 
-	private String computeNextCursor(List<SubmodelDescriptor> descriptorList) {
+	private String computeNextCursor(List<T> descriptorList) {
 		if (!descriptorList.isEmpty()) {
-			SubmodelDescriptor last = descriptorList.get(descriptorList.size()-1);
-			String lastId = last.getId();
+			T last = descriptorList.get(descriptorList.size() - 1);
+			String lastId = idResolver.apply(last);
 			return sortedMap.higherKey(lastId);
 		}
 		return null;
 	}
 
-	private Map<String, SubmodelDescriptor> getCursorView(PaginationInfo info) {
+	private Map<String, T> getCursorView(PaginationInfo info) {
 		if (info.hasCursor()) {
 			return sortedMap.tailMap(info.getCursor());
 		} else {

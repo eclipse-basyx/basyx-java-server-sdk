@@ -20,7 +20,9 @@
 		<module>basyx.aasregistry</module>
 		<module>basyx.aasenvironment</module>
 		<module>basyx.conceptdescriptionrepository</module>
-	</modules>
+		<module>basyx.security-model</module>
+        <module>basyx.common/basyx.authorization</module>
+    </modules>
 	<name>BaSyx Parent</name>
 	<description>Parent POM for Eclipse BaSyx</description>
 	<url>https://www.eclipse.org/basyx/</url>
@@ -310,6 +312,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-feature-authorization</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelrepository-feature-mqtt</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -372,6 +379,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-feature-authorization</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-feature-mqtt</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -425,6 +437,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.security-model</artifactId>
 				<version>${revision}</version>
 			</dependency>
 
@@ -557,6 +574,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-feature-aasxupload</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-feature-authorization</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>

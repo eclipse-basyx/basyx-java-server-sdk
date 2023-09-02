@@ -24,14 +24,13 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.memory;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+import lombok.RequiredArgsConstructor;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
@@ -40,15 +39,16 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRe
 
 import lombok.NonNull;
 
-public class InMemorySubmodelRegistryStorage implements SubmodelRegistryStorage {
+@RequiredArgsConstructor
+public class InMemorySubmodelRegistryStorage implements SubmodelRegistryStorage<Predicate<SubmodelDescriptor>> {
 
 	private final HashMap<String, SubmodelDescriptor> submodelLookupMap = new HashMap<>();
 	private final TreeMap<String, SubmodelDescriptor> sortedSubmodelMap = new TreeMap<>();
 
 	@Override
-	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(@NonNull PaginationInfo pRequest) {
-		PaginationSupport paginationSupport = new PaginationSupport(sortedSubmodelMap);
-		return paginationSupport.getDescriptorsPaged(pRequest);
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(@NonNull PaginationInfo pRequest, FilterInfo<Predicate<SubmodelDescriptor>> filterInfo) {
+		PaginationSupport<SubmodelDescriptor> paginationSupport = new PaginationSupport<>(sortedSubmodelMap, SubmodelDescriptor::getId);
+		return paginationSupport.getDescriptorsPagedAndFiltered(pRequest, filterInfo.getFilter());
 	}
 
 	@Override
@@ -92,6 +92,15 @@ public class InMemorySubmodelRegistryStorage implements SubmodelRegistryStorage 
 		submodelLookupMap.put(toReplaceId, descr);
 		sortedSubmodelMap.put(toReplaceId, descr);
 	}
+
+	@Override
+	public Set<String> clear(FilterInfo<Predicate<SubmodelDescriptor>> filterInfo) {
+		Set<String> keys = sortedSubmodelMap.entrySet().stream().filter(entry -> filterInfo.getFilter().test(entry.getValue())).map(Map.Entry::getKey).collect(Collectors.toSet());
+		submodelLookupMap.entrySet().removeIf(entry -> filterInfo.getFilter().test(entry.getValue()));
+		sortedSubmodelMap.entrySet().removeIf(entry -> filterInfo.getFilter().test(entry.getValue()));
+		return keys;
+	}
+
 
 	@Override
 	public Set<String> clear() {

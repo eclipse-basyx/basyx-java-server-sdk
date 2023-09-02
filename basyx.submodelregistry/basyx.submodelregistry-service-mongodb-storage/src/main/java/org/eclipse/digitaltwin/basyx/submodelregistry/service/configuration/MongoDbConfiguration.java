@@ -24,8 +24,10 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration;
 
+import org.eclipse.digitaltwin.basyx.authorization.rbac.IRbacStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.CursorEncodingRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
+import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.mongodb.MongoDbSubmodelRegistryRbacStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.mongodb.MongoDbSubmodelRegistryStorage;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -41,8 +43,13 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class MongoDbConfiguration {
 
 	@Bean
-	public SubmodelRegistryStorage createStorage(MongoTemplate template) {
-		return new CursorEncodingRegistryStorage(new MongoDbSubmodelRegistryStorage(template));
+	public SubmodelRegistryStorage<?> createStorage(MongoTemplate template) {
+		return new CursorEncodingRegistryStorage<>(new MongoDbSubmodelRegistryStorage(template));
+	}
+
+	@Bean
+	public IRbacStorage createRbacStorage(MongoTemplate template) {
+		return new MongoDbSubmodelRegistryRbacStorage(template);
 	}
 
 	@Bean

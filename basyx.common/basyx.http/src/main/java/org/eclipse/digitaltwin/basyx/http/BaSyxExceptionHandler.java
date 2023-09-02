@@ -31,6 +31,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotAuthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -75,5 +76,10 @@ public class BaSyxExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(NotInvokableException.class)
 	public <T> ResponseEntity<T> handleNotInvokableException(NotInvokableException exception) {
 		return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+	}
+
+	@ExceptionHandler(NotAuthorizedException.class)
+	public <T> ResponseEntity<T> handleNotAuthorizedException(NotAuthorizedException exception) {
+		return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 	}
 }

@@ -37,8 +37,9 @@ In addition, it supports the following backends:
 * MongoDB
 
 Furthermore, the following features are provided:
+* [AAS Repository Authorization](basyx.aasrepository-feature-authorization/)
 * [AAS Repository MQTT eventing](basyx.aasrepository-feature-mqtt/)
-* [AAS Service MQTT eventing](../basyx.aasservice/basyx.aasservice-feature-mqtt/Rea)
+* [AAS Service MQTT eventing](../basyx.aasservice/basyx.aasservice-feature-mqtt/Readme.md)
 
 For a configuration example, see [application.properties](basyx.aasrepository.component/src/main/resources/application.properties)
 
