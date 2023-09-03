@@ -398,7 +398,7 @@ public abstract class SubmodelRepositorySuite {
 				.get();
 	}
 
-	private Submodel buildDummySubmodel(String id) {
+	protected Submodel buildDummySubmodel(String id) {
 		return new DefaultSubmodel.Builder().id(id)
 				.submodelElements(new DefaultProperty.Builder().idShort("prop")
 						.value("testValue")

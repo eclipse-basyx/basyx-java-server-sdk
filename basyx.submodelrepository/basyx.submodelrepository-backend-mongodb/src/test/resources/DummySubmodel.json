@@ -1,0 +1,12 @@
+{
+  "modelType": "Submodel",
+  "id": "dummySubmodelId",
+  "submodelElements": [
+    {
+      "modelType": "Property",
+      "value": "testValue",
+      "valueType": "xs:string",
+      "idShort": "prop"
+    }
+  ]
+}

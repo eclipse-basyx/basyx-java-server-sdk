@@ -133,14 +133,12 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 	}
 	
 	@Test
-	public void retrieveRawJson() throws FileNotFoundException, IOException {
-		MongoTemplate template = createMongoTemplate();
-		
+	public void retrieveRawCDJson() throws FileNotFoundException, IOException {
 		createDummyConceptDescriptionOnRepo(getConceptDescriptionRepository());
 		
 		String expectedCDJson = getDummyCDJSONString();
 		
-		Document cdDocument = template.findOne(new Query().addCriteria(Criteria.where("id").is("dummy")),
+		Document cdDocument = createMongoTemplate().findOne(new Query().addCriteria(Criteria.where("id").is("dummy")),
 				Document.class, COLLECTION);
 		
 		assertSameJSONContent(expectedCDJson, cdDocument.toJson());

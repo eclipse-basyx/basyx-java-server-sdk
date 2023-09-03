@@ -110,7 +110,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	}
 	
 	@Test
-	public void retrieveRawJson() throws FileNotFoundException, IOException {
+	public void retrieveRawAasJson() throws FileNotFoundException, IOException {
 		AssetAdministrationShell dummyAas = createDummyShellOnRepo(getAasRepositoryFactory().create(), "dummyAAS");
 		
 		String expectedAASJson = getAasJSONString();

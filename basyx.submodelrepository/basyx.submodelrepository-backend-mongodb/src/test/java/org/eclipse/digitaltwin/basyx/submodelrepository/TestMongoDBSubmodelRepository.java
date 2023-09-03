@@ -26,48 +26,77 @@ package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+import org.bson.Document;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.InvokableOperation;
+import org.eclipse.digitaltwin.basyx.common.mongocore.CustomIdentifiableMappingMongoConverter;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
+import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
+import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
+import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
+import org.eclipse.digitaltwin.basyx.submodelrepository.http.SubmodelRepositoryHTTPSerializationExtension;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.junit.Test;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
+import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
 public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	private final String COLLECTION = "submodelTestCollection";
-	private final String CONNECTION_URL = "mongodb://mongoAdmin:mongoPassword@localhost:27017";
-	private final MongoClient CLIENT = MongoClients.create(CONNECTION_URL);
-	private final MongoTemplate TEMPLATE = new MongoTemplate(CLIENT, "BaSyxTestDb");
+	
+	private MongoTemplate mongoTemplate;
+	
 	private final InMemorySubmodelServiceFactory SUBMODEL_SERVICE_FACTORY = new InMemorySubmodelServiceFactory();
 	private static final String CONFIGURED_SM_REPO_NAME = "configured-sm-repo-name";
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository() {
-		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
+		mongoTemplate = createMongoTemplate();
+		
+		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
 
-		return new MongoDBSubmodelRepositoryFactory(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY).create();
+		return new MongoDBSubmodelRepositoryFactory(mongoTemplate, COLLECTION, SUBMODEL_SERVICE_FACTORY).create();
 	}
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
-		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
+		mongoTemplate = createMongoTemplate();
+		
+		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
 
-		// TODO: Remove this after MongoDB uses AAS4J serializer
-		submodels.forEach(this::removeInvokableFromInvokableOperation);
+		// Remove InvokableOperation from the Submodels
+		submodels.forEach(this::removeInvokableOperation);
 
-		return new MongoDBSubmodelRepositoryFactory(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, submodels).create();
+		return new MongoDBSubmodelRepositoryFactory(mongoTemplate, COLLECTION, SUBMODEL_SERVICE_FACTORY, submodels).create();
 	}
 	
 	@Test
 	public void getConfiguredMongoDBSmRepositoryName() {
-		SubmodelRepository repo = new MongoDBSubmodelRepository(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, CONFIGURED_SM_REPO_NAME);
+		mongoTemplate = createMongoTemplate();
+		
+		SubmodelRepository repo = new MongoDBSubmodelRepository(mongoTemplate, COLLECTION, SUBMODEL_SERVICE_FACTORY, CONFIGURED_SM_REPO_NAME);
 		
 		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
 	}
@@ -83,12 +112,71 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	public void invokeNonOperation() {
 		super.invokeNonOperation();
 	}
+	
+	@Test
+	public void retrieveRawSMJson() throws FileNotFoundException, IOException {
+		String dummySMId = "dummySubmodelId";
+		
+		createDummySubmodelOnRepository(dummySMId);
+		
+		String expectedSMJson = getSubmodelJSONString();
+		
+		Document smDocument = createMongoTemplate().findOne(new Query().addCriteria(Criteria.where("id").is(dummySMId)),
+				Document.class, COLLECTION);
+		
+		assertSameJSONContent(expectedSMJson, smDocument.toJson());
+	}
+	
+	private void assertSameJSONContent(String expectedSMJson, String actualSMJson) throws JsonMappingException, JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
 
-	private void removeInvokableFromInvokableOperation(Submodel sm) {
-		sm.getSubmodelElements().stream()
-		.filter(InvokableOperation.class::isInstance)
-		.map(InvokableOperation.class::cast)
-		.forEach(o -> o.setInvokable(null));
+		assertEquals(mapper.readTree(expectedSMJson), mapper.readTree(actualSMJson));
+	}
+
+	private void createDummySubmodelOnRepository(String dummySMId) {
+		Submodel dummySubmodel = buildDummySubmodel(dummySMId);
+		
+		SubmodelRepository repository = getSubmodelRepository();
+		repository.createSubmodel(dummySubmodel);
+	}
+	
+	private void removeInvokableOperation(Submodel sm) {
+	    Iterator<SubmodelElement> iterator = sm.getSubmodelElements().iterator();
+	    while (iterator.hasNext()) {
+	        SubmodelElement element = iterator.next();
+	        if (element instanceof InvokableOperation) {
+	            iterator.remove();
+	        }
+	    }
+	}
+	
+	private MongoTemplate createMongoTemplate() {
+		List<SerializationExtension> extensions = Arrays.asList(new Aas4JHTTPSerializationExtension(), new SubmodelRepositoryHTTPSerializationExtension());
+		
+		ObjectMapper mapper = new BaSyxHTTPConfiguration().jackson2ObjectMapperBuilder(extensions).build();
+		
+		MongoDatabaseFactory databaseFactory = createDatabaseFactory();
+		
+		return new MongoTemplate(databaseFactory, new CustomIdentifiableMappingMongoConverter(databaseFactory, new MongoMappingContext(), mapper));
+	}
+	
+	private MongoDatabaseFactory createDatabaseFactory() {
+		String connectionString = createConnectionString();
+
+		MongoClient client = MongoClients.create(connectionString);
+
+		return new SimpleMongoClientDatabaseFactory(client, "BaSyxTestDb");
+	}
+
+	private String createConnectionString() {
+		return String.format("mongodb://%s:%s@%s:%s", "mongoAdmin", "mongoPassword", "127.0.0.1", "27017");
+	}
+	
+	private String getSubmodelJSONString() throws FileNotFoundException, IOException {
+		ClassPathResource classPathResource = new ClassPathResource("DummySubmodel.json");
+		InputStream in = classPathResource.getInputStream();
+		
+		return IOUtils.toString(in, StandardCharsets.UTF_8.name());
 	}
 
 }
