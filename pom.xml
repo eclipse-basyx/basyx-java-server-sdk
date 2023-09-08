@@ -357,6 +357,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-backend</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-backend-inmemory</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -539,6 +544,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-tck</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-backend</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
