@@ -29,7 +29,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,36 +41,29 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 import org.junit.Test;
 
 /**
- * Testsuite for implementations of the AasxFileServerSuite interface
+ * Testsuite for implementations of the {@link AasxFileServer} interface
  * 
  * @author chaithra
  *
  */
 public abstract class AasxFileServerSuite {
 	
-	protected abstract AasxFileServer getAasxFileServer();	
-	
-	private static final List<String> DUMMY_AAS_IDS = new ArrayList<>(Arrays.asList("AAS_ID_1", "AAS_ID_2"));	
-	private static final String DUMMY_FILENAME = "test_file.txt";
-	private static final byte[] byteArray = {65, 66, 67, 68, 69};
-	private static final InputStream DUMMY_FILE = new ByteArrayInputStream(byteArray);	
+	protected abstract AasxFileServer getAasxFileServer();		 
 		
 	@Test
 	public void getAllAASXPackageIds() {
 		
 		AasxFileServer server = getAasxFileServer();		
-		createDummyAASXPackage(server);		
-		Collection<PackageDescription> packageDescriptions = server.getAllAASXPackageIds();			
-		PackageDescription firstPackage = packageDescriptions.iterator().next();	
-
-		assertGetAllAASXPackageIds(packageDescriptions, firstPackage);
+		Collection<PackageDescription> packageDescriptions = DummyAasxFileServerFactory.getAllDummyAASXPackages(server);			
+			 
+		assertGetAllAASXPackageIds(packageDescriptions);
 	}
 	
 	@Test
 	public void getAllAASXPackageIdsEmpty() {
 		
 		AasxFileServer server = getAasxFileServer();	
-		Collection<PackageDescription> packageDescriptions = server.getAllAASXPackageIds();					
+		Collection<PackageDescription> packageDescriptions = server.getAllAASXPackageIds();			
 				
 		assertIsEmpty(packageDescriptions);		
 	}
@@ -84,14 +76,15 @@ public abstract class AasxFileServerSuite {
 	}
 
 	@Test
-	public void updateExistingAASXByPackageId() {		
+	public void updateExistingAASXByPackageId() {				
 		
-		List<String> expectedAasIds =  new ArrayList<>(Arrays.asList("AAS_ID_3", "AAS_ID_4"));
 		AasxFileServer server = getAasxFileServer();
-		PackageDescription packageDescription = createDummyAASXPackage(server);		
-		server.updateAASXByPackageId(packageDescription.getPackageId(), expectedAasIds, DUMMY_FILE, DUMMY_FILENAME);
+		PackageDescription packageDescription = DummyAasxFileServerFactory.createFirstDummyAASXPackage(server);	
+		List<String> expectedAasIds =  new ArrayList<>(Arrays.asList("AAS_ID_3", "AAS_ID_4"));
+		server.updateAASXByPackageId(packageDescription.getPackageId(), expectedAasIds, 
+				AasxFileServerSuiteHelper.FIRST_FILE, AasxFileServerSuiteHelper.FIRST_FILENAME);
 		
-		assertUpdateAASXpaxkageID(packageDescription, expectedAasIds);
+		assertAASXPackageId(packageDescription, expectedAasIds);
 	}	
 
 	@Test(expected = ElementDoesNotExistException.class)
@@ -99,25 +92,26 @@ public abstract class AasxFileServerSuite {
 		
 		String packageId = "notExisting";		
 		AasxFileServer server = getAasxFileServer();		
-		server.updateAASXByPackageId(packageId, DUMMY_AAS_IDS, DUMMY_FILE, DUMMY_FILENAME);
+		server.updateAASXByPackageId(packageId, AasxFileServerSuiteHelper.FIRST_AAS_IDS, 
+				AasxFileServerSuiteHelper.FIRST_FILE, AasxFileServerSuiteHelper.FIRST_FILENAME);
 	}	
 	
 	@Test
 	public void getAASXByPackageId() throws ElementDoesNotExistException {
 		
 		AasxFileServer server = getAasxFileServer();
-		PackageDescription packageDescription = createDummyAASXPackage(server);			
-		InputStream actualValue = server.getAASXByPackageId(packageDescription.getPackageId());
+		PackageDescription packageDescription = DummyAasxFileServerFactory.createFirstDummyAASXPackage(server);			
+		InputStream actualValue = server.getAASXByPackageId(packageDescription.getPackageId());		
 		
-		assertEquals(DUMMY_FILE, actualValue);
+		assertEquals(AasxFileServerSuiteHelper.FIRST_FILE, actualValue);		
 	}
 
 	@Test
-	public void deleteAASXPackageById() {
+	public void deleteAASXByPackageId() {
 		
 		AasxFileServer server = getAasxFileServer();
-		PackageDescription packageDescription = createDummyAASXPackage(server);	
-		server.deleteAASXPackageById(packageDescription.getPackageId()); 
+		PackageDescription packageDescription = DummyAasxFileServerFactory.createFirstDummyAASXPackage(server);		
+		server.deleteAASXByPackageId(packageDescription.getPackageId()); 
 		try {
 			server.getAASXByPackageId(packageDescription.getPackageId());
 			fail();
@@ -129,27 +123,35 @@ public abstract class AasxFileServerSuite {
 	public void deleteNonExistingAasxFileServer() {
 		
 		AasxFileServer server = getAasxFileServer();
-		server.deleteAASXPackageById("nonExisting");
+		server.deleteAASXByPackageId("nonExisting");
 	}	
 	
-	private PackageDescription createDummyAASXPackage(AasxFileServer server) {		
-		return server.createAASXPackage(DUMMY_AAS_IDS, DUMMY_FILE, DUMMY_FILENAME);
-	}
+	private void assertGetAllAASXPackageIds(Collection<PackageDescription> packageDescriptions) {
+        
+        assertEquals(2, packageDescriptions.size());
+       
+        List<String> expectedFirstAasIds = AasxFileServerSuiteHelper.FIRST_AAS_IDS;        
+        List<String> expectedSecondAasIds = AasxFileServerSuiteHelper.SECOND_AAS_IDS;        
+
+       for (PackageDescription packageDescription : packageDescriptions) {
+            if (packageDescription.getPackageId().equals("1")) {                
+                assertEquals(expectedFirstAasIds, packageDescription.getAasIds());                
+            } else if (packageDescription.getPackageId().equals("2")) {                
+                assertEquals(expectedSecondAasIds, packageDescription.getAasIds());                
+            } else {                
+                fail("Unexpected package ID: " + packageDescription.getPackageId());
+            }
+        }
+    }
 	
-	private void assertGetAllAASXPackageIds(Collection<PackageDescription> packageDescriptions, PackageDescription firstPackage) {		
-		assertEquals(1, packageDescriptions.size());		
-		assertEquals("1", firstPackage.getPackageId()); 
-		assertEquals(DUMMY_AAS_IDS,firstPackage.getAasIds());		
-		assertTrue(DUMMY_AAS_IDS.containsAll(firstPackage.getAasIds()));		
-	}	
-	
-	private void assertUpdateAASXpaxkageID(PackageDescription actualPackageDescription, List<String> expectedNewAasIds ) {		
+	private void assertAASXPackageId(PackageDescription actualPackageDescription, List<String> expectedNewAasIds ) {		
 		assertEquals(expectedNewAasIds, actualPackageDescription.getAasIds());
+		assertEquals(expectedNewAasIds.size(), actualPackageDescription.getAasIds().size()); 
 		assertEquals("1",actualPackageDescription.getPackageId());		
-	}
+	}	
 	
 	private void assertIsEmpty(Collection<PackageDescription> packageDescription) {		
 		assertTrue(packageDescription.isEmpty());
-	}		
+	}	
 
 }

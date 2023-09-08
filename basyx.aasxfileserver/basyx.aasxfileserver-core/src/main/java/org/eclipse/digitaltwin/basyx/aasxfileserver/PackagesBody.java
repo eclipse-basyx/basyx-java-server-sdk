@@ -39,17 +39,11 @@ import org.springframework.validation.annotation.Validated;
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-06-22T10:58:56.694021713Z[GMT]")
-
-
 public class PackagesBody   {
 	
-	  private List<String> aasIds = null;
-	
-	  private InputStream file = null;
-	
-	
-	  private String fileName = null;
-	  
+	  private List<String> aasIds = null;	
+	  private InputStream file = null;	
+	  private String fileName = null;	  
 	  private String packageId = null;
 	
 	  public PackagesBody aasIds(List<String> aasIds) {
@@ -102,15 +96,15 @@ public class PackagesBody   {
 	  public PackagesBody packageId(String packageId) {
 		    this.packageId = packageId;
 		    return this;
-		  }
+	  }
 		  
 	  public String getPackageId() {
 		    return packageId;
-		  }
+	  }
 	
 	  public void setPackageId(String packageId) {
 		    this.packageId = packageId;
-		  }	  
+	  }	  
 		  
 	  @Override
 	  public boolean equals(java.lang.Object o) {

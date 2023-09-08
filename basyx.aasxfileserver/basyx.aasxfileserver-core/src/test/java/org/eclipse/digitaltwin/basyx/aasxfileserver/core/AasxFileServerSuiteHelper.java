@@ -22,26 +22,29 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasxfileserver.core;
 
-
-package org.eclipse.digitaltwin.basyx.aasxfileserver.component;
-
-import org.eclipse.digitaltwin.basyx.aasxfileserver.AasxFileServer;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * Creates and starts the {@link AasxFileServer} off-shelf-component
+ * Test helper class for {@link AasxFileServerSuite}
  * 
- * @author schnicke, chaithra
+ * @author chaithra
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", 
-exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
-public class AasxFileServerComponent {	
-	public static void main(String[] args) {
-		SpringApplication.run(AasxFileServerComponent.class, args);
-	}
+public class AasxFileServerSuiteHelper {
+
+    public static final List<String> FIRST_AAS_IDS = Arrays.asList("AAS_ID_1", "AAS_ID_2");
+    public static final String FIRST_FILENAME = "test_file1.txt";
+    public static final byte[] FIRST_BYTEARRAY = {65, 66, 67, 68, 69};
+    public static final InputStream FIRST_FILE = new ByteArrayInputStream(FIRST_BYTEARRAY);
+
+    public static final List<String> SECOND_AAS_IDS = Arrays.asList("AAS_ID_3", "AAS_ID_4");
+    public static final String SECOND_FILENAME = "test_file2.txt";
+    public static final byte[] SECOND_BYTEARRAY = {75, 76, 77, 78, 79};
+    public static final InputStream SECOND_FILE = new ByteArrayInputStream(SECOND_BYTEARRAY);   
+    
 }

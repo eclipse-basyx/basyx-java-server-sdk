@@ -49,21 +49,20 @@ public class InMemoryAasxFileServer implements AasxFileServer {
 
 	/**
 	 * Creates the InMemoryAasxFileServer
-	 * @author chaithra
 	 */	
 	public InMemoryAasxFileServer() {}	
 	
 	@Override
 	public Collection<PackageDescription> getAllAASXPackageIds() {
-
-		return packageMap.values().stream()
-				.map(aasxPackage -> aasxPackage.getPackageDescription())
-				.collect(Collectors.toList());
+	    return packageMap.values()
+	            .stream()
+	            .map(Package::getPackageDescription)
+	            .collect(Collectors.toList());
 	}
 
 	@Override
 	public InputStream getAASXByPackageId(String packageId) throws ElementDoesNotExistException {
-		throwIfAasxFileIdDoesNotExist(packageId);
+		throwIfAasxPackageIdDoesNotExist(packageId);
 
 		return packageMap.get(packageId).getPackagesBody().getFile();
 	}
@@ -72,8 +71,7 @@ public class InMemoryAasxFileServer implements AasxFileServer {
 	public void updateAASXByPackageId(String packageId, List<String> aasIds, InputStream file, String filename)
 			throws ElementDoesNotExistException {
 		
-		throwIfAasxFileIdDoesNotExist(packageId);
-
+		throwIfAasxPackageIdDoesNotExist(packageId);
 		updateAASXPackage(packageId, aasIds, file, filename);
 	}	
 
@@ -89,19 +87,15 @@ public class InMemoryAasxFileServer implements AasxFileServer {
 	}	
 
 	@Override
-	public void deleteAASXPackageById(String packageId) throws ElementDoesNotExistException {
-		throwIfAasxFileIdDoesNotExist(packageId);
+	public void deleteAASXByPackageId(String packageId) throws ElementDoesNotExistException {
+		throwIfAasxPackageIdDoesNotExist(packageId);
 
 		packageMap.remove(packageId);
-	}
-
-	public Integer increment(Integer n) {
-		return n++;
-	}
+	}	
 	
-	private PackageDescription createPackageDescription(List<String> aasIds, String newpackageId) {		
+	private PackageDescription createPackageDescription(List<String> aasIds, String newPackageId) {		
 		PackageDescription packageDescription = new PackageDescription();
-		packageDescription.packageId(newpackageId);
+		packageDescription.packageId(newPackageId);
 		packageDescription.aasIds(aasIds);
 		
 		return packageDescription;
@@ -116,10 +110,10 @@ public class InMemoryAasxFileServer implements AasxFileServer {
 		return packagesBody;
 	}	
 	
-	private void createPackage(List<String> aasIds, InputStream file, String fileName, String newpackageId, PackageDescription packageDescription) {
+	private void createPackage(List<String> aasIds, InputStream file, String fileName, String newPackageId, PackageDescription packageDescription) {
 		PackagesBody packagesBody = createPackagesBody(aasIds, file, fileName);		
-		Package aasxPackage = new Package(newpackageId, packageDescription, packagesBody);		
-		packageMap.put(newpackageId, aasxPackage);
+		Package aasxPackage = new Package(newPackageId, packageDescription, packagesBody);		
+		packageMap.put(newPackageId, aasxPackage);
 	}
 	
 	private void updateAASXPackage(String packageId, List<String> aasIds, InputStream file, String filename) {
@@ -130,10 +124,10 @@ public class InMemoryAasxFileServer implements AasxFileServer {
 		aasxPackage.getPackageDescription().setAasIds(aasIds);
 	}	
 	
-	private void throwIfAasxFileIdDoesNotExist(String id) {
+	private void throwIfAasxPackageIdDoesNotExist(String id) {
 		
 		if (!packageMap.containsKey(id))
 			throw new ElementDoesNotExistException(id);
-	}	
+	}
 
 }

@@ -33,18 +33,14 @@ package org.eclipse.digitaltwin.basyx.aasxfileserver;
  */
 public class Package {
 	
-	private String packageId = null;
-	
-	private PackageDescription packageDescription;
-	
-	private PackagesBody packagesBody;
-	
+	private String packageId;	
+	private PackageDescription packageDescription;	
+	private PackagesBody packagesBody;	
 	
 	public Package(String packageId, PackageDescription packageDescription, PackagesBody packagesBody ) {		
 		this.packageId = packageId;
 		this.packageDescription = packageDescription;
-		this.packagesBody = packagesBody;
-		
+		this.packagesBody = packagesBody;		
 	}
 
 	public String getPackageId() {

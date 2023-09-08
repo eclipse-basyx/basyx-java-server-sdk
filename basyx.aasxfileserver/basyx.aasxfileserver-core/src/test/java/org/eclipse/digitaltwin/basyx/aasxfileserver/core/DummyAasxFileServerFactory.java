@@ -22,26 +22,50 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasxfileserver.core;
 
-
-package org.eclipse.digitaltwin.basyx.aasxfileserver.component;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AasxFileServer;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.PackageDescription;
 
 /**
- * Creates and starts the {@link AasxFileServer} off-shelf-component
+ * Factory for creating AASX Packages for tests
  * 
- * @author schnicke, chaithra
+ * @author chaithra
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", 
-exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
-public class AasxFileServerComponent {	
-	public static void main(String[] args) {
-		SpringApplication.run(AasxFileServerComponent.class, args);
-	}
+public class DummyAasxFileServerFactory {
+
+    public static PackageDescription createFirstDummyAASXPackage(AasxFileServer server) {
+        return server.createAASXPackage(
+                AasxFileServerSuiteHelper.FIRST_AAS_IDS,
+                AasxFileServerSuiteHelper.FIRST_FILE,
+                AasxFileServerSuiteHelper.FIRST_FILENAME);
+    }
+
+    public static PackageDescription createSecondDummyAASXPackage(AasxFileServer server) {
+        return server.createAASXPackage(
+                AasxFileServerSuiteHelper.SECOND_AAS_IDS,
+                AasxFileServerSuiteHelper.SECOND_FILE,
+                AasxFileServerSuiteHelper.SECOND_FILENAME);
+    }
+
+    public static Collection<PackageDescription> getAllDummyAASXPackages(AasxFileServer server) {
+        PackageDescription firstPackage = createFirstDummyAASXPackage(server);
+        PackageDescription secondPackage = createSecondDummyAASXPackage(server);
+
+        ArrayList<PackageDescription> packages = new ArrayList<>();
+        packages.add(firstPackage);
+        packages.add(secondPackage);
+
+        return packages;
+    }
 }
+
+
+
+
+
+

@@ -41,9 +41,9 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 public interface AasxFileServer {
 
 	/**
-	 * Retrieves all AASXPackageIds from the repository
+	 * Retrieves all AASX package ids from the repository
 	 * 
-	 * @return a list of available AASX packages at the server
+	 * @return a list of available AASX Package Descriptions at the server
 	 */
 	public Collection<PackageDescription> getAllAASXPackageIds();
 		
@@ -61,27 +61,27 @@ public interface AasxFileServer {
 	 * 
 	 * @param packageId
 	 * @param aasIds
+	 * @param file
 	 * @param filename
-	 * @param file 
 	 * @throws ElementDoesNotExistException
 	 */
 	public void updateAASXByPackageId(String packageId, List<String> aasIds, InputStream file, String filename) throws ElementDoesNotExistException;
 
 	/**
-	 * Creates a new AASXPackage
+	 * Creates a new AASX Package
 	 * 
 	 * @param aasIds
-	 * @param filename
-	 * @param file 
+	 * @param file
+	 * @param filename 
 	 * @throws CollidingIdentifierException
 	 */
 	public PackageDescription createAASXPackage(List<String> aasIds, InputStream file, String fileName) throws CollidingIdentifierException;
 
 	/**
-	 * Deletes a AASXPackage	 
+	 * Deletes a AASX Package	 
 	 * @param packageId
 	 * @throws ElementDoesNotExistException
 	 */
-	public void deleteAASXPackageById(String packageId) throws ElementDoesNotExistException;
+	public void deleteAASXByPackageId(String packageId) throws ElementDoesNotExistException;
 	
 }

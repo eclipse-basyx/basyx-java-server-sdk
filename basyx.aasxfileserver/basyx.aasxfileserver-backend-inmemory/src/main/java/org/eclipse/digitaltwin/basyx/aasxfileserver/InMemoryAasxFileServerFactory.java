@@ -28,7 +28,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 /**
- * AasxFileServer factory returning an in-memory backend AasxFileServer
+ *  AasxFileServer factory returning an in-memory backend {@link AasxFileServer}
  * 
  * @author schnicke, chaithra
  */
