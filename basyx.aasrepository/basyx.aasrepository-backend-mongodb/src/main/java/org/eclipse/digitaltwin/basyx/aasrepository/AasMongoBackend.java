@@ -25,46 +25,20 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
-import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**
- * AasRepository factory returning a MongoDb backend AasRepository
+ * MongoDB Backend for AAS
  * 
- * @author schnicke
+ * Necessary for Spring being able to provide CRUDRepository implementations for
+ * the MongoDB
+ * 
+ * @author mateusmolina, despen
+ * 
  */
-@Component
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-public class MongoDBAasRepositoryFactory implements AasRepositoryFactory {
-	private MongoTemplate mongoTemplate;
-	private String collectionName;
-	private AasServiceFactory aasServiceFactory;
-	
-	private String aasRepositoryName;
+public interface AasMongoBackend extends MongoRepository<AssetAdministrationShell, String> {
 
-	@Autowired(required = false)
-	public MongoDBAasRepositoryFactory(MongoTemplate mongoTemplate,
-			@Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName,
-			AasServiceFactory aasServiceFactory) {
-		this.mongoTemplate = mongoTemplate;
-		this.collectionName = collectionName;
-		this.aasServiceFactory = aasServiceFactory;
-	}
-	
-	@Autowired(required = false)
-	public MongoDBAasRepositoryFactory(MongoTemplate mongoTemplate,
-			@Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName,
-			AasServiceFactory aasServiceFactory, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
-		this(mongoTemplate, collectionName, aasServiceFactory);
-		this.aasRepositoryName = aasRepositoryName;
-	}
-
-	@Override
-	public AasRepository create() {
-		return new MongoDBAasRepository(mongoTemplate, collectionName, aasServiceFactory, aasRepositoryName);
-	}
 }

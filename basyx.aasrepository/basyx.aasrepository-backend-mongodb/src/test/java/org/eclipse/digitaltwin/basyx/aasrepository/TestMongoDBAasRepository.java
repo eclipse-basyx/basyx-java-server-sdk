@@ -31,85 +31,75 @@ import java.util.Arrays;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
+ * Integration Test for MongoDBAasRepository
  * 
- * @author schnicke, danish, kammognie
+ * Requires that a mongoDb server is running
+ * 
+ * @author schnicke, danish, kammognie, mateusmolina, despen
  *
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = { MongoDBTestConfiguration.class })
 public class TestMongoDBAasRepository extends AasRepositorySuite {
-	private final String COLLECTION = "aasTestCollection";
+	private final String COLLECTION = "testAasCollection";
 
-	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
+	@Autowired
+	AasRepository repository;
+
+	@Autowired
+	private MongoTemplate mongoTemplate;
 
 	@Override
-	protected AasRepositoryFactory getAasRepositoryFactory() {
-		MongoTemplate template = createMongoTemplate();
-
-		MongoDBUtilities.clearCollection(template, COLLECTION);
-
-		return new MongoDBAasRepositoryFactory(template, COLLECTION, new InMemoryAasServiceFactory());
+	protected AasRepository getAasRepository() {
+		return repository;
 	}
-	
+
+	@Override
+	protected void sanitizeRepository() {
+		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
+	}
+
 	@Test
 	public void aasIsPersisted() {
-		AasRepositoryFactory repoFactory = getAasRepositoryFactory();
-		AssetAdministrationShell expectedShell = createDummyShellOnRepo(repoFactory.create());
-		AssetAdministrationShell retrievedShell = getAasFromNewBackendInstance(repoFactory, expectedShell.getId());
+		AssetAdministrationShell expectedShell = createDummyShellOnRepo(repository);
+		AssetAdministrationShell retrievedShell = getAasFromMongoTemplate(expectedShell.getId());
 
 		assertEquals(expectedShell, retrievedShell);
-
 	}
 
 	@Test
 	public void updatedAasIsPersisted() {
-		AasRepositoryFactory repoFactory = getAasRepositoryFactory();
-		AasRepository mongoDBAasRepository = repoFactory.create();
-		AssetAdministrationShell expectedShell = createDummyShellOnRepo(mongoDBAasRepository);
+		AssetAdministrationShell expectedShell = createDummyShellOnRepo(repository);
 		addSubmodelReferenceToAas(expectedShell);
-		mongoDBAasRepository.updateAas(expectedShell.getId(), expectedShell);
-		AssetAdministrationShell retrievedShell = getAasFromNewBackendInstance(repoFactory, expectedShell.getId());
+		repository.updateAas(expectedShell.getId(), expectedShell);
+
+		AssetAdministrationShell retrievedShell = getAasFromMongoTemplate(expectedShell.getId());
 
 		assertEquals(expectedShell, retrievedShell);
-	}
-	
-	@Test
-	public void getConfiguredMongoDBAasRepositoryName() {
-		AasRepository repo = new MongoDBAasRepository(createMongoTemplate(), COLLECTION, new InMemoryAasServiceFactory(), CONFIGURED_AAS_REPO_NAME);
-		
-		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
 	}
 
 	private void addSubmodelReferenceToAas(AssetAdministrationShell expectedShell) {
 		expectedShell.setSubmodels(Arrays.asList(AasRepositorySuite.createDummyReference("dummySubmodel")));
 	}
 
-	private AssetAdministrationShell getAasFromNewBackendInstance(AasRepositoryFactory repoFactory, String shellId) {
-		AssetAdministrationShell retrievedShell = repoFactory.create()
-				.getAas(shellId);
-		return retrievedShell;
+	private AssetAdministrationShell getAasFromMongoTemplate(String shellId) {
+		return mongoTemplate.findById(shellId, AssetAdministrationShell.class);
 	}
 
 	private AssetAdministrationShell createDummyShellOnRepo(AasRepository aasRepository) {
-		AssetAdministrationShell expectedShell = new DefaultAssetAdministrationShell.Builder().id("dummy")
-				.build();
+		AssetAdministrationShell expectedShell = new DefaultAssetAdministrationShell.Builder().id("dummy").build();
 
 		aasRepository.createAas(expectedShell);
 		return expectedShell;
 	}
 
-	private MongoTemplate createMongoTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-		
-		MongoClient client = MongoClients.create(connectionURL);
-		
-		return new MongoTemplate(client, "BaSyxTestDb");
-	}
-	
 }
