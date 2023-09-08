@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -27,30 +27,54 @@ package org.eclipse.digitaltwin.basyx.aasrepository;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+import org.bson.Document;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.common.mongocore.CustomIdentifiableMappingMongoConverter;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
+import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
+import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
+import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
+import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
 /**
+ * Tests the {@link MongoDBAasRepository}
  * 
  * @author schnicke, danish, kammognie
  *
  */
 public class TestMongoDBAasRepository extends AasRepositorySuite {
-	private final String COLLECTION = "aasTestCollection";
-
+	
 	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
-
+	private final String COLLECTION = "aasTestCollection";
+	
+	private MongoTemplate template;
+	
 	@Override
 	protected AasRepositoryFactory getAasRepositoryFactory() {
-		MongoTemplate template = createMongoTemplate();
+		template = createMongoTemplate();
 
 		MongoDBUtilities.clearCollection(template, COLLECTION);
 
@@ -60,22 +84,21 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	@Test
 	public void aasIsPersisted() {
 		AasRepositoryFactory repoFactory = getAasRepositoryFactory();
-		AssetAdministrationShell expectedShell = createDummyShellOnRepo(repoFactory.create());
+		AssetAdministrationShell expectedShell = createDummyShellOnRepo(repoFactory.create(), "dummy");
 		AssetAdministrationShell retrievedShell = getAasFromNewBackendInstance(repoFactory, expectedShell.getId());
 
 		assertEquals(expectedShell, retrievedShell);
-
 	}
 
 	@Test
 	public void updatedAasIsPersisted() {
 		AasRepositoryFactory repoFactory = getAasRepositoryFactory();
 		AasRepository mongoDBAasRepository = repoFactory.create();
-		AssetAdministrationShell expectedShell = createDummyShellOnRepo(mongoDBAasRepository);
+		AssetAdministrationShell expectedShell = createDummyShellOnRepo(mongoDBAasRepository, "dummy");
 		addSubmodelReferenceToAas(expectedShell);
 		mongoDBAasRepository.updateAas(expectedShell.getId(), expectedShell);
 		AssetAdministrationShell retrievedShell = getAasFromNewBackendInstance(repoFactory, expectedShell.getId());
-
+		
 		assertEquals(expectedShell, retrievedShell);
 	}
 	
@@ -84,6 +107,26 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		AasRepository repo = new MongoDBAasRepository(createMongoTemplate(), COLLECTION, new InMemoryAasServiceFactory(), CONFIGURED_AAS_REPO_NAME);
 		
 		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
+	}
+	
+	@Test
+	public void retrieveRawAasJson() throws FileNotFoundException, IOException {
+		AssetAdministrationShell dummyAas = createDummyShellOnRepo(getAasRepositoryFactory().create(), "dummyAAS");
+		
+		String expectedAASJson = getAasJSONString();
+		
+		template.save(dummyAas, COLLECTION);
+		
+		Document aasDocument = template.findOne(new Query().addCriteria(Criteria.where("id").is("dummyAAS")),
+				Document.class, COLLECTION);
+		
+		assertSameJSONContent(expectedAASJson, aasDocument.toJson());
+	}
+
+	private void assertSameJSONContent(String expectedAASJson, String json) throws JsonMappingException, JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
+
+		assertEquals(mapper.readTree(expectedAASJson), mapper.readTree(json));
 	}
 
 	private void addSubmodelReferenceToAas(AssetAdministrationShell expectedShell) {
@@ -96,8 +139,8 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		return retrievedShell;
 	}
 
-	private AssetAdministrationShell createDummyShellOnRepo(AasRepository aasRepository) {
-		AssetAdministrationShell expectedShell = new DefaultAssetAdministrationShell.Builder().id("dummy")
+	private AssetAdministrationShell createDummyShellOnRepo(AasRepository aasRepository, String id) {
+		AssetAdministrationShell expectedShell = new DefaultAssetAdministrationShell.Builder().id(id).idShort("dummyAASIdShort")
 				.build();
 
 		aasRepository.createAas(expectedShell);
@@ -105,11 +148,32 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	}
 
 	private MongoTemplate createMongoTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
+		List<SerializationExtension> extensions = Arrays.asList(new Aas4JHTTPSerializationExtension());
 		
-		MongoClient client = MongoClients.create(connectionURL);
+		ObjectMapper mapper = new BaSyxHTTPConfiguration().jackson2ObjectMapperBuilder(extensions).build();
 		
-		return new MongoTemplate(client, "BaSyxTestDb");
+		MongoDatabaseFactory databaseFactory = createDatabaseFactory();
+		
+		return new MongoTemplate(databaseFactory, new CustomIdentifiableMappingMongoConverter(databaseFactory, new MongoMappingContext(), mapper));
+	}
+	
+	private MongoDatabaseFactory createDatabaseFactory() {
+		String connectionString = createConnectionString();
+
+		MongoClient client = MongoClients.create(connectionString);
+
+		return new SimpleMongoClientDatabaseFactory(client, "test");
+	}
+
+	private String createConnectionString() {
+		return String.format("mongodb://%s:%s@%s:%s", "mongoAdmin", "mongoPassword", "127.0.0.1", "27017");
+	}
+	
+	private String getAasJSONString() throws FileNotFoundException, IOException {
+		ClassPathResource classPathResource = new ClassPathResource("DummyAas.json");
+		InputStream in = classPathResource.getInputStream();
+		
+		return IOUtils.toString(in, StandardCharsets.UTF_8.name());
 	}
 	
 }
