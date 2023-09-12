@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
@@ -52,7 +53,7 @@ import org.springframework.stereotype.Component;
 /**
  * Loader for AAS environment pre-configuration
  *
- * @author fried, mateusmolina, despen
+ * @author fried, mateusmolina, despen, witt, jungjan
  *
  */
 @Component
@@ -99,36 +100,19 @@ public class AasEnvironmentPreconfigurationLoader {
 		}
 	}
 
-	public void loadEnvironmentFromFolder(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
+	public void loadEnvironmentFromFolder(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) throws InvalidFormatException, IOException, DeserializationException {
 
 		File rootDirectory = new File(folderToLoad);
-		RecursiveDirectoryScanner scanner = new RecursiveDirectoryScanner();
+		RecursiveDirectoryScanner directoryScanner = new RecursiveDirectoryScanner();
 
-		List<File> potentialEnvironments = scanner.listFiles(rootDirectory);
+		List<File> potentialEnvironments = directoryScanner.listFiles(rootDirectory);
 
-		potentialEnvironments.stream().filter(potentialEnvironment -> {
-			String name = potentialEnvironment.getName();
+		filesToLoad = potentialEnvironments.stream()
+				.map(file -> file.getAbsolutePath())
+				.filter(path -> isAasxFile(path) || isJsonFile(path) || isXmlFile(path))
+				.collect(Collectors.toList());
 
-			return isAasxFile(name) || isJsonFile(name) || isXmlFile(name);
-
-		}).forEach(potentialEnvironment -> {
-			String path = potentialEnvironment.getPath();
-			filesToLoad.add(path);
-		});
-
-		try {
-			loadPreconfiguredEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository);
-		} catch (InvalidFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (DeserializationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		loadPreconfiguredEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository);
 	}
 
 	private void createConceptDescriptionsOnRepositoryFromEnvironment(ConceptDescriptionRepository conceptDescriptionRepository, Environment environment) {
@@ -184,5 +168,4 @@ public class AasEnvironmentPreconfigurationLoader {
 	private boolean isEnvironmentLoaded(Environment environment) {
 		return environment != null;
 	}
-
 }
