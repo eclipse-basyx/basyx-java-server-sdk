@@ -25,6 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -32,6 +35,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
@@ -44,6 +51,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 
+
 /**
  * In-memory implementation of the SubmodelRepository
  *
@@ -54,6 +62,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 	private Map<String, SubmodelService> submodelServices = new LinkedHashMap<>();
 	private SubmodelServiceFactory submodelServiceFactory;
+	private String tmpDirectory = Files.createTempDir().getAbsolutePath();
 
 	/**
 	 * Creates the InMemorySubmodelRepository utilizing the passed
@@ -218,40 +227,73 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 
 	@Override
-	public java.io.File GetFileByPathSubmodel(String submodelId, String idShortPath) {
-		// TODO Auto-generated method stub
+	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) {
 		throwIfSubmodelDoesNotExist(submodelId);	
 		SubmodelElement submodelElement = submodelServices.get(submodelId).getSubmodelElement(idShortPath);
-		return null;
+		
+		return new java.io.File(((File)submodelElement).getValue());
 	}
 
 	@Override
-	public void setFileValue(String submodelId, String idShortPath, java.io.File file) throws IdentificationMismatchException{
-		// TODO Auto-generated method stub
+	public void setFileValue(String submodelId, String idShortPath, InputStream inputStream ) throws IdentificationMismatchException{
 		throwIfSubmodelDoesNotExist(submodelId);
 		
 		SubmodelElement submodelElement = submodelServices.get(submodelId).getSubmodelElement(idShortPath);
+		if(submodelElement.getCategory().equals("File"))
+			throw new Exception();
 		
-		File f = new DefaultFile();
-
-		if (submodelElement.getCategory().compareTo(f.getCategory())==0) {
-			submodelServices.get(submodelId)
-					.setSubmodelElementValue(idShortPath, (SubmodelElementValue) file);
-		} else {
-			throw new IdentificationMismatchException(
-					"The request is invalid for a SubmodelElement with category '" + submodelElement.getCategory() + "'");
-		}		
+		File fileElement = new DefaultFile();
+		String filePath = getFilePath(idShortPath, fileElement);
+		java.io.File targetFile = new java.io.File(filePath);
+		
+		try (FileOutputStream outStream = new FileOutputStream(targetFile)) {
+			IOUtils.copy(inputStream, outStream);		
+		}	
 	}
+	
+//	@SuppressWarnings("unchecked")
+//	private void createFile(String idShortPath, Object newValue, ISubmodelElement submodelElement) throws IOException {
+//		File file = File.createAsFacade((Map<String, Object>) submodelElement);
+//		String filePath = getFilePath(idShortPath, file);
+//
+//		java.io.File targetFile = new java.io.File(filePath);
+//
+//		try (FileOutputStream outStream = new FileOutputStream(targetFile);
+//				InputStream inStream = (InputStream) newValue) {
+//			IOUtils.copy(inStream, outStream);		
+//		}
+//	}
+//	
+	private String getFilePath(String idShortPath, File file) {
+		String fileName = idShortPath.replaceAll("/", "-");
+
+		String extension = getFileExtension(file);
+
+		return tmpDirectory + "/" + fileName + extension;
+	}
+
+	private String getFileExtension(File file) {
+		MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
+		try {
+			MimeType mimeType = allTypes.forName(file.getContentType());
+			return mimeType.getExtension();
+		} catch (MimeTypeException e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+	
+	
 
 	@Override
 	public void deleteFileValue(String submodelId, String idShortPath) {
-		// TODO Auto-generated method stub
 		throwIfSubmodelDoesNotExist(submodelId);	
 		SubmodelElement submodelElement = submodelServices.get(submodelId).getSubmodelElement(idShortPath);
 		
 		java.io.File tmpFile = new java.io.File(((File)submodelElement).getValue());
 		tmpFile.delete();
 		
+		((File)submodelElement).setValue("");
 	}	
 
 	private void throwIfMismatchingIds(String smId, Submodel newSubmodel) {

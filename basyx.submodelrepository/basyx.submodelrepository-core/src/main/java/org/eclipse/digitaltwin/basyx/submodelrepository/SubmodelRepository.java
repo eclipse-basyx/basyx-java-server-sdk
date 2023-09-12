@@ -25,6 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
+import java.io.InputStream;
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
@@ -200,7 +201,7 @@ public interface SubmodelRepository {
 	 * @return
 	 * @throws ElementDoesNotExistException
 	 */
-	public java.io.File GetFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException;
+	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException;
 	
 	/**
 	 * Uploads a file to a file submodelelement
@@ -214,7 +215,7 @@ public interface SubmodelRepository {
 	 * @return
 	 * @throws ElementDoesNotExistException
 	 */
-	public void setFileValue(String submodelId, String idShortPath, java.io.File file) throws ElementDoesNotExistException,IdentificationMismatchException;
+	public void setFileValue(String submodelId, String idShortPath, InputStream inputStream) throws ElementDoesNotExistException,IdentificationMismatchException;
 
 	/**
 	 * Deletes the file of a file submodelelement

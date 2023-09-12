@@ -25,6 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.validation.Valid;
@@ -48,6 +49,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -156,14 +158,21 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 	@Override
 	public ResponseEntity<java.io.File> GetFileByPathSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath) {
-		java.io.File value = repository.GetFileByPathSubmodel(submodelIdentifier.getIdentifier(), idShortPath);
+		java.io.File value = repository.getFileByPathSubmodel(submodelIdentifier.getIdentifier(), idShortPath);
 		return new ResponseEntity<java.io.File>(value, HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<Void> PutFileByPathSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid java.io.File file) {
-		repository.setFileValue(submodelIdentifier.getIdentifier(), idShortPath, file);
-		return new ResponseEntity<Void>(HttpStatus.OK);
+	public ResponseEntity<Void> putFileByPath(String submodelIdentifier, String idShortPath, String fileName,
+			@Valid MultipartFile file) {
+		java.io.File destinationFile = new java.io.File("temp");
+		try {
+			file.transferTo(destinationFile);
+			repository.setFileValue(submodelIdentifier, idShortPath, destinationFile);
+			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+		} catch (IllegalStateException | IOException e) {
+			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	@Override
@@ -185,5 +194,6 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		SubmodelElement submodelElement = repository.getSubmodelElement(submodelIdentifier, idShortPath);
 		return new ResponseEntity<SubmodelElement>(submodelElement, HttpStatus.OK);
 	}
+
 
 }

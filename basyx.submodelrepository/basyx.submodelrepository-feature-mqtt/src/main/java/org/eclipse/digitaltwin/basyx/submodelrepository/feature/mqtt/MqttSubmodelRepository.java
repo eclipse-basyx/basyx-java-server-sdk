@@ -179,7 +179,7 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public java.io.File GetFileByPathSubmodel(String submodelId, String idShortPath) {
+	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) {
 		// TODO Auto-generated method stub
 		return null;
 	}
