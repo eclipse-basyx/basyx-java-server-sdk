@@ -76,9 +76,9 @@ import org.xml.sax.SAXException;
 public class TestAasEnvironmentPreconfigurationLoader {
 	private final static String RESOURCES_DIR = "src/test/resources/";
 	private final static String ENVIRONMENTS_DIR = RESOURCES_DIR + "environments/";
-	private final static String AASX_PATH = ENVIRONMENTS_DIR + "a/testEnvironment.aasx";
-	private final static String JSON_PATH = ENVIRONMENTS_DIR + "b/testEnvironment.json";
-	private final static String XML_PATH = ENVIRONMENTS_DIR + "b/testEnvironment.xml";
+	private final static String AASX_ENVIRONMENT_PATH = ENVIRONMENTS_DIR + "a/testEnvironment.aasx";
+	private final static String JSON_ENVIRONMENT_PATH = ENVIRONMENTS_DIR + "b/testEnvironment.json";
+	private final static String XML_ENVIRONMENT_PATH = ENVIRONMENTS_DIR + "b/testEnvironment.xml";
 
 	private final static String AASX_SUFFIX = "aasx";
 	private final static String JSON_SUFFIX = "json";
@@ -116,69 +116,57 @@ public class TestAasEnvironmentPreconfigurationLoader {
 		resourceLoader = new FileSystemResourceLoader();
 	}
 
-	@AfterClass
-	public static void cleanUp() {
-		cleanResourcesDirectory(ENVIRONMENTS_DIR);
-	}
-
 	private static void prepareResourcesDirectory(String rootFolder) throws SerializationException, IOException, DeserializationException, SAXException, InvalidOperationException, InvalidFormatException {
-		createDirectoryAasxEnvironment();
-		createDirectoryJsonEnvironment();
-		createDirectoryXmlEnvironment();
+		createAasxFileInDirectory();
+		createJsonFileInDirectory();
+		createXmlFileInDirectory();
 	}
 
-	public static void createDirectoryAasxEnvironment() throws SerializationException, IOException, InvalidOperationException, InvalidFormatException, DeserializationException {
+	public static void createAasxFileInDirectory() throws SerializationException, IOException, InvalidOperationException, InvalidFormatException, DeserializationException {
 		createShells(AASX_SUFFIX).forEach(expectedAasRepository::createAas);
 		createSubmodels(AASX_SUFFIX).stream()
 				.forEach(expectedSubmodelRepository::createSubmodel);
 		createConceptDescriptions(AASX_SUFFIX).forEach(expectetdConceptDescriptionRepository::createConceptDescription);
 
 		byte[] serialization = aasEnvironmentSerialization.createAASXAASEnvironmentSerialization(getShellIds(createShells(AASX_SUFFIX)), getSubmodelIds(createSubmodels(AASX_SUFFIX)), true);
-		String filePath = "a/testEnvironment.aasx";
-		writeBytesToFile(filePath, serialization);
+		writeBytesToFile(AASX_ENVIRONMENT_PATH, serialization);
 	}
 
-	public static void createDirectoryJsonEnvironment() throws SerializationException, IOException, DeserializationException {
+	public static void createJsonFileInDirectory() throws SerializationException, IOException, DeserializationException {
 		createShells(JSON_SUFFIX).forEach(expectedAasRepository::createAas);
 		createSubmodels(JSON_SUFFIX).stream()
 				.forEach(expectedSubmodelRepository::createSubmodel);
 		createConceptDescriptions(JSON_SUFFIX).forEach(expectetdConceptDescriptionRepository::createConceptDescription);
 
 		String jsonSerialization = aasEnvironmentSerialization.createJSONAASEnvironmentSerialization(getShellIds(createShells(JSON_SUFFIX)), getSubmodelIds(createSubmodels(JSON_SUFFIX)), true);
-		String filePath = "b/testEnvironment.json";
-		writeStringToFile(filePath, jsonSerialization);
+		writeStringToFile(JSON_ENVIRONMENT_PATH, jsonSerialization);
 	}
 
-	public static void createDirectoryXmlEnvironment() throws SerializationException, IOException, SAXException, DeserializationException {
+	public static void createXmlFileInDirectory() throws SerializationException, IOException, SAXException, DeserializationException {
 		createShells(XML_SUFFIX).forEach(expectedAasRepository::createAas);
 		createSubmodels(XML_SUFFIX).stream()
 				.forEach(expectedSubmodelRepository::createSubmodel);
 		createConceptDescriptions(XML_SUFFIX).forEach(expectetdConceptDescriptionRepository::createConceptDescription);
 
 		String xmlSerialization = aasEnvironmentSerialization.createXMLAASEnvironmentSerialization(getShellIds(createShells(XML_SUFFIX)), getSubmodelIds(createSubmodels(XML_SUFFIX)), true);
-		String filePath = "b/testEnvironment.xml";
-		writeStringToFile(filePath, xmlSerialization);
+		writeStringToFile(XML_ENVIRONMENT_PATH, xmlSerialization);
 	}
 
 	private static void writeStringToFile(String filePath, String data) {
 
-		String fielPath = ENVIRONMENTS_DIR + filePath;
-		File file = new File(fielPath);
+		File file = new File(filePath);
 		try (FileWriter fileWriter = new FileWriter(file)) {
 			fileWriter.write(data);
 			fileWriter.flush();
 		} catch (IOException ignore) {
 		}
-
 	}
 
 	private static void writeBytesToFile(String filePath, byte[] data) {
-		String fielPath = ENVIRONMENTS_DIR + filePath;
-		File file = new File(fielPath);
+		File file = new File(filePath);
 		try (FileOutputStream outputStream = new FileOutputStream(file)) {
 			outputStream.write(data);
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException ignore) {
 		}
 	}
 
@@ -192,6 +180,11 @@ public class TestAasEnvironmentPreconfigurationLoader {
 		return shells.stream()
 				.map(shell -> ((DefaultAssetAdministrationShell) shell).getId())
 				.collect(Collectors.toList());
+	}
+
+	@AfterClass
+	public static void cleanUp() {
+		cleanResourcesDirectory(ENVIRONMENTS_DIR);
 	}
 
 	private static void cleanResourcesDirectory(String rootFolder) {
@@ -210,20 +203,6 @@ public class TestAasEnvironmentPreconfigurationLoader {
 			}
 		}
 	}
-
-	// @Test
-	// public void TestloadEnvironmentFromFolder() throws InvalidFormatException,
-	// IOException, DeserializationException {
-	// peconfigloader.loadEnvironmentFromFolder(actualShellRepository,
-	// actualSubmodelRepository, actualConceptDescriptionRepository);
-	//
-	// assertAasxEnvironment(actualShellRepository, actualSubmodelRepository,
-	// actualConceptDescriptionRepository);
-	// assertJsonEnvironment(actualShellRepository, actualSubmodelRepository,
-	// actualConceptDescriptionRepository);
-	// assertXmlEnvironment(actualShellRepository, actualSubmodelRepository,
-	// actualConceptDescriptionRepository);
-	// }
 
 	@Test
 	public void loadEnvironmentFromFolder_shells() throws InvalidFormatException, IOException, DeserializationException {
@@ -248,7 +227,7 @@ public class TestAasEnvironmentPreconfigurationLoader {
 
 	@Test
 	public void loadEnvironmentFromFiles_shells() throws InvalidFormatException, IOException, DeserializationException {
-		List<String> filepaths = Arrays.asList(AASX_PATH, JSON_PATH, XML_PATH);
+		List<String> filepaths = Arrays.asList(AASX_ENVIRONMENT_PATH, JSON_ENVIRONMENT_PATH, XML_ENVIRONMENT_PATH);
 		AasEnvironmentPreconfigurationLoader peconfigloader = new AasEnvironmentPreconfigurationLoader(resourceLoader, filepaths);
 		peconfigloader.loadPreconfiguredEnvironment(actualShellRepository, actualSubmodelRepository, actualConceptDescriptionRepository);
 		assertShellsFromAllSourcesLoaded(actualShellRepository);
@@ -256,7 +235,7 @@ public class TestAasEnvironmentPreconfigurationLoader {
 
 	@Test
 	public void loadEnvironmentFromFiles_submodels() throws InvalidFormatException, IOException, DeserializationException {
-		List<String> filepaths = Arrays.asList(AASX_PATH, JSON_PATH, XML_PATH);
+		List<String> filepaths = Arrays.asList(AASX_ENVIRONMENT_PATH, JSON_ENVIRONMENT_PATH, XML_ENVIRONMENT_PATH);
 		AasEnvironmentPreconfigurationLoader peconfigloader = new AasEnvironmentPreconfigurationLoader(resourceLoader, filepaths);
 		peconfigloader.loadPreconfiguredEnvironment(actualShellRepository, actualSubmodelRepository, actualConceptDescriptionRepository);
 		assertSubmodelsFromAllSourcesLoaded(actualSubmodelRepository);
@@ -264,7 +243,7 @@ public class TestAasEnvironmentPreconfigurationLoader {
 
 	@Test
 	public void loadEnvironmentFromFiles_conceptDescriptions() throws InvalidFormatException, IOException, DeserializationException {
-		List<String> filepaths = Arrays.asList(AASX_PATH, JSON_PATH, XML_PATH);
+		List<String> filepaths = Arrays.asList(AASX_ENVIRONMENT_PATH, JSON_ENVIRONMENT_PATH, XML_ENVIRONMENT_PATH);
 		AasEnvironmentPreconfigurationLoader peconfigloader = new AasEnvironmentPreconfigurationLoader(resourceLoader, filepaths);
 		peconfigloader.loadPreconfiguredEnvironment(actualShellRepository, actualSubmodelRepository, actualConceptDescriptionRepository);
 		assertConceptDescriptionssFromAllSourcesLoaded(actualConceptDescriptionRepository);
@@ -306,48 +285,6 @@ public class TestAasEnvironmentPreconfigurationLoader {
 				.containsAll(createConceptDescriptions(XML_SUFFIX)));
 
 	}
-
-	// private void assertAasxEnvironment(AasRepository shellRepository,
-	// SubmodelRepository submodelReposiroty, ConceptDescriptionRepository
-	// conceptDescriptionRepository) {
-	// assertTrue(shellRepository.getAllAas(NO_LIMIT_PAGINATION_INFO)
-	// .getResult()
-	// .containsAll(createShells(AASX_SUFFIX)));
-	// assertTrue(submodelReposiroty.getAllSubmodels(NO_LIMIT_PAGINATION_INFO)
-	// .getResult()
-	// .containsAll(createSubmodels(AASX_SUFFIX)));
-	// assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO)
-	// .getResult()
-	// .containsAll(createConceptDescriptions(AASX_SUFFIX)));
-	// }
-	//
-	// private void assertJsonEnvironment(AasRepository shellRepository,
-	// SubmodelRepository submodelReposiroty, ConceptDescriptionRepository
-	// conceptDescriptionRepository) {
-	// assertTrue(shellRepository.getAllAas(NO_LIMIT_PAGINATION_INFO)
-	// .getResult()
-	// .containsAll(createShells(JSON_SUFFIX)));
-	// assertTrue(submodelReposiroty.getAllSubmodels(NO_LIMIT_PAGINATION_INFO)
-	// .getResult()
-	// .containsAll(createSubmodels(JSON_SUFFIX)));
-	// assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO)
-	// .getResult()
-	// .containsAll(createConceptDescriptions(JSON_SUFFIX)));
-	// }
-	//
-	// private void assertXmlEnvironment(AasRepository shellRepository,
-	// SubmodelRepository submodelReposiroty, ConceptDescriptionRepository
-	// conceptDescriptionRepository) {
-	// assertTrue(shellRepository.getAllAas(NO_LIMIT_PAGINATION_INFO)
-	// .getResult()
-	// .containsAll(createShells(XML_SUFFIX)));
-	// assertTrue(submodelReposiroty.getAllSubmodels(NO_LIMIT_PAGINATION_INFO)
-	// .getResult()
-	// .containsAll(createSubmodels(XML_SUFFIX)));
-	// assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO)
-	// .getResult()
-	// .containsAll(createConceptDescriptions(XML_SUFFIX)));
-	// }
 
 	private static Collection<AssetAdministrationShell> createShells(String suffix) {
 		AssetAdministrationShell shell1 = new DefaultAssetAdministrationShell.Builder().id("technical-data-shell-id-" + suffix)
