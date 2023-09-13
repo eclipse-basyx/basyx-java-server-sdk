@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -62,7 +63,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 	private Map<String, SubmodelService> submodelServices = new LinkedHashMap<>();
 	private SubmodelServiceFactory submodelServiceFactory;
-	private String tmpDirectory = Files.createTempDir().getAbsolutePath();
+	private String tmpDirectory = getTemporaryDirectoryPath();
 
 	/**
 	 * Creates the InMemorySubmodelRepository utilizing the passed
@@ -282,8 +283,6 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 			return "";
 		}
 	}
-	
-	
 
 	@Override
 	public void deleteFileValue(String submodelId, String idShortPath) {
@@ -301,6 +300,19 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 		if (!smId.equals(newSubmodelId))
 			throw new IdentificationMismatchException();
+	}
+	
+	private String getTemporaryDirectoryPath() {
+		
+		String tempDirectoryPath = "";
+		
+		try {
+			tempDirectoryPath = Files.createTempDirectory("basyx-temp").toAbsolutePath().toString();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return tempDirectoryPath;
 	}
 
 }
