@@ -62,6 +62,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.FileSystemResourceLoader;
@@ -75,6 +76,9 @@ import org.xml.sax.SAXException;
 public class TestAasEnvironmentPreconfigurationLoader {
 	private final static String RESOURCES_DIR = "src/test/resources/";
 	private final static String ENVIRONMENTS_DIR = RESOURCES_DIR + "environments/";
+	private final static String AASX_PATH = ENVIRONMENTS_DIR + "a/testEnvironment.aasx";
+	private final static String JSON_PATH = ENVIRONMENTS_DIR + "b/testEnvironment.json";
+	private final static String XML_PATH = ENVIRONMENTS_DIR + "b/testEnvironment.xml";
 
 	private final static String AASX_SUFFIX = "aasx";
 	private final static String JSON_SUFFIX = "json";
@@ -83,6 +87,12 @@ public class TestAasEnvironmentPreconfigurationLoader {
 	private static AasRepository expectedAasRepository;
 	private static SubmodelRepository expectedSubmodelRepository;
 	private static ConceptDescriptionRepository expectetdConceptDescriptionRepository;
+
+	private AasRepository actualShellRepository;
+	private SubmodelRepository actualSubmodelRepository;
+	private ConceptDescriptionRepository actualConceptDescriptionRepository;
+
+	ResourceLoader resourceLoader;
 
 	private static AasEnvironmentSerialization aasEnvironmentSerialization;
 
@@ -96,6 +106,14 @@ public class TestAasEnvironmentPreconfigurationLoader {
 
 		aasEnvironmentSerialization = new DefaultAASEnvironmentSerialization(expectedAasRepository, expectedSubmodelRepository, expectetdConceptDescriptionRepository);
 		prepareResourcesDirectory(ENVIRONMENTS_DIR);
+	}
+
+	@Before
+	public void setUp() {
+		actualShellRepository = new InMemoryAasRepository(new InMemoryAasServiceFactory());
+		actualSubmodelRepository = new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
+		actualConceptDescriptionRepository = new InMemoryConceptDescriptionRepository();
+		resourceLoader = new FileSystemResourceLoader();
 	}
 
 	@AfterClass
@@ -193,59 +211,143 @@ public class TestAasEnvironmentPreconfigurationLoader {
 		}
 	}
 
+	// @Test
+	// public void TestloadEnvironmentFromFolder() throws InvalidFormatException,
+	// IOException, DeserializationException {
+	// peconfigloader.loadEnvironmentFromFolder(actualShellRepository,
+	// actualSubmodelRepository, actualConceptDescriptionRepository);
+	//
+	// assertAasxEnvironment(actualShellRepository, actualSubmodelRepository,
+	// actualConceptDescriptionRepository);
+	// assertJsonEnvironment(actualShellRepository, actualSubmodelRepository,
+	// actualConceptDescriptionRepository);
+	// assertXmlEnvironment(actualShellRepository, actualSubmodelRepository,
+	// actualConceptDescriptionRepository);
+	// }
+
 	@Test
-	public void TestloadEnvironmentFromFolder() throws InvalidFormatException, IOException, DeserializationException {
-		AasRepository actualShellRepository = new InMemoryAasRepository(new InMemoryAasServiceFactory());
-		SubmodelRepository actualSubmodelRepository = new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
-		ConceptDescriptionRepository actualConceptDescriptionRepository = new InMemoryConceptDescriptionRepository();
-
-		ResourceLoader resourceLoader = new FileSystemResourceLoader();
-		String environmentsDir = RESOURCES_DIR + "environments";
-
-		AasEnvironmentPreconfigurationLoader peconfigloader = new AasEnvironmentPreconfigurationLoader(resourceLoader, environmentsDir);
-		peconfigloader.loadEnvironmentFromFolder(actualShellRepository, actualSubmodelRepository, actualConceptDescriptionRepository);
-
-		assertAasxEnvironment(actualShellRepository, actualSubmodelRepository, actualConceptDescriptionRepository);
-		assertJsonEnvironment(actualShellRepository, actualSubmodelRepository, actualConceptDescriptionRepository);
-		assertXmlEnvironment(actualShellRepository, actualSubmodelRepository, actualConceptDescriptionRepository);
-
+	public void loadEnvironmentFromFolder_shells() throws InvalidFormatException, IOException, DeserializationException {
+		AasEnvironmentPreconfigurationLoader peconfigloader = new AasEnvironmentPreconfigurationLoader(resourceLoader, ENVIRONMENTS_DIR);
+		peconfigloader.loadPreconfiguredEnvironment(actualShellRepository, actualSubmodelRepository, actualConceptDescriptionRepository);
+		assertShellsFromAllSourcesLoaded(actualShellRepository);
 	}
 
-	private void assertAasxEnvironment(AasRepository shellRepository, SubmodelRepository submodelReposiroty, ConceptDescriptionRepository conceptDescriptionRepository) {
+	@Test
+	public void loadEnvironmentFromFolder_submodels() throws InvalidFormatException, IOException, DeserializationException {
+		AasEnvironmentPreconfigurationLoader peconfigloader = new AasEnvironmentPreconfigurationLoader(resourceLoader, ENVIRONMENTS_DIR);
+		peconfigloader.loadPreconfiguredEnvironment(actualShellRepository, actualSubmodelRepository, actualConceptDescriptionRepository);
+		assertSubmodelsFromAllSourcesLoaded(actualSubmodelRepository);
+	}
+
+	@Test
+	public void loadEnvironmentFromFolder_conceptDescriptions() throws InvalidFormatException, IOException, DeserializationException {
+		AasEnvironmentPreconfigurationLoader peconfigloader = new AasEnvironmentPreconfigurationLoader(resourceLoader, ENVIRONMENTS_DIR);
+		peconfigloader.loadPreconfiguredEnvironment(actualShellRepository, actualSubmodelRepository, actualConceptDescriptionRepository);
+		assertConceptDescriptionssFromAllSourcesLoaded(actualConceptDescriptionRepository);
+	}
+
+	@Test
+	public void loadEnvironmentFromFiles_shells() throws InvalidFormatException, IOException, DeserializationException {
+		List<String> filepaths = Arrays.asList(AASX_PATH, JSON_PATH, XML_PATH);
+		AasEnvironmentPreconfigurationLoader peconfigloader = new AasEnvironmentPreconfigurationLoader(resourceLoader, filepaths);
+		peconfigloader.loadPreconfiguredEnvironment(actualShellRepository, actualSubmodelRepository, actualConceptDescriptionRepository);
+		assertShellsFromAllSourcesLoaded(actualShellRepository);
+	}
+
+	@Test
+	public void loadEnvironmentFromFiles_submodels() throws InvalidFormatException, IOException, DeserializationException {
+		List<String> filepaths = Arrays.asList(AASX_PATH, JSON_PATH, XML_PATH);
+		AasEnvironmentPreconfigurationLoader peconfigloader = new AasEnvironmentPreconfigurationLoader(resourceLoader, filepaths);
+		peconfigloader.loadPreconfiguredEnvironment(actualShellRepository, actualSubmodelRepository, actualConceptDescriptionRepository);
+		assertSubmodelsFromAllSourcesLoaded(actualSubmodelRepository);
+	}
+
+	@Test
+	public void loadEnvironmentFromFiles_conceptDescriptions() throws InvalidFormatException, IOException, DeserializationException {
+		List<String> filepaths = Arrays.asList(AASX_PATH, JSON_PATH, XML_PATH);
+		AasEnvironmentPreconfigurationLoader peconfigloader = new AasEnvironmentPreconfigurationLoader(resourceLoader, filepaths);
+		peconfigloader.loadPreconfiguredEnvironment(actualShellRepository, actualSubmodelRepository, actualConceptDescriptionRepository);
+		assertConceptDescriptionssFromAllSourcesLoaded(actualConceptDescriptionRepository);
+	}
+
+	private void assertShellsFromAllSourcesLoaded(AasRepository shellRepository) {
 		assertTrue(shellRepository.getAllAas(NO_LIMIT_PAGINATION_INFO)
 				.getResult()
 				.containsAll(createShells(AASX_SUFFIX)));
-		assertTrue(submodelReposiroty.getAllSubmodels(NO_LIMIT_PAGINATION_INFO)
-				.getResult()
-				.containsAll(createSubmodels(AASX_SUFFIX)));
-		assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO)
-				.getResult()
-				.containsAll(createConceptDescriptions(AASX_SUFFIX)));
-	}
-
-	private void assertJsonEnvironment(AasRepository shellRepository, SubmodelRepository submodelReposiroty, ConceptDescriptionRepository conceptDescriptionRepository) {
 		assertTrue(shellRepository.getAllAas(NO_LIMIT_PAGINATION_INFO)
 				.getResult()
 				.containsAll(createShells(JSON_SUFFIX)));
-		assertTrue(submodelReposiroty.getAllSubmodels(NO_LIMIT_PAGINATION_INFO)
-				.getResult()
-				.containsAll(createSubmodels(JSON_SUFFIX)));
-		assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO)
-				.getResult()
-				.containsAll(createConceptDescriptions(JSON_SUFFIX)));
-	}
-
-	private void assertXmlEnvironment(AasRepository shellRepository, SubmodelRepository submodelReposiroty, ConceptDescriptionRepository conceptDescriptionRepository) {
 		assertTrue(shellRepository.getAllAas(NO_LIMIT_PAGINATION_INFO)
 				.getResult()
 				.containsAll(createShells(XML_SUFFIX)));
+	}
+
+	private void assertSubmodelsFromAllSourcesLoaded(SubmodelRepository submodelReposiroty) {
+		assertTrue(submodelReposiroty.getAllSubmodels(NO_LIMIT_PAGINATION_INFO)
+				.getResult()
+				.containsAll(createSubmodels(AASX_SUFFIX)));
+		assertTrue(submodelReposiroty.getAllSubmodels(NO_LIMIT_PAGINATION_INFO)
+				.getResult()
+				.containsAll(createSubmodels(JSON_SUFFIX)));
 		assertTrue(submodelReposiroty.getAllSubmodels(NO_LIMIT_PAGINATION_INFO)
 				.getResult()
 				.containsAll(createSubmodels(XML_SUFFIX)));
+	}
+
+	private void assertConceptDescriptionssFromAllSourcesLoaded(ConceptDescriptionRepository conceptDescriptionRepository) {
+		assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO)
+				.getResult()
+				.containsAll(createConceptDescriptions(AASX_SUFFIX)));
+		assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO)
+				.getResult()
+				.containsAll(createConceptDescriptions(JSON_SUFFIX)));
 		assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO)
 				.getResult()
 				.containsAll(createConceptDescriptions(XML_SUFFIX)));
+
 	}
+
+	// private void assertAasxEnvironment(AasRepository shellRepository,
+	// SubmodelRepository submodelReposiroty, ConceptDescriptionRepository
+	// conceptDescriptionRepository) {
+	// assertTrue(shellRepository.getAllAas(NO_LIMIT_PAGINATION_INFO)
+	// .getResult()
+	// .containsAll(createShells(AASX_SUFFIX)));
+	// assertTrue(submodelReposiroty.getAllSubmodels(NO_LIMIT_PAGINATION_INFO)
+	// .getResult()
+	// .containsAll(createSubmodels(AASX_SUFFIX)));
+	// assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO)
+	// .getResult()
+	// .containsAll(createConceptDescriptions(AASX_SUFFIX)));
+	// }
+	//
+	// private void assertJsonEnvironment(AasRepository shellRepository,
+	// SubmodelRepository submodelReposiroty, ConceptDescriptionRepository
+	// conceptDescriptionRepository) {
+	// assertTrue(shellRepository.getAllAas(NO_LIMIT_PAGINATION_INFO)
+	// .getResult()
+	// .containsAll(createShells(JSON_SUFFIX)));
+	// assertTrue(submodelReposiroty.getAllSubmodels(NO_LIMIT_PAGINATION_INFO)
+	// .getResult()
+	// .containsAll(createSubmodels(JSON_SUFFIX)));
+	// assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO)
+	// .getResult()
+	// .containsAll(createConceptDescriptions(JSON_SUFFIX)));
+	// }
+	//
+	// private void assertXmlEnvironment(AasRepository shellRepository,
+	// SubmodelRepository submodelReposiroty, ConceptDescriptionRepository
+	// conceptDescriptionRepository) {
+	// assertTrue(shellRepository.getAllAas(NO_LIMIT_PAGINATION_INFO)
+	// .getResult()
+	// .containsAll(createShells(XML_SUFFIX)));
+	// assertTrue(submodelReposiroty.getAllSubmodels(NO_LIMIT_PAGINATION_INFO)
+	// .getResult()
+	// .containsAll(createSubmodels(XML_SUFFIX)));
+	// assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO)
+	// .getResult()
+	// .containsAll(createConceptDescriptions(XML_SUFFIX)));
+	// }
 
 	private static Collection<AssetAdministrationShell> createShells(String suffix) {
 		AssetAdministrationShell shell1 = new DefaultAssetAdministrationShell.Builder().id("technical-data-shell-id-" + suffix)

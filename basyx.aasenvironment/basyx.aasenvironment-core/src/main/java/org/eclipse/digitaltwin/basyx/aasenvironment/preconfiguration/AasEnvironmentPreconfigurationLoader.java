@@ -28,8 +28,10 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
@@ -61,7 +63,6 @@ public class AasEnvironmentPreconfigurationLoader {
 
 	@Value("${basyx.environment:#{null}}")
 	private List<String> filesToLoad;
-	private String folderToLoad;
 
 	private ResourceLoader resourceLoader;
 
@@ -73,8 +74,13 @@ public class AasEnvironmentPreconfigurationLoader {
 
 	@Autowired
 	public AasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, String folderToLoad) {
-		this.resourceLoader = resourceLoader;
-		this.folderToLoad = folderToLoad;
+		this(resourceLoader, extractFilesToLoadFromEnvironmentFolder(folderToLoad));
+	}
+
+	@Autowired
+	public AasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, String folderToLoad, List<String> filesToLoad) {
+		this(resourceLoader, Stream.concat(extractFilesToLoadFromEnvironmentFolder(folderToLoad).stream(), filesToLoad.stream())
+				.collect(Collectors.toList()));
 	}
 
 	public boolean shouldLoadPreconfiguredEnvironment() {
@@ -100,19 +106,15 @@ public class AasEnvironmentPreconfigurationLoader {
 		}
 	}
 
-	public void loadEnvironmentFromFolder(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) throws InvalidFormatException, IOException, DeserializationException {
-
+	private static List<String> extractFilesToLoadFromEnvironmentFolder(String folderToLoad) throws IllegalArgumentException {
 		File rootDirectory = new File(folderToLoad);
 		RecursiveDirectoryScanner directoryScanner = new RecursiveDirectoryScanner();
 
 		List<File> potentialEnvironments = directoryScanner.listFiles(rootDirectory);
-
-		filesToLoad = potentialEnvironments.stream()
+		return potentialEnvironments.stream()
 				.map(file -> file.getAbsolutePath())
 				.filter(path -> isAasxFile(path) || isJsonFile(path) || isXmlFile(path))
 				.collect(Collectors.toList());
-
-		loadPreconfiguredEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository);
 	}
 
 	private void createConceptDescriptionsOnRepositoryFromEnvironment(ConceptDescriptionRepository conceptDescriptionRepository, Environment environment) {
@@ -167,5 +169,9 @@ public class AasEnvironmentPreconfigurationLoader {
 
 	private boolean isEnvironmentLoaded(Environment environment) {
 		return environment != null;
+	}
+
+	private boolean isNullOrEmpty(Collection<?> collection) {
+		return collection == null || collection.isEmpty();
 	}
 }
