@@ -54,6 +54,9 @@ public class TestPreconfiguration {
 	private static AasRepository aasRepo;
 	private static ConceptDescriptionRepository conceptDescriptionRepo;
 
+	private String AASX_SUFFIX = "aasx";
+	private String JSON_SUFFIX = "json";
+	private String XML_SUFFIX = "xml";
 
 	@BeforeClass
 	public static void startAASEnvironment() throws Exception {
@@ -77,8 +80,7 @@ public class TestPreconfiguration {
 
 	@Test
 	public void jsonLoadedConceptDescriptionIsInRepository() throws IOException, ParseException {
-		ConceptDescription conceptDescription = conceptDescriptionRepo
-				.getConceptDescription("https://acplt.test/Test_ConceptDescription");
+		ConceptDescription conceptDescription = conceptDescriptionRepo.getConceptDescription("https://acplt.test/Test_ConceptDescription");
 		assertNotNull(conceptDescription);
 	}
 
@@ -96,8 +98,7 @@ public class TestPreconfiguration {
 
 	@Test
 	public void xmlLoadedConceptDescriptionIsInRepository() throws IOException, ParseException {
-		ConceptDescription conceptDescription = conceptDescriptionRepo
-				.getConceptDescription("http://www.vdi2770.test/blatt1/Entwurf/Okt18/cd/Description/Title");
+		ConceptDescription conceptDescription = conceptDescriptionRepo.getConceptDescription("http://www.vdi2770.test/blatt1/Entwurf/Okt18/cd/Description/Title");
 		assertNotNull(conceptDescription);
 	}
 
@@ -115,9 +116,62 @@ public class TestPreconfiguration {
 
 	@Test
 	public void aasxLoadedConceptDescriptionIsInRepository() throws IOException, ParseException {
-		ConceptDescription conceptDescription = conceptDescriptionRepo
-				.getConceptDescription("http://www.vdi2770.com/blatt1/Entwurf/Okt18/cd/Description/Title");
+		ConceptDescription conceptDescription = conceptDescriptionRepo.getConceptDescription("http://www.vdi2770.com/blatt1/Entwurf/Okt18/cd/Description/Title");
 		assertNotNull(conceptDescription);
+	}
+
+	@Test
+	public void aasxFromDirectoryLoadedShellsInRepository() {
+		AssetAdministrationShell shell1 = aasRepo.getAas("technical-data-shell-id-" + AASX_SUFFIX);
+		AssetAdministrationShell shell2 = aasRepo.getAas("operational-data-shell-id-" + AASX_SUFFIX);
+
+		assertNotNull(shell1);
+		assertNotNull(shell2);
+	}
+
+	@Test
+	public void aasxFromDirectoryLoadedSubmodelsInRepository() {
+		Submodel submodel1 = submodelRepo.getSubmodel("7A7104BDAB57E184" + AASX_SUFFIX);
+		Submodel submodel2 = submodelRepo.getSubmodel("AC69B1CB44F07935" + AASX_SUFFIX);
+
+		assertNotNull(submodel1);
+		assertNotNull(submodel2);
+	}
+
+	@Test
+	public void jsonFromDirectoryLoadedShellsInRepository() {
+		AssetAdministrationShell shell1 = aasRepo.getAas("technical-data-shell-id-" + JSON_SUFFIX);
+		AssetAdministrationShell shell2 = aasRepo.getAas("operational-data-shell-id-" + JSON_SUFFIX);
+
+		assertNotNull(shell1);
+		assertNotNull(shell2);
+	}
+
+	@Test
+	public void jsonFromDirectoryLoadedSubmodelsInRepository() {
+		Submodel submodel1 = submodelRepo.getSubmodel("7A7104BDAB57E184" + JSON_SUFFIX);
+		Submodel submodel2 = submodelRepo.getSubmodel("AC69B1CB44F07935" + JSON_SUFFIX);
+
+		assertNotNull(submodel1);
+		assertNotNull(submodel2);
+	}
+
+	@Test
+	public void xmlFromDirectoryLoadedShellsInRepository() {
+		AssetAdministrationShell shell1 = aasRepo.getAas("technical-data-shell-id-" + XML_SUFFIX);
+		AssetAdministrationShell shell2 = aasRepo.getAas("operational-data-shell-id-" + XML_SUFFIX);
+
+		assertNotNull(shell1);
+		assertNotNull(shell2);
+	}
+
+	@Test
+	public void xmlFromDirectoryLoadedSubmodelsInRepository() {
+		Submodel submodel1 = submodelRepo.getSubmodel("7A7104BDAB57E184" + XML_SUFFIX);
+		Submodel submodel2 = submodelRepo.getSubmodel("AC69B1CB44F07935" + XML_SUFFIX);
+
+		assertNotNull(submodel1);
+		assertNotNull(submodel2);
 	}
 
 	@AfterClass

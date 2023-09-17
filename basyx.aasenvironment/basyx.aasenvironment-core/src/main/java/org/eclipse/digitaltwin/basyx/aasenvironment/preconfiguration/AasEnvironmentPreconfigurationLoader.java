@@ -25,17 +25,13 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,9 +39,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.aasx.AASXDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSchemaValidator;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.xml.XmlDeserializer;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.xml.XmlSchemaValidator;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
@@ -53,20 +47,12 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.integration.file.RecursiveDirectoryScanner;
 import org.springframework.stereotype.Component;
-import org.xml.sax.SAXException;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Loader for AAS environment pre-configuration
@@ -76,8 +62,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Component
 public class AasEnvironmentPreconfigurationLoader {
-	private static Logger logger = LoggerFactory.getLogger(AasEnvironmentPreconfigurationLoader.class);
-
 	private List<String> pathsToLoad;
 	private String directoryToLoad;
 
@@ -108,81 +92,9 @@ public class AasEnvironmentPreconfigurationLoader {
 			throws IOException, DeserializationException, InvalidFormatException {
 		for (String filePath : pathsToLoad) {
 			InputStream fileStream = getFileInputStream(filePath);
-			if (!isEnvironmentFile(filePath)) {
-				continue;
-			}
 
 			Environment environment = getEnvironmentFromInputStream(filePath, fileStream);
 			loadEnvironmentFromFile(aasRepository, submodelRepository, conceptDescriptionRepository, environment);
-		}
-	}
-
-	private boolean isEnvironmentFile(String filePath) throws IOException {
-		if (isJsonFile(filePath)) {
-			return isJsonEnvironment(filePath);
-		}
-		if (isXmlFile(filePath)) {
-			return isXmlEnvironment(filePath);
-		}
-		return isAasxFile(filePath);
-	}
-
-	private boolean isJsonEnvironment(String filePath) throws IOException {
-		String data = getFileContentAsString(filePath);
-		if (!couldBeValidJsonEnvironment(data)) {
-			return false;
-		}
-		JsonSchemaValidator validator = new JsonSchemaValidator();
-		Set<String> result = validator.validateSchema(data);
-		result.forEach(logger::warn);
-
-		// FIXME: the Set<String> result should be empty to be schema compliant.
-		// return result.isEmpty();
-		return true;
-	}
-
-	private boolean couldBeValidJsonEnvironment(String data) {
-		ObjectMapper objectMapper = new ObjectMapper();
-		Map<String, Object> resultMap;
-
-		try {
-			resultMap = objectMapper.readValue(data, new TypeReference<Map<String, Object>>() {
-			});
-		} catch (JsonMappingException e) {
-			throw new RuntimeException(e);
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
-
-		String[] expectedKeys = { "assetAdministrationShells", "submodels", "conceptDescriptions" };
-		for (String key : expectedKeys) {
-			if (!resultMap.containsKey(key)) {
-				logger.warn("Expected Object '{}' of JSON Environment is not defined.", key);
-			}
-		}
-		return resultMap.containsKey("assetAdministrationShells") || resultMap.containsKey("submodels") || resultMap.containsKey("conceptDescriptions");
-	}
-
-	private boolean isXmlEnvironment(String filePath) throws IOException {
-		String data = getFileContentAsString(filePath);
-		try {
-			XmlSchemaValidator validator = new XmlSchemaValidator();
-			Set<String> result = validator.validateSchema(data);
-			result.forEach(logger::warn);
-
-			// FIXME: the Set<String> result should be empty to be schema compliant.
-			// return result.isEmpty();
-			return true;
-		} catch (SAXException e) {
-			throw new RuntimeException(e.getMessage());
-		}
-	}
-
-	private String getFileContentAsString(String filePath) throws IOException {
-		InputStream fileStream = getFileInputStream(filePath);
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(fileStream))) {
-			return reader.lines()
-					.collect(Collectors.joining(System.lineSeparator()));
 		}
 	}
 
