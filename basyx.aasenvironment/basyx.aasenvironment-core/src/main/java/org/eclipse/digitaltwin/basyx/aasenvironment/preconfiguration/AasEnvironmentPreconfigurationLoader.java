@@ -79,7 +79,7 @@ public class AasEnvironmentPreconfigurationLoader {
 
 	@Autowired
 	public AasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, @Value("${basyx.environmentPaths:#{null}}") List<String> pathsToLoad, @Value("${basyx.environmentDict:#{null}}") String directoryToLoad) {
-		this(resourceLoader, Stream.concat(extractFilesToLoadFromEnvironmentDirectory(directoryToLoad).stream(), pathsToLoad.stream())
+		this(resourceLoader, Stream.concat(extractFilesToLoadFromEnvironmentDirectory(directoryToLoad).stream(), pathsToLoad != null ? pathsToLoad.stream() : new ArrayList<String>().stream())
 				.collect(Collectors.toList()));
 		this.directoryToLoad = directoryToLoad;
 	}
@@ -106,12 +106,12 @@ public class AasEnvironmentPreconfigurationLoader {
 		}
 	}
 
-	private static List<String> extractFilesToLoadFromEnvironmentDirectory(String folderToLoad) throws IllegalArgumentException {
-		if (folderToLoad == null) {
-			new ArrayList<String>();
+	private static List<String> extractFilesToLoadFromEnvironmentDirectory(String directoryToLoad) throws IllegalArgumentException {
+		if (directoryToLoad == null) {
+			return new ArrayList<String>();
 		}
-		folderToLoad = convertFromClassPathFormat(folderToLoad);
-		File rootDirectory = new File(folderToLoad);
+		directoryToLoad = convertFromClassPathFormat(directoryToLoad);
+		File rootDirectory = new File(directoryToLoad);
 		RecursiveDirectoryScanner directoryScanner = new RecursiveDirectoryScanner();
 
 		List<File> potentialEnvironments = directoryScanner.listFiles(rootDirectory);
