@@ -46,7 +46,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 /**
  * Tests the Preconfiguration feature of the AAS Environment
  * 
- * @author fried
+ * @author fried, witt, jungjan
  */
 public class TestPreconfiguration {
 	private static ConfigurableApplicationContext appContext;
