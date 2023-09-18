@@ -32,6 +32,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.util.ResourceUtils;
 
 public class TestAasEnvironmentHTTP {
+
 	private static final String ACCEPT_JSON = "application/json";
 	private static final String ACCEPT_XML = "application/xml";
 	private static final String ACCEPT_AASX = "application/asset-administration-shell-package+xml";
@@ -46,7 +47,7 @@ public class TestAasEnvironmentHTTP {
 	@Test
 	public void testAASEnvironmentSertializationWithJSON() throws IOException, ParseException, DeserializationException {
 		boolean includeConceptDescription = true;
-		
+
 		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), ACCEPT_JSON);
 		String actual = BaSyxHttpTestUtils.getResponseAsString(response);
 		TestAASEnvironmentSerialization.validateJSON(actual, includeConceptDescription);
@@ -55,7 +56,7 @@ public class TestAasEnvironmentHTTP {
 	@Test
 	public void testAASEnvironmentSertializationWithXML() throws IOException, ParseException, DeserializationException {
 		boolean includeConceptDescription = true;
-		
+
 		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), ACCEPT_XML);
 		String actual = BaSyxHttpTestUtils.getResponseAsString(response);
 		TestAASEnvironmentSerialization.validateXml(actual, includeConceptDescription);
@@ -64,27 +65,29 @@ public class TestAasEnvironmentHTTP {
 	@Test
 	public void testAASEnvironmentSertializationWithAASX() throws IOException, ParseException, DeserializationException, InvalidFormatException {
 		boolean includeConceptDescription = true;
-		
+
 		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), ACCEPT_AASX);
 		assertEquals(HttpStatus.OK.value(), response.getCode());
 
-		TestAASEnvironmentSerialization.checkAASX(response.getEntity().getContent(), includeConceptDescription);
+		TestAASEnvironmentSerialization.checkAASX(response.getEntity()
+				.getContent(), includeConceptDescription);
 	}
-	
+
 	@Test
 	public void testAASEnvironmentSertializationWithAASXExcludeCD() throws IOException, ParseException, DeserializationException, InvalidFormatException {
 		boolean includeConceptDescription = false;
-		
+
 		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), ACCEPT_AASX);
 		assertEquals(HttpStatus.OK.value(), response.getCode());
 
-		TestAASEnvironmentSerialization.checkAASX(response.getEntity().getContent(), includeConceptDescription);
+		TestAASEnvironmentSerialization.checkAASX(response.getEntity()
+				.getContent(), includeConceptDescription);
 	}
 
 	@Test
 	public void testAASEnvironmentWithWrongParameter() throws IOException {
 		boolean includeConceptDescription = true;
-		
+
 		CloseableHttpResponse response = executeGetOnURL(getSerializationURL(new ArrayList<String>(), new ArrayList<String>(), includeConceptDescription), ACCEPT_JSON);
 		assertEquals(HttpStatus.BAD_REQUEST.value(), response.getCode());
 	}
@@ -92,7 +95,7 @@ public class TestAasEnvironmentHTTP {
 	@Test
 	public void testAASEnvironmentWithWrongAcceptHeader() throws IOException {
 		boolean includeConceptDescription = true;
-		
+
 		CloseableHttpResponse response = executeGetOnURL(getSerializationURL(new ArrayList<String>(), new ArrayList<String>(), includeConceptDescription), "");
 		assertEquals(HttpStatus.BAD_REQUEST.value(), response.getCode());
 	}
@@ -100,7 +103,7 @@ public class TestAasEnvironmentHTTP {
 	@Test
 	public void testAASEnvironmentWithWrongId() throws IOException {
 		boolean includeConceptDescription = true;
-		
+
 		List<String> aasIds = new ArrayList<>();
 		List<String> submodelIds = new ArrayList<>();
 
