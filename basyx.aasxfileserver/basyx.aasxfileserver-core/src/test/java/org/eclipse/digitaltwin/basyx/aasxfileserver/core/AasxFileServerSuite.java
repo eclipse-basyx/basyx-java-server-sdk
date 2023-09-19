@@ -29,12 +29,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AasxFileServer;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.PackageDescription;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
@@ -97,13 +99,14 @@ public abstract class AasxFileServerSuite {
 	}	
 	
 	@Test
-	public void getAASXByPackageId() throws ElementDoesNotExistException {
+	public void getAASXByPackageId() throws ElementDoesNotExistException, IOException {
 		
 		AasxFileServer server = getAasxFileServer();
 		PackageDescription packageDescription = DummyAasxFileServerFactory.createFirstDummyAASXPackage(server);			
-		InputStream actualValue = server.getAASXByPackageId(packageDescription.getPackageId());		
+		InputStream actualValue = server.getAASXByPackageId(packageDescription.getPackageId());	
+		InputStream expectedValue = AasxFileServerSuiteHelper.FIRST_FILE;		
 		
-		assertEquals(AasxFileServerSuiteHelper.FIRST_FILE, actualValue);		
+		IOUtils.contentEquals(expectedValue, actualValue);
 	}
 
 	@Test
