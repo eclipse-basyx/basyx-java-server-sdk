@@ -20,7 +20,6 @@
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
 			<artifactId>model</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>

@@ -35,8 +35,40 @@
 			<artifactId>basyx.submodelrepository-backend-mongodb</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelrepository-feature-mqtt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelrepository-http</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.junit.vintage</groupId>
 			<artifactId>junit-vintage-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelservice-core</artifactId>
+			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -102,13 +134,17 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<configuration>
 					<usedDependencies>
-						<dependency> org.eclipse.digitaltwin.basyx:basyx.submodelrepository-backend-inmemory</dependency>
+						<dependency>
+							org.eclipse.digitaltwin.basyx:basyx.submodelrepository-backend-inmemory</dependency>
 						<dependency>org.eclipse.digitaltwin.basyx:basyx.http</dependency>
 						<dependency>org.junit.vintage:junit-vintage-engine</dependency>
-						<dependency>org.eclipse.digitaltwin.basyx:basyx.submodelrepository-http</dependency>
+						<dependency>
+							org.eclipse.digitaltwin.basyx:basyx.submodelrepository-http</dependency>
 						<dependency>commons-io:commons-io</dependency>
-						<dependency> org.eclipse.digitaltwin.basyx:basyx.submodelrepository-backend-mongodb</dependency>
-						<dependency> org.eclipse.digitaltwin.basyx:basyx.submodelservice-backend-inmemory</dependency>
+						<dependency>
+							org.eclipse.digitaltwin.basyx:basyx.submodelrepository-backend-mongodb</dependency>
+						<dependency>
+							org.eclipse.digitaltwin.basyx:basyx.submodelservice-backend-inmemory</dependency>
 					</usedDependencies>
 				</configuration>
 			</plugin>
