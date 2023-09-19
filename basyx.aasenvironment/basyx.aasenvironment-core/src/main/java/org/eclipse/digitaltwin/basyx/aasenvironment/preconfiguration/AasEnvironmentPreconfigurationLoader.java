@@ -26,14 +26,11 @@
 package org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
@@ -49,7 +46,6 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.integration.file.RecursiveDirectoryScanner;
 import org.springframework.stereotype.Component;
@@ -62,40 +58,48 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class AasEnvironmentPreconfigurationLoader {
+
+	@Value("${basyx.environment:#{null}}")
 	private List<String> pathsToLoad;
-	private String directoryToLoad;
 
 	private ResourceLoader resourceLoader;
 
-	public AasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, List<String> filesToLoad) {
-		this.resourceLoader = resourceLoader;
-		this.pathsToLoad = filesToLoad;
-	}
-
-	public AasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, String directoryToLoad) {
-		this(resourceLoader, extractFilesToLoadFromEnvironmentDirectory(directoryToLoad));
-		this.directoryToLoad = directoryToLoad;
-	}
-
 	@Autowired
-	public AasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, @Value("${basyx.environmentPaths:#{null}}") List<String> pathsToLoad, @Value("${basyx.environmentDict:#{null}}") String directoryToLoad) {
-		this(resourceLoader, Stream.concat(extractFilesToLoadFromEnvironmentDirectory(directoryToLoad).stream(), pathsToLoad != null ? pathsToLoad.stream() : new ArrayList<String>().stream())
-				.collect(Collectors.toList()));
-		this.directoryToLoad = directoryToLoad;
+	public AasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, List<String> pathsToLoad) {
+		this.resourceLoader = resourceLoader;
+		this.pathsToLoad = pathsToLoad;
 	}
 
 	public boolean shouldLoadPreconfiguredEnvironment() {
-		return pathsToLoad != null || directoryToLoad != null;
+		return pathsToLoad != null;
 	}
 
 	public void loadPreconfiguredEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository)
 			throws IOException, DeserializationException, InvalidFormatException {
-		for (String filePath : pathsToLoad) {
-			InputStream fileStream = getFileInputStream(filePath);
-
-			Environment environment = getEnvironmentFromInputStream(filePath, fileStream);
+		List<File> files = resolveFiles(pathsToLoad);
+		for (File file : files) {
+			Environment environment = getEnvironmentFromFile(file);
 			loadEnvironmentFromFile(aasRepository, submodelRepository, conceptDescriptionRepository, environment);
 		}
+	}
+
+	private List<File> resolveFiles(List<String> paths) throws IOException {
+		ArrayList<File> files = new ArrayList<>();
+
+		for (String path : paths) {
+			if (!getFile(path).isFile()) {
+				List<File> filesFromDir = extractFilesToLoadFromEnvironmentDirectory(path);
+				files.addAll(filesFromDir);
+			} else {
+				files.add(getFile(path));
+			}
+		}
+		return files;
+	}
+
+	private File getFile(String filePath) throws IOException {
+		return resourceLoader.getResource(filePath)
+				.getFile();
 	}
 
 	private void loadEnvironmentFromFile(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository, Environment environment) {
@@ -106,45 +110,14 @@ public class AasEnvironmentPreconfigurationLoader {
 		}
 	}
 
-	private static List<String> extractFilesToLoadFromEnvironmentDirectory(String directoryToLoad) throws IllegalArgumentException {
-		if (directoryToLoad == null) {
-			return new ArrayList<String>();
-		}
-		directoryToLoad = convertFromClassPathFormat(directoryToLoad);
-		File rootDirectory = new File(directoryToLoad);
+	private List<File> extractFilesToLoadFromEnvironmentDirectory(String directoryToLoad) throws IllegalArgumentException, IOException {
+		File rootDirectory = getFile(directoryToLoad);
 		RecursiveDirectoryScanner directoryScanner = new RecursiveDirectoryScanner();
 
 		List<File> potentialEnvironments = directoryScanner.listFiles(rootDirectory);
 		return potentialEnvironments.stream()
-				.map(file -> file.getPath())
-				.filter(path -> isAasxFile(path) || isJsonFile(path) || isXmlFile(path))
-				.map(AasEnvironmentPreconfigurationLoader::convertToClassPathFormat)
+				.filter(file -> isAasxFile(file.getPath()) || isJsonFile(file.getPath()) || isXmlFile(file.getPath()))
 				.collect(Collectors.toList());
-	}
-
-	private static String convertFromClassPathFormat(String resourcePath) {
-		String classpathPrefix = "classpath:";
-		if (!resourcePath.startsWith(classpathPrefix)) {
-			return resourcePath;
-		}
-
-		String resource = resourcePath.substring(classpathPrefix.length());
-		ClassLoader classLoader = AasEnvironmentPreconfigurationLoader.class.getClassLoader();
-		URL resourceUrl = classLoader.getResource(resource);
-		return resourceUrl != null ? new File(resourceUrl.getFile()).getAbsolutePath() : null;
-	}
-
-	private static String convertToClassPathFormat(String resourcePath) {
-		ClassLoader classLoader = AasEnvironmentPreconfigurationLoader.class.getClassLoader();
-		URL classPathUrl = classLoader.getResource("");
-		String classPath = new File(classPathUrl.getFile()).getAbsolutePath() + "\\";
-		String absoluteResourcePath = new File(resourcePath).getAbsolutePath();
-		if (absoluteResourcePath.startsWith(absoluteResourcePath)) {
-			return absoluteResourcePath.replace(classPath, "classpath:")
-					.replace("\\", "/");
-		}
-
-		return resourcePath;
 	}
 
 	private void createConceptDescriptionsOnRepositoryFromEnvironment(ConceptDescriptionRepository conceptDescriptionRepository, Environment environment) {
@@ -165,16 +138,16 @@ public class AasEnvironmentPreconfigurationLoader {
 		}
 	}
 
-	private Environment getEnvironmentFromInputStream(String filePath, InputStream fileStream) throws DeserializationException, InvalidFormatException, IOException {
+	private Environment getEnvironmentFromFile(File file) throws DeserializationException, InvalidFormatException, IOException {
 		Environment environment = null;
-		if (isJsonFile(filePath)) {
+		if (isJsonFile(file.getPath())) {
 			JsonDeserializer deserializer = new JsonDeserializer();
-			environment = deserializer.read(fileStream);
-		} else if (isXmlFile(filePath)) {
+			environment = deserializer.read(new FileInputStream(file));
+		} else if (isXmlFile(file.getPath())) {
 			XmlDeserializer deserializer = new XmlDeserializer();
-			environment = deserializer.read(fileStream);
-		} else if (isAasxFile(filePath)) {
-			AASXDeserializer deserializer = new AASXDeserializer(fileStream);
+			environment = deserializer.read(new FileInputStream(file));
+		} else if (isAasxFile(file.getPath())) {
+			AASXDeserializer deserializer = new AASXDeserializer(new FileInputStream(file));
 			environment = deserializer.read();
 		}
 		return environment;
@@ -192,16 +165,7 @@ public class AasEnvironmentPreconfigurationLoader {
 		return filePath.endsWith(".aasx");
 	}
 
-	private InputStream getFileInputStream(String filePath) throws IOException {
-		Resource resource = resourceLoader.getResource(filePath);
-		return resource.getInputStream();
-	}
-
 	private boolean isEnvironmentLoaded(Environment environment) {
 		return environment != null;
-	}
-
-	private boolean isNullOrEmpty(Collection<?> collection) {
-		return collection == null || collection.isEmpty();
 	}
 }
