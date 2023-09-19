@@ -9,39 +9,34 @@
 		<version>${revision}</version>
 		<relativePath>..</relativePath>
 	</parent>
-	
+
 	<artifactId>basyx.submodelregistry-service-release-log-mongodb</artifactId>
-	
+
 	<properties>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>
-		<start-class>org.eclipse.digitaltwin.basyx.submodelregistry.service.OpenApiGeneratorApplication</start-class>
+		<start-class>
+			org.eclipse.digitaltwin.basyx.submodelregistry.service.OpenApiGeneratorApplication</start-class>
 		<docker.image.name>submodel-registry-log-mongodb</docker.image.name>
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.submodelregistry-service-mongodb-storage</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.vintage</groupId>
-			<artifactId>junit-vintage-engine</artifactId>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.hamcrest</groupId>
-					<artifactId>hamcrest-core</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>		
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
 		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<usedDependencies>
+						<dependency>junit:junit</dependency>
+					</usedDependencies>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

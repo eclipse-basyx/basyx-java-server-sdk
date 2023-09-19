@@ -16,14 +16,8 @@
 			<artifactId>basyx.core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.aasservice-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.aasservice-core</artifactId>
-			<classifier>tests</classifier>
-			<scope>test</scope>
+			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
+			<artifactId>model</artifactId>
 		</dependency>
 	</dependencies>
 </project>

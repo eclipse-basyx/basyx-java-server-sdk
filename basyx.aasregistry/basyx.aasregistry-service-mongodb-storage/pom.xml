@@ -17,7 +17,8 @@
 		<spring-cloud.version>2020.0.4</spring-cloud.version>
 		<openapi.folder>${project.basedir}/${openapi.folder.name}</openapi.folder>
 		<openapi.mongodb.file>${openapi.folder}/${openapi.mongodb.file.name}</openapi.mongodb.file>
-		<openapi.extensions.result.file>${openapi.folder}/temporary-extensions-result-file.yaml</openapi.extensions.result.file>
+		<openapi.extensions.result.file>
+			${openapi.folder}/temporary-extensions-result-file.yaml</openapi.extensions.result.file>
 		<openapi.result.file>${openapi.folder}/${openapi.name}</openapi.result.file>
 		<patch.mongo-extensions.name>patch-mongodb-annotations.yaml</patch.mongo-extensions.name>
 	</properties>
@@ -46,7 +47,7 @@
 					</filesets>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>de.dfki.cos.basys.common</groupId>
 				<artifactId>jsonpatch-maven-plugin</artifactId>
@@ -58,8 +59,10 @@
 							<goal>jsonpatch-maven-plugin</goal>
 						</goals>
 						<configuration>
-							<input>${project.basedir}/../${openapi.folder.name}/${openapi.base.name}</input>
-							<patch>${project.basedir}/../${openapi.folder.name}/${patch.base-extensions.name}</patch>
+							<input>
+								${project.basedir}/../${openapi.folder.name}/${openapi.base.name}</input>
+							<patch>
+								${project.basedir}/../${openapi.folder.name}/${patch.base-extensions.name}</patch>
 							<output>${openapi.extensions.result.file}</output>
 						</configuration>
 					</execution>
@@ -71,7 +74,8 @@
 						</goals>
 						<configuration>
 							<input>${openapi.extensions.result.file}</input>
-							<patch>${project.basedir}/${openapi.folder.name}/${patch.mongo-extensions.name}</patch>
+							<patch>
+								${project.basedir}/${openapi.folder.name}/${patch.mongo-extensions.name}</patch>
 							<output>${openapi.result.file}</output>
 						</configuration>
 					</execution>
@@ -95,7 +99,8 @@
 							<library>spring-boot</library>
 							<output>${project.basedir}/${generated.folder}</output>
 
-							<!-- See https://openapi-generator.tech/docs/generators/spring -->
+							<!-- See
+							https://openapi-generator.tech/docs/generators/spring -->
 							<configOptions>
 								<openApiNullable>false</openApiNullable>
 								<java8>true</java8>
@@ -104,10 +109,14 @@
 								<serializableModel>true</serializableModel>
 								<oas3>true</oas3>
 								<useSpringController>true</useSpringController>
-								<configPackage>org.eclipse.digitaltwin.basyx.aasregistry.service.configuration</configPackage>
-								<apiPackage>org.eclipse.digitaltwin.basyx.aasregistry.service.api</apiPackage>
-								<invokerPackage>org.eclipse.digitaltwin.basyx.aasregistry.service</invokerPackage>
-								<modelPackage>org.eclipse.digitaltwin.basyx.aasregistry.model</modelPackage>
+								<configPackage>
+									org.eclipse.digitaltwin.basyx.aasregistry.service.configuration</configPackage>
+								<apiPackage>
+									org.eclipse.digitaltwin.basyx.aasregistry.service.api</apiPackage>
+								<invokerPackage>
+									org.eclipse.digitaltwin.basyx.aasregistry.service</invokerPackage>
+								<modelPackage>
+									org.eclipse.digitaltwin.basyx.aasregistry.model</modelPackage>
 								<delegatePattern>true</delegatePattern>
 							</configOptions>
 						</configuration>
@@ -203,7 +212,84 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>testcontainers</artifactId>
+			<version>1.18.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-commons</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>2.2.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-mongodb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-sync</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>bson</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-core</artifactId>
+		</dependency>
 	</dependencies>
+	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

@@ -11,10 +11,6 @@
 	<properties></properties>
 	<dependencies>
 		<dependency>
-			<groupId>org.yaml</groupId>
-			<artifactId>snakeyaml</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
 		</dependency>
@@ -35,9 +31,13 @@
 			<artifactId>jackson-annotations</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
+			<groupId> org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId> org.apache.maven</groupId>
+			<artifactId>maven-compat</artifactId>
+			<version>3.0-alpha-2</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -45,4 +45,18 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin> 
+                <groupId>org.apache.maven.plugins</groupId> 
+                <artifactId>maven-dependency-plugin</artifactId>  
+                <configuration> 
+                    <usedDependencies>  
+                        <dependency>junit:junit</dependency> 
+                    </usedDependencies>  
+                </configuration>  
+            </plugin>
+		</plugins>
+	</build>
 </project>

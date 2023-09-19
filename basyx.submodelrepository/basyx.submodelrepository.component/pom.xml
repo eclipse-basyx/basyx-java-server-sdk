@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -8,10 +10,11 @@
 	</parent>
 
 	<artifactId>basyx.submodelrepository.component</artifactId>
-	
+
 	<properties>
 		<docker.image.name>submodel-repository</docker.image.name>
-		<docker.container.waitForEndpoint>http://localhost:${docker.host.port}/submodels</docker.container.waitForEndpoint>
+		<docker.container.waitForEndpoint>
+			http://localhost:${docker.host.port}/submodels</docker.container.waitForEndpoint>
 	</properties>
 
 	<dependencies>
@@ -32,41 +35,8 @@
 			<artifactId>basyx.submodelrepository-backend-mongodb</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.submodelrepository-feature-mqtt</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.submodelrepository-http</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.junit.vintage</groupId>
 			<artifactId>junit-vintage-engine</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.submodelservice-core</artifactId>
-			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -88,19 +58,33 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.httpcomponents.client5</groupId>
-			<artifactId>httpclient5</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<scope>test</scope>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelservice-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -113,8 +97,23 @@
 					<classifier>exec</classifier>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<usedDependencies>
+						<dependency> org.eclipse.digitaltwin.basyx:basyx.submodelrepository-backend-inmemory</dependency>
+						<dependency>org.eclipse.digitaltwin.basyx:basyx.http</dependency>
+						<dependency>org.junit.vintage:junit-vintage-engine</dependency>
+						<dependency>org.eclipse.digitaltwin.basyx:basyx.submodelrepository-http</dependency>
+						<dependency>commons-io:commons-io</dependency>
+						<dependency> org.eclipse.digitaltwin.basyx:basyx.submodelrepository-backend-mongodb</dependency>
+						<dependency> org.eclipse.digitaltwin.basyx:basyx.submodelservice-backend-inmemory</dependency>
+					</usedDependencies>
+				</configuration>
+			</plugin>
 		</plugins>
-		
+
 		<pluginManagement>
 			<plugins>
 				<!-- Build the docker image -->
@@ -134,7 +133,8 @@
 								</build>
 								<run>
 									<ports>
-										<port>${docker.host.port}:${docker.container.port}</port>
+										<port>
+											${docker.host.port}:${docker.container.port}</port>
 									</ports>
 									<wait>
 										<url>${docker.container.waitForEndpoint}</url>
@@ -172,7 +172,7 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	
+
 	<profiles>
 		<profile>
 			<id>docker</id>

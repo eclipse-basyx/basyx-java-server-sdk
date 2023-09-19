@@ -20,4 +20,5 @@
 		<module>basyx.aasrepository-tck</module>
 		<module>basyx.aasrepository.component</module>
 	</modules>
+	
 </project>

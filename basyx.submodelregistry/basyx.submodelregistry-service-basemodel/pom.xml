@@ -53,14 +53,16 @@
 							<goal>jsonpatch-maven-plugin</goal>
 						</goals>
 						<configuration>
-							<input>${project.basedir}/../${openapi.folder.name}/${openapi.base.name}</input>
-							<patch>${project.basedir}/../${openapi.folder.name}/${patch.base-extensions.name}</patch>
+							<input>
+								${project.basedir}/../${openapi.folder.name}/${openapi.base.name}</input>
+							<patch>
+								${project.basedir}/../${openapi.folder.name}/${patch.base-extensions.name}</patch>
 							<output>${openapi.result.file}</output>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
- 			<plugin>
+			<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
 				<executions>
@@ -85,7 +87,8 @@
 								<serializableModel>true</serializableModel>
 								<oas3>true</oas3>
 								<useSpringController>true</useSpringController>
-								<modelPackage>org.eclipse.digitaltwin.basyx.submodelregistry.model</modelPackage>
+								<modelPackage>
+									org.eclipse.digitaltwin.basyx.submodelregistry.model</modelPackage>
 								<instantiationTypes>array=ArrayList,map=HashMap</instantiationTypes>
 							</configOptions>
 						</configuration>
@@ -99,6 +102,17 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<usedDependencies>
+						<dependency> org.openapitools:jackson-databind-nullable</dependency>
+						<dependency>junit:junit</dependency>
+						<dependency> org.springframework.boot:spring-boot-starter-validation</dependency>
+					</usedDependencies>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -106,13 +120,36 @@
 			<groupId>org.openapitools</groupId>
 			<artifactId>jackson-databind-nullable</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-ui</artifactId>
-		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>2.2.9</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+
 	</dependencies>
 </project>

@@ -51,14 +51,16 @@
 							<goal>jsonpatch-maven-plugin</goal>
 						</goals>
 						<configuration>
-							<input>${project.basedir}/../${openapi.folder.name}/${openapi.base.name}</input>
-							<patch>${project.basedir}/../${openapi.folder.name}/${patch.base-extensions.name}</patch>
+							<input>
+								${project.basedir}/../${openapi.folder.name}/${openapi.base.name}</input>
+							<patch>
+								${project.basedir}/../${openapi.folder.name}/${patch.base-extensions.name}</patch>
 							<output>${openapi.result.file}</output>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-		 	<plugin>
+			<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
 				<executions>
@@ -71,9 +73,12 @@
 							<library>native</library>
 							<inputSpec>${openapi.result.file}</inputSpec>
 							<output>${project.basedir}/${generated.folder}</output>
-							<apiPackage>org.eclipse.digitaltwin.basyx.submodelregistry.client.api</apiPackage>
-							<invokerPackage>org.eclipse.digitaltwin.basyx.submodelregistry.client</invokerPackage>
-							<modelPackage>org.eclipse.digitaltwin.basyx.submodelregistry.client.model</modelPackage>
+							<apiPackage>
+								org.eclipse.digitaltwin.basyx.submodelregistry.client.api</apiPackage>
+							<invokerPackage>
+								org.eclipse.digitaltwin.basyx.submodelregistry.client</invokerPackage>
+							<modelPackage>
+								org.eclipse.digitaltwin.basyx.submodelregistry.client.model</modelPackage>
 							<generateModels>true</generateModels>
 							<generateApis>true</generateApis>
 							<generateApiTests>false</generateApiTests>
@@ -81,7 +86,8 @@
 							<generateApiDocumentation>false</generateApiDocumentation>
 							<generateSupportingFiles>true</generateSupportingFiles>
 							<templateDirectory>${project.basedir}/templates</templateDirectory>
-							<supportingFilesToGenerate>AbstractOpenApiSchema.java,ServerConfiguration.java,ServerVariable.java,Configuration.java,JSON.java,ApiException.java,ApiResponse.java,ApiClient.java,Pair.java,RFC3339DateFormat.java</supportingFilesToGenerate>
+							<supportingFilesToGenerate>
+								AbstractOpenApiSchema.java,ServerConfiguration.java,ServerVariable.java,Configuration.java,JSON.java,ApiException.java,ApiResponse.java,ApiClient.java,Pair.java,RFC3339DateFormat.java</supportingFilesToGenerate>
 							<configOptions>
 								<java8>true</java8>
 								<dateLibrary>java8</dateLibrary>
@@ -91,8 +97,18 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<usedDependencies>
+						<dependency>junit:junit</dependency>
+						<dependency>javax.annotation:javax.annotation-api</dependency>
+					</usedDependencies>
+				</configuration>
+			</plugin>
 		</plugins>
-			
+
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -124,6 +140,19 @@
 		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>jsr305</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
