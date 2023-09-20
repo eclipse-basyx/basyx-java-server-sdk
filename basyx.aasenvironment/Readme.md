@@ -24,4 +24,8 @@ For a configuration example, see [application.properties](./basyx.aasenvironment
 The Health Endpoint and CORS Documentation can be found [here](../docs/Readme.md). 
 
 ## Preconfiguration of AAS Environments
-The AAS Environment Component supports the preconfiguration of AAS Environments (e.g., XML, JSON, AASX) via the _basyx.environment_ parameter. For examples, see [application.properties](./basyx.aasenvironment.component/src/main/resources/application.properties)
+The AAS Environment Component supports the preconfiguration of AAS Environments (e.g., XML, JSON, AASX) via the _basyx.environment_ parameter. 
+
+The feature supports both preconfiguring explicit files (e.g., file:myDevice.aasx) as well as directories (e.g., file:myDirectory) that will be recursively scanned for serialized environments.
+
+For examples, see [application.properties](./basyx.aasenvironment.component/src/main/resources/application.properties)
