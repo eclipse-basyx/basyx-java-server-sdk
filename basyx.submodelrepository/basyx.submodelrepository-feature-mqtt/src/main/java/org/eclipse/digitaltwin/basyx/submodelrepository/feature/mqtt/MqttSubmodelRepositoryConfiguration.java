@@ -42,7 +42,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @ConditionalOnExpression("#{${" + MqttSubmodelRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
 @Configuration
-public class MqttConfiguration {
+public class MqttSubmodelRepositoryConfiguration {
 
 	@ConditionalOnMissingBean
 	@Bean
