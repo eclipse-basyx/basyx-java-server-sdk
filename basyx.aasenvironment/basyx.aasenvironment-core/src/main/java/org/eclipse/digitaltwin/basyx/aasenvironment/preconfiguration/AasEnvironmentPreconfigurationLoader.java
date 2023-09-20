@@ -87,14 +87,18 @@ public class AasEnvironmentPreconfigurationLoader {
 		ArrayList<File> files = new ArrayList<>();
 
 		for (String path : paths) {
-			if (!getFile(path).isFile()) {
-				List<File> filesFromDir = extractFilesToLoadFromEnvironmentDirectory(path);
-				files.addAll(filesFromDir);
-			} else {
-				files.add(getFile(path));
-			}
+			resolvePathAndAddFilesToList(files, path);
 		}
 		return files;
+	}
+
+	private void resolvePathAndAddFilesToList(ArrayList<File> files, String path) throws IOException {
+		if (!getFile(path).isFile()) {
+			List<File> filesFromDir = extractFilesToLoadFromEnvironmentDirectory(path);
+			files.addAll(filesFromDir);
+		} else {
+			files.add(getFile(path));
+		}
 	}
 
 	private File getFile(String filePath) throws IOException {

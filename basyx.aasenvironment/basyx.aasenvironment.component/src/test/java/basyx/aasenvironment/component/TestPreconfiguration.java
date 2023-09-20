@@ -54,10 +54,6 @@ public class TestPreconfiguration {
 	private static AasRepository aasRepo;
 	private static ConceptDescriptionRepository conceptDescriptionRepo;
 
-	private String AASX_SUFFIX = "aasx";
-	private String JSON_SUFFIX = "json";
-	private String XML_SUFFIX = "xml";
-
 	@BeforeClass
 	public static void startAASEnvironment() throws Exception {
 		appContext = new SpringApplication(AasEnvironmentComponent.class).run(new String[] {});
@@ -122,8 +118,8 @@ public class TestPreconfiguration {
 
 	@Test
 	public void aasxFromDirectoryLoadedShellsInRepository() {
-		AssetAdministrationShell shell1 = aasRepo.getAas("technical-data-shell-id-" + AASX_SUFFIX);
-		AssetAdministrationShell shell2 = aasRepo.getAas("operational-data-shell-id-" + AASX_SUFFIX);
+		AssetAdministrationShell shell1 = aasRepo.getAas("technical-data-shell-id-aasx");
+		AssetAdministrationShell shell2 = aasRepo.getAas("operational-data-shell-id-aasx");
 
 		assertNotNull(shell1);
 		assertNotNull(shell2);
@@ -131,8 +127,8 @@ public class TestPreconfiguration {
 
 	@Test
 	public void aasxFromDirectoryLoadedSubmodelsInRepository() {
-		Submodel submodel1 = submodelRepo.getSubmodel("7A7104BDAB57E184" + AASX_SUFFIX);
-		Submodel submodel2 = submodelRepo.getSubmodel("AC69B1CB44F07935" + AASX_SUFFIX);
+		Submodel submodel1 = submodelRepo.getSubmodel("7A7104BDAB57E184aasx");
+		Submodel submodel2 = submodelRepo.getSubmodel("AC69B1CB44F07935aasx");
 
 		assertNotNull(submodel1);
 		assertNotNull(submodel2);
@@ -140,8 +136,8 @@ public class TestPreconfiguration {
 
 	@Test
 	public void jsonFromDirectoryLoadedShellsInRepository() {
-		AssetAdministrationShell shell1 = aasRepo.getAas("technical-data-shell-id-" + JSON_SUFFIX);
-		AssetAdministrationShell shell2 = aasRepo.getAas("operational-data-shell-id-" + JSON_SUFFIX);
+		AssetAdministrationShell shell1 = aasRepo.getAas("technical-data-shell-id-json");
+		AssetAdministrationShell shell2 = aasRepo.getAas("operational-data-shell-id-json");
 
 		assertNotNull(shell1);
 		assertNotNull(shell2);
@@ -149,8 +145,8 @@ public class TestPreconfiguration {
 
 	@Test
 	public void jsonFromDirectoryLoadedSubmodelsInRepository() {
-		Submodel submodel1 = submodelRepo.getSubmodel("7A7104BDAB57E184" + JSON_SUFFIX);
-		Submodel submodel2 = submodelRepo.getSubmodel("AC69B1CB44F07935" + JSON_SUFFIX);
+		Submodel submodel1 = submodelRepo.getSubmodel("7A7104BDAB57E184json");
+		Submodel submodel2 = submodelRepo.getSubmodel("AC69B1CB44F07935json");
 
 		assertNotNull(submodel1);
 		assertNotNull(submodel2);
@@ -158,8 +154,8 @@ public class TestPreconfiguration {
 
 	@Test
 	public void xmlFromDirectoryLoadedShellsInRepository() {
-		AssetAdministrationShell shell1 = aasRepo.getAas("technical-data-shell-id-" + XML_SUFFIX);
-		AssetAdministrationShell shell2 = aasRepo.getAas("operational-data-shell-id-" + XML_SUFFIX);
+		AssetAdministrationShell shell1 = aasRepo.getAas("technical-data-shell-id-xml");
+		AssetAdministrationShell shell2 = aasRepo.getAas("operational-data-shell-id-xml");
 
 		assertNotNull(shell1);
 		assertNotNull(shell2);
@@ -167,8 +163,8 @@ public class TestPreconfiguration {
 
 	@Test
 	public void xmlFromDirectoryLoadedSubmodelsInRepository() {
-		Submodel submodel1 = submodelRepo.getSubmodel("7A7104BDAB57E184" + XML_SUFFIX);
-		Submodel submodel2 = submodelRepo.getSubmodel("AC69B1CB44F07935" + XML_SUFFIX);
+		Submodel submodel1 = submodelRepo.getSubmodel("7A7104BDAB57E184xml");
+		Submodel submodel2 = submodelRepo.getSubmodel("AC69B1CB44F07935xml");
 
 		assertNotNull(submodel1);
 		assertNotNull(submodel2);
