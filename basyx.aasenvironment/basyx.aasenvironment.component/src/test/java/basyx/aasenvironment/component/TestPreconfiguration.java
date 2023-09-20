@@ -46,14 +46,13 @@ import org.springframework.context.ConfigurableApplicationContext;
 /**
  * Tests the Preconfiguration feature of the AAS Environment
  * 
- * @author fried
+ * @author fried, witt, jungjan
  */
 public class TestPreconfiguration {
 	private static ConfigurableApplicationContext appContext;
 	private static SubmodelRepository submodelRepo;
 	private static AasRepository aasRepo;
 	private static ConceptDescriptionRepository conceptDescriptionRepo;
-
 
 	@BeforeClass
 	public static void startAASEnvironment() throws Exception {
@@ -77,8 +76,7 @@ public class TestPreconfiguration {
 
 	@Test
 	public void jsonLoadedConceptDescriptionIsInRepository() throws IOException, ParseException {
-		ConceptDescription conceptDescription = conceptDescriptionRepo
-				.getConceptDescription("https://acplt.test/Test_ConceptDescription");
+		ConceptDescription conceptDescription = conceptDescriptionRepo.getConceptDescription("https://acplt.test/Test_ConceptDescription");
 		assertNotNull(conceptDescription);
 	}
 
@@ -96,8 +94,7 @@ public class TestPreconfiguration {
 
 	@Test
 	public void xmlLoadedConceptDescriptionIsInRepository() throws IOException, ParseException {
-		ConceptDescription conceptDescription = conceptDescriptionRepo
-				.getConceptDescription("http://www.vdi2770.test/blatt1/Entwurf/Okt18/cd/Description/Title");
+		ConceptDescription conceptDescription = conceptDescriptionRepo.getConceptDescription("http://www.vdi2770.test/blatt1/Entwurf/Okt18/cd/Description/Title");
 		assertNotNull(conceptDescription);
 	}
 
@@ -115,9 +112,62 @@ public class TestPreconfiguration {
 
 	@Test
 	public void aasxLoadedConceptDescriptionIsInRepository() throws IOException, ParseException {
-		ConceptDescription conceptDescription = conceptDescriptionRepo
-				.getConceptDescription("http://www.vdi2770.com/blatt1/Entwurf/Okt18/cd/Description/Title");
+		ConceptDescription conceptDescription = conceptDescriptionRepo.getConceptDescription("http://www.vdi2770.com/blatt1/Entwurf/Okt18/cd/Description/Title");
 		assertNotNull(conceptDescription);
+	}
+
+	@Test
+	public void aasxFromDirectoryLoadedShellsInRepository() {
+		AssetAdministrationShell shell1 = aasRepo.getAas("technical-data-shell-id-aasx");
+		AssetAdministrationShell shell2 = aasRepo.getAas("operational-data-shell-id-aasx");
+
+		assertNotNull(shell1);
+		assertNotNull(shell2);
+	}
+
+	@Test
+	public void aasxFromDirectoryLoadedSubmodelsInRepository() {
+		Submodel submodel1 = submodelRepo.getSubmodel("7A7104BDAB57E184aasx");
+		Submodel submodel2 = submodelRepo.getSubmodel("AC69B1CB44F07935aasx");
+
+		assertNotNull(submodel1);
+		assertNotNull(submodel2);
+	}
+
+	@Test
+	public void jsonFromDirectoryLoadedShellsInRepository() {
+		AssetAdministrationShell shell1 = aasRepo.getAas("technical-data-shell-id-json");
+		AssetAdministrationShell shell2 = aasRepo.getAas("operational-data-shell-id-json");
+
+		assertNotNull(shell1);
+		assertNotNull(shell2);
+	}
+
+	@Test
+	public void jsonFromDirectoryLoadedSubmodelsInRepository() {
+		Submodel submodel1 = submodelRepo.getSubmodel("7A7104BDAB57E184json");
+		Submodel submodel2 = submodelRepo.getSubmodel("AC69B1CB44F07935json");
+
+		assertNotNull(submodel1);
+		assertNotNull(submodel2);
+	}
+
+	@Test
+	public void xmlFromDirectoryLoadedShellsInRepository() {
+		AssetAdministrationShell shell1 = aasRepo.getAas("technical-data-shell-id-xml");
+		AssetAdministrationShell shell2 = aasRepo.getAas("operational-data-shell-id-xml");
+
+		assertNotNull(shell1);
+		assertNotNull(shell2);
+	}
+
+	@Test
+	public void xmlFromDirectoryLoadedSubmodelsInRepository() {
+		Submodel submodel1 = submodelRepo.getSubmodel("7A7104BDAB57E184xml");
+		Submodel submodel2 = submodelRepo.getSubmodel("AC69B1CB44F07935xml");
+
+		assertNotNull(submodel1);
+		assertNotNull(submodel2);
 	}
 
 	@AfterClass

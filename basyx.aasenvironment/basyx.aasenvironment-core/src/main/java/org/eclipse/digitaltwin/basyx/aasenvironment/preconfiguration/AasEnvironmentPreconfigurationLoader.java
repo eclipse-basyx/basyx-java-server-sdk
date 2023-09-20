@@ -25,9 +25,12 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
@@ -43,48 +46,67 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.integration.file.RecursiveDirectoryScanner;
 import org.springframework.stereotype.Component;
 
 /**
  * Loader for AAS environment pre-configuration
  *
- * @author fried, mateusmolina, despen
+ * @author fried, mateusmolina, despen, witt, jungjan
  *
  */
 @Component
 public class AasEnvironmentPreconfigurationLoader {
 
 	@Value("${basyx.environment:#{null}}")
-	private List<String> filesToLoad;
+	private List<String> pathsToLoad;
 
 	private ResourceLoader resourceLoader;
 
 	@Autowired
-	public AasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, List<String> filesToLoad) {
+	public AasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, List<String> pathsToLoad) {
 		this.resourceLoader = resourceLoader;
-		this.filesToLoad = filesToLoad;
+		this.pathsToLoad = pathsToLoad;
 	}
 
 	public boolean shouldLoadPreconfiguredEnvironment() {
-		return filesToLoad != null;
+		return pathsToLoad != null;
 	}
 
-	public void loadPreconfiguredEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository,
-			ConceptDescriptionRepository conceptDescriptionRepository)
-					throws IOException, DeserializationException, InvalidFormatException {
-		for (String filePath : filesToLoad) {
-
-			InputStream fileStream = getFileInputStream(filePath);
-			Environment environment = getEnvironmentFromInputStream(filePath, fileStream);
+	public void loadPreconfiguredEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository)
+			throws IOException, DeserializationException, InvalidFormatException {
+		List<File> files = resolveFiles(pathsToLoad);
+		for (File file : files) {
+			Environment environment = getEnvironmentFromFile(file);
 			loadEnvironmentFromFile(aasRepository, submodelRepository, conceptDescriptionRepository, environment);
-
 		}
 	}
 
-	private void loadEnvironmentFromFile(AasRepository aasRepository, SubmodelRepository submodelRepository,
-			ConceptDescriptionRepository conceptDescriptionRepository, Environment environment) {
+	private List<File> resolveFiles(List<String> paths) throws IOException {
+		ArrayList<File> files = new ArrayList<>();
+
+		for (String path : paths) {
+			resolvePathAndAddFilesToList(files, path);
+		}
+		return files;
+	}
+
+	private void resolvePathAndAddFilesToList(ArrayList<File> files, String path) throws IOException {
+		if (!getFile(path).isFile()) {
+			List<File> filesFromDir = extractFilesToLoadFromEnvironmentDirectory(path);
+			files.addAll(filesFromDir);
+		} else {
+			files.add(getFile(path));
+		}
+	}
+
+	private File getFile(String filePath) throws IOException {
+		return resourceLoader.getResource(filePath)
+				.getFile();
+	}
+
+	private void loadEnvironmentFromFile(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository, Environment environment) {
 		if (isEnvironmentLoaded(environment)) {
 			createShellsOnRepositoryFromEnvironment(aasRepository, environment);
 			createSubmodelsOnRepositoryFromEnvironment(submodelRepository, environment);
@@ -92,15 +114,23 @@ public class AasEnvironmentPreconfigurationLoader {
 		}
 	}
 
-	private void createConceptDescriptionsOnRepositoryFromEnvironment(
-			ConceptDescriptionRepository conceptDescriptionRepository, Environment environment) {
+	private List<File> extractFilesToLoadFromEnvironmentDirectory(String directoryToLoad) throws IllegalArgumentException, IOException {
+		File rootDirectory = getFile(directoryToLoad);
+		RecursiveDirectoryScanner directoryScanner = new RecursiveDirectoryScanner();
+
+		List<File> potentialEnvironments = directoryScanner.listFiles(rootDirectory);
+		return potentialEnvironments.stream()
+				.filter(file -> isAasxFile(file.getPath()) || isJsonFile(file.getPath()) || isXmlFile(file.getPath()))
+				.collect(Collectors.toList());
+	}
+
+	private void createConceptDescriptionsOnRepositoryFromEnvironment(ConceptDescriptionRepository conceptDescriptionRepository, Environment environment) {
 		for (ConceptDescription conceptDescription : environment.getConceptDescriptions()) {
 			conceptDescriptionRepository.createConceptDescription(conceptDescription);
 		}
 	}
 
-	private void createSubmodelsOnRepositoryFromEnvironment(SubmodelRepository submodelRepository,
-			Environment environment) {
+	private void createSubmodelsOnRepositoryFromEnvironment(SubmodelRepository submodelRepository, Environment environment) {
 		for (Submodel submodel : environment.getSubmodels()) {
 			submodelRepository.createSubmodel(submodel);
 		}
@@ -112,17 +142,16 @@ public class AasEnvironmentPreconfigurationLoader {
 		}
 	}
 
-	private Environment getEnvironmentFromInputStream(String filePath, InputStream fileStream)
-			throws DeserializationException, InvalidFormatException, IOException {
+	private Environment getEnvironmentFromFile(File file) throws DeserializationException, InvalidFormatException, IOException {
 		Environment environment = null;
-		if (isJsonFile(filePath)) {
+		if (isJsonFile(file.getPath())) {
 			JsonDeserializer deserializer = new JsonDeserializer();
-			environment = deserializer.read(fileStream);
-		} else if (isXmlFile(filePath)) {
+			environment = deserializer.read(new FileInputStream(file));
+		} else if (isXmlFile(file.getPath())) {
 			XmlDeserializer deserializer = new XmlDeserializer();
-			environment = deserializer.read(fileStream);
-		} else if (isAasxFile(filePath)) {
-			AASXDeserializer deserializer = new AASXDeserializer(fileStream);
+			environment = deserializer.read(new FileInputStream(file));
+		} else if (isAasxFile(file.getPath())) {
+			AASXDeserializer deserializer = new AASXDeserializer(new FileInputStream(file));
 			environment = deserializer.read();
 		}
 		return environment;
@@ -140,13 +169,7 @@ public class AasEnvironmentPreconfigurationLoader {
 		return filePath.endsWith(".aasx");
 	}
 
-	private InputStream getFileInputStream(String filePath) throws IOException {
-		Resource resource = resourceLoader.getResource(filePath);
-		return resource.getInputStream();
-	}
-
 	private boolean isEnvironmentLoaded(Environment environment) {
 		return environment != null;
 	}
-
 }
