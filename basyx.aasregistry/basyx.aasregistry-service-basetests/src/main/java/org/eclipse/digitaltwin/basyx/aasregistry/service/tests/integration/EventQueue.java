@@ -28,17 +28,18 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEvent;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public abstract class BaseEventListener {
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+public class EventQueue {
 
 	private LinkedBlockingQueue<String> messageQueue = new LinkedBlockingQueue<>();
 
-	@Autowired
-	private ObjectMapper mapper;
+	private final ObjectMapper mapper;
 
 	public boolean offer(String message) {
 		return messageQueue.offer(message);
@@ -68,7 +69,7 @@ public abstract class BaseEventListener {
 
 	public RegistryEvent poll() {
 		try {
-			String message = messageQueue.poll(15, TimeUnit.SECONDS);
+			String message = messageQueue.poll(1, TimeUnit.MINUTES);
 			if (message == null) {
 				throw new EventListenerException("timeout");
 			}
