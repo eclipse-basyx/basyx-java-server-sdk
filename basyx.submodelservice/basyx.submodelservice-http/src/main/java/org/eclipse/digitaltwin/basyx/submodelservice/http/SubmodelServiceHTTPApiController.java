@@ -25,21 +25,26 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.http;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.http.model.OperationRequest;
+import org.eclipse.digitaltwin.basyx.http.model.OperationResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.eclipse.digitaltwin.basyx.pagination.GetSubmodelElementsResult;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,17 +63,19 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private SubmodelService service;
 
-	@org.springframework.beans.factory.annotation.Autowired
+	@Autowired
 	public SubmodelServiceHTTPApiController(SubmodelService service) {
 		this.service = service;
 	}
 
+	@Override
 	public ResponseEntity<Void> deleteSubmodelElementByPath(
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath) {
 		service.deleteSubmodelElement(idShortPath);
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 
+	@Override
 	public ResponseEntity<PagedResult> getAllSubmodelElements(
 			@Min(1) @Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array", schema = @Schema(allowableValues = {
 					"1" }, minimum = "1")) @Valid @RequestParam(value = "limit", required = false) Integer limit,
@@ -92,6 +99,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		return new ResponseEntity<PagedResult>(paginatedSubmodelElement, HttpStatus.OK);
 	}
 
+	@Override
 	public ResponseEntity<Submodel> getSubmodel(
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level,
@@ -103,6 +111,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		return new ResponseEntity<Submodel>(submodel, HttpStatus.OK);
 	}
 
+	@Override
 	public ResponseEntity<SubmodelElement> getSubmodelElementByPath(
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
 			@Min(1) @Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array", schema = @Schema(allowableValues = {
@@ -118,6 +127,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		return new ResponseEntity<SubmodelElement>(submodelElement, HttpStatus.OK);
 	}
 
+	@Override
 	public ResponseEntity<SubmodelElementValue> getSubmodelElementByPathValueOnly(
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
 			@Min(1) @Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array", schema = @Schema(allowableValues = {
@@ -133,6 +143,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		return new ResponseEntity<SubmodelElementValue>(submodelElementValue, HttpStatus.OK);
 	}
 
+	@Override
 	public ResponseEntity<Submodel> getSubmodelMetadata(@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 			"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level) {
 
@@ -142,6 +153,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		return new ResponseEntity<Submodel>(submodel, HttpStatus.OK);
 	}
 
+	@Override
 	public ResponseEntity<SubmodelValueOnly> getSubmodelValueOnly(
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level,
@@ -154,6 +166,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		return new ResponseEntity<SubmodelValueOnly>(result, HttpStatus.OK);
 	}
 
+	@Override
 	public ResponseEntity<Void> patchSubmodelElementByPathValueOnly(
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
 			@Parameter(in = ParameterIn.DEFAULT, description = "The SubmodelElement in its ValueOnly representation", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElementValue body,
@@ -166,6 +179,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 
+	@Override
 	public ResponseEntity<SubmodelElement> postSubmodelElement(@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElement body,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level) {
@@ -173,11 +187,28 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
 	}
 
+	@Override
 	public ResponseEntity<SubmodelElement> postSubmodelElementByPath(
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElement body) {
 		service.createSubmodelElement(idShortPath, body);
 		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
+	}
+
+	@Override
+	public ResponseEntity<OperationResult> invokeOperation(
+			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
+			@Parameter(in = ParameterIn.DEFAULT, description = "Operation request object", required = true, schema = @Schema()) @Valid @RequestBody OperationRequest body) {
+		OperationVariable[] result = service.invokeOperation(idShortPath, body.getInputArguments().toArray(new OperationVariable[0]));
+
+		return new ResponseEntity<OperationResult>(createOperationResult(result), HttpStatus.OK);
+
+	}
+
+	private OperationResult createOperationResult(OperationVariable[] result) {
+		OperationResult operationResult = new OperationResult();
+		operationResult.setOutputArguments(Arrays.asList(result));
+		return operationResult;
 	}
 
 }

@@ -37,10 +37,10 @@ public class ElementDoesNotExistException extends RuntimeException {
 	}
 
 	public ElementDoesNotExistException(String elementId) {
-		super(getMsg(elementId));
+		super(getMessage(elementId));
 	}
 
-	private static String getMsg(String elementId) {
+	private static String getMessage(String elementId) {
 		return "Element with Id " + elementId + " does not exist";
 	}
 }

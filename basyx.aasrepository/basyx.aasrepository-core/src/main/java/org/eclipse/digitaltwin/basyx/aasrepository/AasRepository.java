@@ -37,11 +37,11 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 /**
  * Specifies the overall AasRepository API
  * 
- * @author schnicke
+ * @author schnicke, kammognie
  *
  */
 public interface AasRepository {
-
+	
 	/**
 	 * Retrieves all Asset Administration Shells from the repository
 	 * 
@@ -121,8 +121,14 @@ public interface AasRepository {
 	 * @return the requested AAS
 	 */
 	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException;
-
+    
+	/**
+	 * Returns the name of the repository
+	 * 
+	 * @return repoName
+	 */
 	public default String getName() {
-		return "aasRepository-default-name";
+		return "aas-repo";
 	}
+	
 }

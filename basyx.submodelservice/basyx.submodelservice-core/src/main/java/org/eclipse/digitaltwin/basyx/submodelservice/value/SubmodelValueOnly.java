@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapperUtil;
 
@@ -45,7 +46,11 @@ public class SubmodelValueOnly {
 	private Map<String, SubmodelElementValue> submodelValuesMap;
 	
 	public SubmodelValueOnly(Collection<SubmodelElement> submodelElements) {		
-		submodelValuesMap = submodelElements.stream().map(ValueMapperUtil::toValueOnly).collect(Collectors.toMap(ValueOnly::getIdShort,ValueOnly::getSubmodelElementValue));
+		submodelValuesMap = submodelElements.stream().filter(SubmodelValueOnly::hasValueOnlyDefined).map(ValueMapperUtil::toValueOnly).collect(Collectors.toMap(ValueOnly::getIdShort, ValueOnly::getSubmodelElementValue));
+	}
+
+	private static boolean hasValueOnlyDefined(SubmodelElement element) {
+		return !(element instanceof Operation);
 	}
 	
 	public String getIdShort() {

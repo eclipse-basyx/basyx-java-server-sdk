@@ -38,6 +38,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Key;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.MultiLanguageProperty;
+import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Range;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
@@ -56,6 +58,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultFile;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultMultiLanguageProperty;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultRange;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
@@ -64,6 +67,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultRelationshipElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetID;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
+import org.eclipse.digitaltwin.basyx.InvokableOperation;
 
 /**
  * Test helper class for SubmodelService
@@ -164,6 +168,8 @@ public class SubmodelServiceHelper {
 	public static final String SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_LIST_ID_SHORT = "SubmodelElementList";
 	public static final String SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_SUBMODEL_ELEMENT_LIST = _0173_1_02_BAA120_008;
 	public static final String SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_LIST_CATEGORY = "PARAMETER";
+
+	public static final String SUBMODEL_TECHNICAL_DATA_OPERATION_ID = "square";
 
 	public static SubmodelElement getDummySubmodelElement(Submodel technicalData, String idShort) {
 		return technicalData.getSubmodelElements()
@@ -322,8 +328,31 @@ public class SubmodelServiceHelper {
 		List<SubmodelElement> list = new ArrayList<>();
 		list.addAll(
 				Arrays.asList(createPropertySubmodelElement(), createRangeSubmodelElement(), createMultiLanguagePropertySubmodelElement(), createFileSubmodelElement(), createEntitySubmodelElement(), createReferenceElementSubmodelElement(),
-						createRelationshipElementSubmodelElement(), createAnnotatedRelationshipElementSubmodelElement(), createBlobSubmodelElement(), createSubmodelElementCollection(), createSubmodelElementList()));
+						createRelationshipElementSubmodelElement(), createAnnotatedRelationshipElementSubmodelElement(), createBlobSubmodelElement(), createSubmodelElementCollection(), createSubmodelElementList(),
+						createInvokableOperation()));
 		return list;
+	}
+
+	public static OperationVariable createOperationVariable(Property val) {
+		return new DefaultOperationVariable.Builder().value(val).build();
+	}
+
+	private static Operation createInvokableOperation() {
+		return new InvokableOperation.Builder().idShort(SUBMODEL_TECHNICAL_DATA_OPERATION_ID).inputVariables(createIntOperationVariable("input")).outputVariables(createIntOperationVariable("result"))
+				.invokable(SubmodelServiceHelper::square).build();
+	}
+
+	private static OperationVariable[] square(OperationVariable[] inputs) {
+		Property in = (Property) inputs[0].getValue();
+		Integer val = Integer.valueOf(in.getValue());
+		Integer squared = val * val;
+		in.setValue(squared.toString());
+		in.setIdShort("result");
+		return new OperationVariable[] { createOperationVariable(in) };
+	}
+
+	private static DefaultOperationVariable createIntOperationVariable(String idShort) {
+		return new DefaultOperationVariable.Builder().value(new DefaultProperty.Builder().idShort(idShort).valueType(DataTypeDefXSD.INT).build()).build();
 	}
 
 	private static DefaultReference createFirstReference() {

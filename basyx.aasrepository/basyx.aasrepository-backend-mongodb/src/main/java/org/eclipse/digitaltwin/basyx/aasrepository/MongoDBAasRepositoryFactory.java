@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
@@ -44,16 +43,28 @@ public class MongoDBAasRepositoryFactory implements AasRepositoryFactory {
 	private MongoTemplate mongoTemplate;
 	private String collectionName;
 	private AasServiceFactory aasServiceFactory;
+	
+	private String aasRepositoryName;
 
-	@Autowired
-	public MongoDBAasRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName, AasServiceFactory aasServiceFactory) {
+	@Autowired(required = false)
+	public MongoDBAasRepositoryFactory(MongoTemplate mongoTemplate,
+			@Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName,
+			AasServiceFactory aasServiceFactory) {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
 		this.aasServiceFactory = aasServiceFactory;
 	}
+	
+	@Autowired(required = false)
+	public MongoDBAasRepositoryFactory(MongoTemplate mongoTemplate,
+			@Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName,
+			AasServiceFactory aasServiceFactory, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
+		this(mongoTemplate, collectionName, aasServiceFactory);
+		this.aasRepositoryName = aasRepositoryName;
+	}
 
 	@Override
 	public AasRepository create() {
-		return new MongoDBAasRepository(mongoTemplate, collectionName, aasServiceFactory);
+		return new MongoDBAasRepository(mongoTemplate, collectionName, aasServiceFactory, aasRepositoryName);
 	}
 }
