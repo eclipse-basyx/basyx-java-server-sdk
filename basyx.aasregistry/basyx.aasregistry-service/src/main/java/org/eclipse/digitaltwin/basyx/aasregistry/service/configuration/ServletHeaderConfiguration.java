@@ -68,6 +68,9 @@ public class ServletHeaderConfiguration {
 		private final Map<CacheKey, Map<String, String>> resolvedHeadersByPath = new ConcurrentHashMap<>();
 
 		public MappingsHeaderApplier(List<HeaderDefinition> headerDefs) {
+			if (headerDefs == null) {
+				headerDefs = List.of();
+			}
 			this.headerDefs = headerDefs;
 		}
 

@@ -24,64 +24,49 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage;
 
+import java.util.List;
 import java.util.Set;
 
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNotFoundException;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEvent;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEventSink;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
+public class SubmodelRegistryStorageDecorator implements SubmodelRegistryStorage {
 
-public class RegistrationEventSendingSubmodelRegistryStorage extends SubmodelRegistryStorageDecorator {
-
-	@NonNull
-	private final RegistryEventSink eventSink;
+	protected final SubmodelRegistryStorage storage;
 	
-	public RegistrationEventSendingSubmodelRegistryStorage(SubmodelRegistryStorage storage, RegistryEventSink sink) {
-		super(storage);
-		this.eventSink = sink;
+	@Override
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest) {
+		return storage.getAllSubmodelDescriptors(pRequest);
+	}
+
+	@Override
+	public SubmodelDescriptor getSubmodelDescriptor(String submodelId) throws SubmodelNotFoundException {
+		return storage.getSubmodelDescriptor(submodelId);
 	}
 
 	@Override
 	public void insertSubmodelDescriptor(SubmodelDescriptor descr) throws SubmodelAlreadyExistsException {
 		storage.insertSubmodelDescriptor(descr);
-		submodelRegistered(descr);
-	}
-	
-	@Override
-	public void removeSubmodelDescriptor(String submodelId) throws SubmodelNotFoundException {
-		storage.removeSubmodelDescriptor(submodelId);
-		submodelUnregistered(submodelId);
 	}
 
 	@Override
 	public void replaceSubmodelDescriptor(String submodelId, SubmodelDescriptor descr) throws SubmodelNotFoundException {
 		storage.replaceSubmodelDescriptor(submodelId, descr);
-		if (!submodelId.equals(descr.getId())) {
-			submodelUnregistered(submodelId);
-		}
-		submodelRegistered(descr);
 	}
 
-	
+	@Override
+	public void removeSubmodelDescriptor(String submodelId) throws SubmodelNotFoundException {
+		storage.removeSubmodelDescriptor(submodelId);
+	}
+
 	@Override
 	public Set<String> clear() {
-		Set<String> removed = storage.clear();
-		removed.forEach(this::submodelUnregistered);
-		return removed;
-	}
-
-	private void submodelRegistered(SubmodelDescriptor submodel) {
-		RegistryEvent evt = RegistryEvent.builder().id(submodel.getId()).type(RegistryEvent.EventType.SUBMODEL_REGISTERED).submodelDescriptor(submodel).build();
-		eventSink.consumeEvent(evt);
-	}
-
-	private void submodelUnregistered(@NonNull String submodelId) {
-		RegistryEvent evt = RegistryEvent.builder().id(submodelId).type(RegistryEvent.EventType.SUBMODEL_UNREGISTERED).build();
-		eventSink.consumeEvent(evt);
+		return storage.clear();
 	}
 }
