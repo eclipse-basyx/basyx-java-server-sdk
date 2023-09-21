@@ -41,7 +41,7 @@ import org.springframework.stereotype.Component;
  */
 @ConditionalOnExpression("#{${" + MqttSubmodelRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
 @Component
-public class MqttSubmodelRepositoryFeature implements SubmodelRepositoryFeature {
+public class MqttSubmodelRepositoryFeature<FilterType> implements SubmodelRepositoryFeature<FilterType> {
 	public final static String FEATURENAME = "basyx.submodelrepository.feature.mqtt";
 
 	@Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")

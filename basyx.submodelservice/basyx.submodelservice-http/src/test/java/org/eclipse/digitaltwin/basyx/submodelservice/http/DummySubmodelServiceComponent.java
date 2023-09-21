@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Bean;
 public class DummySubmodelServiceComponent {
 
 	@Bean
-	public SubmodelService getSubmodelService() {
+	public SubmodelService<?> getSubmodelService() {
 		return new InMemorySubmodelServiceFactory()
 				.create(DummySubmodelFactory.createSubmodelWithAllSubmodelElements());
 	}

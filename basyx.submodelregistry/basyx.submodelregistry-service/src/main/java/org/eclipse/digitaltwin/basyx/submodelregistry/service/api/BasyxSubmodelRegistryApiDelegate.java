@@ -56,24 +56,27 @@ public class BasyxSubmodelRegistryApiDelegate<FilterType> implements SubmodelDes
 
 	@Override
 	public ResponseEntity<Void> deleteAllSubmodelDescriptors() {
-		storage.clear();
+		storage.clear(permissionResolver.getDeleteAllSubmodelDescriptorsFilterInfo());
 		return ResponseEntity.noContent().build();
 	}
 
 	@Override
 	public ResponseEntity<SubmodelDescriptor> getSubmodelDescriptorById(String submodelIdentifier) {
+		permissionResolver.getSubmodelDescriptorById(submodelIdentifier);
 		SubmodelDescriptor submodelDescriptor = storage.getSubmodelDescriptor(submodelIdentifier);
 		return ResponseEntity.ok(submodelDescriptor);
 	}
 
 	@Override
 	public ResponseEntity<Void> deleteSubmodelDescriptorById(String submodelIdentifier) {
+		permissionResolver.deleteSubmodelDescriptorById(submodelIdentifier);
 		storage.removeSubmodelDescriptor(submodelIdentifier);
 		return ResponseEntity.noContent().build();
 	}
 
 	@Override
 	public ResponseEntity<SubmodelDescriptor> postSubmodelDescriptor(SubmodelDescriptor submodelDescriptor) {
+		permissionResolver.postSubmodelDescriptor(submodelDescriptor.getId());
 		storage.insertSubmodelDescriptor(submodelDescriptor);
 		URI location = locationBuilder.getSubmodelLocation(submodelDescriptor.getId());		
 		return ResponseEntity.created(location).body(submodelDescriptor);
@@ -81,6 +84,7 @@ public class BasyxSubmodelRegistryApiDelegate<FilterType> implements SubmodelDes
 
 	@Override
 	public ResponseEntity<Void> putSubmodelDescriptorById(String submodelIdentifier, SubmodelDescriptor submodelDescriptor) {
+		permissionResolver.putSubmodelDescriptorById(submodelIdentifier);
 		storage.replaceSubmodelDescriptor(submodelIdentifier, submodelDescriptor);
 		return ResponseEntity.noContent().build();
 	}
@@ -88,7 +92,6 @@ public class BasyxSubmodelRegistryApiDelegate<FilterType> implements SubmodelDes
 	@Override
 	public ResponseEntity<GetSubmodelDescriptorsResult> getAllSubmodelDescriptors(Integer limit, String cursor) {
 		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
-		//Predicate<SubmodelDescriptor> filterMethod = (submodelDescriptor) -> permissionResolver.hasPermission(submodelDescriptor, Action.READ);
 		CursorResult<List<SubmodelDescriptor>> cResult = storage.getAllSubmodelDescriptors(pInfo, permissionResolver.getGetAllSubmodelDescriptorsFilterInfo());
 		GetSubmodelDescriptorsResult gsdResult = new GetSubmodelDescriptorsResult();
 		gsdResult.setPagingMetadata(new PagedResultPagingMetadata().cursor(cResult.getCursor()));

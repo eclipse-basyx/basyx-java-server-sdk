@@ -24,30 +24,31 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.tests;
 
-import java.util.List;
-
+import lombok.NonNull;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorageDelegate;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorCopies;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
-import lombok.NonNull;
+import java.util.List;
+import java.util.Set;
 
 //performs additional cloning for in memory tests so that
 //altering the objects during tests will then not affect the storage
-public class CloningAasRegistryStorageDecorator extends AasRegistryStorageDelegate {
+public class CloningAasRegistryStorageDecorator<AssetAdministrationShellDescriptorFilterType, SubmodelDescriptorFilterType> extends AasRegistryStorageDelegate<AssetAdministrationShellDescriptorFilterType, SubmodelDescriptorFilterType> {
 
-	public CloningAasRegistryStorageDecorator(AasRegistryStorage storage) {
+	public CloningAasRegistryStorageDecorator(AasRegistryStorage<AssetAdministrationShellDescriptorFilterType, SubmodelDescriptorFilterType> storage) {
 		super(storage);
 	}
 
 	@Override
-	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter) {
-		CursorResult<List<AssetAdministrationShellDescriptor>> result = storage.getAllAasDescriptors(pRequest, filter);
+	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter, FilterInfo<AssetAdministrationShellDescriptorFilterType> filterInfo) {
+		CursorResult<List<AssetAdministrationShellDescriptor>> result = storage.getAllAasDescriptors(pRequest, filter, filterInfo);
 		List<AssetAdministrationShellDescriptor> listClone = DescriptorCopies.deepCloneCollection(result.getResult());
 		return new CursorResult<>(result.getCursor(), listClone);
 	}
@@ -55,7 +56,7 @@ public class CloningAasRegistryStorageDecorator extends AasRegistryStorageDelega
 	public AssetAdministrationShellDescriptor getAasDescriptor(String aasId) {
 		return DescriptorCopies.deepClone(storage.getAasDescriptor(aasId));
 	}
-	
+
 	@Override
 	public void replaceAasDescriptor(String id, AssetAdministrationShellDescriptor descriptor) {
 		storage.replaceAasDescriptor(id, DescriptorCopies.deepClone(descriptor));
@@ -69,6 +70,13 @@ public class CloningAasRegistryStorageDecorator extends AasRegistryStorageDelega
 	}
 
 	@Override
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(String aasDescriptorId, PaginationInfo pRequest, FilterInfo<SubmodelDescriptorFilterType> filterInfo) {
+		CursorResult<List<SubmodelDescriptor>> result = storage.getAllSubmodels(aasDescriptorId, pRequest, filterInfo);
+		List<SubmodelDescriptor> submodelClone = DescriptorCopies.deepCloneCollection(result.getResult());
+		return new CursorResult<>(result.getCursor(), submodelClone);
+	}
+
+	@Override
 	public SubmodelDescriptor getSubmodel(String aasDescriptorId, String submodelId) {
 		return DescriptorCopies.deepClone(storage.getSubmodel(aasDescriptorId, submodelId));
 	}
@@ -76,5 +84,10 @@ public class CloningAasRegistryStorageDecorator extends AasRegistryStorageDelega
 	@Override
 	public void insertSubmodel(String aasDescriptorId, SubmodelDescriptor submodel) {
 		storage.insertSubmodel(aasDescriptorId, DescriptorCopies.deepClone(submodel));
+	}
+
+	@Override
+	public Set<String> clear(FilterInfo<AssetAdministrationShellDescriptorFilterType> filterInfo) {
+		return storage.clear(filterInfo);
 	}
 }

@@ -55,13 +55,13 @@ public class TestConceptDescriptionRepositoryHTTP extends ConceptDescriptionRepo
 
 	@Override
 	public void resetRepository() {
-		ConceptDescriptionRepository repo = appContext.getBean(ConceptDescriptionRepository.class);
+		ConceptDescriptionRepository<?> repo = appContext.getBean(ConceptDescriptionRepository.class);
 		Collection<ConceptDescription> conceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
 		resetRepoToDefaultConceptDescriptions(repo, conceptDescriptions);
 	}
 
-	private void resetRepoToDefaultConceptDescriptions(ConceptDescriptionRepository repo, Collection<ConceptDescription> conceptDescriptions) {
-		repo.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO)
+	private void resetRepoToDefaultConceptDescriptions(ConceptDescriptionRepository<?> repo, Collection<ConceptDescription> conceptDescriptions) {
+		repo.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO, null)
 				.getResult()
 				.stream()
 				.map(s -> s.getId())

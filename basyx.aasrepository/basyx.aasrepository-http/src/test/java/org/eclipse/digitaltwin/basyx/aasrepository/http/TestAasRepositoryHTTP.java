@@ -51,8 +51,8 @@ public class TestAasRepositoryHTTP extends AasRepositoryHTTPSuite {
 
 	@Override
 	public void resetRepository() {
-		AasRepository repo = appContext.getBean(AasRepository.class);
-		repo.getAllAas(NO_LIMIT_PAGINATION_INFO)
+		AasRepository<?> repo = appContext.getBean(AasRepository.class);
+		repo.getAllAas(NO_LIMIT_PAGINATION_INFO, null)
 				.getResult()
 				.stream()
 				.map(a -> a.getId())

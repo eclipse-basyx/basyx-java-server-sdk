@@ -23,17 +23,20 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.springframework.data.domain.Sort;
@@ -52,7 +55,7 @@ import com.mongodb.client.result.DeleteResult;
  * @author schnicke, kevinbck, kammognie
  *
  */
-public class MongoDBAasRepository implements AasRepository {
+public class MongoDBAasRepository implements AasRepository<Criteria, Criteria> {
 	private static String IDJSONPATH = "id";
 	private static final String ID = "_id";
 	private MongoTemplate mongoTemplate;
@@ -78,10 +81,13 @@ public class MongoDBAasRepository implements AasRepository {
 	}
 
 	@Override
-	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
+	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo, FilterInfo<Criteria> filterInfo) {
 		Query query = new Query();
+		List<Criteria> criterias = new ArrayList<>();
+		applyFiltering(query, filterInfo, criterias);
 		applySorting(query, pInfo);
-		applyPagination(query, pInfo);
+		applyPagination(query, pInfo, criterias);
+		query.addCriteria(new Criteria().andOperator(criterias.toArray(Criteria[]::new)));
 		List<AssetAdministrationShell> foundDescriptors = mongoTemplate.find(query, AssetAdministrationShell.class,
 				collectionName);
 
@@ -133,9 +139,9 @@ public class MongoDBAasRepository implements AasRepository {
 	}
 
 	@Override
-	public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo) {
+	public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo, FilterInfo<Criteria> filterInfo) {
 		CursorResult<List<Reference>> paginatedSubmodelReferences = aasServiceFactory.create(getAas(aasId))
-				.getSubmodelReferences(pInfo);
+				.getSubmodelReferences(pInfo, filterInfo);
 
 		return paginatedSubmodelReferences;
 	}
@@ -200,13 +206,19 @@ public class MongoDBAasRepository implements AasRepository {
 		return idResolver.apply(last);
 	}
 
+	private void applyFiltering(Query query, FilterInfo<Criteria> filterInfo, List<Criteria> criterias) {
+		if (filterInfo != null) {
+			criterias.add(filterInfo.getFilter());
+		}
+	}
+
 	private void applySorting(Query query, PaginationInfo pInfo) {
 		query.with(Sort.by(Direction.ASC, ID));
 	}
 
-	private void applyPagination(Query query, PaginationInfo pInfo) {
+	private void applyPagination(Query query, PaginationInfo pInfo, List<Criteria> criterias) {
 		if (pInfo.getCursor() != null) {
-			query.addCriteria(Criteria.where(ID).gt(pInfo.getCursor()));
+			criterias.add(Criteria.where(ID).gt(pInfo.getCursor()));
 		}
 		if (pInfo.getLimit() != null) {
 			query.limit(pInfo.getLimit());

@@ -35,6 +35,6 @@ import org.eclipse.digitaltwin.basyx.core.BaSyxFeature;
  * @author schnicke, danish
  *
  */
-public interface ConceptDescriptionRepositoryFeature extends BaSyxFeature<ConceptDescriptionRepositoryFactory> {
+public interface ConceptDescriptionRepositoryFeature<ConceptDescriptionFilterType> extends BaSyxFeature<ConceptDescriptionRepositoryFactory<ConceptDescriptionFilterType>> {
 
 }

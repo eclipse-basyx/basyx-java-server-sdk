@@ -57,13 +57,13 @@ public class PredefinedSetRbacRuleChecker implements IRbacRuleChecker {
 	 *            target attributes
 	 * @return true if the requested rbac tuple was found, false otherwise
 	 */
-	public boolean checkRbacRuleIsSatisfied(final List<String> roles, final String action, final ITargetInformation targetInformation) {
+	public boolean checkRbacRuleIsSatisfied(final List<String> roles, final String action, final ITargetInfo targetInformation) {
 		final Optional<RbacRule> matchingRule = getMatchingRules(roles, action, targetInformation).findAny();
 		logger.info("roles: {}, action: {}, targetInfo: {} - matching-rule?: {}", roles, action, targetInformation, matchingRule);
 		return matchingRule.isPresent();
 	}
 
-	private Stream<RbacRule> getMatchingRules(final List<String> roles, final String action, final ITargetInformation targetInformation) {
+	private Stream<RbacRule> getMatchingRules(final List<String> roles, final String action, final ITargetInfo targetInformation) {
 		return this.rbacRuleSet.getRules().parallelStream().filter(rbacRule -> checkRolesMatchRbacRule(rbacRule, roles)).filter(rbacRule -> checkActionMatchesRbacRule(rbacRule, action))
 				.filter(rbacRule -> checkRbacRuleMatchesTargetInformation(rbacRule, targetInformation));
 	}
@@ -76,7 +76,7 @@ public class PredefinedSetRbacRuleChecker implements IRbacRuleChecker {
 		return rbacRule.getAction().equals("*") || rbacRule.getAction().equals(action);
 	}
 
-	private boolean checkRbacRuleMatchesTargetInformation(final RbacRule rbacRule, final ITargetInformation targetInformation) {
+	private boolean checkRbacRuleMatchesTargetInformation(final RbacRule rbacRule, final ITargetInfo targetInformation) {
 		final Map<String, String> targetInformationMap = targetInformation.toMap();
 		final Map<String, String> rbacRuleTargetInformationMap = rbacRule.getTargetInformation().toMap();
 		for (final Map.Entry<String, String> targetInfo : targetInformationMap.entrySet()) {

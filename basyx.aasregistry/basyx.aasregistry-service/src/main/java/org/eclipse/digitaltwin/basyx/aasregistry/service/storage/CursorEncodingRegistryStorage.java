@@ -24,36 +24,60 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.storage;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
+import lombok.NonNull;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
+import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchRequest;
+import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchResponse;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNotFoundException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
-import lombok.NonNull;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Set;
 
 
-public class CursorEncodingRegistryStorage extends AasRegistryStorageDelegate {
+public class CursorEncodingRegistryStorage<AssetAdministrationShellDescriptorFilterType, SubmodelDescriptorFilterType> extends AasRegistryStorageDelegate<AssetAdministrationShellDescriptorFilterType, SubmodelDescriptorFilterType> {
 
 	public CursorEncodingRegistryStorage(AasRegistryStorage storage) {
 		super(storage);
 	}
-	
+
 	@Override
-	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter) {
+	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter, FilterInfo<AssetAdministrationShellDescriptorFilterType> filterInfo) {
 		PaginationInfo decoded = decodeCursor(pRequest);
-		CursorResult<List<AssetAdministrationShellDescriptor>> result = storage.getAllAasDescriptors(decoded, filter);
+		CursorResult<List<AssetAdministrationShellDescriptor>> result = storage.getAllAasDescriptors(decoded, filter, filterInfo);
 		return encodeCursor(result);
 	}
 
 	@Override
-	public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(@NonNull String aasDescriptorId, @NonNull PaginationInfo pRequest) throws AasDescriptorNotFoundException {
+	public AssetAdministrationShellDescriptor getAasDescriptor(@NonNull String aasDescriptorId) throws AasDescriptorNotFoundException {
+		return storage.getAasDescriptor(aasDescriptorId);
+	}
+
+	@Override
+	public void insertAasDescriptor(AssetAdministrationShellDescriptor descr) throws AasDescriptorAlreadyExistsException {
+		storage.insertAasDescriptor(descr);
+	}
+
+	@Override
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(@NonNull String aasDescriptorId, @NonNull PaginationInfo pRequest, FilterInfo<SubmodelDescriptorFilterType> filterInfo) throws AasDescriptorNotFoundException {
 		PaginationInfo decoded = decodeCursor(pRequest);
-		CursorResult<List<SubmodelDescriptor>> result = storage.getAllSubmodels(aasDescriptorId, decoded);
+		CursorResult<List<SubmodelDescriptor>> result = storage.getAllSubmodels(aasDescriptorId, decoded, filterInfo);
 		return encodeCursor(result);
+	}
+
+	@Override
+	public Set<String> clear(FilterInfo<AssetAdministrationShellDescriptorFilterType> filterInfo) {
+		return storage.clear(filterInfo);
+	}
+
+	@Override
+	public ShellDescriptorSearchResponse searchAasDescriptors(@NonNull ShellDescriptorSearchRequest request) {
+		return storage.searchAasDescriptors(request);
 	}
 
 	private <T> CursorResult<T> encodeCursor(CursorResult<T> result) {

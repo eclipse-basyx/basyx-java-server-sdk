@@ -16,5 +16,6 @@
 		<module>basyx.submodelservice-http</module>
 		<module>basyx.submodelservice.component</module>
 		<module>basyx.submodelservice-backend-inmemory</module>
+		<module>basyx.submodelservice-authorization</module>
 	</modules>
 </project>

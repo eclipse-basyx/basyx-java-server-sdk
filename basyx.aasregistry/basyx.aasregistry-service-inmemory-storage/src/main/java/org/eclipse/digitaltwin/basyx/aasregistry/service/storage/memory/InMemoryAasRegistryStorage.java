@@ -38,6 +38,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
@@ -51,12 +52,13 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelAlreadyE
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 import lombok.RequiredArgsConstructor;
 
-public class InMemoryAasRegistryStorage implements AasRegistryStorage {
+public class InMemoryAasRegistryStorage implements AasRegistryStorage<Predicate<AssetAdministrationShellDescriptor>, Predicate<SubmodelDescriptor>> {
 
 	private final TreeMap<String, AssetAdministrationShellDescriptor> aasDescriptorLookupMap = new TreeMap<>();
 	private final HashMap<String, TreeMap<String, SubmodelDescriptor>> submodelLookupMap = new HashMap<>();
@@ -67,7 +69,7 @@ public class InMemoryAasRegistryStorage implements AasRegistryStorage {
 	}
 
 	@Override
-	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(PaginationInfo pRequest, DescriptorFilter filter) {
+	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(PaginationInfo pRequest, DescriptorFilter filter, FilterInfo<Predicate<AssetAdministrationShellDescriptor>> filterInfo) {
 		PaginationSupport<AssetAdministrationShellDescriptor> paginationSupport = new PaginationSupport<>(aasDescriptorLookupMap, AssetAdministrationShellDescriptor::getId);
 
 		DescriptorFilterFunction function = new DescriptorFilterFunction(filter);
@@ -75,13 +77,13 @@ public class InMemoryAasRegistryStorage implements AasRegistryStorage {
 	}
 
 	@Override
-	public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(String aasDescriptorId, PaginationInfo pInfo) throws AasDescriptorNotFoundException {
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(String aasDescriptorId, PaginationInfo pInfo, FilterInfo<Predicate<SubmodelDescriptor>> filterInfo) throws AasDescriptorNotFoundException {
 		TreeMap<String, SubmodelDescriptor> submodels = submodelLookupMap.get(aasDescriptorId);
 		if (submodels == null) {
 			throw new AasDescriptorNotFoundException(aasDescriptorId);
 		}
 		PaginationSupport<SubmodelDescriptor> paginationSupport = new PaginationSupport<>(submodels, SubmodelDescriptor::getId);
-		return paginationSupport.getDescriptorsPaged(pInfo);
+		return paginationSupport.getDescriptorsPagedAndFiltered(pInfo, null, filterInfo.getFilter());
 	}
 
 	@Override
@@ -218,6 +220,14 @@ public class InMemoryAasRegistryStorage implements AasRegistryStorage {
 				break;
 			}
 		}
+	}
+
+	@Override
+	public Set<String> clear(FilterInfo<Predicate<AssetAdministrationShellDescriptor>> filterInfo) {
+		Set<String> keys = aasDescriptorLookupMap.entrySet().stream().filter(entry -> filterInfo.getFilter().test(entry.getValue())).map(Map.Entry::getKey).collect(Collectors.toSet());
+		aasDescriptorLookupMap.entrySet().removeIf(entry -> filterInfo.getFilter().test(entry.getValue()));
+		submodelLookupMap.entrySet().removeIf(entry -> !aasDescriptorLookupMap.containsKey(entry.getKey()));
+		return keys;
 	}
 
 	@Override

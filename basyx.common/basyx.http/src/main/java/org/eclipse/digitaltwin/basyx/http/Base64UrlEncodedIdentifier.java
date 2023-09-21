@@ -36,7 +36,7 @@ import java.util.Base64;
  * @author gordt, schnicke
  *
  */
-public class Base64UrlEncodedIdentifier {
+public class Base64UrlEncodedIdentifier implements CharSequence {
 
 	public Base64UrlEncodedIdentifier(String identifier) {
 		this.identifier = identifier;
@@ -76,6 +76,21 @@ public class Base64UrlEncodedIdentifier {
 		byte[] bytes = unencodedIdentifier.getBytes(StandardCharsets.UTF_8);
 		String base64urlEncoded = Base64.getUrlEncoder().encodeToString(bytes);
 		return base64urlEncoded.replaceAll("=", "");
+	}
+
+	@Override
+	public int length() {
+		return identifier.length();
+	}
+
+	@Override
+	public char charAt(int index) {
+		return identifier.charAt(index);
+	}
+
+	@Override
+	public CharSequence subSequence(int start, int end) {
+		return identifier.subSequence(start, end);
 	}
 
 	@Override

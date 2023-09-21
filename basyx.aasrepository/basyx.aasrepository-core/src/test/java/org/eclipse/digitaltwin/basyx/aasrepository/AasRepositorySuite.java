@@ -71,7 +71,7 @@ public abstract class AasRepositorySuite {
 
 	private static final String DUMMY_SUBMODEL_ID = "dummySubmodelId";
 
-	private AasRepository aasRepo;
+	private AasRepository<?, ?> aasRepo;
 
 	protected abstract AasRepositoryFactory getAasRepositoryFactory();
 	
@@ -102,7 +102,7 @@ public abstract class AasRepositorySuite {
 	@Test
 	public void allAasRetrieval() throws Exception {
 		PaginationInfo pInfo = new PaginationInfo(2, null);
-		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(pInfo)
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(pInfo, null)
 				.getResult();
 		assertEquals(preconfiguredShells, coll);
 	}
@@ -143,14 +143,14 @@ public abstract class AasRepositorySuite {
 	public void getSubmodelReferences() {
 		Reference reference = createDummyReference(DUMMY_SUBMODEL_ID);
 
-		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo)
+		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo, null)
 				.getResult();
 		assertTrue(submodelReferences.contains(reference));
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getSubmodelReferencesOfNonExistingAas() {
-		aasRepo.getSubmodelReferences("doesNotMatter", noLimitPaginationInfo)
+		aasRepo.getSubmodelReferences("doesNotMatter", noLimitPaginationInfo, null)
 				.getResult();
 	}
 
@@ -159,7 +159,7 @@ public abstract class AasRepositorySuite {
 		Reference reference = createDummyReference(DUMMY_SUBMODEL_ID);
 		aasRepo.addSubmodelReference(aas1.getId(), reference);
 
-		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo)
+		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo, null)
 				.getResult();
 
 		assertTrue(submodelReferences.contains(reference));
@@ -176,7 +176,7 @@ public abstract class AasRepositorySuite {
 		Reference reference = createDummyReference(DUMMY_SUBMODEL_ID);
 		aasRepo.removeSubmodelReference(aas1.getId(), DUMMY_SUBMODEL_ID);
 
-		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo)
+		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo, null)
 				.getResult();
 
 		assertFalse(submodelReferences.contains(reference));
@@ -240,7 +240,7 @@ public abstract class AasRepositorySuite {
 
 	@Test
 	public void getPaginatedAssetAdministrationShell() {
-		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null));
+		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null), null);
 		List<AssetAdministrationShell> resultList = result.getResult();
 		assertEquals(1, resultList.size());
 		assertEquals(AAS_1_ID, resultList.stream()
@@ -251,10 +251,10 @@ public abstract class AasRepositorySuite {
 
 	@Test
 	public void getPaginatedAssetAdministrationShellIterating() {
-		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null));
+		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null), null);
 		String cursor = result.getCursor();
 
-		result = aasRepo.getAllAas(new PaginationInfo(1, cursor));
+		result = aasRepo.getAllAas(new PaginationInfo(1, cursor), null);
 		List<AssetAdministrationShell> resultList = result.getResult();
 		assertEquals(1, resultList.size());
 		assertEquals(AAS2, resultList.stream()
@@ -271,7 +271,7 @@ public abstract class AasRepositorySuite {
 				.build();
 		aasRepo.createAas(aas);
 		PaginationInfo pInfo = new PaginationInfo(1, "");
-		CursorResult<List<Reference>> paginatedReferences = aasRepo.getSubmodelReferences("paginatedAAS", pInfo);
+		CursorResult<List<Reference>> paginatedReferences = aasRepo.getSubmodelReferences("paginatedAAS", pInfo, null);
 		assertEquals(1, paginatedReferences.getResult()
 				.size());
 		assertEquals(submodelReferences.stream()

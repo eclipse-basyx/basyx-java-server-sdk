@@ -26,11 +26,13 @@
 
 package org.eclipse.digitaltwin.basyx.core.pagination;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -60,6 +62,27 @@ public class PaginationSupport<T extends Object> {
 			cursor = computeNextCursor(resultList, pInfo);
 		}
 		return new CursorResult<>(cursor, resultList);
+	}
+
+	public CursorResult<List<T>> getPagedAndFiltered(PaginationInfo pInfo, Predicate<T> filterMethod) {
+
+		Map<String, T> cursorView = getCursorView(pInfo);
+		Stream<Entry<String, T>> eStream = cursorView.entrySet().stream();
+
+		if (filterMethod != null) {
+			eStream = applyFilter(e -> filterMethod.test(e.getValue()), eStream);
+		}
+		Stream<T> tStream = eStream.map(Entry::getValue);
+		tStream = applyLimit(pInfo, tStream);
+
+		List<T> descriptorList = tStream.collect(Collectors.toList());
+
+		String cursor = computeNextCursor(descriptorList);
+		return new CursorResult<>(cursor, Collections.unmodifiableList(descriptorList));
+	}
+
+	private Stream<Entry<String, T>> applyFilter(Predicate<Entry<String, T>> filterMethod, Stream<Entry<String, T>> aStream) {
+		return aStream.filter(filterMethod);
 	}
 
 	private Stream<T> applyLimit(PaginationInfo info, Stream<T> aStream) {

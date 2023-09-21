@@ -32,12 +32,12 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
  * @author schnicke, danish
  * 
  */
-public interface ConceptDescriptionRepositoryFactory {
+public interface ConceptDescriptionRepositoryFactory<ConceptDescriptionFilterType> {
 	
 	/**
 	 * Creates a new ConceptDescriptionRepository
 	 * 
 	 * @return
 	 */
-	public ConceptDescriptionRepository create();
+	public ConceptDescriptionRepository<ConceptDescriptionFilterType> create();
 }

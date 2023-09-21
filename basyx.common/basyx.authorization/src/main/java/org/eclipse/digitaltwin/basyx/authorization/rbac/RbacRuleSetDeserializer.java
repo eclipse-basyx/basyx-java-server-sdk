@@ -42,7 +42,7 @@ import java.util.function.Consumer;
 /**
  * Deserializer for {@link RbacRuleSet}.
  * <p>
- * Supports polymorphism for {@link ITargetInformation} using a "@type"
+ * Supports polymorphism for {@link ITargetInfo} using a "@type"
  * discriminator field. If you need to support further implementations, you can
  * register it via {@link ObjectMapper#registerSubtypes(NamedType...)} using the
  * {@link RbacRuleSetDeserializer#RbacRuleSetDeserializer(Consumer)}
@@ -62,7 +62,7 @@ public class RbacRuleSetDeserializer {
 
 	public static class RbacRuleMixin {
 		@JsonCreator
-		public RbacRuleMixin(final @JsonProperty("role") String role, final @JsonProperty("action") String action, final @JsonProperty("targetInformation") ITargetInformation targetInformation) {
+		public RbacRuleMixin(final @JsonProperty("role") String role, final @JsonProperty("action") String action, final @JsonProperty("targetInformation") ITargetInfo targetInformation) {
 
 		}
 	}
@@ -77,7 +77,10 @@ public class RbacRuleSetDeserializer {
 	public RbacRuleSetDeserializer(final Consumer<ObjectMapper> objectMapperConsumer) {
 		objectMapper = new ObjectMapper();
 		objectMapper.addMixIn(RbacRule.class, RbacRuleMixin.class);
-		objectMapper.addMixIn(ITargetInformation.class, TargetInformationMixin.class).registerSubtypes(new NamedType(BaSyxObjectTargetInformation.class, "basyx"), new NamedType(TagTargetInformation.class, "tag"));
+		objectMapper.addMixIn(ITargetInfo.class, TargetInformationMixin.class)
+				.registerSubtypes(new NamedType(BaSyxObjectTargetInfo.class, "basyx"));
+		objectMapper.registerSubtypes(new NamedType(RbacRuleTargetInfo.class, "rbac"));
+
 		objectMapperConsumer.accept(objectMapper);
 	}
 

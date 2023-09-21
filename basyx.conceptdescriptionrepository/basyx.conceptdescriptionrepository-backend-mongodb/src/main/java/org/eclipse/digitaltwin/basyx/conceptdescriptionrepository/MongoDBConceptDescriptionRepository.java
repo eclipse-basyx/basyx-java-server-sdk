@@ -34,6 +34,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -52,7 +53,7 @@ import com.mongodb.client.result.DeleteResult;
  * @author danish, kammognie
  *
  */
-public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRepository {
+public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRepository<Criteria> {
 	private static final String IDJSONPATH = "id";
 
 	private MongoTemplate mongoTemplate;
@@ -71,14 +72,14 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 	}
 
 	@Override
-	public CursorResult<List<ConceptDescription>> getAllConceptDescriptions(PaginationInfo pInfo) {
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptions(PaginationInfo pInfo, FilterInfo<Criteria> filterInfo) {
 		List<ConceptDescription> cdList = mongoTemplate.findAll(ConceptDescription.class, collectionName);
 		CursorResult<List<ConceptDescription>> paginatedCD = paginateList(pInfo, cdList);
 		return paginatedCD;
 	}
 
 	@Override
-	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIdShort(String idShort, PaginationInfo pInfo) {
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIdShort(String idShort, PaginationInfo pInfo, FilterInfo<Criteria> filterInfo) {
 		List<ConceptDescription> allDescriptions = mongoTemplate.findAll(ConceptDescription.class, collectionName);
 
 		List<ConceptDescription> filtered = allDescriptions.stream()
@@ -90,7 +91,7 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 	}
 
 	@Override
-	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIsCaseOf(Reference reference, PaginationInfo pInfo) {
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIsCaseOf(Reference reference, PaginationInfo pInfo, FilterInfo<Criteria> filterInfo) {
 		List<ConceptDescription> allDescriptions = mongoTemplate.findAll(ConceptDescription.class, collectionName);
 		List<ConceptDescription> filtered = allDescriptions.stream()
 				.filter(conceptDescription -> hasMatchingReference(conceptDescription, reference))
@@ -101,7 +102,7 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 	}
 
 	@Override
-	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByDataSpecificationReference(Reference reference, PaginationInfo pInfo) {
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByDataSpecificationReference(Reference reference, PaginationInfo pInfo, FilterInfo<Criteria> filterInfo) {
 		List<ConceptDescription> allDescriptions = mongoTemplate.findAll(ConceptDescription.class, collectionName);
 
 		List<ConceptDescription> filtered = allDescriptions.stream()

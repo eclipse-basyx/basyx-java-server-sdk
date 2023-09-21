@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -38,6 +39,7 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -48,7 +50,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
  * @author schnicke, danish, kammognie
  *
  */
-public class InMemoryAasRepository implements AasRepository {
+public class InMemoryAasRepository implements AasRepository<Predicate<AssetAdministrationShell>, Predicate<Reference>> {
 
 	private Map<String, AasService> aasServices = new LinkedHashMap<>();
 
@@ -78,7 +80,7 @@ public class InMemoryAasRepository implements AasRepository {
 	}
 
 	@Override
-	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
+	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo, FilterInfo<Predicate<AssetAdministrationShell>> filterInfo) {
 		List<AssetAdministrationShell> allAas = aasServices.values()
 				.stream()
 				.map(AasService::getAAS)
@@ -136,10 +138,10 @@ public class InMemoryAasRepository implements AasRepository {
 	}
 
 	@Override
-	public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo) {
+	public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo, FilterInfo<Predicate<Reference>> filterInfo) {
 		throwIfAasDoesNotExist(aasId);
 
-		CursorResult<List<Reference>> paginatedSubmodelReference = aasServices.get(aasId).getSubmodelReferences(pInfo);
+		CursorResult<List<Reference>> paginatedSubmodelReference = aasServices.get(aasId).getSubmodelReferences(pInfo, filterInfo);
 
 		return paginatedSubmodelReference;
 	}

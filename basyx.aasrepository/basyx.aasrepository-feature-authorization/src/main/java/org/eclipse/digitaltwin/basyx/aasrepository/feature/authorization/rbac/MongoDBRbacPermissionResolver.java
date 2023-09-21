@@ -1,0 +1,191 @@
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.rbac;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.*;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.PermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.*;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.*;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotAuthorizedException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@ConditionalOnExpression(value = "'${basyx.aasrepository.feature.authorization.type}' == 'rbac' and '${basyx.backend}'.equals('MongoDB')")
+@Service
+public class MongoDBRbacPermissionResolver implements PermissionResolver<Criteria, Criteria>, RbacPermissionResolver<Criteria> {
+    @Autowired
+    private final IRbacStorage<Criteria> storage;
+
+    @Autowired
+    private final ISubjectInfoProvider subjectInfoProvider;
+
+    @Autowired
+    private final IRoleAuthenticator roleAuthenticator;
+
+    public MongoDBRbacPermissionResolver(IRbacStorage<Criteria> storage, ISubjectInfoProvider subjectInfoProvider, IRoleAuthenticator roleAuthenticator) {
+        this.storage = storage;
+        this.subjectInfoProvider = subjectInfoProvider;
+        this.roleAuthenticator = roleAuthenticator;
+    }
+
+    private boolean hasPermission(ITargetInfo targetInfo, Action action, ISubjectInfo<?> subjectInfo) {
+        final IRbacRuleChecker rbacRuleChecker = new PredefinedSetRbacRuleChecker(storage.getRbacRuleSet(null));
+        final List<String> roles = roleAuthenticator.getRoles();
+        return rbacRuleChecker.checkRbacRuleIsSatisfied(roles, action.toString(), targetInfo);
+    }
+
+    @Override
+    public FilterInfo<Criteria> getGetAllAasFilterInfo() {
+        final RbacRuleSet rbacRuleSet = storage.getRbacRuleSet(null);
+        final Set<RbacRule> rbacRules = rbacRuleSet.getRules();
+        final List<String> roles = roleAuthenticator.getRoles();
+
+        final Set<String> relevantSubmodelIds = rbacRules.stream()
+                .filter(rbacRule -> rbacRule.getTargetInformation() instanceof BaSyxObjectTargetInfo)
+                .filter(rbacRule -> rbacRule.getAction().equals(Action.READ.toString()))
+                .filter(rbacRule -> roles.contains(rbacRule.getRole()))
+                .map(rbacRule -> (BaSyxObjectTargetInfo) rbacRule.getTargetInformation())
+                .map(BaSyxObjectTargetInfo::getAasId)
+                .collect(Collectors.toSet());
+        return new FilterInfo<>(Criteria.where("_id").in(relevantSubmodelIds));
+    }
+
+    @Override
+    public void getAas(String aasId) {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
+                .setAasId(aasId)
+                .build();
+        if (!hasPermission(targetInfo, Action.READ, subjectInfo)) {
+            throw new NotAuthorizedException();
+        }
+    }
+
+    @Override
+    public void createAas(AssetAdministrationShell aas) {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
+                .setAasId(aas.getId())
+                .build();
+        if (!hasPermission(targetInfo, Action.WRITE, subjectInfo)) {
+            throw new NotAuthorizedException();
+        }
+    }
+
+    @Override
+    public void updateAas(String aasId, AssetAdministrationShell aas) {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
+                .setAasId(aasId)
+                .build();
+        if (!hasPermission(targetInfo, Action.WRITE, subjectInfo)) {
+            throw new NotAuthorizedException();
+        }
+    }
+
+    @Override
+    public void deleteAas(String aasId) {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
+                .setAasId(aasId)
+                .build();
+        if (!hasPermission(targetInfo, Action.WRITE, subjectInfo)) {
+            throw new NotAuthorizedException();
+        }
+    }
+
+    @Override
+    public FilterInfo<Criteria> getGetSubmodelReferencesFilterInfo(String aasId) {
+        final RbacRuleSet rbacRuleSet = storage.getRbacRuleSet(null);
+        final Set<RbacRule> rbacRules = rbacRuleSet.getRules();
+        final List<String> roles = roleAuthenticator.getRoles();
+
+        final Set<String> relevantSubmodelIds = rbacRules.stream()
+                .filter(rbacRule -> rbacRule.getTargetInformation() instanceof BaSyxObjectTargetInfo)
+                .filter(rbacRule -> rbacRule.getAction().equals(Action.READ.toString()))
+                .filter(rbacRule -> roles.contains(rbacRule.getRole()))
+                .map(rbacRule -> (BaSyxObjectTargetInfo) rbacRule.getTargetInformation())
+                .map(BaSyxObjectTargetInfo::getSmId)
+                .collect(Collectors.toSet());
+        return new FilterInfo<>(Criteria.where("_id").in(relevantSubmodelIds));
+    }
+
+    @Override
+    public void addSubmodelReference(String aasId, Reference submodelReference) {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
+                .setAasId(aasId)
+                .setSmSemanticId(IdHelper.getSubmodelSemanticIdString(submodelReference.getReferredSemanticID()))
+                .build();
+        if (!hasPermission(targetInfo, Action.WRITE, subjectInfo)) {
+            throw new NotAuthorizedException();
+        }
+    }
+
+    @Override
+    public void removeSubmodelReference(String aasId, String submodelId) {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
+                .setAasId(aasId)
+                .setSmId(submodelId)
+                .build();
+        if (!hasPermission(targetInfo, Action.WRITE, subjectInfo)) {
+            throw new NotAuthorizedException();
+        }
+    }
+
+    @Override
+    public void setAssetInformation(String aasId, AssetInformation aasInfo) {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
+                .setAasId(aasId)
+                .build();
+        if (!hasPermission(targetInfo, Action.READ, subjectInfo)) {
+            throw new NotAuthorizedException();
+        }
+    }
+
+    @Override
+    public void getAssetInformation(String aasId) {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
+                .setAasId(aasId)
+                .build();
+        if (!hasPermission(targetInfo, Action.READ, subjectInfo)) {
+            throw new NotAuthorizedException();
+        }
+    }
+
+    @Override
+    public FilterInfo<Criteria> getGetRbacRuleSetFilterInfo() {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final RbacRuleTargetInfo targetInfo = new RbacRuleTargetInfo();
+        if (!hasPermission(targetInfo, Action.READ, subjectInfo)) {
+            return new FilterInfo<>(Criteria.where("true").is("false"));
+        }
+        return null;
+    }
+
+    @Override
+    public void addRule(RbacRule rbacRule) {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final RbacRuleTargetInfo targetInfo = new RbacRuleTargetInfo();
+        if (!hasPermission(targetInfo, Action.WRITE, subjectInfo)) {
+            throw new NotAuthorizedException();
+        }
+    }
+
+    @Override
+    public void removeRule(RbacRule rbacRule) {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final RbacRuleTargetInfo targetInfo = new RbacRuleTargetInfo();
+        if (!hasPermission(targetInfo, Action.WRITE, subjectInfo)) {
+            throw new NotAuthorizedException();
+        }
+    }
+}

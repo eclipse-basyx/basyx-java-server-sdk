@@ -1,50 +1,135 @@
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.authorization.rbac;
 
-import org.eclipse.digitaltwin.basyx.authorization.Action;
-import org.eclipse.digitaltwin.basyx.authorization.ISubjectInfo;
-import org.eclipse.digitaltwin.basyx.authorization.ISubjectInfoProvider;
+import org.eclipse.digitaltwin.basyx.authorization.*;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.*;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotAuthorizedException;
 import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
+import org.eclipse.digitaltwin.basyx.submodelregistry.service.authorization.IdHelper;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.authorization.PermissionResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.function.Predicate;
 
-@Primary
 @ConditionalOnExpression(value = "'${basyx.submodelregistry.feature.authorization.type}' == 'rbac' and '${registry.type}'.equals('inMemory')")
 @Service
-public class InMemoryRbacPermissionResolver implements PermissionResolver<Predicate<SubmodelDescriptor>> {
+public class InMemoryRbacPermissionResolver implements PermissionResolver<Predicate<SubmodelDescriptor>>, RbacPermissionResolver<Predicate<RbacRule>> {
     @Autowired
-    private final Environment environment;
-
-    @Autowired
-    private final IRbacStorage storage;
+    private final IRbacStorage<Predicate<SubmodelDescriptor>> storage;
 
     @Autowired
     private final ISubjectInfoProvider subjectInfoProvider;
 
-    public InMemoryRbacPermissionResolver(Environment environment, IRbacStorage storage, ISubjectInfoProvider subjectInfoProvider) {
-        this.environment = environment;
+    @Autowired
+    private final IRoleAuthenticator roleAuthenticator;
+
+    public InMemoryRbacPermissionResolver(IRbacStorage<Predicate<SubmodelDescriptor>> storage, ISubjectInfoProvider subjectInfoProvider, IRoleAuthenticator roleAuthenticator) {
         this.storage = storage;
         this.subjectInfoProvider = subjectInfoProvider;
+        this.roleAuthenticator = roleAuthenticator;
     }
 
-    @Override
-    public boolean hasPermission(SubmodelDescriptor submodelDescriptor, Action action, ISubjectInfo<?> subjectInfo) {
-        final IRbacRuleChecker rbacRuleChecker = new PredefinedSetRbacRuleChecker(storage.getRbacRuleSet());
-        final ITargetInformation targetInformation = new BaSyxObjectTargetInformation(null, submodelDescriptor.getId(), null);
-        return rbacRuleChecker.checkRbacRuleIsSatisfied(Arrays.asList("admin"), action.toString(), targetInformation);
+    private boolean hasPermission(ITargetInfo targetInfo, Action action, ISubjectInfo<?> subjectInfo) {
+        final IRbacRuleChecker rbacRuleChecker = new PredefinedSetRbacRuleChecker(storage.getRbacRuleSet(null));
+        final List<String> roles = roleAuthenticator.getRoles();
+        return rbacRuleChecker.checkRbacRuleIsSatisfied(roles, action.toString(), targetInfo);
     }
 
     @Override
     public FilterInfo<Predicate<SubmodelDescriptor>> getGetAllSubmodelDescriptorsFilterInfo() {
-        ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
-        return new FilterInfo<>(submodelDescriptor -> hasPermission(submodelDescriptor, Action.READ, subjectInfo));
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        return new FilterInfo<>(submodelDescriptor -> {
+            final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
+                    .setSmId(submodelDescriptor.getId())
+                    .setSmSemanticId(IdHelper.getSubmodelDescriptorSemanticIdString(submodelDescriptor.getSemanticId()))
+                    .build();
+            return hasPermission(targetInfo, Action.READ, subjectInfo);
+        });
+    }
+
+    @Override
+    public void getSubmodelDescriptorById(String submodelIdentifier) {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
+                .setSmId(submodelIdentifier)
+                .build();
+        if (!hasPermission(targetInfo, Action.READ, subjectInfo)) {
+            throw new NotAuthorizedException();
+        }
+    }
+
+    @Override
+    public void putSubmodelDescriptorById(String submodelIdentifier) {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
+                .setSmId(submodelIdentifier)
+                .build();
+        if (!hasPermission(targetInfo, Action.WRITE, subjectInfo)) {
+            throw new NotAuthorizedException();
+        }
+    }
+
+    @Override
+    public void postSubmodelDescriptor(String submodelIdentifier) {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
+                .setSmId(submodelIdentifier)
+                .build();
+        if (!hasPermission(targetInfo, Action.WRITE, subjectInfo)) {
+            throw new NotAuthorizedException();
+        }
+    }
+
+    @Override
+    public void deleteSubmodelDescriptorById(String submodelIdentifier) {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
+                .setSmId(submodelIdentifier)
+                .build();
+        if (!hasPermission(targetInfo, Action.WRITE, subjectInfo)) {
+            throw new NotAuthorizedException();
+        }
+    }
+
+    @Override
+    public FilterInfo<Predicate<SubmodelDescriptor>> getDeleteAllSubmodelDescriptorsFilterInfo() {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        return new FilterInfo<>(submodelDescriptor -> {
+            final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
+                    .setSmId(submodelDescriptor.getId())
+                    .setSmSemanticId(IdHelper.getSubmodelDescriptorSemanticIdString(submodelDescriptor.getSemanticId()))
+                    .build();
+            return hasPermission(targetInfo, Action.READ, subjectInfo);
+        });
+    }
+
+    @Override
+    public FilterInfo<Predicate<RbacRule>> getGetRbacRuleSetFilterInfo() {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final RbacRuleTargetInfo targetInfo = new RbacRuleTargetInfo();
+        final boolean result = hasPermission(targetInfo, Action.READ, subjectInfo);
+        return new FilterInfo<>(rbacRule -> result);
+    }
+
+    @Override
+    public void addRule(RbacRule rbacRule) {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final RbacRuleTargetInfo targetInfo = new RbacRuleTargetInfo();
+        if (!hasPermission(targetInfo, Action.WRITE, subjectInfo)) {
+            throw new NotAuthorizedException();
+        }
+    }
+
+    @Override
+    public void removeRule(RbacRule rbacRule) {
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        final RbacRuleTargetInfo targetInfo = new RbacRuleTargetInfo();
+        if (!hasPermission(targetInfo, Action.WRITE, subjectInfo)) {
+            throw new NotAuthorizedException();
+        }
     }
 }

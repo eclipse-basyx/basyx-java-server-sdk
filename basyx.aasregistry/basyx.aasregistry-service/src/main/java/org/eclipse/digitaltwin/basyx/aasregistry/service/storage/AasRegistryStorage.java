@@ -37,14 +37,15 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorAlr
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelNotFoundException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 import lombok.NonNull;
 
-public interface AasRegistryStorage {
+public interface AasRegistryStorage<AssetAdministrationShellDescriptorFilterType, SubmodelDescriptorFilterType> {
 
-	CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter);
+	CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter, FilterInfo<AssetAdministrationShellDescriptorFilterType> filterInfo);
 
 	AssetAdministrationShellDescriptor getAasDescriptor(@NonNull String aasDescriptorId) throws AasDescriptorNotFoundException;
 
@@ -54,7 +55,7 @@ public interface AasRegistryStorage {
 
 	void removeAasDescriptor(@NonNull String aasDescriptorId) throws AasDescriptorNotFoundException;
 
-	CursorResult<List<SubmodelDescriptor>> getAllSubmodels(@NonNull String aasDescriptorId,@NonNull PaginationInfo pRequest) throws AasDescriptorNotFoundException;
+	CursorResult<List<SubmodelDescriptor>> getAllSubmodels(@NonNull String aasDescriptorId, @NonNull PaginationInfo pRequest, FilterInfo<SubmodelDescriptorFilterType> filterInfo) throws AasDescriptorNotFoundException;
 
 	SubmodelDescriptor getSubmodel(@NonNull String aasDescriptorId, @NonNull String submodelId) throws AasDescriptorNotFoundException, SubmodelNotFoundException;
 
@@ -63,6 +64,8 @@ public interface AasRegistryStorage {
 	void replaceSubmodel(@NonNull String aasDescriptorId, @NonNull String submodelId, @NonNull SubmodelDescriptor submodel) throws AasDescriptorNotFoundException, SubmodelNotFoundException;
 	
 	void removeSubmodel(@NonNull String aasDescriptorId, @NonNull String submodelId) throws AasDescriptorNotFoundException, SubmodelNotFoundException;
+
+	public Set<String> clear(FilterInfo<AssetAdministrationShellDescriptorFilterType> filterInfo);
 
 	Set<String> clear();
 

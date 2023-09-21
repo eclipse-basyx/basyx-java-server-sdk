@@ -46,8 +46,8 @@ public interface IRbacRuleChecker {
 	 *            {@link org.eclipse.basyx.extensions.aas.aggregator.authorization.AASAggregatorScopes#READ_SCOPE}.
 	 * @param targetInformation
 	 *            the features of the target object which access should be checked
-	 *            for like {@link BaSyxObjectTargetInformation}.
+	 *            for like {@link BaSyxObjectTargetInfo}.
 	 * @return true if the rule is satisfied, false otherwise
 	 */
-	public boolean checkRbacRuleIsSatisfied(final List<String> roles, final String action, final ITargetInformation targetInformation);
+	public boolean checkRbacRuleIsSatisfied(final List<String> roles, final String action, final ITargetInfo targetInformation);
 }

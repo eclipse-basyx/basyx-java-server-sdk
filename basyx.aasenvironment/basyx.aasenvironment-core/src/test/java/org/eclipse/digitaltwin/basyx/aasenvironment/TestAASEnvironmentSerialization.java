@@ -53,9 +53,9 @@ public class TestAASEnvironmentSerialization {
 	public static final String CONCEPT_DESCRIPTION_ID_NOT_INCLUDED_IN_ENV = "IdNotToBeIncludedInSerializedEnv";
 
 	private AasEnvironmentSerialization aasEnvironment;
-	private AasRepository aasRepository;
-	private SubmodelRepository submodelRepository;
-	private ConceptDescriptionRepository conceptDescriptionRepository;
+	private AasRepository<?, ?> aasRepository;
+	private SubmodelRepository<?>submodelRepository;
+	private ConceptDescriptionRepository<?> conceptDescriptionRepository;
 
 	@Before
 	public void setup() {
@@ -222,10 +222,10 @@ public class TestAASEnvironmentSerialization {
 	}
 	
 	private void validateRepositoriesState() {
-		assertTrue(aasRepository.getAllAas(NO_LIMIT_PAGINATION_INFO).getResult().containsAll(createDummyShells()));
-		assertTrue(submodelRepository.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult()
+		assertTrue(aasRepository.getAllAas(NO_LIMIT_PAGINATION_INFO, null).getResult().containsAll(createDummyShells()));
+		assertTrue(submodelRepository.getAllSubmodels(NO_LIMIT_PAGINATION_INFO, null).getResult()
 				.containsAll(createDummySubmodels()));
-		assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO).getResult()
+		assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO, null).getResult()
 				.containsAll(createDummyConceptDescriptions()));
 	}
 

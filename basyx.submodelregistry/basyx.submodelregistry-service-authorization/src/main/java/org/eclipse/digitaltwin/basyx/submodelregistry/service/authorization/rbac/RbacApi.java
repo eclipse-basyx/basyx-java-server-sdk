@@ -2,7 +2,6 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.service.authorization.rba
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.IRbacStorage;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleSet;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +17,11 @@ import java.util.Optional;
 @Validated
 @RestController
 @Tag(name = "Submodel Registry RBAC", description = "RBAC API for the Submodel Registry")
-public class RbacApi {
-    private final IRbacStorage storage;
+public class RbacApi<RbacRuleFilterType> {
+    private final IRbacService service;
 
-    public RbacApi(IRbacStorage storage) {
-        this.storage = storage;
+    public RbacApi(IRbacService service) {
+        this.service = service;
     }
 
     @RequestMapping(
@@ -30,7 +29,7 @@ public class RbacApi {
             value = "/submodel-descriptors-rbac"
     )
     public ResponseEntity<RbacRuleSet> putRBACRule() {
-        return ResponseEntity.of(Optional.ofNullable(storage.getRbacRuleSet()));
+        return ResponseEntity.of(Optional.ofNullable(service.getRbacRuleSet()));
     }
 
     @RequestMapping(
@@ -41,7 +40,7 @@ public class RbacApi {
     public void putRBACRule(
             @Parameter(name = "SubmodelDescriptor", description = "Submodel Descriptor object", required = true) @Valid @RequestBody RbacRule rbacRule
     ) {
-        storage.addRule(rbacRule);
+        service.addRule(rbacRule);
     }
 
     @RequestMapping(
@@ -52,6 +51,6 @@ public class RbacApi {
     public void deleteRBACRule(
             @Parameter(name = "SubmodelDescriptor", description = "Submodel Descriptor object", required = true) @Valid @RequestBody RbacRule rbacRule
     ) {
-        storage.removeRule(rbacRule);
+        service.removeRule(rbacRule);
     }
 }

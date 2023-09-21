@@ -37,9 +37,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class RbacRule {
 	private String role;
 	private String action;
-	private ITargetInformation targetInformation;
+	private ITargetInfo targetInformation;
 
-	public RbacRule(final String role, final String action, final ITargetInformation targetInformation) {
+	public RbacRule(final String role, final String action, final ITargetInfo targetInformation) {
 		if (Objects.isNull(role)) {
 			throw new IllegalArgumentException("role must not be null");
 		}
@@ -62,7 +62,7 @@ public class RbacRule {
 		return action;
 	}
 
-	public ITargetInformation getTargetInformation() {
+	public ITargetInfo getTargetInformation() {
 		return targetInformation;
 	}
 

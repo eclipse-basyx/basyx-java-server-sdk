@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.storage.memory;
 
+import org.apache.commons.lang3.function.TriFunction;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
@@ -44,6 +46,10 @@ class ThreadSafeAccess {
 		return runWithLock(supplier, writeLock);
 	}
 
+	public <T, A> T write1(Function<A, T> func, A arg1) {
+		return runWithLock(func, arg1, writeLock);
+	}
+
 	public <A> void write(Consumer<A> consumer, A arg1) {
 		runWithLock(consumer, arg1, readLock);
 	}
@@ -62,6 +68,10 @@ class ThreadSafeAccess {
 
 	public <A, B, T> T read(BiFunction<A, B, T> func, A arg1, B arg2) {
 		return runWithLock(func, arg1, arg2, readLock);
+	}
+
+	public <A, B, C, T> T read(TriFunction<A, B, C, T> func, A arg1, B arg2, C arg3) {
+		return runWithLock(func, arg1, arg2, arg3, readLock);
 	}
 
 	private <T> T runWithLock(Supplier<T> supplier, Lock lock) {
@@ -95,6 +105,15 @@ class ThreadSafeAccess {
 		try {
 			lock.lock();
 			return func.apply(arg1, arg2);
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	private <A, B, C, T> T runWithLock(TriFunction<A, B, C, T> func, A arg1, B arg2, C arg3, Lock lock) {
+		try {
+			lock.lock();
+			return func.apply(arg1, arg2, arg3);
 		} finally {
 			lock.unlock();
 		}

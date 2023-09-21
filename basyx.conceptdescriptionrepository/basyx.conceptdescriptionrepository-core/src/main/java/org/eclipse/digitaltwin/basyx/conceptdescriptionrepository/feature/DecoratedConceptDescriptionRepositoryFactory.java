@@ -37,14 +37,14 @@ import org.eclipse.digitaltwin.basyx.core.DecoratedFactory;
  * @author schnicke, danish
  *
  */
-public class DecoratedConceptDescriptionRepositoryFactory extends DecoratedFactory<ConceptDescriptionRepositoryFactory, ConceptDescriptionRepositoryFeature> implements ConceptDescriptionRepositoryFactory {
+public class DecoratedConceptDescriptionRepositoryFactory<ConceptDescriptionFilterType> extends DecoratedFactory<ConceptDescriptionRepositoryFactory<ConceptDescriptionFilterType>, ConceptDescriptionRepositoryFeature<ConceptDescriptionFilterType>> implements ConceptDescriptionRepositoryFactory<ConceptDescriptionFilterType> {
 
-	public DecoratedConceptDescriptionRepositoryFactory(ConceptDescriptionRepositoryFactory toDecorate, List<ConceptDescriptionRepositoryFeature> features) {
+	public DecoratedConceptDescriptionRepositoryFactory(ConceptDescriptionRepositoryFactory<ConceptDescriptionFilterType> toDecorate, List<ConceptDescriptionRepositoryFeature<ConceptDescriptionFilterType>> features) {
 		super(toDecorate, features);
 	}
 
 	@Override
-	public ConceptDescriptionRepository create() {
+	public ConceptDescriptionRepository<ConceptDescriptionFilterType> create() {
 		return getDecorated().create();
 	}
 }

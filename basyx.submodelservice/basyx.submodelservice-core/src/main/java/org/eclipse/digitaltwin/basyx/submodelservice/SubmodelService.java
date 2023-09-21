@@ -31,6 +31,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -41,7 +42,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
  * @author schnicke
  *
  */
-public interface SubmodelService {
+public interface SubmodelService<FilterType> {
 	/**
 	 * Retrieves the Submodel contained in the service
 	 * 
@@ -54,7 +55,7 @@ public interface SubmodelService {
 	 * 
 	 * @return
 	 */
-	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo);
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo, FilterInfo<FilterType> filterInfo);
 
 	/**
 	 * Retrieve specific SubmodelElement of the Submodel

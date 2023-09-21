@@ -32,6 +32,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Key;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
@@ -51,17 +52,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author jungjan
  *
  */
-public class MqttAasService implements AasService {
+public class MqttAasService<SubmodelReferenceFilterType> implements AasService<SubmodelReferenceFilterType> {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static Logger logger = LoggerFactory.getLogger(MqttAasService.class);
 	private MqttAasServiceTopicFactory topicFactory;
 
-	private AasService decorated;
+	private AasService<SubmodelReferenceFilterType> decorated;
 
 	private IMqttClient mqttClient;
 	private String repoId;
 
-	public MqttAasService(AasService decorated, IMqttClient mqttClient, MqttAasServiceTopicFactory topicFactory, String repoId) {
+	public MqttAasService(AasService<SubmodelReferenceFilterType> decorated, IMqttClient mqttClient, MqttAasServiceTopicFactory topicFactory, String repoId) {
 		this.topicFactory = topicFactory;
 		this.decorated = decorated;
 		this.mqttClient = mqttClient;
@@ -112,8 +113,8 @@ public class MqttAasService implements AasService {
 	}
 
 	@Override
-	public CursorResult<List<Reference>> getSubmodelReferences(PaginationInfo pInfo) {
-		return decorated.getSubmodelReferences(pInfo);
+	public CursorResult<List<Reference>> getSubmodelReferences(PaginationInfo pInfo, FilterInfo<SubmodelReferenceFilterType> filterInfo) {
+		return decorated.getSubmodelReferences(pInfo, filterInfo);
 	}
 
 	@Override
@@ -151,7 +152,7 @@ public class MqttAasService implements AasService {
 	}
 
 	private Reference extractSubmodelReferenceById(String submodelId) {
-		List<Reference> submodelsReferences = getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
+		List<Reference> submodelsReferences = getSubmodelReferences(NO_LIMIT_PAGINATION_INFO, null).getResult();
 
 		return submodelsReferences.stream()
 				.filter(reference -> containsSubmodelId(reference, submodelId))

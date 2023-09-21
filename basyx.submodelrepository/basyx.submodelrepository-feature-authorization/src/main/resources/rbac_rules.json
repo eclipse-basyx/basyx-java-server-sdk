@@ -1,0 +1,57 @@
+[
+  {
+    "role": "admin",
+    "action": "urn:org.eclipse.basyx:scope:aas-aggregator:read",
+    "targetInformation": {
+      "@type": "basyx",
+      "aasId": "*",
+      "smId": "*",
+      "smElIdShortPath": "*"
+    }
+  },
+  {
+    "role": "admin",
+    "action": "urn:org.eclipse.basyx:action:aas-api:read",
+    "targetInformation": {
+      "@type": "basyx",
+      "aasId": "*",
+      "smId": "*",
+      "smElIdShortPath": "*"
+    }
+  },
+  {
+    "role": "admin",
+    "action": "urn:org.eclipse.basyx:scope:sm-aggregator:read",
+    "targetInformation": {
+      "@type": "basyx",
+      "aasId": "*",
+      "smId": "*",
+      "smElIdShortPath": "*"
+    }
+  },
+
+  {
+    "role": "urn:admin:access",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "basyx",
+      "aasId": "*",
+      "smId": "https://admin-shell.io/zvei/nameplate/1/0/Nameplate",
+      "smElIdShortPath": "*"
+    }
+  },
+  {
+    "role": "admin",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "rbac"
+    }
+  },
+  {
+    "role": "admin",
+    "action": "WRITE",
+    "targetInformation": {
+      "@type": "rbac"
+    }
+  }
+]

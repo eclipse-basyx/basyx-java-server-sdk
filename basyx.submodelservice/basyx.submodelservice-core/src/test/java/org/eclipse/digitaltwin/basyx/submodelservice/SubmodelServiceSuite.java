@@ -80,10 +80,10 @@ public abstract class SubmodelServiceSuite {
 	@Test
 	public void getSubmodelElements() {
 		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
-		SubmodelService smService = getSubmodelService(technicalData);
+		SubmodelService<?> smService = getSubmodelService(technicalData);
 
 		assertTrue(technicalData.getSubmodelElements()
-				.containsAll(smService.getSubmodelElements(NO_LIMIT_PAGINATION_INFO).getResult()));
+				.containsAll(smService.getSubmodelElements(NO_LIMIT_PAGINATION_INFO, null).getResult()));
 	}
 
 	@Test
@@ -381,18 +381,18 @@ public abstract class SubmodelServiceSuite {
 	@Test
 	public void getPaginatedSubmodelElement() {
 		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
-		SubmodelService submodelService = getSubmodelService(technicalData);
+		SubmodelService<?> submodelService = getSubmodelService(technicalData);
 		CursorResult<List<SubmodelElement>> cursorResult = submodelService
-				.getSubmodelElements(new PaginationInfo(1, ""));
+				.getSubmodelElements(new PaginationInfo(1, ""), null);
 		assertEquals(1, cursorResult.getResult().size());
 	}
 
 	@Test
 	public void paginationCursor() {
 		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
-		SubmodelService submodelService = getSubmodelService(technicalData);
+		SubmodelService<?> submodelService = getSubmodelService(technicalData);
 		CursorResult<List<SubmodelElement>> cursorResult = submodelService.getSubmodelElements(new PaginationInfo(1,
-				SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT));
+				SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT), null);
 		assertEquals(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_BLOB_ID_SHORT, cursorResult.getCursor());
 	}
 

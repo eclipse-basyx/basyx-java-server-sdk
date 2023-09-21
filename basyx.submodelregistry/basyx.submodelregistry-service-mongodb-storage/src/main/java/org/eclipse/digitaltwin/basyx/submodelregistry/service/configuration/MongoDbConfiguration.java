@@ -27,7 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.IRbacStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.CursorEncodingRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.mongodb.MongoDbSubmodelRegistryRbacStorage;
+import org.eclipse.digitaltwin.basyx.submodelregistry.service.authorization.rbac.MongoDbSubmodelRegistryRbacStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.mongodb.MongoDbSubmodelRegistryStorage;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;

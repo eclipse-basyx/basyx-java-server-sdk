@@ -32,6 +32,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.feature.SubmodelServiceFeat
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 /**
@@ -42,11 +44,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SubmodelServiceFeaturePrinter {
-
 	private static final Logger logger = LoggerFactory.getLogger(SubmodelServiceFeaturePrinter.class);
 
 	@Autowired
-	public SubmodelServiceFeaturePrinter(List<SubmodelServiceFeature> features) {
+	public SubmodelServiceFeaturePrinter(List<SubmodelServiceFeature> features, ApplicationContext context) {
 		logger.info("------------------ Submodel Service Found Features: ------------------ ");
 		for (SubmodelServiceFeature feature : features) {
 			logger.info("BaSyxFeature " + feature.getName() + " is enabled: " + feature.isEnabled());

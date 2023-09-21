@@ -55,7 +55,7 @@ public abstract class AasServiceSuite {
 
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 
-	private AasService aasService;
+	private AasService<?> aasService;
 	
 	private AssetAdministrationShell aas;
 
@@ -75,7 +75,7 @@ public abstract class AasServiceSuite {
 	@Test
 	public void getSubmodelReference() {
 		DummyAssetAdministrationShell.addDummySubmodelReference(aas);
-		List<Reference> submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
+		List<Reference> submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO, null).getResult();
 		Reference submodelReference = getFirstSubmodelReference(submodelReferences);
 		assertEquals(DummyAssetAdministrationShell.submodelReference, submodelReference);
 	}
@@ -86,7 +86,7 @@ public abstract class AasServiceSuite {
 
 		aasService.addSubmodelReference(submodel.getSemanticID());
 
-		List<Reference> submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
+		List<Reference> submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO, null).getResult();
 
 		Reference submodelReference = getFirstSubmodelReference(submodelReferences);
 
@@ -97,9 +97,9 @@ public abstract class AasServiceSuite {
 	@Test
 	public void removeSubmodelReference() {
 		DummyAssetAdministrationShell.addDummySubmodelReference(aas);
-		List<Reference> submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
+		List<Reference> submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO, null).getResult();
 		aasService.removeSubmodelReference(DummyAssetAdministrationShell.SUBMODEL_ID);
-		submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
+		submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO, null).getResult();
 		assertEquals(0, submodelReferences.size());
 	}
 

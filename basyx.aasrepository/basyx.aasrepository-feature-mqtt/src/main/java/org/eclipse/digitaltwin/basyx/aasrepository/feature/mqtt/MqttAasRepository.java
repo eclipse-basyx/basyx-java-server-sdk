@@ -34,6 +34,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
@@ -50,23 +51,23 @@ import org.slf4j.LoggerFactory;
  * @author haque, jungjan, fischer, siebert
  *
  */
-public class MqttAasRepository implements AasRepository {
+public class MqttAasRepository<AssetAdministrationShellFilterType, SubmodelReferenceFilterType> implements AasRepository<AssetAdministrationShellFilterType, SubmodelReferenceFilterType> {
 	private static Logger logger = LoggerFactory.getLogger(MqttAasRepository.class);
 	private MqttAasRepositoryTopicFactory topicFactory;
 
-	private AasRepository decorated;
+	private AasRepository<AssetAdministrationShellFilterType, SubmodelReferenceFilterType> decorated;
 
 	private IMqttClient mqttClient;
 
-	public MqttAasRepository(AasRepository decorated, IMqttClient mqttClient, MqttAasRepositoryTopicFactory topicFactory) {
+	public MqttAasRepository(AasRepository<AssetAdministrationShellFilterType, SubmodelReferenceFilterType> decorated, IMqttClient mqttClient, MqttAasRepositoryTopicFactory topicFactory) {
 		this.topicFactory = topicFactory;
 		this.decorated = decorated;
 		this.mqttClient = mqttClient;
 	}
 
 	@Override
-	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
-		return decorated.getAllAas(pInfo);
+	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo, FilterInfo<AssetAdministrationShellFilterType> filterInfo) {
+		return decorated.getAllAas(pInfo, filterInfo);
 	}
 
 	@Override
@@ -99,8 +100,8 @@ public class MqttAasRepository implements AasRepository {
 	}
 
 	@Override
-	public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo) {
-		return decorated.getSubmodelReferences(aasId, pInfo);
+	public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo, FilterInfo<SubmodelReferenceFilterType> filterInfo) {
+		return decorated.getSubmodelReferences(aasId, pInfo, filterInfo);
 	}
 
 	@Override

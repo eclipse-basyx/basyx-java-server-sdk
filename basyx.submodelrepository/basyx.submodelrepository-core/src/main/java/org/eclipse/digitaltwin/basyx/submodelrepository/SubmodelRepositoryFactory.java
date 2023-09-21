@@ -32,11 +32,11 @@ package org.eclipse.digitaltwin.basyx.submodelrepository;
  * @author schnicke
  * 
  */
-public interface SubmodelRepositoryFactory {
+public interface SubmodelRepositoryFactory<FilterType> {
 	/**
 	 * Creates a new SubmodelRepository
 	 * 
 	 * @return
 	 */
-	public SubmodelRepository create();
+	public SubmodelRepository<FilterType> create();
 }

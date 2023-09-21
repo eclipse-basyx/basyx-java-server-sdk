@@ -29,6 +29,7 @@ import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
@@ -38,7 +39,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
  * @author schnicke
  *
  */
-public interface AasService {
+public interface AasService<SubmodelReferenceFilterType> {
 
 	/**
 	 * Retrieves the AAS contained in the server
@@ -52,7 +53,7 @@ public interface AasService {
 	 * 
 	 * @return A List containing all Submodel References
 	 */
-	public CursorResult<List<Reference>> getSubmodelReferences(PaginationInfo pInfo);
+	public CursorResult<List<Reference>> getSubmodelReferences(PaginationInfo pInfo, FilterInfo<SubmodelReferenceFilterType> filterInfo);
 
 	/**
 	 * Adds a Submodel Reference

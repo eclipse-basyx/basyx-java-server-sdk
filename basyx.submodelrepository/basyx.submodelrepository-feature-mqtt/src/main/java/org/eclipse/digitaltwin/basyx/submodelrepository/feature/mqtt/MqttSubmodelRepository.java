@@ -9,6 +9,7 @@ import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelElementS
 import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelSerializer;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -20,29 +21,30 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.FilterType;
 
 /**
  * Repository decorator for the MQTT eventing on the submodel level.
  * 
  * @author fischer
  */
-public class MqttSubmodelRepository implements SubmodelRepository {
+public class MqttSubmodelRepository<FilterType> implements SubmodelRepository<FilterType> {
 	private static Logger logger = LoggerFactory.getLogger(MqttSubmodelRepository.class);
 	private MqttSubmodelRepositoryTopicFactory topicFactory;
 
-	private SubmodelRepository decorated;
+	private SubmodelRepository<FilterType> decorated;
 
 	private IMqttClient mqttClient;
 
-	public MqttSubmodelRepository(SubmodelRepository decorated, IMqttClient mqttClient, MqttSubmodelRepositoryTopicFactory topicFactory) {
+	public MqttSubmodelRepository(SubmodelRepository<FilterType> decorated, IMqttClient mqttClient, MqttSubmodelRepositoryTopicFactory topicFactory) {
 		this.topicFactory = topicFactory;
 		this.decorated = decorated;
 		this.mqttClient = mqttClient;
 	}
 
 	@Override
-	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
-		return decorated.getAllSubmodels(pInfo);
+	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo, FilterInfo<FilterType> filterInfo) {
+		return decorated.getAllSubmodels(pInfo, filterInfo);
 	}
 
 	@Override
@@ -70,9 +72,9 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo)
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo, FilterInfo<FilterType> filterInfo)
 			throws ElementDoesNotExistException {
-		return decorated.getSubmodelElements(submodelId, pInfo);
+		return decorated.getSubmodelElements(submodelId, pInfo, filterInfo);
 	}
 
 	@Override

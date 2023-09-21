@@ -21,9 +21,9 @@ public class RbacConfiguration implements WebMvcConfigurer {
            final ObjectMapper objectMapper = converter.getObjectMapper();
 
             objectMapper.addMixIn(RbacRule.class, RbacRuleSetDeserializer.RbacRuleMixin.class);
-            objectMapper.addMixIn(ITargetInformation.class, RbacRuleSetDeserializer.TargetInformationMixin.class)
-                    .registerSubtypes(new NamedType(BaSyxObjectTargetInformation.class, "basyx"), new NamedType(TagTargetInformation.class, "tag"));
-            objectMapper.registerSubtypes(new NamedType(PathTargetInformation.class, "path"));
+            objectMapper.addMixIn(ITargetInfo.class, RbacRuleSetDeserializer.TargetInformationMixin.class)
+                    .registerSubtypes(new NamedType(BaSyxObjectTargetInfo.class, "basyx"));
+            objectMapper.registerSubtypes(new NamedType(RbacRuleTargetInfo.class, "rbac"));
         });
     }
 }

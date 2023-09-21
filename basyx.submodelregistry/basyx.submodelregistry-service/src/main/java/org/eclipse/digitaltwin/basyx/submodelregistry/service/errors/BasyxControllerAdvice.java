@@ -26,6 +26,7 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.service.errors;
 
 import java.time.OffsetDateTime;
 
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotAuthorizedException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.Message;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.Message.MessageTypeEnum;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.Result;
@@ -55,7 +56,12 @@ public class BasyxControllerAdvice {
 	public ResponseEntity<Result> handleExceptions(ResponseStatusException ex) {
 		return newResultEntity(ex, ex.getStatus());
 	}
-	
+
+	@ExceptionHandler(NotAuthorizedException.class)
+	public ResponseEntity<Result> handleNotAuthorizedException(NotAuthorizedException ex) {
+		return newResultEntity(ex, HttpStatus.FORBIDDEN);
+	}
+
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Result> handleExceptions(Exception ex) {
 		return newResultEntity(ex, HttpStatus.INTERNAL_SERVER_ERROR);

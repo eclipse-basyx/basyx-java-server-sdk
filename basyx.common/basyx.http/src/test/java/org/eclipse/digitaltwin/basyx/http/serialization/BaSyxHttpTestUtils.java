@@ -31,6 +31,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Stack;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
@@ -41,6 +45,7 @@ import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
@@ -173,6 +178,7 @@ public class BaSyxHttpTestUtils {
 		HttpPatch patchRequest = new HttpPatch(url);
 
 		patchRequest.setHeader("Content-type", "application/json");
+		addExtraHeaders(patchRequest);
 		patchRequest.setEntity(new StringEntity(content));
 
 		return patchRequest;
@@ -182,6 +188,7 @@ public class BaSyxHttpTestUtils {
 		HttpPut putRequest = new HttpPut(url);
 
 		putRequest.setHeader("Content-type", "application/json");
+		addExtraHeaders(putRequest);
 		putRequest.setEntity(new StringEntity(content));
 
 		return putRequest;
@@ -200,6 +207,7 @@ public class BaSyxHttpTestUtils {
 		HttpPost aasCreateRequest = new HttpPost(url);
 		aasCreateRequest.setHeader("Content-type", "application/json");
 		aasCreateRequest.setHeader("Accept", "application/json");
+		addExtraHeaders(aasCreateRequest);
 		return aasCreateRequest;
 	}
 
@@ -207,12 +215,30 @@ public class BaSyxHttpTestUtils {
 		HttpGet aasCreateRequest = new HttpGet(url);
 		aasCreateRequest.setHeader("Content-type", "application/json");
 		aasCreateRequest.setHeader("Accept", "application/json");
+		addExtraHeaders(aasCreateRequest);
 		return aasCreateRequest;
 	}
 
 	private static HttpDelete createDeleteRequestWithHeader(String url) {
 		HttpDelete deleteRequest = new HttpDelete(url);
 		deleteRequest.setHeader("Content-type", "application/json");
+		addExtraHeaders(deleteRequest);
 		return deleteRequest;
+	}
+
+	private static void addExtraHeaders(HttpRequest httpRequest) {
+		Optional.ofNullable(getThreadExtraHeaders()).ifPresent(headers -> {
+			headers.forEach(httpRequest::setHeader);
+		});
+	}
+
+	private static final ThreadLocal<Map<String, Object>> extraHeaders = ThreadLocal.withInitial(() -> null);
+
+	public static void setExtraHeaders(Map<String, Object> headers) {
+		extraHeaders.set(headers);
+	}
+
+	private static Map<String, Object> getThreadExtraHeaders() {
+		return extraHeaders.get();
 	}
 }

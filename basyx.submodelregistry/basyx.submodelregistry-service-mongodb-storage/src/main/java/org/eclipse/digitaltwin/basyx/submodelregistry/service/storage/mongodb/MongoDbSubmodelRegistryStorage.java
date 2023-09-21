@@ -72,9 +72,11 @@ public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage<C
 
 	@Override
 	public Set<String> clear(FilterInfo<Criteria> filterInfo) {
-		Query query = Query.query(Criteria.where(ID).exists(true));
+		Query query = new Query();
 		if (filterInfo != null) {
 			query.addCriteria(filterInfo.getFilter());
+		} else {
+			query.addCriteria(Criteria.where(ID).exists(true));
 		}
 		query.fields().include(ID);
 		List<SubmodelDescriptor> list = template.findAllAndRemove(query, SubmodelDescriptor.class);

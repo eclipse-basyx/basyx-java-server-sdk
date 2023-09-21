@@ -25,21 +25,13 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -48,17 +40,22 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * In-memory implementation of the SubmodelRepository
  *
  * @author schnicke, danish, kammognie
  *
  */
-public class InMemorySubmodelRepository implements SubmodelRepository {
+public class InMemorySubmodelRepository implements SubmodelRepository<Predicate<Submodel>> {
 
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
-	private Map<String, SubmodelService> submodelServices = new LinkedHashMap<>();
-	private SubmodelServiceFactory submodelServiceFactory;
+	private Map<String, SubmodelService<Predicate<Submodel>>> submodelServices = new LinkedHashMap<>();
+	private SubmodelServiceFactory<Predicate<Submodel>> submodelServiceFactory;
 	private String smRepositoryName;
 
 	/**
@@ -67,7 +64,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	 * 
 	 * @param submodelServiceFactory
 	 */
-	public InMemorySubmodelRepository(SubmodelServiceFactory submodelServiceFactory) {
+	public InMemorySubmodelRepository(SubmodelServiceFactory<Predicate<Submodel>> submodelServiceFactory) {
 		this.submodelServiceFactory = submodelServiceFactory;
 	}
 	
@@ -78,7 +75,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	 * @param submodelServiceFactory 
 	 * @param smRepositoryName Name of the SubmodelRepository
 	 */
-	public InMemorySubmodelRepository(SubmodelServiceFactory submodelServiceFactory, String smRepositoryName) {
+	public InMemorySubmodelRepository(SubmodelServiceFactory<Predicate<Submodel>> submodelServiceFactory, String smRepositoryName) {
 		this(submodelServiceFactory);
 		this.smRepositoryName = smRepositoryName;
 	}
@@ -91,7 +88,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	 * @param submodelServiceFactory
 	 * @param submodels
 	 */
-	public InMemorySubmodelRepository(SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels) {
+	public InMemorySubmodelRepository(SubmodelServiceFactory<Predicate<Submodel>> submodelServiceFactory, Collection<Submodel> submodels) {
 		this(submodelServiceFactory);
 		throwIfHasCollidingIds(submodels);
 
@@ -107,7 +104,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	 * @param submodels 
 	 * @param smRepositoryName Name of the SubmodelRepository
 	 */
-	public InMemorySubmodelRepository(SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels, String smRepositoryName) {
+	public InMemorySubmodelRepository(SubmodelServiceFactory<Predicate<Submodel>> submodelServiceFactory, Collection<Submodel> submodels, String smRepositoryName) {
 		this(submodelServiceFactory, submodels);
 		this.smRepositoryName = smRepositoryName;
 	}
@@ -124,18 +121,25 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 				});
 	}
 
-	private Map<String, SubmodelService> createServices(Collection<Submodel> submodels) {
-		Map<String, SubmodelService> map = new LinkedHashMap<>();
+	private Map<String, SubmodelService<Predicate<Submodel>>> createServices(Collection<Submodel> submodels) {
+		Map<String, SubmodelService<Predicate<Submodel>>> map = new LinkedHashMap<>();
 		submodels.forEach(submodel -> map.put(submodel.getId(), submodelServiceFactory.create(submodel)));
 
 		return map;
 	}
 
 	@Override
-	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
-		List<Submodel> allSubmodels = submodelServices.values()
+	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo, FilterInfo<Predicate<Submodel>> filterInfo) {
+		Stream<Submodel> allSubmodelsStream = submodelServices.values()
 				.stream()
-				.map(service -> service.getSubmodel())
+				.map(service -> service.getSubmodel());
+
+		if (filterInfo != null) {
+			final Predicate<Submodel> filter = filterInfo.getFilter();
+			allSubmodelsStream = allSubmodelsStream.filter(filter);
+		}
+
+		List<Submodel> allSubmodels = allSubmodelsStream
 				.collect(Collectors.toList());
 
 		TreeMap<String, Submodel> submodelMap = allSubmodels.stream()
@@ -168,8 +172,8 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo) {
-		return getSubmodelService(submodelId).getSubmodelElements(pInfo);
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo, FilterInfo<Predicate<Submodel>> filterInfo) {
+		return getSubmodelService(submodelId).getSubmodelElements(pInfo, filterInfo);
 	}
 
 	@Override
@@ -214,7 +218,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) {
-		return new SubmodelValueOnly(getSubmodelElements(submodelId, NO_LIMIT_PAGINATION_INFO).getResult());
+		return new SubmodelValueOnly(getSubmodelElements(submodelId, NO_LIMIT_PAGINATION_INFO, null).getResult());
 	}
 
 	@Override
@@ -243,7 +247,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 
-	private SubmodelService getSubmodelService(String submodelId) {
+	private SubmodelService<Predicate<Submodel>> getSubmodelService(String submodelId) {
 		throwIfSubmodelDoesNotExist(submodelId);
 
 		return submodelServices.get(submodelId);

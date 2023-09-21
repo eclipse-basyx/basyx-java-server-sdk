@@ -30,6 +30,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
+import java.util.function.Predicate;
+
 /**
  * SubmodelService factory returning an in-memory backend SubmodelService
  * 
@@ -38,11 +40,10 @@ import org.springframework.stereotype.Component;
  */
 @ConditionalOnExpression("'${basyx.submodelservice.backend}'.equals('InMemory') or '${basyx.backend}'.equals('InMemory')")
 @Component
-public class InMemorySubmodelServiceFactory implements SubmodelServiceFactory {
+public class InMemorySubmodelServiceFactory implements SubmodelServiceFactory<Predicate<Submodel>> {
 
 	@Override
-	public SubmodelService create(Submodel submodel) {
-		return new InMemorySubmodelService(submodel);
+	public SubmodelService<Predicate<Submodel>> create(Submodel submodel) {
+		return new InMemorySubmodelService<>(submodel);
 	}
-
 }

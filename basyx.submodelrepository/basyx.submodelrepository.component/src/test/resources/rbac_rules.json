@@ -1,0 +1,12 @@
+[
+  {
+    "role": "admin",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "basyx",
+      "aasId": "*",
+      "smId": "*",
+      "smElIdShortPath": "*"
+    }
+  }
+]

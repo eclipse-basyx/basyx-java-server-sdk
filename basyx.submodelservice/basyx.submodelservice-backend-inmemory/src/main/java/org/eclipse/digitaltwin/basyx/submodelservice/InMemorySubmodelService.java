@@ -39,6 +39,7 @@ import org.eclipse.digitaltwin.basyx.InvokableOperation;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -55,7 +56,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapper;
  * @author schnicke, danish
  * 
  */
-public class InMemorySubmodelService implements SubmodelService {
+public class InMemorySubmodelService<FilterType> implements SubmodelService<FilterType> {
 
 	private final Submodel submodel;
 	private HierarchicalSubmodelElementParser parser;
@@ -77,7 +78,7 @@ public class InMemorySubmodelService implements SubmodelService {
 	}
 
 	@Override
-	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo) {
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo, FilterInfo<FilterType> filterInfo) {
 		List<SubmodelElement> allSubmodels = submodel.getSubmodelElements();
 
 		TreeMap<String, SubmodelElement> submodelMap = allSubmodels.stream()
@@ -201,10 +202,10 @@ public class InMemorySubmodelService implements SubmodelService {
 	@Override
 	public OperationVariable[] invokeOperation(String idShortPath, OperationVariable[] input) {
 		SubmodelElement sme = getSubmodelElement(idShortPath);
-		
+
 		if (!(sme instanceof InvokableOperation))
 			throw new NotInvokableException(idShortPath);
-		
+
 		InvokableOperation operation = (InvokableOperation) sme;
 		return operation.invoke(input);
 	}

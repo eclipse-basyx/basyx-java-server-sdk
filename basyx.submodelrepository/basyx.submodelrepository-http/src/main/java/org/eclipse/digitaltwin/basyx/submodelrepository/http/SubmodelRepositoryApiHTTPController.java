@@ -99,7 +99,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		if (cursor == null)
 			cursor = "";
 		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
-		CursorResult<List<Submodel>> cursorResult = repository.getAllSubmodels(pInfo);
+		CursorResult<List<Submodel>> cursorResult = repository.getAllSubmodels(pInfo, null);
 
 		GetSubmodelsResult paginatedSubmodel = new GetSubmodelsResult();
 		paginatedSubmodel.result(new ArrayList<>(cursorResult.getResult()));
@@ -127,7 +127,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 			cursor = "";
 		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
 		CursorResult<List<SubmodelElement>> submodelElements = repository
-				.getSubmodelElements(submodelIdentifier.getIdentifier(), pInfo);
+				.getSubmodelElements(submodelIdentifier.getIdentifier(), pInfo, null);
 		
 		GetSubmodelElementsResult paginatedSubmodelElement = new GetSubmodelElementsResult();
 		paginatedSubmodelElement.setResult(submodelElements.getResult());

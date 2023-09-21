@@ -32,6 +32,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -43,14 +44,14 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
  * @author schnicke, danish, kammognie
  *
  */
-public interface SubmodelRepository {
+public interface SubmodelRepository<FilterType> {
 
 	/**
 	 * Retrieves all Submodels from the repository
 	 * 
 	 * @return a list of all found Submodels
 	 */
-	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo);
+	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo, FilterInfo<FilterType> filterInfo);
 
 	/**
 	 * Retrieves the Submodel with the specific id
@@ -92,7 +93,7 @@ public interface SubmodelRepository {
 	 * @param submodelId
 	 * @return
 	 */
-	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo)
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo, FilterInfo<FilterType> filterInfo)
 			throws ElementDoesNotExistException;
 
 	/**

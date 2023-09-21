@@ -25,8 +25,10 @@
 package org.eclipse.digitaltwin.basyx.aasservice.backend;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -36,6 +38,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -46,7 +49,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
  * @author schnicke
  * 
  */
-public class InMemoryAasService implements AasService {
+public class InMemoryAasService implements AasService<Predicate<Reference>> {
 	private AssetAdministrationShell aas;
 
 	/**
@@ -64,7 +67,7 @@ public class InMemoryAasService implements AasService {
 	}
 
 	@Override
-	public CursorResult<List<Reference>> getSubmodelReferences(PaginationInfo pInfo) {
+	public CursorResult<List<Reference>> getSubmodelReferences(PaginationInfo pInfo, FilterInfo<Predicate<Reference>> filterInfo) {
 		List<Reference> submodelReferences = aas.getSubmodels();
 
 		Function<Reference, String> idResolver = extractSubmodelID();
@@ -72,7 +75,7 @@ public class InMemoryAasService implements AasService {
 		TreeMap<String, Reference> submodelRefMap = convertToTreeMap(submodelReferences, idResolver);
 
 		PaginationSupport<Reference> paginationSupport = new PaginationSupport<>(submodelRefMap, idResolver);
-		CursorResult<List<Reference>> paginatedSubmodelReference = paginationSupport.getPaged(pInfo);
+		CursorResult<List<Reference>> paginatedSubmodelReference = paginationSupport.getPagedAndFiltered(pInfo, Optional.ofNullable(filterInfo).map(FilterInfo::getFilter).orElse(null));
 
 		return paginatedSubmodelReference;
 	}

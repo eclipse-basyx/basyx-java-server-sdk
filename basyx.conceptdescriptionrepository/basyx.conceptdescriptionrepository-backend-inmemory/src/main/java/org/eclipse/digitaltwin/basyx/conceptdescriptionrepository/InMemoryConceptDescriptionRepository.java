@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
@@ -41,6 +42,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -51,7 +53,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
  * @author danish, kammognie
  *
  */
-public class InMemoryConceptDescriptionRepository implements ConceptDescriptionRepository {
+public class InMemoryConceptDescriptionRepository implements ConceptDescriptionRepository<Predicate<ConceptDescription>> {
 
 	private Map<String, ConceptDescription> conceptDescriptions = new LinkedHashMap<>();
 	
@@ -97,7 +99,7 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 	}
 
 	@Override
-	public CursorResult<List<ConceptDescription>> getAllConceptDescriptions(PaginationInfo pInfo) {
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptions(PaginationInfo pInfo, FilterInfo<Predicate<ConceptDescription>> filterInfo) {
 		List<ConceptDescription> conceptDescriptionList = conceptDescriptions.values()
 				.stream()
 				.collect(Collectors.toList());
@@ -107,7 +109,7 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 	}
 
 	@Override
-	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIdShort(String idShort, PaginationInfo pInfo) {
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIdShort(String idShort, PaginationInfo pInfo, FilterInfo<Predicate<ConceptDescription>> filterInfo) {
 		List<ConceptDescription> allDescriptions = conceptDescriptions.values()
 				.stream()
 				.collect(Collectors.toList());
@@ -121,7 +123,7 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 	}
 
 	@Override
-	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIsCaseOf(Reference reference, PaginationInfo pInfo) {
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIsCaseOf(Reference reference, PaginationInfo pInfo, FilterInfo<Predicate<ConceptDescription>> filterInfo) {
 		List<ConceptDescription> allDescriptions = conceptDescriptions.values()
 				.stream()
 				.collect(Collectors.toList());
@@ -134,7 +136,7 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 	}
 
 	@Override
-	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByDataSpecificationReference(Reference reference, PaginationInfo pInfo) {
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByDataSpecificationReference(Reference reference, PaginationInfo pInfo, FilterInfo<Predicate<ConceptDescription>> filterInfo) {
 		List<ConceptDescription> allDescriptions = conceptDescriptions.values()
 				.stream()
 				.collect(Collectors.toList());

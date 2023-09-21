@@ -32,7 +32,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
- 
+
 
 public class CursorEncodingRegistryStorage<FilterType> extends SubmodelRegistryStorageDecorator<FilterType> {
 

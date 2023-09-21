@@ -60,16 +60,16 @@ import org.junit.Test;
 public abstract class SubmodelRepositorySuite {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 
-	protected abstract SubmodelRepository getSubmodelRepository();
+	protected abstract SubmodelRepository<?> getSubmodelRepository();
 
-	protected abstract SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels);
+	protected abstract SubmodelRepository<?> getSubmodelRepository(Collection<Submodel> submodels);
 
 	@Test
 	public void getAllSubmodelsPreconfigured() {
 		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodels();
 
-		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
-		Collection<Submodel> submodels = repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult();
+		SubmodelRepository<?> repo = getSubmodelRepository(expectedSubmodels);
+		Collection<Submodel> submodels = repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO, null).getResult();
 
 		assertSubmodelsAreContained(expectedSubmodels, submodels);
 	}
@@ -81,15 +81,15 @@ public abstract class SubmodelRepositorySuite {
 
 	@Test
 	public void getAllSubmodelsEmpty() {
-		SubmodelRepository repo = getSubmodelRepository();
-		Collection<Submodel> submodels = repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult();
+		SubmodelRepository<?> repo = getSubmodelRepository();
+		Collection<Submodel> submodels = repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO, null).getResult();
 
 		assertIsEmpty(submodels);
 	}
 
 	@Test
 	public void getSpecificSubmodel() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 
 		Submodel operationalDataSm = DummySubmodelFactory.createOperationalDataSubmodel();
 		Submodel retrieved = repo.getSubmodel(operationalDataSm.getId());
@@ -99,7 +99,7 @@ public abstract class SubmodelRepositorySuite {
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getSpecificNonExistingSubmodel() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.getSubmodel("doesNotExist");
 	}
 
@@ -108,7 +108,7 @@ public abstract class SubmodelRepositorySuite {
 		String id = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID;
 		Submodel expected = buildDummySubmodel(id);
 
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.updateSubmodel(id, expected);
 
 		assertEquals(expected, repo.getSubmodel(id));
@@ -119,7 +119,7 @@ public abstract class SubmodelRepositorySuite {
 		String id = "notExisting";
 		Submodel doesNotExist = buildDummySubmodel(id);
 
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.updateSubmodel(id, doesNotExist);
 	}
 
@@ -128,7 +128,7 @@ public abstract class SubmodelRepositorySuite {
 		String id = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID;
 		Submodel newSm = buildDummySubmodel("mismatchId");
 
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.updateSubmodel(id, newSm);
 	}
 
@@ -137,7 +137,7 @@ public abstract class SubmodelRepositorySuite {
 		String id = "newSubmodel";
 		Submodel expectedSubmodel = buildDummySubmodel(id);
 
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.createSubmodel(expectedSubmodel);
 
 		Submodel retrieved = repo.getSubmodel(id);
@@ -146,7 +146,7 @@ public abstract class SubmodelRepositorySuite {
 
 	@Test(expected = CollidingIdentifierException.class)
 	public void createSubmodelWithCollidingId() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		Submodel submodel = repo.getSubmodel(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID);
 
 		repo.createSubmodel(submodel);
@@ -154,7 +154,7 @@ public abstract class SubmodelRepositorySuite {
 
 	@Test
 	public void deleteSubmodel() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.deleteSubmodel(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID);
 
 		try {
@@ -166,15 +166,15 @@ public abstract class SubmodelRepositorySuite {
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void deleteNonExistingSubmodel() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.deleteSubmodel("nonExisting");
 	}
 
 	@Test
 	public void getSubmodelElements() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		Collection<SubmodelElement> elements = repo
-				.getSubmodelElements(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, NO_LIMIT_PAGINATION_INFO)
+				.getSubmodelElements(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, NO_LIMIT_PAGINATION_INFO, null)
 				.getResult();
 		Collection<SubmodelElement> expectedElements = DummySubmodelFactory.createOperationalDataSubmodel()
 				.getSubmodelElements();
@@ -183,14 +183,14 @@ public abstract class SubmodelRepositorySuite {
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getSubmodelElementsOfNonExistingSubmodel() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		repo.getSubmodelElements("notExisting", NO_LIMIT_PAGINATION_INFO).getResult();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.getSubmodelElements("notExisting", NO_LIMIT_PAGINATION_INFO, null).getResult();
 
 	}
 
 	@Test
 	public void getSubmodelElement() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		SubmodelElement element = repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT);
 		SubmodelElement expectedElement = getExpectedSubmodelElement();
 
@@ -199,19 +199,19 @@ public abstract class SubmodelRepositorySuite {
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getNonExistingSubmodelElement() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, "nonExisting");
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getSubmodelElementOfNonExistingSubmodel() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.getSubmodelElement("nonExisting", "doesNotMatter");
 	}
 
 	@Test
 	public void getPropertyValue() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		Object expected = ((Property) getExpectedSubmodelElement()).getValue();
 		Object value = repo.getSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT);
 
@@ -220,19 +220,19 @@ public abstract class SubmodelRepositorySuite {
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getNonExistingSubmodelElementValue() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.getSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, "nonExisting");
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getSubmodelElementValueOfNonExistingSubmodel() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.getSubmodelElementValue("nonExisting", "doesNotMatter");
 	}
 
 	@Test
 	public void setPropertyValue() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		String expected = "200";
 
 		PropertyValue valueToWrite = new PropertyValue(expected);
@@ -245,7 +245,7 @@ public abstract class SubmodelRepositorySuite {
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void setNonExistingSubmodelElementValue() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 
 		PropertyValue valueToWrite = new PropertyValue("400");
 
@@ -254,7 +254,7 @@ public abstract class SubmodelRepositorySuite {
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void setSubmodelElementValueOfNonExistingSubmodel() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 
 		PropertyValue valueToWrite = new PropertyValue("400");
 
@@ -263,7 +263,7 @@ public abstract class SubmodelRepositorySuite {
 
 	@Test
 	public void createSubmodelElement() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 
 		Property property = new DefaultProperty.Builder().idShort("test321")
 				.category("cat1")
@@ -279,7 +279,7 @@ public abstract class SubmodelRepositorySuite {
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void deleteSubmodeleElement() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.deleteSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, "test123");
 
 		try {
@@ -291,7 +291,7 @@ public abstract class SubmodelRepositorySuite {
 
 	@Test
 	public void createNestedSubmodelELement() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 		Property propertyInCollection = new DefaultProperty.Builder().idShort("test654")
 				.category("cat1")
 				.value("305")
@@ -319,7 +319,7 @@ public abstract class SubmodelRepositorySuite {
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void deleteNestedSubmodelElementInSubmodelElementCollection() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 
 		String idShortPathPropertyInSmeCol = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT + DummySubmodelFactory.SUBMODEL_ELEMENT_SECOND_ID_SHORT;
 
@@ -335,7 +335,7 @@ public abstract class SubmodelRepositorySuite {
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void deleteNestedSubmodelElementInSubmodelElementList() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository<?> repo = getSubmodelRepositoryWithDummySubmodels();
 
 		repo.deleteSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, generateIdShortPath());
 
@@ -358,9 +358,9 @@ public abstract class SubmodelRepositorySuite {
 	public void getPaginatedSubmodel() {
 		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodels();
 
-		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
+		SubmodelRepository<?> repo = getSubmodelRepository(expectedSubmodels);
 		CursorResult<List<Submodel>> cursorResult = repo
-				.getAllSubmodels(new PaginationInfo(1, ""));
+				.getAllSubmodels(new PaginationInfo(1, ""), null);
 		assertEquals(1, cursorResult.getResult().size());
 	}
 
@@ -407,9 +407,9 @@ public abstract class SubmodelRepositorySuite {
 				.build();
 	}
 
-	private SubmodelRepository getSubmodelRepositoryWithDummySubmodels() {
+	private SubmodelRepository<?> getSubmodelRepositoryWithDummySubmodels() {
 		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodels();
-		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
+		SubmodelRepository<?> repo = getSubmodelRepository(expectedSubmodels);
 		return repo;
 	}
 

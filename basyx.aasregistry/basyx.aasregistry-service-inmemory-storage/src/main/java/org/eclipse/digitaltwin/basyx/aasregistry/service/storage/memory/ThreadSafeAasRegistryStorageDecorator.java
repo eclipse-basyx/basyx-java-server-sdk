@@ -38,6 +38,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNot
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
@@ -45,15 +46,15 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class ThreadSafeAasRegistryStorageDecorator implements AasRegistryStorage {
+public class ThreadSafeAasRegistryStorageDecorator<AssetAdministrationShellDescriptorFilterType, SubmodelDescriptorFilterType> implements AasRegistryStorage<AssetAdministrationShellDescriptorFilterType, SubmodelDescriptorFilterType> {
 
-	private final AasRegistryStorage storage;
+	private final AasRegistryStorage<AssetAdministrationShellDescriptorFilterType, SubmodelDescriptorFilterType> storage;
 
 	private final ThreadSafeAccess access = new ThreadSafeAccess();
 	
 	@Override
-	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter) {	
-		return access.read(storage::getAllAasDescriptors, pRequest, filter);
+	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter, FilterInfo<AssetAdministrationShellDescriptorFilterType> filterInfo) {
+		return access.read(storage::getAllAasDescriptors, pRequest, filter, filterInfo);
 	}
 
 	@Override
@@ -67,8 +68,8 @@ public class ThreadSafeAasRegistryStorageDecorator implements AasRegistryStorage
 	}
 	
 	@Override
-	public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(@NonNull String aasDescriptorId, @NonNull PaginationInfo pRequest) throws AasDescriptorNotFoundException {	
-		return access.read(storage::getAllSubmodels, aasDescriptorId, pRequest);
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(@NonNull String aasDescriptorId, @NonNull PaginationInfo pRequest, FilterInfo<SubmodelDescriptorFilterType> filterInfo) throws AasDescriptorNotFoundException {
+		return access.read(storage::getAllSubmodels, aasDescriptorId, pRequest, filterInfo);
 	}
 
 	@Override
@@ -84,6 +85,11 @@ public class ThreadSafeAasRegistryStorageDecorator implements AasRegistryStorage
 	@Override
 	public void removeSubmodel(@NonNull String aasDescrId, @NonNull String submodelId) {
 		 access.write(storage::removeSubmodel, aasDescrId, submodelId);
+	}
+
+	@Override
+	public Set<String> clear(FilterInfo<AssetAdministrationShellDescriptorFilterType> filterInfo) {
+		return access.write1(storage::clear, filterInfo);
 	}
 
 	@Override

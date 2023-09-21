@@ -53,14 +53,14 @@ public class TestSubmodelRepositorySubmodelElementsHTTP extends SubmodelServiceS
 
 	@Before
 	public void createSubmodelOnRepo() {
-		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
+		SubmodelRepository<?> repo = appContext.getBean(SubmodelRepository.class);
 		repo.createSubmodel(createSubmodel());
 	}
 
 	@After
 	public void removeSubmodelFromRepo() {
-		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
-		repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult().stream().map(s -> s.getId())
+		SubmodelRepository<?> repo = appContext.getBean(SubmodelRepository.class);
+		repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO, null).getResult().stream().map(s -> s.getId())
 				.forEach(repo::deleteSubmodel);
 	}
 
@@ -72,7 +72,7 @@ public class TestSubmodelRepositorySubmodelElementsHTTP extends SubmodelServiceS
 	@Override
 	protected String getURL() {
 
-		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath("http://localhost:8080/submodels",
+		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath("http://localhost:8079/submodels",
 				createSubmodel().getId());
 	}
 

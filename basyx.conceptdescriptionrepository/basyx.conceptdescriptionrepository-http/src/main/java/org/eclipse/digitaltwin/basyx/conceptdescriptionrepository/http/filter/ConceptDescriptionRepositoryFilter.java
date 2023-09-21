@@ -39,12 +39,12 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
  * @author danish
  *
  */
-public class ConceptDescriptionRepositoryFilter {
+public class ConceptDescriptionRepositoryFilter<ConceptDescriptionFilterType> {
 
 	private static final int MAX_NUM_OF_EXPECTED_PARAMETERS = 1;
-	private ConceptDescriptionRepository repository;
+	private ConceptDescriptionRepository<ConceptDescriptionFilterType> repository;
 
-	public ConceptDescriptionRepositoryFilter(ConceptDescriptionRepository conceptDescriptionRepository) {
+	public ConceptDescriptionRepositoryFilter(ConceptDescriptionRepository<ConceptDescriptionFilterType> conceptDescriptionRepository) {
 		this.repository = conceptDescriptionRepository;
 	}
 
@@ -60,15 +60,15 @@ public class ConceptDescriptionRepositoryFilter {
 		}
 
 		if (idShort != null)
-			return repository.getAllConceptDescriptionsByIdShort(idShort, pInfo);
+			return repository.getAllConceptDescriptionsByIdShort(idShort, pInfo, null);
 
 		if (isCaseOf != null)
-			return repository.getAllConceptDescriptionsByIsCaseOf(isCaseOf, pInfo);
+			return repository.getAllConceptDescriptionsByIsCaseOf(isCaseOf, pInfo, null);
 
 		if (dataSpecificationRef != null)
-			return repository.getAllConceptDescriptionsByDataSpecificationReference(dataSpecificationRef, pInfo);
+			return repository.getAllConceptDescriptionsByDataSpecificationReference(dataSpecificationRef, pInfo, null);
 
-		return repository.getAllConceptDescriptions(pInfo);
+		return repository.getAllConceptDescriptions(pInfo, null);
 	}
 
 	private boolean hasPermittedNumberOfParameters(String idShort, Reference isCaseOf, Reference dataSpecificationRef) {

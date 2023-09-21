@@ -21,7 +21,6 @@
 		<module>basyx.aasenvironment</module>
 		<module>basyx.conceptdescriptionrepository</module>
 		<module>basyx.security-model</module>
-        <module>basyx.common/basyx.authorization</module>
     </modules>
 	<name>BaSyx Parent</name>
 	<description>Parent POM for Eclipse BaSyx</description>

@@ -48,6 +48,7 @@
 		<module>basyx.aasregistry-client-native</module>
 		<module>basyx.aasregistry-paths</module>
 		<module>basyx.aasregistry-service</module>
+		<module>basyx.aasregistry-service-authorization</module>
 		<module>basyx.aasregistry-service-basetests</module>
 		<module>basyx.aasregistry-service-kafka-events</module>
 		<module>basyx.aasregistry-service-inmemory-storage</module>

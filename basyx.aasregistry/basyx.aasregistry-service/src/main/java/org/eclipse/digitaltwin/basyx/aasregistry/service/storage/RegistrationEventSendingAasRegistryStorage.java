@@ -24,10 +24,7 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.storage;
 
-import java.util.Set;
-
-import javax.validation.Valid;
-
+import lombok.NonNull;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorAlreadyExistsException;
@@ -36,8 +33,13 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelNotFound
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEvent;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEvent.EventType;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventSink;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
-import lombok.NonNull;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Set;
 
 public class RegistrationEventSendingAasRegistryStorage extends AasRegistryStorageDelegate {
 
@@ -59,6 +61,11 @@ public class RegistrationEventSendingAasRegistryStorage extends AasRegistryStora
 	}
 
 	@Override
+	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter, FilterInfo<AssetAdministrationShellDescriptorFilterType> filterInfo) {
+		return storage.getAllAasDescriptors(pRequest, filter, filterInfo);
+	}
+
+	@Override
 	public void insertAasDescriptor(@Valid AssetAdministrationShellDescriptor descr) throws AasDescriptorAlreadyExistsException {
 		storage.insertAasDescriptor(descr);
 		aasDescriptorRegistered(descr);
@@ -68,6 +75,11 @@ public class RegistrationEventSendingAasRegistryStorage extends AasRegistryStora
 	public void removeAasDescriptor(@NonNull String aasDescriptorId) throws AasDescriptorNotFoundException {
 		storage.removeAasDescriptor(aasDescriptorId);
 		aasDescriptorUnregistered(aasDescriptorId);
+	}
+
+	@Override
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(@NonNull String aasDescriptorId, @NonNull PaginationInfo pRequest, FilterInfo<SubmodelDescriptorFilterType> filterInfo) throws AasDescriptorNotFoundException {
+		return storage.getAllSubmodels(aasDescriptorId, pRequest, filterInfo);
 	}
 
 	@Override
@@ -94,6 +106,11 @@ public class RegistrationEventSendingAasRegistryStorage extends AasRegistryStora
 	}
 
 	@Override
+	public Set<String> clear(FilterInfo<AssetAdministrationShellDescriptorFilterType> filterInfo) {
+		return storage.clear(filterInfo);
+	}
+
+	@Override
 	public Set<String> clear() {
 		Set<String> unregistredDescriptors = storage.clear();
 		for (String eachId : unregistredDescriptors) {
@@ -101,7 +118,7 @@ public class RegistrationEventSendingAasRegistryStorage extends AasRegistryStora
 		}
 		return unregistredDescriptors;
 	}
-	
+
 	private void aasDescriptorRegistered(@NonNull AssetAdministrationShellDescriptor descriptor) {
 		RegistryEvent evt = RegistryEvent.builder().id(descriptor.getId()).type(RegistryEvent.EventType.AAS_REGISTERED).aasDescriptor(descriptor).build();
 		eventSink.consumeEvent(evt);

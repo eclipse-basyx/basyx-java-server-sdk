@@ -105,7 +105,7 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 			cursor = "";
 
 		PaginationInfo paginationInfo = new PaginationInfo(limit, cursor);
-		CursorResult<List<AssetAdministrationShell>> paginatedAAS = aasRepository.getAllAas(paginationInfo);
+		CursorResult<List<AssetAdministrationShell>> paginatedAAS = aasRepository.getAllAas(paginationInfo, null);
 
 		GetAssetAdministrationShellsResult result = new GetAssetAdministrationShellsResult();
 		result.setResult(paginatedAAS.getResult());
@@ -122,7 +122,7 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 			cursor = "";
 
 		PaginationInfo paginationInfo = new PaginationInfo(limit, cursor);
-		CursorResult<List<Reference>> submodelReferences = aasRepository.getSubmodelReferences(aasIdentifier.getIdentifier(), paginationInfo);
+		CursorResult<List<Reference>> submodelReferences = aasRepository.getSubmodelReferences(aasIdentifier.getIdentifier(), paginationInfo, null);
 
 		GetReferencesResult result = new GetReferencesResult();
 		result.setResult(submodelReferences.getResult());

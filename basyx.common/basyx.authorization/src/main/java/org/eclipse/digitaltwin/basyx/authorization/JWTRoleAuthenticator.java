@@ -5,7 +5,9 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class JWTRoleAuthenticator implements IRoleAuthenticator {
@@ -18,13 +20,17 @@ public class JWTRoleAuthenticator implements IRoleAuthenticator {
 
     @Override
     public List<String> getRoles() {
-        final Object subjectInfo = subjectInfoProvider.get();
-        if (subjectInfo instanceof Jwt) {
-            final Jwt jwt = (Jwt) subjectInfo;
-            final String scopeString = jwt.getClaimAsString("scope");
-            final List<String> scopes = Arrays.asList(scopeString.split("\\s+"));
-            return scopes;
+        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
+        if (subjectInfo != null) {
+            final Object obj = subjectInfo.get();
+            if (obj instanceof Jwt) {
+                final Jwt jwt = (Jwt) obj;
+                final List<String> roles = jwt.getClaimAsStringList("roles");
+                return roles;
+            }
+        } else {
+            return Collections.emptyList();
         }
-        return null;
+        return Collections.emptyList();
     }
 }

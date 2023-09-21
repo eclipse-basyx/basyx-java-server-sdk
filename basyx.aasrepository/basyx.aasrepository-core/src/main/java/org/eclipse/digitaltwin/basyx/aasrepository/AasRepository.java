@@ -31,6 +31,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
@@ -40,14 +41,14 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
  * @author schnicke, kammognie
  *
  */
-public interface AasRepository {
-	
+public interface AasRepository<AssetAdministrationShellFilterType, SubmodelReferenceFilterType> {
+
 	/**
 	 * Retrieves all Asset Administration Shells from the repository
 	 * 
 	 * @return a list of all found Asset Administration Shells
 	 */
-	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo);
+	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo, FilterInfo<AssetAdministrationShellFilterType> filterInfo);
 
 	/**
 	 * Retrieves a specific AAS
@@ -86,7 +87,7 @@ public interface AasRepository {
 	 * 
 	 * @param referenceId
 	 */
-	public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo);
+	public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo, FilterInfo<SubmodelReferenceFilterType> filterInfo);
 
 	/**
 	 * Adds a Submodel Reference
@@ -121,14 +122,14 @@ public interface AasRepository {
 	 * @return the requested AAS
 	 */
 	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException;
-    
+
 	/**
 	 * Returns the name of the repository
-	 * 
+	 *
 	 * @return repoName
 	 */
 	public default String getName() {
 		return "aas-repo";
 	}
-	
+
 }

@@ -49,6 +49,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStor
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.ShellDescriptorSearchRequests;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.ShellDescriptorSearchRequests.GroupedQueries;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.springframework.data.domain.Sort.Direction;
@@ -74,7 +75,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class MongoDbAasRegistryStorage implements AasRegistryStorage {
+public class MongoDbAasRegistryStorage implements AasRegistryStorage<Criteria, Criteria> {
 
 	private static final String MATCHING_SUBMODEL_DESCRIPTORS = "submodelDescriptors.$";
 
@@ -88,8 +89,9 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 	private final MongoTemplate template;
 	
 	@Override
-	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter) {
+	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter, FilterInfo<Criteria> filterInfo) {
 		List<AggregationOperation> allAggregations = new LinkedList<>();
+		applyFilter(filterInfo.getFilter(), allAggregations);
 		applyFilter(filter, allAggregations);
 		applySorting(allAggregations);
 		applyPagination(pRequest, allAggregations);
@@ -119,6 +121,12 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 		if (pRequest.getLimit() != null) {
 			allAggregations.add(Aggregation.limit(pRequest.getLimit()));
 		}
+	}
+
+	private void applyFilter(Criteria criteria, List<AggregationOperation> allAggregations) {
+		if (criteria != null) {
+			allAggregations.add(Aggregation.match(criteria));
+		};
 	}
 
 	private void applyFilter(DescriptorFilter filter, List<AggregationOperation> allAggregations) {
@@ -204,7 +212,7 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 	}
 
 	@Override
-	public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(@NonNull String aasDescriptorId, @NonNull PaginationInfo pRequest) throws AasDescriptorNotFoundException {
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(@NonNull String aasDescriptorId, @NonNull PaginationInfo pRequest, FilterInfo<Criteria> filterInfo) throws AasDescriptorNotFoundException {
 		if (!template.exists(Query.query(Criteria.where(ID).is(aasDescriptorId)), AssetAdministrationShellDescriptor.class)) {
 			throw new AasDescriptorNotFoundException(aasDescriptorId);
 		}
@@ -212,6 +220,7 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 		allAggregations.add(Aggregation.match(Criteria.where(ID).is(aasDescriptorId)));
 		allAggregations.add(Aggregation.unwind(SUBMODEL_DESCRIPTORS));
 		allAggregations.add(Aggregation.replaceRoot(SUBMODEL_DESCRIPTORS));
+		this.applyFilter(filterInfo.getFilter(), allAggregations);
 		this.applySorting(allAggregations);
 		this.applyPagination(pRequest, allAggregations);
 		AggregationResults<SubmodelDescriptor> results = template.aggregate(Aggregation.newAggregation(allAggregations), AssetAdministrationShellDescriptor.class, SubmodelDescriptor.class);
@@ -296,6 +305,11 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public Set<String> clear(FilterInfo<Criteria> filterInfo) {
+		return null;
 	}
 
 	@Override

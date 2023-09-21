@@ -82,9 +82,9 @@ public abstract class BaseInterfaceTest {
 	private RegistryEventSink eventSink = Mockito.mock(RegistryEventSink.class);
 
 	@Autowired
-	public AasRegistryStorage baseStorage;
+	public AasRegistryStorage<?, ?> baseStorage;
 
-	protected RegistrationEventSendingAasRegistryStorage storage;
+	protected RegistrationEventSendingAasRegistryStorage<?, ?> storage;
 
 	@Rule
 	public TestResourcesLoader testResourcesLoader = new TestResourcesLoader();
@@ -100,7 +100,7 @@ public abstract class BaseInterfaceTest {
 	
 	@Before
 	public void setUp() throws IOException {
-		storage = new RegistrationEventSendingAasRegistryStorage(baseStorage, eventSink);
+		storage = new RegistrationEventSendingAasRegistryStorage<>(baseStorage, eventSink);
 		List<AssetAdministrationShellDescriptor> descriptors = testResourcesLoader.loadRepositoryDefinition(AssetAdministrationShellDescriptor.class);
 		descriptors.forEach(baseStorage::insertAasDescriptor);
 	}
@@ -134,23 +134,23 @@ public abstract class BaseInterfaceTest {
 	}
 
 	protected List<AssetAdministrationShellDescriptor> getAllAasDescriptors() {
-		return storage.getAllAasDescriptors(new PaginationInfo(null, null), new DescriptorFilter(null, null)).getResult();
+		return storage.getAllAasDescriptors(new PaginationInfo(null, null), new DescriptorFilter(null, null), null).getResult();
 	}
 	
 
 	protected List<AssetAdministrationShellDescriptor> getAllAasDescriptorsFiltered(AssetKind kind, String type) {
-		return storage.getAllAasDescriptors(new PaginationInfo(null, null), new DescriptorFilter(kind, type)).getResult();
+		return storage.getAllAasDescriptors(new PaginationInfo(null, null), new DescriptorFilter(kind, type), null).getResult();
 	}
 	
 	protected CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptorsWithPagination(int limit, String cursor) {
-		return storage.getAllAasDescriptors(new PaginationInfo(limit, cursor), new DescriptorFilter(null, null));
+		return storage.getAllAasDescriptors(new PaginationInfo(limit, cursor), new DescriptorFilter(null, null), null);
 	}
 	
 	protected List<SubmodelDescriptor> getAllSubmodels(String id) {
-		return storage.getAllSubmodels(id, new PaginationInfo(null, null)).getResult();
+		return storage.getAllSubmodels(id, new PaginationInfo(null, null), null).getResult();
 	}
 	
 	protected CursorResult<List<SubmodelDescriptor>> getAllSubmodelsWithPagination(String aasId, int limit, String cursor) {
-		return storage.getAllSubmodels(aasId, new PaginationInfo(limit, cursor));
+		return storage.getAllSubmodels(aasId, new PaginationInfo(limit, cursor), null);
 	}
 }

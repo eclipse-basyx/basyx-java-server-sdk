@@ -31,6 +31,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
@@ -40,14 +41,14 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
  * @author danish, kammognie
  *
  */
-public interface ConceptDescriptionRepository {
+public interface ConceptDescriptionRepository<ConceptDescriptionFilterType> {
 
 	/**
 	 * Retrieves all ConceptDescriptions from the repository
 	 * 
 	 * @return a list of all found ConceptDescriptions
 	 */
-	public CursorResult<List<ConceptDescription>> getAllConceptDescriptions(PaginationInfo pInfo);
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptions(PaginationInfo pInfo, FilterInfo<ConceptDescriptionFilterType> filterInfo);
 
 	/**
 	 * Retrieves all ConceptDescriptions from the repository matching the passed
@@ -56,7 +57,7 @@ public interface ConceptDescriptionRepository {
 	 * @param idShort
 	 * @return a list of all matched ConceptDescriptions
 	 */
-	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIdShort(String idShort, PaginationInfo pInfo);
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIdShort(String idShort, PaginationInfo pInfo, FilterInfo<ConceptDescriptionFilterType> filterInfo);
 
 	/**
 	 * Retrieves all ConceptDescriptions from the repository matching the passed
@@ -65,7 +66,7 @@ public interface ConceptDescriptionRepository {
 	 * @param isCaseOf
 	 * @return a list of all matched ConceptDescriptions
 	 */
-	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIsCaseOf(Reference isCaseOf, PaginationInfo pInfo);
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIsCaseOf(Reference isCaseOf, PaginationInfo pInfo, FilterInfo<ConceptDescriptionFilterType> filterInfo);
 
 	/**
 	 * Retrieves all ConceptDescriptions from the repository matching the passed
@@ -74,7 +75,7 @@ public interface ConceptDescriptionRepository {
 	 * @param dataSpecificationReference
 	 * @return a list of all matched ConceptDescriptions
 	 */
-	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByDataSpecificationReference(Reference dataSpecificationReference, PaginationInfo pInfo);
+	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByDataSpecificationReference(Reference dataSpecificationReference, PaginationInfo pInfo, FilterInfo<ConceptDescriptionFilterType> filterInfo);
 
 	/**
 	 * Retrieves the ConceptDescription with the specific id
@@ -109,14 +110,14 @@ public interface ConceptDescriptionRepository {
 	 * @throws ElementDoesNotExistException
 	 */
 	public void deleteConceptDescription(String conceptDescriptionId) throws ElementDoesNotExistException;
-	
+
 	/**
 	 * Returns the name of the repository
-	 * 
+	 *
 	 * @return repoName
 	 */
 	public default String getName() {
 		return "cd-repo";
 	}
-  
+
 }

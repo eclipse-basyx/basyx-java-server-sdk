@@ -42,6 +42,7 @@ import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.eclipse.digitaltwin.basyx.pagination.GetSubmodelElementsResult;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
+import org.eclipse.digitaltwin.basyx.submodelservice.authorization.PermissionResolver;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,19 +59,23 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-07-20T09:38:58.667119080Z[GMT]")
 @RestController
-public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi {
+public class SubmodelServiceHTTPApiController<SubmodelElementFilterType, SubmodelElementValueFilterType> implements SubmodelServiceHTTPApi {
 
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
-	private SubmodelService service;
+	private SubmodelService<SubmodelElementFilterType> service;
+
+	private final PermissionResolver<SubmodelElementFilterType> permissionResolver;
 
 	@Autowired
 	public SubmodelServiceHTTPApiController(SubmodelService service) {
 		this.service = service;
+		this.permissionResolver = permissionResolver;
 	}
 
 	@Override
 	public ResponseEntity<Void> deleteSubmodelElementByPath(
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath) {
+		permissionResolver.deleteSubmodelElement(service.getSubmodel(), idShortPath);
 		service.deleteSubmodelElement(idShortPath);
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
@@ -89,7 +94,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		if (cursor == null)
 			cursor = "";
 		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
-		CursorResult<List<SubmodelElement>> submodelElements = service.getSubmodelElements(pInfo);
+		CursorResult<List<SubmodelElement>> submodelElements = service.getSubmodelElements(pInfo, permissionResolver.getGetSubmodelElementsFilterInfo(service.getSubmodel()));
 
 		GetSubmodelElementsResult paginatedSubmodelElement = new GetSubmodelElementsResult();
 		paginatedSubmodelElement.setResult(submodelElements.getResult());
@@ -106,6 +111,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" }, defaultValue = "withoutBlobValue")) @Valid @RequestParam(value = "extent", required = false, defaultValue = "withoutBlobValue") String extent) {
 
+		permissionResolver.getSubmodel();
 		Submodel submodel = service.getSubmodel();
 
 		return new ResponseEntity<Submodel>(submodel, HttpStatus.OK);
@@ -122,6 +128,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" }, defaultValue = "withoutBlobValue")) @Valid @RequestParam(value = "extent", required = false, defaultValue = "withoutBlobValue") String extent) {
 
+		permissionResolver.getSubmodelElement(service.getSubmodel(), idShortPath);
 		SubmodelElement submodelElement = service.getSubmodelElement(idShortPath);
 
 		return new ResponseEntity<SubmodelElement>(submodelElement, HttpStatus.OK);
@@ -138,6 +145,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" }, defaultValue = "withoutBlobValue")) @Valid @RequestParam(value = "extent", required = false, defaultValue = "withoutBlobValue") String extent) {
 
+		permissionResolver.getSubmodelElementValue(service.getSubmodel(), idShortPath);
 		SubmodelElementValue submodelElementValue = service.getSubmodelElementValue(idShortPath);
 
 		return new ResponseEntity<SubmodelElementValue>(submodelElementValue, HttpStatus.OK);
@@ -147,6 +155,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 	public ResponseEntity<Submodel> getSubmodelMetadata(@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 			"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level) {
 
+		permissionResolver.getSubmodelMetaData(service.getSubmodel());
 		Submodel submodel = service.getSubmodel();
 		submodel.setSubmodelElements(null);
 
@@ -161,7 +170,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 					"withoutBlobValue" }, defaultValue = "withoutBlobValue")) @Valid @RequestParam(value = "extent", required = false, defaultValue = "withoutBlobValue") String extent) {
 
 		SubmodelValueOnly result = new SubmodelValueOnly(
-				service.getSubmodelElements(NO_LIMIT_PAGINATION_INFO).getResult());
+				service.getSubmodelElements(NO_LIMIT_PAGINATION_INFO, permissionResolver.getSubmodelValueOnlyFilterInfo(service.getSubmodel())).getResult());
 
 		return new ResponseEntity<SubmodelValueOnly>(result, HttpStatus.OK);
 	}
@@ -175,6 +184,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 			@Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue", schema = @Schema()) @Valid @RequestParam(value = "cursor", required = false) String cursor,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
 					"core" }, defaultValue = "core")) @Valid @RequestParam(value = "level", required = false, defaultValue = "core") String level) {
+		permissionResolver.setSubmodelElementValue(service.getSubmodel(), idShortPath, body);
 		service.setSubmodelElementValue(idShortPath, body);
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
@@ -183,6 +193,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 	public ResponseEntity<SubmodelElement> postSubmodelElement(@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElement body,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level) {
+		permissionResolver.createSubmodelElement(service.getSubmodel(), body);
 		service.createSubmodelElement(body);
 		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
 	}
@@ -191,6 +202,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 	public ResponseEntity<SubmodelElement> postSubmodelElementByPath(
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElement body) {
+		permissionResolver.createSubmodelElement(service.getSubmodel(), idShortPath, body);
 		service.createSubmodelElement(idShortPath, body);
 		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
 	}
