@@ -105,8 +105,8 @@ public abstract class AasxFileServerSuite {
 		PackageDescription packageDescription = DummyAasxFileServerFactory.createFirstDummyAASXPackage(server);			
 		InputStream actualValue = server.getAASXByPackageId(packageDescription.getPackageId());	
 		InputStream expectedValue = AasxFileServerSuiteHelper.FIRST_FILE;		
-		
-		IOUtils.contentEquals(expectedValue, actualValue);
+	
+		assertTrue(IOUtils.contentEquals(expectedValue, actualValue));
 	}
 
 	@Test
