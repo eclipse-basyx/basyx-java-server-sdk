@@ -94,10 +94,9 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	private void throwIfHasCollidingIds(Collection<Submodel> submodelsToCheck) {
 		Set<String> ids = new HashSet<>();
 
-		submodelsToCheck.stream().map(submodel -> submodel.getId()).filter(id -> !ids.add(id)).findAny()
-				.ifPresent(id -> {
-					throw new CollidingIdentifierException(id);
-				});
+		submodelsToCheck.stream().map(submodel -> submodel.getId()).filter(id -> !ids.add(id)).findAny().ifPresent(id -> {
+			throw new CollidingIdentifierException(id);
+		});
 	}
 
 	private Map<String, SubmodelService> createServices(Collection<Submodel> submodels) {
@@ -153,24 +152,21 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public SubmodelElement getSubmodelElement(String submodelId, String smeIdShort)
-			throws ElementDoesNotExistException {
+	public SubmodelElement getSubmodelElement(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(submodelId);
 
 		return submodelServices.get(submodelId).getSubmodelElement(smeIdShort);
 	}
 
 	@Override
-	public SubmodelElementValue getSubmodelElementValue(String submodelId, String smeIdShort)
-			throws ElementDoesNotExistException {
+	public SubmodelElementValue getSubmodelElementValue(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(submodelId);
 
 		return submodelServices.get(submodelId).getSubmodelElementValue(smeIdShort);
 	}
 
 	@Override
-	public void setSubmodelElementValue(String submodelId, String smeIdShort, SubmodelElementValue value)
-			throws ElementDoesNotExistException {
+	public void setSubmodelElementValue(String submodelId, String smeIdShort, SubmodelElementValue value) throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(submodelId);
 
 		submodelServices.get(submodelId).setSubmodelElementValue(smeIdShort, value);
@@ -191,8 +187,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement)
-			throws ElementDoesNotExistException {
+	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(submodelId);
 
 		submodelServices.get(submodelId).createSubmodelElement(idShortPath, smElement);
@@ -238,7 +233,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		throwIfSubmodelDoesNotExist(submodelId);
 
 		SubmodelElement submodelElement = submodelServices.get(submodelId).getSubmodelElement(idShortPath);
-		throwIfSmElementIsNotAFile(submodelElement);
+		throwIfSmElementIsNotAFile(submodelElement, inputStream);
 
 		File fileSmElement = (File) submodelElement;
 		String filePath = getFilePath(submodelId, idShortPath, fileSmElement);
@@ -247,11 +242,11 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		try (FileOutputStream outStream = new FileOutputStream(targetFile)) {
 			IOUtils.copy(inputStream, outStream);
 		}
-		
+
 		FileBlobValue fileValue = new FileBlobValue(fileSmElement.getContentType(), filePath);
 
 		setSubmodelElementValue(submodelId, idShortPath, fileValue);
-		
+
 		inputStream.close();
 	}
 
@@ -259,6 +254,13 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		String fileName = submodelId + "-" + idShortPath.replaceAll("/", "-") + "-" + file.getValue();
 
 		return tmpDirectory + "/" + fileName;
+	}
+
+	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement, InputStream inputStream) throws IOException {
+		if (!(submodelElement instanceof File)) {
+			inputStream.close();
+			throw new ElementNotAFileException(submodelElement.getIdShort());
+		}
 	}
 
 	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement) {

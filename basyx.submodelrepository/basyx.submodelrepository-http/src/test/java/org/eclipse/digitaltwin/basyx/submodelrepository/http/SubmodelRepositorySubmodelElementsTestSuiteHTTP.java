@@ -30,13 +30,15 @@ import static org.junit.Assert.assertEquals;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.entity.mime.FileBody;
-import org.apache.hc.client5.http.entity.mime.HttpMultipartMode;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -46,7 +48,6 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
@@ -215,52 +216,46 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
 	}
-	
+
 	@Test
 	public void uploadFileToFileSubmodelElement() throws IOException {
-		String submodelJSON = BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodel4FileTest.json");
-		
-		BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
-		
-		CloseableHttpResponse submodelElementFileUploadResponse = uploadFileToSubmodelElement("8A6344BDAB57E184","FileData");
-		
+		CloseableHttpResponse submodelElementFileUploadResponse = uploadFile();
+
 		assertEquals(HttpStatus.OK.value(), submodelElementFileUploadResponse.getCode());
 	}
-	
+
 	@Test
 	public void uploadFileToNonFileSubmodelElement() throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
 		String submodelJSON = BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodel4FileTest.json");
 		BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
-		CloseableHttpResponse submodelElementFileUploadResponse = uploadFileToSubmodelElement("8A6344BDAB57E184","NonFileParameter");
+		CloseableHttpResponse submodelElementFileUploadResponse = uploadFileToSubmodelElement(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_NON_FILE_ID_SHORT);
 		assertEquals(HttpStatus.BAD_REQUEST.value(), submodelElementFileUploadResponse.getCode());
 	}
-	
-	
+
 	private CloseableHttpResponse uploadFileToSubmodelElement(String submodelId, String submodelElementIdShort) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
-		
+
 		String fileName = "BaSyx-Logo.png";
 
 		java.io.File file = ResourceUtils.getFile("src/test/resources/" + fileName);
-		
+
 		HttpPut putRequest = createPutRequestWithFile(submodelId, submodelElementIdShort, fileName, file);
-        
-        return executePutRequest(client, putRequest);
+
+		return executePutRequest(client, putRequest);
 	}
 
 	private CloseableHttpResponse executePutRequest(CloseableHttpClient client, HttpPut putRequest) throws IOException {
 		CloseableHttpResponse response = client.execute(putRequest);
 
-        HttpEntity responseEntity = response.getEntity();
+		HttpEntity responseEntity = response.getEntity();
 
-        EntityUtils.consume(responseEntity);
+		EntityUtils.consume(responseEntity);
 		return response;
 	}
 
-	private HttpPut createPutRequestWithFile(String submodelId, String submodelElementIdShort, String fileName,
-			java.io.File file) {
+	private HttpPut createPutRequestWithFile(String submodelId, String submodelElementIdShort, String fileName, java.io.File file) {
 		HttpPut putRequest = new HttpPut(createSMEFileUploadURL(submodelId, submodelElementIdShort, fileName));
-		
+
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
 		builder.addPart("file", new FileBody(file));
@@ -270,9 +265,65 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 		putRequest.setEntity(multipart);
 		return putRequest;
 	}
-	
+
 	private String createSMEFileUploadURL(String submodelId, String submodelElementIdShort, String fileName) {
 		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(getURL(), submodelId) + "/submodel-elements/" + submodelElementIdShort + "/attachment?fileName=" + fileName;
+	}
+
+	@Test
+	public void deleteFile() throws FileNotFoundException, IOException {
+		uploadFile();
+
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeDeleteOnURL(createSMEFileDeleteURL(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT));
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+
+		response = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT));
+		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
+	}
+
+	@Test
+	public void deleteFileToNonFileSubmodelElement() throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
+		uploadFile();
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_NON_FILE_ID_SHORT));
+		assertEquals(HttpStatus.BAD_REQUEST.value(), response.getCode());
+	}
+
+	private CloseableHttpResponse uploadFile() throws FileNotFoundException, IOException {
+		String submodelJSON = BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodel4FileTest.json");
+		BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
+		return uploadFileToSubmodelElement(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT);
+	}
+
+	@Test
+	public void getFile() throws FileNotFoundException, IOException, ParseException {
+		uploadFile();
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT));
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+		String received = BaSyxHttpTestUtils.getResponseAsString(response);
+
+		String fileName = "BaSyx-Logo.png";
+		assertEquals(readFile("src/test/resources/" + fileName, Charset.defaultCharset()), new String(received.getBytes(), Charset.defaultCharset()));
+
+	}
+
+	static String readFile(String path, Charset encoding) throws IOException {
+		byte[] encoded = Files.readAllBytes(Paths.get(path));
+		return new String(encoded, encoding);
+	}
+
+	@Test
+	public void getFileToNonFileSubmodelElement() throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
+		uploadFile();
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_NON_FILE_ID_SHORT));
+		assertEquals(HttpStatus.BAD_REQUEST.value(), response.getCode());
+	}
+
+	private String createSMEFileDeleteURL(String submodelId, String submodelElementIdShort) {
+		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(getURL(), submodelId) + "/submodel-elements/" + submodelElementIdShort + "/attachment";
+	}
+
+	private String createSMEFileGetURL(String submodelId, String submodelElementIdShort) {
+		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(getURL(), submodelId) + "/submodel-elements/" + submodelElementIdShort + "/attachment";
 	}
 
 	@Test

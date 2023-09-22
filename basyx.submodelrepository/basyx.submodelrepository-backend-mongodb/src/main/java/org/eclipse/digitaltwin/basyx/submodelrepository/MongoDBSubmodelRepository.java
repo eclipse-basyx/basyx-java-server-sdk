@@ -331,7 +331,7 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 		SubmodelElement submodelElement = getSubmodelService(submodelId).getSubmodelElement(idShortPath);
 
-		throwIfSmElementIsNotAFile(submodelElement);
+		throwIfSmElementIsNotAFile(submodelElement, inputStream);
 
 		File fileSmElement = (File) submodelElement;
 
@@ -406,6 +406,13 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 		if (!(submodelElement instanceof File))
 			throw new ElementNotAFileException(submodelElement.getIdShort());
+	}
+	
+	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement, InputStream inputStream) throws IOException {
+		if (!(submodelElement instanceof File)) {
+			inputStream.close();
+			throw new ElementNotAFileException(submodelElement.getIdShort());
+		}
 	}
 
 	private String getFilePath(String tmpDirectory, String idShortPath, String contentType) {

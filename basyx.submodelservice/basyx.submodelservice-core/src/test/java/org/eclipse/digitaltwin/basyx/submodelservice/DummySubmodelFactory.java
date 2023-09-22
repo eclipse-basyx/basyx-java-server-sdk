@@ -92,6 +92,11 @@ public class DummySubmodelFactory {
 	public static final String SUBMODEL_SIMPLE_DATA_ID_SHORT = "simpleSubmodel001";
 	public static final String SUBMODEL_SIMPLE_DATA_ID = "simpleSubmodel001";
 	public static final String SUBMODEL_ELEMENT_SIMPLE_DATA_ID_SHORT = "elementToDelete";
+	
+	//SUBMODEL_FOR_FILE_TEST
+	public static final String SUBMODEL_FOR_FILE_TEST = "8A6344BDAB57E184";
+	public static final String SUBMODEL_ELEMENT_FILE_ID_SHORT = "FileData";
+	public static final String SUBMODEL_ELEMENT_NON_FILE_ID_SHORT = "NonFileParameter";
 
 	public static Collection<Submodel> getSubmodels() {
 		return Arrays.asList(createTechnicalDataSubmodel(), createOperationalDataSubmodel(), createSimpleDataSubmodel());

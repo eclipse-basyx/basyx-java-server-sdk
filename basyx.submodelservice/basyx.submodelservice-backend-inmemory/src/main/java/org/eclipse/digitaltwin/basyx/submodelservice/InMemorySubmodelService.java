@@ -85,6 +85,7 @@ public class InMemorySubmodelService implements SubmodelService {
 		return submodelElementValueFactory.create(getSubmodelElement(idShort)).getValue();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setSubmodelElementValue(String idShort, SubmodelElementValue value) throws ElementDoesNotExistException {
 		SubmodelElementValueMapperFactory submodelElementValueFactory = new SubmodelElementValueMapperFactory();
@@ -148,6 +149,7 @@ public class InMemorySubmodelService implements SubmodelService {
 			String collectionId = helper.extractDirectParentSubmodelElementListIdShort(idShortPath);
 			SubmodelElementList list = (SubmodelElementList) parser.getSubmodelElementFromIdShortPath(collectionId);
 			list.getValue().remove(sm);
+			return;
 		}
 		String collectionId = helper.extractDirectParentSubmodelElementCollectionIdShort(idShortPath);
 		SubmodelElementCollection collection = (SubmodelElementCollection) parser.getSubmodelElementFromIdShortPath(collectionId);

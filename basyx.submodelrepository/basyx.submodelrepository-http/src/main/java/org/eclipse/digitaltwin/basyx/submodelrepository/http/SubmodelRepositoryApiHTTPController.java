@@ -92,7 +92,6 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 
-
 	@Override
 	public ResponseEntity<PagedResult> getAllSubmodels(@Size(min = 1, max = 3072) @Valid Base64UrlEncodedIdentifier semanticId, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid String cursor, @Valid String level,
 			@Valid String extent) {
@@ -117,7 +116,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	@Override
 	public ResponseEntity<PagedResult> getAllSubmodelElements(Base64UrlEncodedIdentifier submodelIdentifier, @Min(1) @Valid Integer limit, @Valid String cursor, @Valid String level, @Valid String extent) {
 		Collection<SubmodelElement> submodelElements = repository.getSubmodelElements(submodelIdentifier.getIdentifier());
-		
+
 		GetSubmodelElementsResult paginatedSubmodelElement = new GetSubmodelElementsResult();
 		paginatedSubmodelElement.setResult(new ArrayList<>(submodelElements));
 		paginatedSubmodelElement.setPagingMetadata(new PagedResultPagingMetadata().cursor("nextSubmodelElementCursor"));
@@ -127,7 +126,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 	@Override
 	public ResponseEntity<SubmodelElement> getSubmodelElementByPathSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid String level, @Valid String extent) {
-			return handleSubmodelElementValueNormalGetRequest(submodelIdentifier.getIdentifier(), idShortPath);
+		return handleSubmodelElementValueNormalGetRequest(submodelIdentifier.getIdentifier(), idShortPath);
 	}
 
 	@Override
@@ -167,41 +166,40 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		try {
 			FileInputStream fileInputStream = new FileInputStream(repository.getFileByPathSubmodel(submodelIdentifier.getIdentifier(), idShortPath));
 			Resource resource = new InputStreamResource(fileInputStream);
-			return new ResponseEntity<Resource>(resource, HttpStatus.ACCEPTED);
-		}catch(FileNotFoundException | FileDoesNotExistException | ElementDoesNotExistException e) {
+			return new ResponseEntity<Resource>(resource, HttpStatus.OK);
+		} catch (FileNotFoundException | FileDoesNotExistException | ElementDoesNotExistException e) {
 			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
-		}catch(ElementNotAFileException e) {
+		} catch (ElementNotAFileException e) {
 			return new ResponseEntity<Resource>(HttpStatus.BAD_REQUEST);
 		}
-    }
+	}
 
 	@Override
-	public ResponseEntity<Void> putFileByPath(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, String fileName,
-			@Valid MultipartFile file) {
+	public ResponseEntity<Void> putFileByPath(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, String fileName, @Valid MultipartFile file) {
 		try {
 			repository.setFileValue(submodelIdentifier.getIdentifier(), idShortPath, file.getInputStream());
 			return new ResponseEntity<Void>(HttpStatus.OK);
 		} catch (FileDoesNotExistException | ElementDoesNotExistException e) {
 			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
-		}catch(ElementNotAFileException e) {
+		} catch (ElementNotAFileException e) {
 			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
-		}catch(IOException e) {
+		} catch (IOException e) {
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@Override
-	public ResponseEntity<Void> deleteFileByPathSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath) {
-		try{
+	public ResponseEntity<Void> deleteFileByPath(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath) {
+		try {
 			repository.deleteFileValue(submodelIdentifier.getIdentifier(), idShortPath);
 			return new ResponseEntity<Void>(HttpStatus.OK);
 		} catch (FileDoesNotExistException | ElementDoesNotExistException e) {
 			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
-		}catch(ElementNotAFileException e) {
+		} catch (ElementNotAFileException e) {
 			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	private ResponseEntity<Void> handleSubmodelElementValueSetRequest(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, SubmodelElementValue body) {
 		repository.setSubmodelElementValue(submodelIdentifier.getIdentifier(), idShortPath, body);
 		return new ResponseEntity<Void>(HttpStatus.OK);
@@ -216,6 +214,5 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		SubmodelElement submodelElement = repository.getSubmodelElement(submodelIdentifier, idShortPath);
 		return new ResponseEntity<SubmodelElement>(submodelElement, HttpStatus.OK);
 	}
-
 
 }
