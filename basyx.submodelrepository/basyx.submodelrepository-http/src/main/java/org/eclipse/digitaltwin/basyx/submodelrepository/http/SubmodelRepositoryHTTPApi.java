@@ -36,7 +36,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
@@ -44,6 +43,7 @@ import org.eclipse.digitaltwin.basyx.http.model.Result;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -372,30 +372,28 @@ public interface SubmodelRepositoryHTTPApi {
 	ResponseEntity<Void> deleteSubmodelElementByPathSubmodelRepo(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath);
-
-//***********************************//	
 	
+	@Operation(summary = "Downloads file content from a specific submodel element from the Submodel at a specified path", description = "", tags={ "Asset Administration Shell API" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Requested file", content = @Content(mediaType = "application/octet-stream", schema = @Schema(implementation = Resource.class))),
+        
+        @ApiResponse(responseCode = "400", description = "Bad Request, e.g. the request parameters of the format of the request body is wrong.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
+        
+        @ApiResponse(responseCode = "401", description = "Unauthorized, e.g. the server refused the authorization attempt.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
+        
+        @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
+        
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
+        
+        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
+        
+        @ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
+    @RequestMapping(value = "/submodels/{submodelIdentifier}/submodel-elements/{idShortPath}/attachment",
+        produces = { "application/octet-stream", "application/json" }, 
+        method = RequestMethod.GET)
+    ResponseEntity<Resource> getFileByPath(@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("submodelIdentifier") String submodelIdentifier, @Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required=true, schema=@Schema()) @PathVariable("idShortPath") String idShortPath);
 	
-	@Operation(summary = "Returns a specific file from the Submodel at a specified path", description = "", tags = { "Submodel Repository API" })
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Requested file", content = @Content(mediaType = "application/octet-stream", schema = @Schema(implementation = SubmodelElement.class))),
-
-			@ApiResponse(responseCode = "400", description = "Bad Request, e.g. the request parameters of the format of the request body is wrong.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "401", description = "Unauthorized, e.g. the server refused the authorization attempt.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
-
-			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
-	@RequestMapping(value = "/submodels/{submodelIdentifier}/submodel-elements/{idShortPath}/GetFileByPath", produces = { "application/octet-stream" }, method = RequestMethod.GET)
-	ResponseEntity<java.io.File> GetFileByPathSubmodelRepo(
-			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
-			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath);
-
-	 @Operation(summary = "Uploads file content to an existing submodel element at a specified path within submodel elements hierarchy", description = "", tags={ "Asset Administration Shell API" })
+	@Operation(summary = "Uploads file content to an existing submodel element at a specified path within submodel elements hierarchy", description = "", tags={ "Asset Administration Shell API" })
 	    @ApiResponses(value = { 
 	        @ApiResponse(responseCode = "204", description = "Submodel element updated successfully"),
 	        
@@ -410,7 +408,7 @@ public interface SubmodelRepositoryHTTPApi {
 	        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
 	        
 	        @ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
-	    @RequestMapping(value = "/aas/submodels/{submodelIdentifier}/submodel-elements/{idShortPath}/attachment",
+	    @RequestMapping(value = "/submodels/{submodelIdentifier}/submodel-elements/{idShortPath}/attachment",
 	        produces = { "application/json" }, 
 	        consumes = { "multipart/form-data" }, 
 	        method = RequestMethod.PUT)

@@ -52,7 +52,7 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
 		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodels);
 	}
-
+	
 	@Test(expected = CollidingIdentifierException.class)
 	public void idCollisionDuringConstruction() {
 		Collection<Submodel> submodelsWithCollidingIds = createSubmodelCollectionWithCollidingIds();
@@ -66,10 +66,13 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	}
 
 	private Collection<Submodel> createSubmodelCollectionWithCollidingIds() {
-		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
+		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(),
+				DummySubmodelFactory.createTechnicalDataSubmodel());
 	}
 
 	private Collection<Submodel> createSubmodelCollectionWithUniqueIds() {
-		return Arrays.asList(DummySubmodelFactory.createSimpleDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
+		return Arrays.asList(DummySubmodelFactory.createSimpleDataSubmodel(),
+				DummySubmodelFactory.createTechnicalDataSubmodel());
 	}
+
 }

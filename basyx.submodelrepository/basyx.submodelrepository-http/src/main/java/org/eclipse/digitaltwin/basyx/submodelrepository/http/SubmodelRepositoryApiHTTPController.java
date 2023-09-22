@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,9 +34,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
@@ -44,6 +48,7 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination.GetSubmo
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -158,29 +163,45 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	}
 
 	@Override
-	public ResponseEntity<java.io.File> GetFileByPathSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath) {
-		java.io.File value = repository.getFileByPathSubmodel(submodelIdentifier.getIdentifier(), idShortPath);
-		return new ResponseEntity<java.io.File>(value, HttpStatus.OK);
-	}
+	public ResponseEntity<Resource> getFileByPath(@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("submodelIdentifier") String submodelIdentifier,@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required=true, schema=@Schema()) @PathVariable("idShortPath") String idShortPath) {
+		try {
+			FileInputStream fileInputStream = new FileInputStream(repository.getFileByPathSubmodel(submodelIdentifier, idShortPath));
+			Resource resource = new InputStreamResource(fileInputStream);
+			return new ResponseEntity<Resource>(resource, HttpStatus.ACCEPTED);
+		}catch(FileNotFoundException | FileDoesNotExistException | ElementDoesNotExistException e) {
+			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
+		}catch(ElementNotAFileException e) {
+			return new ResponseEntity<Resource>(HttpStatus.BAD_REQUEST);
+		}
+    }
 
 	@Override
 	public ResponseEntity<Void> putFileByPath(String submodelIdentifier, String idShortPath, String fileName,
 			@Valid MultipartFile file) {
-		java.io.File destinationFile = new java.io.File("temp");
 		try {
-			file.transferTo(destinationFile);
-			repository.setFileValue(submodelIdentifier, idShortPath, destinationFile);
-			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-		} catch (IllegalStateException | IOException e) {
+			repository.setFileValue(submodelIdentifier, idShortPath, file.getInputStream());
+			return new ResponseEntity<Void>(HttpStatus.OK);
+		} catch (FileDoesNotExistException | ElementDoesNotExistException e) {
+			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+		}catch(ElementNotAFileException e) {
+			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+		}catch(IOException e) {
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@Override
 	public ResponseEntity<Void> deleteFileByPathSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath) {
-		repository.deleteFileValue(submodelIdentifier.getIdentifier(), idShortPath);
-		return new ResponseEntity<Void>(HttpStatus.OK);
+		try{
+			repository.deleteFileValue(submodelIdentifier.getIdentifier(), idShortPath);
+			return new ResponseEntity<Void>(HttpStatus.OK);
+		} catch (FileDoesNotExistException | ElementDoesNotExistException e) {
+			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+		}catch(ElementNotAFileException e) {
+			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+		}
 	}
+	
 	private ResponseEntity<Void> handleSubmodelElementValueSetRequest(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, SubmodelElementValue body) {
 		repository.setSubmodelElementValue(submodelIdentifier.getIdentifier(), idShortPath, body);
 		return new ResponseEntity<Void>(HttpStatus.OK);

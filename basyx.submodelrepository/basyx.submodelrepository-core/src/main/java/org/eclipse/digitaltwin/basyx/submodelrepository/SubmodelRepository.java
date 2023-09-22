@@ -25,15 +25,14 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 
@@ -214,8 +213,9 @@ public interface SubmodelRepository {
 	 *            the file object to upload
 	 * @return
 	 * @throws ElementDoesNotExistException
+	 * @throws IOException 
 	 */
-	public void setFileValue(String submodelId, String idShortPath, InputStream inputStream) throws ElementDoesNotExistException,IdentificationMismatchException;
+	public void setFileValue(String submodelId, String idShortPath, InputStream inputStream) throws IOException;
 
 	/**
 	 * Deletes the file of a file submodelelement

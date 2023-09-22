@@ -263,10 +263,21 @@ public abstract class SubmodelRepositorySuite {
 	@Test(expected = FileDoesNotExistException.class)
 	public void getNonExistingFile() throws IOException {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		deleteFileIfExisted(repo);
 		
 		repo.getFileByPathSubmodel(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 	}
 	
+	private void deleteFileIfExisted(SubmodelRepository repo) {
+		try {
+			repo.getFileByPathSubmodel(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
+			repo.deleteFileValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
+		}catch(FileDoesNotExistException e) {
+			return;
+		}
+		
+	}
+
 	@Test(expected = ElementNotAFileException.class)
 	public void getFileFromNonFileSME() throws IOException {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
@@ -292,6 +303,7 @@ public abstract class SubmodelRepositorySuite {
 	@Test(expected = FileDoesNotExistException.class)
 	public void deleteNonExistingFile() throws IOException {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		deleteFileIfExisted(repo);
 		
 		repo.deleteFileValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 	}
