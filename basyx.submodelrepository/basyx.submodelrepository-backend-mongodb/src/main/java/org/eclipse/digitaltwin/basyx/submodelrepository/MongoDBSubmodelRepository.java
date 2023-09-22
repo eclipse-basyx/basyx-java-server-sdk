@@ -324,7 +324,7 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void setFileValue(String submodelId, String idShortPath, InputStream inputStream)
-			throws ElementDoesNotExistException, IdentificationMismatchException {
+			throws ElementDoesNotExistException, IdentificationMismatchException, IOException {
 		Query query = new Query().addCriteria(Criteria.where(ID_JSON_PATH).is(submodelId));
 
 		throwIfSubmodelDoesNotExist(query, submodelId);
@@ -341,6 +341,8 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 				appendFsIdToFileValue(fileSmElement, id));
 
 		setSubmodelElementValue(submodelId, idShortPath, fileValue);
+		
+		inputStream.close();
 	}
 	
 	private void configureDefaultGridFsTemplate(MongoTemplate mongoTemplate) {

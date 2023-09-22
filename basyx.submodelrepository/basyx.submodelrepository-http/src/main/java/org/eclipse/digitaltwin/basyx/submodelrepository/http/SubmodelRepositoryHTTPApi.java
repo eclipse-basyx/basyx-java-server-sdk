@@ -391,7 +391,7 @@ public interface SubmodelRepositoryHTTPApi {
     @RequestMapping(value = "/submodels/{submodelIdentifier}/submodel-elements/{idShortPath}/attachment",
         produces = { "application/octet-stream", "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<Resource> getFileByPath(@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("submodelIdentifier") String submodelIdentifier, @Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required=true, schema=@Schema()) @PathVariable("idShortPath") String idShortPath);
+    ResponseEntity<Resource> getFileByPath(@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier, @Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required=true, schema=@Schema()) @PathVariable("idShortPath") String idShortPath);
 	
 	@Operation(summary = "Uploads file content to an existing submodel element at a specified path within submodel elements hierarchy", description = "", tags={ "Asset Administration Shell API" })
 	    @ApiResponses(value = { 
@@ -412,7 +412,7 @@ public interface SubmodelRepositoryHTTPApi {
 	        produces = { "application/json" }, 
 	        consumes = { "multipart/form-data" }, 
 	        method = RequestMethod.PUT)
-	    ResponseEntity<Void> putFileByPath(@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("submodelIdentifier") String submodelIdentifier, @Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required=true, schema=@Schema()) @PathVariable("idShortPath") String idShortPath, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true,schema=@Schema()) @RequestParam(value="fileName", required=true)  String fileName, @Parameter(description = "file detail") @Valid @RequestPart("file") MultipartFile file);
+	    ResponseEntity<Void> putFileByPath(@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier, @Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required=true, schema=@Schema()) @PathVariable("idShortPath") String idShortPath, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true,schema=@Schema()) @RequestParam(value="fileName", required=true)  String fileName, @Parameter(description = "file detail") @Valid @RequestPart("file") MultipartFile file);
 
 	@Operation(summary = "Deletes the file of an existing submodel element at a specified path within the submodel element hierarchy", description = "", tags = { "Submodel Repository API" })
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "File deleted successfully"),

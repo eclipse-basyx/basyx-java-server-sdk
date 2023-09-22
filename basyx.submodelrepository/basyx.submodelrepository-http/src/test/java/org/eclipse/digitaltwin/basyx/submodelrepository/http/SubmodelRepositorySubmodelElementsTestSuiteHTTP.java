@@ -36,6 +36,7 @@ import java.util.List;
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.entity.mime.FileBody;
+import org.apache.hc.client5.http.entity.mime.HttpMultipartMode;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -43,6 +44,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
@@ -217,10 +219,12 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 	@Test
 	public void uploadFileToFileSubmodelElement() throws IOException {
 		String submodelJSON = BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodel4FileTest.json");
+		
 		BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
+		
 		CloseableHttpResponse submodelElementFileUploadResponse = uploadFileToSubmodelElement("8A6344BDAB57E184","FileData");
+		
 		assertEquals(HttpStatus.OK.value(), submodelElementFileUploadResponse.getCode());
-
 	}
 	
 	@Test
@@ -234,10 +238,28 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 	
 	private CloseableHttpResponse uploadFileToSubmodelElement(String submodelId, String submodelElementIdShort) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
-
-		java.io.File file = ResourceUtils.getFile("src/test/resources/BaSyx-Logo.png");
 		
-		HttpPut putRequest = new HttpPut(createSubmodelElementsURL(submodelId, submodelElementIdShort));
+		String fileName = "BaSyx-Logo.png";
+
+		java.io.File file = ResourceUtils.getFile("src/test/resources/" + fileName);
+		
+		HttpPut putRequest = createPutRequestWithFile(submodelId, submodelElementIdShort, fileName, file);
+        
+        return executePutRequest(client, putRequest);
+	}
+
+	private CloseableHttpResponse executePutRequest(CloseableHttpClient client, HttpPut putRequest) throws IOException {
+		CloseableHttpResponse response = client.execute(putRequest);
+
+        HttpEntity responseEntity = response.getEntity();
+
+        EntityUtils.consume(responseEntity);
+		return response;
+	}
+
+	private HttpPut createPutRequestWithFile(String submodelId, String submodelElementIdShort, String fileName,
+			java.io.File file) {
+		HttpPut putRequest = new HttpPut(createSMEFileUploadURL(submodelId, submodelElementIdShort, fileName));
 		
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
@@ -246,14 +268,12 @@ public abstract class SubmodelRepositorySubmodelElementsTestSuiteHTTP {
 
 		HttpEntity multipart = builder.build();
 		putRequest.setEntity(multipart);
-
-		return client.execute(putRequest);
+		return putRequest;
 	}
 	
-	private String createSubmodelElementsURL(String submodelId, String submodelElementIdShort) {
-		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(getURL(), submodelId) + "/submodel-elements/"+ submodelElementIdShort+ "/attachment";
+	private String createSMEFileUploadURL(String submodelId, String submodelElementIdShort, String fileName) {
+		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(getURL(), submodelId) + "/submodel-elements/" + submodelElementIdShort + "/attachment?fileName=" + fileName;
 	}
-
 
 	@Test
 	public void getBlobValue() throws IOException, ParseException {

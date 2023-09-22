@@ -163,9 +163,9 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	}
 
 	@Override
-	public ResponseEntity<Resource> getFileByPath(@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("submodelIdentifier") String submodelIdentifier,@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required=true, schema=@Schema()) @PathVariable("idShortPath") String idShortPath) {
+	public ResponseEntity<Resource> getFileByPath(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath) {
 		try {
-			FileInputStream fileInputStream = new FileInputStream(repository.getFileByPathSubmodel(submodelIdentifier, idShortPath));
+			FileInputStream fileInputStream = new FileInputStream(repository.getFileByPathSubmodel(submodelIdentifier.getIdentifier(), idShortPath));
 			Resource resource = new InputStreamResource(fileInputStream);
 			return new ResponseEntity<Resource>(resource, HttpStatus.ACCEPTED);
 		}catch(FileNotFoundException | FileDoesNotExistException | ElementDoesNotExistException e) {
@@ -176,10 +176,10 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
     }
 
 	@Override
-	public ResponseEntity<Void> putFileByPath(String submodelIdentifier, String idShortPath, String fileName,
+	public ResponseEntity<Void> putFileByPath(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, String fileName,
 			@Valid MultipartFile file) {
 		try {
-			repository.setFileValue(submodelIdentifier, idShortPath, file.getInputStream());
+			repository.setFileValue(submodelIdentifier.getIdentifier(), idShortPath, file.getInputStream());
 			return new ResponseEntity<Void>(HttpStatus.OK);
 		} catch (FileDoesNotExistException | ElementDoesNotExistException e) {
 			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);

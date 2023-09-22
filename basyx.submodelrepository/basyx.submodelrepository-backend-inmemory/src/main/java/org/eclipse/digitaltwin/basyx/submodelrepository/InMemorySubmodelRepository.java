@@ -247,9 +247,12 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		try (FileOutputStream outStream = new FileOutputStream(targetFile)) {
 			IOUtils.copy(inputStream, outStream);
 		}
+		
 		FileBlobValue fileValue = new FileBlobValue(fileSmElement.getContentType(), filePath);
 
 		setSubmodelElementValue(submodelId, idShortPath, fileValue);
+		
+		inputStream.close();
 	}
 
 	private String getFilePath(String submodelId, String idShortPath, File file) {
