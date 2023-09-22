@@ -87,7 +87,7 @@
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.submodelservice-http</artifactId>
 			<classifier>tests</classifier>
-			<scope>tests</scope>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

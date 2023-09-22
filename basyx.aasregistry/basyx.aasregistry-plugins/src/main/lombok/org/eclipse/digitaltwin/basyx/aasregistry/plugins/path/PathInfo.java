@@ -37,7 +37,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.experimental.UtilityClass;
 
 @Data
 public class PathInfo {
@@ -187,10 +186,12 @@ public class PathInfo {
 
 	}
 
-	@UtilityClass
-	private static class ConstantGenerator {
+	private static final class ConstantGenerator {
 
-		public String generateConstant(String name) {
+		private ConstantGenerator() {			
+		}
+		
+		public static String generateConstant(String name) {
 			StringBuilder builder = new StringBuilder();
 			for (int i = 0, len = name.length(); i < len; i++) {
 				char c = name.charAt(i);

@@ -28,7 +28,9 @@ package org.eclipse.digitaltwin.basyx.http;
 
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -63,5 +65,15 @@ public class BaSyxExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(IdentificationMismatchException.class)
 	public <T> ResponseEntity<T> handleIdMismatchException(IdentificationMismatchException exception) {
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(FeatureNotSupportedException.class)
+	public <T> ResponseEntity<T> handleFeatureNotSupportedException(FeatureNotSupportedException exception) {
+		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+	}
+
+	@ExceptionHandler(NotInvokableException.class)
+	public <T> ResponseEntity<T> handleNotInvokableException(NotInvokableException exception) {
+		return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
 	}
 }

@@ -37,7 +37,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 /**
  * Specifies the overall ConceptDescriptionRepository API
  * 
- * @author danish
+ * @author danish, kammognie
  *
  */
 public interface ConceptDescriptionRepository {
@@ -109,5 +109,14 @@ public interface ConceptDescriptionRepository {
 	 * @throws ElementDoesNotExistException
 	 */
 	public void deleteConceptDescription(String conceptDescriptionId) throws ElementDoesNotExistException;
-
+	
+	/**
+	 * Returns the name of the repository
+	 * 
+	 * @return repoName
+	 */
+	public default String getName() {
+		return "cd-repo";
+	}
+  
 }

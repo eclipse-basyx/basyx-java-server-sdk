@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -38,10 +40,12 @@ import org.junit.Test.None;
 
 /**
  * 
- * @author schnicke
+ * @author schnicke, kammognie
  *
  */
 public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
+	
+	private static final String CONFIGURED_SM_REPO_NAME = "configured-sm-repo-name";
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository() {
@@ -53,6 +57,13 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodels);
 	}
 
+	@Test
+    public void getConfiguredInMemorySmRepositoryName() {
+		SubmodelRepository repo = new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), CONFIGURED_SM_REPO_NAME);
+		
+		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
+	}
+	
 	@Test(expected = CollidingIdentifierException.class)
 	public void idCollisionDuringConstruction() {
 		Collection<Submodel> submodelsWithCollidingIds = createSubmodelCollectionWithCollidingIds();

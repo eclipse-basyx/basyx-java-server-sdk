@@ -10,7 +10,7 @@
 	<artifactId>basyx.aasrepository.component</artifactId>
 
 	<properties>
-		<docker.image.name>aasrepository</docker.image.name>
+		<docker.image.name>aas-repository</docker.image.name>
 		<docker.container.waitForEndpoint>http://localhost:${docker.host.port}/shells</docker.container.waitForEndpoint>
 	</properties>
 
@@ -80,6 +80,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

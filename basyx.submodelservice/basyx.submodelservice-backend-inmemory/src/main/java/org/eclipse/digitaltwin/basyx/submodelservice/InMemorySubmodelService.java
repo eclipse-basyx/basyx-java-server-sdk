@@ -30,12 +30,15 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
+import org.eclipse.digitaltwin.basyx.InvokableOperation;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -193,5 +196,16 @@ public class InMemorySubmodelService implements SubmodelService {
 			}
 		}
 		return -1;
+	}
+
+	@Override
+	public OperationVariable[] invokeOperation(String idShortPath, OperationVariable[] input) {
+		SubmodelElement sme = getSubmodelElement(idShortPath);
+		
+		if (!(sme instanceof InvokableOperation))
+			throw new NotInvokableException(idShortPath);
+		
+		InvokableOperation operation = (InvokableOperation) sme;
+		return operation.invoke(input);
 	}
 }

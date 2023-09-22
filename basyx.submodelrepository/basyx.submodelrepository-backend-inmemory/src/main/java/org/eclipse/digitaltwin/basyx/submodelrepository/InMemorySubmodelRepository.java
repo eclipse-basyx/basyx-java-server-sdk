@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -50,7 +51,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 /**
  * In-memory implementation of the SubmodelRepository
  *
- * @author schnicke, danish
+ * @author schnicke, danish, kammognie
  *
  */
 public class InMemorySubmodelRepository implements SubmodelRepository {
@@ -58,6 +59,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private Map<String, SubmodelService> submodelServices = new LinkedHashMap<>();
 	private SubmodelServiceFactory submodelServiceFactory;
+	private String smRepositoryName;
 
 	/**
 	 * Creates the InMemorySubmodelRepository utilizing the passed
@@ -67,6 +69,18 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	 */
 	public InMemorySubmodelRepository(SubmodelServiceFactory submodelServiceFactory) {
 		this.submodelServiceFactory = submodelServiceFactory;
+	}
+	
+	/**
+	 * Creates the InMemorySubmodelRepository utilizing the passed
+	 * SubmodelServiceFactory for creating new SubmodelServices
+	 * 
+	 * @param submodelServiceFactory 
+	 * @param smRepositoryName Name of the SubmodelRepository
+	 */
+	public InMemorySubmodelRepository(SubmodelServiceFactory submodelServiceFactory, String smRepositoryName) {
+		this(submodelServiceFactory);
+		this.smRepositoryName = smRepositoryName;
 	}
 
 	/**
@@ -82,6 +96,20 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		throwIfHasCollidingIds(submodels);
 
 		submodelServices = createServices(submodels);
+	}
+	
+	/**
+	 * Creates the InMemorySubmodelRepository utilizing the passed
+	 * SubmodelServiceFactory for creating new SubmodelServices and preconfiguring
+	 * it with the passed Submodels
+	 * 
+	 * @param submodelServiceFactory 
+	 * @param submodels 
+	 * @param smRepositoryName Name of the SubmodelRepository
+	 */
+	public InMemorySubmodelRepository(SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels, String smRepositoryName) {
+		this(submodelServiceFactory, submodels);
+		this.smRepositoryName = smRepositoryName;
 	}
 
 	private void throwIfHasCollidingIds(Collection<Submodel> submodelsToCheck) {
@@ -120,10 +148,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public Submodel getSubmodel(String id) throws ElementDoesNotExistException {
-		throwIfSubmodelDoesNotExist(id);
-
-		return submodelServices.get(id)
-				.getSubmodel();
+		return getSubmodelService(id).getSubmodel();
 	}
 
 	@Override
@@ -142,46 +167,24 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		submodelServices.put(submodel.getId(), submodelServiceFactory.create(submodel));
 	}
 
-	private void throwIfSubmodelExists(String id) {
-		if (submodelServices.containsKey(id))
-			throw new CollidingIdentifierException(id);
-	}
-
-	private void throwIfSubmodelDoesNotExist(String id) {
-		if (!submodelServices.containsKey(id))
-			throw new ElementDoesNotExistException(id);
-	}
-
 	@Override
 	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo) {
-		throwIfSubmodelDoesNotExist(submodelId);
-
-		return submodelServices.get(submodelId)
-				.getSubmodelElements(pInfo);
+		return getSubmodelService(submodelId).getSubmodelElements(pInfo);
 	}
 
 	@Override
 	public SubmodelElement getSubmodelElement(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
-		throwIfSubmodelDoesNotExist(submodelId);
-
-		return submodelServices.get(submodelId)
-				.getSubmodelElement(smeIdShort);
+		return getSubmodelService(submodelId).getSubmodelElement(smeIdShort);
 	}
 
 	@Override
 	public SubmodelElementValue getSubmodelElementValue(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
-		throwIfSubmodelDoesNotExist(submodelId);
-
-		return submodelServices.get(submodelId)
-				.getSubmodelElementValue(smeIdShort);
+		return getSubmodelService(submodelId).getSubmodelElementValue(smeIdShort);
 	}
 
 	@Override
 	public void setSubmodelElementValue(String submodelId, String smeIdShort, SubmodelElementValue value) throws ElementDoesNotExistException {
-		throwIfSubmodelDoesNotExist(submodelId);
-
-		submodelServices.get(submodelId)
-				.setSubmodelElementValue(smeIdShort, value);
+		getSubmodelService(submodelId).setSubmodelElementValue(smeIdShort, value);
 	}
 
 	@Override
@@ -201,18 +204,12 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
-		throwIfSubmodelDoesNotExist(submodelId);
-
-		submodelServices.get(submodelId)
-				.createSubmodelElement(idShortPath, smElement);
+		getSubmodelService(submodelId).createSubmodelElement(idShortPath, smElement);
 	}
 
 	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
-		throwIfSubmodelDoesNotExist(submodelId);
-
-		submodelServices.get(submodelId)
-				.deleteSubmodelElement(idShortPath);
+		getSubmodelService(submodelId).deleteSubmodelElement(idShortPath);
 	}
 
 	@Override
@@ -226,12 +223,40 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		submodel.setSubmodelElements(null);
 		return submodel;
 	}
+	
+	@Override
+	public String getName() {
+		return smRepositoryName == null ? SubmodelRepository.super.getName() : smRepositoryName;
+	}
+
+	@Override
+	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
+		return getSubmodelService(submodelId).invokeOperation(idShortPath, input);
+	}
+
 
 	private void throwIfMismatchingIds(String smId, Submodel newSubmodel) {
 		String newSubmodelId = newSubmodel.getId();
 
 		if (!smId.equals(newSubmodelId))
 			throw new IdentificationMismatchException();
+	}
+
+
+	private SubmodelService getSubmodelService(String submodelId) {
+		throwIfSubmodelDoesNotExist(submodelId);
+
+		return submodelServices.get(submodelId);
+	}
+
+	private void throwIfSubmodelExists(String id) {
+		if (submodelServices.containsKey(id))
+			throw new CollidingIdentifierException(id);
+	}
+
+	private void throwIfSubmodelDoesNotExist(String id) {
+		if (!submodelServices.containsKey(id))
+			throw new ElementDoesNotExistException(id);
 	}
 
 }

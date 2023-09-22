@@ -29,22 +29,21 @@ import java.util.List;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorageDelegate;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorCopies;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Delegate;
 
 //performs additional cloning for in memory tests so that
 //altering the objects during tests will then not affect the storage
-@RequiredArgsConstructor
-public class CloningAasRegistryStorageDecorator implements AasRegistryStorage {
+public class CloningAasRegistryStorageDecorator extends AasRegistryStorageDelegate {
 
-	@Delegate
-	private final AasRegistryStorage storage;
+	public CloningAasRegistryStorageDecorator(AasRegistryStorage storage) {
+		super(storage);
+	}
 
 	@Override
 	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter) {

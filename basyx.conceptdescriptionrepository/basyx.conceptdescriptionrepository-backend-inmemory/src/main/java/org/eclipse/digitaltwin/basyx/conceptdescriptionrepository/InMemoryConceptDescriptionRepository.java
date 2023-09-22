@@ -48,18 +48,28 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 /**
  * In-memory implementation of the ConceptDescriptionRepository
  *
- * @author danish
+ * @author danish, kammognie
  *
  */
 public class InMemoryConceptDescriptionRepository implements ConceptDescriptionRepository {
 
 	private Map<String, ConceptDescription> conceptDescriptions = new LinkedHashMap<>();
+	
+	private String cdRepositoryName;
 
 	/**
 	 * Creates the InMemoryConceptDescriptionRepository
 	 * 
 	 */
-	public InMemoryConceptDescriptionRepository() {
+	public InMemoryConceptDescriptionRepository() { }
+	
+	/**
+	 * Creates the InMemoryConceptDescriptionRepository
+	 * 
+	 * @param cdRepositoryName Name of the CDRepository
+	 */
+	public InMemoryConceptDescriptionRepository(String cdRepositoryName) {
+		this.cdRepositoryName = cdRepositoryName;
 	}
 
 	/**
@@ -72,6 +82,18 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 		assertIdUniqueness(conceptDescriptions);
 
 		this.conceptDescriptions.putAll(mapConceptDescriptions(conceptDescriptions));
+	}
+	
+	/**
+	 * Creates the InMemoryConceptDescriptionRepository and preconfiguring
+	 * it with the passed ConceptDescriptions
+	 * 
+	 * @param conceptDescriptions 
+	 * @param cdRepositoryName Name of the CDRepository
+	 */
+	public InMemoryConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions, String cdRepositoryName) {
+		this(conceptDescriptions);
+		this.cdRepositoryName = cdRepositoryName;
 	}
 
 	@Override
@@ -153,6 +175,11 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 		throwIfConceptDescriptionDoesNotExist(conceptDescriptionId);
 
 		conceptDescriptions.remove(conceptDescriptionId);
+	}
+	
+	@Override
+	public String getName() {
+		return cdRepositoryName == null ? ConceptDescriptionRepository.super.getName() : cdRepositoryName;
 	}
 
 	private static void assertIdUniqueness(Collection<ConceptDescription> conceptDescriptionsToCheck) {

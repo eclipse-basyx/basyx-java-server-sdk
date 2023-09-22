@@ -22,31 +22,42 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 /**
  * AasRepository factory returning an in-memory backend AasRepository
  * 
- * @author schnicke
+ * @author schnicke, kammognie
  */
 @ConditionalOnExpression("'${basyx.aasrepository.backend}'.equals('InMemory') or '${basyx.backend}'.equals('InMemory')")
 @Component
 public class InMemoryAasRepositoryFactory implements AasRepositoryFactory {
 
 	private AasServiceFactory aasApiFactory;
+	
+	private String aasRepositoryName;
 
-	@Autowired
+	@Autowired(required = false)
 	public InMemoryAasRepositoryFactory(AasServiceFactory aasApiFactory) {
 		this.aasApiFactory = aasApiFactory;
+	}
+	
+	@Autowired(required = false)
+	public InMemoryAasRepositoryFactory(AasServiceFactory aasApiFactory, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
+		this(aasApiFactory);
+		this.aasRepositoryName = aasRepositoryName;
 	}
 
 	@Override
 	public AasRepository create() {
-		return new InMemoryAasRepository(aasApiFactory);
+		return new InMemoryAasRepository(aasApiFactory, aasRepositoryName);
 	}
+
 }

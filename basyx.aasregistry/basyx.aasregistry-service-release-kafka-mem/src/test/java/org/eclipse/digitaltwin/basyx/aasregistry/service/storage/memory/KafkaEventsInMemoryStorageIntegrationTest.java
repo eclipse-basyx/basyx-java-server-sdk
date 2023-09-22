@@ -24,52 +24,78 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.storage.memory;
 
-import java.time.Duration;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.BaseEventListener;
+import org.apache.kafka.common.TopicPartition;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.BaseIntegrationTest;
-import org.junit.ClassRule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.EventQueue;
+import org.junit.Before;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.listener.ConsumerSeekAware;
 import org.springframework.stereotype.Component;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
-import org.testcontainers.containers.KafkaContainer;
-import org.testcontainers.containers.output.Slf4jLogConsumer;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.containers.wait.strategy.WaitStrategy;
-import org.testcontainers.utility.DockerImageName;
 
-@TestPropertySource(properties = { "registry.type=inMemory", "events.sink=kafka" })
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@TestPropertySource(properties = { "registry.type=inMemory", "events.sink=kafka",
+		"spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092" })
 public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTest {
 
-	private static Logger logger = LoggerFactory.getLogger("KAFKA");
-	private static Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(logger);
+	@Autowired
+	private RegistrationEventKafkaListener listener;
 
-	@ClassRule
-	public static final KafkaContainer KAFKA = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.2.1")) {
-		protected void waitUntilContainerStarted() {
-			super.waitUntilContainerStarted();
-			WaitStrategy strategy = Wait.forLogMessage(".*Kafka startTimeMs.*", 1);
-			strategy.withStartupTimeout(Duration.ofMinutes(10));
-			strategy.waitUntilReady(this);
-		}
-	}.withLogConsumer(logConsumer);
-
-	@DynamicPropertySource
-	static void assignAdditionalProperties(DynamicPropertyRegistry registry) {
-		logger.info("Connecting to KAFKA on: " + KAFKA.getBootstrapServers());
-		registry.add("spring.kafka.bootstrap-servers", KAFKA::getBootstrapServers);
+	@Before
+	public void awaitAssignment() throws InterruptedException {
+		listener.awaitTopicAssignment();
 	}
+	
+	@Override
+	public EventQueue queue() {
+		return listener.queue;
+	}
+	
 
+	@KafkaListener(topics = "aas-registry", batch = "false", groupId = "kafka-test", autoStartup = "true" )
 	@Component
-	public static class KafkaEventListener extends BaseEventListener {
+	private static class RegistrationEventKafkaListener implements ConsumerSeekAware {
+		
+		
+		private final EventQueue queue;
+		private final CountDownLatch latch = new CountDownLatch(1);
+		
+		@SuppressWarnings("unused")
+		public RegistrationEventKafkaListener(ObjectMapper mapper) {
+			this.queue = new EventQueue(mapper);
+		}
+		
+		@KafkaHandler
+		public void receiveMessage(byte[] content) {
+			queue.offer(new String((byte[]) content, StandardCharsets.UTF_8));
+		}
 
-		@KafkaListener(topics = "aas-registry", groupId = "test")
-		public void receive(String message) {
-			super.offer(message);
+		@Override
+		public void onPartitionsAssigned(Map<TopicPartition, Long> assignments,
+					ConsumerSeekCallback callback) {
+			for (TopicPartition eachPartition : assignments.keySet()) {
+				if ("aas-registry".equals(eachPartition.topic())) {
+					callback.seekToEnd(List.of(eachPartition));
+					latch.countDown();
+					System.out.println("Partition registered");
+				}
+			}		
+		}
+		
+		public void awaitTopicAssignment() throws InterruptedException {
+			if (!latch.await(5, TimeUnit.MINUTES)) {
+				throw new RuntimeException("Timeout occured while waiting for partition assignment. Is kafka running?");
+			}
 		}
 	}
+
 }
