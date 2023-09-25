@@ -166,7 +166,7 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 		String expectedValue = getJSONValueAsString("value/setFileValue.json");
 
 		CloseableHttpResponse writeResponse = writeSubmodelElementValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, expectedValue);
-		assertEquals(HttpStatus.OK.value(), writeResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), writeResponse.getCode());
 
 		CloseableHttpResponse response = requestSubmodelElementValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
