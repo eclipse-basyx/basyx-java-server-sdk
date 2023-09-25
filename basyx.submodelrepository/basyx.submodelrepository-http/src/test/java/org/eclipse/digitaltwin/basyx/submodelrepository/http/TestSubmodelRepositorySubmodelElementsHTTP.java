@@ -25,9 +25,12 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -42,6 +45,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  *
  */
 public class TestSubmodelRepositorySubmodelElementsHTTP extends SubmodelRepositorySubmodelElementsTestSuiteHTTP {
+	private static final String SUBMODEL_JSON = "SingleSubmodel4FileTest.json";
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
@@ -54,6 +58,12 @@ public class TestSubmodelRepositorySubmodelElementsHTTP extends SubmodelReposito
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
 		Collection<Submodel> submodels = createSubmodels();
 		submodels.forEach(repo::createSubmodel);
+		try {
+			createSubmodel4FileTest();
+		} catch (IOException e) {
+			System.out.println("Cannot load "+SUBMODEL_JSON + " for testing file-upload feature.");
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -70,6 +80,11 @@ public class TestSubmodelRepositorySubmodelElementsHTTP extends SubmodelReposito
 	@Override
 	protected String getURL() {
 		return "http://localhost:8080/submodels";
+	}
+	
+	private void createSubmodel4FileTest() throws FileNotFoundException, IOException {
+		String submodelJSON = BaSyxHttpTestUtils.readJSONStringFromClasspath(SUBMODEL_JSON);
+		BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
 	}
 
 }

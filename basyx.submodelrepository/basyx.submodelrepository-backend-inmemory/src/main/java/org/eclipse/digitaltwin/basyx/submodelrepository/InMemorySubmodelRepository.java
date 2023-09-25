@@ -250,24 +250,6 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		inputStream.close();
 	}
 
-	private String getFilePath(String submodelId, String idShortPath, File file) {
-		String fileName = submodelId + "-" + idShortPath.replaceAll("/", "-") + "-" + file.getValue();
-
-		return tmpDirectory + "/" + fileName;
-	}
-
-	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement, InputStream inputStream) throws IOException {
-		if (!(submodelElement instanceof File)) {
-			inputStream.close();
-			throw new ElementNotAFileException(submodelElement.getIdShort());
-		}
-	}
-
-	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement) {
-		if (!(submodelElement instanceof File))
-			throw new ElementNotAFileException(submodelElement.getIdShort());
-	}
-
 	@Override
 	public void deleteFileValue(String submodelId, String idShortPath) {
 		throwIfSubmodelDoesNotExist(submodelId);
@@ -286,6 +268,24 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		FileBlobValue fileValue = new FileBlobValue(StringUtils.EMPTY, StringUtils.EMPTY);
 
 		setSubmodelElementValue(submodelId, idShortPath, fileValue);
+	}
+
+	private String getFilePath(String submodelId, String idShortPath, File file) {
+		String fileName = submodelId + "-" + idShortPath.replaceAll("/", "-") + "-" + file.getValue();
+
+		return tmpDirectory + "/" + fileName;
+	}
+
+	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement, InputStream inputStream) throws IOException {
+		if (!(submodelElement instanceof File)) {
+			inputStream.close();
+			throw new ElementNotAFileException(submodelElement.getIdShort());
+		}
+	}
+
+	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement) {
+		if (!(submodelElement instanceof File))
+			throw new ElementNotAFileException(submodelElement.getIdShort());
 	}
 
 	private void throwIfMismatchingIds(String smId, Submodel newSubmodel) {
@@ -310,15 +310,12 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 	private String getTemporaryDirectoryPath() {
-
 		String tempDirectoryPath = "";
-
 		try {
 			tempDirectoryPath = Files.createTempDirectory("basyx-temp").toAbsolutePath().toString();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		return tempDirectoryPath;
 	}
 

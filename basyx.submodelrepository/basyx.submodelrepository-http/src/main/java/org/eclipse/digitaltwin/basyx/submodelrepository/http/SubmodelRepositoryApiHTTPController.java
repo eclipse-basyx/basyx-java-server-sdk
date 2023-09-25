@@ -167,10 +167,12 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 			FileInputStream fileInputStream = new FileInputStream(repository.getFileByPathSubmodel(submodelIdentifier.getIdentifier(), idShortPath));
 			Resource resource = new InputStreamResource(fileInputStream);
 			return new ResponseEntity<Resource>(resource, HttpStatus.OK);
-		} catch (FileNotFoundException | FileDoesNotExistException | ElementDoesNotExistException e) {
+		} catch (FileDoesNotExistException | ElementDoesNotExistException e) {
 			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
 		} catch (ElementNotAFileException e) {
-			return new ResponseEntity<Resource>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Resource>(HttpStatus.PRECONDITION_FAILED);
+		} catch(FileNotFoundException e) {
+			return new ResponseEntity<Resource>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -179,10 +181,10 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		try {
 			repository.setFileValue(submodelIdentifier.getIdentifier(), idShortPath, file.getInputStream());
 			return new ResponseEntity<Void>(HttpStatus.OK);
-		} catch (FileDoesNotExistException | ElementDoesNotExistException e) {
+		} catch (ElementDoesNotExistException e) {
 			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
 		} catch (ElementNotAFileException e) {
-			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Void>(HttpStatus.PRECONDITION_FAILED);
 		} catch (IOException e) {
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -196,7 +198,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		} catch (FileDoesNotExistException | ElementDoesNotExistException e) {
 			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
 		} catch (ElementNotAFileException e) {
-			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Void>(HttpStatus.PRECONDITION_FAILED);
 		}
 	}
 
