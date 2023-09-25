@@ -165,7 +165,8 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 
 		assertEquals(HttpStatus.NOT_FOUND.value(), deletionResponse.getCode());
 	}
-
+	
+	
 	@Test
 	public void getPaginatedSubmodel() throws ParseException, IOException {
 		String submodelsJSON = BaSyxSubmodelHttpTestUtils

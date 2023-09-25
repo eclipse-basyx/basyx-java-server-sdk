@@ -26,6 +26,12 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Collection;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.http.SubmodelServiceSubmodelElementsTestSuiteHTTP;
 import org.junit.After;
@@ -44,6 +50,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public class TestSubmodelRepositorySubmodelElementsHTTP extends SubmodelServiceSubmodelElementsTestSuiteHTTP {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
+	private static final String SUBMODEL_JSON = "SingleSubmodel4FileTest.json";
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
@@ -55,6 +62,12 @@ public class TestSubmodelRepositorySubmodelElementsHTTP extends SubmodelServiceS
 	public void createSubmodelOnRepo() {
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
 		repo.createSubmodel(createSubmodel());
+		try {
+			createSubmodel4FileTest();
+		} catch (IOException e) {
+			System.out.println("Cannot load "+SUBMODEL_JSON + " for testing file-upload feature.");
+			e.printStackTrace();
+		}
 	}
 
 	@After
@@ -74,6 +87,11 @@ public class TestSubmodelRepositorySubmodelElementsHTTP extends SubmodelServiceS
 
 		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath("http://localhost:8080/submodels",
 				createSubmodel().getId());
+	}
+	
+	private void createSubmodel4FileTest() throws FileNotFoundException, IOException {
+		String submodelJSON = BaSyxHttpTestUtils.readJSONStringFromClasspath(SUBMODEL_JSON);
+		BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
 	}
 
 }

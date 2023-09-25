@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Component;
 
 /**
@@ -50,6 +51,7 @@ public class MongoDBSubmodelRepositoryFactory implements SubmodelRepositoryFacto
 	private Collection<Submodel> submodels;
 	
 	private String smRepositoryName;
+	private GridFsTemplate gridFsTemplate;
 
 	@Autowired(required = false)
 	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate,
@@ -62,9 +64,10 @@ public class MongoDBSubmodelRepositoryFactory implements SubmodelRepositoryFacto
 	
 	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate,
 			@Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName,
-			SubmodelServiceFactory submodelServiceFactory, @Value("${basyx.smrepo.name:sm-repo}") String smRepositoryName) {
+			SubmodelServiceFactory submodelServiceFactory, @Value("${basyx.smrepo.name:sm-repo}") String smRepositoryName, GridFsTemplate gridFsTemplate) {
 		this(mongoTemplate, collectionName, submodelServiceFactory);
 		this.smRepositoryName = smRepositoryName;
+		this.gridFsTemplate = gridFsTemplate;
 	}
 
 	@Autowired(required = false)
@@ -75,19 +78,21 @@ public class MongoDBSubmodelRepositoryFactory implements SubmodelRepositoryFacto
 		this.submodels = submodels;
 	}
 	
+	@Autowired(required = false)
 	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate,
 			@Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName,
-			SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels, @Value("${basyx.smrepo.name:sm-repo}") String smRepositoryName) {
+			SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels, @Value("${basyx.smrepo.name:sm-repo}") String smRepositoryName, GridFsTemplate gridFsTemplate) {
 		this(mongoTemplate, collectionName, submodelServiceFactory, submodels);
 		this.smRepositoryName = smRepositoryName;
+		this.gridFsTemplate = gridFsTemplate;
 	}
-
+	
 	@Override
 	public SubmodelRepository create() {
 		if (this.submodels == null || this.submodels.isEmpty()) {
-			return new MongoDBSubmodelRepository(mongoTemplate, collectionName, submodelServiceFactory, smRepositoryName);
+			return new MongoDBSubmodelRepository(mongoTemplate, collectionName, submodelServiceFactory, smRepositoryName, gridFsTemplate);
 		}
-		return new MongoDBSubmodelRepository(mongoTemplate, collectionName, submodelServiceFactory, submodels, smRepositoryName);
+		return new MongoDBSubmodelRepository(mongoTemplate, collectionName, submodelServiceFactory, submodels, smRepositoryName, gridFsTemplate);
 
 	}
 }

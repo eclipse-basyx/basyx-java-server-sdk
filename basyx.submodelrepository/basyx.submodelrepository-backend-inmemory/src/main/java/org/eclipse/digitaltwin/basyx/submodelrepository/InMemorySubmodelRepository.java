@@ -25,6 +25,12 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -35,16 +41,22 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
+import org.apache.commons.io.IOUtils;
+import org.apache.tika.utils.StringUtils;
+import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 
@@ -60,6 +72,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	private Map<String, SubmodelService> submodelServices = new LinkedHashMap<>();
 	private SubmodelServiceFactory submodelServiceFactory;
 	private String smRepositoryName;
+	private String tmpDirectory = getTemporaryDirectoryPath();
 
 	/**
 	 * Creates the InMemorySubmodelRepository utilizing the passed
@@ -115,13 +128,9 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	private void throwIfHasCollidingIds(Collection<Submodel> submodelsToCheck) {
 		Set<String> ids = new HashSet<>();
 
-		submodelsToCheck.stream()
-				.map(submodel -> submodel.getId())
-				.filter(id -> !ids.add(id))
-				.findAny()
-				.ifPresent(id -> {
-					throw new CollidingIdentifierException(id);
-				});
+		submodelsToCheck.stream().map(submodel -> submodel.getId()).filter(id -> !ids.add(id)).findAny().ifPresent(id -> {
+			throw new CollidingIdentifierException(id);
+		});
 	}
 
 	private Map<String, SubmodelService> createServices(Collection<Submodel> submodels) {
@@ -198,8 +207,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	public void createSubmodelElement(String submodelId, SubmodelElement smElement) {
 		throwIfSubmodelDoesNotExist(submodelId);
 
-		submodelServices.get(submodelId)
-				.createSubmodelElement(smElement);
+		submodelServices.get(submodelId).createSubmodelElement(smElement);
 	}
 
 	@Override
@@ -235,6 +243,82 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 
+	@Override
+	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) {
+		throwIfSubmodelDoesNotExist(submodelId);
+		SubmodelElement submodelElement = submodelServices.get(submodelId).getSubmodelElement(idShortPath);
+
+		throwIfSmElementIsNotAFile(submodelElement);
+
+		File fileSmElement = (File) submodelElement;
+		String filePath = fileSmElement.getValue();
+
+		throwIfFileDoesNotExist(fileSmElement, filePath);
+
+		return new java.io.File(filePath);
+
+	}
+
+	@Override
+	public void setFileValue(String submodelId, String idShortPath, InputStream inputStream) throws IOException {
+		throwIfSubmodelDoesNotExist(submodelId);
+
+		SubmodelElement submodelElement = submodelServices.get(submodelId).getSubmodelElement(idShortPath);
+		throwIfSmElementIsNotAFile(submodelElement, inputStream);
+
+		File fileSmElement = (File) submodelElement;
+		String filePath = getFilePath(submodelId, idShortPath, fileSmElement);
+		java.io.File targetFile = new java.io.File(filePath);
+
+		try (FileOutputStream outStream = new FileOutputStream(targetFile)) {
+			IOUtils.copy(inputStream, outStream);
+		}
+
+		FileBlobValue fileValue = new FileBlobValue(fileSmElement.getContentType(), filePath);
+
+		setSubmodelElementValue(submodelId, idShortPath, fileValue);
+
+		inputStream.close();
+	}
+
+	@Override
+	public void deleteFileValue(String submodelId, String idShortPath) {
+		throwIfSubmodelDoesNotExist(submodelId);
+		SubmodelElement submodelElement = submodelServices.get(submodelId).getSubmodelElement(idShortPath);
+
+		throwIfSmElementIsNotAFile(submodelElement);
+
+		File fileSubmodelElement = (File) submodelElement;
+		String filePath = fileSubmodelElement.getValue();
+
+		throwIfFileDoesNotExist(fileSubmodelElement, filePath);
+
+		java.io.File tmpFile = new java.io.File(filePath);
+		tmpFile.delete();
+
+		FileBlobValue fileValue = new FileBlobValue(StringUtils.EMPTY, StringUtils.EMPTY);
+
+		setSubmodelElementValue(submodelId, idShortPath, fileValue);
+	}
+
+	private String getFilePath(String submodelId, String idShortPath, File file) {
+		String fileName = submodelId + "-" + idShortPath.replaceAll("/", "-") + "-" + file.getValue();
+
+		return tmpDirectory + "/" + fileName;
+	}
+
+	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement, InputStream inputStream) throws IOException {
+		if (!(submodelElement instanceof File)) {
+			inputStream.close();
+			throw new ElementNotAFileException(submodelElement.getIdShort());
+		}
+	}
+
+	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement) {
+		if (!(submodelElement instanceof File))
+			throw new ElementNotAFileException(submodelElement.getIdShort());
+	}
+
 	private void throwIfMismatchingIds(String smId, Submodel newSubmodel) {
 		String newSubmodelId = newSubmodel.getId();
 
@@ -257,6 +341,30 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	private void throwIfSubmodelDoesNotExist(String id) {
 		if (!submodelServices.containsKey(id))
 			throw new ElementDoesNotExistException(id);
+	}
+
+	private void throwIfFileDoesNotExist(File fileSmElement, String filePath) {
+		if (fileSmElement.getValue().isBlank() || !isFilePathValid(filePath))
+			throw new FileDoesNotExistException(fileSmElement.getIdShort());
+	}
+
+	private boolean isFilePathValid(String filePath) {
+		try {
+			Paths.get(filePath);
+		} catch (InvalidPathException | NullPointerException ex) {
+			return false;
+		}
+		return true;
+	}
+
+	private String getTemporaryDirectoryPath() {
+		String tempDirectoryPath = "";
+		try {
+			tempDirectoryPath = Files.createTempDirectory("basyx-temp").toAbsolutePath().toString();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return tempDirectoryPath;
 	}
 
 }

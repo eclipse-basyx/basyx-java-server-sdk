@@ -56,7 +56,7 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
 		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodels);
 	}
-
+	
 	@Test
     public void getConfiguredInMemorySmRepositoryName() {
 		SubmodelRepository repo = new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), CONFIGURED_SM_REPO_NAME);
@@ -77,10 +77,13 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	}
 
 	private Collection<Submodel> createSubmodelCollectionWithCollidingIds() {
-		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
+		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(),
+				DummySubmodelFactory.createTechnicalDataSubmodel());
 	}
 
 	private Collection<Submodel> createSubmodelCollectionWithUniqueIds() {
-		return Arrays.asList(DummySubmodelFactory.createSimpleDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
+		return Arrays.asList(DummySubmodelFactory.createSimpleDataSubmodel(),
+				DummySubmodelFactory.createTechnicalDataSubmodel());
 	}
+
 }

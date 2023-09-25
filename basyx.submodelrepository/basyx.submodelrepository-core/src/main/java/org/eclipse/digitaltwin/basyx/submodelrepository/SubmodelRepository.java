@@ -26,6 +26,9 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import java.util.List;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -208,4 +211,43 @@ public interface SubmodelRepository {
 	 * @throws ElementDoesNotExistException
 	 */
 	public Submodel getSubmodelByIdMetadata(String submodelId) throws ElementDoesNotExistException;
+	
+	/**
+	 * Retrieves the file of a file submodelelement
+	 * 
+	 * @param submodelId
+	 *            the Submodel id
+	 * @param idShortPath
+	 *            the IdShort of the file element
+	 * @return
+	 * @throws ElementDoesNotExistException
+	 */
+	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException;
+	
+	/**
+	 * Uploads a file to a file submodelelement
+	 * 
+	 * @param submodelId
+	 *            the Submodel id
+	 * @param idShortPath
+	 *            the IdShort of the file element
+	 * @param file           
+	 *            the file object to upload
+	 * @return
+	 * @throws ElementDoesNotExistException
+	 * @throws IOException 
+	 */
+	public void setFileValue(String submodelId, String idShortPath, InputStream inputStream) throws IOException;
+
+	/**
+	 * Deletes the file of a file submodelelement
+	 * 
+	 * @param submodelId
+	 *            the Submodel id
+	 * @param idShortPath
+	 *            the IdShort of the file element
+	 * @return
+	 * @throws ElementDoesNotExistException
+	 */
+	public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException;
 }
