@@ -66,11 +66,11 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 
 		return new MongoDBSubmodelRepositoryFactory(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, submodels, CONFIGURED_SM_REPO_NAME, GRIDFS_TEMPLATE).create();
 	}
-	
+
 	@Test
 	public void getConfiguredMongoDBSmRepositoryName() {
 		SubmodelRepository repo = new MongoDBSubmodelRepository(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, CONFIGURED_SM_REPO_NAME, GRIDFS_TEMPLATE);
-		
+
 		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
 	}
 
@@ -87,10 +87,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	}
 
 	private void removeInvokableFromInvokableOperation(Submodel sm) {
-		sm.getSubmodelElements().stream()
-		.filter(InvokableOperation.class::isInstance)
-		.map(InvokableOperation.class::cast)
-		.forEach(o -> o.setInvokable(null));
+		sm.getSubmodelElements().stream().filter(InvokableOperation.class::isInstance).map(InvokableOperation.class::cast).forEach(o -> o.setInvokable(null));
 	}
 
 }
