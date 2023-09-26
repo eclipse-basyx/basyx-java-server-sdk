@@ -23,21 +23,21 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+
 package org.eclipse.digitaltwin.basyx.aasxfileserver;
 
-import org.eclipse.digitaltwin.basyx.aasxfileserver.core.AasxFileServerSuite;
-
 /**
- * Tests the {@link InMemoryAasxFileServer}
+ * Interface for a factory creating a {@link AASXFileServer}
  * 
- * @author chaithra
- *
+ * @author schnicke, chaithra
+ * 
  */
-public class TestInMemoryAasxFileServer extends AasxFileServerSuite {
-
-	@Override
-	protected AasxFileServer getAasxFileServer() {
-		return new InMemoryAasxFileServer();
-	}
-
+public interface AASXFileServerFactory {
+	
+	/**
+	 * Creates a new AasxFileServer
+	 * 
+	 * @return
+	 */
+	public AASXFileServer create();
 }

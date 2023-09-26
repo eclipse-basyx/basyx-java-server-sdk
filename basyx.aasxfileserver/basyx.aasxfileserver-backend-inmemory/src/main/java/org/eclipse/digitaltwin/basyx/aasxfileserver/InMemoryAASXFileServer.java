@@ -37,20 +37,20 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 
 /**
- * In-memory implementation of the AasxFileServer
+ * In-memory implementation of the AASXFileServer
  *
  * @author chaithra
  *
  */
-public class InMemoryAasxFileServer implements AasxFileServer {
+public class InMemoryAASXFileServer implements AASXFileServer {
 
 	private Map<String, Package> packageMap = new LinkedHashMap<>();
 	private AtomicInteger packageId = new AtomicInteger(0);
 
 	/**
-	 * Creates the InMemoryAasxFileServer
+	 * Creates the InMemoryAASXFileServer
 	 */	
-	public InMemoryAasxFileServer() {}	
+	public InMemoryAASXFileServer() {}	
 	
 	@Override
 	public Collection<PackageDescription> getAllAASXPackageIds() {
@@ -62,7 +62,7 @@ public class InMemoryAasxFileServer implements AasxFileServer {
 
 	@Override
 	public InputStream getAASXByPackageId(String packageId) throws ElementDoesNotExistException {
-		throwIfAasxPackageIdDoesNotExist(packageId);
+		throwIfAASXPackageIdDoesNotExist(packageId);
 
 		return packageMap.get(packageId).getPackagesBody().getFile();
 	}
@@ -71,7 +71,8 @@ public class InMemoryAasxFileServer implements AasxFileServer {
 	public void updateAASXByPackageId(String packageId, List<String> aasIds, InputStream file, String filename)
 			throws ElementDoesNotExistException {
 		
-		throwIfAasxPackageIdDoesNotExist(packageId);
+		throwIfAASXPackageIdDoesNotExist(packageId);
+		
 		updateAASXPackage(packageId, aasIds, file, filename);
 	}	
 
@@ -88,7 +89,7 @@ public class InMemoryAasxFileServer implements AasxFileServer {
 
 	@Override
 	public void deleteAASXByPackageId(String packageId) throws ElementDoesNotExistException {
-		throwIfAasxPackageIdDoesNotExist(packageId);
+		throwIfAASXPackageIdDoesNotExist(packageId);
 
 		packageMap.remove(packageId);
 	}	
@@ -124,7 +125,7 @@ public class InMemoryAasxFileServer implements AasxFileServer {
 		aasxPackage.getPackageDescription().setAasIds(aasIds);
 	}	
 	
-	private void throwIfAasxPackageIdDoesNotExist(String id) {
+	private void throwIfAASXPackageIdDoesNotExist(String id) {
 		
 		if (!packageMap.containsKey(id))
 			throw new ElementDoesNotExistException(id);

@@ -27,24 +27,24 @@ package org.eclipse.digitaltwin.basyx.aasxfileserver.feature;
 
 import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.aasxfileserver.AasxFileServer;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.AasxFileServerFactory;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServerFactory;
 import org.eclipse.digitaltwin.basyx.core.DecoratedFactory;
 
 /**
- * Factory for {@link AasxFileServerFactory} decoration
+ * Factory for {@link AASXFileServerFactory} decoration
  * 
  * @author schnicke, chaithra
  *
  */
-public class DecoratedAasxFileServerFactory extends DecoratedFactory<AasxFileServerFactory, AasxFileServerFeature> implements AasxFileServerFactory {
+public class DecoratedAasxFileServerFactory extends DecoratedFactory<AASXFileServerFactory, AasxFileServerFeature> implements AASXFileServerFactory {
 
-	public DecoratedAasxFileServerFactory(AasxFileServerFactory toDecorate, List<AasxFileServerFeature> features) {
+	public DecoratedAasxFileServerFactory(AASXFileServerFactory toDecorate, List<AasxFileServerFeature> features) {
 		super(toDecorate, features);
 	}
 
 	@Override
-	public AasxFileServer create() {
+	public AASXFileServer create() {
 		return getDecorated().create();
 	}
 }

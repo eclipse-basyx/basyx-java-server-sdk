@@ -28,16 +28,16 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 /**
- *  AasxFileServer factory returning an in-memory backend {@link AasxFileServer}
+ *  AasxFileServer factory returning an in-memory backend {@link AASXFileServer}
  * 
  * @author schnicke, chaithra
  */
 @Component
 @ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
-public class InMemoryAasxFileServerFactory implements AasxFileServerFactory {
+public class InMemoryAASXFileServerFactory implements AASXFileServerFactory {
 	
 	@Override
-	public AasxFileServer create() {
-		return new InMemoryAasxFileServer();
+	public AASXFileServer create() {
+		return new InMemoryAASXFileServer();
 	}
 }

@@ -22,29 +22,31 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasxfileserver.core;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.Arrays;
+package org.eclipse.digitaltwin.basyx.aasxfileserver.component;
+
 import java.util.List;
 
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServerFactory;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.feature.AasxFileServerFeature;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.feature.DecoratedAasxFileServerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 /**
- * Test helper class for {@link AasxFileServerSuite}
+ * Provides the spring bean configuration for the {@link AASXFileServer}
+ * utilizing all found features for the respective services
  * 
  * @author chaithra
  *
  */
-public class AasxFileServerSuiteHelper {
+@Configuration
+public class AASXFileServerConfiguration {
 
-    public static final List<String> FIRST_AAS_IDS = Arrays.asList("AAS_ID_1", "AAS_ID_2");
-    public static final String FIRST_FILENAME = "test_file1.txt";
-    public static final byte[] FIRST_BYTEARRAY = {65, 66, 67, 68, 69};
-    public static final InputStream FIRST_FILE = new ByteArrayInputStream(FIRST_BYTEARRAY);
-
-    public static final List<String> SECOND_AAS_IDS = Arrays.asList("AAS_ID_3", "AAS_ID_4");
-    public static final String SECOND_FILENAME = "test_file2.txt";
-    public static final byte[] SECOND_BYTEARRAY = {75, 76, 77, 78, 79};
-    public static final InputStream SECOND_FILE = new ByteArrayInputStream(SECOND_BYTEARRAY);   
-    
+	@Bean
+	public static AASXFileServer getAasxFileServer(AASXFileServerFactory aasRepositoryFactory, List<AasxFileServerFeature> features) {
+		return new DecoratedAasxFileServerFactory(aasRepositoryFactory, features).create();
+	}
+	
 }

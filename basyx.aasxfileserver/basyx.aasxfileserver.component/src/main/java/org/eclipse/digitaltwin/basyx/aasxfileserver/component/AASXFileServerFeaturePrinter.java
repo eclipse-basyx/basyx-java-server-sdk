@@ -39,12 +39,12 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service
-public class AasxFileServerFeaturePrinter {
+public class AASXFileServerFeaturePrinter {
 
-	private static final Logger logger = LoggerFactory.getLogger(AasxFileServerFeaturePrinter.class);
+	private static final Logger logger = LoggerFactory.getLogger(AASXFileServerFeaturePrinter.class);
 
 	@Autowired
-	public AasxFileServerFeaturePrinter(List<AasxFileServerFeature> features) {
+	public AASXFileServerFeaturePrinter(List<AasxFileServerFeature> features) {
 		logger.info("-------------------- AASX File Server Features: --------------------");
 		for (AasxFileServerFeature feature : features) {
 			logger.info("BaSyxFeature " + feature.getName() + " is enabled: " + feature.isEnabled());

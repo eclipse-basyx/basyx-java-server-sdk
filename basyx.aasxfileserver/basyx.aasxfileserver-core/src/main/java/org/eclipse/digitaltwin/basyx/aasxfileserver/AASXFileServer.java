@@ -38,7 +38,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
  * @author chaithra
  *
  */
-public interface AasxFileServer {
+public interface AASXFileServer {
 
 	/**
 	 * Retrieves all AASX package ids from the repository

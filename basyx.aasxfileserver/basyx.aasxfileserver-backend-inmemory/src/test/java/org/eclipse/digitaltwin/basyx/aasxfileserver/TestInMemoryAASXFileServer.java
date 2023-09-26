@@ -23,25 +23,21 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.aasxfileserver;
 
-package org.eclipse.digitaltwin.basyx.aasxfileserver.component;
-
-import org.eclipse.digitaltwin.basyx.aasxfileserver.AasxFileServer;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.core.AASXFileServerSuite;
 
 /**
- * Creates and starts the {@link AasxFileServer} off-shelf-component
+ * Tests the {@link InMemoryAASXFileServer}
  * 
- * @author schnicke, chaithra
+ * @author chaithra
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", 
-exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
-public class AasxFileServerComponent {	
-	public static void main(String[] args) {
-		SpringApplication.run(AasxFileServerComponent.class, args);
+public class TestInMemoryAASXFileServer extends AASXFileServerSuite {
+
+	@Override
+	protected AASXFileServer getAASXFileServer() {
+		return new InMemoryAASXFileServer();
 	}
+
 }

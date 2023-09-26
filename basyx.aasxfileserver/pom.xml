@@ -15,6 +15,6 @@
 	<modules>
 		<module>basyx.aasxfileserver-core</module>
 		<module>basyx.aasxfileserver.component</module>
-		<module>basyx.aasxfileserver-backend-inmemory</module>			
+		<module>basyx.aasxfileserver-backend-inmemory</module>
 	</modules>
 </project>

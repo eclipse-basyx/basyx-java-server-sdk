@@ -23,30 +23,25 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+
 package org.eclipse.digitaltwin.basyx.aasxfileserver.component;
 
-import java.util.List;
-
-import org.eclipse.digitaltwin.basyx.aasxfileserver.AasxFileServer;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.AasxFileServerFactory;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.feature.AasxFileServerFeature;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.feature.DecoratedAasxFileServerFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 
 /**
- * Provides the spring bean configuration for the {@link AasxFileServer}
- * utilizing all found features for the respective services
+ * Creates and starts the {@link AASXFileServer} off-shelf-component
  * 
- * @author chaithra
+ * @author schnicke, chaithra
  *
  */
-@Configuration
-public class AasxFileServerConfiguration {
-
-	@Bean
-	public static AasxFileServer getAasxFileServer(AasxFileServerFactory aasRepositoryFactory, List<AasxFileServerFeature> features) {
-		return new DecoratedAasxFileServerFactory(aasRepositoryFactory, features).create();
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", 
+exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
+public class AASXFileServerComponent {	
+	public static void main(String[] args) {
+		SpringApplication.run(AASXFileServerComponent.class, args);
 	}
-	
 }

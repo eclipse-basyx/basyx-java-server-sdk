@@ -24,10 +24,14 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasxfileserver.core;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.aasxfileserver.AasxFileServer;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.PackageDescription;
 
 /**
@@ -36,23 +40,27 @@ import org.eclipse.digitaltwin.basyx.aasxfileserver.PackageDescription;
  * @author chaithra
  *
  */
-public class DummyAasxFileServerFactory {
+public class DummyAASXFileServerFactory {
+	
+	public static final List<String> FIRST_AAS_IDS = Arrays.asList("AAS_ID_1", "AAS_ID_2");
+    public static final String FIRST_FILENAME = "test_file1.txt";
+    public static final byte[] FIRST_BYTEARRAY = {65, 66, 67, 68, 69};
+    public static final InputStream FIRST_FILE = new ByteArrayInputStream(FIRST_BYTEARRAY);
 
-    public static PackageDescription createFirstDummyAASXPackage(AasxFileServer server) {
-        return server.createAASXPackage(
-                AasxFileServerSuiteHelper.FIRST_AAS_IDS,
-                AasxFileServerSuiteHelper.FIRST_FILE,
-                AasxFileServerSuiteHelper.FIRST_FILENAME);
+    public static final List<String> SECOND_AAS_IDS = Arrays.asList("AAS_ID_3", "AAS_ID_4");
+    public static final String SECOND_FILENAME = "test_file2.txt";
+    public static final byte[] SECOND_BYTEARRAY = {75, 76, 77, 78, 79};
+    public static final InputStream SECOND_FILE = new ByteArrayInputStream(SECOND_BYTEARRAY); 
+
+    public static PackageDescription createFirstDummyAASXPackage(AASXFileServer server) {
+        return server.createAASXPackage(FIRST_AAS_IDS, FIRST_FILE, FIRST_FILENAME);
     }
 
-    public static PackageDescription createSecondDummyAASXPackage(AasxFileServer server) {
-        return server.createAASXPackage(
-                AasxFileServerSuiteHelper.SECOND_AAS_IDS,
-                AasxFileServerSuiteHelper.SECOND_FILE,
-                AasxFileServerSuiteHelper.SECOND_FILENAME);
+    public static PackageDescription createSecondDummyAASXPackage(AASXFileServer server) {
+        return server.createAASXPackage(SECOND_AAS_IDS, SECOND_FILE, SECOND_FILENAME);
     }
 
-    public static Collection<PackageDescription> getAllDummyAASXPackages(AasxFileServer server) {
+    public static Collection<PackageDescription> getAllDummyAASXPackages(AASXFileServer server) {
         PackageDescription firstPackage = createFirstDummyAASXPackage(server);
         PackageDescription secondPackage = createSecondDummyAASXPackage(server);
 

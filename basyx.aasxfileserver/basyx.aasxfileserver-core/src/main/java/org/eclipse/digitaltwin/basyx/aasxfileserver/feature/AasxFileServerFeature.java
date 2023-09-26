@@ -26,7 +26,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasxfileserver.feature;
 
-import org.eclipse.digitaltwin.basyx.aasxfileserver.AasxFileServerFactory;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServerFactory;
 import org.eclipse.digitaltwin.basyx.core.BaSyxFeature;
 
 /**
@@ -35,6 +35,6 @@ import org.eclipse.digitaltwin.basyx.core.BaSyxFeature;
  * @author schnicke, chaithra
  *
  */
-public interface AasxFileServerFeature extends BaSyxFeature<AasxFileServerFactory> {
+public interface AasxFileServerFeature extends BaSyxFeature<AASXFileServerFactory> {
 
 }
