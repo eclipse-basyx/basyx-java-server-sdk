@@ -425,7 +425,7 @@ public abstract class SubmodelRepositorySuite {
 	public void getDefaultSubmodelRepositoryName() {
 		SubmodelRepository repo = getSubmodelRepository();
 		
-		assertEquals("sm-repo", repo.getName());
+		assertEquals("configured-sm-repo-name", repo.getName());
 	}
 
 	@Test
