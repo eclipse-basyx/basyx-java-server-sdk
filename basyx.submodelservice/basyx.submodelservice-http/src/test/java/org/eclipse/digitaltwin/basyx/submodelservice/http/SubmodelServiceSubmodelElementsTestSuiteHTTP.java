@@ -54,7 +54,7 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 
 	protected abstract String getURL();
 
-	private final String CURSOR = "EntityData";
+	private final String CURSOR = "SimpleCollection";
 	private final String ENCODED_CURSOR = Base64UrlEncodedCursor.encodeCursor(CURSOR);
 
 	public static Submodel createSubmodel() {
