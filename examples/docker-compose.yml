@@ -45,3 +45,10 @@ services:
         mqtt:
             condition: service_healthy
         
+  aas-registry:
+    image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: aas-registry
+    pull_policy: never
+    ports:
+      - 8082:8080
+    restart: always
