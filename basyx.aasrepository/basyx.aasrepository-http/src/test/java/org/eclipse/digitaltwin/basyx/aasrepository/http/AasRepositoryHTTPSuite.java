@@ -274,9 +274,8 @@ public abstract class AasRepositoryHTTPSuite {
 	@Test
 	public void paginationResult() throws FileNotFoundException, IOException, ParseException {
 		createMultipleAasOnServer();
-		createAasOnServer(getAas3JSONString());
-		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getURL() + "?limit=1&cursor=" + ENCODED_CURSOR);
-		String response = BaSyxHttpTestUtils.getResponseAsString(getResponse);
+		CloseableHttpResponse httpResponse = BaSyxHttpTestUtils.executeGetOnURL(getURL() + "?limit=1&cursor=" + ENCODED_CURSOR);
+		String response = BaSyxHttpTestUtils.getResponseAsString(httpResponse);
 		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedAas1JSONString(), response);
 	}
 
@@ -291,6 +290,7 @@ public abstract class AasRepositoryHTTPSuite {
 	private void createMultipleAasOnServer() throws FileNotFoundException, IOException {
 		createAasOnServer(getAas1JSONString());
 		createAasOnServer(getAas2JSONString());
+		createAasOnServer(getAas3JSONString());
 	}
 
 	private String createDummyAasOnServer(String aasJsonContent) throws FileNotFoundException, IOException {
