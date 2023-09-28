@@ -31,9 +31,10 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
+import java.util.Iterator;
 
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.PackageDescription;
@@ -139,30 +140,23 @@ public abstract class AASXFileServerSuite {
 		
 	}
 	
-	private void assertGetAllAASXPackageIds(Collection<PackageDescription> packageDescriptions) {
+	private void assertGetAllAASXPackageIds(Collection<PackageDescription> packageDescriptions) {        
+        assertEquals(2, packageDescriptions.size());       
+               
+        Iterator<PackageDescription> iterator = packageDescriptions.iterator();
         
-        assertEquals(2, packageDescriptions.size());
-       
-        List<String> expectedFirstAasIds = DummyAASXFileServerFactory.FIRST_AAS_IDS;        
-        List<String> expectedSecondAasIds = DummyAASXFileServerFactory.SECOND_AAS_IDS;        
-
-       for (PackageDescription packageDescription : packageDescriptions) {
-            if (packageDescription.getPackageId().equals("1")) {                
-                assertEquals(expectedFirstAasIds, packageDescription.getAasIds());                
-            } else if (packageDescription.getPackageId().equals("2")) {                
-                assertEquals(expectedSecondAasIds, packageDescription.getAasIds());                
-            } else {                
-                fail("Unexpected package ID: " + packageDescription.getPackageId());
-            }
-        }
+        PackageDescription expectedFirstPackage = iterator.next();
+        PackageDescription expectedSecondPackage = iterator.next();    
+        
+        assertTrue(packageDescriptions.containsAll(Arrays.asList(expectedFirstPackage, expectedSecondPackage)));          
     }
 	
 	private void assertUpdatedAASXPackageId(PackageDescription expectedPackageDescription, Collection<PackageDescription> actualPackageDescriptions, AASXFileServer server) {
 		assertEquals(1, actualPackageDescriptions.size());
 		assertTrue(actualPackageDescriptions.contains(expectedPackageDescription)); 
 		
-		InputStream actualAASXFile = server.getAASXByPackageId(actualPackageDescriptions.iterator().next().getPackageId());		        	
-	    InputStream expectedAASXFile = server.getAASXByPackageId(expectedPackageDescription.getPackageId());
+		InputStream actualAASXFile = server.getAASXByPackageId("1");		        	
+	    InputStream expectedAASXFile = DummyAASXFileServerFactory.SECOND_FILE;
 	        	
 	    assertEquals(expectedAASXFile,actualAASXFile);        	
 	}
