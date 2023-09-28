@@ -54,7 +54,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	protected SubmodelRepository getSubmodelRepository() {
 		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
 
-		return new MongoDBSubmodelRepositoryFactory(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, CONFIGURED_SM_REPO_NAME, GRIDFS_TEMPLATE).create();
+		return new MongoDBSubmodelRepositoryFactory(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, GRIDFS_TEMPLATE).create();
 	}
 
 	@Override

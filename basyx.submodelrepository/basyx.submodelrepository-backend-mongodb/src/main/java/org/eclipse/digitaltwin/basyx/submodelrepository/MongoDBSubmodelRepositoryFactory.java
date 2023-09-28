@@ -49,44 +49,45 @@ public class MongoDBSubmodelRepositoryFactory implements SubmodelRepositoryFacto
 	private String collectionName;
 	private SubmodelServiceFactory submodelServiceFactory;
 	private Collection<Submodel> submodels;
-	
+
 	private String smRepositoryName;
 	private GridFsTemplate gridFsTemplate;
 
 	@Autowired(required = false)
-	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate,
-			@Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName,
-			SubmodelServiceFactory submodelServiceFactory) {
+	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory) {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
 		this.submodelServiceFactory = submodelServiceFactory;
 	}
-	
-	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate,
-			@Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName,
-			SubmodelServiceFactory submodelServiceFactory, @Value("${basyx.smrepo.name:sm-repo}") String smRepositoryName, GridFsTemplate gridFsTemplate) {
+
+	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory,
+			@Value("${basyx.smrepo.name:sm-repo}") String smRepositoryName, GridFsTemplate gridFsTemplate) {
 		this(mongoTemplate, collectionName, submodelServiceFactory);
 		this.smRepositoryName = smRepositoryName;
 		this.gridFsTemplate = gridFsTemplate;
 	}
 
+	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory,
+			GridFsTemplate gridFsTemplate) {
+		this(mongoTemplate, collectionName, submodelServiceFactory);
+		this.gridFsTemplate = gridFsTemplate;
+	}
+
 	@Autowired(required = false)
-	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate,
-			@Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName,
-			SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels) {
+	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory,
+			Collection<Submodel> submodels) {
 		this(mongoTemplate, collectionName, submodelServiceFactory);
 		this.submodels = submodels;
 	}
-	
+
 	@Autowired(required = false)
-	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate,
-			@Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName,
-			SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels, @Value("${basyx.smrepo.name:sm-repo}") String smRepositoryName, GridFsTemplate gridFsTemplate) {
+	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory,
+			Collection<Submodel> submodels, @Value("${basyx.smrepo.name:sm-repo}") String smRepositoryName, GridFsTemplate gridFsTemplate) {
 		this(mongoTemplate, collectionName, submodelServiceFactory, submodels);
 		this.smRepositoryName = smRepositoryName;
 		this.gridFsTemplate = gridFsTemplate;
 	}
-	
+
 	@Override
 	public SubmodelRepository create() {
 		if (this.submodels == null || this.submodels.isEmpty()) {
