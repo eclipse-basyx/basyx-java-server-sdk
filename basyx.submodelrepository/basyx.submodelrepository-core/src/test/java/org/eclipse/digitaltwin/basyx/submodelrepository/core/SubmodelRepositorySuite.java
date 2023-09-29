@@ -276,16 +276,7 @@ public abstract class SubmodelRepositorySuite {
 		
 		repo.getFileByPathSubmodel(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 	}
-	
-	private void deleteFileIfExisted(SubmodelRepository repo) {
-		try {
-			repo.getFileByPathSubmodel(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
-			repo.deleteFileValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
-		}catch(FileDoesNotExistException e) {
-			return;
-		}
-		
-	}
+
 
 	@Test(expected = ElementNotAFileException.class)
 	public void getFileFromNonFileSME() throws IOException {
@@ -460,7 +451,16 @@ public abstract class SubmodelRepositorySuite {
 
 		submodelRepo.invokeOperation(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT, new OperationVariable[0]);
 	}
-
+	
+	private void deleteFileIfExisted(SubmodelRepository repo) {
+		try {
+			repo.getFileByPathSubmodel(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
+			repo.deleteFileValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
+		}catch(FileDoesNotExistException e) {
+			return;
+		}
+		
+	}
 
 	private SubmodelElement getExpectedSubmodelElement() {
 		return DummySubmodelFactory.createOperationalDataSubmodel()
