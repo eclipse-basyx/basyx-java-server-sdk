@@ -1,0 +1,584 @@
+{
+	"info": {
+		"_postman_id": "5ba1e84b-1eea-4960-ad3d-35684948a21d",
+		"name": "BaSyx V2 Registries",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27284508"
+	},
+	"item": [
+		{
+			"name": "AAS Registry",
+			"item": [
+				{
+					"name": "Read RBAC Rules",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{aas_registry_basepath}}/authorization-rbac",
+							"host": [
+								"{{aas_registry_basepath}}"
+							],
+							"path": [
+								"authorization-rbac"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete RBAC Rule",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"role\": \"admin\",\r\n    \"action\": \"READ\",\r\n    \"targetInformation\": {\r\n        \"@type\": \"rbac\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{aas_registry_basepath}}/authorization-rbac",
+							"host": [
+								"{{aas_registry_basepath}}"
+							],
+							"path": [
+								"authorization-rbac"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Put RBAC Rule",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"role\": \"admin\",\r\n    \"action\": \"READ\",\r\n    \"targetInformation\": {\r\n        \"@type\": \"basyx\",\r\n        \"aasId\": \"*\",\r\n        \"smId\": \"https://admin-shell.io/zvei/nameplate/1/0/Nameplate\",\r\n        \"smElIdShortPath\": \"*\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{aas_registry_basepath}}/authorization-rbac",
+							"host": [
+								"{{aas_registry_basepath}}"
+							],
+							"path": [
+								"authorization-rbac"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Shell Descriptors",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{aas_registry_basepath}}/shell-descriptors",
+							"host": [
+								"{{aas_registry_basepath}}"
+							],
+							"path": [
+								"shell-descriptors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Shell Descriptor By Id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{aas_registry_basepath}}/shell-descriptors/abc",
+							"host": [
+								"{{aas_registry_basepath}}"
+							],
+							"path": [
+								"shell-descriptors",
+								"abc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Shell Descriptor By Id Through Superpath",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{aas_registry_basepath}}/shell-descriptors/abc/submodel-descriptors/def",
+							"host": [
+								"{{aas_registry_basepath}}"
+							],
+							"path": [
+								"shell-descriptors",
+								"abc",
+								"submodel-descriptors",
+								"def"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Shell Descriptors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{aas_registry_basepath}}/shell-descriptors",
+							"host": [
+								"{{aas_registry_basepath}}"
+							],
+							"path": [
+								"shell-descriptors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Submodel Descriptors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{aas_registry_basepath}}/shell-descriptors/abc/submodel-descriptors",
+							"host": [
+								"{{aas_registry_basepath}}"
+							],
+							"path": [
+								"shell-descriptors",
+								"abc",
+								"submodel-descriptors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Shell Descriptor By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{aas_registry_basepath}}/shell-descriptors/abc",
+							"host": [
+								"{{aas_registry_basepath}}"
+							],
+							"path": [
+								"shell-descriptors",
+								"abc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Submodel Descriptor By Id Through Superpath",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{aas_registry_basepath}}/shell-descriptors/abc/submodel-descriptors/def",
+							"host": [
+								"{{aas_registry_basepath}}"
+							],
+							"path": [
+								"shell-descriptors",
+								"abc",
+								"submodel-descriptors",
+								"def"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Shell Descriptor",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{aas_registry_basepath}}/shell-descriptors/abc",
+							"host": [
+								"{{aas_registry_basepath}}"
+							],
+							"path": [
+								"shell-descriptors",
+								"abc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Submodel Descriptor By Id Through Superpath",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{aas_registry_basepath}}/shell-descriptors/abc/submodel-descriptors/def",
+							"host": [
+								"{{aas_registry_basepath}}"
+							],
+							"path": [
+								"shell-descriptors",
+								"abc",
+								"submodel-descriptors",
+								"def"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Shell Descriptor",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{aas_registry_basepath}}/shell-descriptors/abc",
+							"host": [
+								"{{aas_registry_basepath}}"
+							],
+							"path": [
+								"shell-descriptors",
+								"abc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Submodel Descriptor By Id Through Superpath",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{aas_registry_basepath}}/shell-descriptors/abc/submodel-descriptors/def",
+							"host": [
+								"{{aas_registry_basepath}}"
+							],
+							"path": [
+								"shell-descriptors",
+								"abc",
+								"submodel-descriptors",
+								"def"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Submodel Registry",
+			"item": [
+				{
+					"name": "Read RBAC Rules",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{submodel_registry_basepath}}/authorization-rbac",
+							"host": [
+								"{{submodel_registry_basepath}}"
+							],
+							"path": [
+								"authorization-rbac"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete RBAC Rule",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"role\": \"admin\",\r\n    \"action\": \"READ\",\r\n    \"targetInformation\": {\r\n        \"@type\": \"rbac\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{submodel_registry_basepath}}/authorization-rbac",
+							"host": [
+								"{{submodel_registry_basepath}}"
+							],
+							"path": [
+								"authorization-rbac"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Put RBAC Rule",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"role\": \"admin\",\r\n    \"action\": \"READ\",\r\n    \"targetInformation\": {\r\n        \"@type\": \"basyx\",\r\n        \"aasId\": \"*\",\r\n        \"smId\": \"https://admin-shell.io/zvei/nameplate/1/0/Nameplate\",\r\n        \"smElIdShortPath\": \"*\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{submodel_registry_basepath}}/authorization-rbac",
+							"host": [
+								"{{submodel_registry_basepath}}"
+							],
+							"path": [
+								"authorization-rbac"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Shell Descriptors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{submodel_registry_basepath}}/submodel-descriptors",
+							"host": [
+								"{{submodel_registry_basepath}}"
+							],
+							"path": [
+								"submodel-descriptors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Shell Descriptor By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{submodel_registry_basepath}}/submodel-descriptors/aHR0cHM6Ly9hZG1pbi1zaGVsbC5pby96dmVpL25hbWVwbGF0ZS8xLzAvTmFtZXBsYXRl",
+							"host": [
+								"{{submodel_registry_basepath}}"
+							],
+							"path": [
+								"submodel-descriptors",
+								"aHR0cHM6Ly9hZG1pbi1zaGVsbC5pby96dmVpL25hbWVwbGF0ZS8xLzAvTmFtZXBsYXRl"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Shell Descriptor",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"https://admin-shell.io/zvei/nameplate/1/0/Nameplate\",\r\n  \"endpoints\": [\r\n    {\r\n      \"protocolInformation\": {\r\n        \"href\": \"opc.tcp://localhost:4840\"\r\n      },\r\n      \"href\": {\r\n        \"href\": \"https://localhost:1234/api/v3.0/submodel\",\r\n        \"endpointProtocol\": \"HTTP\",\r\n        \"endpointProtocolVersion\": [\r\n          \"1.1\"\r\n        ]\r\n      },\r\n      \"interface\": \"AAS-3.0\"\r\n    },\r\n    {\r\n      \"protocolInformation\": {\r\n        \"href\": \"opc.tcp://localhost:4840\"\r\n      },\r\n      \"interface\": \"AAS-3.0\"\r\n    },\r\n    {\r\n      \"protocolInformation\": {\r\n        \"href\": \"https://localhost:5678\",\r\n        \"endpointProtocol\": \"HTTP\",\r\n        \"endpointProtocolVersion\": [\r\n          \"1.1\"\r\n        ],\r\n        \"subprotocol\": \"OPC UA Basic SOAP\",\r\n        \"subprotocolBody\": \"ns=2;s=MyAAS\",\r\n        \"subprotocolBodyEncoding\": \"application/soap+xml\"\r\n      },\r\n      \"interface\": \"AAS-3.0\"\r\n    }\r\n  ],\r\n  \"security\": {\r\n      \"criteria\": true\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{submodel_registry_basepath}}/submodel-descriptors/aHR0cHM6Ly9hZG1pbi1zaGVsbC5pby96dmVpL25hbWVwbGF0ZS8xLzAvTmFtZXBsYXRl",
+							"host": [
+								"{{submodel_registry_basepath}}"
+							],
+							"path": [
+								"submodel-descriptors",
+								"aHR0cHM6Ly9hZG1pbi1zaGVsbC5pby96dmVpL25hbWVwbGF0ZS8xLzAvTmFtZXBsYXRl"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Shell Descriptor",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"https://admin-shell.io/zvei/nameplate/1/0/Nameplate\",\r\n  \"endpoints\": [\r\n    {\r\n      \"protocolInformation\": {\r\n        \"href\": \"opc.tcp://localhost:4840\"\r\n      },\r\n      \"href\": {\r\n        \"href\": \"https://localhost:1234/api/v3.0/submodel\",\r\n        \"endpointProtocol\": \"HTTP\",\r\n        \"endpointProtocolVersion\": [\r\n          \"1.1\"\r\n        ]\r\n      },\r\n      \"interface\": \"AAS-3.0\"\r\n    },\r\n    {\r\n      \"protocolInformation\": {\r\n        \"href\": \"opc.tcp://localhost:4840\"\r\n      },\r\n      \"interface\": \"AAS-3.0\"\r\n    },\r\n    {\r\n      \"protocolInformation\": {\r\n        \"href\": \"https://localhost:5678\",\r\n        \"endpointProtocol\": \"HTTP\",\r\n        \"endpointProtocolVersion\": [\r\n          \"1.1\"\r\n        ],\r\n        \"subprotocol\": \"OPC UA Basic SOAP\",\r\n        \"subprotocolBody\": \"ns=2;s=MyAAS\",\r\n        \"subprotocolBodyEncoding\": \"application/soap+xml\"\r\n      },\r\n      \"interface\": \"AAS-3.0\"\r\n    }\r\n  ],\r\n  \"security\": {\r\n      \"criteria\": true\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{submodel_registry_basepath}}/submodel-descriptors",
+							"host": [
+								"{{submodel_registry_basepath}}"
+							],
+							"path": [
+								"submodel-descriptors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Shell Descriptor",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"https://admin-shell.io/zvei/nameplate/1/0/Nameplate\",\r\n  \"endpoints\": [\r\n    {\r\n      \"protocolInformation\": {\r\n        \"href\": \"opc.tcp://localhost:4840\"\r\n      },\r\n      \"href\": {\r\n        \"href\": \"https://localhost:1234/api/v3.0/submodel\",\r\n        \"endpointProtocol\": \"HTTP\",\r\n        \"endpointProtocolVersion\": [\r\n          \"1.1\"\r\n        ]\r\n      },\r\n      \"interface\": \"AAS-3.0\"\r\n    },\r\n    {\r\n      \"protocolInformation\": {\r\n        \"href\": \"opc.tcp://localhost:4840\"\r\n      },\r\n      \"interface\": \"AAS-3.0\"\r\n    },\r\n    {\r\n      \"protocolInformation\": {\r\n        \"href\": \"https://localhost:5678\",\r\n        \"endpointProtocol\": \"HTTP\",\r\n        \"endpointProtocolVersion\": [\r\n          \"1.1\"\r\n        ],\r\n        \"subprotocol\": \"OPC UA Basic SOAP\",\r\n        \"subprotocolBody\": \"ns=2;s=MyAAS\",\r\n        \"subprotocolBodyEncoding\": \"application/soap+xml\"\r\n      },\r\n      \"interface\": \"AAS-3.0\"\r\n    }\r\n  ],\r\n  \"security\": {\r\n      \"criteria\": true\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{submodel_registry_basepath}}/submodel-descriptors/aHR0cHM6Ly9hZG1pbi1zaGVsbC5pby96dmVpL25hbWVwbGF0ZS8xLzAvTmFtZXBsYXRl",
+							"host": [
+								"{{submodel_registry_basepath}}"
+							],
+							"path": [
+								"submodel-descriptors",
+								"aHR0cHM6Ly9hZG1pbi1zaGVsbC5pby96dmVpL25hbWVwbGF0ZS8xLzAvTmFtZXBsYXRl"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Clear Submodel Descriptors",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"https://admin-shell.io/zvei/nameplate/1/0/Nameplate\",\r\n  \"endpoints\": [\r\n    {\r\n      \"protocolInformation\": {\r\n        \"href\": \"opc.tcp://localhost:4840\"\r\n      },\r\n      \"href\": {\r\n        \"href\": \"https://localhost:1234/api/v3.0/submodel\",\r\n        \"endpointProtocol\": \"HTTP\",\r\n        \"endpointProtocolVersion\": [\r\n          \"1.1\"\r\n        ]\r\n      },\r\n      \"interface\": \"AAS-3.0\"\r\n    },\r\n    {\r\n      \"protocolInformation\": {\r\n        \"href\": \"opc.tcp://localhost:4840\"\r\n      },\r\n      \"interface\": \"AAS-3.0\"\r\n    },\r\n    {\r\n      \"protocolInformation\": {\r\n        \"href\": \"https://localhost:5678\",\r\n        \"endpointProtocol\": \"HTTP\",\r\n        \"endpointProtocolVersion\": [\r\n          \"1.1\"\r\n        ],\r\n        \"subprotocol\": \"OPC UA Basic SOAP\",\r\n        \"subprotocolBody\": \"ns=2;s=MyAAS\",\r\n        \"subprotocolBodyEncoding\": \"application/soap+xml\"\r\n      },\r\n      \"interface\": \"AAS-3.0\"\r\n    }\r\n  ],\r\n  \"security\": {\r\n      \"criteria\": true\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{submodel_registry_basepath}}/submodel-descriptors",
+							"host": [
+								"{{submodel_registry_basepath}}"
+							],
+							"path": [
+								"submodel-descriptors"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "accessTokenUrl",
+				"value": "{{keycloak_token_url_host_docker_internal}}",
+				"type": "string"
+			},
+			{
+				"key": "refreshRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "tokenRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "authRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "challengeAlgorithm",
+				"value": "S256",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{keycloak_username}}",
+				"type": "string"
+			},
+			{
+				"key": "password",
+				"value": "{{keycloak_password}}",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "password_credentials",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "{{keycloak_clientid}}",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "client_authentication",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
