@@ -56,9 +56,9 @@ import org.junit.Test;
  *
  */
 public abstract class ConceptDescriptionRepositorySuite {
-	protected abstract ConceptDescriptionRepository getConceptDescriptionRepository();
+	protected abstract ConceptDescriptionRepository<?> getConceptDescriptionRepository();
 
-	protected abstract ConceptDescriptionRepository getConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions);
+	protected abstract ConceptDescriptionRepository<?> getConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions);
 
 	private final PaginationInfo noLimitPaginationInfo = new PaginationInfo(0, "");
 
@@ -66,8 +66,8 @@ public abstract class ConceptDescriptionRepositorySuite {
 	public void getAllConceptDescriptionsPreconfigured() {
 		Collection<ConceptDescription> expectedConceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
 
-		ConceptDescriptionRepository repo = getConceptDescriptionRepository(expectedConceptDescriptions);
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptions(noLimitPaginationInfo)
+		ConceptDescriptionRepository<?> repo = getConceptDescriptionRepository(expectedConceptDescriptions);
+		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptions(noLimitPaginationInfo, null)
 				.getResult();
 
 		assertEquals(4, actualConceptDescriptions.size());
@@ -79,8 +79,8 @@ public abstract class ConceptDescriptionRepositorySuite {
 		Collection<ConceptDescription> allConceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
 		Collection<ConceptDescription> expectedDescriptions = Arrays.asList(DummyConceptDescriptionFactory.createBasicConceptDescription());
 
-		ConceptDescriptionRepository repo = getConceptDescriptionRepository(allConceptDescriptions);
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIdShort("BasicConceptDescription", noLimitPaginationInfo)
+		ConceptDescriptionRepository<?> repo = getConceptDescriptionRepository(allConceptDescriptions);
+		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIdShort("BasicConceptDescription", noLimitPaginationInfo, null)
 				.getResult();
 
 		assertEquals(1, actualConceptDescriptions.size());
@@ -98,8 +98,8 @@ public abstract class ConceptDescriptionRepositorySuite {
 		Collection<ConceptDescription> allConceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
 		Collection<ConceptDescription> expectedDescriptions = Arrays.asList(DummyConceptDescriptionFactory.createConceptDescription(), DummyConceptDescriptionFactory.createBasicConceptDescriptionWithDataSpecification());
 
-		ConceptDescriptionRepository repo = getConceptDescriptionRepository(allConceptDescriptions);
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIsCaseOf(reference, noLimitPaginationInfo)
+		ConceptDescriptionRepository<?> repo = getConceptDescriptionRepository(allConceptDescriptions);
+		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIsCaseOf(reference, noLimitPaginationInfo, null)
 				.getResult();
 
 		assertEquals(2, actualConceptDescriptions.size());
@@ -117,8 +117,8 @@ public abstract class ConceptDescriptionRepositorySuite {
 		Collection<ConceptDescription> allConceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
 		Collection<ConceptDescription> expectedDescriptions = Arrays.asList(DummyConceptDescriptionFactory.createBasicConceptDescriptionWithDataSpecification());
 
-		ConceptDescriptionRepository repo = getConceptDescriptionRepository(allConceptDescriptions);
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByDataSpecificationReference(reference, noLimitPaginationInfo)
+		ConceptDescriptionRepository<?> repo = getConceptDescriptionRepository(allConceptDescriptions);
+		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByDataSpecificationReference(reference, noLimitPaginationInfo, null)
 				.getResult();
 
 		assertEquals(1, actualConceptDescriptions.size());
@@ -127,8 +127,8 @@ public abstract class ConceptDescriptionRepositorySuite {
 
 	@Test
 	public void getAllConceptDescriptionsEmpty() {
-		ConceptDescriptionRepository repo = getConceptDescriptionRepository();
-		Collection<ConceptDescription> conceptDescriptions = repo.getAllConceptDescriptions(noLimitPaginationInfo)
+		ConceptDescriptionRepository<?> repo = getConceptDescriptionRepository();
+		Collection<ConceptDescription> conceptDescriptions = repo.getAllConceptDescriptions(noLimitPaginationInfo, null)
 				.getResult();
 
 		assertIsEmpty(conceptDescriptions);
@@ -136,7 +136,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 
 	@Test
 	public void getSpecificConceptDescription() {
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+		ConceptDescriptionRepository<?> repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 
 		ConceptDescription conceptDescription = DummyConceptDescriptionFactory.createConceptDescription();
 		ConceptDescription retrieved = repo.getConceptDescription(conceptDescription.getId());
@@ -146,7 +146,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getSpecificNonExistingConceptDescription() {
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+		ConceptDescriptionRepository<?> repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		repo.getConceptDescription("doesNotExist");
 	}
 
@@ -155,7 +155,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 		String id = ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID;
 		ConceptDescription expected = createDummyConceptDescription(id);
 
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+		ConceptDescriptionRepository<?> repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		repo.updateConceptDescription(id, expected);
 
 		assertEquals(expected, repo.getConceptDescription(id));
@@ -166,7 +166,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 		String id = "notExisting";
 		ConceptDescription doesNotExist = createDummyConceptDescription(id);
 
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+		ConceptDescriptionRepository<?> repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		repo.updateConceptDescription(id, doesNotExist);
 	}
 
@@ -175,7 +175,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 		String id = ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID;
 		ConceptDescription newCd = createDummyConceptDescription("mismatchId");
 
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+		ConceptDescriptionRepository<?> repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		repo.updateConceptDescription(id, newCd);
 	}
 
@@ -184,7 +184,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 		String id = "newConceptDescription";
 		ConceptDescription expectedConceptDescription = createDummyConceptDescription(id);
 
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+		ConceptDescriptionRepository<?> repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		repo.createConceptDescription(expectedConceptDescription);
 
 		ConceptDescription retrieved = repo.getConceptDescription(id);
@@ -193,7 +193,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 
 	@Test(expected = CollidingIdentifierException.class)
 	public void createConceptDescriptionWithCollidingId() {
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+		ConceptDescriptionRepository<?> repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		ConceptDescription conceptDescription = repo.getConceptDescription(ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID);
 
 		repo.createConceptDescription(conceptDescription);
@@ -201,7 +201,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 
 	@Test
 	public void deleteConceptDescription() {
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+		ConceptDescriptionRepository<?> repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		repo.deleteConceptDescription(ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID);
 
 		try {
@@ -213,7 +213,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void deleteNonExistingConceptDescription() {
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+		ConceptDescriptionRepository<?> repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		repo.deleteConceptDescription("nonExisting");
 	}
 	
@@ -226,9 +226,9 @@ public abstract class ConceptDescriptionRepositorySuite {
 
 	@Test
 	public void allContextDescriptionPaginated() {
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+		ConceptDescriptionRepository<?> repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		PaginationInfo pInfo = new PaginationInfo(1, "");
-		CursorResult<List<ConceptDescription>> paginatedConceptDescriptions = repo.getAllConceptDescriptions(pInfo);
+		CursorResult<List<ConceptDescription>> paginatedConceptDescriptions = repo.getAllConceptDescriptions(pInfo, null);
 		assertEquals(1, paginatedConceptDescriptions.getResult()
 				.size());
 	}
@@ -244,9 +244,9 @@ public abstract class ConceptDescriptionRepositorySuite {
 		Collection<ConceptDescription> allConceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
 		ConceptDescription expectedDescription = DummyConceptDescriptionFactory.createConceptDescription();
 
-		ConceptDescriptionRepository repo = getConceptDescriptionRepository(allConceptDescriptions);
+		ConceptDescriptionRepository<?> repo = getConceptDescriptionRepository(allConceptDescriptions);
 		PaginationInfo pInfo = new PaginationInfo(1, "");
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIsCaseOf(reference, pInfo)
+		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIsCaseOf(reference, pInfo, null)
 				.getResult();
 
 		assertEquals(1, actualConceptDescriptions.size());
@@ -269,9 +269,9 @@ public abstract class ConceptDescriptionRepositorySuite {
 				.build();
 	}
 
-	private ConceptDescriptionRepository getConceptDescriptionRepositoryWithDummyConceptDescriptions() {
+	private ConceptDescriptionRepository<?> getConceptDescriptionRepositoryWithDummyConceptDescriptions() {
 		Collection<ConceptDescription> expectedConceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
-		ConceptDescriptionRepository repo = getConceptDescriptionRepository(expectedConceptDescriptions);
+		ConceptDescriptionRepository<?> repo = getConceptDescriptionRepository(expectedConceptDescriptions);
 		return repo;
 	}
 

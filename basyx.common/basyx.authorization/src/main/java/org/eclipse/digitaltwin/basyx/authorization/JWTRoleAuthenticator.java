@@ -1,15 +1,15 @@
 package org.eclipse.digitaltwin.basyx.authorization;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@ConditionalOnProperty(CommonAuthorizationConfig.ENABLED_PROPERTY_KEY)
 public class JWTRoleAuthenticator implements IRoleAuthenticator {
     @Autowired
     private final ISubjectInfoProvider subjectInfoProvider;

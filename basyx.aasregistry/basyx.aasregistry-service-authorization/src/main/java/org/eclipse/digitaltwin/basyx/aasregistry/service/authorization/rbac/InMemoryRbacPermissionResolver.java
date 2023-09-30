@@ -4,22 +4,22 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.authorization.IdHelper;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.authorization.PermissionResolver;
-import org.eclipse.digitaltwin.basyx.authorization.Action;
-import org.eclipse.digitaltwin.basyx.authorization.IRoleAuthenticator;
-import org.eclipse.digitaltwin.basyx.authorization.ISubjectInfo;
-import org.eclipse.digitaltwin.basyx.authorization.ISubjectInfoProvider;
+import org.eclipse.digitaltwin.basyx.authorization.*;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.*;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.CommonRbacConfig;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotAuthorizedException;
 import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.function.Predicate;
 
-@ConditionalOnExpression(value = "'${basyx.aasregistry.feature.authorization.type}' == 'rbac' and '${registry.type}'.equals('inMemory')")
 @Service
+@ConditionalOnProperty(CommonAuthorizationConfig.ENABLED_PROPERTY_KEY)
+@ConditionalOnExpression(value = "'${" + CommonAuthorizationConfig.TYPE_PROPERTY_KEY + "}' == '" + CommonRbacConfig.RBAC_AUTHORIZATION_TYPE + "' and '${registry.type}'.equals('inMemory')")
 public class InMemoryRbacPermissionResolver implements PermissionResolver<Predicate<AssetAdministrationShellDescriptor>, Predicate<SubmodelDescriptor>>, RbacPermissionResolver<Predicate<RbacRule>> {
     @Autowired
     private final IRbacStorage<Predicate<RbacRule>> storage;

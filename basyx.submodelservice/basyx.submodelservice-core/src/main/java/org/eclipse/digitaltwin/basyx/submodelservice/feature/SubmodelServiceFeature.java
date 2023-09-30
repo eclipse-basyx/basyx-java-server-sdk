@@ -35,6 +35,6 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
  * @author schnicke
  *
  */
-public interface SubmodelServiceFeature extends BaSyxFeature<SubmodelServiceFactory> {
+public interface SubmodelServiceFeature<SubmodelFilterType> extends BaSyxFeature<SubmodelServiceFactory<SubmodelFilterType>> {
 
 }

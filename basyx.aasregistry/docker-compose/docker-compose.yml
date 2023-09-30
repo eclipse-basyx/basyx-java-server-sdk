@@ -162,6 +162,12 @@ services:
     pull_policy: never
     ports:
       - "8040:8080"
+      - "8049:5800"
+    environment:
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:5800,server=y,suspend=y
+    volumes:
+      # additional header configs for cors
+      - ./aas-config:/workspace/config  # /workspace is the docker file working dir
     restart: always
     networks:
       - basyx
@@ -172,7 +178,7 @@ services:
     pull_policy: never
     ports:
       - "8050:8080"
-      - "8049:5800"
+      - "8059:5800"
     depends_on:
       - mongodb
     restart: always

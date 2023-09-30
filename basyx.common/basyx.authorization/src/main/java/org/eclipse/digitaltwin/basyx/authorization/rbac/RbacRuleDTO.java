@@ -35,7 +35,7 @@ import java.util.Map;
 public class RbacRuleDTO {
 	private String role;
 	private String action;
-	private Map<String, String> targetInformation;
+	private Map<String, String> targetInfo;
 
 	public String getRole() {
 		return role;
@@ -45,13 +45,19 @@ public class RbacRuleDTO {
 		return action;
 	}
 
-	public Map<String, String> getTargetInformation() {
-		return targetInformation;
+	public Map<String, String> getTargetInfo() {
+		return targetInfo;
 	}
 
-	private RbacRuleDTO() {
+	public RbacRuleDTO() {
 		role = "";
 		action = "";
-		targetInformation = new HashMap<>();
+		targetInfo = new HashMap<>();
+	}
+
+	public RbacRuleDTO(final String role, final String action, final Map<String, String> targetInfo) {
+		this.role = role;
+		this.action = action;
+		this.targetInfo = targetInfo;
 	}
 }

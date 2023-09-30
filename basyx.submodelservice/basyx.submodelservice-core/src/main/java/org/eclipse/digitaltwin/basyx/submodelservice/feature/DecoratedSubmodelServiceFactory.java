@@ -38,14 +38,14 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
  * @author schnicke
  *
  */
-public class DecoratedSubmodelServiceFactory extends DecoratedFactory<SubmodelServiceFactory, SubmodelServiceFeature> implements SubmodelServiceFactory {
+public class DecoratedSubmodelServiceFactory<SubmodelFilterType> extends DecoratedFactory<SubmodelServiceFactory<SubmodelFilterType>, SubmodelServiceFeature<SubmodelFilterType>> implements SubmodelServiceFactory<SubmodelFilterType> {
 
-	public DecoratedSubmodelServiceFactory(SubmodelServiceFactory toDecorate, List<SubmodelServiceFeature> features) {
+	public DecoratedSubmodelServiceFactory(SubmodelServiceFactory<SubmodelFilterType> toDecorate, List<SubmodelServiceFeature<SubmodelFilterType>> features) {
 		super(toDecorate, features);
 	}
 
 	@Override
-	public SubmodelService create(Submodel submodel) {
+	public SubmodelService<SubmodelFilterType> create(Submodel submodel) {
 		return getDecorated().create(submodel);
 	}
 }

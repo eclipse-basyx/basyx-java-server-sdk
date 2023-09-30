@@ -147,6 +147,9 @@ services:
       - "8042:5800"
     environment:
       JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:5800,server=y,suspend=y
+    volumes:
+      # additional header configs for cors
+      - ./submodel-config:/workspace/config  # /workspace is the docker file working dir
     restart: always
     networks:
       - basyx-submodel

@@ -4,22 +4,23 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.authorization.*;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.*;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.CommonRbacConfig;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotAuthorizedException;
 import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.PermissionResolver;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.RbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.context.annotation.Primary;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@ConditionalOnExpression(value = "'${basyx.submodelrepository.feature.authorization.type}' == 'rbac' and '${basyx.backend}'.equals('MongoDB')")
 @Service
+@ConditionalOnProperty(CommonAuthorizationConfig.ENABLED_PROPERTY_KEY)
+@ConditionalOnExpression(value = "'${" + CommonAuthorizationConfig.TYPE_PROPERTY_KEY + "}' == '" + CommonRbacConfig.RBAC_AUTHORIZATION_TYPE + "' and '${basyx.backend}'.equals('MongoDB')")
 public class MongoDBRbacPermissionResolver implements PermissionResolver<Criteria>, RbacPermissionResolver<Criteria> {
     @Autowired
     private final IRbacStorage<Criteria> storage;
@@ -47,18 +48,18 @@ public class MongoDBRbacPermissionResolver implements PermissionResolver<Criteri
         final List<String> roles = roleAuthenticator.getRoles();
 
         final Set<String> relevantSubmodelIds = rbacRules.stream()
-                .filter(rbacRule -> rbacRule.getTargetInformation() instanceof BaSyxObjectTargetInfo)
+                .filter(rbacRule -> rbacRule.getTargetInfo() instanceof BaSyxObjectTargetInfo)
                 .filter(rbacRule -> rbacRule.getAction().equals(Action.READ.toString()))
                 .filter(rbacRule -> roles.contains(rbacRule.getRole()))
-                .map(rbacRule -> (BaSyxObjectTargetInfo) rbacRule.getTargetInformation())
+                .map(rbacRule -> (BaSyxObjectTargetInfo) rbacRule.getTargetInfo())
                 .map(BaSyxObjectTargetInfo::getSmId)
                 .collect(Collectors.toSet());
 
         final Set<String> relevantSubmodelSemanticIds = rbacRules.stream()
-                .filter(rbacRule -> rbacRule.getTargetInformation() instanceof BaSyxObjectTargetInfo)
+                .filter(rbacRule -> rbacRule.getTargetInfo() instanceof BaSyxObjectTargetInfo)
                 .filter(rbacRule -> rbacRule.getAction().equals(Action.READ.toString()))
                 .filter(rbacRule -> roles.contains(rbacRule.getRole()))
-                .map(rbacRule -> (BaSyxObjectTargetInfo) rbacRule.getTargetInformation())
+                .map(rbacRule -> (BaSyxObjectTargetInfo) rbacRule.getTargetInfo())
                 .map(BaSyxObjectTargetInfo::getSmSemanticId)
                 .collect(Collectors.toSet());
 
@@ -75,10 +76,10 @@ public class MongoDBRbacPermissionResolver implements PermissionResolver<Criteri
         final List<String> roles = roleAuthenticator.getRoles();
 
         boolean found = rbacRules.stream()
-                .filter(rbacRule -> rbacRule.getTargetInformation() instanceof BaSyxObjectTargetInfo)
+                .filter(rbacRule -> rbacRule.getTargetInfo() instanceof BaSyxObjectTargetInfo)
                 .filter(rbacRule -> rbacRule.getAction().equals(Action.READ.toString()))
                 .filter(rbacRule -> roles.contains(rbacRule.getRole()))
-                .map(rbacRule -> (BaSyxObjectTargetInfo) rbacRule.getTargetInformation())
+                .map(rbacRule -> (BaSyxObjectTargetInfo) rbacRule.getTargetInfo())
                 .map(BaSyxObjectTargetInfo::getSmId)
                 .anyMatch(smId -> smId.equals(submodelId));
 
@@ -129,18 +130,18 @@ public class MongoDBRbacPermissionResolver implements PermissionResolver<Criteri
         final List<String> roles = roleAuthenticator.getRoles();
 
         final Set<String> relevantSubmodelIds = rbacRules.stream()
-                .filter(rbacRule -> rbacRule.getTargetInformation() instanceof BaSyxObjectTargetInfo)
+                .filter(rbacRule -> rbacRule.getTargetInfo() instanceof BaSyxObjectTargetInfo)
                 .filter(rbacRule -> rbacRule.getAction().equals(Action.READ.toString()))
                 .filter(rbacRule -> roles.contains(rbacRule.getRole()))
-                .map(rbacRule -> (BaSyxObjectTargetInfo) rbacRule.getTargetInformation())
+                .map(rbacRule -> (BaSyxObjectTargetInfo) rbacRule.getTargetInfo())
                 .map(BaSyxObjectTargetInfo::getSmId)
                 .collect(Collectors.toSet());
 
         final Set<String> relevantSubmodelSemanticIds = rbacRules.stream()
-                .filter(rbacRule -> rbacRule.getTargetInformation() instanceof BaSyxObjectTargetInfo)
+                .filter(rbacRule -> rbacRule.getTargetInfo() instanceof BaSyxObjectTargetInfo)
                 .filter(rbacRule -> rbacRule.getAction().equals(Action.READ.toString()))
                 .filter(rbacRule -> roles.contains(rbacRule.getRole()))
-                .map(rbacRule -> (BaSyxObjectTargetInfo) rbacRule.getTargetInformation())
+                .map(rbacRule -> (BaSyxObjectTargetInfo) rbacRule.getTargetInfo())
                 .map(BaSyxObjectTargetInfo::getSmSemanticId)
                 .collect(Collectors.toSet());
 

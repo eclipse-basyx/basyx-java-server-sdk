@@ -24,25 +24,25 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration;
 
-import org.eclipse.digitaltwin.basyx.authorization.rbac.IRbacStorage;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleSet;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleSetDeserializer;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.*;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.CursorEncodingRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.memory.InMemorySubmodelRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.memory.ThreadSafeSubmodelRegistryStorageDecorator;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.authorization.rbac.InMemoryAuthorizationRbacStorage;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.function.Predicate;
 
 @Configuration
 public class InMemorySubmodelStorageConfiguration {
+	private final Environment environment;
+
+	public InMemorySubmodelStorageConfiguration(Environment environment) {
+		this.environment = environment;
+	}
 
 	@Bean
 	@ConditionalOnProperty(prefix = "registry", name = "type", havingValue = "inMemory")
@@ -53,16 +53,6 @@ public class InMemorySubmodelStorageConfiguration {
 	@Bean
 	@ConditionalOnProperty(prefix = "registry", name = "type", havingValue = "inMemory")
 	public IRbacStorage<Predicate<RbacRule>> rbacStorage() {
-		return new InMemoryAuthorizationRbacStorage(getRbacRuleSet());
-	}
-
-	final static String RBAC_RULES_FILE_PATH = "/rbac_rules.json";
-
-	private RbacRuleSet getRbacRuleSet() {
-		try {
-			return new RbacRuleSetDeserializer().fromFile(RBAC_RULES_FILE_PATH);
-		} catch (final IOException e) {
-			throw new UncheckedIOException(e);
-		}
+		return new InMemoryAuthorizationRbacStorage(RbacUtil.getRbacRuleSetFromFile(environment));
 	}
 }

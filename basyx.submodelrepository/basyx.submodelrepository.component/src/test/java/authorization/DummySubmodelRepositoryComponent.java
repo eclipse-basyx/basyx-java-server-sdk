@@ -74,11 +74,6 @@ import java.util.Map;
 //@RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration
 public class DummySubmodelRepositoryComponent {
-	private Environment environment;
-	public DummySubmodelRepositoryComponent(Environment environment) {
-		System.out.println("hello world");
-	}
-
 	@Primary
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

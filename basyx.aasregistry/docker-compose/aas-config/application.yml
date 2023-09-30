@@ -12,3 +12,15 @@ servlet:
         Access-Control-Allow-Headers: Accept, Content-Type
       methods: 
         - OPTIONS
+basyx:
+  aasregistry:
+      authorization:
+        enabled: true
+        type: rbac
+        rbac:
+          file: /workspace/config/rbac_rules.json
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt.issuer-uri: http://host.docker.internal:8080/realms/master

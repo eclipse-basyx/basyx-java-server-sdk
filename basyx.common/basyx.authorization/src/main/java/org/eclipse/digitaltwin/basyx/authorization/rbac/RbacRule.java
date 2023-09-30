@@ -37,21 +37,21 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class RbacRule {
 	private String role;
 	private String action;
-	private ITargetInfo targetInformation;
+	private ITargetInfo targetInfo;
 
-	public RbacRule(final String role, final String action, final ITargetInfo targetInformation) {
+	public RbacRule(final String role, final String action, final ITargetInfo targetInfo) {
 		if (Objects.isNull(role)) {
 			throw new IllegalArgumentException("role must not be null");
 		}
 		if (Objects.isNull(action)) {
 			throw new IllegalArgumentException("action must not be null");
 		}
-		if (Objects.isNull(targetInformation)) {
-			throw new IllegalArgumentException("targetInformation must not be null");
+		if (Objects.isNull(targetInfo)) {
+			throw new IllegalArgumentException("targetInfo must not be null");
 		}
 		this.role = role;
 		this.action = action;
-		this.targetInformation = targetInformation;
+		this.targetInfo = targetInfo;
 	}
 
 	public String getRole() {
@@ -62,8 +62,8 @@ public class RbacRule {
 		return action;
 	}
 
-	public ITargetInfo getTargetInformation() {
-		return targetInformation;
+	public ITargetInfo getTargetInfo() {
+		return targetInfo;
 	}
 
 	@Override
@@ -78,16 +78,16 @@ public class RbacRule {
 
 		final RbacRule rbacRule = (RbacRule) o;
 
-		return new EqualsBuilder().append(getRole(), rbacRule.getRole()).append(getAction(), rbacRule.getAction()).append(getTargetInformation(), rbacRule.getTargetInformation()).isEquals();
+		return new EqualsBuilder().append(getRole(), rbacRule.getRole()).append(getAction(), rbacRule.getAction()).append(getTargetInfo(), rbacRule.getTargetInfo()).isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(17, 37).append(getRole()).append(getAction()).append(getTargetInformation()).toHashCode();
+		return new HashCodeBuilder(17, 37).append(getRole()).append(getAction()).append(getTargetInfo()).toHashCode();
 	}
 
 	@Override
 	public String toString() {
-		return new StringBuilder("RbacRule{").append("role='").append(role).append('\'').append(", action='").append(action).append('\'').append(", targetInformation='").append(targetInformation).append('\'').append('}').toString();
+		return new StringBuilder("RbacRule{").append("role='").append(role).append('\'').append(", action='").append(action).append('\'').append(", targetInfo='").append(targetInfo).append('\'').append('}').toString();
 	}
 }

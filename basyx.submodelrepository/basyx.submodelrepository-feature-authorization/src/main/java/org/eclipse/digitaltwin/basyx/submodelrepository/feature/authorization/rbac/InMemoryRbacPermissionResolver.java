@@ -5,20 +5,21 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.authorization.*;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.*;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.CommonRbacConfig;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotAuthorizedException;
 import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.PermissionResolver;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.RbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.context.annotation.Primary;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.function.Predicate;
 
-@ConditionalOnExpression(value = "'${basyx.submodelrepository.feature.authorization.enabled:false}' and '${basyx.submodelrepository.feature.authorization.type}' == 'rbac' and '${basyx.backend}'.equals('InMemory')")
 @Service
+@ConditionalOnProperty(CommonAuthorizationConfig.ENABLED_PROPERTY_KEY)
+@ConditionalOnExpression(value = "'${" + CommonAuthorizationConfig.TYPE_PROPERTY_KEY + "}' == '" + CommonRbacConfig.RBAC_AUTHORIZATION_TYPE + "' and '${basyx.backend}'.equals('InMemory')")
 public class InMemoryRbacPermissionResolver implements PermissionResolver<Predicate<Submodel>>, RbacPermissionResolver<Predicate<RbacRule>> {
     @Autowired
     private final IRbacStorage<Predicate<RbacRule>> storage;

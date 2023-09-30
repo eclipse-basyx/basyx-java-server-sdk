@@ -35,6 +35,6 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactor
  * @author schnicke
  *
  */
-public interface SubmodelRepositoryFeature<FilterType> extends BaSyxFeature<SubmodelRepositoryFactory<FilterType>> {
+public interface SubmodelRepositoryFeature<SubmodelFilterType> extends BaSyxFeature<SubmodelRepositoryFactory<SubmodelFilterType>> {
 
 }
