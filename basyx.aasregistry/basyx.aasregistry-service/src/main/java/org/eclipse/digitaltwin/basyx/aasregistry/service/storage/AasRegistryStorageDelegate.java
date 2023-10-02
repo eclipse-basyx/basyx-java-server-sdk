@@ -37,6 +37,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorAlr
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelNotFoundException;
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
@@ -44,17 +45,17 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 
-public abstract class AasRegistryStorageDelegate implements AasRegistryStorage {
+public abstract class AasRegistryStorageDelegate<AssetAdministrationShellDescriptorFilterType, SubmodelDescriptorFilterType> implements AasRegistryStorage<AssetAdministrationShellDescriptorFilterType, SubmodelDescriptorFilterType> {
 
-	protected final AasRegistryStorage storage;
+	protected final AasRegistryStorage<AssetAdministrationShellDescriptorFilterType, SubmodelDescriptorFilterType> storage;
 	
-	public AasRegistryStorageDelegate(AasRegistryStorage storage) {
+	public AasRegistryStorageDelegate(AasRegistryStorage<AssetAdministrationShellDescriptorFilterType, SubmodelDescriptorFilterType> storage) {
 		this.storage = storage;
 	}
 
 	@Override
-	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter) {
-		return storage.getAllAasDescriptors(pRequest, filter);
+	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter, FilterInfo<AssetAdministrationShellDescriptorFilterType> filterInfo) {
+		return storage.getAllAasDescriptors(pRequest, filter, filterInfo);
 	}
 
 	@Override
@@ -78,8 +79,8 @@ public abstract class AasRegistryStorageDelegate implements AasRegistryStorage {
 	}
 
 	@Override
-	public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(@NonNull String aasDescriptorId, @NonNull PaginationInfo pRequest) throws AasDescriptorNotFoundException {
-		return storage.getAllSubmodels(aasDescriptorId, pRequest);
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(@NonNull String aasDescriptorId, @NonNull PaginationInfo pRequest, FilterInfo<SubmodelDescriptorFilterType> filterInfo) throws AasDescriptorNotFoundException {
+		return storage.getAllSubmodels(aasDescriptorId, pRequest, filterInfo);
 	}
 
 	@Override

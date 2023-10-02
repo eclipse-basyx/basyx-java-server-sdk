@@ -41,12 +41,12 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
 
-public class RegistrationEventSendingAasRegistryStorage extends AasRegistryStorageDelegate {
+public class RegistrationEventSendingAasRegistryStorage<AssetAdministrationShellDescriptorFilterType, SubmodelDescriptorFilterType> extends AasRegistryStorageDelegate<AssetAdministrationShellDescriptorFilterType, SubmodelDescriptorFilterType> {
 
 	@NonNull
 	private final RegistryEventSink eventSink;
 	
-	public RegistrationEventSendingAasRegistryStorage(AasRegistryStorage storage, RegistryEventSink eventSink) {
+	public RegistrationEventSendingAasRegistryStorage(AasRegistryStorage<AssetAdministrationShellDescriptorFilterType, SubmodelDescriptorFilterType> storage, RegistryEventSink eventSink) {
 		super(storage);
 		this.eventSink = eventSink;
 	}

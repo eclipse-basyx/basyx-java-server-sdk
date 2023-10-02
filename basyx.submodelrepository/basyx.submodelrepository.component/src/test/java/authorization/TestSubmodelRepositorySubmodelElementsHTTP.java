@@ -54,21 +54,21 @@ public class TestSubmodelRepositorySubmodelElementsHTTP extends SubmodelServiceS
 
 	@Before
 	public void createSubmodelOnRepo() {
-		final SubmodelRepository<?> repo = getSubmodelRepository();
+		final SubmodelRepository<?, ?> repo = getSubmodelRepository();
 		repo.createSubmodel(SubmodelServiceSubmodelElementsTestSuiteHTTP.createSubmodel());
 	}
 
 	@After
 	public void removeSubmodelFromRepo() {
-		final SubmodelRepository<?> repo = getSubmodelRepository();
+		final SubmodelRepository<?, ?> repo = getSubmodelRepository();
 		repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO, null).getResult().stream().map(s -> s.getId())
 				.forEach(repo::deleteSubmodel);
 	}
 
-	private SubmodelRepository<?> getSubmodelRepository() {
-		SubmodelRepository<?> repo = appContext.getBean(SubmodelRepository.class);
+	private SubmodelRepository<?, ?> getSubmodelRepository() {
+		SubmodelRepository<?, ?> repo = appContext.getBean(SubmodelRepository.class);
 		if (repo instanceof AuthorizationSubmodelRepository) {
-			repo = ((AuthorizationSubmodelRepository<?>) repo).getDecorated();
+			repo = ((AuthorizationSubmodelRepository<?, ?>) repo).getDecorated();
 		}
 		return repo;
 	}

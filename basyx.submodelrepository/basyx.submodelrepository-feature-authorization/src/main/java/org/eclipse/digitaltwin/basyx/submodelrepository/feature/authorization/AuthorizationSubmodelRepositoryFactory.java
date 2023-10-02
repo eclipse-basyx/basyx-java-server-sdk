@@ -34,19 +34,19 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactor
  * @author wege
  */
 
-public class AuthorizationSubmodelRepositoryFactory<FilterType> implements SubmodelRepositoryFactory<FilterType> {
+public class AuthorizationSubmodelRepositoryFactory<SubmodelFilterType, SubmodelElementFilterType> implements SubmodelRepositoryFactory<SubmodelFilterType, SubmodelElementFilterType> {
 
-	private SubmodelRepositoryFactory<FilterType> decorated;
+	private SubmodelRepositoryFactory<SubmodelFilterType, SubmodelElementFilterType> decorated;
 
-	private final PermissionResolver<FilterType> permissionResolver;
+	private final PermissionResolver<SubmodelFilterType, SubmodelElementFilterType> permissionResolver;
 
-	public AuthorizationSubmodelRepositoryFactory(SubmodelRepositoryFactory<FilterType> decorated, PermissionResolver<FilterType> permissionResolver) {
+	public AuthorizationSubmodelRepositoryFactory(SubmodelRepositoryFactory<SubmodelFilterType, SubmodelElementFilterType> decorated, PermissionResolver<SubmodelFilterType, SubmodelElementFilterType> permissionResolver) {
 		this.decorated = decorated;
 		this.permissionResolver = permissionResolver;
 	}
 
 	@Override
-	public SubmodelRepository<FilterType> create() {
+	public SubmodelRepository<SubmodelFilterType, SubmodelElementFilterType> create() {
 		return new AuthorizationSubmodelRepository<>(decorated.create(), permissionResolver);
 	}
 }

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (C) 2023 DFKI GmbH (https://www.dfki.de/en/web)
  * Copyright (C) 2023 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -9,10 +9,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -20,7 +20,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
@@ -55,12 +55,7 @@ public class PaginationSupport<T extends Object> {
 		tStream = applyLimit(pInfo, tStream);
 
 		List<T> resultList = tStream.collect(Collectors.toList());
-		String cursor;
-		if (pInfo.hasLimit() && resultList.size() < pInfo.getLimit()) {
-			cursor = null; // got less than requested
-		} else {
-			cursor = computeNextCursor(resultList, pInfo);
-		}
+		String cursor = computeNextCursor(resultList);
 		return new CursorResult<>(cursor, resultList);
 	}
 
@@ -92,20 +87,18 @@ public class PaginationSupport<T extends Object> {
 		return aStream;
 	}
 
-	private String computeNextCursor(List<T> list, PaginationInfo pInfo) {
-		if (!pInfo.hasLimit()) {
-			return null;
-		}
+	private String computeNextCursor(List<T> list) {
 		if (!list.isEmpty()) {
 			T last = list.get(list.size() - 1);
-			return idResolver.apply(last);
+			String lastId = idResolver.apply(last);
+			return sortedMap.higherKey(lastId);
 		}
 		return null;
 	}
 
 	private Map<String, T> getCursorView(PaginationInfo info) {
 		if (info.hasCursor()) {
-			return sortedMap.tailMap(info.getCursor(), false);
+			return sortedMap.tailMap(info.getCursor());
 		} else {
 			return sortedMap;
 		}

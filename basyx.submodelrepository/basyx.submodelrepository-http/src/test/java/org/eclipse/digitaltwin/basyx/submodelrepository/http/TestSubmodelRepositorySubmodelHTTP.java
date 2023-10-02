@@ -52,14 +52,14 @@ public class TestSubmodelRepositorySubmodelHTTP extends SubmodelRepositorySubmod
 
 	@Override
 	public void resetRepository() {
-		SubmodelRepository<?> repo = appContext.getBean(SubmodelRepository.class);
+		SubmodelRepository<?, ?> repo = appContext.getBean(SubmodelRepository.class);
 		repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO, null).getResult().stream().map(s -> s.getId())
 				.forEach(repo::deleteSubmodel);
 	}
 
 	@Override
 	public void populateRepository() {
-		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
+		SubmodelRepository<?, ?> repo = appContext.getBean(SubmodelRepository.class);
 		Collection<Submodel> submodels = createSubmodels();
 		submodels.forEach(repo::createSubmodel);
 	}

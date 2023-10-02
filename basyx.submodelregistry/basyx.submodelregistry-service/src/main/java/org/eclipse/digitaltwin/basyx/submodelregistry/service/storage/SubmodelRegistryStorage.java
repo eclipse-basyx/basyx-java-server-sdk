@@ -34,9 +34,9 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNotFoundException;
 
-public interface SubmodelRegistryStorage<FilterType> {
+public interface SubmodelRegistryStorage<SubmodelDescriptorFilterType> {
 
-	CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest, FilterInfo<FilterType> filterInfo);
+	CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest, FilterInfo<SubmodelDescriptorFilterType> filterInfo);
 
 	SubmodelDescriptor getSubmodelDescriptor(String submodelId) throws SubmodelNotFoundException;
 
@@ -46,7 +46,7 @@ public interface SubmodelRegistryStorage<FilterType> {
 
 	void removeSubmodelDescriptor(String submodelId) throws SubmodelNotFoundException;
 
-	Set<String> clear(FilterInfo<FilterType> filterInfo);
+	Set<String> clear(FilterInfo<SubmodelDescriptorFilterType> filterInfo);
 
 	Set<String> clear();
 

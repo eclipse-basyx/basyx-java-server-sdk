@@ -37,14 +37,14 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactor
  * @author schnicke
  *
  */
-public class DecoratedSubmodelRepositoryFactory<FilterType> extends DecoratedFactory<SubmodelRepositoryFactory<FilterType>, SubmodelRepositoryFeature<FilterType>> implements SubmodelRepositoryFactory<FilterType> {
+public class DecoratedSubmodelRepositoryFactory<SubmodelFilterType, SubmodelElementFilterType> extends DecoratedFactory<SubmodelRepositoryFactory<SubmodelFilterType, SubmodelElementFilterType>, SubmodelRepositoryFeature<SubmodelFilterType, SubmodelElementFilterType>> implements SubmodelRepositoryFactory<SubmodelFilterType, SubmodelElementFilterType> {
 
-	public DecoratedSubmodelRepositoryFactory(SubmodelRepositoryFactory<FilterType> toDecorate, List<SubmodelRepositoryFeature<FilterType>> features) {
+	public DecoratedSubmodelRepositoryFactory(SubmodelRepositoryFactory<SubmodelFilterType, SubmodelElementFilterType> toDecorate, List<SubmodelRepositoryFeature<SubmodelFilterType, SubmodelElementFilterType>> features) {
 		super(toDecorate, features);
 	}
 
 	@Override
-	public SubmodelRepository<FilterType> create() {
+	public SubmodelRepository<SubmodelFilterType, SubmodelElementFilterType> create() {
 		return getDecorated().create();
 	}
 }

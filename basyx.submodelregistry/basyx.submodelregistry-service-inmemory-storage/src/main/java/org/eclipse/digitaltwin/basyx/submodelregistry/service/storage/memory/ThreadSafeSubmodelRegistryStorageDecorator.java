@@ -39,19 +39,19 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRe
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class ThreadSafeSubmodelRegistryStorageDecorator<FilterType> implements SubmodelRegistryStorage<FilterType> {
+public class ThreadSafeSubmodelRegistryStorageDecorator<SubmodelDescriptorFilterType> implements SubmodelRegistryStorage<SubmodelDescriptorFilterType> {
 
-	private final SubmodelRegistryStorage<FilterType> storage;
+	private final SubmodelRegistryStorage<SubmodelDescriptorFilterType> storage;
 
 	private final ThreadSafeAccess access = new ThreadSafeAccess();
 	
 	@Override
-	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest, FilterInfo<FilterType> filterInfo) {
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest, FilterInfo<SubmodelDescriptorFilterType> filterInfo) {
 		return access.read(storage::getAllSubmodelDescriptors, pRequest, filterInfo);
 	}
 
 	@Override
-	public Set<String> clear(FilterInfo<FilterType> filterInfo) {
+	public Set<String> clear(FilterInfo<SubmodelDescriptorFilterType> filterInfo) {
 		return access.writeFunc(storage::clear, filterInfo);
 	}
 

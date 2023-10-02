@@ -57,7 +57,7 @@ import java.util.function.Function;
  * @author jungjan, kammognie
  *
  */
-public class MongoDBSubmodelRepository implements SubmodelRepository<Criteria> {
+public class MongoDBSubmodelRepository implements SubmodelRepository<Criteria, Criteria> {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static final String ID = "_id";
 	private static String ID_JSON_PATH = "id";

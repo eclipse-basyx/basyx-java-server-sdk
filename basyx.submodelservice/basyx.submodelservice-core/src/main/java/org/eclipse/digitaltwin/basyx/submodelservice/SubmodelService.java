@@ -42,7 +42,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
  * @author schnicke
  *
  */
-public interface SubmodelService<FilterType> {
+public interface SubmodelService<SubmodelElementFilterType> {
 	/**
 	 * Retrieves the Submodel contained in the service
 	 * 
@@ -55,7 +55,7 @@ public interface SubmodelService<FilterType> {
 	 * 
 	 * @return
 	 */
-	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo, FilterInfo<FilterType> filterInfo);
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo, FilterInfo<SubmodelElementFilterType> filterInfo);
 
 	/**
 	 * Retrieve specific SubmodelElement of the Submodel

@@ -25,32 +25,23 @@
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage;
 
 import lombok.NonNull;
-import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
-import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
-import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNotFoundException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEvent;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEventSink;
 
-import java.util.List;
 import java.util.Set;
 
 
-public class RegistrationEventSendingSubmodelRegistryStorage<FilterType> extends SubmodelRegistryStorageDecorator<FilterType> {
+public class RegistrationEventSendingSubmodelRegistryStorage<SubmodelDescriptorFilterType> extends SubmodelRegistryStorageDecorator<SubmodelDescriptorFilterType> {
 
 	@NonNull
 	private final RegistryEventSink eventSink;
 
-	public RegistrationEventSendingSubmodelRegistryStorage(SubmodelRegistryStorage<FilterType> storage, RegistryEventSink sink) {
+	public RegistrationEventSendingSubmodelRegistryStorage(SubmodelRegistryStorage<SubmodelDescriptorFilterType> storage, RegistryEventSink sink) {
 		super(storage);
 		this.eventSink = sink;
-	}
-
-	@Override
-	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest, FilterInfo<FilterType> filterInfo) {
-		return storage.getAllSubmodelDescriptors(pRequest, filterInfo);
 	}
 
 	@Override
@@ -63,11 +54,6 @@ public class RegistrationEventSendingSubmodelRegistryStorage<FilterType> extends
 	public void removeSubmodelDescriptor(String submodelId) throws SubmodelNotFoundException {
 		storage.removeSubmodelDescriptor(submodelId);
 		submodelUnregistered(submodelId);
-	}
-
-	@Override
-	public Set<String> clear(FilterInfo<FilterType> filterInfo) {
-		return storage.clear(filterInfo);
 	}
 
 	@Override

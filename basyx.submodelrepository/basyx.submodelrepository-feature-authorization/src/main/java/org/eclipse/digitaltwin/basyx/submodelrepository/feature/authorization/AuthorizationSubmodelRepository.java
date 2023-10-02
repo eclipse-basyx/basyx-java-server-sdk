@@ -1,5 +1,6 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -20,22 +21,22 @@ import java.util.List;
  * @author wege
  */
 
-public class AuthorizationSubmodelRepository<FilterType> implements SubmodelRepository<FilterType> {
-	private SubmodelRepository<FilterType> decorated;
+public class AuthorizationSubmodelRepository<SubmodelFilterType, SubmodelElementFilterType> implements SubmodelRepository<SubmodelFilterType, SubmodelElementFilterType> {
+	private SubmodelRepository<SubmodelFilterType, SubmodelElementFilterType> decorated;
 
-	public SubmodelRepository<FilterType> getDecorated() {
+	public SubmodelRepository<SubmodelFilterType, SubmodelElementFilterType> getDecorated() {
 		return decorated;
 	}
 
-	private final PermissionResolver<FilterType> permissionResolver;
+	private final PermissionResolver<SubmodelFilterType, SubmodelElementFilterType> permissionResolver;
 
-	public AuthorizationSubmodelRepository(SubmodelRepository<FilterType> decorated, PermissionResolver<FilterType> permissionResolver) {
+	public AuthorizationSubmodelRepository(SubmodelRepository<SubmodelFilterType, SubmodelElementFilterType> decorated, PermissionResolver<SubmodelFilterType, SubmodelElementFilterType> permissionResolver) {
 		this.decorated = decorated;
 		this.permissionResolver = permissionResolver;
 	}
 
 	@Override
-	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo, FilterInfo<FilterType> filterInfo) {
+	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo, FilterInfo<SubmodelFilterType> filterInfo) {
 		return decorated.getAllSubmodels(pInfo, permissionResolver.getGetAllSubmodelsFilterInfo());
 	}
 
@@ -65,8 +66,8 @@ public class AuthorizationSubmodelRepository<FilterType> implements SubmodelRepo
 	}
 
 	@Override
-	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo, FilterInfo<FilterType> filterInfo) throws ElementDoesNotExistException {
-		return decorated.getSubmodelElements(submodelId, pInfo, permissionResolver.getGetSubmodelElementsFilterInfo());
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo, FilterInfo<SubmodelElementFilterType> filterInfo) throws ElementDoesNotExistException {
+		return decorated.getSubmodelElements(submodelId, pInfo, permissionResolver.getGetSubmodelElementsFilterInfo(getSubmodel(submodelId)));
 	}
 
 	@Override
@@ -108,6 +109,11 @@ public class AuthorizationSubmodelRepository<FilterType> implements SubmodelRepo
 	@Override
 	public String getName() {
 		return decorated.getName();
+	}
+
+	@Override
+	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
+		return decorated.invokeOperation(submodelId, idShortPath, input);
 	}
 
 	@Override

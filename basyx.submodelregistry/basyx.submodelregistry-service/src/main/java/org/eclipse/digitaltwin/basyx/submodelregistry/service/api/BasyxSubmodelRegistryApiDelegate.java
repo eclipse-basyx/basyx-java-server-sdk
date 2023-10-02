@@ -33,22 +33,25 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.authorization.Perm
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEventSink;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.RegistrationEventSendingSubmodelRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.net.URI;
 import java.util.List;
 
 @Component
-public class BasyxSubmodelRegistryApiDelegate<FilterType> implements SubmodelDescriptorsApiDelegate {
+public class BasyxSubmodelRegistryApiDelegate<SubmodelDescriptorFilterType> implements SubmodelDescriptorsApiDelegate {
 
-	private final SubmodelRegistryStorage<FilterType> storage;
+	private final SubmodelRegistryStorage<SubmodelDescriptorFilterType> storage;
 
 	private final LocationBuilder locationBuilder;
 
-	private final PermissionResolver<FilterType> permissionResolver;
+	@Nullable
+	private final PermissionResolver<SubmodelDescriptorFilterType> permissionResolver;
 
-	public BasyxSubmodelRegistryApiDelegate(SubmodelRegistryStorage<FilterType> storage, RegistryEventSink eventSink, LocationBuilder locationBuilder, PermissionResolver<FilterType> permissionResolver) {
+	public BasyxSubmodelRegistryApiDelegate(SubmodelRegistryStorage<SubmodelDescriptorFilterType> storage, RegistryEventSink eventSink, LocationBuilder locationBuilder, @Autowired(required = false) PermissionResolver<SubmodelDescriptorFilterType> permissionResolver) {
 		this.storage = new RegistrationEventSendingSubmodelRegistryStorage<>(storage, eventSink);
 		this.locationBuilder = locationBuilder;
 		this.permissionResolver = permissionResolver;
@@ -56,27 +59,33 @@ public class BasyxSubmodelRegistryApiDelegate<FilterType> implements SubmodelDes
 
 	@Override
 	public ResponseEntity<Void> deleteAllSubmodelDescriptors() {
-		storage.clear(permissionResolver.getDeleteAllSubmodelDescriptorsFilterInfo());
+		storage.clear(permissionResolver != null ? permissionResolver.getDeleteAllSubmodelDescriptorsFilterInfo() : null);
 		return ResponseEntity.noContent().build();
 	}
 
 	@Override
 	public ResponseEntity<SubmodelDescriptor> getSubmodelDescriptorById(String submodelIdentifier) {
-		permissionResolver.getSubmodelDescriptorById(submodelIdentifier);
+		if (permissionResolver != null) {
+			permissionResolver.getSubmodelDescriptorById(submodelIdentifier);
+		}
 		SubmodelDescriptor submodelDescriptor = storage.getSubmodelDescriptor(submodelIdentifier);
 		return ResponseEntity.ok(submodelDescriptor);
 	}
 
 	@Override
 	public ResponseEntity<Void> deleteSubmodelDescriptorById(String submodelIdentifier) {
-		permissionResolver.deleteSubmodelDescriptorById(submodelIdentifier);
+		if (permissionResolver != null) {
+			permissionResolver.deleteSubmodelDescriptorById(submodelIdentifier);
+		}
 		storage.removeSubmodelDescriptor(submodelIdentifier);
 		return ResponseEntity.noContent().build();
 	}
 
 	@Override
 	public ResponseEntity<SubmodelDescriptor> postSubmodelDescriptor(SubmodelDescriptor submodelDescriptor) {
-		permissionResolver.postSubmodelDescriptor(submodelDescriptor.getId());
+		if (permissionResolver != null) {
+			permissionResolver.postSubmodelDescriptor(submodelDescriptor.getId());
+		}
 		storage.insertSubmodelDescriptor(submodelDescriptor);
 		URI location = locationBuilder.getSubmodelLocation(submodelDescriptor.getId());		
 		return ResponseEntity.created(location).body(submodelDescriptor);
@@ -84,7 +93,9 @@ public class BasyxSubmodelRegistryApiDelegate<FilterType> implements SubmodelDes
 
 	@Override
 	public ResponseEntity<Void> putSubmodelDescriptorById(String submodelIdentifier, SubmodelDescriptor submodelDescriptor) {
-		permissionResolver.putSubmodelDescriptorById(submodelIdentifier);
+		if (permissionResolver != null) {
+			permissionResolver.putSubmodelDescriptorById(submodelIdentifier);
+		}
 		storage.replaceSubmodelDescriptor(submodelIdentifier, submodelDescriptor);
 		return ResponseEntity.noContent().build();
 	}
@@ -92,7 +103,7 @@ public class BasyxSubmodelRegistryApiDelegate<FilterType> implements SubmodelDes
 	@Override
 	public ResponseEntity<GetSubmodelDescriptorsResult> getAllSubmodelDescriptors(Integer limit, String cursor) {
 		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
-		CursorResult<List<SubmodelDescriptor>> cResult = storage.getAllSubmodelDescriptors(pInfo, permissionResolver.getGetAllSubmodelDescriptorsFilterInfo());
+		CursorResult<List<SubmodelDescriptor>> cResult = storage.getAllSubmodelDescriptors(pInfo, permissionResolver != null ? permissionResolver.getGetAllSubmodelDescriptorsFilterInfo() : null);
 		GetSubmodelDescriptorsResult gsdResult = new GetSubmodelDescriptorsResult();
 		gsdResult.setPagingMetadata(new PagedResultPagingMetadata().cursor(cResult.getCursor()));
 		gsdResult.setResult(cResult.getResult());

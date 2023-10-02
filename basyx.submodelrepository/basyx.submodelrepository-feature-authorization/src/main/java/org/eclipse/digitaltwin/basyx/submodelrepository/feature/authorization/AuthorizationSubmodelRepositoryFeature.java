@@ -39,22 +39,22 @@ import org.springframework.stereotype.Component;
  */
 @ConditionalOnExpression("#{${" + AuthorizationSubmodelRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.authorization.enabled:false}}")
 @Component
-public class AuthorizationSubmodelRepositoryFeature<FilterType> implements SubmodelRepositoryFeature<FilterType> {
+public class AuthorizationSubmodelRepositoryFeature<SubmodelFilterType, SubmodelElementFilterType> implements SubmodelRepositoryFeature<SubmodelFilterType, SubmodelElementFilterType> {
 	public final static String FEATURENAME = "basyx.submodelrepository.feature.authorization";
 
 	@Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.authorization.enabled:false}}")
 	private boolean enabled;
 
 	@Autowired
-	private final PermissionResolver<FilterType> permissionResolver;
+	private final PermissionResolver<SubmodelFilterType, SubmodelElementFilterType> permissionResolver;
 
 	@Autowired
-	public AuthorizationSubmodelRepositoryFeature(PermissionResolver<FilterType> permissionResolver) {
+	public AuthorizationSubmodelRepositoryFeature(PermissionResolver<SubmodelFilterType, SubmodelElementFilterType> permissionResolver) {
 		this.permissionResolver = permissionResolver;
 	}
 
 	@Override
-	public SubmodelRepositoryFactory<FilterType> decorate(SubmodelRepositoryFactory<FilterType> aasServiceFactory) {
+	public SubmodelRepositoryFactory<SubmodelFilterType, SubmodelElementFilterType> decorate(SubmodelRepositoryFactory<SubmodelFilterType, SubmodelElementFilterType> aasServiceFactory) {
 		return new AuthorizationSubmodelRepositoryFactory<>(aasServiceFactory, permissionResolver);
 	}
 

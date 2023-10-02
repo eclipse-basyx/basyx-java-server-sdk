@@ -51,8 +51,8 @@ import org.springframework.context.annotation.Primary;
 public class SubmodelRepositoryConfiguration {
 	@Primary
 	@Bean
-	public <SubmodelFilterType> SubmodelRepository<SubmodelFilterType> getSubmodelRepository(SubmodelRepositoryFactory<SubmodelFilterType> aasRepositoryFactory,
-			List<SubmodelRepositoryFeature<SubmodelFilterType>> features) {
+	public <SubmodelFilterType, SubmodelElementFilterType> SubmodelRepository<SubmodelFilterType, SubmodelElementFilterType> getSubmodelRepository(SubmodelRepositoryFactory<SubmodelFilterType, SubmodelElementFilterType> aasRepositoryFactory,
+			List<SubmodelRepositoryFeature<SubmodelFilterType, SubmodelElementFilterType>> features) {
 		return new DecoratedSubmodelRepositoryFactory<>(aasRepositoryFactory, features).create();
 	}
 

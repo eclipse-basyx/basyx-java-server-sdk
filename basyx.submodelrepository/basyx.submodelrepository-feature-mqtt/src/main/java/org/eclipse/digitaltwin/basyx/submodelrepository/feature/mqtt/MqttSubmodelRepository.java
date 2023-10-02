@@ -21,29 +21,28 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.FilterType;
 
 /**
  * Repository decorator for the MQTT eventing on the submodel level.
  * 
  * @author fischer
  */
-public class MqttSubmodelRepository<FilterType> implements SubmodelRepository<FilterType> {
+public class MqttSubmodelRepository<SubmodelFilterType, SubmodelElementFilterType> implements SubmodelRepository<SubmodelFilterType, SubmodelElementFilterType> {
 	private static Logger logger = LoggerFactory.getLogger(MqttSubmodelRepository.class);
 	private MqttSubmodelRepositoryTopicFactory topicFactory;
 
-	private SubmodelRepository<FilterType> decorated;
+	private SubmodelRepository<SubmodelFilterType, SubmodelElementFilterType> decorated;
 
 	private IMqttClient mqttClient;
 
-	public MqttSubmodelRepository(SubmodelRepository<FilterType> decorated, IMqttClient mqttClient, MqttSubmodelRepositoryTopicFactory topicFactory) {
+	public MqttSubmodelRepository(SubmodelRepository<SubmodelFilterType, SubmodelElementFilterType> decorated, IMqttClient mqttClient, MqttSubmodelRepositoryTopicFactory topicFactory) {
 		this.topicFactory = topicFactory;
 		this.decorated = decorated;
 		this.mqttClient = mqttClient;
 	}
 
 	@Override
-	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo, FilterInfo<FilterType> filterInfo) {
+	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo, FilterInfo<SubmodelFilterType> filterInfo) {
 		return decorated.getAllSubmodels(pInfo, filterInfo);
 	}
 
@@ -72,7 +71,7 @@ public class MqttSubmodelRepository<FilterType> implements SubmodelRepository<Fi
 	}
 
 	@Override
-	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo, FilterInfo<FilterType> filterInfo)
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo, FilterInfo<SubmodelElementFilterType> filterInfo)
 			throws ElementDoesNotExistException {
 		return decorated.getSubmodelElements(submodelId, pInfo, filterInfo);
 	}

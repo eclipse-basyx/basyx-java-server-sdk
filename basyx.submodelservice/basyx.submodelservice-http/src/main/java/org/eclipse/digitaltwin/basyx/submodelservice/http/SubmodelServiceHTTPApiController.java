@@ -67,7 +67,7 @@ public class SubmodelServiceHTTPApiController<SubmodelElementFilterType, Submode
 	private final PermissionResolver<SubmodelElementFilterType> permissionResolver;
 
 	@Autowired
-	public SubmodelServiceHTTPApiController(SubmodelService service) {
+	public SubmodelServiceHTTPApiController(SubmodelService service, PermissionResolver permissionResolver) {
 		this.service = service;
 		this.permissionResolver = permissionResolver;
 	}

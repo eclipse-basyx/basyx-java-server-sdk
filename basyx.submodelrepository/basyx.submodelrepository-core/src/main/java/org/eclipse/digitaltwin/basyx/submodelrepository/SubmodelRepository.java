@@ -44,7 +44,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
  * @author schnicke, danish, kammognie
  *
  */
-public interface SubmodelRepository<SubmodelFilterType> {
+public interface SubmodelRepository<SubmodelFilterType, SubmodelElementFilterType> {
 
 	/**
 	 * Retrieves all Submodels from the repository
@@ -93,7 +93,7 @@ public interface SubmodelRepository<SubmodelFilterType> {
 	 * @param submodelId
 	 * @return
 	 */
-	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo, FilterInfo<SubmodelFilterType> filterInfo)
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo, FilterInfo<SubmodelElementFilterType> filterInfo)
 			throws ElementDoesNotExistException;
 
 	/**

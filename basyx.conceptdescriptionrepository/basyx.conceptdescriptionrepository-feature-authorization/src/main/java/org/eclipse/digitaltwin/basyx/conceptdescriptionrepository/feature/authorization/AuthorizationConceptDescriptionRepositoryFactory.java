@@ -34,19 +34,19 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
  * @author wege
  */
 
-public class AuthorizationConceptDescriptionRepositoryFactory<FilterType> implements ConceptDescriptionRepositoryFactory<FilterType> {
+public class AuthorizationConceptDescriptionRepositoryFactory<ConceptDescriptionFilterType> implements ConceptDescriptionRepositoryFactory<ConceptDescriptionFilterType> {
 
-	private ConceptDescriptionRepositoryFactory<FilterType> decorated;
+	private ConceptDescriptionRepositoryFactory<ConceptDescriptionFilterType> decorated;
 
-	private final PermissionResolver<FilterType> permissionResolver;
+	private final PermissionResolver<ConceptDescriptionFilterType> permissionResolver;
 
-	public AuthorizationConceptDescriptionRepositoryFactory(ConceptDescriptionRepositoryFactory<FilterType> decorated, PermissionResolver<FilterType> permissionResolver) {
+	public AuthorizationConceptDescriptionRepositoryFactory(ConceptDescriptionRepositoryFactory<ConceptDescriptionFilterType> decorated, PermissionResolver<ConceptDescriptionFilterType> permissionResolver) {
 		this.decorated = decorated;
 		this.permissionResolver = permissionResolver;
 	}
 
 	@Override
-	public ConceptDescriptionRepository<FilterType> create() {
+	public ConceptDescriptionRepository<ConceptDescriptionFilterType> create() {
 		return new AuthorizationConceptDescriptionRepository<>(decorated.create(), permissionResolver);
 	}
 }

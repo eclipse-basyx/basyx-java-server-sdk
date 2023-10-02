@@ -61,13 +61,6 @@ public class CloningAasRegistryStorageDecorator<AssetAdministrationShellDescript
 	public void replaceAasDescriptor(String id, AssetAdministrationShellDescriptor descriptor) {
 		storage.replaceAasDescriptor(id, DescriptorCopies.deepClone(descriptor));
 	}
-	
-	@Override
-	public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(String aasDescriptorId, PaginationInfo pRequest) {
-		CursorResult<List<SubmodelDescriptor>> result = storage.getAllSubmodels(aasDescriptorId, pRequest);
-		List<SubmodelDescriptor> submodelClone = DescriptorCopies.deepCloneCollection(result.getResult());
-		return new CursorResult<>(result.getCursor(), submodelClone);
-	}
 
 	@Override
 	public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(String aasDescriptorId, PaginationInfo pRequest, FilterInfo<SubmodelDescriptorFilterType> filterInfo) {

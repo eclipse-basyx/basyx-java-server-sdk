@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.submodelservice;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
@@ -56,7 +57,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapper;
  * @author schnicke, danish
  * 
  */
-public class InMemorySubmodelService<FilterType> implements SubmodelService<FilterType> {
+public class InMemorySubmodelService implements SubmodelService<Predicate<SubmodelElement>> {
 
 	private final Submodel submodel;
 	private HierarchicalSubmodelElementParser parser;
@@ -78,7 +79,7 @@ public class InMemorySubmodelService<FilterType> implements SubmodelService<Filt
 	}
 
 	@Override
-	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo, FilterInfo<FilterType> filterInfo) {
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo, FilterInfo<Predicate<SubmodelElement>> filterInfo) {
 		List<SubmodelElement> allSubmodels = submodel.getSubmodelElements();
 
 		TreeMap<String, SubmodelElement> submodelMap = allSubmodels.stream()

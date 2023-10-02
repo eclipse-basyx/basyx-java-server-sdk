@@ -20,7 +20,7 @@ import java.util.function.Predicate;
 @Service
 @ConditionalOnProperty(CommonAuthorizationConfig.ENABLED_PROPERTY_KEY)
 @ConditionalOnExpression(value = "'${" + CommonAuthorizationConfig.TYPE_PROPERTY_KEY + "}' == '" + CommonRbacConfig.RBAC_AUTHORIZATION_TYPE + "' and '${basyx.backend}'.equals('InMemory')")
-public class InMemoryRbacPermissionResolver implements PermissionResolver<Predicate<Submodel>>, RbacPermissionResolver<Predicate<RbacRule>> {
+public class InMemoryRbacPermissionResolver implements PermissionResolver<Predicate<Submodel>, Predicate<SubmodelElement>>, RbacPermissionResolver<Predicate<RbacRule>> {
     @Autowired
     private final IRbacStorage<Predicate<RbacRule>> storage;
 
@@ -102,12 +102,13 @@ public class InMemoryRbacPermissionResolver implements PermissionResolver<Predic
     }
 
     @Override
-    public FilterInfo<Predicate<Submodel>> getGetSubmodelElementsFilterInfo() {
+    public FilterInfo<Predicate<SubmodelElement>> getGetSubmodelElementsFilterInfo(Submodel submodel) {
         final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
-        return new FilterInfo<>(submodelDescriptor -> {
+        return new FilterInfo<>(submodelElement -> {
             final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
-                    .setSmId(submodelDescriptor.getId())
-                    .setSmSemanticId(IdHelper.getSubmodelSemanticIdString(submodelDescriptor.getSemanticID()))
+                    .setSmId(submodel.getId())
+                    .setSmSemanticId(IdHelper.getSubmodelSemanticIdString(submodel.getSemanticID()))
+                    .setSmElIdShortPath(submodelElement.getIdShort())
                     .build();
             return hasPermission(targetInfo, Action.READ, subjectInfo);
         });

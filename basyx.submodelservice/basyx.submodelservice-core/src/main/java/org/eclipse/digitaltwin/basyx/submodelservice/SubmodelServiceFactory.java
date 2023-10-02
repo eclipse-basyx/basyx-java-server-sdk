@@ -34,12 +34,12 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
  * @author schnicke
  *
  */
-public interface SubmodelServiceFactory<SubmodelFilterType> {
+public interface SubmodelServiceFactory<SubmodelElementFilterType> {
 	/**
 	 * Creates a new SubmodelService containing the Submodel passed as parameter
 	 * 
 	 * @param submodel
 	 * @return
 	 */
-	public SubmodelService<SubmodelFilterType> create(Submodel submodel);
+	public SubmodelService<SubmodelElementFilterType> create(Submodel submodel);
 }

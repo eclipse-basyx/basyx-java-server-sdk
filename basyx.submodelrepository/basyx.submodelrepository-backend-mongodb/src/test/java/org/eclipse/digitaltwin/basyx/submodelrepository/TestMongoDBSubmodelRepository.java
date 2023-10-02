@@ -34,6 +34,7 @@ import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.junit.Test;
@@ -45,18 +46,18 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	private final String CONNECTION_URL = "mongodb://mongoAdmin:mongoPassword@localhost:27017";
 	private final MongoClient CLIENT = MongoClients.create(CONNECTION_URL);
 	private final MongoTemplate TEMPLATE = new MongoTemplate(CLIENT, "BaSyxTestDb");
-	private final InMemorySubmodelServiceFactory SUBMODEL_SERVICE_FACTORY = new InMemorySubmodelServiceFactory();
+	private final SubmodelServiceFactory SUBMODEL_SERVICE_FACTORY = new InMemorySubmodelServiceFactory();
 	private static final String CONFIGURED_SM_REPO_NAME = "configured-sm-repo-name";
 
 	@Override
-	protected SubmodelRepository getSubmodelRepository() {
+	protected SubmodelRepository<?, ?> getSubmodelRepository() {
 		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
 
 		return new MongoDBSubmodelRepositoryFactory(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY).create();
 	}
 
 	@Override
-	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
+	protected SubmodelRepository<?, ?> getSubmodelRepository(Collection<Submodel> submodels) {
 		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
 
 		// TODO: Remove this after MongoDB uses AAS4J serializer
@@ -67,7 +68,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	
 	@Test
 	public void getConfiguredMongoDBSmRepositoryName() {
-		SubmodelRepository repo = new MongoDBSubmodelRepository(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, CONFIGURED_SM_REPO_NAME);
+		SubmodelRepository<?, ?> repo = new MongoDBSubmodelRepository(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, CONFIGURED_SM_REPO_NAME);
 		
 		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
 	}

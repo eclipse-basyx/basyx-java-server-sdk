@@ -34,20 +34,20 @@ import org.eclipse.paho.client.mqttv3.IMqttClient;
  * 
  * @author fischer
  */
-public class MqttSubmodelRepositoryFactory implements SubmodelRepositoryFactory {
+public class MqttSubmodelRepositoryFactory<SubmodelFilterType, SubmodelElementFilterType> implements SubmodelRepositoryFactory<SubmodelFilterType, SubmodelElementFilterType> {
 
-	private SubmodelRepositoryFactory decorated;
+	private SubmodelRepositoryFactory<SubmodelFilterType, SubmodelElementFilterType> decorated;
 	private IMqttClient client;
 	private MqttSubmodelRepositoryTopicFactory topicFactory;
 
-	public MqttSubmodelRepositoryFactory(SubmodelRepositoryFactory decorated, IMqttClient client, MqttSubmodelRepositoryTopicFactory topicFactory) {
+	public MqttSubmodelRepositoryFactory(SubmodelRepositoryFactory<SubmodelFilterType, SubmodelElementFilterType> decorated, IMqttClient client, MqttSubmodelRepositoryTopicFactory topicFactory) {
 		this.decorated = decorated;
 		this.client = client;
 		this.topicFactory = topicFactory;
 	}
 
 	@Override
-	public SubmodelRepository create() {
-		return new MqttSubmodelRepository(decorated.create(), client, topicFactory);
+	public SubmodelRepository<SubmodelFilterType, SubmodelElementFilterType> create() {
+		return new MqttSubmodelRepository<>(decorated.create(), client, topicFactory);
 	}
 }

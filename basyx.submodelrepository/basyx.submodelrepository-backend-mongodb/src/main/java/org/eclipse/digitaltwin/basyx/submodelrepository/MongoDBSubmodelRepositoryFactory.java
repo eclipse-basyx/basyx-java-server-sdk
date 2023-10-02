@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,11 +43,11 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-public class MongoDBSubmodelRepositoryFactory implements SubmodelRepositoryFactory {
+public class MongoDBSubmodelRepositoryFactory implements SubmodelRepositoryFactory<Criteria, Criteria> {
 
 	private MongoTemplate mongoTemplate;
 	private String collectionName;
-	private SubmodelServiceFactory submodelServiceFactory;
+	private SubmodelServiceFactory<Criteria> submodelServiceFactory;
 	private Collection<Submodel> submodels;
 	
 	private String smRepositoryName;
@@ -83,7 +84,7 @@ public class MongoDBSubmodelRepositoryFactory implements SubmodelRepositoryFacto
 	}
 
 	@Override
-	public SubmodelRepository create() {
+	public SubmodelRepository<Criteria, Criteria> create() {
 		if (this.submodels == null || this.submodels.isEmpty()) {
 			return new MongoDBSubmodelRepository(mongoTemplate, collectionName, submodelServiceFactory, smRepositoryName);
 		}

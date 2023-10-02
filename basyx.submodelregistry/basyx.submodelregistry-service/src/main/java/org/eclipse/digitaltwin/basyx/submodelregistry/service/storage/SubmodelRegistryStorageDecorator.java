@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
@@ -36,13 +37,13 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNot
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class SubmodelRegistryStorageDecorator implements SubmodelRegistryStorage {
+public class SubmodelRegistryStorageDecorator<SubmodelDescriptorFilterType> implements SubmodelRegistryStorage<SubmodelDescriptorFilterType> {
 
-	protected final SubmodelRegistryStorage storage;
+	protected final SubmodelRegistryStorage<SubmodelDescriptorFilterType> storage;
 	
 	@Override
-	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest) {
-		return storage.getAllSubmodelDescriptors(pRequest);
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest, FilterInfo<SubmodelDescriptorFilterType> filterInfo) {
+		return storage.getAllSubmodelDescriptors(pRequest, filterInfo);
 	}
 
 	@Override
@@ -63,6 +64,11 @@ public class SubmodelRegistryStorageDecorator implements SubmodelRegistryStorage
 	@Override
 	public void removeSubmodelDescriptor(String submodelId) throws SubmodelNotFoundException {
 		storage.removeSubmodelDescriptor(submodelId);
+	}
+
+	@Override
+	public Set<String> clear(FilterInfo<SubmodelDescriptorFilterType> filterInfo) {
+		return storage.clear(filterInfo);
 	}
 
 	@Override

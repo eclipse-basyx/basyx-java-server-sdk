@@ -41,7 +41,7 @@ import org.springframework.stereotype.Component;
  */
 @ConditionalOnExpression("#{${" + MqttSubmodelRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
 @Component
-public class MqttSubmodelRepositoryFeature<FilterType> implements SubmodelRepositoryFeature<FilterType> {
+public class MqttSubmodelRepositoryFeature<SubmodelFilterType, SubmodelElementFilterType> implements SubmodelRepositoryFeature<SubmodelFilterType, SubmodelElementFilterType> {
 	public final static String FEATURENAME = "basyx.submodelrepository.feature.mqtt";
 
 	@Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
@@ -55,8 +55,8 @@ public class MqttSubmodelRepositoryFeature<FilterType> implements SubmodelReposi
 	}
 
 	@Override
-	public SubmodelRepositoryFactory decorate(SubmodelRepositoryFactory aasServiceFactory) {
-		return new MqttSubmodelRepositoryFactory(aasServiceFactory, mqttClient, new MqttSubmodelRepositoryTopicFactory(new Base64URLEncoder()));
+	public SubmodelRepositoryFactory<SubmodelFilterType, SubmodelElementFilterType> decorate(SubmodelRepositoryFactory<SubmodelFilterType, SubmodelElementFilterType> aasServiceFactory) {
+		return new MqttSubmodelRepositoryFactory<>(aasServiceFactory, mqttClient, new MqttSubmodelRepositoryTopicFactory(new Base64URLEncoder()));
 	}
 
 	@Override

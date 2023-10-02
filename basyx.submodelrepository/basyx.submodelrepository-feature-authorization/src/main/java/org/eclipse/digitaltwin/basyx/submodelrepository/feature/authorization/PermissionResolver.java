@@ -5,8 +5,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 
-public interface PermissionResolver<FilterType> {
-    public FilterInfo<FilterType> getGetAllSubmodelsFilterInfo();
+public interface PermissionResolver<SubmodelFilterType, SubmodelElementFilterType> {
+    public FilterInfo<SubmodelFilterType> getGetAllSubmodelsFilterInfo();
 
     public void getSubmodel(String submodelId);
 
@@ -16,7 +16,7 @@ public interface PermissionResolver<FilterType> {
 
     public void deleteSubmodel(Submodel submodel);
 
-    public FilterInfo<FilterType> getGetSubmodelElementsFilterInfo();
+    public FilterInfo<SubmodelElementFilterType> getGetSubmodelElementsFilterInfo(Submodel submodel);
 
     public void getSubmodelElement(String submodelId, String smeIdShort);
 

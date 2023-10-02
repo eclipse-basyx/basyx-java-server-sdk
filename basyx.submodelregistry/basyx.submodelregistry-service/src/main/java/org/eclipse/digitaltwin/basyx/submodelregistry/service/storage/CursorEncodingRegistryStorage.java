@@ -34,14 +34,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 
-public class CursorEncodingRegistryStorage<FilterType> extends SubmodelRegistryStorageDecorator<FilterType> {
+public class CursorEncodingRegistryStorage<SubmodelDescriptorFilterType> extends SubmodelRegistryStorageDecorator<SubmodelDescriptorFilterType> {
 
-	public CursorEncodingRegistryStorage(SubmodelRegistryStorage<FilterType> storage) {
+	public CursorEncodingRegistryStorage(SubmodelRegistryStorage<SubmodelDescriptorFilterType> storage) {
 		super(storage);
 	}
 	
 	@Override
-	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(@NonNull PaginationInfo pRequest, FilterInfo<FilterType> filterInfo) {
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(@NonNull PaginationInfo pRequest, FilterInfo<SubmodelDescriptorFilterType> filterInfo) {
 		PaginationInfo decoded = decodeCursor(pRequest);
 		CursorResult<List<SubmodelDescriptor>> result = storage.getAllSubmodelDescriptors(decoded, filterInfo);
 		return encodeCursor(result);

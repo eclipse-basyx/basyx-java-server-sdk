@@ -54,7 +54,7 @@ public class TestAASEnvironmentSerialization {
 
 	private AasEnvironmentSerialization aasEnvironment;
 	private AasRepository<?, ?> aasRepository;
-	private SubmodelRepository<?>submodelRepository;
+	private SubmodelRepository<?, ?> submodelRepository;
 	private ConceptDescriptionRepository<?> conceptDescriptionRepository;
 
 	@Before

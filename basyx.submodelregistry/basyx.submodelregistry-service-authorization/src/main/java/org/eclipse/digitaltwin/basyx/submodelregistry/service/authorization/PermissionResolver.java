@@ -4,8 +4,8 @@ import org.eclipse.digitaltwin.basyx.authorization.Action;
 import org.eclipse.digitaltwin.basyx.authorization.ISubjectInfo;
 import org.eclipse.digitaltwin.basyx.core.filtering.FilterInfo;
 
-public interface PermissionResolver<FilterType> {
-    public FilterInfo<FilterType> getGetAllSubmodelDescriptorsFilterInfo();
+public interface PermissionResolver<SubmodelDescriptorFilterType> {
+    public FilterInfo<SubmodelDescriptorFilterType> getGetAllSubmodelDescriptorsFilterInfo();
 
     public void getSubmodelDescriptorById(String submodelIdentifier);
 
@@ -15,5 +15,5 @@ public interface PermissionResolver<FilterType> {
 
     public void deleteSubmodelDescriptorById(String submodelIdentifier);
 
-    public FilterInfo<FilterType> getDeleteAllSubmodelDescriptorsFilterInfo();
+    public FilterInfo<SubmodelDescriptorFilterType> getDeleteAllSubmodelDescriptorsFilterInfo();
 }

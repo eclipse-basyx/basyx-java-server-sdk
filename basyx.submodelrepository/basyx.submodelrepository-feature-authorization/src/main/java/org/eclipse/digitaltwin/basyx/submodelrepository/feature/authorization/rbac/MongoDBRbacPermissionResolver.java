@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @ConditionalOnProperty(CommonAuthorizationConfig.ENABLED_PROPERTY_KEY)
 @ConditionalOnExpression(value = "'${" + CommonAuthorizationConfig.TYPE_PROPERTY_KEY + "}' == '" + CommonRbacConfig.RBAC_AUTHORIZATION_TYPE + "' and '${basyx.backend}'.equals('MongoDB')")
-public class MongoDBRbacPermissionResolver implements PermissionResolver<Criteria>, RbacPermissionResolver<Criteria> {
+public class MongoDBRbacPermissionResolver implements PermissionResolver<Criteria, Criteria>, RbacPermissionResolver<Criteria> {
     @Autowired
     private final IRbacStorage<Criteria> storage;
 
@@ -124,7 +124,7 @@ public class MongoDBRbacPermissionResolver implements PermissionResolver<Criteri
     }
 
     @Override
-    public FilterInfo<Criteria> getGetSubmodelElementsFilterInfo() {
+    public FilterInfo<Criteria> getGetSubmodelElementsFilterInfo(Submodel submodel) {
         final RbacRuleSet rbacRuleSet = storage.getRbacRuleSet(null);
         final Set<RbacRule> rbacRules = rbacRuleSet.getRules();
         final List<String> roles = roleAuthenticator.getRoles();
@@ -145,9 +145,18 @@ public class MongoDBRbacPermissionResolver implements PermissionResolver<Criteri
                 .map(BaSyxObjectTargetInfo::getSmSemanticId)
                 .collect(Collectors.toSet());
 
+        final Set<String> relevantSubmodelElementIds = rbacRules.stream()
+                .filter(rbacRule -> rbacRule.getTargetInfo() instanceof BaSyxObjectTargetInfo)
+                .filter(rbacRule -> rbacRule.getAction().equals(Action.READ.toString()))
+                .filter(rbacRule -> roles.contains(rbacRule.getRole()))
+                .map(rbacRule -> (BaSyxObjectTargetInfo) rbacRule.getTargetInfo())
+                .map(BaSyxObjectTargetInfo::getSmElIdShortPath)
+                .collect(Collectors.toSet());
+
         return new FilterInfo<>(new Criteria().andOperator(
                 Criteria.where("_id").in(relevantSubmodelIds),
                 Criteria.where("_semanticId").in(relevantSubmodelSemanticIds)
+                // TODO: filter submodel element ids
         ));
     }
 
