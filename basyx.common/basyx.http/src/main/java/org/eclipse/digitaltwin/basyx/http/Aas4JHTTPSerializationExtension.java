@@ -75,7 +75,7 @@ public class Aas4JHTTPSerializationExtension implements SerializationExtension {
     SimpleModule module = new SimpleModule();
     module.addSerializer(StandardizedLiteralEnum.class, new StandardizedLiteralEnumSerializer<>());
     module.addDeserializer(Profile.class, new StandardizedLiteralEnumDeserializer<>(Profile.class));
-    module.addSerializer(Enum.class, new EnumSerializer());
+    ReflectionHelper.ENUMS.forEach(x -> module.addSerializer(x, new EnumSerializer()));
     ReflectionHelper.ENUMS.forEach(x -> module.addDeserializer(x, new EnumDeserializer<>(x)));
     return module;
   }
