@@ -230,11 +230,9 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 			submodelDeepCopy.setSubmodelElements(null);
 			return submodelDeepCopy;
 		} catch (DeserializationException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Unable to deserialize the Submodel");
+			throw new RuntimeException("Unable to deserialize the Submodel", e);
 		} catch (SerializationException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Unable to serialize the Submodel");
+			throw new RuntimeException("Unable to serialize the Submodel", e);
 		}
 	}
 	
