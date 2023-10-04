@@ -34,28 +34,28 @@ import org.springframework.stereotype.Service;
 @ConditionalOnProperty(CommonAuthorizationConfig.ENABLED_PROPERTY_KEY)
 @ConditionalOnExpression(value = "'${" + CommonAuthorizationConfig.TYPE_PROPERTY_KEY + "}' == 'rbac'")
 public class RbacServiceImpl<RbacRuleFilterType> implements IRbacService {
-    private final RbacPermissionResolver<RbacRuleFilterType> rbacPermissionResolver;
+    private final RbacRulePermissionResolver<RbacRuleFilterType> rbacRulePermissionResolver;
     private final IRbacStorage<RbacRuleFilterType> storage;
 
-    public RbacServiceImpl(RbacPermissionResolver<RbacRuleFilterType> rbacPermissionResolver, IRbacStorage<RbacRuleFilterType> storage) {
-        this.rbacPermissionResolver = rbacPermissionResolver;
+    public RbacServiceImpl(RbacRulePermissionResolver<RbacRuleFilterType> rbacRulePermissionResolver, IRbacStorage<RbacRuleFilterType> storage) {
+        this.rbacRulePermissionResolver = rbacRulePermissionResolver;
         this.storage = storage;
     }
 
     @Override
     public RbacRuleSet getRbacRuleSet() {
-        return storage.getRbacRuleSet(rbacPermissionResolver.getGetRbacRuleSetFilterInfo());
+        return storage.getRbacRuleSet(rbacRulePermissionResolver.getGetRbacRuleSetFilterInfo());
     }
 
     @Override
     public void addRule(RbacRule rbacRule) {
-        rbacPermissionResolver.addRule(rbacRule);
+        rbacRulePermissionResolver.addRule(rbacRule);
         storage.addRule(rbacRule);
     }
 
     @Override
     public void removeRule(RbacRule rbacRule) {
-        rbacPermissionResolver.addRule(rbacRule);
+        rbacRulePermissionResolver.addRule(rbacRule);
         storage.removeRule(rbacRule);
     }
 }

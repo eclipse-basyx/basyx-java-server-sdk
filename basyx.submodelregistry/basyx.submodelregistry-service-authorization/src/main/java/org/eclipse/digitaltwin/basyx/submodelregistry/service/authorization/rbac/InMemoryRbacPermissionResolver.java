@@ -43,26 +43,9 @@ import java.util.function.Predicate;
 @Service
 @ConditionalOnProperty(CommonAuthorizationConfig.ENABLED_PROPERTY_KEY)
 @ConditionalOnExpression(value = "'${" + CommonAuthorizationConfig.TYPE_PROPERTY_KEY + "}' == '" + CommonRbacConfig.RBAC_AUTHORIZATION_TYPE + "' and '${registry.type}'.equals('inMemory')")
-public class InMemoryRbacPermissionResolver implements PermissionResolver<Predicate<SubmodelDescriptor>>, RbacPermissionResolver<Predicate<RbacRule>> {
-    @Autowired
-    private final IRbacStorage<Predicate<RbacRule>> storage;
-
-    @Autowired
-    private final ISubjectInfoProvider subjectInfoProvider;
-
-    @Autowired
-    private final IRoleAuthenticator roleAuthenticator;
-
+public class InMemoryRbacPermissionResolver extends AbstractRbacPermissionResolver<Predicate<SubmodelDescriptor>, Predicate<RbacRule>> {
     public InMemoryRbacPermissionResolver(IRbacStorage<Predicate<RbacRule>> storage, ISubjectInfoProvider subjectInfoProvider, IRoleAuthenticator roleAuthenticator) {
-        this.storage = storage;
-        this.subjectInfoProvider = subjectInfoProvider;
-        this.roleAuthenticator = roleAuthenticator;
-    }
-
-    private boolean hasPermission(ITargetInfo targetInfo, Action action, ISubjectInfo<?> subjectInfo) {
-        final IRbacRuleChecker rbacRuleChecker = new PredefinedSetRbacRuleChecker(storage.getRbacRuleSet(null));
-        final List<String> roles = roleAuthenticator.getRoles();
-        return rbacRuleChecker.checkRbacRuleIsSatisfied(roles, action.toString(), targetInfo);
+        super(storage, subjectInfoProvider, roleAuthenticator);
     }
 
     @Override
@@ -75,50 +58,6 @@ public class InMemoryRbacPermissionResolver implements PermissionResolver<Predic
                     .build();
             return hasPermission(targetInfo, Action.READ, subjectInfo);
         });
-    }
-
-    @Override
-    public void getSubmodelDescriptorById(String submodelIdentifier) {
-        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
-        final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
-                .setSmId(submodelIdentifier)
-                .build();
-        if (!hasPermission(targetInfo, Action.READ, subjectInfo)) {
-            throw new NotAuthorizedException();
-        }
-    }
-
-    @Override
-    public void putSubmodelDescriptorById(String submodelIdentifier) {
-        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
-        final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
-                .setSmId(submodelIdentifier)
-                .build();
-        if (!hasPermission(targetInfo, Action.WRITE, subjectInfo)) {
-            throw new NotAuthorizedException();
-        }
-    }
-
-    @Override
-    public void postSubmodelDescriptor(String submodelIdentifier) {
-        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
-        final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
-                .setSmId(submodelIdentifier)
-                .build();
-        if (!hasPermission(targetInfo, Action.WRITE, subjectInfo)) {
-            throw new NotAuthorizedException();
-        }
-    }
-
-    @Override
-    public void deleteSubmodelDescriptorById(String submodelIdentifier) {
-        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
-        final BaSyxObjectTargetInfo targetInfo = new BaSyxObjectTargetInfo.Builder()
-                .setSmId(submodelIdentifier)
-                .build();
-        if (!hasPermission(targetInfo, Action.WRITE, subjectInfo)) {
-            throw new NotAuthorizedException();
-        }
     }
 
     @Override
@@ -139,23 +78,5 @@ public class InMemoryRbacPermissionResolver implements PermissionResolver<Predic
         final RbacRuleTargetInfo targetInfo = new RbacRuleTargetInfo();
         final boolean result = hasPermission(targetInfo, Action.READ, subjectInfo);
         return new FilterInfo<>(rbacRule -> result);
-    }
-
-    @Override
-    public void addRule(RbacRule rbacRule) {
-        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
-        final RbacRuleTargetInfo targetInfo = new RbacRuleTargetInfo();
-        if (!hasPermission(targetInfo, Action.WRITE, subjectInfo)) {
-            throw new NotAuthorizedException();
-        }
-    }
-
-    @Override
-    public void removeRule(RbacRule rbacRule) {
-        final ISubjectInfo<?> subjectInfo = subjectInfoProvider.get();
-        final RbacRuleTargetInfo targetInfo = new RbacRuleTargetInfo();
-        if (!hasPermission(targetInfo, Action.WRITE, subjectInfo)) {
-            throw new NotAuthorizedException();
-        }
     }
 }
