@@ -30,6 +30,11 @@ import org.eclipse.digitaltwin.basyx.http.CorsPathPatternProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * 
+ * @author schnicke
+ *
+ */
 @Configuration
 public class SubmodelRepoConfiguration {
 

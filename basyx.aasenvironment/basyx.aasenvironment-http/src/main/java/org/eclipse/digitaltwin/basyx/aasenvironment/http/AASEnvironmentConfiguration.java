@@ -24,7 +24,7 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http;
+package org.eclipse.digitaltwin.basyx.aasenvironment.http;
 
 import org.eclipse.digitaltwin.basyx.http.CorsPathPatternProvider;
 import org.springframework.context.annotation.Bean;
@@ -36,10 +36,10 @@ import org.springframework.context.annotation.Configuration;
  *
  */
 @Configuration
-public class ConceptDescriptionRepoConfiguration {
+public class AASEnvironmentConfiguration {
 
 	@Bean
-	public CorsPathPatternProvider getConceptDescriptionRepoCorsUrlProvider() {
-		return new CorsPathPatternProvider("/concept-descriptions/**");
+	public CorsPathPatternProvider getAASEnvironmentRepoCorsUrlProvider() {
+		return new CorsPathPatternProvider("/serialization");
 	}
 }
