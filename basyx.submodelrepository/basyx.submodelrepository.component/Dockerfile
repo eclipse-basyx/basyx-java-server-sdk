@@ -1,4 +1,4 @@
-FROM amazoncorretto:11
+FROM eclipse-temurin:17-jdk
 USER nobody
 WORKDIR /application
 ARG JAR_FILE=target/*-exec.jar
@@ -6,4 +6,6 @@ COPY ${JAR_FILE} basyxExecutable.jar
 COPY src/main/resources/application.properties application.properties
 ARG PORT=8081
 EXPOSE ${PORT}
+HEALTHCHECK --interval=30s --timeout=12s --start-period=30s CMD curl --fail http://localhost:8081/concept-descriptions || exit 1
+
 ENTRYPOINT ["java","-jar","basyxExecutable.jar"]
