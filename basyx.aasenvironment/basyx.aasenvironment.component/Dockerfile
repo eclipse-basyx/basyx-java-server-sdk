@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk
+FROM amazoncorretto:11
 USER nobody
 WORKDIR /application
 ARG JAR_FILE=target/*-exec.jar
