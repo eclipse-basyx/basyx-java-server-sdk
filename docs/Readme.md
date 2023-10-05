@@ -11,8 +11,7 @@ offer common mechanisms to check the current health status of the application an
 The health endpoint to check whether the server is up and running is available at:
 
 	http://{host}:{port}/health
-
-For a configuration example, see [application.properties](basyx.aasrepository.component/src/main/resources/application.properties)
+For a detailed documentation on its configuration possibilities, see [Spring Management Endpoint](Management_Endpoint.md) documentation.
 
 ## CORS configuration
 Cross-Site Resource Sharing options can be configured under [application.properties](./basyx.aasrepository.component/src/main/resources/application.properties) with the following attribute:
