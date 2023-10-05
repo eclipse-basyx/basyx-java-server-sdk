@@ -19,5 +19,5 @@ Cross-Site Resource Sharing options can be configured under [application.propert
 * Allowed Origin Patterns:<br>
 Comma-separated list of origin patterns to allow. Unlike allowed origins which only supports '*', origin patterns are more flexible (for example 'https://*.example.com') and can be used when credentials are allowed. When no allowed origin patterns or allowed origins are set, CORS support is disabled.
   ```
-  basyx.cors.allowed-origins=http://localhost:8080=https://*.example.com
+  basyx.cors.allowed-origins=http://localhost:8080, https://*.example.com
   ```
