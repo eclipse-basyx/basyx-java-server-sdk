@@ -82,7 +82,7 @@ public abstract class ConceptDescriptionRepositoryHTTPSuite {
 	@Test
 	public void getAllConceptDescriptionsByDataSpecRefPreconfigured() throws IOException, ParseException {
 		String conceptDescriptionsJSON = getAllConceptDescriptionsByDataSpecRefJSON(getDataSpecReferenceJSON());
-		String expectedConceptDescriptionsJSON = getConceptDescriptionsWithDataSpecRef();
+		String expectedConceptDescriptionsJSON = getAllConceptDescriptionsWithDataSpecRef();
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionsJSON, conceptDescriptionsJSON);
 	}
 
@@ -182,7 +182,7 @@ public abstract class ConceptDescriptionRepositoryHTTPSuite {
 
 	@Test
 	public void paginatedResult() throws ParseException, IOException {
-		String conceptDescriptionsJSON = requestPaginatedConceptDescriptions(1, "7A7104IHTREFN4322");
+		String conceptDescriptionsJSON = requestPaginatedConceptDescriptions(1, "7A7104BDAH56TH2");
 		String expectedDescriptionJson = getConceptDescriptionsWithDataSpecRef();
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedDescriptionJson, conceptDescriptionsJSON);
 	}
@@ -290,6 +290,10 @@ public abstract class ConceptDescriptionRepositoryHTTPSuite {
 
 	private String getConceptDescriptionsWithDataSpecRef() throws IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("ConceptDescriptionWithDataSpec.json");
+	}
+	
+	private String getAllConceptDescriptionsWithDataSpecRef() throws IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AllConceptDescriptionWithDataSpec.json");
 	}
 
 	private String getReferenceJSON() throws IOException {
