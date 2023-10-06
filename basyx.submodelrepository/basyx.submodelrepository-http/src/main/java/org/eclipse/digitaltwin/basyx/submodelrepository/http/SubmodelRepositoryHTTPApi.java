@@ -76,7 +76,7 @@ public interface SubmodelRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
 
-			@ApiResponse(responseCode = "default", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
+			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
 	@RequestMapping(value = "/submodels", produces = { "application/json" }, method = RequestMethod.GET)
 	ResponseEntity<PagedResult> getAllSubmodels(
 			@Size(min = 1, max = 3072) @Parameter(in = ParameterIn.QUERY, description = "The value of the semantic id reference (UTF8-BASE64-URL-encoded)", schema = @Schema()) @Valid @RequestParam(value = "semanticId", required = false) Base64UrlEncodedIdentifier semanticId,
@@ -103,7 +103,7 @@ public interface SubmodelRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
 
-			@ApiResponse(responseCode = "default", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Submodel.class))) })
+			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Submodel.class))) })
 	@RequestMapping(value = "/submodels/{submodelIdentifier}", produces = { "application/json" }, method = RequestMethod.GET)
 	ResponseEntity<Submodel> getSubmodelById(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
@@ -125,7 +125,7 @@ public interface SubmodelRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
 
-			@ApiResponse(responseCode = "default", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
+			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
 	@RequestMapping(value = "/submodels/{submodelIdentifier}/$value", produces = { "application/json" }, method = RequestMethod.GET)
 	ResponseEntity<SubmodelValueOnly> getSubmodelByIdValueOnly(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
@@ -148,7 +148,7 @@ public interface SubmodelRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
 
-			@ApiResponse(responseCode = "default", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
+			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
 	@RequestMapping(value = "/submodels/{submodelIdentifier}/$metadata", produces = { "application/json" }, method = RequestMethod.GET)
 	ResponseEntity<Submodel> getSubmodelByIdMetadata(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
@@ -168,9 +168,9 @@ public interface SubmodelRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
 
-			@ApiResponse(responseCode = "default", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
+			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
 	@RequestMapping(value = "/submodels", produces = { "application/json" }, consumes = { "application/json" }, method = RequestMethod.POST)
-	ResponseEntity<Submodel> postSubmodel(@Parameter(in = ParameterIn.DEFAULT, description = "Submodel object", required = true) @Valid @RequestBody Submodel body);
+	ResponseEntity<Submodel> postSubmodel(@Parameter(in = ParameterIn.DEFAULT, description = "Submodel object", required = true, schema = @Schema()) @Valid @RequestBody Submodel body);
 
 
 	@Operation(summary = "Updates an existing Submodel", description = "", tags = { "Submodel Repository API" })
@@ -186,7 +186,7 @@ public interface SubmodelRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
 
-			@ApiResponse(responseCode = "default", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
+			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
 	@RequestMapping(value = "/submodels/{submodelIdentifier}", produces = { "application/json" }, consumes = { "application/json" }, method = RequestMethod.PUT)
 	ResponseEntity<Void> putSubmodelById(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
@@ -207,7 +207,7 @@ public interface SubmodelRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
 
-			@ApiResponse(responseCode = "default", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
+			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
 	@RequestMapping(value = "/submodels/{submodelIdentifier}", produces = { "application/json" }, method = RequestMethod.DELETE)
 	ResponseEntity<Void> deleteSubmodelById(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier);
@@ -250,7 +250,7 @@ public interface SubmodelRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
 
-			@ApiResponse(responseCode = "default", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
+			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
 	@RequestMapping(value = "/submodels/{submodelIdentifier}/submodel-elements/{idShortPath}", produces = { "application/json" }, method = RequestMethod.GET)
 	ResponseEntity<SubmodelElement> getSubmodelElementByPathSubmodelRepo(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
@@ -273,7 +273,7 @@ public interface SubmodelRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
 
-			@ApiResponse(responseCode = "default", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
+			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
 	@RequestMapping(value = "/submodels/{submodelIdentifier}/submodel-elements/{idShortPath}/$value", produces = { "application/json" }, method = RequestMethod.GET)
 	ResponseEntity<SubmodelElementValue> getSubmodelElementByPathValueOnlySubmodelRepo(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
@@ -296,7 +296,7 @@ public interface SubmodelRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
 
-			@ApiResponse(responseCode = "default", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
+			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
 	@RequestMapping(value = "/submodels/{submodelIdentifier}/submodel-elements/{idShortPath}/$value", produces = { "application/json" }, consumes = { "application/json" }, method = RequestMethod.PATCH)
 	ResponseEntity<Void> patchSubmodelElementByPathValueOnlySubmodelRepo(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
@@ -320,7 +320,7 @@ public interface SubmodelRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
 
-			@ApiResponse(responseCode = "default", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
+			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
 	@RequestMapping(value = "/submodels/{submodelIdentifier}/submodel-elements/{idShortPath}", produces = { "application/json" }, consumes = { "application/json" }, method = RequestMethod.POST)
 	ResponseEntity<SubmodelElement> postSubmodelElementByPathSubmodelRepo(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
@@ -347,7 +347,7 @@ public interface SubmodelRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
 
-			@ApiResponse(responseCode = "default", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
+			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
 	@RequestMapping(value = "/submodels/{submodelIdentifier}/submodel-elements", produces = { "application/json" }, consumes = { "application/json" }, method = RequestMethod.POST)
 	ResponseEntity<SubmodelElement> postSubmodelElementSubmodelRepo(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
@@ -367,7 +367,7 @@ public interface SubmodelRepositoryHTTPApi {
 
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
 
-			@ApiResponse(responseCode = "default", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
+			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
 	@RequestMapping(value = "/submodels/{submodelIdentifier}/submodel-elements/{idShortPath}", produces = { "application/json" }, method = RequestMethod.DELETE)
 	ResponseEntity<Void> deleteSubmodelElementByPathSubmodelRepo(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
