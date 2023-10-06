@@ -1,35 +1,54 @@
 version: "3.9"
 services:
-##############################################################################
-##############################################################################
-###
-### Do not forget to start docker-compose in basyx.parent to get a running mongodb
-###
-##############################################################################
-##############################################################################
-  emqx:
-    image: emqx/emqx:5.0.25
-    ports:
-      - 1883:1883
+  mongo:
+    image: mongo:5.0.10
+    # Provide mongo config
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoAdmin
+      MONGO_INITDB_ROOT_PASSWORD: mongoPassword
+    # Set health checks to wait until mongo has started
+    #volumes:
+    # -  ./data-vol:/data/db 
     healthcheck:
-      test: ["CMD", "/opt/emqx/bin/emqx_ctl", "status"]
-      interval: 5s
-      timeout: 25s
+      test: mongo
+      interval: 10s
+      start_period: 5s
       retries: 5
-    networks:
-      - basyx-java-server-sdk
+    # Maps tcp port to host
+    #ports:
+    #  - 27017:27017
+    
+  mqtt:
+    image: eclipse-mosquitto:2.0.15
+    ports:
+      - 1884:1884
+    volumes:
+      - ./mosquitto:/mosquitto/config
+    healthcheck:
+      test: ["CMD-SHELL", mosquitto_sub -p 1884 -t 'topic' -C 1 -E -i probe -W 3]
+      interval: 5s
+      retries: 3
+      start_period: 1s
+      timeout: 10s   
+      
   aas-env:
     image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
     volumes:
       - ./aas-env.properties:/application/application.properties
+      - ./aas/test_demo_full_example.xml:/application/aas/test_demo_full_example.xml
     ports:
         - 8081:8081
-    networks:
-      - basyx-java-server-sdk
     depends_on:
-        emqx:
+        mongo:
+            condition: service_healthy
+        mqtt:
             condition: service_healthy
         
-networks:
-  basyx-java-server-sdk:
-    external: true
+  aas-registry:
+    image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: aas-registry
+    pull_policy: never
+    ports:
+      - 8082:8080
+    restart: always

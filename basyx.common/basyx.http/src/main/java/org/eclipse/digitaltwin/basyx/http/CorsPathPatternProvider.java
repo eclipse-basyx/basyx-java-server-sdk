@@ -24,24 +24,23 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.component;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+package org.eclipse.digitaltwin.basyx.http;
 
 /**
- * Creates and starts the SubmodelRepository off-shelf-component
+ * Enables components to publish their used pathPatterns for CORS configuration
  * 
  * @author schnicke
  *
  */
-@SpringBootApplication(
-		scanBasePackages = "org.eclipse.digitaltwin.basyx", 
-		exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
-public class SubmodelRepositoryComponent {
-	public static void main(String[] args) {
-		SpringApplication.run(SubmodelRepositoryComponent.class, args);
+public class CorsPathPatternProvider {
+	private String pathPattern;
+
+	public CorsPathPatternProvider(String pathPattern) {
+		this.pathPattern = pathPattern;
 	}
+
+	public String getPathPattern() {
+		return pathPattern;
+	}
+
 }
