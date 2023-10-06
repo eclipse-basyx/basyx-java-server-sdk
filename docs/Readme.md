@@ -10,7 +10,7 @@ offer common mechanisms to check the current health status of the application an
 ## Health Endpoint
 The health endpoint to check whether the server is up and running is available at:
 
-	http://{host}:{port}/health
+	http://{host}:{port}/actuator/health
 For a detailed documentation on its configuration possibilities, see [Spring Management Endpoint](Management_Endpoint.md) documentation.
 
 ## CORS configuration
