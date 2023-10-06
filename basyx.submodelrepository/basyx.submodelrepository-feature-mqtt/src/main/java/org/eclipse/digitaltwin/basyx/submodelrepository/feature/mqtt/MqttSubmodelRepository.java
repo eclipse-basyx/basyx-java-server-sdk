@@ -1,9 +1,7 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
 import java.util.List;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -201,7 +199,7 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public void setFileValue(String submodelId, String idShortPath, InputStream inputStream) throws IOException {
+	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream){
 		throw new FeatureNotImplementedException();
 	}
 

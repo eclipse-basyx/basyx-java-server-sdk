@@ -165,7 +165,6 @@ public class InMemorySubmodelService implements SubmodelService {
 			deleteNestedSubmodelElementFromList(idShortPath, sm);
 		} else {
 			deleteNestedSubmodelElementFromCollection(idShortPath, sm);
-			return;
 		}
 	}
 

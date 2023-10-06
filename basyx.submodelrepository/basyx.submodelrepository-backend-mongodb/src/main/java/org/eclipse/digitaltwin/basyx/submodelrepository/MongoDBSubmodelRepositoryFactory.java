@@ -66,7 +66,8 @@ public class MongoDBSubmodelRepositoryFactory implements SubmodelRepositoryFacto
 		this.smRepositoryName = smRepositoryName;
 		this.gridFsTemplate = gridFsTemplate;
 	}
-
+	
+	@Autowired(required = false)
 	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory,
 			GridFsTemplate gridFsTemplate) {
 		this(mongoTemplate, collectionName, submodelServiceFactory);

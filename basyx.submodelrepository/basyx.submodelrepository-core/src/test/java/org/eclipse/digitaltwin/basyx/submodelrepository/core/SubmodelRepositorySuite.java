@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -69,6 +70,7 @@ import org.springframework.core.io.ClassPathResource;
  */
 public abstract class SubmodelRepositorySuite {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
+	private static final String DUMMY_FILE_CONTENT = "this is a file";
 
 	protected abstract SubmodelRepository getSubmodelRepository();
 
@@ -195,7 +197,6 @@ public abstract class SubmodelRepositorySuite {
 	public void getSubmodelElementsOfNonExistingSubmodel() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.getSubmodelElements("notExisting", NO_LIMIT_PAGINATION_INFO).getResult();
-
 	}
 
 	@Test
@@ -254,23 +255,67 @@ public abstract class SubmodelRepositorySuite {
 	}
 	
 	@Test
-	public void getFile() throws IOException {
+	public void updateFile() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		
+		// Set the value of the file-submodelelement for the first time
+		try {
+			repo.setFileValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "SampleJsonFile.json", getInputStreamOfFileFromClasspath("SampleJsonFile.json"));
+		} catch (IOException e1) {
+			fail();
+			e1.printStackTrace();
+		}
+		
+		// Set the value of the file-submodel element again with a dummy text file
+		try {
+			repo.setFileValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "newFile.txt", getInputStreamOfDummyFile());
+		} catch (IOException e1) {
+			fail();
+			e1.printStackTrace();
+		}
+		
+		// Get the file from the file submodel element
+		File retrievedValue = repo.getFileByPathSubmodel(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
+		
+		try {
+			String actual = new String(FileUtils.openInputStream(retrievedValue).readAllBytes());
+			assertEquals(DUMMY_FILE_CONTENT, actual);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void getFile(){
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		String expectedFileExtension = "json";
 		
-		InputStream expectedFile = getInputStreamOfFileFromClasspath("SampleJsonFile.json");
-		
-		repo.setFileValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, getInputStreamOfFileFromClasspath("SampleJsonFile.json"));
+		InputStream expectedFile = null;
+		try {
+			expectedFile = getInputStreamOfFileFromClasspath("SampleJsonFile.json");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		try {
+			repo.setFileValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "SampleJsonFile.json", getInputStreamOfFileFromClasspath("SampleJsonFile.json"));
+		} catch (IOException e) {
+			fail();
+			e.printStackTrace();
+		}
 
 		File retrievedValue = repo.getFileByPathSubmodel(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 
 		assertEquals(expectedFileExtension, getExtension(retrievedValue.getName()));
 		
-		assertTrue(IOUtils.contentEquals(expectedFile, FileUtils.openInputStream(retrievedValue)));
+		try {
+			assertTrue(IOUtils.contentEquals(expectedFile, FileUtils.openInputStream(retrievedValue)));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Test(expected = FileDoesNotExistException.class)
-	public void getNonExistingFile() throws IOException {
+	public void getNonExistingFile(){
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		deleteFileIfExisted(repo);
 		
@@ -279,17 +324,22 @@ public abstract class SubmodelRepositorySuite {
 
 
 	@Test(expected = ElementNotAFileException.class)
-	public void getFileFromNonFileSME() throws IOException {
+	public void getFileFromNonFileSME(){
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		
 		repo.getFileByPathSubmodel(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_MULTI_LANG_PROP_ID_SHORT);
 	}
 	
 	@Test
-	public void deleteFile() throws IOException {
+	public void deleteFile(){
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		
-		repo.setFileValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, getInputStreamOfFileFromClasspath("SampleJsonFile.json"));
+		try {
+			repo.setFileValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "SampleJsonFile.json", getInputStreamOfFileFromClasspath("SampleJsonFile.json"));
+		} catch (IOException e1) {
+			fail();
+			e1.printStackTrace();
+		} 
 		
 		repo.deleteFileValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 		
@@ -499,6 +549,10 @@ public abstract class SubmodelRepositorySuite {
 		ClassPathResource classPathResource = new ClassPathResource(fileName);
 		
 		return classPathResource.getInputStream();
+	}
+	
+	private InputStream getInputStreamOfDummyFile() throws FileNotFoundException, IOException {
+		return new ByteArrayInputStream(DUMMY_FILE_CONTENT.getBytes());
 	}
 	
 	private String getExtension(String filename) {

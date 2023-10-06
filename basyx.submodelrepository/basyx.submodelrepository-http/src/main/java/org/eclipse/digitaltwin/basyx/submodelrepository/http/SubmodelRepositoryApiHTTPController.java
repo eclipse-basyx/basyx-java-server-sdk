@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -200,7 +201,9 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	@Override
 	public ResponseEntity<Void> putFileByPath(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, String fileName, @Valid MultipartFile file) {
 		try {
-			repository.setFileValue(submodelIdentifier.getIdentifier(), idShortPath, file.getInputStream());
+			InputStream fileInputstream = file.getInputStream();
+			repository.setFileValue(submodelIdentifier.getIdentifier(), idShortPath, fileName, fileInputstream);
+			fileInputstream.close();
 			return new ResponseEntity<Void>(HttpStatus.OK);
 		} catch (ElementDoesNotExistException e) {
 			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
