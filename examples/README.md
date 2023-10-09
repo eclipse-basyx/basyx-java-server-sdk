@@ -20,11 +20,11 @@ As of right now you have to register all Asset Administration Shells on your own
 You can use the following endpoints to register Asset Administration Shells which are included in the usage example:
 
 ```bash
-http://localhost:1500/shells/aHR0cHM6Ly9odHctYmVybGluLmRlL2lkcy9hYXMvZGVtb2Fhc3Yz
+http://localhost:8081/shells/aHR0cHM6Ly9odHctYmVybGluLmRlL2lkcy9hYXMvZGVtb2Fhc3Yz
 ```
 
 ```bash
-http://localhost:1500/shells/aHR0cHM6Ly9leGFtcGxlLmNvbS9pZHMvc20vMjQxMV83MTYwXzAxMzJfNDUyMw==
+http://localhost:8081/shells/aHR0cHM6Ly9leGFtcGxlLmNvbS9pZHMvc20vMjQxMV83MTYwXzAxMzJfNDUyMw==
 ```
 
 ![alt text](RegisterAAS.png "Register Asset Administration Shells")
