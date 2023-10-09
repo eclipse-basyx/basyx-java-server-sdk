@@ -30,6 +30,10 @@ import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
+import org.springframework.data.mongodb.repository.support.MappingMongoEntityInformation;
+import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
@@ -42,19 +46,26 @@ import org.springframework.stereotype.Component;
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
 @Component
 public class AasMongoDBBackendProvider implements AasBackendProvider {
-
+	
+	private BasyxMongoMappingContext mappingContext;
+	
+	private MongoTemplate template;
+	
 	@Autowired
-	private AasMongoBackend backend;
-
-	@Autowired
-	public AasMongoDBBackendProvider(BasyxMongoMappingContext mappingContext, @Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName) {
+	public AasMongoDBBackendProvider(BasyxMongoMappingContext mappingContext, @Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName, MongoTemplate template) {
 		super();
+		this.mappingContext = mappingContext;
+		this.template = template;
+		
 		mappingContext.addEntityMapping(AssetAdministrationShell.class, collectionName);
 	}
 
 	@Override
 	public CrudRepository<AssetAdministrationShell, String> getCrudRepository() {
-		return backend;
+		@SuppressWarnings("unchecked")
+		MongoPersistentEntity<AssetAdministrationShell> entity = (MongoPersistentEntity<AssetAdministrationShell>) mappingContext.getPersistentEntity(AssetAdministrationShell.class);
+		
+		return new SimpleMongoRepository<>(new MappingMongoEntityInformation<>(entity), template);
 	}
 
 }

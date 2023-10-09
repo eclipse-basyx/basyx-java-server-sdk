@@ -59,11 +59,17 @@ public class CrudAasRepository implements AasRepository {
 	private AasServiceFactory aasServiceFactory;
 
 	private String aasRepositoryName = null;
-
-	@Autowired
-	public CrudAasRepository(AasBackendProvider aasBackendProvider, AasServiceFactory aasServiceFactory, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
+	
+	@Autowired(required = false)
+	public CrudAasRepository(AasBackendProvider aasBackendProvider, AasServiceFactory aasServiceFactory) {
 		this.aasBackend = aasBackendProvider.getCrudRepository();
 		this.aasServiceFactory = aasServiceFactory;
+	}
+
+	@Autowired(required = false)
+	public CrudAasRepository(AasBackendProvider aasBackendProvider, AasServiceFactory aasServiceFactory, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
+		this(aasBackendProvider, aasServiceFactory);
+		
 		this.aasRepositoryName = aasRepositoryName;
 	}
 
