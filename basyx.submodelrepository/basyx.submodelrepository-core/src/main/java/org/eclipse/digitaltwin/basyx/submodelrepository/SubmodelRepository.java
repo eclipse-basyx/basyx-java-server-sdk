@@ -218,7 +218,7 @@ public interface SubmodelRepository {
 	 * @param submodelId
 	 *            the Submodel id
 	 * @param idShortPath
-	 *            the IdShort of the file element
+	 *            the IdShort path of the file element
 	 * @return
 	 * 
 	 * @throws ElementDoesNotExistException
@@ -233,7 +233,7 @@ public interface SubmodelRepository {
 	 * @param submodelId
 	 *            the Submodel id
 	 * @param idShortPath
-	 *            the IdShort of the file element
+	 *            the IdShort path of the file element
 	 * @param file           
 	 *            the file object to upload
 	 *            
@@ -248,7 +248,7 @@ public interface SubmodelRepository {
 	 * @param submodelId
 	 *            the Submodel id
 	 * @param idShortPath
-	 *            the IdShort of the file element
+	 *            the IdShort path of the file element
 	 *            
 	 * @throws ElementDoesNotExistException
 	 * @throws ElementNotAFileException

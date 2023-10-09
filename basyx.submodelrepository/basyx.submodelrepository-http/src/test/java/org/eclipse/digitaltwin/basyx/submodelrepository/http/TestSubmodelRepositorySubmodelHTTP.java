@@ -85,6 +85,7 @@ public class TestSubmodelRepositorySubmodelHTTP extends SubmodelRepositorySubmod
 
 	private void createSubmodel4FileTest() throws FileNotFoundException, IOException {
 		String submodelJSON = BaSyxHttpTestUtils.readJSONStringFromClasspath(SUBMODEL_JSON);
+		
 		BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
 	}
 

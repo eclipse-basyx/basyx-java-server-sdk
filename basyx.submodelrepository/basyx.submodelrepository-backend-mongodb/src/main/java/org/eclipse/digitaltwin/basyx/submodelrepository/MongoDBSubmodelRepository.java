@@ -68,12 +68,11 @@ import com.mongodb.client.result.DeleteResult;
 /**
  * MongoDB implementation of the SubmodelRepository
  * 
- * @author jungjan, kammognie
+ * @author jungjan, kammognie, zhangzai, danish
  *
  */
 public class MongoDBSubmodelRepository implements SubmodelRepository {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
-	private static final String ID = "_id";
 	private static final String MONGO_ID = "_id";
 	private static final String TEMP_DIR_PREFIX = "basyx-temp";
 	private static final String GRIDFS_ID_DELIMITER = "#";
@@ -322,12 +321,12 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	}
 
 	private void applySorting(Query query, PaginationInfo pInfo) {
-		query.with(Sort.by(Direction.ASC, ID));
+		query.with(Sort.by(Direction.ASC, MONGO_ID));
 	}
 
 	private void applyPagination(Query query, PaginationInfo pInfo) {
 		if (pInfo.getCursor() != null) {
-			query.addCriteria(Criteria.where(ID).gt(pInfo.getCursor()));
+			query.addCriteria(Criteria.where(MONGO_ID).gt(pInfo.getCursor()));
 		}
 		if (pInfo.getLimit() != null) {
 			query.limit(pInfo.getLimit());

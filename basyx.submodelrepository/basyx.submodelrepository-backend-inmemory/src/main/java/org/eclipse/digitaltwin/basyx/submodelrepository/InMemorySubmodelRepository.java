@@ -68,7 +68,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 /**
  * In-memory implementation of the SubmodelRepository
  *
- * @author schnicke, danish, kammognie
+ * @author schnicke, danish, kammognie, zhangzai
  *
  */
 public class InMemorySubmodelRepository implements SubmodelRepository {
@@ -266,11 +266,6 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		throwIfFileDoesNotExist((File) submodelElement, filePath);
 
 		return new java.io.File(filePath);
-
-	}
-
-	private String getFilePath(SubmodelElement submodelElement) {
-		return ((File) submodelElement).getValue();
 	}
 
 	@Override
@@ -283,34 +278,18 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		File fileSmElement = (File) submodelElement;
 		deleteExistingFile(fileSmElement);
 		String filePath = createFilePath(submodelId, idShortPath, fileName);
-		java.io.File targetFile = new java.io.File(filePath);
-
-		try (FileOutputStream outStream = new FileOutputStream(targetFile)) {
-			IOUtils.copy(inputStream, outStream);
-		} catch (IOException e) {
-			throw new FileHandlingException(fileName);
-		}
+		
+		createFileAtSpecifiedPath(fileName, inputStream, filePath);
 
 		FileBlobValue fileValue = new FileBlobValue(fileSmElement.getContentType(), filePath);
 
 		setSubmodelElementValue(submodelId, idShortPath, fileValue);
 	}
 
-	private void deleteExistingFile(File fileSmElement) {
-		String filePath = fileSmElement.getValue();
-		if(filePath.isEmpty()) return;
-		
-		try {
-			Files.deleteIfExists(Paths.get(filePath, ""));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-	}
-
 	@Override
 	public void deleteFileValue(String submodelId, String idShortPath) {
 		throwIfSubmodelDoesNotExist(submodelId);
+		
 		SubmodelElement submodelElement = submodelServices.get(submodelId).getSubmodelElement(idShortPath);
 
 		throwIfSmElementIsNotAFile(submodelElement);
@@ -329,7 +308,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 	private String createFilePath(String submodelId, String idShortPath, String fileName) {
-		return tmpDirectory + "/" + submodelId + "-" + idShortPath.replaceAll("/", "-") + "-" + fileName;
+		return tmpDirectory + "/" + submodelId + "-" + idShortPath.replace("/", "-") + "-" + fileName;
 	}
 	
 	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement) {
@@ -382,6 +361,31 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 			e.printStackTrace();
 		}
 		return tempDirectoryPath;
+	}
+	
+	private String getFilePath(SubmodelElement submodelElement) {
+		return ((File) submodelElement).getValue();
+	}
+	
+	private void deleteExistingFile(File fileSmElement) {
+		String filePath = fileSmElement.getValue();
+		if(filePath.isEmpty()) return;
+		
+		try {
+			Files.deleteIfExists(Paths.get(filePath, ""));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void createFileAtSpecifiedPath(String fileName, InputStream inputStream, String filePath) {
+		java.io.File targetFile = new java.io.File(filePath);
+
+		try (FileOutputStream outStream = new FileOutputStream(targetFile)) {
+			IOUtils.copy(inputStream, outStream);
+		} catch (IOException e) {
+			throw new FileHandlingException(fileName);
+		}
 	}
 
 }

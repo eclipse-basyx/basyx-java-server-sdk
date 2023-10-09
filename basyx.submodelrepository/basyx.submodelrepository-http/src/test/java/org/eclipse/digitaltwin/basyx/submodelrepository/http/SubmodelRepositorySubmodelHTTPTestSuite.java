@@ -195,12 +195,14 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	@Test
 	public void uploadFileToNonFileSubmodelElement() throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
 		CloseableHttpResponse submodelElementFileUploadResponse = uploadFileToSubmodelElement(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_NON_FILE_ID_SHORT);
+		
 		assertEquals(HttpStatus.PRECONDITION_FAILED.value(), submodelElementFileUploadResponse.getCode());
 	}
 
 	@Test
 	public void uploadFileToNotExistElement() throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
 		CloseableHttpResponse submodelElementFileUploadResponse = uploadFileToSubmodelElement(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, "ElementNotExist");
+		
 		assertEquals(HttpStatus.NOT_FOUND.value(), submodelElementFileUploadResponse.getCode());
 	}
 
@@ -218,36 +220,44 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	@Test
 	public void deleteFileToNonFileSubmodelElement() throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
 		uploadFileToSubmodelElement(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT);
+		
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeDeleteOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_NON_FILE_ID_SHORT));
+		
 		assertEquals(HttpStatus.PRECONDITION_FAILED.value(), response.getCode());
 	}
 
 	@Test
 	public void deleteFileFromNotExistElement() throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeDeleteOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, "ElementNotExist"));
+		
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
 
 	@Test
 	public void getFile() throws FileNotFoundException, IOException, ParseException {
 		uploadFileToSubmodelElement(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT);
+		
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT));
 		assertEquals(HttpStatus.OK.value(), response.getCode());
+		
 		String received = BaSyxHttpTestUtils.getResponseAsString(response);
 
 		String fileName = "BaSyx-Logo.png";
+		
 		assertEquals(readFile("src/test/resources/" + fileName, Charset.defaultCharset()), new String(received.getBytes(), Charset.defaultCharset()));
 	}
 
 	@Test
 	public void getFileFromNonFileSubmodelElement() throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_NON_FILE_ID_SHORT));
+		
 		assertEquals(HttpStatus.PRECONDITION_FAILED.value(), response.getCode());
 	}
 
 	@Test
 	public void getFileFromNotExistElement() throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, "ElementNotExist"));
+		
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
 
@@ -299,12 +309,15 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 
 	private static String readFile(String path, Charset encoding) throws IOException {
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
+		
 		return new String(encoded, encoding);
 	}
 
 	private void assertSubmodelCreationReponse(String submodelJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JsonProcessingException, JsonMappingException {
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
+		
 		String response = BaSyxHttpTestUtils.getResponseAsString(creationResponse);
+		
 		BaSyxHttpTestUtils.assertSameJSONContent(submodelJSON, response);
 	}
 

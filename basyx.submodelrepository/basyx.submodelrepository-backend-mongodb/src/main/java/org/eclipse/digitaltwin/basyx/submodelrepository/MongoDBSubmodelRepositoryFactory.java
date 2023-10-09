@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component;
 /**
  * SubmodelRepository factory returning a MongoDb backend SubmodelRepository
  * 
- * @author jungjan
+ * @author jungjan, zhangzai
  *
  */
 @Component
@@ -62,17 +62,16 @@ public class MongoDBSubmodelRepositoryFactory implements SubmodelRepositoryFacto
 	
 	@Autowired(required = false)
 	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory,
-			@Value("${basyx.smrepo.name:sm-repo}") String smRepositoryName, GridFsTemplate gridFsTemplate) {
+			GridFsTemplate gridFsTemplate) {
 		this(mongoTemplate, collectionName, submodelServiceFactory);
-		this.smRepositoryName = smRepositoryName;
 		this.gridFsTemplate = gridFsTemplate;
 	}
 	
 	@Autowired(required = false)
-	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory,
-			GridFsTemplate gridFsTemplate) {
-		this(mongoTemplate, collectionName, submodelServiceFactory);
-		this.gridFsTemplate = gridFsTemplate;
+	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory, 
+			GridFsTemplate gridFsTemplate, @Value("${basyx.smrepo.name:sm-repo}") String smRepositoryName) {
+		this(mongoTemplate, collectionName, submodelServiceFactory, gridFsTemplate);
+		this.smRepositoryName = smRepositoryName;
 	}
 
 	@Autowired(required = false)

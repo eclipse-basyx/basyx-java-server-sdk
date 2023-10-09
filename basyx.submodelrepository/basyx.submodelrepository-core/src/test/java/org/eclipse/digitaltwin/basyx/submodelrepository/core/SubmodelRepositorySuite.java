@@ -65,7 +65,7 @@ import org.springframework.core.io.ClassPathResource;
 /**
  * Testsuite for implementations of the SubmodelRepository interface
  * 
- * @author schnicke, danish, kammognie, zhang
+ * @author schnicke, danish, kammognie, zhangzai
  *
  */
 public abstract class SubmodelRepositorySuite {
@@ -296,6 +296,7 @@ public abstract class SubmodelRepositorySuite {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+		
 		try {
 			repo.setFileValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "SampleJsonFile.json", getInputStreamOfFileFromClasspath("SampleJsonFile.json"));
 		} catch (IOException e) {
