@@ -26,7 +26,6 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import java.util.List;
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
@@ -34,6 +33,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -219,9 +220,12 @@ public interface SubmodelRepository {
 	 * @param idShortPath
 	 *            the IdShort of the file element
 	 * @return
+	 * 
 	 * @throws ElementDoesNotExistException
+	 * @throws ElementNotAFileException
+	 * @throws FileDoesNotExistException
 	 */
-	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath);
+	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException;
 	
 	/**
 	 * Uploads a file to a file submodelelement
@@ -232,11 +236,11 @@ public interface SubmodelRepository {
 	 *            the IdShort of the file element
 	 * @param file           
 	 *            the file object to upload
-	 * @return
+	 *            
 	 * @throws ElementDoesNotExistException
-	 * @throws IOException 
+	 * @throws ElementNotAFileException
 	 */
-	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream);
+	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException;
 
 	/**
 	 * Deletes the file of a file submodelelement
@@ -245,8 +249,10 @@ public interface SubmodelRepository {
 	 *            the Submodel id
 	 * @param idShortPath
 	 *            the IdShort of the file element
-	 * @return
+	 *            
 	 * @throws ElementDoesNotExistException
+	 * @throws ElementNotAFileException
+	 * @throws FileDoesNotExistException
 	 */
-	public void deleteFileValue(String submodelId, String idShortPath);
+	public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException;
 }

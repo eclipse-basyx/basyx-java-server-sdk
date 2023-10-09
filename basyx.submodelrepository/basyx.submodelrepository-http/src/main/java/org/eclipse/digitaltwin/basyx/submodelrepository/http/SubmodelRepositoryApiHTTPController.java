@@ -200,16 +200,20 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 	@Override
 	public ResponseEntity<Void> putFileByPath(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, String fileName, @Valid MultipartFile file) {
+		InputStream fileInputstream = null;
 		try {
-			InputStream fileInputstream = file.getInputStream();
+			fileInputstream = file.getInputStream();
 			repository.setFileValue(submodelIdentifier.getIdentifier(), idShortPath, fileName, fileInputstream);
-			fileInputstream.close();
+			closeInputStream(fileInputstream);
 			return new ResponseEntity<Void>(HttpStatus.OK);
 		} catch (ElementDoesNotExistException e) {
+			closeInputStream(fileInputstream);
 			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
 		} catch (ElementNotAFileException e) {
+			closeInputStream(fileInputstream);
 			return new ResponseEntity<Void>(HttpStatus.PRECONDITION_FAILED);
 		} catch (IOException e) {
+			closeInputStream(fileInputstream);
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -253,5 +257,16 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		OperationResult operationResult = new OperationResult();
 		operationResult.setOutputArguments(Arrays.asList(result));
 		return operationResult;
+	}
+	
+	private void closeInputStream(InputStream fileInputstream) {
+		if (fileInputstream == null)
+			return;
+		
+		try {
+			fileInputstream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

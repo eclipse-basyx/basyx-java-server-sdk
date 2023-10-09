@@ -244,6 +244,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	@Override
 	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) {
 		throwIfSubmodelDoesNotExist(submodelId);
+		
 		SubmodelElement submodelElement = submodelServices.get(submodelId).getSubmodelElement(idShortPath);
 
 		throwIfSmElementIsNotAFile(submodelElement);
@@ -275,7 +276,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		try (FileOutputStream outStream = new FileOutputStream(targetFile)) {
 			IOUtils.copy(inputStream, outStream);
 		} catch (IOException e) {
-			throw new FileHandlingException();
+			throw new FileHandlingException(fileName);
 		}
 
 		FileBlobValue fileValue = new FileBlobValue(fileSmElement.getContentType(), filePath);

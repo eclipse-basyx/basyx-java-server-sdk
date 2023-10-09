@@ -33,4 +33,16 @@ package org.eclipse.digitaltwin.basyx.core.exceptions;
  */
 @SuppressWarnings("serial")
 public class FeatureNotImplementedException extends RuntimeException {
+	
+	public FeatureNotImplementedException() {
+		super();
+	}
+	
+	public FeatureNotImplementedException(String featureName) {
+		super(getMessage(featureName));
+	}
+
+	private static String getMessage(String featureName) {
+		return "Feature " + featureName + " is not implemented yet";
+	}
 }

@@ -331,7 +331,7 @@ public abstract class SubmodelRepositorySuite {
 	}
 	
 	@Test
-	public void deleteFile(){
+	public void deleteFile() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		
 		try {
