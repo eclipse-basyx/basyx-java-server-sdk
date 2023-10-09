@@ -40,6 +40,10 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.utils.StringUtils;
@@ -227,8 +231,16 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	@Override
 	public Submodel getSubmodelByIdMetadata(String submodelId) {
 		Submodel submodel = getSubmodel(submodelId);
-		submodel.setSubmodelElements(null);
-		return submodel;
+		try {
+			String submodelAsJSON = new JsonSerializer().write(submodel);
+			Submodel submodelDeepCopy = new JsonDeserializer().readReferable(submodelAsJSON, Submodel.class);
+			submodelDeepCopy.setSubmodelElements(null);
+			return submodelDeepCopy;
+		} catch (DeserializationException e) {
+			throw new RuntimeException("Unable to deserialize the Submodel", e);
+		} catch (SerializationException e) {
+			throw new RuntimeException("Unable to serialize the Submodel", e);
+		}
 	}
 
 	@Override
