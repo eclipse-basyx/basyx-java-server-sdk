@@ -27,7 +27,7 @@ http://localhost:1500/shells/aHR0cHM6Ly9odHctYmVybGluLmRlL2lkcy9hYXMvZGVtb2Fhc3Y
 http://localhost:1500/shells/aHR0cHM6Ly9leGFtcGxlLmNvbS9pZHMvc20vMjQxMV83MTYwXzAxMzJfNDUyMw==
 ```
 
-![alt text](Docs/Figs/RegisterAAS.png "Register Asset Administration Shells")
+![alt text](RegisterAAS.png "Register Asset Administration Shells")
 
 The example project includes some more shells to try out which include SubmodelElements that have currently no frontend representation. Here, a provisional visualization is shown.
 
