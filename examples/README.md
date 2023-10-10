@@ -1,6 +1,8 @@
 # BaSyx V2 Examples
 This folder contains example configurations and docker compose files for setting up the BaSyx V2 infrastructure.
 
+## Simple Example
+
 After executing 
 
 ```bash
@@ -46,3 +48,6 @@ http://localhost:8081/shells/aHR0cHM6Ly9hY3BsdC5vcmcvVGVzdF9Bc3NldEFkbWluaXN0cmF
 ```bash
 http://localhost:8081/shells/aHR0cHM6Ly9hY3BsdC5vcmcvVGVzdF9Bc3NldEFkbWluaXN0cmF0aW9uU2hlbGxfTWlzc2luZw==
 ```
+
+## BaSyx with NGINX
+See the separate [NGINX example](BaSyxNGINX) for a comprehensive setup leveraging NGINX.
