@@ -36,4 +36,4 @@ http://localhost/aas-repo/aHR0cHM6Ly9hY3BsdC5vcmcvVGVzdF9Bc3NldEFkbWluaXN0cmF0aW
 http://localhost/aas-repo/aHR0cHM6Ly9hY3BsdC5vcmcvVGVzdF9Bc3NldEFkbWluaXN0cmF0aW9uU2hlbGxfTWlzc2luZw==
 ```
 
-![alt text](RegisterAAS.png "Register Asset Administration Shells")
+![alt text](../RegisterAAS.png "Register Asset Administration Shells")
