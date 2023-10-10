@@ -11,6 +11,9 @@ The following off-the-shelf components are available:
 * [AAS Environment](basyx.aasenvironment)
 * [AAS Registry](basyx.aasregistry)
 
+## Examples
+We are providing easy to use [examples](examples) that can be leveraged for setting up your own AAS infrastructure.
+
 ## Contributing
 
 If you would like to contribute, please notice the [contribution guidelines](CONTRIBUTING.md). The overall process is described in the [Eclipse wiki](https://wiki.eclipse.org/BaSyx_/_Developer_/_Contributing).
