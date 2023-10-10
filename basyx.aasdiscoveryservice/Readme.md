@@ -1,5 +1,5 @@
-# Eclipse BaSyx - ConceptDescription Repository 
-Eclipse BaSyx provides the ConceptDescription Repository as off-the-shelf component:
+# Eclipse BaSyx - Aas Discovery Service
+Eclipse BaSyx provides the Aas Discovery Service as off-the-shelf component:
 
     docker run --name=cd-repo -p:8081:8081 -v C:/tmp/application.properties:/application/application.properties eclipsebasyx/conceptdescription-repository:2.0.0-SNAPSHOT 
 
