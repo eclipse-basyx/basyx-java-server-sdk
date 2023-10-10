@@ -28,8 +28,6 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
 
 import org.springframework.boot.SpringApplication;
-import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**

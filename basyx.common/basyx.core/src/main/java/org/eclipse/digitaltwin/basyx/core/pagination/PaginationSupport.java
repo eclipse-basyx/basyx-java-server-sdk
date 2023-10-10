@@ -53,7 +53,12 @@ public class PaginationSupport<T extends Object> {
 		tStream = applyLimit(pInfo, tStream);
 
 		List<T> resultList = tStream.collect(Collectors.toList());
-		String cursor = computeNextCursor(resultList);
+		String cursor;
+		if (pInfo.hasLimit() && resultList.size() < pInfo.getLimit()) {
+			cursor = null; // got less than requested
+		} else {
+			cursor = computeNextCursor(resultList, pInfo);
+		}
 		return new CursorResult<>(cursor, resultList);
 	}
 
@@ -64,18 +69,20 @@ public class PaginationSupport<T extends Object> {
 		return aStream;
 	}
 
-	private String computeNextCursor(List<T> list) {
+	private String computeNextCursor(List<T> list, PaginationInfo pInfo) {
+		if (!pInfo.hasLimit()) {
+			return null;
+		}
 		if (!list.isEmpty()) {
 			T last = list.get(list.size() - 1);
-			String lastId = idResolver.apply(last);
-			return sortedMap.higherKey(lastId);
+			return idResolver.apply(last);
 		}
 		return null;
 	}
 
 	private Map<String, T> getCursorView(PaginationInfo info) {
 		if (info.hasCursor()) {
-			return sortedMap.tailMap(info.getCursor());
+			return sortedMap.tailMap(info.getCursor(), false);
 		} else {
 			return sortedMap;
 		}

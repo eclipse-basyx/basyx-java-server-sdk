@@ -36,7 +36,8 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositoryS
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.junit.Test;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
@@ -45,6 +46,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	private final String CONNECTION_URL = "mongodb://mongoAdmin:mongoPassword@localhost:27017";
 	private final MongoClient CLIENT = MongoClients.create(CONNECTION_URL);
 	private final MongoTemplate TEMPLATE = new MongoTemplate(CLIENT, "BaSyxTestDb");
+	private final GridFsTemplate GRIDFS_TEMPLATE = new GridFsTemplate(TEMPLATE.getMongoDatabaseFactory(), TEMPLATE.getConverter(), "TestSMEFiles");
 	private final InMemorySubmodelServiceFactory SUBMODEL_SERVICE_FACTORY = new InMemorySubmodelServiceFactory();
 	private static final String CONFIGURED_SM_REPO_NAME = "configured-sm-repo-name";
 
@@ -52,7 +54,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	protected SubmodelRepository getSubmodelRepository() {
 		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
 
-		return new MongoDBSubmodelRepositoryFactory(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY).create();
+		return new MongoDBSubmodelRepositoryFactory(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, GRIDFS_TEMPLATE).create();
 	}
 
 	@Override
@@ -62,13 +64,13 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 		// TODO: Remove this after MongoDB uses AAS4J serializer
 		submodels.forEach(this::removeInvokableFromInvokableOperation);
 
-		return new MongoDBSubmodelRepositoryFactory(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, submodels).create();
+		return new MongoDBSubmodelRepositoryFactory(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, submodels, CONFIGURED_SM_REPO_NAME, GRIDFS_TEMPLATE).create();
 	}
-	
+
 	@Test
 	public void getConfiguredMongoDBSmRepositoryName() {
-		SubmodelRepository repo = new MongoDBSubmodelRepository(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, CONFIGURED_SM_REPO_NAME);
-		
+		SubmodelRepository repo = new MongoDBSubmodelRepository(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, CONFIGURED_SM_REPO_NAME, GRIDFS_TEMPLATE);
+
 		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
 	}
 
@@ -85,10 +87,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	}
 
 	private void removeInvokableFromInvokableOperation(Submodel sm) {
-		sm.getSubmodelElements().stream()
-		.filter(InvokableOperation.class::isInstance)
-		.map(InvokableOperation.class::cast)
-		.forEach(o -> o.setInvokable(null));
+		sm.getSubmodelElements().stream().filter(InvokableOperation.class::isInstance).map(InvokableOperation.class::cast).forEach(o -> o.setInvokable(null));
 	}
 
 }

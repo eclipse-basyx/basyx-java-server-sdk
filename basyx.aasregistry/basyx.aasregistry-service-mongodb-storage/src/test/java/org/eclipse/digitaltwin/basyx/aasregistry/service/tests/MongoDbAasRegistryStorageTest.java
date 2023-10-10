@@ -26,9 +26,7 @@ package org.eclipse.digitaltwin.basyx.aasregistry.service.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 import org.bson.Document;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetKind;
@@ -38,46 +36,29 @@ import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.MongoDbConfiguration;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.ShellDescriptorSearchRequests;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.ShellDescriptorSearchRequests.GroupedQueries;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.MongoDbAasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.SearchQueryBuilder;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.utility.DockerImageName;
 
 import com.mongodb.ExplainVerbosity;
 import com.mongodb.client.MongoCollection;
 
-@TestPropertySource(properties = { "registry.type=mongodb", "spring.data.mongodb.database=aasregistry" })
+@TestPropertySource(properties = { "registry.type=mongodb", "spring.data.mongodb.database=aasregistry"
+		, "spring.data.mongodb.uri=mongodb://mongoAdmin:mongoPassword@localhost:27017" })
 @ContextConfiguration(classes = { MongoDbConfiguration.class })
 @EnableAutoConfiguration
 public class MongoDbAasRegistryStorageTest extends AasRegistryStorageTest {
 
-	@Value("${spring.data.mongodb.database}")
-	private static String DATABASE_NAME;
-
-	@ClassRule
-	public static final MongoDBContainer MONGODB_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:5.0.10"));
-
 	@Autowired
 	private MongoTemplate template;
 
-	@DynamicPropertySource
-	static void assignAdditionalProperties(DynamicPropertyRegistry registry) throws InterruptedException, ExecutionException {
-		String uri = MONGODB_CONTAINER.getConnectionString() + "/" + DATABASE_NAME;
-		registry.add("spring.data.mongodb.uri", () -> uri);
-	}
 
 	@Test
 	public void whenGetAllByFullFilter_NotAllDocumentsScannedButIndexUsed() {

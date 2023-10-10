@@ -1,1 +1,1 @@
-{"paging_metadata":{"cursor":"dummyAasIdentifier"},"result":[{"modelType":"AssetAdministrationShell","assetInformation":{"assetKind":"Instance","globalAssetId":"globalAssetId"},"id":"customIdentifier","idShort":"ExampleMotor"}]}
+{"paging_metadata":{"cursor":"customIdentifier"},"result":[{"modelType":"AssetAdministrationShell","assetInformation":{"assetKind":"Instance","globalAssetId":"globalAssetId"},"id":"customIdentifier","idShort":"ExampleMotor"}]}

@@ -35,14 +35,16 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEve
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
-public class RegistrationEventSendingSubmodelRegistryStorage implements SubmodelRegistryStorage {
 
-	@lombok.experimental.Delegate
-	private final SubmodelRegistryStorage storage;
+public class RegistrationEventSendingSubmodelRegistryStorage extends SubmodelRegistryStorageDecorator {
 
 	@NonNull
 	private final RegistryEventSink eventSink;
+	
+	public RegistrationEventSendingSubmodelRegistryStorage(SubmodelRegistryStorage storage, RegistryEventSink sink) {
+		super(storage);
+		this.eventSink = sink;
+	}
 
 	@Override
 	public void insertSubmodelDescriptor(SubmodelDescriptor descr) throws SubmodelAlreadyExistsException {
