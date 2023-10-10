@@ -23,23 +23,24 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
-package org.eclipse.digitaltwin.basyx.submodelrepository.http;
-
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+package org.eclipse.digitaltwin.basyx.core.exceptions;
 
 /**
- * Spring application configured for tests.
+ * Indicates that the requested submodel element is not a File SubmodelElement
  * 
- * @author schnicke, danish, kammognie
+ * @author danish
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
-public class DummySubmodelRepositoryComponent {
+@SuppressWarnings("serial")
+public class ElementNotAFileException extends RuntimeException {
+	public ElementNotAFileException() {
+	}
 
-	public static void main(String[] args) {
-		SpringApplication.run(DummySubmodelRepositoryComponent.class, args);
+	public ElementNotAFileException(String elementId) {
+		super(getMsg(elementId));
+	}
+
+	private static String getMsg(String elementId) {
+		return "SubmodelElement with Id " + elementId + " is not a File";
 	}
 }

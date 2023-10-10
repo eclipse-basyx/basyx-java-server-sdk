@@ -23,23 +23,26 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
-package org.eclipse.digitaltwin.basyx.submodelrepository.http;
-
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+package org.eclipse.digitaltwin.basyx.core.exceptions;
 
 /**
- * Spring application configured for tests.
- * 
- * @author schnicke, danish, kammognie
+ * This exception is used for features where certain functionalities are not implemented yet.
+ *  
+ * @author zhangzai
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
-public class DummySubmodelRepositoryComponent {
+@SuppressWarnings("serial")
+public class FeatureNotImplementedException extends RuntimeException {
+	
+	public FeatureNotImplementedException() {
+		super();
+	}
+	
+	public FeatureNotImplementedException(String featureName) {
+		super(getMessage(featureName));
+	}
 
-	public static void main(String[] args) {
-		SpringApplication.run(DummySubmodelRepositoryComponent.class, args);
+	private static String getMessage(String featureName) {
+		return "Feature " + featureName + " is not implemented yet";
 	}
 }

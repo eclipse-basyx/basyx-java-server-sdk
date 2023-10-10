@@ -1,6 +1,7 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
 import java.util.List;
+import java.io.InputStream;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -9,6 +10,7 @@ import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelElementS
 import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelSerializer;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -184,6 +186,21 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	@Override
 	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
 		return decorated.invokeOperation(submodelId, idShortPath, input);
+	}
+
+	@Override
+	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) {
+		throw new FeatureNotImplementedException();
+	}
+
+	@Override
+	public void deleteFileValue(String identifier, String idShortPath) {
+		throw new FeatureNotImplementedException();
+	}
+
+	@Override
+	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream){
+		throw new FeatureNotImplementedException();
 	}
 
 }

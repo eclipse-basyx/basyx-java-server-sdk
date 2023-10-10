@@ -44,7 +44,7 @@ import org.junit.Test.None;
  *
  */
 public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
-	
+
 	private static final String CONFIGURED_SM_REPO_NAME = "configured-sm-repo-name";
 
 	@Override
@@ -58,12 +58,12 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	}
 
 	@Test
-    public void getConfiguredInMemorySmRepositoryName() {
+	public void getConfiguredInMemorySmRepositoryName() {
 		SubmodelRepository repo = new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), CONFIGURED_SM_REPO_NAME);
-		
+
 		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
 	}
-	
+
 	@Test(expected = CollidingIdentifierException.class)
 	public void idCollisionDuringConstruction() {
 		Collection<Submodel> submodelsWithCollidingIds = createSubmodelCollectionWithCollidingIds();
@@ -83,4 +83,5 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	private Collection<Submodel> createSubmodelCollectionWithUniqueIds() {
 		return Arrays.asList(DummySubmodelFactory.createSimpleDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
 	}
+
 }

@@ -23,23 +23,27 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
-package org.eclipse.digitaltwin.basyx.submodelrepository.http;
-
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+package org.eclipse.digitaltwin.basyx.core.exceptions;
 
 /**
- * Spring application configured for tests.
- * 
- * @author schnicke, danish, kammognie
+ * Indicates that the provided file could not be handled
+ *  
+ * @author zhangzai
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
-public class DummySubmodelRepositoryComponent {
-
-	public static void main(String[] args) {
-		SpringApplication.run(DummySubmodelRepositoryComponent.class, args);
+@SuppressWarnings("serial")
+public class FileHandlingException extends RuntimeException {
+	
+	public FileHandlingException() {
+		super();
 	}
+	
+	public FileHandlingException(String fileName) {
+		super(getMessage(fileName));
+	}
+
+	private static String getMessage(String fileName) {
+		return "Exception occurred while handling the file: " + fileName;
+	}
+	
 }
