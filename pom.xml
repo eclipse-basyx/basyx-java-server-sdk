@@ -22,6 +22,7 @@
 		<module>basyx.aasregistry</module>
 		<module>basyx.aasenvironment</module>
 		<module>basyx.conceptdescriptionrepository</module>
+		<module>basyx.aasdiscoveryservice</module>
 	</modules>
 	<name>BaSyx Parent</name>
 	<description>Parent POM for Eclipse BaSyx</description>

@@ -1,0 +1,49 @@
+{
+    "modelType": "ConceptDescription",
+    "administration": {
+        "revision": "2",
+        "version": "1.2"
+    },
+    "id": "7A7104BDAB57E184",
+    "idShort": "ConceptDescription",
+    "isCaseOf": [
+        {
+            "keys": [
+                {
+                    "type": "DataElement",
+                    "value": "DataElement"
+                }
+            ],
+            "type": "ModelReference"
+        },
+        {
+            "keys": [
+                {
+                    "type": "BasicEventElement",
+                    "value": "BasicEventElement"
+                }
+            ],
+            "type": "ExternalReference"
+        }
+    ],
+    "description": [
+        {
+            "language": "en",
+            "text": "Hello"
+        },
+        {
+            "language": "de",
+            "text": "Hallo"
+        }
+    ],
+    "displayName": [
+        {
+            "language": "en",
+            "text": "Concept Description"
+        },
+        {
+            "language": "de",
+            "text": "Konzeptbeschreibung"
+        }
+    ]
+}

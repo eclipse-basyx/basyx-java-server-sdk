@@ -1,0 +1,55 @@
+{
+  "paging_metadata": {},
+  "result": [
+    {
+      "modelType": "ConceptDescription",
+      "id": "7A7104BDA6544322",
+      "idShort": "BasicConDescCommonIsCaseOf",
+      "isCaseOf": [
+        {
+          "keys": [
+            {
+              "type": "Entity",
+              "value": "EntityKey"
+            }
+          ],
+          "type": "ExternalReference"
+        },
+        {
+          "keys": [
+            {
+              "type": "Capability",
+              "value": "CapabilityKey"
+            }
+          ],
+          "type": "ModelReference"
+        }
+      ]
+    },
+    {
+      "modelType": "ConceptDescription",
+      "id": "7A7104BDAH56TH2",
+      "idShort": "BasicConceptDescription",
+      "isCaseOf": [
+        {
+          "keys": [
+            {
+              "type": "ConceptDescription",
+              "value": "ConceptDescriptionKey"
+            }
+          ],
+          "type": "ExternalReference"
+        },
+        {
+          "keys": [
+            {
+              "type": "Capability",
+              "value": "CapabilityKey"
+            }
+          ],
+          "type": "ModelReference"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "paging_metadata": {},
+  "result": [
+    {
+      "modelType": "ConceptDescription",
+      "id": "7A7104BDA6544322",
+      "idShort": "BasicConDescCommonIsCaseOf",
+      "isCaseOf": [
+        {
+          "keys": [
+            {
+              "type": "Entity",
+              "value": "EntityKey"
+            }
+          ],
+          "type": "ExternalReference"
+        },
+        {
+          "keys": [
+            {
+              "type": "Capability",
+              "value": "CapabilityKey"
+            }
+          ],
+          "type": "ModelReference"
+        }
+      ]
+    },
+    {
+      "modelType": "ConceptDescription",
+      "administration": {
+        "revision": "2",
+        "version": "1.2"
+      },
+      "id": "7A7104BDAB57E184",
+      "idShort": "ConceptDescription",
+      "isCaseOf": [
+        {
+          "keys": [
+            {
+              "type": "DataElement",
+              "value": "DataElement"
+            }
+          ],
+          "type": "ModelReference"
+        },
+        {
+          "keys": [
+            {
+              "type": "BasicEventElement",
+              "value": "BasicEventElement"
+            }
+          ],
+          "type": "ExternalReference"
+        }
+      ],
+      "description": [
+        {
+          "language": "en",
+          "text": "Hello"
+        },
+        {
+          "language": "de",
+          "text": "Hallo"
+        }
+      ],
+      "displayName": [
+        {
+          "language": "en",
+          "text": "Concept Description"
+        },
+        {
+          "language": "de",
+          "text": "Konzeptbeschreibung"
+        }
+      ]
+    },
+    {
+      "modelType": "ConceptDescription",
+      "id": "7A7104BDAH56TH2",
+      "idShort": "BasicConceptDescription",
+      "isCaseOf": [
+        {
+          "keys": [
+            {
+              "type": "ConceptDescription",
+              "value": "ConceptDescriptionKey"
+            }
+          ],
+          "type": "ExternalReference"
+        },
+        {
+          "keys": [
+            {
+              "type": "Capability",
+              "value": "CapabilityKey"
+            }
+          ],
+          "type": "ModelReference"
+        }
+      ]
+    },
+    {
+      "modelType": "ConceptDescription",
+      "id": "7A7104IHTREFN4322",
+      "idShort": "ConDescWithDataSpec",
+      "isCaseOf": [
+        {
+          "keys": [
+            {
+              "type": "Entity",
+              "value": "EntityKey"
+            }
+          ],
+          "type": "ExternalReference"
+        },
+        {
+          "keys": [
+            {
+              "type": "DataElement",
+              "value": "DataElement"
+            }
+          ],
+          "type": "ModelReference"
+        }
+      ],
+      "embeddedDataSpecifications": [
+        {
+          "dataSpecification": {
+            "keys": [
+              {
+                "type": "ReferenceElement",
+                "value": "ReferenceElementKey"
+              }
+            ],
+            "type": "ExternalReference"
+          }
+        }
+      ]
+    }
+  ]
+}
