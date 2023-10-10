@@ -25,14 +25,12 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -54,6 +52,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ResourceUtils;
 
@@ -235,16 +234,20 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 
 	@Test
 	public void getFile() throws FileNotFoundException, IOException, ParseException {
+		String fileName = "BaSyx-Logo.png";
+		
+		byte[] expectedFile = readBytesFromClasspath(fileName);
+		
 		uploadFileToSubmodelElement(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT);
 		
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT));
 		assertEquals(HttpStatus.OK.value(), response.getCode());
-		
-		String received = BaSyxHttpTestUtils.getResponseAsString(response);
 
-		String fileName = "BaSyx-Logo.png";
-		
-		assertEquals(readFile("src/test/resources/" + fileName, Charset.defaultCharset()), new String(received.getBytes(), Charset.defaultCharset()));
+        byte[] actualFile = EntityUtils.toByteArray(response.getEntity());
+        
+        response.close();
+        
+        assertArrayEquals(expectedFile, actualFile);
 	}
 
 	@Test
@@ -307,12 +310,6 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(getURL(), submodelId) + "/submodel-elements/" + submodelElementIdShort + "/attachment?fileName=" + fileName;
 	}
 
-	private static String readFile(String path, Charset encoding) throws IOException {
-		byte[] encoded = Files.readAllBytes(Paths.get(path));
-		
-		return new String(encoded, encoding);
-	}
-
 	private void assertSubmodelCreationReponse(String submodelJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JsonProcessingException, JsonMappingException {
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
 		
@@ -370,7 +367,14 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	private String getSubmodelsPaginatedJson() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SubmodelsPaginated.json");
 	}
-
+	
+	private byte[] readBytesFromClasspath(String fileName) throws FileNotFoundException, IOException {
+		ClassPathResource classPathResource = new ClassPathResource(fileName);
+		InputStream in = classPathResource.getInputStream();
+		
+		return in.readAllBytes();
+	}
+	
 	protected List<Submodel> createSubmodels() {
 		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createOperationalDataSubmodel(), DummySubmodelFactory.createSimpleDataSubmodel());
 	}
