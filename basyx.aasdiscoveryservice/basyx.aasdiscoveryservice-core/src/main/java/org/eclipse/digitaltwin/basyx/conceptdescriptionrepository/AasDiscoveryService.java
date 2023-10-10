@@ -27,96 +27,62 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
 
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 /**
- * Specifies the overall ConceptDescriptionRepository API
+ * Specifies the overall AasDiscoveryService API
  * 
- * @author danish, kammognie
+ * @author danish, zhangzai
  *
  */
 public interface AasDiscoveryService {
 
 	/**
-	 * Retrieves all ConceptDescriptions from the repository
+	 * Returns a list of Asset Administration Shell ids based on asset identifiers
 	 * 
-	 * @return a list of all found ConceptDescriptions
+	 * @param pInfo
+	 * @param assetIds
+	 * @return a list of all matching Aas Ids
 	 */
-	public CursorResult<List<ConceptDescription>> getAllConceptDescriptions(PaginationInfo pInfo);
+	public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo,
+			List<String> assetIds);
 
 	/**
-	 * Retrieves all ConceptDescriptions from the repository matching the passed
-	 * idShort
+	 * Returns a list of asset identifier key-value-pairs based on an Asset
+	 * Administration Shell id
 	 * 
-	 * @param idShort
-	 * @return a list of all matched ConceptDescriptions
+	 * @param aasIdentifier
+	 * @return a list of asset identifiers
 	 */
-	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIdShort(String idShort, PaginationInfo pInfo);
+	public List<SpecificAssetID> getAllAssetLinksById(String aasIdentifier);
 
 	/**
-	 * Retrieves all ConceptDescriptions from the repository matching the passed
-	 * isCaseOf
+	 * Creates new asset identifier key-value-pairs linked to an Asset
+	 * Administration Shell for discoverable content. The existing content might
+	 * have to be deleted first.
 	 * 
-	 * @param isCaseOf
-	 * @return a list of all matched ConceptDescriptions
+	 * @param aasIdentifier
+	 * @param assetIds
+	 * @return a list of asset identifiers
 	 */
-	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIsCaseOf(Reference isCaseOf, PaginationInfo pInfo);
+	public List<SpecificAssetID> createAllAssetLinksById(String aasIdentifier, List<SpecificAssetID> assetIds);
 
 	/**
-	 * Retrieves all ConceptDescriptions from the repository matching the passed
-	 * dataSpecificationReference
+	 * Deletes all asset identifier key-value-pairs linked to an Asset Administration Shell
 	 * 
-	 * @param dataSpecificationReference
-	 * @return a list of all matched ConceptDescriptions
+	 * @param aasIdentifier
 	 */
-	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByDataSpecificationReference(Reference dataSpecificationReference, PaginationInfo pInfo);
+	public void deleteAllAssetLinksById(String aasIdentifier);
 
 	/**
-	 * Retrieves the ConceptDescription with the specific id
+	 * Returns the name of the service
 	 * 
-	 * @param conceptDescriptionId
-	 * @return the requested ConceptDescription
-	 * @throws ElementDoesNotExistException
-	 */
-	public ConceptDescription getConceptDescription(String conceptDescriptionId) throws ElementDoesNotExistException;
-
-	/**
-	 * Updates an existing ConceptDescription
-	 * 
-	 * @param conceptDescriptionId
-	 * @param conceptDescription
-	 * @throws ElementDoesNotExistException
-	 */
-	public void updateConceptDescription(String conceptDescriptionId, ConceptDescription conceptDescription) throws ElementDoesNotExistException;
-
-	/**
-	 * Creates a new ConceptDescription
-	 * 
-	 * @param conceptDescription
-	 * @throws CollidingIdentifierException
-	 */
-	public void createConceptDescription(ConceptDescription conceptDescription) throws CollidingIdentifierException;
-
-	/**
-	 * Deletes a ConceptDescription
-	 * 
-	 * @param conceptDescriptionId
-	 * @throws ElementDoesNotExistException
-	 */
-	public void deleteConceptDescription(String conceptDescriptionId) throws ElementDoesNotExistException;
-	
-	/**
-	 * Returns the name of the repository
-	 * 
-	 * @return repoName
+	 * @return service-name
 	 */
 	public default String getName() {
-		return "cd-repo";
+		return "aas-discovery-service";
 	}
-  
+
 }
