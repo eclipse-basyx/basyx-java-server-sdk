@@ -142,6 +142,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-service-authorization</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasregistry-service-mongodb-storage</artifactId>
 				<version>${project.version}</version>
 			</dependency>

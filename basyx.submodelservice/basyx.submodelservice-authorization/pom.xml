@@ -29,7 +29,6 @@
         <dependency>
             <groupId>org.eclipse.digitaltwin.basyx</groupId>
             <artifactId>basyx.core</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -38,7 +37,6 @@
         <dependency>
             <groupId>org.eclipse.digitaltwin.basyx</groupId>
             <artifactId>basyx.authorization</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

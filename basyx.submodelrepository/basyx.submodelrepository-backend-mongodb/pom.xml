@@ -40,7 +40,6 @@
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.authorization</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>
