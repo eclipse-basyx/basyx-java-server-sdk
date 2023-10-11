@@ -56,7 +56,7 @@ public interface AasDiscoveryService {
 	 * @param aasIdentifier
 	 * @return a list of asset identifiers
 	 */
-	public List<SpecificAssetID> getAllAssetLinksById(String aasIdentifier);
+	public List<SpecificAssetID> getAllAssetLinksById(String shellIdentifier);
 
 	/**
 	 * Creates new asset identifier key-value-pairs linked to an Asset
@@ -67,14 +67,14 @@ public interface AasDiscoveryService {
 	 * @param assetIds
 	 * @return a list of asset identifiers
 	 */
-	public List<SpecificAssetID> createAllAssetLinksById(String aasIdentifier, List<SpecificAssetID> assetIds);
+	public List<SpecificAssetID> createAllAssetLinksById(String shellIdentifier, List<SpecificAssetID> assetIds);
 
 	/**
 	 * Deletes all asset identifier key-value-pairs linked to an Asset Administration Shell
 	 * 
 	 * @param aasIdentifier
 	 */
-	public void deleteAllAssetLinksById(String aasIdentifier);
+	public void deleteAllAssetLinksById(String shellIdentifier);
 
 	/**
 	 * Returns the name of the service

@@ -27,256 +27,126 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
-import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAdministrativeInformation;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetID;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
-import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.exceptions.AssetLinkDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Test;
 
 /**
- * Testsuite for implementations of the ConceptDescriptionRepository interface
+ * Testsuite for implementations of the {@link AasDiscoveryService} interface
  * 
- * @author schnicke, danish, kammognie
+ * @author danish, zhangzai
  *
  */
 public abstract class AasDiscoveryServiceSuite {
-	protected abstract AasDiscoveryService getConceptDescriptionRepository();
-
-	protected abstract AasDiscoveryService getConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions);
-
+	
+	protected abstract AasDiscoveryService getAasDiscoveryService();
+	
 	private final PaginationInfo noLimitPaginationInfo = new PaginationInfo(0, "");
 
 	@Test
-	public void getAllConceptDescriptionsPreconfigured() {
-		Collection<ConceptDescription> expectedConceptDescriptions = DummyAasDiscoveryServiceFactory.getConceptDescriptions();
-
-		AasDiscoveryService repo = getConceptDescriptionRepository(expectedConceptDescriptions);
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptions(noLimitPaginationInfo)
-				.getResult();
-
-		assertEquals(4, actualConceptDescriptions.size());
-		assertConceptDescriptionsAreContained(expectedConceptDescriptions, actualConceptDescriptions);
+	public void getAllAssetAdministrationShellIdsByAssetLink() {
+		createMultipleDummyAasAssetLink();
+		
+		List<String> expectedResult = new ArrayList<>(List.of("TestAasID1", "TestAasID2"));
+		
+		List<String> assetIds = new ArrayList<>(List.of("AssetID1", "AssetID2"));
+				
+		List<String> actualResult = getAasDiscoveryService().getAllAssetAdministrationShellIdsByAssetLink(noLimitPaginationInfo, assetIds).getResult();
+	
+		assertEquals(expectedResult.size(), actualResult.size());
+		assertEquals(expectedResult, actualResult);
 	}
 
 	@Test
-	public void getAllConceptDescriptionsWithIdShortPreconfigured() {
-		Collection<ConceptDescription> allConceptDescriptions = DummyAasDiscoveryServiceFactory.getConceptDescriptions();
-		Collection<ConceptDescription> expectedDescriptions = Arrays.asList(DummyAasDiscoveryServiceFactory.createBasicConceptDescription());
+	public void getAllAssetLinksById() {
+		createMultipleDummyAasAssetLink();
+		
+		List<SpecificAssetID> expectedResult = Arrays.asList(createDummySpecificAssetID("DummyAssetName3", "DummyAsset_3_Value"), createDummySpecificAssetID("DummyAssetName4", "DummyAsset_4_Value"));
+		
+		String shellIdentifier = "TestAasID2";
+				
+		List<SpecificAssetID> actualResult = getAasDiscoveryService().getAllAssetLinksById(shellIdentifier);
 
-		AasDiscoveryService repo = getConceptDescriptionRepository(allConceptDescriptions);
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIdShort("BasicConceptDescription", noLimitPaginationInfo)
-				.getResult();
-
-		assertEquals(1, actualConceptDescriptions.size());
-		assertConceptDescriptionsAreContained(expectedDescriptions, actualConceptDescriptions);
-	}
-
-	@Test
-	public void getAllConceptDescriptionsWithIsCaseOfPreconfigured() {
-		Reference reference = new DefaultReference.Builder().keys(Arrays.asList(new DefaultKey.Builder().type(KeyTypes.DATA_ELEMENT)
-				.value("DataElement")
-				.build()))
-				.type(ReferenceTypes.MODEL_REFERENCE)
-				.build();
-
-		Collection<ConceptDescription> allConceptDescriptions = DummyAasDiscoveryServiceFactory.getConceptDescriptions();
-		Collection<ConceptDescription> expectedDescriptions = Arrays.asList(DummyAasDiscoveryServiceFactory.createConceptDescription(), DummyAasDiscoveryServiceFactory.createBasicConceptDescriptionWithDataSpecification());
-
-		AasDiscoveryService repo = getConceptDescriptionRepository(allConceptDescriptions);
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIsCaseOf(reference, noLimitPaginationInfo)
-				.getResult();
-
-		assertEquals(2, actualConceptDescriptions.size());
-		assertConceptDescriptionsAreContained(expectedDescriptions, actualConceptDescriptions);
-	}
-
-	@Test
-	public void getAllConceptDescriptionsWithDataSpecPreconfigured() {
-		Reference reference = new DefaultReference.Builder().keys(Arrays.asList(new DefaultKey.Builder().type(KeyTypes.REFERENCE_ELEMENT)
-				.value("ReferenceElementKey")
-				.build()))
-				.type(ReferenceTypes.EXTERNAL_REFERENCE)
-				.build();
-
-		Collection<ConceptDescription> allConceptDescriptions = DummyAasDiscoveryServiceFactory.getConceptDescriptions();
-		Collection<ConceptDescription> expectedDescriptions = Arrays.asList(DummyAasDiscoveryServiceFactory.createBasicConceptDescriptionWithDataSpecification());
-
-		AasDiscoveryService repo = getConceptDescriptionRepository(allConceptDescriptions);
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByDataSpecificationReference(reference, noLimitPaginationInfo)
-				.getResult();
-
-		assertEquals(1, actualConceptDescriptions.size());
-		assertConceptDescriptionsAreContained(expectedDescriptions, actualConceptDescriptions);
-	}
-
-	@Test
-	public void getAllConceptDescriptionsEmpty() {
-		AasDiscoveryService repo = getConceptDescriptionRepository();
-		Collection<ConceptDescription> conceptDescriptions = repo.getAllConceptDescriptions(noLimitPaginationInfo)
-				.getResult();
-
-		assertIsEmpty(conceptDescriptions);
-	}
-
-	@Test
-	public void getSpecificConceptDescription() {
-		AasDiscoveryService repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-
-		ConceptDescription conceptDescription = DummyAasDiscoveryServiceFactory.createConceptDescription();
-		ConceptDescription retrieved = repo.getConceptDescription(conceptDescription.getId());
-
-		assertEquals(conceptDescription, retrieved);
-	}
-
-	@Test(expected = ElementDoesNotExistException.class)
-	public void getSpecificNonExistingConceptDescription() {
-		AasDiscoveryService repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		repo.getConceptDescription("doesNotExist");
-	}
-
-	@Test
-	public void updateExistingConceptDescription() {
-		String id = AasDiscoveryServiceSuiteHelper.CONCEPT_DESCRIPTION_ID;
-		ConceptDescription expected = createDummyConceptDescription(id);
-
-		AasDiscoveryService repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		repo.updateConceptDescription(id, expected);
-
-		assertEquals(expected, repo.getConceptDescription(id));
-	}
-
-	@Test(expected = ElementDoesNotExistException.class)
-	public void updateNonExistingConceptDescription() {
-		String id = "notExisting";
-		ConceptDescription doesNotExist = createDummyConceptDescription(id);
-
-		AasDiscoveryService repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		repo.updateConceptDescription(id, doesNotExist);
-	}
-
-	@Test(expected = IdentificationMismatchException.class)
-	public void updateExistingCDWithMismatchId() {
-		String id = AasDiscoveryServiceSuiteHelper.CONCEPT_DESCRIPTION_ID;
-		ConceptDescription newCd = createDummyConceptDescription("mismatchId");
-
-		AasDiscoveryService repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		repo.updateConceptDescription(id, newCd);
-	}
-
-	@Test
-	public void createConceptDescription() {
-		String id = "newConceptDescription";
-		ConceptDescription expectedConceptDescription = createDummyConceptDescription(id);
-
-		AasDiscoveryService repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		repo.createConceptDescription(expectedConceptDescription);
-
-		ConceptDescription retrieved = repo.getConceptDescription(id);
-		assertEquals(expectedConceptDescription, retrieved);
-	}
-
-	@Test(expected = CollidingIdentifierException.class)
-	public void createConceptDescriptionWithCollidingId() {
-		AasDiscoveryService repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		ConceptDescription conceptDescription = repo.getConceptDescription(AasDiscoveryServiceSuiteHelper.CONCEPT_DESCRIPTION_ID);
-
-		repo.createConceptDescription(conceptDescription);
-	}
-
-	@Test
-	public void deleteConceptDescription() {
-		AasDiscoveryService repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		repo.deleteConceptDescription(AasDiscoveryServiceSuiteHelper.CONCEPT_DESCRIPTION_ID);
-
-		try {
-			repo.getConceptDescription(AasDiscoveryServiceSuiteHelper.CONCEPT_DESCRIPTION_ID);
-			fail();
-		} catch (ElementDoesNotExistException expected) {
-		}
-	}
-
-	@Test(expected = ElementDoesNotExistException.class)
-	public void deleteNonExistingConceptDescription() {
-		AasDiscoveryService repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		repo.deleteConceptDescription("nonExisting");
+		assertEquals(expectedResult.size(), actualResult.size());
+		assertEquals(expectedResult, actualResult);
 	}
 	
 	@Test
-	public void getDefaultConceptDescriptionRepositoryName() {
-		AasDiscoveryService repo = getConceptDescriptionRepository();
+	public void createAllAssetLinksById() {
+		String shellIdentifier = "TestAasID3";
 		
-		assertEquals("cd-repo", repo.getName());
+		List<SpecificAssetID> expectedAssetIds = Arrays.asList(createDummySpecificAssetID("DummyAssetName4", "DummyAsset_4_Value"), createDummySpecificAssetID("DummyAssetName5", "DummyAsset_5_Value"));
+		
+		List<SpecificAssetID> createdAssetIds = getAasDiscoveryService().createAllAssetLinksById(shellIdentifier, expectedAssetIds);
+		assertEquals(expectedAssetIds, createdAssetIds);
+		
+				
+		List<SpecificAssetID> actualAssetIds = getAasDiscoveryService().getAllAssetLinksById(shellIdentifier);
+		assertEquals(expectedAssetIds.size(), actualAssetIds.size());
+		assertEquals(expectedAssetIds, actualAssetIds);
 	}
-
+	
+	@Test(expected = CollidingAssetLinkException.class)
+	public void createExistingAllAssetLinksById() {
+		String shellIdentifier = "ExistingAASId";
+		
+		createSingleDummyAasAssetLink(shellIdentifier);
+		
+		getAasDiscoveryService().createAllAssetLinksById(shellIdentifier, new ArrayList<>());
+	}
+	
 	@Test
-	public void allContextDescriptionPaginated() {
-		AasDiscoveryService repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		PaginationInfo pInfo = new PaginationInfo(1, "");
-		CursorResult<List<ConceptDescription>> paginatedConceptDescriptions = repo.getAllConceptDescriptions(pInfo);
-		assertEquals(1, paginatedConceptDescriptions.getResult()
-				.size());
+	public void deleteAllAssetLinksById() {
+		String shellIdentifier = "TestAasID1";
+		
+		createMultipleDummyAasAssetLink();
+		
+		getAasDiscoveryService().deleteAllAssetLinksById(shellIdentifier); // Deleting the link
+		
+		List<SpecificAssetID> actualResult = getAasDiscoveryService().getAllAssetLinksById(shellIdentifier);
+		
+		assertTrue(actualResult.isEmpty());
 	}
-
-	@Test
-	public void paginatedGetAllConceptDescriptionsWithIsCaseOfPreconfigured() {
-		Reference reference = new DefaultReference.Builder().keys(Arrays.asList(new DefaultKey.Builder().type(KeyTypes.DATA_ELEMENT)
-				.value("DataElement")
-				.build()))
-				.type(ReferenceTypes.MODEL_REFERENCE)
-				.build();
-
-		Collection<ConceptDescription> allConceptDescriptions = DummyAasDiscoveryServiceFactory.getConceptDescriptions();
-		ConceptDescription expectedDescription = DummyAasDiscoveryServiceFactory.createConceptDescription();
-
-		AasDiscoveryService repo = getConceptDescriptionRepository(allConceptDescriptions);
-		PaginationInfo pInfo = new PaginationInfo(1, "");
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIsCaseOf(reference, pInfo)
-				.getResult();
-
-		assertEquals(1, actualConceptDescriptions.size());
-		assertEquals(expectedDescription, actualConceptDescriptions.stream()
-				.findFirst()
-				.get());
+	
+	@Test(expected = AssetLinkDoesNotExistException.class)
+	public void deleteNonExistingAllAssetLinksById() {
+		String shellIdentifier = "NonExistingLink";
+		
+		getAasDiscoveryService().deleteAllAssetLinksById(shellIdentifier); // Deleting the link
 	}
-
-	private void assertConceptDescriptionsAreContained(Collection<ConceptDescription> expectedConceptDescriptions, Collection<ConceptDescription> actualConceptDescriptions) {
-		assertTrue(actualConceptDescriptions.containsAll(expectedConceptDescriptions));
+	
+	private void createMultipleDummyAasAssetLink() {
+		String dummyShellIdentifier_1 = "TestAasID1";
+		String dummyShellIdentifier_2 = "TestAasID2";
+		
+		SpecificAssetID specificAssetID_1 = createDummySpecificAssetID("DummyAssetName1", "DummyAsset_1_Value");
+		SpecificAssetID specificAssetID_2 = createDummySpecificAssetID("DummyAssetName2", "DummyAsset_2_Value");
+		
+		SpecificAssetID specificAssetID_3 = createDummySpecificAssetID("DummyAssetName3", "DummyAsset_3_Value");
+		SpecificAssetID specificAssetID_4 = createDummySpecificAssetID("DummyAssetName4", "DummyAsset_4_Value");
+		
+		getAasDiscoveryService().createAllAssetLinksById(dummyShellIdentifier_1, Arrays.asList(specificAssetID_1, specificAssetID_2));
+		getAasDiscoveryService().createAllAssetLinksById(dummyShellIdentifier_2, Arrays.asList(specificAssetID_3, specificAssetID_4));
 	}
-
-	private ConceptDescription createDummyConceptDescription(String id) {
-		return new DefaultConceptDescription.Builder().id(id)
-				.isCaseOf(new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE)
-						.build())
-				.administration(new DefaultAdministrativeInformation.Builder().revision("6")
-						.version("2.4.5")
-						.build())
-				.build();
+	
+	private void createSingleDummyAasAssetLink(String shellId) {
+		
+		SpecificAssetID specificAssetID_1 = createDummySpecificAssetID("TestAsset1", "TestAssetValue1");
+		SpecificAssetID specificAssetID_2 = createDummySpecificAssetID("TestAsset2", "TestAssetValue2");
+		
+		getAasDiscoveryService().createAllAssetLinksById(shellId, Arrays.asList(specificAssetID_1, specificAssetID_2));
 	}
-
-	private AasDiscoveryService getConceptDescriptionRepositoryWithDummyConceptDescriptions() {
-		Collection<ConceptDescription> expectedConceptDescriptions = DummyAasDiscoveryServiceFactory.getConceptDescriptions();
-		AasDiscoveryService repo = getConceptDescriptionRepository(expectedConceptDescriptions);
-		return repo;
-	}
-
-	private void assertIsEmpty(Collection<ConceptDescription> conceptDescriptions) {
-		assertTrue(conceptDescriptions.isEmpty());
+	
+	private SpecificAssetID createDummySpecificAssetID(String name, String value) {
+		return new DefaultSpecificAssetID.Builder().name(name).value(value).build();
 	}
 
 }
