@@ -10,6 +10,7 @@ The following off-the-shelf components are available:
 * [ConceptDescription Repository](basyx.conceptdescriptionrepository)
 * [AAS Environment](basyx.aasenvironment)
 * [AAS Registry](basyx.aasregistry)
+* [Submodel Registry](basyx.submodelregistry)
 
 ## Examples
 We are providing easy to use [examples](examples) that can be leveraged for setting up your own AAS infrastructure.
