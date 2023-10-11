@@ -24,34 +24,33 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.authorization;
 
-import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springdoc.core.customizers.OpenApiCustomiser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.condition.NoneNestedConditions;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
-import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@EnableAutoConfiguration(exclude = {
-        SecurityAutoConfiguration.class,
-        //SecurityFilterAutoConfiguration.class,
-        ManagementWebSecurityAutoConfiguration.class,
-        //UserDetailsServiceAutoConfiguration.class,
-        OAuth2ResourceServerAutoConfiguration.class
-})
 @Configuration
-@Conditional(DisableSpringSecurityIfNoAuthorizationConfig.NoAuthorizationCondition.class)
-public class DisableSpringSecurityIfNoAuthorizationConfig {
-    public static class NoAuthorizationCondition extends NoneNestedConditions {
-        public NoAuthorizationCondition() {
-            super(ConfigurationPhase.PARSE_CONFIGURATION);
-        }
+@ConditionalOnProperty(CommonAuthorizationConfig.ENABLED_PROPERTY_KEY)
+public class OpenAPISecurityConfig {
+    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri:#{null}}")
+    private String issuerUri;
 
-        @ConditionalOnProperty(value = CommonAuthorizationConfig.ENABLED_PROPERTY_KEY, havingValue = "true")
-        public static class AuthorizationCondition {
-        }
+    @Bean
+    public OpenApiCustomiser openApiCustomiser() {
+        return (openAPI -> {
+            final String securitySchemeName = "oidc";
+            final SecurityScheme securityScheme = new SecurityScheme();
+            securityScheme.setName(securitySchemeName);
+            securityScheme.setType(SecurityScheme.Type.OPENIDCONNECT);
+            securityScheme.setScheme("bearer");
+            securityScheme.setOpenIdConnectUrl(this.issuerUri + "/.well-known/openid-configuration");
+            securityScheme.setBearerFormat("JWT");
+
+            openAPI.addSecurityItem(new SecurityRequirement().addList(securitySchemeName));
+            openAPI.getComponents().addSecuritySchemes(securitySchemeName, securityScheme);
+        });
     }
 }
