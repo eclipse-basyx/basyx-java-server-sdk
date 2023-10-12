@@ -24,15 +24,16 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.feature;
 
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.AasDiscoveryServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.AasDiscoveryService;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.AasDiscoveryServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.BaSyxFeature;
 
 /**
- * Base interface for all features for the ConceptDescription
+ * Base interface for all features for the {@link AasDiscoveryService}
  * 
- * @author schnicke, danish
+ * @author schnicke
  *
  */
 public interface AasDiscoveryServiceFeature extends BaSyxFeature<AasDiscoveryServiceFactory> {

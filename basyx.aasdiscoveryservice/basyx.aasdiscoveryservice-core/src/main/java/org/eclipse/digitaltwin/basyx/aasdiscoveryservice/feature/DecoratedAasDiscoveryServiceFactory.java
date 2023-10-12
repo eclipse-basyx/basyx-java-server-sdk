@@ -23,12 +23,12 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.feature;
 
 import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.AasDiscoveryServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.AasDiscoveryService;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.AasDiscoveryServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.DecoratedFactory;
 
 /**

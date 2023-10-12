@@ -24,7 +24,7 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice;
 
 /**
  * Interface for a factory creating a {@link AasDiscoveryService}
@@ -35,7 +35,7 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
 public interface AasDiscoveryServiceFactory {
 	
 	/**
-	 * Creates a new ConceptDescriptionRepository
+	 * Creates a new {@link AasDiscoveryService}
 	 * 
 	 * @return
 	 */

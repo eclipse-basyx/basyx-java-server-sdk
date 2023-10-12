@@ -62,6 +62,6 @@ public class MongoDBConceptDescriptionRepositoryFactory implements ConceptDescri
 
 	@Override
 	public ConceptDescriptionRepository create() {
-		return new MongoDBConceptDescriptionRepository(mongoTemplate, collectionName, cdRepositoryName);
+		return new MongoDBAasDiscoveryService(mongoTemplate, collectionName, cdRepositoryName);
 	}
 }

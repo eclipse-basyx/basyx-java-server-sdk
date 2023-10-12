@@ -52,20 +52,20 @@ import com.mongodb.client.result.DeleteResult;
  * @author danish, kammognie
  *
  */
-public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRepository {
+public class MongoDBAasDiscoveryService implements AasDiscoveryService {
 	private static final String IDJSONPATH = "id";
 
 	private MongoTemplate mongoTemplate;
 	private String collectionName;
 	private String cdRepositoryName;
 
-	public MongoDBConceptDescriptionRepository(MongoTemplate mongoTemplate, String collectionName) {
+	public MongoDBAasDiscoveryService(MongoTemplate mongoTemplate, String collectionName) {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
 		configureIndexForConceptDescriptionId(mongoTemplate);
 	}
 	
-	public MongoDBConceptDescriptionRepository(MongoTemplate mongoTemplate, String collectionName, String cdRepositoryName) {
+	public MongoDBAasDiscoveryService(MongoTemplate mongoTemplate, String collectionName, String cdRepositoryName) {
 		this(mongoTemplate, collectionName);
 		this.cdRepositoryName = cdRepositoryName;
 	}

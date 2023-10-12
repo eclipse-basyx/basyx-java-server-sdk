@@ -35,7 +35,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.MongoDBConceptDescriptionRepository;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.MongoDBAasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.MongoDBConceptDescriptionRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.ConceptDescriptionRepositorySuite;
 import org.junit.Test;
@@ -46,7 +46,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
 /**
- * Tests the {@link MongoDBConceptDescriptionRepository}
+ * Tests the {@link MongoDBAasDiscoveryService}
  * 
  * @author danish, kammognie
  *
@@ -84,7 +84,7 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 		
 		clearDatabase(template);
 		
-		ConceptDescriptionRepository repo = new MongoDBConceptDescriptionRepository(template, COLLECTION, CONFIGURED_CD_REPO_NAME);
+		ConceptDescriptionRepository repo = new MongoDBAasDiscoveryService(template, COLLECTION, CONFIGURED_CD_REPO_NAME);
 		
 		assertEquals(CONFIGURED_CD_REPO_NAME, repo.getName());
 	}
