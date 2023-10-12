@@ -57,7 +57,7 @@ public abstract class AasDiscoveryServiceSuite {
 		
 		List<String> expectedResult = new ArrayList<>(List.of("TestAasID1", "TestAasID2"));
 		
-		List<String> assetIds = new ArrayList<>(List.of("AssetID1", "AssetID2"));
+		List<String> assetIds = new ArrayList<>(List.of("DummyAsset_1_Value", "DummyAsset_3_Value"));
 				
 		List<String> actualResult = getAasDiscoveryService().getAllAssetAdministrationShellIdsByAssetLink(noLimitPaginationInfo, assetIds).getResult();
 	
