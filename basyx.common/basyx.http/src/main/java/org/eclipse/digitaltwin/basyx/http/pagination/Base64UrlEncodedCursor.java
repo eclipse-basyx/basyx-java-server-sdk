@@ -25,9 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.http.pagination;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 
 /**
  * Represents a Base64URL encoded cursor
@@ -37,52 +35,30 @@ import java.util.Base64;
  */
 public class Base64UrlEncodedCursor {
 
+	private final String encodedCursor;
+
 	public Base64UrlEncodedCursor(String encodedCursor) {
 		this.encodedCursor = encodedCursor;
 	}
 
-	private final String encodedCursor;
-
 	public String getDecodedCursor() {
-		return decodeCursor(encodedCursor);
+		return Base64UrlEncoder.decode(encodedCursor);
 	}
 
 	public String getEncodedCursor() {
 		return encodedCursor;
 	}
 
+	@Override
+	public String toString() {
+		return "Base64UrlEncodedCursor [cursor=" + encodedCursor + "]";
+	}
+
 	public static Base64UrlEncodedCursor fromUnencodedCursor(String unencodedCursor) {
 		return new Base64UrlEncodedCursor(encodeCursor(unencodedCursor));
 	}
 
-	public static String encodeCursor(String decodedCursor) {
-		// There are multiple ways to handle the padding - we decided
-		// to cut off the padding, since multiple encodings may lead to confusion.
-		// https://www.rfc-editor.org/rfc/rfc4648#section-5
-		// https://www.rfc-editor.org/rfc/rfc4648#section-3.2
-		byte[] bytes = decodedCursor.getBytes(StandardCharsets.UTF_8);
-		String base64urlEncoded = Base64.getUrlEncoder().encodeToString(bytes);
-		return base64urlEncoded.replaceAll("=", "");
-	}
-
-	public static String decodeCursor(String encodedCursor) {
-		// Some will encode the padding...
-		if (encodedCursor.contains("%3D")) {
-			encodedCursor = URLDecoder.decode(encodedCursor, StandardCharsets.US_ASCII);
-		}
-		// Some will cut the padding...
-		var incompleteFourChars = encodedCursor.length() % 4;
-
-		if (incompleteFourChars > 0) {
-			encodedCursor += "==".substring(0, 4 - incompleteFourChars);
-		}
-
-		byte[] decode = Base64.getUrlDecoder().decode(encodedCursor.getBytes(StandardCharsets.US_ASCII));
-		return new String(decode, StandardCharsets.UTF_8);
-	}
-
-	@Override
-	public String toString() {
-		return "Base64UrlEncodedCursor [cursor=" + encodedCursor + "]";
+	public static String encodeCursor(String unencodedCursor) {
+		return Base64UrlEncoder.encode(unencodedCursor);
 	}
 }
