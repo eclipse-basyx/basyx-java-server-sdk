@@ -445,27 +445,27 @@
 			<!-- basyx.basyx.aasdiscoveryservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.basyx.aasdiscoveryservice-core</artifactId>
+				<artifactId>basyx.aasdiscoveryservice-core</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<!-- <dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.basyx.aasdiscoveryservice-http</artifactId>
+				<artifactId>basyx.aasdiscoveryservice-http</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.basyx.aasdiscoveryservice-backend-inmemory</artifactId>
+				<artifactId>basyx.aasdiscoveryservice-backend-inmemory</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.basyx.aasdiscoveryservice-backend-mongodb</artifactId>
+				<artifactId>basyx.aasdiscoveryservice-backend-mongodb</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.basyx.aasdiscoveryservice.component</artifactId>
+				<artifactId>basyx.aasdiscoveryservice.component</artifactId>
 				<version>${revision}</version>
 			</dependency> -->
 
@@ -672,31 +672,31 @@
 			<!-- basyx.basyx.aasdiscoveryservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.basyx.aasdiscoveryservice-core</artifactId>
+				<artifactId>basyx.aasdiscoveryservice-core</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
 			<!-- <dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.basyx.aasdiscoveryservice-http</artifactId>
+				<artifactId>basyx.aasdiscoveryservice-http</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.basyx.aasdiscoveryservice-backend-inmemory</artifactId>
+				<artifactId>basyx.aasdiscoveryservice-backend-inmemory</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.basyx.aasdiscoveryservice-backend-mongodb</artifactId>
+				<artifactId>basyx.aasdiscoveryservice-backend-mongodb</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.basyx.aasdiscoveryservice.component</artifactId>
+				<artifactId>basyx.aasdiscoveryservice.component</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency> -->
