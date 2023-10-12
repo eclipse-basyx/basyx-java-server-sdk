@@ -107,7 +107,6 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 		if (cursor != null)
 			decodedCursor = cursor.getDecodedCursor();
 
-
 		PaginationInfo paginationInfo = new PaginationInfo(limit, decodedCursor);
 		CursorResult<List<AssetAdministrationShell>> paginatedAAS = aasRepository.getAllAas(paginationInfo);
 		

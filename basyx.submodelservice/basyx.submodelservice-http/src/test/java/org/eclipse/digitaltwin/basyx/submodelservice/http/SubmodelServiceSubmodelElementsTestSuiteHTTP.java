@@ -71,10 +71,10 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 
 	@Test
 	public void getPaginatedSubmodelElements() throws FileNotFoundException, IOException, ParseException {
-		String requestedPaginatedSubmodelElements = requestPaginatedSubmodelElementsJSON();
+		String actualPaginatedSubmodelElements = requestPaginatedSubmodelElementsJSON();
 
-		String paginatedSubmodelElementJSON = getPaginatedSubmodelElementsJSON();
-		BaSyxHttpTestUtils.assertSameJSONContent(paginatedSubmodelElementJSON, requestedPaginatedSubmodelElements);
+		String expectedPaginatedSubmodelElementJSON = getPaginatedSubmodelElementsJSON();
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedPaginatedSubmodelElementJSON, actualPaginatedSubmodelElements);
 	}
 
 	@Test

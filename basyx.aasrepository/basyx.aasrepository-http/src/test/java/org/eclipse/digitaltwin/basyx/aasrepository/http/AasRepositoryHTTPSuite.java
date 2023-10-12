@@ -274,7 +274,9 @@ public abstract class AasRepositoryHTTPSuite {
 	@Test
 	public void paginationResult() throws FileNotFoundException, IOException, ParseException {
 		createMultipleAasOnServer();
+
 		CloseableHttpResponse httpResponse = BaSyxHttpTestUtils.executeGetOnURL(getURL() + "?limit=1&cursor=" + ENCODED_CURSOR);
+
 		String response = BaSyxHttpTestUtils.getResponseAsString(httpResponse);
 		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedAas1JSONString(), response);
 	}

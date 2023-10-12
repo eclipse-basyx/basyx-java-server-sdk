@@ -41,8 +41,10 @@ public class Base64UrlEncoder {
 		// https://www.rfc-editor.org/rfc/rfc4648#section-5
 		// https://www.rfc-editor.org/rfc/rfc4648#section-3.2
 		byte[] bytes = plainValue.getBytes(StandardCharsets.UTF_8);
+
 		String base64urlEncoded = Base64.getUrlEncoder().encodeToString(bytes);
-		return base64urlEncoded.replaceAll("=", "");
+
+		return base64urlEncoded.replace("=", "");
 	}
 
 	public static String decode(String encodedValue) {
@@ -50,12 +52,12 @@ public class Base64UrlEncoder {
 		if (encodedValue.contains("%3D")) {
 			encodedValue = URLDecoder.decode(encodedValue, StandardCharsets.US_ASCII);
 		}
+
 		// Some will cut the padding...
 		var incompleteFourChars = encodedValue.length() % 4;
 
-		if (incompleteFourChars > 0) {
+		if (incompleteFourChars > 0)
 			encodedValue += "==".substring(0, 4 - incompleteFourChars);
-		}
 
 		byte[] decode = Base64.getUrlDecoder().decode(encodedValue.getBytes(StandardCharsets.US_ASCII));
 		return new String(decode, StandardCharsets.UTF_8);
