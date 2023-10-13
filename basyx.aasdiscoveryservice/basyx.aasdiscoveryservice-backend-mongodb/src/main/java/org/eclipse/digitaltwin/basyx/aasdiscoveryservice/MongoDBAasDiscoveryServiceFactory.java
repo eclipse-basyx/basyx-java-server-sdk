@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,21 +39,21 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-public class MongoDBConceptDescriptionRepositoryFactory implements ConceptDescriptionRepositoryFactory {
+public class MongoDBAasDiscoveryServiceFactory implements AasDiscoveryServiceFactory {
 
 	private MongoTemplate mongoTemplate;
 	private String collectionName;
 	private String cdRepositoryName;
 
 	@Autowired(required = false)
-	public MongoDBConceptDescriptionRepositoryFactory(MongoTemplate mongoTemplate,
+	public MongoDBAasDiscoveryServiceFactory(MongoTemplate mongoTemplate,
 			@Value("${basyx.conceptdescriptionrepository.mongodb.collectionName:conceptdescription-repo}") String collectionName) {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
 	}
 
 	@Autowired(required = false)
-	public MongoDBConceptDescriptionRepositoryFactory(MongoTemplate mongoTemplate,
+	public MongoDBAasDiscoveryServiceFactory(MongoTemplate mongoTemplate,
 			@Value("${basyx.conceptdescriptionrepository.mongodb.collectionName:conceptdescription-repo}") String collectionName,
 			@Value("${basyx.cdrepo.name:cd-repo}") String cdRepositoryName) {
 		this(mongoTemplate, collectionName);
@@ -61,7 +61,7 @@ public class MongoDBConceptDescriptionRepositoryFactory implements ConceptDescri
 	}
 
 	@Override
-	public ConceptDescriptionRepository create() {
+	public AasDiscoveryService create() {
 		return new MongoDBAasDiscoveryService(mongoTemplate, collectionName, cdRepositoryName);
 	}
 }
