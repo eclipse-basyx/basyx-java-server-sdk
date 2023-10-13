@@ -70,7 +70,7 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 
 		CursorResult<List<ConceptDescription>> filteredResult = repoFilter.filter(idShort, isCaseOfReference, dataSpecificationReference, pInfo);
 
-		String encodedCursor = getEncodedCursor(filteredResult);
+		String encodedCursor = getEncodedCursorFromCursorResult(filteredResult);
 
 		GetConceptDescriptionsResult paginatedConceptDescription = new GetConceptDescriptionsResult();
 		paginatedConceptDescription.setResult(filteredResult.getResult());
@@ -114,8 +114,8 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 		return identifier == null ? null : identifier.getIdentifier();
 	}
 
-	private String getEncodedCursor(CursorResult<?> cursorResult) {
-		if (cursorResult.getCursor() == null)
+	private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
+		if (cursorResult == null || cursorResult.getCursor() == null)
 			return null;
 
 		return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());

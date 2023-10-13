@@ -113,7 +113,7 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 
 		GetAssetAdministrationShellsResult result = new GetAssetAdministrationShellsResult();
 		
-		String encodedCursor = getEncodedCursor(paginatedAAS);
+		String encodedCursor = getEncodedCursorFromCursorResult(paginatedAAS);
 		
 		result.setResult(paginatedAAS.getResult());
 		result.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
@@ -135,7 +135,7 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 
 		GetReferencesResult result = new GetReferencesResult();
 
-		String encodedCursor = getEncodedCursor(submodelReferences);
+		String encodedCursor = getEncodedCursorFromCursorResult(submodelReferences);
 
 		result.setResult(submodelReferences.getResult());
 		result.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
@@ -160,8 +160,8 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
-	private String getEncodedCursor(CursorResult<?> cursorResult) {
-		if (cursorResult.getCursor() == null)
+	private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
+		if (cursorResult == null || cursorResult.getCursor() == null)
 			return null;
 
 		return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
