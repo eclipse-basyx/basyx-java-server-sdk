@@ -23,48 +23,34 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.http;
+package org.eclipse.digitaltwin.basyx.http.pagination;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
- * Represents a Base64URL encoded identifier
+ * Tests Base64UrlEncodedCursor
  * 
- * @author gordt, schnicke, mateusmolina
- *
+ * @author mateusmolina
+ * 
  */
-public class Base64UrlEncodedIdentifier {
+public class TestBase64UrlEncodedCursor {
 
-	private final String identifier;
+	private static final String DECODED_CURSOR = "testCursor";
 
-	/**
-	 * @param unencoded
-	 *            identifier
-	 */
-	public Base64UrlEncodedIdentifier(String identifier) {
-		this.identifier = identifier;
+	private static final String ENCODED_CURSOR = "dGVzdEN1cnNvcg";
+
+	@Test
+	public void encodedFromUnencodedCursor() {
+		Base64UrlEncodedCursor cursorObj = Base64UrlEncodedCursor.fromUnencodedCursor(DECODED_CURSOR);
+		assertEquals(ENCODED_CURSOR, cursorObj.getEncodedCursor());
 	}
 
-	/**
-	 * @return encoded identifier
-	 */
-	public String getIdentifier() {
-		return identifier;
-	}
-
-	public String getEncodedIdentifier() {
-		return encodeIdentifier(identifier);
-	}
-
-	@Override
-	public String toString() {
-		return "Base64UrlEncodedIdentifier [identifier=" + identifier + "]";
-	}
-
-	public static Base64UrlEncodedIdentifier fromEncodedValue(String value) {
-		return new Base64UrlEncodedIdentifier(Base64UrlEncoder.decode(value));
-	}
-
-	public static String encodeIdentifier(String unencodedIdentifier) {
-		return Base64UrlEncoder.encode(unencodedIdentifier);
+	@Test
+	public void decodedFromEncodedCursor() {
+		Base64UrlEncodedCursor cursorObj = new Base64UrlEncodedCursor(ENCODED_CURSOR);
+		assertEquals(DECODED_CURSOR, cursorObj.getDecodedCursor());
 	}
 
 }
