@@ -101,6 +101,7 @@ public class InMemorySubmodelService implements SubmodelService {
 		return submodelElementValueFactory.create(getSubmodelElement(idShort)).getValue();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setSubmodelElementValue(String idShort, SubmodelElementValue value) throws ElementDoesNotExistException {
 		SubmodelElementValueMapperFactory submodelElementValueFactory = new SubmodelElementValueMapperFactory();
