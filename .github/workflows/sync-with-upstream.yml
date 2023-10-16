@@ -26,7 +26,7 @@ on:
   - cron: "0 1 * * *" # this updates the Repository every day on 01am.
 
 jobs:
-  build:
+  sync:
     runs-on: ubuntu-latest
     steps:
       - name: GitHub Sync to Upstream Repository
