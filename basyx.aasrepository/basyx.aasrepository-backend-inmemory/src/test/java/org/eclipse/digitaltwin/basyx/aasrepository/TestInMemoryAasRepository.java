@@ -27,26 +27,34 @@
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
 import static org.junit.Assert.assertEquals;
+
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.junit.Test;
 
 /**
  * Tests the {@link InMemoryAasRepository} name
- *  
- * @author schnicke, kammognie
+ * 
+ * @author schnicke, kammognie, mateusmolina
  *
  */
 public class TestInMemoryAasRepository extends AasRepositorySuite {
 	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
 	
+	private AasBackendProvider backendProvider = new InMemoryBackendProvider();
+
 	@Override
-	protected AasRepositoryFactory getAasRepositoryFactory() {
-		return new InMemoryAasRepositoryFactory(new InMemoryAasServiceFactory());
+	protected AasRepository getAasRepository() {
+		return new CrudAasRepository(backendProvider, new InMemoryAasServiceFactory());
 	}
-	
+
+	@Override
+	protected void sanitizeRepository() {
+		backendProvider.getCrudRepository().deleteAll();
+	}
+
 	@Test
     public void getConfiguredInMemoryAasRepositoryName() {
-		AasRepository repo = new InMemoryAasRepository(new InMemoryAasServiceFactory(), CONFIGURED_AAS_REPO_NAME);
+		AasRepository repo = new CrudAasRepository(backendProvider, new InMemoryAasServiceFactory(), CONFIGURED_AAS_REPO_NAME);
 		
 		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
 	}
