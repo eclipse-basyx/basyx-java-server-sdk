@@ -40,6 +40,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetReferences
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,35 +99,46 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 	}
 
 	@Override
-	public ResponseEntity<PagedResult> getAllAssetAdministrationShells(@Valid List<SpecificAssetID> assetIds, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid String cursor) {
+	public ResponseEntity<PagedResult> getAllAssetAdministrationShells(@Valid List<SpecificAssetID> assetIds, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor) {
 		if (limit == null)
 			limit = 100;
-		if (cursor == null)
-			cursor = "";
+		
+		String decodedCursor = "";
+		if (cursor != null)
+			decodedCursor = cursor.getDecodedCursor();
 
-		PaginationInfo paginationInfo = new PaginationInfo(limit, cursor);
+		PaginationInfo paginationInfo = new PaginationInfo(limit, decodedCursor);
 		CursorResult<List<AssetAdministrationShell>> paginatedAAS = aasRepository.getAllAas(paginationInfo);
+		
 
 		GetAssetAdministrationShellsResult result = new GetAssetAdministrationShellsResult();
+		
+		String encodedCursor = getEncodedCursorFromCursorResult(paginatedAAS);
+		
 		result.setResult(paginatedAAS.getResult());
-		result.setPagingMetadata(new PagedResultPagingMetadata().cursor(paginatedAAS.getCursor()));
+		result.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<PagedResult> getAllSubmodelReferencesAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Min(1) @Valid Integer limit, @Valid String cursor) {
+	public ResponseEntity<PagedResult> getAllSubmodelReferencesAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor) {
 		if (limit == null)
 			limit = 100;
-		if (cursor == null)
-			cursor = "";
 
-		PaginationInfo paginationInfo = new PaginationInfo(limit, cursor);
+		String decodedCursor = "";
+		if (cursor != null)
+			decodedCursor = cursor.getDecodedCursor();
+
+		PaginationInfo paginationInfo = new PaginationInfo(limit, decodedCursor);
 		CursorResult<List<Reference>> submodelReferences = aasRepository.getSubmodelReferences(aasIdentifier.getIdentifier(), paginationInfo);
 
 		GetReferencesResult result = new GetReferencesResult();
+
+		String encodedCursor = getEncodedCursorFromCursorResult(submodelReferences);
+
 		result.setResult(submodelReferences.getResult());
-		result.setPagingMetadata(new PagedResultPagingMetadata().cursor(submodelReferences.getCursor()));
+		result.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
@@ -148,4 +160,10 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
+	private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
+		if (cursorResult == null || cursorResult.getCursor() == null)
+			return null;
+
+		return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
+	}
 }

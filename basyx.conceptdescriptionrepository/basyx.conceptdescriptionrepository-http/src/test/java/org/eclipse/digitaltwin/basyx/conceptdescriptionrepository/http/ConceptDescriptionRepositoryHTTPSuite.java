@@ -35,6 +35,7 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.ConceptDescriptionRepositorySuiteHelper;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.DummyConceptDescriptionFactory;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -53,6 +54,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  */
 public abstract class ConceptDescriptionRepositoryHTTPSuite {
 	protected abstract String getURL();
+
+	private final String CURSOR = ConceptDescriptionRepositorySuiteHelper.BASIC_CONCEPT_DESCRIPTION_ID;
+	private final String ENCODED_CURSOR = Base64UrlEncodedCursor.encodeCursor(CURSOR);
 
 	@Before
 	@After
@@ -82,7 +86,7 @@ public abstract class ConceptDescriptionRepositoryHTTPSuite {
 	@Test
 	public void getAllConceptDescriptionsByDataSpecRefPreconfigured() throws IOException, ParseException {
 		String conceptDescriptionsJSON = getAllConceptDescriptionsByDataSpecRefJSON(getDataSpecReferenceJSON());
-		String expectedConceptDescriptionsJSON = getConceptDescriptionsWithDataSpecRef();
+		String expectedConceptDescriptionsJSON = getAllConceptDescriptionsWithDataSpecRef();
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionsJSON, conceptDescriptionsJSON);
 	}
 
@@ -182,9 +186,11 @@ public abstract class ConceptDescriptionRepositoryHTTPSuite {
 
 	@Test
 	public void paginatedResult() throws ParseException, IOException {
-		String conceptDescriptionsJSON = requestPaginatedConceptDescriptions(1, "7A7104IHTREFN4322");
-		String expectedDescriptionJson = getConceptDescriptionsWithDataSpecRef();
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedDescriptionJson, conceptDescriptionsJSON);
+		String actualConceptDescriptionsJSON = requestPaginatedConceptDescriptions(1, ENCODED_CURSOR);
+
+		String expectedDescriptionJSON = getConceptDescriptionsWithDataSpecRefWithPagination();
+
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedDescriptionJSON, actualConceptDescriptionsJSON);
 	}
 
 	@Test
@@ -288,8 +294,12 @@ public abstract class ConceptDescriptionRepositoryHTTPSuite {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("ConceptDescriptionWithIsCaseOf.json");
 	}
 
-	private String getConceptDescriptionsWithDataSpecRef() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("ConceptDescriptionWithDataSpec.json");
+	private String getAllConceptDescriptionsWithDataSpecRef() throws IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AllConceptDescriptionWithDataSpec.json");
+	}
+
+	private String getConceptDescriptionsWithDataSpecRefWithPagination() throws IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("ConceptDescriptionWithDataSpecWithPagination.json");
 	}
 
 	private String getReferenceJSON() throws IOException {

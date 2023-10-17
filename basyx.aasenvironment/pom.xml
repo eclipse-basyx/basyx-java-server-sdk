@@ -16,4 +16,5 @@
 		<module>basyx.aasenvironment-core</module>
 		<module>basyx.aasenvironment-http</module>
 	</modules>
+	
 </project>

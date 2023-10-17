@@ -37,13 +37,13 @@ import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorQuery;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorQuery.QueryTypeEnum;
 
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.UtilityClass;
 
-@UtilityClass
 class SearchMatchers {
 
+	private SearchMatchers() {		
+	}
 
-	public Map<String, List<BiPredicate<Object[], String>>> createMatchers(List<ShellDescriptorQuery> queryList) {
+	public static Map<String, List<BiPredicate<Object[], String>>> createMatchers(List<ShellDescriptorQuery> queryList) {
 		Map<String, List<BiPredicate<Object[], String>>> matchers = new HashMap<>();
 		for (ShellDescriptorQuery eachQuery : queryList) {
 			String path = eachQuery.getPath();
@@ -54,7 +54,7 @@ class SearchMatchers {
 	}
 	
 	
-	public BiPredicate<Object[], String> createMatcher(ShellDescriptorQuery query) {
+	public static BiPredicate<Object[], String> createMatcher(ShellDescriptorQuery query) {
 		QueryTypeEnum queryType = query.getQueryType();
 		String value = query.getValue();
 

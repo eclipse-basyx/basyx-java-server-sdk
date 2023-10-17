@@ -31,43 +31,43 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.SubmodelDescriptor;
 
-import lombok.experimental.UtilityClass;
-
-@UtilityClass
 public class ClientRegistryTestObjects {
 
-	public AssetAdministrationShellDescriptor newAssetAdministrationShellDescriptor(String id) {
+	private ClientRegistryTestObjects() {
+	}
+	
+	public static AssetAdministrationShellDescriptor newAssetAdministrationShellDescriptor(String id) {
 		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
 		descriptor.setId(id);
 		return descriptor;
 	}
 
-	public SubmodelDescriptor newSubmodelDescriptor(String id) {
+	public static SubmodelDescriptor newSubmodelDescriptor(String id) {
 		return newSubmodelDescriptorWithIdShort(id, null);
 	}
 
-	public SubmodelDescriptor newSubmodelDescriptorWithDescription(String id, String description) {
+	public static SubmodelDescriptor newSubmodelDescriptorWithDescription(String id, String description) {
 		SubmodelDescriptor descriptor = new SubmodelDescriptor();
 		descriptor.setId(id);
 		addDescription(descriptor, description);
 		return descriptor;
 	}
 
-	private void addDescription(SubmodelDescriptor descriptor, String description) {
+	private static void addDescription(SubmodelDescriptor descriptor, String description) {
 		if (description != null) {
 			LangStringTextType lString = newDescription(description);
 			descriptor.addDescriptionItem(lString);
 		}
 	}
 
-	private LangStringTextType newDescription(String sDescr) {
+	private static LangStringTextType newDescription(String sDescr) {
 		LangStringTextType descr = new LangStringTextType();
 		descr.setLanguage("de-DE");
 		descr.setText(sDescr);
 		return descr;
 	}
 
-	public SubmodelDescriptor newSubmodelDescriptorWithIdShort(String id, String idShort) {
+	public static SubmodelDescriptor newSubmodelDescriptorWithIdShort(String id, String idShort) {
 		SubmodelDescriptor descriptor = new SubmodelDescriptor();
 		descriptor.setId(id);
 		descriptor.setIdShort(idShort);
@@ -75,7 +75,7 @@ public class ClientRegistryTestObjects {
 		return descriptor;
 	}
 
-	public void addDefaultEndpoint(SubmodelDescriptor descriptor) {
+	public static void addDefaultEndpoint(SubmodelDescriptor descriptor) {
 		Endpoint endpoint = new Endpoint();
 		endpoint.setInterface("https://admin-shell.io/aas/API/3/0/SubmodelServiceSpecification/SSP-003");
 		ProtocolInformation protocolInfo = new ProtocolInformation();

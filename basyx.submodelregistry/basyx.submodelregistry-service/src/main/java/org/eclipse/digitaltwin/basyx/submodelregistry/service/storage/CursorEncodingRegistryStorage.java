@@ -32,14 +32,13 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Delegate;
+ 
 
-@RequiredArgsConstructor
-public class CursorEncodingRegistryStorage implements SubmodelRegistryStorage {
+public class CursorEncodingRegistryStorage extends SubmodelRegistryStorageDecorator {
 
-	@Delegate
-	private final SubmodelRegistryStorage storage;
+	public CursorEncodingRegistryStorage(SubmodelRegistryStorage storage) {
+		super(storage);
+	}
 	
 	@Override
 	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(@NonNull PaginationInfo pRequest) {
