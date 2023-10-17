@@ -35,12 +35,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Iterator;
+import org.apache.commons.io.IOUtils;
 
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.PackageDescription;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.junit.Test;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.core.DummyAASXFileServerFactory;
 
 /**
  * Testsuite for implementations of the {@link AASXFileServer} interface
@@ -49,134 +49,122 @@ import org.eclipse.digitaltwin.basyx.aasxfileserver.core.DummyAASXFileServerFact
  *
  */
 public abstract class AASXFileServerSuite {
-	
-	protected abstract AASXFileServer getAASXFileServer();		 
-		
+
+	protected abstract AASXFileServer getAASXFileServer();
+
 	@Test
 	public void getAllAASXPackageIds() {
-		
-		AASXFileServer server = getAASXFileServer();		
-		Collection<PackageDescription> packageDescriptions = DummyAASXFileServerFactory.getAllDummyAASXPackages(server);			
-			 
+
+		AASXFileServer server = getAASXFileServer();
+		Collection<PackageDescription> packageDescriptions = DummyAASXFileServerFactory.getAllDummyAASXPackages(server);
+
 		assertGetAllAASXPackageIds(packageDescriptions);
 	}
-	
+
 	@Test
 	public void getAllAASXPackageIdsEmpty() {
-		
-		AASXFileServer server = getAASXFileServer();	
-		Collection<PackageDescription> packageDescriptions = server.getAllAASXPackageIds();			
-				
-		assertIsEmpty(packageDescriptions);		
+
+		AASXFileServer server = getAASXFileServer();
+		Collection<PackageDescription> packageDescriptions = server.getAllAASXPackageIds();
+
+		assertTrue(packageDescriptions.isEmpty());
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getSpecificNonExistingPackageId() {
-		
+
 		AASXFileServer server = getAASXFileServer();
 		server.getAASXByPackageId("doesNotExist");
 	}
 
 	@Test
-	public void updateExistingAASXByPackageId() {				
-		
-		AASXFileServer server = getAASXFileServer();	
-		
-		PackageDescription expectedPackageDescription = DummyAASXFileServerFactory.createFirstDummyAASXPackage(server);	
-		
-	    updateAasxPackage(server, expectedPackageDescription.getPackageId(), DummyAASXFileServerFactory.SECOND_AAS_IDS , 
-	    		DummyAASXFileServerFactory.SECOND_FILE, DummyAASXFileServerFactory.SECOND_FILENAME);
-		
+	public void updateExistingAASXByPackageId() {
+
+		AASXFileServer server = getAASXFileServer();
+
+		PackageDescription expectedPackageDescription = DummyAASXFileServerFactory.createFirstDummyAASXPackage(server);
+
+		updateAasxPackage(server, expectedPackageDescription.getPackageId(), DummyAASXFileServerFactory.SECOND_AAS_IDS,
+				DummyAASXFileServerFactory.SECOND_FILE, DummyAASXFileServerFactory.SECOND_FILENAME);
+
 		Collection<PackageDescription> actualPackageDescription = server.getAllAASXPackageIds();
-				
+
 		assertUpdatedAASXPackageId(expectedPackageDescription, actualPackageDescription, server);
-	}	
+	}
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void updateNonExistingAASXByPackageId() {
-		
-		String packageId = "notExisting";		
-		AASXFileServer server = getAASXFileServer();		
-		server.updateAASXByPackageId(packageId, DummyAASXFileServerFactory.FIRST_AAS_IDS, 
-				DummyAASXFileServerFactory.FIRST_FILE, DummyAASXFileServerFactory.FIRST_FILENAME);
-	}	
-	
-	@Test
-	public void getAASXByPackageId() throws ElementDoesNotExistException, IOException {
+
+		String packageId = "notExisting";
 		
 		AASXFileServer server = getAASXFileServer();
-		PackageDescription packageDescription = DummyAASXFileServerFactory.createFirstDummyAASXPackage(server);			
-		InputStream actualValue = server.getAASXByPackageId(packageDescription.getPackageId());	
-		InputStream expectedValue = DummyAASXFileServerFactory.FIRST_FILE;	
-		
-		assertInputStreamsEqual(expectedValue, actualValue);
+
+		server.updateAASXByPackageId(packageId, DummyAASXFileServerFactory.FIRST_AAS_IDS, DummyAASXFileServerFactory.FIRST_FILE, DummyAASXFileServerFactory.FIRST_FILENAME);
+	}
+
+	@Test
+	public void getAASXByPackageId() throws ElementDoesNotExistException, IOException {
+
+		AASXFileServer server = getAASXFileServer();
+
+		PackageDescription packageDescription = DummyAASXFileServerFactory.createFirstDummyAASXPackage(server);
+
+		InputStream actualValue = server.getAASXByPackageId(packageDescription.getPackageId());
+		InputStream expectedValue = DummyAASXFileServerFactory.FIRST_FILE;
+
+		assertTrue(IOUtils.contentEquals(expectedValue, actualValue));
 	}
 
 	@Test
 	public void deleteAASXByPackageId() {
-		
+
 		AASXFileServer server = getAASXFileServer();
-		PackageDescription packageDescription = DummyAASXFileServerFactory.createFirstDummyAASXPackage(server);		
-		server.deleteAASXByPackageId(packageDescription.getPackageId()); 
+
+		PackageDescription packageDescription = DummyAASXFileServerFactory.createFirstDummyAASXPackage(server);
+
+		server.deleteAASXByPackageId(packageDescription.getPackageId());
+
 		try {
 			server.getAASXByPackageId(packageDescription.getPackageId());
 			fail();
 		} catch (ElementDoesNotExistException expected) {
 		}
-	}	
-	
+	}
+
 	@Test(expected = ElementDoesNotExistException.class)
 	public void deleteNonExistingAasxFileServer() {
-		
+
 		AASXFileServer server = getAASXFileServer();
 		server.deleteAASXByPackageId("nonExisting");
-	}	
-	
-	private void updateAasxPackage(AASXFileServer server, String packageId, List<String> expectedAasIds, InputStream secondFile,
-			String secondFilename) {
-		
-		server.updateAASXByPackageId(packageId, expectedAasIds, 
-				DummyAASXFileServerFactory.SECOND_FILE, DummyAASXFileServerFactory.SECOND_FILENAME);
-		
 	}
-	
-	private void assertGetAllAASXPackageIds(Collection<PackageDescription> packageDescriptions) {        
-        assertEquals(2, packageDescriptions.size());       
-               
-        Iterator<PackageDescription> iterator = packageDescriptions.iterator();
-        
-        PackageDescription expectedFirstPackage = iterator.next();
-        PackageDescription expectedSecondPackage = iterator.next();    
-        
-        assertTrue(packageDescriptions.containsAll(Arrays.asList(expectedFirstPackage, expectedSecondPackage)));          
-    }
-	
-	private void assertUpdatedAASXPackageId(PackageDescription expectedPackageDescription, Collection<PackageDescription> actualPackageDescriptions, AASXFileServer server) {
+
+	private void updateAasxPackage(AASXFileServer server, String packageId, List<String> expectedAasIds,
+			InputStream secondFile, String secondFilename) {
+
+		server.updateAASXByPackageId(packageId, expectedAasIds, DummyAASXFileServerFactory.SECOND_FILE, DummyAASXFileServerFactory.SECOND_FILENAME);
+	}
+
+	private void assertGetAllAASXPackageIds(Collection<PackageDescription> packageDescriptions) {
+		assertEquals(2, packageDescriptions.size());
+
+		Iterator<PackageDescription> iterator = packageDescriptions.iterator();
+
+		PackageDescription expectedFirstPackage = iterator.next();
+		PackageDescription expectedSecondPackage = iterator.next();
+
+		assertTrue(packageDescriptions.containsAll(Arrays.asList(expectedFirstPackage, expectedSecondPackage)));
+	}
+
+	private void assertUpdatedAASXPackageId(PackageDescription expectedPackageDescription,
+			Collection<PackageDescription> actualPackageDescriptions, AASXFileServer server) {
+		
 		assertEquals(1, actualPackageDescriptions.size());
-		assertTrue(actualPackageDescriptions.contains(expectedPackageDescription)); 
-		
-		InputStream actualAASXFile = server.getAASXByPackageId("1");		        	
-	    InputStream expectedAASXFile = DummyAASXFileServerFactory.SECOND_FILE;
-	        	
-	    assertEquals(expectedAASXFile,actualAASXFile);        	
-	}
-	
-	private void assertIsEmpty(Collection<PackageDescription> packageDescription) {		
-		assertTrue(packageDescription.isEmpty());
-	}	
+		assertTrue(actualPackageDescriptions.contains(expectedPackageDescription));
 
-	private boolean assertInputStreamsEqual(InputStream expectedValue, InputStream actualValue) throws IOException {
-	    int expectedByte;
-	    int actualByte;
+		InputStream actualAASXFile = server.getAASXByPackageId("1");
+		InputStream expectedAASXFile = DummyAASXFileServerFactory.SECOND_FILE;
 
-	    while ((expectedByte = expectedValue.read()) != -1) {
-	        actualByte = actualValue.read();
-
-	        if (expectedByte != actualByte) {
-	            return false;
-	        }
-	    }
-	    return actualValue.read() == -1;
+		assertEquals(expectedAASXFile, actualAASXFile);
 	}
 
 }

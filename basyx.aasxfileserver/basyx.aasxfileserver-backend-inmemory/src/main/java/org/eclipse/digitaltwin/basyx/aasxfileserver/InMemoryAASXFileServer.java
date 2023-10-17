@@ -45,12 +45,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 public class InMemoryAASXFileServer implements AASXFileServer {
 
 	private Map<String, Package> packageMap = new LinkedHashMap<>();
-	private AtomicInteger packageId = new AtomicInteger(0);
-
-	/**
-	 * Creates the InMemoryAASXFileServer
-	 */	
-	public InMemoryAASXFileServer() {}	
+	private AtomicInteger packageId = new AtomicInteger(0);	
 	
 	@Override
 	public Collection<PackageDescription> getAllAASXPackageIds() {
@@ -80,8 +75,10 @@ public class InMemoryAASXFileServer implements AASXFileServer {
 	public PackageDescription createAASXPackage(List<String> aasIds, InputStream file, String fileName)
 			throws CollidingIdentifierException {
 		
-		String newpackageId = String.valueOf(packageId.incrementAndGet());		
-		PackageDescription packageDescription = createPackageDescription(aasIds, newpackageId);		
+		String newpackageId = String.valueOf(packageId.incrementAndGet());
+		
+		PackageDescription packageDescription = createPackageDescription(aasIds, newpackageId);	
+		
 		createPackage(aasIds, file, fileName, newpackageId, packageDescription);
 
 		return packageDescription;
@@ -112,17 +109,25 @@ public class InMemoryAASXFileServer implements AASXFileServer {
 	}	
 	
 	private void createPackage(List<String> aasIds, InputStream file, String fileName, String newPackageId, PackageDescription packageDescription) {
-		PackagesBody packagesBody = createPackagesBody(aasIds, file, fileName);		
-		Package aasxPackage = new Package(newPackageId, packageDescription, packagesBody);		
+		PackagesBody packagesBody = createPackagesBody(aasIds, file, fileName);
+		
+		Package aasxPackage = new Package(newPackageId, packageDescription, packagesBody);	
+		
 		packageMap.put(newPackageId, aasxPackage);
 	}
 	
 	private void updateAASXPackage(String packageId, List<String> aasIds, InputStream file, String filename) {
-		Package aasxPackage = this.packageMap.get(packageId);		
-		aasxPackage.getPackagesBody().setAasIds(aasIds);
-		aasxPackage.getPackagesBody().setFileName(filename);		
-		aasxPackage.getPackagesBody().setFile(file);		
+		Package aasxPackage = this.packageMap.get(packageId);
+		
+		updatePackagesBody(aasIds, file, filename, aasxPackage.getPackagesBody());
+		
 		aasxPackage.getPackageDescription().setAasIds(aasIds);
+	}
+
+	private void updatePackagesBody(List<String> aasIds, InputStream file, String filename, PackagesBody packagesBody) {
+		packagesBody.setAasIds(aasIds);
+		packagesBody.setFileName(filename);
+		packagesBody.setFile(file);
 	}	
 	
 	private void throwIfAASXPackageIdDoesNotExist(String id) {

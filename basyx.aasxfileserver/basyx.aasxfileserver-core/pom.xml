@@ -10,7 +10,7 @@
 
 	<artifactId>basyx.aasxfileserver-core</artifactId>
 	<name>AASX File Server Core</name>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -21,5 +21,13 @@
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
 			<artifactId>model</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
 	</dependencies>
-</project>
+	
+	
+	</project>
