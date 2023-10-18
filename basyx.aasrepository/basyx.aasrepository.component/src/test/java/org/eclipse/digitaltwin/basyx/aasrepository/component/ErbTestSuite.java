@@ -25,6 +25,11 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.component;
 
-public class AASRepositoryI extends ErbTestSuite {
+import org.junit.Test;
 
+public class ErbTestSuite {
+	@Test
+	public void test() {
+		System.out.println("Hallo ich bin ein AAStest!");
+	}
 }

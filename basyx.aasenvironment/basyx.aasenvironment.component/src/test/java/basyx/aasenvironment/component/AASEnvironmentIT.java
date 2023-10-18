@@ -38,7 +38,7 @@ import org.junit.runners.Suite;
  */
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ // AASRepositoryI.class,
+@Suite.SuiteClasses({ // ASRepositoryI.class,
 		AASRepositoryIT.class, // test case 1
 // SubmodelRepositoryIT.class, // test case 2
 // ConceptDescriptionRepositoryIT.class
