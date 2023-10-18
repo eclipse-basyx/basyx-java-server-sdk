@@ -26,7 +26,6 @@
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -36,6 +35,7 @@ import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetID;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.AasDiscoveryService;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.model.AssetLink;
 import org.eclipse.digitaltwin.basyx.core.exceptions.AssetLinkDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
@@ -139,7 +139,7 @@ public abstract class AasDiscoveryServiceSuite {
 		getAasDiscoveryService().deleteAllAssetLinksById(shellIdentifier); // Deleting the link
 	}
 	
-	private void createMultipleDummyAasAssetLink(AasDiscoveryService discoveryService) {
+	public static List<AssetLink> createMultipleDummyAasAssetLink(AasDiscoveryService discoveryService) {
 		String dummyShellIdentifier_1 = "TestAasID1";
 		String dummyShellIdentifier_2 = "TestAasID2";
 		
@@ -151,6 +151,8 @@ public abstract class AasDiscoveryServiceSuite {
 		
 		discoveryService.createAllAssetLinksById(dummyShellIdentifier_1, Arrays.asList(specificAssetID_1, specificAssetID_2));
 		discoveryService.createAllAssetLinksById(dummyShellIdentifier_2, Arrays.asList(specificAssetID_3, specificAssetID_4));
+		
+		return Arrays.asList(new AssetLink(dummyShellIdentifier_1, Arrays.asList(specificAssetID_1, specificAssetID_2)), new AssetLink(dummyShellIdentifier_2, Arrays.asList(specificAssetID_3, specificAssetID_4)));
 	}
 	
 	protected void createSingleDummyAasAssetLink(String shellId, AasDiscoveryService discoveryService) {
@@ -161,7 +163,7 @@ public abstract class AasDiscoveryServiceSuite {
 		discoveryService.createAllAssetLinksById(shellId, Arrays.asList(specificAssetID_1, specificAssetID_2));
 	}
 	
-	protected SpecificAssetID createDummySpecificAssetID(String name, String value) {
+	protected static SpecificAssetID createDummySpecificAssetID(String name, String value) {
 		return new DefaultSpecificAssetID.Builder().name(name).value(value).build();
 	}
 

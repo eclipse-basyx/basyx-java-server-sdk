@@ -23,22 +23,29 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.documentation;
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http;
+import org.eclipse.digitaltwin.basyx.http.documentation.RepositoryApiDocumentationConfiguration;
+import org.springframework.context.annotation.Configuration;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import io.swagger.v3.oas.models.info.Info;
 
 /**
- * Spring application configured for tests.
+ * API documentation configuration for {@link ConceptDescriptionRepository}
  * 
- * @author schnicke, danish, kammognie
+ * @author danish
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
-public class DummyConceptDescriptionRepositoryComponent {
-	
-	public static void main(String[] args) {
-		SpringApplication.run(DummyConceptDescriptionRepositoryComponent.class, args);
+@Configuration
+public class AasDiscoveryServiceApiDocumentationConfiguration extends RepositoryApiDocumentationConfiguration {
+
+	private static final String TITLE = "BaSyx AAS Discovery Service";
+	private static final String DESCRIPTION = "AAS Discovery Service API";
+
+	@Override
+	protected Info apiInfo() {
+		return new Info().title(TITLE).description(DESCRIPTION).version(VERSION).contact(apiContact())
+				.license(apiLicence());
 	}
+
 }

@@ -23,26 +23,23 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.testconfig;
 
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.InMemoryConceptDescriptionRepository;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http;
+
+import org.eclipse.digitaltwin.basyx.http.CorsPathPatternProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Configuration for tests
  * 
- * @author danish, kammognie
+ * @author schnicke
  *
  */
 @Configuration
-public class DummyConfig {
+public class AasDiscoveryServiceConfiguration {
 
-		@Bean
-		@ConditionalOnMissingBean
-		public ConceptDescriptionRepository createConceptDescriptionRepository() {
-			return new InMemoryConceptDescriptionRepository();
-		}
+	@Bean
+	public CorsPathPatternProvider getConceptDescriptionRepoCorsUrlProvider() {
+		return new CorsPathPatternProvider("/lookup/shells/**");
+	}
 }

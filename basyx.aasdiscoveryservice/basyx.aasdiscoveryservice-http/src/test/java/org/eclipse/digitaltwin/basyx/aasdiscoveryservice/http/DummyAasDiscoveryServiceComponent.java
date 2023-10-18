@@ -24,22 +24,21 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http;
 
-import org.eclipse.digitaltwin.basyx.http.CorsPathPatternProvider;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
+ * Spring application configured for tests.
  * 
- * @author schnicke
+ * @author schnicke, danish, kammognie
  *
  */
-@Configuration
-public class ConceptDescriptionRepoConfiguration {
-
-	@Bean
-	public CorsPathPatternProvider getConceptDescriptionRepoCorsUrlProvider() {
-		return new CorsPathPatternProvider("/concept-descriptions/**");
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
+public class DummyAasDiscoveryServiceComponent {
+	
+	public static void main(String[] args) {
+		SpringApplication.run(DummyAasDiscoveryServiceComponent.class, args);
 	}
 }

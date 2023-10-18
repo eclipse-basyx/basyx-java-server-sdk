@@ -23,30 +23,41 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.documentation;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.testconfig;
 
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.http.documentation.RepositoryApiDocumentationConfiguration;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.AasDiscoveryService;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.MongoDBAasDiscoveryService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
-import io.swagger.v3.oas.models.info.Info;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 
 /**
- * API documentation configuration for {@link ConceptDescriptionRepository}
+ * Configuration for tests
  * 
  * @author danish
  *
  */
 @Configuration
-public class CDRepositoryApiDocumentationConfiguration extends RepositoryApiDocumentationConfiguration {
+public class DummyConfig {
 
-	private static final String TITLE = "BaSyx Concept Description Repository";
-	private static final String DESCRIPTION = "Concept Description API";
+	private final String COLLECTION = "discoveryServiceHTTPTestCollection";
 
-	@Override
-	protected Info apiInfo() {
-		return new Info().title(TITLE).description(DESCRIPTION).version(VERSION).contact(apiContact())
-				.license(apiLicence());
+	@Bean
+	@ConditionalOnMissingBean
+	public AasDiscoveryService createAasDiscoveryService() {
+		return new MongoDBAasDiscoveryService(createTemplate(), COLLECTION);
+	}
+
+	private MongoTemplate createTemplate() {
+		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
+
+		MongoClient client = MongoClients.create(connectionURL);
+
+		return new MongoTemplate(client, "BaSyxTestDb");
 	}
 
 }

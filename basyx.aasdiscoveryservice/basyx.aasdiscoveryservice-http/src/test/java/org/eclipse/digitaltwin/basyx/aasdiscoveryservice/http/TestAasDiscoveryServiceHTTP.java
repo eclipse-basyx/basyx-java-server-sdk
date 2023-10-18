@@ -23,14 +23,16 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http;
 
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.DummyConceptDescriptionFactory;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.AasDiscoveryService;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.model.AssetLink;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -44,30 +46,31 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @author schnicke, danish
  *
  */
-public class TestConceptDescriptionRepositoryHTTP extends ConceptDescriptionRepositoryHTTPSuite {
+public class TestAasDiscoveryServiceHTTP extends AasDiscoveryServiceHTTPSuite {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
 	public static void startConceptDescriptionRepo() throws Exception {
-		appContext = new SpringApplication(DummyConceptDescriptionRepositoryComponent.class).run(new String[] {});
+		appContext = new SpringApplication(DummyAasDiscoveryServiceComponent.class).run(new String[] {});
 	}
 
 	@Override
 	public void resetRepository() {
-		ConceptDescriptionRepository repo = appContext.getBean(ConceptDescriptionRepository.class);
-		Collection<ConceptDescription> conceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
-		resetRepoToDefaultConceptDescriptions(repo, conceptDescriptions);
+		AasDiscoveryService aasDiscoveryService = appContext.getBean(AasDiscoveryService.class);
+		
+		try {
+			Collection<AssetLink> assetLinks = AasDiscoveryServiceSuite.createMultipleDummyAasAssetLink(aasDiscoveryService);
+			resetRepoToDefaultConceptDescriptions(aasDiscoveryService, assetLinks);
+		} catch (CollidingAssetLinkException e) {
+		}
+		
 	}
 
-	private void resetRepoToDefaultConceptDescriptions(ConceptDescriptionRepository repo, Collection<ConceptDescription> conceptDescriptions) {
-		repo.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO)
-				.getResult()
-				.stream()
-				.map(s -> s.getId())
-				.forEach(repo::deleteConceptDescription);
+	private void resetRepoToDefaultConceptDescriptions(AasDiscoveryService discoveryService, Collection<AssetLink> assetLinks) {
+		assetLinks.stream().forEach(assetLink -> discoveryService.deleteAllAssetLinksById(assetLink.getShellIdentifier()));
 
-		conceptDescriptions.forEach(repo::createConceptDescription);
+		assetLinks.stream().forEach(assetLink -> discoveryService.createAllAssetLinksById(assetLink.getShellIdentifier(), assetLink.getSpecificAssetIDs()));
 	}
 
 	@AfterClass
@@ -77,7 +80,7 @@ public class TestConceptDescriptionRepositoryHTTP extends ConceptDescriptionRepo
 
 	@Override
 	protected String getURL() {
-		return "http://localhost:8080/concept-descriptions";
+		return "http://localhost:8080/lookup/shells";
 	}
 
 }
