@@ -27,7 +27,10 @@ package org.eclipse.digitaltwin.basyx.aasrepository;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.springframework.data.repository.CrudRepository;
@@ -38,7 +41,7 @@ import org.springframework.data.repository.CrudRepository;
  * @author mateusmolina
  * 
  */
-public class InMemoryAasBackend implements CrudRepository<AssetAdministrationShell, String> {
+public class AasInMemoryBackend implements CrudRepository<AssetAdministrationShell, String> {
 
 	private Map<String, AssetAdministrationShell> inMemoryStore = new LinkedHashMap<>();
 
@@ -73,8 +76,7 @@ public class InMemoryAasBackend implements CrudRepository<AssetAdministrationShe
 
 	@Override
 	public Iterable<AssetAdministrationShell> findAllById(Iterable<String> ids) {
-		// Implement if needed
-		return null;
+		return StreamSupport.stream(ids.spliterator(), false).map(inMemoryStore::get).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 	@Override

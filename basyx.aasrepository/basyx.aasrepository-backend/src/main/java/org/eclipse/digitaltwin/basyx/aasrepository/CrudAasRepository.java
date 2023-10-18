@@ -40,10 +40,8 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchExcep
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Component;
 
 /**
  * Default Implementation for the AasRepository based on Spring CrudRepository
@@ -51,7 +49,6 @@ import org.springframework.stereotype.Component;
  * @author mateusmolina, despen
  *
  */
-@Component
 public class CrudAasRepository implements AasRepository {
 
 	private CrudRepository<AssetAdministrationShell, String> aasBackend;
@@ -60,13 +57,11 @@ public class CrudAasRepository implements AasRepository {
 
 	private String aasRepositoryName = null;
 	
-	@Autowired(required = false)
 	public CrudAasRepository(AasBackendProvider aasBackendProvider, AasServiceFactory aasServiceFactory) {
 		this.aasBackend = aasBackendProvider.getCrudRepository();
 		this.aasServiceFactory = aasServiceFactory;
 	}
 
-	@Autowired(required = false)
 	public CrudAasRepository(AasBackendProvider aasBackendProvider, AasServiceFactory aasServiceFactory, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
 		this(aasBackendProvider, aasServiceFactory);
 		

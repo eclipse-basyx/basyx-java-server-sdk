@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.aasrepository.http;
 
 import org.springframework.boot.SpringApplication;
@@ -32,14 +31,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * Spring application configured for tests.
  * 
- * @author  danish, kammognie
+ * @author danish, kammognie
  *
  */
 
 @SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
 public class DummyAasRepositoryComponent {
-	
 	public static void main(String[] args) {
-        SpringApplication.run(DummyAasRepositoryComponent.class, args);
-    }
+		SpringApplication.run(DummyAasRepositoryComponent.class, args);
+	}
 }

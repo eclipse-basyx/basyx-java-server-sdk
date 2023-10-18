@@ -40,11 +40,11 @@ import org.junit.Test;
 public class TestInMemoryAasRepository extends AasRepositorySuite {
 	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
 	
-	private AasBackendProvider backendProvider = new InMemoryBackendProvider();
+	private AasBackendProvider backendProvider = new AasInMemoryBackendProvider();
 
 	@Override
 	protected AasRepository getAasRepository() {
-		return new CrudAasRepository(backendProvider, new InMemoryAasServiceFactory());
+		return new DefaultAasRepositoryFactory(backendProvider, new InMemoryAasServiceFactory()).create();
 	}
 
 	@Override

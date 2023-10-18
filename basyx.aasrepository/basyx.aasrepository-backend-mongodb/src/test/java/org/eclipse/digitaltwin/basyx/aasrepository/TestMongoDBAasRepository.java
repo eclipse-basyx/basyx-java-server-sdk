@@ -36,6 +36,7 @@ import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
@@ -56,8 +57,10 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	@Override
 	protected AasRepository getAasRepository() {
 		mongoTemplate = createMongoTemplate();
-		
-		return new CrudAasRepository(new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate), new InMemoryAasServiceFactory());
+		AasBackendProvider aasBackendProvider = new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate);
+		AasRepositoryFactory aasRepositoryFactory = new DefaultAasRepositoryFactory(aasBackendProvider, new InMemoryAasServiceFactory());
+
+		return aasRepositoryFactory.create();
 	}
 
 	@Override
@@ -109,7 +112,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		
 		MongoClient client = MongoClients.create(connectionURL);
 		
-		return new MongoTemplate(client, "BaSyxTestDB");
+		return new MongoTemplate(client, "BaSyxTestDb");
 	}
 
 }

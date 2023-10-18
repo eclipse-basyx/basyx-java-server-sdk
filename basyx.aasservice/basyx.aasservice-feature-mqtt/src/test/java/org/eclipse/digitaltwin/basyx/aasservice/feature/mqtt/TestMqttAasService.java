@@ -36,7 +36,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.InMemoryAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.DefaultAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceSuite;
 import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShell;
@@ -156,7 +157,7 @@ public class TestMqttAasService extends AasServiceSuite {
 	}
 
 	private static AasRepository createMqttAasRepository() {
-		AasRepository repo = new InMemoryAasRepositoryFactory(mqttAasServiceFactory).create();
+		AasRepository repo = new DefaultAasRepositoryFactory(new AasInMemoryBackendProvider(), new InMemoryAasServiceFactory()).create();
 		return repo;
 	}
 

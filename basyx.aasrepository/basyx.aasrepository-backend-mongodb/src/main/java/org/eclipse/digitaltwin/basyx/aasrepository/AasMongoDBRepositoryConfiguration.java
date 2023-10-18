@@ -23,29 +23,30 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.http.testconfig;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.DefaultAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasInMemoryBackendProvider;
+package org.eclipse.digitaltwin.basyx.aasrepository;
+
+import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
 /**
- * Configuration for tests
+ * Provides a InMemoryAasServiceFactory for usage in the MongoDB Aas Repository
+ * backend.<br>
+ * <br>
+ * This is needed to ensure that the AasServiceFeatures are processed correctly
+ * when utilizing MongoDb
  * 
- * @author danish, kammognie
+ * @author schnicke
  *
  */
 @Configuration
-public class DummyConfig {
-
+@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
+public class AasMongoDBRepositoryConfiguration {
 	@Bean
-    @ConditionalOnMissingBean
-    public AasRepository createAasRepository() {
-		return new DefaultAasRepositoryFactory(new AasInMemoryBackendProvider(), new InMemoryAasServiceFactory()).create();
-    }
+	public AasServiceFactory getAasServiceFactory() {
+		return new InMemoryAasServiceFactory();
+	}
 }

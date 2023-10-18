@@ -25,26 +25,42 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.data.repository.CrudRepository;
+import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * 
- * InMemory backend provider for the AAS
+ * CRUD AAS repository factory
  * 
  * @author mateusmolina
+ * 
  */
-@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
 @Component
-public class InMemoryBackendProvider implements AasBackendProvider {
+public class DefaultAasRepositoryFactory implements AasRepositoryFactory {
 
-	private InMemoryAasBackend aasBackend = new InMemoryAasBackend();
+	AasBackendProvider aasBackendProvider;
+
+	AasServiceFactory aasServiceFactory;
+
+	String aasRepositoryName = null;
+
+	@Autowired(required = false)
+	public DefaultAasRepositoryFactory(AasBackendProvider aasBackendProvider, AasServiceFactory aasServiceFactory) {
+		this.aasBackendProvider = aasBackendProvider;
+		this.aasServiceFactory = aasServiceFactory;
+	}
+
+	@Autowired(required = false)
+	public DefaultAasRepositoryFactory(AasBackendProvider aasBackendProvider, AasServiceFactory aasServiceFactory, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
+		this.aasBackendProvider = aasBackendProvider;
+		this.aasServiceFactory = aasServiceFactory;
+		this.aasRepositoryName = aasRepositoryName;
+	}
 
 	@Override
-	public CrudRepository<AssetAdministrationShell, String> getCrudRepository() {
-		return aasBackend;
+	public AasRepository create() {
+		return new CrudAasRepository(aasBackendProvider, aasServiceFactory, aasRepositoryName);
 	}
 
 }

@@ -23,30 +23,28 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
-import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Component;
 
 /**
- * Provides a InMemoryAasServiceFactory for usage in the MongoDB Aas Repository
- * backend.<br>
- * <br>
- * This is needed to ensure that the AasServiceFeatures are processed correctly
- * when utilizing MongoDb
  * 
- * @author schnicke
- *
+ * InMemory backend provider for the AAS
+ * 
+ * @author mateusmolina
  */
-@Configuration
-@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-public class MongoDBAasRepositoryConfiguration {
-	@Bean
-	public AasServiceFactory getAasServiceFactory() {
-		return new InMemoryAasServiceFactory();
+@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
+@Component
+public class AasInMemoryBackendProvider implements AasBackendProvider {
+
+	private AasInMemoryBackend aasBackend = new AasInMemoryBackend();
+
+	@Override
+	public CrudRepository<AssetAdministrationShell, String> getCrudRepository() {
+		return aasBackend;
 	}
+
 }
