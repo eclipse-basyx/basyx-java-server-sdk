@@ -23,40 +23,25 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.model;
 
-import java.util.List;
-import java.util.stream.Collectors;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
+import static org.junit.Assert.assertEquals;
+
+
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
 
 /**
- * Represents the link between {@link AssetAdministrationShell} and {@link SpecificAssetID}
+ * Tests the {@link InMemoryAasDiscoveryService}
  * 
- * @author danish
+ * @author zhangzai
  *
  */
-public class AssetLink {
+public class TestInMemoryAasDiscoveryService extends AasDiscoveryServiceSuite {
 	
-	private String shellIdentifier;
-	private List<SpecificAssetID> specificAssetIDs;
-	
-	public AssetLink(String shellIdentifier, List<SpecificAssetID> specificAssetIDs) {
-		super();
-		this.shellIdentifier = shellIdentifier;
-		this.specificAssetIDs = specificAssetIDs;
+	@Override
+	protected AasDiscoveryService getAasDiscoveryService() {
+		return new InMemoryAasDiscoveryService();
 	}
 
-	public String getShellIdentifier() {
-		return shellIdentifier;
-	}
-
-	public List<SpecificAssetID> getSpecificAssetIDs() {
-		return specificAssetIDs;
-	}
-	
-	public List<String> getSpecificAssetIDStrings(){
-		return specificAssetIDs.stream().map(id->id.getValue()).collect(Collectors.toList());
-	}
 }
