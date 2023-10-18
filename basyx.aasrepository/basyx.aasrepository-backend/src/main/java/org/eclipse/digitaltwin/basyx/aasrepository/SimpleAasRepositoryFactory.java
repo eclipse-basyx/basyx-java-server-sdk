@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
  * 
  */
 @Component
-public class DefaultAasRepositoryFactory implements AasRepositoryFactory {
+public class SimpleAasRepositoryFactory implements AasRepositoryFactory {
 
 	AasBackendProvider aasBackendProvider;
 
@@ -46,13 +46,13 @@ public class DefaultAasRepositoryFactory implements AasRepositoryFactory {
 	String aasRepositoryName = null;
 
 	@Autowired(required = false)
-	public DefaultAasRepositoryFactory(AasBackendProvider aasBackendProvider, AasServiceFactory aasServiceFactory) {
+	public SimpleAasRepositoryFactory(AasBackendProvider aasBackendProvider, AasServiceFactory aasServiceFactory) {
 		this.aasBackendProvider = aasBackendProvider;
 		this.aasServiceFactory = aasServiceFactory;
 	}
 
 	@Autowired(required = false)
-	public DefaultAasRepositoryFactory(AasBackendProvider aasBackendProvider, AasServiceFactory aasServiceFactory, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
+	public SimpleAasRepositoryFactory(AasBackendProvider aasBackendProvider, AasServiceFactory aasServiceFactory, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
 		this.aasBackendProvider = aasBackendProvider;
 		this.aasServiceFactory = aasServiceFactory;
 		this.aasRepositoryName = aasRepositoryName;

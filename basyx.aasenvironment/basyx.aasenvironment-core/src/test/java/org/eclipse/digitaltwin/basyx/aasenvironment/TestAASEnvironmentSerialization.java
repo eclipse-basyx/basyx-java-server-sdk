@@ -30,7 +30,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironmentSerialization;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.DefaultAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.SimpleAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
@@ -61,7 +61,7 @@ public class TestAASEnvironmentSerialization {
 	@Before
 	public void setup() {
 		submodelRepository = new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
-		aasRepository = new DefaultAasRepositoryFactory(new AasInMemoryBackendProvider(), new InMemoryAasServiceFactory()).create();
+		aasRepository = new SimpleAasRepositoryFactory(new AasInMemoryBackendProvider(), new InMemoryAasServiceFactory()).create();
 		conceptDescriptionRepository = new InMemoryConceptDescriptionRepository(createDummyConceptDescriptions());
 
 		for (Submodel submodel : createDummySubmodels()) {

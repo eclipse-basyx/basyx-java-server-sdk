@@ -44,7 +44,7 @@ public class TestInMemoryAasRepository extends AasRepositorySuite {
 
 	@Override
 	protected AasRepository getAasRepository() {
-		return new DefaultAasRepositoryFactory(backendProvider, new InMemoryAasServiceFactory()).create();
+		return new SimpleAasRepositoryFactory(backendProvider, new InMemoryAasServiceFactory()).create();
 	}
 
 	@Override

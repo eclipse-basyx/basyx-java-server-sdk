@@ -58,7 +58,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	protected AasRepository getAasRepository() {
 		mongoTemplate = createMongoTemplate();
 		AasBackendProvider aasBackendProvider = new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate);
-		AasRepositoryFactory aasRepositoryFactory = new DefaultAasRepositoryFactory(aasBackendProvider, new InMemoryAasServiceFactory());
+		AasRepositoryFactory aasRepositoryFactory = new SimpleAasRepositoryFactory(aasBackendProvider, new InMemoryAasServiceFactory());
 
 		return aasRepositoryFactory.create();
 	}
