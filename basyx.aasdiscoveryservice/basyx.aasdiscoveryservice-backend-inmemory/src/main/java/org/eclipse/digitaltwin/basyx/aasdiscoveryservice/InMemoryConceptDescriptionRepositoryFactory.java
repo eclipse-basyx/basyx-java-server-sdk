@@ -22,35 +22,27 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 /**
  * ConceptDescriptionRepository factory returning an in-memory backend ConceptDescriptionRepository
  * 
- * @author schnicke, danish
+ * @author zhangzai
  */
 @Component
 @ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
-public class InMemoryConceptDescriptionRepositoryFactory implements ConceptDescriptionRepositoryFactory {
-	
-	private String cdRepositoryName;
+public class InMemoryConceptDescriptionRepositoryFactory implements AasDiscoveryServiceFactory {
 	
 	@Autowired(required = false)
 	public InMemoryConceptDescriptionRepositoryFactory() { }
 	
-	@Autowired(required = false)
-	public InMemoryConceptDescriptionRepositoryFactory(@Value("${basyx.cdrepo.name:cd-repo}") String cdRepositoryName) { 
-		this.cdRepositoryName = cdRepositoryName;
-	}
-
 	@Override
-	public ConceptDescriptionRepository create() {
-		return new InMemoryConceptDescriptionRepository(cdRepositoryName);
+	public AasDiscoveryService create() {
+		return new InMemoryAasDiscoveryService();
 	}
 
 }

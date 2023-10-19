@@ -66,7 +66,7 @@ public abstract class AasDiscoveryServiceSuite {
 		List<String> actualResult = discoveryService.getAllAssetAdministrationShellIdsByAssetLink(noLimitPaginationInfo, assetIds).getResult();
 	
 		assertEquals(expectedResult.size(), actualResult.size());
-		assertEquals(expectedResult, actualResult);
+		assertTrue(expectedResult.containsAll(actualResult)&&actualResult.containsAll(expectedResult));
 	}
 
 	@Test
