@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Custom BaSyx Mongo Mapping Context Necessary for configuring MongoDB
- * collection names for AAS, SM and CM
+ * collection names for AAS, SM and CD
  * 
  * @author mateusmolina, despen
  */
@@ -48,7 +48,6 @@ public class BasyxMongoMappingContext extends MongoMappingContext {
 
 	public void addEntityMapping(Class<?> clazz, String collectionName) {
 		customCollectionNames.put(clazz, collectionName);
-
 	}
 
 	@Override

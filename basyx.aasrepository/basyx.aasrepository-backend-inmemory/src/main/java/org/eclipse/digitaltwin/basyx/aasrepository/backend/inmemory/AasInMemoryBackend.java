@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository;
+package org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -53,9 +53,9 @@ public class AasInMemoryBackend implements CrudRepository<AssetAdministrationShe
 
 	@Override
 	public <S extends AssetAdministrationShell> Iterable<S> saveAll(Iterable<S> entities) {
-		for (S entity : entities) {
+		for (S entity : entities)
 			inMemoryStore.put(entity.getId(), entity);
-		}
+
 		return entities;
 	}
 
@@ -96,16 +96,14 @@ public class AasInMemoryBackend implements CrudRepository<AssetAdministrationShe
 
 	@Override
 	public void deleteAllById(Iterable<? extends String> ids) {
-		for (String id : ids) {
+		for (String id : ids)
 			inMemoryStore.remove(id);
-		}
 	}
 
 	@Override
 	public void deleteAll(Iterable<? extends AssetAdministrationShell> entities) {
-		for (AssetAdministrationShell entity : entities) {
+		for (AssetAdministrationShell entity : entities)
 			inMemoryStore.remove(entity.getId());
-		}
 	}
 
 	@Override

@@ -23,44 +23,27 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository;
+package org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory;
 
-import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
 /**
- * CRUD AAS repository factory
+ * 
+ * InMemory backend provider for the AAS
  * 
  * @author mateusmolina
- * 
  */
+@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
 @Component
-public class SimpleAasRepositoryFactory implements AasRepositoryFactory {
-
-	AasBackendProvider aasBackendProvider;
-
-	AasServiceFactory aasServiceFactory;
-
-	String aasRepositoryName = null;
-
-	@Autowired(required = false)
-	public SimpleAasRepositoryFactory(AasBackendProvider aasBackendProvider, AasServiceFactory aasServiceFactory) {
-		this.aasBackendProvider = aasBackendProvider;
-		this.aasServiceFactory = aasServiceFactory;
-	}
-
-	@Autowired(required = false)
-	public SimpleAasRepositoryFactory(AasBackendProvider aasBackendProvider, AasServiceFactory aasServiceFactory, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
-		this.aasBackendProvider = aasBackendProvider;
-		this.aasServiceFactory = aasServiceFactory;
-		this.aasRepositoryName = aasRepositoryName;
-	}
+public class AasInMemoryBackendProvider implements AasBackendProvider {
 
 	@Override
-	public AasRepository create() {
-		return new CrudAasRepository(aasBackendProvider, aasServiceFactory, aasRepositoryName);
+	public CrudRepository<AssetAdministrationShell, String> getCrudRepository() {
+		return new AasInMemoryBackend();
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,40 +22,27 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-
-
-package org.eclipse.digitaltwin.basyx.aasrepository;
+package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
 import org.junit.Test;
 
 /**
- * Tests the {@link InMemoryAasRepository} name
+ * Tests {@link CrudAasRepository}
  * 
- * @author schnicke, kammognie, mateusmolina
- *
+ * @author mateusmolina, despen
  */
-public class TestInMemoryAasRepository extends AasRepositorySuite {
-	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
-	
-	private AasBackendProvider backendProvider = new AasInMemoryBackendProvider();
+public class CrudAasRepositoryTest {
 
-	@Override
-	protected AasRepository getAasRepository() {
-		return new SimpleAasRepositoryFactory(backendProvider, new InMemoryAasServiceFactory()).create();
-	}
-
-	@Override
-	protected void sanitizeRepository() {
-		backendProvider.getCrudRepository().deleteAll();
-	}
+	private static final String CONFIGURED_AAS_REPO_NAME = "test-aas-repo";
 
 	@Test
-    public void getConfiguredInMemoryAasRepositoryName() {
-		AasRepository repo = new CrudAasRepository(backendProvider, new InMemoryAasServiceFactory(), CONFIGURED_AAS_REPO_NAME);
-		
+	public void getConfiguredAasRepositoryName() {
+		AasRepository repo = new CrudAasRepository(() -> null, aas -> null, CONFIGURED_AAS_REPO_NAME);
+
 		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
 	}
 

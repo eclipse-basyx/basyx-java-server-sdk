@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,29 +23,46 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.http.testconfig;
+
+package org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory;
+
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
+import org.junit.Test;
 
 /**
- * Configuration for tests
+ * Tests the {@link InMemoryAasRepository} name
  * 
- * @author danish, kammognie
+ * @author schnicke, kammognie, mateusmolina
  *
  */
-@Configuration
-public class DummyConfig {
+public class TestInMemoryAasRepository extends AasRepositorySuite {
+	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
+	
+	private AasBackendProvider backendProvider = new AasInMemoryBackendProvider();
 
-	@Bean
-    @ConditionalOnMissingBean
-    public AasRepository createAasRepository() {
-		return new SimpleAasRepositoryFactory(new AasInMemoryBackendProvider(), new InMemoryAasServiceFactory()).create();
-    }
+	@Override
+	protected AasRepository getAasRepository() {
+		return new SimpleAasRepositoryFactory(backendProvider, new InMemoryAasServiceFactory()).create();
+	}
+
+	@Override
+	protected void sanitizeRepository() {
+		backendProvider.getCrudRepository().deleteAll();
+	}
+
+	@Test
+    public void getConfiguredInMemoryAasRepositoryName() {
+		AasRepository repo = new CrudAasRepository(backendProvider, new InMemoryAasServiceFactory(), CONFIGURED_AAS_REPO_NAME);
+		
+		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
+	}
+
 }
