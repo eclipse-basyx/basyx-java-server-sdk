@@ -23,21 +23,30 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.http;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
+
+import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * Spring application configured for tests.
+ * Provides a InMemoryAasServiceFactory for usage in the MongoDB Aas Repository
+ * backend.<br>
+ * <br>
+ * This is needed to ensure that the AasServiceFeatures are processed correctly
+ * when utilizing MongoDb
  * 
- * @author danish, kammognie
+ * @author schnicke
  *
  */
-
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
-public class DummyAasRepositoryComponent {
-	public static void main(String[] args) {
-		SpringApplication.run(DummyAasRepositoryComponent.class, args);
+@Configuration
+@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
+public class AasMongoDBRepositoryConfiguration {
+	@Bean
+	public AasServiceFactory getAasServiceFactory() {
+		return new InMemoryAasServiceFactory();
 	}
 }

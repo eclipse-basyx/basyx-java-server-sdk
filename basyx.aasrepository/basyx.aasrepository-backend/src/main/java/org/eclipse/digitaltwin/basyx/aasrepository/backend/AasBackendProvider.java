@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,33 +22,16 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
-
-package org.eclipse.digitaltwin.basyx.aasrepository;
-
-import static org.junit.Assert.assertEquals;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
-import org.junit.Test;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.springframework.data.repository.CrudRepository;
 
 /**
- * Tests the {@link InMemoryAasRepository} name
- *  
- * @author schnicke, kammognie
- *
+ * Backend provider for the AAS
+ * 
+ * @author mateusmolina, despen
  */
-public class TestInMemoryAasRepository extends AasRepositorySuite {
-	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
-	
-	@Override
-	protected AasRepositoryFactory getAasRepositoryFactory() {
-		return new InMemoryAasRepositoryFactory(new InMemoryAasServiceFactory());
-	}
-	
-	@Test
-    public void getConfiguredInMemoryAasRepositoryName() {
-		AasRepository repo = new InMemoryAasRepository(new InMemoryAasServiceFactory(), CONFIGURED_AAS_REPO_NAME);
-		
-		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
-	}
-
+public interface AasBackendProvider {
+	public CrudRepository<AssetAdministrationShell, String> getCrudRepository();
 }

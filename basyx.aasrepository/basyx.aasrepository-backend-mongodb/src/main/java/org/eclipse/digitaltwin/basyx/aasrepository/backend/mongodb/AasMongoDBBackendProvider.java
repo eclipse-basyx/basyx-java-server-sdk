@@ -23,48 +23,50 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository;
+package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
 
-import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
+import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
+import org.springframework.data.mongodb.repository.support.MappingMongoEntityInformation;
+import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
 /**
- * AasRepository factory returning a MongoDb backend AasRepository
  * 
- * @author schnicke
+ * MongoDB Backend Provider for the AAS
+ * 
+ * @author mateusmolina, despen
  */
-@Component
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-public class MongoDBAasRepositoryFactory implements AasRepositoryFactory {
-	private MongoTemplate mongoTemplate;
-	private String collectionName;
-	private AasServiceFactory aasServiceFactory;
+@Component
+public class AasMongoDBBackendProvider implements AasBackendProvider {
 	
-	private String aasRepositoryName;
-
-	@Autowired(required = false)
-	public MongoDBAasRepositoryFactory(MongoTemplate mongoTemplate,
-			@Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName,
-			AasServiceFactory aasServiceFactory) {
-		this.mongoTemplate = mongoTemplate;
-		this.collectionName = collectionName;
-		this.aasServiceFactory = aasServiceFactory;
-	}
+	private BasyxMongoMappingContext mappingContext;
 	
-	@Autowired(required = false)
-	public MongoDBAasRepositoryFactory(MongoTemplate mongoTemplate,
-			@Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName,
-			AasServiceFactory aasServiceFactory, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
-		this(mongoTemplate, collectionName, aasServiceFactory);
-		this.aasRepositoryName = aasRepositoryName;
+	private MongoTemplate template;
+	
+	@Autowired
+	public AasMongoDBBackendProvider(BasyxMongoMappingContext mappingContext, @Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName, MongoTemplate template) {
+		super();
+		this.mappingContext = mappingContext;
+		this.template = template;
+		
+		mappingContext.addEntityMapping(AssetAdministrationShell.class, collectionName);
 	}
 
 	@Override
-	public AasRepository create() {
-		return new MongoDBAasRepository(mongoTemplate, collectionName, aasServiceFactory, aasRepositoryName);
+	public CrudRepository<AssetAdministrationShell, String> getCrudRepository() {
+		@SuppressWarnings("unchecked")
+		MongoPersistentEntity<AssetAdministrationShell> entity = (MongoPersistentEntity<AssetAdministrationShell>) mappingContext.getPersistentEntity(AssetAdministrationShell.class);
+		
+		return new SimpleMongoRepository<>(new MappingMongoEntityInformation<>(entity), template);
 	}
+
 }

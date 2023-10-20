@@ -13,6 +13,7 @@
 	<modules>
 		<module>basyx.aasrepository-core</module>
 		<module>basyx.aasrepository-http</module>
+		<module>basyx.aasrepository-backend</module>
 		<module>basyx.aasrepository-backend-inmemory</module>
 		<module>basyx.aasrepository-backend-mongodb</module>
 		<module>basyx.aasrepository-feature-aasxupload</module>

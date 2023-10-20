@@ -22,22 +22,28 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
-package org.eclipse.digitaltwin.basyx.aasrepository.http;
+import static org.junit.Assert.assertEquals;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
+import org.junit.Test;
 
 /**
- * Spring application configured for tests.
+ * Tests {@link CrudAasRepository}
  * 
- * @author danish, kammognie
- *
+ * @author mateusmolina, despen
  */
+public class CrudAasRepositoryTest {
 
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
-public class DummyAasRepositoryComponent {
-	public static void main(String[] args) {
-		SpringApplication.run(DummyAasRepositoryComponent.class, args);
+	private static final String CONFIGURED_AAS_REPO_NAME = "test-aas-repo";
+
+	@Test
+	public void getConfiguredAasRepositoryName() {
+		AasRepository repo = new CrudAasRepository(() -> null, aas -> null, CONFIGURED_AAS_REPO_NAME);
+
+		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
 	}
+
 }

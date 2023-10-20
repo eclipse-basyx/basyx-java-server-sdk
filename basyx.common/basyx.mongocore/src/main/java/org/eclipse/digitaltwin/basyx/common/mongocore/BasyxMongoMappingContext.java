@@ -22,31 +22,41 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.common.mongocore;
 
+import java.util.HashMap;
+import java.util.Map;
 
-package org.eclipse.digitaltwin.basyx.aasrepository;
-
-import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.mapping.BasicMongoPersistentEntity;
+import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.data.util.TypeInformation;
+import org.springframework.stereotype.Component;
 
 /**
- * Provides a InMemoryAasServiceFactory for usage in the MongoDB Aas Repository
- * backend.<br>
- * <br>
- * This is needed to ensure that the AasServiceFeatures are processed correctly
- * when utilizing MongoDb
+ * Custom BaSyx Mongo Mapping Context Necessary for configuring MongoDB
+ * collection names for AAS, SM and CD
  * 
- * @author schnicke
- *
+ * @author mateusmolina, despen
  */
-@Configuration
-@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-public class MongoDBAasRepositoryConfiguration {
-	@Bean
-	public AasServiceFactory getAasServiceFactory() {
-		return new InMemoryAasServiceFactory();
+@Component
+public class BasyxMongoMappingContext extends MongoMappingContext {
+	private final Map<Class<?>, String> customCollectionNames = new HashMap<>();
+
+	public BasyxMongoMappingContext() {
+		super();
+	}
+
+	public void addEntityMapping(Class<?> clazz, String collectionName) {
+		customCollectionNames.put(clazz, collectionName);
+	}
+
+	@Override
+	protected <T> BasicMongoPersistentEntity<T> createPersistentEntity(TypeInformation<T> typeInformation) {
+		return new BasicMongoPersistentEntity<T>(typeInformation) {
+			@Override
+			public String getCollection() {
+				return customCollectionNames.getOrDefault(typeInformation.getType(), super.getCollection());
+			}
+		};
 	}
 }
