@@ -45,7 +45,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.CrudRepository;
 
 /**
- * Default Implementation for the AasRepository based on Spring CrudRepository
+ * Default Implementation for the {@link AasRepository} based on Spring {@link CrudRepository}
  * 
  * @author mateusmolina, despen
  *
@@ -150,8 +150,7 @@ public class CrudAasRepository implements AasRepository {
 	private AasService getAasServiceOrThrow(String aasId) {
 		AssetAdministrationShell aas = aasBackend.findById(aasId).orElseThrow(() -> new ElementDoesNotExistException(aasId));
 
-		AasService aasService = aasServiceFactory.create(aas);
-		return aasService;
+		return aasServiceFactory.create(aas);
 	}
 
 	private void throwIfMismatchingIds(String aasId, AssetAdministrationShell newAas) {
@@ -162,15 +161,13 @@ public class CrudAasRepository implements AasRepository {
 	}
 
 	private void throwIfAasExists(AssetAdministrationShell aas) {
-		if (aasBackend.existsById(aas.getId())) {
+		if (aasBackend.existsById(aas.getId()))
 			throw new CollidingIdentifierException();
-		}
 	}
 
 	private void throwIfAasDoesNotExist(String aasId) {
-		if (!aasBackend.existsById(aasId)) {
+		if (!aasBackend.existsById(aasId))
 			throw new ElementDoesNotExistException(aasId);
-		}
 	}
 
 	@Override

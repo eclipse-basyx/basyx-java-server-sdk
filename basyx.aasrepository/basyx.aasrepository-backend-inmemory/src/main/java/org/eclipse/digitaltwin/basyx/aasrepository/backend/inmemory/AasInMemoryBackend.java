@@ -48,6 +48,7 @@ public class AasInMemoryBackend implements CrudRepository<AssetAdministrationShe
 	@Override
 	public <S extends AssetAdministrationShell> S save(S entity) {
 		inMemoryStore.put(entity.getId(), entity);
+		
 		return entity;
 	}
 

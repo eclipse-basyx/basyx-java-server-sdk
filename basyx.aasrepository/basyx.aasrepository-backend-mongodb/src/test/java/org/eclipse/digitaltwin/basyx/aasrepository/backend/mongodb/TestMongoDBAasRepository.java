@@ -37,7 +37,6 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb.AasMongoDBBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
@@ -64,6 +63,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	@Override
 	protected AasRepository getAasRepository() {
 		mongoTemplate = createMongoTemplate();
+		
 		AasBackendProvider aasBackendProvider = new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate);
 		AasRepositoryFactory aasRepositoryFactory = new SimpleAasRepositoryFactory(aasBackendProvider, new InMemoryAasServiceFactory());
 
@@ -78,6 +78,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	@Test
 	public void aasIsPersisted() {
 		AasRepository aasRepository = getAasRepository();
+		
 		AssetAdministrationShell expectedShell = createDummyShellOnRepo(aasRepository);
 		AssetAdministrationShell retrievedShell = aasRepository.getAas(expectedShell.getId());
 
@@ -87,8 +88,10 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	@Test
 	public void updatedAasIsPersisted() {
 		AasRepository aasRepository = getAasRepository();
+		
 		AssetAdministrationShell expectedShell = createDummyShellOnRepo(aasRepository);
 		addSubmodelReferenceToAas(expectedShell);
+		
 		aasRepository.updateAas(expectedShell.getId(), expectedShell);
 
 		AssetAdministrationShell retrievedShell = aasRepository.getAas(expectedShell.getId());

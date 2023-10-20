@@ -30,18 +30,18 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 /**
- * Simple AAS repository factory that uses that creates a CrudAasRepository with
- * a backendProvider and a serviceFactory
+ * Simple AAS repository factory that creates a {@link CrudAasRepository} with
+ * a backend provider and a service factory
  * 
  * @author mateusmolina
  * 
  */
 @Component
-@ConditionalOnProperty(value = "basyx.backend")
+@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
 public class SimpleAasRepositoryFactory implements AasRepositoryFactory {
 
 	private AasBackendProvider aasBackendProvider;
