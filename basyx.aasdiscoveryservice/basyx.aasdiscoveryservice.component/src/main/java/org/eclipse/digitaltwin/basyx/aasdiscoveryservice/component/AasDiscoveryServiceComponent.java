@@ -23,41 +23,25 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.testconfig;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.MongoDBAasDiscoveryService;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.component;
+
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 
 /**
- * Configuration for tests
+ * Creates and starts the {@link AasDiscoveryService} off-shelf-component
  * 
- * @author danish
+ * @author schnicke, danish
  *
  */
-@Configuration
-public class DummyConfig {
-
-	private final String COLLECTION = "discoveryServiceHTTPTestCollection";
-
-	@Bean
-	@ConditionalOnMissingBean
-	public AasDiscoveryService createAasDiscoveryService() {
-		return new MongoDBAasDiscoveryService(createTemplate(), COLLECTION);
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", 
+exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
+public class AasDiscoveryServiceComponent {
+	public static void main(String[] args) {
+		SpringApplication.run(AasDiscoveryServiceComponent.class, args);
 	}
-
-	private MongoTemplate createTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-
-		MongoClient client = MongoClients.create(connectionURL);
-
-		return new MongoTemplate(client, "BaSyxTestDb");
-	}
-
 }

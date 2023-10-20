@@ -22,42 +22,44 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.tck;
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.testconfig;
-
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.MongoDBAasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import org.junit.internal.TextListener;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 
 /**
- * Configuration for tests
+ * Application for testing an AAS Discovery. The first argument is the server
+ * URL.
  * 
  * @author danish
  *
  */
-@Configuration
-public class DummyConfig {
+public class AasDiscoveryServiceTestApplication {
 
-	private final String COLLECTION = "discoveryServiceHTTPTestCollection";
+	public static void main(String[] args) throws Exception {
+		String url = getAasDiscoveryServiceUrl(args);
 
-	@Bean
-	@ConditionalOnMissingBean
-	public AasDiscoveryService createAasDiscoveryService() {
-		return new MongoDBAasDiscoveryService(createTemplate(), COLLECTION);
+		Result result = runTests(url);
+
+		printResults(result);
 	}
 
-	private MongoTemplate createTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
+	private static void printResults(Result result) {
+		System.out.println("Finished. Result: Failures: " + result.getFailureCount() + ". Ignored: " + result.getIgnoreCount() + ". Tests run: " + result.getRunCount() + ". Time: " + result.getRunTime() + "ms.");
+	}
 
-		MongoClient client = MongoClients.create(connectionURL);
+	private static Result runTests(String url) {
+		AasDiscoveryServiceTestDefinedURL.url = url;
 
-		return new MongoTemplate(client, "BaSyxTestDb");
+		JUnitCore junit = new JUnitCore();
+		junit.addListener(new TextListener(System.out));
+
+		return junit.run(AasDiscoveryServiceTestDefinedURL.class);
+	}
+
+	private static String getAasDiscoveryServiceUrl(String[] args) {
+		return args[0];
 	}
 
 }

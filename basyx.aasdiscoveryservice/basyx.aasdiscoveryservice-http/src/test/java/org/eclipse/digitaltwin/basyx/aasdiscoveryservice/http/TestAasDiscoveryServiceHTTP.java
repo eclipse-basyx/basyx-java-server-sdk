@@ -25,15 +25,13 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.AasDiscoveryService;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.model.AssetLink;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
-import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.springframework.boot.SpringApplication;
@@ -47,7 +45,6 @@ import org.springframework.context.ConfigurableApplicationContext;
  *
  */
 public class TestAasDiscoveryServiceHTTP extends AasDiscoveryServiceHTTPSuite {
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
@@ -56,21 +53,22 @@ public class TestAasDiscoveryServiceHTTP extends AasDiscoveryServiceHTTPSuite {
 	}
 
 	@Override
-	public void resetRepository() {
+	public void resetService() {
 		AasDiscoveryService aasDiscoveryService = appContext.getBean(AasDiscoveryService.class);
 		
-		try {
-			Collection<AssetLink> assetLinks = AasDiscoveryServiceSuite.createMultipleDummyAasAssetLink(aasDiscoveryService);
-			resetRepoToDefaultConceptDescriptions(aasDiscoveryService, assetLinks);
-		} catch (CollidingAssetLinkException e) {
-		}
+		List<AssetLink> dummyAssetLinks = AasDiscoveryServiceSuite.getMultipleDummyAasAssetLink();
 		
+		dummyAssetLinks.stream().forEach(assetLink -> resetAssetLink(assetLink, aasDiscoveryService));
 	}
-
-	private void resetRepoToDefaultConceptDescriptions(AasDiscoveryService discoveryService, Collection<AssetLink> assetLinks) {
-		assetLinks.stream().forEach(assetLink -> discoveryService.deleteAllAssetLinksById(assetLink.getShellIdentifier()));
-
-		assetLinks.stream().forEach(assetLink -> discoveryService.createAllAssetLinksById(assetLink.getShellIdentifier(), assetLink.getSpecificAssetIDs()));
+	
+	private void resetAssetLink(AssetLink assetLink, AasDiscoveryService aasDiscoveryService) {
+		
+		try {
+			aasDiscoveryService.createAllAssetLinksById(assetLink.getShellIdentifier(), assetLink.getSpecificAssetIDs());
+		} catch (CollidingAssetLinkException e) {
+			aasDiscoveryService.deleteAllAssetLinksById(assetLink.getShellIdentifier());
+			aasDiscoveryService.createAllAssetLinksById(assetLink.getShellIdentifier(), assetLink.getSpecificAssetIDs());
+		}
 	}
 
 	@AfterClass

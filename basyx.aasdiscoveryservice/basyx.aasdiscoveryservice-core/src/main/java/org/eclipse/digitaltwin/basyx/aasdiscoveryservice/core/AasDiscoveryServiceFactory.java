@@ -23,41 +23,20 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.testconfig;
-
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.MongoDBAasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core;
 
 /**
- * Configuration for tests
+ * Interface for a factory creating a {@link AasDiscoveryService}
  * 
- * @author danish
- *
+ * @author schnicke, danish
+ * 
  */
-@Configuration
-public class DummyConfig {
-
-	private final String COLLECTION = "discoveryServiceHTTPTestCollection";
-
-	@Bean
-	@ConditionalOnMissingBean
-	public AasDiscoveryService createAasDiscoveryService() {
-		return new MongoDBAasDiscoveryService(createTemplate(), COLLECTION);
-	}
-
-	private MongoTemplate createTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-
-		MongoClient client = MongoClients.create(connectionURL);
-
-		return new MongoTemplate(client, "BaSyxTestDb");
-	}
-
+public interface AasDiscoveryServiceFactory {
+	
+	/**
+	 * Creates a new {@link AasDiscoveryService}
+	 * 
+	 * @return
+	 */
+	public AasDiscoveryService create();
 }

@@ -23,41 +23,40 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.testconfig;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.MongoDBAasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
 
 /**
- * Configuration for tests
+ * Represents the link between {@link AssetAdministrationShell} and {@link SpecificAssetID}
  * 
  * @author danish
  *
  */
-@Configuration
-public class DummyConfig {
-
-	private final String COLLECTION = "discoveryServiceHTTPTestCollection";
-
-	@Bean
-	@ConditionalOnMissingBean
-	public AasDiscoveryService createAasDiscoveryService() {
-		return new MongoDBAasDiscoveryService(createTemplate(), COLLECTION);
+public class AssetLink {
+	
+	private String shellIdentifier;
+	private List<SpecificAssetID> specificAssetIDs;
+	
+	public AssetLink(String shellIdentifier, List<SpecificAssetID> specificAssetIDs) {
+		super();
+		this.shellIdentifier = shellIdentifier;
+		this.specificAssetIDs = specificAssetIDs;
 	}
 
-	private MongoTemplate createTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-
-		MongoClient client = MongoClients.create(connectionURL);
-
-		return new MongoTemplate(client, "BaSyxTestDb");
+	public String getShellIdentifier() {
+		return shellIdentifier;
 	}
 
+	public List<SpecificAssetID> getSpecificAssetIDs() {
+		return specificAssetIDs;
+	}
+	
+	public List<String> getSpecificAssetIDStrings(){
+		return specificAssetIDs.stream().map(SpecificAssetID::getValue).collect(Collectors.toList());
+	}
 }

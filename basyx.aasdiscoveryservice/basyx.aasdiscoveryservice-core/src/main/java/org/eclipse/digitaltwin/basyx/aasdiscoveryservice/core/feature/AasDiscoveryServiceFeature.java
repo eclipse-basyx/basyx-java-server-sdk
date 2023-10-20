@@ -23,41 +23,18 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.testconfig;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.feature;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.MongoDBAasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
+import org.eclipse.digitaltwin.basyx.core.BaSyxFeature;
 
 /**
- * Configuration for tests
+ * Base interface for all features for the {@link AasDiscoveryService}
  * 
- * @author danish
+ * @author schnicke, danish, zhangzai
  *
  */
-@Configuration
-public class DummyConfig {
-
-	private final String COLLECTION = "discoveryServiceHTTPTestCollection";
-
-	@Bean
-	@ConditionalOnMissingBean
-	public AasDiscoveryService createAasDiscoveryService() {
-		return new MongoDBAasDiscoveryService(createTemplate(), COLLECTION);
-	}
-
-	private MongoTemplate createTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-
-		MongoClient client = MongoClients.create(connectionURL);
-
-		return new MongoTemplate(client, "BaSyxTestDb");
-	}
+public interface AasDiscoveryServiceFeature extends BaSyxFeature<AasDiscoveryServiceFactory> {
 
 }

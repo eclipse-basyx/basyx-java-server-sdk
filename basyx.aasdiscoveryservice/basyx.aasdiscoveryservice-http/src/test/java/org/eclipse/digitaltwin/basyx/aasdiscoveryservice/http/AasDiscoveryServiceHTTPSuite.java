@@ -30,7 +30,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.AasDiscoveryService;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.After;
@@ -53,7 +53,7 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 
 	@Before
 	@After
-	public abstract void resetRepository();
+	public abstract void resetService();
 	
 	@Test
 	public void getAllAssetAdministrationShellIdsByAssetLink() throws ParseException, IOException {
@@ -124,6 +124,36 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 		assertEquals(HttpStatus.NOT_FOUND.value(), deletionResponse.getCode());
 	}
 	
+	protected CloseableHttpResponse createAssetLinks(String shellId, String assetLinksJSON) throws IOException, ParseException {
+		return BaSyxHttpTestUtils.executePostOnURL(getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(shellId), assetLinksJSON);
+	}
+
+	protected CloseableHttpResponse deleteAssetLinkById(String shellId) throws IOException {
+		return removeAssetLink(shellId);
+	}
+
+	protected String requestAllShellIds() throws IOException, ParseException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(getURL() + "?assetIds=RHVtbXlBc3NldF8xX1ZhbHVl,RHVtbXlBc3NldF8zX1ZhbHVl");
+
+		return BaSyxHttpTestUtils.getResponseAsString(response);
+	}
+	
+	protected CloseableHttpResponse requestAllAssetLinks(String shellIdentifier) throws IOException, ParseException {
+		return BaSyxHttpTestUtils.executeGetOnURL(getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(shellIdentifier));
+	}
+	
+	private String getNewAssetLinksJSON() throws IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("NewAssetLinks.json");
+	}
+
+	private String getAllShellIdsJSON() throws IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AllShellIDs.json");
+	}
+	
+	private String getAllAssetLinksJSON() throws IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AllAssetLinks.json");
+	}
+	
 	private void removeNewlyAddedAssetLinks(String shellId) throws IOException {
 		CloseableHttpResponse deletionResponse = removeAssetLink(shellId);
 		
@@ -140,40 +170,6 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 		String response = BaSyxHttpTestUtils.getResponseAsString(creationResponse);
 		
 		BaSyxHttpTestUtils.assertSameJSONContent(submodelJSON, response);
-	}
-	
-	private CloseableHttpResponse createAssetLinks(String shellId, String assetLinksJSON) throws IOException, ParseException {
-		return BaSyxHttpTestUtils.executePostOnURL(getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(shellId), assetLinksJSON);
-	}
-	
-	private String getNewAssetLinksJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("NewAssetLinks.json");
-	}
-
-	protected CloseableHttpResponse createConceptDescription(String conceptDescriptionJSON) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(getURL(), conceptDescriptionJSON);
-	}
-
-	protected CloseableHttpResponse deleteConceptDescriptionById(String conceptDescriptionId) throws IOException {
-		return removeAssetLink(conceptDescriptionId);
-	}
-
-	protected String requestAllShellIds() throws IOException, ParseException {
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(getURL() + "?assetIds=RHVtbXlBc3NldF8xX1ZhbHVl,RHVtbXlBc3NldF8zX1ZhbHVl");
-
-		return BaSyxHttpTestUtils.getResponseAsString(response);
-	}
-	
-	protected CloseableHttpResponse requestAllAssetLinks(String shellIdentifier) throws IOException, ParseException {
-		return BaSyxHttpTestUtils.executeGetOnURL(getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(shellIdentifier));
-	}
-
-	private String getAllShellIdsJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AllShellIDs.json");
-	}
-	
-	private String getAllAssetLinksJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AllAssetLinks.json");
 	}
 
 }

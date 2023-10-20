@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>basyx.aasdiscoveryservice-http</artifactId>
-	<name>Concept Description Repository HTTP</name>
+	<name>AAS Discovery Service HTTP</name>
 
 	<dependencies>
 		<dependency>

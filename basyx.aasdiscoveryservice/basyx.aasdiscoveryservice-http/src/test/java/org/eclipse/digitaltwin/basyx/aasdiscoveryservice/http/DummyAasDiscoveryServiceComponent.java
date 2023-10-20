@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http;
 
 import org.springframework.boot.SpringApplication;
@@ -32,7 +31,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * Spring application configured for tests.
  * 
- * @author schnicke, danish, kammognie
+ * @author danish
  *
  */
 @SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")

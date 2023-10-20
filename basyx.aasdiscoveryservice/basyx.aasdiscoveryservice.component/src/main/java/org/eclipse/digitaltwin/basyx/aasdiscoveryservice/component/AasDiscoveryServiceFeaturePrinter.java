@@ -23,41 +23,36 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.testconfig;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.MongoDBAasDiscoveryService;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.component;
+
+import java.util.List;
+
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.feature.AasDiscoveryServiceFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
- * Configuration for tests
+ * Prints all {@link AasDiscoveryService} features that are on the classpath
  * 
- * @author danish
+ * @author schnicke, danish
  *
  */
-@Configuration
-public class DummyConfig {
+@Service
+public class AasDiscoveryServiceFeaturePrinter {
 
-	private final String COLLECTION = "discoveryServiceHTTPTestCollection";
+	private static final Logger logger = LoggerFactory.getLogger(AasDiscoveryServiceFeaturePrinter.class);
 
-	@Bean
-	@ConditionalOnMissingBean
-	public AasDiscoveryService createAasDiscoveryService() {
-		return new MongoDBAasDiscoveryService(createTemplate(), COLLECTION);
+	@Autowired
+	public AasDiscoveryServiceFeaturePrinter(List<AasDiscoveryServiceFeature> features) {
+		logger.info("-------------------- AAS Discovery Service Features: --------------------");
+		for (AasDiscoveryServiceFeature feature : features) {
+			logger.info("BaSyxFeature " + feature.getName() + " is enabled: " + feature.isEnabled());
+		}
+
+		logger.info("----------------------------------------------------------------- ");
 	}
-
-	private MongoTemplate createTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-
-		MongoClient client = MongoClients.create(connectionURL);
-
-		return new MongoTemplate(client, "BaSyxTestDb");
-	}
-
 }

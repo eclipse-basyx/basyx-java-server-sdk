@@ -1,7 +1,7 @@
 # Eclipse BaSyx - Aas Discovery Service
 Eclipse BaSyx provides the Aas Discovery Service as off-the-shelf component:
 
-    docker run --name=cd-repo -p:8081:8081 -v C:/tmp/application.properties:/application/application.properties eclipsebasyx/conceptdescription-repository:2.0.0-SNAPSHOT 
+    docker run --name=aas-discovery-service -p:8081:8081 -v C:/tmp/application.properties:/application/application.properties eclipsebasyx/aasdiscovery-service:2.0.0-SNAPSHOT 
 
 > *Disclaimer*: In this example, configuration files are located in `C:/tmp`
 
@@ -15,10 +15,10 @@ The Swagger UI for the endpoint is available at:
 
 	http://{host}:{port}/swagger-ui/index.html
 
-It supports DotAAS Part 1 V3 and all HTTP/REST endpoints defined in [DotAAS Part 2 V3 - ConceptDescription Repository](https://app.swaggerhub.com/apis/Plattform_i40/ConceptDescriptionRepositoryServiceSpecification/V3.0_SSP-001).
+It supports DotAAS Part 1 V3 and all HTTP/REST endpoints defined in [DotAAS Part 2 V3 - AasDiscovery Service](https://app.swaggerhub.com/apis/Plattform_i40/Entire-API-Collection/V3.0.1#/Asset%20Administration%20Shell%20Basic%20Discovery%20API/).
 In addition, it supports InMemory as well as MongoDB backends. 
 
-For a configuration example, see [application.properties](basyx.conceptdescriptionrepository.component/src/main/resources/application.properties)
+For a configuration example, see [application.properties](basyx.aasdiscoveryservice.component/src/main/resources/application.properties)
 
 The Health Endpoint and CORS Documentation can be found [here](../docs/Readme.md). 
 

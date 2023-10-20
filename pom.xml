@@ -458,7 +458,11 @@
 				<artifactId>basyx.aasdiscoveryservice-http</artifactId>
 				<version>${revision}</version>
 			</dependency>
-			<!--
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasdiscoveryservice-tck</artifactId>
+				<version>${revision}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasdiscoveryservice-backend-inmemory</artifactId>
@@ -468,7 +472,7 @@
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasdiscoveryservice.component</artifactId>
 				<version>${revision}</version>
-			</dependency> -->
+			</dependency>
 
 			<!-- tests -->
 			<!-- basyx.common -->
@@ -689,20 +693,24 @@
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
-			<!-- 
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasdiscoveryservice-tck</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasdiscoveryservice-backend-inmemory</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
-			
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasdiscoveryservice.component</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
-			</dependency> -->
+			</dependency> 
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>

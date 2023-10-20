@@ -23,41 +23,30 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.testconfig;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.component;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.MongoDBAasDiscoveryService;
+import java.util.List;
+
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.feature.AasDiscoveryServiceFeature;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.feature.DecoratedAasDiscoveryServiceFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 
 /**
- * Configuration for tests
+ * Provides the spring bean configuration for the {@link AasDiscoveryService}
+ * utilizing all found features for the respective services
  * 
  * @author danish
  *
  */
 @Configuration
-public class DummyConfig {
-
-	private final String COLLECTION = "discoveryServiceHTTPTestCollection";
+public class AasDiscoveryServiceConfiguration {
 
 	@Bean
-	@ConditionalOnMissingBean
-	public AasDiscoveryService createAasDiscoveryService() {
-		return new MongoDBAasDiscoveryService(createTemplate(), COLLECTION);
+	public static AasDiscoveryService getAasDiscoveryService(AasDiscoveryServiceFactory aasDiscoveryServiceFactory, List<AasDiscoveryServiceFeature> features) {
+		return new DecoratedAasDiscoveryServiceFactory(aasDiscoveryServiceFactory, features).create();
 	}
-
-	private MongoTemplate createTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-
-		MongoClient client = MongoClients.create(connectionURL);
-
-		return new MongoTemplate(client, "BaSyxTestDb");
-	}
-
+	
 }
