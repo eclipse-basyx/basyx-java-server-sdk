@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,7 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
@@ -40,14 +40,15 @@ import javax.validation.constraints.Size;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
-import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.model.OperationRequest;
 import org.eclipse.digitaltwin.basyx.http.model.OperationResult;
+import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.eclipse.digitaltwin.basyx.pagination.GetSubmodelElementsResult;
@@ -101,18 +102,25 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	}
 
 	@Override
-	public ResponseEntity<PagedResult> getAllSubmodels(@Size(min = 1, max = 3072) @Valid Base64UrlEncodedIdentifier semanticId, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid String cursor, @Valid String level,
+	public ResponseEntity<PagedResult> getAllSubmodels(@Size(min = 1, max = 3072) @Valid Base64UrlEncodedIdentifier semanticId, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor, @Valid String level,
 			@Valid String extent) {
 		if (limit == null)
 			limit = 100;
-		if (cursor == null)
-			cursor = "";
-		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
+
+		String decodedCursor = "";
+		if (cursor != null)
+			decodedCursor = cursor.getDecodedCursor();
+
+		PaginationInfo pInfo = new PaginationInfo(limit, decodedCursor);
+
 		CursorResult<List<Submodel>> cursorResult = repository.getAllSubmodels(pInfo);
 
 		GetSubmodelsResult paginatedSubmodel = new GetSubmodelsResult();
+
+		String encodedCursor = getEncodedCursorFromCursorResult(cursorResult);
+
 		paginatedSubmodel.result(new ArrayList<>(cursorResult.getResult()));
-		paginatedSubmodel.setPagingMetadata(new PagedResultPagingMetadata().cursor(cursorResult.getCursor()));
+		paginatedSubmodel.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
 
 		return new ResponseEntity<PagedResult>(paginatedSubmodel, HttpStatus.OK);
 	}
@@ -129,19 +137,23 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	}
 
 	@Override
-	public ResponseEntity<PagedResult> getAllSubmodelElements(Base64UrlEncodedIdentifier submodelIdentifier, @Min(1) @Valid Integer limit, @Valid String cursor, @Valid String level, @Valid String extent) {
+	public ResponseEntity<PagedResult> getAllSubmodelElements(Base64UrlEncodedIdentifier submodelIdentifier, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor, @Valid String level, @Valid String extent) {
 		if (limit == null)
 			limit = 100;
-		if (cursor == null)
-			cursor = "";
-		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
-		CursorResult<List<SubmodelElement>> submodelElements = repository
+
+		String decodedCursor = "";
+		if (cursor != null)
+			decodedCursor = cursor.getDecodedCursor();
+
+		PaginationInfo pInfo = new PaginationInfo(limit, decodedCursor);
+		CursorResult<List<SubmodelElement>> cursorResult = repository
 				.getSubmodelElements(submodelIdentifier.getIdentifier(), pInfo);
 
 		GetSubmodelElementsResult paginatedSubmodelElement = new GetSubmodelElementsResult();
-		paginatedSubmodelElement.setResult(submodelElements.getResult());
-		paginatedSubmodelElement
-				.setPagingMetadata(new PagedResultPagingMetadata().cursor(submodelElements.getCursor()));
+		String encodedCursor = getEncodedCursorFromCursorResult(cursorResult);
+
+		paginatedSubmodelElement.result(new ArrayList<>(cursorResult.getResult()));
+		paginatedSubmodelElement.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
 
 		return new ResponseEntity<PagedResult>(paginatedSubmodelElement, HttpStatus.OK);
 	}
@@ -257,6 +269,13 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		OperationResult operationResult = new OperationResult();
 		operationResult.setOutputArguments(Arrays.asList(result));
 		return operationResult;
+	}
+
+	private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
+		if (cursorResult == null || cursorResult.getCursor() == null)
+			return null;
+
+		return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
 	}
 	
 	private void closeInputStream(InputStream fileInputstream) {

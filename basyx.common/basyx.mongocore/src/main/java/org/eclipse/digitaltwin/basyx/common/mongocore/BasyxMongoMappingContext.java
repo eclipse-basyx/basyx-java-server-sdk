@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,33 +22,41 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.common.mongocore;
 
+import java.util.HashMap;
+import java.util.Map;
 
-package org.eclipse.digitaltwin.basyx.aasrepository;
-
-import static org.junit.Assert.assertEquals;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
-import org.junit.Test;
+import org.springframework.data.mongodb.core.mapping.BasicMongoPersistentEntity;
+import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.data.util.TypeInformation;
+import org.springframework.stereotype.Component;
 
 /**
- * Tests the {@link InMemoryAasRepository} name
- *  
- * @author schnicke, kammognie
- *
+ * Custom BaSyx Mongo Mapping Context Necessary for configuring MongoDB
+ * collection names for AAS, SM and CD
+ * 
+ * @author mateusmolina, despen
  */
-public class TestInMemoryAasRepository extends AasRepositorySuite {
-	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
-	
-	@Override
-	protected AasRepositoryFactory getAasRepositoryFactory() {
-		return new InMemoryAasRepositoryFactory(new InMemoryAasServiceFactory());
-	}
-	
-	@Test
-    public void getConfiguredInMemoryAasRepositoryName() {
-		AasRepository repo = new InMemoryAasRepository(new InMemoryAasServiceFactory(), CONFIGURED_AAS_REPO_NAME);
-		
-		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
+@Component
+public class BasyxMongoMappingContext extends MongoMappingContext {
+	private final Map<Class<?>, String> customCollectionNames = new HashMap<>();
+
+	public BasyxMongoMappingContext() {
+		super();
 	}
 
+	public void addEntityMapping(Class<?> clazz, String collectionName) {
+		customCollectionNames.put(clazz, collectionName);
+	}
+
+	@Override
+	protected <T> BasicMongoPersistentEntity<T> createPersistentEntity(TypeInformation<T> typeInformation) {
+		return new BasicMongoPersistentEntity<T>(typeInformation) {
+			@Override
+			public String getCollection() {
+				return customCollectionNames.getOrDefault(typeInformation.getType(), super.getCollection());
+			}
+		};
+	}
 }

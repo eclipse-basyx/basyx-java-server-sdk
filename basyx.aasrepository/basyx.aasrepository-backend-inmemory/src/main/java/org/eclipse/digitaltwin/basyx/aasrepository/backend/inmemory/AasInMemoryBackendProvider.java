@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2022 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,41 +23,27 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository;
+package org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory;
 
-import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
 /**
- * AasRepository factory returning an in-memory backend AasRepository
  * 
- * @author schnicke, kammognie
+ * InMemory backend provider for the AAS
+ * 
+ * @author mateusmolina
  */
-@ConditionalOnExpression("'${basyx.aasrepository.backend}'.equals('InMemory') or '${basyx.backend}'.equals('InMemory')")
+@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
 @Component
-public class InMemoryAasRepositoryFactory implements AasRepositoryFactory {
-
-	private AasServiceFactory aasApiFactory;
-	
-	private String aasRepositoryName;
-
-	@Autowired(required = false)
-	public InMemoryAasRepositoryFactory(AasServiceFactory aasApiFactory) {
-		this.aasApiFactory = aasApiFactory;
-	}
-	
-	@Autowired(required = false)
-	public InMemoryAasRepositoryFactory(AasServiceFactory aasApiFactory, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
-		this(aasApiFactory);
-		this.aasRepositoryName = aasRepositoryName;
-	}
+public class AasInMemoryBackendProvider implements AasBackendProvider {
 
 	@Override
-	public AasRepository create() {
-		return new InMemoryAasRepository(aasApiFactory, aasRepositoryName);
+	public CrudRepository<AssetAdministrationShell, String> getCrudRepository() {
+		return new AasInMemoryBackend();
 	}
 
 }
