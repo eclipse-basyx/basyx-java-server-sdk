@@ -110,19 +110,6 @@ public class BaSyxHttpTestUtils {
 		HttpGet getRequest = createGetRequestWithHeader(url);
 		return client.execute(getRequest);
 	}
-	
-	/**
-	 * Performs a get request on the passed URL
-	 * 
-	 * @param url
-	 * @return
-	 * @throws IOException
-	 */
-	public static CloseableHttpResponse executeGetOnURL(String url, String content) throws IOException {
-		CloseableHttpClient client = HttpClients.createDefault();
-		HttpGet getRequest = createGetRequestContent(url, content);
-		return client.execute(getRequest);
-	}
 
 	/**
 	 * Performs a delete request on the passed URL
@@ -221,15 +208,6 @@ public class BaSyxHttpTestUtils {
 		aasCreateRequest.setHeader("Content-type", "application/json");
 		aasCreateRequest.setHeader("Accept", "application/json");
 		return aasCreateRequest;
-	}
-	
-	private static HttpGet createGetRequestContent(String url, String content) {
-		HttpGet getRequest = createGetRequestWithHeader(url);
-
-		StringEntity entity = new StringEntity(content);
-		getRequest.setEntity(entity);
-
-		return getRequest;
 	}
 
 	private static HttpDelete createDeleteRequestWithHeader(String url) {

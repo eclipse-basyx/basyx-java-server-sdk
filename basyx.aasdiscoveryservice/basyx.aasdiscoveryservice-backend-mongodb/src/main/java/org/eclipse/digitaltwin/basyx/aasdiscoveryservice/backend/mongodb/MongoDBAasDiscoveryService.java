@@ -24,7 +24,9 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -74,9 +76,9 @@ public class MongoDBAasDiscoveryService implements AasDiscoveryService {
 			List<String> assetIds) {
 		List<AssetLink> assetLinks = mongoTemplate.findAll(AssetLink.class, collectionName);
 		
-		List<String> shellIdentifiers = assetLinks.stream().filter(link -> containsMatchingAssetId(link.getSpecificAssetIDs(), assetIds)).map(AssetLink::getShellIdentifier).collect(Collectors.toList());
+		Set<String> shellIdentifiers = assetLinks.stream().filter(link -> containsMatchingAssetId(link.getSpecificAssetIDs(), assetIds)).map(AssetLink::getShellIdentifier).collect(Collectors.toSet());
 		
-		return paginateList(pInfo, shellIdentifiers);
+		return paginateList(pInfo, new ArrayList<>(shellIdentifiers));
 	}
 
 	@Override
