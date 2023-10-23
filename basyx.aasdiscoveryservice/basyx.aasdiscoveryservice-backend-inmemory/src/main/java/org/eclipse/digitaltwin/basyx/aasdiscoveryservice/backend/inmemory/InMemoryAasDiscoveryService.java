@@ -115,11 +115,11 @@ public class InMemoryAasDiscoveryService implements AasDiscoveryService {
 		return aasDiscoveryServiceName == null ? AasDiscoveryService.super.getName() : aasDiscoveryServiceName;
 	}
 	
-	private CursorResult<List<String>> paginateList(PaginationInfo pInfo, List<String> cdList) {
-	    TreeMap<String, String> cdMap = cdList.stream()
+	private CursorResult<List<String>> paginateList(PaginationInfo pInfo, List<String> shellIdentifiers) {
+	    TreeMap<String, String> shellIdentifierMap = shellIdentifiers.stream()
 	            .collect(Collectors.toMap(Function.identity(), Function.identity(), (a, b) -> a, TreeMap::new));
 
-	    PaginationSupport<String> paginationSupport = new PaginationSupport<>(cdMap, Function.identity());
+	    PaginationSupport<String> paginationSupport = new PaginationSupport<>(shellIdentifierMap, Function.identity());
 	    
 	    return paginationSupport.getPaged(pInfo);
 	}
