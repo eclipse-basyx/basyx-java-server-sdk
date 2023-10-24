@@ -36,7 +36,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
 public class DummyAasDiscoveryServiceComponent {
-	
+
 	public static void main(String[] args) {
 		SpringApplication.run(DummyAasDiscoveryServiceComponent.class, args);
 	}

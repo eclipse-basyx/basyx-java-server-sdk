@@ -46,8 +46,7 @@ public interface AasDiscoveryService {
 	 * @param assetIds
 	 * @return a list of all matching Aas Ids
 	 */
-	public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo,
-			List<String> assetIds);
+	public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo, List<String> assetIds);
 
 	/**
 	 * Returns a list of asset identifier key-value-pairs based on an Asset
@@ -70,7 +69,8 @@ public interface AasDiscoveryService {
 	public List<SpecificAssetID> createAllAssetLinksById(String shellIdentifier, List<SpecificAssetID> assetIds);
 
 	/**
-	 * Deletes all asset identifier key-value-pairs linked to an Asset Administration Shell
+	 * Deletes all asset identifier key-value-pairs linked to an Asset
+	 * Administration Shell
 	 * 
 	 * @param aasIdentifier
 	 */

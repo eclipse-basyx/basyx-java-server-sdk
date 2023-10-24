@@ -45,7 +45,10 @@ public class AasDiscoveryServiceApiDocumentationConfiguration extends Repository
 
 	@Override
 	protected Info apiInfo() {
-		return new Info().title(TITLE).description(DESCRIPTION).version(VERSION).contact(apiContact())
+		return new Info().title(TITLE)
+				.description(DESCRIPTION)
+				.version(VERSION)
+				.contact(apiContact())
 				.license(apiLicence());
 	}
 

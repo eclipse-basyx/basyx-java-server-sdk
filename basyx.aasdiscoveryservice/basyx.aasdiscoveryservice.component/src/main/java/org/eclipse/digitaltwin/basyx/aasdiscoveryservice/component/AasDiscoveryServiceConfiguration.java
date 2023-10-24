@@ -48,5 +48,5 @@ public class AasDiscoveryServiceConfiguration {
 	public static AasDiscoveryService getAasDiscoveryService(AasDiscoveryServiceFactory aasDiscoveryServiceFactory, List<AasDiscoveryServiceFeature> features) {
 		return new DecoratedAasDiscoveryServiceFactory(aasDiscoveryServiceFactory, features).create();
 	}
-	
+
 }

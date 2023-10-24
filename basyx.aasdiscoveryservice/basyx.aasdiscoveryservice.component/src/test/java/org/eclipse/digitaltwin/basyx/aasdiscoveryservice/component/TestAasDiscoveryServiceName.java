@@ -42,7 +42,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class TestAasDiscoveryServiceName {
 	private static final String CONFIGURED_AAS_DISC_SERV_NAME = "configured-aas-disc-serv-name";
 	private static final String BASYX_AAS_DISC_SERV_NAME_KEY = "basyx.aasdiscserv.name";
-	
+
 	private static ConfigurableApplicationContext appContext;
 
 	public void startContext() {
@@ -56,34 +56,34 @@ public class TestAasDiscoveryServiceName {
 	@Test
 	public void getDefaultServiceName() {
 		startContext();
-		
+
 		AasDiscoveryService service = appContext.getBean(AasDiscoveryService.class);
-		
+
 		assertEquals("aas-discovery-service", service.getName());
-		
+
 		closeContext();
 	}
 
 	@Test
 	public void getConfiguredServiceName() {
 		configureServiceNamePropertyAndStartContext();
-		
+
 		AasDiscoveryService service = appContext.getBean(AasDiscoveryService.class);
-		
+
 		assertEquals(CONFIGURED_AAS_DISC_SERV_NAME, service.getName());
-		
+
 		resetServiceNamePropertyAndCloseContext();
 	}
 
 	private void resetServiceNamePropertyAndCloseContext() {
 		System.clearProperty(BASYX_AAS_DISC_SERV_NAME_KEY);
-		
+
 		closeContext();
 	}
 
 	private void configureServiceNamePropertyAndStartContext() {
 		System.setProperty(BASYX_AAS_DISC_SERV_NAME_KEY, CONFIGURED_AAS_DISC_SERV_NAME);
-		
+
 		startContext();
 	}
 

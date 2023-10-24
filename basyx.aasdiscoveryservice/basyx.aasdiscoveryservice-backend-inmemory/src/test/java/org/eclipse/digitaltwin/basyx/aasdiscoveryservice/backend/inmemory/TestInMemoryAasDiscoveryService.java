@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
@@ -36,7 +35,7 @@ import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServic
  *
  */
 public class TestInMemoryAasDiscoveryService extends AasDiscoveryServiceSuite {
-	
+
 	@Override
 	protected AasDiscoveryService getAasDiscoveryService() {
 		return new InMemoryAasDiscoveryService();

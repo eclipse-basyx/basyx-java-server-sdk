@@ -32,7 +32,7 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core;
  * 
  */
 public interface AasDiscoveryServiceFactory {
-	
+
 	/**
 	 * Creates a new {@link AasDiscoveryService}
 	 * 

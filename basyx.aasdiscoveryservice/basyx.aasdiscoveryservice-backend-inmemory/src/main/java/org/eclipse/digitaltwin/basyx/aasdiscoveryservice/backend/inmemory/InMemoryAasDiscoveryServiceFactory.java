@@ -32,24 +32,26 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 /**
- * {@link AasDiscoveryService} factory returning an in-memory backend {@link AasDiscoveryService}
+ * {@link AasDiscoveryService} factory returning an in-memory backend
+ * {@link AasDiscoveryService}
  * 
  * @author zhangzai
  */
 @Component
 @ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
 public class InMemoryAasDiscoveryServiceFactory implements AasDiscoveryServiceFactory {
-	
+
 	private String aasDiscoveryServiceName;
-	
+
 	@Autowired(required = false)
-	public InMemoryAasDiscoveryServiceFactory() { }
-	
+	public InMemoryAasDiscoveryServiceFactory() {
+	}
+
 	@Autowired(required = false)
-	public InMemoryAasDiscoveryServiceFactory(@Value("${basyx.aasdiscserv.name:aas-discovery-service}") String aasDiscoveryServiceName) { 
+	public InMemoryAasDiscoveryServiceFactory(@Value("${basyx.aasdiscserv.name:aas-discovery-service}") String aasDiscoveryServiceName) {
 		this.aasDiscoveryServiceName = aasDiscoveryServiceName;
 	}
-	
+
 	@Override
 	public AasDiscoveryService create() {
 		return new InMemoryAasDiscoveryService(aasDiscoveryServiceName);

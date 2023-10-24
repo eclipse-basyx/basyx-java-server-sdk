@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.component;
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
@@ -38,8 +37,7 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
  * @author schnicke, danish
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", 
-exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
 public class AasDiscoveryServiceComponent {
 	public static void main(String[] args) {
 		SpringApplication.run(AasDiscoveryServiceComponent.class, args);

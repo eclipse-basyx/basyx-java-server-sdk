@@ -32,16 +32,17 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
 
 /**
- * Represents the link between {@link AssetAdministrationShell} and {@link SpecificAssetID}
+ * Represents the link between {@link AssetAdministrationShell} and
+ * {@link SpecificAssetID}
  * 
  * @author danish
  *
  */
 public class AssetLink {
-	
+
 	private String shellIdentifier;
 	private List<SpecificAssetID> specificAssetIDs;
-	
+
 	public AssetLink(String shellIdentifier, List<SpecificAssetID> specificAssetIDs) {
 		super();
 		this.shellIdentifier = shellIdentifier;
@@ -55,8 +56,10 @@ public class AssetLink {
 	public List<SpecificAssetID> getSpecificAssetIDs() {
 		return specificAssetIDs;
 	}
-	
-	public List<String> getSpecificAssetIDStrings(){
-		return specificAssetIDs.stream().map(SpecificAssetID::getValue).collect(Collectors.toList());
+
+	public List<String> getSpecificAssetIDStrings() {
+		return specificAssetIDs.stream()
+				.map(SpecificAssetID::getValue)
+				.collect(Collectors.toList());
 	}
 }

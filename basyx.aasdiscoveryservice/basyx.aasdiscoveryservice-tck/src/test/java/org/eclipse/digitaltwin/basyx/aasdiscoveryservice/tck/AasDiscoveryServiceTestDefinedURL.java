@@ -28,6 +28,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.List;
+
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
@@ -68,12 +69,12 @@ public class AasDiscoveryServiceTestDefinedURL extends AasDiscoveryServiceHTTPSu
 		try {
 			String conceptDescriptionJSON = gson.toJson(assetLink.getSpecificAssetIDs());
 			CloseableHttpResponse creationResponse = createAssetLinks(assetLink.getShellIdentifier(), conceptDescriptionJSON);
-			
+
 			if (creationResponse.getCode() != 409) {
 				logger.info("Creating Asset Link with shell id '{}', ResponseCode is '{}'", assetLink.getShellIdentifier(), creationResponse.getCode());
 				return;
 			}
-			
+
 			resetAssetLink(assetLink);
 		} catch (IOException | ParseException e) {
 			throw new RuntimeException(e);
@@ -82,7 +83,7 @@ public class AasDiscoveryServiceTestDefinedURL extends AasDiscoveryServiceHTTPSu
 
 	private void resetAssetLink(AssetLink assetLink) {
 		deleteAssetLink(assetLink.getShellIdentifier());
-		
+
 		createAssetLink(assetLink);
 	}
 

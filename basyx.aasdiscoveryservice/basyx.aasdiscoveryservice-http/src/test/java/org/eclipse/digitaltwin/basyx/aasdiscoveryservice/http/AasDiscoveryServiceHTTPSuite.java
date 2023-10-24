@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
@@ -42,8 +43,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
- * Tests the Aas Discovery specific parts of the
- * {@link AasDiscoveryService} HTTP/REST API
+ * Tests the Aas Discovery specific parts of the {@link AasDiscoveryService}
+ * HTTP/REST API
  * 
  * @author danish
  *
@@ -54,50 +55,50 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 	@Before
 	@After
 	public abstract void resetService();
-	
+
 	@Test
 	public void getAllAssetAdministrationShellIdsByAssetLink() throws ParseException, IOException {
 		String expectedShellIds = getAllShellIdsJSON();
-		
+
 		String actualShellIds = requestAllShellIds();
-		
+
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedShellIds, actualShellIds);
 	}
-	
+
 	@Test
 	public void getAllAssetLinks() throws IOException, ParseException {
 		String expectedShellIds = getAllAssetLinksJSON();
-		
+
 		CloseableHttpResponse response = requestAllAssetLinks("TestAasID2");
-		
+
 		String actualShellIds = BaSyxHttpTestUtils.getResponseAsString(response);
-		
+
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedShellIds, actualShellIds);
 	}
-	
+
 	@Test
 	public void getAllAssetLinksWithNonExistingShellId() throws IOException, ParseException {
 		CloseableHttpResponse response = requestAllAssetLinks("nonExisting");
 
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
-	
+
 	@Test
 	public void createAllAssetLinks() throws IOException, ParseException {
 		String assetLinkJSON = getNewAssetLinksJSON();
-		
+
 		CloseableHttpResponse creationResponse = createAssetLinks("NewDummyShellId", assetLinkJSON);
 
 		assertAssetLinkCreationReponse(assetLinkJSON, creationResponse);
 
 		CloseableHttpResponse retrievalResponse = requestAllAssetLinks("NewDummyShellId");
 		String actualAssetLinks = BaSyxHttpTestUtils.getResponseAsString(retrievalResponse);
-		
+
 		BaSyxHttpTestUtils.assertSameJSONContent(assetLinkJSON, actualAssetLinks);
-		
+
 		removeNewlyAddedAssetLinks("NewDummyShellId");
 	}
-	
+
 	@Test
 	public void createAssetLinksCollidingId() throws IOException, ParseException {
 		String assetLinkJSON = getNewAssetLinksJSON();
@@ -105,7 +106,7 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 
 		assertEquals(HttpStatus.CONFLICT.value(), creationResponse.getCode());
 	}
-	
+
 	@Test
 	public void deleteAssetLinks() throws IOException, ParseException {
 		String existingShellId = "TestAasID1";
@@ -123,7 +124,7 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 
 		assertEquals(HttpStatus.NOT_FOUND.value(), deletionResponse.getCode());
 	}
-	
+
 	protected CloseableHttpResponse createAssetLinks(String shellId, String assetLinksJSON) throws IOException, ParseException {
 		return BaSyxHttpTestUtils.executePostOnURL(getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(shellId), assetLinksJSON);
 	}
@@ -137,11 +138,11 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 
 		return BaSyxHttpTestUtils.getResponseAsString(response);
 	}
-	
+
 	protected CloseableHttpResponse requestAllAssetLinks(String shellIdentifier) throws IOException, ParseException {
 		return BaSyxHttpTestUtils.executeGetOnURL(getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(shellIdentifier));
 	}
-	
+
 	private String getNewAssetLinksJSON() throws IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("NewAssetLinks.json");
 	}
@@ -149,26 +150,26 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 	private String getAllShellIdsJSON() throws IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AllShellIDs.json");
 	}
-	
+
 	private String getAllAssetLinksJSON() throws IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AllAssetLinks.json");
 	}
-	
+
 	private void removeNewlyAddedAssetLinks(String shellId) throws IOException {
 		CloseableHttpResponse deletionResponse = removeAssetLink(shellId);
-		
+
 		assertEquals(HttpStatus.NO_CONTENT.value(), deletionResponse.getCode());
 	}
 
 	private CloseableHttpResponse removeAssetLink(String shellId) throws IOException {
 		return BaSyxHttpTestUtils.executeDeleteOnURL(getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
 	}
-	
+
 	private void assertAssetLinkCreationReponse(String submodelJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JsonProcessingException, JsonMappingException {
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
-		
+
 		String response = BaSyxHttpTestUtils.getResponseAsString(creationResponse);
-		
+
 		BaSyxHttpTestUtils.assertSameJSONContent(submodelJSON, response);
 	}
 

@@ -50,7 +50,7 @@ import com.mongodb.client.MongoClients;
 public class TestMongoDBAasDiscoveryService extends AasDiscoveryServiceSuite {
 	private static final String CONFIGURED_AAS_DISC_SERV_NAME = "configured-aas-discovery-service-name";
 	private final String COLLECTION = "aasDiscoveryServiceTestCollection";
-	
+
 	@Override
 	protected AasDiscoveryService getAasDiscoveryService() {
 		MongoTemplate template = createTemplate();
@@ -59,55 +59,55 @@ public class TestMongoDBAasDiscoveryService extends AasDiscoveryServiceSuite {
 
 		return new MongoDBAasDiscoveryServiceFactory(template, COLLECTION).create();
 	}
-	
+
 	@Test
 	public void configuredMongoDBAasDiscoveryServiceName() {
-        MongoTemplate template = createTemplate();
-		
+		MongoTemplate template = createTemplate();
+
 		clearDatabase(template);
-		
+
 		AasDiscoveryService service = new MongoDBAasDiscoveryService(template, COLLECTION, CONFIGURED_AAS_DISC_SERV_NAME);
-		
+
 		assertEquals(CONFIGURED_AAS_DISC_SERV_NAME, service.getName());
 	}
 
 	@Test
 	public void assetLinkIsPersisted() {
 		AasDiscoveryService aasDiscoveryService = getAasDiscoveryService();
-		
+
 		String dummyShellIdentifier = "DummyShellID";
-		
+
 		List<SpecificAssetID> expectedAssetIDs = createDummyAssetLinkOnDiscoveryService(dummyShellIdentifier, aasDiscoveryService);
-		
+
 		List<SpecificAssetID> actualAssetIDs = aasDiscoveryService.getAllAssetLinksById(dummyShellIdentifier);
 
 		assertEquals(expectedAssetIDs, actualAssetIDs);
-		
+
 		removeCreatedAssetLink(dummyShellIdentifier, aasDiscoveryService);
 	}
 
 	private List<SpecificAssetID> createDummyAssetLinkOnDiscoveryService(String testShellIdentifier, AasDiscoveryService aasDiscoveryService) {
 		AssetLink assetLink = getSingleDummyAasAssetLink(testShellIdentifier);
 		createAssetLink(assetLink, aasDiscoveryService);
-		
+
 		SpecificAssetID specificAssetID_1 = createDummySpecificAssetID("TestAsset1", "TestAssetValue1");
 		SpecificAssetID specificAssetID_2 = createDummySpecificAssetID("TestAsset2", "TestAssetValue2");
-		
+
 		return Arrays.asList(specificAssetID_1, specificAssetID_2);
 	}
-	
+
 	private void removeCreatedAssetLink(String dummyShellIdentifier, AasDiscoveryService aasDiscoveryService) {
 		aasDiscoveryService.deleteAllAssetLinksById(dummyShellIdentifier);
 	}
-	
+
 	private MongoTemplate createTemplate() {
 		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-		
+
 		MongoClient client = MongoClients.create(connectionURL);
-		
+
 		return new MongoTemplate(client, "BaSyxTestDb");
 	}
-	
+
 	private void clearDatabase(MongoTemplate template) {
 		template.remove(new Query(), COLLECTION);
 	}

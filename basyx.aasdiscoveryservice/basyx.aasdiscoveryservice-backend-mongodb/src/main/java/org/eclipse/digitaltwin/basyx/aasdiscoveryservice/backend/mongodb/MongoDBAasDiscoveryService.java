@@ -65,19 +65,21 @@ public class MongoDBAasDiscoveryService implements AasDiscoveryService {
 		this.collectionName = collectionName;
 		configureIndexForConceptDescriptionId(mongoTemplate);
 	}
-	
+
 	public MongoDBAasDiscoveryService(MongoTemplate mongoTemplate, String collectionName, String aasDiscoveryServiceName) {
 		this(mongoTemplate, collectionName);
 		this.aasDiscoveryServiceName = aasDiscoveryServiceName;
 	}
 
 	@Override
-	public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo,
-			List<String> assetIds) {
+	public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo, List<String> assetIds) {
 		List<AssetLink> assetLinks = mongoTemplate.findAll(AssetLink.class, collectionName);
-		
-		Set<String> shellIdentifiers = assetLinks.stream().filter(link -> containsMatchingAssetId(link.getSpecificAssetIDs(), assetIds)).map(AssetLink::getShellIdentifier).collect(Collectors.toSet());
-		
+
+		Set<String> shellIdentifiers = assetLinks.stream()
+				.filter(link -> containsMatchingAssetId(link.getSpecificAssetIDs(), assetIds))
+				.map(AssetLink::getShellIdentifier)
+				.collect(Collectors.toSet());
+
 		return paginateList(pInfo, new ArrayList<>(shellIdentifiers));
 	}
 
@@ -99,11 +101,11 @@ public class MongoDBAasDiscoveryService implements AasDiscoveryService {
 
 		if (mongoTemplate.exists(query, AssetLink.class, collectionName))
 			throw new CollidingAssetLinkException(shellIdentifier);
-		
+
 		AssetLink link = new AssetLink(shellIdentifier, assetIds);
 
 		mongoTemplate.save(link, collectionName);
-		
+
 		return assetIds;
 	}
 
@@ -117,28 +119,32 @@ public class MongoDBAasDiscoveryService implements AasDiscoveryService {
 		if (result.getDeletedCount() == 0)
 			throw new AssetLinkDoesNotExistException(shellIdentifier);
 	}
-	
+
 	@Override
 	public String getName() {
 		return aasDiscoveryServiceName == null ? AasDiscoveryService.super.getName() : aasDiscoveryServiceName;
 	}
-	
-	private CursorResult<List<String>> paginateList(PaginationInfo pInfo, List<String> shellIdentifiers) {
-	    TreeMap<String, String> shellIdentifierMap = shellIdentifiers.stream()
-	            .collect(Collectors.toMap(Function.identity(), Function.identity(), (a, b) -> a, TreeMap::new));
 
-	    PaginationSupport<String> paginationSupport = new PaginationSupport<>(shellIdentifierMap, Function.identity());
-	    
-	    return paginationSupport.getPaged(pInfo);
+	private CursorResult<List<String>> paginateList(PaginationInfo pInfo, List<String> shellIdentifiers) {
+		TreeMap<String, String> shellIdentifierMap = shellIdentifiers.stream()
+				.collect(Collectors.toMap(Function.identity(), Function.identity(), (a, b) -> a, TreeMap::new));
+
+		PaginationSupport<String> paginationSupport = new PaginationSupport<>(shellIdentifierMap, Function.identity());
+
+		return paginationSupport.getPaged(pInfo);
 	}
-	
+
 	private boolean containsMatchingAssetId(List<SpecificAssetID> containedSpecificAssetIds, List<String> queryAssetIds) {
-		return queryAssetIds.stream().anyMatch(queryAssetId -> containedSpecificAssetIds.stream().anyMatch(containedAssetId -> containedAssetId.getValue().equals(queryAssetId)));
+		return queryAssetIds.stream()
+				.anyMatch(queryAssetId -> containedSpecificAssetIds.stream()
+						.anyMatch(containedAssetId -> containedAssetId.getValue()
+								.equals(queryAssetId)));
 	}
-	
+
 	private void configureIndexForConceptDescriptionId(MongoTemplate mongoTemplate) {
 		Index idIndex = new Index().on(SHELL_IDENTIFIER, Direction.ASC);
-		mongoTemplate.indexOps(AssetLink.class).ensureIndex(idIndex);
+		mongoTemplate.indexOps(AssetLink.class)
+				.ensureIndex(idIndex);
 	}
 
 }

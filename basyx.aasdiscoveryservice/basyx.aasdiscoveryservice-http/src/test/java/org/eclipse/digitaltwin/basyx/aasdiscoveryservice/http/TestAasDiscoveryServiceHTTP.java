@@ -55,14 +55,15 @@ public class TestAasDiscoveryServiceHTTP extends AasDiscoveryServiceHTTPSuite {
 	@Override
 	public void resetService() {
 		AasDiscoveryService aasDiscoveryService = appContext.getBean(AasDiscoveryService.class);
-		
+
 		List<AssetLink> dummyAssetLinks = AasDiscoveryServiceSuite.getMultipleDummyAasAssetLink();
-		
-		dummyAssetLinks.stream().forEach(assetLink -> resetAssetLink(assetLink, aasDiscoveryService));
+
+		dummyAssetLinks.stream()
+				.forEach(assetLink -> resetAssetLink(assetLink, aasDiscoveryService));
 	}
-	
+
 	private void resetAssetLink(AssetLink assetLink, AasDiscoveryService aasDiscoveryService) {
-		
+
 		try {
 			aasDiscoveryService.createAllAssetLinksById(assetLink.getShellIdentifier(), assetLink.getSpecificAssetIDs());
 		} catch (CollidingAssetLinkException e) {
