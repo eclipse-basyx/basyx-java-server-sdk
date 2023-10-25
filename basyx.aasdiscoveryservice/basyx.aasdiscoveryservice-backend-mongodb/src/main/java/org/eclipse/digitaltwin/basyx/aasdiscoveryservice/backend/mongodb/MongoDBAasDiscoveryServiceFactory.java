@@ -54,7 +54,7 @@ public class MongoDBAasDiscoveryServiceFactory implements AasDiscoveryServiceFac
 
 	@Autowired(required = false)
 	public MongoDBAasDiscoveryServiceFactory(MongoTemplate mongoTemplate, @Value("${basyx.aasdiscoveryservice.mongodb.collectionName:aasdiscovery-service}") String collectionName,
-			@Value("${basyx.aasdiscserv.name:aas-discovery-service}") String aasDiscoveryServiceName) {
+			@Value("${basyx.aasdiscoveryservice.name:aas-discovery-service}") String aasDiscoveryServiceName) {
 		this(mongoTemplate, collectionName);
 		this.aasDiscoveryServiceName = aasDiscoveryServiceName;
 	}

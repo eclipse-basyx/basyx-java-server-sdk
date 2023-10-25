@@ -48,7 +48,7 @@ public class InMemoryAasDiscoveryServiceFactory implements AasDiscoveryServiceFa
 	}
 
 	@Autowired(required = false)
-	public InMemoryAasDiscoveryServiceFactory(@Value("${basyx.aasdiscserv.name:aas-discovery-service}") String aasDiscoveryServiceName) {
+	public InMemoryAasDiscoveryServiceFactory(@Value("${basyx.aasdiscoveryservice.name:aas-discovery-service}") String aasDiscoveryServiceName) {
 		this.aasDiscoveryServiceName = aasDiscoveryServiceName;
 	}
 

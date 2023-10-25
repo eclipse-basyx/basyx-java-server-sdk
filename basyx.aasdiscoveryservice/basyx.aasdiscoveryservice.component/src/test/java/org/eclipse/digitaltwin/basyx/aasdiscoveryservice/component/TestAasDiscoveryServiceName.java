@@ -41,7 +41,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public class TestAasDiscoveryServiceName {
 	private static final String CONFIGURED_AAS_DISC_SERV_NAME = "configured-aas-disc-serv-name";
-	private static final String BASYX_AAS_DISC_SERV_NAME_KEY = "basyx.aasdiscserv.name";
+	private static final String BASYX_AAS_DISC_SERV_NAME_KEY = "basyx.aasdiscoveryservice.name";
 
 	private static ConfigurableApplicationContext appContext;
 
