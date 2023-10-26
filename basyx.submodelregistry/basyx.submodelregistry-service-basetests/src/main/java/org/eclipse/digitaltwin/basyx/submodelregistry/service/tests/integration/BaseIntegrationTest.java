@@ -72,7 +72,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -114,9 +113,6 @@ public abstract class BaseIntegrationTest {
 	@Rule
 	public TestResourcesLoader resourceLoader = new TestResourcesLoader(BaseIntegrationTest.class.getPackageName(), mapper);
 
-	@Autowired
-	private BaseEventListener listener;
-
 	protected SubmodelRegistryApi api;
 
 	@Before
@@ -124,12 +120,12 @@ public abstract class BaseIntegrationTest {
 		api = new SubmodelRegistryApi("http", "127.0.0.1", port);
 		// there should be no descriptor
 		api.deleteAllSubmodelDescriptors();
-		listener.assertNoAdditionalMessage();
+		queue().assertNoAdditionalMessage();
 	}
 
 	@After
 	public void cleanup() throws ApiException {
-		listener.assertNoAdditionalMessage();
+		queue().assertNoAdditionalMessage();
 		GetSubmodelDescriptorsResult result = api.getAllSubmodelDescriptors(null, null);
 		for (SubmodelDescriptor eachDescriptor : result.getResult()) {
 			api.deleteSubmodelDescriptorById(eachDescriptor.getId());
@@ -151,7 +147,7 @@ public abstract class BaseIntegrationTest {
 		IntStream.iterate(0, i -> i + 1).limit(300).parallel().forEach(this::postSubmodel);		
 		assertThat(api.getAllSubmodelDescriptors(null, null).getResult()).hasSize(300);
 		for (int i = 0; i < 300; i++) {
-			listener.poll();
+			queue().poll();
 		}
 	}
 
@@ -188,12 +184,12 @@ public abstract class BaseIntegrationTest {
 		HashSet<RegistryEvent> events = new HashSet<>();
 		// we do not have a specific order, so read all events first
 		for (int i = 0; i < DELETE_ALL_TEST_INSTANCE_COUNT; i++) {
-			events.add(listener.poll());
+			events.add(queue().poll());
 		}
 		for (int i = 0; i < DELETE_ALL_TEST_INSTANCE_COUNT; i++) {
 			assertThat(events.remove(RegistryEvent.builder().id("id_" + i).type(EventType.SUBMODEL_UNREGISTERED).build())).isTrue();
 		}
-		listener.assertNoAdditionalMessage();
+		queue().assertNoAdditionalMessage();
 	}
 
 	@Test
@@ -209,7 +205,7 @@ public abstract class BaseIntegrationTest {
 		all = api.getAllSubmodelDescriptors(null, null).getResult();
 		assertThat(all).isEmpty();
 
-		listener.assertNoAdditionalMessage();
+		queue().assertNoAdditionalMessage();
 	}
 
 	@Test
@@ -331,7 +327,7 @@ public abstract class BaseIntegrationTest {
 	}	
 
 	private void deleteSubmodelDescriptor(String submodelId) throws ApiException {
-		listener.reset();
+		queue().reset();
 		int response = api.deleteSubmodelDescriptorByIdWithHttpInfo(submodelId).getStatusCode();
 		assertThat(response).isEqualTo(NO_CONTENT);
 		assertThatEventWasSend(RegistryEvent.builder().id(submodelId).type(EventType.SUBMODEL_UNREGISTERED).build());
@@ -353,7 +349,7 @@ public abstract class BaseIntegrationTest {
 	}
 
 	private void assertThatEventWasSend(RegistryEvent build) {
-		RegistryEvent evt = listener.poll();
+		RegistryEvent evt = queue().poll();
 		assertThat(evt).isEqualTo(build);
 	}
 
@@ -379,4 +375,6 @@ public abstract class BaseIntegrationTest {
 			assertThat(ex.getCode()).isEqualTo(statusCode);
 		}
 	}
+	
+	public abstract EventQueue queue();
 }

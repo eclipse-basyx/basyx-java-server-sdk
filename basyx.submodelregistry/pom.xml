@@ -14,7 +14,6 @@
 
 	<properties>
 		<docker.image.version>2.0.0-SNAPSHOT</docker.image.version>
-		<testcontainers.version>1.18.1</testcontainers.version>
 		<lombok.maven-plugin.version>1.18.20.0</lombok.maven-plugin.version>
 		<java.version>11</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
@@ -112,12 +111,6 @@
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator</artifactId>
 				<version>${openapitools.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.testcontainers</groupId>
-				<artifactId>mongodb</artifactId>
-				<version>${testcontainers.version}</version>
-				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>

@@ -33,13 +33,14 @@ import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.UtilityClass;
 
-@UtilityClass
+
 public class ShellDescriptorSearchRequests {
 
+	private ShellDescriptorSearchRequests() {
+	}
 
-	public GroupedQueries groupQueries(ShellDescriptorQuery query) {
+	public static GroupedQueries groupQueries(ShellDescriptorQuery query) {
 		ArrayList<ShellDescriptorQuery> submodelQueries = new ArrayList<>();
 		ArrayList<ShellDescriptorQuery> rootQueries = new ArrayList<>();
 		String smPrefix = AasRegistryPaths.SEGMENT_SUBMODEL_DESCRIPTORS + ".";

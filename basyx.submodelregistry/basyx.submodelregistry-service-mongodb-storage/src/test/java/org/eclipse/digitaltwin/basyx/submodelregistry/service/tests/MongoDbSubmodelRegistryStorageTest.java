@@ -26,44 +26,26 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.service.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.concurrent.ExecutionException;
-
 import org.bson.Document;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.utility.DockerImageName;
 
 import com.mongodb.ExplainVerbosity;
 import com.mongodb.client.MongoCollection;
 
-@TestPropertySource(properties = { "registry.type=mongodb", "spring.data.mongodb.database=submodelregistry" })
+@TestPropertySource(properties = { "registry.type=mongodb", "spring.data.mongodb.database=submodelregistry" 
+		, "spring.data.mongodb.uri=mongodb://mongoAdmin:mongoPassword@localhost:27017" })
 @ContextConfiguration(classes = { org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration.MongoDbConfiguration.class })
 @EnableAutoConfiguration
 public class MongoDbSubmodelRegistryStorageTest extends SubmodelRegistryStorageTest {
 
-	@Value("${spring.data.mongodb.database}")
-	private static String DATABASE_NAME;
-
-	@ClassRule
-	public static final MongoDBContainer MONGODB_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:5.0.10"));
 
 	@Autowired
 	private MongoTemplate template;
-
-	@DynamicPropertySource
-	static void assignAdditionalProperties(DynamicPropertyRegistry registry) throws InterruptedException, ExecutionException {
-		String uri = MONGODB_CONTAINER.getConnectionString() + "/" + DATABASE_NAME;
-		registry.add("spring.data.mongodb.uri", () -> uri);
-	}
 
 	@Test
 	public void whenGetById_NotAllDocumentsScannedButIndexUsed() {

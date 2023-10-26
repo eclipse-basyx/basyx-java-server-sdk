@@ -34,11 +34,13 @@ import java.util.Collection;
 import java.util.List;
 
 import lombok.NonNull;
-import lombok.experimental.UtilityClass;
 
 
-@UtilityClass 
 public class DescriptorCopies {
+	
+	private DescriptorCopies() {
+		
+	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> T deepClone(@NonNull T toClone) {

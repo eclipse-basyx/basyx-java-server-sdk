@@ -34,15 +34,14 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Delegate;
 
-@RequiredArgsConstructor
-public class CursorEncodingRegistryStorage implements AasRegistryStorage {
 
-	@Delegate
-	private final AasRegistryStorage storage;
+public class CursorEncodingRegistryStorage extends AasRegistryStorageDelegate {
 
+	public CursorEncodingRegistryStorage(AasRegistryStorage storage) {
+		super(storage);
+	}
+	
 	@Override
 	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter) {
 		PaginationInfo decoded = decodeCursor(pRequest);

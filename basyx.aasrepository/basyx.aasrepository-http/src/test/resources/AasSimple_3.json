@@ -1,0 +1,9 @@
+{
+	"modelType": "AssetAdministrationShell",
+	"idShort": "AasNumber3",
+	"id": "AasNumber3Identifier",
+	"assetInformation": {
+		"assetKind": "Instance",
+		"globalAssetId": "AasNumber3AssetId"
+	}
+}

@@ -38,17 +38,16 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEvent.Ev
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventSink;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Delegate;
 
-@RequiredArgsConstructor
-public class RegistrationEventSendingAasRegistryStorage implements AasRegistryStorage {
-
-	@Delegate
-	private final AasRegistryStorage storage;
+public class RegistrationEventSendingAasRegistryStorage extends AasRegistryStorageDelegate {
 
 	@NonNull
 	private final RegistryEventSink eventSink;
+	
+	public RegistrationEventSendingAasRegistryStorage(AasRegistryStorage storage, RegistryEventSink eventSink) {
+		super(storage);
+		this.eventSink = eventSink;
+	}
 
 	@Override
 	public void replaceAasDescriptor(@NonNull String aasDescriptorId, @NonNull AssetAdministrationShellDescriptor descriptor) throws AasDescriptorNotFoundException {
