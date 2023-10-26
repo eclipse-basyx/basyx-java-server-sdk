@@ -35,7 +35,7 @@ package org.eclipse.digitaltwin.basyx.aasxfileserver;
 public interface AASXFileServerFactory {
 	
 	/**
-	 * Creates a new AasxFileServer
+	 * Creates a new @link{ AASXFileServer}
 	 * 
 	 * @return
 	 */

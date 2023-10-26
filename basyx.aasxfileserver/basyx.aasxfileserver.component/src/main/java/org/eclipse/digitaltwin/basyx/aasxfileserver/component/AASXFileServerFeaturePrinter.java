@@ -26,14 +26,14 @@ package org.eclipse.digitaltwin.basyx.aasxfileserver.component;
 
 import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.aasxfileserver.feature.AasxFileServerFeature;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.feature.AASXFileServerFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Prints all AasxFileServer features that are on the classpath
+ * Prints all AASXFileServer features that are on the classpath
  * 
  * @author schnicke, chaithra
  *
@@ -44,9 +44,9 @@ public class AASXFileServerFeaturePrinter {
 	private static final Logger logger = LoggerFactory.getLogger(AASXFileServerFeaturePrinter.class);
 
 	@Autowired
-	public AASXFileServerFeaturePrinter(List<AasxFileServerFeature> features) {
+	public AASXFileServerFeaturePrinter(List<AASXFileServerFeature> features) {
 		logger.info("-------------------- AASX File Server Features: --------------------");
-		for (AasxFileServerFeature feature : features) {
+		for (AASXFileServerFeature feature : features) {
 			logger.info("BaSyxFeature " + feature.getName() + " is enabled: " + feature.isEnabled());
 		}
 

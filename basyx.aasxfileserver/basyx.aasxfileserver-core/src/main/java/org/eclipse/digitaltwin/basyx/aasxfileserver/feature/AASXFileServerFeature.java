@@ -23,28 +23,18 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+
 package org.eclipse.digitaltwin.basyx.aasxfileserver.feature;
 
-import java.util.List;
-
-import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServerFactory;
-import org.eclipse.digitaltwin.basyx.core.DecoratedFactory;
+import org.eclipse.digitaltwin.basyx.core.BaSyxFeature;
 
 /**
- * Factory for {@link AASXFileServerFactory} decoration
+ * Base interface for all features for the AASX File Server
  * 
  * @author schnicke, chaithra
  *
  */
-public class DecoratedAasxFileServerFactory extends DecoratedFactory<AASXFileServerFactory, AasxFileServerFeature> implements AASXFileServerFactory {
+public interface AASXFileServerFeature extends BaSyxFeature<AASXFileServerFactory> {
 
-	public DecoratedAasxFileServerFactory(AASXFileServerFactory toDecorate, List<AasxFileServerFeature> features) {
-		super(toDecorate, features);
-	}
-
-	@Override
-	public AASXFileServer create() {
-		return getDecorated().create();
-	}
 }

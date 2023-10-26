@@ -29,11 +29,12 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackageDescription;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 
 /**
- * Specifies the overall AasxFileServer API
+ * Specifies the overall {@link AASXFileServer} API
  * 
  * @author chaithra
  *
@@ -75,13 +76,23 @@ public interface AASXFileServer {
 	 * @param filename 
 	 * @throws CollidingIdentifierException
 	 */
-	public PackageDescription createAASXPackage(List<String> aasIds, InputStream file, String fileName) throws CollidingIdentifierException;
+	public PackageDescription createAASXPackage(List<String> aasIds, InputStream file, String fileName);
 
 	/**
-	 * Deletes a AASX Package	 
+	 * Deletes a AASX Package	
+	 *  
 	 * @param packageId
 	 * @throws ElementDoesNotExistException
 	 */
 	public void deleteAASXByPackageId(String packageId) throws ElementDoesNotExistException;
+	
+	/**
+	 * Returns the name of the AASX file server
+	 * 
+	 * @return serverName
+	 */
+	public default String getName() {
+		return "aasx-server";
+	}
 	
 }

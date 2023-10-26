@@ -23,18 +23,37 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.aasxfileserver.model;
 
-package org.eclipse.digitaltwin.basyx.aasxfileserver.feature;
-
-import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServerFactory;
-import org.eclipse.digitaltwin.basyx.core.BaSyxFeature;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 
 /**
- * Base interface for all features for the AASX File Server
+ * Specifies the Package for {@link AASXFileServer}
  * 
- * @author schnicke, chaithra
+ * @author chaithra
  *
  */
-public interface AasxFileServerFeature extends BaSyxFeature<AASXFileServerFactory> {
+public class Package {
+	
+	private String packageId;	
+	private PackageDescription packageDescription;	
+	private PackagesBody packagesBody;	
+	
+	public Package(String packageId, PackageDescription packageDescription, PackagesBody packagesBody ) {		
+		this.packageId = packageId;
+		this.packageDescription = packageDescription;
+		this.packagesBody = packagesBody;		
+	}
 
+	public String getPackageId() {
+		return packageId;
+	}	
+
+	public PackageDescription getPackageDescription() {
+		return packageDescription;
+	}
+
+	public PackagesBody getPackagesBody() {
+		return packagesBody;
+	}	
 }

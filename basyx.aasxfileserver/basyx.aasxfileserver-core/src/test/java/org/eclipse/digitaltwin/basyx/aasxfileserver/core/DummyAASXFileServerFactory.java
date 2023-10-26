@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.PackageDescription;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackageDescription;
 
 /**
  * Factory for creating AASX Packages for tests
@@ -52,17 +52,17 @@ public class DummyAASXFileServerFactory {
     public static final byte[] SECOND_BYTEARRAY = {75, 76, 77, 78, 79};
     public static final InputStream SECOND_FILE = new ByteArrayInputStream(SECOND_BYTEARRAY); 
 
-    public static PackageDescription createFirstDummyAASXPackage(AASXFileServer server) {
+    public static PackageDescription createFirstDummyAASXPackageOnServer(AASXFileServer server) {
         return server.createAASXPackage(FIRST_AAS_IDS, FIRST_FILE, FIRST_FILENAME);
     }
 
-    public static PackageDescription createSecondDummyAASXPackage(AASXFileServer server) {
+    public static PackageDescription createSecondDummyAASXPackageOnServer(AASXFileServer server) {
         return server.createAASXPackage(SECOND_AAS_IDS, SECOND_FILE, SECOND_FILENAME);
     }
 
-    public static Collection<PackageDescription> getAllDummyAASXPackages(AASXFileServer server) {
-        PackageDescription firstPackage = createFirstDummyAASXPackage(server);
-        PackageDescription secondPackage = createSecondDummyAASXPackage(server);
+    public static Collection<PackageDescription> createMultipleDummyAASXPackagesOnServer(AASXFileServer server) {
+        PackageDescription firstPackage = createFirstDummyAASXPackageOnServer(server);
+        PackageDescription secondPackage = createSecondDummyAASXPackageOnServer(server);
 
         ArrayList<PackageDescription> packages = new ArrayList<>();
         packages.add(firstPackage);
@@ -70,6 +70,14 @@ public class DummyAASXFileServerFactory {
 
         return packages;
     }
+    
+    public static PackageDescription createDummyPackageDescription(String packageId, List<String> aasIds) {
+		PackageDescription expectedDescription1 = new PackageDescription();
+		expectedDescription1.setPackageId(packageId);
+		expectedDescription1.setAasIds(aasIds);
+		
+		return expectedDescription1;
+	}
 }
 
 

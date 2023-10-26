@@ -33,11 +33,13 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.model.Package;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackageDescription;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackagesBody;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 
 /**
- * In-memory implementation of the AASXFileServer
+ * In-memory implementation of the {@link AASXFileServer}
  *
  * @author chaithra
  *
@@ -46,6 +48,23 @@ public class InMemoryAASXFileServer implements AASXFileServer {
 
 	private Map<String, Package> packageMap = new LinkedHashMap<>();
 	private AtomicInteger packageId = new AtomicInteger(0);	
+	
+	private String aasxFileServerName;
+	
+	/**
+	 * Creates the InMemoryAASXFileServer
+	 * 
+	 */
+	public InMemoryAASXFileServer() { }
+	
+	/**
+	 * Creates the InMemoryAASXFileServer
+	 * 
+	 * @param aasxRepositoryName Name of the CDRepository
+	 */
+	public InMemoryAASXFileServer(String aasxFileServerName) {
+		this.aasxFileServerName = aasxFileServerName;
+	}
 	
 	@Override
 	public Collection<PackageDescription> getAllAASXPackageIds() {
@@ -72,8 +91,7 @@ public class InMemoryAASXFileServer implements AASXFileServer {
 	}	
 
 	@Override
-	public PackageDescription createAASXPackage(List<String> aasIds, InputStream file, String fileName)
-			throws CollidingIdentifierException {
+	public PackageDescription createAASXPackage(List<String> aasIds, InputStream file, String fileName) {
 		
 		String newpackageId = String.valueOf(packageId.incrementAndGet());
 		
@@ -90,6 +108,11 @@ public class InMemoryAASXFileServer implements AASXFileServer {
 
 		packageMap.remove(packageId);
 	}	
+	
+	@Override
+	public String getName() {
+		return aasxFileServerName == null ? AASXFileServer.super.getName() : aasxFileServerName;
+	}
 	
 	private PackageDescription createPackageDescription(List<String> aasIds, String newPackageId) {		
 		PackageDescription packageDescription = new PackageDescription();

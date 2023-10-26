@@ -23,18 +23,19 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasxfileserver;
+package org.eclipse.digitaltwin.basyx.aasxfileserver.model;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.springframework.validation.annotation.Validated;
 
 
 /**
- * Specifies the PackagesBody for AasxFileServer 
+ * Specifies the PackagesBody for {@link AASXFileServer}   
  *
  */
 @Validated

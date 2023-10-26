@@ -29,8 +29,8 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServerFactory;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.feature.AasxFileServerFeature;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.feature.DecoratedAasxFileServerFactory;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.feature.AASXFileServerFeature;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.feature.DecoratedAASXFileServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -45,8 +45,8 @@ import org.springframework.context.annotation.Configuration;
 public class AASXFileServerConfiguration {
 
 	@Bean
-	public static AASXFileServer getAasxFileServer(AASXFileServerFactory aasRepositoryFactory, List<AasxFileServerFeature> features) {
-		return new DecoratedAasxFileServerFactory(aasRepositoryFactory, features).create();
+	public static AASXFileServer getAASXFileServer(AASXFileServerFactory aasRepositoryFactory, List<AASXFileServerFeature> features) {
+		return new DecoratedAASXFileServerFactory(aasRepositoryFactory, features).create();
 	}
 	
 }
