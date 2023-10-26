@@ -26,8 +26,8 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.http.testconfig;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-
-import org.eclipse.digitaltwin.basyx.aasrepository.InMemoryAasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -46,6 +46,6 @@ public class DummyConfig {
 	@Bean
     @ConditionalOnMissingBean
     public AasRepository createAasRepository() {
-        return new InMemoryAasRepository(new InMemoryAasServiceFactory());
+		return new SimpleAasRepositoryFactory(new AasInMemoryBackendProvider(), new InMemoryAasServiceFactory()).create();
     }
 }
