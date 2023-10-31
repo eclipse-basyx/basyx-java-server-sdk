@@ -714,10 +714,12 @@
 					<plugin>
 						<groupId>org.sonatype.plugins</groupId>
 						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<extensions>true</extensions>
 						<configuration>
-							<serverId>sonatype-nexus-staging</serverId>
-							<nexusUrl>https://oss.sonatype.org</nexusUrl>
+							<serverId>ossrh</serverId>
+     						<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
 							<stagingProfileId>2d2ac71e07682f</stagingProfileId>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
 						</configuration>
 					</plugin>
 
