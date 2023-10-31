@@ -84,7 +84,9 @@ public interface AasRepository {
 	/**
 	 * Returns a List of References to Submodels
 	 * 
-	 * @param referenceId
+	 * @param aasId
+	 * @param pInfo
+	 * @return
 	 */
 	public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo);
 
@@ -107,8 +109,6 @@ public interface AasRepository {
 	 * 
 	 * @param aasId
 	 *            the id of the AAS
-	 * 
-	 * @return the requested Asset-Information of the specified AAS
 	 */
 	public void setAssetInformation(String aasId, AssetInformation aasInfo) throws ElementDoesNotExistException;
 

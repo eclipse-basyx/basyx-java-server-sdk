@@ -39,7 +39,7 @@ import javax.validation.Valid;
 
 /**
  * Paginated wrapper for
- * {@link ConceptDescriptionRepository#getAllConceptDescriptions()}
+ * {@link ConceptDescriptionRepository#getAllConceptDescriptions(org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo)}
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-05-22T07:02:56.105163402Z[GMT]")

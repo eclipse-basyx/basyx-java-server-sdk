@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -38,8 +40,8 @@
 			<email>frank.schnicke@iese.fraunhofer.de</email>
 		</developer>
 	</developers>
-	
-	
+
+
 	<repositories>
 		<repository>
 			<id>central</id>
@@ -51,14 +53,14 @@
 			</snapshots>
 		</repository>
 	</repositories>
-	
+
 	<scm>
 		<connection>scm:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</connection>
 		<developerConnection>scm:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</developerConnection>
 		<tag>HEAD</tag>
 		<url>https://github.com/eclipse-basyx/basyx-java-server-sdk</url>
 	</scm>
-	
+
 	<properties>
 		<java.version>11</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -70,7 +72,7 @@
 		<docker.container.port>8081</docker.container.port>
 		<aas4j-version>1.0.0-milestone-03.1</aas4j-version>
 	</properties>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -138,18 +140,12 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>attach-javadoc</id>
-						<phase>package</phase>
+						<id>attach-javadocs</id>
 						<goals>
-							<goal>javadoc</goal>
+							<goal>jar</goal>
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<additionalOptions>
-						<additionalOption>-Xdoclint:none</additionalOption>
-					</additionalOptions>
-				</configuration>
 			</plugin>
 		</plugins>
 		<pluginManagement>
@@ -181,7 +177,7 @@
 						</execution>
 					</executions>
 				</plugin>
-				
+
 				<!-- Signing the artifacts -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -335,14 +331,14 @@
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
-			    <groupId>org.eclipse.digitaltwin.basyx</groupId>
-			    <artifactId>basyx.submodelservice.component</artifactId>
-			    <version>${revision}</version>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice.component</artifactId>
+				<version>${revision}</version>
 			</dependency>
 			<dependency>
-			    <groupId>org.eclipse.digitaltwin.basyx</groupId>
-			    <artifactId>basyx.submodelservice-http</artifactId>
-			    <version>${revision}</version>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-http</artifactId>
+				<version>${revision}</version>
 			</dependency>
 			<!-- basyx.submodelrepository -->
 			<dependency>
@@ -513,16 +509,16 @@
 				<classifier>tests</classifier>
 			</dependency>
 			<dependency>
-			    <groupId>org.eclipse.digitaltwin.basyx</groupId>
-			    <artifactId>basyx.submodelservice.component</artifactId>
-			    <version>${revision}</version>
-			    <classifier>tests</classifier>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice.component</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
 			</dependency>
 			<dependency>
-			    <groupId>org.eclipse.digitaltwin.basyx</groupId>
-			    <artifactId>basyx.submodelservice-http</artifactId>
-			    <version>${revision}</version>
-			    <classifier>tests</classifier>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-http</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
 			</dependency>
 			<!-- basyx.submodelrepository -->
 			<dependency>
@@ -694,7 +690,7 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
+
 	<profiles>
 		<profile>
 			<id>MavenCentral</id>
@@ -717,7 +713,7 @@
 						<extensions>true</extensions>
 						<configuration>
 							<serverId>ossrh</serverId>
-     						<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
 							<stagingProfileId>2d2ac71e07682f</stagingProfileId>
 							<autoReleaseAfterClose>true</autoReleaseAfterClose>
 						</configuration>
