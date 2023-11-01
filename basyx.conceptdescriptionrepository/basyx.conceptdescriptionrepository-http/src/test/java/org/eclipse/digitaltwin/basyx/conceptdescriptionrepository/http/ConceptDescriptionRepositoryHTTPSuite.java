@@ -66,28 +66,28 @@ public abstract class ConceptDescriptionRepositoryHTTPSuite {
 	public void getAllConceptDescriptionsPreconfigured() throws IOException, ParseException {
 		String conceptDescriptionsJSON = requestAllConceptDescriptions();
 		String expectedConceptDescriptionsJSON = getAllConceptDescriptionJSON();
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionsJSON, conceptDescriptionsJSON);
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionsJSON, getJSONWithoutCursorInfo(conceptDescriptionsJSON));
 	}
 
 	@Test
 	public void getAllConceptDescriptionsByIdShortPreconfigured() throws IOException, ParseException {
 		String conceptDescriptionsJSON = getAllConceptDescriptionsByIdShortJSON("ConceptDescription");
 		String expectedConceptDescriptionsJSON = getConceptDescriptionsWithIdShort();
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionsJSON, conceptDescriptionsJSON);
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionsJSON, getJSONWithoutCursorInfo(conceptDescriptionsJSON));
 	}
 
 	@Test
 	public void getAllConceptDescriptionsByIsCaseOfPreconfigured() throws IOException, ParseException {
 		String conceptDescriptionsJSON = getAllConceptDescriptionsByIsCaseOfJSON(getReferenceJSON());
 		String expectedConceptDescriptionsJSON = getConceptDescriptionsWithIsCaseOf();
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionsJSON, conceptDescriptionsJSON);
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionsJSON, getJSONWithoutCursorInfo(conceptDescriptionsJSON));
 	}
 
 	@Test
 	public void getAllConceptDescriptionsByDataSpecRefPreconfigured() throws IOException, ParseException {
 		String conceptDescriptionsJSON = getAllConceptDescriptionsByDataSpecRefJSON(getDataSpecReferenceJSON());
 		String expectedConceptDescriptionsJSON = getAllConceptDescriptionsWithDataSpecRef();
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionsJSON, conceptDescriptionsJSON);
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedConceptDescriptionsJSON, getJSONWithoutCursorInfo(conceptDescriptionsJSON));
 	}
 
 	@Test
@@ -190,7 +190,7 @@ public abstract class ConceptDescriptionRepositoryHTTPSuite {
 
 		String expectedDescriptionJSON = getConceptDescriptionsWithDataSpecRefWithPagination();
 
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedDescriptionJSON, actualConceptDescriptionsJSON);
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedDescriptionJSON, getJSONWithoutCursorInfo(actualConceptDescriptionsJSON));
 	}
 
 	@Test
@@ -198,6 +198,10 @@ public abstract class ConceptDescriptionRepositoryHTTPSuite {
 		CloseableHttpResponse deletionResponse = deleteConceptDescriptionById("nonExisting");
 
 		assertEquals(HttpStatus.NOT_FOUND.value(), deletionResponse.getCode());
+	}
+	
+	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException {
+		return BaSyxHttpTestUtils.removeCursorFromJSON(response);
 	}
 
 	private void assertConceptDescriptionCreationReponse(String conceptDescriptionJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JsonProcessingException, JsonMappingException {

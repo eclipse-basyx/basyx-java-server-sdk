@@ -66,7 +66,7 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 		String requestedSubmodelElements = requestSubmodelElementsJSON();
 
 		String submodelElementJSON = getSubmodelElementsJSON();
-		BaSyxHttpTestUtils.assertSameJSONContent(submodelElementJSON, requestedSubmodelElements);
+		BaSyxHttpTestUtils.assertSameJSONContent(submodelElementJSON, getJSONWithoutCursorInfo(requestedSubmodelElements));
 	}
 
 	@Test
@@ -74,7 +74,7 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 		String actualPaginatedSubmodelElements = requestPaginatedSubmodelElementsJSON();
 
 		String expectedPaginatedSubmodelElementJSON = getPaginatedSubmodelElementsJSON();
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedPaginatedSubmodelElementJSON, actualPaginatedSubmodelElements);
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedPaginatedSubmodelElementJSON, getJSONWithoutCursorInfo(actualPaginatedSubmodelElements));
 	}
 
 	@Test
@@ -452,6 +452,10 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 		String expectedValue = getJSONValueAsString("operation/result.json");
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
 
+	}
+	
+	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException  {
+		return BaSyxHttpTestUtils.removeCursorFromJSON(response);
 	}
 
 	private CloseableHttpResponse requestOperationInvocation(String operationId, String parameters) throws IOException {
