@@ -10,6 +10,49 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>basyx.submodelregistry-service-release-kafka-mongodb</artifactId>
+	<name>BaSyx Submodel Registry Service Release Kafka MongoDB</name>
+	<description>BaSyx Submodel Registry Service Release Kafka MongoDB</description>
+	<url>https://www.eclipse.org/basyx/</url>
+	<licenses>
+		<license>
+			<name>MIT</name>
+			<url>https://opensource.org/licenses/MIT</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<organization>Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V.</organization>
+			<id>fschnicke</id>
+			<name>Frank Schnicke</name>
+			<email>frank.schnicke@iese.fraunhofer.de</email>
+		</developer>
+		
+		<developer>
+			<organization>DFKI GmbH</organization>
+			<name>Daniel Porta</name>
+		</developer>
+	</developers>
+	
+	
+	<repositories>
+		<repository>
+			<id>central</id>
+			<name>Maven Central</name>
+			<layout>default</layout>
+			<url>https://repo1.maven.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	
+	<scm>
+		<connection>scm:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</connection>
+		<developerConnection>scm:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/eclipse-basyx/basyx-java-server-sdk</url>
+	</scm>
+	
 	<properties>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>
 		<start-class>org.eclipse.digitaltwin.basyx.submodelregistry.service.OpenApiGeneratorApplication</start-class>

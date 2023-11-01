@@ -11,6 +11,49 @@
 	</parent>
 
 	<artifactId>basyx.submodelregistry-service-mongodb-storage</artifactId>
+	<name>BaSyx Submodel Registry Service Mongodb Storage</name>
+	<description>BaSyx Submodel Registry Service Mongodb Storage</description>
+	<url>https://www.eclipse.org/basyx/</url>
+	<licenses>
+		<license>
+			<name>MIT</name>
+			<url>https://opensource.org/licenses/MIT</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<organization>Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V.</organization>
+			<id>fschnicke</id>
+			<name>Frank Schnicke</name>
+			<email>frank.schnicke@iese.fraunhofer.de</email>
+		</developer>
+		
+		<developer>
+			<organization>DFKI GmbH</organization>
+			<name>Daniel Porta</name>
+		</developer>
+	</developers>
+	
+	
+	<repositories>
+		<repository>
+			<id>central</id>
+			<name>Maven Central</name>
+			<layout>default</layout>
+			<url>https://repo1.maven.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	
+	<scm>
+		<connection>scm:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</connection>
+		<developerConnection>scm:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/eclipse-basyx/basyx-java-server-sdk</url>
+	</scm>
+	
 	<packaging>jar</packaging>
 
 	<properties>
@@ -138,6 +181,23 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
+			<plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>empty-javadoc-jar</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>jar</goal>
+                    </goals>
+                    <configuration>
+                        <classifier>javadoc</classifier>
+                        <classesDirectory>${basedir}/javadoc</classesDirectory>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
 
 		</plugins>
 	</build>

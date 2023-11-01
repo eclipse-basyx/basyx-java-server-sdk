@@ -38,7 +38,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 
 /**
- * Paginated wrapper for {@link AasRepository#getSubmodelReferences(String)}
+ * Paginated wrapper for {@link AasRepository#getSubmodelReferences(String, org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo)}
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-05-22T07:02:56.105163402Z[GMT]")
