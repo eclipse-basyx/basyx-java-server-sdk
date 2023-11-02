@@ -5,7 +5,7 @@ env:
   UPSTREAM_URL: "https://github.com/eclipse-basyx/basyx-java-server-sdk"
   # Required, token to authenticate bot, could use ${{ secrets.GITHUB_TOKEN }} 
   # Over here, we use a PAT instead to authenticate workflow file changes.
-  WORKFLOW_TOKEN: ${{ secrets.SYNC_UPSTREAM_TOKEN }}
+  WORKFLOW_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   # Optional, defaults to main
   UPSTREAM_BRANCH: "main"
   # Optional, defaults to UPSTREAM_BRANCH
@@ -17,7 +17,7 @@ env:
   # Optional push arguments
   PUSH_ARGS: ""
   # Optional toggle to spawn time logs (keeps action active) 
-  SPAWN_LOGS: "false" # "true" or "false"
+  SPAWN_LOGS: "true" # "true" or "false"
 
 on:
   workflow_dispatch:
