@@ -12,40 +12,6 @@
 	<artifactId>basyx.aasrepository-http</artifactId>
 	<name>BaSyx AAS Repository HTTP</name>
 	<description>BaSyx AAS Repository HTTP</description>
-	<url>https://www.eclipse.org/basyx/</url>
-	<licenses>
-		<license>
-			<name>MIT</name>
-			<url>https://opensource.org/licenses/MIT</url>
-		</license>
-	</licenses>
-	<developers>
-		<developer>
-			<organization>Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V.</organization>
-			<id>fschnicke</id>
-			<name>Frank Schnicke</name>
-			<email>frank.schnicke@iese.fraunhofer.de</email>
-		</developer>
-	</developers>
-	
-	<repositories>
-		<repository>
-			<id>central</id>
-			<name>Maven Central</name>
-			<layout>default</layout>
-			<url>https://repo1.maven.org/maven2</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-	
-	<scm>
-		<connection>scm:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</connection>
-		<developerConnection>scm:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</developerConnection>
-		<tag>HEAD</tag>
-		<url>https://github.com/eclipse-basyx/basyx-java-server-sdk</url>
-	</scm>
 
 	<dependencies>
 		<dependency>
