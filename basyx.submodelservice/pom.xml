@@ -9,6 +9,8 @@
 	</parent>
 
 	<artifactId>basyx.submodelservice</artifactId>
+	<name>BaSyx submodelservice</name>
+	<description>BaSyx submodelservice</description>
 	<packaging>pom</packaging>
 
 	<modules>

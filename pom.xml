@@ -38,6 +38,8 @@
 			<id>fschnicke</id>
 			<name>Frank Schnicke</name>
 			<email>frank.schnicke@iese.fraunhofer.de</email>
+			<organizationUrl>https://www.iese.fraunhofer.de/</organizationUrl>
+			<url>https://projects.eclipse.org/projects/dt.basyx/who</url>
 		</developer>
 	</developers>
 
@@ -55,10 +57,9 @@
 	</repositories>
 
 	<scm>
-		<connection>scm:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</connection>
-		<developerConnection>scm:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</developerConnection>
-		<tag>HEAD</tag>
-		<url>https://github.com/eclipse-basyx/basyx-java-server-sdk</url>
+		<connection>scm:git:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</connection>
+		<developerConnection>scm:git:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</developerConnection>
+		<url>https://github.com/eclipse-basyx/basyx-java-server-sdk/tree/main</url>
 	</scm>
 
 	<properties>

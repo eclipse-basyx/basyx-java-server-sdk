@@ -8,6 +8,8 @@
 	</parent>
 
 	<artifactId>basyx.aasrepository</artifactId>
+	<name>BaSyx aasrepository</name>
+	<description>BaSyx aasrepository</description>
 	<packaging>pom</packaging>
 
 	<modules>

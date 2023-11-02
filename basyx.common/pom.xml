@@ -9,6 +9,8 @@
 	</parent>
 
 	<artifactId>basyx.common</artifactId>
+	<name>BaSyx common</name>
+	<description>BaSyx common</description>
 	<packaging>pom</packaging>
 
 	<modules>

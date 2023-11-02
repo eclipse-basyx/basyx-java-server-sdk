@@ -9,6 +9,8 @@
 	</parent>
 
 	<artifactId>basyx.aasenvironment</artifactId>
+	<name>BaSyx AAS Environment</name>
+	<description>BaSyx AAS Environment</description>
 	<packaging>pom</packaging>
 
 	<modules>
