@@ -13,7 +13,7 @@ env:
   # Optional fetch arguments
   FETCH_ARGS: ""
   # Optional merge arguments
-  MERGE_ARGS: "Merges latest upstream commits"
+  MERGE_ARGS: ""
   # Optional push arguments
   PUSH_ARGS: ""
   # Optional toggle to spawn time logs (keeps action active) 
