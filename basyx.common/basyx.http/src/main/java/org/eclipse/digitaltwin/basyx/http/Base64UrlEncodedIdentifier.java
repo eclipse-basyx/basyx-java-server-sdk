@@ -23,63 +23,48 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.http;
-
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 
 /**
  * Represents a Base64URL encoded identifier
  * 
- * @author gordt, schnicke
+ * @author gordt, schnicke, mateusmolina
  *
  */
 public class Base64UrlEncodedIdentifier {
 
+	private final String identifier;
+
+	/**
+	 * @param unencoded
+	 *            identifier
+	 */
 	public Base64UrlEncodedIdentifier(String identifier) {
 		this.identifier = identifier;
 	}
 
-	private final String identifier;
-
+	/**
+	 * @return encoded identifier
+	 */
 	public String getIdentifier() {
 		return identifier;
-	}
-
-	public static Base64UrlEncodedIdentifier fromEncodedValue(String value) {
-		// Some will encode the padding...
-		if (value.contains("%3D")) {
-			value = URLDecoder.decode(value, StandardCharsets.US_ASCII);
-		}
-		// Some will cut the padding...
-		var incompleteFourChars = value.length() % 4;
-
-		if (incompleteFourChars > 0) {
-			value += "==".substring(0, 4 - incompleteFourChars);
-		}
-
-		byte[] decode = Base64.getUrlDecoder().decode(value.getBytes(StandardCharsets.US_ASCII));
-		return new Base64UrlEncodedIdentifier(new String(decode, StandardCharsets.UTF_8));
 	}
 
 	public String getEncodedIdentifier() {
 		return encodeIdentifier(identifier);
 	}
 
-	public static String encodeIdentifier(String unencodedIdentifier) {
-		// There are multiple ways to handle the padding - we decided
-		// to cut off the padding, since multiple encodings may lead to confusion.
-		// https://www.rfc-editor.org/rfc/rfc4648#section-5
-		// https://www.rfc-editor.org/rfc/rfc4648#section-3.2
-		byte[] bytes = unencodedIdentifier.getBytes(StandardCharsets.UTF_8);
-		String base64urlEncoded = Base64.getUrlEncoder().encodeToString(bytes);
-		return base64urlEncoded.replaceAll("=", "");
-	}
-
 	@Override
 	public String toString() {
 		return "Base64UrlEncodedIdentifier [identifier=" + identifier + "]";
 	}
+
+	public static Base64UrlEncodedIdentifier fromEncodedValue(String value) {
+		return new Base64UrlEncodedIdentifier(Base64UrlEncoder.decode(value));
+	}
+
+	public static String encodeIdentifier(String unencodedIdentifier) {
+		return Base64UrlEncoder.encode(unencodedIdentifier);
+	}
+
 }
