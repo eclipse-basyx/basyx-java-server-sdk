@@ -37,20 +37,19 @@ import org.junit.Test;
  *
  */
 public class TestInMemoryAASXFileServer extends AASXFileServerSuite {
-	
+
 	private static final String CONFIGURED_AASX_SERVER_NAME = "configured-aasx-server-name";
 
 	@Override
 	protected AASXFileServer getAASXFileServer() {
 		return new InMemoryAASXFileServer();
 	}
-	
+
 	@Test
-    public void getConfiguredInMemoryAASXFileServer() {
+	public void getConfiguredInMemoryAASXFileServer() {
 		AASXFileServer server = new InMemoryAASXFileServer(CONFIGURED_AASX_SERVER_NAME);
-		
+
 		assertEquals(CONFIGURED_AASX_SERVER_NAME, server.getName());
 	}
-	
-	
+
 }

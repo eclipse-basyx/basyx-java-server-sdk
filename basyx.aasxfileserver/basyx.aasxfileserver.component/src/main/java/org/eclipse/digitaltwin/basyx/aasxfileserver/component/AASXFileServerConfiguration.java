@@ -48,5 +48,5 @@ public class AASXFileServerConfiguration {
 	public static AASXFileServer getAASXFileServer(AASXFileServerFactory aasRepositoryFactory, List<AASXFileServerFeature> features) {
 		return new DecoratedAASXFileServerFactory(aasRepositoryFactory, features).create();
 	}
-	
+
 }

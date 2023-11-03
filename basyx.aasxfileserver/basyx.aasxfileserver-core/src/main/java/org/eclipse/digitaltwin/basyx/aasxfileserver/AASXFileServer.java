@@ -47,7 +47,7 @@ public interface AASXFileServer {
 	 * @return a list of available AASX Package Descriptions at the server
 	 */
 	public Collection<PackageDescription> getAllAASXPackageIds();
-		
+
 	/**
 	 * Retrieves a specific AASX package from the server
 	 * 
@@ -73,19 +73,19 @@ public interface AASXFileServer {
 	 * 
 	 * @param aasIds
 	 * @param file
-	 * @param filename 
+	 * @param filename
 	 * @throws CollidingIdentifierException
 	 */
 	public PackageDescription createAASXPackage(List<String> aasIds, InputStream file, String fileName);
 
 	/**
-	 * Deletes a AASX Package	
-	 *  
+	 * Deletes a AASX Package
+	 * 
 	 * @param packageId
 	 * @throws ElementDoesNotExistException
 	 */
 	public void deleteAASXByPackageId(String packageId) throws ElementDoesNotExistException;
-	
+
 	/**
 	 * Returns the name of the AASX file server
 	 * 
@@ -94,5 +94,5 @@ public interface AASXFileServer {
 	public default String getName() {
 		return "aasx-server";
 	}
-	
+
 }

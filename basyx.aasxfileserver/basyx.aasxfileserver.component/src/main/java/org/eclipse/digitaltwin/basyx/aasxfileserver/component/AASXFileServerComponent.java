@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.aasxfileserver.component;
 
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
@@ -38,9 +37,8 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
  * @author schnicke, chaithra
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", 
-exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
-public class AASXFileServerComponent {	
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
+public class AASXFileServerComponent {
 	public static void main(String[] args) {
 		SpringApplication.run(AASXFileServerComponent.class, args);
 	}

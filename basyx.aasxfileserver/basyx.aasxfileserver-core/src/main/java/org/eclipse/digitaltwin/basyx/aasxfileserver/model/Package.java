@@ -34,20 +34,20 @@ import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
  *
  */
 public class Package {
-	
-	private String packageId;	
-	private PackageDescription packageDescription;	
-	private PackagesBody packagesBody;	
-	
-	public Package(String packageId, PackageDescription packageDescription, PackagesBody packagesBody ) {		
+
+	private String packageId;
+	private PackageDescription packageDescription;
+	private PackagesBody packagesBody;
+
+	public Package(String packageId, PackageDescription packageDescription, PackagesBody packagesBody) {
 		this.packageId = packageId;
 		this.packageDescription = packageDescription;
-		this.packagesBody = packagesBody;		
+		this.packagesBody = packagesBody;
 	}
 
 	public String getPackageId() {
 		return packageId;
-	}	
+	}
 
 	public PackageDescription getPackageDescription() {
 		return packageDescription;
@@ -55,5 +55,5 @@ public class Package {
 
 	public PackagesBody getPackagesBody() {
 		return packagesBody;
-	}	
+	}
 }

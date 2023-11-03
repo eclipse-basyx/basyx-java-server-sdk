@@ -47,31 +47,30 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 public class InMemoryAASXFileServer implements AASXFileServer {
 
 	private Map<String, Package> packageMap = new LinkedHashMap<>();
-	private AtomicInteger packageId = new AtomicInteger(0);	
-	
+	private AtomicInteger packageId = new AtomicInteger(0);
+
 	private String aasxFileServerName;
-	
+
 	/**
 	 * Creates the InMemoryAASXFileServer
 	 * 
 	 */
-	public InMemoryAASXFileServer() { }
-	
+	public InMemoryAASXFileServer() {
+	}
+
 	/**
 	 * Creates the InMemoryAASXFileServer
 	 * 
-	 * @param aasxRepositoryName Name of the CDRepository
+	 * @param aasxRepositoryName
+	 *            Name of the CDRepository
 	 */
 	public InMemoryAASXFileServer(String aasxFileServerName) {
 		this.aasxFileServerName = aasxFileServerName;
 	}
-	
+
 	@Override
 	public Collection<PackageDescription> getAllAASXPackageIds() {
-	    return packageMap.values()
-	            .stream()
-	            .map(Package::getPackageDescription)
-	            .collect(Collectors.toList());
+		return packageMap.values().stream().map(Package::getPackageDescription).collect(Collectors.toList());
 	}
 
 	@Override
@@ -82,68 +81,67 @@ public class InMemoryAASXFileServer implements AASXFileServer {
 	}
 
 	@Override
-	public void updateAASXByPackageId(String packageId, List<String> aasIds, InputStream file, String filename)
-			throws ElementDoesNotExistException {
-		
+	public void updateAASXByPackageId(String packageId, List<String> aasIds, InputStream file, String filename) throws ElementDoesNotExistException {
+
 		throwIfAASXPackageIdDoesNotExist(packageId);
-		
+
 		updateAASXPackage(packageId, aasIds, file, filename);
-	}	
+	}
 
 	@Override
 	public PackageDescription createAASXPackage(List<String> aasIds, InputStream file, String fileName) {
-		
+
 		String newpackageId = String.valueOf(packageId.incrementAndGet());
-		
-		PackageDescription packageDescription = createPackageDescription(aasIds, newpackageId);	
-		
+
+		PackageDescription packageDescription = createPackageDescription(aasIds, newpackageId);
+
 		createPackage(aasIds, file, fileName, newpackageId, packageDescription);
 
 		return packageDescription;
-	}	
+	}
 
 	@Override
 	public void deleteAASXByPackageId(String packageId) throws ElementDoesNotExistException {
 		throwIfAASXPackageIdDoesNotExist(packageId);
 
 		packageMap.remove(packageId);
-	}	
-	
+	}
+
 	@Override
 	public String getName() {
 		return aasxFileServerName == null ? AASXFileServer.super.getName() : aasxFileServerName;
 	}
-	
-	private PackageDescription createPackageDescription(List<String> aasIds, String newPackageId) {		
+
+	private PackageDescription createPackageDescription(List<String> aasIds, String newPackageId) {
 		PackageDescription packageDescription = new PackageDescription();
 		packageDescription.packageId(newPackageId);
 		packageDescription.aasIds(aasIds);
-		
+
 		return packageDescription;
 	}
-	
-	private PackagesBody createPackagesBody(List<String> aasIds, InputStream file, String fileName) {		
+
+	private PackagesBody createPackagesBody(List<String> aasIds, InputStream file, String fileName) {
 		PackagesBody packagesBody = new PackagesBody();
 		packagesBody.aasIds(aasIds);
 		packagesBody.file(file);
 		packagesBody.fileName(fileName);
-		
+
 		return packagesBody;
-	}	
-	
+	}
+
 	private void createPackage(List<String> aasIds, InputStream file, String fileName, String newPackageId, PackageDescription packageDescription) {
 		PackagesBody packagesBody = createPackagesBody(aasIds, file, fileName);
-		
-		Package aasxPackage = new Package(newPackageId, packageDescription, packagesBody);	
-		
+
+		Package aasxPackage = new Package(newPackageId, packageDescription, packagesBody);
+
 		packageMap.put(newPackageId, aasxPackage);
 	}
-	
+
 	private void updateAASXPackage(String packageId, List<String> aasIds, InputStream file, String filename) {
 		Package aasxPackage = this.packageMap.get(packageId);
-		
+
 		updatePackagesBody(aasIds, file, filename, aasxPackage.getPackagesBody());
-		
+
 		aasxPackage.getPackageDescription().setAasIds(aasIds);
 	}
 
@@ -151,10 +149,10 @@ public class InMemoryAASXFileServer implements AASXFileServer {
 		packagesBody.setAasIds(aasIds);
 		packagesBody.setFileName(filename);
 		packagesBody.setFile(file);
-	}	
-	
+	}
+
 	private void throwIfAASXPackageIdDoesNotExist(String id) {
-		
+
 		if (!packageMap.containsKey(id))
 			throw new ElementDoesNotExistException(id);
 	}

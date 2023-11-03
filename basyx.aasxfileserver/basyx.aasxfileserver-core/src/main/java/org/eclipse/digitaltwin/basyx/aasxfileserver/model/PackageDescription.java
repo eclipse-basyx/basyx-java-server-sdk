@@ -33,7 +33,7 @@ import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Specifies the PackageDescription for {@link AASXFileServer} 
+ * Specifies the PackageDescription for {@link AASXFileServer}
  * 
  */
 @Validated
@@ -88,8 +88,7 @@ public class PackageDescription {
 			return false;
 		}
 		PackageDescription packageDescription = (PackageDescription) o;
-		return Objects.equals(this.aasIds, packageDescription.aasIds)
-				&& Objects.equals(this.packageId, packageDescription.packageId);
+		return Objects.equals(this.aasIds, packageDescription.aasIds) && Objects.equals(this.packageId, packageDescription.packageId);
 	}
 
 	@Override

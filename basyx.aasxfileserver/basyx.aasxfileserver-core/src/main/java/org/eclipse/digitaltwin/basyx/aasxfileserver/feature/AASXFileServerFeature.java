@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.aasxfileserver.feature;
 
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServerFactory;
