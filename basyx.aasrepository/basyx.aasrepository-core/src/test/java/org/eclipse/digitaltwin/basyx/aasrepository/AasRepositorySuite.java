@@ -47,6 +47,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Before;
@@ -62,6 +63,9 @@ public abstract class AasRepositorySuite {
 
 	private static final String AAS2 = "aas2";
 	private static final String AAS_1_ID = "aas1/s";
+	private static final String AAS_EMPTY_ID = " ";
+	private static final String AAS_NULL_ID = null;
+	
 	private AssetAdministrationShell aas1;
 	private AssetAdministrationShell aas2;
 
@@ -87,8 +91,7 @@ public abstract class AasRepositorySuite {
 				.submodels(createDummyReference(DUMMY_SUBMODEL_ID))
 				.build();
 
-		aas2 = new DefaultAssetAdministrationShell.Builder().id(AAS2)
-				.build();
+		aas2 = createDummyAssetAdministrationShell(AAS2);
 		AssetInformation assetInfo = createDummyAssetInformation();
 		aas2.setAssetInformation(assetInfo);
 
@@ -125,6 +128,18 @@ public abstract class AasRepositorySuite {
 	@Test(expected = CollidingIdentifierException.class)
 	public void createWithCollidingAasIdentifiers() throws CollidingIdentifierException {
 		aasRepo.createAas(aas1);
+	}
+	
+	@Test(expected = MissingIdentifierException.class)
+	public void createWithEmptyAasIdentifiers() throws MissingIdentifierException {
+		AssetAdministrationShell shell = createDummyAssetAdministrationShell(AAS_EMPTY_ID);
+		aasRepo.createAas(shell);
+	}
+	
+	@Test(expected = MissingIdentifierException.class)
+	public void createWithNullAasIdentifiers() throws MissingIdentifierException {
+		AssetAdministrationShell shell = createDummyAssetAdministrationShell(AAS_NULL_ID);
+		aasRepo.createAas(shell);
 	}
 
 	@Test
@@ -297,6 +312,11 @@ public abstract class AasRepositorySuite {
 	private AssetInformation createDummyAssetInformation() {
 		return new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
 				.globalAssetID("assetIDTestKey")
+				.build();
+	}
+	
+	public static AssetAdministrationShell createDummyAssetAdministrationShell(String AasId) {
+		return new DefaultAssetAdministrationShell.Builder().id(AasId)
 				.build();
 	}
 

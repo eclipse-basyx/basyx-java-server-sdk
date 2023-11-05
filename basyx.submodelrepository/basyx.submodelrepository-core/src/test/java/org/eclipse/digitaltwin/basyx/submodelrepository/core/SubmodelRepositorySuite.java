@@ -48,6 +48,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
@@ -71,6 +72,8 @@ import org.springframework.core.io.ClassPathResource;
 public abstract class SubmodelRepositorySuite {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static final String DUMMY_FILE_CONTENT = "this is a file";
+	private static final String EMPTY_ID = " ";
+	private static final String NULL_ID = null;
 
 	protected abstract SubmodelRepository getSubmodelRepository();
 
@@ -164,6 +167,26 @@ public abstract class SubmodelRepositorySuite {
 		repo.createSubmodel(submodel);
 	}
 
+	@Test(expected = MissingIdentifierException.class)
+	public void createSubmodelWithEmptyId() {
+		String id = EMPTY_ID;
+		Submodel submodel = buildDummySubmodel(id);
+		
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		
+		repo.createSubmodel(submodel);
+	}
+	
+	@Test(expected = MissingIdentifierException.class)
+	public void createSubmodelWithNullId() {
+		String id = NULL_ID;
+		Submodel submodel = buildDummySubmodel(id);
+		
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		
+		repo.createSubmodel(submodel);
+	}
+	
 	@Test
 	public void deleteSubmodel() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();

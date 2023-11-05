@@ -37,6 +37,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAdministrativeInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
@@ -45,8 +46,10 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.junit.Test;
 
 /**
@@ -61,6 +64,9 @@ public abstract class ConceptDescriptionRepositorySuite {
 	protected abstract ConceptDescriptionRepository getConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions);
 
 	private final PaginationInfo noLimitPaginationInfo = new PaginationInfo(0, "");
+	
+	private static final String EMPTY_ID = " ";
+	private static final String NULL_ID = null;
 
 	@Test
 	public void getAllConceptDescriptionsPreconfigured() {
@@ -196,6 +202,24 @@ public abstract class ConceptDescriptionRepositorySuite {
 		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		ConceptDescription conceptDescription = repo.getConceptDescription(ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID);
 
+		repo.createConceptDescription(conceptDescription);
+	}
+	
+	@Test(expected = MissingIdentifierException.class)
+	public void createConceptDescriptionWithEmptyId() {
+		String id = EMPTY_ID;
+		ConceptDescription conceptDescription = createDummyConceptDescription(id);
+		
+		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+		repo.createConceptDescription(conceptDescription);
+	}
+	
+	@Test(expected = MissingIdentifierException.class)
+	public void createConceptDescriptionWithNullId() {
+		String id = NULL_ID;
+		ConceptDescription conceptDescription = createDummyConceptDescription(id);
+		
+		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
 		repo.createConceptDescription(conceptDescription);
 	}
 

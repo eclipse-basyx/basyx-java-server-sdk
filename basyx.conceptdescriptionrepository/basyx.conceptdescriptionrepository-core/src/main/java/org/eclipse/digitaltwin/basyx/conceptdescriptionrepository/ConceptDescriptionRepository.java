@@ -31,6 +31,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
@@ -100,7 +101,7 @@ public interface ConceptDescriptionRepository {
 	 * @param conceptDescription
 	 * @throws CollidingIdentifierException
 	 */
-	public void createConceptDescription(ConceptDescription conceptDescription) throws CollidingIdentifierException;
+	public void createConceptDescription(ConceptDescription conceptDescription) throws CollidingIdentifierException,MissingIdentifierException;
 
 	/**
 	 * Deletes a ConceptDescription

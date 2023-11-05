@@ -41,6 +41,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -164,7 +165,8 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 	}
 
 	@Override
-	public void createConceptDescription(ConceptDescription conceptDescription) throws CollidingIdentifierException {
+	public void createConceptDescription(ConceptDescription conceptDescription) throws CollidingIdentifierException,MissingIdentifierException {
+		throwIfConceptDescriptionIdEmptyOrNull(conceptDescription.getId());
 		throwIfConceptDescriptionExists(conceptDescription.getId());
 
 		conceptDescriptions.put(conceptDescription.getId(), conceptDescription);
@@ -203,6 +205,11 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 	private void throwIfConceptDescriptionExists(String id) {
 		if (conceptDescriptions.containsKey(id))
 			throw new CollidingIdentifierException(id);
+	}
+	
+	private void throwIfConceptDescriptionIdEmptyOrNull(String id) {
+		if(id.trim().isEmpty() || id == null )
+			throw new MissingIdentifierException(id);
 	}
 
 	private void throwIfConceptDescriptionDoesNotExist(String id) {

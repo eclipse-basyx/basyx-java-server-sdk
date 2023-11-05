@@ -56,6 +56,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -173,9 +174,11 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
+	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException, MissingIdentifierException {
+		throwIfSubmodelIdEmptyOrNull(submodel.getId());
 		throwIfSubmodelExists(submodel.getId());
-
+		
+		
 		submodelServices.put(submodel.getId(), submodelServiceFactory.create(submodel));
 	}
 
@@ -337,6 +340,11 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	private void throwIfSubmodelDoesNotExist(String id) {
 		if (!submodelServices.containsKey(id))
 			throw new ElementDoesNotExistException(id);
+	}
+	
+	private void throwIfSubmodelIdEmptyOrNull(String id) {
+		if(id.trim().isEmpty() || id == null )
+			throw new MissingIdentifierException(id);
 	}
 
 	private void throwIfFileDoesNotExist(File fileSmElement, String filePath) {
