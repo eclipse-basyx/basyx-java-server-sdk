@@ -41,9 +41,16 @@
 				{
 					"name": "COLOR",
 					"value": "RED"
-				}
-				]	
-			}
+				}]
+			}, 
+			{
+				"id": "identification_2.2",
+				"extensions": [
+				{
+					"name": "COLOR",
+					"value": "RED"
+				}]
+			}	
 		]
-	}	
+	}
 ]
