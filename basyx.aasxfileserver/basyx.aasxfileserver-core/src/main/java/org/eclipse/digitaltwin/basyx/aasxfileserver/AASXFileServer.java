@@ -44,9 +44,10 @@ public interface AASXFileServer {
 	/**
 	 * Retrieves all AASX package ids from the repository
 	 * 
+	 * @param shellId
 	 * @return a list of available AASX Package Descriptions at the server
 	 */
-	public Collection<PackageDescription> getAllAASXPackageIds();
+	public Collection<PackageDescription> getAllAASXPackageIds(String shellId);
 
 	/**
 	 * Retrieves a specific AASX package from the server
@@ -61,22 +62,22 @@ public interface AASXFileServer {
 	 * Updates an existing AASX package at the server
 	 * 
 	 * @param packageId
-	 * @param aasIds
+	 * @param shellIds
 	 * @param file
 	 * @param filename
 	 * @throws ElementDoesNotExistException
 	 */
-	public void updateAASXByPackageId(String packageId, List<String> aasIds, InputStream file, String filename) throws ElementDoesNotExistException;
+	public void updateAASXByPackageId(String packageId, List<String> shellIds, InputStream file, String filename) throws ElementDoesNotExistException;
 
 	/**
 	 * Creates a new AASX Package
 	 * 
-	 * @param aasIds
+	 * @param shellIds
 	 * @param file
 	 * @param filename
 	 * @throws CollidingIdentifierException
 	 */
-	public PackageDescription createAASXPackage(List<String> aasIds, InputStream file, String fileName);
+	public PackageDescription createAASXPackage(List<String> shellIds, InputStream file, String fileName);
 
 	/**
 	 * Deletes a AASX Package

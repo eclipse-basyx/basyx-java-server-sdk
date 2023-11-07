@@ -32,7 +32,7 @@ import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfigurat
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 
 /**
- * Creates and starts the {@link AASXFileServer} off-shelf-component
+ * Creates and starts the {@link AASXFileServer} off-the-shelf-component
  * 
  * @author schnicke, chaithra
  *

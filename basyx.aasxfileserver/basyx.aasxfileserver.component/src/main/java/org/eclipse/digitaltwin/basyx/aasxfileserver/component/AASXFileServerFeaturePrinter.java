@@ -47,7 +47,7 @@ public class AASXFileServerFeaturePrinter {
 	public AASXFileServerFeaturePrinter(List<AASXFileServerFeature> features) {
 		logger.info("-------------------- AASX File Server Features: --------------------");
 		for (AASXFileServerFeature feature : features) {
-			logger.info("BaSyxFeature " + feature.getName() + " is enabled: " + feature.isEnabled());
+			logger.info("BaSyxFeature '{}' is enabled: {}", feature.getName(), feature.isEnabled());
 		}
 
 		logger.info("----------------------------------------------------------------- ");

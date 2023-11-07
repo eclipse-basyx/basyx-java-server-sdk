@@ -42,22 +42,22 @@ import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackageDescription;
  */
 public class DummyAASXFileServerFactory {
 
-	public static final List<String> FIRST_AAS_IDS = Arrays.asList("AAS_ID_1", "AAS_ID_2");
+	public static final List<String> FIRST_SHELL_IDS = Arrays.asList("AAS_ID_1", "AAS_ID_2");
 	public static final String FIRST_FILENAME = "test_file1.txt";
 	public static final byte[] FIRST_BYTEARRAY = { 65, 66, 67, 68, 69 };
 	public static final InputStream FIRST_FILE = new ByteArrayInputStream(FIRST_BYTEARRAY);
 
-	public static final List<String> SECOND_AAS_IDS = Arrays.asList("AAS_ID_3", "AAS_ID_4");
+	public static final List<String> SECOND_SHELL_IDS = Arrays.asList("AAS_ID_3", "AAS_ID_4");
 	public static final String SECOND_FILENAME = "test_file2.txt";
 	public static final byte[] SECOND_BYTEARRAY = { 75, 76, 77, 78, 79 };
 	public static final InputStream SECOND_FILE = new ByteArrayInputStream(SECOND_BYTEARRAY);
 
 	public static PackageDescription createFirstDummyAASXPackageOnServer(AASXFileServer server) {
-		return server.createAASXPackage(FIRST_AAS_IDS, FIRST_FILE, FIRST_FILENAME);
+		return server.createAASXPackage(FIRST_SHELL_IDS, FIRST_FILE, FIRST_FILENAME);
 	}
 
 	public static PackageDescription createSecondDummyAASXPackageOnServer(AASXFileServer server) {
-		return server.createAASXPackage(SECOND_AAS_IDS, SECOND_FILE, SECOND_FILENAME);
+		return server.createAASXPackage(SECOND_SHELL_IDS, SECOND_FILE, SECOND_FILENAME);
 	}
 
 	public static Collection<PackageDescription> createMultipleDummyAASXPackagesOnServer(AASXFileServer server) {
@@ -71,10 +71,10 @@ public class DummyAASXFileServerFactory {
 		return packages;
 	}
 
-	public static PackageDescription createDummyPackageDescription(String packageId, List<String> aasIds) {
+	public static PackageDescription createDummyPackageDescription(String packageId, List<String> shellIds) {
 		PackageDescription expectedDescription1 = new PackageDescription();
 		expectedDescription1.setPackageId(packageId);
-		expectedDescription1.setAasIds(aasIds);
+		expectedDescription1.setAasIds(shellIds);
 
 		return expectedDescription1;
 	}
