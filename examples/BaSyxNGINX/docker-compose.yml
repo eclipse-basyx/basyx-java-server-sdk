@@ -23,7 +23,7 @@ services:
     restart: always
 
   aas-ui:
-    image: eclipsebasyx/aas-gui:v2-231009
+    image: eclipsebasyx/aas-gui:v2-231107
     container_name: aas-ui
     environment:
       VITE_REGISTRY_PATH: "http://localhost/registry"
