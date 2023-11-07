@@ -12,8 +12,9 @@ The following off-the-shelf components are available:
 * [AAS Registry](basyx.aasregistry)
 * [Submodel Registry](basyx.submodelregistry)
 
-## Examples
-We are providing easy to use [examples](examples) that can be leveraged for setting up your own AAS infrastructure.
+## Documentation & Examples
+In addition to the [general documentation](https://github.com/eclipse-basyx/basyx-java-server-sdk/tree/main/docs), each component has its own specific documentation that can be found in the respective folders. 
+Furthermore, we are providing easy to use [examples](examples) that can be leveraged for setting up your own AAS infrastructure.
 
 ## Contributing
 
