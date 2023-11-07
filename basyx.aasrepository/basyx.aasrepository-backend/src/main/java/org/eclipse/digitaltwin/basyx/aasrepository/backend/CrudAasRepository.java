@@ -168,7 +168,7 @@ public class CrudAasRepository implements AasRepository {
 	}
 	
 	private void throwIfAasIdEmptyOrNull(String id) {
-		if(id.trim().isEmpty() || id == null )
+		if(id == null || id.trim().isEmpty())
 			throw new MissingIdentifierException(id);
 	}
 

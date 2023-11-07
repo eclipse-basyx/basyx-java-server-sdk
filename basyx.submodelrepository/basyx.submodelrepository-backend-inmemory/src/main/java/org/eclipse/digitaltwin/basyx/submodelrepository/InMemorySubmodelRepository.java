@@ -343,7 +343,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 	
 	private void throwIfSubmodelIdEmptyOrNull(String id) {
-		if(id.trim().isEmpty() || id == null )
+		if(id == null || id.trim().isEmpty())
 			throw new MissingIdentifierException(id);
 	}
 

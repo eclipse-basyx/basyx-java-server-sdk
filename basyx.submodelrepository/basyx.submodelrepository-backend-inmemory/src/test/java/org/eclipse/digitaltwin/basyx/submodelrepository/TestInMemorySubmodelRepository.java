@@ -83,5 +83,5 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	private Collection<Submodel> createSubmodelCollectionWithUniqueIds() {
 		return Arrays.asList(DummySubmodelFactory.createSimpleDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
 	}
-
+	
 }
