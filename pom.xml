@@ -205,6 +205,7 @@
 						<serverId>ossrh</serverId>
 						<nexusUrl>https://oss.sonatype.org/</nexusUrl>
 						<autoReleaseAfterClose>true</autoReleaseAfterClose>
+						<stagingProfileId>2d2ac71e07682f</stagingProfileId>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -705,14 +706,6 @@
 					<plugin>
 						<groupId>org.sonatype.plugins</groupId>
 						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<version>1.6.13</version>
-						<extensions>true</extensions>
-						<configuration>
-							<serverId>ossrh</serverId>
-							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-							<stagingProfileId>2d2ac71e07682f</stagingProfileId>
-							<autoReleaseAfterClose>true</autoReleaseAfterClose>
-						</configuration>
 					</plugin>
 
 					<!-- Signing the artifacts -->
