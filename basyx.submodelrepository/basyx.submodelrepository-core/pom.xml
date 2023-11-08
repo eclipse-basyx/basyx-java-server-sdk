@@ -12,6 +12,17 @@
 	<name>BaSyx Submodel Repository Core</name>
 	<description>BaSyx Submodel Repository Core</description>
 
+	<developers>
+		<developer>
+			<organization>Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V.</organization>
+			<id>fschnicke</id>
+			<name>Frank Schnicke</name>
+			<email>frank.schnicke@iese.fraunhofer.de</email>
+			<organizationUrl>https://www.iese.fraunhofer.de/</organizationUrl>
+			<url>https://projects.eclipse.org/projects/dt.basyx/who</url>
+		</developer>
+	</developers>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
