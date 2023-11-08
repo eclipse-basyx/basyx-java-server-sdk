@@ -12,6 +12,8 @@
 	<name>BaSyx Core</name>
 	<description>BaSyx Core</description>
 	
+	<packaging>jar</packaging>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>
