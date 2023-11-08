@@ -11,7 +11,7 @@
 	<name>AAS Discovery Service Component</name>
 
 	<properties>
-		<docker.image.name>aasdiscovery-service</docker.image.name>
+		<docker.image.name>aas-discovery</docker.image.name>
 		<docker.container.waitForEndpoint>http://localhost:${docker.host.port}/lookup/shells</docker.container.waitForEndpoint>
 	</properties>
 
