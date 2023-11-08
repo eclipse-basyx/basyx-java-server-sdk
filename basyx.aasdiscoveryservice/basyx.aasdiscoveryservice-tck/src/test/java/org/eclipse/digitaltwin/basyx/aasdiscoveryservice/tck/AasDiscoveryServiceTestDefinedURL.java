@@ -57,18 +57,18 @@ public class AasDiscoveryServiceTestDefinedURL extends AasDiscoveryServiceHTTPSu
 
 	@Override
 	public void resetService() {
-		createDummyConceptDescriptions();
+		createDummyAssetLinks();
 	}
 
-	private void createDummyConceptDescriptions() {
+	private void createDummyAssetLinks() {
 		List<AssetLink> dummyAssetLinks = AasDiscoveryServiceSuite.getMultipleDummyAasAssetLink();
 		dummyAssetLinks.forEach(this::createAssetLink);
 	}
 
 	private void createAssetLink(AssetLink assetLink) {
 		try {
-			String conceptDescriptionJSON = gson.toJson(assetLink.getSpecificAssetIDs());
-			CloseableHttpResponse creationResponse = createAssetLinks(assetLink.getShellIdentifier(), conceptDescriptionJSON);
+			String specificAssetIdsJSON = gson.toJson(assetLink.getSpecificAssetIDs());
+			CloseableHttpResponse creationResponse = createAssetLinks(assetLink.getShellIdentifier(), specificAssetIdsJSON);
 
 			if (creationResponse.getCode() != 409) {
 				logger.info("Creating Asset Link with shell id '{}', ResponseCode is '{}'", assetLink.getShellIdentifier(), creationResponse.getCode());
