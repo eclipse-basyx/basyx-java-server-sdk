@@ -46,6 +46,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,8 +79,8 @@ public class LookupApiController implements LookupApi {
 
 		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
 		
-		List<String> decodedAssetIds = assetIds.stream().map(assetId -> assetId.getIdentifier()).collect(Collectors.toList());
-
+		List<String> decodedAssetIds = getDecodedAssetIds(assetIds);
+		
 		CursorResult<List<String>> filteredResult = aasDiscoveryService.getAllAssetAdministrationShellIdsByAssetLink(pInfo, decodedAssetIds);
 
 		InlineResponse200 paginatedAasIds = new InlineResponse200();
@@ -99,5 +101,13 @@ public class LookupApiController implements LookupApi {
         
         return new ResponseEntity<List<SpecificAssetID>>(assetIDs, HttpStatus.CREATED);
     }
+    
+	private List<String> getDecodedAssetIds(List<Base64UrlEncodedIdentifier> assetIds) {
+
+		if (assetIds == null)
+			return new ArrayList<>();
+
+		return assetIds.stream().map(assetId -> assetId.getIdentifier()).collect(Collectors.toList());
+	}
 
 }
