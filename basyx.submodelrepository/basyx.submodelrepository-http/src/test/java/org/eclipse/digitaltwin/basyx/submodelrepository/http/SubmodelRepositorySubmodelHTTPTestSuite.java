@@ -240,7 +240,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 
 	@Test
 	public void getFile() throws FileNotFoundException, IOException, ParseException {
-		String fileName = "BaSyx-Logo.png";
+		String fileName = DummySubmodelFactory.FILE_NAME;
 		
 		byte[] expectedFile = readBytesFromClasspath(fileName);
 		
@@ -281,9 +281,9 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	private CloseableHttpResponse uploadFileToSubmodelElement(String submodelId, String submodelElementIdShort) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
 
-		String fileName = "BaSyx-Logo.png";
+		String fileName = DummySubmodelFactory.FILE_NAME;
 
-		java.io.File file = ResourceUtils.getFile("src/test/resources/" + fileName);
+		java.io.File file = ResourceUtils.getFile("classpath:" + fileName);
 
 		HttpPut putRequest = createPutRequestWithFile(submodelId, submodelElementIdShort, fileName, file);
 
@@ -382,7 +382,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	}
 	
 	protected List<Submodel> createSubmodels() {
-		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createOperationalDataSubmodel(), DummySubmodelFactory.createSimpleDataSubmodel());
+		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createOperationalDataSubmodel(), DummySubmodelFactory.createSimpleDataSubmodel(), DummySubmodelFactory.createSubmodelWithFileElement());
 	}
 
 }
