@@ -30,7 +30,7 @@ It supports DotAAS Part 1 V3 and the following HTTP/REST endpoints defined in [D
   * GetAssetInformation
   * PutAssetInformation
 
-Right now, no additional input parameters modifying the output (e.g., cursor, serializationModifier) are supported.
+Right now, no additional input parameters modifying the output (e.g., serializationModifier) are supported.
 
 In addition, it supports the following backends:
 * InMemory
