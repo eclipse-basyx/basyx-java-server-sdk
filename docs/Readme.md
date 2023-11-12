@@ -7,7 +7,7 @@ The components
 * [AAS Registry](../basyx.aasregistry)
 * [Submodel Registry](../basyx.submodelregistry)
 
-offer common mechanisms to check the current health status of the application and configure Cross-Origin Resource Sharing (CORS) options.
+are highly configurable by leveraging the Spring framework. Thus, they utilize existing Spring configuration properties, e.g., for MongoDB. In addition, the components offer common mechanisms to check the current health status of the application and configure Cross-Origin Resource Sharing (CORS) options.
 
 ## Health Endpoint
 The health endpoint to check whether the server is up and running is available at:
@@ -25,6 +25,6 @@ Comma-separated list of origin patterns to allow. Unlike allowed origins which o
   ```
 
 ## Configuration via Environment Variables
-The BaSyx components leverage the Spring framework. Thus, all configuration options of Spring are also available for BaSyx. In consequence, each entry of the _application.properties_ file can be configured via environment variables by replacing "." with "_" and capitalizing each letter.
+The BaSyx V2 components use the Spring framework as described above. Due to this, all configuration options of Spring are also available for BaSyx. In consequence, each entry of the _application.properties_ file can be configured via environment variables by replacing "." with "_" and capitalizing each letter.
 
 As an example _"basyx.backend"_ can be configured via the environment variable _"BASYX_BACKEND"_.
