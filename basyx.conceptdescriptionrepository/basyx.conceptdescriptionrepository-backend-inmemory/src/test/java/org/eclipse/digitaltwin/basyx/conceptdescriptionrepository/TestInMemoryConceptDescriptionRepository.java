@@ -35,6 +35,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.ConceptDescriptionRepositorySuite;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.DummyConceptDescriptionFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.junit.Test;
 
 /**
@@ -46,6 +47,8 @@ import org.junit.Test;
 public class TestInMemoryConceptDescriptionRepository extends ConceptDescriptionRepositorySuite {
 	
 	private static final String CONFIGURED_CD_REPO_NAME = "configured-cd-repo-name";
+	private static final String EMPTY_ID = " ";
+	private static final String NULL_ID = null;
 
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository() {
@@ -68,6 +71,22 @@ public class TestInMemoryConceptDescriptionRepository extends ConceptDescription
 	public void idCollisionDuringConstruction() {
 		Collection<ConceptDescription> conceptDescriptionsWithCollidingIds = createConceptDescriptionCollectionWithCollidingIds();
 		new InMemoryConceptDescriptionRepository(conceptDescriptionsWithCollidingIds);
+	}
+	
+	@Test(expected = MissingIdentifierException.class)
+	public void createConceptDescriptionWithEmptyId() {
+		ConceptDescription conceptDescription = createDummyConceptDescription(EMPTY_ID);
+		
+		ConceptDescriptionRepository repo = new InMemoryConceptDescriptionRepository();
+		repo.createConceptDescription(conceptDescription);
+	}
+	
+	@Test(expected = MissingIdentifierException.class)
+	public void createConceptDescriptionWithNullId() {
+    ConceptDescription conceptDescription = createDummyConceptDescription(NULL_ID);
+		
+		ConceptDescriptionRepository repo = new InMemoryConceptDescriptionRepository();
+		repo.createConceptDescription(conceptDescription);
 	}
 
 	private Collection<ConceptDescription> createConceptDescriptionCollectionWithCollidingIds() {

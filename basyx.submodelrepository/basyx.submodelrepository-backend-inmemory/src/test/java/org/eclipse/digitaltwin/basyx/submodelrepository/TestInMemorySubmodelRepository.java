@@ -32,6 +32,7 @@ import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
@@ -46,6 +47,9 @@ import org.junit.Test.None;
 public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 
 	private static final String CONFIGURED_SM_REPO_NAME = "configured-sm-repo-name";
+	private static final String EMPTY_ID = " ";
+	private static final String NULL_ID = null;
+	
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository() {
@@ -69,7 +73,24 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 		Collection<Submodel> submodelsWithCollidingIds = createSubmodelCollectionWithCollidingIds();
 		new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodelsWithCollidingIds);
 	}
-
+	
+	
+	@Test(expected = MissingIdentifierException.class)
+	public void createSubmodelWithEmptyId() {
+		SubmodelRepository repo  = new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
+		Submodel submodel = buildDummySubmodel(EMPTY_ID);
+		
+		repo.createSubmodel(submodel);
+	}
+	
+	@Test(expected = MissingIdentifierException.class)
+	public void createSubmodelWithNullId() {
+		SubmodelRepository repo  = new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
+		Submodel submodel = buildDummySubmodel(NULL_ID);
+		
+		repo.createSubmodel(submodel);
+	}
+	
 	@Test(expected = None.class)
 	public void assertIdUniqueness() {
 		Collection<Submodel> submodelsWithUniqueIds = createSubmodelCollectionWithUniqueIds();

@@ -45,7 +45,6 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Test;
@@ -63,8 +62,6 @@ public abstract class ConceptDescriptionRepositorySuite {
 
 	private final PaginationInfo noLimitPaginationInfo = new PaginationInfo(0, "");
 	
-	private static final String EMPTY_ID = " ";
-	private static final String NULL_ID = null;
 
 	@Test
 	public void getAllConceptDescriptionsPreconfigured() {
@@ -202,24 +199,6 @@ public abstract class ConceptDescriptionRepositorySuite {
 
 		repo.createConceptDescription(conceptDescription);
 	}
-	
-	@Test(expected = MissingIdentifierException.class)
-	public void createConceptDescriptionWithEmptyId() {
-		String id = EMPTY_ID;
-		ConceptDescription conceptDescription = createDummyConceptDescription(id);
-		
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		repo.createConceptDescription(conceptDescription);
-	}
-	
-	@Test(expected = MissingIdentifierException.class)
-	public void createConceptDescriptionWithNullId() {
-		String id = NULL_ID;
-		ConceptDescription conceptDescription = createDummyConceptDescription(id);
-		
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		repo.createConceptDescription(conceptDescription);
-	}
 
 	@Test
 	public void deleteConceptDescription() {
@@ -281,7 +260,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 		assertTrue(actualConceptDescriptions.containsAll(expectedConceptDescriptions));
 	}
 
-	private ConceptDescription createDummyConceptDescription(String id) {
+	protected ConceptDescription createDummyConceptDescription(String id) {
 		return new DefaultConceptDescription.Builder().id(id)
 				.isCaseOf(new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE)
 						.build())
