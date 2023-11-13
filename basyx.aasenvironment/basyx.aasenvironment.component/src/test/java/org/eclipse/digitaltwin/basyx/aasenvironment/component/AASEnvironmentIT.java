@@ -23,9 +23,10 @@
 * SPDX-License-Identifier: MIT
 ******************************************************************************/
 
-package basyx.aasenvironment.component;
+package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.component.AASRepositoryIT;
+import org.eclipse.digitaltwin.basyx.submodelrepository.component.SubmodelRepositoryIT;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -38,9 +39,8 @@ import org.junit.runners.Suite;
  */
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ // ASRepositoryI.class,
-		AASRepositoryIT.class, // test case 1
-// SubmodelRepositoryIT.class, // test case 2
+@Suite.SuiteClasses({ AASRepositoryIT.class, // test case 1
+		SubmodelRepositoryIT.class, // test case 2
 // ConceptDescriptionRepositoryIT.class
 })
 
