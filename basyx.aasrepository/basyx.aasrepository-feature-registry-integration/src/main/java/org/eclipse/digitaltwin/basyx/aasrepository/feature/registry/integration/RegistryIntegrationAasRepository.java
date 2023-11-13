@@ -26,8 +26,6 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration
 
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
@@ -39,10 +37,6 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.eclipse.paho.client.mqttv3.IMqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,12 +52,11 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 
 	private AasRepository decorated;
 	
-	private RegistryAndDiscoveryInterfaceApi registryApi; 
+	private AasRepositoryRegistryLink aasRepositoryRegistryLink;
 
-
-	public RegistryIntegrationAasRepository(AasRepository decorated, RegistryAndDiscoveryInterfaceApi registryApi) {
+	public RegistryIntegrationAasRepository(AasRepository decorated, AasRepositoryRegistryLink aasRepositoryRegistryLink) {
 		this.decorated = decorated;
-		this.registryApi = registryApi;
+		this.aasRepositoryRegistryLink = aasRepositoryRegistryLink;
 	}
 
 	@Override
@@ -80,19 +73,20 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException {
 		decorated.createAas(aas);
 		
-		integrateAasWithRegistry(aas);
+		integrateAasWithRegistry(aas, aasRepositoryRegistryLink.getAasRepositoryURL());
 	}
 
-	private void integrateAasWithRegistry(AssetAdministrationShell aas) {
-		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
-		descriptor.idShort(aas.getIdShort());
-		aas.getDisplayName();
+	private void integrateAasWithRegistry(AssetAdministrationShell shell, String aasRepositoryURL) {
+		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(shell, aasRepositoryURL).create();
+		descriptor.idShort(shell.getIdShort());
+		shell.getDisplayName();
 		descriptor.addDisplayNameItem(null);
 		
+		RegistryAndDiscoveryInterfaceApi registryApi = aasRepositoryRegistryLink.getRegistryApi();
+		
 		try {
-			registryApi.postAssetAdministrationShellDescriptor(null);
+			registryApi.postAssetAdministrationShellDescriptor(descriptor);
 		} catch (ApiException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -100,14 +94,24 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 	@Override
 	public void updateAas(String aasId, AssetAdministrationShell aas) {
 		decorated.updateAas(aasId, aas);
-		aasUpdated(aas, getName());
 	}
 
 	@Override
 	public void deleteAas(String aasId) {
 		AssetAdministrationShell shell = decorated.getAas(aasId);
 		decorated.deleteAas(aasId);
-		aasDeleted(shell, getName());
+
+		deleteFromRegistry(shell.getId());
+	}
+	
+	private void deleteFromRegistry(String shellId) {
+		RegistryAndDiscoveryInterfaceApi registryApi = aasRepositoryRegistryLink.getRegistryApi();
+		
+		try {
+			registryApi.deleteAssetAdministrationShellDescriptorById(shellId);
+		} catch (ApiException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -138,55 +142,6 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 	@Override
 	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException {
 		return decorated.getAssetInformation(aasId);
-	}
-
-	private void aasCreated(AssetAdministrationShell shell, String repoId) {
-		sendMqttMessage(topicFactory.createCreateAASTopic(repoId), serializePayload(shell));
-	}
-
-	private void aasUpdated(AssetAdministrationShell shell, String repoId) {
-		sendMqttMessage(topicFactory.createUpdateAASTopic(repoId), serializePayload(shell));
-	}
-
-	private void aasDeleted(AssetAdministrationShell shell, String repoId) {
-		sendMqttMessage(topicFactory.createDeleteAASTopic(repoId), serializePayload(shell));
-	}
-
-	private String serializePayload(AssetAdministrationShell shell) {
-		try {
-			return new JsonSerializer().write(shell);
-		} catch (SerializationException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	/**
-	 * Sends MQTT message to connected broker
-	 * 
-	 * @param topic
-	 *            in which the message will be published
-	 * @param payload
-	 *            the actual message
-	 */
-	private void sendMqttMessage(String topic, String payload) {
-		MqttMessage msg = createMqttMessage(payload);
-
-		try {
-			logger.debug("Send MQTT message to " + topic + ": " + payload);
-			mqttClient.publish(topic, msg);
-		} catch (MqttPersistenceException e) {
-			logger.error("Could not persist mqtt message", e);
-		} catch (MqttException e) {
-			logger.error("Could not send mqtt message", e);
-		}
-	}
-
-	private MqttMessage createMqttMessage(String payload) {
-		if (payload == null) {
-			return new MqttMessage();
-		} else {
-			return new MqttMessage(payload.getBytes());
-		}
 	}
 
 }

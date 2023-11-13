@@ -37,20 +37,20 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.aasrepository.feature.registryintegration:}')")
+//@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.aasrepository.feature.registryintegration:}')")
 public class RegistryIntegrationAasRepositoryFeature implements AasRepositoryFeature {
 	public final static String FEATURENAME = "basyx.aasrepository.feature.registryintegration";
 
-	private RegistryAndDiscoveryInterfaceApi registryApi;
+	private AasRepositoryRegistryLink aasRepositoryRegistryLink;
 
 	@Autowired
-	public RegistryIntegrationAasRepositoryFeature(RegistryAndDiscoveryInterfaceApi registryApi) {
-		this.registryApi = registryApi;
+	public RegistryIntegrationAasRepositoryFeature(AasRepositoryRegistryLink aasRepositoryRegistryLink) {
+		this.aasRepositoryRegistryLink = aasRepositoryRegistryLink;
 	}
 
 	@Override
 	public AasRepositoryFactory decorate(AasRepositoryFactory aasRepositoryFactory) {
-		return new RegistryIntegrationAasRepositoryFactory(aasRepositoryFactory, registryApi);
+		return new RegistryIntegrationAasRepositoryFactory(aasRepositoryFactory, aasRepositoryRegistryLink);
 	}
 
 	@Override

@@ -35,14 +35,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.aasrepository.feature.registryintegration:}')")
+//@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.aasrepository.feature.registryintegration:}') && !T(org.springframework.util.StringUtils).isEmpty('${basyx.aasrepository.externalurl:}')")
 public class RegistryIntegrationAasRepositoryConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public RegistryAndDiscoveryInterfaceApi mqttClient(@Value("${basyx.aasrepository.feature.registryintegration}") String registryBasePath) throws MqttException {
+	public AasRepositoryRegistryLink mqttClient(@Value("${basyx.aasrepository.feature.registryintegration}") String registryBasePath, @Value("${basyx.aasrepository.externalurl}") String aasRepositoryURL) throws MqttException {
 	
-		return new RegistryAndDiscoveryInterfaceApi(registryBasePath);
+		return new AasRepositoryRegistryLink(new RegistryAndDiscoveryInterfaceApi(registryBasePath), aasRepositoryURL);
 	}
 
 }

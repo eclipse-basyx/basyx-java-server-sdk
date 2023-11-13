@@ -108,7 +108,7 @@ services:
       - mongodb   
                
   aas-registry-kafka-mongodb:
-    image: aas-registry-test/aas-registry-kafka-mongodb:latest
+    image: mdanish98/aas-registry-kafka-mongodb:latest
     container_name: aas-registry-kafka-mongodb
     pull_policy: never
     ports:
@@ -124,7 +124,7 @@ services:
       - basyx
 
   aas-registry-kafka-mongodb-external-conf:
-    image: aas-registry-test/aas-registry-kafka-mongodb:latest
+    image: mdanish98/aas-registry-kafka-mongodb:latest
     container_name: aas-registry-kafka-mongodb-external-conf
     pull_policy: never
     ports:
@@ -143,7 +143,7 @@ services:
       - basyx
 
   aas-registry-kafka-mem:
-    image: aas-registry-test/aas-registry-kafka-mem:latest
+    image: mdanish98/aas-registry-kafka-mem:latest
     container_name: aas-registry-kafka-mem
     pull_policy: never
     ports:
@@ -157,7 +157,7 @@ services:
       - basyx
 
   aas-registry-log-mem:
-    image: aas-registry-test/aas-registry-log-mem:latest
+    image: mdanish98/aas-registry-log-mem:latest
     container_name: aas-registry-log-mem
     pull_policy: never
     ports:
@@ -167,7 +167,7 @@ services:
       - basyx
 
   aas-registry-log-mongodb:
-    image: aas-registry-test/aas-registry-log-mongodb:latest
+    image: mdanish98/aas-registry-log-mongodb:latest
     container_name: aas-registry-log-mongodb
     pull_policy: never
     ports:

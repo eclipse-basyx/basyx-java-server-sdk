@@ -34,16 +34,18 @@ import org.eclipse.paho.client.mqttv3.IMqttClient;
 public class RegistryIntegrationAasRepositoryFactory implements AasRepositoryFactory {
 
 	private AasRepositoryFactory decorated;
-	private RegistryAndDiscoveryInterfaceApi registryApi;
+	private AasRepositoryRegistryLink aasRepositoryRegistryLink;
+	private String aasRepositoryURL;
 
-	public RegistryIntegrationAasRepositoryFactory(AasRepositoryFactory decorated, RegistryAndDiscoveryInterfaceApi registryApi) {
+	public RegistryIntegrationAasRepositoryFactory(AasRepositoryFactory decorated, AasRepositoryRegistryLink aasRepositoryRegistryLink) {
 		this.decorated = decorated;
-		this.registryApi = registryApi;
+		this.aasRepositoryRegistryLink = aasRepositoryRegistryLink;
+		this.aasRepositoryURL = aasRepositoryURL;
 	}
 
 	@Override
 	public AasRepository create() {
-		return new RegistryIntegrationAasRepository(decorated.create(), registryApi);
+		return new RegistryIntegrationAasRepository(decorated.create(), aasRepositoryRegistryLink);
 	}
 
 }
