@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.component.AASRepositoryIT;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.component.ConceptDescriptionRepositoryIT;
 import org.eclipse.digitaltwin.basyx.submodelrepository.component.SubmodelRepositoryIT;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -39,9 +40,10 @@ import org.junit.runners.Suite;
  */
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ AASRepositoryIT.class, // test case 1
-		SubmodelRepositoryIT.class, // test case 2
-// ConceptDescriptionRepositoryIT.class
+@Suite.SuiteClasses({
+	AASRepositoryIT.class, 
+	SubmodelRepositoryIT.class,
+	ConceptDescriptionRepositoryIT.class,
 })
 
 public class AASEnvironmentIT {

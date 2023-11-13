@@ -38,7 +38,7 @@ import org.springframework.context.annotation.Configuration;
  *
  */
 @Configuration
-public class DummyConfig {
+public class DummyConceptDescriptionRepositoryConfig {
 
 		@Bean
 		@ConditionalOnMissingBean
