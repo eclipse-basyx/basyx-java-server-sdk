@@ -78,9 +78,6 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 
 	private void integrateAasWithRegistry(AssetAdministrationShell shell, String aasRepositoryURL) {
 		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(shell, aasRepositoryURL).create();
-		descriptor.idShort(shell.getIdShort());
-		shell.getDisplayName();
-		descriptor.addDisplayNameItem(null);
 		
 		RegistryAndDiscoveryInterfaceApi registryApi = aasRepositoryRegistryLink.getRegistryApi();
 		

@@ -37,7 +37,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 @Component
-//@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.aasrepository.feature.registryintegration:}')")
+@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.aasrepository.feature.registryintegration:}') && !T(org.springframework.util.StringUtils).isEmpty('${basyx.aasrepository.externalurl:}')")
 public class RegistryIntegrationAasRepositoryFeature implements AasRepositoryFeature {
 	public final static String FEATURENAME = "basyx.aasrepository.feature.registryintegration";
 
