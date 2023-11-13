@@ -22,7 +22,6 @@
 			<artifactId>junit-vintage-engine</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.aasrepository.component</artifactId>
@@ -35,7 +34,6 @@
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.submodelrepository.component</artifactId>
@@ -48,14 +46,12 @@
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.conceptdescriptionrepository-tck</artifactId>
 			<classifier>tests</classifier>
 			<scope>test</scope>
-		</dependency>
-		
+		</dependency>	
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
