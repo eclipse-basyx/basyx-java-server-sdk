@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AdministrativeInformation;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringNameType;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AttributeMapper;
@@ -23,15 +24,6 @@ public class TestAttributeMapper {
 		assertEquals(expectedDescriptions, actualDescriptions);
 	}
 	
-//	@Test
-//	public void mapAdministration() {
-//		AdministrativeInformation expectedAdministrativeInformation = RegistryIntegrationTestHelper.getAasRegAdministration();
-//		
-//		AdministrativeInformation actualAdministrativeInformation = new AttributeMapper().mapAdministration(RegistryIntegrationTestHelper.getAas4jAdministration());
-//		
-//		assertEquals(expectedAdministrativeInformation, actualAdministrativeInformation);
-//	}
-	
 	@Test
 	public void mapDisplayNames() {
 		List<LangStringNameType> expectedDisplayNames = RegistryIntegrationTestHelper.getAasRegLangStringNameTypes();
@@ -40,6 +32,25 @@ public class TestAttributeMapper {
 		
 		assertEquals(expectedDisplayNames.size(), actualDisplayNames.size());
 		assertEquals(expectedDisplayNames, actualDisplayNames);
+	}
+	
+	@Test
+	public void mapExtensions() {
+		List<Extension> expectedDisplayNames = RegistryIntegrationTestHelper.getAasRegExtensions();
+		
+		List<Extension> actualDisplayNames = new AttributeMapper().mapExtensions(RegistryIntegrationTestHelper.getAas4jExtensions());
+		
+		assertEquals(expectedDisplayNames.size(), actualDisplayNames.size());
+		assertEquals(expectedDisplayNames, actualDisplayNames);
+	}
+	
+	@Test
+	public void mapAdministration() {
+		AdministrativeInformation expectedAdministrativeInformation = RegistryIntegrationTestHelper.getAasRegAdministration();
+		
+		AdministrativeInformation actualAdministrativeInformation = new AttributeMapper().mapAdministration(RegistryIntegrationTestHelper.getAas4jAdministration());
+		
+		assertEquals(expectedAdministrativeInformation, actualAdministrativeInformation);
 	}
 	
 	@Test

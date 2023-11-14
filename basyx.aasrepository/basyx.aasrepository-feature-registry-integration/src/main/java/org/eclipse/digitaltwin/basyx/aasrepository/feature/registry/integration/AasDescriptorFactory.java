@@ -29,8 +29,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.AdministrativeInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.Extension;
 import org.eclipse.digitaltwin.aas4j.v3.model.LangStringNameType;
 import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
@@ -44,106 +46,122 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
  * @author danish
  */
 public class AasDescriptorFactory {
-	
+
 	private static final String AAS_INTERFACE = "AAS-3.0";
 	private AssetAdministrationShell shell;
 	private String aasRepositoryURL;
-	
+
 	public AasDescriptorFactory(AssetAdministrationShell shell, String aasRepositoryURL) {
 		super();
 		this.shell = shell;
 		this.aasRepositoryURL = aasRepositoryURL;
 	}
-	
+
 	/**
-	 * Creates {@link AssetAdministrationShellDescriptor} 
+	 * Creates {@link AssetAdministrationShellDescriptor}
 	 * 
 	 * @return the created AssetAdministrationShellDescriptor
 	 */
 	public AssetAdministrationShellDescriptor create() {
-		
+
 		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
-		
+
 		setId(shell.getId(), descriptor);
-		
+
 		setIdShort(shell.getIdShort(), descriptor);
-		
+
 		setEndpointItem(shell.getId(), descriptor);
-		
+
 		setDescription(shell.getDescription(), descriptor);
-		
+
 		setDisplayName(shell.getDisplayName(), descriptor);
-		
-//		setExtensions(shell.getExtensions(), descriptor);
-		
-//		setAdministration(shell.getAdministration(), descriptor);
-		
+
+		setExtensions(shell.getExtensions(), descriptor);
+
+		setAdministration(shell.getAdministration(), descriptor);
+
 		setAssetKind(shell.getAssetInformation(), descriptor);
-		
+
 		setAssetType(shell.getAssetInformation(), descriptor);
-		
+
 		setGlobalAssetId(shell.getAssetInformation(), descriptor);
-		
+
 		return descriptor;
 	}
 
 	private void setDescription(List<LangStringTextType> descriptions, AssetAdministrationShellDescriptor descriptor) {
-		
+
 		if (descriptions == null || descriptions.isEmpty())
 			return;
-		
+
 		descriptor.setDescription(new AttributeMapper().mapDescription(descriptions));
 	}
-	
+
 	private void setDisplayName(List<LangStringNameType> displayNames, AssetAdministrationShellDescriptor descriptor) {
-		
+
 		if (displayNames == null || displayNames.isEmpty())
 			return;
-		
+
 		descriptor.setDisplayName(new AttributeMapper().mapDisplayName(displayNames));
 	}
-	
+
+	private void setExtensions(List<Extension> extensions, AssetAdministrationShellDescriptor descriptor) {
+
+		if (extensions == null || extensions.isEmpty())
+			return;
+
+		descriptor.setExtensions(new AttributeMapper().mapExtensions(extensions));
+	}
+
+	private void setAdministration(AdministrativeInformation administration, AssetAdministrationShellDescriptor descriptor) {
+
+		if (administration == null)
+			return;
+
+		descriptor.setAdministration(new AttributeMapper().mapAdministration(administration));
+	}
+
 	private void setAssetKind(AssetInformation assetInformation, AssetAdministrationShellDescriptor descriptor) {
-		
+
 		if (assetInformation == null || assetInformation.getAssetKind() == null)
 			return;
-		
+
 		descriptor.setAssetKind(new AttributeMapper().mapAssetKind(assetInformation.getAssetKind()));
 	}
-	
+
 	private void setAssetType(AssetInformation assetInformation, AssetAdministrationShellDescriptor descriptor) {
-		
+
 		if (assetInformation == null || assetInformation.getAssetType() == null)
 			return;
-		
+
 		descriptor.setAssetType(assetInformation.getAssetType());
 	}
-	
+
 	private void setGlobalAssetId(AssetInformation assetInformation, AssetAdministrationShellDescriptor descriptor) {
-		
+
 		if (assetInformation == null || assetInformation.getGlobalAssetID() == null)
 			return;
-		
+
 		descriptor.setGlobalAssetId(assetInformation.getGlobalAssetID());
 	}
 
 	private void setEndpointItem(String shellId, AssetAdministrationShellDescriptor descriptor) {
-		
+
 		Endpoint endpoint = new Endpoint();
 		endpoint.setInterface(AAS_INTERFACE);
 		ProtocolInformation protocolInformation = createProtocolInformation(shellId);
 		endpoint.setProtocolInformation(protocolInformation);
-		
+
 		descriptor.addEndpointsItem(endpoint);
 	}
 
 	private ProtocolInformation createProtocolInformation(String shellId) {
 		String href = String.format("%s/%s", aasRepositoryURL, Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
-		
+
 		ProtocolInformation protocolInformation = new ProtocolInformation();
 		protocolInformation.endpointProtocol(getProtocol(href));
 		protocolInformation.setHref(href);
-		
+
 		return protocolInformation;
 	}
 

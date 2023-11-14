@@ -28,16 +28,22 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AdministrativeInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.Extension;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.KeyTypes;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ReferenceTypes;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.deserializer.DataTypeDefXsdDeserializer;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.deserializer.KeyTypeDeserializer;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.deserializer.ReferenceTypeDeserializer;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mixin.AdministrativeInformationMixin;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mixin.ExtensionMixin;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mixin.ReferenceMixin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * Factory for creating clones for the defined Input and Output type
@@ -56,6 +62,8 @@ public class CloneFactory<I, O> {
 	public CloneFactory(Class<O> outputElementType) {
 		super();
 		this.elementType = outputElementType;
+		
+		configureMixins();
 	}
 	
 	/**
@@ -73,6 +81,10 @@ public class CloneFactory<I, O> {
         module2.setMixInAnnotation(Reference.class, ReferenceMixin.class);
         mapper.registerModule(module2);
         
+        SimpleModule module3 = new SimpleModule();
+        module3.setMixInAnnotation(Extension.class, ExtensionMixin.class);
+        mapper.registerModule(module3);
+        
         SimpleModule moduleDeser = new SimpleModule();
         moduleDeser.addDeserializer(KeyTypes.class, new KeyTypeDeserializer());
         mapper.registerModule(moduleDeser);
@@ -80,26 +92,13 @@ public class CloneFactory<I, O> {
         SimpleModule moduleDeser2 = new SimpleModule();
         moduleDeser2.addDeserializer(ReferenceTypes.class, new ReferenceTypeDeserializer());
         mapper.registerModule(moduleDeser2);
+        
+        SimpleModule moduleDeser3 = new SimpleModule();
+        moduleDeser3.addDeserializer(DataTypeDefXsd.class, new DataTypeDefXsdDeserializer());
+        mapper.registerModule(moduleDeser3);
+        
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 	}
-
-//	public O create() {
-//		String serializedLangString = "";
-//		try {
-//			serializedLangString = mapper.writeValueAsString(input);
-//		} catch (JsonProcessingException e) {
-//			e.printStackTrace();
-//		}
-//		
-//		O administrativeInformation = null;
-//		
-//		try {
-//			administrativeInformation = mapper.readValue(serializedLangString,  new TypeReference<O>() {});
-//		} catch (JsonProcessingException e) {
-//			e.printStackTrace();
-//		}
-//		
-//		return administrativeInformation;
-//	}
 	
 	public List<O> create(List<I> input) {
 	    String serializedLangString = "";
