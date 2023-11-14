@@ -53,8 +53,7 @@ public class TestSubmodelRepositorySubmodelHTTP extends SubmodelRepositorySubmod
 	@Override
 	public void resetRepository() {
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
-		repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult().stream().map(s -> s.getId())
-				.forEach(repo::deleteSubmodel);
+		repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
 	}
 
 	@Override
@@ -73,4 +72,5 @@ public class TestSubmodelRepositorySubmodelHTTP extends SubmodelRepositorySubmod
 	protected String getURL() {
 		return "http://localhost:8080/submodels";
 	}
+
 }

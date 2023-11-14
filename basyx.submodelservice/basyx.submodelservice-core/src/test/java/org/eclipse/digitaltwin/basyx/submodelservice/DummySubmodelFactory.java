@@ -33,7 +33,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXSD;
+import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
+import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
@@ -97,6 +99,13 @@ public class DummySubmodelFactory {
 	public static final String SUBMODEL_SIMPLE_DATA_ID_SHORT = "simpleSubmodel001";
 	public static final String SUBMODEL_SIMPLE_DATA_ID = "simpleSubmodel001";
 	public static final String SUBMODEL_ELEMENT_SIMPLE_DATA_ID_SHORT = "elementToDelete";
+	
+	//SUBMODEL_FOR_FILE_TEST
+	public static final String SUBMODEL_FOR_FILE_TEST = "8A6344BDAB57E184";
+	public static final String SUBMODEL_FOR_FILE_TEST_ID_SHORT = "FileTests";
+	public static final String SUBMODEL_ELEMENT_FILE_ID_SHORT = "FileData";
+	public static final String SUBMODEL_ELEMENT_NON_FILE_ID_SHORT = "NonFileParameter";
+	public static final String FILE_NAME = "BaSyx-Logo.png";
 
 	public static Collection<Submodel> getSubmodels() {
 		return Arrays.asList(createTechnicalDataSubmodel(), createOperationalDataSubmodel(), createSimpleDataSubmodel());
@@ -122,6 +131,18 @@ public class DummySubmodelFactory {
 				.idShort(SUBMODEL_TECHNICAL_DATA_ID_SHORT)
 				.id(SUBMODEL_TECHNICAL_DATA_ID)
 				.submodelElements(SubmodelServiceHelper.getAllSubmodelElements())
+				.build();
+	}
+	
+	public static Submodel createSubmodelWithFileElement() {
+		return new DefaultSubmodel.Builder().semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.GLOBAL_REFERENCE)
+				.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID)
+				.build())
+				.type(ReferenceTypes.EXTERNAL_REFERENCE)
+				.build())
+				.idShort(SUBMODEL_FOR_FILE_TEST_ID_SHORT)
+				.id(SUBMODEL_FOR_FILE_TEST)
+				.submodelElements(Arrays.asList(createFileElement(), createNonFileElement()))
 				.build();
 	}
 
@@ -248,6 +269,20 @@ public class DummySubmodelFactory {
 		list.add(smeList);
 		list.add(createProperty(SUBMODEL_ELEMENT_SIMPLE_DATA_ID_SHORT));
 		return list;
+	}
+	
+	private static Property createNonFileElement() {
+		Property simpleProperty = SubmodelServiceHelper.createPropertySubmodelElement();
+		simpleProperty.setIdShort(SUBMODEL_ELEMENT_NON_FILE_ID_SHORT);
+		
+		return simpleProperty;
+	}
+	
+	private static File createFileElement() {
+		File simpleFile = SubmodelServiceHelper.createFileSubmodelElement();
+		simpleFile.setValue(FILE_NAME);
+		
+		return simpleFile;
 	}
 
 }

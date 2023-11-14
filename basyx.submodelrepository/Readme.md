@@ -30,8 +30,11 @@ It supports DotAAS Part 1 V3 and the following HTTP/REST endpoints defined in [D
   * DeleteSubmodelElementByPath
   * PatchSubmodelElementByPath (including ValueOnly)
   * GetSubmodelElementValueByPath
+  * GetFileByPath
+  * PutFileByPath
+  * DeleteFileByPath
 
-Right now, no additional input parameters modifying the output (e.g., cursor, serializationModifier) are supported, if not specified otherwise.
+Right now, no additional input parameters modifying the output (e.g., serializationModifier) are supported, if not specified otherwise.
 
 In addition, it supports the following backends:
 * InMemory, MongoDB

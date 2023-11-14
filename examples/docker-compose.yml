@@ -36,7 +36,7 @@ services:
     image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
     volumes:
       - ./aas-env.properties:/application/application.properties
-      - ./aas/test_demo_full_example.xml:/application/aas/test_demo_full_example.xml
+      - ./aas:/application/aas
     ports:
         - 8081:8081
     depends_on:
@@ -48,7 +48,20 @@ services:
   aas-registry:
     image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
     container_name: aas-registry
-    pull_policy: never
     ports:
       - 8082:8080
+    volumes:
+      - ./aas-registry.yml:/workspace/config/application.yml
+    restart: always
+
+  aas-web-ui_v2:
+    image: eclipsebasyx/aas-gui:v2-231107
+    container_name: aas-web-ui_v2
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_REGISTRY_PATH: "http://localhost:8082/api/v3.0"
+      VITE_AAS_REPO_PATH: "http://localhost:8081/shells"
+      VITE_SUBMODEL_REPO_PATH: "http://localhost:8081/submodels"
+      VITE_CD_REPO_PATH: "http://localhost:8081/concept-descriptions"
     restart: always
