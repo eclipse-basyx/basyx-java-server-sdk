@@ -277,7 +277,6 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 		AggregationExpression notEquals = ComparisonOperators.valueOf(SUBMODEL_DESCRIPTORS_ID).notEqualToValue(submodelId);
 		AggregationExpression filterArray = ArrayOperators.arrayOf(SUBMODEL_DESCRIPTORS).filter().as(SUBMODEL_DESCRIPTORS).by(notEquals);
 		AggregationUpdate update =  AggregationUpdate.update().set(SUBMODEL_DESCRIPTORS).toValue(filterArray);
-		//AggregationUpdate update = Aggregation.newUpdate(Aggregation.project(SUBMODEL_DESCRIPTORS).and(filterArray).as(SUBMODEL_DESCRIPTORS));
 		AssetAdministrationShellDescriptor old = template.findAndModify(Query.query(Criteria.where(ID).is(aasDescriptorId)), update, AssetAdministrationShellDescriptor.class);
 		if (old == null) {
 			throw new AasDescriptorNotFoundException(submodelId);
