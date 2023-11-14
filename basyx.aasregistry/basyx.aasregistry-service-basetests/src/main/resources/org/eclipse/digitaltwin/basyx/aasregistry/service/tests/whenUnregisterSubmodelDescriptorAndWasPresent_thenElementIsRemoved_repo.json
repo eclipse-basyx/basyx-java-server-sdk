@@ -1,0 +1,56 @@
+[
+	{
+		"id": "identification_1",
+		"endpoints": [
+			{
+				"protocolInformation": {
+					"endpointProtocolVersion": [
+						"1"
+					]
+				}
+			}
+		],
+		"extensions": [
+			{
+				"name": "COLOR",
+				"value": "BLUE"
+			}
+		]
+	},
+	{
+		"id": "identification_2",
+		"endpoints": [
+			{
+				"protocolInformation": {
+					"endpointProtocolVersion": [
+						"2"
+					]
+				}
+			}
+		],
+		"extensions": [
+			{
+				"name": "COLOR",
+				"value": "RED"
+			}
+		],
+		"submodelDescriptors": [
+			{
+				"id": "identification_2.1",
+				"extensions": [
+				{
+					"name": "COLOR",
+					"value": "RED"
+				}]
+			}, 
+			{
+				"id": "identification_2.2",
+				"extensions": [
+				{
+					"name": "COLOR",
+					"value": "RED"
+				}]
+			}	
+		]
+	}
+]

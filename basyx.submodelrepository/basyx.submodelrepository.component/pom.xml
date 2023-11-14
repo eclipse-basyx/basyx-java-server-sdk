@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -8,10 +10,14 @@
 	</parent>
 
 	<artifactId>basyx.submodelrepository.component</artifactId>
-	
+
 	<properties>
 		<docker.image.name>submodel-repository</docker.image.name>
-		<docker.container.waitForEndpoint>http://localhost:${docker.host.port}/submodels</docker.container.waitForEndpoint>
+		<docker.image.smreg.inmem.name>submodel-registry-log-mem:2.0.0-SNAPSHOT</docker.image.smreg.inmem.name>
+		<docker.container.waitForEndpoint>
+			http://localhost:${docker.host.port}/submodels</docker.container.waitForEndpoint>
+		<docker.container.smreg.inmem.waitForEndpoint>
+			http://localhost:8050/api/v3.0/submodel-descriptors</docker.container.smreg.inmem.waitForEndpoint>
 	</properties>
 
 	<dependencies>
@@ -34,6 +40,16 @@
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.submodelrepository-feature-mqtt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelrepository-feature-registry-integration</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelrepository-feature-registry-integration</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -62,7 +78,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.submodelservice-core</artifactId>
@@ -95,7 +111,6 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
@@ -114,7 +129,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		
+
 		<pluginManagement>
 			<plugins>
 				<!-- Build the docker image -->
@@ -134,10 +149,30 @@
 								</build>
 								<run>
 									<ports>
-										<port>${docker.host.port}:${docker.container.port}</port>
+										<port>
+											${docker.host.port}:${docker.container.port}</port>
 									</ports>
 									<wait>
 										<url>${docker.container.waitForEndpoint}</url>
+										<time>60000</time>
+									</wait>
+									<env>
+										<SPRING_PROFILES_ACTIVE>
+											integration</SPRING_PROFILES_ACTIVE>
+									</env>
+								</run>
+							</image>
+							<image>
+								<alias>submodel-registry</alias>
+								<name>
+									${docker.username}/${docker.image.smreg.inmem.name}</name>
+								<run>
+									<ports>
+										<port>8050:8080</port>
+									</ports>
+									<wait>
+										<url>
+											${docker.container.smreg.inmem.waitForEndpoint}</url>
 										<time>60000</time>
 									</wait>
 								</run>
@@ -172,7 +207,7 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	
+
 	<profiles>
 		<profile>
 			<id>docker</id>

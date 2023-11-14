@@ -1,7 +1,5 @@
 {
-	"paging_metadata": {
-		"cursor": "Y3VzdG9tSWRlbnRpZmllcg"
-	},
+	"paging_metadata": {},
 	"result": [
 		{
 			"modelType": "AssetAdministrationShell",

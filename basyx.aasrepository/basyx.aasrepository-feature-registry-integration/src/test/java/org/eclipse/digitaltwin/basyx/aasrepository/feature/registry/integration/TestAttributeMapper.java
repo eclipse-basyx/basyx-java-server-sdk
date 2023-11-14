@@ -29,24 +29,35 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AdministrativeInformation;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringNameType;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AttributeMapper;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.DefaultAttributeMapperFactory;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Test class for {@link AttributeMapper}
+ * Unit tests for {@link AttributeMapper}
  * 
  * @author danish
  */
 public class TestAttributeMapper {
 	
+	private static AttributeMapper attributeMapper;
+	
+	@BeforeClass
+	public static void setUp() {
+		attributeMapper =  new DefaultAttributeMapperFactory().create();
+	}
+	
 	@Test
 	public void mapDescriptions() {
 		List<LangStringTextType> expectedDescriptions = RegistryIntegrationTestHelper.getAasRegLangStringTextTypes();
 		
-		List<LangStringTextType> actualDescriptions = new AttributeMapper().mapDescription(RegistryIntegrationTestHelper.getAas4jLangStringTextTypes());
+		List<LangStringTextType> actualDescriptions = attributeMapper.mapDescription(RegistryIntegrationTestHelper.getAas4jLangStringTextTypes());
 		
 		assertEquals(expectedDescriptions.size(), actualDescriptions.size());
 		assertEquals(expectedDescriptions, actualDescriptions);
@@ -56,17 +67,36 @@ public class TestAttributeMapper {
 	public void mapDisplayNames() {
 		List<LangStringNameType> expectedDisplayNames = RegistryIntegrationTestHelper.getAasRegLangStringNameTypes();
 		
-		List<LangStringNameType> actualDisplayNames = new AttributeMapper().mapDisplayName(RegistryIntegrationTestHelper.getAas4jLangStringNameTypes());
+		List<LangStringNameType> actualDisplayNames = attributeMapper.mapDisplayName(RegistryIntegrationTestHelper.getAas4jLangStringNameTypes());
 		
 		assertEquals(expectedDisplayNames.size(), actualDisplayNames.size());
 		assertEquals(expectedDisplayNames, actualDisplayNames);
 	}
 	
 	@Test
+	public void mapExtensions() {
+		List<Extension> expectedExtensions = RegistryIntegrationTestHelper.getAasRegExtensions();
+		
+		List<Extension> actualExtensions = attributeMapper.mapExtensions(RegistryIntegrationTestHelper.getAas4jExtensions());
+		
+		assertEquals(expectedExtensions.size(), actualExtensions.size());
+		assertEquals(expectedExtensions, actualExtensions);
+	}
+	
+	@Test
+	public void mapAdministration() {
+		AdministrativeInformation expectedAdministrativeInformation = RegistryIntegrationTestHelper.getAasRegAdministration();
+		
+		AdministrativeInformation actualAdministrativeInformation = attributeMapper.mapAdministration(RegistryIntegrationTestHelper.getAas4jAdministration());
+		
+		assertEquals(expectedAdministrativeInformation, actualAdministrativeInformation);
+	}
+	
+	@Test
 	public void mapAssetKind() {
 		AssetKind expectedAssetKind = RegistryIntegrationTestHelper.AASREG_ASSET_KIND;
 		
-		AssetKind actualAssetKind = new AttributeMapper().mapAssetKind(RegistryIntegrationTestHelper.AAS4J_ASSET_KIND);
+		AssetKind actualAssetKind = attributeMapper.mapAssetKind(RegistryIntegrationTestHelper.AAS4J_ASSET_KIND);
 
 		assertEquals(expectedAssetKind, actualAssetKind);
 	}

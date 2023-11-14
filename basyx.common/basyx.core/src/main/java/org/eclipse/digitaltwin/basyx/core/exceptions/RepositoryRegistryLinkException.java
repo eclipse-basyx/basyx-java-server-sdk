@@ -36,12 +36,12 @@ public class RepositoryRegistryLinkException extends RuntimeException {
 	public RepositoryRegistryLinkException() {
 	}
 
-	public RepositoryRegistryLinkException(String shellIdentifier) {
-		super(getMessage(shellIdentifier));
+	public RepositoryRegistryLinkException(String id) {
+		super(getMessage(id));
 	}
 
-	private static String getMessage(String shellIdentifier) {
-		return "Unable to link shell with id " + shellIdentifier + " with Registry";
+	private static String getMessage(String id) {
+		return "Unable to link the element with id " + id + " with the Registry";
 	}
 
 }

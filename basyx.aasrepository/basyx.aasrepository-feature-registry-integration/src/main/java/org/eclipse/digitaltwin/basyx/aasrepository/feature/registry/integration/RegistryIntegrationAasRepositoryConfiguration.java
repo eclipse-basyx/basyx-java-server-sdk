@@ -28,7 +28,6 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration
 
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,19 +35,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Configuration for {@link AasRepository} with AasRegistry
+ * Configuration for integrating {@link AasRepository} with AasRegistry
  * 
  * @author danish
  */
 @Configuration
-@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.aasrepository.feature.registryintegration:}') && !T(org.springframework.util.StringUtils).isEmpty('${basyx.aasrepository.externalurl:}')")
+@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.aasrepository.feature.registryintegration:}') && !T(org.springframework.util.StringUtils).isEmpty('${basyx.externalurl:}')")
 public class RegistryIntegrationAasRepositoryConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public AasRepositoryRegistryLink getAasRepositoryRegistryLink(@Value("${basyx.aasrepository.feature.registryintegration}") String registryBasePath, @Value("${basyx.aasrepository.externalurl}") String aasRepositoryURL) throws MqttException {
+	public AasRepositoryRegistryLink getAasRepositoryRegistryLink(@Value("${basyx.aasrepository.feature.registryintegration}") String registryBasePath, @Value("${basyx.externalurl}") String aasRepositoryBaseURL) {
 	
-		return new AasRepositoryRegistryLink(new RegistryAndDiscoveryInterfaceApi(registryBasePath), aasRepositoryURL);
+		return new AasRepositoryRegistryLink(new RegistryAndDiscoveryInterfaceApi(registryBasePath), aasRepositoryBaseURL);
 	}
 
 }

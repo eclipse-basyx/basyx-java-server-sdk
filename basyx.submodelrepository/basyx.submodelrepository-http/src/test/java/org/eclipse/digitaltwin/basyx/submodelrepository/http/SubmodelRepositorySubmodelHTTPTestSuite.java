@@ -83,7 +83,8 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	public void getAllSubmodelsPreconfigured() throws IOException, ParseException {
 		String submodelsJSON = BaSyxSubmodelHttpTestUtils.requestAllSubmodels(getURL());
 		String expectedSubmodelsJSON = getAllSubmodelJSON();
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelsJSON, submodelsJSON);
+		
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelsJSON,getJSONWithoutCursorInfo(submodelsJSON));
 	}
 
 	@Test
@@ -187,7 +188,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 				.requestAllSubmodels(getURL() + "?limit=1&cursor=" + ENCODED_CURSOR);
 		String expected = getSubmodelsPaginatedJson();
 
-		BaSyxHttpTestUtils.assertSameJSONContent(expected, submodelsJSON);
+		BaSyxHttpTestUtils.assertSameJSONContent(expected, getJSONWithoutCursorInfo(submodelsJSON));
 	}
 
 	@Test
@@ -240,7 +241,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 
 	@Test
 	public void getFile() throws FileNotFoundException, IOException, ParseException {
-		String fileName = "BaSyx-Logo.png";
+		String fileName = DummySubmodelFactory.FILE_NAME;
 		
 		byte[] expectedFile = readBytesFromClasspath(fileName);
 		
@@ -269,6 +270,10 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 		
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
+	
+	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException {
+		return BaSyxHttpTestUtils.removeCursorFromJSON(response);
+	}
 
 	private String createSMEFileDeleteURL(String submodelId, String submodelElementIdShort) {
 		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(getURL(), submodelId) + "/submodel-elements/" + submodelElementIdShort + "/attachment";
@@ -281,9 +286,9 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	private CloseableHttpResponse uploadFileToSubmodelElement(String submodelId, String submodelElementIdShort) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
 
-		String fileName = "BaSyx-Logo.png";
+		String fileName = DummySubmodelFactory.FILE_NAME;
 
-		java.io.File file = ResourceUtils.getFile("src/test/resources/" + fileName);
+		java.io.File file = ResourceUtils.getFile("classpath:" + fileName);
 
 		HttpPut putRequest = createPutRequestWithFile(submodelId, submodelElementIdShort, fileName, file);
 
@@ -382,7 +387,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	}
 	
 	protected List<Submodel> createSubmodels() {
-		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createOperationalDataSubmodel(), DummySubmodelFactory.createSimpleDataSubmodel());
+		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createOperationalDataSubmodel(), DummySubmodelFactory.createSimpleDataSubmodel(), DummySubmodelFactory.createSubmodelWithFileElement());
 	}
 
 }

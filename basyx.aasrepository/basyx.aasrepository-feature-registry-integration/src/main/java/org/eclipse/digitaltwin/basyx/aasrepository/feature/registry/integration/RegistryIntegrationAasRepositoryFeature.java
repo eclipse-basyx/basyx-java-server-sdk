@@ -26,6 +26,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +34,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 /**
- * Feature for integrating Registry with Aas Repository
+ * Feature for integrating Registry with {@link AasRepository}
  * 
  * @author danish
  */
 @Component
-@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.aasrepository.feature.registryintegration:}') && !T(org.springframework.util.StringUtils).isEmpty('${basyx.aasrepository.externalurl:}')")
+@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.aasrepository.feature.registryintegration:}') && !T(org.springframework.util.StringUtils).isEmpty('${basyx.externalurl:}')")
 public class RegistryIntegrationAasRepositoryFeature implements AasRepositoryFeature {
 	public final static String FEATURENAME = "basyx.aasrepository.feature.registryintegration";
 

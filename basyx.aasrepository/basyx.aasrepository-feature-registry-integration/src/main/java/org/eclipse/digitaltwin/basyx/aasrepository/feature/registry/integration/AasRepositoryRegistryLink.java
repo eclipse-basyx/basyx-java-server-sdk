@@ -36,20 +36,20 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 public class AasRepositoryRegistryLink {
 	
 	private RegistryAndDiscoveryInterfaceApi registryApi;
-	private String aasRepositoryURL;
+	private String aasRepositoryBaseURL;
 	
-	public AasRepositoryRegistryLink(RegistryAndDiscoveryInterfaceApi registryApi, String aasRepositoryURL) {
+	public AasRepositoryRegistryLink(RegistryAndDiscoveryInterfaceApi registryApi, String aasRepositoryBaseURL) {
 		super();
 		this.registryApi = registryApi;
-		this.aasRepositoryURL = aasRepositoryURL;
+		this.aasRepositoryBaseURL = aasRepositoryBaseURL;
 	}
 
 	public RegistryAndDiscoveryInterfaceApi getRegistryApi() {
 		return registryApi;
 	}
 
-	public String getAasRepositoryURL() {
-		return aasRepositoryURL;
+	public String getAasRepositoryBaseURL() {
+		return aasRepositoryBaseURL;
 	}
 
 }

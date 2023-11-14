@@ -38,6 +38,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.DefaultAttributeMapperFactory;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 
 /**
@@ -48,13 +50,18 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 public class AasDescriptorFactory {
 
 	private static final String AAS_INTERFACE = "AAS-3.0";
+	private static final String AAS_REPOSITORY_PATH = "/shells";
+	
 	private AssetAdministrationShell shell;
 	private String aasRepositoryURL;
 
-	public AasDescriptorFactory(AssetAdministrationShell shell, String aasRepositoryURL) {
+	private AttributeMapper attributeMapper;
+
+	public AasDescriptorFactory(AssetAdministrationShell shell, String aasRepositoryBaseURL) {
 		super();
 		this.shell = shell;
-		this.aasRepositoryURL = aasRepositoryURL;
+		this.aasRepositoryURL = createAasRepositoryUrl(aasRepositoryBaseURL);
+		this.attributeMapper = new DefaultAttributeMapperFactory().create();
 	}
 
 	/**
@@ -94,7 +101,7 @@ public class AasDescriptorFactory {
 		if (descriptions == null || descriptions.isEmpty())
 			return;
 
-		descriptor.setDescription(new AttributeMapper().mapDescription(descriptions));
+		descriptor.setDescription(attributeMapper.mapDescription(descriptions));
 	}
 
 	private void setDisplayName(List<LangStringNameType> displayNames, AssetAdministrationShellDescriptor descriptor) {
@@ -102,7 +109,7 @@ public class AasDescriptorFactory {
 		if (displayNames == null || displayNames.isEmpty())
 			return;
 
-		descriptor.setDisplayName(new AttributeMapper().mapDisplayName(displayNames));
+		descriptor.setDisplayName(attributeMapper.mapDisplayName(displayNames));
 	}
 
 	private void setExtensions(List<Extension> extensions, AssetAdministrationShellDescriptor descriptor) {
@@ -110,7 +117,7 @@ public class AasDescriptorFactory {
 		if (extensions == null || extensions.isEmpty())
 			return;
 
-		descriptor.setExtensions(new AttributeMapper().mapExtensions(extensions));
+		descriptor.setExtensions(attributeMapper.mapExtensions(extensions));
 	}
 
 	private void setAdministration(AdministrativeInformation administration, AssetAdministrationShellDescriptor descriptor) {
@@ -118,7 +125,7 @@ public class AasDescriptorFactory {
 		if (administration == null)
 			return;
 
-		descriptor.setAdministration(new AttributeMapper().mapAdministration(administration));
+		descriptor.setAdministration(attributeMapper.mapAdministration(administration));
 	}
 
 	private void setAssetKind(AssetInformation assetInformation, AssetAdministrationShellDescriptor descriptor) {
@@ -126,7 +133,7 @@ public class AasDescriptorFactory {
 		if (assetInformation == null || assetInformation.getAssetKind() == null)
 			return;
 
-		descriptor.setAssetKind(new AttributeMapper().mapAssetKind(assetInformation.getAssetKind()));
+		descriptor.setAssetKind(attributeMapper.mapAssetKind(assetInformation.getAssetKind()));
 	}
 
 	private void setAssetType(AssetInformation assetInformation, AssetAdministrationShellDescriptor descriptor) {
@@ -178,6 +185,15 @@ public class AasDescriptorFactory {
 			return new URL(endpoint).getProtocol();
 		} catch (MalformedURLException e) {
 			throw new RuntimeException();
+		}
+	}
+
+	private String createAasRepositoryUrl(String aasRepositoryBaseURL) {
+
+		try {
+			return new URL(new URL(aasRepositoryBaseURL), AAS_REPOSITORY_PATH).toString();
+		} catch (MalformedURLException e) {
+			throw new RuntimeException("The AAS Repository Base url is malformed " + e.getMessage());
 		}
 	}
 

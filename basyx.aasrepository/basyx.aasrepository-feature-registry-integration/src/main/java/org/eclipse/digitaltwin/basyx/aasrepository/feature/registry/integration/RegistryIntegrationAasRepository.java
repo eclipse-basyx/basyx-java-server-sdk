@@ -36,6 +36,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.RepositoryRegistryLinkException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.RepositoryRegistryUnlinkException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.slf4j.Logger;
@@ -73,7 +74,7 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException {
 		decorated.createAas(aas);
 		
-		integrateAasWithRegistry(aas, aasRepositoryRegistryLink.getAasRepositoryURL());
+		integrateAasWithRegistry(aas, aasRepositoryRegistryLink.getAasRepositoryBaseURL());
 	}
 
 	@Override
@@ -127,8 +128,10 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 		try {
 			registryApi.postAssetAdministrationShellDescriptor(descriptor);
 			
-			logger.info("Shell {} is automatically linked with the Registry", shell.getId());
+			logger.info("Shell {} has been automatically linked with the Registry", shell.getId());
 		} catch (ApiException e) {
+			e.printStackTrace();
+			
 			throw new RepositoryRegistryLinkException(shell.getId());
 		}
 	}
@@ -139,9 +142,11 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 		try {
 			registryApi.deleteAssetAdministrationShellDescriptorById(shellId);
 			
-			logger.info("Shell {} is automatically de-registered with the Registry", shellId);
+			logger.info("Shell {} has been automatically de-registered from the Registry", shellId);
 		} catch (ApiException e) {
-			throw new RuntimeException("Automatic deletion of the shell with shellId " + shellId + " from the Registry fails");
+			e.printStackTrace();
+			
+			throw new RepositoryRegistryUnlinkException(shellId);
 		}
 	}
 

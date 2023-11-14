@@ -236,14 +236,14 @@ public abstract class BaseIntegrationTest {
 	@Test
 	public void whenCreateAndDeleteDescriptors_thenAllDescriptorsAreRemoved() throws IOException, InterruptedException, TimeoutException, ApiException {
 		List<AssetAdministrationShellDescriptor> deployed = initialize();
-		List<AssetAdministrationShellDescriptor> all = api.getAllAssetAdministrationShellDescriptors(port, null, null, null).getResult();
+		List<AssetAdministrationShellDescriptor> all = api.getAllAssetAdministrationShellDescriptors(null, null, null, null).getResult();
 		assertThat(all).containsExactlyInAnyOrderElementsOf(deployed);
 
 		for (AssetAdministrationShellDescriptor eachDescriptor : all) {
 			deleteAdminAssetShellDescriptor(eachDescriptor.getId());
 		}
 
-		all = api.getAllAssetAdministrationShellDescriptors(port, null, null, null).getResult();
+		all = api.getAllAssetAdministrationShellDescriptors(null, null, null, null).getResult();
 		assertThat(all).isEmpty();
 
 		queue().assertNoAdditionalMessage();
@@ -252,7 +252,7 @@ public abstract class BaseIntegrationTest {
 	@Test
 	public void whenRegisterAndUnregisterSubmodel_thenSubmodelIsCreatedAndDeleted() throws IOException, InterruptedException, TimeoutException, ApiException {
 		List<AssetAdministrationShellDescriptor> deployed = initialize();
-		List<AssetAdministrationShellDescriptor> all = api.getAllAssetAdministrationShellDescriptors(port, null, null, null).getResult();
+		List<AssetAdministrationShellDescriptor> all = api.getAllAssetAdministrationShellDescriptors(null, null, null, null).getResult();
 		assertThat(all).asList().containsExactlyInAnyOrderElementsOf(deployed);
 
 		SubmodelDescriptor toRegister = resourceLoader.load(SubmodelDescriptor.class, "toregister");

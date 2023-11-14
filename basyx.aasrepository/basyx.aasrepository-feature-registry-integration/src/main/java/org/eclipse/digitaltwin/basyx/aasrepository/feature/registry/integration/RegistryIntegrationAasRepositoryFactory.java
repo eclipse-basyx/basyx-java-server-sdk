@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
