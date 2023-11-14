@@ -83,7 +83,8 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	public void getAllSubmodelsPreconfigured() throws IOException, ParseException {
 		String submodelsJSON = BaSyxSubmodelHttpTestUtils.requestAllSubmodels(getURL());
 		String expectedSubmodelsJSON = getAllSubmodelJSON();
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelsJSON, submodelsJSON);
+		
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelsJSON,getJSONWithoutCursorInfo(submodelsJSON));
 	}
 
 	@Test
@@ -187,7 +188,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 				.requestAllSubmodels(getURL() + "?limit=1&cursor=" + ENCODED_CURSOR);
 		String expected = getSubmodelsPaginatedJson();
 
-		BaSyxHttpTestUtils.assertSameJSONContent(expected, submodelsJSON);
+		BaSyxHttpTestUtils.assertSameJSONContent(expected, getJSONWithoutCursorInfo(submodelsJSON));
 	}
 
 	@Test
@@ -268,6 +269,10 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, "ElementNotExist"));
 		
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
+	}
+	
+	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException {
+		return BaSyxHttpTestUtils.removeCursorFromJSON(response);
 	}
 
 	private String createSMEFileDeleteURL(String submodelId, String submodelElementIdShort) {

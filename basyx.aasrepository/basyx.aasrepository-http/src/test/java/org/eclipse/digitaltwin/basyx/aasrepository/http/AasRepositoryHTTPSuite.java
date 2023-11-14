@@ -121,7 +121,7 @@ public abstract class AasRepositoryHTTPSuite {
 		
 		String actualJsonFromServer = BaSyxHttpTestUtils.getResponseAsString(retrievalResponse);
 		
-		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedAasJSONString(), actualJsonFromServer);
+		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedAasJSONString(), getJSONWithoutCursorInfo(actualJsonFromServer));
 	}
 
 	@Test
@@ -183,7 +183,9 @@ public abstract class AasRepositoryHTTPSuite {
 		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(dummyAasId));
 
 		assertEquals(200, deleteResponse.getCode());
-		BaSyxHttpTestUtils.assertSameJSONContent(getSMReferenceRemovalJson(), BaSyxHttpTestUtils.getResponseAsString(getResponse));
+		
+		String response = BaSyxHttpTestUtils.getResponseAsString(getResponse);
+		BaSyxHttpTestUtils.assertSameJSONContent(getSMReferenceRemovalJson(), getJSONWithoutCursorInfo(response));
 
 	}
 
@@ -278,11 +280,15 @@ public abstract class AasRepositoryHTTPSuite {
 		CloseableHttpResponse httpResponse = BaSyxHttpTestUtils.executeGetOnURL(getURL() + "?limit=1&cursor=" + ENCODED_CURSOR);
 
 		String response = BaSyxHttpTestUtils.getResponseAsString(httpResponse);
-		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedAas1JSONString(), response);
+		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedAas1JSONString(), getJSONWithoutCursorInfo(response));
 	}
 
 	private String getPaginatedAas1JSONString() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("PaginatedAasSimple_1.json");
+	}
+	
+	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException {
+		return BaSyxHttpTestUtils.removeCursorFromJSON(response);
 	}
 
 	private CloseableHttpResponse updateSpecificAas(String dummyaasid, String aasJsonContent) throws IOException {
