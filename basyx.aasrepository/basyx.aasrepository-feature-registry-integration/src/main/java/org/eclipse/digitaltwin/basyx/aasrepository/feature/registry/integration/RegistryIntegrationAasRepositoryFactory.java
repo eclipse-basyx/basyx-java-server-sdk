@@ -26,21 +26,22 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
-import org.eclipse.paho.client.mqttv3.IMqttClient;
 
+/**
+ * Factory for creating {@link RegistryIntegrationAasRepository}
+ * 
+ * @author danish
+ */
 public class RegistryIntegrationAasRepositoryFactory implements AasRepositoryFactory {
 
 	private AasRepositoryFactory decorated;
 	private AasRepositoryRegistryLink aasRepositoryRegistryLink;
-	private String aasRepositoryURL;
 
 	public RegistryIntegrationAasRepositoryFactory(AasRepositoryFactory decorated, AasRepositoryRegistryLink aasRepositoryRegistryLink) {
 		this.decorated = decorated;
 		this.aasRepositoryRegistryLink = aasRepositoryRegistryLink;
-		this.aasRepositoryURL = aasRepositoryURL;
 	}
 
 	@Override

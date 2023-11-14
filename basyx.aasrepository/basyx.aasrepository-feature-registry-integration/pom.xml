@@ -52,14 +52,5 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.eclipse.paho</groupId>
-			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.moquette</groupId>
-			<artifactId>moquette-broker</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 </project>

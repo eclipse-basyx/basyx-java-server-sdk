@@ -1,8 +1,3 @@
-# AssetAdministrationShell Repository - MQTT Eventing
-This feature provides hierarchical MQTT eventing for a multitude of events:
-
-| Event       |Topic        | Payload |
-| ----------- | ----------- |    ---     |
-| AAS Created | /aas-repository/\$repoId/shells/created| Created AAS JSON |
-| AAS Updated   | /aas-repository/\$repoId/shells/updated| Updated AAS JSON|
-| AAS Deleted   | /aas-repository/\$repoId/shells/deleted| Deleted AAS JSON|
+# AssetAdministrationShell Repository - Registry Integration
+This feature automatically integrates the Descriptor with the Registry while creation of the Shell at Repository.
+It also automatically removes the Descriptor from the Registry when the Shell is removed from the Repository.

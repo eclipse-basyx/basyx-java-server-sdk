@@ -35,16 +35,16 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministratio
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.RepositoryRegistryLinkException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Observer for the AASAggregator that triggers MQTT events for different
- * operations on the aggregator.
+ * Decorator for linking {@link AasRepository} with AasRegistry
  *
- * @author haque, jungjan, fischer, siebert
+ * @author danish
  *
  */
 public class RegistryIntegrationAasRepository implements AasRepository {
@@ -76,18 +76,6 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 		integrateAasWithRegistry(aas, aasRepositoryRegistryLink.getAasRepositoryURL());
 	}
 
-	private void integrateAasWithRegistry(AssetAdministrationShell shell, String aasRepositoryURL) {
-		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(shell, aasRepositoryURL).create();
-		
-		RegistryAndDiscoveryInterfaceApi registryApi = aasRepositoryRegistryLink.getRegistryApi();
-		
-		try {
-			registryApi.postAssetAdministrationShellDescriptor(descriptor);
-		} catch (ApiException e) {
-			e.printStackTrace();
-		}
-	}
-
 	@Override
 	public void updateAas(String aasId, AssetAdministrationShell aas) {
 		decorated.updateAas(aasId, aas);
@@ -99,16 +87,6 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 		decorated.deleteAas(aasId);
 
 		deleteFromRegistry(shell.getId());
-	}
-	
-	private void deleteFromRegistry(String shellId) {
-		RegistryAndDiscoveryInterfaceApi registryApi = aasRepositoryRegistryLink.getRegistryApi();
-		
-		try {
-			registryApi.deleteAssetAdministrationShellDescriptorById(shellId);
-		} catch (ApiException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -139,6 +117,32 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 	@Override
 	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException {
 		return decorated.getAssetInformation(aasId);
+	}
+	
+	private void integrateAasWithRegistry(AssetAdministrationShell shell, String aasRepositoryURL) {
+		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(shell, aasRepositoryURL).create();
+		
+		RegistryAndDiscoveryInterfaceApi registryApi = aasRepositoryRegistryLink.getRegistryApi();
+		
+		try {
+			registryApi.postAssetAdministrationShellDescriptor(descriptor);
+			
+			logger.info("Shell {} is automatically linked with the Registry", shell.getId());
+		} catch (ApiException e) {
+			throw new RepositoryRegistryLinkException(shell.getId());
+		}
+	}
+	
+	private void deleteFromRegistry(String shellId) {
+		RegistryAndDiscoveryInterfaceApi registryApi = aasRepositoryRegistryLink.getRegistryApi();
+		
+		try {
+			registryApi.deleteAssetAdministrationShellDescriptorById(shellId);
+			
+			logger.info("Shell {} is automatically de-registered with the Registry", shellId);
+		} catch (ApiException e) {
+			throw new RuntimeException("Automatic deletion of the shell with shellId " + shellId + " from the Registry fails");
+		}
 	}
 
 }

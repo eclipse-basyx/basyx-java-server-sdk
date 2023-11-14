@@ -23,33 +23,25 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
-
-import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+package org.eclipse.digitaltwin.basyx.core.exceptions;
 
 /**
- * Represents information for linking {@link AasRepository} with AasRegistry
+ * Indicates failure of automatic link between Repository and Registry
  * 
  * @author danish
+ *
  */
-public class AasRepositoryRegistryLink {
-	
-	private RegistryAndDiscoveryInterfaceApi registryApi;
-	private String aasRepositoryURL;
-	
-	public AasRepositoryRegistryLink(RegistryAndDiscoveryInterfaceApi registryApi, String aasRepositoryURL) {
-		super();
-		this.registryApi = registryApi;
-		this.aasRepositoryURL = aasRepositoryURL;
+@SuppressWarnings("serial")
+public class RepositoryRegistryLinkException extends RuntimeException {
+	public RepositoryRegistryLinkException() {
 	}
 
-	public RegistryAndDiscoveryInterfaceApi getRegistryApi() {
-		return registryApi;
+	public RepositoryRegistryLinkException(String shellIdentifier) {
+		super(getMessage(shellIdentifier));
 	}
 
-	public String getAasRepositoryURL() {
-		return aasRepositoryURL;
+	private static String getMessage(String shellIdentifier) {
+		return "Unable to link shell with id " + shellIdentifier + " with Registry";
 	}
 
 }

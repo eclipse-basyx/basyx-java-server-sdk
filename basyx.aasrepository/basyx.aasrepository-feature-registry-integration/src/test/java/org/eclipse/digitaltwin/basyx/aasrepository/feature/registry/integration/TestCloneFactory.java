@@ -25,56 +25,30 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringNameType;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType;
+import org.junit.Test;
 
 /**
- * Maps the models defined in AasRegistry client to the AAS4J models
+ * Test class for {@link CloneFactory}
  * 
  * @author danish
  */
-public class AttributeMapper {
-
-	/**
-	 * Maps {@link AssetAdministrationShell#getDescription()} from AAS4J to
-	 * AasRegistry client
-	 * 
-	 * @param descriptions
-	 * @return the mapped descriptions
-	 */
-	public List<LangStringTextType> mapDescription(List<org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType> descriptions) {
+public class TestCloneFactory {
+	
+	@Test
+	public void createClone() {
+		List<LangStringTextType> expectedDescriptions = RegistryIntegrationTestHelper.getAasRegLangStringTextTypes();
+		
 		CloneFactory<org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType, LangStringTextType> cloneFactory = new CloneFactory<>(LangStringTextType.class);
-
-		return cloneFactory.create(descriptions);
-	}
-
-	/**
-	 * Maps {@link AssetAdministrationShell#getDisplayName()} from AAS4J to
-	 * AasRegistry client
-	 * 
-	 * @param displayNames
-	 * @return the mapped displayNames
-	 */
-	public List<LangStringNameType> mapDisplayName(List<org.eclipse.digitaltwin.aas4j.v3.model.LangStringNameType> displayNames) {
-		CloneFactory<org.eclipse.digitaltwin.aas4j.v3.model.LangStringNameType, LangStringNameType> cloneFactory = new CloneFactory<>(LangStringNameType.class);
-
-		return cloneFactory.create(displayNames);
-	}
-
-	/**
-	 * Maps {@link AssetInformation#getAssetKind()} from AAS4J to AasRegistry client
-	 * 
-	 * @param assetKind
-	 * @return the mapped assetKind
-	 */
-	public AssetKind mapAssetKind(org.eclipse.digitaltwin.aas4j.v3.model.AssetKind assetKind) {
-
-		return AssetKind.valueOf(AssetKind.class, assetKind.name());
+		
+		List<LangStringTextType> actualDescriptions = cloneFactory.create(RegistryIntegrationTestHelper.getAas4jLangStringTextTypes());
+		
+		assertEquals(expectedDescriptions.size(), actualDescriptions.size());
+		assertEquals(expectedDescriptions, actualDescriptions);
 	}
 
 }
