@@ -41,9 +41,9 @@ public class AasDescriptorFactory {
 		
 		setDisplayName(shell.getDisplayName(), descriptor);
 		
-		setExtensions(shell.getExtensions(), descriptor);
+//		setExtensions(shell.getExtensions(), descriptor);
 		
-		setAdministration(shell.getAdministration(), descriptor);
+//		setAdministration(shell.getAdministration(), descriptor);
 		
 		setAssetKind(shell.getAssetInformation(), descriptor);
 		
