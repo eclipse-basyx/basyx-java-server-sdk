@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AdministrativeInformation;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringNameType;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType;
@@ -22,15 +21,6 @@ public class TestAttributeMapper {
 		assertEquals(expectedDescriptions.size(), actualDescriptions.size());
 		assertEquals(expectedDescriptions, actualDescriptions);
 	}
-	
-//	@Test
-//	public void mapAdministration() {
-//		AdministrativeInformation expectedAdministrativeInformation = RegistryIntegrationTestHelper.getAasRegAdministration();
-//		
-//		AdministrativeInformation actualAdministrativeInformation = new AttributeMapper().mapAdministration(RegistryIntegrationTestHelper.getAas4jAdministration());
-//		
-//		assertEquals(expectedAdministrativeInformation, actualAdministrativeInformation);
-//	}
 	
 	@Test
 	public void mapDisplayNames() {
