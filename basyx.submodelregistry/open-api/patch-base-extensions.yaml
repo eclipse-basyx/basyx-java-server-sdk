@@ -89,12 +89,12 @@
   path: /components/schemas/AdministrativeInformation/allOf/1/properties/version/allOf
 - op: add
   path: /components/schemas/AdministrativeInformation/allOf/1/properties/version/pattern
-  value: "^(0|[1-9][0-9]{1,3})$"
+  value: "^(0|[1-9][0-9]{0,3})$"
 - op: remove
   path: /components/schemas/AdministrativeInformation/allOf/1/properties/revision/allOf
 - op: add
   path: /components/schemas/AdministrativeInformation/allOf/1/properties/revision/pattern
-  value: "^(0|[1-9][0-9]{1,3})$"
+  value: "^(0|[1-9][0-9]{0,3})$"
 - op: replace
   path: /components/schemas/AdministrativeInformation/allOf/1/properties/templateId/pattern
   value: "^([\\t\\n\\r \\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
