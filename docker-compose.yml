@@ -77,7 +77,6 @@ services:
   aas-registry-log-mem:
     image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
     container_name: aas-registry-log-mem
-    pull_policy: never
     ports:
       - "8050:8080"
     restart: always
@@ -87,7 +86,6 @@ services:
   sm-registry-log-mem:
     image: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
     container_name: sm-registry-log-mem
-    pull_policy: never
     ports:
       - "8060:8080"
     restart: always
