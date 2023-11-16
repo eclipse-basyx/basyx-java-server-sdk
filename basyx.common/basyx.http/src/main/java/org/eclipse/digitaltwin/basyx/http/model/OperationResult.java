@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -24,27 +24,23 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.http.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import javax.validation.Valid;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * OperationResult
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-08-10T13:45:22.063686165Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-08-10T13:45:22.063686165Z[GMT]")
 
+public class OperationResult extends BaseOperationResult {
 
-public class OperationResult extends BaseOperationResult  {
   @JsonProperty("inoutputArguments")
   @Valid
   private List<OperationVariable> inoutputArguments = null;
@@ -68,11 +64,12 @@ public class OperationResult extends BaseOperationResult  {
 
   /**
    * Get inoutputArguments
+   *
    * @return inoutputArguments
    **/
   @Schema(description = "")
-      @Valid
-    public List<OperationVariable> getInoutputArguments() {
+  @Valid
+  public List<OperationVariable> getInoutputArguments() {
     return inoutputArguments;
   }
 
@@ -95,11 +92,12 @@ public class OperationResult extends BaseOperationResult  {
 
   /**
    * Get outputArguments
+   *
    * @return outputArguments
    **/
   @Schema(description = "")
-      @Valid
-    public List<OperationVariable> getOutputArguments() {
+  @Valid
+  public List<OperationVariable> getOutputArguments() {
     return outputArguments;
   }
 
@@ -118,8 +116,8 @@ public class OperationResult extends BaseOperationResult  {
     }
     OperationResult operationResult = (OperationResult) o;
     return Objects.equals(this.inoutputArguments, operationResult.inoutputArguments) &&
-        Objects.equals(this.outputArguments, operationResult.outputArguments) &&
-        super.equals(o);
+      Objects.equals(this.outputArguments, operationResult.outputArguments) &&
+      super.equals(o);
   }
 
   @Override
@@ -139,8 +137,7 @@ public class OperationResult extends BaseOperationResult  {
   }
 
   /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces (except the first line).
    */
   private String toIndentedString(java.lang.Object o) {
     if (o == null) {

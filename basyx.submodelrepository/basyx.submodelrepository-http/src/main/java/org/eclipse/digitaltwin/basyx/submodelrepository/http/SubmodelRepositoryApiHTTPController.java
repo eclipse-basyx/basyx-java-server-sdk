@@ -33,9 +33,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -70,222 +70,253 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-10T15:59:05.892Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-10T15:59:05.892Z[GMT]")
 @RestController
 public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHTTPApi {
-	private SubmodelRepository repository;
 
-	@Autowired
-	public SubmodelRepositoryApiHTTPController(SubmodelRepository repository) {
-		this.repository = repository;
-	}
+  private SubmodelRepository repository;
 
-	@Override
-	public ResponseEntity<Submodel> postSubmodel(@Parameter(in = ParameterIn.DEFAULT, description = "Submodel object", required = true, schema = @Schema()) @Valid @RequestBody Submodel body) {
-		repository.createSubmodel(body);
-		return new ResponseEntity<Submodel>(body, HttpStatus.CREATED);
-	}
+  @Autowired
+  public SubmodelRepositoryApiHTTPController(SubmodelRepository repository) {
+    this.repository = repository;
+  }
 
-	@Override
-	public ResponseEntity<Void> deleteSubmodelById(
-			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier) {
-		repository.deleteSubmodel(submodelIdentifier.getIdentifier());
-		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-	}
+  @Override
+  public ResponseEntity<Submodel> postSubmodel(
+    @Parameter(in = ParameterIn.DEFAULT, description = "Submodel object", required = true, schema = @Schema()) @Valid @RequestBody Submodel body) {
+    repository.createSubmodel(body);
+    return new ResponseEntity<Submodel>(body, HttpStatus.CREATED);
+  }
 
-	@Override
-	public ResponseEntity<Void> deleteSubmodelElementByPathSubmodelRepo(
-			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
-			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath) {
-		repository.deleteSubmodelElement(submodelIdentifier.getIdentifier(), idShortPath);
-		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-	}
+  @Override
+  public ResponseEntity<Void> deleteSubmodelById(
+    @Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier) {
+    repository.deleteSubmodel(submodelIdentifier.getIdentifier());
+    return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+  }
 
-	@Override
-	public ResponseEntity<PagedResult> getAllSubmodels(@Size(min = 1, max = 3072) @Valid Base64UrlEncodedIdentifier semanticId, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor, @Valid String level,
-			@Valid String extent) {
-		if (limit == null)
+  @Override
+  public ResponseEntity<Void> deleteSubmodelElementByPathSubmodelRepo(
+    @Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
+    @Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath) {
+    repository.deleteSubmodelElement(submodelIdentifier.getIdentifier(), idShortPath);
+    return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+  }
+
+  @Override
+  public ResponseEntity<PagedResult> getAllSubmodels(
+    @Size(min = 1, max = 3072) @Valid Base64UrlEncodedIdentifier semanticId, @Valid String idShort,
+    @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor, @Valid String level,
+    @Valid String extent) {
+		if (limit == null) {
 			limit = 100;
+		}
 
-		String decodedCursor = "";
-		if (cursor != null)
+    String decodedCursor = "";
+		if (cursor != null) {
 			decodedCursor = cursor.getDecodedCursor();
+		}
 
-		PaginationInfo pInfo = new PaginationInfo(limit, decodedCursor);
+    PaginationInfo pInfo = new PaginationInfo(limit, decodedCursor);
 
-		CursorResult<List<Submodel>> cursorResult = repository.getAllSubmodels(pInfo);
+    CursorResult<List<Submodel>> cursorResult = repository.getAllSubmodels(pInfo);
 
-		GetSubmodelsResult paginatedSubmodel = new GetSubmodelsResult();
+    GetSubmodelsResult paginatedSubmodel = new GetSubmodelsResult();
 
-		String encodedCursor = getEncodedCursorFromCursorResult(cursorResult);
+    String encodedCursor = getEncodedCursorFromCursorResult(cursorResult);
 
-		paginatedSubmodel.result(new ArrayList<>(cursorResult.getResult()));
-		paginatedSubmodel.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
+    paginatedSubmodel.result(new ArrayList<>(cursorResult.getResult()));
+    paginatedSubmodel.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
 
-		return new ResponseEntity<PagedResult>(paginatedSubmodel, HttpStatus.OK);
-	}
+    return new ResponseEntity<PagedResult>(paginatedSubmodel, HttpStatus.OK);
+  }
 
-	@Override
-	public ResponseEntity<Submodel> getSubmodelById(Base64UrlEncodedIdentifier submodelIdentifier, @Valid String level, @Valid String extent) {
-		return new ResponseEntity<Submodel>(repository.getSubmodel(submodelIdentifier.getIdentifier()), HttpStatus.OK);
-	}
+  @Override
+  public ResponseEntity<Submodel> getSubmodelById(Base64UrlEncodedIdentifier submodelIdentifier, @Valid String level,
+    @Valid String extent) {
+    return new ResponseEntity<Submodel>(repository.getSubmodel(submodelIdentifier.getIdentifier()), HttpStatus.OK);
+  }
 
-	@Override
-	public ResponseEntity<Void> putSubmodelById(Base64UrlEncodedIdentifier submodelIdentifier, @Valid Submodel body, @Valid String level) {
-		repository.updateSubmodel(submodelIdentifier.getIdentifier(), body);
-		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-	}
+  @Override
+  public ResponseEntity<Void> putSubmodelById(Base64UrlEncodedIdentifier submodelIdentifier, @Valid Submodel body,
+    @Valid String level) {
+    repository.updateSubmodel(submodelIdentifier.getIdentifier(), body);
+    return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+  }
 
-	@Override
-	public ResponseEntity<PagedResult> getAllSubmodelElements(Base64UrlEncodedIdentifier submodelIdentifier, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor, @Valid String level, @Valid String extent) {
-		if (limit == null)
+  @Override
+  public ResponseEntity<PagedResult> getAllSubmodelElements(Base64UrlEncodedIdentifier submodelIdentifier,
+    @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor, @Valid String level, @Valid String extent) {
+		if (limit == null) {
 			limit = 100;
+		}
 
-		String decodedCursor = "";
-		if (cursor != null)
+    String decodedCursor = "";
+		if (cursor != null) {
 			decodedCursor = cursor.getDecodedCursor();
-
-		PaginationInfo pInfo = new PaginationInfo(limit, decodedCursor);
-		CursorResult<List<SubmodelElement>> cursorResult = repository
-				.getSubmodelElements(submodelIdentifier.getIdentifier(), pInfo);
-
-		GetSubmodelElementsResult paginatedSubmodelElement = new GetSubmodelElementsResult();
-		String encodedCursor = getEncodedCursorFromCursorResult(cursorResult);
-
-		paginatedSubmodelElement.result(new ArrayList<>(cursorResult.getResult()));
-		paginatedSubmodelElement.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
-
-		return new ResponseEntity<PagedResult>(paginatedSubmodelElement, HttpStatus.OK);
-	}
-
-	@Override
-	public ResponseEntity<SubmodelElement> getSubmodelElementByPathSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid String level, @Valid String extent) {
-		return handleSubmodelElementValueNormalGetRequest(submodelIdentifier.getIdentifier(), idShortPath);
-	}
-
-	@Override
-	public ResponseEntity<SubmodelElement> postSubmodelElementByPathSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid SubmodelElement body, @Valid String level, @Valid String extent) {
-		repository.createSubmodelElement(submodelIdentifier.getIdentifier(), idShortPath, body);
-		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
-	}
-
-	@Override
-	public ResponseEntity<SubmodelElement> postSubmodelElementSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, @Valid SubmodelElement body) {
-		repository.createSubmodelElement(submodelIdentifier.getIdentifier(), body);
-		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
-	}
-
-	@Override
-	public ResponseEntity<SubmodelElementValue> getSubmodelElementByPathValueOnlySubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid String level, @Valid String extent) {
-		return handleSubmodelElementValueGetRequest(submodelIdentifier.getIdentifier(), idShortPath);
-	}
-
-	@Override
-	public ResponseEntity<Void> patchSubmodelElementByPathValueOnlySubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid SubmodelElementValue body, @Valid String level) {
-		return handleSubmodelElementValueSetRequest(submodelIdentifier, idShortPath, body);
-	}
-
-	@Override
-	public ResponseEntity<SubmodelValueOnly> getSubmodelByIdValueOnly(Base64UrlEncodedIdentifier submodelIdentifier, @Valid String level, @Valid String extent) {
-		return new ResponseEntity<SubmodelValueOnly>(repository.getSubmodelByIdValueOnly(submodelIdentifier.getIdentifier()), HttpStatus.OK);
-	}
-
-	@Override
-	public ResponseEntity<Submodel> getSubmodelByIdMetadata(Base64UrlEncodedIdentifier submodelIdentifier, @Valid String level) {
-		return new ResponseEntity<Submodel>(repository.getSubmodelByIdMetadata(submodelIdentifier.getIdentifier()), HttpStatus.OK);
-	}
-
-	@Override
-	public ResponseEntity<Resource> getFileByPath(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath) {
-		try {
-			FileInputStream fileInputStream = new FileInputStream(repository.getFileByPathSubmodel(submodelIdentifier.getIdentifier(), idShortPath));
-			Resource resource = new InputStreamResource(fileInputStream);
-			return new ResponseEntity<Resource>(resource, HttpStatus.OK);
-		} catch (FileDoesNotExistException | ElementDoesNotExistException e) {
-			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
-		} catch (ElementNotAFileException e) {
-			return new ResponseEntity<Resource>(HttpStatus.PRECONDITION_FAILED);
-		} catch(FileNotFoundException e) {
-			return new ResponseEntity<Resource>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}
 
-	@Override
-	public ResponseEntity<Void> putFileByPath(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, String fileName, @Valid MultipartFile file) {
-		InputStream fileInputstream = null;
-		try {
-			fileInputstream = file.getInputStream();
-			repository.setFileValue(submodelIdentifier.getIdentifier(), idShortPath, fileName, fileInputstream);
-			closeInputStream(fileInputstream);
-			return new ResponseEntity<Void>(HttpStatus.OK);
-		} catch (ElementDoesNotExistException e) {
-			closeInputStream(fileInputstream);
-			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
-		} catch (ElementNotAFileException e) {
-			closeInputStream(fileInputstream);
-			return new ResponseEntity<Void>(HttpStatus.PRECONDITION_FAILED);
-		} catch (IOException e) {
-			closeInputStream(fileInputstream);
-			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
+    PaginationInfo pInfo = new PaginationInfo(limit, decodedCursor);
+    CursorResult<List<SubmodelElement>> cursorResult = repository
+      .getSubmodelElements(submodelIdentifier.getIdentifier(), pInfo);
 
-	@Override
-	public ResponseEntity<Void> deleteFileByPath(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath) {
-		try {
-			repository.deleteFileValue(submodelIdentifier.getIdentifier(), idShortPath);
-			return new ResponseEntity<Void>(HttpStatus.OK);
-		} catch (FileDoesNotExistException | ElementDoesNotExistException e) {
-			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
-		} catch (ElementNotAFileException e) {
-			return new ResponseEntity<Void>(HttpStatus.PRECONDITION_FAILED);
-		}
-	}
+    GetSubmodelElementsResult paginatedSubmodelElement = new GetSubmodelElementsResult();
+    String encodedCursor = getEncodedCursorFromCursorResult(cursorResult);
 
-	private ResponseEntity<Void> handleSubmodelElementValueSetRequest(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, SubmodelElementValue body) {
-		repository.setSubmodelElementValue(submodelIdentifier.getIdentifier(), idShortPath, body);
-		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-	}
+    paginatedSubmodelElement.result(new ArrayList<>(cursorResult.getResult()));
+    paginatedSubmodelElement.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
 
-	private ResponseEntity<SubmodelElementValue> handleSubmodelElementValueGetRequest(String submodelIdentifier, String idShortPath) {
-		SubmodelElementValue value = repository.getSubmodelElementValue(submodelIdentifier, idShortPath);
-		return new ResponseEntity<SubmodelElementValue>(value, HttpStatus.OK);
-	}
+    return new ResponseEntity<PagedResult>(paginatedSubmodelElement, HttpStatus.OK);
+  }
 
-	private ResponseEntity<SubmodelElement> handleSubmodelElementValueNormalGetRequest(String submodelIdentifier, String idShortPath) {
-		SubmodelElement submodelElement = repository.getSubmodelElement(submodelIdentifier, idShortPath);
-		return new ResponseEntity<SubmodelElement>(submodelElement, HttpStatus.OK);
-	}
+  @Override
+  public ResponseEntity<SubmodelElement> getSubmodelElementByPathSubmodelRepo(
+    Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid String level, @Valid String extent) {
+    return handleSubmodelElementValueNormalGetRequest(submodelIdentifier.getIdentifier(), idShortPath);
+  }
 
-	@Override
-	public ResponseEntity<OperationResult> invokeOperationSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid OperationRequest body, @Valid Boolean async) {
-		OperationVariable[] result = repository.invokeOperation(submodelIdentifier.getIdentifier(), idShortPath, body.getInputArguments().toArray(new OperationVariable[0]));
+  @Override
+  public ResponseEntity<SubmodelElement> postSubmodelElementByPathSubmodelRepo(
+    Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid SubmodelElement body, @Valid String level,
+    @Valid String extent) {
+    repository.createSubmodelElement(submodelIdentifier.getIdentifier(), idShortPath, body);
+    return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
+  }
 
-		return new ResponseEntity<OperationResult>(createOperationResult(result), HttpStatus.OK);
+  @Override
+  public ResponseEntity<SubmodelElement> postSubmodelElementSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier,
+    @Valid SubmodelElement body) {
+    repository.createSubmodelElement(submodelIdentifier.getIdentifier(), body);
+    return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
+  }
 
-	}
+  @Override
+  public ResponseEntity<SubmodelElementValue> getSubmodelElementByPathValueOnlySubmodelRepo(
+    Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid String level, @Valid String extent) {
+    return handleSubmodelElementValueGetRequest(submodelIdentifier.getIdentifier(), idShortPath);
+  }
 
-	private OperationResult createOperationResult(OperationVariable[] result) {
-		OperationResult operationResult = new OperationResult();
-		operationResult.setOutputArguments(Arrays.asList(result));
-		return operationResult;
-	}
+  @Override
+  public ResponseEntity<Void> patchSubmodelElementByPathValueOnlySubmodelRepo(
+    Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid SubmodelElementValue body,
+    @Valid String level) {
+    return handleSubmodelElementValueSetRequest(submodelIdentifier, idShortPath, body);
+  }
 
-	private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
-		if (cursorResult == null || cursorResult.getCursor() == null)
+  @Override
+  public ResponseEntity<SubmodelValueOnly> getSubmodelByIdValueOnly(Base64UrlEncodedIdentifier submodelIdentifier,
+    @Valid String level, @Valid String extent) {
+    return new ResponseEntity<SubmodelValueOnly>(
+      repository.getSubmodelByIdValueOnly(submodelIdentifier.getIdentifier()), HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<Submodel> getSubmodelByIdMetadata(Base64UrlEncodedIdentifier submodelIdentifier,
+    @Valid String level) {
+    return new ResponseEntity<Submodel>(repository.getSubmodelByIdMetadata(submodelIdentifier.getIdentifier()),
+      HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<Resource> getFileByPath(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath) {
+    try {
+      FileInputStream fileInputStream = new FileInputStream(
+        repository.getFileByPathSubmodel(submodelIdentifier.getIdentifier(), idShortPath));
+      Resource resource = new InputStreamResource(fileInputStream);
+      return new ResponseEntity<Resource>(resource, HttpStatus.OK);
+    } catch (FileDoesNotExistException | ElementDoesNotExistException e) {
+      return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
+    } catch (ElementNotAFileException e) {
+      return new ResponseEntity<Resource>(HttpStatus.PRECONDITION_FAILED);
+    } catch (FileNotFoundException e) {
+      return new ResponseEntity<Resource>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Override
+  public ResponseEntity<Void> putFileByPath(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath,
+    String fileName, @Valid MultipartFile file) {
+    InputStream fileInputstream = null;
+    try {
+      fileInputstream = file.getInputStream();
+      repository.setFileValue(submodelIdentifier.getIdentifier(), idShortPath, fileName, fileInputstream);
+      closeInputStream(fileInputstream);
+      return new ResponseEntity<Void>(HttpStatus.OK);
+    } catch (ElementDoesNotExistException e) {
+      closeInputStream(fileInputstream);
+      return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+    } catch (ElementNotAFileException e) {
+      closeInputStream(fileInputstream);
+      return new ResponseEntity<Void>(HttpStatus.PRECONDITION_FAILED);
+    } catch (IOException e) {
+      closeInputStream(fileInputstream);
+      return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Override
+  public ResponseEntity<Void> deleteFileByPath(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath) {
+    try {
+      repository.deleteFileValue(submodelIdentifier.getIdentifier(), idShortPath);
+      return new ResponseEntity<Void>(HttpStatus.OK);
+    } catch (FileDoesNotExistException | ElementDoesNotExistException e) {
+      return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+    } catch (ElementNotAFileException e) {
+      return new ResponseEntity<Void>(HttpStatus.PRECONDITION_FAILED);
+    }
+  }
+
+  private ResponseEntity<Void> handleSubmodelElementValueSetRequest(Base64UrlEncodedIdentifier submodelIdentifier,
+    String idShortPath, SubmodelElementValue body) {
+    repository.setSubmodelElementValue(submodelIdentifier.getIdentifier(), idShortPath, body);
+    return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+  }
+
+  private ResponseEntity<SubmodelElementValue> handleSubmodelElementValueGetRequest(String submodelIdentifier,
+    String idShortPath) {
+    SubmodelElementValue value = repository.getSubmodelElementValue(submodelIdentifier, idShortPath);
+    return new ResponseEntity<SubmodelElementValue>(value, HttpStatus.OK);
+  }
+
+  private ResponseEntity<SubmodelElement> handleSubmodelElementValueNormalGetRequest(String submodelIdentifier,
+    String idShortPath) {
+    SubmodelElement submodelElement = repository.getSubmodelElement(submodelIdentifier, idShortPath);
+    return new ResponseEntity<SubmodelElement>(submodelElement, HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<OperationResult> invokeOperationSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier,
+    String idShortPath, @Valid OperationRequest body, @Valid Boolean async) {
+    OperationVariable[] result = repository.invokeOperation(submodelIdentifier.getIdentifier(), idShortPath,
+      body.getInputArguments().toArray(new OperationVariable[0]));
+
+    return new ResponseEntity<OperationResult>(createOperationResult(result), HttpStatus.OK);
+
+  }
+
+  private OperationResult createOperationResult(OperationVariable[] result) {
+    OperationResult operationResult = new OperationResult();
+    operationResult.setOutputArguments(Arrays.asList(result));
+    return operationResult;
+  }
+
+  private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
+		if (cursorResult == null || cursorResult.getCursor() == null) {
 			return null;
-
-		return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
-	}
-	
-	private void closeInputStream(InputStream fileInputstream) {
-		if (fileInputstream == null)
-			return;
-		
-		try {
-			fileInputstream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
-	}
+
+    return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
+  }
+
+  private void closeInputStream(InputStream fileInputstream) {
+		if (fileInputstream == null) {
+			return;
+		}
+
+    try {
+      fileInputstream.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 }
