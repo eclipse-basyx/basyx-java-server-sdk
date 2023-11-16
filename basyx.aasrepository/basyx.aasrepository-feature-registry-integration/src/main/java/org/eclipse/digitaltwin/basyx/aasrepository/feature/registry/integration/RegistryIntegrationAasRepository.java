@@ -142,7 +142,7 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 		try {
 			registryApi.deleteAssetAdministrationShellDescriptorById(shellId);
 			
-			logger.info("Shell {} has been automatically de-registered from the Registry", shellId);
+			logger.info("Shell {} has been automatically un-linked from the Registry", shellId);
 		} catch (ApiException e) {
 			e.printStackTrace();
 			

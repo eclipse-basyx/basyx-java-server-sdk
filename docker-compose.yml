@@ -74,17 +74,23 @@ services:
     networks:
       - basyx-java-server-sdk
   
-  aas-registry-log-mongodb:
-    image: eclipsebasyx/aas-registry-log-mongodb:latest
-    container_name: aas-registry-log-mongodb
+  aas-registry-log-mem:
+    image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: aas-registry-log-mem
     pull_policy: never
     ports:
       - "8050:8080"
-    depends_on:
-      - mongo
     restart: always
-    environment:
-      SPRING_DATA_MONGODB_URI: mongodb://mongoAdmin:mongoPassword@mongodb:27017
+    networks:
+      - basyx-java-server-sdk
+  
+  sm-registry-log-mem:
+    image: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: sm-registry-log-mem
+    pull_policy: never
+    ports:
+      - "8060:8080"
+    restart: always
     networks:
       - basyx-java-server-sdk
 

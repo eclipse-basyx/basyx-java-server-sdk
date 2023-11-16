@@ -181,7 +181,7 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 		try {
 			registryApi.deleteSubmodelDescriptorById(submodelId);
 			
-			logger.info("Submodel {} has been automatically de-registered from the Registry", submodelId);
+			logger.info("Submodel {} has been automatically un-linked from the Registry", submodelId);
 		} catch (ApiException e) {
 			e.printStackTrace();
 			

@@ -48,7 +48,6 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ProtocolInfor
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Reference;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ReferenceTypes;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.RegistryIntegrationSubmodelRepository;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
@@ -65,7 +64,7 @@ public class SubmodelRepositoryRegistryTestLink {
 	private static final String DUMMY_SUBMODEL_ID = "7A7104BDAB57E184";
 
 	public static String submodelRepoBaseUrl = "http://localhost:8081";
-	public static String submodelRegistryUrl = "http://localhost:8050/api/v3.0";
+	public static String submodelRegistryUrl = "http://localhost:8060/api/v3.0";
 
 	private static final SubmodelDescriptor DUMMY_DESCRIPTOR = createExpectedDescriptor();
 
