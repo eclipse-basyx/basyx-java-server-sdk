@@ -39,41 +39,40 @@ import org.springframework.web.server.ResponseStatusException;
 @ControllerAdvice
 public class BasyxControllerAdvice {
 
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Result> handleValidationException(MethodArgumentNotValidException ex) {
-    Result result = new Result();
-    OffsetDateTime timestamp = OffsetDateTime.now();
-    String reason = HttpStatus.BAD_REQUEST.getReasonPhrase();
-    for (ObjectError error : ex.getAllErrors()) {
-      result.addMessagesItem(
-        new Message().code(reason).messageType(MessageTypeEnum.EXCEPTION).text(error.toString()).timestamp(timestamp));
-    }
-    return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-  }
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<Result> handleValidationException(MethodArgumentNotValidException ex) {
+		Result result = new Result();
+		OffsetDateTime timestamp = OffsetDateTime.now();
+		String reason = HttpStatus.BAD_REQUEST.getReasonPhrase();
+		for (ObjectError error : ex.getAllErrors()) {
+			result.addMessagesItem(new Message().code(reason).messageType(MessageTypeEnum.EXCEPTION).text(error.toString()).timestamp(timestamp));
+		}
+		return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+	}
 
-  @ExceptionHandler(ResponseStatusException.class)
-  public ResponseEntity<Result> handleExceptions(ResponseStatusException ex) {
-    return newResultEntity(ex, HttpStatus.valueOf(ex.getStatusCode().value()));
-  }
+	@ExceptionHandler(ResponseStatusException.class)
+	public ResponseEntity<Result> handleExceptions(ResponseStatusException ex) {
+		return newResultEntity(ex, HttpStatus.valueOf(ex.getStatusCode().value()));
+	}
 
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<Result> handleExceptions(Exception ex) {
-    return newResultEntity(ex, HttpStatus.INTERNAL_SERVER_ERROR);
-  }
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<Result> handleExceptions(Exception ex) {
+		return newResultEntity(ex, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
-  private ResponseEntity<Result> newResultEntity(Exception ex, HttpStatus status) {
-    Result result = new Result();
-    Message message = newExceptionMessage(ex.getMessage(), status);
-    result.addMessagesItem(message);
-    return new ResponseEntity<>(result, status);
-  }
+	private ResponseEntity<Result> newResultEntity(Exception ex, HttpStatus status) {
+		Result result = new Result();
+		Message message = newExceptionMessage(ex.getMessage(), status);
+		result.addMessagesItem(message);
+		return new ResponseEntity<>(result, status);
+	}
 
-  private Message newExceptionMessage(String msg, HttpStatus status) {
-    Message message = new Message();
-    message.setCode("" + status.value());
-    message.setMessageType(MessageTypeEnum.EXCEPTION);
-    message.setTimestamp(OffsetDateTime.now());
-    message.setText(msg);
-    return message;
-  }
+	private Message newExceptionMessage(String msg, HttpStatus status) {
+		Message message = new Message();
+		message.setCode("" + status.value());
+		message.setMessageType(MessageTypeEnum.EXCEPTION);
+		message.setTimestamp(OffsetDateTime.now());
+		message.setText(msg);
+		return message;
+	}
 }

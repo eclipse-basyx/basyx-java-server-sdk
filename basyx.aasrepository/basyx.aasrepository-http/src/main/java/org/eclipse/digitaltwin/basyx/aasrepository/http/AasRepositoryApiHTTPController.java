@@ -55,125 +55,117 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 
-  private final AasRepository aasRepository;
+	private final AasRepository aasRepository;
 
-  @Autowired
-  public AasRepositoryApiHTTPController(AasRepository aasRepository) {
-    this.aasRepository = aasRepository;
-  }
+	@Autowired
+	public AasRepositoryApiHTTPController(AasRepository aasRepository) {
+		this.aasRepository = aasRepository;
+	}
 
-  @Override
-  public ResponseEntity<Void> deleteAssetAdministrationShellById(
-    @Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier) {
-    aasRepository.deleteAas(aasIdentifier.getIdentifier());
-    return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-  }
+	@Override
+	public ResponseEntity<Void> deleteAssetAdministrationShellById(
+			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier) {
+		aasRepository.deleteAas(aasIdentifier.getIdentifier());
+		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+	}
 
-  @Override
-  public ResponseEntity<AssetAdministrationShell> getAssetAdministrationShellById(
-    @Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier) {
-    return new ResponseEntity<AssetAdministrationShell>(aasRepository.getAas(aasIdentifier.getIdentifier()),
-      HttpStatus.OK);
-  }
+	@Override
+	public ResponseEntity<AssetAdministrationShell> getAssetAdministrationShellById(
+			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier) {
+		return new ResponseEntity<AssetAdministrationShell>(aasRepository.getAas(aasIdentifier.getIdentifier()), HttpStatus.OK);
+	}
 
-  @Override
-  public ResponseEntity<AssetAdministrationShell> postAssetAdministrationShell(
-    @Parameter(in = ParameterIn.DEFAULT, description = "Asset Administration Shell object", required = true, schema = @Schema()) @Valid @RequestBody AssetAdministrationShell body) {
-    aasRepository.createAas(body);
-    return new ResponseEntity<AssetAdministrationShell>(body, HttpStatus.CREATED);
-  }
+	@Override
+	public ResponseEntity<AssetAdministrationShell> postAssetAdministrationShell(
+			@Parameter(in = ParameterIn.DEFAULT, description = "Asset Administration Shell object", required = true, schema = @Schema()) @Valid @RequestBody AssetAdministrationShell body) {
+		aasRepository.createAas(body);
+		return new ResponseEntity<AssetAdministrationShell>(body, HttpStatus.CREATED);
+	}
 
-  @Override
-  public ResponseEntity<Void> putAssetAdministrationShellById(
-    @Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,
-    @Parameter(in = ParameterIn.DEFAULT, description = "Asset Administration Shell object", required = true, schema = @Schema()) @Valid @RequestBody AssetAdministrationShell body) {
-    aasRepository.updateAas(aasIdentifier.getIdentifier(), body);
-    return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-  }
+	@Override
+	public ResponseEntity<Void> putAssetAdministrationShellById(
+			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,
+			@Parameter(in = ParameterIn.DEFAULT, description = "Asset Administration Shell object", required = true, schema = @Schema()) @Valid @RequestBody AssetAdministrationShell body) {
+		aasRepository.updateAas(aasIdentifier.getIdentifier(), body);
+		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+	}
 
-  @Override
-  public ResponseEntity<Void> deleteSubmodelReferenceByIdAasRepository(Base64UrlEncodedIdentifier aasIdentifier,
-    Base64UrlEncodedIdentifier submodelIdentifier) {
-    aasRepository.removeSubmodelReference(aasIdentifier.getIdentifier(), submodelIdentifier.getIdentifier());
-    return new ResponseEntity<Void>(HttpStatus.OK);
-  }
+	@Override
+	public ResponseEntity<Void> deleteSubmodelReferenceByIdAasRepository(Base64UrlEncodedIdentifier aasIdentifier, Base64UrlEncodedIdentifier submodelIdentifier) {
+		aasRepository.removeSubmodelReference(aasIdentifier.getIdentifier(), submodelIdentifier.getIdentifier());
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
 
-  @Override
-  public ResponseEntity<PagedResult> getAllAssetAdministrationShells(@Valid List<SpecificAssetID> assetIds,
-    @Valid String idShort, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor) {
+	@Override
+	public ResponseEntity<PagedResult> getAllAssetAdministrationShells(@Valid List<SpecificAssetID> assetIds, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor) {
 		if (limit == null) {
 			limit = 100;
 		}
 
-    String decodedCursor = "";
+		String decodedCursor = "";
 		if (cursor != null) {
 			decodedCursor = cursor.getDecodedCursor();
 		}
 
-    PaginationInfo paginationInfo = new PaginationInfo(limit, decodedCursor);
-    CursorResult<List<AssetAdministrationShell>> paginatedAAS = aasRepository.getAllAas(paginationInfo);
+		PaginationInfo paginationInfo = new PaginationInfo(limit, decodedCursor);
+		CursorResult<List<AssetAdministrationShell>> paginatedAAS = aasRepository.getAllAas(paginationInfo);
 
-    GetAssetAdministrationShellsResult result = new GetAssetAdministrationShellsResult();
+		GetAssetAdministrationShellsResult result = new GetAssetAdministrationShellsResult();
 
-    String encodedCursor = getEncodedCursorFromCursorResult(paginatedAAS);
+		String encodedCursor = getEncodedCursorFromCursorResult(paginatedAAS);
 
-    result.setResult(paginatedAAS.getResult());
-    result.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
+		result.setResult(paginatedAAS.getResult());
+		result.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
 
-    return new ResponseEntity<>(result, HttpStatus.OK);
-  }
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 
-  @Override
-  public ResponseEntity<PagedResult> getAllSubmodelReferencesAasRepository(Base64UrlEncodedIdentifier aasIdentifier,
-    @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor) {
+	@Override
+	public ResponseEntity<PagedResult> getAllSubmodelReferencesAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor) {
 		if (limit == null) {
 			limit = 100;
 		}
 
-    String decodedCursor = "";
+		String decodedCursor = "";
 		if (cursor != null) {
 			decodedCursor = cursor.getDecodedCursor();
 		}
 
-    PaginationInfo paginationInfo = new PaginationInfo(limit, decodedCursor);
-    CursorResult<List<Reference>> submodelReferences = aasRepository.getSubmodelReferences(
-      aasIdentifier.getIdentifier(), paginationInfo);
+		PaginationInfo paginationInfo = new PaginationInfo(limit, decodedCursor);
+		CursorResult<List<Reference>> submodelReferences = aasRepository.getSubmodelReferences(aasIdentifier.getIdentifier(), paginationInfo);
 
-    GetReferencesResult result = new GetReferencesResult();
+		GetReferencesResult result = new GetReferencesResult();
 
-    String encodedCursor = getEncodedCursorFromCursorResult(submodelReferences);
+		String encodedCursor = getEncodedCursorFromCursorResult(submodelReferences);
 
-    result.setResult(submodelReferences.getResult());
-    result.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
+		result.setResult(submodelReferences.getResult());
+		result.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
 
-    return new ResponseEntity<>(result, HttpStatus.OK);
-  }
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 
-  @Override
-  public ResponseEntity<Reference> postSubmodelReferenceAasRepository(Base64UrlEncodedIdentifier aasIdentifier,
-    @Valid Reference body) {
-    aasRepository.addSubmodelReference(aasIdentifier.getIdentifier(), body);
-    return new ResponseEntity<Reference>(body, HttpStatus.CREATED);
-  }
+	@Override
+	public ResponseEntity<Reference> postSubmodelReferenceAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Valid Reference body) {
+		aasRepository.addSubmodelReference(aasIdentifier.getIdentifier(), body);
+		return new ResponseEntity<Reference>(body, HttpStatus.CREATED);
+	}
 
-  @Override
-  public ResponseEntity<AssetInformation> getAssetInformationAasRepository(Base64UrlEncodedIdentifier aasIdentifier) {
-    return new ResponseEntity<AssetInformation>(aasRepository.getAssetInformation(aasIdentifier.getIdentifier()),
-      HttpStatus.OK);
-  }
+	@Override
+	public ResponseEntity<AssetInformation> getAssetInformationAasRepository(Base64UrlEncodedIdentifier aasIdentifier) {
+		return new ResponseEntity<AssetInformation>(aasRepository.getAssetInformation(aasIdentifier.getIdentifier()), HttpStatus.OK);
+	}
 
-  @Override
-  public ResponseEntity<Void> putAssetInformationAasRepository(Base64UrlEncodedIdentifier aasIdentifier,
-    @Valid AssetInformation body) {
-    aasRepository.setAssetInformation(aasIdentifier.getIdentifier(), body);
-    return new ResponseEntity<Void>(HttpStatus.OK);
-  }
+	@Override
+	public ResponseEntity<Void> putAssetInformationAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Valid AssetInformation body) {
+		aasRepository.setAssetInformation(aasIdentifier.getIdentifier(), body);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
 
-  private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
+	private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
 		if (cursorResult == null || cursorResult.getCursor() == null) {
 			return null;
 		}
 
-    return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
-  }
+		return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
+	}
 }

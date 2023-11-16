@@ -41,36 +41,28 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 public interface AasRegistryStorage {
 
-  CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest,
-    @NonNull DescriptorFilter filter);
+	CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter);
 
-  AssetAdministrationShellDescriptor getAasDescriptor(@NonNull String aasDescriptorId)
-    throws AasDescriptorNotFoundException;
+	AssetAdministrationShellDescriptor getAasDescriptor(@NonNull String aasDescriptorId) throws AasDescriptorNotFoundException;
 
-  void insertAasDescriptor(@Valid AssetAdministrationShellDescriptor descr) throws AasDescriptorAlreadyExistsException;
+	void insertAasDescriptor(@Valid AssetAdministrationShellDescriptor descr) throws AasDescriptorAlreadyExistsException;
 
-  void replaceAasDescriptor(@NonNull String aasDescriptorId, @NonNull AssetAdministrationShellDescriptor descriptor)
-    throws AasDescriptorNotFoundException;
+	void replaceAasDescriptor(@NonNull String aasDescriptorId, @NonNull AssetAdministrationShellDescriptor descriptor) throws AasDescriptorNotFoundException;
 
-  void removeAasDescriptor(@NonNull String aasDescriptorId) throws AasDescriptorNotFoundException;
+	void removeAasDescriptor(@NonNull String aasDescriptorId) throws AasDescriptorNotFoundException;
 
-  CursorResult<List<SubmodelDescriptor>> getAllSubmodels(@NonNull String aasDescriptorId,
-    @NonNull PaginationInfo pRequest) throws AasDescriptorNotFoundException;
+	CursorResult<List<SubmodelDescriptor>> getAllSubmodels(@NonNull String aasDescriptorId, @NonNull PaginationInfo pRequest) throws AasDescriptorNotFoundException;
 
-  SubmodelDescriptor getSubmodel(@NonNull String aasDescriptorId, @NonNull String submodelId)
-    throws AasDescriptorNotFoundException, SubmodelNotFoundException;
+	SubmodelDescriptor getSubmodel(@NonNull String aasDescriptorId, @NonNull String submodelId) throws AasDescriptorNotFoundException, SubmodelNotFoundException;
 
-  void insertSubmodel(@NonNull String aasDescriptorId, @NonNull SubmodelDescriptor submodel)
-    throws AasDescriptorNotFoundException, SubmodelAlreadyExistsException;
+	void insertSubmodel(@NonNull String aasDescriptorId, @NonNull SubmodelDescriptor submodel) throws AasDescriptorNotFoundException, SubmodelAlreadyExistsException;
 
-  void replaceSubmodel(@NonNull String aasDescriptorId, @NonNull String submodelId,
-    @NonNull SubmodelDescriptor submodel) throws AasDescriptorNotFoundException, SubmodelNotFoundException;
+	void replaceSubmodel(@NonNull String aasDescriptorId, @NonNull String submodelId, @NonNull SubmodelDescriptor submodel) throws AasDescriptorNotFoundException, SubmodelNotFoundException;
 
-  void removeSubmodel(@NonNull String aasDescriptorId, @NonNull String submodelId)
-    throws AasDescriptorNotFoundException, SubmodelNotFoundException;
+	void removeSubmodel(@NonNull String aasDescriptorId, @NonNull String submodelId) throws AasDescriptorNotFoundException, SubmodelNotFoundException;
 
-  Set<String> clear();
+	Set<String> clear();
 
-  ShellDescriptorSearchResponse searchAasDescriptors(@NonNull ShellDescriptorSearchRequest request);
+	ShellDescriptorSearchResponse searchAasDescriptors(@NonNull ShellDescriptorSearchRequest request);
 
 }

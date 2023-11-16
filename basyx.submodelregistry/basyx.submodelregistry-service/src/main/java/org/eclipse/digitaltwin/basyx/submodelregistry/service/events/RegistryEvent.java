@@ -39,11 +39,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RegistryEvent {
 
-  private String id;
-  private EventType type;
-  private @Nullable SubmodelDescriptor submodelDescriptor;
+	private String id;
+	private EventType type;
+	private @Nullable SubmodelDescriptor submodelDescriptor;
 
-  public enum EventType {
-    SUBMODEL_REGISTERED, SUBMODEL_UNREGISTERED
-  }
+	public enum EventType {
+		SUBMODEL_REGISTERED, SUBMODEL_UNREGISTERED
+	}
 }

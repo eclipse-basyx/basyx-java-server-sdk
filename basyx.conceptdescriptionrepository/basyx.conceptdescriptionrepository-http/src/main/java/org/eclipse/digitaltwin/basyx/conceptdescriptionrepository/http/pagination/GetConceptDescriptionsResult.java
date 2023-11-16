@@ -37,79 +37,81 @@ import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Paginated wrapper for {@link ConceptDescriptionRepository#getAllConceptDescriptions()}
+ * Paginated wrapper for
+ * {@link ConceptDescriptionRepository#getAllConceptDescriptions()}
  */
 @Validated
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-05-22T07:02:56.105163402Z[GMT]")
 
 public class GetConceptDescriptionsResult extends PagedResult {
 
-  @JsonProperty("result")
-  @Valid
-  private List<ConceptDescription> result = null;
+	@JsonProperty("result")
+	@Valid
+	private List<ConceptDescription> result = null;
 
-  public GetConceptDescriptionsResult result(List<ConceptDescription> result) {
-    this.result = result;
-    return this;
-  }
+	public GetConceptDescriptionsResult result(List<ConceptDescription> result) {
+		this.result = result;
+		return this;
+	}
 
-  public GetConceptDescriptionsResult addResultItem(ConceptDescription resultItem) {
-    if (this.result == null) {
-      this.result = new ArrayList<ConceptDescription>();
-    }
-    this.result.add(resultItem);
-    return this;
-  }
+	public GetConceptDescriptionsResult addResultItem(ConceptDescription resultItem) {
+		if (this.result == null) {
+			this.result = new ArrayList<ConceptDescription>();
+		}
+		this.result.add(resultItem);
+		return this;
+	}
 
-  /**
-   * Get result
-   *
-   * @return result
-   **/
-  @Schema(description = "")
-  @Valid
-  public List<ConceptDescription> getResult() {
-    return result;
-  }
+	/**
+	 * Get result
+	 *
+	 * @return result
+	 **/
+	@Schema(description = "")
+	@Valid
+	public List<ConceptDescription> getResult() {
+		return result;
+	}
 
-  public void setResult(List<ConceptDescription> result) {
-    this.result = result;
-  }
+	public void setResult(List<ConceptDescription> result) {
+		this.result = result;
+	}
 
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    GetConceptDescriptionsResult getConceptDescriptionsResult = (GetConceptDescriptionsResult) o;
-    return Objects.equals(this.result, getConceptDescriptionsResult.result) && super.equals(o);
-  }
+	@Override
+	public boolean equals(java.lang.Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		GetConceptDescriptionsResult getConceptDescriptionsResult = (GetConceptDescriptionsResult) o;
+		return Objects.equals(this.result, getConceptDescriptionsResult.result) && super.equals(o);
+	}
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(result, super.hashCode());
-  }
+	@Override
+	public int hashCode() {
+		return Objects.hash(result, super.hashCode());
+	}
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class GetConceptDescriptionsResult {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    result: ").append(toIndentedString(result)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("class GetConceptDescriptionsResult {\n");
+		sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+		sb.append("    result: ").append(toIndentedString(result)).append("\n");
+		sb.append("}");
+		return sb.toString();
+	}
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
-  }
+	/**
+	 * Convert the given object to string with each line indented by 4 spaces
+	 * (except the first line).
+	 */
+	private String toIndentedString(java.lang.Object o) {
+		if (o == null) {
+			return "null";
+		}
+		return o.toString().replace("\n", "\n    ");
+	}
 }

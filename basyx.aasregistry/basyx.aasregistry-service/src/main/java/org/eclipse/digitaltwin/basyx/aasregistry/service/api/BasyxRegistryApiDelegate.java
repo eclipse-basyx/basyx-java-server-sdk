@@ -46,108 +46,99 @@ import org.springframework.stereotype.Component;
 @Component
 public class BasyxRegistryApiDelegate implements ShellDescriptorsApiDelegate {
 
-  private final AasRegistryStorage storage;
+	private final AasRegistryStorage storage;
 
-  private final LocationBuilder locationBuilder;
+	private final LocationBuilder locationBuilder;
 
-  public BasyxRegistryApiDelegate(AasRegistryStorage storage, RegistryEventSink eventSink, LocationBuilder builder) {
-    this.storage = new RegistrationEventSendingAasRegistryStorage(storage, eventSink);
-    this.locationBuilder = builder;
-  }
+	public BasyxRegistryApiDelegate(AasRegistryStorage storage, RegistryEventSink eventSink, LocationBuilder builder) {
+		this.storage = new RegistrationEventSendingAasRegistryStorage(storage, eventSink);
+		this.locationBuilder = builder;
+	}
 
-  @Override
-  public ResponseEntity<Void> deleteAssetAdministrationShellDescriptorById(String aasIdentifier) {
-    storage.removeAasDescriptor(aasIdentifier);
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-  }
+	@Override
+	public ResponseEntity<Void> deleteAssetAdministrationShellDescriptorById(String aasIdentifier) {
+		storage.removeAasDescriptor(aasIdentifier);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
 
-  @Override
-  public ResponseEntity<Void> deleteSubmodelDescriptorByIdThroughSuperpath(String aasIdentifier,
-    String submodelIdentifier) {
-    storage.removeSubmodel(aasIdentifier, submodelIdentifier);
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-  }
+	@Override
+	public ResponseEntity<Void> deleteSubmodelDescriptorByIdThroughSuperpath(String aasIdentifier, String submodelIdentifier) {
+		storage.removeSubmodel(aasIdentifier, submodelIdentifier);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
 
-  @Override
-  public ResponseEntity<GetAssetAdministrationShellDescriptorsResult> getAllAssetAdministrationShellDescriptors(
-    Integer limit, String cursor, AssetKind assetKind, String assetType) {
-    PaginationInfo pInfo = new PaginationInfo(limit, cursor);
-    DescriptorFilter filter = new DescriptorFilter(assetKind, assetType);
-    CursorResult<List<AssetAdministrationShellDescriptor>> allDescriptors = storage.getAllAasDescriptors(pInfo, filter);
+	@Override
+	public ResponseEntity<GetAssetAdministrationShellDescriptorsResult> getAllAssetAdministrationShellDescriptors(Integer limit, String cursor, AssetKind assetKind, String assetType) {
+		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
+		DescriptorFilter filter = new DescriptorFilter(assetKind, assetType);
+		CursorResult<List<AssetAdministrationShellDescriptor>> allDescriptors = storage.getAllAasDescriptors(pInfo, filter);
 
-    GetAssetAdministrationShellDescriptorsResult result = new GetAssetAdministrationShellDescriptorsResult();
-    result.setPagingMetadata(resolvePagingMeta(allDescriptors));
-    result.setResult(allDescriptors.getResult());
+		GetAssetAdministrationShellDescriptorsResult result = new GetAssetAdministrationShellDescriptorsResult();
+		result.setPagingMetadata(resolvePagingMeta(allDescriptors));
+		result.setResult(allDescriptors.getResult());
 
-    return new ResponseEntity<>(result, HttpStatus.OK);
-  }
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 
-  @Override
-  public ResponseEntity<GetSubmodelDescriptorsResult> getAllSubmodelDescriptorsThroughSuperpath(String aasIdentifier,
-    Integer limit, String cursor) {
-    PaginationInfo pInfo = new PaginationInfo(limit, cursor);
-    CursorResult<List<SubmodelDescriptor>> allSubmodels = storage.getAllSubmodels(aasIdentifier, pInfo);
+	@Override
+	public ResponseEntity<GetSubmodelDescriptorsResult> getAllSubmodelDescriptorsThroughSuperpath(String aasIdentifier, Integer limit, String cursor) {
+		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
+		CursorResult<List<SubmodelDescriptor>> allSubmodels = storage.getAllSubmodels(aasIdentifier, pInfo);
 
-    GetSubmodelDescriptorsResult result = new GetSubmodelDescriptorsResult();
-    result.setPagingMetadata(resolvePagingMeta(allSubmodels));
-    result.setResult(allSubmodels.getResult());
+		GetSubmodelDescriptorsResult result = new GetSubmodelDescriptorsResult();
+		result.setPagingMetadata(resolvePagingMeta(allSubmodels));
+		result.setResult(allSubmodels.getResult());
 
-    return new ResponseEntity<>(result, HttpStatus.OK);
-  }
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 
-  @Override
-  public ResponseEntity<AssetAdministrationShellDescriptor> getAssetAdministrationShellDescriptorById(
-    String aasIdentifier) {
-    AssetAdministrationShellDescriptor result = storage.getAasDescriptor(aasIdentifier);
-    return new ResponseEntity<>(result, HttpStatus.OK);
-  }
+	@Override
+	public ResponseEntity<AssetAdministrationShellDescriptor> getAssetAdministrationShellDescriptorById(String aasIdentifier) {
+		AssetAdministrationShellDescriptor result = storage.getAasDescriptor(aasIdentifier);
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 
-  @Override
-  public ResponseEntity<SubmodelDescriptor> getSubmodelDescriptorByIdThroughSuperpath(String aasIdentifier,
-    String submodelIdentifier) {
-    SubmodelDescriptor result = storage.getSubmodel(aasIdentifier, submodelIdentifier);
-    return new ResponseEntity<>(result, HttpStatus.OK);
-  }
+	@Override
+	public ResponseEntity<SubmodelDescriptor> getSubmodelDescriptorByIdThroughSuperpath(String aasIdentifier, String submodelIdentifier) {
+		SubmodelDescriptor result = storage.getSubmodel(aasIdentifier, submodelIdentifier);
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 
-  @Override
-  public ResponseEntity<SubmodelDescriptor> postSubmodelDescriptorThroughSuperpath(String aasIdentifier,
-    SubmodelDescriptor body) {
-    storage.insertSubmodel(aasIdentifier, body);
-    URI location = locationBuilder.getSubmodelLocation(aasIdentifier, body.getId());
-    return ResponseEntity.created(location).body(body);
-  }
+	@Override
+	public ResponseEntity<SubmodelDescriptor> postSubmodelDescriptorThroughSuperpath(String aasIdentifier, SubmodelDescriptor body) {
+		storage.insertSubmodel(aasIdentifier, body);
+		URI location = locationBuilder.getSubmodelLocation(aasIdentifier, body.getId());
+		return ResponseEntity.created(location).body(body);
+	}
 
-  @Override
-  public ResponseEntity<Void> putAssetAdministrationShellDescriptorById(String aasIdentifier,
-    AssetAdministrationShellDescriptor body) {
-    storage.replaceAasDescriptor(aasIdentifier, body);
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-  }
+	@Override
+	public ResponseEntity<Void> putAssetAdministrationShellDescriptorById(String aasIdentifier, AssetAdministrationShellDescriptor body) {
+		storage.replaceAasDescriptor(aasIdentifier, body);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
 
-  @Override
-  public ResponseEntity<AssetAdministrationShellDescriptor> postAssetAdministrationShellDescriptor(
-    @Valid AssetAdministrationShellDescriptor body) {
-    storage.insertAasDescriptor(body);
-    URI location = locationBuilder.getAasLocation(body.getId());
-    return ResponseEntity.created(location).body(body);
-  }
+	@Override
+	public ResponseEntity<AssetAdministrationShellDescriptor> postAssetAdministrationShellDescriptor(@Valid AssetAdministrationShellDescriptor body) {
+		storage.insertAasDescriptor(body);
+		URI location = locationBuilder.getAasLocation(body.getId());
+		return ResponseEntity.created(location).body(body);
+	}
 
-  @Override
-  public ResponseEntity<Void> putSubmodelDescriptorByIdThroughSuperpath(String aasIdentifier, String submodelIdentifier,
-    SubmodelDescriptor descriptor) {
-    storage.replaceSubmodel(aasIdentifier, submodelIdentifier, descriptor);
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-  }
+	@Override
+	public ResponseEntity<Void> putSubmodelDescriptorByIdThroughSuperpath(String aasIdentifier, String submodelIdentifier, SubmodelDescriptor descriptor) {
+		storage.replaceSubmodel(aasIdentifier, submodelIdentifier, descriptor);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
 
-  @Override
-  public ResponseEntity<Void> deleteAllShellDescriptors() {
-    storage.clear();
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-  }
+	@Override
+	public ResponseEntity<Void> deleteAllShellDescriptors() {
+		storage.clear();
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
 
-  private <T> PagedResultPagingMetadata resolvePagingMeta(CursorResult<T> result) {
-    PagedResultPagingMetadata meta = new PagedResultPagingMetadata();
-    meta.setCursor(result.getCursor());
-    return meta;
-  }
+	private <T> PagedResultPagingMetadata resolvePagingMeta(CursorResult<T> result) {
+		PagedResultPagingMetadata meta = new PagedResultPagingMetadata();
+		meta.setCursor(result.getCursor());
+		return meta;
+	}
 }

@@ -49,108 +49,106 @@ import org.springframework.util.AntPathMatcher;
 @ConfigurationProperties(prefix = "servlet")
 public class ServletHeaderConfiguration {
 
-  private List<HeaderDefinition> headers;
+	private List<HeaderDefinition> headers;
 
-  @Bean
-  public Filter headerFilter() {
-    return new MappingsHeaderApplier(headers);
-  }
+	@Bean
+	public Filter headerFilter() {
+		return new MappingsHeaderApplier(headers);
+	}
 
-  public static final class MappingsHeaderApplier implements Filter {
+	public static final class MappingsHeaderApplier implements Filter {
 
-    private AntPathMatcher matcher = new AntPathMatcher();
+		private AntPathMatcher matcher = new AntPathMatcher();
 
-    private final List<HeaderDefinition> headerDefs;
+		private final List<HeaderDefinition> headerDefs;
 
-    private final Map<CacheKey, Map<String, String>> resolvedHeadersByPath = new ConcurrentHashMap<>();
+		private final Map<CacheKey, Map<String, String>> resolvedHeadersByPath = new ConcurrentHashMap<>();
 
-    public MappingsHeaderApplier(List<HeaderDefinition> headerDefs) {
-      if (headerDefs == null) {
-        headerDefs = List.of();
-      }
-      this.headerDefs = headerDefs;
-    }
+		public MappingsHeaderApplier(List<HeaderDefinition> headerDefs) {
+			if (headerDefs == null) {
+				headerDefs = List.of();
+			}
+			this.headerDefs = headerDefs;
+		}
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-      for (HeaderDefinition eachDef : headerDefs) {
-        prepareHeaderDefinition(eachDef);
-      }
-    }
+		@Override
+		public void init(FilterConfig filterConfig) throws ServletException {
+			for (HeaderDefinition eachDef : headerDefs) {
+				prepareHeaderDefinition(eachDef);
+			}
+		}
 
-    private void prepareHeaderDefinition(HeaderDefinition eachDef) {
-      String pattern = eachDef.getPath();
-      pattern = removeTrailingSlash(pattern);
-      eachDef.setPath(pattern);
-      if (eachDef.getMethods() != null) {
-        Arrays.sort(eachDef.getMethods());
-      }
-    }
+		private void prepareHeaderDefinition(HeaderDefinition eachDef) {
+			String pattern = eachDef.getPath();
+			pattern = removeTrailingSlash(pattern);
+			eachDef.setPath(pattern);
+			if (eachDef.getMethods() != null) {
+				Arrays.sort(eachDef.getMethods());
+			}
+		}
 
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-      throws IOException, ServletException {
-      HttpServletRequest httpRequest = (HttpServletRequest) request;
-      HttpServletResponse httpResponse = (HttpServletResponse) response;
-      String path = httpRequest.getServletPath();
-      String method = httpRequest.getMethod();
-      CacheKey cacheKey = new CacheKey(path, method);
-      Map<String, String> resolved = resolvedHeadersByPath.computeIfAbsent(cacheKey,
-        key -> resolveHeaders(path, method));
-      resolved.forEach(httpResponse::addHeader);
-      chain.doFilter(request, httpResponse);
-    }
+		@Override
+		public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+			HttpServletRequest httpRequest = (HttpServletRequest) request;
+			HttpServletResponse httpResponse = (HttpServletResponse) response;
+			String path = httpRequest.getServletPath();
+			String method = httpRequest.getMethod();
+			CacheKey cacheKey = new CacheKey(path, method);
+			Map<String, String> resolved = resolvedHeadersByPath.computeIfAbsent(cacheKey, key -> resolveHeaders(path, method));
+			resolved.forEach(httpResponse::addHeader);
+			chain.doFilter(request, httpResponse);
+		}
 
-    private Map<String, String> resolveHeaders(String path, String method) {
-      path = removeTrailingSlash(path);
-      Map<String, String> headers = new HashMap<>();
-      for (HeaderDefinition eachDef : headerDefs) {
-        String[] methods = eachDef.getMethods();
-        if (areMethodMatching(methods, method)) {
-          applyHeadersIfMatching(eachDef, path, headers);
-        }
-      }
-      return headers;
-    }
+		private Map<String, String> resolveHeaders(String path, String method) {
+			path = removeTrailingSlash(path);
+			Map<String, String> headers = new HashMap<>();
+			for (HeaderDefinition eachDef : headerDefs) {
+				String[] methods = eachDef.getMethods();
+				if (areMethodMatching(methods, method)) {
+					applyHeadersIfMatching(eachDef, path, headers);
+				}
+			}
+			return headers;
+		}
 
-    private boolean areMethodMatching(String[] methods, String method) {
-      boolean applyForAllMethods = methods == null || methods.length == 0;
-      return applyForAllMethods || Arrays.binarySearch(methods, method) >= 0;
-    }
+		private boolean areMethodMatching(String[] methods, String method) {
+			boolean applyForAllMethods = methods == null || methods.length == 0;
+			return applyForAllMethods || Arrays.binarySearch(methods, method) >= 0;
+		}
 
-    private void applyHeadersIfMatching(HeaderDefinition eachDef, String path, Map<String, String> headers) {
-      String pattern = eachDef.getPath();
-      if (matcher.match(pattern, path)) {
-        // next defs will override previous definitions if multiple match
-        headers.putAll(eachDef.getValues());
-      }
-    }
+		private void applyHeadersIfMatching(HeaderDefinition eachDef, String path, Map<String, String> headers) {
+			String pattern = eachDef.getPath();
+			if (matcher.match(pattern, path)) {
+				// next defs will override previous definitions if multiple match
+				headers.putAll(eachDef.getValues());
+			}
+		}
 
-    private String removeTrailingSlash(String path) {
-      if (path.endsWith("/")) {
-        return path.substring(0, path.length() - 1);
-      }
-      return path;
-    }
-  }
+		private String removeTrailingSlash(String path) {
+			if (path.endsWith("/")) {
+				return path.substring(0, path.length() - 1);
+			}
+			return path;
+		}
+	}
 
-  @Data
-  private static final class CacheKey {
+	@Data
+	private static final class CacheKey {
 
-    private final String path;
+		private final String path;
 
-    private final String method;
+		private final String method;
 
-  }
+	}
 
-  @Data
-  public static final class HeaderDefinition {
+	@Data
+	public static final class HeaderDefinition {
 
-    private String path;
+		private String path;
 
-    private Map<String, String> values;
+		private Map<String, String> values;
 
-    private String[] methods;
+		private String[] methods;
 
-  }
+	}
 }

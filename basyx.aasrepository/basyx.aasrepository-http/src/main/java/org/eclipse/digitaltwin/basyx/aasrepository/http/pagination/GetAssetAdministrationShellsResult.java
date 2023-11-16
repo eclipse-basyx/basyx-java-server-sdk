@@ -44,72 +44,73 @@ import org.springframework.validation.annotation.Validated;
 
 public class GetAssetAdministrationShellsResult extends PagedResult {
 
-  @JsonProperty("result")
-  @Valid
-  private List<AssetAdministrationShell> result = null;
+	@JsonProperty("result")
+	@Valid
+	private List<AssetAdministrationShell> result = null;
 
-  public GetAssetAdministrationShellsResult result(List<AssetAdministrationShell> result) {
-    this.result = result;
-    return this;
-  }
+	public GetAssetAdministrationShellsResult result(List<AssetAdministrationShell> result) {
+		this.result = result;
+		return this;
+	}
 
-  public GetAssetAdministrationShellsResult addResultItem(AssetAdministrationShell resultItem) {
-    if (this.result == null) {
-      this.result = new ArrayList<AssetAdministrationShell>();
-    }
-    this.result.add(resultItem);
-    return this;
-  }
+	public GetAssetAdministrationShellsResult addResultItem(AssetAdministrationShell resultItem) {
+		if (this.result == null) {
+			this.result = new ArrayList<AssetAdministrationShell>();
+		}
+		this.result.add(resultItem);
+		return this;
+	}
 
-  /**
-   * Get result
-   *
-   * @return result
-   **/
-  @Schema(description = "")
-  @Valid
-  public List<AssetAdministrationShell> getResult() {
-    return result;
-  }
+	/**
+	 * Get result
+	 *
+	 * @return result
+	 **/
+	@Schema(description = "")
+	@Valid
+	public List<AssetAdministrationShell> getResult() {
+		return result;
+	}
 
-  public void setResult(List<AssetAdministrationShell> result) {
-    this.result = result;
-  }
+	public void setResult(List<AssetAdministrationShell> result) {
+		this.result = result;
+	}
 
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    GetAssetAdministrationShellsResult getAssetAdministrationShellsResult = (GetAssetAdministrationShellsResult) o;
-    return Objects.equals(this.result, getAssetAdministrationShellsResult.result) && super.equals(o);
-  }
+	@Override
+	public boolean equals(java.lang.Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		GetAssetAdministrationShellsResult getAssetAdministrationShellsResult = (GetAssetAdministrationShellsResult) o;
+		return Objects.equals(this.result, getAssetAdministrationShellsResult.result) && super.equals(o);
+	}
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(result, super.hashCode());
-  }
+	@Override
+	public int hashCode() {
+		return Objects.hash(result, super.hashCode());
+	}
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class GetAssetAdministrationShellsResult {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    result: ").append(toIndentedString(result)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("class GetAssetAdministrationShellsResult {\n");
+		sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+		sb.append("    result: ").append(toIndentedString(result)).append("\n");
+		sb.append("}");
+		return sb.toString();
+	}
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
-  }
+	/**
+	 * Convert the given object to string with each line indented by 4 spaces
+	 * (except the first line).
+	 */
+	private String toIndentedString(java.lang.Object o) {
+		if (o == null) {
+			return "null";
+		}
+		return o.toString().replace("\n", "\n    ");
+	}
 }

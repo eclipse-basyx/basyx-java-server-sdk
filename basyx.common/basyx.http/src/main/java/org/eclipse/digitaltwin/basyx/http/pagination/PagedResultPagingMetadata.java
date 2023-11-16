@@ -38,63 +38,64 @@ import org.springframework.validation.annotation.Validated;
 
 public class PagedResultPagingMetadata {
 
-  @JsonProperty("cursor")
-  private String cursor = null;
+	@JsonProperty("cursor")
+	private String cursor = null;
 
-  public PagedResultPagingMetadata cursor(String cursor) {
-    this.cursor = cursor;
-    return this;
-  }
+	public PagedResultPagingMetadata cursor(String cursor) {
+		this.cursor = cursor;
+		return this;
+	}
 
-  /**
-   * Get cursor
-   *
-   * @return cursor
-   **/
-  @Schema(example = "wJlCDLIl6KTWypN7T6vc6nWEmEYe99Hjf1XY1xmqV-M=#", description = "")
+	/**
+	 * Get cursor
+	 *
+	 * @return cursor
+	 **/
+	@Schema(example = "wJlCDLIl6KTWypN7T6vc6nWEmEYe99Hjf1XY1xmqV-M=#", description = "")
 
-  public String getCursor() {
-    return cursor;
-  }
+	public String getCursor() {
+		return cursor;
+	}
 
-  public void setCursor(String cursor) {
-    this.cursor = cursor;
-  }
+	public void setCursor(String cursor) {
+		this.cursor = cursor;
+	}
 
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    PagedResultPagingMetadata pagedResultPagingMetadata = (PagedResultPagingMetadata) o;
-    return Objects.equals(this.cursor, pagedResultPagingMetadata.cursor);
-  }
+	@Override
+	public boolean equals(java.lang.Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		PagedResultPagingMetadata pagedResultPagingMetadata = (PagedResultPagingMetadata) o;
+		return Objects.equals(this.cursor, pagedResultPagingMetadata.cursor);
+	}
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(cursor);
-  }
+	@Override
+	public int hashCode() {
+		return Objects.hash(cursor);
+	}
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class PagedResultPagingMetadata {\n");
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("class PagedResultPagingMetadata {\n");
 
-    sb.append("    cursor: ").append(toIndentedString(cursor)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
+		sb.append("    cursor: ").append(toIndentedString(cursor)).append("\n");
+		sb.append("}");
+		return sb.toString();
+	}
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
-  }
+	/**
+	 * Convert the given object to string with each line indented by 4 spaces
+	 * (except the first line).
+	 */
+	private String toIndentedString(java.lang.Object o) {
+		if (o == null) {
+			return "null";
+		}
+		return o.toString().replace("\n", "\n    ");
+	}
 }

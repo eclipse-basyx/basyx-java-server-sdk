@@ -39,81 +39,71 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelNotFound
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
-
 public abstract class AasRegistryStorageDelegate implements AasRegistryStorage {
 
-  protected final AasRegistryStorage storage;
+	protected final AasRegistryStorage storage;
 
-  public AasRegistryStorageDelegate(AasRegistryStorage storage) {
-    this.storage = storage;
-  }
+	public AasRegistryStorageDelegate(AasRegistryStorage storage) {
+		this.storage = storage;
+	}
 
-  @Override
-  public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest,
-    @NonNull DescriptorFilter filter) {
-    return storage.getAllAasDescriptors(pRequest, filter);
-  }
+	@Override
+	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter) {
+		return storage.getAllAasDescriptors(pRequest, filter);
+	}
 
-  @Override
-  public AssetAdministrationShellDescriptor getAasDescriptor(@NonNull String aasDescriptorId)
-    throws AasDescriptorNotFoundException {
-    return storage.getAasDescriptor(aasDescriptorId);
-  }
+	@Override
+	public AssetAdministrationShellDescriptor getAasDescriptor(@NonNull String aasDescriptorId) throws AasDescriptorNotFoundException {
+		return storage.getAasDescriptor(aasDescriptorId);
+	}
 
-  @Override
-  public void insertAasDescriptor(@Valid AssetAdministrationShellDescriptor descr)
-    throws AasDescriptorAlreadyExistsException {
-    storage.insertAasDescriptor(descr);
-  }
+	@Override
+	public void insertAasDescriptor(@Valid AssetAdministrationShellDescriptor descr) throws AasDescriptorAlreadyExistsException {
+		storage.insertAasDescriptor(descr);
+	}
 
-  @Override
-  public void replaceAasDescriptor(@NonNull String aasDescriptorId,
-    @NonNull AssetAdministrationShellDescriptor descriptor) throws AasDescriptorNotFoundException {
-    storage.replaceAasDescriptor(aasDescriptorId, descriptor);
-  }
+	@Override
+	public void replaceAasDescriptor(@NonNull String aasDescriptorId, @NonNull AssetAdministrationShellDescriptor descriptor) throws AasDescriptorNotFoundException {
+		storage.replaceAasDescriptor(aasDescriptorId, descriptor);
+	}
 
-  @Override
-  public void removeAasDescriptor(@NonNull String aasDescriptorId) throws AasDescriptorNotFoundException {
-    storage.removeAasDescriptor(aasDescriptorId);
-  }
+	@Override
+	public void removeAasDescriptor(@NonNull String aasDescriptorId) throws AasDescriptorNotFoundException {
+		storage.removeAasDescriptor(aasDescriptorId);
+	}
 
-  @Override
-  public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(@NonNull String aasDescriptorId,
-    @NonNull PaginationInfo pRequest) throws AasDescriptorNotFoundException {
-    return storage.getAllSubmodels(aasDescriptorId, pRequest);
-  }
+	@Override
+	public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(@NonNull String aasDescriptorId, @NonNull PaginationInfo pRequest) throws AasDescriptorNotFoundException {
+		return storage.getAllSubmodels(aasDescriptorId, pRequest);
+	}
 
-  @Override
-  public SubmodelDescriptor getSubmodel(@NonNull String aasDescriptorId, @NonNull String submodelId)
-    throws AasDescriptorNotFoundException, SubmodelNotFoundException {
-    return storage.getSubmodel(aasDescriptorId, submodelId);
-  }
+	@Override
+	public SubmodelDescriptor getSubmodel(@NonNull String aasDescriptorId, @NonNull String submodelId) throws AasDescriptorNotFoundException, SubmodelNotFoundException {
+		return storage.getSubmodel(aasDescriptorId, submodelId);
+	}
 
-  @Override
-  public void insertSubmodel(@NonNull String aasDescriptorId, @NonNull SubmodelDescriptor submodel)
-    throws AasDescriptorNotFoundException, SubmodelAlreadyExistsException {
-    storage.insertSubmodel(aasDescriptorId, submodel);
-  }
+	@Override
+	public void insertSubmodel(@NonNull String aasDescriptorId, @NonNull SubmodelDescriptor submodel) throws AasDescriptorNotFoundException, SubmodelAlreadyExistsException {
+		storage.insertSubmodel(aasDescriptorId, submodel);
+	}
 
-  @Override
-  public void replaceSubmodel(@NonNull String aasDescriptorId, @NonNull String submodelId,
-    @NonNull SubmodelDescriptor submodel) throws AasDescriptorNotFoundException, SubmodelNotFoundException {
-    storage.replaceSubmodel(aasDescriptorId, submodelId, submodel);
-  }
+	@Override
+	public void replaceSubmodel(@NonNull String aasDescriptorId, @NonNull String submodelId, @NonNull SubmodelDescriptor submodel) throws AasDescriptorNotFoundException, SubmodelNotFoundException {
+		storage.replaceSubmodel(aasDescriptorId, submodelId, submodel);
+	}
 
-  @Override
-  public void removeSubmodel(@NonNull String aasDescriptorId, @NonNull String submodelId)
-    throws AasDescriptorNotFoundException, SubmodelNotFoundException {
-    storage.removeSubmodel(aasDescriptorId, submodelId);
-  }
+	@Override
+	public void removeSubmodel(@NonNull String aasDescriptorId, @NonNull String submodelId) throws AasDescriptorNotFoundException, SubmodelNotFoundException {
+		storage.removeSubmodel(aasDescriptorId, submodelId);
+	}
 
-  @Override
-  public Set<String> clear() {
-    return storage.clear();
-  }
+	@Override
+	public Set<String> clear() {
+		return storage.clear();
+	}
 
-  @Override
-  public ShellDescriptorSearchResponse searchAasDescriptors(@NonNull ShellDescriptorSearchRequest request) {
-    return storage.searchAasDescriptors(request);
-  }
+	@Override
+	public ShellDescriptorSearchResponse searchAasDescriptors(@NonNull ShellDescriptorSearchRequest request) {
+		return storage.searchAasDescriptors(request);
+	}
 }
