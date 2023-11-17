@@ -40,12 +40,7 @@ import org.junit.runners.Suite;
  */
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-	AASRepositoryIT.class, 
-	SubmodelRepositoryIT.class,
-	ConceptDescriptionRepositoryIT.class,
-})
-
+@Suite.SuiteClasses({ AASRepositoryIT.class, SubmodelRepositoryIT.class, ConceptDescriptionRepositoryIT.class, })
 public class AASEnvironmentIT {
 
 }
