@@ -35,6 +35,7 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.feature.AasServiceFeature;
 import org.eclipse.digitaltwin.basyx.aasservice.feature.DecoratedAasServiceFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -49,6 +50,7 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 public class AasRepositoryConfiguration {
 	@Bean
+	@ConditionalOnMissingBean
 	public static AasRepository getAasRepository(AasRepositoryFactory aasRepositoryFactory, List<AasRepositoryFeature> features) {
 		return new DecoratedAasRepositoryFactory(aasRepositoryFactory, features).create();
 	}

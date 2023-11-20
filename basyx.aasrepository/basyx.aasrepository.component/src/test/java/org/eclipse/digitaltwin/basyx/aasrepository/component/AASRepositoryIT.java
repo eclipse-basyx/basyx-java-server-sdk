@@ -9,4 +9,5 @@ import org.eclipse.digitaltwin.basyx.aasrepository.tck.AasRepositoryTestDefinedU
  *
  */
 public class AASRepositoryIT extends AasRepositoryTestDefinedURL {
+
 }
