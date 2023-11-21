@@ -15,7 +15,7 @@
 	<properties>
 		<docker.image.version>2.0.0-SNAPSHOT</docker.image.version>
 		<lombok.maven-plugin.version>1.18.20.0</lombok.maven-plugin.version>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,8 +23,7 @@
 		<swagger.codegen.version>3.0.42</swagger.codegen.version>
 		<spring.fox.version>3.0.0</spring.fox.version>
 		<openapi.folder.name>open-api</openapi.folder.name>
-		<openapi.base.name>Plattform_i40-SubmodelRegistryServiceSpecification-V3.0.1_SSP-001-resolved.yaml
-		</openapi.base.name>
+		<openapi.base.name>Plattform_i40-SubmodelRegistryServiceSpecification-V3.0.1_SSP-001-resolved.yaml</openapi.base.name>
 		<openapi.name>Plattform_i40-SubmodelRegistry-and-Discovery.yaml</openapi.name>
 		<guava.version>31.0.1-jre</guava.version>
 		<maven-plugin.version>3.6.0</maven-plugin.version>
@@ -51,11 +50,11 @@
 		<module>basyx.submodelregistry-service-release-log-mem</module>
 		<module>basyx.submodelregistry-client-native</module>
 		<module>basyx.submodelregistry-service-mongodb-storage</module>
-		<module>basyx.submodelregistry-service-kafka-events</module>
+<!--		<module>basyx.submodelregistry-service-kafka-events</module>-->
 		<module>basyx.submodelregistry-service-basetests</module>
-		<module>basyx.submodelregistry-service-release-kafka-mem</module>
+<!--		<module>basyx.submodelregistry-service-release-kafka-mem</module>-->
 		<module>basyx.submodelregistry-service-release-log-mongodb</module>
-		<module>basyx.submodelregistry-service-release-kafka-mongodb</module>
+<!--		<module>basyx.submodelregistry-service-release-kafka-mongodb</module>-->
 	</modules>
 
 	<developers>
