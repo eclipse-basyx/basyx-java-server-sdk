@@ -48,7 +48,9 @@ import org.springframework.core.io.ClassPathResource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Supports the tests working with the HTTP/REST API of AAS, Submodels, etc.
@@ -57,6 +59,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 public class BaSyxHttpTestUtils {
+
+	private static final String CURSOR = "cursor";
+	private static final String PAGING_METADATA_KEY = "paging_metadata";
 
 	/**
 	 * Reads the JSON String from a JSON file in the classpath
@@ -167,6 +172,30 @@ public class BaSyxHttpTestUtils {
 		HttpPatch patchRequest = createPatchRequestWithHeader(url, content);
 
 		return client.execute(patchRequest);
+	}
+	
+	/**
+	 * Removes cursor node from the paging_metadata provided in the JSON
+	 * 
+	 * @param inputJSON
+	 * @return
+	 * 
+	 * @throws JsonMappingException
+	 * @throws JsonProcessingException
+	 */
+	public static String removeCursorFromJSON(String inputJSON) throws JsonMappingException, JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
+
+        JsonNode rootNode = mapper.readTree(inputJSON);
+
+        if (rootNode.has(PAGING_METADATA_KEY)) {
+            ObjectNode pagingMetadata = (ObjectNode) rootNode.get(PAGING_METADATA_KEY);
+            
+            if (pagingMetadata.has(CURSOR))
+            	pagingMetadata.remove(CURSOR);
+        }
+        
+        return mapper.writeValueAsString(rootNode);
 	}
 
 	private static HttpPatch createPatchRequestWithHeader(String url, String content) {

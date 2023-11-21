@@ -62,6 +62,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationUpdate;
 import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.data.mongodb.core.aggregation.ComparisonOperators;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.aggregation.SetOperation;
 import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -69,6 +70,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.core.query.UpdateDefinition;
 
 import com.mongodb.ClientSessionOptions;
+import com.mongodb.internal.operation.UpdateOperation;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -274,7 +276,7 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 	public void removeSubmodel(@NonNull String aasDescriptorId, @NonNull String submodelId) throws AasDescriptorNotFoundException, SubmodelNotFoundException {
 		AggregationExpression notEquals = ComparisonOperators.valueOf(SUBMODEL_DESCRIPTORS_ID).notEqualToValue(submodelId);
 		AggregationExpression filterArray = ArrayOperators.arrayOf(SUBMODEL_DESCRIPTORS).filter().as(SUBMODEL_DESCRIPTORS).by(notEquals);
-		AggregationUpdate update = Aggregation.newUpdate(Aggregation.project(SUBMODEL_DESCRIPTORS).and(filterArray).as(SUBMODEL_DESCRIPTORS));
+		AggregationUpdate update =  AggregationUpdate.update().set(SUBMODEL_DESCRIPTORS).toValue(filterArray);
 		AssetAdministrationShellDescriptor old = template.findAndModify(Query.query(Criteria.where(ID).is(aasDescriptorId)), update, AssetAdministrationShellDescriptor.class);
 		if (old == null) {
 			throw new AasDescriptorNotFoundException(submodelId);
