@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package basyx.aasenvironment.component;
+package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
 import static org.junit.Assert.assertNotNull;
 
