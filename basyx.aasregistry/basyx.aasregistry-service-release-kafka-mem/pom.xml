@@ -7,7 +7,7 @@
 		<groupId>org.eclipse.digitaltwin.basyx</groupId>
 		<artifactId>basyx.aasregistry</artifactId>
 		<version>${revision}</version>
-		<relativePath>..</relativePath>
+
 	</parent>
 
 	<artifactId>basyx.aasregistry-service-release-kafka-mem</artifactId>
