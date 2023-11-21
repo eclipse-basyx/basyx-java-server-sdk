@@ -23,26 +23,28 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.testconfig;
 
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.InMemoryConceptDescriptionRepository;
+package org.eclipse.digitaltwin.basyx.submodelrepository.http.testconfig;
+
+import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Configuration for tests
+ * Configuration for tests  
  * 
  * @author danish, kammognie
  *
  */
 @Configuration
-public class DummyConfig {
+public class DummySubmodelRepositoryConfig {
 
-		@Bean
-		@ConditionalOnMissingBean
-		public ConceptDescriptionRepository createConceptDescriptionRepository() {
-			return new InMemoryConceptDescriptionRepository();
-		}
+	@Bean
+	@ConditionalOnMissingBean
+	public SubmodelRepository createSubmodelRepository() {
+		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
+	}
 }

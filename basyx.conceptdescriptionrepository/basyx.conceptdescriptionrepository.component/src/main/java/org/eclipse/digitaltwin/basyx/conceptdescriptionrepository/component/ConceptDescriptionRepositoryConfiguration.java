@@ -31,12 +31,14 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.ConceptDescriptionRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.DecoratedConceptDescriptionRepositoryFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Provides the spring bean configuration for the {@link ConceptDescriptionRepository}
- * utilizing all found features for the respective services
+ * Provides the spring bean configuration for the
+ * {@link ConceptDescriptionRepository} utilizing all found features for the
+ * respective services
  * 
  * @author danish
  *
@@ -45,8 +47,9 @@ import org.springframework.context.annotation.Configuration;
 public class ConceptDescriptionRepositoryConfiguration {
 
 	@Bean
+	@ConditionalOnMissingBean
 	public static ConceptDescriptionRepository getConceptDescriptionRepository(ConceptDescriptionRepositoryFactory aasRepositoryFactory, List<ConceptDescriptionRepositoryFeature> features) {
 		return new DecoratedConceptDescriptionRepositoryFactory(aasRepositoryFactory, features).create();
 	}
-	
+
 }
