@@ -26,7 +26,7 @@
  package org.eclipse.digitaltwin.basyx.core.exceptions;
 
  /**
-  * Indicates that an entity has no identifier or an Identifier with the value NULL
+  * Indicates that an entity has no identifier or an identifier with the value NULL
   * 
   * @author kammognie
   *

@@ -100,8 +100,9 @@ public interface ConceptDescriptionRepository {
 	 * 
 	 * @param conceptDescription
 	 * @throws CollidingIdentifierException
+	 * @throws MissingIdentifierException
 	 */
-	public void createConceptDescription(ConceptDescription conceptDescription) throws CollidingIdentifierException,MissingIdentifierException;
+	public void createConceptDescription(ConceptDescription conceptDescription) throws CollidingIdentifierException, MissingIdentifierException;
 
 	/**
 	 * Deletes a ConceptDescription
@@ -110,7 +111,7 @@ public interface ConceptDescriptionRepository {
 	 * @throws ElementDoesNotExistException
 	 */
 	public void deleteConceptDescription(String conceptDescriptionId) throws ElementDoesNotExistException;
-	
+
 	/**
 	 * Returns the name of the repository
 	 * 
@@ -119,5 +120,5 @@ public interface ConceptDescriptionRepository {
 	public default String getName() {
 		return "cd-repo";
 	}
-  
+
 }

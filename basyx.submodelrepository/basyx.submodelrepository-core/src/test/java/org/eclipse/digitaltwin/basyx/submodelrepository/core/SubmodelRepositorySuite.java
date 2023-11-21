@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -48,6 +49,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
@@ -71,6 +73,8 @@ import org.springframework.core.io.ClassPathResource;
 public abstract class SubmodelRepositorySuite {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static final String DUMMY_FILE_CONTENT = "this is a file";
+	private static final String EMPTY_ID = " ";
+	private static final String NULL_ID = null;
 	
 	protected abstract SubmodelRepository getSubmodelRepository();
 
@@ -163,7 +167,30 @@ public abstract class SubmodelRepositorySuite {
 
 		repo.createSubmodel(submodel);
 	}
-
+	
+	@Test(expected = MissingIdentifierException.class)
+	public void createSubmodelWithEmptyId() {
+		SubmodelRepository repo  = getSubmodelRepository();
+		Submodel submodel = buildDummySubmodel(EMPTY_ID);
+		
+		repo.createSubmodel(submodel);
+	}
+	
+	@Test(expected = MissingIdentifierException.class)
+	public void createSubmodelWithNullId() {
+		SubmodelRepository repo  = getSubmodelRepository();
+		Submodel submodel = buildDummySubmodel(NULL_ID);
+		
+		repo.createSubmodel(submodel);
+	}
+	
+	@Test(expected = MissingIdentifierException.class)
+	public void createSubmodelCollectionWithMissingId() {
+		Collection<Submodel> submodels = Arrays.asList(buildDummySubmodel(EMPTY_ID),buildDummySubmodel("AZ78C1BA454E07834"),buildDummySubmodel(NULL_ID));
+		
+		getSubmodelRepository(submodels);
+	}
+	
 	@Test
 	public void deleteSubmodel() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
@@ -523,7 +550,7 @@ public abstract class SubmodelRepositorySuite {
 				.get();
 	}
 
-	protected Submodel buildDummySubmodel(String id) {
+	private Submodel buildDummySubmodel(String id) {
 		return new DefaultSubmodel.Builder().id(id)
 				.submodelElements(new DefaultProperty.Builder().idShort("prop")
 						.value("testValue")

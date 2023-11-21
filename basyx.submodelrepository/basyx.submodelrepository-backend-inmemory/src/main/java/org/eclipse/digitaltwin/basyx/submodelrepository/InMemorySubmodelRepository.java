@@ -113,6 +113,8 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	 */
 	public InMemorySubmodelRepository(SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels) {
 		this(submodelServiceFactory);
+		throwIfMissingId(submodels);
+
 		throwIfHasCollidingIds(submodels);
 
 		submodelServices = createServices(submodels);
@@ -176,9 +178,9 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	@Override
 	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException, MissingIdentifierException {
 		throwIfSubmodelIdEmptyOrNull(submodel.getId());
+
 		throwIfSubmodelExists(submodel.getId());
-		
-		
+
 		submodelServices.put(submodel.getId(), submodelServiceFactory.create(submodel));
 	}
 
@@ -259,7 +261,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	@Override
 	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) {
 		throwIfSubmodelDoesNotExist(submodelId);
-		
+
 		SubmodelElement submodelElement = submodelServices.get(submodelId).getSubmodelElement(idShortPath);
 
 		throwIfSmElementIsNotAFile(submodelElement);
@@ -281,7 +283,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		File fileSmElement = (File) submodelElement;
 		deleteExistingFile(fileSmElement);
 		String filePath = createFilePath(submodelId, idShortPath, fileName);
-		
+
 		createFileAtSpecifiedPath(fileName, inputStream, filePath);
 
 		FileBlobValue fileValue = new FileBlobValue(fileSmElement.getContentType(), filePath);
@@ -292,7 +294,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	@Override
 	public void deleteFileValue(String submodelId, String idShortPath) {
 		throwIfSubmodelDoesNotExist(submodelId);
-		
+
 		SubmodelElement submodelElement = submodelServices.get(submodelId).getSubmodelElement(idShortPath);
 
 		throwIfSmElementIsNotAFile(submodelElement);
@@ -313,7 +315,15 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	private String createFilePath(String submodelId, String idShortPath, String fileName) {
 		return tmpDirectory + "/" + submodelId + "-" + idShortPath.replace("/", "-") + "-" + fileName;
 	}
-	
+
+	private void throwIfMissingId(Collection<Submodel> submodelsToCheck) {
+		boolean isMissingId = submodelsToCheck.stream().map(Submodel::getId).anyMatch(id -> id == null || id.isBlank());
+
+		if (isMissingId) {
+			throw new MissingIdentifierException();
+		}
+	}
+
 	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement) {
 		if (!(submodelElement instanceof File))
 			throw new ElementNotAFileException(submodelElement.getIdShort());
@@ -341,9 +351,9 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		if (!submodelServices.containsKey(id))
 			throw new ElementDoesNotExistException(id);
 	}
-	
+
 	private void throwIfSubmodelIdEmptyOrNull(String id) {
-		if(id == null || id.trim().isEmpty())
+		if (id == null || id.isBlank())
 			throw new MissingIdentifierException(id);
 	}
 
@@ -370,22 +380,23 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		}
 		return tempDirectoryPath;
 	}
-	
+
 	private String getFilePath(SubmodelElement submodelElement) {
 		return ((File) submodelElement).getValue();
 	}
-	
+
 	private void deleteExistingFile(File fileSmElement) {
 		String filePath = fileSmElement.getValue();
-		if(filePath.isEmpty()) return;
-		
+		if (filePath.isEmpty())
+			return;
+
 		try {
 			Files.deleteIfExists(Paths.get(filePath, ""));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void createFileAtSpecifiedPath(String fileName, InputStream inputStream, String filePath) {
 		java.io.File targetFile = new java.io.File(filePath);
 

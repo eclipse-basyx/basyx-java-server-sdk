@@ -131,13 +131,13 @@ public abstract class AasRepositorySuite {
 	}
 	
 	@Test(expected = MissingIdentifierException.class)
-	public void createWithEmptyAasIdentifiers() throws MissingIdentifierException {
+	public void createWithEmptyAasIdentifier() {
 		AssetAdministrationShell shell = createDummyAssetAdministrationShell(AAS_EMPTY_ID);
 		aasRepo.createAas(shell);
 	}
 	
 	@Test(expected = MissingIdentifierException.class)
-	public void createWithNullAasIdentifiers() throws MissingIdentifierException {
+	public void createWithNullAasIdentifier() {
 		AssetAdministrationShell shell = createDummyAssetAdministrationShell(AAS_NULL_ID);
 		aasRepo.createAas(shell);
 	}
@@ -315,8 +315,8 @@ public abstract class AasRepositorySuite {
 				.build();
 	}
 	
-	public static AssetAdministrationShell createDummyAssetAdministrationShell(String AasId) {
-		return new DefaultAssetAdministrationShell.Builder().id(AasId)
+	public static AssetAdministrationShell createDummyAssetAdministrationShell(String aasId) {
+		return new DefaultAssetAdministrationShell.Builder().id(aasId)
 				.build();
 	}
 

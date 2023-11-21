@@ -64,8 +64,10 @@ public interface AasRepository {
 	 * 
 	 * @param aas
 	 *            the AAS to be created
+	 * @throws MissingIdentifierException
+	 *            for creating AAS
 	 */
-	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException, MissingIdentifierException ;
+	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException, MissingIdentifierException;
 
 	/**
 	 * Deletes a specific AAS

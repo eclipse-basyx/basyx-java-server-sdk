@@ -91,6 +91,7 @@ public class CrudAasRepository implements AasRepository {
 	@Override
 	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException, MissingIdentifierException {
 		throwIfAasIdEmptyOrNull(aas.getId());
+		
 		throwIfAasExists(aas);
 
 		aasBackend.save(aas);
@@ -167,9 +168,9 @@ public class CrudAasRepository implements AasRepository {
 			throw new CollidingIdentifierException();
 	}
 	
-	private void throwIfAasIdEmptyOrNull(String id) {
-		if(id == null || id.trim().isEmpty())
-			throw new MissingIdentifierException(id);
+	private void throwIfAasIdEmptyOrNull(String aasId) {
+		if(aasId == null || aasId.isBlank())
+			throw new MissingIdentifierException(aasId);
 	}
 
 	private void throwIfAasDoesNotExist(String aasId) {

@@ -45,6 +45,7 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Test;
@@ -62,7 +63,9 @@ public abstract class ConceptDescriptionRepositorySuite {
 
 	private final PaginationInfo noLimitPaginationInfo = new PaginationInfo(0, "");
 	
-
+	private static final String EMPTY_ID = " ";
+	private static final String NULL_ID = null;
+	
 	@Test
 	public void getAllConceptDescriptionsPreconfigured() {
 		Collection<ConceptDescription> expectedConceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
@@ -199,6 +202,29 @@ public abstract class ConceptDescriptionRepositorySuite {
 
 		repo.createConceptDescription(conceptDescription);
 	}
+	
+	@Test(expected = MissingIdentifierException.class)
+	public void createConceptDescriptionWithEmptyId() {
+		ConceptDescriptionRepository repo  = getConceptDescriptionRepository();
+		ConceptDescription conceptDescription = createDummyConceptDescription(EMPTY_ID);
+		
+		repo.createConceptDescription(conceptDescription);
+	}
+	
+	@Test(expected = MissingIdentifierException.class)
+	public void createConceptDescriptionWithNullId() {
+		ConceptDescriptionRepository repo  = getConceptDescriptionRepository();
+		ConceptDescription conceptDescription = createDummyConceptDescription(NULL_ID);
+		
+		repo.createConceptDescription(conceptDescription);
+	}
+	
+	@Test(expected = MissingIdentifierException.class)
+	public void createConceptDescriptionCollectionWithMissingId() {
+		Collection<ConceptDescription> conceptDescriptions = Arrays.asList(createDummyConceptDescription(EMPTY_ID),createDummyConceptDescription(NULL_ID),createDummyConceptDescription("AZ78C1BA454E07834"));
+		
+		getConceptDescriptionRepository(conceptDescriptions);
+	}
 
 	@Test
 	public void deleteConceptDescription() {
@@ -260,7 +286,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 		assertTrue(actualConceptDescriptions.containsAll(expectedConceptDescriptions));
 	}
 
-	protected ConceptDescription createDummyConceptDescription(String id) {
+	private ConceptDescription createDummyConceptDescription(String id) {
 		return new DefaultConceptDescription.Builder().id(id)
 				.isCaseOf(new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE)
 						.build())
