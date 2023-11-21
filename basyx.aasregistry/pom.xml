@@ -15,7 +15,7 @@
 	<properties>
 		<docker.image.version>2.0.0-SNAPSHOT</docker.image.version>
 		<lombok.maven-plugin.version>1.18.20.0</lombok.maven-plugin.version>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -50,13 +50,13 @@
 		<module>basyx.aasregistry-paths</module>
 		<module>basyx.aasregistry-service</module>
 		<module>basyx.aasregistry-service-basetests</module>
-		<module>basyx.aasregistry-service-kafka-events</module>
+<!--		<module>basyx.aasregistry-service-kafka-events</module>-->
 		<module>basyx.aasregistry-service-inmemory-storage</module>
 		<module>basyx.aasregistry-service-mongodb-storage</module>
 		<module>basyx.aasregistry-service-release-log-mem</module>
 		<module>basyx.aasregistry-service-release-log-mongodb</module>
-		<module>basyx.aasregistry-service-release-kafka-mem</module>
-		<module>basyx.aasregistry-service-release-kafka-mongodb</module>
+<!--		<module>basyx.aasregistry-service-release-kafka-mem</module>-->
+<!--		<module>basyx.aasregistry-service-release-kafka-mongodb</module>-->
 
 	</modules>
 
