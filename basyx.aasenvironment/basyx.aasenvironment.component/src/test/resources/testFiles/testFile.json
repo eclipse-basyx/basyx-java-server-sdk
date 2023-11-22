@@ -1,0 +1,10 @@
+{
+    "keys": [
+        {
+            "type": "SUBMODEL",
+            "value": "DummySubmodelID"
+        }
+    ],
+    "referredSemanticID": null,
+    "type": null
+}

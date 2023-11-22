@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashSet;
@@ -59,11 +60,14 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchExcep
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * In-memory implementation of the SubmodelRepository
@@ -72,6 +76,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
  *
  */
 public class InMemorySubmodelRepository implements SubmodelRepository {
+
+	private Logger logger = LoggerFactory.getLogger(InMemorySubmodelRepository.class);
 
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private Map<String, SubmodelService> submodelServices = new LinkedHashMap<>();
@@ -256,7 +262,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	@Override
 	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) {
 		throwIfSubmodelDoesNotExist(submodelId);
-		
+
 		SubmodelElement submodelElement = submodelServices.get(submodelId).getSubmodelElement(idShortPath);
 
 		throwIfSmElementIsNotAFile(submodelElement);
@@ -278,7 +284,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		File fileSmElement = (File) submodelElement;
 		deleteExistingFile(fileSmElement);
 		String filePath = createFilePath(submodelId, idShortPath, fileName);
-		
+
 		createFileAtSpecifiedPath(fileName, inputStream, filePath);
 
 		FileBlobValue fileValue = new FileBlobValue(fileSmElement.getContentType(), filePath);
@@ -289,7 +295,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	@Override
 	public void deleteFileValue(String submodelId, String idShortPath) {
 		throwIfSubmodelDoesNotExist(submodelId);
-		
+
 		SubmodelElement submodelElement = submodelServices.get(submodelId).getSubmodelElement(idShortPath);
 
 		throwIfSmElementIsNotAFile(submodelElement);
@@ -308,9 +314,9 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 	private String createFilePath(String submodelId, String idShortPath, String fileName) {
-		return tmpDirectory + "/" + submodelId + "-" + idShortPath.replace("/", "-") + "-" + fileName;
+		return tmpDirectory + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId) + "-" + idShortPath.replace("/", "-") + "-" + fileName;
 	}
-	
+
 	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement) {
 		if (!(submodelElement instanceof File))
 			throw new ElementNotAFileException(submodelElement.getIdShort());
@@ -362,22 +368,40 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		}
 		return tempDirectoryPath;
 	}
-	
+
 	private String getFilePath(SubmodelElement submodelElement) {
 		return ((File) submodelElement).getValue();
 	}
-	
+
 	private void deleteExistingFile(File fileSmElement) {
 		String filePath = fileSmElement.getValue();
-		if(filePath.isEmpty()) return;
 		
+		if (filePath.isEmpty())
+			return;
+
+		Path validatedFilePath = getValidatedFilePath(filePath);
+		
+		if (validatedFilePath == null) {
+			logger.error("Unable to delete the file due to invalid path '{}'", filePath);
+			
+			return;
+		}
+
 		try {
-			Files.deleteIfExists(Paths.get(filePath, ""));
+			Files.deleteIfExists(validatedFilePath);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Unable to delete the file having path '{}'", filePath);
 		}
 	}
-	
+
+	private Path getValidatedFilePath(String filePath) {
+		try {
+			return Paths.get(filePath, "");
+		} catch (InvalidPathException e) {
+			return null;
+		}
+	}
+
 	private void createFileAtSpecifiedPath(String fileName, InputStream inputStream, String filePath) {
 		java.io.File targetFile = new java.io.File(filePath);
 

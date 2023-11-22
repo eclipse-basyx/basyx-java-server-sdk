@@ -25,8 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -57,7 +55,7 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination.GetSubmo
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -198,16 +196,15 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	@Override
 	public ResponseEntity<Resource> getFileByPath(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath) {
 		try {
-			FileInputStream fileInputStream = new FileInputStream(repository.getFileByPathSubmodel(submodelIdentifier.getIdentifier(), idShortPath));
-			Resource resource = new InputStreamResource(fileInputStream);
+			Resource resource = new FileSystemResource(repository.getFileByPathSubmodel(submodelIdentifier.getIdentifier(), idShortPath));
+			
 			return new ResponseEntity<Resource>(resource, HttpStatus.OK);
 		} catch (FileDoesNotExistException | ElementDoesNotExistException e) {
 			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
 		} catch (ElementNotAFileException e) {
 			return new ResponseEntity<Resource>(HttpStatus.PRECONDITION_FAILED);
-		} catch(FileNotFoundException e) {
-			return new ResponseEntity<Resource>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+
 	}
 
 	@Override
