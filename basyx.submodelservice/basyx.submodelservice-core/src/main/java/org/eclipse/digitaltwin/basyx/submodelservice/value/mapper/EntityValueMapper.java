@@ -71,6 +71,6 @@ public class EntityValueMapper implements ValueMapper<EntityValue> {
 	}
 
 	private List<SpecificAssetIdValue> getSpecificAssetIdValue(List<SpecificAssetId> specificAssetIds) {
-		return specificAssetIds.stream().map(SpecificAssetId -> new SpecificAssetIdValue(SpecificAssetId)).collect(Collectors.toList());
+		return specificAssetIds.stream().map(specificAssetId -> new SpecificAssetIdValue(specificAssetId)).collect(Collectors.toList());
 	}
 }
