@@ -83,7 +83,7 @@ public class TestMappedSubmodelElementValue {
 	private ReferenceValue referenceValue_first = new ReferenceValue(ReferenceTypes.EXTERNAL_REFERENCE, Arrays.asList(new DefaultKey.Builder().type(KeyTypes.CAPABILITY)
 			.value("CapabilityType")
 			.build()));
-	private String globalAssetId = "globalAssetId";
+	private String globalAssetId = "globalAssetID";
 	private ReferenceValue referenceValue_second = new ReferenceValue(ReferenceTypes.MODEL_REFERENCE, Arrays.asList(new DefaultKey.Builder().type(KeyTypes.RELATIONSHIP_ELEMENT)
 			.value("RelationshipElement")
 			.build()));

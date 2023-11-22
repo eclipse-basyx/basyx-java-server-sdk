@@ -142,7 +142,7 @@ public class SubmodelServiceHelper {
 	private static final SpecificAssetId ENTITY_SPECIFIC_ASSET_ID = new DefaultSpecificAssetId.Builder().name(SPECIFIC_ASSET_ID_NAME)
 			.value(SPECIFIC_ASSET_ID_VALUE)
 			.build();
-	public static final String GLOBAL_ASSET_ID = "globalAssetId";
+	public static final String GLOBAL_ASSET_ID = "globalAssetID";
 
 	// SUBMODEL_ELEMENT_REFERENCE_ELEMENT_DATA
 	public static final String SUBMODEL_TECHNICAL_DATA_REFERENCE_ELEMENT_ID_SHORT = "ReferenceElement";
