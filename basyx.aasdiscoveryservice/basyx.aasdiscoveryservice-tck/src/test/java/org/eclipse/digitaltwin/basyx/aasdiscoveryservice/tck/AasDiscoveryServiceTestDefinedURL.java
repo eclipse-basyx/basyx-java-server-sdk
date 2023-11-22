@@ -67,7 +67,7 @@ public class AasDiscoveryServiceTestDefinedURL extends AasDiscoveryServiceHTTPSu
 
 	private void createAssetLink(AssetLink assetLink) {
 		try {
-			String specificAssetIdsJSON = gson.toJson(assetLink.getSpecificAssetIDs());
+			String specificAssetIdsJSON = gson.toJson(assetLink.getSpecificAssetIds());
 			CloseableHttpResponse creationResponse = createAssetLinks(assetLink.getShellIdentifier(), specificAssetIdsJSON);
 
 			if (creationResponse.getCode() != 409) {
