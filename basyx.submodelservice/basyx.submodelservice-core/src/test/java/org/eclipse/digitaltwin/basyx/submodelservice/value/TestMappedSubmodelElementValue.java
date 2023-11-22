@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AnnotatedRelationshipElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
-import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXSD;
+import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
 import org.eclipse.digitaltwin.aas4j.v3.model.EntityType;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
@@ -53,7 +53,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetID;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.AnnotatedRelationshipElementValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.BlobValueMapper;
@@ -83,13 +83,13 @@ public class TestMappedSubmodelElementValue {
 	private ReferenceValue referenceValue_first = new ReferenceValue(ReferenceTypes.EXTERNAL_REFERENCE, Arrays.asList(new DefaultKey.Builder().type(KeyTypes.CAPABILITY)
 			.value("CapabilityType")
 			.build()));
-	private String globalAssetID = "globalAssetID";
+	private String globalAssetId = "globalAssetID";
 	private ReferenceValue referenceValue_second = new ReferenceValue(ReferenceTypes.MODEL_REFERENCE, Arrays.asList(new DefaultKey.Builder().type(KeyTypes.RELATIONSHIP_ELEMENT)
 			.value("RelationshipElement")
 			.build()));
-	private List<SpecificAssetIDValue> specificAssetIDValues = Arrays.asList(new SpecificAssetIDValue(new DefaultSpecificAssetID.Builder().value("value")
+	private List<SpecificAssetIdValue> specificAssetIdValues = Arrays.asList(new SpecificAssetIdValue(new DefaultSpecificAssetId.Builder().value("value")
 			.name("name")
-			.externalSubjectID(new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE)
+			.externalSubjectId(new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE)
 					.keys(new DefaultKey.Builder().value("keyValue")
 							.type(KeyTypes.GLOBAL_REFERENCE)
 							.build())
@@ -132,7 +132,7 @@ public class TestMappedSubmodelElementValue {
 		String expectedValue = "200";
 
 		Property property = new DefaultProperty.Builder().value(expectedValue)
-				.valueType(DataTypeDefXSD.INTEGER)
+				.valueType(DataTypeDefXsd.INTEGER)
 				.build();
 
 		ValueMapper<PropertyValue> rangeValueMapper = new PropertyValueMapper(property);
@@ -254,11 +254,11 @@ public class TestMappedSubmodelElementValue {
 	public void mappedSetEntityValue() {
 		Entity entity = SubmodelServiceHelper.createEntitySubmodelElement();
 
-		EntityValue entityValue = new EntityValue(valueOnlies, testEntityType, globalAssetID, specificAssetIDValues);
+		EntityValue entityValue = new EntityValue(valueOnlies, testEntityType, globalAssetId, specificAssetIdValues);
 
 		setReferenceElementValue(entity, entityValue);
 
-		assertValuesAreEqual(valueOnlies, testEntityType, globalAssetID, specificAssetIDValues, entity);
+		assertValuesAreEqual(valueOnlies, testEntityType, globalAssetId, specificAssetIdValues, entity);
 	}
 
 	@Test
@@ -404,7 +404,7 @@ public class TestMappedSubmodelElementValue {
 				.getType());
 	}
 
-	private static void assertValuesAreEqual(List<ValueOnly> expectedValueOnlies, EntityType expectedEntityType, String expectedGlobalAssetID, List<SpecificAssetIDValue> expectedSpecificAssetIdValues, Entity entity) {
+	private static void assertValuesAreEqual(List<ValueOnly> expectedValueOnlies, EntityType expectedEntityType, String expectedGlobalAssetId, List<SpecificAssetIdValue> expectedSpecificAssetIdValues, Entity entity) {
 		assertEquals(((PropertyValue) expectedValueOnlies.get(0)
 				.getSubmodelElementValue()).getValue(),
 				((Property) entity.getStatements()
@@ -422,10 +422,10 @@ public class TestMappedSubmodelElementValue {
 
 		assertEquals(expectedEntityType, entity.getEntityType());
 
-		assertEquals(expectedGlobalAssetID, entity.getGlobalAssetID());
+		assertEquals(expectedGlobalAssetId, entity.getGlobalAssetId());
 
 		assertEquals(expectedSpecificAssetIdValues.stream()
-				.map(SpecificAssetIDValue::toSpecificAssetID)
+				.map(SpecificAssetIdValue::toSpecificAssetId)
 				.collect(Collectors.toList()), entity.getSpecificAssetIds());
 	}
 
@@ -654,7 +654,7 @@ public class TestMappedSubmodelElementValue {
 	}
 
 	private SubmodelElement getSubmodelElementAtIndex(SubmodelElementCollection submodelElementCollection, int index) {
-		return ((List<SubmodelElement>) submodelElementCollection.getValue()).get(index);
+		return submodelElementCollection.getValue().get(index);
 	}
 
 	private SubmodelElement getSubmodelElementAtIndex(SubmodelElementList submodelElementList, int index) {

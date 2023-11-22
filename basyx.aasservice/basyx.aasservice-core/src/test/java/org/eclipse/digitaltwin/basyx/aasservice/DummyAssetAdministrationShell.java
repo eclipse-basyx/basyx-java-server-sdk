@@ -26,7 +26,7 @@ public class DummyAssetAdministrationShell {
 	public static AssetAdministrationShell getDummyShell() {
 		return new DefaultAssetAdministrationShell.Builder().id("arbitrary")
 				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
-						.globalAssetID(SUBMODEL_ID).build())
+						.globalAssetId(SUBMODEL_ID).build())
 				.build();
 	}
 

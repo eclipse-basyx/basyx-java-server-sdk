@@ -116,6 +116,7 @@ public class TestMqttAasService extends AasServiceSuite {
 		return mqttFeature.decorate(serviceFactory);
 	}
 
+	@Override
 	@Test
 	public void setAssetInformation() {
 		AssetInformation assetInfo = createDummyAssetInformation();
@@ -128,7 +129,7 @@ public class TestMqttAasService extends AasServiceSuite {
 
 	private AssetInformation createDummyAssetInformation() {
 		AssetInformation assetInfo = new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
-				.globalAssetID("assetIDTestKey")
+				.globalAssetId("assetIDTestKey")
 				.build();
 		return assetInfo;
 	}

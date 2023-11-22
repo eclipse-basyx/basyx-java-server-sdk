@@ -25,7 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -143,7 +142,7 @@ public class InMemorySubmodelService implements SubmodelService {
 		}
 		if (parentSme instanceof SubmodelElementCollection) {
 			SubmodelElementCollection collection = (SubmodelElementCollection) parentSme;
-			Collection<SubmodelElement> submodelElements = collection.getValue();
+			List<SubmodelElement> submodelElements = collection.getValue();
 			submodelElements.add(submodelElement);
 			collection.setValue(submodelElements);
 			return;
