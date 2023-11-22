@@ -2,7 +2,6 @@
 	"modelType": "Submodel",
 	"id": "8A7104BDAB57E185",
 	"idShort": "AllSubmodelElementsIdShort",
-	"kind": "Instance",
 	"submodelElements": [
 		{
 			"modelType": "Property",
