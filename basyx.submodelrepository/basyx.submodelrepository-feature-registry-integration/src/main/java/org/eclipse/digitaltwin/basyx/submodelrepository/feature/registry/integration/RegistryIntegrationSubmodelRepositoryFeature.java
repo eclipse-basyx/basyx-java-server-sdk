@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
 
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
@@ -42,16 +41,16 @@ import org.springframework.stereotype.Component;
 public class RegistryIntegrationSubmodelRepositoryFeature implements SubmodelRepositoryFeature {
 	public final static String FEATURENAME = "basyx.submodelrepository.feature.registryintegration";
 
-	private SubmodelRepositoryRegistryLink smRepositoryRegistryLink;
+	private SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink;
 
 	@Autowired
-	public RegistryIntegrationSubmodelRepositoryFeature(SubmodelRepositoryRegistryLink smRepositoryRegistryLink) {
-		this.smRepositoryRegistryLink = smRepositoryRegistryLink;
+	public RegistryIntegrationSubmodelRepositoryFeature(SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink) {
+		this.submodelRepositoryRegistryLink = submodelRepositoryRegistryLink;
 	}
 
 	@Override
-	public SubmodelRepositoryFactory decorate(SubmodelRepositoryFactory smRepositoryFactory) {
-		return new RegistryIntegrationSubmodelRepositoryFactory(smRepositoryFactory, smRepositoryRegistryLink);
+	public SubmodelRepositoryFactory decorate(SubmodelRepositoryFactory submodelRepositoryFactory) {
+		return new RegistryIntegrationSubmodelRepositoryFactory(submodelRepositoryFactory, submodelRepositoryRegistryLink);
 	}
 
 	@Override

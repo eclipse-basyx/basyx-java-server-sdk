@@ -51,16 +51,16 @@ public class SubmodelDescriptorFactory {
 
 	private static final String SUBMODEL_INTERFACE = "SUBMODEL-3.0";
 	private static final String SUBMODEL_REPOSITORY_PATH = "/submodels";
-	
+
 	private Submodel submodel;
-	private String smRepositoryURL;
+	private String submodelRepositoryURL;
 
 	private AttributeMapper attributeMapper;
 
-	public SubmodelDescriptorFactory(Submodel submodel, String smRepositoryBaseURL) {
+	public SubmodelDescriptorFactory(Submodel submodel, String submodelRepositoryBaseURL) {
 		super();
 		this.submodel = submodel;
-		this.smRepositoryURL = createSubmodelRepositoryUrl(smRepositoryBaseURL);
+		this.submodelRepositoryURL = createSubmodelRepositoryUrl(submodelRepositoryBaseURL);
 		this.attributeMapper = new DefaultAttributeMapperFactory().create();
 	}
 
@@ -153,7 +153,7 @@ public class SubmodelDescriptorFactory {
 	}
 
 	private ProtocolInformation createProtocolInformation(String shellId) {
-		String href = String.format("%s/%s", smRepositoryURL, Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
+		String href = String.format("%s/%s", submodelRepositoryURL, Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
 
 		ProtocolInformation protocolInformation = new ProtocolInformation();
 		protocolInformation.endpointProtocol(getProtocol(href));
@@ -177,13 +177,13 @@ public class SubmodelDescriptorFactory {
 			throw new RuntimeException();
 		}
 	}
-	
-	private String createSubmodelRepositoryUrl(String smRepositoryBaseURL) {
+
+	private String createSubmodelRepositoryUrl(String submodelRepositoryBaseURL) {
 
 		try {
-			return new URL(new URL(smRepositoryBaseURL), SUBMODEL_REPOSITORY_PATH).toString();
+			return new URL(new URL(submodelRepositoryBaseURL), SUBMODEL_REPOSITORY_PATH).toString();
 		} catch (MalformedURLException e) {
-			throw new RuntimeException("The Submodel Repository Base url is malformed " + e.getMessage());
+			throw new RuntimeException("The Submodel Repository Base url is malformed.\n" + e.getMessage());
 		}
 	}
 

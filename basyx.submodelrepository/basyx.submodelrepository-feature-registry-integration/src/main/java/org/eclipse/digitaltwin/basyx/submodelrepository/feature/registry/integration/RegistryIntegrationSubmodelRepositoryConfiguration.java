@@ -44,9 +44,9 @@ public class RegistryIntegrationSubmodelRepositoryConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public SubmodelRepositoryRegistryLink getAasRepositoryRegistryLink(@Value("${basyx.submodelrepository.feature.registryintegration}") String registryBasePath, @Value("${basyx.externalurl}") String smRepositoryBaseURL) {
+	public SubmodelRepositoryRegistryLink getAasRepositoryRegistryLink(@Value("${basyx.submodelrepository.feature.registryintegration}") String registryBasePath, @Value("${basyx.externalurl}") String submodelRepositoryBaseURL) {
 	
-		return new SubmodelRepositoryRegistryLink(new SubmodelRegistryApi(registryBasePath), smRepositoryBaseURL);
+		return new SubmodelRepositoryRegistryLink(new SubmodelRegistryApi(registryBasePath), submodelRepositoryBaseURL);
 	}
 
 }

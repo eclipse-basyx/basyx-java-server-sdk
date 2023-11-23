@@ -29,9 +29,9 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
 /**
- * Application for testing the {@link RegistryIntegrationSubmodelRepository} feature.
- * The first argument is the Submodel Repository Base URL, the second argument is the Submodel
- * Registry URL.
+ * Application for testing the {@link RegistryIntegrationSubmodelRepository}
+ * feature. The first argument is the Submodel Repository Base URL, the second
+ * argument is the Submodel Registry URL.
  * 
  * @author schnicke, danish
  *
@@ -39,10 +39,10 @@ import org.junit.runner.Result;
 public class SubmodelRepositoryRegistryTestLinkApplication {
 
 	public static void main(String[] args) throws Exception {
-		String smRepoBaseUrl = getSubmodelRepositoryBaseUrl(args);
-		String smRegUrl = getSubmodelRegistryUrl(args);
+		String submodelRepoBaseUrl = getSubmodelRepositoryBaseUrl(args);
+		String submodelRegUrl = getSubmodelRegistryUrl(args);
 
-		Result result = runTests(smRepoBaseUrl, smRegUrl);
+		Result result = runTests(submodelRepoBaseUrl, submodelRegUrl);
 
 		printResults(result);
 	}
@@ -51,9 +51,9 @@ public class SubmodelRepositoryRegistryTestLinkApplication {
 		System.out.println("Finished. Result: Failures: " + result.getFailureCount() + ". Ignored: " + result.getIgnoreCount() + ". Tests run: " + result.getRunCount() + ". Time: " + result.getRunTime() + "ms.");
 	}
 
-	private static Result runTests(String smRepoBaseUrl, String smRegUrl) {
-		SubmodelRepositoryRegistryTestLink.submodelRepoBaseUrl = smRepoBaseUrl;
-		SubmodelRepositoryRegistryTestLink.submodelRegistryUrl = smRegUrl;
+	private static Result runTests(String submodelRepoBaseUrl, String submodelRegUrl) {
+		SubmodelRepositoryRegistryTestLink.submodelRepoBaseUrl = submodelRepoBaseUrl;
+		SubmodelRepositoryRegistryTestLink.submodelRegistryUrl = submodelRegUrl;
 
 		JUnitCore junit = new JUnitCore();
 		junit.addListener(new TextListener(System.out));

@@ -41,7 +41,7 @@ public class RepositoryRegistryLinkException extends RuntimeException {
 	}
 
 	private static String getMessage(String id) {
-		return "Unable to link the element with id " + id + " with the Registry";
+		return "Unable to link the element with id '" + id + "' with the Registry.";
 	}
 
 }

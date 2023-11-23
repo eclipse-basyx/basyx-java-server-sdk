@@ -90,7 +90,7 @@ public class AasRepositoryRegistryTestLink {
 
 		assertDescriptionDeletionAtRegistry();
 	}
-	
+
 	private AssetAdministrationShellDescriptor retrieveDescriptorFromRegistry() throws ApiException {
 		RegistryAndDiscoveryInterfaceApi api = new RegistryAndDiscoveryInterfaceApi(aasRegistryUrl);
 
@@ -171,13 +171,13 @@ public class AasRepositoryRegistryTestLink {
 			throw new RuntimeException();
 		}
 	}
-	
+
 	private static String createAasRepositoryUrl(String aasRepositoryBaseURL) {
 
 		try {
 			return new URL(new URL(aasRepositoryBaseURL), AAS_REPOSITORY_PATH).toString();
 		} catch (MalformedURLException e) {
-			throw new RuntimeException("The AAS Repository Base url is malformed " + e.getMessage());
+			throw new RuntimeException("The AAS Repository Base url is malformed. " + e.getMessage());
 		}
 	}
 

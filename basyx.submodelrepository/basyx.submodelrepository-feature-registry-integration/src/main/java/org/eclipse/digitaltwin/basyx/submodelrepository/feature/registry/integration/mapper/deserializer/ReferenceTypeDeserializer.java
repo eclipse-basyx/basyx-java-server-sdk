@@ -44,9 +44,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class ReferenceTypeDeserializer extends JsonDeserializer<ReferenceTypes> {
 
 	@Override
-	public ReferenceTypes deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+	public ReferenceTypes deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException, JacksonException {
 		try {
-			JsonNode node = p.getCodec().readTree(p);
+			JsonNode node = parser.getCodec()
+					.readTree(parser);
 
 			String value = node.asText();
 
@@ -55,7 +56,7 @@ public class ReferenceTypeDeserializer extends JsonDeserializer<ReferenceTypes> 
 			return ReferenceTypes.valueOf(ReferenceTypes.class, compatibleEnumValue);
 
 		} catch (Exception e) {
-			throw new RuntimeException("Unable to deserialize the ReferenceTypes Enum");
+			throw new RuntimeException("Unable to deserialize the ReferenceTypes Enum.");
 		}
 	}
 

@@ -66,26 +66,26 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 	}
 
 	@Override
-	public AssetAdministrationShell getAas(String aasId) throws ElementDoesNotExistException {
-		return decorated.getAas(aasId);
+	public AssetAdministrationShell getAas(String shellId) throws ElementDoesNotExistException {
+		return decorated.getAas(shellId);
 	}
 
 	@Override
-	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException {
-		decorated.createAas(aas);
-		
-		integrateAasWithRegistry(aas, aasRepositoryRegistryLink.getAasRepositoryBaseURL());
+	public void createAas(AssetAdministrationShell shell) throws CollidingIdentifierException {
+		decorated.createAas(shell);
+
+		integrateAasWithRegistry(shell, aasRepositoryRegistryLink.getAasRepositoryBaseURL());
 	}
 
 	@Override
-	public void updateAas(String aasId, AssetAdministrationShell aas) {
-		decorated.updateAas(aasId, aas);
+	public void updateAas(String shellId, AssetAdministrationShell shell) {
+		decorated.updateAas(shellId, shell);
 	}
 
 	@Override
-	public void deleteAas(String aasId) {
-		AssetAdministrationShell shell = decorated.getAas(aasId);
-		decorated.deleteAas(aasId);
+	public void deleteAas(String shellId) {
+		AssetAdministrationShell shell = decorated.getAas(shellId);
+		decorated.deleteAas(shellId);
 
 		deleteFromRegistry(shell.getId());
 	}
@@ -96,56 +96,56 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 	}
 
 	@Override
-	public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo) {
-		return decorated.getSubmodelReferences(aasId, pInfo);
+	public CursorResult<List<Reference>> getSubmodelReferences(String shellId, PaginationInfo paginationInfo) {
+		return decorated.getSubmodelReferences(shellId, paginationInfo);
 	}
 
 	@Override
-	public void addSubmodelReference(String aasId, Reference submodelReference) {
-		decorated.addSubmodelReference(aasId, submodelReference);
+	public void addSubmodelReference(String shellId, Reference submodelReference) {
+		decorated.addSubmodelReference(shellId, submodelReference);
 	}
 
 	@Override
-	public void removeSubmodelReference(String aasId, String submodelId) {
-		decorated.removeSubmodelReference(aasId, submodelId);
+	public void removeSubmodelReference(String shellId, String submodelId) {
+		decorated.removeSubmodelReference(shellId, submodelId);
 	}
 
 	@Override
-	public void setAssetInformation(String aasId, AssetInformation aasInfo) throws ElementDoesNotExistException {
-		decorated.setAssetInformation(aasId, aasInfo);
+	public void setAssetInformation(String shellId, AssetInformation sehllInfo) throws ElementDoesNotExistException {
+		decorated.setAssetInformation(shellId, sehllInfo);
 	}
 
 	@Override
-	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException {
-		return decorated.getAssetInformation(aasId);
+	public AssetInformation getAssetInformation(String shellId) throws ElementDoesNotExistException {
+		return decorated.getAssetInformation(shellId);
 	}
-	
+
 	private void integrateAasWithRegistry(AssetAdministrationShell shell, String aasRepositoryURL) {
 		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(shell, aasRepositoryURL).create();
-		
+
 		RegistryAndDiscoveryInterfaceApi registryApi = aasRepositoryRegistryLink.getRegistryApi();
-		
+
 		try {
 			registryApi.postAssetAdministrationShellDescriptor(descriptor);
-			
+
 			logger.info("Shell {} has been automatically linked with the Registry", shell.getId());
 		} catch (ApiException e) {
 			e.printStackTrace();
-			
+
 			throw new RepositoryRegistryLinkException(shell.getId());
 		}
 	}
-	
+
 	private void deleteFromRegistry(String shellId) {
 		RegistryAndDiscoveryInterfaceApi registryApi = aasRepositoryRegistryLink.getRegistryApi();
-		
+
 		try {
 			registryApi.deleteAssetAdministrationShellDescriptorById(shellId);
-			
-			logger.info("Shell {} has been automatically un-linked from the Registry", shellId);
+
+			logger.info("Shell '{}' has been automatically un-linked from the Registry.", shellId);
 		} catch (ApiException e) {
 			e.printStackTrace();
-			
+
 			throw new RepositoryRegistryUnlinkException(shellId);
 		}
 	}

@@ -36,16 +36,16 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactor
 public class RegistryIntegrationSubmodelRepositoryFactory implements SubmodelRepositoryFactory {
 
 	private SubmodelRepositoryFactory decorated;
-	private SubmodelRepositoryRegistryLink smRepositoryRegistryLink;
+	private SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink;
 	
-	public RegistryIntegrationSubmodelRepositoryFactory(SubmodelRepositoryFactory decorated, SubmodelRepositoryRegistryLink smRepositoryRegistryLink) {
+	public RegistryIntegrationSubmodelRepositoryFactory(SubmodelRepositoryFactory decorated, SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink) {
 		this.decorated = decorated;
-		this.smRepositoryRegistryLink = smRepositoryRegistryLink;
+		this.submodelRepositoryRegistryLink = submodelRepositoryRegistryLink;
 	}
 
 	@Override
 	public SubmodelRepository create() {
-		return new RegistryIntegrationSubmodelRepository(decorated.create(), smRepositoryRegistryLink);
+		return new RegistryIntegrationSubmodelRepository(decorated.create(), submodelRepositoryRegistryLink);
 	}
 
 }

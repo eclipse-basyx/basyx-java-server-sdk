@@ -44,9 +44,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class DataTypeDefXsdDeserializer extends JsonDeserializer<DataTypeDefXsd> {
 
 	@Override
-	public DataTypeDefXsd deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+	public DataTypeDefXsd deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException, JacksonException {
 		try {
-			JsonNode node = p.getCodec().readTree(p);
+			JsonNode node = parser.getCodec()
+					.readTree(parser);
 
 			String value = node.asText();
 
@@ -54,7 +55,7 @@ public class DataTypeDefXsdDeserializer extends JsonDeserializer<DataTypeDefXsd>
 
 			return DataTypeDefXsd.valueOf(DataTypeDefXsd.class, compatibleEnumValue);
 		} catch (Exception e) {
-			throw new RuntimeException("Unable to deserialize the DataTypeDefXsd Enum");
+			throw new RuntimeException("Unable to deserialize the DataTypeDefXsd Enum.");
 		}
 	}
 

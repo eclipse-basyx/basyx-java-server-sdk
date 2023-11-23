@@ -46,11 +46,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author danish
  */
 public class AttributeMapper {
-	
+
 	private Logger logger = LoggerFactory.getLogger(AttributeMapper.class);
-	
+
 	private ObjectMapper mapper;
-	
+
 	public AttributeMapper(ObjectMapper mapper) {
 		this.mapper = mapper;
 	}
@@ -64,11 +64,11 @@ public class AttributeMapper {
 	 */
 	public List<LangStringTextType> mapDescription(List<org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType> descriptions) {
 		CustomTypeCloneFactory<org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType, LangStringTextType> cloneFactory = new CustomTypeCloneFactory<>(LangStringTextType.class, mapper);
-		
+
 		List<LangStringTextType> mappedDescriptions = cloneFactory.create(descriptions);
-		
+
 		if (mappedDescriptions == null)
-			logger.error("Descriptions could not be mapped due to a failure");
+			logger.error("Descriptions could not be mapped due to a failure.");
 
 		return mappedDescriptions;
 	}
@@ -82,11 +82,11 @@ public class AttributeMapper {
 	 */
 	public List<LangStringNameType> mapDisplayName(List<org.eclipse.digitaltwin.aas4j.v3.model.LangStringNameType> displayNames) {
 		CustomTypeCloneFactory<org.eclipse.digitaltwin.aas4j.v3.model.LangStringNameType, LangStringNameType> cloneFactory = new CustomTypeCloneFactory<>(LangStringNameType.class, mapper);
-		
+
 		List<LangStringNameType> mappedDisplayNames = cloneFactory.create(displayNames);
-		
+
 		if (mappedDisplayNames == null)
-			logger.error("DisplayNames could not be mapped due to a failure");
+			logger.error("DisplayNames could not be mapped due to a failure.");
 
 		return mappedDisplayNames;
 	}
@@ -100,11 +100,11 @@ public class AttributeMapper {
 	 */
 	public List<Extension> mapExtensions(List<org.eclipse.digitaltwin.aas4j.v3.model.Extension> extensions) {
 		CustomTypeCloneFactory<org.eclipse.digitaltwin.aas4j.v3.model.Extension, Extension> cloneFactory = new CustomTypeCloneFactory<>(Extension.class, mapper);
-		
+
 		List<Extension> mappedExtensions = cloneFactory.create(extensions);
-		
+
 		if (mappedExtensions == null)
-			logger.error("Extensions could not be mapped due to a failure");
+			logger.error("Extensions could not be mapped due to a failure.");
 
 		return cloneFactory.create(extensions);
 	}
@@ -118,11 +118,11 @@ public class AttributeMapper {
 	 */
 	public AdministrativeInformation mapAdministration(org.eclipse.digitaltwin.aas4j.v3.model.AdministrativeInformation administrativeInformation) {
 		CustomTypeCloneFactory<org.eclipse.digitaltwin.aas4j.v3.model.AdministrativeInformation, AdministrativeInformation> cloneFactory = new CustomTypeCloneFactory<>(AdministrativeInformation.class, mapper);
-		
+
 		AdministrativeInformation mappedAdministrativeInformation = cloneFactory.create(administrativeInformation);
-		
+
 		if (mappedAdministrativeInformation == null)
-			logger.error("AdministrativeInformation could not be mapped due to a failure");
+			logger.error("AdministrativeInformation could not be mapped due to a failure.");
 
 		return mappedAdministrativeInformation;
 	}

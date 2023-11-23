@@ -36,12 +36,12 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 public class SubmodelRepositoryRegistryLink {
 	
 	private SubmodelRegistryApi registryApi;
-	private String smRepositoryBaseURL;
+	private String submodelRepositoryBaseURL;
 	
-	public SubmodelRepositoryRegistryLink(SubmodelRegistryApi registryApi, String smRepositoryBaseURL) {
+	public SubmodelRepositoryRegistryLink(SubmodelRegistryApi registryApi, String submodelRepositoryBaseURL) {
 		super();
 		this.registryApi = registryApi;
-		this.smRepositoryBaseURL = smRepositoryBaseURL;
+		this.submodelRepositoryBaseURL = submodelRepositoryBaseURL;
 	}
 
 	public SubmodelRegistryApi getRegistryApi() {
@@ -49,7 +49,7 @@ public class SubmodelRepositoryRegistryLink {
 	}
 
 	public String getSubmodelRepositoryBaseURL() {
-		return smRepositoryBaseURL;
+		return submodelRepositoryBaseURL;
 	}
 
 }

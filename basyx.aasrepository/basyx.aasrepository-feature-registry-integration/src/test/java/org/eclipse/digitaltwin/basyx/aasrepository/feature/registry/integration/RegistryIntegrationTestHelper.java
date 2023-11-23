@@ -60,9 +60,9 @@ public class RegistryIntegrationTestHelper {
 	private static final LangStringTextType AAS_LANG_STRING_TEXT_TYPE_2 = new DefaultLangStringTextType.Builder().language("en").text("An Example").build();
 
 	// LangStringTextType AasRegistry
-	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType AASREG_LANG_STRING_TEXT_TYPE_1 = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType().language("de")
+	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType AAS_REG_LANG_STRING_TEXT_TYPE_1 = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType().language("de")
 			.text("Ein Beispiel");
-	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType AASREG_LANG_STRING_TEXT_TYPE_2 = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType().language("en")
+	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType AAS_REG_LANG_STRING_TEXT_TYPE_2 = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType().language("en")
 			.text("An Example");
 
 	// LangStringNameType AAS4J
@@ -70,9 +70,9 @@ public class RegistryIntegrationTestHelper {
 	private static final LangStringNameType AAS4J_LANG_STRING_NAME_TYPE_2 = new DefaultLangStringNameType.Builder().language("de").text("Namenstypzeichenfolge").build();
 
 	// LangStringNameType AasRegistry
-	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringNameType AASREG_LANG_STRING_NAME_TYPE_1 = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringNameType().language("en")
+	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringNameType AAS_REG_LANG_STRING_NAME_TYPE_1 = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringNameType().language("en")
 			.text("Name type string");
-	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringNameType AASREG_LANG_STRING_NAME_TYPE_2 = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringNameType().language("de")
+	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringNameType AAS_REG_LANG_STRING_NAME_TYPE_2 = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringNameType().language("de")
 			.text("Namenstypzeichenfolge");
 
 	// AssetKind AAS4J
@@ -86,10 +86,10 @@ public class RegistryIntegrationTestHelper {
 	private static final EmbeddedDataSpecification AAS4JEMB_EMBEDDED_DATA_SPECIFICATION = new DefaultEmbeddedDataSpecification.Builder().dataSpecification(AAS4J_DATASPECIFICATION).build();
 
 	// Administration AasRegistry
-	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference AASREG_DATASPECIFICATION = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference()
+	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference AAS_REG_DATASPECIFICATION = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference()
 			.keys(Arrays.asList(new Key().type(org.eclipse.digitaltwin.basyx.aasregistry.client.model.KeyTypes.BLOB).value("BlobValue"))).type(org.eclipse.digitaltwin.basyx.aasregistry.client.model.ReferenceTypes.EXTERNALREFERENCE);
-	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.EmbeddedDataSpecification AASREG_EMBEDDED_DATA_SPECIFICATION = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.EmbeddedDataSpecification()
-			.dataSpecification(AASREG_DATASPECIFICATION);
+	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.EmbeddedDataSpecification AAS_REG_EMBEDDED_DATA_SPECIFICATION = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.EmbeddedDataSpecification()
+			.dataSpecification(AAS_REG_DATASPECIFICATION);
 	
 	private static final String VERSION = "1.0.0";
 	private static final String REVISION = "3";
@@ -99,7 +99,7 @@ public class RegistryIntegrationTestHelper {
 	private static final Extension AAS4J_EXTENSION = new DefaultExtension.Builder().semanticId(AAS4J_DATASPECIFICATION).name("extension").valueType(org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd.STRING).value("extensionValue").build();
 
 	// Extension AasRegistry
-	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension AASREG_EXTENSION = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension().semanticId(AASREG_DATASPECIFICATION).name("extension")
+	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension AAS_REG_EXTENSION = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension().semanticId(AAS_REG_DATASPECIFICATION).name("extension")
 			.valueType(DataTypeDefXsd.STRING).value("extensionValue").supplementalSemanticIds(new ArrayList<>()).refersTo(new ArrayList<>());
 
 	public static List<LangStringTextType> getAas4jLangStringTextTypes() {
@@ -107,7 +107,7 @@ public class RegistryIntegrationTestHelper {
 	}
 
 	public static List<org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType> getAasRegLangStringTextTypes() {
-		return Arrays.asList(AASREG_LANG_STRING_TEXT_TYPE_1, AASREG_LANG_STRING_TEXT_TYPE_2);
+		return Arrays.asList(AAS_REG_LANG_STRING_TEXT_TYPE_1, AAS_REG_LANG_STRING_TEXT_TYPE_2);
 	}
 
 	public static AdministrativeInformation getAas4jAdministration() {
@@ -115,7 +115,7 @@ public class RegistryIntegrationTestHelper {
 	}
 
 	public static org.eclipse.digitaltwin.basyx.aasregistry.client.model.AdministrativeInformation getAasRegAdministration() {
-		return new org.eclipse.digitaltwin.basyx.aasregistry.client.model.AdministrativeInformation().embeddedDataSpecifications(Arrays.asList(AASREG_EMBEDDED_DATA_SPECIFICATION)).version(VERSION).revision(REVISION)
+		return new org.eclipse.digitaltwin.basyx.aasregistry.client.model.AdministrativeInformation().embeddedDataSpecifications(Arrays.asList(AAS_REG_EMBEDDED_DATA_SPECIFICATION)).version(VERSION).revision(REVISION)
 				.templateId(TEMPLATE_ID);
 	}
 
@@ -124,7 +124,7 @@ public class RegistryIntegrationTestHelper {
 	}
 
 	public static List<org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringNameType> getAasRegLangStringNameTypes() {
-		return Arrays.asList(AASREG_LANG_STRING_NAME_TYPE_1, AASREG_LANG_STRING_NAME_TYPE_2);
+		return Arrays.asList(AAS_REG_LANG_STRING_NAME_TYPE_1, AAS_REG_LANG_STRING_NAME_TYPE_2);
 	}
 
 	public static List<Extension> getAas4jExtensions() {
@@ -132,7 +132,7 @@ public class RegistryIntegrationTestHelper {
 	}
 
 	public static List<org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension> getAasRegExtensions() {
-		return Arrays.asList(AASREG_EXTENSION);
+		return Arrays.asList(AAS_REG_EXTENSION);
 	}
 
 }

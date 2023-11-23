@@ -44,18 +44,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class KeyTypeDeserializer extends JsonDeserializer<KeyTypes> {
 
 	@Override
-	public KeyTypes deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+	public KeyTypes deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException, JacksonException {
 		try {
-			JsonNode node = p.getCodec().readTree(p);
-			
+			JsonNode node = parser.getCodec()
+					.readTree(parser);
+
 			String value = node.asText();
-			
+
 			String compatibleEnumValue = StringUtils.remove(value, '_');
-			
+
 			return KeyTypes.valueOf(KeyTypes.class, compatibleEnumValue);
-			
+
 		} catch (Exception e) {
-			throw new RuntimeException("Unable to deserialize the KeyTypes Enum");
+			throw new RuntimeException("Unable to deserialize the KeyTypes Enum.");
 		}
 	}
 

@@ -2,7 +2,7 @@
 This feature automatically integrates the Descriptor with the Registry while creation of the Submodel at the Repository. <br>
 It also automatically removes the Descriptor from the Registry when the Submodel is removed from the Repository.
 
-To enable this feature, following two properties should be configured:
+To enable this feature, the following two properties should be configured:
 
 ```
 basyx.submodelrepository.feature.registryintegration = {Submodel-Registry-Base-Url}

@@ -64,9 +64,9 @@ public class DefaultAttributeMapperFactory {
         return new AttributeMapper(mapper);
 	}
 	
-	private <T> SimpleModule createDeserializerModule(Class<T> type, JsonDeserializer<? extends T> deser) {
+	private <T> SimpleModule createDeserializerModule(Class<T> type, JsonDeserializer<? extends T> deserializer) {
 		SimpleModule moduleDeser = new SimpleModule();
-        moduleDeser.addDeserializer(type, deser);
+        moduleDeser.addDeserializer(type, deserializer);
         
 		return moduleDeser;
 	}
