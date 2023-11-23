@@ -146,10 +146,10 @@ public class AasDescriptorFactory {
 
 	private void setGlobalAssetId(AssetInformation assetInformation, AssetAdministrationShellDescriptor descriptor) {
 
-		if (assetInformation == null || assetInformation.getGlobalAssetID() == null)
+		if (assetInformation == null || assetInformation.getGlobalAssetId() == null)
 			return;
 
-		descriptor.setGlobalAssetId(assetInformation.getGlobalAssetID());
+		descriptor.setGlobalAssetId(assetInformation.getGlobalAssetId());
 	}
 
 	private void setEndpointItem(String shellId, AssetAdministrationShellDescriptor descriptor) {

@@ -31,7 +31,6 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AdministrativeInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
-import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXSD;
 import org.eclipse.digitaltwin.aas4j.v3.model.EmbeddedDataSpecification;
 import org.eclipse.digitaltwin.aas4j.v3.model.Extension;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
@@ -97,7 +96,7 @@ public class RegistryIntegrationTestHelper {
 	private static final String TEMPLATE_ID = "ID2.0";
 
 	// Extension AAS4J
-	private static final Extension AAS4J_EXTENSION = new DefaultExtension.Builder().semanticID(AAS4J_DATASPECIFICATION).name("extension").valueType(DataTypeDefXSD.STRING).value("extensionValue").build();
+	private static final Extension AAS4J_EXTENSION = new DefaultExtension.Builder().semanticId(AAS4J_DATASPECIFICATION).name("extension").valueType(org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd.STRING).value("extensionValue").build();
 
 	// Extension AasRegistry
 	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension AASREG_EXTENSION = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension().semanticId(AASREG_DATASPECIFICATION).name("extension")
@@ -112,7 +111,7 @@ public class RegistryIntegrationTestHelper {
 	}
 
 	public static AdministrativeInformation getAas4jAdministration() {
-		return new DefaultAdministrativeInformation.Builder().embeddedDataSpecifications(AAS4JEMB_EMBEDDED_DATA_SPECIFICATION).version(VERSION).revision(REVISION).templateID(TEMPLATE_ID).build();
+		return new DefaultAdministrativeInformation.Builder().embeddedDataSpecifications(AAS4JEMB_EMBEDDED_DATA_SPECIFICATION).version(VERSION).revision(REVISION).templateId(TEMPLATE_ID).build();
 	}
 
 	public static org.eclipse.digitaltwin.basyx.aasregistry.client.model.AdministrativeInformation getAasRegAdministration() {

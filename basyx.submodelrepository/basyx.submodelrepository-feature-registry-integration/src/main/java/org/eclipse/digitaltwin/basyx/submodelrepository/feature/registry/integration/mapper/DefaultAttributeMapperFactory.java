@@ -25,19 +25,12 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AdministrativeInformation;
-import org.eclipse.digitaltwin.aas4j.v3.model.Extension;
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.KeyTypes;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ReferenceTypes;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.deserializer.DataTypeDefXsdDeserializer;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.deserializer.KeyTypeDeserializer;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.deserializer.ReferenceTypeDeserializer;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.mixin.AdministrativeInformationMixin;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.mixin.ExtensionMixin;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.mixin.ReferenceMixin;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,12 +50,6 @@ public class DefaultAttributeMapperFactory {
 	 */
 	public AttributeMapper create() {
 		ObjectMapper mapper = new ObjectMapper();
-		
-		SimpleModule adminInfoMixInModule = createMixInModule(AdministrativeInformation.class, AdministrativeInformationMixin.class);
-		
-		SimpleModule referenceMixInModule = createMixInModule(Reference.class, ReferenceMixin.class);
-		
-		SimpleModule extensionMixInModule = createMixInModule(Extension.class, ExtensionMixin.class);
         
         SimpleModule keyTypesDeserModule = createDeserializerModule(KeyTypes.class, new KeyTypeDeserializer());
         
@@ -70,7 +57,7 @@ public class DefaultAttributeMapperFactory {
         
         SimpleModule dataTypeDeserModule = createDeserializerModule(DataTypeDefXsd.class, new DataTypeDefXsdDeserializer());
         
-        mapper.registerModules(adminInfoMixInModule, referenceMixInModule, extensionMixInModule, keyTypesDeserModule, refTypesDeserModule, dataTypeDeserModule);
+        mapper.registerModules(keyTypesDeserModule, refTypesDeserModule, dataTypeDeserModule);
         
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         
@@ -82,13 +69,6 @@ public class DefaultAttributeMapperFactory {
         moduleDeser.addDeserializer(type, deser);
         
 		return moduleDeser;
-	}
-
-	private SimpleModule createMixInModule(Class<?> targetType, Class<?> mixInClass) {
-		SimpleModule module = new SimpleModule();
-        module.setMixInAnnotation(targetType, mixInClass);
-        
-		return module;
 	}
 
 }

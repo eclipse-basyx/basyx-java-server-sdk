@@ -24,7 +24,6 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
 
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.RegistryIntegrationSubmodelRepository;
 import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;

@@ -87,7 +87,7 @@ public class SubmodelDescriptorFactory {
 
 		setAdministration(submodel.getAdministration(), descriptor);
 
-		setSemanticId(submodel.getSemanticID(), descriptor);
+		setSemanticId(submodel.getSemanticId(), descriptor);
 
 		setSupplementalSemanticId(submodel.getSupplementalSemanticIds(), descriptor);
 
