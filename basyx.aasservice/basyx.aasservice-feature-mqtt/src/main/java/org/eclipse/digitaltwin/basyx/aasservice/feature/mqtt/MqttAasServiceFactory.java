@@ -29,23 +29,27 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class MqttAasServiceFactory implements AasServiceFactory {
 
 	private AasServiceFactory decorated;
 	private IMqttClient client;
 	private MqttAasServiceTopicFactory topicFactory;
 	private String repoId;
+	private ObjectMapper objectMapper;
 
-	public MqttAasServiceFactory(AasServiceFactory decorated, IMqttClient client, MqttAasServiceTopicFactory topicFactory, String repoId) {
+	public MqttAasServiceFactory(AasServiceFactory decorated, IMqttClient client, MqttAasServiceTopicFactory topicFactory, String repoId, ObjectMapper objectMapper) {
 		this.decorated = decorated;
 		this.client = client;
 		this.topicFactory = topicFactory;
 		this.repoId = repoId;
+		this.objectMapper = objectMapper;
 	}
 
 	@Override
 	public AasService create(AssetAdministrationShell aas) {
-		return new MqttAasService(decorated.create(aas), client, topicFactory, repoId);
+		return new MqttAasService(decorated.create(aas), client, topicFactory, repoId, objectMapper);
 	}
 
 }
