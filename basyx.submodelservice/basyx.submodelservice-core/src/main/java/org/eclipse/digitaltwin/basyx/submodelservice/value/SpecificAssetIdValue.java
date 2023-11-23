@@ -27,8 +27,8 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetID;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 
 /**
  * Represents the {@link SpecificAssetId} value
@@ -36,28 +36,28 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetID;
  * @author danish
  *
  */
-public class SpecificAssetIDValue {
+public class SpecificAssetIdValue {
 	
 	private String name;
 	private String value;
 	private ReferenceValue externalSubjectId;
 	
 	@SuppressWarnings("unused")
-	private SpecificAssetIDValue() {
+	private SpecificAssetIdValue() {
 		super();
 	}
 
-	public SpecificAssetIDValue(String name, String value, ReferenceValue externalSubjectId) {
+	public SpecificAssetIdValue(String name, String value, ReferenceValue externalSubjectId) {
 		this.name = name;
 		this.value = value;
 		this.externalSubjectId = externalSubjectId;
 	}
 
-	public SpecificAssetIDValue(SpecificAssetID specificAssetID) {
-		this.name = specificAssetID.getName();
-		this.value = specificAssetID.getValue();
-		if (specificAssetID.getExternalSubjectID() != null) {
-			this.externalSubjectId = new ReferenceValue(specificAssetID.getExternalSubjectID());
+	public SpecificAssetIdValue(SpecificAssetId specificAssetId) {
+		this.name = specificAssetId.getName();
+		this.value = specificAssetId.getValue();
+		if (specificAssetId.getExternalSubjectId() != null) {
+			this.externalSubjectId = new ReferenceValue(specificAssetId.getExternalSubjectId());
 		}
 	}
 
@@ -76,7 +76,7 @@ public class SpecificAssetIDValue {
 		return externalSubjectId.toReference();
 	}
 
-	public SpecificAssetID toSpecificAssetID() {
-		return new DefaultSpecificAssetID.Builder().externalSubjectID(getExternalSubjectId()).name(getName()).value(getValue()).build();
+	public SpecificAssetId toSpecificAssetId() {
+		return new DefaultSpecificAssetId.Builder().externalSubjectId(getExternalSubjectId()).name(getName()).value(getValue()).build();
 	}
 }

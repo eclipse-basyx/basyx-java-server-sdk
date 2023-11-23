@@ -296,7 +296,7 @@ public abstract class AasRepositorySuite {
 
 	private AssetInformation createDummyAssetInformation() {
 		return new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
-				.globalAssetID("assetIDTestKey")
+				.globalAssetId("assetIDTestKey")
 				.build();
 	}
 

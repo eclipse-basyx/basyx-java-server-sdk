@@ -40,7 +40,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXSD;
+import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -384,7 +384,7 @@ public abstract class SubmodelRepositorySuite {
 		Property property = new DefaultProperty.Builder().idShort("test321")
 				.category("cat1")
 				.value("305")
-				.valueType(DataTypeDefXSD.INTEGER)
+				.valueType(DataTypeDefXsd.INTEGER)
 				.build();
 		repo.createSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, property);
 
@@ -411,12 +411,12 @@ public abstract class SubmodelRepositorySuite {
 		Property propertyInCollection = new DefaultProperty.Builder().idShort("test654")
 				.category("cat1")
 				.value("305")
-				.valueType(DataTypeDefXSD.INTEGER)
+				.valueType(DataTypeDefXsd.INTEGER)
 				.build();
 		Property propertyInList = new DefaultProperty.Builder().idShort("test987")
 				.category("cat1")
 				.value("305")
-				.valueType(DataTypeDefXSD.INTEGER)
+				.valueType(DataTypeDefXsd.INTEGER)
 				.build();
 
 		String idShortPathPropertyInSmeCol = DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE;
@@ -527,7 +527,7 @@ public abstract class SubmodelRepositorySuite {
 		return new DefaultSubmodel.Builder().id(id)
 				.submodelElements(new DefaultProperty.Builder().idShort("prop")
 						.value("testValue")
-						.valueType(DataTypeDefXSD.STRING)
+						.valueType(DataTypeDefXsd.STRING)
 						.build())
 				.build();
 	}

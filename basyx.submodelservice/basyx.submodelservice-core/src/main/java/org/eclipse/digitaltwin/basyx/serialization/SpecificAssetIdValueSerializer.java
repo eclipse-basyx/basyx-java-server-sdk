@@ -29,7 +29,7 @@ import java.io.IOException;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceValue;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIDValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIdValue;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -38,10 +38,10 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 /**
  * @author witt, jungjan
  */
-public class SpecificAssetIDValueSerializer extends JsonSerializer<SpecificAssetIDValue> {
+public class SpecificAssetIdValueSerializer extends JsonSerializer<SpecificAssetIdValue> {
 
 	@Override
-	public void serialize(SpecificAssetIDValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+	public void serialize(SpecificAssetIdValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
 		gen.writeStartObject();
 		gen.writePOJOField(value.getName(), value.getValue());
 

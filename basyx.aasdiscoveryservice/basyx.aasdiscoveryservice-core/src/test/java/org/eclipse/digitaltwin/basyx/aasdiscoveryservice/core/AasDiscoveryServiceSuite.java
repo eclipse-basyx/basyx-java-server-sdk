@@ -33,8 +33,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetID;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 import org.eclipse.digitaltwin.basyx.core.exceptions.AssetLinkDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
@@ -82,11 +82,11 @@ public abstract class AasDiscoveryServiceSuite {
 		assetLinks.stream()
 				.forEach(assetLink -> createAssetLink(assetLink, discoveryService));
 
-		List<SpecificAssetID> expectedResult = Arrays.asList(createDummySpecificAssetID("DummyAssetName3", "DummyAsset_3_Value"), createDummySpecificAssetID("DummyAssetName4", "DummyAsset_4_Value"));
+		List<SpecificAssetId> expectedResult = Arrays.asList(createDummySpecificAssetId("DummyAssetName3", "DummyAsset_3_Value"), createDummySpecificAssetId("DummyAssetName4", "DummyAsset_4_Value"));
 
 		String shellIdentifier = "TestAasID2";
 
-		List<SpecificAssetID> actualResult = discoveryService.getAllAssetLinksById(shellIdentifier);
+		List<SpecificAssetId> actualResult = discoveryService.getAllAssetLinksById(shellIdentifier);
 
 		assertEquals(expectedResult.size(), actualResult.size());
 		assertEquals(expectedResult, actualResult);
@@ -98,12 +98,12 @@ public abstract class AasDiscoveryServiceSuite {
 
 		String shellIdentifier = "TestAasID3";
 
-		List<SpecificAssetID> expectedAssetIds = Arrays.asList(createDummySpecificAssetID("DummyAssetName4", "DummyAsset_4_Value"), createDummySpecificAssetID("DummyAssetName5", "DummyAsset_5_Value"));
+		List<SpecificAssetId> expectedAssetIds = Arrays.asList(createDummySpecificAssetId("DummyAssetName4", "DummyAsset_4_Value"), createDummySpecificAssetId("DummyAssetName5", "DummyAsset_5_Value"));
 
-		List<SpecificAssetID> createdAssetIds = discoveryService.createAllAssetLinksById(shellIdentifier, expectedAssetIds);
+		List<SpecificAssetId> createdAssetIds = discoveryService.createAllAssetLinksById(shellIdentifier, expectedAssetIds);
 		assertEquals(expectedAssetIds, createdAssetIds);
 
-		List<SpecificAssetID> actualAssetIds = discoveryService.getAllAssetLinksById(shellIdentifier);
+		List<SpecificAssetId> actualAssetIds = discoveryService.getAllAssetLinksById(shellIdentifier);
 
 		assertEquals(expectedAssetIds.size(), actualAssetIds.size());
 		assertEquals(expectedAssetIds, actualAssetIds);
@@ -153,29 +153,29 @@ public abstract class AasDiscoveryServiceSuite {
 		String dummyShellIdentifier_1 = "TestAasID1";
 		String dummyShellIdentifier_2 = "TestAasID2";
 
-		SpecificAssetID specificAssetID_1 = createDummySpecificAssetID("DummyAssetName1", "DummyAsset_1_Value");
-		SpecificAssetID specificAssetID_2 = createDummySpecificAssetID("DummyAssetName2", "DummyAsset_2_Value");
+		SpecificAssetId specificAssetId_1 = createDummySpecificAssetId("DummyAssetName1", "DummyAsset_1_Value");
+		SpecificAssetId specificAssetId_2 = createDummySpecificAssetId("DummyAssetName2", "DummyAsset_2_Value");
 
-		SpecificAssetID specificAssetID_3 = createDummySpecificAssetID("DummyAssetName3", "DummyAsset_3_Value");
-		SpecificAssetID specificAssetID_4 = createDummySpecificAssetID("DummyAssetName4", "DummyAsset_4_Value");
+		SpecificAssetId specificAssetId_3 = createDummySpecificAssetId("DummyAssetName3", "DummyAsset_3_Value");
+		SpecificAssetId specificAssetId_4 = createDummySpecificAssetId("DummyAssetName4", "DummyAsset_4_Value");
 
-		return Arrays.asList(new AssetLink(dummyShellIdentifier_1, Arrays.asList(specificAssetID_1, specificAssetID_2)), new AssetLink(dummyShellIdentifier_2, Arrays.asList(specificAssetID_3, specificAssetID_4)));
+		return Arrays.asList(new AssetLink(dummyShellIdentifier_1, Arrays.asList(specificAssetId_1, specificAssetId_2)), new AssetLink(dummyShellIdentifier_2, Arrays.asList(specificAssetId_3, specificAssetId_4)));
 	}
 
 	public static void createAssetLink(AssetLink assetLink, AasDiscoveryService aasDiscoveryService) {
-		aasDiscoveryService.createAllAssetLinksById(assetLink.getShellIdentifier(), assetLink.getSpecificAssetIDs());
+		aasDiscoveryService.createAllAssetLinksById(assetLink.getShellIdentifier(), assetLink.getSpecificAssetIds());
 	}
 
 	public static AssetLink getSingleDummyAasAssetLink(String shellId) {
 
-		SpecificAssetID specificAssetID_1 = createDummySpecificAssetID("TestAsset1", "TestAssetValue1");
-		SpecificAssetID specificAssetID_2 = createDummySpecificAssetID("TestAsset2", "TestAssetValue2");
+		SpecificAssetId specificAssetId_1 = createDummySpecificAssetId("TestAsset1", "TestAssetValue1");
+		SpecificAssetId specificAssetId_2 = createDummySpecificAssetId("TestAsset2", "TestAssetValue2");
 
-		return new AssetLink(shellId, Arrays.asList(specificAssetID_1, specificAssetID_2));
+		return new AssetLink(shellId, Arrays.asList(specificAssetId_1, specificAssetId_2));
 	}
 
-	protected static SpecificAssetID createDummySpecificAssetID(String name, String value) {
-		return new DefaultSpecificAssetID.Builder().name(name)
+	protected static SpecificAssetId createDummySpecificAssetId(String name, String value) {
+		return new DefaultSpecificAssetId.Builder().name(name)
 				.value(value)
 				.build();
 	}
