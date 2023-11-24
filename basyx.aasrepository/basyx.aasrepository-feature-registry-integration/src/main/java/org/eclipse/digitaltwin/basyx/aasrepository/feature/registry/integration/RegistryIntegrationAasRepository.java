@@ -111,8 +111,8 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 	}
 
 	@Override
-	public void setAssetInformation(String shellId, AssetInformation sehllInfo) throws ElementDoesNotExistException {
-		decorated.setAssetInformation(shellId, sehllInfo);
+	public void setAssetInformation(String shellId, AssetInformation shellInfo) throws ElementDoesNotExistException {
+		decorated.setAssetInformation(shellId, shellInfo);
 	}
 
 	@Override

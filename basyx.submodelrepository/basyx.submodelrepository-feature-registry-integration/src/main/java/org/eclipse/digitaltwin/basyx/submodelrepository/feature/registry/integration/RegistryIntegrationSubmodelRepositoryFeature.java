@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integr
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.SubmodelRepositoryFeature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
@@ -39,9 +40,15 @@ import org.springframework.stereotype.Component;
 @Component
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.submodelrepository.feature.registryintegration:}') && !T(org.springframework.util.StringUtils).isEmpty('${basyx.externalurl:}')")
 public class RegistryIntegrationSubmodelRepositoryFeature implements SubmodelRepositoryFeature {
-	public final static String FEATURENAME = "basyx.submodelrepository.feature.registryintegration";
+	public static final String FEATURENAME = "basyx.submodelrepository.feature.registryintegration";
 
 	private SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink;
+	
+	@Value("${" + FEATURENAME + ":}")
+	private String registryBaseURL;
+	
+	@Value("${basyx.externalurl:}")
+	private String aasRepositoryExternalBaseURL;
 
 	@Autowired
 	public RegistryIntegrationSubmodelRepositoryFeature(SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink) {
@@ -69,6 +76,6 @@ public class RegistryIntegrationSubmodelRepositoryFeature implements SubmodelRep
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return !registryBaseURL.isBlank() && !aasRepositoryExternalBaseURL.isBlank();
 	}
 }

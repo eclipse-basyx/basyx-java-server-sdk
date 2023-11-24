@@ -69,10 +69,10 @@ public class SubmodelRepositoryRegistryTestLink {
 	private static final SubmodelDescriptor DUMMY_DESCRIPTOR = createExpectedDescriptor();
 
 	@Test
-	public void createAas() throws FileNotFoundException, IOException, ApiException {
-		String aasJsonContent = getAas1JSONString();
+	public void createSubmodel() throws FileNotFoundException, IOException, ApiException {
+		String submodelJsonContent = getSubmodelJSONString();
 
-		CloseableHttpResponse creationResponse = createAasOnRepo(aasJsonContent);
+		CloseableHttpResponse creationResponse = createSubmodelOnRepo(submodelJsonContent);
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
 
 		SubmodelDescriptor actualDescriptor = retrieveDescriptorFromRegistry();
@@ -83,13 +83,13 @@ public class SubmodelRepositoryRegistryTestLink {
 	}
 
 	@Test
-	public void deleteAas() throws FileNotFoundException, IOException, ApiException {
-		String aasJsonContent = getAas1JSONString();
+	public void deleteSubmodel() throws FileNotFoundException, IOException, ApiException {
+		String submodelJsonContent = getSubmodelJSONString();
 
-		CloseableHttpResponse creationResponse = createAasOnRepo(aasJsonContent);
+		CloseableHttpResponse creationResponse = createSubmodelOnRepo(submodelJsonContent);
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
 
-		CloseableHttpResponse deleteResponse = deleteAasFromRepo(DUMMY_SUBMODEL_ID);
+		CloseableHttpResponse deleteResponse = deleteSubmodelFromRepo(DUMMY_SUBMODEL_ID);
 		assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());
 
 		assertDescriptionDeletionAtRegistry();
@@ -102,13 +102,13 @@ public class SubmodelRepositoryRegistryTestLink {
 	}
 
 	private void resetRepository() throws IOException {
-		CloseableHttpResponse deleteResponse = deleteAasFromRepo(DUMMY_SUBMODEL_ID);
+		CloseableHttpResponse deleteResponse = deleteSubmodelFromRepo(DUMMY_SUBMODEL_ID);
 
 		assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());
 	}
 
-	private CloseableHttpResponse deleteAasFromRepo(String shellId) throws IOException {
-		return BaSyxHttpTestUtils.executeDeleteOnURL(getSpecificAasAccessURL(shellId));
+	private CloseableHttpResponse deleteSubmodelFromRepo(String shellId) throws IOException {
+		return BaSyxHttpTestUtils.executeDeleteOnURL(getSpecificSubmodelAccessURL(shellId));
 	}
 
 	private void assertDescriptionDeletionAtRegistry() throws ApiException {
@@ -121,15 +121,15 @@ public class SubmodelRepositoryRegistryTestLink {
 		assertTrue(actualDescriptors.isEmpty());
 	}
 
-	private String getAas1JSONString() throws FileNotFoundException, IOException {
+	private String getSubmodelJSONString() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodel.json");
 	}
 
-	private CloseableHttpResponse createAasOnRepo(String aasJsonContent) throws IOException {
+	private CloseableHttpResponse createSubmodelOnRepo(String aasJsonContent) throws IOException {
 		return BaSyxHttpTestUtils.executePostOnURL(createSubmodelRepositoryUrl(submodelRepoBaseUrl), aasJsonContent);
 	}
 
-	private String getSpecificAasAccessURL(String aasId) {
+	private String getSpecificSubmodelAccessURL(String aasId) {
 		return createSubmodelRepositoryUrl(submodelRepoBaseUrl) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
 	}
 
@@ -184,7 +184,7 @@ public class SubmodelRepositoryRegistryTestLink {
 		try {
 			return new URL(new URL(smRepositoryBaseURL), SUBMODEL_REPOSITORY_PATH).toString();
 		} catch (MalformedURLException e) {
-			throw new RuntimeException("The Submodel Repository Base url is malformed " + e.getMessage());
+			throw new RuntimeException("The Submodel Repository Base url is malformed.\n " + e.getMessage());
 		}
 	}
 

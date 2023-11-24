@@ -30,6 +30,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
@@ -44,6 +45,12 @@ public class RegistryIntegrationAasRepositoryFeature implements AasRepositoryFea
 	public final static String FEATURENAME = "basyx.aasrepository.feature.registryintegration";
 
 	private AasRepositoryRegistryLink aasRepositoryRegistryLink;
+	
+	@Value("${" + FEATURENAME + ":}")
+	private String registryBaseURL;
+	
+	@Value("${basyx.externalurl:}")
+	private String submodelRepositoryExternalBaseURL;
 
 	@Autowired
 	public RegistryIntegrationAasRepositoryFeature(AasRepositoryRegistryLink aasRepositoryRegistryLink) {
@@ -71,6 +78,6 @@ public class RegistryIntegrationAasRepositoryFeature implements AasRepositoryFea
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return !registryBaseURL.isBlank() && !submodelRepositoryExternalBaseURL.isBlank();
 	}
 }
