@@ -162,8 +162,8 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 		decorated.deleteFileValue(submodelId, idShortPath);
 	}
 
-	private void integrateSubmodelWithRegistry(Submodel submodel, String aasRepositoryURL) {
-		SubmodelDescriptor descriptor = new SubmodelDescriptorFactory(submodel, aasRepositoryURL, attributeMapper).create();
+	private void integrateSubmodelWithRegistry(Submodel submodel, String submodelRepositoryURL) {
+		SubmodelDescriptor descriptor = new SubmodelDescriptorFactory(submodel, submodelRepositoryURL, attributeMapper).create();
 
 		SubmodelRegistryApi registryApi = submodelRepositoryRegistryLink.getRegistryApi();
 
