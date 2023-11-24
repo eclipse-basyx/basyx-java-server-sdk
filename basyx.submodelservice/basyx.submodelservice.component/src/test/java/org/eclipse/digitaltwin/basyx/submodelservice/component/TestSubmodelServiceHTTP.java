@@ -25,8 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.component;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.io.IOException;
 
 import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
@@ -55,7 +53,7 @@ public class TestSubmodelServiceHTTP {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(accessUrl);
 		String actualSubmodel = new BasicHttpClientResponseHandler().handleResponse(response);
 		String expectedSubmodel = BaSyxHttpTestUtils.readJSONStringFromClasspath(SUBMODEL_PATH);
-		assertEquals(expectedSubmodel, actualSubmodel);
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodel, actualSubmodel);
 	}
 
 	@AfterAll

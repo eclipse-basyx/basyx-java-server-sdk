@@ -29,7 +29,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.pagination.InlineResponse200;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
@@ -94,23 +94,20 @@ public class LookupApiController implements LookupApi {
 		paginatedAasIds.setPagingMetadata(new PagedResultPagingMetadata().cursor(filteredResult.getCursor()));
 
 		return new ResponseEntity<PagedResult>(paginatedAasIds, HttpStatus.OK);
-	}
+    }
 
-	public ResponseEntity<List<SpecificAssetID>> getAllAssetLinksById(
-			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier) {
-		List<SpecificAssetID> assetLinks = aasDiscoveryService.getAllAssetLinksById(aasIdentifier.getIdentifier());
+    public ResponseEntity<List<SpecificAssetId>> getAllAssetLinksById(@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier) {
+        List<SpecificAssetId> assetLinks = aasDiscoveryService.getAllAssetLinksById(aasIdentifier.getIdentifier());
+        
+        return new ResponseEntity<>(assetLinks, HttpStatus.OK);
+    }
 
-		return new ResponseEntity<>(assetLinks, HttpStatus.OK);
-	}
-
-	public ResponseEntity<List<SpecificAssetID>> postAllAssetLinksById(
-			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,
-			@Parameter(in = ParameterIn.DEFAULT, description = "A list of specific Asset identifiers", required = true, schema = @Schema()) @Valid @RequestBody List<SpecificAssetID> body) {
-		List<SpecificAssetID> assetIDs = aasDiscoveryService.createAllAssetLinksById(aasIdentifier.getIdentifier(), body);
-
-		return new ResponseEntity<List<SpecificAssetID>>(assetIDs, HttpStatus.CREATED);
-	}
-
+    public ResponseEntity<List<SpecificAssetId>> postAllAssetLinksById(@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,@Parameter(in = ParameterIn.DEFAULT, description = "A list of specific Asset identifiers", required=true, schema=@Schema()) @Valid @RequestBody List<SpecificAssetId> body) {
+        List<SpecificAssetId> assetIDs = aasDiscoveryService.createAllAssetLinksById(aasIdentifier.getIdentifier(), body);
+        
+        return new ResponseEntity<List<SpecificAssetId>>(assetIDs, HttpStatus.CREATED);
+    }
+    
 	private List<String> getDecodedAssetIds(List<Base64UrlEncodedIdentifier> assetIds) {
 
 		if (assetIds == null) {

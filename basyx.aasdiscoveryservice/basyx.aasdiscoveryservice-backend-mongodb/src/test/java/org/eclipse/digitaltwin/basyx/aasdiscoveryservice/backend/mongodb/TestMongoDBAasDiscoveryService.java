@@ -30,7 +30,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
@@ -77,23 +77,23 @@ public class TestMongoDBAasDiscoveryService extends AasDiscoveryServiceSuite {
 
 		String dummyShellIdentifier = "DummyShellID";
 
-		List<SpecificAssetID> expectedAssetIDs = createDummyAssetLinkOnDiscoveryService(dummyShellIdentifier, aasDiscoveryService);
+		List<SpecificAssetId> expectedAssetIDs = createDummyAssetLinkOnDiscoveryService(dummyShellIdentifier, aasDiscoveryService);
 
-		List<SpecificAssetID> actualAssetIDs = aasDiscoveryService.getAllAssetLinksById(dummyShellIdentifier);
+		List<SpecificAssetId> actualAssetIDs = aasDiscoveryService.getAllAssetLinksById(dummyShellIdentifier);
 
 		assertEquals(expectedAssetIDs, actualAssetIDs);
 
 		removeCreatedAssetLink(dummyShellIdentifier, aasDiscoveryService);
 	}
 
-	private List<SpecificAssetID> createDummyAssetLinkOnDiscoveryService(String testShellIdentifier, AasDiscoveryService aasDiscoveryService) {
+	private List<SpecificAssetId> createDummyAssetLinkOnDiscoveryService(String testShellIdentifier, AasDiscoveryService aasDiscoveryService) {
 		AssetLink assetLink = getSingleDummyAasAssetLink(testShellIdentifier);
 		createAssetLink(assetLink, aasDiscoveryService);
 
-		SpecificAssetID specificAssetID_1 = createDummySpecificAssetID("TestAsset1", "TestAssetValue1");
-		SpecificAssetID specificAssetID_2 = createDummySpecificAssetID("TestAsset2", "TestAssetValue2");
+		SpecificAssetId specificAssetId_1 = createDummySpecificAssetId("TestAsset1", "TestAssetValue1");
+		SpecificAssetId specificAssetId_2 = createDummySpecificAssetId("TestAsset2", "TestAssetValue2");
 
-		return Arrays.asList(specificAssetID_1, specificAssetID_2);
+		return Arrays.asList(specificAssetId_1, specificAssetId_2);
 	}
 
 	private void removeCreatedAssetLink(String dummyShellIdentifier, AasDiscoveryService aasDiscoveryService) {
