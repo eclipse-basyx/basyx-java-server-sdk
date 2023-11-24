@@ -48,7 +48,7 @@ public class RegistryIntegrationSubmodelRepositoryFeature implements SubmodelRep
 	private String registryBaseURL;
 	
 	@Value("${basyx.externalurl:}")
-	private String aasRepositoryExternalBaseURL;
+	private String submodelRepositoryExternalBaseURL;
 
 	@Autowired
 	public RegistryIntegrationSubmodelRepositoryFeature(SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink) {
@@ -76,6 +76,6 @@ public class RegistryIntegrationSubmodelRepositoryFeature implements SubmodelRep
 
 	@Override
 	public boolean isEnabled() {
-		return !registryBaseURL.isBlank() && !aasRepositoryExternalBaseURL.isBlank();
+		return !registryBaseURL.isBlank() && !submodelRepositoryExternalBaseURL.isBlank();
 	}
 }
