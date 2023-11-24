@@ -22,6 +22,7 @@
 		<module>basyx.aasregistry</module>
 		<module>basyx.aasenvironment</module>
 		<module>basyx.conceptdescriptionrepository</module>
+		<module>basyx.aasxfileserver</module>		
 		<module>basyx.aasdiscoveryservice</module>
 	</modules>
 	<name>BaSyx Parent</name>
@@ -50,7 +51,7 @@
 		<docker.image.tag>${revision}</docker.image.tag>
 		<docker.host.port>8081</docker.host.port>
 		<docker.container.port>8081</docker.container.port>
-		<aas4j-version>1.0.0-milestone-03.1</aas4j-version>
+		<aas4j-version>1.0.0-milestone-04</aas4j-version>
 	</properties>
 	<build>
 		<plugins>
@@ -440,8 +441,7 @@
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
 				<version>${revision}</version>
-			</dependency>
-			
+			</dependency>			
 			<!-- basyx.basyx.aasdiscoveryservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -471,6 +471,22 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasdiscoveryservice.component</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<!-- basyx.aasxfileserver -->
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasxfileserver-core</artifactId>
+				<version>${revision}</version>
+			</dependency>			
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasxfileserver-backend-inmemory</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasxfileserver.component</artifactId>
 				<version>${revision}</version>
 			</dependency>
 
@@ -679,7 +695,7 @@
 				<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
-			</dependency>
+			</dependency>			
 			<!-- basyx.basyx.aasdiscoveryservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -717,6 +733,25 @@
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency> 
+			<!-- basyx.aasxfileserver -->
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasxfileserver-core</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasxfileserver-backend-inmemory</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasxfileserver.component</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>

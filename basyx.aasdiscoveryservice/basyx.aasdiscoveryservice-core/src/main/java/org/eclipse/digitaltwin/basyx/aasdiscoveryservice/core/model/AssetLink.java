@@ -29,11 +29,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 
 /**
  * Represents the link between {@link AssetAdministrationShell} and
- * {@link SpecificAssetID}
+ * {@link SpecificAssetId}
  * 
  * @author danish
  *
@@ -41,25 +41,25 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
 public class AssetLink {
 
 	private String shellIdentifier;
-	private List<SpecificAssetID> specificAssetIDs;
+	private List<SpecificAssetId> specificAssetIds;
 
-	public AssetLink(String shellIdentifier, List<SpecificAssetID> specificAssetIDs) {
+	public AssetLink(String shellIdentifier, List<SpecificAssetId> specificAssetIds) {
 		super();
 		this.shellIdentifier = shellIdentifier;
-		this.specificAssetIDs = specificAssetIDs;
+		this.specificAssetIds = specificAssetIds;
 	}
 
 	public String getShellIdentifier() {
 		return shellIdentifier;
 	}
 
-	public List<SpecificAssetID> getSpecificAssetIDs() {
-		return specificAssetIDs;
+	public List<SpecificAssetId> getSpecificAssetIds() {
+		return specificAssetIds;
 	}
 
-	public List<String> getSpecificAssetIDStrings() {
-		return specificAssetIDs.stream()
-				.map(SpecificAssetID::getValue)
+	public List<String> getSpecificAssetIdStrings() {
+		return specificAssetIds.stream()
+				.map(SpecificAssetId::getValue)
 				.collect(Collectors.toList());
 	}
 }

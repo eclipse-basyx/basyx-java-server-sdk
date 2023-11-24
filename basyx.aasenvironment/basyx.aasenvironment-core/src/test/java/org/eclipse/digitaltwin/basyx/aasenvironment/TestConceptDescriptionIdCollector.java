@@ -93,25 +93,25 @@ public class TestConceptDescriptionIdCollector {
 	private List<SubmodelElement> createDummySMEs() {
 		Property dummyProperty1 = new DefaultProperty.Builder().idShort("dummyProperty1IdShort")
 				.value("dummyProperty1Value")
-				.semanticID(new DefaultReference.Builder().keys(
+				.semanticId(new DefaultReference.Builder().keys(
 						new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION).value("dummyProperty1CDId").build())
 						.build())
 				.build();
 		Property dummyProperty2 = new DefaultProperty.Builder().idShort("dummyProperty2IdShort")
 				.value("dummyProperty2Value")
-				.semanticID(new DefaultReference.Builder().keys(
+				.semanticId(new DefaultReference.Builder().keys(
 						new DefaultKey.Builder().type(KeyTypes.CAPABILITY).value("dummyProperty2CapabilityId").build())
 						.build())
 				.build();
 		Property dummyProperty3 = new DefaultProperty.Builder().idShort("dummyProperty3IdShort")
 				.value("dummyProperty3Value")
-				.semanticID(new DefaultReference.Builder().keys(
+				.semanticId(new DefaultReference.Builder().keys(
 						new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION).value("dummyProperty3CDId").build())
 						.build())
 				.build();
 		SubmodelElementCollection dummySMC1 = new DefaultSubmodelElementCollection.Builder().idShort("dummySMC1IdShort")
 				.value(dummyProperty3)
-				.semanticID(new DefaultReference.Builder().keys(
+				.semanticId(new DefaultReference.Builder().keys(
 						new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION).value("dummySMC1CDId").build())
 						.build())
 				.build();
@@ -122,7 +122,7 @@ public class TestConceptDescriptionIdCollector {
 	private SubmodelElement createDummySMEWithoutCDSemantic() {
 		return new DefaultProperty.Builder().idShort("dummyNoCDSemanticPropertyIdShort")
 				.value("dummyNoCDSemanticPropertyValue")
-				.semanticID(new DefaultReference.Builder().keys(
+				.semanticId(new DefaultReference.Builder().keys(
 						new DefaultKey.Builder().type(KeyTypes.BLOB).value("dummyNoCDSemanticPropertyBlobId").build())
 						.build())
 				.build();

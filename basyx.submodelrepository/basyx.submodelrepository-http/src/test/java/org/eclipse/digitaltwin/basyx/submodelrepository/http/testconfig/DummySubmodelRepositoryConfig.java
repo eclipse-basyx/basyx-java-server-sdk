@@ -23,41 +23,28 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.testconfig;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.MongoDBAasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
+package org.eclipse.digitaltwin.basyx.submodelrepository.http.testconfig;
+
+import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 
 /**
- * Configuration for tests
+ * Configuration for tests  
  * 
- * @author danish
+ * @author danish, kammognie
  *
  */
 @Configuration
-public class DummyConfig {
-
-	private final String COLLECTION = "discoveryServiceHTTPTestCollection";
+public class DummySubmodelRepositoryConfig {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public AasDiscoveryService createAasDiscoveryService() {
-		return new MongoDBAasDiscoveryService(createTemplate(), COLLECTION);
+	public SubmodelRepository createSubmodelRepository() {
+		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
 	}
-
-	private MongoTemplate createTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-
-		MongoClient client = MongoClients.create(connectionURL);
-
-		return new MongoTemplate(client, "BaSyxTestDb");
-	}
-
 }

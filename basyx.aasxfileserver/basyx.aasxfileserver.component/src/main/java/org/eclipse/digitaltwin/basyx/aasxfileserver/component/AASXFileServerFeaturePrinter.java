@@ -22,30 +22,34 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasxfileserver.component;
 
-package org.eclipse.digitaltwin.basyx.aasrepository.http.testconfig;
+import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryBackendProvider;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
+import org.eclipse.digitaltwin.basyx.aasxfileserver.feature.AASXFileServerFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
- * Configuration for tests
+ * Prints all AASXFileServer features that are on the classpath
  * 
- * @author danish, kammognie
+ * @author schnicke, chaithra
  *
  */
-@Configuration
-public class DummyConfig {
+@Service
+public class AASXFileServerFeaturePrinter {
 
-	@Bean
-    @ConditionalOnMissingBean
-    public AasRepository createAasRepository() {
-		return new SimpleAasRepositoryFactory(new AasInMemoryBackendProvider(), new InMemoryAasServiceFactory()).create();
-    }
+	private static final Logger logger = LoggerFactory.getLogger(AASXFileServerFeaturePrinter.class);
+
+	@Autowired
+	public AASXFileServerFeaturePrinter(List<AASXFileServerFeature> features) {
+		logger.info("-------------------- AASX File Server Features: --------------------");
+		for (AASXFileServerFeature feature : features) {
+			logger.info("BaSyxFeature '{}' is enabled: {}", feature.getName(), feature.isEnabled());
+		}
+
+		logger.info("----------------------------------------------------------------- ");
+	}
 }

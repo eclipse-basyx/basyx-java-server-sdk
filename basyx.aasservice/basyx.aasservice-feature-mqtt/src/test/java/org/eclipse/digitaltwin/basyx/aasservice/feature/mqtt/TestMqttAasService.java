@@ -28,6 +28,8 @@ package org.eclipse.digitaltwin.basyx.aasservice.feature.mqtt;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -45,6 +47,9 @@ import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener;
+import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
+import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
+import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
@@ -74,16 +79,17 @@ public class TestMqttAasService extends AasServiceSuite {
 
 	private MqttAasService mqttAasService;
 	private AssetAdministrationShell shell;
+	private static ObjectMapper objectMapper;
 
 	@BeforeClass
 	public static void setUpClass() throws MqttException, IOException {
+		objectMapper = configureObjectMapper();
 		mqttBroker = startBroker();
 		listener = configureInterceptListener(mqttBroker);
 		mqttClient = createAndConnectClient();
 
 		aasRepository = createMqttAasRepository();
 		mqttAasServiceFactory = createMqttAasServiceFactory(mqttClient);
-
 	}
 
 	@Before
@@ -105,10 +111,12 @@ public class TestMqttAasService extends AasServiceSuite {
 
 	private static AasServiceFactory createMqttAasServiceFactory(MqttClient client) {
 		AasServiceFactory serviceFactory = new InMemoryAasServiceFactory();
-		MqttAasServiceFeature mqttFeature = new MqttAasServiceFeature(client, aasRepository);
+		MqttAasServiceFeature mqttFeature = new MqttAasServiceFeature(client, aasRepository, objectMapper);
+		
 		return mqttFeature.decorate(serviceFactory);
 	}
 
+	@Override
 	@Test
 	public void setAssetInformation() {
 		AssetInformation assetInfo = createDummyAssetInformation();
@@ -121,7 +129,7 @@ public class TestMqttAasService extends AasServiceSuite {
 
 	private AssetInformation createDummyAssetInformation() {
 		AssetInformation assetInfo = new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
-				.globalAssetID("assetIDTestKey")
+				.globalAssetId("assetIDTestKey")
 				.build();
 		return assetInfo;
 	}
@@ -137,7 +145,6 @@ public class TestMqttAasService extends AasServiceSuite {
 	}
 
 	private String serialize(Object obj) {
-		ObjectMapper objectMapper = new ObjectMapper();
 		try {
 			return objectMapper.writeValueAsString(obj);
 		} catch (JsonProcessingException ignore) {
@@ -155,6 +162,12 @@ public class TestMqttAasService extends AasServiceSuite {
 
 		assertEquals(topicFactory.createRemoveSubmodelReferenceTopic(repoId, shell.getId()), listener.lastTopic);
 		assertEquals(serialize(DummyAssetAdministrationShell.submodelReference), listener.lastPayload);
+	}
+	
+	private static ObjectMapper configureObjectMapper() {
+		List<SerializationExtension> extensions = Arrays.asList(new Aas4JHTTPSerializationExtension());
+
+		return new BaSyxHTTPConfiguration().jackson2ObjectMapperBuilder(extensions).build();
 	}
 
 	private static AasRepository createMqttAasRepository() {

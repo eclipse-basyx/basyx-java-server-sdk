@@ -23,28 +23,23 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.aasxfileserver.component;
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.http.testconfig;
-
-import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 
 /**
- * Configuration for tests  
+ * Creates and starts the {@link AASXFileServer} off-the-shelf-component
  * 
- * @author danish, kammognie
+ * @author schnicke, chaithra
  *
  */
-@Configuration
-public class DummyConfig {
-
-	@Bean
-	@ConditionalOnMissingBean
-	public SubmodelRepository createSubmodelRepository() {
-		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
+public class AASXFileServerComponent {
+	public static void main(String[] args) {
+		SpringApplication.run(AASXFileServerComponent.class, args);
 	}
 }

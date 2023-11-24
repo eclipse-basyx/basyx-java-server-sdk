@@ -23,26 +23,17 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.testconfig;
+package org.eclipse.digitaltwin.basyx.aasxfileserver.feature;
 
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.InMemoryConceptDescriptionRepository;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServerFactory;
+import org.eclipse.digitaltwin.basyx.core.BaSyxFeature;
 
 /**
- * Configuration for tests
+ * Base interface for all features for the AASX File Server
  * 
- * @author danish, kammognie
+ * @author schnicke, chaithra
  *
  */
-@Configuration
-public class DummyConfig {
+public interface AASXFileServerFeature extends BaSyxFeature<AASXFileServerFactory> {
 
-		@Bean
-		@ConditionalOnMissingBean
-		public ConceptDescriptionRepository createConceptDescriptionRepository() {
-			return new InMemoryConceptDescriptionRepository();
-		}
 }

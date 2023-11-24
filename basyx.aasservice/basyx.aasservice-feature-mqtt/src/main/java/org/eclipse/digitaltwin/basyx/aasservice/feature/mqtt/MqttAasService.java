@@ -60,16 +60,17 @@ public class MqttAasService implements AasService {
 
 	private IMqttClient mqttClient;
 	private String repoId;
+	private ObjectMapper objectMapper;
 
-	public MqttAasService(AasService decorated, IMqttClient mqttClient, MqttAasServiceTopicFactory topicFactory, String repoId) {
+	public MqttAasService(AasService decorated, IMqttClient mqttClient, MqttAasServiceTopicFactory topicFactory, String repoId, ObjectMapper objectMapper) {
 		this.topicFactory = topicFactory;
 		this.decorated = decorated;
 		this.mqttClient = mqttClient;
 		this.repoId = repoId;
+		this.objectMapper = objectMapper;
 	}
 
 	public String serialize(Object obj) {
-		ObjectMapper objectMapper = new ObjectMapper();
 		try {
 			return objectMapper.writeValueAsString(obj);
 		} catch (JsonProcessingException e) {

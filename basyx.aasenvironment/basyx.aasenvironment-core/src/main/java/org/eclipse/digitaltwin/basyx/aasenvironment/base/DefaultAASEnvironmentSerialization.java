@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.Serializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.aasx.AASXSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.xml.XmlSerializer;
@@ -66,8 +65,8 @@ public class DefaultAASEnvironmentSerialization implements AasEnvironmentSeriali
 	private AasRepository aasRepository;
 	private SubmodelRepository submodelRepository;
 	private ConceptDescriptionRepository conceptDescriptionRepository;
-	private Serializer jsonSerializer = new JsonSerializer();
-	private Serializer xmlSerializer = new XmlSerializer();
+	private JsonSerializer jsonSerializer = new JsonSerializer();
+	private XmlSerializer xmlSerializer = new XmlSerializer();
 	private AASXSerializer aasxSerializer = new AASXSerializer();
 	private MetamodelCloneCreator cloneCreator = new MetamodelCloneCreator();
 	

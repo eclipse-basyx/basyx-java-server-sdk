@@ -1,12 +1,11 @@
 {
 	"paging_metadata": {
-		"cursor": "U2ltcGxlTGlzdA"
 	},
 	"result": [
 		{
 			"modelType": "SubmodelElementList",
 			"idShort": "SimpleList",
-			"orderRelevant": false,
+			"orderRelevant": true,
 			"value": [
 				{
 					"modelType": "Property",
