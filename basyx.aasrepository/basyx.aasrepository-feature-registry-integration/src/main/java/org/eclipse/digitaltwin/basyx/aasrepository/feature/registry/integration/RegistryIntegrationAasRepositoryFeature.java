@@ -29,6 +29,7 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -51,15 +52,18 @@ public class RegistryIntegrationAasRepositoryFeature implements AasRepositoryFea
 	
 	@Value("${basyx.externalurl:}")
 	private String aasRepositoryExternalBaseURL;
+	
+	private AttributeMapper attributeMapper;
 
 	@Autowired
-	public RegistryIntegrationAasRepositoryFeature(AasRepositoryRegistryLink aasRepositoryRegistryLink) {
+	public RegistryIntegrationAasRepositoryFeature(AasRepositoryRegistryLink aasRepositoryRegistryLink, AttributeMapper attributeMapper) {
 		this.aasRepositoryRegistryLink = aasRepositoryRegistryLink;
+		this.attributeMapper = attributeMapper;
 	}
 
 	@Override
 	public AasRepositoryFactory decorate(AasRepositoryFactory aasRepositoryFactory) {
-		return new RegistryIntegrationAasRepositoryFactory(aasRepositoryFactory, aasRepositoryRegistryLink);
+		return new RegistryIntegrationAasRepositoryFactory(aasRepositoryFactory, aasRepositoryRegistryLink, attributeMapper);
 	}
 
 	@Override

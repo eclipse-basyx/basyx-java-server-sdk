@@ -25,7 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -100,7 +99,7 @@ public class RegistryIntegrationTestHelper {
 
 	// Extension AasRegistry
 	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension AAS_REG_EXTENSION = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension().semanticId(AAS_REG_DATASPECIFICATION).name("extension")
-			.valueType(DataTypeDefXsd.STRING).value("extensionValue").supplementalSemanticIds(new ArrayList<>()).refersTo(new ArrayList<>());
+			.valueType(DataTypeDefXsd.STRING).value("extensionValue");
 
 	public static List<LangStringTextType> getAas4jLangStringTextTypes() {
 		return Arrays.asList(AAS4J_LANG_STRING_TEXT_TYPE_1, AAS_LANG_STRING_TEXT_TYPE_2);

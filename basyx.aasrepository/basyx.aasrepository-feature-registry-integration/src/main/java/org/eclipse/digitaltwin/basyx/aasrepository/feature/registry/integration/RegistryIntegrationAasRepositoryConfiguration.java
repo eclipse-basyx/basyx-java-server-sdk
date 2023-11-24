@@ -28,11 +28,14 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration
 
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Configuration for integrating {@link AasRepository} with AasRegistry
@@ -48,6 +51,13 @@ public class RegistryIntegrationAasRepositoryConfiguration {
 	public AasRepositoryRegistryLink getAasRepositoryRegistryLink(@Value("${basyx.aasrepository.feature.registryintegration}") String registryBasePath, @Value("${basyx.externalurl}") String aasRepositoryBaseURL) {
 	
 		return new AasRepositoryRegistryLink(new RegistryAndDiscoveryInterfaceApi(registryBasePath), aasRepositoryBaseURL);
+	}
+	
+	@Bean
+	@ConditionalOnMissingBean
+	public AttributeMapper getAasAttributeMapper(ObjectMapper objectMapper) {
+		
+		return new AttributeMapper(objectMapper);
 	}
 
 }

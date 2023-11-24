@@ -43,6 +43,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.slf4j.Logger;
@@ -59,10 +60,12 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 
 	private SubmodelRepository decorated;
 	private SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink;
+	private AttributeMapper attributeMapper;
 
-	public RegistryIntegrationSubmodelRepository(SubmodelRepository decorated, SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink) {
+	public RegistryIntegrationSubmodelRepository(SubmodelRepository decorated, SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink, AttributeMapper attributeMapper) {
 		this.decorated = decorated;
 		this.submodelRepositoryRegistryLink = submodelRepositoryRegistryLink;
+		this.attributeMapper = attributeMapper;
 	}
 
 	@Override
@@ -89,9 +92,9 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 
 	@Override
 	public void deleteSubmodel(String submodelId) throws ElementDoesNotExistException {
-		decorated.deleteSubmodel(submodelId);
-
 		deleteFromRegistry(submodelId);
+		
+		decorated.deleteSubmodel(submodelId);
 	}
 
 	@Override
@@ -160,14 +163,14 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 	}
 
 	private void integrateSubmodelWithRegistry(Submodel submodel, String aasRepositoryURL) {
-		SubmodelDescriptor descriptor = new SubmodelDescriptorFactory(submodel, aasRepositoryURL).create();
+		SubmodelDescriptor descriptor = new SubmodelDescriptorFactory(submodel, aasRepositoryURL, attributeMapper).create();
 
 		SubmodelRegistryApi registryApi = submodelRepositoryRegistryLink.getRegistryApi();
 
 		try {
 			registryApi.postSubmodelDescriptor(descriptor);
 
-			logger.info("Submodel {} has been automatically linked with the Registry", submodel.getId());
+			logger.info("Submodel '{}' has been automatically linked with the Registry", submodel.getId());
 		} catch (ApiException e) {
 			e.printStackTrace();
 
@@ -177,6 +180,12 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 
 	private void deleteFromRegistry(String submodelId) {
 		SubmodelRegistryApi registryApi = submodelRepositoryRegistryLink.getRegistryApi();
+		
+		if (!submodelExistsOnRegistry(submodelId, registryApi)) {
+			logger.error("Unable to un-link the Submodel descriptor '{}' from the Registry because it does not exist on the Registry.", submodelId);
+			
+			return;
+		}
 
 		try {
 			registryApi.deleteSubmodelDescriptorById(submodelId);
@@ -186,6 +195,16 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 			e.printStackTrace();
 
 			throw new RepositoryRegistryUnlinkException(submodelId);
+		}
+	}
+	
+	private boolean submodelExistsOnRegistry(String submodelId, SubmodelRegistryApi registryApi) {
+		try {
+			registryApi.getSubmodelDescriptorById(submodelId);
+			
+			return true;
+		} catch (ApiException e) {
+			return false;
 		}
 	}
 

@@ -33,6 +33,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.RepositoryRegistryLinkException;
@@ -54,10 +55,12 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 	private AasRepository decorated;
 	
 	private AasRepositoryRegistryLink aasRepositoryRegistryLink;
+	private AttributeMapper attributeMapper;
 
-	public RegistryIntegrationAasRepository(AasRepository decorated, AasRepositoryRegistryLink aasRepositoryRegistryLink) {
+	public RegistryIntegrationAasRepository(AasRepository decorated, AasRepositoryRegistryLink aasRepositoryRegistryLink, AttributeMapper attributeMapper) {
 		this.decorated = decorated;
 		this.aasRepositoryRegistryLink = aasRepositoryRegistryLink;
+		this.attributeMapper = attributeMapper;
 	}
 
 	@Override
@@ -84,10 +87,9 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 
 	@Override
 	public void deleteAas(String shellId) {
-		AssetAdministrationShell shell = decorated.getAas(shellId);
+		deleteFromRegistry(shellId);
+		
 		decorated.deleteAas(shellId);
-
-		deleteFromRegistry(shell.getId());
 	}
 
 	@Override
@@ -121,14 +123,14 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 	}
 
 	private void integrateAasWithRegistry(AssetAdministrationShell shell, String aasRepositoryURL) {
-		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(shell, aasRepositoryURL).create();
+		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(shell, aasRepositoryURL, attributeMapper).create();
 
 		RegistryAndDiscoveryInterfaceApi registryApi = aasRepositoryRegistryLink.getRegistryApi();
 
 		try {
 			registryApi.postAssetAdministrationShellDescriptor(descriptor);
 
-			logger.info("Shell {} has been automatically linked with the Registry", shell.getId());
+			logger.info("Shell '{}' has been automatically linked with the Registry", shell.getId());
 		} catch (ApiException e) {
 			e.printStackTrace();
 
@@ -138,6 +140,12 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 
 	private void deleteFromRegistry(String shellId) {
 		RegistryAndDiscoveryInterfaceApi registryApi = aasRepositoryRegistryLink.getRegistryApi();
+		
+		if (!shellExistsOnRegistry(shellId, registryApi)) {
+			logger.error("Unable to un-link the AAS descriptor '{}' from the Registry because it does not exist on the Registry.", shellId);
+			
+			return;
+		}
 
 		try {
 			registryApi.deleteAssetAdministrationShellDescriptorById(shellId);
@@ -147,6 +155,16 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 			e.printStackTrace();
 
 			throw new RepositoryRegistryUnlinkException(shellId);
+		}
+	}
+	
+	private boolean shellExistsOnRegistry(String shellId, RegistryAndDiscoveryInterfaceApi registryApi) {
+		try {
+			registryApi.getAssetAdministrationShellDescriptorById(shellId);
+			
+			return true;
+		} catch (ApiException e) {
+			return false;
 		}
 	}
 

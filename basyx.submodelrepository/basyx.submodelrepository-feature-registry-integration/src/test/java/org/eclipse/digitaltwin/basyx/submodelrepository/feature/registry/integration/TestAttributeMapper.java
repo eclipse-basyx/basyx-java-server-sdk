@@ -27,17 +27,21 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integr
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
+import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
+import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.AdministrativeInformation;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Extension;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringNameType;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringTextType;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Reference;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.DefaultAttributeMapperFactory;
-import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Unit tests for {@link AttributeMapper}
@@ -46,12 +50,7 @@ import org.junit.Test;
  */
 public class TestAttributeMapper {
 	
-	private static AttributeMapper attributeMapper;
-	
-	@BeforeClass
-	public static void setUp() {
-		attributeMapper =  new DefaultAttributeMapperFactory().create();
-	}
+	private static AttributeMapper attributeMapper = new AttributeMapper(configureObjectMapper());
 	
 	@Test
 	public void mapDescriptions() {
@@ -109,6 +108,12 @@ public class TestAttributeMapper {
 		
 		assertEquals(expectedSupplementalSemanticId.size(), actualSupplementalSemanticId.size());
 		assertEquals(expectedSupplementalSemanticId, actualSupplementalSemanticId);
+	}
+	
+	private static ObjectMapper configureObjectMapper() {
+		List<SerializationExtension> extensions = Arrays.asList(new Aas4JHTTPSerializationExtension());
+
+		return new BaSyxHTTPConfiguration().jackson2ObjectMapperBuilder(extensions).build();
 	}
 
 }

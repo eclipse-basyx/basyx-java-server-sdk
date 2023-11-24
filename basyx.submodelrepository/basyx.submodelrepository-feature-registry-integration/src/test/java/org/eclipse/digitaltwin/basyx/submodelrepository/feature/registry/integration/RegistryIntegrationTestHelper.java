@@ -25,7 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -93,7 +92,7 @@ public class RegistryIntegrationTestHelper {
 
 	// Extension SMRegistry
 	private static final org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Extension SUBMODEL_REG_EXTENSION = new org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Extension().semanticId(SUBMODEL_REG_DATASPECIFICATION).name("extension")
-			.valueType(DataTypeDefXsd.STRING).value("extensionValue").supplementalSemanticIds(new ArrayList<>()).refersTo(new ArrayList<>());
+			.valueType(DataTypeDefXsd.STRING).value("extensionValue");
 	
 	public static List<LangStringTextType> getAas4jLangStringTextTypes() {
 		return Arrays.asList(AAS4J_LANG_STRING_TEXT_TYPE_1, AAS4J_LANG_STRING_TEXT_TYPE_2);

@@ -27,11 +27,14 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integr
 
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Configuration for integrating {@link SubmodelRepository} with SubmodelRegistry
@@ -44,9 +47,16 @@ public class RegistryIntegrationSubmodelRepositoryConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public SubmodelRepositoryRegistryLink getAasRepositoryRegistryLink(@Value("${basyx.submodelrepository.feature.registryintegration}") String registryBasePath, @Value("${basyx.externalurl}") String submodelRepositoryBaseURL) {
+	public SubmodelRepositoryRegistryLink getSubmodelRepositoryRegistryLink(@Value("${basyx.submodelrepository.feature.registryintegration}") String registryBasePath, @Value("${basyx.externalurl}") String submodelRepositoryBaseURL) {
 	
 		return new SubmodelRepositoryRegistryLink(new SubmodelRegistryApi(registryBasePath), submodelRepositoryBaseURL);
+	}
+	
+	@Bean
+	@ConditionalOnMissingBean
+	public AttributeMapper getSubmodelAttributeMapper(ObjectMapper objectMapper) {
+		
+		return new AttributeMapper(objectMapper);
 	}
 
 }

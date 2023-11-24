@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration
 
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
 
 /**
  * Factory for creating {@link RegistryIntegrationAasRepository}
@@ -37,15 +38,17 @@ public class RegistryIntegrationAasRepositoryFactory implements AasRepositoryFac
 
 	private AasRepositoryFactory decorated;
 	private AasRepositoryRegistryLink aasRepositoryRegistryLink;
+	private AttributeMapper attributeMapper;
 
-	public RegistryIntegrationAasRepositoryFactory(AasRepositoryFactory decorated, AasRepositoryRegistryLink aasRepositoryRegistryLink) {
+	public RegistryIntegrationAasRepositoryFactory(AasRepositoryFactory decorated, AasRepositoryRegistryLink aasRepositoryRegistryLink, AttributeMapper attributeMapper) {
 		this.decorated = decorated;
 		this.aasRepositoryRegistryLink = aasRepositoryRegistryLink;
+		this.attributeMapper = attributeMapper;
 	}
 
 	@Override
 	public AasRepository create() {
-		return new RegistryIntegrationAasRepository(decorated.create(), aasRepositoryRegistryLink);
+		return new RegistryIntegrationAasRepository(decorated.create(), aasRepositoryRegistryLink, attributeMapper);
 	}
 
 }

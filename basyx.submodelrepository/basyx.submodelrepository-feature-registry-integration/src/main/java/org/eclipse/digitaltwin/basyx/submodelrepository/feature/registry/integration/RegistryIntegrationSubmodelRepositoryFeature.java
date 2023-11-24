@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integr
 
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.SubmodelRepositoryFeature;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -49,15 +50,18 @@ public class RegistryIntegrationSubmodelRepositoryFeature implements SubmodelRep
 	
 	@Value("${basyx.externalurl:}")
 	private String submodelRepositoryExternalBaseURL;
+	
+	private AttributeMapper attributeMapper;
 
 	@Autowired
-	public RegistryIntegrationSubmodelRepositoryFeature(SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink) {
+	public RegistryIntegrationSubmodelRepositoryFeature(SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink, AttributeMapper attributeMapper) {
 		this.submodelRepositoryRegistryLink = submodelRepositoryRegistryLink;
+		this.attributeMapper = attributeMapper;
 	}
 
 	@Override
 	public SubmodelRepositoryFactory decorate(SubmodelRepositoryFactory submodelRepositoryFactory) {
-		return new RegistryIntegrationSubmodelRepositoryFactory(submodelRepositoryFactory, submodelRepositoryRegistryLink);
+		return new RegistryIntegrationSubmodelRepositoryFactory(submodelRepositoryFactory, submodelRepositoryRegistryLink, attributeMapper);
 	}
 
 	@Override

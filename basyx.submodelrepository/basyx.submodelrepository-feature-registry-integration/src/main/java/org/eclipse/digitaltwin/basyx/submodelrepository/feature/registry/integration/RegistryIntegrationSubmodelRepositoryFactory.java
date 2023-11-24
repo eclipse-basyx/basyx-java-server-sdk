@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integr
 
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper;
 
 /**
  * Factory for creating {@link RegistryIntegrationSubmodelRepository}
@@ -37,15 +38,17 @@ public class RegistryIntegrationSubmodelRepositoryFactory implements SubmodelRep
 
 	private SubmodelRepositoryFactory decorated;
 	private SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink;
+	private AttributeMapper attributeMapper;
 	
-	public RegistryIntegrationSubmodelRepositoryFactory(SubmodelRepositoryFactory decorated, SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink) {
+	public RegistryIntegrationSubmodelRepositoryFactory(SubmodelRepositoryFactory decorated, SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink, AttributeMapper attributeMapper) {
 		this.decorated = decorated;
 		this.submodelRepositoryRegistryLink = submodelRepositoryRegistryLink;
+		this.attributeMapper = attributeMapper;
 	}
 
 	@Override
 	public SubmodelRepository create() {
-		return new RegistryIntegrationSubmodelRepository(decorated.create(), submodelRepositoryRegistryLink);
+		return new RegistryIntegrationSubmodelRepository(decorated.create(), submodelRepositoryRegistryLink, attributeMapper);
 	}
 
 }

@@ -40,7 +40,6 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.DefaultAttributeMapperFactory;
 
 /**
  * Factory for creating the {@link SubmodelDescriptor}
@@ -57,11 +56,11 @@ public class SubmodelDescriptorFactory {
 
 	private AttributeMapper attributeMapper;
 
-	public SubmodelDescriptorFactory(Submodel submodel, String submodelRepositoryBaseURL) {
+	public SubmodelDescriptorFactory(Submodel submodel, String submodelRepositoryBaseURL, AttributeMapper attributeMapper) {
 		super();
 		this.submodel = submodel;
 		this.submodelRepositoryURL = createSubmodelRepositoryUrl(submodelRepositoryBaseURL);
-		this.attributeMapper = new DefaultAttributeMapperFactory().create();
+		this.attributeMapper = attributeMapper;
 	}
 
 	/**
