@@ -2,6 +2,7 @@
     "modelType": "Submodel",
     "id": "7A7104BDAB57E184",
     "idShort": "TechnicalData",
+    "kind":"Instance",
     "submodelElements": [
         {
             "modelType": "Property",
@@ -323,7 +324,7 @@
             "modelType": "SubmodelElementList",
             "category": "PARAMETER",
             "idShort": "SubmodelElementList",
-            "orderRelevant": false,
+            "orderRelevant": true,
             "value": [
                 {
                     "modelType": "Range",

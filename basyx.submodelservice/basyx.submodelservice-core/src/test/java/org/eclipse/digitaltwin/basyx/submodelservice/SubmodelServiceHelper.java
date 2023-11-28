@@ -30,7 +30,7 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AnnotatedRelationshipElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
-import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXSD;
+import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
 import org.eclipse.digitaltwin.aas4j.v3.model.EntityType;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
@@ -46,7 +46,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.RelationshipElement;
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
@@ -64,7 +64,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultRange;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReferenceElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultRelationshipElement;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetID;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
 import org.eclipse.digitaltwin.basyx.InvokableOperation;
@@ -139,7 +139,7 @@ public class SubmodelServiceHelper {
 	public static final String SUBMODEL_TECHNICAL_DATA_ENTITY_CATEGORY = "Entity";
 	public static final String SPECIFIC_ASSET_ID_VALUE = "specificValue";
 	public static final String SPECIFIC_ASSET_ID_NAME = "specificAssetIdName";
-	private static final SpecificAssetID ENTITY_SPECIFIC_ASSET_ID = new DefaultSpecificAssetID.Builder().name(SPECIFIC_ASSET_ID_NAME)
+	private static final SpecificAssetId ENTITY_SPECIFIC_ASSET_ID = new DefaultSpecificAssetId.Builder().name(SPECIFIC_ASSET_ID_NAME)
 			.value(SPECIFIC_ASSET_ID_VALUE)
 			.build();
 	public static final String GLOBAL_ASSET_ID = "globalAssetID";
@@ -181,7 +181,7 @@ public class SubmodelServiceHelper {
 	}
 
 	public static Property createPropertySubmodelElement() {
-		return new DefaultProperty.Builder().semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
+		return new DefaultProperty.Builder().semanticId(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 				.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_PROPERTY)
 				.build())
 				.type(ReferenceTypes.EXTERNAL_REFERENCE)
@@ -189,12 +189,12 @@ public class SubmodelServiceHelper {
 				.idShort(SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT)
 				.category(SUBMODEL_TECHNICAL_DATA_PROPERTY_CATEGORY)
 				.value(SUBMODEL_TECHNICAL_DATA_PROPERTY_VALUE)
-				.valueType(DataTypeDefXSD.INTEGER)
+				.valueType(DataTypeDefXsd.INTEGER)
 				.build();
 	}
 
 	public static Range createRangeSubmodelElement() {
-		return new DefaultRange.Builder().semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
+		return new DefaultRange.Builder().semanticId(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 				.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_RANGE)
 				.build())
 				.type(ReferenceTypes.EXTERNAL_REFERENCE)
@@ -202,14 +202,14 @@ public class SubmodelServiceHelper {
 				.idShort(SUBMODEL_TECHNICAL_DATA_RANGE_ID_SHORT)
 				.category(SUBMODEL_TECHNICAL_DATA_RANGE_CATEGORY)
 				.min(SUBMODEL_TECHNICAL_DATA_RANGE_MIN_VALUE)
-				.valueType(DataTypeDefXSD.INTEGER)
+				.valueType(DataTypeDefXsd.INTEGER)
 				.max(SUBMODEL_TECHNICAL_DATA_RANGE_MAX_VALUE)
-				.valueType(DataTypeDefXSD.INTEGER)
+				.valueType(DataTypeDefXsd.INTEGER)
 				.build();
 	}
 
 	public static MultiLanguageProperty createMultiLanguagePropertySubmodelElement() {
-		return new DefaultMultiLanguageProperty.Builder().semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
+		return new DefaultMultiLanguageProperty.Builder().semanticId(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 				.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_MULTI_LANG)
 				.build())
 				.type(ReferenceTypes.EXTERNAL_REFERENCE)
@@ -221,7 +221,7 @@ public class SubmodelServiceHelper {
 	}
 
 	public static File createFileSubmodelElement() {
-		return new DefaultFile.Builder().semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
+		return new DefaultFile.Builder().semanticId(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 				.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_FILE)
 				.build())
 				.type(ReferenceTypes.EXTERNAL_REFERENCE)
@@ -234,7 +234,7 @@ public class SubmodelServiceHelper {
 	}
 
 	public static Blob createBlobSubmodelElement() {
-		return new DefaultBlob.Builder().semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
+		return new DefaultBlob.Builder().semanticId(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 				.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_BLOB)
 				.build())
 				.type(ReferenceTypes.EXTERNAL_REFERENCE)
@@ -247,7 +247,7 @@ public class SubmodelServiceHelper {
 	}
 
 	public static Entity createEntitySubmodelElement() {
-		return new DefaultEntity.Builder().semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
+		return new DefaultEntity.Builder().semanticId(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 				.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_ENTITY)
 				.build())
 				.type(ReferenceTypes.EXTERNAL_REFERENCE)
@@ -256,13 +256,13 @@ public class SubmodelServiceHelper {
 				.category(SUBMODEL_TECHNICAL_DATA_ENTITY_CATEGORY)
 				.statements(Arrays.asList(createPropertySubmodelElement(), createRangeSubmodelElement()))
 				.entityType(EntityType.CO_MANAGED_ENTITY)
-				.globalAssetID(GLOBAL_ASSET_ID)
+				.globalAssetId(GLOBAL_ASSET_ID)
 				.specificAssetIds(ENTITY_SPECIFIC_ASSET_ID)
 				.build();
 	}
 
 	public static ReferenceElement createReferenceElementSubmodelElement() {
-		return new DefaultReferenceElement.Builder().semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
+		return new DefaultReferenceElement.Builder().semanticId(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 				.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_REFERENCE_ELEMENT)
 				.build())
 				.type(ReferenceTypes.EXTERNAL_REFERENCE)
@@ -274,7 +274,7 @@ public class SubmodelServiceHelper {
 	}
 
 	public static RelationshipElement createRelationshipElementSubmodelElement() {
-		return new DefaultRelationshipElement.Builder().semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
+		return new DefaultRelationshipElement.Builder().semanticId(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 				.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_RELATIONSHIP_ELEMENT)
 				.build())
 				.type(ReferenceTypes.EXTERNAL_REFERENCE)
@@ -287,7 +287,7 @@ public class SubmodelServiceHelper {
 	}
 
 	public static AnnotatedRelationshipElement createAnnotatedRelationshipElementSubmodelElement() {
-		return new DefaultAnnotatedRelationshipElement.Builder().semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
+		return new DefaultAnnotatedRelationshipElement.Builder().semanticId(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 				.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_ANNOTATED_RELATIONSHIP_ELEMENT)
 				.build())
 				.type(ReferenceTypes.EXTERNAL_REFERENCE)
@@ -301,7 +301,7 @@ public class SubmodelServiceHelper {
 	}
 
 	public static SubmodelElementCollection createSubmodelElementCollection() {
-		return new DefaultSubmodelElementCollection.Builder().semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
+		return new DefaultSubmodelElementCollection.Builder().semanticId(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 				.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_SUBMODEL_ELEMENT_COLLECTION)
 				.build())
 				.type(ReferenceTypes.EXTERNAL_REFERENCE)
@@ -313,7 +313,7 @@ public class SubmodelServiceHelper {
 	}
 
 	public static SubmodelElementList createSubmodelElementList() {
-		return new DefaultSubmodelElementList.Builder().semanticID(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
+		return new DefaultSubmodelElementList.Builder().semanticId(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION)
 				.value(SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_SUBMODEL_ELEMENT_LIST)
 				.build())
 				.type(ReferenceTypes.EXTERNAL_REFERENCE)
@@ -352,7 +352,7 @@ public class SubmodelServiceHelper {
 	}
 
 	private static DefaultOperationVariable createIntOperationVariable(String idShort) {
-		return new DefaultOperationVariable.Builder().value(new DefaultProperty.Builder().idShort(idShort).valueType(DataTypeDefXSD.INT).build()).build();
+		return new DefaultOperationVariable.Builder().value(new DefaultProperty.Builder().idShort(idShort).valueType(DataTypeDefXsd.INT).build()).build();
 	}
 
 	private static DefaultReference createFirstReference() {

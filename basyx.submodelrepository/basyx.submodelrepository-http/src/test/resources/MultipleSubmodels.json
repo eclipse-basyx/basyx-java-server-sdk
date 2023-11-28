@@ -4,6 +4,7 @@
         {
             "modelType": "Submodel",
             "id": "7A7104BDAB57E184",
+            "kind":"Instance",
             "idShort": "TechnicalData",
             "submodelElements": [
                 {
@@ -326,7 +327,7 @@
                     "modelType": "SubmodelElementList",
                     "category": "PARAMETER",
                     "idShort": "SubmodelElementList",
-                    "orderRelevant": false,
+                    "orderRelevant": true,
                     "value": [
                         {
                             "modelType": "Range",
@@ -409,6 +410,7 @@
 			"id": "8A6344BDAB57E184",
 			"idShort": "FileTests",
 			"modelType": "Submodel",
+			"kind":"Instance",
 			"semanticId": {
 				"keys": [{
 						"type": "GlobalReference",
@@ -450,6 +452,7 @@
 		}, 
 		{
             "modelType": "Submodel",
+            "kind":"Instance",
             "id": "AC69B1CB44F07935",
             "idShort": "OperationalData",
             "submodelElements": [
@@ -473,6 +476,7 @@
         },
         {
             "modelType": "Submodel",
+            "kind":"Instance",
             "id": "simpleSubmodel001",
             "idShort": "simpleSubmodel001",
             "submodelElements": [
@@ -492,7 +496,7 @@
                 {
                     "modelType": "SubmodelElementList",
                     "idShort": "SimpleList",
-                    "orderRelevant": false,
+                    "orderRelevant": true,
                     "value": [
                         {
                             "modelType": "Property",

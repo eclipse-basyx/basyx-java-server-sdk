@@ -95,7 +95,7 @@ public class SubmodelServiceConfiguration {
 				.id("TestID")
 				.idShort("test")
 				.kind(ModellingKind.INSTANCE)
-				.semanticID(new DefaultReference.Builder().keys(refKeys)
+				.semanticId(new DefaultReference.Builder().keys(refKeys)
 						.build())
 				.submodelElements(smeList)
 				.build();

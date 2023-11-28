@@ -34,7 +34,7 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 import org.eclipse.digitaltwin.basyx.core.exceptions.AssetLinkDoesNotExistException;
@@ -85,16 +85,16 @@ public class InMemoryAasDiscoveryService implements AasDiscoveryService {
 	}
 
 	@Override
-	public List<SpecificAssetID> getAllAssetLinksById(String shellIdentifier) {
+	public List<SpecificAssetId> getAllAssetLinksById(String shellIdentifier) {
 		throwIfAssetLinkDoesNotExist(shellIdentifier);
 
 		AssetLink assetLink = assetLinks.get(shellIdentifier);
 
-		return assetLink.getSpecificAssetIDs();
+		return assetLink.getSpecificAssetIds();
 	}
 
 	@Override
-	public List<SpecificAssetID> createAllAssetLinksById(String shellIdentifier, List<SpecificAssetID> assetIds) {
+	public List<SpecificAssetId> createAllAssetLinksById(String shellIdentifier, List<SpecificAssetId> assetIds) {
 		throwIfAssetLinkExists(shellIdentifier);
 
 		assetLinks.put(shellIdentifier, new AssetLink(shellIdentifier, assetIds));
@@ -126,7 +126,7 @@ public class InMemoryAasDiscoveryService implements AasDiscoveryService {
 	private String getShellIdWithAssetId(String id) {
 		return assetLinks.values()
 				.stream()
-				.filter(link -> link.getSpecificAssetIDStrings()
+				.filter(link -> link.getSpecificAssetIdStrings()
 						.contains(id))
 				.findFirst()
 				.map(link -> link.getShellIdentifier())

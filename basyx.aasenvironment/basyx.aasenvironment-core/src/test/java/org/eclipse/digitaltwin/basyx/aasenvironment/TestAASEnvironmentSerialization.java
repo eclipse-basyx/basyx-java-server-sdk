@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.Deserializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.aasx.AASXDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
@@ -84,10 +83,10 @@ public class TestAASEnvironmentSerialization {
 
 	private static Collection<AssetAdministrationShell> createDummyShells() {
 		AssetAdministrationShell shell1 = new DefaultAssetAdministrationShell.Builder().id(AAS_TECHNICAL_DATA_ID).idShort(AAS_TECHNICAL_DATA_ID)
-				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetID(SUBMODEL_TECHNICAL_DATA_ID).build()).build();
+				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetId(SUBMODEL_TECHNICAL_DATA_ID).build()).build();
 
 		AssetAdministrationShell shell2 = new DefaultAssetAdministrationShell.Builder().id(AAS_OPERATIONAL_DATA_ID).idShort(AAS_OPERATIONAL_DATA_ID)
-				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetID(SUBMODEL_TECHNICAL_DATA_ID).build()).build();
+				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetId(SUBMODEL_TECHNICAL_DATA_ID).build()).build();
 		Collection<AssetAdministrationShell> shells = new ArrayList<>();
 		shells.add(shell1);
 		shells.add(shell2);
@@ -135,13 +134,13 @@ public class TestAASEnvironmentSerialization {
 	}
 
 	public static void validateJSON(String actual, boolean includeConceptDescription) throws DeserializationException {
-		Deserializer jsonDeserializer = new JsonDeserializer();
+		JsonDeserializer jsonDeserializer = new JsonDeserializer();
 		Environment aasEnvironment = jsonDeserializer.read(actual);
 		checkAASEnvironment(aasEnvironment, includeConceptDescription);
 	}
 
 	public static void validateXml(String actual, boolean includeConceptDescription) throws DeserializationException {
-		Deserializer xmlDeserializer = new XmlDeserializer();
+		XmlDeserializer xmlDeserializer = new XmlDeserializer();
 		Environment aasEnvironment = xmlDeserializer.read(actual);
 
 		checkAASEnvironment(aasEnvironment, includeConceptDescription);

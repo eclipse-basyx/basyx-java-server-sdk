@@ -2,6 +2,7 @@
     "modelType": "Submodel",
     "id": "7A7104BDAB57E184",
     "idShort": "TechnicalData",
+    "kind":"Instance",
     "semanticId": {
         "keys": [
             {
