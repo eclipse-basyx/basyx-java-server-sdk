@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.visitor.AssetAdministrationShellElementWalkerVisitor;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.internal.visitor.AssetAdministrationShellElementWalkerVisitor;
 import org.eclipse.digitaltwin.aas4j.v3.model.Capability;
 import org.eclipse.digitaltwin.aas4j.v3.model.DataElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
