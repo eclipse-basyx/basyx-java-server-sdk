@@ -173,6 +173,22 @@ public abstract class ConceptDescriptionRepositoryHTTPSuite {
 	}
 
 	@Test
+	public void createSubmodelEmptyId() throws IOException {
+		String conceptDescriptionJSON = getSingleConceptDescriptionWithEmptyIdJSON();
+		CloseableHttpResponse creationResponse = createConceptDescription(conceptDescriptionJSON);
+
+		assertEquals(HttpStatus.BAD_REQUEST.value(), creationResponse.getCode());
+	}
+	
+	@Test
+	public void createSubmodelNullId() throws IOException {
+		String conceptDescriptionJSON = getSingleConceptDescriptionWithNullIdJSON();
+		CloseableHttpResponse creationResponse = createConceptDescription(conceptDescriptionJSON);
+
+		assertEquals(HttpStatus.BAD_REQUEST.value(), creationResponse.getCode());
+	}
+	
+	@Test
 	public void deleteConceptDescription() throws IOException {
 		String existingConceptDescriptionId = DummyConceptDescriptionFactory.createConceptDescription()
 				.getId();
@@ -284,6 +300,14 @@ public abstract class ConceptDescriptionRepositoryHTTPSuite {
 
 	private String getSingleConceptDescriptionJSON() throws IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleConceptDescription.json");
+	}
+	
+	private String getSingleConceptDescriptionWithNullIdJSON() throws IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleConceptDescriptionWithNullId.json");
+	}
+
+	private String getSingleConceptDescriptionWithEmptyIdJSON() throws IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleConceptDescriptionWithEmptyId.json");
 	}
 
 	private String getAllConceptDescriptionJSON() throws IOException {

@@ -164,6 +164,23 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 		assertEquals(HttpStatus.CONFLICT.value(), creationResponse.getCode());
 	}
 
+	
+	@Test
+	public void createSubmodelEmptyId() throws IOException {
+		String submodelJSON = getSingleSubmodelWithEmptyIdJSON();
+		CloseableHttpResponse creationResponse = BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
+
+		assertEquals(HttpStatus.BAD_REQUEST.value(), creationResponse.getCode());
+	}
+	
+	@Test
+	public void createSubmodelNullId() throws IOException {
+		String submodelJSON = getSingleSubmodelWithNullIdJSON();
+		CloseableHttpResponse creationResponse = BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
+
+		assertEquals(HttpStatus.BAD_REQUEST.value(), creationResponse.getCode());
+	}
+
 	@Test
 	public void deleteSubmodel() throws IOException {
 		String existingSubmodelId = DummySubmodelFactory.createTechnicalDataSubmodel().getId();
@@ -377,6 +394,14 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 
 	private String getSubmodelsPaginatedJson() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SubmodelsPaginated.json");
+	}
+	
+	private String getSingleSubmodelWithNullIdJSON() throws IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelWithNullId.json");
+	}
+
+	private String getSingleSubmodelWithEmptyIdJSON() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelWithEmptyId.json");
 	}
 	
 	private byte[] readBytesFromClasspath(String fileName) throws FileNotFoundException, IOException {
