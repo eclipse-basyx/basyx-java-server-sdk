@@ -33,7 +33,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -190,9 +189,9 @@ public class TestPreconfiguration {
 	}
 	
 	@Test
-	public void aasxJsonFileIntegrationInSubmodelRepository() throws FileNotFoundException, IOException {
-		String expectedFilePath = "testFiles/testFile.json";
-		String expectedFileExtension = "json";
+	public void aasxPNGFileIntegrationInSubmodelRepository() throws FileNotFoundException, IOException {
+		String expectedFilePath = "testFiles/verwaltungsschale-detail-part1.png";
+		String expectedFileExtension = "png";
 		
 		File actualFile1 = submodelRepo.getFileByPathSubmodel("7A7104BDAB57E184aasx", "FileData");
 		File actualFile2 = submodelRepo.getFileByPathSubmodel("7A7104BDAB57E184aasx", "SubmodelElementCollection.FileData");
