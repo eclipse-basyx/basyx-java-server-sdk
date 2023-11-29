@@ -124,7 +124,7 @@
 					<configuration>
 						<images>
 							<image>
-								<name>${docker.username}/${docker.image.name}</name>
+								<name>${docker.namespace}/${docker.image.name}</name>
 								<build>
 									<tags>
 										<tag>${docker.image.tag}</tag>
