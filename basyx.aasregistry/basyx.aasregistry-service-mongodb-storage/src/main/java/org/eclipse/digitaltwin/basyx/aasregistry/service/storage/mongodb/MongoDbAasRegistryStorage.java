@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 DFKI GmbH (https://www.dfki.de/en/web)
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,11 +19,13 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb;
 
+import com.mongodb.ClientSessionOptions;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,9 +34,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import javax.validation.Valid;
-
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetKind;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorQuery;
@@ -62,18 +63,11 @@ import org.springframework.data.mongodb.core.aggregation.AggregationUpdate;
 import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.data.mongodb.core.aggregation.ComparisonOperators;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
-import org.springframework.data.mongodb.core.aggregation.SetOperation;
 import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.core.query.UpdateDefinition;
-
-import com.mongodb.ClientSessionOptions;
-import com.mongodb.internal.operation.UpdateOperation;
-
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class MongoDbAasRegistryStorage implements AasRegistryStorage {
@@ -88,7 +82,7 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 	private static final String ASSET_KIND = "assetKind";
 
 	private final MongoTemplate template;
-	
+
 	@Override
 	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(@NonNull PaginationInfo pRequest, @NonNull DescriptorFilter filter) {
 		List<AggregationOperation> allAggregations = new LinkedList<>();
@@ -127,7 +121,7 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 		Optional<Criteria> filterCriteria = createFilterCriteria(filter);
 		filterCriteria.map(Aggregation::match).ifPresent(allAggregations::add);
 	}
-	
+
 	public Optional<Criteria> createFilterCriteria(DescriptorFilter filter) {
 		if (!filter.isFiltered()) {
 			return Optional.empty();
@@ -276,7 +270,7 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 	public void removeSubmodel(@NonNull String aasDescriptorId, @NonNull String submodelId) throws AasDescriptorNotFoundException, SubmodelNotFoundException {
 		AggregationExpression notEquals = ComparisonOperators.valueOf(SUBMODEL_DESCRIPTORS_ID).notEqualToValue(submodelId);
 		AggregationExpression filterArray = ArrayOperators.arrayOf(SUBMODEL_DESCRIPTORS).filter().as(SUBMODEL_DESCRIPTORS).by(notEquals);
-		AggregationUpdate update =  AggregationUpdate.update().set(SUBMODEL_DESCRIPTORS).toValue(filterArray);
+		AggregationUpdate update = AggregationUpdate.update().set(SUBMODEL_DESCRIPTORS).toValue(filterArray);
 		AssetAdministrationShellDescriptor old = template.findAndModify(Query.query(Criteria.where(ID).is(aasDescriptorId)), update, AssetAdministrationShellDescriptor.class);
 		if (old == null) {
 			throw new AasDescriptorNotFoundException(submodelId);
@@ -314,7 +308,7 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 		ShellDescriptorQuery dQuery = request.getQuery();
 		GroupedQueries grouped = ShellDescriptorSearchRequests.groupQueries(dQuery);
 		Criteria mongoCriteria = qBuilder.buildCriteria(grouped);
-		
+
 		long total = template.count(Query.query(mongoCriteria), AssetAdministrationShellDescriptor.class);
 
 		List<AggregationOperation> aggregationOps = new LinkedList<>();

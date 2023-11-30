@@ -33,9 +33,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -46,6 +46,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifierSize;
 import org.eclipse.digitaltwin.basyx.http.model.OperationRequest;
 import org.eclipse.digitaltwin.basyx.http.model.OperationResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
@@ -70,9 +71,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-10T15:59:05.892Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-10T15:59:05.892Z[GMT]")
 @RestController
 public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHTTPApi {
+
 	private SubmodelRepository repository;
 
 	@Autowired
@@ -102,14 +104,15 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	}
 
 	@Override
-	public ResponseEntity<PagedResult> getAllSubmodels(@Size(min = 1, max = 3072) @Valid Base64UrlEncodedIdentifier semanticId, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor, @Valid String level,
-			@Valid String extent) {
-		if (limit == null)
+	public ResponseEntity<PagedResult> getAllSubmodels(@Base64UrlEncodedIdentifierSize(min = 1, max = 3072) @Valid Base64UrlEncodedIdentifier semanticId, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor, @Valid String level, @Valid String extent) {
+		if (limit == null) {
 			limit = 100;
+		}
 
 		String decodedCursor = "";
-		if (cursor != null)
+		if (cursor != null) {
 			decodedCursor = cursor.getDecodedCursor();
+		}
 
 		PaginationInfo pInfo = new PaginationInfo(limit, decodedCursor);
 
@@ -138,16 +141,17 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 	@Override
 	public ResponseEntity<PagedResult> getAllSubmodelElements(Base64UrlEncodedIdentifier submodelIdentifier, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor, @Valid String level, @Valid String extent) {
-		if (limit == null)
+		if (limit == null) {
 			limit = 100;
+		}
 
 		String decodedCursor = "";
-		if (cursor != null)
+		if (cursor != null) {
 			decodedCursor = cursor.getDecodedCursor();
+		}
 
 		PaginationInfo pInfo = new PaginationInfo(limit, decodedCursor);
-		CursorResult<List<SubmodelElement>> cursorResult = repository
-				.getSubmodelElements(submodelIdentifier.getIdentifier(), pInfo);
+		CursorResult<List<SubmodelElement>> cursorResult = repository.getSubmodelElements(submodelIdentifier.getIdentifier(), pInfo);
 
 		GetSubmodelElementsResult paginatedSubmodelElement = new GetSubmodelElementsResult();
 		String encodedCursor = getEncodedCursorFromCursorResult(cursorResult);
@@ -205,7 +209,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
 		} catch (ElementNotAFileException e) {
 			return new ResponseEntity<Resource>(HttpStatus.PRECONDITION_FAILED);
-		} catch(FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			return new ResponseEntity<Resource>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -272,16 +276,18 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	}
 
 	private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
-		if (cursorResult == null || cursorResult.getCursor() == null)
+		if (cursorResult == null || cursorResult.getCursor() == null) {
 			return null;
+		}
 
 		return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
 	}
-	
+
 	private void closeInputStream(InputStream fileInputstream) {
-		if (fileInputstream == null)
+		if (fileInputstream == null) {
 			return;
-		
+		}
+
 		try {
 			fileInputstream.close();
 		} catch (IOException e) {

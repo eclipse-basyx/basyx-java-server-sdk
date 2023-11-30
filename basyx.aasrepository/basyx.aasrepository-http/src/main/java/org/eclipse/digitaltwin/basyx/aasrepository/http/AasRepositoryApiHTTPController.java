@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,17 +19,18 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
 package org.eclipse.digitaltwin.basyx.aasrepository.http;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
@@ -50,13 +51,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
-
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-10T15:59:05.892Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-10T15:59:05.892Z[GMT]")
 @RestController
 public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
+
 	private final AasRepository aasRepository;
 
 	@Autowired
@@ -100,21 +98,22 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 
 	@Override
 	public ResponseEntity<PagedResult> getAllAssetAdministrationShells(@Valid List<SpecificAssetId> assetIds, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor) {
-		if (limit == null)
+		if (limit == null) {
 			limit = 100;
-		
+		}
+
 		String decodedCursor = "";
-		if (cursor != null)
+		if (cursor != null) {
 			decodedCursor = cursor.getDecodedCursor();
+		}
 
 		PaginationInfo paginationInfo = new PaginationInfo(limit, decodedCursor);
 		CursorResult<List<AssetAdministrationShell>> paginatedAAS = aasRepository.getAllAas(paginationInfo);
-		
 
 		GetAssetAdministrationShellsResult result = new GetAssetAdministrationShellsResult();
-		
+
 		String encodedCursor = getEncodedCursorFromCursorResult(paginatedAAS);
-		
+
 		result.setResult(paginatedAAS.getResult());
 		result.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
 
@@ -123,12 +122,14 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 
 	@Override
 	public ResponseEntity<PagedResult> getAllSubmodelReferencesAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor) {
-		if (limit == null)
+		if (limit == null) {
 			limit = 100;
+		}
 
 		String decodedCursor = "";
-		if (cursor != null)
+		if (cursor != null) {
 			decodedCursor = cursor.getDecodedCursor();
+		}
 
 		PaginationInfo paginationInfo = new PaginationInfo(limit, decodedCursor);
 		CursorResult<List<Reference>> submodelReferences = aasRepository.getSubmodelReferences(aasIdentifier.getIdentifier(), paginationInfo);
@@ -161,8 +162,9 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 	}
 
 	private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
-		if (cursorResult == null || cursorResult.getCursor() == null)
+		if (cursorResult == null || cursorResult.getCursor() == null) {
 			return null;
+		}
 
 		return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
 	}
