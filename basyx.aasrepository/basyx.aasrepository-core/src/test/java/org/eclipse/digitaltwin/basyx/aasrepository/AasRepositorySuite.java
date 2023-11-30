@@ -336,7 +336,7 @@ public abstract class AasRepositorySuite {
 	}
 
 	private AssetInformation createDummyAssetInformation() {
-		return new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetID("assetIDTestKey").build();
+		return new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetId("assetIDTestKey").build();
 	}
 
 	/**
