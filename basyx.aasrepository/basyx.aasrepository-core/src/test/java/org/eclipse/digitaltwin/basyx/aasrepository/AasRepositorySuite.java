@@ -29,11 +29,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
@@ -46,11 +54,13 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * Testsuite for implementations of the AasRepository interface
@@ -70,6 +80,7 @@ public abstract class AasRepositorySuite {
 	private List<AssetAdministrationShell> preconfiguredShells = new ArrayList<>();
 
 	private static final String DUMMY_SUBMODEL_ID = "dummySubmodelId";
+	private static final String THUMBNAIL_FILE_PATH = "BaSyx-Logo.png";
 
 	private AasRepository aasRepo;
 
@@ -287,6 +298,80 @@ public abstract class AasRepositorySuite {
 						.get());
 	}
 
+	@Test
+	public void updateThumbnail() {
+
+		// Set the thumbnail of the AAS for the first time
+		try {
+			aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH));
+		} catch (IOException e1) {
+			fail();
+			e1.printStackTrace();
+		}
+
+		// Get the AAS thumbnail
+		File retrievedThumbnail = aasRepo.getThumbnail(AAS2);
+
+		try {
+			assertEquals(readFile("src/test/resources/" + THUMBNAIL_FILE_PATH, Charset.defaultCharset()), new String(FileUtils.readFileToByteArray(retrievedThumbnail), Charset.defaultCharset()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void getThumbnail() {
+
+		try {
+			aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH));
+		} catch (IOException e) {
+			fail();
+			e.printStackTrace();
+		}
+
+		File retrievedThumbnail = aasRepo.getThumbnail(AAS2);
+
+		try {
+			assertEquals(readFile("src/test/resources/" + THUMBNAIL_FILE_PATH, Charset.defaultCharset()), new String(FileUtils.readFileToByteArray(retrievedThumbnail), Charset.defaultCharset()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test(expected = FileDoesNotExistException.class)
+	public void getNonExistingFile() {
+		aasRepo.getThumbnail(AAS2);
+	}
+
+	@Test
+	public void deleteThumbnail() {
+		try {
+			aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH));
+		} catch (IOException e1) {
+			fail();
+			e1.printStackTrace();
+		}
+
+		aasRepo.deleteThumbnail(AAS2);
+
+		try {
+			aasRepo.getThumbnail(AAS2);
+			fail();
+		} catch (Exception e) {
+		}
+	}
+
+	@Test(expected = FileDoesNotExistException.class)
+	public void deleteNonExistingFile() throws IOException {
+		aasRepo.deleteThumbnail(AAS2);
+	}
+
+	private static String readFile(String path, Charset encoding) throws IOException {
+		byte[] encoded = Files.readAllBytes(Paths.get(path));
+
+		return new String(encoded, encoding);
+	}
+
 	public static Reference createDummyReference(String submodelId) {
 		return new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL)
 				.value(submodelId)
@@ -314,5 +399,11 @@ public abstract class AasRepositorySuite {
 			referenceList.add(ref);
 		}
 		return referenceList;
+	}
+
+	private InputStream getInputStreamOfFileFromClasspath(String fileName) throws FileNotFoundException, IOException {
+		ClassPathResource classPathResource = new ClassPathResource(fileName);
+
+		return classPathResource.getInputStream();
 	}
 }
