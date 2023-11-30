@@ -320,6 +320,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-feature-registry-integration</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelrepository.component</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -383,6 +388,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-feature-mqtt</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-feature-registry-integration</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -484,6 +494,17 @@
 				<artifactId>basyx.aasxfileserver.component</artifactId>
 				<version>${revision}</version>
 			</dependency>
+			<!-- basyx.aasregistry -->
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-client-native</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelregistry-client-native</artifactId>
+				<version>${revision}</version>
+			</dependency>
 
 			<!-- tests -->
 			<!-- basyx.common -->
@@ -561,6 +582,12 @@
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-feature-registry-integration</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
 			<!-- basyx.aasservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -626,6 +653,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-feature-mqtt</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-feature-registry-integration</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
