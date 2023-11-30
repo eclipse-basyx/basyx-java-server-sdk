@@ -36,13 +36,9 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
-import org.apache.hc.client5.http.entity.mime.FileBody;
-import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
@@ -307,14 +303,14 @@ public abstract class AasRepositoryHTTPSuite {
 	}
 
 	@Test
-	public void getFile() throws FileNotFoundException, IOException, ParseException {
+	public void getThumbnail() throws FileNotFoundException, IOException, ParseException {
 		createDummyAasOnServer(getAas1JSONString());
 
 		byte[] expectedFile = readBytesFromClasspath(THUMBNAIL_FILE_PATH);
 
 		uploadThumbnail(dummyAasId);
 
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(getThumbnailAccessURL(dummyAasId));
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), dummyAasId));
 		assertEquals(HttpStatus.OK.value(), response.getCode());
 
 		byte[] actualFile = EntityUtils.toByteArray(response.getEntity());
@@ -326,26 +322,26 @@ public abstract class AasRepositoryHTTPSuite {
 
 	@Test
 	public void getFileFromNotExistElement() throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(getThumbnailAccessURL(dummyAasId));
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), dummyAasId));
 
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
 
 	@Test
-	public void deleteFile() throws FileNotFoundException, IOException {
+	public void deleteThumbnail() throws FileNotFoundException, IOException {
 		createDummyAasOnServer(getAas1JSONString());
 		uploadThumbnail(dummyAasId);
 
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeDeleteOnURL(getThumbnailAccessURL(dummyAasId));
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeDeleteOnURL(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), dummyAasId));
 		assertEquals(HttpStatus.OK.value(), response.getCode());
 
-		response = BaSyxHttpTestUtils.executeGetOnURL(getThumbnailAccessURL(dummyAasId));
+		response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), dummyAasId));
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
 
 	@Test
-	public void deleteNoneExisting() throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeDeleteOnURL(getThumbnailAccessURL(dummyAasId));
+	public void deleteNoneExistingThumbnail() throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeDeleteOnURL(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), dummyAasId));
 
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
@@ -400,9 +396,7 @@ public abstract class AasRepositoryHTTPSuite {
 		return getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
 	}
 
-	protected String getThumbnailAccessURL(String aasId) {
-		return getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId) + "/asset-information/thumbnail";
-	}
+
 
 	private void assertAasIsNotOnServer(String aasId) throws IOException {
 		CloseableHttpResponse getResponse = getSpecificAas(aasId);
@@ -461,36 +455,14 @@ public abstract class AasRepositoryHTTPSuite {
 	private CloseableHttpResponse uploadThumbnail(String aasId) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
 
-
 		java.io.File file = ResourceUtils.getFile("src/test/resources/" + THUMBNAIL_FILE_PATH);
 
-		HttpPut putRequest = createPutRequestWithFile(aasId, THUMBNAIL_FILE_PATH, file);
+		HttpPut putRequest = BaSyxHttpTestUtils.createPutRequestWithFile(getURL(), aasId, THUMBNAIL_FILE_PATH, file);
 
-		return executePutRequest(client, putRequest);
+		return BaSyxHttpTestUtils.executePutRequest(client, putRequest);
 	}
 
-	private CloseableHttpResponse executePutRequest(CloseableHttpClient client, HttpPut putRequest) throws IOException {
-		CloseableHttpResponse response = client.execute(putRequest);
 
-		HttpEntity responseEntity = response.getEntity();
-
-		EntityUtils.consume(responseEntity);
-		return response;
-	}
-
-	private HttpPut createPutRequestWithFile(String aasId, String fileName, java.io.File file) {
-		HttpPut putRequest = new HttpPut(getThumbnailAccessURL(aasId));
-
-		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-
-		builder.addPart("file", new FileBody(file));
-		builder.addTextBody("fileName", fileName);
-		builder.setContentType(ContentType.MULTIPART_FORM_DATA);
-
-		HttpEntity multipart = builder.build();
-		putRequest.setEntity(multipart);
-		return putRequest;
-	}
 
 	private byte[] readBytesFromClasspath(String fileName) throws FileNotFoundException, IOException {
 		ClassPathResource classPathResource = new ClassPathResource(fileName);

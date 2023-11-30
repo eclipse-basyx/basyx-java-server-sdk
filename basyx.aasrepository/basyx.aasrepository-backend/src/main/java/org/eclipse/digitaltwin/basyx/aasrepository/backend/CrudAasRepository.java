@@ -25,37 +25,27 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.apache.commons.io.IOUtils;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.CrudRepository;
-
 
 
 /**
@@ -72,8 +62,6 @@ public class CrudAasRepository implements AasRepository {
 	private AasServiceFactory aasServiceFactory;
 
 	private String aasRepositoryName = null;
-	
-	private String tmpDirectory = getTemporaryDirectoryPath();
 
 	public CrudAasRepository(AasBackendProvider aasBackendProvider, AasServiceFactory aasServiceFactory) {
 		this.aasBackend = aasBackendProvider.getCrudRepository();
@@ -196,7 +184,7 @@ public class CrudAasRepository implements AasRepository {
 	public File getThumbnail(String aasId) {
 		Resource resource = getAssetInformation(aasId).getDefaultThumbnail();
 
-		throwIfFileDoesNotExist(aasId, resource);
+		ThumbnailHandler.throwIfFileDoesNotExist(aasId, resource);
 		String filePath = resource.getPath();
 		return new File(filePath);
 	}
@@ -207,43 +195,29 @@ public class CrudAasRepository implements AasRepository {
 		if (thumbnail != null) {
 			String path = thumbnail.getPath();
 
-			deleteExistingFile(path);
+			ThumbnailHandler.deleteExistingFile(path);
 		}
 
-		String filePath = createFilePath(aasId, fileName);
+		String filePath = ThumbnailHandler.createFilePath(ThumbnailHandler.getTemporaryDirectoryPath(), aasId, fileName);
 
-		createFileAtSpecifiedPath(fileName, inputStream, filePath);
+		ThumbnailHandler.createFileAtSpecifiedPath(fileName, inputStream, filePath);
 
 		if (thumbnail != null) {
-			updateThumbnail(aasId, contentType, filePath);
+			ThumbnailHandler.updateThumbnail(this, aasId, contentType, filePath);
 
 			return;
 		}
 
-		setNewThumbnail(aasId, contentType, filePath);
+		ThumbnailHandler.setNewThumbnail(this, aasId, contentType, filePath);
 	}
 
-	private void updateThumbnail(String aasId, String contentType, String filePath) {
-		AssetInformation assetInfor = getAssetInformation(aasId);
-		assetInfor.getDefaultThumbnail().setContentType(contentType);
-		assetInfor.getDefaultThumbnail().setPath(filePath);
-		setAssetInformation(aasId, assetInfor);
-	}
 
-	private void setNewThumbnail(String aasId, String contentType, String filePath) {
-		Resource resource = new DefaultResource();
-		resource.setContentType(contentType);
-		resource.setPath(filePath);
-		AssetInformation assetInfor = getAssetInformation(aasId);
-		assetInfor.setDefaultThumbnail(resource);
-		setAssetInformation(aasId, assetInfor);
-	}
 
 	@Override
 	public void deleteThumbnail(String aasId) {
 		Resource thumbnail = getAssetInformation(aasId).getDefaultThumbnail();
 
-		throwIfFileDoesNotExist(aasId, thumbnail);
+		ThumbnailHandler.throwIfFileDoesNotExist(aasId, thumbnail);
 
 		String filePath = thumbnail.getPath();
 		java.io.File tmpFile = new java.io.File(filePath);
@@ -256,59 +230,6 @@ public class CrudAasRepository implements AasRepository {
 
 	}
 
-	private void throwIfFileDoesNotExist(String aasId, Resource resource) {
-		if (resource == null)
-			throw new FileDoesNotExistException(aasId);
 
-		String filePath = resource.getPath();
-		if (!isFilePathValid(filePath))
-			throw new FileDoesNotExistException(aasId);
-	}
-
-	private boolean isFilePathValid(String filePath) {
-		if (filePath.isEmpty())
-			return false;
-		try {
-			Paths.get(filePath);
-		} catch (InvalidPathException | NullPointerException ex) {
-			return false;
-		}
-		return true;
-	}
-
-	private String createFilePath(String aasId, String fileName) {
-		return tmpDirectory + "/" + aasId + "-" + "Thumbnail" + "-" + fileName;
-	}
-
-	private void createFileAtSpecifiedPath(String fileName, InputStream inputStream, String filePath) {
-		java.io.File targetFile = new java.io.File(filePath);
-
-		try (FileOutputStream outStream = new FileOutputStream(targetFile)) {
-			IOUtils.copy(inputStream, outStream);
-		} catch (IOException e) {
-			throw new FileHandlingException(fileName);
-		}
-	}
-
-	private void deleteExistingFile(String path) {
-		if (path == null || path.isEmpty())
-			return;
-
-		try {
-			Files.deleteIfExists(Paths.get(path, ""));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private String getTemporaryDirectoryPath() {
-		String tempDirectoryPath = "";
-		try {
-			tempDirectoryPath = Files.createTempDirectory("basyx-temp-thumbnail").toAbsolutePath().toString();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return tempDirectoryPath;
-	}
 
 }

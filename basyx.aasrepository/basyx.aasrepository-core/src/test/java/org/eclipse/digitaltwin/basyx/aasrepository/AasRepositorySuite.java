@@ -80,7 +80,8 @@ public abstract class AasRepositorySuite {
 	private List<AssetAdministrationShell> preconfiguredShells = new ArrayList<>();
 
 	private static final String DUMMY_SUBMODEL_ID = "dummySubmodelId";
-	private static final String THUMBNAIL_FILE_PATH = "BaSyx-Logo.png";
+	private static final String THUMBNAIL_FILE_PATH_1 = "BaSyx-Logo-1.png";
+	private static final String THUMBNAIL_FILE_PATH_2 = "BaSyx-Logo-2.png";
 
 	private AasRepository aasRepo;
 
@@ -91,15 +92,12 @@ public abstract class AasRepositorySuite {
 	@Before
 	public void createAasRepoWithDummyAas() {
 		aasRepo = getAasRepository();
-		
+
 		sanitizeRepository();
 
-		aas1 = new DefaultAssetAdministrationShell.Builder().id(AAS_1_ID)
-				.submodels(createDummyReference(DUMMY_SUBMODEL_ID))
-				.build();
+		aas1 = new DefaultAssetAdministrationShell.Builder().id(AAS_1_ID).submodels(createDummyReference(DUMMY_SUBMODEL_ID)).build();
 
-		aas2 = new DefaultAssetAdministrationShell.Builder().id(AAS2)
-				.build();
+		aas2 = new DefaultAssetAdministrationShell.Builder().id(AAS2).build();
 		AssetInformation assetInfo = createDummyAssetInformation();
 		aas2.setAssetInformation(assetInfo);
 
@@ -108,7 +106,7 @@ public abstract class AasRepositorySuite {
 
 		preconfiguredShells.forEach(shell -> aasRepo.createAas(shell));
 	}
-	
+
 	@Test
 	public void getDefaultAasRepositoryName() {
 		assertEquals("aas-repo", aasRepo.getName());
@@ -117,8 +115,7 @@ public abstract class AasRepositorySuite {
 	@Test
 	public void allAasRetrieval() throws Exception {
 		PaginationInfo pInfo = new PaginationInfo(2, null);
-		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(pInfo)
-				.getResult();
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(pInfo).getResult();
 		assertEquals(preconfiguredShells, coll);
 	}
 
@@ -158,15 +155,13 @@ public abstract class AasRepositorySuite {
 	public void getSubmodelReferences() {
 		Reference reference = createDummyReference(DUMMY_SUBMODEL_ID);
 
-		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo)
-				.getResult();
+		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo).getResult();
 		assertTrue(submodelReferences.contains(reference));
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getSubmodelReferencesOfNonExistingAas() {
-		aasRepo.getSubmodelReferences("doesNotMatter", noLimitPaginationInfo)
-				.getResult();
+		aasRepo.getSubmodelReferences("doesNotMatter", noLimitPaginationInfo).getResult();
 	}
 
 	@Test
@@ -174,8 +169,7 @@ public abstract class AasRepositorySuite {
 		Reference reference = createDummyReference(DUMMY_SUBMODEL_ID);
 		aasRepo.addSubmodelReference(aas1.getId(), reference);
 
-		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo)
-				.getResult();
+		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo).getResult();
 
 		assertTrue(submodelReferences.contains(reference));
 	}
@@ -191,8 +185,7 @@ public abstract class AasRepositorySuite {
 		Reference reference = createDummyReference(DUMMY_SUBMODEL_ID);
 		aasRepo.removeSubmodelReference(aas1.getId(), DUMMY_SUBMODEL_ID);
 
-		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo)
-				.getResult();
+		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo).getResult();
 
 		assertFalse(submodelReferences.contains(reference));
 	}
@@ -224,9 +217,7 @@ public abstract class AasRepositorySuite {
 
 	@Test(expected = IdentificationMismatchException.class)
 	public void updateExistingAasWithMismatchedIdentifier() {
-		AssetAdministrationShell aas = new DefaultAssetAdministrationShell.Builder().id("mismatchId")
-				.submodels(createDummyReference(DUMMY_SUBMODEL_ID))
-				.build();
+		AssetAdministrationShell aas = new DefaultAssetAdministrationShell.Builder().id("mismatchId").submodels(createDummyReference(DUMMY_SUBMODEL_ID)).build();
 
 		aasRepo.updateAas(AAS_1_ID, aas);
 	}
@@ -258,10 +249,7 @@ public abstract class AasRepositorySuite {
 		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null));
 		List<AssetAdministrationShell> resultList = result.getResult();
 		assertEquals(1, resultList.size());
-		assertEquals(AAS_1_ID, resultList.stream()
-				.findFirst()
-				.get()
-				.getId());
+		assertEquals(AAS_1_ID, resultList.stream().findFirst().get().getId());
 	}
 
 	@Test
@@ -272,70 +260,52 @@ public abstract class AasRepositorySuite {
 		result = aasRepo.getAllAas(new PaginationInfo(1, cursor));
 		List<AssetAdministrationShell> resultList = result.getResult();
 		assertEquals(1, resultList.size());
-		assertEquals(AAS2, resultList.stream()
-				.findFirst()
-				.get()
-				.getId());
+		assertEquals(AAS2, resultList.stream().findFirst().get().getId());
 	}
 
 	@Test
 	public void getPaginatedSubmodelReferencesPaginated() {
 		List<Reference> submodelReferences = createDummyReferences();
-		AssetAdministrationShell aas = new DefaultAssetAdministrationShell.Builder().id("paginatedAAS")
-				.submodels(submodelReferences)
-				.build();
+		AssetAdministrationShell aas = new DefaultAssetAdministrationShell.Builder().id("paginatedAAS").submodels(submodelReferences).build();
 		aasRepo.createAas(aas);
 		PaginationInfo pInfo = new PaginationInfo(1, "");
 		CursorResult<List<Reference>> paginatedReferences = aasRepo.getSubmodelReferences("paginatedAAS", pInfo);
-		assertEquals(1, paginatedReferences.getResult()
-				.size());
-		assertEquals(submodelReferences.stream()
-				.findFirst()
-				.get(),
-				paginatedReferences.getResult()
-						.stream()
-						.findFirst()
-						.get());
+		assertEquals(1, paginatedReferences.getResult().size());
+		assertEquals(submodelReferences.stream().findFirst().get(), paginatedReferences.getResult().stream().findFirst().get());
 	}
 
 	@Test
-	public void updateThumbnail() {
-
+	public void updateThumbnail() throws FileNotFoundException, IOException {
 		// Set the thumbnail of the AAS for the first time
-		try {
-			aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH));
-		} catch (IOException e1) {
-			fail();
-			e1.printStackTrace();
-		}
+		aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH_1, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_1));
 
-		// Get the AAS thumbnail
+
+		// Set the thumbnail of the AAS for the second time with a new figure
+		aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH_1, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_2));
+
 		File retrievedThumbnail = aasRepo.getThumbnail(AAS2);
 
-		try {
-			assertEquals(readFile("src/test/resources/" + THUMBNAIL_FILE_PATH, Charset.defaultCharset()), new String(FileUtils.readFileToByteArray(retrievedThumbnail), Charset.defaultCharset()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		assertEquals(readFile("src/test/resources/" + THUMBNAIL_FILE_PATH_2, Charset.defaultCharset()), new String(FileUtils.readFileToByteArray(retrievedThumbnail), Charset.defaultCharset()));
+
 	}
 
 	@Test
-	public void getThumbnail() {
-
-		try {
-			aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH));
-		} catch (IOException e) {
-			fail();
-			e.printStackTrace();
-		}
+	public void setThumbnail() throws FileNotFoundException, IOException {
+		aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH_1, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_1));
 
 		File retrievedThumbnail = aasRepo.getThumbnail(AAS2);
 
-		try {
-			assertEquals(readFile("src/test/resources/" + THUMBNAIL_FILE_PATH, Charset.defaultCharset()), new String(FileUtils.readFileToByteArray(retrievedThumbnail), Charset.defaultCharset()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		assertEquals(readFile("src/test/resources/" + THUMBNAIL_FILE_PATH_1, Charset.defaultCharset()), new String(FileUtils.readFileToByteArray(retrievedThumbnail), Charset.defaultCharset()));
+
+	}
+
+	@Test
+	public void getThumbnail() throws IOException {
+		aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH_1, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_1));
+
+		File retrievedThumbnail = aasRepo.getThumbnail(AAS2);
+
+		assertEquals(readFile("src/test/resources/" + THUMBNAIL_FILE_PATH_1, Charset.defaultCharset()), new String(FileUtils.readFileToByteArray(retrievedThumbnail), Charset.defaultCharset()));
 	}
 
 	@Test(expected = FileDoesNotExistException.class)
@@ -344,14 +314,8 @@ public abstract class AasRepositorySuite {
 	}
 
 	@Test
-	public void deleteThumbnail() {
-		try {
-			aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH));
-		} catch (IOException e1) {
-			fail();
-			e1.printStackTrace();
-		}
-
+	public void deleteThumbnail() throws FileNotFoundException, IOException {
+		aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH_1, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_1));
 		aasRepo.deleteThumbnail(AAS2);
 
 		try {
@@ -373,16 +337,11 @@ public abstract class AasRepositorySuite {
 	}
 
 	public static Reference createDummyReference(String submodelId) {
-		return new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL)
-				.value(submodelId)
-				.build())
-				.build();
+		return new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(submodelId).build()).build();
 	}
 
 	private AssetInformation createDummyAssetInformation() {
-		return new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
-				.globalAssetId("assetIDTestKey")
-				.build();
+		return new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetID("assetIDTestKey").build();
 	}
 
 	/**
@@ -391,11 +350,7 @@ public abstract class AasRepositorySuite {
 	private List<Reference> createDummyReferences() {
 		List<Reference> referenceList = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
-			Reference ref = new DefaultReference.Builder().type(ReferenceTypes.MODEL_REFERENCE)
-					.keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL)
-							.value("smRef_" + i)
-							.build())
-					.build();
+			Reference ref = new DefaultReference.Builder().type(ReferenceTypes.MODEL_REFERENCE).keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value("smRef_" + i).build()).build();
 			referenceList.add(ref);
 		}
 		return referenceList;
