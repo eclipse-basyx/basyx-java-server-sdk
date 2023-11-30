@@ -6,13 +6,13 @@ import jakarta.validation.constraints.Size;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Base64UrlEncodedIdentifierSizeValidator implements ConstraintValidator<Size, Base64UrlEncodedIdentifier> {
+public class Base64UrlEncodedIdentifierSizeValidator implements ConstraintValidator<Base64UrlEncodedIdentifierSize, Base64UrlEncodedIdentifier> {
 
     private int min;
     private int max;
 
     @Override
-    public void initialize(Size constraintAnnotation) {
+    public void initialize(Base64UrlEncodedIdentifierSize constraintAnnotation) {
         this.min = constraintAnnotation.min();
         this.max = constraintAnnotation.max();
     }
