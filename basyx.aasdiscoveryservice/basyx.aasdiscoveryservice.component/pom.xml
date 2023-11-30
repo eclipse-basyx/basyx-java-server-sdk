@@ -111,78 +111,63 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		
-		<pluginManagement>
-			<plugins>
-				<!-- Build the docker image -->
-				<plugin>
-					<groupId>io.fabric8</groupId>
-					<artifactId>docker-maven-plugin</artifactId>
-					<version>0.43.0</version>
-					<configuration>
-						<images>
-							<image>
-								<name>${docker.username}/${docker.image.name}</name>
-								<build>
-									<tags>
-										<tag>${docker.image.tag}</tag>
-									</tags>
-									<contextDir>${project.basedir}</contextDir>
-								</build>
-								<run>
-									<ports>
-										<port>${docker.host.port}:${docker.container.port}</port>
-									</ports>
-									<wait>
-										<url>${docker.container.waitForEndpoint}</url>
-										<time>60000</time>
-									</wait>
-								</run>
-							</image>
-						</images>
-						<verbose>true</verbose>
-					</configuration>
-					<executions>
-						<execution>
-							<id>docker:build</id>
-							<phase>package</phase>
-							<goals>
-								<goal>build</goal>
-							</goals>
-						</execution>
-						<execution>
-							<id>docker-compose-up</id>
-							<phase>pre-integration-test</phase>
-							<goals>
-								<goal>start</goal>
-							</goals>
-						</execution>
-						<execution>
-							<id>docker-compose-down</id>
-							<phase>post-integration-test</phase>
-							<goals>
-								<goal>stop</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 
 	<profiles>
 		<profile>
 			<id>docker</id>
+      <activation>
+        <property>
+          <name>docker.namespace</name>
+        </property>
+      </activation>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
+            <configuration>
+              <images>
+                <image>
+                  <run>
+                    <ports>
+                      <port>${docker.host.port}:${docker.container.port}</port>
+                    </ports>
+                    <wait>
+                      <url>${docker.container.waitForEndpoint}</url>
+                      <time>60000</time>
+                    </wait>
+                  </run>
+                </image>
+              </images>
+            </configuration>
+						<executions>
+							<execution>
+								<id>build-docker</id>
+							</execution>
+							<execution>
+								<id>push-docker</id>
+							</execution>
+							<execution>
+                <id>docker-compose-up</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>docker-compose-down</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+						</executions>
 					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-failsafe-plugin</artifactId>
-					</plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+          </plugin>
 				</plugins>
 			</build>
 		</profile>
