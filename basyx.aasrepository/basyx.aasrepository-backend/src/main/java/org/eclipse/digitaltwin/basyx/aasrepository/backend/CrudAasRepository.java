@@ -47,7 +47,6 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.CrudRepository;
 
-
 /**
  * Default Implementation for the {@link AasRepository} based on Spring
  * {@link CrudRepository}
@@ -70,7 +69,7 @@ public class CrudAasRepository implements AasRepository {
 
 	public CrudAasRepository(AasBackendProvider aasBackendProvider, AasServiceFactory aasServiceFactory, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
 		this(aasBackendProvider, aasServiceFactory);
-		
+
 		this.aasRepositoryName = aasRepositoryName;
 	}
 
@@ -192,44 +191,50 @@ public class CrudAasRepository implements AasRepository {
 	@Override
 	public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
 		Resource thumbnail = getAssetInformation(aasId).getDefaultThumbnail();
-		if (thumbnail != null) {
-			String path = thumbnail.getPath();
-
-			ThumbnailHandler.deleteExistingFile(path);
-		}
-
-		String filePath = ThumbnailHandler.createFilePath(ThumbnailHandler.getTemporaryDirectoryPath(), aasId, fileName);
-
-		ThumbnailHandler.createFileAtSpecifiedPath(fileName, inputStream, filePath);
 
 		if (thumbnail != null) {
-			ThumbnailHandler.updateThumbnail(this, aasId, contentType, filePath);
-
+			updateThumbnailFile(aasId, fileName, contentType, inputStream, thumbnail);
 			return;
 		}
 
+		String filePath = createFile(aasId, fileName, inputStream);
 		ThumbnailHandler.setNewThumbnail(this, aasId, contentType, filePath);
 	}
 
+	private void updateThumbnailFile(String aasId, String fileName, String contentType, InputStream inputStream, Resource thumbnail) {
+		String path = thumbnail.getPath();
+		ThumbnailHandler.deleteExistingFile(path);
+		String filePath = createFile(aasId, fileName, inputStream);
+		ThumbnailHandler.updateThumbnail(this, aasId, contentType, filePath);
+	}
 
+	private String createFile(String aasId, String fileName, InputStream inputStream) {
+		String filePath = ThumbnailHandler.createFilePath(ThumbnailHandler.getTemporaryDirectoryPath(), aasId, fileName);
+		ThumbnailHandler.createFileAtSpecifiedPath(fileName, inputStream, filePath);
+		return filePath;
+	}
 
 	@Override
 	public void deleteThumbnail(String aasId) {
 		Resource thumbnail = getAssetInformation(aasId).getDefaultThumbnail();
-
 		ThumbnailHandler.throwIfFileDoesNotExist(aasId, thumbnail);
 
-		String filePath = thumbnail.getPath();
-		java.io.File tmpFile = new java.io.File(filePath);
-		tmpFile.delete();
+		deleteThumbnailFile(thumbnail);
 
+		updateThumbnailInAssetInformation(aasId);
+	}
+
+	private void updateThumbnailInAssetInformation(String aasId) {
 		AssetInformation assetInfor = getAssetInformation(aasId);
 		assetInfor.getDefaultThumbnail().setContentType("");
 		assetInfor.getDefaultThumbnail().setPath("");
 		setAssetInformation(aasId, assetInfor);
-
 	}
 
-
+	private void deleteThumbnailFile(Resource thumbnail) {
+		String filePath = thumbnail.getPath();
+		java.io.File tmpFile = new java.io.File(filePath);
+		tmpFile.delete();
+	}
 
 }

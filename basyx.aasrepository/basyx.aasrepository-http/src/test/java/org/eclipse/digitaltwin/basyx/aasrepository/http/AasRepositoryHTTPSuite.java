@@ -337,10 +337,12 @@ public abstract class AasRepositoryHTTPSuite {
 
 		response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), dummyAasId));
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
+
+		response.close();
 	}
 
 	@Test
-	public void deleteNoneExistingThumbnail() throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
+	public void deleteNonExistingThumbnail() throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeDeleteOnURL(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), dummyAasId));
 
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());

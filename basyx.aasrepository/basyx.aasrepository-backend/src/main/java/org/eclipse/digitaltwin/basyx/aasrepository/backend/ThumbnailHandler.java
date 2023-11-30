@@ -39,8 +39,12 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ThumbnailHandler {
+
+	private static Logger logger = LoggerFactory.getLogger(ThumbnailHandler.class);
 
 	public static void updateThumbnail(AasRepository aasRepo, String aasId, String contentType, String filePath) {
 		AssetInformation assetInfor = aasRepo.getAssetInformation(aasId);
@@ -63,19 +67,17 @@ public class ThumbnailHandler {
 			throw new FileDoesNotExistException(aasId);
 
 		String filePath = resource.getPath();
-		if (!isFilePathValid(filePath))
-			throw new FileDoesNotExistException(aasId);
+		throwIfFilePathIsNotValid(aasId, filePath);
 	}
 
-	private static boolean isFilePathValid(String filePath) {
+	private static void throwIfFilePathIsNotValid(String aasId, String filePath) {
 		if (filePath.isEmpty())
-			return false;
+			throw new FileDoesNotExistException(aasId);
 		try {
 			Paths.get(filePath);
 		} catch (InvalidPathException | NullPointerException ex) {
-			return false;
+			throw new FileDoesNotExistException(aasId);
 		}
-		return true;
 	}
 
 	public static String createFilePath(String tmpDirectory, String aasId, String fileName) {
@@ -99,7 +101,7 @@ public class ThumbnailHandler {
 		try {
 			Files.deleteIfExists(Paths.get(path, ""));
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Unable to delete the file having path '{}'", path);
 		}
 	}
 
@@ -108,7 +110,7 @@ public class ThumbnailHandler {
 		try {
 			tempDirectoryPath = Files.createTempDirectory("basyx-temp-thumbnail").toAbsolutePath().toString();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Unable to create file in the temporary path.");
 		}
 		return tempDirectoryPath;
 	}

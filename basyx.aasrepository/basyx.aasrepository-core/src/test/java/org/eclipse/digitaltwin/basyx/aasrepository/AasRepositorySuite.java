@@ -279,9 +279,8 @@ public abstract class AasRepositorySuite {
 		// Set the thumbnail of the AAS for the first time
 		aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH_1, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_1));
 
-
 		// Set the thumbnail of the AAS for the second time with a new figure
-		aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH_1, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_2));
+		aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH_2, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_2));
 
 		File retrievedThumbnail = aasRepo.getThumbnail(AAS2);
 
@@ -313,16 +312,12 @@ public abstract class AasRepositorySuite {
 		aasRepo.getThumbnail(AAS2);
 	}
 
-	@Test
+	@Test(expected = FileDoesNotExistException.class)
 	public void deleteThumbnail() throws FileNotFoundException, IOException {
 		aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH_1, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_1));
 		aasRepo.deleteThumbnail(AAS2);
 
-		try {
-			aasRepo.getThumbnail(AAS2);
-			fail();
-		} catch (Exception e) {
-		}
+		aasRepo.getThumbnail(AAS2);
 	}
 
 	@Test(expected = FileDoesNotExistException.class)

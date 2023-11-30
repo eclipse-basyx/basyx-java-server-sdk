@@ -42,7 +42,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetAssetAdministrationShellsResult;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetReferencesResult;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
@@ -179,12 +178,8 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 
 	@Override
 	public ResponseEntity<Void> deleteThumbnailAasRepository(Base64UrlEncodedIdentifier aasIdentifier) {
-		try {
-			aasRepository.deleteThumbnail(aasIdentifier.getIdentifier());
-			return new ResponseEntity<Void>(HttpStatus.OK);
-		} catch (FileDoesNotExistException e) {
-			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
-		}
+		aasRepository.deleteThumbnail(aasIdentifier.getIdentifier());
+		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
 	@Override
@@ -193,8 +188,8 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 			FileInputStream fileInputStream = new FileInputStream(aasRepository.getThumbnail(aasIdentifier.getIdentifier()));
 			Resource resource = new InputStreamResource(fileInputStream);
 			return new ResponseEntity<Resource>(resource, HttpStatus.OK);
-		} catch (FileDoesNotExistException | FileNotFoundException e) {
-			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
+		} catch (FileNotFoundException e) {
+			return new ResponseEntity<Resource>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

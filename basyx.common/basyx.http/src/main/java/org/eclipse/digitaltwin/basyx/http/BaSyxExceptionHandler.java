@@ -31,6 +31,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.springframework.http.HttpStatus;
@@ -87,5 +88,10 @@ public class BaSyxExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(NotInvokableException.class)
 	public <T> ResponseEntity<T> handleNotInvokableException(NotInvokableException exception) {
 		return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+	}
+
+	@ExceptionHandler(FileDoesNotExistException.class)
+	public <T> ResponseEntity<T> handleFileDoesNotExistException(FileDoesNotExistException exception) {
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 }
