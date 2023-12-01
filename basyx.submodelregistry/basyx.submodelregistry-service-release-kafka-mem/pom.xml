@@ -7,7 +7,7 @@
 		<groupId>org.eclipse.digitaltwin.basyx</groupId>
 		<artifactId>basyx.submodelregistry</artifactId>
 		<version>${revision}</version>
-		<relativePath>..</relativePath>
+
 	</parent>
 
 	<artifactId>basyx.submodelregistry-service-release-kafka-mem</artifactId>

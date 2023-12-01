@@ -127,11 +127,11 @@
 				<plugin>
 					<groupId>io.fabric8</groupId>
 					<artifactId>docker-maven-plugin</artifactId>
-					<version>0.43.0</version>
+					<version>0.43.4</version>
 					<configuration>
 						<images>
 							<image>
-								<name>${docker.username}/${docker.image.name}</name>
+								<name>${docker.namespace}/${docker.image.name}</name>
 								<build>
 									<tags>
 										<tag>${docker.image.tag}</tag>

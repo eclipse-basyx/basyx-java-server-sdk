@@ -7,7 +7,6 @@
 		<groupId>org.eclipse.digitaltwin.basyx</groupId>
 		<artifactId>basyx.submodelregistry</artifactId>
 		<version>${revision}</version>
-		<relativePath>..</relativePath>
 	</parent>
 
 	<artifactId>basyx.submodelregistry-service-basemodel</artifactId>
@@ -60,7 +59,7 @@
 					</execution>
 				</executions>
 			</plugin>
- 			<plugin>
+			<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
 				<executions>
@@ -87,6 +86,7 @@
 								<useSpringController>true</useSpringController>
 								<modelPackage>org.eclipse.digitaltwin.basyx.submodelregistry.model</modelPackage>
 								<instantiationTypes>array=ArrayList,map=HashMap</instantiationTypes>
+								<useSpringBoot3>true</useSpringBoot3>
 							</configOptions>
 						</configuration>
 					</execution>
@@ -107,12 +107,12 @@
 			<artifactId>jackson-databind-nullable</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-ui</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 		</dependency>
 	</dependencies>
 </project>

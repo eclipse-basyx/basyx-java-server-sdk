@@ -1,8 +1,8 @@
-FROM amazoncorretto:11.0.20-alpine3.18 as builder
+FROM amazoncorretto:17.0.8-alpine3.18 as builder
 COPY maven/${project.build.finalName}.jar ./
 RUN java -Djarmode=layertools -jar ${project.build.finalName}.jar extract
 
-FROM amazoncorretto:11.0.20-alpine3.18
+FROM amazoncorretto:17.0.8-alpine3.18
 RUN mkdir /workspace
 WORKDIR /workspace
 COPY --from=builder dependencies/ ./
