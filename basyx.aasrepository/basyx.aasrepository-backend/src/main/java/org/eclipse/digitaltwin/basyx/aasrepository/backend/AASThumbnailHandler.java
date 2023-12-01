@@ -70,16 +70,6 @@ public class AASThumbnailHandler {
 		throwIfFilePathIsNotValid(aasId, filePath);
 	}
 
-	private static void throwIfFilePathIsNotValid(String aasId, String filePath) {
-		if (filePath.isEmpty())
-			throw new FileDoesNotExistException(aasId);
-		try {
-			Paths.get(filePath);
-		} catch (InvalidPathException | NullPointerException ex) {
-			throw new FileDoesNotExistException(aasId);
-		}
-	}
-
 	public static String createFilePath(String tmpDirectory, String aasId, String fileName) {
 		return tmpDirectory + "/" + aasId + "-" + "Thumbnail" + "-" + fileName;
 	}
@@ -113,5 +103,15 @@ public class AASThumbnailHandler {
 			logger.error("Unable to create file in the temporary path.");
 		}
 		return tempDirectoryPath;
+	}
+
+	private static void throwIfFilePathIsNotValid(String aasId, String filePath) {
+		if (filePath.isEmpty())
+			throw new FileDoesNotExistException(aasId);
+		try {
+			Paths.get(filePath);
+		} catch (InvalidPathException | NullPointerException ex) {
+			throw new FileDoesNotExistException(aasId);
+		}
 	}
 }
