@@ -300,6 +300,8 @@ public abstract class AasRepositoryHTTPSuite {
 		CloseableHttpResponse getThumbnailResponse = uploadThumbnail(dummyAasId);
 
 		assertEquals(HttpStatus.OK.value(), getThumbnailResponse.getCode());
+
+		getThumbnailResponse.close();
 	}
 
 	@Test
@@ -325,6 +327,8 @@ public abstract class AasRepositoryHTTPSuite {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), dummyAasId));
 
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
+
+		response.close();
 	}
 
 	@Test

@@ -42,9 +42,9 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ThumbnailHandler {
+public class AASThumbnailHandler {
 
-	private static Logger logger = LoggerFactory.getLogger(ThumbnailHandler.class);
+	private static Logger logger = LoggerFactory.getLogger(AASThumbnailHandler.class);
 
 	public static void updateThumbnail(AasRepository aasRepo, String aasId, String contentType, String filePath) {
 		AssetInformation assetInfor = aasRepo.getAssetInformation(aasId);
