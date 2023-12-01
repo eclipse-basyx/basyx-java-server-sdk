@@ -55,7 +55,7 @@ public class FileElementPathCollector implements AssetAdministrationShellElement
 
 	private Stack<SubmodelElement> submodelElementStack = new Stack<>();
 
-	private List<List<SubmodelElement>> idShortPathCandidates = new ArrayList<>();
+	private List<List<SubmodelElement>> fileElementPathCandidates = new ArrayList<>();
 
 	public FileElementPathCollector(Submodel submodel) {
 		this.submodel = submodel;
@@ -70,7 +70,7 @@ public class FileElementPathCollector implements AssetAdministrationShellElement
 	public List<List<SubmodelElement>> collect() {
 		visit(submodel);
 
-		return idShortPathCandidates;
+		return fileElementPathCandidates;
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public class FileElementPathCollector implements AssetAdministrationShellElement
 
 		submodelElementStack.push(file);
 
-		idShortPathCandidates.add(new ArrayList<>(submodelElementStack));
+		fileElementPathCandidates.add(new ArrayList<>(submodelElementStack));
 
 		submodelElementStack.pop();
 	}

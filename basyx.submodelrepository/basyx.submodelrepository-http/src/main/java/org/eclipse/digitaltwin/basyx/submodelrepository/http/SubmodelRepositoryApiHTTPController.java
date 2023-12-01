@@ -195,16 +195,9 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 	@Override
 	public ResponseEntity<Resource> getFileByPath(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath) {
-		try {
-			Resource resource = new FileSystemResource(repository.getFileByPathSubmodel(submodelIdentifier.getIdentifier(), idShortPath));
-			
-			return new ResponseEntity<Resource>(resource, HttpStatus.OK);
-		} catch (FileDoesNotExistException | ElementDoesNotExistException e) {
-			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
-		} catch (ElementNotAFileException e) {
-			return new ResponseEntity<Resource>(HttpStatus.PRECONDITION_FAILED);
-		}
+		Resource resource = new FileSystemResource(repository.getFileByPathSubmodel(submodelIdentifier.getIdentifier(), idShortPath));
 
+		return new ResponseEntity<Resource>(resource, HttpStatus.OK);
 	}
 
 	@Override
