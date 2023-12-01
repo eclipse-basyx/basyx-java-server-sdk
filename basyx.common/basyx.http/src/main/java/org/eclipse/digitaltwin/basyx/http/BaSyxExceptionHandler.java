@@ -95,12 +95,6 @@ public class BaSyxExceptionHandler extends ResponseEntityExceptionHandler {
 	public <T> ResponseEntity<T> handleNotInvokableException(NotInvokableException exception) {
 		return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
 	}
-
-
-	@ExceptionHandler(FileDoesNotExistException.class)
-	public <T> ResponseEntity<T> handleFileDoesNotExistException(FileDoesNotExistException exception) {
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-	}
 	
 	@ExceptionHandler(ElementNotAFileException.class)
 	public <T> ResponseEntity<T> handleNotInvokableException(ElementNotAFileException exception) {
