@@ -38,12 +38,17 @@ import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPatch;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.entity.mime.FileBody;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.springframework.core.io.ClassPathResource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -196,6 +201,33 @@ public class BaSyxHttpTestUtils {
         }
         
         return mapper.writeValueAsString(rootNode);
+	}
+
+	public static CloseableHttpResponse executePutRequest(CloseableHttpClient client, HttpPut putRequest) throws IOException {
+		CloseableHttpResponse response = client.execute(putRequest);
+
+		HttpEntity responseEntity = response.getEntity();
+
+		EntityUtils.consume(responseEntity);
+		return response;
+	}
+
+	public static HttpPut createPutRequestWithFile(String url, String aasId, String fileName, java.io.File file) {
+		HttpPut putRequest = new HttpPut(getThumbnailAccessURL(url, aasId));
+
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+
+		builder.addPart("file", new FileBody(file));
+		builder.addTextBody("fileName", fileName);
+		builder.setContentType(ContentType.MULTIPART_FORM_DATA);
+
+		HttpEntity multipart = builder.build();
+		putRequest.setEntity(multipart);
+		return putRequest;
+	}
+
+	public static String getThumbnailAccessURL(String url, String aasId) {
+		return url + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId) + "/asset-information/thumbnail";
 	}
 
 	private static HttpPatch createPatchRequestWithHeader(String url, String content) {

@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -166,6 +168,21 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 		} catch (ApiException e) {
 			return false;
 		}
+	}
+
+	@Override
+	public File getThumbnail(String aasId) {
+		return decorated.getThumbnail(aasId);
+	}
+
+	@Override
+	public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
+		decorated.setThumbnail(aasId, fileName, contentType, inputStream);
+	}
+
+	@Override
+	public void deleteThumbnail(String aasId) {
+		decorated.deleteThumbnail(aasId);
 	}
 
 }

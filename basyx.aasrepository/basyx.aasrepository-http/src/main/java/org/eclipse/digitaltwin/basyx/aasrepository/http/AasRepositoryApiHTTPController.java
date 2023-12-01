@@ -25,6 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.http;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -45,11 +49,14 @@ import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-10T15:59:05.892Z[GMT]")
 @RestController
@@ -167,5 +174,47 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 		}
 
 		return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
+	}
+
+	@Override
+	public ResponseEntity<Void> deleteThumbnailAasRepository(Base64UrlEncodedIdentifier aasIdentifier) {
+		aasRepository.deleteThumbnail(aasIdentifier.getIdentifier());
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Resource> getThumbnailAasRepository(Base64UrlEncodedIdentifier aasIdentifier) {
+		try {
+			FileInputStream fileInputStream = new FileInputStream(aasRepository.getThumbnail(aasIdentifier.getIdentifier()));
+			Resource resource = new InputStreamResource(fileInputStream);
+			return new ResponseEntity<Resource>(resource, HttpStatus.OK);
+		} catch (FileNotFoundException e) {
+			return new ResponseEntity<Resource>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@Override
+	public ResponseEntity<Void> putThumbnailAasRepository(Base64UrlEncodedIdentifier aasIdentifier, String fileName, @Valid MultipartFile file) {
+		InputStream fileInputstream = null;
+		try {
+			fileInputstream = file.getInputStream();
+			aasRepository.setThumbnail(aasIdentifier.getIdentifier(), fileName, file.getContentType(), fileInputstream);
+			closeInputStream(fileInputstream);
+			return new ResponseEntity<Void>(HttpStatus.OK);
+		} catch (IOException e) {
+			closeInputStream(fileInputstream);
+			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	private void closeInputStream(InputStream fileInputstream) {
+		if (fileInputstream == null)
+			return;
+
+		try {
+			fileInputstream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

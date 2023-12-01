@@ -33,7 +33,6 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.junit.Test;
 
