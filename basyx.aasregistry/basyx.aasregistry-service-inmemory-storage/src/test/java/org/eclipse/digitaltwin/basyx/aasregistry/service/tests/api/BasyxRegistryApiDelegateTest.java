@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 DFKI GmbH (https://www.dfki.de/en/web)
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,7 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.tests.api;
@@ -28,11 +28,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
-
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.GetAssetAdministrationShellDescriptorsResult;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.GetSubmodelDescriptorsResult;
@@ -58,22 +56,18 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestComponent;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.MockBeans;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {  BasyxSearchApiDelegate.class, BasyxRegistryApiDelegate.class, SearchApiController.class, ShellDescriptorsApiController.class, InMemoryAasStorageConfiguration.class })
+@ContextConfiguration(classes = { BasyxSearchApiDelegate.class, BasyxRegistryApiDelegate.class, SearchApiController.class, ShellDescriptorsApiController.class, InMemoryAasStorageConfiguration.class })
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @TestPropertySource(properties = { "registry.type=inMemory" })
 public class BasyxRegistryApiDelegateTest {
@@ -92,10 +86,9 @@ public class BasyxRegistryApiDelegateTest {
 
 	@MockBean
 	private RegistryEventSink listener;
-	
+
 	@MockBean
 	private LocationBuilder locationBuilder;
-
 
 	@Autowired
 	private AasRegistryStorage storage;
@@ -233,7 +226,7 @@ public class BasyxRegistryApiDelegateTest {
 	@Test
 	public void whenPostSubmodelDescriptorDescriptorById_thenNoContent() throws IOException {
 		AssetAdministrationShellDescriptor descr = new AssetAdministrationShellDescriptor(ID_2);
-		assertThat(aasController.putAssetAdministrationShellDescriptorById(encode(ID_2), descr).getStatusCode()).isEqualByComparingTo(HttpStatus.NO_CONTENT);
+		assertThat(aasController.putAssetAdministrationShellDescriptorById(encode(ID_2), descr).getStatusCode()).isEqualTo(HttpStatusCode.valueOf(HttpStatus.NO_CONTENT.value()));
 		SubmodelDescriptor input = new SubmodelDescriptor(ID_2_3, List.of());
 		ResponseEntity<?> response = aasController.postSubmodelDescriptorThroughSuperpath(encode(ID_2), input);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -315,7 +308,7 @@ public class BasyxRegistryApiDelegateTest {
 		assertThat(result.size()).isEqualTo(1);
 		assertThat(result.get(0)).isEqualTo(input);
 	}
-	
+
 	private byte[] encode(String id) {
 		return Base64.getUrlEncoder().encode(id.getBytes(StandardCharsets.UTF_8));
 	}

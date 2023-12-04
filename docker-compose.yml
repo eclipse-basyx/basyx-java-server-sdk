@@ -73,6 +73,24 @@ services:
         condition: service_healthy
     networks:
       - basyx-java-server-sdk
+  
+  aas-registry-log-mem:
+    image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: aas-registry-log-mem
+    ports:
+      - "8050:8080"
+    restart: always
+    networks:
+      - basyx-java-server-sdk
+  
+  sm-registry-log-mem:
+    image: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: sm-registry-log-mem
+    ports:
+      - "8060:8080"
+    restart: always
+    networks:
+      - basyx-java-server-sdk
 
 networks:
   basyx-java-server-sdk:

@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -24,21 +24,20 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.http.model;
 
-import java.util.Objects;
-
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Message
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-04-24T09:29:02.769762272Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-04-24T09:29:02.769762272Z[GMT]")
 
 public class Message {
+
 	@JsonProperty("code")
 	private String code = null;
 
@@ -98,7 +97,7 @@ public class Message {
 
 	/**
 	 * Get code
-	 * 
+	 *
 	 * @return code
 	 **/
 	public String getCode() {
@@ -116,7 +115,7 @@ public class Message {
 
 	/**
 	 * Get correlationId
-	 * 
+	 *
 	 * @return correlationId
 	 **/
 	public String getCorrelationId() {
@@ -134,7 +133,7 @@ public class Message {
 
 	/**
 	 * Get messageType
-	 * 
+	 *
 	 * @return messageType
 	 **/
 	public MessageTypeEnum getMessageType() {
@@ -152,7 +151,7 @@ public class Message {
 
 	/**
 	 * Get text
-	 * 
+	 *
 	 * @return text
 	 **/
 	public String getText() {
@@ -170,7 +169,7 @@ public class Message {
 
 	/**
 	 * Get timestamp
-	 * 
+	 *
 	 * @return timestamp
 	 **/
 	public String getTimestamp() {

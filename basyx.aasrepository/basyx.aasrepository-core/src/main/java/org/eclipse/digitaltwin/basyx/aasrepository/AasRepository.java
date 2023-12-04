@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -121,6 +123,37 @@ public interface AasRepository {
 	 * @return the requested AAS
 	 */
 	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException;
+
+	/**
+	 * Get Thumbnail of the specific aas
+	 * 
+	 * @param aasID
+	 *            the id of the AAS
+	 * @return the file of the thumbnail
+	 */
+	public File getThumbnail(String aasId);
+
+	/**
+	 * Set Thumbnail of the AAS
+	 * 
+	 * @param aasID
+	 *            the id of the AAS
+	 * @param fileName
+	 *            name of the thumbnail file with extension
+	 * @param contentType
+	 *            content type of the file
+	 * @param inputStream
+	 *            inputstream of the thumbnail file
+	 */
+	public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream);
+
+	/**
+	 * Delete the thumbnail file of the AAS
+	 * 
+	 * @param aasId
+	 *            the id of the AAS
+	 */
+	public void deleteThumbnail(String aasId);
     
 	/**
 	 * Returns the name of the repository

@@ -25,15 +25,21 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-
+import java.io.InputStream;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.aasenvironment.component.AasEnvironmentComponent;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -42,11 +48,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * Tests the Preconfiguration feature of the AAS Environment
  * 
- * @author fried, witt, jungjan
+ * @author fried, witt, jungjan, danish
  */
 public class TestPreconfiguration {
 	private static ConfigurableApplicationContext appContext;
@@ -169,10 +176,49 @@ public class TestPreconfiguration {
 		assertNotNull(submodel1);
 		assertNotNull(submodel2);
 	}
+	
+	@Test
+	public void aasxPDFFileIntegrationInSubmodelRepository() throws FileNotFoundException, IOException {
+		InputStream expectedFile = getInputStreamOfFileFromClasspath("testFiles/OperatingManual.pdf");
+		String expectedFileExtension = "pdf";
+		
+		File actualFile = submodelRepo.getFileByPathSubmodel("http://i40.customer.com/type/1/1/1A7B62B529F19152", "OperatingManual.DigitalFile_PDF");
+		
+		assertEquals(expectedFileExtension, getExtension(actualFile.getName()));
+		assertTrue(IOUtils.contentEquals(expectedFile, FileUtils.openInputStream(actualFile)));
+	}
+	
+	@Test
+	public void aasxPNGFileIntegrationInSubmodelRepository() throws FileNotFoundException, IOException {
+		String expectedFilePath = "testFiles/verwaltungsschale-detail-part1.png";
+		String expectedFileExtension = "png";
+		
+		File actualFile1 = submodelRepo.getFileByPathSubmodel("7A7104BDAB57E184aasx", "FileData");
+		File actualFile2 = submodelRepo.getFileByPathSubmodel("7A7104BDAB57E184aasx", "SubmodelElementCollection.FileData");
+		
+		assertFileContents(expectedFilePath, expectedFileExtension, actualFile1, actualFile2);
+	}
 
 	@AfterClass
 	public static void shutdownAASEnvironment() {
 		appContext.close();
+	}
+	
+	private void assertFileContents(String expectedFilePath, String expectedFileExtension, File actualFile1, File actualFile2) throws IOException {
+		assertEquals(expectedFileExtension, getExtension(actualFile1.getName()));
+		assertEquals(expectedFileExtension, getExtension(actualFile2.getName()));
+		assertTrue(IOUtils.contentEquals(getInputStreamOfFileFromClasspath(expectedFilePath), FileUtils.openInputStream(actualFile1)));
+		assertTrue(IOUtils.contentEquals(getInputStreamOfFileFromClasspath(expectedFilePath), FileUtils.openInputStream(actualFile2)));
+	}
+	
+	private InputStream getInputStreamOfFileFromClasspath(String fileName) throws FileNotFoundException, IOException {
+		ClassPathResource classPathResource = new ClassPathResource(fileName);
+		
+		return classPathResource.getInputStream();
+	}
+	
+	private String getExtension(String filename) {
+	    return FilenameUtils.getExtension(filename);
 	}
 
 }

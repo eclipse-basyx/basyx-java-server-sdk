@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.10</version>
+		<version>3.1.4</version>
 		<relativePath />
 	</parent>
 	<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -22,7 +22,7 @@
 		<module>basyx.aasregistry</module>
 		<module>basyx.aasenvironment</module>
 		<module>basyx.conceptdescriptionrepository</module>
-		<module>basyx.aasxfileserver</module>		
+		<module>basyx.aasxfileserver</module>
 		<module>basyx.aasdiscoveryservice</module>
 	</modules>
 	<name>BaSyx Parent</name>
@@ -36,18 +36,20 @@
 	</licenses>
 	<developers>
 		<developer>
-			<organization>Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V.</organization>
+			<organization>Fraunhofer-Gesellschaft zur Foerderung der angewandten
+				Forschung e.V.</organization>
 			<id>fschnicke</id>
 			<name>Frank Schnicke</name>
 			<email>frank.schnicke@iese.fraunhofer.de</email>
 		</developer>
 	</developers>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<revision>2.0.0-SNAPSHOT</revision>
-		<docker.username>eclipsebasyx</docker.username>
+		<docker.provenance />
+		<docker.namespace>eclipsebasyx</docker.namespace>
 		<docker.image.tag>${revision}</docker.image.tag>
 		<docker.host.port>8081</docker.host.port>
 		<docker.container.port>8081</docker.container.port>
@@ -141,13 +143,6 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
 					<version>3.1.2</version>
-					<dependencies>
-						<dependency>
-							<groupId>org.apache.maven.surefire</groupId>
-							<artifactId>surefire-junit47</artifactId>
-							<version>3.1.2</version>
-						</dependency>
-					</dependencies>
 					<executions>
 						<execution>
 							<id>integration-test</id>
@@ -225,8 +220,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springdoc</groupId>
-				<artifactId>springdoc-openapi-ui</artifactId>
-				<version>1.7.0</version>
+				<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+				<version>2.2.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.paho</groupId>
@@ -288,14 +283,14 @@
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
-			    <groupId>org.eclipse.digitaltwin.basyx</groupId>
-			    <artifactId>basyx.submodelservice.component</artifactId>
-			    <version>${revision}</version>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice.component</artifactId>
+				<version>${revision}</version>
 			</dependency>
 			<dependency>
-			    <groupId>org.eclipse.digitaltwin.basyx</groupId>
-			    <artifactId>basyx.submodelservice-http</artifactId>
-			    <version>${revision}</version>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-http</artifactId>
+				<version>${revision}</version>
 			</dependency>
 			<!-- basyx.submodelrepository -->
 			<dependency>
@@ -321,6 +316,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelrepository-feature-mqtt</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-feature-registry-integration</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -392,6 +392,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-feature-registry-integration</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository.component</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -441,7 +446,7 @@
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
 				<version>${revision}</version>
-			</dependency>			
+			</dependency>
 			<!-- basyx.basyx.aasdiscoveryservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -478,7 +483,7 @@
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasxfileserver-core</artifactId>
 				<version>${revision}</version>
-			</dependency>			
+			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasxfileserver-backend-inmemory</artifactId>
@@ -487,6 +492,17 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasxfileserver.component</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<!-- basyx.aasregistry -->
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-client-native</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelregistry-client-native</artifactId>
 				<version>${revision}</version>
 			</dependency>
 
@@ -518,16 +534,16 @@
 				<classifier>tests</classifier>
 			</dependency>
 			<dependency>
-			    <groupId>org.eclipse.digitaltwin.basyx</groupId>
-			    <artifactId>basyx.submodelservice.component</artifactId>
-			    <version>${revision}</version>
-			    <classifier>tests</classifier>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice.component</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
 			</dependency>
 			<dependency>
-			    <groupId>org.eclipse.digitaltwin.basyx</groupId>
-			    <artifactId>basyx.submodelservice-http</artifactId>
-			    <version>${revision}</version>
-			    <classifier>tests</classifier>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-http</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
 			</dependency>
 			<!-- basyx.submodelrepository -->
 			<dependency>
@@ -563,6 +579,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelrepository-backend-mongodb</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-feature-registry-integration</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -636,6 +658,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-feature-registry-integration</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository.component</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
@@ -695,7 +723,7 @@
 				<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
-			</dependency>			
+			</dependency>
 			<!-- basyx.basyx.aasdiscoveryservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -732,7 +760,7 @@
 				<artifactId>basyx.aasdiscoveryservice.component</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
-			</dependency> 
+			</dependency>
 			<!-- basyx.aasxfileserver -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
