@@ -317,11 +317,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 	private void throwIfMissingId(Collection<Submodel> submodelsToCheck) {
-		boolean isMissingId = submodelsToCheck.stream().map(Submodel::getId).anyMatch(id -> id == null || id.isBlank());
-
-		if (isMissingId) {
-			throw new MissingIdentifierException();
-		}
+		submodelsToCheck.stream().map(Submodel::getId).forEach(this::throwIfSubmodelIdEmptyOrNull);
 	}
 
 	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement) {
