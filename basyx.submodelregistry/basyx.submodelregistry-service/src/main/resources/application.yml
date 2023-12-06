@@ -33,16 +33,4 @@ spring:
   jackson:
     date-format: org.eclipse.digitaltwin.basyx.submodelregistry.service.RFC3339DateFormat
     serialization:
-      WRITE_DATES_AS_TIMESTAMPS: false
-  cloud:
-    stream:
-      bindings:
-        default:
-          key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-          value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-        registryBinding:
-          destination: submodel-registry
-          content-type: application/json
-          producer:
-            partitionKeyExpression: payload.id
-            partitionCount: 1            
+      WRITE_DATES_AS_TIMESTAMPS: false         

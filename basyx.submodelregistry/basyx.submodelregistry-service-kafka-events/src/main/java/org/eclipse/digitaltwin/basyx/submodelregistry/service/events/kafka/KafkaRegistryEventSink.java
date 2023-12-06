@@ -24,29 +24,32 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.events.kafka;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEvent;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEventSink;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
+import org.springframework.messaging.support.GenericMessage;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+@RequiredArgsConstructor
 @Log4j2
 public class KafkaRegistryEventSink implements RegistryEventSink {
 
-	private static final String REGISTRY_BINDING_NAME = "registryBinding";
-
-	@Autowired
-	private StreamBridge streamBridge;
+	private final KafkaTemplate<String, String> template;
 
 	@Override
 	public void consumeEvent(RegistryEvent evt) {
-		boolean msgSent = streamBridge.send(REGISTRY_BINDING_NAME, evt);
-		if (msgSent)   {
+		try {
+			CompletableFuture<SendResult<String, String>> future = template.send(new GenericMessage<RegistryEvent>(evt));
+			future.get(); // use the blocking approach for now
 			log.info("Registration event message sent to stream.");
-		} else {
+		} catch (ExecutionException | InterruptedException e) {
 			log.error("Failed to sent registration event info.");
 		}
 	}
-
 }

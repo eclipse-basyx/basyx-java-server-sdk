@@ -50,7 +50,7 @@ public class RegistryEventLogSink implements RegistryEventSink {
 			String msg = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(evt);
 			log.debug("Event sent -> " + msg);
 		} catch (JsonProcessingException e) {
-			log.error(Marker.ANY_MARKER, "Failed to proecess json ", e);
+			log.error(Marker.ANY_MARKER, "Failed to process json ", e);
 		}
 	}
 
