@@ -33,7 +33,6 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEve
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEventSink;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 
 public class RegistrationEventSendingSubmodelRegistryStorage extends SubmodelRegistryStorageDecorator {
