@@ -16,10 +16,10 @@
 		<module>basyx.common</module>
 		<module>basyx.submodelservice</module>
 		<module>basyx.submodelrepository</module>
-		<module>basyx.submodelregistry</module>
+		<!--<module>basyx.submodelregistry</module>-->
 		<module>basyx.aasservice</module>
 		<module>basyx.aasrepository</module>
-		<module>basyx.aasregistry</module>
+		<!--<module>basyx.aasregistry</module>-->
 		<module>basyx.aasenvironment</module>
 		<module>basyx.conceptdescriptionrepository</module>
 		<module>basyx.aasxfileserver</module>
@@ -271,6 +271,11 @@
 				<artifactId>basyx.mongodbcore</artifactId>
 				<version>${revision}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.authorization</artifactId>
+				<version>${revision}</version>
+			</dependency>
 			<!-- basyx.submodelservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -320,7 +325,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.submodelrepository-feature-registry-integration</artifactId>
+				<artifactId>
+					basyx.submodelrepository-feature-registry-integration</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -393,6 +399,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-feature-registry-integration</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-feature-authorization</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -584,7 +595,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.submodelrepository-feature-registry-integration</artifactId>
+				<artifactId>
+					basyx.submodelrepository-feature-registry-integration</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -659,6 +671,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-feature-registry-integration</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-feature-authorization</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>

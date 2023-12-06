@@ -91,6 +91,19 @@ services:
     restart: always
     networks:
       - basyx-java-server-sdk
+  
+  keycloak:
+      build:
+        context: ./examples/keycloak
+      volumes:
+        - ./:/opt/jboss/keycloak/imports
+      ports:
+        - 9096:8080
+      environment:
+        - KEYCLOAK_ADMIN=admin
+        - KEYCLOAK_ADMIN_PASSWORD=admin
+      networks:
+        - basyx-java-server-sdk
 
 networks:
   basyx-java-server-sdk:

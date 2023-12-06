@@ -19,6 +19,7 @@
 		<module>basyx.aasrepository-feature-aasxupload</module>
 		<module>basyx.aasrepository-feature-mqtt</module>
 		<module>basyx.aasrepository-feature-registry-integration</module>
+		<module>basyx.aasrepository-feature-authorization</module>
 		<module>basyx.aasrepository-tck</module>
 		<module>basyx.aasrepository.component</module>
 	</modules>
