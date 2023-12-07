@@ -16,12 +16,13 @@ jobs:
       uses: docker/setup-qemu-action@v3
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
-    - name: Set up JDK 17
+    - name: Set up JDK 11
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
+        java-version: '11'
         distribution: 'temurin'
         cache: maven
+        
     - name: Install BaSyx
       run: mvn clean install -DskipTests
     - name: Log in to Docker Hub
@@ -30,11 +31,47 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         
-    - name: Build and push Docker image
+    - name: Build and push Concept Description Repository Docker image
       uses: docker/build-push-action@v5
       with:
         context: ./basyx.conceptdescriptionrepository/basyx.conceptdescriptionrepository.component
         platforms: linux/amd64,linux/arm64
         file: ./basyx.conceptdescriptionrepository/basyx.conceptdescriptionrepository.component/Dockerfile
         push: true
-        tags: mhrimaz/basyxtest:latest
+        tags: mhrimaz/basyxtest:cdlatest
+        
+    - name: Build and push Submodel Repository Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./basyx.submodelrepository/basyx.submodelrepository.component
+        platforms: linux/amd64,linux/arm64
+        file: ./basyx.submodelrepository/basyx.submodelrepository.component/Dockerfile
+        push: true
+        tags: mhrimaz/basyxtest:smlatest        
+        
+    - name: Build and push Asset Administration Shell Repository Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./basyx.aasrepository/basyx.aasrepository.component
+        platforms: linux/amd64,linux/arm64
+        file: ./basyx.aasrepository/basyx.aasrepository.component/Dockerfile
+        push: true
+        tags: mhrimaz/basyxtest:aaslatest
+
+    - name: Build and push AASX File Server Repository Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./basyx.aasxfileserver/basyx.aasxfileserver.component
+        platforms: linux/amd64,linux/arm64
+        file: ./basyx.aasxfileserver/basyx.aasxfileserver.component/Dockerfile
+        push: true
+        tags: mhrimaz/basyxtest:fslatest
+        
+    - name: Build and push Environment Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./basyx.aasenvironment/basyx.aasenvironment.component
+        platforms: linux/amd64,linux/arm64
+        file: ./basyx.aasenvironment/basyx.aasenvironment.component/Dockerfile
+        push: true
+        tags: mhrimaz/basyxtest:envlatest
