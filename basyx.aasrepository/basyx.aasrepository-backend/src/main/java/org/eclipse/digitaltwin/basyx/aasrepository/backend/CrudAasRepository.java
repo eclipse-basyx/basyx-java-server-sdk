@@ -48,7 +48,7 @@ import org.springframework.data.repository.CrudRepository;
 /**
  * Default Implementation for the {@link AasRepository} based on Spring {@link CrudRepository}
  * 
- * @author mateusmolina, despen, kammognie
+ * @author mateusmolina, despen, zhangzai, kammognie
  *
  */
 public class CrudAasRepository implements AasRepository {

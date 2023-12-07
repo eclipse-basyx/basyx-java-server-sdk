@@ -91,7 +91,7 @@ public abstract class AasRepositorySuite {
 				.submodels(createDummyReference(DUMMY_SUBMODEL_ID))
 				.build();
 
-		aas2 = createDummyAssetAdministrationShell(AAS2);
+		aas2 = new DefaultAssetAdministrationShell.Builder().id(AAS2).build();
 		AssetInformation assetInfo = createDummyAssetInformation();
 		aas2.setAssetInformation(assetInfo);
 
@@ -132,14 +132,12 @@ public abstract class AasRepositorySuite {
 	
 	@Test(expected = MissingIdentifierException.class)
 	public void createWithEmptyAasIdentifier() {
-		AssetAdministrationShell shell = createDummyAssetAdministrationShell(AAS_EMPTY_ID);
-		aasRepo.createAas(shell);
+		aasRepo.createAas(new DefaultAssetAdministrationShell.Builder().id(AAS_EMPTY_ID).build());
 	}
 	
 	@Test(expected = MissingIdentifierException.class)
 	public void createWithNullAasIdentifier() {
-		AssetAdministrationShell shell = createDummyAssetAdministrationShell(AAS_NULL_ID);
-		aasRepo.createAas(shell);
+		aasRepo.createAas(new DefaultAssetAdministrationShell.Builder().id(AAS_NULL_ID).build());
 	}
 
 	@Test
@@ -315,11 +313,6 @@ public abstract class AasRepositorySuite {
 				.build();
 	}
 	
-	public static AssetAdministrationShell createDummyAssetAdministrationShell(String aasId) {
-		return new DefaultAssetAdministrationShell.Builder().id(aasId)
-				.build();
-	}
-
 	/**
 	 * @return 5 References each with value of smRef_(0-4)
 	 */
