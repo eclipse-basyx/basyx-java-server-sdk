@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '17'
-        distribution: 'adopt'
+        distribution: 'temurin'
         cache: maven
     - name: Install BaSyx
       run: mvn clean install -DskipTests
@@ -33,8 +33,8 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
-        context: .
+        context: ./basyx.conceptdescriptionrepository/basyx.conceptdescriptionrepository.component
         platforms: linux/amd64,linux/arm64
-        file: ./Dockerfile
+        file: ./basyx.conceptdescriptionrepository/basyx.conceptdescriptionrepository.component/Dockerfile
         push: true
-        tags: repo/repo:latest
+        tags: mhrimaz/basyxtest:latest
