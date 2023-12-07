@@ -65,10 +65,10 @@ public class TestAasDiscoveryServiceHTTP extends AasDiscoveryServiceHTTPSuite {
 	private void resetAssetLink(AssetLink assetLink, AasDiscoveryService aasDiscoveryService) {
 
 		try {
-			aasDiscoveryService.createAllAssetLinksById(assetLink.getShellIdentifier(), assetLink.getSpecificAssetIDs());
+			aasDiscoveryService.createAllAssetLinksById(assetLink.getShellIdentifier(), assetLink.getSpecificAssetIds());
 		} catch (CollidingAssetLinkException e) {
 			aasDiscoveryService.deleteAllAssetLinksById(assetLink.getShellIdentifier());
-			aasDiscoveryService.createAllAssetLinksById(assetLink.getShellIdentifier(), assetLink.getSpecificAssetIDs());
+			aasDiscoveryService.createAllAssetLinksById(assetLink.getShellIdentifier(), assetLink.getSpecificAssetIds());
 		}
 	}
 

@@ -29,6 +29,9 @@ It supports DotAAS Part 1 V3 and the following HTTP/REST endpoints defined in [D
   * DeleteSubmodelReference
   * GetAssetInformation
   * PutAssetInformation
+  * GetThumbnail
+  * PutThumbnail
+  * DeleteThumbnail
 
 Right now, no additional input parameters modifying the output (e.g., serializationModifier) are supported.
 

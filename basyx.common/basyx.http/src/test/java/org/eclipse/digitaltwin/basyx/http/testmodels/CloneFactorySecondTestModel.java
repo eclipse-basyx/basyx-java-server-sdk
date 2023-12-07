@@ -23,60 +23,59 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.http.testmodels;
 
-package org.eclipse.digitaltwin.basyx.submodelservice.value;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetID;
+import java.util.Objects;
 
 /**
- * Represents the {@link SpecificAssetId} value
+ * Simple model for testing {@link CloneFactory}
  * 
  * @author danish
- *
  */
-public class SpecificAssetIDValue {
+public class CloneFactorySecondTestModel {
 	
 	private String name;
-	private String value;
-	private ReferenceValue externalSubjectId;
+	private String type;
 	
-	@SuppressWarnings("unused")
-	private SpecificAssetIDValue() {
+	public CloneFactorySecondTestModel() {}
+	
+	public CloneFactorySecondTestModel(String name, String type) {
 		super();
-	}
-
-	public SpecificAssetIDValue(String name, String value, ReferenceValue externalSubjectId) {
 		this.name = name;
-		this.value = value;
-		this.externalSubjectId = externalSubjectId;
-	}
-
-	public SpecificAssetIDValue(SpecificAssetID specificAssetID) {
-		this.name = specificAssetID.getName();
-		this.value = specificAssetID.getValue();
-		if (specificAssetID.getExternalSubjectID() != null) {
-			this.externalSubjectId = new ReferenceValue(specificAssetID.getExternalSubjectID());
-		}
+		this.type = type;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public String getValue() {
-		return value;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public Reference getExternalSubjectId() {
-		if (externalSubjectId == null)
-			return null;
-		
-		return externalSubjectId.toReference();
+	public String getType() {
+		return type;
 	}
 
-	public SpecificAssetID toSpecificAssetID() {
-		return new DefaultSpecificAssetID.Builder().externalSubjectID(getExternalSubjectId()).name(getName()).value(getValue()).build();
+	public void setType(String type) {
+		this.type = type;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, type);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CloneFactorySecondTestModel other = (CloneFactorySecondTestModel) obj;
+		return Objects.equals(name, other.name) && Objects.equals(type, other.type);
+	}
+
 }

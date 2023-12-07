@@ -28,9 +28,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetID;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.EntityValue;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIDValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIdValue;
 
 /**
  * Maps {@link Entity} value to {@link EntityValue}
@@ -47,30 +47,30 @@ public class EntityValueMapper implements ValueMapper<EntityValue> {
 
 	@Override
 	public EntityValue getValue() {
-		return new EntityValue(ValueMapperUtil.createValueOnlyCollection(entity.getStatements()), entity.getEntityType(), entity.getGlobalAssetID(), getSpecificAssetIdValue(entity.getSpecificAssetIds()));
+		return new EntityValue(ValueMapperUtil.createValueOnlyCollection(entity.getStatements()), entity.getEntityType(), entity.getGlobalAssetId(), getSpecificAssetIdValue(entity.getSpecificAssetIds()));
 	}
 
 	@Override
 	public void setValue(EntityValue entityValue) {
 		ValueMapperUtil.setValueOfSubmodelElementWithValueOnly(entity.getStatements(), entityValue.getStatements());
 		entity.setEntityType(entityValue.getEntityType());
-		setGlobalAssetID(entityValue.getGlobalAssetId());
-		setSpecificAssetIDs(entityValue.getSpecificAssetIds());
+		setGlobalAssetId(entityValue.getGlobalAssetId());
+		setSpecificAssetIds(entityValue.getSpecificAssetIds());
 	}
 
-	private void setSpecificAssetIDs(List<SpecificAssetIDValue> specificAssetIdValues) {
+	private void setSpecificAssetIds(List<SpecificAssetIdValue> specificAssetIdValues) {
 		if (specificAssetIdValues == null)
 			return;
 
-		List<SpecificAssetID> specificAssetIds = specificAssetIdValues.stream().map(SpecificAssetIDValue::toSpecificAssetID).collect(Collectors.toList());
+		List<SpecificAssetId> specificAssetIds = specificAssetIdValues.stream().map(SpecificAssetIdValue::toSpecificAssetId).collect(Collectors.toList());
 		entity.setSpecificAssetIds(specificAssetIds);
 	}
 
-	private void setGlobalAssetID(String value) {
-		entity.setGlobalAssetID(value);
+	private void setGlobalAssetId(String value) {
+		entity.setGlobalAssetId(value);
 	}
 
-	private List<SpecificAssetIDValue> getSpecificAssetIdValue(List<SpecificAssetID> specificAssetIds) {
-		return specificAssetIds.stream().map(specificAssetId -> new SpecificAssetIDValue(specificAssetId)).collect(Collectors.toList());
+	private List<SpecificAssetIdValue> getSpecificAssetIdValue(List<SpecificAssetId> specificAssetIds) {
+		return specificAssetIds.stream().map(specificAssetId -> new SpecificAssetIdValue(specificAssetId)).collect(Collectors.toList());
 	}
 }

@@ -34,6 +34,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @ConditionalOnExpression("#{${" + MqttAasServiceFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
 @Component
 public class MqttAasServiceFeature implements AasServiceFeature {
@@ -43,18 +45,19 @@ public class MqttAasServiceFeature implements AasServiceFeature {
 	private boolean enabled;
 
 	private IMqttClient mqttClient;
-
 	private String repoId;
+	private ObjectMapper objectMapper;
 
 	@Autowired
-	public MqttAasServiceFeature(IMqttClient mqttClient, AasRepository repo) {
+	public MqttAasServiceFeature(IMqttClient mqttClient, AasRepository repo, ObjectMapper objectMapper) {
 		this.mqttClient = mqttClient;
 		this.repoId = repo.getName();
+		this.objectMapper = objectMapper;
 	}
 
 	@Override
 	public AasServiceFactory decorate(AasServiceFactory aasServiceFactory) {
-		return new MqttAasServiceFactory(aasServiceFactory, mqttClient, new MqttAasServiceTopicFactory(new URLEncoder()), repoId);
+		return new MqttAasServiceFactory(aasServiceFactory, mqttClient, new MqttAasServiceTopicFactory(new URLEncoder()), repoId, objectMapper);
 	}
 
 	@Override

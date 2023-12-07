@@ -5,6 +5,7 @@
 			"id": "8A6344BDAB57E184",
 			"idShort": "FileTests",
 			"modelType": "Submodel",
+			"kind":"Instance",
 			"semanticId": {
 				"keys": [{
 						"type": "GlobalReference",

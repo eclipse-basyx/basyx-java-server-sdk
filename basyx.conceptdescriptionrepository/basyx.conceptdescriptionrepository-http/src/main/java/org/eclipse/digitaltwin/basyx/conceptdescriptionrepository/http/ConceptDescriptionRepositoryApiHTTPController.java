@@ -1,10 +1,13 @@
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
@@ -24,14 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
-
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-03-21T12:35:49.719724407Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-03-21T12:35:49.719724407Z[GMT]")
 @RestController
 public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDescriptionRepositoryHTTPApi {
 
@@ -56,12 +52,14 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 	@Override
 	public ResponseEntity<PagedResult> getAllConceptDescriptions(@Valid String idShort, @Valid Base64UrlEncodedIdentifier isCaseOf, @Valid Base64UrlEncodedIdentifier dataSpecificationRef, @Min(1) @Valid Integer limit,
 			@Valid Base64UrlEncodedCursor cursor) {
-		if (limit == null)
+		if (limit == null) {
 			limit = 100;
+		}
 
 		String decodedCursor = "";
-		if (cursor != null)
+		if (cursor != null) {
 			decodedCursor = cursor.getDecodedCursor();
+		}
 
 		Reference isCaseOfReference = getReference(getDecodedValue(isCaseOf));
 		Reference dataSpecificationReference = getReference(getDecodedValue(dataSpecificationRef));
@@ -100,8 +98,9 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 	}
 
 	private Reference getReference(String serializedReference) {
-		if (serializedReference == null)
+		if (serializedReference == null) {
 			return null;
+		}
 
 		try {
 			return objectMapper.readValue(serializedReference, DefaultReference.class);
@@ -115,8 +114,9 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 	}
 
 	private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
-		if (cursorResult == null || cursorResult.getCursor() == null)
+		if (cursorResult == null || cursorResult.getCursor() == null) {
 			return null;
+		}
 
 		return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
 	}

@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceValue;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIDValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIdValue;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -45,11 +45,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * @author jungjan, witt
  */
-public class SpecificAssetIDValueJsonDeserializer extends JsonDeserializer<SpecificAssetIDValue> {
+public class SpecificAssetIdValueJsonDeserializer extends JsonDeserializer<SpecificAssetIdValue> {
 	private final String EXTERNAL_SUBJECT_ID_KEY = "externalSubjectId";
 
 	@Override
-	public SpecificAssetIDValue deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+	public SpecificAssetIdValue deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
 		try {
 			ObjectMapper mapper = (ObjectMapper) p.getCodec();
 			JsonNode node = mapper.readTree(p);
@@ -66,7 +66,7 @@ public class SpecificAssetIDValueJsonDeserializer extends JsonDeserializer<Speci
 				externalSubjectIdValue = handleExternalSubjectId(mapper, node);
 			}
 
-			return new SpecificAssetIDValue(name, value, externalSubjectIdValue);
+			return new SpecificAssetIdValue(name, value, externalSubjectIdValue);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

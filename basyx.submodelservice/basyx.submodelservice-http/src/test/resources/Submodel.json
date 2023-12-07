@@ -1,6 +1,7 @@
 {
 	"modelType": "Submodel",
 	"id": "8A7104BDAB57E185",
+	"kind": "Instance",
 	"idShort": "AllSubmodelElementsIdShort",
 	"submodelElements": [
 		{
@@ -323,7 +324,7 @@
 			"modelType": "SubmodelElementList",
 			"category": "PARAMETER",
 			"idShort": "SubmodelElementList",
-			"orderRelevant": false,
+			"orderRelevant": true,
 			"value": [
 				{
 					"modelType": "Range",
@@ -423,7 +424,7 @@
 		{
 			"modelType": "SubmodelElementList",
 			"idShort": "SimpleList",
-			"orderRelevant": false,
+			"orderRelevant": true,
 			"value": [
 				{
 					"modelType": "Property",

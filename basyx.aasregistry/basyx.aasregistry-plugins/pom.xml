@@ -4,7 +4,6 @@
 		<groupId>org.eclipse.digitaltwin.basyx</groupId>
 		<artifactId>basyx.aasregistry</artifactId>
 		<version>${revision}</version>
-		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>basyx.aasregistry-plugins</artifactId>
 	<packaging>maven-plugin</packaging>
