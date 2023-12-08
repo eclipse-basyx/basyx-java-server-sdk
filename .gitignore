@@ -89,3 +89,5 @@ local.properties
 /.env
 
 **.iml
+sync-upstream-repo
+.github/workflows/sync-with-upstream.yml
