@@ -25,25 +25,34 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.aasx.AASXDeserializer;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.aasx.InMemoryFile;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.xml.XmlDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.basyx.aasenvironment.FileElementPathCollector;
+import org.eclipse.digitaltwin.basyx.aasenvironment.IdShortPathBuilder;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
@@ -53,16 +62,20 @@ import org.springframework.stereotype.Component;
 /**
  * Loader for AAS environment pre-configuration
  *
- * @author fried, mateusmolina, despen, witt, jungjan
+ * @author fried, mateusmolina, despen, witt, jungjan, danish
  *
  */
 @Component
 public class AasEnvironmentPreconfigurationLoader {
+	
+	private Logger logger = LoggerFactory.getLogger(AasEnvironmentPreconfigurationLoader.class);
 
 	@Value("${basyx.environment:#{null}}")
 	private List<String> pathsToLoad;
 
 	private ResourceLoader resourceLoader;
+	
+	private List<InMemoryFile> relatedFiles;
 
 	@Autowired
 	public AasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, List<String> pathsToLoad) {
@@ -131,9 +144,48 @@ public class AasEnvironmentPreconfigurationLoader {
 	}
 
 	private void createSubmodelsOnRepositoryFromEnvironment(SubmodelRepository submodelRepository, Environment environment) {
-		for (Submodel submodel : environment.getSubmodels()) {
-			submodelRepository.createSubmodel(submodel);
+		List<Submodel> submodels = environment.getSubmodels();
+		
+		submodels.stream().forEach(submodelRepository::createSubmodel);
+		
+		if (relatedFiles == null || relatedFiles.isEmpty())
+			return;
+		
+		for (Submodel submodel : submodels) {
+			List<List<SubmodelElement>> idShortElementPathsOfAllFileSMEs = new FileElementPathCollector(submodel).collect();
+			
+			idShortElementPathsOfAllFileSMEs.stream().forEach(fileSMEIdShortPath -> setFileToFileElement(submodel.getId(), fileSMEIdShortPath, submodelRepository));
 		}
+	}
+
+	private void setFileToFileElement(String submodelId, List<SubmodelElement> fileSMEIdShortPathElements, SubmodelRepository submodelRepository) {
+		String fileSMEIdShortPath = new IdShortPathBuilder(new ArrayList<>(fileSMEIdShortPathElements)).build();
+		
+		org.eclipse.digitaltwin.aas4j.v3.model.File fileSME = (org.eclipse.digitaltwin.aas4j.v3.model.File) submodelRepository.getSubmodelElement(submodelId, fileSMEIdShortPath);
+		
+		InMemoryFile inMemoryFile = getAssociatedInMemoryFile(relatedFiles, fileSME.getValue());
+		
+		if (inMemoryFile == null) {
+			logger.info("Unable to set file to the SubmodelElement File with IdShortPath '{}' because it does not exist in the AASX file.", fileSMEIdShortPath);
+			
+			return;
+		}
+		
+		submodelRepository.setFileValue(submodelId, fileSMEIdShortPath, getFileName(inMemoryFile.getPath()), new ByteArrayInputStream(inMemoryFile.getFileContent()));
+	}
+
+	private String getFileName(String path) {
+		return FilenameUtils.getName(path);
+	}
+
+	private InMemoryFile getAssociatedInMemoryFile(List<InMemoryFile> relatedFiles, String value) {
+		
+		Optional<InMemoryFile> inMemoryFile = relatedFiles.stream().filter(file -> file.getPath().equals(value)).findAny();
+		
+		if (inMemoryFile.isEmpty())
+			return null;
+		
+		return inMemoryFile.get();
 	}
 
 	private void createShellsOnRepositoryFromEnvironment(AasRepository aasRepository, Environment environment) {
@@ -152,6 +204,9 @@ public class AasEnvironmentPreconfigurationLoader {
 			environment = deserializer.read(new FileInputStream(file));
 		} else if (isAasxFile(file.getPath())) {
 			AASXDeserializer deserializer = new AASXDeserializer(new FileInputStream(file));
+			
+			relatedFiles = deserializer.getRelatedFiles();
+			
 			environment = deserializer.read();
 		}
 		return environment;

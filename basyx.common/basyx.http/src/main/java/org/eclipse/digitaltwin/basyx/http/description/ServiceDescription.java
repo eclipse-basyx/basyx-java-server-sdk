@@ -2,10 +2,9 @@ package org.eclipse.digitaltwin.basyx.http.description;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import javax.annotation.Generated;
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +17,9 @@ import java.util.Objects;
  */
 
 @Schema(name = "ServiceDescription",
-    description = "The Description object enables servers to present their capabilities to the clients, in particular which profiles they implement. At least one defined profile is required. Additional, proprietary attributes might be included. Nevertheless, the server must not expect that a regular client understands them.")
+  description = "The Description object enables servers to present their capabilities to the clients, in particular which profiles they implement. At least one defined profile is required. Additional, proprietary attributes might be included. Nevertheless, the server must not expect that a regular client understands them.")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen",
-    date = "2023-09-29T10:10:24.413141+02:00[Europe/Berlin]")
+  date = "2023-09-29T10:10:24.413141+02:00[Europe/Berlin]")
 public class ServiceDescription implements Serializable {
 
   private static final long serialVersionUID = 1L;

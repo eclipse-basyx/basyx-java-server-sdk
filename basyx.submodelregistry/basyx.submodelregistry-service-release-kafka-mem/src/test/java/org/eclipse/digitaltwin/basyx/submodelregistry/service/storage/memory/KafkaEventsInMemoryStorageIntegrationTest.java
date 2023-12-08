@@ -24,7 +24,6 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.memory;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -35,6 +34,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.EventQueue;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.ConsumerSeekAware;
@@ -44,7 +44,9 @@ import org.springframework.test.context.TestPropertySource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-@TestPropertySource(properties = { "registry.type=inMemory", "events.sink=kafka", "spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092" })
+@TestPropertySource(
+		properties = {"spring.profiles.active=kafkaEvents,inMemoryStorage",
+				"spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092"})
 public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTest {
 
 
@@ -69,21 +71,24 @@ public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTe
 		private final EventQueue queue;
 		private final CountDownLatch latch = new CountDownLatch(1);
 		
+		@Value("${spring.kafka.template.default-topic}")
+		private String topicName;
+		
 		@SuppressWarnings("unused")
 		public RegistrationEventKafkaListener(ObjectMapper mapper) {
 			this.queue = new EventQueue(mapper);
 		}
 		
 		@KafkaHandler
-		public void receiveMessage(byte[] content) {
-			queue.offer(new String((byte[]) content, StandardCharsets.UTF_8));
+		public void receiveMessage(String content) {
+			queue.offer(content);
 		}
 
 		@Override
 		public void onPartitionsAssigned(Map<TopicPartition, Long> assignments,
 					ConsumerSeekCallback callback) {
 			for (TopicPartition eachPartition : assignments.keySet()) {
-				if ("submodel-registry".equals(eachPartition.topic())) {
+				if (topicName.equals(eachPartition.topic())) {
 					callback.seekToEnd(List.of(eachPartition));
 					latch.countDown();
 				}

@@ -29,11 +29,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
@@ -46,11 +54,13 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * Testsuite for implementations of the AasRepository interface
@@ -70,6 +80,8 @@ public abstract class AasRepositorySuite {
 	private List<AssetAdministrationShell> preconfiguredShells = new ArrayList<>();
 
 	private static final String DUMMY_SUBMODEL_ID = "dummySubmodelId";
+	private static final String THUMBNAIL_FILE_PATH_1 = "BaSyx-Logo-1.png";
+	private static final String THUMBNAIL_FILE_PATH_2 = "BaSyx-Logo-2.png";
 
 	private AasRepository aasRepo;
 
@@ -80,15 +92,12 @@ public abstract class AasRepositorySuite {
 	@Before
 	public void createAasRepoWithDummyAas() {
 		aasRepo = getAasRepository();
-		
+
 		sanitizeRepository();
 
-		aas1 = new DefaultAssetAdministrationShell.Builder().id(AAS_1_ID)
-				.submodels(createDummyReference(DUMMY_SUBMODEL_ID))
-				.build();
+		aas1 = new DefaultAssetAdministrationShell.Builder().id(AAS_1_ID).submodels(createDummyReference(DUMMY_SUBMODEL_ID)).build();
 
-		aas2 = new DefaultAssetAdministrationShell.Builder().id(AAS2)
-				.build();
+		aas2 = new DefaultAssetAdministrationShell.Builder().id(AAS2).build();
 		AssetInformation assetInfo = createDummyAssetInformation();
 		aas2.setAssetInformation(assetInfo);
 
@@ -97,7 +106,7 @@ public abstract class AasRepositorySuite {
 
 		preconfiguredShells.forEach(shell -> aasRepo.createAas(shell));
 	}
-	
+
 	@Test
 	public void getDefaultAasRepositoryName() {
 		assertEquals("aas-repo", aasRepo.getName());
@@ -106,8 +115,7 @@ public abstract class AasRepositorySuite {
 	@Test
 	public void allAasRetrieval() throws Exception {
 		PaginationInfo pInfo = new PaginationInfo(2, null);
-		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(pInfo)
-				.getResult();
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(pInfo).getResult();
 		assertEquals(preconfiguredShells, coll);
 	}
 
@@ -147,15 +155,13 @@ public abstract class AasRepositorySuite {
 	public void getSubmodelReferences() {
 		Reference reference = createDummyReference(DUMMY_SUBMODEL_ID);
 
-		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo)
-				.getResult();
+		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo).getResult();
 		assertTrue(submodelReferences.contains(reference));
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getSubmodelReferencesOfNonExistingAas() {
-		aasRepo.getSubmodelReferences("doesNotMatter", noLimitPaginationInfo)
-				.getResult();
+		aasRepo.getSubmodelReferences("doesNotMatter", noLimitPaginationInfo).getResult();
 	}
 
 	@Test
@@ -163,8 +169,7 @@ public abstract class AasRepositorySuite {
 		Reference reference = createDummyReference(DUMMY_SUBMODEL_ID);
 		aasRepo.addSubmodelReference(aas1.getId(), reference);
 
-		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo)
-				.getResult();
+		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo).getResult();
 
 		assertTrue(submodelReferences.contains(reference));
 	}
@@ -180,8 +185,7 @@ public abstract class AasRepositorySuite {
 		Reference reference = createDummyReference(DUMMY_SUBMODEL_ID);
 		aasRepo.removeSubmodelReference(aas1.getId(), DUMMY_SUBMODEL_ID);
 
-		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo)
-				.getResult();
+		List<Reference> submodelReferences = aasRepo.getSubmodelReferences(aas1.getId(), noLimitPaginationInfo).getResult();
 
 		assertFalse(submodelReferences.contains(reference));
 	}
@@ -213,9 +217,7 @@ public abstract class AasRepositorySuite {
 
 	@Test(expected = IdentificationMismatchException.class)
 	public void updateExistingAasWithMismatchedIdentifier() {
-		AssetAdministrationShell aas = new DefaultAssetAdministrationShell.Builder().id("mismatchId")
-				.submodels(createDummyReference(DUMMY_SUBMODEL_ID))
-				.build();
+		AssetAdministrationShell aas = new DefaultAssetAdministrationShell.Builder().id("mismatchId").submodels(createDummyReference(DUMMY_SUBMODEL_ID)).build();
 
 		aasRepo.updateAas(AAS_1_ID, aas);
 	}
@@ -247,10 +249,7 @@ public abstract class AasRepositorySuite {
 		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null));
 		List<AssetAdministrationShell> resultList = result.getResult();
 		assertEquals(1, resultList.size());
-		assertEquals(AAS_1_ID, resultList.stream()
-				.findFirst()
-				.get()
-				.getId());
+		assertEquals(AAS_1_ID, resultList.stream().findFirst().get().getId());
 	}
 
 	@Test
@@ -261,43 +260,83 @@ public abstract class AasRepositorySuite {
 		result = aasRepo.getAllAas(new PaginationInfo(1, cursor));
 		List<AssetAdministrationShell> resultList = result.getResult();
 		assertEquals(1, resultList.size());
-		assertEquals(AAS2, resultList.stream()
-				.findFirst()
-				.get()
-				.getId());
+		assertEquals(AAS2, resultList.stream().findFirst().get().getId());
 	}
 
 	@Test
 	public void getPaginatedSubmodelReferencesPaginated() {
 		List<Reference> submodelReferences = createDummyReferences();
-		AssetAdministrationShell aas = new DefaultAssetAdministrationShell.Builder().id("paginatedAAS")
-				.submodels(submodelReferences)
-				.build();
+		AssetAdministrationShell aas = new DefaultAssetAdministrationShell.Builder().id("paginatedAAS").submodels(submodelReferences).build();
 		aasRepo.createAas(aas);
 		PaginationInfo pInfo = new PaginationInfo(1, "");
 		CursorResult<List<Reference>> paginatedReferences = aasRepo.getSubmodelReferences("paginatedAAS", pInfo);
-		assertEquals(1, paginatedReferences.getResult()
-				.size());
-		assertEquals(submodelReferences.stream()
-				.findFirst()
-				.get(),
-				paginatedReferences.getResult()
-						.stream()
-						.findFirst()
-						.get());
+		assertEquals(1, paginatedReferences.getResult().size());
+		assertEquals(submodelReferences.stream().findFirst().get(), paginatedReferences.getResult().stream().findFirst().get());
+	}
+
+	@Test
+	public void updateThumbnail() throws FileNotFoundException, IOException {
+		// Set the thumbnail of the AAS for the first time
+		aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH_1, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_1));
+
+		// Set the thumbnail of the AAS for the second time with a new figure
+		aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH_2, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_2));
+
+		File retrievedThumbnail = aasRepo.getThumbnail(AAS2);
+
+		assertEquals(readFile("src/test/resources/" + THUMBNAIL_FILE_PATH_2, Charset.defaultCharset()), new String(FileUtils.readFileToByteArray(retrievedThumbnail), Charset.defaultCharset()));
+
+	}
+
+	@Test
+	public void setThumbnail() throws FileNotFoundException, IOException {
+		aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH_1, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_1));
+
+		File retrievedThumbnail = aasRepo.getThumbnail(AAS2);
+
+		assertEquals(readFile("src/test/resources/" + THUMBNAIL_FILE_PATH_1, Charset.defaultCharset()), new String(FileUtils.readFileToByteArray(retrievedThumbnail), Charset.defaultCharset()));
+
+	}
+
+	@Test
+	public void getThumbnail() throws IOException {
+		aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH_1, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_1));
+
+		File retrievedThumbnail = aasRepo.getThumbnail(AAS2);
+
+		assertEquals(readFile("src/test/resources/" + THUMBNAIL_FILE_PATH_1, Charset.defaultCharset()), new String(FileUtils.readFileToByteArray(retrievedThumbnail), Charset.defaultCharset()));
+	}
+
+	@Test(expected = FileDoesNotExistException.class)
+	public void getNonExistingFile() {
+		aasRepo.getThumbnail(AAS2);
+	}
+
+	@Test(expected = FileDoesNotExistException.class)
+	public void deleteThumbnail() throws FileNotFoundException, IOException {
+		aasRepo.setThumbnail(AAS2, THUMBNAIL_FILE_PATH_1, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_1));
+		aasRepo.deleteThumbnail(AAS2);
+
+		aasRepo.getThumbnail(AAS2);
+	}
+
+	@Test(expected = FileDoesNotExistException.class)
+	public void deleteNonExistingFile() throws IOException {
+		aasRepo.deleteThumbnail(AAS2);
+	}
+
+	private static String readFile(String path, Charset encoding) throws IOException {
+		byte[] encoded = Files.readAllBytes(Paths.get(path));
+
+		return new String(encoded, encoding);
 	}
 
 	public static Reference createDummyReference(String submodelId) {
-		return new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL)
-				.value(submodelId)
-				.build())
-				.build();
+		return new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(submodelId).build()).build();
 	}
 
 	private AssetInformation createDummyAssetInformation() {
-		return new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
-				.globalAssetId("assetIDTestKey")
-				.build();
+		return new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetId("assetIDTestKey").build();
 	}
 
 	/**
@@ -306,13 +345,15 @@ public abstract class AasRepositorySuite {
 	private List<Reference> createDummyReferences() {
 		List<Reference> referenceList = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
-			Reference ref = new DefaultReference.Builder().type(ReferenceTypes.MODEL_REFERENCE)
-					.keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL)
-							.value("smRef_" + i)
-							.build())
-					.build();
+			Reference ref = new DefaultReference.Builder().type(ReferenceTypes.MODEL_REFERENCE).keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value("smRef_" + i).build()).build();
 			referenceList.add(ref);
 		}
 		return referenceList;
+	}
+
+	private InputStream getInputStreamOfFileFromClasspath(String fileName) throws FileNotFoundException, IOException {
+		ClassPathResource classPathResource = new ClassPathResource(fileName);
+
+		return classPathResource.getInputStream();
 	}
 }
