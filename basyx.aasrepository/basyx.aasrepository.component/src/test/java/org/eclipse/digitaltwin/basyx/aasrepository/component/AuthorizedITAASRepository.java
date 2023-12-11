@@ -26,7 +26,7 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.component;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.AuthorizedAasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AuthorizedAasRepositoryTestSuite;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.AuthorizedAasRepositoryTestSuite;
 
 /**
  * Integration test for the {@link AuthorizedAasRepository}

@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
