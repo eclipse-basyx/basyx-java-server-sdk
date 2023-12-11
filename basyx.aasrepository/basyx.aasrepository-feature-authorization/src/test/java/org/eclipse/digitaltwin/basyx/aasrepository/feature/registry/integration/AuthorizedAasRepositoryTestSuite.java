@@ -60,7 +60,7 @@ public class AuthorizedAasRepositoryTestSuite {
 	private static final String THUMBNAIL_FILE_NAME = "BaSyx-Logo.png";
 	private static final String THUMBNAIL_FILE_PATH = "authorization/" + THUMBNAIL_FILE_NAME;
 	public static String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
-	public static String aasRepositoryBaseUrl = "http://127.0.0.1:8086/shells";
+	public static String aasRepositoryBaseUrl = "http://127.0.0.1:8087/shells";
 	public static String clientId = "basyx-client-api";
 	private static AccessTokenProvider tokenProvider;
 	
