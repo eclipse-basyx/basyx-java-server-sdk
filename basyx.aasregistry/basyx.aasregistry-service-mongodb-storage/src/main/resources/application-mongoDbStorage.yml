@@ -3,5 +3,4 @@ registry:
 spring:
   data:
     mongodb:
-      #uri: mongodb://admin:admin@localhost:27017/aasregistry
       database: aasregistry
