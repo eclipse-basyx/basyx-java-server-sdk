@@ -313,7 +313,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		java.io.File tmpFile = new java.io.File(filePath);
 		tmpFile.delete();
 
-		FileBlobValue fileValue = new FileBlobValue(StringUtils.EMPTY, StringUtils.EMPTY);
+		FileBlobValue fileValue = new FileBlobValue(" ", " ");
 
 		setSubmodelElementValue(submodelId, idShortPath, fileValue);
 	}
