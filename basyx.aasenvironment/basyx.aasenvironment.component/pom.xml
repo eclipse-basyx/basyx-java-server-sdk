@@ -46,7 +46,7 @@
 			<artifactId>basyx.conceptdescriptionrepository-tck</artifactId>
 			<classifier>tests</classifier>
 			<scope>test</scope>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
@@ -65,12 +65,12 @@
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.http</artifactId>
 		</dependency>
-			<dependency>
+		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.submodelservice-core</artifactId>
 			<classifier>tests</classifier>
 			<scope>test</scope>
-		</dependency> 
+		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.http</artifactId>
@@ -119,31 +119,33 @@
 	<profiles>
 		<profile>
 			<id>docker</id>
-      <activation>
-        <property>
-          <name>docker.namespace</name>
-        </property>
-      </activation>
+			<activation>
+				<property>
+					<name>docker.namespace</name>
+				</property>
+			</activation>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-            <configuration>
-              <images>
-                <image>
-                  <run>
-                    <ports>
-                      <port>${docker.host.port}:${docker.container.port}</port>
-                    </ports>
-                    <wait>
-                      <url>${docker.container.waitForEndpoint}</url>
-                      <time>60000</time>
-                    </wait>
-                  </run>
-                </image>
-              </images>
-            </configuration>
+						<configuration>
+							<images>
+								<image>
+									<run>
+										<ports>
+											<port>
+												${docker.host.port}:${docker.container.port}</port>
+										</ports>
+										<wait>
+											<url>
+												${docker.container.waitForEndpoint}</url>
+											<time>60000</time>
+										</wait>
+									</run>
+								</image>
+							</images>
+						</configuration>
 						<executions>
 							<execution>
 								<id>build-docker</id>
@@ -152,19 +154,19 @@
 								<id>push-docker</id>
 							</execution>
 							<execution>
-                <id>docker-compose-up</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>start</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>docker-compose-down</id>
-                <phase>post-integration-test</phase>
-                <goals>
-                  <goal>stop</goal>
-                </goals>
-              </execution>
+								<id>docker-compose-up</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>start</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>docker-compose-down</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
 						</executions>
 					</plugin>
 					<plugin>
