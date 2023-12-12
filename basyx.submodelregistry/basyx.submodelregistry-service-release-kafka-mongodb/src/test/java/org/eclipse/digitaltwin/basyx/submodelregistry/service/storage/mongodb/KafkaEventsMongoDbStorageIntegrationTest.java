@@ -24,7 +24,6 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.mongodb;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -35,6 +34,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.EventQueue;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.ConsumerSeekAware;
@@ -44,9 +44,9 @@ import org.springframework.test.context.TestPropertySource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-@TestPropertySource(properties = { "registry.type=mongodb", "events.sink=kafka"
-		, "spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092"
-		, "spring.data.mongodb.database=submodel-registry" , "spring.data.mongodb.uri=mongodb://mongoAdmin:mongoPassword@localhost:27017/" })
+@TestPropertySource(properties = { "spring.profiles.active=kafkaEvents,mongoDbStorage",
+		"spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092", "spring.data.mongodb.database=aasregistry",
+		"spring.data.mongodb.uri=mongodb://mongoAdmin:mongoPassword@localhost:27017/" })
 public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTest {
 
 	@Autowired
@@ -65,10 +65,12 @@ public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTes
 	@KafkaListener(topics = "submodel-registry", batch = "false", groupId = "kafka-test", autoStartup = "true" )
 	@Component
 	private static class RegistrationEventKafkaListener implements ConsumerSeekAware {
-		
-		
+				
 		private final EventQueue queue;
 		private final CountDownLatch latch = new CountDownLatch(1);
+		
+		@Value("${spring.kafka.template.default-topic}")
+		private String topicName;
 		
 		@SuppressWarnings("unused")
 		public RegistrationEventKafkaListener(ObjectMapper mapper) {
@@ -76,15 +78,15 @@ public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTes
 		}
 		
 		@KafkaHandler
-		public void receiveMessage(byte[] content) {
-			queue.offer(new String((byte[]) content, StandardCharsets.UTF_8));
+		public void receiveMessage(String content) {
+			queue.offer(content);
 		}
 
 		@Override
 		public void onPartitionsAssigned(Map<TopicPartition, Long> assignments,
 					ConsumerSeekCallback callback) {
 			for (TopicPartition eachPartition : assignments.keySet()) {
-				if ("submodel-registry".equals(eachPartition.topic())) {
+				if (topicName.equals(eachPartition.topic())) {
 					callback.seekToEnd(List.of(eachPartition));
 					latch.countDown();
 				}

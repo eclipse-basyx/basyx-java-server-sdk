@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 DFKI GmbH (https://www.dfki.de/en/web)
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,36 +22,23 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasregistry.service.events;
 
-import org.slf4j.Marker;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.stereotype.Component;
+package org.eclipse.digitaltwin.basyx.core.exceptions;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+/**
+ * Indicates that the provided list of SubmodelElements for building IdShortPath
+ * is invalid
+ * 
+ * @author danish
+ *
+ */
+@SuppressWarnings("serial")
+public class InvalidIdShortPathElementsException extends RuntimeException {
+	public InvalidIdShortPathElementsException() {
+	}
 
-import lombok.extern.log4j.Log4j2;
-
-@Log4j2
-@Component
-@ConditionalOnProperty(prefix = "events", name = "sink", havingValue = "log")
-public class RegistryEventLogSink implements RegistryEventSink {
-
-	@Autowired
-	private MappingJackson2HttpMessageConverter converter;
-
-	@Override
-	public void consumeEvent(RegistryEvent evt) {
-		try {
-			ObjectMapper objectMapper = converter.getObjectMapper();
-			String msg = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(evt);
-			log.debug("Event sent -> " + msg);
-		} catch (JsonProcessingException e) {
-			log.error(Marker.ANY_MARKER, "Failed to process json ", e);
-		}
+	public InvalidIdShortPathElementsException(String message) {
+		super(message);
 	}
 
 }

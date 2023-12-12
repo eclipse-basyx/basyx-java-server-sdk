@@ -13,8 +13,7 @@
 
 	<properties>
 		<docker.image.name>aas-repository</docker.image.name>
-		<docker.container.waitForEndpoint>
-			http://localhost:${docker.host.port}/shells</docker.container.waitForEndpoint>
+		<docker.container.waitForEndpoint>http://localhost:${docker.host.port}/shells</docker.container.waitForEndpoint>
 	</properties>
 
 	<dependencies>
