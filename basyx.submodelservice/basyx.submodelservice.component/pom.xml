@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -8,7 +10,8 @@
 	<artifactId>basyx.submodelservice.component</artifactId>
 	<properties>
 		<docker.image.name>submodelservice</docker.image.name>
-		<docker.container.waitForEndpoint>http://localhost:${docker.host.port}/submodel</docker.container.waitForEndpoint>
+		<docker.container.waitForEndpoint>
+			http://localhost:${docker.host.port}/submodel</docker.container.waitForEndpoint>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -65,24 +68,70 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<configuration>
 					<usedDependencies>
-						<dependency>org.eclipse.digitaltwin.basyx:basyx.submodelservice-http</dependency>
+						<dependency>
+							org.eclipse.digitaltwin.basyx:basyx.submodelservice-http</dependency>
 					</usedDependencies>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+
 	<profiles>
 		<profile>
 			<id>docker</id>
+			<activation>
+				<property>
+					<name>docker.namespace</name>
+				</property>
+			</activation>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
+						<configuration>
+							<images>
+								<image>
+									<run>
+										<ports>
+											<port>
+												${docker.host.port}:${docker.container.port}</port>
+										</ports>
+										<wait>
+											<url>
+												${docker.container.waitForEndpoint}</url>
+											<time>60000</time>
+										</wait>
+									</run>
+								</image>
+							</images>
+						</configuration>
+						<executions>
+							<execution>
+								<id>build-docker</id>
+							</execution>
+							<execution>
+								<id>push-docker</id>
+							</execution>
+							<execution>
+								<id>docker-compose-up</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>start</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>docker-compose-down</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-failsafe-plugin</artifactId>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
 					</plugin>
 				</plugins>
 			</build>
