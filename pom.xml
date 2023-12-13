@@ -48,11 +48,11 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<revision>2.0.0-SNAPSHOT</revision>
-		<docker.provenance/>
-    <docker.namespace>eclipsebasyx</docker.namespace>
-    <docker.image.name>NOT_DEFINED_IN_MODULE</docker.image.name>
-    <docker.image.tag>${revision}</docker.image.tag>
-    <docker.target.platforms>linux/amd64,linux/arm64</docker.target.platforms>
+		<docker.provenance />
+		<docker.namespace>eclipsebasyx</docker.namespace>
+		<docker.image.name>NOT_DEFINED_IN_MODULE</docker.image.name>
+		<docker.image.tag>${revision}</docker.image.tag>
+		<docker.target.platforms>linux/amd64,linux/arm64</docker.target.platforms>
 		<docker.host.port>8081</docker.host.port>
 		<docker.container.port>8081</docker.container.port>
 		<aas4j-version>1.0.0-milestone-04</aas4j-version>
@@ -161,59 +161,63 @@
 					</executions>
 				</plugin>
 				<plugin>
-          <groupId>io.fabric8</groupId>
-          <artifactId>docker-maven-plugin</artifactId>
-          <version>0.43.4</version>
-          <configuration>
-            <images>
-              <image>
-                <name>${docker.namespace}/${docker.image.name}:${docker.image.tag}</name>
-                <build>
-                  <contextDir>${project.basedir}</contextDir>
-                  <args>
-                  </args>
-                  <labels>
-                    <maven.version>${project.version}</maven.version>
-                    <maven.build.timestamp>${maven.build.timestamp}</maven.build.timestamp>
-                  </labels>
-                  <noCache>true</noCache>
-                </build>
-              </image>
-            </images>
-            <verbose>true</verbose>
-          </configuration>
-          <executions>
-            <execution>
-              <id>build-docker</id>
-              <phase>package</phase>
-              <goals>
-                <goal>build</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>push-docker</id>
-              <phase>deploy</phase>
-              <goals>
-                <goal>build</goal>
-                <goal>push</goal>
-              </goals>
-              <configuration>
-                <images>
-                  <image>
-                    <build>
-                      <buildx>
-                        <platforms>${docker.target.platforms}</platforms>
-                        <attestations>
-                          <provenance>${docker.provenance}</provenance>
-                        </attestations>
-                      </buildx>
-                    </build>
-                  </image>
-                </images>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
+					<groupId>io.fabric8</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<version>0.43.4</version>
+					<configuration>
+						<images>
+							<image>
+								<name>
+									${docker.namespace}/${docker.image.name}:${docker.image.tag}</name>
+								<build>
+									<contextDir>${project.basedir}</contextDir>
+									<args>
+									</args>
+									<labels>
+										<maven.version>${project.version}</maven.version>
+										<maven.build.timestamp>
+											${maven.build.timestamp}</maven.build.timestamp>
+									</labels>
+									<noCache>true</noCache>
+								</build>
+							</image>
+						</images>
+						<verbose>true</verbose>
+					</configuration>
+					<executions>
+						<execution>
+							<id>build-docker</id>
+							<phase>package</phase>
+							<goals>
+								<goal>build</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>push-docker</id>
+							<phase>deploy</phase>
+							<goals>
+								<goal>build</goal>
+								<goal>push</goal>
+							</goals>
+							<configuration>
+								<images>
+									<image>
+										<build>
+											<buildx>
+												<platforms>
+													${docker.target.platforms}</platforms>
+												<attestations>
+													<provenance>
+														${docker.provenance}</provenance>
+												</attestations>
+											</buildx>
+										</build>
+									</image>
+								</images>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -279,6 +283,11 @@
         <artifactId>snakeyaml</artifactId>
         <version>2.2</version>
       </dependency>
+			<dependency>
+				<groupId>org.yaml</groupId>
+				<artifactId>snakeyaml</artifactId>
+				<version>2.2</version>
+			</dependency>
 			<dependency>
 				<groupId>org.springdoc</groupId>
 				<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -381,7 +390,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.submodelrepository-feature-registry-integration</artifactId>
+				<artifactId>
+					basyx.submodelrepository-feature-registry-integration</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -645,7 +655,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.submodelrepository-feature-registry-integration</artifactId>
+				<artifactId>
+					basyx.submodelrepository-feature-registry-integration</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
