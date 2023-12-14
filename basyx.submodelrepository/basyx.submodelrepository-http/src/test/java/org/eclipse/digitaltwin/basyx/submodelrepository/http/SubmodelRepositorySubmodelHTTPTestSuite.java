@@ -163,10 +163,9 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 
 		assertEquals(HttpStatus.CONFLICT.value(), creationResponse.getCode());
 	}
-
 	
 	@Test
-	public void createSubmodelEmptyId() throws IOException {
+	public void createSubmodelWithEmptyId() throws IOException {
 		String submodelJSON = getSingleSubmodelWithEmptyIdJSON();
 		CloseableHttpResponse creationResponse = BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
 
@@ -174,7 +173,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	}
 	
 	@Test
-	public void createSubmodelNullId() throws IOException {
+	public void createSubmodelWithNullId() throws IOException {
 		String submodelJSON = getSingleSubmodelWithNullIdJSON();
 		CloseableHttpResponse creationResponse = BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
 

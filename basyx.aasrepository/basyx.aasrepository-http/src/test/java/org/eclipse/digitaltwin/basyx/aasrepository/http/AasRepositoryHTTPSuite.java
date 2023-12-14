@@ -101,7 +101,7 @@ public abstract class AasRepositoryHTTPSuite {
 	}
 	
 	@Test
-	public void aasWithEmptyId() throws FileNotFoundException, IOException {
+	public void createAasWithEmptyId() throws FileNotFoundException, IOException {
 		String aasJsonContent = createDummyAasOnServer(getAasWithEmptyIdJSONString());
 
 		CloseableHttpResponse creationResponse = createAasOnServer(aasJsonContent);
@@ -110,7 +110,7 @@ public abstract class AasRepositoryHTTPSuite {
 	}
 	
 	@Test
-	public void aasWithNullId() throws FileNotFoundException, IOException {
+	public void createAasWithNullId() throws FileNotFoundException, IOException {
 		String aasJsonContent = createDummyAasOnServer(getAasWithNullIdJSONString());
 
 		CloseableHttpResponse creationResponse = createAasOnServer(aasJsonContent);

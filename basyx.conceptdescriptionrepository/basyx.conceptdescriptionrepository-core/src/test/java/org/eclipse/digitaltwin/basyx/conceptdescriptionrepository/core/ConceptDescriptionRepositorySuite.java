@@ -221,8 +221,8 @@ public abstract class ConceptDescriptionRepositorySuite {
 	
 	@Test(expected = MissingIdentifierException.class)
 	public void createConceptDescriptionCollectionWithMissingId() {
-		Collection<ConceptDescription> conceptDescriptions = Arrays.asList(createDummyConceptDescription(EMPTY_ID),createDummyConceptDescription(NULL_ID),createDummyConceptDescription("AZ78C1BA454E07834"));
-		
+		Collection<ConceptDescription> conceptDescriptions = Arrays.asList(createDummyConceptDescription(EMPTY_ID), createDummyConceptDescription(NULL_ID), createDummyConceptDescription(ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID));
+
 		getConceptDescriptionRepository(conceptDescriptions);
 	}
 

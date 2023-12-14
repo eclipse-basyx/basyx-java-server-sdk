@@ -349,11 +349,6 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 			throw new ElementDoesNotExistException(id);
 	}
 
-	private void throwIfSubmodelIdEmptyOrNull(String id) {
-		if (id == null || id.isBlank())
-			throw new MissingIdentifierException(id);
-	}
-
 	private void throwIfFileDoesNotExist(File fileSmElement, String filePath) {
 		if (fileSmElement.getValue().isBlank() || !isFilePathValid(filePath))
 			throw new FileDoesNotExistException(fileSmElement.getIdShort());
@@ -421,7 +416,13 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		}
 	}
 
-    private void throwIfMissingId(Collection<Submodel> submodelsToCheck) {
-	    submodelsToCheck.stream().map(Submodel::getId).forEach(this::throwIfSubmodelIdEmptyOrNull);
+    private void throwIfMissingId(Collection<Submodel> submodels) {
+	    submodels.stream().map(Submodel::getId).forEach(this::throwIfSubmodelIdEmptyOrNull);
     }
+    
+    private void throwIfSubmodelIdEmptyOrNull(String id) {
+    	
+		if (id == null || id.isBlank())
+			throw new MissingIdentifierException(id);
+	}
 }

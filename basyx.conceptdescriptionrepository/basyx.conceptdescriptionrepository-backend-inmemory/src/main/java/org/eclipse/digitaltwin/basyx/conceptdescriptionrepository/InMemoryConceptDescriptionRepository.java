@@ -195,14 +195,10 @@ public class InMemoryConceptDescriptionRepository implements ConceptDescriptionR
 		if (conceptDescriptions.containsKey(id))
 			throw new CollidingIdentifierException(id);
 	}
-
-	private void throwIfMissingId(Collection<ConceptDescription> conceptDescriptionsToCheck) {
-		boolean isMissingId = conceptDescriptionsToCheck.stream().map(ConceptDescription::getId).anyMatch(id -> id == null || id.isBlank());
-
-		if (isMissingId) {
-			throw new MissingIdentifierException();
-		}
-	}
+	
+	private void throwIfMissingId(Collection<ConceptDescription> conceptDescriptions) {
+		conceptDescriptions.stream().map(ConceptDescription::getId).forEach(this::throwIfConceptDescriptionIdEmptyOrNull);
+    }
 
 	private void throwIfConceptDescriptionIdEmptyOrNull(String id) {
 		if (id == null || id.isBlank())

@@ -133,7 +133,7 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 	public void createConceptDescription(ConceptDescription conceptDescription) throws CollidingIdentifierException, MissingIdentifierException {
 		throwIfConceptDescriptionIdEmptyOrNull(conceptDescription.getId());
 
-		throwIfCollidesWithRemoteId(conceptDescription);
+		throwIfCollidesWithExistingId(conceptDescription);
 
 		mongoTemplate.save(conceptDescription, collectionName);
 	}
@@ -158,7 +158,7 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 			throw new MissingIdentifierException(id);
 	}
 
-	private void throwIfCollidesWithRemoteId(ConceptDescription conceptDescription) {
+	private void throwIfCollidesWithExistingId(ConceptDescription conceptDescription) {
 		Query query = new Query().addCriteria(Criteria.where(IDJSONPATH).is(conceptDescription.getId()));
 
 		if (mongoTemplate.exists(query, ConceptDescription.class, collectionName))

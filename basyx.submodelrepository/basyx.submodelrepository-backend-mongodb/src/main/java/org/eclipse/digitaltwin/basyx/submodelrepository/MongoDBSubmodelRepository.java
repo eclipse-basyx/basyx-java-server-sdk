@@ -137,19 +137,12 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	 */
 	public MongoDBSubmodelRepository(MongoTemplate mongoTemplate, String collectionName, SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels) {
 		this(mongoTemplate, collectionName, submodelServiceFactory);
+		
 		throwIfMissingId(submodels);
 
 		initializeRemoteCollection(submodels);
 
 		configureDefaultGridFsTemplate(this.mongoTemplate);
-	}
-
-	private void throwIfMissingId(Collection<Submodel> submodelsToCheck) {
-		boolean isMissingId = submodelsToCheck.stream().map(Submodel::getId).anyMatch(id -> id == null || id.isBlank());
-
-		if (isMissingId) {
-			throw new MissingIdentifierException();
-		}
 	}
 
 	/**
@@ -416,6 +409,10 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 		setSubmodelElementValue(submodelId, idShortPath, fileValue);
 	}
+	
+	private void throwIfMissingId(Collection<Submodel> submodels) {
+	    submodels.stream().map(Submodel::getId).forEach(this::throwIfSubmodelIdEmptyOrNull);
+    }
 
 	private void throwIfSubmodelIdEmptyOrNull(String id) {
 		if (id == null || id.isBlank())

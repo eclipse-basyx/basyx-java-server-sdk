@@ -41,7 +41,7 @@
      }
  
 	private static String getMessage(String id) {
-         return "Element id is not specified with current id  " + id;
+         return "Element identifier should not be null or empty, the specified identifier is " + id;
      }
  
  }
