@@ -48,6 +48,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
@@ -136,6 +137,9 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	 */
 	public MongoDBSubmodelRepository(MongoTemplate mongoTemplate, String collectionName, SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels) {
 		this(mongoTemplate, collectionName, submodelServiceFactory);
+		
+		throwIfMissingId(submodels);
+
 		initializeRemoteCollection(submodels);
 
 		configureDefaultGridFsTemplate(this.mongoTemplate);
@@ -223,8 +227,11 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
+	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException, MissingIdentifierException {
+		throwIfSubmodelIdEmptyOrNull(submodel.getId());
+
 		throwIfCollidesWithRemoteId(submodel);
+
 		mongoTemplate.save(submodel, collectionName);
 	}
 
@@ -401,6 +408,15 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 		FileBlobValue fileValue = new FileBlobValue(fileSmElement.getContentType(), appendFsIdToFileValue(fileSmElement, id));
 
 		setSubmodelElementValue(submodelId, idShortPath, fileValue);
+	}
+	
+	private void throwIfMissingId(Collection<Submodel> submodels) {
+	    submodels.stream().map(Submodel::getId).forEach(this::throwIfSubmodelIdEmptyOrNull);
+    }
+
+	private void throwIfSubmodelIdEmptyOrNull(String id) {
+		if (id == null || id.isBlank())
+			throw new MissingIdentifierException(id);
 	}
 
 	private void configureDefaultGridFsTemplate(MongoTemplate mongoTemplate) {

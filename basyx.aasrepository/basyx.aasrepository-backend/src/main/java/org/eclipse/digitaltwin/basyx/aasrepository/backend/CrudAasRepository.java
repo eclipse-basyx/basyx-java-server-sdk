@@ -41,6 +41,7 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -51,7 +52,7 @@ import org.springframework.data.repository.CrudRepository;
  * Default Implementation for the {@link AasRepository} based on Spring
  * {@link CrudRepository}
  * 
- * @author mateusmolina, despen, zhangzai
+ * @author mateusmolina, despen, zhangzai, kammognie
  *
  */
 public class CrudAasRepository implements AasRepository {
@@ -92,7 +93,9 @@ public class CrudAasRepository implements AasRepository {
 	}
 
 	@Override
-	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException {
+	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException, MissingIdentifierException {
+		throwIfAasIdEmptyOrNull(aas.getId());
+		
 		throwIfAasExists(aas);
 
 		aasBackend.save(aas);
@@ -205,6 +208,11 @@ public class CrudAasRepository implements AasRepository {
 	private void throwIfAasExists(AssetAdministrationShell aas) {
 		if (aasBackend.existsById(aas.getId()))
 			throw new CollidingIdentifierException();
+	}
+	
+	private void throwIfAasIdEmptyOrNull(String aasId) {
+		if(aasId == null || aasId.isBlank())
+			throw new MissingIdentifierException(aasId);
 	}
 
 	private void throwIfAasDoesNotExist(String aasId) {

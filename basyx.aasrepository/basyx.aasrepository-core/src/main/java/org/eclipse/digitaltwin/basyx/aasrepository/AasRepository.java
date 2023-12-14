@@ -33,6 +33,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
@@ -65,8 +66,10 @@ public interface AasRepository {
 	 * 
 	 * @param aas
 	 *            the AAS to be created
+	 * @throws MissingIdentifierException
+	 *            for creating AAS
 	 */
-	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException;
+	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException, MissingIdentifierException;
 
 	/**
 	 * Deletes a specific AAS
