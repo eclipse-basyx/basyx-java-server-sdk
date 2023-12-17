@@ -24,6 +24,12 @@ Comma-separated list of origin patterns to allow. Unlike allowed origins which o
   basyx.cors.allowed-origins=http://localhost:8080, https://*.example.com
   ```
 
+* Allowed Methods:<br>
+Comma-separated list of HTTP methods to allow. When not set, defaults to GET,HEAD,POST.
+  ```
+  basyx.cors.allowed-methods=GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+  ```
+
 ## Configuration via Environment Variables
 The BaSyx V2 components use the Spring framework as described above. Due to this, all configuration options of Spring are also available for BaSyx. In consequence, each entry of the _application.properties_ file can be configured via environment variables by replacing "." with "_" and capitalizing each letter.
 
