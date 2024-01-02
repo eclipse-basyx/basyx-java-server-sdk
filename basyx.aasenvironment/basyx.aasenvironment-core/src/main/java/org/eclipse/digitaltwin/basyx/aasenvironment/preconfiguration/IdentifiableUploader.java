@@ -50,13 +50,27 @@ public class IdentifiableUploader<T extends Identifiable> {
 		if (currentOpt.isEmpty()) {
 			return create(toUpload);
 		}
-		if (isVersionOrRevisionPresent(toUpload)) {
-			Identifiable current = currentOpt.get();
-			if (hasEqualVersionOrRevision(toUpload.getAdministration(), current.getAdministration())) {
-				return false;
+		T current = currentOpt.get();
+		if (shouldUpdate(current, toUpload)) {
+			return update(toUpload);
+		}
+		return false;
+	}	
+	
+	private boolean shouldUpdate(T current, T toUpload) {
+		if (isVersionOrRevisionPresent(current)) {
+			if (isVersionOrRevisionPresent(toUpload)) {
+				// both have version and revision
+				// => do not update
+				return !hasEqualVersionAndRevision(current.getAdministration(), toUpload.getAdministration());
+			} else {
+				// version or revision was removed
+				return true;
 			}
-		} // always update if no version info is present
-		return update(toUpload);
+		} else {
+			// only update if version info was added
+			return isVersionOrRevisionPresent(toUpload);
+		}
 	}
 
 	private Optional<T> getDeployedById(T toUpload) {
@@ -99,11 +113,8 @@ public class IdentifiableUploader<T extends Identifiable> {
 		return version != null || revision != null;
 	}
 
-	private static boolean hasEqualVersionOrRevision(AdministrativeInformation toUpdateInfo, AdministrativeInformation currentInfo) {
-		if (currentInfo == null) {
-			return true;
-		}
-		return Objects.equals(toUpdateInfo.getRevision(), currentInfo.getRevision()) || Objects.equals(toUpdateInfo.getVersion(), currentInfo.getVersion());
+	private static boolean hasEqualVersionAndRevision(AdministrativeInformation toUpdateInfo, AdministrativeInformation currentInfo) {
+		return Objects.equals(toUpdateInfo.getRevision(), currentInfo.getRevision()) && Objects.equals(toUpdateInfo.getVersion(), currentInfo.getVersion());
 	}
 
 	public static interface IdentifiableRepository<T extends Identifiable> {
