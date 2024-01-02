@@ -50,6 +50,7 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.FileElementPathCollector;
 import org.eclipse.digitaltwin.basyx.aasenvironment.IdShortPathBuilder;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +92,7 @@ public class AasEnvironmentPreconfigurationLoader {
 			throws IOException, DeserializationException, InvalidFormatException {
 		List<File> files = resolveFiles(pathsToLoad);
 		for (File file : files) {
+			logger.info("Loading AAS Environment from file " + file.getName());
 			Environment environment = getEnvironmentFromFile(file);
 			loadEnvironmentFromFile(aasRepository, submodelRepository, conceptDescriptionRepository, environment);
 		}
@@ -139,8 +141,16 @@ public class AasEnvironmentPreconfigurationLoader {
 
 	private void createConceptDescriptionsOnRepositoryFromEnvironment(ConceptDescriptionRepository conceptDescriptionRepository, Environment environment) {
 		for (ConceptDescription conceptDescription : environment.getConceptDescriptions()) {
-			conceptDescriptionRepository.createConceptDescription(conceptDescription);
+			try {
+				conceptDescriptionRepository.createConceptDescription(conceptDescription);
+			} catch (CollidingIdentifierException e) {
+				logCollision(e);
+			}
 		}
+	}
+
+	private void logCollision(CollidingIdentifierException e) {
+		logger.warn("Colliding Ids detected for ConceptDescription: " + e.getId() + ". If they are not identical, this is an error. Please note that the already existing ConceptDescription was not updated.");
 	}
 
 	private void createSubmodelsOnRepositoryFromEnvironment(SubmodelRepository submodelRepository, Environment environment) {
