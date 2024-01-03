@@ -88,14 +88,33 @@ public class AasEnvironmentPreconfigurationLoader {
 		return pathsToLoad != null;
 	}
 
-	public void loadPreconfiguredEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository)
+	public void loadPreconfiguredEnvironments(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository)
 			throws IOException, DeserializationException, InvalidFormatException {
-		List<File> files = resolveFiles(pathsToLoad);
-		for (File file : files) {
-			logger.info("Loading AAS Environment from file " + file.getName());
+		List<File> files = scanForEnvironments(pathsToLoad);
+
+		int numberOfFiles = files.size();
+
+		for (int i = 0; i < numberOfFiles; i++) {
+			File file = files.get(i);
+			logLoadingProcess(i, numberOfFiles, file.getName());
 			Environment environment = getEnvironmentFromFile(file);
-			loadEnvironmentFromFile(aasRepository, submodelRepository, conceptDescriptionRepository, environment);
+			addEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository, environment);
 		}
+	}
+
+	private List<File> scanForEnvironments(List<String> pathsToLoad) throws IOException {
+		logger.info("Scanning for preconfigured AAS Environments");
+
+		List<File> files = resolveFiles(pathsToLoad);
+
+		logger.info("Found " + files.size() + " preconfigured AAS environments");
+
+		return files;
+	}
+
+	private void logLoadingProcess(int current, int overall, String fileName) {
+		int currentForDisplay = current + 1;
+		logger.info("Loading AAS Environment (" + currentForDisplay + "/" + overall + ") from file " + fileName);
 	}
 
 	private List<File> resolveFiles(List<String> paths) throws IOException {
@@ -121,7 +140,7 @@ public class AasEnvironmentPreconfigurationLoader {
 				.getFile();
 	}
 
-	private void loadEnvironmentFromFile(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository, Environment environment) {
+	private void addEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository, Environment environment) {
 		if (isEnvironmentLoaded(environment)) {
 			createShellsOnRepositoryFromEnvironment(aasRepository, environment);
 			createSubmodelsOnRepositoryFromEnvironment(submodelRepository, environment);
