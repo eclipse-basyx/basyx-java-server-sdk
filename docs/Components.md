@@ -6,6 +6,7 @@ The components
 * [AAS Environment](../basyx.aasenvironment/)
 * [AAS Registry](../basyx.aasregistry)
 * [Submodel Registry](../basyx.submodelregistry)
+* [AAS Discovery](../basyx.aasdiscoveryservice)
 
 are highly configurable by leveraging the Spring framework. Thus, they utilize existing Spring configuration properties, e.g., for MongoDB. In addition, the components offer common mechanisms to check the current health status of the application and configure Cross-Origin Resource Sharing (CORS) options.
 
@@ -22,6 +23,12 @@ Cross-Site Resource Sharing options can be configured under [application.propert
 Comma-separated list of origin patterns to allow. Unlike allowed origins which only supports '*', origin patterns are more flexible (for example 'https://*.example.com') and can be used when credentials are allowed. When no allowed origin patterns or allowed origins are set, CORS support is disabled.
   ```
   basyx.cors.allowed-origins=http://localhost:8080, https://*.example.com
+  ```
+
+* Allowed Methods:<br>
+Comma-separated list of HTTP methods to allow. When not set, defaults to GET,HEAD,POST.
+  ```
+  basyx.cors.allowed-methods=GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
   ```
 
 ## Configuration via Environment Variables
