@@ -92,8 +92,12 @@ public class AasEnvironmentPreconfigurationLoader {
 	public void loadPreconfiguredEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository)
 			throws IOException, DeserializationException, InvalidFormatException {
 		List<File> files = resolveFiles(pathsToLoad);
+
+		IndentifiableAssertion check = new IndentifiableAssertion();
+
 		for (File file : files) {
 			Environment environment = getEnvironmentFromFile(file);
+			check.assertNoDuplicateIds(environment);
 			loadEnvironmentFromFile(aasRepository, submodelRepository, conceptDescriptionRepository, environment);
 		}
 	}
@@ -140,7 +144,7 @@ public class AasEnvironmentPreconfigurationLoader {
 	}
 
 	private void createConceptDescriptionsOnRepositoryFromEnvironment(ConceptDescriptionRepository cdRepo, Environment environment) {
-		IdentifiableRepository<ConceptDescription> repo = new DelegatingIdentifiableRepository<ConceptDescription>(cdRepo::getConceptDescription, cdRepo::updateConceptDescription, cdRepo::createConceptDescription); 	
+		IdentifiableRepository<ConceptDescription> repo = new DelegatingIdentifiableRepository<ConceptDescription>(cdRepo::getConceptDescription, cdRepo::updateConceptDescription, cdRepo::createConceptDescription);
 		IdentifiableUploader<ConceptDescription> uploader = new IdentifiableUploader<ConceptDescription>(repo);
 		for (ConceptDescription eachConceptDescription : environment.getConceptDescriptions()) {
 			boolean success = uploader.upload(eachConceptDescription);
@@ -251,9 +255,9 @@ public class AasEnvironmentPreconfigurationLoader {
 
 	private void logSuccess(String resourceName, String id, boolean success) {
 		if (success) {
-			logger.info("Uploading " + resourceName + " "+ id +" was successful!");
+			logger.info("Uploading " + resourceName + " " + id + " was successful!");
 		} else {
-			logger.warn("Uploading " + resourceName + " "+ id +" was not successful!");
+			logger.warn("Uploading " + resourceName + " " + id + " was not successful!");
 		}
 	}
 }

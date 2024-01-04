@@ -32,11 +32,15 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AdministrativeInformation;
-import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Identifiable;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-
+/**
+ * Updates identifiables on server-side based on version and revision 
+ *
+ * @author Gerhard Sonnenberg DFKI GmbH
+ *
+ */
 public class IdentifiableUploader<T extends Identifiable> {
 
 	private final IdentifiableRepository<T> repo;

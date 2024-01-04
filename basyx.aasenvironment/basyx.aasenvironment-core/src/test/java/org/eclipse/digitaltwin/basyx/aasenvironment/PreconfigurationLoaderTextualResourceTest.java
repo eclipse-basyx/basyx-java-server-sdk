@@ -24,31 +24,12 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasenvironment;
 
-import static org.mockito.Mockito.mockingDetails;
-
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
-import org.eclipse.digitaltwin.aas4j.v3.model.AdministrativeInformation;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
-import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
-import org.eclipse.digitaltwin.aas4j.v3.model.Identifiable;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAdministrativeInformation;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEnvironment;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.AasEnvironmentPreconfigurationLoader;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
@@ -56,6 +37,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryB
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.InMemoryConceptDescriptionRepository;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -64,9 +46,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 public class PreconfigurationLoaderTextualResourceTest {
@@ -75,13 +55,15 @@ public class PreconfigurationLoaderTextualResourceTest {
 	private static final String TEST_ENVIRONMENT_VERSION_ON_SECOND_JSON = "/org/eclipse/digitaltwin/basyx/aasenvironment/environment_version_on_second.json";
 	private static final String TEST_ENVIRONMENT_VERSION_AND_REVISION_ON_SECOND_JSON = "/org/eclipse/digitaltwin/basyx/aasenvironment/environment_version_and_revision_on_second.json";
 
+	private static final String TEST_ENVIRONMENT_SHELLS_ONLY_JSON = "/org/eclipse/digitaltwin/basyx/aasenvironment/environment_with_shells_only.json";
+	private static final String TEST_ENVIRONMENT_SUBMODELS_ONLY_JSON = "/org/eclipse/digitaltwin/basyx/aasenvironment/environment_with_submodels_only.json";
+
 	private static final PaginationInfo ALL = new PaginationInfo(0, null);
 
 	private AasRepository aasRepository;
 	private SubmodelRepository submodelRepository;
 	private ConceptDescriptionRepository conceptDescriptionRepository;
 	private ResourceLoader rLoader = new DefaultResourceLoader();
-	private Map<String, Resource> resourceMap;
 
 	@Before
 	public void setUp() {
@@ -156,7 +138,7 @@ public class PreconfigurationLoaderTextualResourceTest {
 
 		Assert.assertEquals(2, aasRepository.getAllAas(ALL).getResult().size());
 		Assert.assertEquals(2, submodelRepository.getAllSubmodels(ALL).getResult().size());
-		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(ALL).getResult().size());	
+		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(ALL).getResult().size());
 	}
 	
 	@Test
@@ -177,6 +159,20 @@ public class PreconfigurationLoaderTextualResourceTest {
 
 		Assert.assertEquals(2, aasRepository.getAllAas(ALL).getResult().size());
 		Assert.assertEquals(2, submodelRepository.getAllSubmodels(ALL).getResult().size());
-		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(ALL).getResult().size());	
+		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(ALL).getResult().size());
+	}
+
+	@Test
+	public void testDuplicateSubmodelIdsInEnvironments_ExceptionIsThrown() throws InvalidFormatException, IOException, DeserializationException {
+		AasEnvironmentPreconfigurationLoader envLoader = new AasEnvironmentPreconfigurationLoader(rLoader, List.of(TEST_ENVIRONMENT_SHELLS_ONLY_JSON, TEST_ENVIRONMENT_SHELLS_ONLY_JSON));
+		String expectedMsg = new CollidingIdentifierException("aas1").getMessage();
+		Assert.assertThrows(expectedMsg, CollidingIdentifierException.class, () -> envLoader.loadPreconfiguredEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository));
+	}
+
+	@Test
+	public void testDuplicateShellIdsInEnvironments_ExceptionIsThrown() {
+		AasEnvironmentPreconfigurationLoader envLoader = new AasEnvironmentPreconfigurationLoader(rLoader, List.of(TEST_ENVIRONMENT_SUBMODELS_ONLY_JSON, TEST_ENVIRONMENT_SUBMODELS_ONLY_JSON));
+		String expectedMsg = new CollidingIdentifierException("sm1").getMessage();
+		Assert.assertThrows(expectedMsg, CollidingIdentifierException.class, () -> envLoader.loadPreconfiguredEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository));
 	}
 }
