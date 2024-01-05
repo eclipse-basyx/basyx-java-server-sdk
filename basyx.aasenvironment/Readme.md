@@ -28,4 +28,6 @@ The AAS Environment Component supports the preconfiguration of AAS Environments 
 
 The feature supports both preconfiguring explicit files (e.g., file:myDevice.aasx) as well as directories (e.g., file:myDirectory) that will be recursively scanned for serialized environments.
 
+Please note that collision of ids of Submodels and AAS will lead to an error. For ConceptDescriptions, however, id collisions are ignored since they are assumed to be identical. Thus, only the first occurance of a ConceptDescription with the same Id will be uploaded. Further ConceptDescriptions with the same Id will only lead to a warning in the log. 
+
 For examples, see [application.properties](./basyx.aasenvironment.component/src/main/resources/application.properties)
