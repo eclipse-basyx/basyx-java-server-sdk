@@ -75,7 +75,7 @@ public class PreconfigurationLoaderTextualResourceTest {
 	@Test
 	public void testWithEmptyResource_NoElementsAreDeployed() throws InvalidFormatException, IOException, DeserializationException {
 		AasEnvironmentPreconfigurationLoader envLoader = new AasEnvironmentPreconfigurationLoader(rLoader, List.of());
-		envLoader.loadPreconfiguredEnvironmens(aasRepository, submodelRepository, conceptDescriptionRepository);
+		envLoader.loadPreconfiguredEnvironments(aasRepository, submodelRepository, conceptDescriptionRepository);
 		Assert.assertTrue(aasRepository.getAllAas(ALL).getResult().isEmpty());
 		Assert.assertTrue(submodelRepository.getAllSubmodels(ALL).getResult().isEmpty());
 		Assert.assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(ALL).getResult().isEmpty());
@@ -93,7 +93,7 @@ public class PreconfigurationLoaderTextualResourceTest {
 	@Test
 	public void testWithResourceFile_AllElementsAreDeployed() throws InvalidFormatException, IOException, DeserializationException, SerializationException {
 		AasEnvironmentPreconfigurationLoader envLoader = new AasEnvironmentPreconfigurationLoader(rLoader, List.of(TEST_ENVIRONMENT_JSON));
-		envLoader.loadPreconfiguredEnvironmens(aasRepository, submodelRepository, conceptDescriptionRepository);
+		envLoader.loadPreconfiguredEnvironments(aasRepository, submodelRepository, conceptDescriptionRepository);
 		Assert.assertEquals(2, aasRepository.getAllAas(ALL).getResult().size());
 		Assert.assertEquals(2, submodelRepository.getAllSubmodels(ALL).getResult().size());
 		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(ALL).getResult().size());
@@ -103,8 +103,8 @@ public class PreconfigurationLoaderTextualResourceTest {
 	public void testDeployedTwiceNoVersion_AllDeployedButNotOverriden() throws InvalidFormatException, IOException, DeserializationException, SerializationException {
 		AasEnvironmentPreconfigurationLoader envLoader = new AasEnvironmentPreconfigurationLoader(rLoader, List.of(TEST_ENVIRONMENT_JSON));
 
-		envLoader.loadPreconfiguredEnvironmens(aasRepository, submodelRepository, conceptDescriptionRepository);
-		envLoader.loadPreconfiguredEnvironmens(aasRepository, submodelRepository, conceptDescriptionRepository);
+		envLoader.loadPreconfiguredEnvironments(aasRepository, submodelRepository, conceptDescriptionRepository);
+		envLoader.loadPreconfiguredEnvironments(aasRepository, submodelRepository, conceptDescriptionRepository);
 
 		Mockito.verify(aasRepository, Mockito.times(2)).createAas(Mockito.any());
 		Mockito.verify(aasRepository, Mockito.times(0)).updateAas(Mockito.anyString(), Mockito.any());
@@ -124,8 +124,8 @@ public class PreconfigurationLoaderTextualResourceTest {
 	public void testDeployedTwiceWithSameVersion_AllDeployedButNotOverriden() throws InvalidFormatException, IOException, DeserializationException, SerializationException {
 		AasEnvironmentPreconfigurationLoader envLoader = new AasEnvironmentPreconfigurationLoader(rLoader, List.of(TEST_ENVIRONMENT_VERSION_ON_SECOND_JSON));
 
-		envLoader.loadPreconfiguredEnvironmens(aasRepository, submodelRepository, conceptDescriptionRepository);
-		envLoader.loadPreconfiguredEnvironmens(aasRepository, submodelRepository, conceptDescriptionRepository);
+		envLoader.loadPreconfiguredEnvironments(aasRepository, submodelRepository, conceptDescriptionRepository);
+		envLoader.loadPreconfiguredEnvironments(aasRepository, submodelRepository, conceptDescriptionRepository);
 
 		Mockito.verify(aasRepository, Mockito.times(2)).createAas(Mockito.any());
 		Mockito.verify(aasRepository, Mockito.times(0)).updateAas(Mockito.anyString(), Mockito.any());
@@ -144,9 +144,9 @@ public class PreconfigurationLoaderTextualResourceTest {
 	@Test
 	public void testDeployedTwiceNewRevision_ElementsAreOverriden() throws InvalidFormatException, IOException, DeserializationException, SerializationException {
 		AasEnvironmentPreconfigurationLoader envLoader = new AasEnvironmentPreconfigurationLoader(rLoader, List.of(TEST_ENVIRONMENT_VERSION_ON_SECOND_JSON));
-		envLoader.loadPreconfiguredEnvironmens(aasRepository, submodelRepository, conceptDescriptionRepository);
+		envLoader.loadPreconfiguredEnvironments(aasRepository, submodelRepository, conceptDescriptionRepository);
 		envLoader = new AasEnvironmentPreconfigurationLoader(rLoader, List.of(TEST_ENVIRONMENT_VERSION_AND_REVISION_ON_SECOND_JSON));
-		envLoader.loadPreconfiguredEnvironmens(aasRepository, submodelRepository, conceptDescriptionRepository);
+		envLoader.loadPreconfiguredEnvironments(aasRepository, submodelRepository, conceptDescriptionRepository);
 
 		Mockito.verify(aasRepository, Mockito.times(2)).createAas(Mockito.any());
 		Mockito.verify(aasRepository, Mockito.times(1)).updateAas(Mockito.anyString(), Mockito.any());
@@ -166,13 +166,13 @@ public class PreconfigurationLoaderTextualResourceTest {
 	public void testDuplicateSubmodelIdsInEnvironments_ExceptionIsThrown() throws InvalidFormatException, IOException, DeserializationException {
 		AasEnvironmentPreconfigurationLoader envLoader = new AasEnvironmentPreconfigurationLoader(rLoader, List.of(TEST_ENVIRONMENT_SHELLS_ONLY_JSON, TEST_ENVIRONMENT_SHELLS_ONLY_JSON));
 		String expectedMsg = new CollidingIdentifierException("aas1").getMessage();
-		Assert.assertThrows(expectedMsg, CollidingIdentifierException.class, () -> envLoader.loadPreconfiguredEnvironmens(aasRepository, submodelRepository, conceptDescriptionRepository));
+		Assert.assertThrows(expectedMsg, CollidingIdentifierException.class, () -> envLoader.loadPreconfiguredEnvironments(aasRepository, submodelRepository, conceptDescriptionRepository));
 	}
 
 	@Test
 	public void testDuplicateShellIdsInEnvironments_ExceptionIsThrown() {
 		AasEnvironmentPreconfigurationLoader envLoader = new AasEnvironmentPreconfigurationLoader(rLoader, List.of(TEST_ENVIRONMENT_SUBMODELS_ONLY_JSON, TEST_ENVIRONMENT_SUBMODELS_ONLY_JSON));
 		String expectedMsg = new CollidingIdentifierException("sm1").getMessage();
-		Assert.assertThrows(expectedMsg, CollidingIdentifierException.class, () -> envLoader.loadPreconfiguredEnvironmens(aasRepository, submodelRepository, conceptDescriptionRepository));
+		Assert.assertThrows(expectedMsg, CollidingIdentifierException.class, () -> envLoader.loadPreconfiguredEnvironments(aasRepository, submodelRepository, conceptDescriptionRepository));
 	}
 }
