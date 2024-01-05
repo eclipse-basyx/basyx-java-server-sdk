@@ -8,7 +8,7 @@ The following off-the-shelf components are available:
 * [AAS Repository](basyx.aasrepository)
 * [Submodel Repository](basyx.submodelrepository)
 * [ConceptDescription Repository](basyx.conceptdescriptionrepository)
-* [AAS Environment](basyx.aasenvironment)
+* [AAS Environment](basyx.aasenvironment) 
 * [AAS Registry](basyx.aasregistry)
 * [Submodel Registry](basyx.submodelregistry)
 * [AAS Discovery](basyx.aasdiscoveryservice)
