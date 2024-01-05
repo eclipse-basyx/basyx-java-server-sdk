@@ -7,21 +7,21 @@ servlet:
         Access-Control-Allow-Methods: POST,PUT,GET,DELETE,OPTIONS
         Access-Control-Allow-Headers: Content-Type, Accept
         Access-Control-Max-Age: 10000
-    - path: /api/v3.0/shell-descriptors
+    - path: /api/v3.0/submodel-descriptors
       values:
         Access-Control-Allow-Origin: "*"
         Access-Control-Allow-Methods: POST,PUT,GET,DELETE,OPTIONS
         Access-Control-Allow-Headers: Accept, Content-Type
       methods: 
         - OPTIONS
-    - path: /registry/shell-descriptors/search
+    - path: /registry/submodel-descriptors/search
       values:
         Access-Control-Allow-Origin: "*"
         Access-Control-Allow-Methods: POST,GET,OPTIONS
         Access-Control-Allow-Headers: Accept, Content-Type
       methods: 
         - OPTIONS
-        
+
 spring:
   data:
    mongodb:

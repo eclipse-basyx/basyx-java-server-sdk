@@ -52,6 +52,7 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.Identifiabl
 import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.IdentifiableUploader.IdentifiableRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,17 +90,36 @@ public class AasEnvironmentPreconfigurationLoader {
 		return pathsToLoad != null;
 	}
 
-	public void loadPreconfiguredEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository)
+	public void loadPreconfiguredEnvironments(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository)
 			throws IOException, DeserializationException, InvalidFormatException {
+		List<File> files = scanForEnvironments(pathsToLoad);
+
+		int numberOfFiles = files.size();
+    
+    IndentifiableAssertion check = new IndentifiableAssertion();
+
+		for (int i = 0; i < numberOfFiles; i++) {
+			File file = files.get(i);
+			logLoadingProcess(i, numberOfFiles, file.getName());
+			Environment environment = getEnvironmentFromFile(file);
+      check.assertNoDuplicateIds(environment);
+			addEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository, environment);
+		}
+	}
+
+	private List<File> scanForEnvironments(List<String> pathsToLoad) throws IOException {
+		logger.info("Scanning for preconfigured AAS Environments");
+
 		List<File> files = resolveFiles(pathsToLoad);
 
-		IndentifiableAssertion check = new IndentifiableAssertion();
+		logger.info("Found " + files.size() + " preconfigured AAS environments");
 
-		for (File file : files) {
-			Environment environment = getEnvironmentFromFile(file);
-			check.assertNoDuplicateIds(environment);
-			loadEnvironmentFromFile(aasRepository, submodelRepository, conceptDescriptionRepository, environment);
-		}
+		return files;
+	}
+
+	private void logLoadingProcess(int current, int overall, String fileName) {
+		int currentForDisplay = current + 1;
+		logger.info("Loading AAS Environment (" + currentForDisplay + "/" + overall + ") from file " + fileName);
 	}
 
 	private List<File> resolveFiles(List<String> paths) throws IOException {
@@ -125,7 +145,7 @@ public class AasEnvironmentPreconfigurationLoader {
 				.getFile();
 	}
 
-	private void loadEnvironmentFromFile(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository, Environment environment) {
+	private void addEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository, Environment environment) {
 		if (isEnvironmentLoaded(environment)) {
 			createShellsOnRepositoryFromEnvironment(aasRepository, environment);
 			createSubmodelsOnRepositoryFromEnvironment(submodelRepository, environment);
@@ -148,9 +168,17 @@ public class AasEnvironmentPreconfigurationLoader {
 		IdentifiableUploader<ConceptDescription> uploader = new IdentifiableUploader<ConceptDescription>(repo);
 		for (ConceptDescription eachConceptDescription : environment.getConceptDescriptions()) {
 			boolean success = uploader.upload(eachConceptDescription);
-			logSuccess("concept description", eachConceptDescription.getId(), success);
+			logSuccessConceptDescription(eachConceptDescription.getId(), success);
 		}
 	}
+
+	private void logSuccessConceptDescription(String conceptDescriptionId, boolean success) {
+    if (!success) {
+		  logger.warn("Colliding Ids detected for ConceptDescription: " + conceptDescriptionId + ". If they are not identical, this is an error. Please note that the already existing ConceptDescription was not updated.");
+    } else {
+      logSuccess("conceptDescription", conceptDescriptionId, success);
+    }
+  }
 
 	private void createSubmodelsOnRepositoryFromEnvironment(SubmodelRepository submodelRepository, Environment environment) {
 		List<Submodel> submodels = environment.getSubmodels();

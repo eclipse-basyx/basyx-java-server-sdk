@@ -46,14 +46,35 @@ services:
             condition: service_healthy
         
   aas-registry:
-    image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
-    container_name: aas-registry
+    image: eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
     ports:
       - 8082:8080
     volumes:
       - ./aas-registry.yml:/workspace/config/application.yml
-    restart: always
+    depends_on:
+        mongo:
+            condition: service_healthy
+    
+  sm-registry:
+    image: eclipsebasyx/submodel-registry-log-mongodb:2.0.0-SNAPSHOT
+    ports:
+      - 8083:8080
+    volumes:
+      - ./sm-registry.yml:/workspace/config/application.yml
+    depends_on:
+        mongo:
+            condition: service_healthy
 
+  aas-discovery:
+    image: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
+    ports:
+      - 8084:8081
+    volumes:
+      - ./aas-discovery.properties:/application/application.properties
+    depends_on:
+        mongo:
+            condition: service_healthy
+      
   aas-web-ui_v2:
     image: eclipsebasyx/aas-gui:v2-231107
     container_name: aas-web-ui_v2

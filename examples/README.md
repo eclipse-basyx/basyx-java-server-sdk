@@ -14,8 +14,9 @@ the following components are started:
 * Submodel Repository (http://localhost:8081/submodels)
 * ConceptDescription Repository (http://localhost:8081/concept-descriptions)
 * AAS Registry (http://localhost:8082/api/v3.0/shell-descriptors)
+* Submodel Registry (http://localhost:8083/api/v3.0/submodel-descriptors)
+* AAS Discovery (http://localhost:8084/lookup/shells)
 * AAS Web UI (http://localhost:3000)
-
 
 As of right now you have to register all Asset Administration Shells on your own (possible through the UI).
 
