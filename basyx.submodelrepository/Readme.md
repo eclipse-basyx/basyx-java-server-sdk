@@ -45,5 +45,3 @@ Furthermore, the following features are provided:
 For a configuration example, see [application.properties](basyx.submodelrepository.component/src/main/resources/application.properties)
 
 The Health Endpoint and CORS Documentation can be found [here](../docs/Readme.md). 
-
-Right now, no additional input parameters modifying the output (e.g., cursor, serializationModifier) are supported.

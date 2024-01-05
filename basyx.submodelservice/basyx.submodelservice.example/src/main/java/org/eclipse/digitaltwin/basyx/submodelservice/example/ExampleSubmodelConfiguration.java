@@ -23,30 +23,14 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelservice.component;
+package org.eclipse.digitaltwin.basyx.submodelservice.example;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.Key;
-import org.eclipse.digitaltwin.aas4j.v3.model.LangStringNameType;
-import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
-import org.eclipse.digitaltwin.aas4j.v3.model.ModellingKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringNameType;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
 /**
  * Provides the spring bean configuration for the {@link SubmodelService}
@@ -56,10 +40,8 @@ import org.springframework.context.annotation.Primary;
  *
  */
 @Configuration
-public class SubmodelServiceConfiguration {
-	@Primary
+public class ExampleSubmodelConfiguration {
 	@Bean
-	@Autowired
 	public SubmodelService getSubmodelService(Submodel submodel) {
 		return getSubmodelServiceFactory().create(submodel);
 	}
@@ -71,35 +53,6 @@ public class SubmodelServiceConfiguration {
 
 	@Bean
 	public static Submodel getSubmodel() {
-		List<LangStringTextType> description = new ArrayList<LangStringTextType>();
-		description.add(new DefaultLangStringTextType.Builder().language("de-DE")
-				.text("Test")
-				.build());
-		List<LangStringNameType> displayName = new ArrayList<LangStringNameType>();
-		displayName.add(new DefaultLangStringNameType.Builder().language("de-DE")
-				.text("Test")
-				.build());
-		List<Key> refKeys = new ArrayList<Key>();
-		refKeys.add(new DefaultKey.Builder().value("123")
-				.build());
-
-		List<SubmodelElement> smeList = new ArrayList<>();
-		SubmodelElement sme1 = new DefaultProperty.Builder().value("test")
-				.idShort("test")
-				.build();
-		smeList.add(sme1);
-
-		Submodel submodel = new DefaultSubmodel.Builder().category("TestCategory")
-				.description(description)
-				.displayName(displayName)
-				.id("TestID")
-				.idShort("test")
-				.kind(ModellingKind.INSTANCE)
-				.semanticId(new DefaultReference.Builder().keys(refKeys)
-						.build())
-				.submodelElements(smeList)
-				.build();
-
-		return submodel;
+		return new ExampleSubmodelFactory().create();
 	}
 }

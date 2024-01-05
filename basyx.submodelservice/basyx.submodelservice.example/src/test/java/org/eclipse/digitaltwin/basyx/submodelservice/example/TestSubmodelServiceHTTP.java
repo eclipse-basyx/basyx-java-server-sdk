@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelservice.component;
+package org.eclipse.digitaltwin.basyx.submodelservice.example;
 
 import java.io.IOException;
 
@@ -53,6 +53,7 @@ public class TestSubmodelServiceHTTP {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(accessUrl);
 		String actualSubmodel = new BasicHttpClientResponseHandler().handleResponse(response);
 		String expectedSubmodel = BaSyxHttpTestUtils.readJSONStringFromClasspath(SUBMODEL_PATH);
+		System.out.println(actualSubmodel);
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodel, actualSubmodel);
 	}
 

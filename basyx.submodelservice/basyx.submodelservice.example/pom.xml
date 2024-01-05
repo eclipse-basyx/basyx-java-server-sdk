@@ -7,9 +7,9 @@
 		<artifactId>basyx.submodelservice</artifactId>
 		<version>${revision}</version>
 	</parent>
-	<artifactId>basyx.submodelservice.component</artifactId>
+	<artifactId>basyx.submodelservice.example</artifactId>
 	<properties>
-		<docker.image.name>submodelservice</docker.image.name>
+		<docker.image.name>standalone_submodel_example</docker.image.name>
 		<docker.container.waitForEndpoint>
 			http://localhost:${docker.host.port}/submodel</docker.container.waitForEndpoint>
 	</properties>
