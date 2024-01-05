@@ -73,7 +73,7 @@ public class PreconfigurationLoaderInitializer implements InitializingBean {
 			return;
 		}
 
-		preconfigurationLoader.loadPreconfiguredEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository);
+		preconfigurationLoader.loadPreconfiguredEnvironments(aasRepository, submodelRepository, conceptDescriptionRepository);
 	}
 
 }
