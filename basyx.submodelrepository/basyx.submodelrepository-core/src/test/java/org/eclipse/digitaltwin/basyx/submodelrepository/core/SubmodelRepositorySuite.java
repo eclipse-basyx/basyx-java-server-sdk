@@ -439,7 +439,7 @@ public abstract class SubmodelRepositorySuite {
 		assertEquals("test987", propertyInSmeListCreated.getIdShort());
 	}
 
-	@Test
+	@Test(expected = ElementDoesNotExistException.class)
 	public void deleteNestedSubmodelElementInSubmodelElementCollection() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 
@@ -451,10 +451,11 @@ public abstract class SubmodelRepositorySuite {
 			repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, idShortPathPropertyInSmeCol);
 			fail();
 		} catch (ElementDoesNotExistException expected) {
+			throw expected;
 		}
 	}
 
-	@Test
+	@Test(expected = ElementDoesNotExistException.class)
 	public void deleteNestedSubmodelElementInSubmodelElementList() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 
@@ -464,6 +465,7 @@ public abstract class SubmodelRepositorySuite {
 			repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, generateIdShortPath());
 			fail();
 		} catch (ElementDoesNotExistException expected) {
+			throw expected;
 		}
 	}
 
