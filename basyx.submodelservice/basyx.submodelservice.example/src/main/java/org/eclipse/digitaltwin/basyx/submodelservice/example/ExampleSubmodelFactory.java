@@ -49,6 +49,11 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.InvokableOperation;
 
+/**
+ * Factory for creating an example submodel to be hosted as standalone submodel
+ * 
+ * @author schnicke
+ */
 public class ExampleSubmodelFactory {
 
 	public Submodel create() {
