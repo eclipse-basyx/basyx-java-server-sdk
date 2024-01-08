@@ -6,6 +6,7 @@ The components
 * [AAS Environment](../basyx.aasenvironment/)
 * [AAS Registry](../basyx.aasregistry)
 * [Submodel Registry](../basyx.submodelregistry)
+* [AAS Discovery](../basyx.aasdiscoveryservice)
 
 are highly configurable by leveraging the Spring framework. Thus, they utilize existing Spring configuration properties, e.g., for MongoDB. In addition, the components offer common mechanisms to check the current health status of the application and configure Cross-Origin Resource Sharing (CORS) options.
 

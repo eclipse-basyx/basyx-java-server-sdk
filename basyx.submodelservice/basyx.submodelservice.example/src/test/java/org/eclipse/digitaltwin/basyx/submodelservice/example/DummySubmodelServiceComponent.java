@@ -23,22 +23,26 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelservice.component;
+package org.eclipse.digitaltwin.basyx.submodelservice.example;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelService;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 
+/**
+ * @author schnicke
+ */
 @SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
 public class DummySubmodelServiceComponent {
 
+	@Primary
 	@Bean
-	public InMemorySubmodelService createSubmodelService() {
-
+	public SubmodelService createSubmodelService() {
 		Submodel submodel = DummySubmodelFactory.createTechnicalDataSubmodel();
-
 		return new InMemorySubmodelService(submodel);
 	}
 

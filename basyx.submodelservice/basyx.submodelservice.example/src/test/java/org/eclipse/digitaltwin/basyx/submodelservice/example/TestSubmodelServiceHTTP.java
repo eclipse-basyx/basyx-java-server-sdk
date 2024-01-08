@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelservice.component;
+package org.eclipse.digitaltwin.basyx.submodelservice.example;
 
 import java.io.IOException;
 
@@ -36,6 +36,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+/**
+ * Example test showcasing how to test a standalone submodel in BaSyx
+ * 
+ * @author schnicke
+ */
 public class TestSubmodelServiceHTTP {
 	private static final String SUBMODEL_PATH = "TechnicalSubmodel.json";
 
@@ -53,6 +58,7 @@ public class TestSubmodelServiceHTTP {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(accessUrl);
 		String actualSubmodel = new BasicHttpClientResponseHandler().handleResponse(response);
 		String expectedSubmodel = BaSyxHttpTestUtils.readJSONStringFromClasspath(SUBMODEL_PATH);
+
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodel, actualSubmodel);
 	}
 
