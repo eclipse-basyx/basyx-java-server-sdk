@@ -38,12 +38,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -58,7 +53,6 @@ import com.mongodb.client.result.DeleteResult;
  */
 public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRepository {
 	
-	private Logger logger = LoggerFactory.getLogger(MongoDBConceptDescriptionRepository.class);
 	private static final String IDJSONPATH = "id";
 
 	private MongoTemplate mongoTemplate;
@@ -68,7 +62,6 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 	public MongoDBConceptDescriptionRepository(MongoTemplate mongoTemplate, String collectionName) {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
-		configureIndexForConceptDescriptionId(mongoTemplate);
 	}
 
 	public MongoDBConceptDescriptionRepository(MongoTemplate mongoTemplate, String collectionName, String cdRepositoryName) {
@@ -168,16 +161,6 @@ public class MongoDBConceptDescriptionRepository implements ConceptDescriptionRe
 
 		if (mongoTemplate.exists(query, ConceptDescription.class, collectionName))
 			throw new CollidingIdentifierException(conceptDescription.getId());
-	}
-
-	private void configureIndexForConceptDescriptionId(MongoTemplate mongoTemplate) {
-		Index idIndex = new Index().on(IDJSONPATH, Direction.ASC);
-		
-		try {
-			mongoTemplate.indexOps(ConceptDescription.class).ensureIndex(idIndex);
-		} catch (UncategorizedMongoDbException e) {
-			logger.info("Index already exists: {}", e.getMessage());
-		}
 	}
 
 	private boolean hasMatchingReference(ConceptDescription cd, Reference reference) {

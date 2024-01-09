@@ -56,13 +56,9 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
@@ -77,8 +73,6 @@ import com.mongodb.client.result.DeleteResult;
  *
  */
 public class MongoDBSubmodelRepository implements SubmodelRepository {
-	private Logger logger = LoggerFactory.getLogger(MongoDBSubmodelRepository.class);
-	
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static final String MONGO_ID = "_id";
 	private static final String TEMP_DIR_PREFIX = "basyx-temp";
@@ -105,7 +99,6 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
 		this.submodelServiceFactory = submodelServiceFactory;
-		configureIndexForSubmodelId(mongoTemplate);
 
 		configureDefaultGridFsTemplate(this.mongoTemplate);
 	}
@@ -128,8 +121,6 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 		if (this.gridFsTemplate == null)
 			configureDefaultGridFsTemplate(mongoTemplate);
-
-		configureIndexForSubmodelId(mongoTemplate);
 	}
 
 	/**
@@ -180,16 +171,6 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 			return;
 		}
 		submodels.forEach(this::createSubmodel);
-	}
-
-	private void configureIndexForSubmodelId(MongoTemplate mongoTemplate) {
-		Index idIndex = new Index().on(ID_JSON_PATH, Direction.ASC);
-		
-		try {
-			mongoTemplate.indexOps(Submodel.class).ensureIndex(idIndex);
-		} catch (UncategorizedMongoDbException e) {
-			logger.info("Index already exists: {}", e.getMessage());
-		}
 	}
 
 	@Override
