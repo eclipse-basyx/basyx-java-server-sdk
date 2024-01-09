@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelservice.component;
+package org.eclipse.digitaltwin.basyx.submodelservice.example;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -35,8 +35,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  */
 @SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
-public class SubmodelServiceComponent {
+public class ExampleSubmodelComponent {
 	public static void main(String[] args) {
-		SpringApplication.run(SubmodelServiceComponent.class, args);
+		SpringApplication.run(ExampleSubmodelComponent.class, args);
 	}
 }
