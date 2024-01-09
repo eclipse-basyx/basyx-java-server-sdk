@@ -59,10 +59,10 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.result.DeleteResult;
 
@@ -99,7 +99,6 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
 		this.submodelServiceFactory = submodelServiceFactory;
-		configureIndexForSubmodelId(mongoTemplate);
 
 		configureDefaultGridFsTemplate(this.mongoTemplate);
 	}
@@ -122,8 +121,6 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 		if (this.gridFsTemplate == null)
 			configureDefaultGridFsTemplate(mongoTemplate);
-
-		configureIndexForSubmodelId(mongoTemplate);
 	}
 
 	/**
@@ -174,11 +171,6 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 			return;
 		}
 		submodels.forEach(this::createSubmodel);
-	}
-
-	private void configureIndexForSubmodelId(MongoTemplate mongoTemplate) {
-		Index idIndex = new Index().on(ID_JSON_PATH, Direction.ASC);
-		mongoTemplate.indexOps(Submodel.class).ensureIndex(idIndex);
 	}
 
 	@Override
