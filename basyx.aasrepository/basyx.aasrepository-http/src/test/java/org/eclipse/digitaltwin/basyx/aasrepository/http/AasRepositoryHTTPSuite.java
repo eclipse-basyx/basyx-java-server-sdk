@@ -463,12 +463,10 @@ public abstract class AasRepositoryHTTPSuite {
 
 		java.io.File file = ResourceUtils.getFile("classpath:" + THUMBNAIL_FILE_PATH);
 
-		HttpPut putRequest = BaSyxHttpTestUtils.createPutRequestWithFile(getURL(), aasId, THUMBNAIL_FILE_PATH, file);
+		HttpPut putRequest = BaSyxHttpTestUtils.createPutRequestWithFile(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), aasId), THUMBNAIL_FILE_PATH, file);
 
 		return BaSyxHttpTestUtils.executePutRequest(client, putRequest);
 	}
-
-
 
 	private byte[] readBytesFromClasspath(String fileName) throws FileNotFoundException, IOException {
 		ClassPathResource classPathResource = new ClassPathResource(fileName);

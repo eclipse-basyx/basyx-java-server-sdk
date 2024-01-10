@@ -245,8 +245,8 @@ public class BaSyxHttpTestUtils {
 		return response;
 	}
 
-	public static HttpPut createPutRequestWithFile(String url, String aasId, String fileName, java.io.File file) {
-		HttpPut putRequest = new HttpPut(getThumbnailAccessURL(url, aasId));
+	public static HttpPut createPutRequestWithFile(String url, String fileName, java.io.File file) {
+		HttpPut putRequest = new HttpPut(url);
 
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 

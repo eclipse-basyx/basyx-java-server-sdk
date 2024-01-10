@@ -23,30 +23,28 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
+
+import org.eclipse.digitaltwin.basyx.authorization.TargetInformation;
+import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.mixin.SubmodelTargetInformationMixin;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.mixin.TargetInformationMixin;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.stereotype.Component;
 
 /**
- * Dummy model for credential
+ * SerializationExtension integrating the additional Authorization serialization
  * 
  * @author danish
+ *
  */
-public class DummyCredential {
-	
-	private String username;
-	private String password;
-	
-	public DummyCredential(String username, String password) {
-		super();
-		this.username = username;
-		this.password = password;
-	}
+@Component
+public class SubmodelAuthorizationSerializationExtension implements SerializationExtension {
 
-	public String getUsername() {
-		return username;
-	}
-
-	public String getPassword() {
-		return password;
+	@Override
+	public void extend(Jackson2ObjectMapperBuilder builder) {
+		builder.mixIn(TargetInformation.class, TargetInformationMixin.class);
+		builder.mixIn(SubmodelTargetInformation.class, SubmodelTargetInformationMixin.class);
 	}
 
 }

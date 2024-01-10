@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.authorization;
 
 /**
  * Dummy store for holding test {@link DummyCredential}
@@ -45,5 +45,14 @@ public class DummyCredentialStore {
 	public static final DummyCredential BASYX_ASSET_UPDATER_TWO_CREDENTIAL = new DummyCredential("basyx.asset.updater.2", "basyxassetupdater2");
 	public static final DummyCredential BASYX_DELETER_CREDENTIAL = new DummyCredential("basyx.deleter", "basyxdeleter");
 	public static final DummyCredential BASYX_DELETER_TWO_CREDENTIAL = new DummyCredential("basyx.deleter.2", "basyxdeleter2");
-
+	
+	public static final DummyCredential BASYX_SME_READER_CREDENTIAL = new DummyCredential("basyx.sme.reader", "basyxsmereader");
+	public static final DummyCredential BASYX_SME_READER_TWO_CREDENTIAL = new DummyCredential("basyx.sme.reader.2", "basyxsmereader2");
+	public static final DummyCredential BASYX_SME_UPDATER_CREDENTIAL = new DummyCredential("basyx.sme.updater", "basyxsmeupdater");
+	public static final DummyCredential BASYX_SME_UPDATER_TWO_CREDENTIAL = new DummyCredential("basyx.sme.updater.2", "basyxsmeupdater2");
+	public static final DummyCredential BASYX_SME_UPDATER_THREE_CREDENTIAL = new DummyCredential("basyx.sme.updater.3", "basyxsmeupdater3");
+	public static final DummyCredential BASYX_EXECUTOR_CREDENTIAL = new DummyCredential("basyx.executor", "basyxexecutor");
+	public static final DummyCredential BASYX_EXECUTOR_TWO_CREDENTIAL = new DummyCredential("basyx.executor.2", "basyxexecutor2");
+	public static final DummyCredential BASYX_FILE_SME_READER_CREDENTIAL = new DummyCredential("basyx.file.sme.reader", "basyxfilesmereader");
+	public static final DummyCredential BASYX_FILE_SME_UPDATER_CREDENTIAL = new DummyCredential("basyx.file.sme.updater", "basyxfilesmeupdater");
 }

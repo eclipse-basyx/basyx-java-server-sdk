@@ -39,13 +39,13 @@ import jakarta.annotation.Nonnull;
  */
 public class RbacRule {
 	private String role;
-	private List<String> action;
+	private List<Action> action;
 	private TargetInformation targetInformation;
 
 	public RbacRule() {
 	}
 
-	public RbacRule(@Nonnull final String role, @Nonnull final List<String> action, @Nonnull final TargetInformation targetInfo) {
+	public RbacRule(@Nonnull final String role, @Nonnull final List<Action> action, @Nonnull final TargetInformation targetInfo) {
 		this.role = role;
 		this.action = action;
 		this.targetInformation = targetInfo;
@@ -55,7 +55,7 @@ public class RbacRule {
 		return role;
 	}
 
-	public List<String> getAction() {
+	public List<Action> getAction() {
 		return action;
 	}
 

@@ -25,7 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.AuthorizedAasRepository;
 import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
