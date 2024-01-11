@@ -1,0 +1,34 @@
+{
+	"assetAdministrationShells": [
+		{
+			"modelType": "AssetAdministrationShell",
+			"id": "aas1"
+		},
+		{
+			"modelType": "AssetAdministrationShell",
+			"id": "aas2"
+		}
+	],
+	"conceptDescriptions": [
+		{
+			"modelType": "ConceptDescription",
+			"id": "cd1"
+		}, 
+		{
+			"modelType": "ConceptDescription",
+			"id": "cd2"
+		}
+	],
+	"submodels": [
+		{
+			"modelType": "Submodel",
+			"kind": "Instance",
+			"id": "sm1"
+		},
+		{
+			"modelType": "Submodel",
+			"kind": "Instance",
+			"id": "sm2"
+		}
+	]
+}
