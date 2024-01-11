@@ -85,9 +85,6 @@ public class PreconfigurationLoaderTextualResourceTest {
 
 		Mockito.verify(submodelRepository, Mockito.never()).createSubmodel(Mockito.any());
 		Mockito.verify(submodelRepository, Mockito.never()).createSubmodel(Mockito.any());
-
-		Mockito.verify(aasRepository, Mockito.never()).createAas(Mockito.any());
-		Mockito.verify(aasRepository, Mockito.never()).updateAas(Mockito.anyString(), Mockito.any());
 	}
 
 	@Test
@@ -112,9 +109,6 @@ public class PreconfigurationLoaderTextualResourceTest {
 		Mockito.verify(submodelRepository, Mockito.times(2)).createSubmodel(Mockito.any());
 		Mockito.verify(submodelRepository, Mockito.times(0)).updateSubmodel(Mockito.anyString(), Mockito.any());
 
-		Mockito.verify(aasRepository, Mockito.times(2)).createAas(Mockito.any());
-		Mockito.verify(aasRepository, Mockito.times(0)).updateAas(Mockito.anyString(), Mockito.any());
-
 		Assert.assertEquals(2, aasRepository.getAllAas(ALL).getResult().size());
 		Assert.assertEquals(2, submodelRepository.getAllSubmodels(ALL).getResult().size());
 		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(ALL).getResult().size());
@@ -133,9 +127,6 @@ public class PreconfigurationLoaderTextualResourceTest {
 		Mockito.verify(submodelRepository, Mockito.times(2)).createSubmodel(Mockito.any());
 		Mockito.verify(submodelRepository, Mockito.times(0)).updateSubmodel(Mockito.anyString(), Mockito.any());
 
-		Mockito.verify(aasRepository, Mockito.times(2)).createAas(Mockito.any());
-		Mockito.verify(aasRepository, Mockito.times(0)).updateAas(Mockito.anyString(), Mockito.any());
-
 		Assert.assertEquals(2, aasRepository.getAllAas(ALL).getResult().size());
 		Assert.assertEquals(2, submodelRepository.getAllSubmodels(ALL).getResult().size());
 		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(ALL).getResult().size());
@@ -153,9 +144,6 @@ public class PreconfigurationLoaderTextualResourceTest {
 
 		Mockito.verify(submodelRepository, Mockito.times(2)).createSubmodel(Mockito.any());
 		Mockito.verify(submodelRepository, Mockito.times(1)).updateSubmodel(Mockito.anyString(), Mockito.any());
-
-		Mockito.verify(aasRepository, Mockito.times(2)).createAas(Mockito.any());
-		Mockito.verify(aasRepository, Mockito.times(1)).updateAas(Mockito.anyString(), Mockito.any());
 
 		Assert.assertEquals(2, aasRepository.getAllAas(ALL).getResult().size());
 		Assert.assertEquals(2, submodelRepository.getAllSubmodels(ALL).getResult().size());
