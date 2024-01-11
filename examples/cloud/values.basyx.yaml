@@ -96,7 +96,5 @@ aas-web-ui:
   externalPlugins:
     enabled: true
     plugins:
-    - fileName: TimeSeriesVisualizerPlugin.vue
-      configMapName: time-series-ui-plugin
     - fileName: HelloWorldPlugin.vue
       configMapName: hello-world-plugin
