@@ -1,0 +1,57 @@
+imagePullSecrets: []
+
+image: 
+  # Possible current options:
+  # - eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
+  # - eclipsebasyx/aas-registry-kafka-mongodb:2.0.0-SNAPSHOT - Storage - MongoDB - Event-sink- Kafka
+  # - eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT - Storage - MongoDB - Event-sink- Logging (Pod)
+  # - eclipsebasyx/aas-registry-kafka-mem:2.0.0-SNAPSHOT - Storage - In-memory - Event-sink- Kafka
+  # - eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT - Storage - In-memory - Event-sink- Logging (Pod)
+
+  # If Kafka is used, then the appropriate Bootstrap connection string must be provided.
+  # If Mongo is used, then the appropriate MongoDB connection string must be provided.
+  name: eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
+  pullPolicy: IfNotPresent
+
+resources: {}
+podAnnotations: {}
+
+kafka:
+  connectionString: null
+mongodb:
+  connectionString: mongodb://mongoAdmin:mongoPassword@mongo:27017
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  host: aas-registry.local
+
+# Content of application.yaml
+config: |
+  servlet:
+    headers:
+      - path: /**
+        values:
+          Access-Control-Allow-Origin: "*"
+          Access-Control-Allow-Methods: POST,PUT,GET,DELETE,OPTIONS
+          Access-Control-Allow-Headers: Content-Type, Accept
+          Access-Control-Max-Age: 10000
+      - path: /api/v3.0/shell-descriptors
+        values:
+          Access-Control-Allow-Origin: "*"
+          Access-Control-Allow-Methods: POST,PUT,GET,DELETE,OPTIONS
+          Access-Control-Allow-Headers: Accept, Content-Type
+        methods: 
+          - OPTIONS
+      - path: /registry/shell-descriptors/search
+        values:
+          Access-Control-Allow-Origin: "*"
+          Access-Control-Allow-Methods: POST,GET,OPTIONS
+          Access-Control-Allow-Headers: Accept, Content-Type
+        methods: 
+          - OPTIONS
+
+
