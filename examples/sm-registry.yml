@@ -22,6 +22,12 @@ servlet:
       methods: 
         - OPTIONS
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics"
+
 spring:
   data:
    mongodb:
