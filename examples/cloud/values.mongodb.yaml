@@ -1,0 +1,12 @@
+# MongoDB - used by new Basyx - both Registry, Environment and other aspects.
+architecture: standalone
+auth:
+  rootUser: adminUser
+  rootPassword: adminPassword
+  # replicaSetKey: cLVYBotU4B
+replicaSetName: aasdashboard
+
+persistence:
+  size: 10Gi
+service:
+  nameOverride: mongodb
