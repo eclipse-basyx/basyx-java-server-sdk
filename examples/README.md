@@ -22,37 +22,7 @@ the following components are started:
 * AAS Discovery (http://localhost:8084/lookup/shells)
 * AAS Web UI (http://localhost:3000)
 
-As of right now you have to register all Asset Administration Shells on your own (possible through the UI).
-
-You can use the following endpoints to register Asset Administration Shells which are included in the usage example:
-
-```bash
-http://localhost:8081/shells/aHR0cHM6Ly9odHctYmVybGluLmRlL2lkcy9hYXMvZGVtb2Fhc3Yz
-```
-
-```bash
-http://localhost:8081/shells/aHR0cHM6Ly9leGFtcGxlLmNvbS9pZHMvc20vMjQxMV83MTYwXzAxMzJfNDUyMw==
-```
-
-![alt text](RegisterAAS.png "Register Asset Administration Shells")
-
-The example project includes some more shells to try out which include SubmodelElements that have currently no frontend representation. Here, a provisional visualization is shown.
-
-```bash
-http://localhost:8081/shells/aHR0cHM6Ly9hY3BsdC5vcmcvVGVzdF9Bc3NldEFkbWluaXN0cmF0aW9uU2hlbGw=
-```
-
-```bash
-http://localhost:8081/shells/aHR0cHM6Ly9hY3BsdC5vcmcvVGVzdF9Bc3NldEFkbWluaXN0cmF0aW9uU2hlbGxfTWFuZGF0b3J5
-```
-
-```bash
-http://localhost:8081/shells/aHR0cHM6Ly9hY3BsdC5vcmcvVGVzdF9Bc3NldEFkbWluaXN0cmF0aW9uU2hlbGwyX01hbmRhdG9yeQ==
-```
-
-```bash
-http://localhost:8081/shells/aHR0cHM6Ly9hY3BsdC5vcmcvVGVzdF9Bc3NldEFkbWluaXN0cmF0aW9uU2hlbGxfTWlzc2luZw==
-```
+By leveraging the registry integration features of AAS Repository and Submodel Repository, the preconfigured AAS Environment serializations are loaded and automatically registered.
 
 ## BaSyx with NGINX
 See the separate [NGINX example](BaSyxNGINX) for a comprehensive setup leveraging NGINX.
