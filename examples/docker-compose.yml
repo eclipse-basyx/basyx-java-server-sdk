@@ -44,13 +44,23 @@ services:
             condition: service_healthy
         mqtt:
             condition: service_healthy
-        
+        aas-registry:
+            condition: service_healthy
+        sm-registry:
+            condition: service_healthy
+            
   aas-registry:
     image: eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
     ports:
       - 8082:8080
     volumes:
       - ./aas-registry.yml:/workspace/config/application.yml
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/api/v3.0/actuator/health || exit 1"]
+      interval: 20s
+      retries: 3
+      start_period: 20s
+      timeout: 10s 
     depends_on:
         mongo:
             condition: service_healthy
@@ -61,6 +71,12 @@ services:
       - 8083:8080
     volumes:
       - ./sm-registry.yml:/workspace/config/application.yml
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/api/v3.0/actuator/health || exit 1"]
+      interval: 20s
+      retries: 3
+      start_period: 20s
+      timeout: 10s 
     depends_on:
         mongo:
             condition: service_healthy
