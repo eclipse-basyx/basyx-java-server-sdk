@@ -188,21 +188,12 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
+				<artifactId>maven-surefire-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>default</id>
-						<phase>none</phase>
-					</execution>
-					<execution>
-						<id>integration-test</id>
-						<phase>none</phase>
-					</execution>
-					<execution>
-						<id>auth-integ-test</id>
+						<phase>integration-test</phase>
 						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
+							<goal>test</goal>
 						</goals>
 						<configuration>
 							<excludes>
@@ -211,9 +202,6 @@
 							<includes>
 								<include>**/AuthorizedITAASRepository.java</include>
 							</includes>
-							<systemPropertyVariables>
-								<spring.profiles.active>authorization</spring.profiles.active>
-							</systemPropertyVariables>
 						</configuration>
 					</execution>
 				</executions>

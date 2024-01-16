@@ -30,9 +30,9 @@ package org.eclipse.digitaltwin.basyx.authorization;
  * 
  * @author danish
  */
-public class CommonAuthorizationConfig {
+public class CommonAuthorizationProperties {
 
-	private CommonAuthorizationConfig() {
+	private CommonAuthorizationProperties() {
 		throw new IllegalStateException("Utility class");
 	}
 

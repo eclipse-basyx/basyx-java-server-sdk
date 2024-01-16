@@ -30,13 +30,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.eclipse.digitaltwin.basyx.authorization.TargetInformation;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformationSubtype;
 
 /**
  * Specialization of {@link TargetInformation} for Submodel target information
  *
  * @author danish
  */
+@TargetInformationSubtype(getValue = "submodel")
 public class SubmodelTargetInformation implements TargetInformation {
 	
 	private String submodelId;

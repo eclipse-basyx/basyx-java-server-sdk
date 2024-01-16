@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.eclipse.digitaltwin.basyx.authorization.TargetInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,6 +96,10 @@ public class PermissionResolver<T extends TargetInformation> {
 	}
 
 	private boolean checkRbacRuleMatchesTargetInfo(final RbacRule rbacRule, final T targetInformation) {
+		
+		if (!(targetInformation.getClass().isInstance(rbacRule.getTargetInformation())))
+			return false;
+		
 		return targetPermissionVerifier.isVerified(rbacRule, targetInformation);
 	}
 

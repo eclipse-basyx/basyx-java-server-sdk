@@ -23,22 +23,43 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.mixin;
+package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.AasTargetInformation;
-import org.eclipse.digitaltwin.basyx.authorization.TargetInformation;
+import java.util.Objects;
+import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import org.reflections.Reflections;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
 
 /**
- * Mixin for {@link TargetInformation}
+ * A base configuration for Rbac based authorization
  * 
  * @author danish
  */
-@JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-@JsonSubTypes({ @JsonSubTypes.Type(value = AasTargetInformation.class, name = "aas") })
-public interface TargetInformationMixin {
+@Configuration
+public class CommonRbacConfiguration {
+
+	@Bean
+	public ObjectMapper getAasMapper(Jackson2ObjectMapperBuilder builder) {
+		ObjectMapper mapper = builder.build();
+
+		Reflections reflections = new Reflections("org.eclipse.digitaltwin.basyx");
+		Set<Class<?>> subtypes = reflections.getTypesAnnotatedWith(TargetInformationSubtype.class);
+		
+		subtypes.stream().map(this::createNamedType).filter(Objects::nonNull).forEach(mapper::registerSubtypes);
+
+		return mapper;
+	}
+
+	private NamedType createNamedType(Class<?> subType) {
+		TargetInformationSubtype annotation = subType.getAnnotation(TargetInformationSubtype.class);
+		
+		return (annotation != null) ? new NamedType(subType, annotation.getValue()) : null;
+	}
 
 }
