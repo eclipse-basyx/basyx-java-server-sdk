@@ -46,7 +46,7 @@ public class HttpBasyxHeader extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         
-		response.addHeader("AAS_Middleware", "Basyx");
+		response.addHeader("AAS_Middleware", "BaSyx");
         filterChain.doFilter(request, response);
     }
 }
