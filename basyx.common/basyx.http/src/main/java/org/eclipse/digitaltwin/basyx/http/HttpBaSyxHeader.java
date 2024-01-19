@@ -40,7 +40,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author fried
  */
 @Component
-public class HttpBasyxHeader extends OncePerRequestFilter {
+public class HttpBaSyxHeader extends OncePerRequestFilter {
 
     @Override 
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
