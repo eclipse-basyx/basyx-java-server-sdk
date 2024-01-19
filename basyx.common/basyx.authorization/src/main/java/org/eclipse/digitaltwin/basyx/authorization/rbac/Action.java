@@ -31,6 +31,7 @@ package org.eclipse.digitaltwin.basyx.authorization.rbac;
  * @author danish
  */
 public enum Action {
+	ALL,
     READ,
     CREATE,
     UPDATE,

@@ -39,24 +39,24 @@ import org.slf4j.LoggerFactory;
  * 
  * @author danish
  */
-public class PermissionResolver<T extends TargetInformation> {
+public class SimpleRbacPermissionResolver<T extends TargetInformation> implements RbacPermissionResolver<T> {
 
 	private static final String ALL_ALLOWED_WILDCARD = "*";
 
-	private Logger logger = LoggerFactory.getLogger(PermissionResolver.class);
+	private Logger logger = LoggerFactory.getLogger(SimpleRbacPermissionResolver.class);
 
-	private InMemoryAuthorizationRbacStorage rbacStorage;
+	private RbacStorage rbacStorage;
 	private RoleProvider roleAuthenticator;
 	private TargetPermissionVerifier<T> targetPermissionVerifier;
 
-	public PermissionResolver(InMemoryAuthorizationRbacStorage rbacStorage, RoleProvider roleAuthenticator, TargetPermissionVerifier<T> targetPermissionVerifier) {
+	public SimpleRbacPermissionResolver(RbacStorage rbacStorage, RoleProvider roleAuthenticator, TargetPermissionVerifier<T> targetPermissionVerifier) {
 		super();
 		this.rbacStorage = rbacStorage;
 		this.roleAuthenticator = roleAuthenticator;
 		this.targetPermissionVerifier = targetPermissionVerifier;
 	}
 
-	public InMemoryAuthorizationRbacStorage getRbacStorage() {
+	public RbacStorage getRbacStorage() {
 		return rbacStorage;
 	}
 
@@ -89,8 +89,6 @@ public class PermissionResolver<T extends TargetInformation> {
 	}
 
 	private boolean checkActionMatchesRbacRule(final RbacRule rbacRule, final Action action) {
-		if (rbacRule.getAction().size() == 1)
-			return rbacRule.getAction().get(0).equals(ALL_ALLOWED_WILDCARD) || rbacRule.getAction().get(0).equals(action);
 
 		return rbacRule.getAction().stream().anyMatch(rbacRuleAction -> rbacRuleAction.equals(action));
 	}

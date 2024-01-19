@@ -26,8 +26,9 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
 
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.InMemoryAuthorizationRbacStorage;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.PermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.SimpleRbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RoleProvider;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.rbac.SubmodelTargetPermissionVerifier;
@@ -50,9 +51,9 @@ public class AuthorizedSubmodelRepositoryConfiguration {
 	}
 
 	@Bean
-	public PermissionResolver<SubmodelTargetInformation> getSubmodelPermissionResolver(InMemoryAuthorizationRbacStorage rbacStorage, RoleProvider roleProvider, TargetPermissionVerifier<SubmodelTargetInformation> targetPermissionVerifier) {
+	public RbacPermissionResolver<SubmodelTargetInformation> getSubmodelPermissionResolver(RbacStorage rbacStorage, RoleProvider roleProvider, TargetPermissionVerifier<SubmodelTargetInformation> targetPermissionVerifier) {
 
-		return new PermissionResolver<>(rbacStorage, roleProvider, targetPermissionVerifier);
+		return new SimpleRbacPermissionResolver<>(rbacStorage, roleProvider, targetPermissionVerifier);
 	}
 
 }

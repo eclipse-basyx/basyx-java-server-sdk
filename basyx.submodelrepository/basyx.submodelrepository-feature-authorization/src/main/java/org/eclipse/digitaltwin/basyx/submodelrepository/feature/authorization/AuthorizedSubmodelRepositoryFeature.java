@@ -26,7 +26,7 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
 
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.PermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.SubmodelRepositoryFeature;
@@ -49,10 +49,10 @@ public class AuthorizedSubmodelRepositoryFeature implements SubmodelRepositoryFe
 	@Value("${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":}")
 	private boolean enabled;
 	
-	private PermissionResolver<SubmodelTargetInformation> permissionResolver;
+	private RbacPermissionResolver<SubmodelTargetInformation> permissionResolver;
 
 	@Autowired
-	public AuthorizedSubmodelRepositoryFeature(PermissionResolver<SubmodelTargetInformation> permissionResolver) {
+	public AuthorizedSubmodelRepositoryFeature(RbacPermissionResolver<SubmodelTargetInformation> permissionResolver) {
 		this.permissionResolver = permissionResolver;
 	}
 

@@ -33,7 +33,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.Action;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.PermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.SimpleRbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
@@ -55,10 +56,10 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	private static final String ALL_ALLOWED_WILDCARD = "*";
 	private SubmodelRepository decorated;
-	private PermissionResolver<SubmodelTargetInformation> permissionResolver;
+	private RbacPermissionResolver<SubmodelTargetInformation> permissionResolver;
 	
 
-	public AuthorizedSubmodelRepository(SubmodelRepository decorated, PermissionResolver<SubmodelTargetInformation> permissionResolver) {
+	public AuthorizedSubmodelRepository(SubmodelRepository decorated, RbacPermissionResolver<SubmodelTargetInformation> permissionResolver) {
 		this.decorated = decorated;
 		this.permissionResolver = permissionResolver;
 	}

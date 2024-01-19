@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
 
-import org.eclipse.digitaltwin.basyx.authorization.rbac.PermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
 
@@ -37,9 +37,9 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactor
 public class AuthorizedSubmodelRepositoryFactory implements SubmodelRepositoryFactory {
 
 	private SubmodelRepositoryFactory decorated;
-	private PermissionResolver<SubmodelTargetInformation> permissionResolver;
+	private RbacPermissionResolver<SubmodelTargetInformation> permissionResolver;
 
-	public AuthorizedSubmodelRepositoryFactory(SubmodelRepositoryFactory decorated, PermissionResolver<SubmodelTargetInformation> permissionResolver) {
+	public AuthorizedSubmodelRepositoryFactory(SubmodelRepositoryFactory decorated, RbacPermissionResolver<SubmodelTargetInformation> permissionResolver) {
 		this.decorated = decorated;
 		this.permissionResolver = permissionResolver;
 	}
