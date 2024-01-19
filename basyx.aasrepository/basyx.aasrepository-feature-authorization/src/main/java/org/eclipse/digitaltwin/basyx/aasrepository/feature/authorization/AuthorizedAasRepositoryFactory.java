@@ -27,7 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.SimpleRbacPermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 
 /**
  * Factory for creating {@link AuthorizedAasRepository}
@@ -37,9 +37,9 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.SimpleRbacPermissionReso
 public class AuthorizedAasRepositoryFactory implements AasRepositoryFactory {
 
 	private AasRepositoryFactory decorated;
-	private SimpleRbacPermissionResolver<AasTargetInformation> permissionResolver;
+	private RbacPermissionResolver<AasTargetInformation> permissionResolver;
 
-	public AuthorizedAasRepositoryFactory(AasRepositoryFactory decorated, SimpleRbacPermissionResolver<AasTargetInformation> permissionResolver) {
+	public AuthorizedAasRepositoryFactory(AasRepositoryFactory decorated, RbacPermissionResolver<AasTargetInformation> permissionResolver) {
 		this.decorated = decorated;
 		this.permissionResolver = permissionResolver;
 	}

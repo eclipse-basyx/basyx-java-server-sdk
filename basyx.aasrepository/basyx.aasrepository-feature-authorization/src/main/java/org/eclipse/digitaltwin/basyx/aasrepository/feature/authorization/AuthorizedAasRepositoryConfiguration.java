@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.rbac.AasTargetPermissionVerifier;
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationConfig;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.SimpleRbacPermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RoleProvider;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
@@ -50,7 +51,7 @@ public class AuthorizedAasRepositoryConfiguration {
 	}
 	
 	@Bean
-	public SimpleRbacPermissionResolver<AasTargetInformation> getPermissionResolver(RbacStorage rbacStorage, RoleProvider roleProvider, TargetPermissionVerifier<AasTargetInformation> targetPermissionVerifier) {
+	public RbacPermissionResolver<AasTargetInformation> getPermissionResolver(RbacStorage rbacStorage, RoleProvider roleProvider, TargetPermissionVerifier<AasTargetInformation> targetPermissionVerifier) {
 
 		return new SimpleRbacPermissionResolver<>(rbacStorage, roleProvider, targetPermissionVerifier);
 	}

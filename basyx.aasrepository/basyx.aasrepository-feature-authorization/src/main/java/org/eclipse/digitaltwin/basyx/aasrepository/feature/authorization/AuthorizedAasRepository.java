@@ -34,7 +34,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.Action;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.SimpleRbacPermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionException;
@@ -50,10 +50,10 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 public class AuthorizedAasRepository implements AasRepository {
 
 	private AasRepository decorated;
-	private SimpleRbacPermissionResolver<AasTargetInformation> permissionResolver;
+	private RbacPermissionResolver<AasTargetInformation> permissionResolver;
 	
 
-	public AuthorizedAasRepository(AasRepository decorated, SimpleRbacPermissionResolver<AasTargetInformation> permissionResolver) {
+	public AuthorizedAasRepository(AasRepository decorated, RbacPermissionResolver<AasTargetInformation> permissionResolver) {
 		this.decorated = decorated;
 		this.permissionResolver = permissionResolver;
 	}
