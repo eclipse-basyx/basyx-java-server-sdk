@@ -67,8 +67,6 @@ public class AasRepositoryTestDefinedURL extends AasRepositoryHTTPSuite {
 		try {
 			String url = getSpecificAasAccessURL(id);
 			CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(url);
-
-			System.out.println("Deleting aas with id " + id + ", ResponseCode is " + deleteResponse.getCode());
 		} catch (IOException e) {
 			fail(e.toString());
 		}

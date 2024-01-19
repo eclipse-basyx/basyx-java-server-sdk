@@ -75,27 +75,31 @@ public class BaSyxHTTPConfiguration {
 	 * 
 	 * @param configurationUrlProviders
 	 * @param allowedOrigins
+	 * @param allowedMethods
 	 * @return
 	 */
 	@Bean
-	public WebMvcConfigurer corsConfigurer(List<CorsPathPatternProvider> configurationUrlProviders, @Value("${basyx.cors.allowed-origins:}") String[] allowedOrigins) {
+	public WebMvcConfigurer corsConfigurer(List<CorsPathPatternProvider> configurationUrlProviders,
+										   @Value("${basyx.cors.allowed-origins:}") String[] allowedOrigins,
+										   @Value("${basyx.cors.allowed-methods:}") String[] allowedMethods) {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				if (allowedOrigins.length == 0)
+				if (allowedOrigins.length == 0 && allowedMethods.length == 0)
 					return;
 
 				logger.info("---- Configuring CORS ----");
 
 				for (CorsPathPatternProvider provider : configurationUrlProviders) {
-					configureOrigins(allowedOrigins, registry, provider.getPathPattern());
+					configureOrigins(allowedOrigins, allowedMethods, registry, provider.getPathPattern());
 				}
 			}
 
-			private void configureOrigins(String[] allowedOrigins, CorsRegistry registry, String pathPattern) {
+			private void configureOrigins(String[] allowedOrigins, String[] allowedMethods, CorsRegistry registry, String pathPattern) {
 				logger.info(pathPattern + " configured with allowedOriginPatterns " + Arrays.toString(allowedOrigins));
+				logger.info(allowedMethods.length == 0 ? "No allowed methods configured" : pathPattern + " configured with allowedMethods " + Arrays.toString(allowedMethods));
 
-				registry.addMapping(pathPattern).allowedOriginPatterns(allowedOrigins);
+				registry.addMapping(pathPattern).allowedOriginPatterns(allowedOrigins).allowedMethods(allowedMethods);
 			}
 		};
 	}

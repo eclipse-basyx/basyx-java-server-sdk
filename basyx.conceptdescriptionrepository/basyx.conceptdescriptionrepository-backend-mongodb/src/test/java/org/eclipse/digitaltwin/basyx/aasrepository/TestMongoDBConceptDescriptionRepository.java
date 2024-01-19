@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
 import static org.junit.Assert.assertEquals;
@@ -54,7 +53,7 @@ import com.mongodb.client.MongoClients;
 public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionRepositorySuite {
 	private static final String CONFIGURED_CD_REPO_NAME = "configured-cd-repo-name";
 	private final String COLLECTION = "conceptDescTestCollection";
-	
+
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository() {
 		MongoTemplate template = createTemplate();
@@ -65,27 +64,26 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 	}
 
 	@Override
-	protected ConceptDescriptionRepository getConceptDescriptionRepository(
-			Collection<ConceptDescription> conceptDescriptions) {
+	protected ConceptDescriptionRepository getConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions) {
 		MongoTemplate template = createTemplate();
-		
+
 		clearDatabase(template);
-		
+
 		ConceptDescriptionRepository conceptDescriptionRepository = new MongoDBConceptDescriptionRepositoryFactory(template, COLLECTION).create();
-		
+
 		conceptDescriptions.forEach(conceptDescriptionRepository::createConceptDescription);
-		
+
 		return conceptDescriptionRepository;
 	}
-	
+
 	@Test
 	public void testConfiguredMongoDBConceptDescriptionRepositoryName() {
-        MongoTemplate template = createTemplate();
-		
+		MongoTemplate template = createTemplate();
+
 		clearDatabase(template);
-		
+
 		ConceptDescriptionRepository repo = new MongoDBConceptDescriptionRepository(template, COLLECTION, CONFIGURED_CD_REPO_NAME);
-		
+
 		assertEquals(CONFIGURED_CD_REPO_NAME, repo.getName());
 	}
 
@@ -97,48 +95,48 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 
 		assertEquals(expectedConceptDescription, retrievedConceptDescription);
 	}
-	
+
 	@Test
 	public void updatedConceptDescriptionIsPersisted() {
 		ConceptDescriptionRepository mongoDBConceptDescriptionRepository = getConceptDescriptionRepository();
-		
+
 		ConceptDescription expectedConceptDescription = createDummyConceptDescriptionOnRepo(mongoDBConceptDescriptionRepository);
-		
+
 		addDescriptionToConceptDescription(expectedConceptDescription);
-		
+
 		mongoDBConceptDescriptionRepository.updateConceptDescription(expectedConceptDescription.getId(), expectedConceptDescription);
-		
+
 		ConceptDescription retrievedConceptDescription = getConceptDescriptionFromNewBackendInstance(mongoDBConceptDescriptionRepository, expectedConceptDescription.getId());
 
 		assertEquals(expectedConceptDescription, retrievedConceptDescription);
 	}
-	
+
 	private void addDescriptionToConceptDescription(ConceptDescription expectedConceptDescription) {
 		expectedConceptDescription.setDescription(Arrays.asList(new DefaultLangStringTextType.Builder().text("description").language("en").build()));
 	}
 
 	private ConceptDescription getConceptDescriptionFromNewBackendInstance(ConceptDescriptionRepository conceptDescriptionRepository, String conceptDescriptionId) {
 		ConceptDescription retrievedConceptDescription = conceptDescriptionRepository.getConceptDescription(conceptDescriptionId);
-		
+
 		return retrievedConceptDescription;
 	}
 
 	private ConceptDescription createDummyConceptDescriptionOnRepo(ConceptDescriptionRepository conceptDescriptionRepository) {
 		ConceptDescription expectedConceptDescription = new DefaultConceptDescription.Builder().id("dummy").build();
-		
+
 		conceptDescriptionRepository.createConceptDescription(expectedConceptDescription);
-		
+
 		return expectedConceptDescription;
 	}
-	
+
 	private MongoTemplate createTemplate() {
 		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-		
+
 		MongoClient client = MongoClients.create(connectionURL);
-		
+
 		return new MongoTemplate(client, "BaSyxTestDb");
 	}
-	
+
 	private void clearDatabase(MongoTemplate template) {
 		template.remove(new Query(), COLLECTION);
 	}

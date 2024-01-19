@@ -1,0 +1,14 @@
+{
+	"submodels": [
+		{
+			"modelType": "Submodel",
+			"kind": "Instance",
+			"id": "sm1"
+		},
+		{
+			"modelType": "Submodel",
+			"kind": "Instance",
+			"id": "sm2"
+		}
+	]
+}

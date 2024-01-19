@@ -56,6 +56,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Before;
@@ -72,6 +73,9 @@ public abstract class AasRepositorySuite {
 
 	private static final String AAS2 = "aas2";
 	private static final String AAS_1_ID = "aas1/s";
+	private static final String AAS_EMPTY_ID = " ";
+	private static final String AAS_NULL_ID = null;
+	
 	private AssetAdministrationShell aas1;
 	private AssetAdministrationShell aas2;
 
@@ -133,6 +137,16 @@ public abstract class AasRepositorySuite {
 	@Test(expected = CollidingIdentifierException.class)
 	public void createWithCollidingAasIdentifiers() throws CollidingIdentifierException {
 		aasRepo.createAas(aas1);
+	}
+	
+	@Test(expected = MissingIdentifierException.class)
+	public void createWithEmptyAasIdentifier() {
+		aasRepo.createAas(new DefaultAssetAdministrationShell.Builder().id(AAS_EMPTY_ID).build());
+	}
+	
+	@Test(expected = MissingIdentifierException.class)
+	public void createWithNullAasIdentifier() {
+		aasRepo.createAas(new DefaultAssetAdministrationShell.Builder().id(AAS_NULL_ID).build());
 	}
 
 	@Test
@@ -338,7 +352,7 @@ public abstract class AasRepositorySuite {
 	private AssetInformation createDummyAssetInformation() {
 		return new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetId("assetIDTestKey").build();
 	}
-
+	
 	/**
 	 * @return 5 References each with value of smRef_(0-4)
 	 */

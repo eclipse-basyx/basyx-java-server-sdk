@@ -3,7 +3,7 @@ Here, a list of features, components and general updates that are planned in the
 
 ## BaSyx AAS Core
 - Implementation of AAS API Spec as well as upcoming features (continous)
-- RBAC Security (Q4/2023)
+- RBAC Security (Q1/2024)
 - AASX Upload at runtime (Q1/2024)
 - AASX File Server with MongoDB and InMemory Persistency (Q1/2024)
 - AAS Client SDK (Q1/2024)

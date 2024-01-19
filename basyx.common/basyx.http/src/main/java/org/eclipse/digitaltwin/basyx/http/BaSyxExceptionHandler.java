@@ -29,6 +29,7 @@ package org.eclipse.digitaltwin.basyx.http;
 import org.eclipse.digitaltwin.basyx.core.exceptions.AssetLinkDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
@@ -71,6 +72,11 @@ public class BaSyxExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(CollidingIdentifierException.class)
 	public <T> ResponseEntity<T> handleCollidingIdentifierException(CollidingIdentifierException exception, WebRequest request) {
 		return new ResponseEntity<>(HttpStatus.CONFLICT);
+	}
+	
+	@ExceptionHandler(MissingIdentifierException.class)
+	public <T> ResponseEntity<T> handleMissingIdentifierException(MissingIdentifierException exception, WebRequest request) {
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(CollidingAssetLinkException.class)

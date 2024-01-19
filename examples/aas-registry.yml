@@ -21,3 +21,14 @@ servlet:
         Access-Control-Allow-Headers: Accept, Content-Type
       methods: 
         - OPTIONS
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics"
+
+spring:
+  data:
+   mongodb:
+     uri: mongodb://mongoAdmin:mongoPassword@mongo:27017
