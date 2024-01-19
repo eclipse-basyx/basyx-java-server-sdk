@@ -64,7 +64,7 @@ public class SubmodelRepositoryRegistryTestLink {
 	private static final String DUMMY_SUBMODEL_ID = "7A7104BDAB57E184";
 
 	public static String submodelRepoBaseUrl = "http://localhost:8081";
-	public static String submodelRegistryUrl = "http://localhost:8060/api/v3.0";
+	public static String submodelRegistryUrl = "http://localhost:8060";
 
 	private static final SubmodelDescriptor DUMMY_DESCRIPTOR = createExpectedDescriptor();
 

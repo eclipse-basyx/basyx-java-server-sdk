@@ -14,6 +14,6 @@ This feature gets enable automatically when both of the above defined properties
 An example valid configuration:
 
 ```
-basyx.submodelrepository.feature.registryintegration = http://localhost:8060/api/v3.0
+basyx.submodelrepository.feature.registryintegration = http://localhost:8060
 basyx.externalurl = http://localhost:8081
 ```
