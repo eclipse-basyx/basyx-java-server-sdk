@@ -25,16 +25,15 @@
 
 package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
+import org.eclipse.digitaltwin.basyx.authorization.TargetInformation;
+
 /**
- * Default allowed actions
+ * An interface for resolving Rbac permissions
  * 
  * @author danish
  */
-public enum Action {
-	ALL,
-    READ,
-    CREATE,
-    UPDATE,
-    EXECUTE,
-    DELETE
+public interface RbacPermissionResolver<T extends TargetInformation> {
+
+	public boolean hasPermission(Action action, T targetInformation);
+	
 }

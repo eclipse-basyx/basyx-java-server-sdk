@@ -62,7 +62,7 @@ public class RbacRuleConfiguration {
 	}
 
 	@Bean
-	public InMemoryAuthorizationRbacStorage createInMemoryRbacStorage() throws IOException {
+	public RbacStorage createInMemoryRbacStorage() throws IOException {
 		
 		if (filePath.isBlank())
 			return new InMemoryAuthorizationRbacStorage(new ArrayList<>());

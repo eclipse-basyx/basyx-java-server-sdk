@@ -65,9 +65,9 @@ The targetInformation defines coarse-grained control over the resource, you may 
 
 Note: The Action are fixed as of now and limited to (CREATE, READ, UPDATE, DELETE, and EXECUTE) but later user configurable mapping of these actions would be provided.
 
-## Action tables for RBAC
+## Action table for RBAC
 
-Below are reference tables that show which action are used in what endpoints of the AAS Repository:
+Below are reference table that show which action are used in what endpoints of the AAS Repository:
 
 | Action  | Endpoint                                                                                                                                                                                                            |
 |---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

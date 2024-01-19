@@ -40,7 +40,7 @@ import java.util.Optional;
  */
 @Service
 @ConditionalOnExpression(value = "${" + CommonAuthorizationConfig.ENABLED_PROPERTY_KEY + ":false} and ('${" + CommonAuthorizationConfig.JWT_BEARER_TOKEN_PROVIDER_PROPERTY_KEY + "}'.equals('keycloak') or '${" + CommonAuthorizationConfig.JWT_BEARER_TOKEN_PROVIDER_PROPERTY_KEY + "}'.isEmpty())")
-public class SubjectInformationFromSecurityContextProvider implements SubjectInformationProvider<Object> {
+public class KeycloakSubjectInformationProvider implements SubjectInformationProvider<Object> {
 
 	public SubjectInformation<Object> get() {
 		return () -> Optional.ofNullable(SecurityContextHolder.getContext()).map(SecurityContext::getAuthentication).map(Authentication::getPrincipal).orElse(null);

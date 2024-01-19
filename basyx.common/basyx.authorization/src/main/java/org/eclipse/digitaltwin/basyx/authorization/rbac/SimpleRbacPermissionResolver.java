@@ -40,24 +40,24 @@ import org.slf4j.LoggerFactory;
  * 
  * @author danish
  */
-public class PermissionResolver<T extends TargetInformation> {
+public class SimpleRbacPermissionResolver<T extends TargetInformation> implements RbacPermissionResolver<T> {
 
 	private static final String ALL_ALLOWED_WILDCARD = "*";
 
-	private Logger logger = LoggerFactory.getLogger(PermissionResolver.class);
+	private Logger logger = LoggerFactory.getLogger(SimpleRbacPermissionResolver.class);
 
-	private InMemoryAuthorizationRbacStorage rbacStorage;
+	private RbacStorage rbacStorage;
 	private RoleProvider roleAuthenticator;
 	private TargetPermissionVerifier<T> targetPermissionVerifier;
 
-	public PermissionResolver(InMemoryAuthorizationRbacStorage rbacStorage, RoleProvider roleAuthenticator, TargetPermissionVerifier<T> targetPermissionVerifier) {
+	public SimpleRbacPermissionResolver(RbacStorage rbacStorage, RoleProvider roleAuthenticator, TargetPermissionVerifier<T> targetPermissionVerifier) {
 		super();
 		this.rbacStorage = rbacStorage;
 		this.roleAuthenticator = roleAuthenticator;
 		this.targetPermissionVerifier = targetPermissionVerifier;
 	}
 
-	public InMemoryAuthorizationRbacStorage getRbacStorage() {
+	public RbacStorage getRbacStorage() {
 		return rbacStorage;
 	}
 
@@ -74,13 +74,14 @@ public class PermissionResolver<T extends TargetInformation> {
 	 * 
 	 * @return 
 	 */
-	public boolean hasPermission(final String action, final T targetInformation) {
+	@Override
+	public boolean hasPermission(final Action action, final T targetInformation) {
 		final Optional<RbacRule> matchingRule = getMatchingRules(roleAuthenticator.getRoles(), action, targetInformation).findAny();
 		logger.info("roles: {}, action: {}, targetInfo: {} - matching-rule?: {}", roleAuthenticator.getRoles(), action, targetInformation, matchingRule);
 		return matchingRule.isPresent();
 	}
 
-	private Stream<RbacRule> getMatchingRules(final List<String> roles, final String action, final T targetInformation) {
+	private Stream<RbacRule> getMatchingRules(final List<String> roles, final Action action, final T targetInformation) {
 		return this.rbacStorage.getRbacRules().parallelStream().filter(rbacRule -> checkRolesMatchRbacRule(rbacRule, roles)).filter(rbacRule -> checkActionMatchesRbacRule(rbacRule, action))
 				.filter(rbacRule -> checkRbacRuleMatchesTargetInfo(rbacRule, targetInformation));
 	}
@@ -89,10 +90,8 @@ public class PermissionResolver<T extends TargetInformation> {
 		return rbacRule.getRole().equals(ALL_ALLOWED_WILDCARD) || (roles != null && roles.stream().anyMatch(role -> rbacRule.getRole().equals(role)));
 	}
 
-	private boolean checkActionMatchesRbacRule(final RbacRule rbacRule, final String action) {
-		if (rbacRule.getAction().size() == 1)
-			return rbacRule.getAction().get(0).equals(ALL_ALLOWED_WILDCARD) || rbacRule.getAction().get(0).equals(action);
-
+	private boolean checkActionMatchesRbacRule(final RbacRule rbacRule, final Action action) {
+		
 		return rbacRule.getAction().stream().anyMatch(rbacRuleAction -> rbacRuleAction.equals(action));
 	}
 
