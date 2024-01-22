@@ -487,7 +487,7 @@ public abstract class AasRepositoryHTTPSuite {
 	private CloseableHttpResponse uploadThumbnail(String aasId) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
 
-		java.io.File file = ResourceUtils.getFile("src/test/resources/" + THUMBNAIL_FILE_PATH);
+		java.io.File file = ResourceUtils.getFile("classpath:" + THUMBNAIL_FILE_PATH);
 
 		HttpPut putRequest = BaSyxHttpTestUtils.createPutRequestWithFile(getURL(), aasId, THUMBNAIL_FILE_PATH, file);
 

@@ -35,7 +35,9 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NullSubjectException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -103,7 +105,17 @@ public class BaSyxExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@ExceptionHandler(ElementNotAFileException.class)
-	public <T> ResponseEntity<T> handleNotInvokableException(ElementNotAFileException exception) {
+	public <T> ResponseEntity<T> handleElementNotAFileException(ElementNotAFileException exception) {
 		return new ResponseEntity<>(HttpStatus.PRECONDITION_FAILED);
+	}
+	
+	@ExceptionHandler(InsufficientPermissionException.class)
+	public <T> ResponseEntity<T> handleInsufficientPermissionException(InsufficientPermissionException exception) {
+		return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+	}
+	
+	@ExceptionHandler(NullSubjectException.class)
+	public <T> ResponseEntity<T> handleNullSubjectException(NullSubjectException exception) {
+		return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 	}
 }
