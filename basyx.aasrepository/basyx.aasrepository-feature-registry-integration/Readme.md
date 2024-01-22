@@ -14,6 +14,6 @@ This feature gets enabled automatically when both of the above defined propertie
 An example valid configuration:
 
 ```
-basyx.aasrepository.feature.registryintegration = http://localhost:8050/api/v3.0
+basyx.aasrepository.feature.registryintegration = http://localhost:8050
 basyx.externalurl = http://localhost:8081
 ```

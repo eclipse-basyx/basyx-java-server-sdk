@@ -55,15 +55,9 @@ services:
       - 8082:8080
     volumes:
       - ./aas-registry.yml:/workspace/config/application.yml
-    healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/api/v3.0/actuator/health || exit 1"]
-      interval: 20s
-      retries: 3
-      start_period: 20s
-      timeout: 10s 
     depends_on:
-        mongo:
-            condition: service_healthy
+      mongo:
+        condition: service_healthy
     
   sm-registry:
     image: eclipsebasyx/submodel-registry-log-mongodb:2.0.0-SNAPSHOT
@@ -71,15 +65,9 @@ services:
       - 8083:8080
     volumes:
       - ./sm-registry.yml:/workspace/config/application.yml
-    healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/api/v3.0/actuator/health || exit 1"]
-      interval: 20s
-      retries: 3
-      start_period: 20s
-      timeout: 10s 
     depends_on:
-        mongo:
-            condition: service_healthy
+      mongo:
+        condition: service_healthy
 
   aas-discovery:
     image: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
@@ -88,8 +76,8 @@ services:
     volumes:
       - ./aas-discovery.properties:/application/application.properties
     depends_on:
-        mongo:
-            condition: service_healthy
+      mongo:
+        condition: service_healthy
       
   aas-web-ui_v2:
     image: eclipsebasyx/aas-gui:v2-231107
@@ -97,7 +85,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      VITE_REGISTRY_PATH: "http://localhost:8082/api/v3.0"
+      VITE_REGISTRY_PATH: "http://localhost:8082"
       VITE_AAS_REPO_PATH: "http://localhost:8081/shells"
       VITE_SUBMODEL_REPO_PATH: "http://localhost:8081/submodels"
       VITE_CD_REPO_PATH: "http://localhost:8081/concept-descriptions"
