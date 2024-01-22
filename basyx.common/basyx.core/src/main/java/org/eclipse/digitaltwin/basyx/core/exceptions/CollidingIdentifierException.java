@@ -33,11 +33,15 @@ package org.eclipse.digitaltwin.basyx.core.exceptions;
  */
 @SuppressWarnings("serial")
 public class CollidingIdentifierException extends RuntimeException {
-	public CollidingIdentifierException() {
-	}
+	private String id;
 
 	public CollidingIdentifierException(String id) {
 		super(getMessage(id));
+		this.id = id;
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	private static String getMessage(String id) {

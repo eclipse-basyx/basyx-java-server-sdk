@@ -35,6 +35,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -79,7 +80,7 @@ public interface SubmodelRepository {
 	 * @param submodel
 	 * @throws CollidingIdentifierException
 	 */
-	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException;
+	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException, MissingIdentifierException;
 
 	/**
 	 * Deletes a Submodel
@@ -95,8 +96,7 @@ public interface SubmodelRepository {
 	 * @param submodelId
 	 * @return
 	 */
-	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo)
-			throws ElementDoesNotExistException;
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo) throws ElementDoesNotExistException;
 
 	/**
 	 * Retrieves a specific SubmodelElement of a Submodel
@@ -211,7 +211,7 @@ public interface SubmodelRepository {
 	 * @throws ElementDoesNotExistException
 	 */
 	public Submodel getSubmodelByIdMetadata(String submodelId) throws ElementDoesNotExistException;
-	
+
 	/**
 	 * Retrieves the file of a file submodelelement
 	 * 
@@ -226,7 +226,7 @@ public interface SubmodelRepository {
 	 * @throws FileDoesNotExistException
 	 */
 	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException;
-	
+
 	/**
 	 * Uploads a file to a file submodelelement
 	 * 
@@ -234,9 +234,9 @@ public interface SubmodelRepository {
 	 *            the Submodel id
 	 * @param idShortPath
 	 *            the IdShort path of the file element
-	 * @param file           
+	 * @param file
 	 *            the file object to upload
-	 *            
+	 * 
 	 * @throws ElementDoesNotExistException
 	 * @throws ElementNotAFileException
 	 */
@@ -249,7 +249,7 @@ public interface SubmodelRepository {
 	 *            the Submodel id
 	 * @param idShortPath
 	 *            the IdShort path of the file element
-	 *            
+	 * 
 	 * @throws ElementDoesNotExistException
 	 * @throws ElementNotAFileException
 	 * @throws FileDoesNotExistException

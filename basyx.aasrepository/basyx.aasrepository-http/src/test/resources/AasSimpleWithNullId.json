@@ -1,0 +1,9 @@
+{
+	"modelType": "AssetAdministrationShell",
+	"idShort": "ExampleMotor",
+	"id": null,
+	"assetInformation": {
+		"assetKind": "Instance",
+		"globalAssetId": "globalAssetId"
+	}
+}

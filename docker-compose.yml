@@ -79,6 +79,8 @@ services:
     container_name: aas-registry-log-mem
     ports:
       - "8050:8080"
+    environment:
+      SERVER_SERVLET_CONTEXT_PATH: /
     restart: always
     networks:
       - basyx-java-server-sdk
@@ -86,6 +88,8 @@ services:
   sm-registry-log-mem:
     image: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
     container_name: sm-registry-log-mem
+    environment:
+      SERVER_SERVLET_CONTEXT_PATH: /
     ports:
       - "8060:8080"
     restart: always

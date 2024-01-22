@@ -1,0 +1,34 @@
+---
+servlet:
+  headers:
+    - path: /**
+      values:
+        Access-Control-Allow-Origin: "*"
+        Access-Control-Allow-Methods: POST,PUT,GET,DELETE,OPTIONS
+        Access-Control-Allow-Headers: Content-Type, Accept
+        Access-Control-Max-Age: 10000
+    - path: /submodel-descriptors
+      values:
+        Access-Control-Allow-Origin: "*"
+        Access-Control-Allow-Methods: POST,PUT,GET,DELETE,OPTIONS
+        Access-Control-Allow-Headers: Accept, Content-Type
+      methods: 
+        - OPTIONS
+    - path: /registry/submodel-descriptors/search
+      values:
+        Access-Control-Allow-Origin: "*"
+        Access-Control-Allow-Methods: POST,GET,OPTIONS
+        Access-Control-Allow-Headers: Accept, Content-Type
+      methods: 
+        - OPTIONS
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics"
+
+spring:
+  data:
+   mongodb:
+     uri: mongodb://mongoAdmin:mongoPassword@mongo:27017

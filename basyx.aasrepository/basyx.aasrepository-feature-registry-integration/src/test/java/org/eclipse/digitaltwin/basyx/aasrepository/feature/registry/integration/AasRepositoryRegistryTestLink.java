@@ -60,7 +60,7 @@ public class AasRepositoryRegistryTestLink {
 	private static final String DUMMY_AAS_ID = "customIdentifier";
 
 	public static String aasRepoBaseUrl = "http://localhost:8081";
-	public static String aasRegistryUrl = "http://localhost:8050/api/v3.0";
+	public static String aasRegistryUrl = "http://localhost:8050";
 
 	private static final AssetAdministrationShellDescriptor DUMMY_DESCRIPTOR = createExpectedDescriptor();
 

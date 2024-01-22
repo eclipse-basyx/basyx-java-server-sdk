@@ -89,7 +89,6 @@ public class SimpleRbacPermissionResolver<T extends TargetInformation> implement
 	}
 
 	private boolean checkActionMatchesRbacRule(final RbacRule rbacRule, final Action action) {
-
 		return rbacRule.getAction().stream().anyMatch(rbacRuleAction -> rbacRuleAction.equals(action));
 	}
 

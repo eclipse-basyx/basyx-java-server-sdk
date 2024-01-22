@@ -48,8 +48,11 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.aasenvironment.FileElementPathCollector;
 import org.eclipse.digitaltwin.basyx.aasenvironment.IdShortPathBuilder;
+import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.IdentifiableUploader.DelegatingIdentifiableRepository;
+import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.IdentifiableUploader.IdentifiableRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,13 +90,36 @@ public class AasEnvironmentPreconfigurationLoader {
 		return pathsToLoad != null;
 	}
 
-	public void loadPreconfiguredEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository)
+	public void loadPreconfiguredEnvironments(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository)
 			throws IOException, DeserializationException, InvalidFormatException {
-		List<File> files = resolveFiles(pathsToLoad);
-		for (File file : files) {
+		List<File> files = scanForEnvironments(pathsToLoad);
+
+		int numberOfFiles = files.size();
+    
+    IndentifiableAssertion check = new IndentifiableAssertion();
+
+		for (int i = 0; i < numberOfFiles; i++) {
+			File file = files.get(i);
+			logLoadingProcess(i, numberOfFiles, file.getName());
 			Environment environment = getEnvironmentFromFile(file);
-			loadEnvironmentFromFile(aasRepository, submodelRepository, conceptDescriptionRepository, environment);
+      check.assertNoDuplicateIds(environment);
+			addEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository, environment);
 		}
+	}
+
+	private List<File> scanForEnvironments(List<String> pathsToLoad) throws IOException {
+		logger.info("Scanning for preconfigured AAS Environments");
+
+		List<File> files = resolveFiles(pathsToLoad);
+
+		logger.info("Found " + files.size() + " preconfigured AAS environments");
+
+		return files;
+	}
+
+	private void logLoadingProcess(int current, int overall, String fileName) {
+		int currentForDisplay = current + 1;
+		logger.info("Loading AAS Environment (" + currentForDisplay + "/" + overall + ") from file " + fileName);
 	}
 
 	private List<File> resolveFiles(List<String> paths) throws IOException {
@@ -119,7 +145,7 @@ public class AasEnvironmentPreconfigurationLoader {
 				.getFile();
 	}
 
-	private void loadEnvironmentFromFile(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository, Environment environment) {
+	private void addEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository, Environment environment) {
 		if (isEnvironmentLoaded(environment)) {
 			createShellsOnRepositoryFromEnvironment(aasRepository, environment);
 			createSubmodelsOnRepositoryFromEnvironment(submodelRepository, environment);
@@ -137,17 +163,28 @@ public class AasEnvironmentPreconfigurationLoader {
 				.collect(Collectors.toList());
 	}
 
-	private void createConceptDescriptionsOnRepositoryFromEnvironment(ConceptDescriptionRepository conceptDescriptionRepository, Environment environment) {
-		for (ConceptDescription conceptDescription : environment.getConceptDescriptions()) {
-			conceptDescriptionRepository.createConceptDescription(conceptDescription);
+	private void createConceptDescriptionsOnRepositoryFromEnvironment(ConceptDescriptionRepository cdRepo, Environment environment) {
+		IdentifiableRepository<ConceptDescription> repo = new DelegatingIdentifiableRepository<ConceptDescription>(cdRepo::getConceptDescription, cdRepo::updateConceptDescription, cdRepo::createConceptDescription);
+		IdentifiableUploader<ConceptDescription> uploader = new IdentifiableUploader<ConceptDescription>(repo);
+		for (ConceptDescription eachConceptDescription : environment.getConceptDescriptions()) {
+			boolean success = uploader.upload(eachConceptDescription);
+			logSuccessConceptDescription(eachConceptDescription.getId(), success);
 		}
 	}
 
+	private void logSuccessConceptDescription(String conceptDescriptionId, boolean success) {
+    if (!success) {
+		  logger.warn("Colliding Ids detected for ConceptDescription: " + conceptDescriptionId + ". If they are not identical, this is an error. Please note that the already existing ConceptDescription was not updated.");
+    } else {
+      logSuccess("conceptDescription", conceptDescriptionId, success);
+    }
+  }
+
 	private void createSubmodelsOnRepositoryFromEnvironment(SubmodelRepository submodelRepository, Environment environment) {
 		List<Submodel> submodels = environment.getSubmodels();
-		
-		submodels.stream().forEach(submodelRepository::createSubmodel);
-		
+
+		createSubmodelsOnRepository(submodelRepository, submodels);
+
 		if (relatedFiles == null || relatedFiles.isEmpty())
 			return;
 		
@@ -188,9 +225,21 @@ public class AasEnvironmentPreconfigurationLoader {
 		return inMemoryFile.get();
 	}
 
-	private void createShellsOnRepositoryFromEnvironment(AasRepository aasRepository, Environment environment) {
-		for (AssetAdministrationShell aas : environment.getAssetAdministrationShells()) {
-			aasRepository.createAas(aas);
+	private void createShellsOnRepositoryFromEnvironment(AasRepository aasRepo, Environment environment) {
+		IdentifiableRepository<AssetAdministrationShell> repo = new DelegatingIdentifiableRepository<AssetAdministrationShell>(aasRepo::getAas, aasRepo::updateAas, aasRepo::createAas);
+		IdentifiableUploader<AssetAdministrationShell> uploader = new IdentifiableUploader<>(repo);
+		for (AssetAdministrationShell eachAas : environment.getAssetAdministrationShells()) {
+			boolean success = uploader.upload(eachAas);
+			logSuccess("shell", eachAas.getId(), success);
+		}
+	}
+
+	private void createSubmodelsOnRepository(SubmodelRepository smRepo, List<Submodel> submodels) {
+		IdentifiableRepository<Submodel> repo = new DelegatingIdentifiableRepository<Submodel>(smRepo::getSubmodel, smRepo::updateSubmodel, smRepo::createSubmodel);
+		IdentifiableUploader<Submodel> uploader = new IdentifiableUploader<>(repo);
+		for (Submodel eachSubmodel : submodels) {
+			boolean success = uploader.upload(eachSubmodel);
+			logSuccess("submodel", eachSubmodel.getId(), success);
 		}
 	}
 
@@ -198,16 +247,20 @@ public class AasEnvironmentPreconfigurationLoader {
 		Environment environment = null;
 		if (isJsonFile(file.getPath())) {
 			JsonDeserializer deserializer = new JsonDeserializer();
-			environment = deserializer.read(new FileInputStream(file));
+			try (FileInputStream fIn = new FileInputStream(file)) {
+				environment = deserializer.read(fIn);
+			}
 		} else if (isXmlFile(file.getPath())) {
 			XmlDeserializer deserializer = new XmlDeserializer();
-			environment = deserializer.read(new FileInputStream(file));
+			try (FileInputStream fIn = new FileInputStream(file)) {
+				environment = deserializer.read(fIn);
+			}
 		} else if (isAasxFile(file.getPath())) {
-			AASXDeserializer deserializer = new AASXDeserializer(new FileInputStream(file));
-			
-			relatedFiles = deserializer.getRelatedFiles();
-			
-			environment = deserializer.read();
+			try (FileInputStream fIn = new FileInputStream(file)) {
+				AASXDeserializer deserializer = new AASXDeserializer(fIn);
+				relatedFiles = deserializer.getRelatedFiles();
+				environment = deserializer.read();
+			}
 		}
 		return environment;
 	}
@@ -226,5 +279,13 @@ public class AasEnvironmentPreconfigurationLoader {
 
 	private boolean isEnvironmentLoaded(Environment environment) {
 		return environment != null;
+	}
+
+	private void logSuccess(String resourceName, String id, boolean success) {
+		if (success) {
+			logger.info("Uploading " + resourceName + " " + id + " was successful!");
+		} else {
+			logger.warn("Uploading " + resourceName + " " + id + " was not successful!");
+		}
 	}
 }

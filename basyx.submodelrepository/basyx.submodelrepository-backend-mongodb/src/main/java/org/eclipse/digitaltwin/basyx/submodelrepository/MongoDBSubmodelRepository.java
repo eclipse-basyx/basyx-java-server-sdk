@@ -48,6 +48,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
@@ -58,10 +59,10 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.result.DeleteResult;
 
@@ -98,7 +99,6 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
 		this.submodelServiceFactory = submodelServiceFactory;
-		configureIndexForSubmodelId(mongoTemplate);
 
 		configureDefaultGridFsTemplate(this.mongoTemplate);
 	}
@@ -121,8 +121,6 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 		if (this.gridFsTemplate == null)
 			configureDefaultGridFsTemplate(mongoTemplate);
-
-		configureIndexForSubmodelId(mongoTemplate);
 	}
 
 	/**
@@ -136,6 +134,9 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	 */
 	public MongoDBSubmodelRepository(MongoTemplate mongoTemplate, String collectionName, SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels) {
 		this(mongoTemplate, collectionName, submodelServiceFactory);
+		
+		throwIfMissingId(submodels);
+
 		initializeRemoteCollection(submodels);
 
 		configureDefaultGridFsTemplate(this.mongoTemplate);
@@ -170,11 +171,6 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 			return;
 		}
 		submodels.forEach(this::createSubmodel);
-	}
-
-	private void configureIndexForSubmodelId(MongoTemplate mongoTemplate) {
-		Index idIndex = new Index().on(ID_JSON_PATH, Direction.ASC);
-		mongoTemplate.indexOps(Submodel.class).ensureIndex(idIndex);
 	}
 
 	@Override
@@ -223,8 +219,11 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
+	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException, MissingIdentifierException {
+		throwIfSubmodelIdEmptyOrNull(submodel.getId());
+
 		throwIfCollidesWithRemoteId(submodel);
+
 		mongoTemplate.save(submodel, collectionName);
 	}
 
@@ -401,6 +400,15 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 		FileBlobValue fileValue = new FileBlobValue(fileSmElement.getContentType(), appendFsIdToFileValue(fileSmElement, id));
 
 		setSubmodelElementValue(submodelId, idShortPath, fileValue);
+	}
+	
+	private void throwIfMissingId(Collection<Submodel> submodels) {
+	    submodels.stream().map(Submodel::getId).forEach(this::throwIfSubmodelIdEmptyOrNull);
+    }
+
+	private void throwIfSubmodelIdEmptyOrNull(String id) {
+		if (id == null || id.isBlank())
+			throw new MissingIdentifierException(id);
 	}
 
 	private void configureDefaultGridFsTemplate(MongoTemplate mongoTemplate) {

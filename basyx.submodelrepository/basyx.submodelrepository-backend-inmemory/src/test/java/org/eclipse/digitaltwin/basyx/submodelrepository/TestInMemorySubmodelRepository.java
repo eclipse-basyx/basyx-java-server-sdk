@@ -46,7 +46,7 @@ import org.junit.Test.None;
 public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 
 	private static final String CONFIGURED_SM_REPO_NAME = "configured-sm-repo-name";
-
+	
 	@Override
 	protected SubmodelRepository getSubmodelRepository() {
 		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
@@ -69,7 +69,7 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 		Collection<Submodel> submodelsWithCollidingIds = createSubmodelCollectionWithCollidingIds();
 		new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodelsWithCollidingIds);
 	}
-
+	
 	@Test(expected = None.class)
 	public void assertIdUniqueness() {
 		Collection<Submodel> submodelsWithUniqueIds = createSubmodelCollectionWithUniqueIds();
@@ -79,9 +79,9 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	private Collection<Submodel> createSubmodelCollectionWithCollidingIds() {
 		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
 	}
-
+	
 	private Collection<Submodel> createSubmodelCollectionWithUniqueIds() {
 		return Arrays.asList(DummySubmodelFactory.createSimpleDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
 	}
-
+	
 }

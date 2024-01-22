@@ -7,7 +7,7 @@ servlet:
         Access-Control-Allow-Methods: POST,PUT,GET,DELETE,OPTIONS
         Access-Control-Allow-Headers: Content-Type, Accept
         Access-Control-Max-Age: 10000
-    - path: /api/v3.0/shell-descriptors
+    - path: /shell-descriptors
       values:
         Access-Control-Allow-Origin: "*"
         Access-Control-Allow-Methods: POST,PUT,GET,DELETE,OPTIONS
@@ -21,3 +21,14 @@ servlet:
         Access-Control-Allow-Headers: Accept, Content-Type
       methods: 
         - OPTIONS
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics"
+
+spring:
+  data:
+   mongodb:
+     uri: mongodb://mongoAdmin:mongoPassword@mongo:27017

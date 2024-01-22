@@ -19,9 +19,8 @@ logging:
   level:
     root: INFO
 server:
+  shutdown: graceful
   port: 8080
-  servlet:
-    contextPath: /api/v3.0
   error:
     whitelabel:
       enabled: false

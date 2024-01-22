@@ -40,7 +40,6 @@ public class AasTargetPermissionVerifier implements TargetPermissionVerifier<Aas
 	
 	@Override
 	public boolean isVerified(RbacRule rbacRule, AasTargetInformation targetInformation) {
-
 		String shellId = targetInformation.getAasId();
 		
 		AasTargetInformation rbacRuleAasTargetInformation = (AasTargetInformation) rbacRule.getTargetInformation();

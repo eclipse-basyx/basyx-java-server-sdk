@@ -47,7 +47,6 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.apache.commons.io.IOUtils;
-import org.apache.tika.utils.StringUtils;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
@@ -57,6 +56,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -118,6 +118,8 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	 */
 	public InMemorySubmodelRepository(SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels) {
 		this(submodelServiceFactory);
+		throwIfMissingId(submodels);
+
 		throwIfHasCollidingIds(submodels);
 
 		submodelServices = createServices(submodels);
@@ -179,7 +181,9 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
+	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException, MissingIdentifierException {
+		throwIfSubmodelIdEmptyOrNull(submodel.getId());
+
 		throwIfSubmodelExists(submodel.getId());
 
 		submodelServices.put(submodel.getId(), submodelServiceFactory.create(submodel));
@@ -308,7 +312,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		java.io.File tmpFile = new java.io.File(filePath);
 		tmpFile.delete();
 
-		FileBlobValue fileValue = new FileBlobValue(StringUtils.EMPTY, StringUtils.EMPTY);
+		FileBlobValue fileValue = new FileBlobValue(" ", " ");
 
 		setSubmodelElementValue(submodelId, idShortPath, fileValue);
 	}
@@ -412,4 +416,13 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		}
 	}
 
+    private void throwIfMissingId(Collection<Submodel> submodels) {
+	    submodels.stream().map(Submodel::getId).forEach(this::throwIfSubmodelIdEmptyOrNull);
+    }
+    
+    private void throwIfSubmodelIdEmptyOrNull(String id) {
+    	
+		if (id == null || id.isBlank())
+			throw new MissingIdentifierException(id);
+	}
 }

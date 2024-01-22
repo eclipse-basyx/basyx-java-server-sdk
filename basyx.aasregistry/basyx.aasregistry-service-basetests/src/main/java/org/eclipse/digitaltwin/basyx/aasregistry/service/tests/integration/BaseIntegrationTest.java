@@ -578,7 +578,7 @@ public abstract class BaseIntegrationTest {
 		assertThatEventWasSend(RegistryEvent.builder().id(descr.getId()).aasDescriptor(convert(descr)).type(EventType.AAS_REGISTERED).build());
 		String location = locations.get(0);
 		
-		String expectedSuffix = "/api/v3.0/shell-descriptors/aHR0cHM6Ly90ZXN0Lmlk";
+		String expectedSuffix = "/shell-descriptors/aHR0cHM6Ly90ZXN0Lmlk";
 		assertThat(location).endsWith(expectedSuffix);
 		assertRestResourceAvailable(location);
 	}
@@ -598,7 +598,7 @@ public abstract class BaseIntegrationTest {
 		
 		assertThatEventWasSend(RegistryEvent.builder().id(shell.getId()).submodelId(sm.getId()).submodelDescriptor(convert(sm)).type(EventType.SUBMODEL_REGISTERED).build());
 		
-		String expectedSuffix = "/api/v3.0/shell-descriptors/aHR0cHM6Ly9zaGVsbC5pZA==/submodel-descriptors/aHR0cHM6Ly9zbS5pZA==";
+		String expectedSuffix = "/shell-descriptors/aHR0cHM6Ly9zaGVsbC5pZA==/submodel-descriptors/aHR0cHM6Ly9zbS5pZA==";
 		assertThat(location).endsWith(expectedSuffix);
 		assertRestResourceAvailable(location);
 	}
