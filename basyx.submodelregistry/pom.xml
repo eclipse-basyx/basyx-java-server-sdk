@@ -14,10 +14,8 @@
 
 	<properties>
 		<lombok.maven-plugin.version>1.18.20.0</lombok.maven-plugin.version>
-		<java.version>17</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<generated.folder>src/generated</generated.folder>
 		<swagger.codegen.version>3.0.42</swagger.codegen.version>
 		<spring.fox.version>3.0.0</spring.fox.version>
@@ -45,13 +43,11 @@
 		<module>basyx.submodelregistry-service-release-log-mem</module>
 		<module>basyx.submodelregistry-client-native</module>
 		<module>basyx.submodelregistry-service-mongodb-storage</module>
-		<!--		<module>basyx.submodelregistry-service-kafka-events</module>-->
+		<module>basyx.submodelregistry-service-kafka-events</module>
 		<module>basyx.submodelregistry-service-basetests</module>
-		<!--
-		<module>basyx.submodelregistry-service-release-kafka-mem</module>-->
+		<module>basyx.submodelregistry-service-release-kafka-mem</module>
 		<module>basyx.submodelregistry-service-release-log-mongodb</module>
-		<!--
-		<module>basyx.submodelregistry-service-release-kafka-mongodb</module>-->
+		<module>basyx.submodelregistry-service-release-kafka-mongodb</module>
 	</modules>
 
 	<developers>

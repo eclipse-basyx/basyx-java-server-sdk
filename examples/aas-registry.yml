@@ -7,7 +7,7 @@ servlet:
         Access-Control-Allow-Methods: POST,PUT,GET,DELETE,OPTIONS
         Access-Control-Allow-Headers: Content-Type, Accept
         Access-Control-Max-Age: 10000
-    - path: /api/v3.0/shell-descriptors
+    - path: /shell-descriptors
       values:
         Access-Control-Allow-Origin: "*"
         Access-Control-Allow-Methods: POST,PUT,GET,DELETE,OPTIONS

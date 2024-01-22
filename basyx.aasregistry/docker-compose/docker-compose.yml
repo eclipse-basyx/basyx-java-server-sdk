@@ -108,7 +108,7 @@ services:
       - mongodb   
                
   aas-registry-kafka-mongodb:
-    image: aas-registry-test/aas-registry-kafka-mongodb:latest
+    image: aas-registry-test/aas-registry-kafka-mongodb:2.0.0-SNAPSHOT
     container_name: aas-registry-kafka-mongodb
     pull_policy: never
     ports:
@@ -123,8 +123,26 @@ services:
     networks:
       - basyx
 
+  aas-registry-kafka-mongodb-different-port-path:
+    image: aas-registry-test/aas-registry-kafka-mongodb:2.0.0-SNAPSHOT
+    container_name: aas-registry-kafka-mongodb-different-port-path
+    pull_policy: never
+    ports:
+      - "8021:8091"
+    depends_on:
+      - mongodb
+      - kafka
+    restart: always
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
+      SPRING_DATA_MONGODB_URI: mongodb://admin:admin@mongodb:27017
+      SERVER_PORT: "8091"
+      SERVER_SERVLET_CONTEXT_PATH: /api/v3.0.1/
+    networks:
+      - basyx
+
   aas-registry-kafka-mongodb-external-conf:
-    image: aas-registry-test/aas-registry-kafka-mongodb:latest
+    image: aas-registry-test/aas-registry-kafka-mongodb:2.0.0-SNAPSHOT
     container_name: aas-registry-kafka-mongodb-external-conf
     pull_policy: never
     ports:
@@ -143,7 +161,7 @@ services:
       - basyx
 
   aas-registry-kafka-mem:
-    image: aas-registry-test/aas-registry-kafka-mem:latest
+    image: aas-registry-test/aas-registry-kafka-mem:2.0.0-SNAPSHOT
     container_name: aas-registry-kafka-mem
     pull_policy: never
     ports:
@@ -155,9 +173,25 @@ services:
       KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
     networks:
       - basyx
+  
+  aas-registry-kafka-mem-different-port-path:
+    image: aas-registry-test/aas-registry-kafka-mem:2.0.0-SNAPSHOT
+    container_name: aas-registry-kafka-mem-different-port-path
+    pull_policy: never
+    ports:
+      - "8031:8090"
+    depends_on:
+      - kafka
+    restart: always
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
+      SERVER_PORT: "8090"
+      SERVER_SERVLET_CONTEXT_PATH: /api/v3.0.1/
+    networks:
+      - basyx
 
   aas-registry-log-mem:
-    image: aas-registry-test/aas-registry-log-mem:latest
+    image: aas-registry-test/aas-registry-log-mem:2.0.0-SNAPSHOT
     container_name: aas-registry-log-mem
     pull_policy: never
     ports:
@@ -166,8 +200,21 @@ services:
     networks:
       - basyx
 
+  aas-registry-log-mem-different-port-path:
+    image: aas-registry-test/aas-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: aas-registry-log-mem-different-port-path
+    pull_policy: never
+    ports:
+      - "8066:8099"
+    environment:
+      SERVER_PORT: "8099"
+      SERVER_SERVLET_CONTEXT_PATH: /api/v3.0.1
+    restart: always
+    networks:
+      - basyx
+
   aas-registry-log-mongodb:
-    image: aas-registry-test/aas-registry-log-mongodb:latest
+    image: aas-registry-test/aas-registry-log-mongodb:2.0.0-SNAPSHOT
     container_name: aas-registry-log-mongodb
     pull_policy: never
     ports:
@@ -179,3 +226,19 @@ services:
       SPRING_DATA_MONGODB_URI: mongodb://admin:admin@mongodb:27017
     networks:
       - basyx
+
+  aas-registry-log-mongodb-different-port-path:
+    image: aas-registry-test/aas-registry-log-mongodb:2.0.0-SNAPSHOT
+    container_name: aas-registry-log-mongodb-different-port-path
+    pull_policy: never
+    ports:
+      - "8051:8060"
+    depends_on:
+      - mongodb
+    restart: always
+    environment:
+      SERVER_PORT: "8060"
+      SERVER_SERVLET_CONTEXT_PATH: /api/v3.0.1
+      SPRING_DATA_MONGODB_URI: mongodb://admin:admin@mongodb:27017
+    networks:
+      - basyx  

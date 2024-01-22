@@ -313,7 +313,7 @@ public abstract class BaseIntegrationTest {
 		assertThat(locations).hasSize(1);
 		String location = locations.get(0);
 		
-		String expectedSuffix = "/api/v3.0/submodel-descriptors/aHR0cHM6Ly9zbS5pZA==";
+		String expectedSuffix = "/submodel-descriptors/aHR0cHM6Ly9zbS5pZA==";
 		assertThat(location).endsWith(expectedSuffix);
 		assertRestResourceAvailable(location);
 	}
