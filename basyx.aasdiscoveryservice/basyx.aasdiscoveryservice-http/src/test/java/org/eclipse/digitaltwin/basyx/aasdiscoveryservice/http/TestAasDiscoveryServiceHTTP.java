@@ -30,6 +30,7 @@ import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
+import static org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryUtils.deriveAssetLinksFromShell;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
 import org.junit.AfterClass;
@@ -56,19 +57,20 @@ public class TestAasDiscoveryServiceHTTP extends AasDiscoveryServiceHTTPSuite {
 	public void resetService() {
 		AasDiscoveryService aasDiscoveryService = appContext.getBean(AasDiscoveryService.class);
 
-		List<AssetLink> dummyAssetLinks = AasDiscoveryServiceSuite.getMultipleDummyAasAssetLink();
+		List<AssetAdministrationShell> dummyAssetLinks = AasDiscoveryServiceSuite.getMultipleDummyAasAssetLink();
 
 		dummyAssetLinks.stream()
 				.forEach(assetLink -> resetAssetLink(assetLink, aasDiscoveryService));
 	}
 
-	private void resetAssetLink(AssetLink assetLink, AasDiscoveryService aasDiscoveryService) {
+	private void resetAssetLink(AssetAdministrationShell shell, AasDiscoveryService aasDiscoveryService) {
 
+		List<AssetLink> linksFromShell = deriveAssetLinksFromShell(shell);
 		try {
-			aasDiscoveryService.createAllAssetLinksById(assetLink.getShellIdentifier(), assetLink.getSpecificAssetIds());
+			aasDiscoveryService.createAllAssetLinksById(shell.getId(), shell.getAssetInformation().getSpecificAssetIds());
 		} catch (CollidingAssetLinkException e) {
-			aasDiscoveryService.deleteAllAssetLinksById(assetLink.getShellIdentifier());
-			aasDiscoveryService.createAllAssetLinksById(assetLink.getShellIdentifier(), assetLink.getSpecificAssetIds());
+			aasDiscoveryService.deleteAllAssetLinksById(shell.getId());
+			aasDiscoveryService.createAllAssetLinksById(shell.getId(), shell.getAssetInformation().getSpecificAssetIds());
 		}
 	}
 

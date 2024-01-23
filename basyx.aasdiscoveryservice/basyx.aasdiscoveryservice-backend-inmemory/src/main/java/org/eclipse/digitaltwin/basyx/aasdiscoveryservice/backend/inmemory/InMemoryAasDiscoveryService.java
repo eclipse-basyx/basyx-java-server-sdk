@@ -25,14 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
@@ -42,6 +38,8 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
+
+import static org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryUtils.deriveAssetLinksFromSpecificAssetIds;
 
 /**
  * In-memory implementation of the {@link AasDiscoveryService}
@@ -53,7 +51,8 @@ public class InMemoryAasDiscoveryService implements AasDiscoveryService {
 
 	private String aasDiscoveryServiceName;
 
-	private Map<String, AssetLink> assetLinks = new LinkedHashMap<>();
+	private final Map<String, Set<AssetLink>> assetLinks = new LinkedHashMap<>();
+	private final Map<String, List<SpecificAssetId>> assetIds = new LinkedHashMap<>();
 
 	/**
 	 * Creates the {@link InMemoryAasDiscoveryService}
@@ -65,7 +64,7 @@ public class InMemoryAasDiscoveryService implements AasDiscoveryService {
 	/**
 	 * Creates the {@link InMemoryAasDiscoveryService}
 	 * 
-	 * @param name
+	 * @param aasDiscoveryServiceName
 	 *            of the Aas Discovery Service
 	 */
 	public InMemoryAasDiscoveryService(String aasDiscoveryServiceName) {
@@ -73,40 +72,40 @@ public class InMemoryAasDiscoveryService implements AasDiscoveryService {
 	}
 
 	@Override
-	public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo, List<String> assetIds) {
-		Set<String> shellIds = assetIds.stream()
-				.map(this::getShellIdWithAssetId)
-				.collect(Collectors.toSet());
+	public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo, List<AssetLink> assetIds) {
+		Set<String> shellIds = getShellIdsWithAssetLinks(assetIds);
 
-		List<String> result = new ArrayList<>();
-		result.addAll(shellIds);
-
-		return paginateList(pInfo, result);
+		return paginateList(pInfo, new ArrayList<>(shellIds));
 	}
 
 	@Override
 	public List<SpecificAssetId> getAllAssetLinksById(String shellIdentifier) {
 		throwIfAssetLinkDoesNotExist(shellIdentifier);
 
-		AssetLink assetLink = assetLinks.get(shellIdentifier);
-
-		return assetLink.getSpecificAssetIds();
+		return assetIds.get(shellIdentifier);
 	}
 
 	@Override
-	public List<SpecificAssetId> createAllAssetLinksById(String shellIdentifier, List<SpecificAssetId> assetIds) {
-		throwIfAssetLinkExists(shellIdentifier);
+	public List<SpecificAssetId> createAllAssetLinksById(String shellIdentifier, List<SpecificAssetId> specificAssetIds) {
+		synchronized (assetLinks) {
+			throwIfAssetLinkExists(shellIdentifier);
 
-		assetLinks.put(shellIdentifier, new AssetLink(shellIdentifier, assetIds));
+			List<AssetLink> shellAssetLinks = deriveAssetLinksFromSpecificAssetIds(specificAssetIds);
+			assetLinks.put(shellIdentifier, new HashSet<>(shellAssetLinks));
+			assetIds.put(shellIdentifier, specificAssetIds);
+		}
 
-		return assetIds;
+		return specificAssetIds;
 	}
 
 	@Override
 	public void deleteAllAssetLinksById(String shellIdentifier) {
-		throwIfAssetLinkDoesNotExist(shellIdentifier);
+		synchronized (assetLinks) {
+			throwIfAssetLinkDoesNotExist(shellIdentifier);
 
-		assetLinks.remove(shellIdentifier);
+			assetLinks.remove(shellIdentifier);
+			assetIds.remove(shellIdentifier);
+		}
 	}
 
 	@Override
@@ -123,14 +122,8 @@ public class InMemoryAasDiscoveryService implements AasDiscoveryService {
 		return paginationSupport.getPaged(pInfo);
 	}
 
-	private String getShellIdWithAssetId(String id) {
-		return assetLinks.values()
-				.stream()
-				.filter(link -> link.getSpecificAssetIdStrings()
-						.contains(id))
-				.findFirst()
-				.map(link -> link.getShellIdentifier())
-				.get();
+	private Set<String> getShellIdsWithAssetLinks(List<AssetLink> requestedLinks) {
+		return assetLinks.entrySet().stream().filter(entry -> entry.getValue().containsAll(requestedLinks)).map(Map.Entry::getKey).collect(Collectors.toSet());
 	}
 
 	private void throwIfAssetLinkDoesNotExist(String shellIdentifier) {

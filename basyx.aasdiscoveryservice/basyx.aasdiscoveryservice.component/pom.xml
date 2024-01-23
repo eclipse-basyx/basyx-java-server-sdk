@@ -14,8 +14,7 @@
 
 	<properties>
 		<docker.image.name>aas-discovery</docker.image.name>
-		<docker.container.waitForEndpoint>
-			http://localhost:${docker.host.port}/lookup/shells</docker.container.waitForEndpoint>
+		<docker.container.waitForEndpoint>http://localhost:${docker.host.port}/lookup/shells</docker.container.waitForEndpoint>
 	</properties>
 
 	<dependencies>

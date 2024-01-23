@@ -30,6 +30,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
@@ -87,7 +88,7 @@ public class TestMongoDBAasDiscoveryService extends AasDiscoveryServiceSuite {
 	}
 
 	private List<SpecificAssetId> createDummyAssetLinkOnDiscoveryService(String testShellIdentifier, AasDiscoveryService aasDiscoveryService) {
-		AssetLink assetLink = getSingleDummyAasAssetLink(testShellIdentifier);
+		AssetAdministrationShell assetLink = getSingleDummyAasAssetLink(testShellIdentifier);
 		createAssetLink(assetLink, aasDiscoveryService);
 
 		SpecificAssetId specificAssetId_1 = createDummySpecificAssetId("TestAsset1", "TestAssetValue1");

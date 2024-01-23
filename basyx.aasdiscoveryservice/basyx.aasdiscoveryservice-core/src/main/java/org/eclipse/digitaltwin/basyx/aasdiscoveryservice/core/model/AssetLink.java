@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -40,26 +41,45 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
  */
 public class AssetLink {
 
-	private String shellIdentifier;
-	private List<SpecificAssetId> specificAssetIds;
+	private String name;
+	private String value;
 
-	public AssetLink(String shellIdentifier, List<SpecificAssetId> specificAssetIds) {
-		super();
-		this.shellIdentifier = shellIdentifier;
-		this.specificAssetIds = specificAssetIds;
+	public AssetLink() {
 	}
 
-	public String getShellIdentifier() {
-		return shellIdentifier;
+	public AssetLink(String name, String value) {
+		this.name = name;
+		this.value = value;
 	}
 
-	public List<SpecificAssetId> getSpecificAssetIds() {
-		return specificAssetIds;
+	public String getName() {
+		return name;
 	}
 
-	public List<String> getSpecificAssetIdStrings() {
-		return specificAssetIds.stream()
-				.map(SpecificAssetId::getValue)
-				.collect(Collectors.toList());
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		AssetLink assetLink = (AssetLink) o;
+		return Objects.equals(name, assetLink.name) && Objects.equals(value, assetLink.value);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, value);
 	}
 }
