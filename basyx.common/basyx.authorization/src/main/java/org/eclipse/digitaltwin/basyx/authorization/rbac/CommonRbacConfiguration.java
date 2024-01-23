@@ -28,7 +28,9 @@ package org.eclipse.digitaltwin.basyx.authorization.rbac;
 import java.util.Objects;
 import java.util.Set;
 
+import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.reflections.Reflections;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -42,6 +44,7 @@ import com.fasterxml.jackson.databind.jsontype.NamedType;
  * @author danish
  */
 @Configuration
+@ConditionalOnExpression(value = "${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false} and ('${" + CommonAuthorizationProperties.TYPE_PROPERTY_KEY + "}'.equals('rbac') or '${" + CommonAuthorizationProperties.TYPE_PROPERTY_KEY + "}'.isEmpty())")
 public class CommonRbacConfiguration {
 
 	@Bean

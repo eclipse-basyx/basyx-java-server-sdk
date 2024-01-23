@@ -66,6 +66,7 @@ public class AccessTokenProvider {
 
 			CloseableHttpClient httpClient = HttpClients.createDefault();
 
+			@SuppressWarnings("deprecation")
 			CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
 
 			return getAccessTokenFromResponse(httpResponse);

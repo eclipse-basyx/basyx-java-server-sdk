@@ -23,30 +23,26 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
+ package org.eclipse.digitaltwin.basyx.core.exceptions;
 
-/**
- * Dummy model for credential
- * 
- * @author danish
- */
-public class DummyCredential {
-	
-	private String username;
-	private String password;
-	
-	public DummyCredential(String username, String password) {
-		super();
-		this.username = username;
-		this.password = password;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-}
+ /**
+  * Indicates that the authorization configuration file could not be found
+  * 
+  * @author danish
+  *
+  */
+ @SuppressWarnings("serial")
+ public class MissingAuthorizationConfigurationException extends RuntimeException {
+	 public MissingAuthorizationConfigurationException() {
+		}
+	 
+     public MissingAuthorizationConfigurationException(String filePath) {
+         super(getMessage(filePath));
+     }
+ 
+	private static String getMessage(String filePath) {
+         return String.format("The authorization configuration file specified at path '%s' could not be found.", filePath);
+     }
+ 
+ }
+ 
