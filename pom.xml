@@ -52,7 +52,7 @@
 		<docker.namespace>eclipsebasyx</docker.namespace>
 		<docker.image.name>NOT_DEFINED_IN_MODULE</docker.image.name>
 		<docker.image.tag>${revision}</docker.image.tag>
-		<docker.target.platforms>linux/amd64,linux/arm64</docker.target.platforms>
+		<docker.target.platforms>linux/amd64, linux/arm64</docker.target.platforms>
 		<docker.host.port>8081</docker.host.port>
 		<docker.container.port>8081</docker.container.port>
 		<aas4j-version>1.0.0-milestone-04</aas4j-version>
@@ -163,7 +163,7 @@
 				<plugin>
 					<groupId>io.fabric8</groupId>
 					<artifactId>docker-maven-plugin</artifactId>
-					<version>0.43.4</version>
+					<version>0.40.1</version>
 					<configuration>
 						<images>
 							<image>
@@ -179,6 +179,11 @@
 											${maven.build.timestamp}</maven.build.timestamp>
 									</labels>
 									<noCache>true</noCache>
+									<buildx>
+										<platforms>
+											${docker.target.platforms}
+										</platforms>			
+									</buildx>
 								</build>
 							</image>
 						</images>
