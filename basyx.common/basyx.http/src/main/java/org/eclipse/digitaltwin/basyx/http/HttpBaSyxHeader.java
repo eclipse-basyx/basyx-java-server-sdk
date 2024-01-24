@@ -42,11 +42,14 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class HttpBaSyxHeader extends OncePerRequestFilter {
 
-    @Override 
+	public static final String HEADER_KEY = "AAS_Middleware";
+	public static final String HEADER_VALUE = "BaSyx";
+
+	@Override 
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         
-		response.addHeader("AAS_Middleware", "BaSyx");
+		response.addHeader(HEADER_KEY, HEADER_VALUE);
         filterChain.doFilter(request, response);
     }
 }
