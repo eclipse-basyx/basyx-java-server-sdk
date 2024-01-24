@@ -305,7 +305,7 @@ public abstract class SubmodelServiceSuite {
 	public void deleteSubmodelElement() {
 		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
 		SubmodelService submodelService = getSubmodelService(technicalData);
-		submodelService.deleteSubmodelElement("test123");
+		submodelService.deleteSubmodelElement(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT);
 
 		try {
 			submodelService.getSubmodelElement("test123");
@@ -351,7 +351,7 @@ public abstract class SubmodelServiceSuite {
 		Submodel operationDataSubmodel = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
 		SubmodelService submodelService = getSubmodelService(operationDataSubmodel);
 
-		String idShortPathPropertyInSmeCol = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT + DummySubmodelFactory.SUBMODEL_ELEMENT_SECOND_ID_SHORT;
+		String idShortPathPropertyInSmeCol = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT + "." + DummySubmodelFactory.SUBMODEL_ELEMENT_SECOND_ID_SHORT;
 
 		submodelService.deleteSubmodelElement(idShortPathPropertyInSmeCol);
 
