@@ -201,6 +201,18 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		service.createSubmodelElement(idShortPath, body);
 		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
 	}
+	
+	@Override
+	public ResponseEntity<Void> putSubmodelElementByPath(
+			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
+			@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElement body,
+			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
+					"deep" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level) {
+		
+		service.updateSubmodelElement(idShortPath, body);
+
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
 
 	@Override
 	public ResponseEntity<OperationResult> invokeOperation(

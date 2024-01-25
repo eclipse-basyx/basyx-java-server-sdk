@@ -67,6 +67,31 @@ public class HierarchicalSubmodelElementParser {
 
 		return getLastElementOfStack(idShortPathTokenStack);
 	}
+	
+	/**
+	 * Returns the IdShortPath of parent SubmodelElement
+	 * 
+	 * <pre>
+	 * e.g., 
+	 * 
+	 * SubmodelElementCollection.Property -> SubmodelElementCollection
+	 * SubmodelElementList.SubmodelElementCollection.File -> SubmodelElementList.SubmodelElementCollection
+	 * Property -> Property
+	 * SubmodelElementList.SubmodelElementCollection -> SubmodelElementList
+	 * 
+	 * </pre>
+	 * @param idShortPath
+	 * @return the IdShortPath of parent SubmodelElement
+	 */
+	public String getIdShortPathOfParentElement(String idShortPath) {
+
+		int lastElementIdShortIndex = idShortPath.lastIndexOf(".");
+
+		if (lastElementIdShortIndex == -1)
+			return idShortPath;
+
+		return idShortPath.substring(0, lastElementIdShortIndex);
+	}
 
 	private SubmodelElement getLastElementOfStack(Stack<PathToken> idShortPathTokenStack) {
 		PathToken nextToken = idShortPathTokenStack.pop();
