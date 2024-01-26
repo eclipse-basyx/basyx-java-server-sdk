@@ -24,8 +24,6 @@ server:
   error:
     whitelabel:
       enabled: false
-servlet:
-  headers: []
 spring:
   application:
     name: Basyx Submodel Registry
