@@ -19,8 +19,10 @@ spec:
         {{- include "aas-environment.selectorLabels" . | nindent 8 }}
     spec:
       volumes:
+        {{- if .Values.startup.enabled }}
         - name: startup
           emptyDir: {}
+        {{ end -}}
         - name: {{ template "aas-environment.fullname" $ }}-config
           configMap:
             name: {{ template "aas-environment.fullname" $ }}-config
@@ -28,6 +30,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if .Values.startup.enabled }}
       initContainers:
       - name: pull-startup-files
         image: alpine/git
@@ -41,6 +44,7 @@ spec:
         volumeMounts:
           - name: startup
             mountPath: /repo
+      {{ end -}}
       containers:
       - name: {{ .Chart.Name }}
         image: {{ .Values.image.name }}
