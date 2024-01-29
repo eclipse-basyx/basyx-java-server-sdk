@@ -59,6 +59,6 @@ public class RestConfiguration extends BaSyxHTTPConfiguration  {
 	}
 	@Bean
 	public CorsPathPatternProvider getSubmodelRegistryServiceCorsUrlProvider() {
-		return new CorsPathPatternProvider("/**");
+		return new CorsPathPatternProvider("/submodel-descriptors/**");
 	}
 }

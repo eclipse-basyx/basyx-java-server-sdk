@@ -28,14 +28,12 @@ import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetKind;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.LocationBuilder;
 import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
 import org.eclipse.digitaltwin.basyx.http.CorsPathPatternProvider;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -60,11 +58,11 @@ public class RestConfiguration extends BaSyxHTTPConfiguration implements WebMvcC
 
 	@Bean
 	public CorsPathPatternProvider getAasRegistryServiceCorsUrlProvider() {
-		return new CorsPathPatternProvider("/**");
+		return new CorsPathPatternProvider("/shell-descriptors/**");
 	}
 
+	@Override
 	public void addFormatters(FormatterRegistry registry) {
-
 		registry.addConverter(new StringToEnumConverter());
 	}
 
