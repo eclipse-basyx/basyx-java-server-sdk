@@ -167,7 +167,10 @@
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.core</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.http</artifactId>
+		</dependency>
 		<!-- Test configuration -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
