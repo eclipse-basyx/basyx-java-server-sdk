@@ -37,7 +37,7 @@ import org.junit.runner.Result;
  * @author schnicke, danish
  *
  */
-public class AuthorizedAasRepositoryTestApplication {
+public class AuthorizedSubmodelRepositoryTestApplication {
 
 	public static void main(String[] args) throws Exception {
 		String submodelRepositoryBaseUrl = getSubmodelRepositoryBaseUrl(args);

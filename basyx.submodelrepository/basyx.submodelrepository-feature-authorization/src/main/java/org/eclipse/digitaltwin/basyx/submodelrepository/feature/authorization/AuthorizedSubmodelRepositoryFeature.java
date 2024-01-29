@@ -57,8 +57,8 @@ public class AuthorizedSubmodelRepositoryFeature implements SubmodelRepositoryFe
 	}
 
 	@Override
-	public SubmodelRepositoryFactory decorate(SubmodelRepositoryFactory aasRepositoryFactory) {
-		return new AuthorizedSubmodelRepositoryFactory(aasRepositoryFactory, permissionResolver);
+	public SubmodelRepositoryFactory decorate(SubmodelRepositoryFactory submodelRepositoryFactory) {
+		return new AuthorizedSubmodelRepositoryFactory(submodelRepositoryFactory, permissionResolver);
 	}
 
 	@Override

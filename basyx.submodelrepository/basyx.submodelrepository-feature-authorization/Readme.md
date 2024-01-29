@@ -79,7 +79,7 @@ Note: The Action are fixed as of now and limited to (CREATE, READ, UPDATE, DELET
 
 ## Action table for RBAC
 
-Below is reference table that show which action are used in what endpoints of the Submodel Repository:
+Below is a reference table that show which action are used in what endpoints of the Submodel Repository:
 
 | Action  | Endpoint                                                                                                                                                                                                            |
 |---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
