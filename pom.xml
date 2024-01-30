@@ -185,6 +185,11 @@
 										</platforms>			
 									</buildx>
 								</build>
+								<run>
+									<network>
+										<mode>host</mode>
+									</network>
+								</run>
 							</image>
 						</images>
 						<verbose>true</verbose>
