@@ -67,7 +67,7 @@ Note: The Action are fixed as of now and limited to (CREATE, READ, UPDATE, DELET
 
 ## Action table for RBAC
 
-Below is reference table that show which action are used in what endpoints of the Concept Description Repository:
+Below is a reference table that shows which actions are used in what endpoints of the Concept Description Repository:
 
 | Action  | Endpoint                                                                                                                                                                                                            |
 |---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
