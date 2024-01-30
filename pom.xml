@@ -180,11 +180,6 @@
 									</labels>
 									<noCache>true</noCache>
 								</build>
-								<run>
-									<extraHosts>
-										<host>host.docker.internal:host-gateway</host>
-									</extraHosts>
-								</run>
 							</image>
 						</images>
 						<verbose>true</verbose>
