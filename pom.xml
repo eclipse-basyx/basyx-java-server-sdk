@@ -180,6 +180,11 @@
 									</labels>
 									<noCache>true</noCache>
 								</build>
+								<run>
+									<network>
+										<mode>host</mode>
+									</network>
+								</run>
 							</image>
 						</images>
 						<verbose>true</verbose>
