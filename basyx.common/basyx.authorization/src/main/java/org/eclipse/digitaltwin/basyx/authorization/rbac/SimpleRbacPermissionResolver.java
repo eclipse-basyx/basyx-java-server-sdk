@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.eclipse.digitaltwin.basyx.authorization.TargetInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +73,6 @@ public class SimpleRbacPermissionResolver<T extends TargetInformation> implement
 	 * 
 	 * @return 
 	 */
-	@Override
 	public boolean hasPermission(final Action action, final T targetInformation) {
 		final Optional<RbacRule> matchingRule = getMatchingRules(roleAuthenticator.getRoles(), action, targetInformation).findAny();
 		logger.info("roles: {}, action: {}, targetInfo: {} - matching-rule?: {}", roleAuthenticator.getRoles(), action, targetInformation, matchingRule);
@@ -91,11 +89,14 @@ public class SimpleRbacPermissionResolver<T extends TargetInformation> implement
 	}
 
 	private boolean checkActionMatchesRbacRule(final RbacRule rbacRule, final Action action) {
-		
 		return rbacRule.getAction().stream().anyMatch(rbacRuleAction -> rbacRuleAction.equals(action));
 	}
 
 	private boolean checkRbacRuleMatchesTargetInfo(final RbacRule rbacRule, final T targetInformation) {
+		
+		if (!(targetInformation.getClass().isInstance(rbacRule.getTargetInformation())))
+			return false;
+		
 		return targetPermissionVerifier.isVerified(rbacRule, targetInformation);
 	}
 

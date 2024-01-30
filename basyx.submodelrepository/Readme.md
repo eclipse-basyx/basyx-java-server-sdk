@@ -41,6 +41,8 @@ In addition, it supports the following backends:
 
 Furthermore, the following features are provided:
 * [MQTT eventing](basyx.submodelrepository-feature-mqtt)
+* [Submodel Repository Authorization](basyx.submodelrepository-feature-authorization)
+* [Submodel Registry Integration](basyx.submodelrepository-feature-registry-integration)
 
 For a configuration example, see [application.properties](basyx.submodelrepository.component/src/main/resources/application.properties)
 

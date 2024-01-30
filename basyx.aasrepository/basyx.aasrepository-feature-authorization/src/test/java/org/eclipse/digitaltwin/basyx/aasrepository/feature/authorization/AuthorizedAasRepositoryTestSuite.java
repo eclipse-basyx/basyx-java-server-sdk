@@ -37,6 +37,9 @@ import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.eclipse.digitaltwin.basyx.authorization.AccessTokenProvider;
+import org.eclipse.digitaltwin.basyx.authorization.DummyCredential;
+import org.eclipse.digitaltwin.basyx.authorization.DummyCredentialStore;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.BeforeClass;
@@ -674,7 +677,7 @@ public class AuthorizedAasRepositoryTestSuite {
 	private CloseableHttpResponse setThumbnailToAasWithNoAuthorization(String shellId) throws IOException {
 		File file = ResourceUtils.getFile("classpath:" + THUMBNAIL_FILE_PATH);
 		
-		return updateElementWithFileWithNoAuthorization(createAasRepositoryUrl(aasRepositoryBaseUrl), shellId, THUMBNAIL_FILE_NAME, file);
+		return updateElementWithFileWithNoAuthorization(getThumbnailAccessURL(shellId), THUMBNAIL_FILE_NAME, file);
 	}
 	
 	private static CloseableHttpResponse createAasOnRepositoryWithNoAuthorization(String aasJsonContent) throws IOException {
@@ -705,10 +708,10 @@ public class AuthorizedAasRepositoryTestSuite {
 		return BaSyxHttpTestUtils.executePutRequest(client, putRequest);
 	}
 	
-	private CloseableHttpResponse updateElementWithFileWithNoAuthorization(String url, String shellId, String fileName, File file) throws IOException {
+	private CloseableHttpResponse updateElementWithFileWithNoAuthorization(String url, String fileName, File file) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
 		
-		HttpPut putRequest = BaSyxHttpTestUtils.createPutRequestWithFile(url, shellId, fileName, file);
+		HttpPut putRequest = BaSyxHttpTestUtils.createPutRequestWithFile(url, fileName, file);
 		
 		return BaSyxHttpTestUtils.executePutRequest(client, putRequest);
 	}

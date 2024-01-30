@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -23,18 +23,16 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.authorization;
+package org.eclipse.digitaltwin.basyx.submodelrepository.component;
 
-import java.util.Map;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.AuthorizedSubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.AuthorizedSubmodelRepositoryTestSuite;
 
 /**
- * An interface of target information
+ * Integration test for the {@link AuthorizedSubmodelRepository}
  * 
  * @author danish
- * 
+ *
  */
-public interface TargetInformation {
-	
-	public Map<String, String> toMap();
-
+public class AuthorizedITSubmodelRepository extends AuthorizedSubmodelRepositoryTestSuite {
 }

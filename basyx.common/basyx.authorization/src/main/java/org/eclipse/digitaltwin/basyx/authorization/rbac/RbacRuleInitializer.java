@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingAuthorizationConfigurationException;
 import org.springframework.core.io.ResourceLoader;
 
 /**
@@ -63,7 +64,13 @@ public class RbacRuleInitializer {
 		});
 	}
 
-	private File getFile(String filePath) throws IOException {
-		return resourceLoader.getResource(filePath).getFile();
+	private File getFile(String filePath) {
+		
+		try {
+			return resourceLoader.getResource(filePath).getFile();
+		} catch(IOException e) {
+			throw new MissingAuthorizationConfigurationException(filePath);
+		}
+		
 	}
 }

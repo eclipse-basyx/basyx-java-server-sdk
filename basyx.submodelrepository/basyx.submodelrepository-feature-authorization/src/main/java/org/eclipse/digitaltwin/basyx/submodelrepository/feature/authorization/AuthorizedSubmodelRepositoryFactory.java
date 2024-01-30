@@ -23,30 +23,30 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
+
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
 
 /**
- * Dummy model for credential
+ * Factory for creating {@link AuthorizedSubmodelRepository}
  * 
  * @author danish
  */
-public class DummyCredential {
-	
-	private String username;
-	private String password;
-	
-	public DummyCredential(String username, String password) {
-		super();
-		this.username = username;
-		this.password = password;
+public class AuthorizedSubmodelRepositoryFactory implements SubmodelRepositoryFactory {
+
+	private SubmodelRepositoryFactory decorated;
+	private RbacPermissionResolver<SubmodelTargetInformation> permissionResolver;
+
+	public AuthorizedSubmodelRepositoryFactory(SubmodelRepositoryFactory decorated, RbacPermissionResolver<SubmodelTargetInformation> permissionResolver) {
+		this.decorated = decorated;
+		this.permissionResolver = permissionResolver;
 	}
 
-	public String getUsername() {
-		return username;
-	}
-
-	public String getPassword() {
-		return password;
+	@Override
+	public SubmodelRepository create() {
+		return new AuthorizedSubmodelRepository(decorated.create(), permissionResolver);
 	}
 
 }

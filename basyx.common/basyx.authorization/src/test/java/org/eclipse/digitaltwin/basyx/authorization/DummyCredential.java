@@ -23,22 +23,30 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.mixin;
-
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.AasTargetInformation;
-import org.eclipse.digitaltwin.basyx.authorization.TargetInformation;
-
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+package org.eclipse.digitaltwin.basyx.authorization;
 
 /**
- * Mixin for {@link TargetInformation}
+ * Dummy model for credential
  * 
  * @author danish
  */
-@JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-@JsonSubTypes({ @JsonSubTypes.Type(value = AasTargetInformation.class, name = "aas") })
-public interface TargetInformationMixin {
+public class DummyCredential {
+	
+	private String username;
+	private String password;
+	
+	public DummyCredential(String username, String password) {
+		super();
+		this.username = username;
+		this.password = password;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
 
 }

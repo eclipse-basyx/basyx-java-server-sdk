@@ -23,18 +23,26 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.mixin;
+ package org.eclipse.digitaltwin.basyx.core.exceptions;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.AasTargetInformation;
-
-import com.fasterxml.jackson.annotation.JsonTypeName;
-
-/**
- * Mixin for {@link AasTargetInformation}
- * 
- * @author danish
- */
-@JsonTypeName("aas")
-public interface AasTargetInformationMixin {
-
-}
+ /**
+  * Indicates that the authorization configuration file could not be found
+  * 
+  * @author danish
+  *
+  */
+ @SuppressWarnings("serial")
+ public class MissingAuthorizationConfigurationException extends RuntimeException {
+	 public MissingAuthorizationConfigurationException() {
+		}
+	 
+     public MissingAuthorizationConfigurationException(String filePath) {
+         super(getMessage(filePath));
+     }
+ 
+	private static String getMessage(String filePath) {
+         return String.format("The authorization configuration file specified at path '%s' could not be found.", filePath);
+     }
+ 
+ }
+ 

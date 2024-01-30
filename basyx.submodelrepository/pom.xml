@@ -17,6 +17,7 @@
 		<module>basyx.submodelrepository-backend-inmemory</module>
 		<module>basyx.submodelrepository-feature-mqtt</module>
 		<module>basyx.submodelrepository-feature-registry-integration</module>
+		<module>basyx.submodelrepository-feature-authorization</module>
 		<module>basyx.submodelrepository-tck</module>
 		<module>basyx.submodelrepository.component</module>
 		<module>basyx.submodelrepository-backend-mongodb</module>

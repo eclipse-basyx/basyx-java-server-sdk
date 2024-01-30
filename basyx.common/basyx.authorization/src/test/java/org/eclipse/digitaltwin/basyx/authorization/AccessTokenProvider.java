@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.authorization;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -37,9 +37,9 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
-import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -66,6 +66,7 @@ public class AccessTokenProvider {
 
 			CloseableHttpClient httpClient = HttpClients.createDefault();
 
+			@SuppressWarnings("deprecation")
 			CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
 
 			return getAccessTokenFromResponse(httpResponse);
@@ -89,12 +90,16 @@ public class AccessTokenProvider {
 	}
 
 	private String getAccessTokenFromResponse(final CloseableHttpResponse httpResponse) throws ParseException, IOException {
-		final String responseString = BaSyxHttpTestUtils.getResponseAsString(httpResponse);
+		final String responseString = getResponseAsString(httpResponse);
 
 		final ObjectMapper objectMapper = new ObjectMapper();
 		final JsonNode responseNode = objectMapper.readTree(responseString);
 
 		return responseNode.get("access_token").asText();
+	}
+	
+	private String getResponseAsString(CloseableHttpResponse retrievalResponse) throws IOException, ParseException {
+		return EntityUtils.toString(retrievalResponse.getEntity(), "UTF-8");
 	}
 
 }

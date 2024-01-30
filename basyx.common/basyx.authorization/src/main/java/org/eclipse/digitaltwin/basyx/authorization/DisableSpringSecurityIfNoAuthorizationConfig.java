@@ -51,7 +51,7 @@ public class DisableSpringSecurityIfNoAuthorizationConfig {
 			super(ConfigurationPhase.PARSE_CONFIGURATION);
 		}
 
-		@ConditionalOnProperty(value = CommonAuthorizationConfig.ENABLED_PROPERTY_KEY, havingValue = "true")
+		@ConditionalOnProperty(value = CommonAuthorizationProperties.ENABLED_PROPERTY_KEY, havingValue = "true")
 		public static class AuthorizationCondition {
 		}
 	}

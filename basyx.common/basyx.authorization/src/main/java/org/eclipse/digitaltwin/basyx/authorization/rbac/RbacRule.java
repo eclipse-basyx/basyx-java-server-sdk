@@ -27,7 +27,6 @@ package org.eclipse.digitaltwin.basyx.authorization.rbac;
 import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.eclipse.digitaltwin.basyx.authorization.TargetInformation;
 
 import jakarta.annotation.Nonnull;
 
