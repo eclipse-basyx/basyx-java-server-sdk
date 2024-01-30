@@ -44,10 +44,10 @@ public class SubmodelTargetPermissionVerifier implements TargetPermissionVerifie
 		String submodelId = targetInformation.getSubmodelId();
 		String submodelElementIdShortPath = targetInformation.getSubmodelElementIdShortPath();
 		
-		SubmodelTargetInformation rbacRuleAasTargetInformation = (SubmodelTargetInformation) rbacRule.getTargetInformation();
+		SubmodelTargetInformation rbacRuleSubmodelTargetInformation = (SubmodelTargetInformation) rbacRule.getTargetInformation();
 
-		if (rbacRuleAasTargetInformation.getSubmodelId().equals(ALL_ALLOWED_WILDCARD) || rbacRuleAasTargetInformation.getSubmodelId().equals(submodelId))
-			return rbacRuleAasTargetInformation.getSubmodelElementIdShortPath().equals(ALL_ALLOWED_WILDCARD) || rbacRuleAasTargetInformation.getSubmodelElementIdShortPath().equals(submodelElementIdShortPath);
+		if (rbacRuleSubmodelTargetInformation.getSubmodelId().equals(ALL_ALLOWED_WILDCARD) || rbacRuleSubmodelTargetInformation.getSubmodelId().equals(submodelId))
+			return rbacRuleSubmodelTargetInformation.getSubmodelElementIdShortPath().equals(ALL_ALLOWED_WILDCARD) || rbacRuleSubmodelTargetInformation.getSubmodelElementIdShortPath().equals(submodelElementIdShortPath);
 		
 		return false;
 	}

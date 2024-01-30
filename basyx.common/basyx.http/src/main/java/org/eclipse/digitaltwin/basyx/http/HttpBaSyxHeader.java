@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 DFKI GmbH (https://www.dfki.de/en/web)
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,26 +22,34 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasregistry.service.configuration;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetKind;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.format.FormatterRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+package org.eclipse.digitaltwin.basyx.http;
+import java.io.IOException;
 
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-@Configuration
-public class WebConfig implements WebMvcConfigurer {
-	@Override
-	public void addFormatters(FormatterRegistry registry) {
-		registry.addConverter(new StringToEnumConverter());
-	}
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-	public static class StringToEnumConverter implements Converter<String, AssetKind> {
-		@Override
-		public AssetKind convert(String source) {
-			return AssetKind.fromValue(source);
-		}
-	}
+/**
+ * Adds Basyx Header to every Request
+ * 
+ * @author fried
+ */
+@Component
+public class HttpBaSyxHeader extends OncePerRequestFilter {
+
+	public static final String HEADER_KEY = "AAS_Middleware";
+	public static final String HEADER_VALUE = "BaSyx";
+
+	@Override 
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        
+		response.addHeader(HEADER_KEY, HEADER_VALUE);
+        filterChain.doFilter(request, response);
+    }
 }
