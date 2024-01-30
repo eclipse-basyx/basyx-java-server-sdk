@@ -1,5 +1,6 @@
 # Eclipse BaSyx - Submodel Service 
-The Submodel Service is intended to provide a standalone Submodel with possible custom logic, e.g., invokable operations. Thus, the Submodel Service is not provided as off-the-shelf component but has to be tailored and build individually.
+The Submodel Service is intended to provide a standalone Submodel. In contrast to the Submodels hosted in the Submodel Repository, a standalone Submodels enables users to provide custom logic, e.g., invokable operations or proactive behavior (i.e., type 3 AAS). Thus, the Submodel Service is not provided as off-the-shelf component but has to be tailored and build individually.
+
 
 See [Example Standalone Submodel](basyx.submodelservice.example) for further explanation on how to build the standalone submodel.
 
