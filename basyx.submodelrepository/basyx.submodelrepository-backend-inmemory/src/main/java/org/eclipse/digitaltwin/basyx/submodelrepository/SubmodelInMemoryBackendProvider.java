@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,27 +23,33 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.testconfig;
+package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleConceptDescriptionRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionInMemoryBackendProvider;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.submodelrepository.backend.FileRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SubmodelBackendProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Component;
 
 /**
- * Configuration for tests
  * 
- * @author danish, kammognie
- *
+ * InMemory backend provider for the {@link Submodel}
+ * 
+ * @author mateusmolina, danish
  */
-@Configuration
-public class DummyConceptDescriptionRepositoryConfig {
+@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
+@Component
+public class SubmodelInMemoryBackendProvider implements SubmodelBackendProvider {
 
-		@Bean
-		@ConditionalOnMissingBean
-		public ConceptDescriptionRepository createConceptDescriptionRepository() {
-			return new SimpleConceptDescriptionRepositoryFactory(new ConceptDescriptionInMemoryBackendProvider()).create();
-		}
+	@Override
+	public CrudRepository<Submodel, String> getCrudRepository() {
+		return new SubmodelInMemoryBackend();
+	}
+
+	@Override
+	public FileRepository getFileRepository() {
+		return new InMemorySubmodelFileRepository();
+	}
+
 }

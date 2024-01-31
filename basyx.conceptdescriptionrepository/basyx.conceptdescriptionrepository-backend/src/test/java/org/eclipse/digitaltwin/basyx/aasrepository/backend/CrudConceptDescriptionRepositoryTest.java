@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,28 +22,27 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.testconfig;
+import static org.junit.Assert.assertEquals;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleConceptDescriptionRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.junit.Test;
 
 /**
- * Configuration for tests
+ * Tests {@link CrudConceptDescriptionRepository}
  * 
- * @author danish, kammognie
- *
+ * @author mateusmolina, despen, danish
  */
-@Configuration
-public class DummyConceptDescriptionRepositoryConfig {
+public class CrudConceptDescriptionRepositoryTest {
 
-		@Bean
-		@ConditionalOnMissingBean
-		public ConceptDescriptionRepository createConceptDescriptionRepository() {
-			return new SimpleConceptDescriptionRepositoryFactory(new ConceptDescriptionInMemoryBackendProvider()).create();
-		}
+	private static final String CONFIGURED_CD_REPO_NAME = "test-cd-repo";
+
+	@Test
+	public void getConfiguredAasRepositoryName() {
+		ConceptDescriptionRepository repo = new CrudConceptDescriptionRepository(() -> null, CONFIGURED_CD_REPO_NAME);
+
+		assertEquals(CONFIGURED_CD_REPO_NAME, repo.getName());
+	}
+
 }

@@ -29,13 +29,15 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironmentSerialization;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleConceptDescriptionRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.InMemoryConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
@@ -59,9 +61,9 @@ public class TestAASEnvironmentSerialization {
 
 	@Before
 	public void setup() {
-		submodelRepository = new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
+		submodelRepository = new SimpleSubmodelRepositoryFactory(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory()).create();
 		aasRepository = new SimpleAasRepositoryFactory(new AasInMemoryBackendProvider(), new InMemoryAasServiceFactory()).create();
-		conceptDescriptionRepository = new InMemoryConceptDescriptionRepository(createDummyConceptDescriptions());
+		conceptDescriptionRepository = new SimpleConceptDescriptionRepositoryFactory(new ConceptDescriptionInMemoryBackendProvider(), createDummyConceptDescriptions(), "cdRepo").create();
 
 		for (Submodel submodel : createDummySubmodels()) {
 			submodelRepository.createSubmodel(submodel);

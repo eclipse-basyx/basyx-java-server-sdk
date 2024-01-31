@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,28 +22,18 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.testconfig;
-
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleConceptDescriptionRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionInMemoryBackendProvider;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
+import org.springframework.data.repository.CrudRepository;
 
 /**
- * Configuration for tests
+ * Backend provider for the {@link ConceptDescription}
  * 
- * @author danish, kammognie
- *
+ * @author mateusmolina, despen, danish
  */
-@Configuration
-public class DummyConceptDescriptionRepositoryConfig {
-
-		@Bean
-		@ConditionalOnMissingBean
-		public ConceptDescriptionRepository createConceptDescriptionRepository() {
-			return new SimpleConceptDescriptionRepositoryFactory(new ConceptDescriptionInMemoryBackendProvider()).create();
-		}
+public interface ConceptDescriptionBackendProvider {
+	
+	public CrudRepository<ConceptDescription, String> getCrudRepository();
+	
 }
