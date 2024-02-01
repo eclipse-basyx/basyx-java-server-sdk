@@ -33,11 +33,9 @@ package org.eclipse.digitaltwin.basyx.core.exceptions;
  */
 @SuppressWarnings("serial")
 public class RepositoryRegistryUnlinkException extends RuntimeException {
-	public RepositoryRegistryUnlinkException() {
-	}
 
-	public RepositoryRegistryUnlinkException(String id) {
-		super(getMessage(id));
+	public RepositoryRegistryUnlinkException(String id, Throwable th) {
+		super(getMessage(id), th);
 	}
 
 	private static String getMessage(String id) {
