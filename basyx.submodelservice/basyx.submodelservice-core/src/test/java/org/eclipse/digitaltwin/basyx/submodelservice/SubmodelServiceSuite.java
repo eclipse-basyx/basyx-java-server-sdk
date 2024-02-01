@@ -308,7 +308,7 @@ public abstract class SubmodelServiceSuite {
 		submodelService.deleteSubmodelElement(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT);
 
 		try {
-			submodelService.getSubmodelElement("test123");
+			submodelService.getSubmodelElement(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT);
 			fail();
 		} catch (ElementDoesNotExistException expected) {
 		}
