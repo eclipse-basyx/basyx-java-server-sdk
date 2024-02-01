@@ -172,9 +172,7 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 
 			logger.info("Submodel '{}' has been automatically linked with the Registry", submodel.getId());
 		} catch (ApiException e) {
-			e.printStackTrace();
-
-			throw new RepositoryRegistryLinkException(submodel.getId());
+			throw new RepositoryRegistryLinkException(submodel.getId(), e);
 		}
 	}
 
@@ -192,9 +190,7 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 
 			logger.info("Submodel '{}' has been automatically un-linked from the Registry.", submodelId);
 		} catch (ApiException e) {
-			e.printStackTrace();
-
-			throw new RepositoryRegistryUnlinkException(submodelId);
+			throw new RepositoryRegistryUnlinkException(submodelId, e);
 		}
 	}
 	
