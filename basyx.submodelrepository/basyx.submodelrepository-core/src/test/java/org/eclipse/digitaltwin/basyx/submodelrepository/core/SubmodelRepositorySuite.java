@@ -407,13 +407,13 @@ public abstract class SubmodelRepositorySuite {
 
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void deleteSubmodeleElement() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		repo.deleteSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, "test123");
+		repo.deleteSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_SIMPLE_DATA_ID_SHORT);
 
 		try {
-			repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, "test123");
+			repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_SIMPLE_DATA_ID_SHORT);
 			fail();
 		} catch (ElementDoesNotExistException expected) {
 		}
@@ -439,11 +439,11 @@ public abstract class SubmodelRepositorySuite {
 		assertEquals("test987", propertyInSmeListCreated.getIdShort());
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void deleteNestedSubmodelElementInSubmodelElementCollection() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository repo = getSubmodelRepositoryWithHierarchicalSubmodelElements();
 
-		String idShortPathPropertyInSmeCol = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT + DummySubmodelFactory.SUBMODEL_ELEMENT_SECOND_ID_SHORT;
+		String idShortPathPropertyInSmeCol = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT + "." + DummySubmodelFactory.SUBMODEL_ELEMENT_SECOND_ID_SHORT;
 
 		repo.deleteSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, idShortPathPropertyInSmeCol);
 
@@ -451,13 +451,13 @@ public abstract class SubmodelRepositorySuite {
 			repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, idShortPathPropertyInSmeCol);
 			fail();
 		} catch (ElementDoesNotExistException expected) {
-			throw expected;
+
 		}
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void deleteNestedSubmodelElementInSubmodelElementList() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository repo = getSubmodelRepositoryWithHierarchicalSubmodelElements();
 
 		repo.deleteSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, generateIdShortPath());
 
@@ -465,7 +465,7 @@ public abstract class SubmodelRepositorySuite {
 			repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, generateIdShortPath());
 			fail();
 		} catch (ElementDoesNotExistException expected) {
-			throw expected;
+
 		}
 	}
 
@@ -528,6 +528,12 @@ public abstract class SubmodelRepositorySuite {
 
 	private SubmodelRepository getSubmodelRepositoryWithDummySubmodels() {
 		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodels();
+		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
+		return repo;
+	}
+
+	private SubmodelRepository getSubmodelRepositoryWithHierarchicalSubmodelElements() {
+		Collection<Submodel> expectedSubmodels = Arrays.asList(DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements());
 		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
 		return repo;
 	}

@@ -301,14 +301,14 @@ public abstract class SubmodelServiceSuite {
 		assertEquals("test123", submodelEl.getIdShort());
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void deleteSubmodelElement() {
 		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
 		SubmodelService submodelService = getSubmodelService(technicalData);
-		submodelService.deleteSubmodelElement("test123");
+		submodelService.deleteSubmodelElement(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT);
 
 		try {
-			submodelService.getSubmodelElement("test123");
+			submodelService.getSubmodelElement(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT);
 			fail();
 		} catch (ElementDoesNotExistException expected) {
 		}
@@ -346,12 +346,12 @@ public abstract class SubmodelServiceSuite {
 		assertEquals("test456", propertyInSmeListCreated.getIdShort());
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void deleteNestedSubmodelElementInSubmodelElementCollection() {
 		Submodel operationDataSubmodel = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
 		SubmodelService submodelService = getSubmodelService(operationDataSubmodel);
 
-		String idShortPathPropertyInSmeCol = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT + DummySubmodelFactory.SUBMODEL_ELEMENT_SECOND_ID_SHORT;
+		String idShortPathPropertyInSmeCol = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT + "." + DummySubmodelFactory.SUBMODEL_ELEMENT_SECOND_ID_SHORT;
 
 		submodelService.deleteSubmodelElement(idShortPathPropertyInSmeCol);
 
@@ -359,11 +359,10 @@ public abstract class SubmodelServiceSuite {
 			submodelService.getSubmodelElement(idShortPathPropertyInSmeCol);
 			fail();
 		} catch (ElementDoesNotExistException expected) {
-			throw expected;
 		}
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void deleteNestedSubmodelElementInSubmodelElementList() {
 		Submodel operationDataSubmodel = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
 		SubmodelService submodelService = getSubmodelService(operationDataSubmodel);
@@ -374,7 +373,6 @@ public abstract class SubmodelServiceSuite {
 			submodelService.getSubmodelElement(generateIdShortPath());
 			fail();
 		} catch (ElementDoesNotExistException expected) {
-			throw expected;
 		}
 	}
 
