@@ -25,8 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
-import org.eclipse.digitaltwin.basyx.authorization.TargetInformation;
-
 /**
  * An interface for resolving Rbac permissions
  * 

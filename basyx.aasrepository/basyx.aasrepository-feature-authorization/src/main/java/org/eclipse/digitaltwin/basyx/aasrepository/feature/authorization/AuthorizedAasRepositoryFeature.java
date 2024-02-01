@@ -28,7 +28,7 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
-import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationConfig;
+import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,11 +42,11 @@ import org.springframework.stereotype.Component;
  * @author danish
  */
 @Component
-@ConditionalOnExpression("#{${" + CommonAuthorizationConfig.ENABLED_PROPERTY_KEY + ":false}}")
+@ConditionalOnExpression("#{${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false}}")
 @Order(0)
 public class AuthorizedAasRepositoryFeature implements AasRepositoryFeature {
 	
-	@Value("${" + CommonAuthorizationConfig.ENABLED_PROPERTY_KEY + ":}")
+	@Value("${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":}")
 	private boolean enabled;
 	
 	private RbacPermissionResolver<AasTargetInformation> permissionResolver;

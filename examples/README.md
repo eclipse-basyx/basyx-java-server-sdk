@@ -26,3 +26,6 @@ By leveraging the registry integration features of AAS Repository and Submodel R
 
 ## BaSyx with NGINX
 See the separate [NGINX example](BaSyxNGINX) for a comprehensive setup leveraging NGINX.
+
+## BaSyx Time Series Data Example
+See the separate [Time Series example](https://github.com/eclipse-basyx/basyx-applications/tree/main/aas-gui/examples/TimeSeriesData) for a comprehensive setup leveraging InfluxDB.

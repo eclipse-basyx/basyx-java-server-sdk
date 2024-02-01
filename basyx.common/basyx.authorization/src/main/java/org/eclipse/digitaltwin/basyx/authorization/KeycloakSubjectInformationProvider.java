@@ -39,7 +39,7 @@ import java.util.Optional;
  * @author danish
  */
 @Service
-@ConditionalOnExpression(value = "${" + CommonAuthorizationConfig.ENABLED_PROPERTY_KEY + ":false} and ('${" + CommonAuthorizationConfig.JWT_BEARER_TOKEN_PROVIDER_PROPERTY_KEY + "}'.equals('keycloak') or '${" + CommonAuthorizationConfig.JWT_BEARER_TOKEN_PROVIDER_PROPERTY_KEY + "}'.isEmpty())")
+@ConditionalOnExpression(value = "${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false} and ('${" + CommonAuthorizationProperties.JWT_BEARER_TOKEN_PROVIDER_PROPERTY_KEY + "}'.equals('keycloak') or '${" + CommonAuthorizationProperties.JWT_BEARER_TOKEN_PROVIDER_PROPERTY_KEY + "}'.isEmpty())")
 public class KeycloakSubjectInformationProvider implements SubjectInformationProvider<Object> {
 
 	public SubjectInformation<Object> get() {

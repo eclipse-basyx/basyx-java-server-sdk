@@ -80,12 +80,13 @@ services:
         condition: service_healthy
       
   aas-web-ui_v2:
-    image: eclipsebasyx/aas-gui:v2-231107
+    image: eclipsebasyx/aas-gui:v2-240125
     container_name: aas-web-ui_v2
     ports:
       - "3000:3000"
     environment:
-      VITE_REGISTRY_PATH: "http://localhost:8082"
+      VITE_AAS_REGISTRY_PATH: "http://localhost:8082"
+      VITE_SUBMODEL_REGISTRY_PATH: "http://localhost:8083"
       VITE_AAS_REPO_PATH: "http://localhost:8081/shells"
       VITE_SUBMODEL_REPO_PATH: "http://localhost:8081/submodels"
       VITE_CD_REPO_PATH: "http://localhost:8081/concept-descriptions"

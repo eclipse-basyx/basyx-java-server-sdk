@@ -45,16 +45,99 @@
   "failureFactor" : 30,
   "roles" : {
     "realm" : [ {
-      "id" : "f9df352e-269d-4a5d-a263-105d8ab3ae52",
-      "name" : "basyx-reader",
+      "id" : "efe8c80d-bcd5-4a3c-91a0-a397a80d1d52",
+      "name" : "basyx-updater-two",
       "description" : "",
       "composite" : false,
       "clientRole" : false,
       "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
       "attributes" : { }
     }, {
-      "id" : "efe8c80d-bcd5-4a3c-91a0-a397a80d1d52",
-      "name" : "basyx-updater-two",
+      "id" : "20c8f106-d2fb-422d-9045-22b28151f792",
+      "name" : "basyx-sme-reader-two",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
+      "id" : "502bc902-9de6-4552-98b0-55187b847272",
+      "name" : "user",
+      "description" : "",
+      "composite" : true,
+      "composites" : {
+        "client" : {
+          "basyx-client-api" : [ "basyx-user" ]
+        }
+      },
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
+      "id" : "43a09e41-bcfb-429b-8675-eaf116ad4f1f",
+      "name" : "basyx-updater",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
+      "id" : "4028f02d-3ee1-4c18-9b6a-a22c8bda51de",
+      "name" : "basyx-sme-updater",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
+      "id" : "6ce3248b-7c14-42b4-9cbc-e1237851d778",
+      "name" : "basyx-creator",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
+      "id" : "5702a4dd-4ccb-44b1-805d-fd9b1c333492",
+      "name" : "basyx-sme-updater-two",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
+      "id" : "5ad9c765-2075-4cc4-b41e-c1b11cd544c4",
+      "name" : "uma_authorization",
+      "description" : "${role_uma_authorization}",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
+      "id" : "797d2956-a895-4171-ab44-2fc9dbcf7f4c",
+      "name" : "default-roles-basyx",
+      "description" : "${role_default-roles}",
+      "composite" : true,
+      "composites" : {
+        "realm" : [ "offline_access", "uma_authorization" ],
+        "client" : {
+          "account" : [ "view-profile", "manage-account" ]
+        }
+      },
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
+      "id" : "94394113-64a8-4cd1-9212-5a0cd955187b",
+      "name" : "basyx-asset-updater",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
+      "id" : "f9df352e-269d-4a5d-a263-105d8ab3ae52",
+      "name" : "basyx-reader",
       "description" : "",
       "composite" : false,
       "clientRole" : false,
@@ -90,15 +173,18 @@
       "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
       "attributes" : { }
     }, {
-      "id" : "502bc902-9de6-4552-98b0-55187b847272",
-      "name" : "user",
+      "id" : "32b591a9-55ed-4940-a7ad-efb3c40c3d38",
+      "name" : "basyx-executor-two",
       "description" : "",
-      "composite" : true,
-      "composites" : {
-        "client" : {
-          "basyx-client-api" : [ "basyx-user" ]
-        }
-      },
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
+      "id" : "09fa63ab-86ae-40bb-9497-56ee46070200",
+      "name" : "basyx-sme-reader",
+      "description" : "",
+      "composite" : false,
       "clientRole" : false,
       "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
       "attributes" : { }
@@ -119,6 +205,14 @@
       "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
       "attributes" : { }
     }, {
+      "id" : "2d2873a1-e636-46b2-bc89-5d8ca3fcde9e",
+      "name" : "basyx-executor",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
       "id" : "7a2111c1-7d1f-4b41-a0de-bfe314b73b72",
       "name" : "offline_access",
       "description" : "${role_offline-access}",
@@ -127,8 +221,8 @@
       "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
       "attributes" : { }
     }, {
-      "id" : "43a09e41-bcfb-429b-8675-eaf116ad4f1f",
-      "name" : "basyx-updater",
+      "id" : "05885c8f-e81f-47fa-bf47-c07153fc7b1b",
+      "name" : "basyx-file-sme-reader",
       "description" : "",
       "composite" : false,
       "clientRole" : false,
@@ -151,6 +245,14 @@
       "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
       "attributes" : { }
     }, {
+      "id" : "50fb06f4-fe2d-46d8-b02c-5f5c409e4ce5",
+      "name" : "basyx-file-sme-updater",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
       "id" : "905eadf9-8b63-4503-9022-2f33daaa3372",
       "name" : "basyx-reader-two",
       "description" : "",
@@ -159,38 +261,8 @@
       "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
       "attributes" : { }
     }, {
-      "id" : "6ce3248b-7c14-42b4-9cbc-e1237851d778",
-      "name" : "basyx-creator",
-      "description" : "",
-      "composite" : false,
-      "clientRole" : false,
-      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
-      "attributes" : { }
-    }, {
-      "id" : "5ad9c765-2075-4cc4-b41e-c1b11cd544c4",
-      "name" : "uma_authorization",
-      "description" : "${role_uma_authorization}",
-      "composite" : false,
-      "clientRole" : false,
-      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
-      "attributes" : { }
-    }, {
-      "id" : "797d2956-a895-4171-ab44-2fc9dbcf7f4c",
-      "name" : "default-roles-basyx",
-      "description" : "${role_default-roles}",
-      "composite" : true,
-      "composites" : {
-        "realm" : [ "offline_access", "uma_authorization" ],
-        "client" : {
-          "account" : [ "view-profile", "manage-account" ]
-        }
-      },
-      "clientRole" : false,
-      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
-      "attributes" : { }
-    }, {
-      "id" : "94394113-64a8-4cd1-9212-5a0cd955187b",
-      "name" : "basyx-asset-updater",
+      "id" : "a0dfe40a-8ec0-492c-a2c4-fa0ff9275918",
+      "name" : "basyx-sme-updater-three",
       "description" : "",
       "composite" : false,
       "clientRole" : false,
@@ -489,7 +561,7 @@
   "otpPolicyLookAheadWindow" : 1,
   "otpPolicyPeriod" : 30,
   "otpPolicyCodeReusable" : false,
-  "otpSupportedApplications" : [ "totpAppGoogleName", "totpAppMicrosoftAuthenticatorName", "totpAppFreeOTPName" ],
+  "otpSupportedApplications" : [ "totpAppMicrosoftAuthenticatorName", "totpAppGoogleName", "totpAppFreeOTPName" ],
   "webAuthnPolicyRpEntityName" : "keycloak",
   "webAuthnPolicySignatureAlgorithms" : [ "ES256" ],
   "webAuthnPolicyRpId" : "",
@@ -621,6 +693,94 @@
     "notBefore" : 0,
     "groups" : [ ]
   }, {
+    "id" : "8e820205-13fa-4d61-9513-99f717c15f73",
+    "createdTimestamp" : 1705326903328,
+    "username" : "basyx.executor",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "3e891de4-74e6-46cb-840f-6681af0ce397",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1705326918687,
+      "secretData" : "{\"value\":\"ytSpEUoTvStjF057boJpFgx59agjUC9pJiM/mdrtc7Y=\",\"salt\":\"U30NyBIzFGYhoqC+DCuMZQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "basyx-executor", "default-roles-basyx" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "3d645000-277e-46f5-b421-85f1fdb064b5",
+    "createdTimestamp" : 1705326932748,
+    "username" : "basyx.executor.2",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "d21c920f-5dd0-4ce7-ad2e-737a841bb1f8",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1705326945517,
+      "secretData" : "{\"value\":\"uAi1tN7YY/byDS0vay77q3nlJsb9gkC5lGiB8SROcIw=\",\"salt\":\"/zhdEnnDDFvuWMT9ZzLMSA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "basyx-executor-two", "default-roles-basyx" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "c86047c6-3ab8-4f47-86ba-b26ea80d1986",
+    "createdTimestamp" : 1705398014689,
+    "username" : "basyx.file.sme.reader",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "bd374dc3-4fec-4232-be91-a3f5608e373e",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1705398026388,
+      "secretData" : "{\"value\":\"3p7BdFuY8JBRDaoD0Lv2i3N2XCvuM7mt5tUhdyJ+sRA=\",\"salt\":\"3+GFcXL0EAlfjmP3CwtpLg==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "basyx-file-sme-reader", "default-roles-basyx" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "da7acf36-1574-4c0a-aa5b-65829a512b60",
+    "createdTimestamp" : 1705398962710,
+    "username" : "basyx.file.sme.updater",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "e5fda50d-9f52-4f60-a917-31a85fc275a7",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1705398974508,
+      "secretData" : "{\"value\":\"sQsBVFdIJj7whmjzlFHkrh+ZCtrj8oXaOuK4V1q+95I=\",\"salt\":\"G1xU/pxUi5Moj3V7dRhfOg==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "basyx-file-sme-updater", "default-roles-basyx" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
     "id" : "abfaa545-3c2f-4ac6-9f41-7c166613ea35",
     "createdTimestamp" : 1702032528855,
     "username" : "basyx.reader",
@@ -665,6 +825,116 @@
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
     "realmRoles" : [ "basyx-reader-two", "default-roles-basyx" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "3988486a-51eb-447b-bc87-354e5b724c76",
+    "createdTimestamp" : 1705306854299,
+    "username" : "basyx.sme.reader",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "d70787d1-9834-43d6-a10d-bca854847fec",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1705306868293,
+      "secretData" : "{\"value\":\"DaO6udzDHUKnoqpl/7bdprLMKfwqV7MjKme1/NnEQtA=\",\"salt\":\"SzPSSVEQd1ZZoOGLuWGInA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-basyx", "basyx-sme-reader" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "ed921577-8b07-439e-af66-cc3579a276ec",
+    "createdTimestamp" : 1705310445991,
+    "username" : "basyx.sme.reader.2",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "62446675-7b7e-40e7-bf6c-b375d8542a12",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1705310456309,
+      "secretData" : "{\"value\":\"QQkWFYjV952eOqGdkcDqqF4OdgtMCmUSKxzPF5I1LrU=\",\"salt\":\"ZUxajrFJ/cFxxH28cz8ibQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "basyx-sme-reader-two", "default-roles-basyx" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "60f02977-d033-43ed-8171-8ac44d14c62f",
+    "createdTimestamp" : 1705312271325,
+    "username" : "basyx.sme.updater",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "d224c0bc-7c5d-426d-8e96-9f4dfb141eab",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1705312282450,
+      "secretData" : "{\"value\":\"q+x0JQZAGRyDLlVAWPzLmVCJ/PPpb07xW+bAv1QFw9s=\",\"salt\":\"QC5VcH0pvVpnVPC/EnTAuA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "basyx-sme-updater", "default-roles-basyx" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "9fd79b98-a230-43c8-a7ff-f88ee381c58c",
+    "createdTimestamp" : 1705315980352,
+    "username" : "basyx.sme.updater.2",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "eca8536c-fbf7-49dd-a370-405b00336965",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1705315990230,
+      "secretData" : "{\"value\":\"KpVPW6pBjilR3xUTV5X/Y8g2javOsmkY7/9TLwix8Lk=\",\"salt\":\"xmj+BOrdA7DQks9wwxV42w==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "basyx-sme-updater-two", "default-roles-basyx" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "20336dcf-0c1f-4344-b31b-f26048fc7faa",
+    "createdTimestamp" : 1705324670982,
+    "username" : "basyx.sme.updater.3",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "d1652462-350a-42e0-9a3e-e04cfa258237",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1705324695639,
+      "secretData" : "{\"value\":\"/qEHkHQIlm0poWXk13LWf3TpXq/ffOzflkIbretgeBw=\",\"salt\":\"arEuG45sRa+2aOZiY9PqVg==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "basyx-sme-updater-three", "default-roles-basyx" ],
     "notBefore" : 0,
     "groups" : [ ]
   }, {
