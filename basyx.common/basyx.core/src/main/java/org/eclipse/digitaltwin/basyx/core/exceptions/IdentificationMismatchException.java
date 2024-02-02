@@ -44,7 +44,7 @@ public class IdentificationMismatchException extends RuntimeException {
 	}
 
 	private static String getMessage(String elementId) {
-		return "The provided element " + elementId
-				+ " has mismatched identifiers than the existing element that needs to be updated";
+		return "The provided element '" + elementId
+				+ "' has mismatched identifiers than the existing element that needs to be updated";
 	}
 }

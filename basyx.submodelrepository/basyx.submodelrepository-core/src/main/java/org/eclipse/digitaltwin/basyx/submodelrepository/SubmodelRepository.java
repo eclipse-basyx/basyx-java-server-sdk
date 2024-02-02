@@ -81,6 +81,16 @@ public interface SubmodelRepository {
 	 * @throws CollidingIdentifierException
 	 */
 	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException, MissingIdentifierException;
+	
+	/**
+	 * Updates a SubmodelElement
+	 * 
+	 * @param submodelIdentifier
+	 * @param idShortPath
+	 * @param submodelElement
+	 * @throws ElementDoesNotExistException
+	 */
+	public void updateSubmodelElement(String submodelIdentifier, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException;
 
 	/**
 	 * Deletes a Submodel

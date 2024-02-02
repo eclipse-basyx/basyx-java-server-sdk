@@ -175,7 +175,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	public void updateSubmodel(String id, Submodel submodel) throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(id);
 
-		throwIfMismatchingIds(id, submodel);
+		throwIfMismatchingIds(id, submodel.getId());
 
 		submodelServices.put(id, submodelServiceFactory.create(submodel));
 	}
@@ -221,6 +221,28 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		throwIfSubmodelDoesNotExist(submodelId);
 
 		submodelServices.get(submodelId).createSubmodelElement(smElement);
+	}
+	
+	@Override
+	public void updateSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
+		
+		SubmodelService submodelService = getSubmodelService(submodelId);
+			
+		SubmodelElement element = submodelService.getSubmodelElement(idShortPath);
+		
+		throwIfMismatchingIds(element.getIdShort(), submodelElement.getIdShort());
+		
+		if (isFileSubmodelElement(element) && !isFileSubmodelElement(submodelElement)) {
+			
+			try {
+				deleteFileValue(submodelId, idShortPath);
+			} catch (FileDoesNotExistException e) {
+				logger.info("The Submodel Element with idShortPath '{}' is a File Submodel Element but there is no file attachment associated with this.", idShortPath);
+			}
+			
+		}
+		
+		submodelService.updateSubmodelElement(idShortPath, submodelElement);
 	}
 
 	@Override
@@ -322,14 +344,17 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement) {
-		if (!(submodelElement instanceof File))
+		if (!(isFileSubmodelElement(submodelElement)))
 			throw new ElementNotAFileException(submodelElement.getIdShort());
 	}
+	
+	private boolean isFileSubmodelElement(SubmodelElement submodelElement) {
+			return submodelElement instanceof File;
+	}
 
-	private void throwIfMismatchingIds(String smId, Submodel newSubmodel) {
-		String newSubmodelId = newSubmodel.getId();
+	private void throwIfMismatchingIds(String existingElementId, String newElementId) {
 
-		if (!smId.equals(newSubmodelId))
+		if (!existingElementId.equals(newElementId))
 			throw new IdentificationMismatchException();
 	}
 
