@@ -25,7 +25,6 @@
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,6 +45,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
+
+import com.google.common.collect.Lists;
 
 /**
  * 
@@ -107,7 +108,7 @@ public class DummySubmodelFactory {
 	public static final String FILE_NAME = "BaSyx-Logo.png";
 
 	public static Collection<Submodel> getSubmodels() {
-		return Arrays.asList(createTechnicalDataSubmodel(), createOperationalDataSubmodel(), createSimpleDataSubmodel());
+		return Lists.newArrayList(createTechnicalDataSubmodel(), createOperationalDataSubmodel(), createSimpleDataSubmodel());
 	}
 
 	public static Submodel createSubmodelWithAllSubmodelElements() {
@@ -141,7 +142,7 @@ public class DummySubmodelFactory {
 				.build())
 				.idShort(SUBMODEL_FOR_FILE_TEST_ID_SHORT)
 				.id(SUBMODEL_FOR_FILE_TEST)
-				.submodelElements(Arrays.asList(createFileElement(), createNonFileElement()))
+				.submodelElements(Lists.newArrayList(createFileElement(), createNonFileElement()))
 				.build();
 	}
 

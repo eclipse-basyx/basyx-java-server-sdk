@@ -65,7 +65,7 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 	public void getSubmodelElements() throws FileNotFoundException, IOException, ParseException {
 		String requestedSubmodelElements = requestSubmodelElementsJSON();
 
-		String submodelElementJSON = getSubmodelElementsJSON();
+		String submodelElementJSON = getJSONValueAsString("SubmodelElements.json");
 		BaSyxHttpTestUtils.assertSameJSONContent(submodelElementJSON, getJSONWithoutCursorInfo(requestedSubmodelElements));
 	}
 
@@ -73,13 +73,13 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 	public void getPaginatedSubmodelElements() throws FileNotFoundException, IOException, ParseException {
 		String actualPaginatedSubmodelElements = requestPaginatedSubmodelElementsJSON();
 
-		String expectedPaginatedSubmodelElementJSON = getPaginatedSubmodelElementsJSON();
+		String expectedPaginatedSubmodelElementJSON = getJSONValueAsString("SubmodelElementsPaginated.json");
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedPaginatedSubmodelElementJSON, getJSONWithoutCursorInfo(actualPaginatedSubmodelElements));
 	}
 
 	@Test
 	public void getSubmodelElement() throws FileNotFoundException, IOException, ParseException {
-		String expectedElement = getSubmodelElementJSON();
+		String expectedElement = getJSONValueAsString("SubmodelElement.json");
 		CloseableHttpResponse response = requestSubmodelElement(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT);
 
 		assertEquals(HttpStatus.OK.value(), response.getCode());
@@ -375,6 +375,42 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 		assertEquals(HttpStatus.CREATED.value(), createdResponse.getCode());
 		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedResponse));
 	}
+	
+	@Test
+	public void updateNonFileSME() throws FileNotFoundException, IOException, ParseException {
+		String element = getJSONValueAsString("PropertySubmodelElementUpdate.json");
+		
+		String idShortPathPropertyInSmeCol = SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT + "." + SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT;
+		
+		CloseableHttpResponse updatedResponse = updateElement(createSpecificSubmodelElementURL(idShortPathPropertyInSmeCol), element);
+		assertEquals(HttpStatus.NO_CONTENT.value(), updatedResponse.getCode());
+
+		CloseableHttpResponse fetchedResponse = requestSubmodelElement(idShortPathPropertyInSmeCol);
+		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedResponse));
+	}
+
+	@Test
+	public void updateNonFileSMEWithFileSME() throws FileNotFoundException, IOException, ParseException {
+		String element = getJSONValueAsString("FileSubmodelElementUpdate.json");
+		
+		String idShortPathPropertyInSmeCol = SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT + "." + SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT;
+		
+		CloseableHttpResponse updatedResponse = updateElement(createSpecificSubmodelElementURL(idShortPathPropertyInSmeCol), element);
+		assertEquals(HttpStatus.NO_CONTENT.value(), updatedResponse.getCode());
+		
+		CloseableHttpResponse fetchedResponse = requestSubmodelElement(idShortPathPropertyInSmeCol);
+		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedResponse));
+	}
+	
+	@Test
+	public void updateNonExistingSME() throws FileNotFoundException, IOException, ParseException {
+		String element = getJSONValueAsString("PropertySubmodelElementUpdate.json");
+		
+		String idShortPathPropertyInSmeCol = SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT + ".NonExistingSMEIdShort";
+		
+		CloseableHttpResponse updatedResponse = updateElement(createSpecificSubmodelElementURL(idShortPathPropertyInSmeCol), element);
+		assertEquals(HttpStatus.NOT_FOUND.value(), updatedResponse.getCode());
+	}
 
 	@Test
 	public void deleteSubmodelElement() throws FileNotFoundException, IOException, ParseException {
@@ -454,6 +490,10 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 
 	}
 	
+	private CloseableHttpResponse updateElement(String url, String element) throws IOException {
+		return BaSyxHttpTestUtils.executePutOnURL(url, element);
+	}
+	
 	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException  {
 		return BaSyxHttpTestUtils.removeCursorFromJSON(response);
 	}
@@ -513,8 +553,8 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 		return getURL() + "/$value";
 	}
 
-	private String createSpecificSubmodelElementURL(String smeIdShort) {
-		return getURL() + "/submodel-elements/" + smeIdShort;
+	private String createSpecificSubmodelElementURL(String smeIdShortPath) {
+		return getURL() + "/submodel-elements/" + smeIdShortPath;
 	}
 
 	private String createSubmodelElementsURL() {
@@ -531,18 +571,6 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 
 	private CloseableHttpResponse requestPaginatedSubmodelElements() throws IOException {
 		return BaSyxHttpTestUtils.executeGetOnURL(createPaginatedSubmodelElementsURL());
-	}
-
-	private String getSubmodelElementsJSON() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SubmodelElements.json");
-	}
-
-	private String getPaginatedSubmodelElementsJSON() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SubmodelElementsPaginated.json");
-	}
-
-	private String getSubmodelElementJSON() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SubmodelElement.json");
 	}
 
 	private String getJSONValueAsString(String fileName) throws FileNotFoundException, IOException {
