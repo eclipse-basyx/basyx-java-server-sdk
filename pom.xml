@@ -67,12 +67,12 @@
 		<java.version>11</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<revision>2.0.0-milestone-01</revision>
+		<revision>2.0.0-SNAPSHOT</revision>
 		<docker.username>eclipsebasyx</docker.username>
 		<docker.image.tag>${revision}</docker.image.tag>
 		<docker.host.port>8081</docker.host.port>
 		<docker.container.port>8081</docker.container.port>
-		<aas4j-version>1.0.0-milestone-03.1</aas4j-version>
+		<aas4j-version>1.0.0-milestone-04</aas4j-version>
 	</properties>
 
 	<build>
