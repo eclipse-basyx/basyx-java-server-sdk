@@ -6,9 +6,8 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>basyx.mqttcore</artifactId>
-	<name>BaSyx mqtt core</name>
+	 <name>BaSyx mqtt core</name>
 	<description>BaSyx mqtt core</description>
-	<packaging>jar</packaging>
 	
 	<dependencies>
 		<dependency>
