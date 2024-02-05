@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.http</artifactId>
+	<name>BaSyx HTTP</name>
+	<description>BaSyx HTTP</description>
 
 	<dependencies>
 		<dependency>

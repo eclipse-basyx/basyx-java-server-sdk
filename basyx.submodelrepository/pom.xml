@@ -9,6 +9,8 @@
 	</parent>
 
 	<artifactId>basyx.submodelrepository</artifactId>
+	<name>BaSyx submodelrepository</name>
+	<description>BaSyx submodelrepository</description>
 	<packaging>pom</packaging>
 
 	<modules>

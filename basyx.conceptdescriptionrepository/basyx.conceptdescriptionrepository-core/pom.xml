@@ -10,6 +10,7 @@
 
 	<artifactId>basyx.conceptdescriptionrepository-core</artifactId>
 	<name>Concept Description Repository Core</name>
+	<description>Concept Description Repository Core</description>
 
 	<dependencies>
 		<dependency>

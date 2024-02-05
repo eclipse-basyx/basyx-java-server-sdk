@@ -8,6 +8,9 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>basyx.submodelservice-http</artifactId>
+	<name>BaSyx Submodel Service HTTP</name>
+	<description>BaSyx Submodel Service HTTP</description>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>

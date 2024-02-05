@@ -11,6 +11,8 @@
 	</parent>
 	
 	<artifactId>basyx.aasregistry-service-release-log-mem</artifactId>
+	<name>BaSyx AAS Registry Service Release Log Mem</name>
+	<description>BaSyx AAS Registry Service Release Log Mem</description>
 	
 	<properties>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>

@@ -9,6 +9,8 @@
 	</parent>
 
 	<artifactId>basyx.aasservice</artifactId>
+	<name>BaSyx aasservice</name>
+	<description>BaSyx aasservice</description>
 	<packaging>pom</packaging>
 
 	<modules>

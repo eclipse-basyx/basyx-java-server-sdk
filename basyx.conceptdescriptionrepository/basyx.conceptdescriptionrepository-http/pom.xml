@@ -11,6 +11,7 @@
 
 	<artifactId>basyx.conceptdescriptionrepository-http</artifactId>
 	<name>Concept Description Repository HTTP</name>
+	<description>Concept Description Repository HTTP</description>
 
 	<dependencies>
 		<dependency>

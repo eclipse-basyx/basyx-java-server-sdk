@@ -88,7 +88,6 @@ public interface SubmodelService {
 	/**
 	 * Creates a Submodel Element
 	 * 
-	 * @return
 	 */
 	public void createSubmodelElement(SubmodelElement submodelElement);
 
@@ -117,7 +116,7 @@ public interface SubmodelService {
 	/**
 	 * Delete a submodel element in a submodel
 	 * 
-	 * @param idshortPath
+	 * @param idShortPath
 	 *            the SubmodelElement IdShortPath
 	 * @throws ElementDoesNotExistException
 	 *             If the submodel element defined in the path does not exist

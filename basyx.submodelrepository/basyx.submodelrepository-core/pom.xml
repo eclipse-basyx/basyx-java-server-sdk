@@ -9,6 +9,8 @@
 	</parent>
 
 	<artifactId>basyx.submodelrepository-core</artifactId>
+	<name>BaSyx Submodel Repository Core</name>
+	<description>BaSyx Submodel Repository Core</description>
 
 	<dependencies>
 		<dependency>

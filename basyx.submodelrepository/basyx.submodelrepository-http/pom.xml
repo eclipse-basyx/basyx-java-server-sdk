@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.submodelrepository-http</artifactId>
+	<name>BaSyx submodelrepository-http</name>
+	<description>BaSyx submodelrepository-http</description>
 
 	<dependencies>
 		<dependency>

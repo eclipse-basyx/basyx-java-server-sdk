@@ -10,7 +10,9 @@
 	</parent>
 
 	<artifactId>basyx.core</artifactId>
-
+	<name>BaSyx Core</name>
+	<description>BaSyx Core</description>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>

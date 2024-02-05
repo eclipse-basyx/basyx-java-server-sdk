@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.aasrepository.component</artifactId>
+	<name>BaSyx AAS Repository Component</name>
+	<description>BaSyx AAS Repository Component</description>
 
 	<properties>
 		<docker.image.name>aas-repository</docker.image.name>

@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.aasrepository-http</artifactId>
+	<name>BaSyx AAS Repository HTTP</name>
+	<description>BaSyx AAS Repository HTTP</description>
 
 	<dependencies>
 		<dependency>

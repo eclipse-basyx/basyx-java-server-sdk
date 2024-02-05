@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.aasenvironment-http</artifactId>
+	<name>BaSyx AAS Environment HTTP</name>
+	<description>BaSyx AAS Environment HTTP</description>
 
 	<dependencies>
 		<dependency>

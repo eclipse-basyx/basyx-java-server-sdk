@@ -9,6 +9,8 @@
 	</parent>
 
 	<artifactId>basyx.aasservice-core</artifactId>
+	<name>BaSyx AAS Service Core</name>
+	<description>BaSyx AAS Service Core</description>
 
 	<dependencies>
 		<dependency>

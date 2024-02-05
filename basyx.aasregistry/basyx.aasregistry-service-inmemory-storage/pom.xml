@@ -11,6 +11,9 @@
 	</parent>
 
 	<artifactId>basyx.aasregistry-service-inmemory-storage</artifactId>
+	<name>BaSyx AAS Registry Service Inmemory Storage</name>
+	<description>BaSyx AAS Registry Service Inmemory Storage</description>
+	
 	<packaging>jar</packaging>
 
 	<dependencies>

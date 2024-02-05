@@ -6,6 +6,9 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>basyx.submodelrepository-feature-mqtt</artifactId>
+	<name>BaSyx submodelrepository-feature-mqtt</name>
+	<description>BaSyx submodelrepository-feature-mqtt</description>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>

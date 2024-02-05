@@ -11,6 +11,8 @@
 	</parent>
 
 	<artifactId>basyx.submodelregistry-service-kafka-events</artifactId>
+	<name>BaSyx Submodel Registry Service Kafka Events</name>
+	<description>BaSyx Submodel Registry Service Kafka Events</description>
 
 	<packaging>jar</packaging>
 

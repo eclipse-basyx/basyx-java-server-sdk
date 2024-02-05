@@ -9,6 +9,8 @@
 	</parent>
 	
 	<artifactId>basyx.submodelservice-core</artifactId>
+	<name>BaSyx submodelservice-core</name>
+	<description>BaSyx submodelservice-core</description>
 
 	<dependencies>	
 	    <dependency>

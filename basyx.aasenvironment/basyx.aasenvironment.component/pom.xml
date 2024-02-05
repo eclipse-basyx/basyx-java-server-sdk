@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.aasenvironment.component</artifactId>
+	<name>BaSyx AAS Environment Component</name>
+	<description>BaSyx AAS Environment Component</description>
 
 	<properties>
 		<docker.image.name>aas-environment</docker.image.name>

@@ -9,6 +9,8 @@
 	</parent>
 
 	<artifactId>basyx.aasenvironment-core</artifactId>
+	<name>BaSyx AAS Environment Core</name>
+	<description>BaSyx AAS Environment Core</description>
 
 	<dependencies>
 		<dependency>

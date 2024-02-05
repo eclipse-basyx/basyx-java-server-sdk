@@ -11,6 +11,8 @@
 	</parent>
 	
 	<artifactId>basyx.aasregistry-service-release-log-mongodb</artifactId>
+	<name>BaSyx AAS Registry Service Release Log MongoDB</name>
+	<description>BaSyx AAS Registry Service Release Log MongoDB</description>
 	
 	<properties>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>

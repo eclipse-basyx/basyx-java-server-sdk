@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import java.util.List;
 import java.io.InputStream;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -244,8 +244,6 @@ public interface SubmodelRepository {
 	 *            the Submodel id
 	 * @param idShortPath
 	 *            the IdShort path of the file element
-	 * @param file
-	 *            the file object to upload
 	 * 
 	 * @throws ElementDoesNotExistException
 	 * @throws ElementNotAFileException

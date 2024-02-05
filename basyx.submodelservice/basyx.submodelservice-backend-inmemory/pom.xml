@@ -9,6 +9,8 @@
 	</parent>
 
 	<artifactId>basyx.submodelservice-backend-inmemory</artifactId>
+	<name>BaSyx submodelservice-backend-inmemory</name>
+	<description>BaSyx submodelservice-backend-inmemory</description>
 
 	<dependencies>
 		<dependency>

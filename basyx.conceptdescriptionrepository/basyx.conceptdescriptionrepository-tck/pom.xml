@@ -6,6 +6,8 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>basyx.conceptdescriptionrepository-tck</artifactId>
+	<name>Concept Description Repository TCK</name>
+	<description>Concept Description Repository TCK</description>
 
 	<dependencies>
 		<dependency>
