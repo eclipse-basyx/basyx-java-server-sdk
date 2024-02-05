@@ -130,7 +130,7 @@ public interface AasRepository {
 	/**
 	 * Get Thumbnail of the specific aas
 	 * 
-	 * @param aasID
+	 * @param aasId
 	 *            the id of the AAS
 	 * @return the file of the thumbnail
 	 */
@@ -139,7 +139,7 @@ public interface AasRepository {
 	/**
 	 * Set Thumbnail of the AAS
 	 * 
-	 * @param aasID
+	 * @param aasId
 	 *            the id of the AAS
 	 * @param fileName
 	 *            name of the thumbnail file with extension

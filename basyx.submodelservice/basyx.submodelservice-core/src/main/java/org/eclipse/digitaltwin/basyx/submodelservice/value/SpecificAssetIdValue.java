@@ -31,7 +31,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 
 /**
- * Represents the {@link SpecificAssetID} value
+ * Represents the {@link SpecificAssetId} value
  * 
  * @author danish
  *
