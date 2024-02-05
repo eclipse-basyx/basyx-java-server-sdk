@@ -36,8 +36,7 @@ public class Base64UrlEncodedIdentifier {
 	private final String identifier;
 
 	/**
-	 * @param unencoded
-	 *            identifier
+	 * @param identifier unencoded identifier
 	 */
 	public Base64UrlEncodedIdentifier(String identifier) {
 		this.identifier = identifier;
