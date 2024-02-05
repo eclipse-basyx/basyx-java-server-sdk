@@ -30,17 +30,20 @@ It supports DotAAS Part 1 V3 and the following HTTP/REST endpoints defined in [D
   * DeleteSubmodelElementByPath
   * PatchSubmodelElementByPath (including ValueOnly)
   * GetSubmodelElementValueByPath
+  * GetFileByPath
+  * PutFileByPath
+  * DeleteFileByPath
 
-Right now, no additional input parameters modifying the output (e.g., cursor, serializationModifier) are supported, if not specified otherwise.
+Right now, no additional input parameters modifying the output (e.g., serializationModifier) are supported, if not specified otherwise.
 
 In addition, it supports the following backends:
 * InMemory, MongoDB
 
 Furthermore, the following features are provided:
 * [MQTT eventing](basyx.submodelrepository-feature-mqtt)
+* [Submodel Repository Authorization](basyx.submodelrepository-feature-authorization)
+* [Submodel Registry Integration](basyx.submodelrepository-feature-registry-integration)
 
 For a configuration example, see [application.properties](basyx.submodelrepository.component/src/main/resources/application.properties)
 
 The Health Endpoint and CORS Documentation can be found [here](../docs/Readme.md). 
-
-Right now, no additional input parameters modifying the output (e.g., cursor, serializationModifier) are supported.

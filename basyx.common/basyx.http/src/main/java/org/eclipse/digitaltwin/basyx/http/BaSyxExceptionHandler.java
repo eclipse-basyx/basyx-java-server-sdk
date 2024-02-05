@@ -26,11 +26,18 @@
 
 package org.eclipse.digitaltwin.basyx.http;
 
+import org.eclipse.digitaltwin.basyx.core.exceptions.AssetLinkDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NullSubjectException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -51,9 +58,29 @@ public class BaSyxExceptionHandler extends ResponseEntityExceptionHandler {
 	public <T> ResponseEntity<T> handleElementNotFoundException(ElementDoesNotExistException exception, WebRequest request) {
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
+	
+	@ExceptionHandler(AssetLinkDoesNotExistException.class)
+	public <T> ResponseEntity<T> handleElementNotFoundException(AssetLinkDoesNotExistException exception, WebRequest request) {
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(FileDoesNotExistException.class)
+	public <T> ResponseEntity<T> handleElementNotFoundException(FileDoesNotExistException exception, WebRequest request) {
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
 
 	@ExceptionHandler(CollidingIdentifierException.class)
 	public <T> ResponseEntity<T> handleCollidingIdentifierException(CollidingIdentifierException exception, WebRequest request) {
+		return new ResponseEntity<>(HttpStatus.CONFLICT);
+	}
+	
+	@ExceptionHandler(MissingIdentifierException.class)
+	public <T> ResponseEntity<T> handleMissingIdentifierException(MissingIdentifierException exception, WebRequest request) {
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(CollidingAssetLinkException.class)
+	public <T> ResponseEntity<T> handleCollidingIdentifierException(CollidingAssetLinkException exception, WebRequest request) {
 		return new ResponseEntity<>(HttpStatus.CONFLICT);
 	}
 
@@ -75,5 +102,20 @@ public class BaSyxExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(NotInvokableException.class)
 	public <T> ResponseEntity<T> handleNotInvokableException(NotInvokableException exception) {
 		return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+	}
+	
+	@ExceptionHandler(ElementNotAFileException.class)
+	public <T> ResponseEntity<T> handleElementNotAFileException(ElementNotAFileException exception) {
+		return new ResponseEntity<>(HttpStatus.PRECONDITION_FAILED);
+	}
+	
+	@ExceptionHandler(InsufficientPermissionException.class)
+	public <T> ResponseEntity<T> handleInsufficientPermissionException(InsufficientPermissionException exception) {
+		return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+	}
+	
+	@ExceptionHandler(NullSubjectException.class)
+	public <T> ResponseEntity<T> handleNullSubjectException(NullSubjectException exception) {
+		return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 	}
 }

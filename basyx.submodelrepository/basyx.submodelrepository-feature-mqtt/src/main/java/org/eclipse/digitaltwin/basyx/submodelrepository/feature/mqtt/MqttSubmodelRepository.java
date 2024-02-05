@@ -1,5 +1,6 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
@@ -105,6 +106,11 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 		SubmodelElement submodelElement = decorated.getSubmodelElement(submodelId, idShortPath);
 		submodelElementCreated(submodelElement, getName(), submodelId, idShortPath);
 	}
+	
+	@Override
+	public void updateSubmodelElement(String submodelIdentifier, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
+		decorated.updateSubmodelElement(submodelIdentifier, idShortPath, submodelElement);
+	}
 
 	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
@@ -184,6 +190,23 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	@Override
 	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
 		return decorated.invokeOperation(submodelId, idShortPath, input);
+	}
+
+	@Override
+	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) {
+		return decorated.getFileByPathSubmodel(submodelId, idShortPath);
+	}
+
+	@Override
+	public void deleteFileValue(String identifier, String idShortPath) {
+		// TODO: Eventing
+		decorated.deleteFileValue(identifier, idShortPath);
+	}
+
+	@Override
+	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream){
+		// TODO: Eventing
+		decorated.setFileValue(submodelId, idShortPath, fileName, inputStream);
 	}
 
 }

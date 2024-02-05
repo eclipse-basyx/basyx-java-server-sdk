@@ -10,11 +10,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.Deserializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.aasx.AASXDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
@@ -30,7 +28,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironmentSerialization;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.InMemoryAasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.InMemoryConceptDescriptionRepository;
@@ -45,6 +44,7 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 public class TestAASEnvironmentSerialization {
+
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, "");
 	public static final String AAS_TECHNICAL_DATA_ID = "shell001";
 	public static final String AAS_OPERATIONAL_DATA_ID = "shell002";
@@ -60,7 +60,7 @@ public class TestAASEnvironmentSerialization {
 	@Before
 	public void setup() {
 		submodelRepository = new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
-		aasRepository = new InMemoryAasRepository(new InMemoryAasServiceFactory());
+		aasRepository = new SimpleAasRepositoryFactory(new AasInMemoryBackendProvider(), new InMemoryAasServiceFactory()).create();
 		conceptDescriptionRepository = new InMemoryConceptDescriptionRepository(createDummyConceptDescriptions());
 
 		for (Submodel submodel : createDummySubmodels()) {
@@ -70,7 +70,7 @@ public class TestAASEnvironmentSerialization {
 		for (AssetAdministrationShell shell : createDummyShells()) {
 			aasRepository.createAas(shell);
 		}
-		
+
 		aasEnvironment = new DefaultAASEnvironmentSerialization(aasRepository, submodelRepository, conceptDescriptionRepository);
 	}
 
@@ -83,10 +83,10 @@ public class TestAASEnvironmentSerialization {
 
 	private static Collection<AssetAdministrationShell> createDummyShells() {
 		AssetAdministrationShell shell1 = new DefaultAssetAdministrationShell.Builder().id(AAS_TECHNICAL_DATA_ID).idShort(AAS_TECHNICAL_DATA_ID)
-				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetID(SUBMODEL_TECHNICAL_DATA_ID).build()).build();
+				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetId(SUBMODEL_TECHNICAL_DATA_ID).build()).build();
 
 		AssetAdministrationShell shell2 = new DefaultAssetAdministrationShell.Builder().id(AAS_OPERATIONAL_DATA_ID).idShort(AAS_OPERATIONAL_DATA_ID)
-				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetID(SUBMODEL_TECHNICAL_DATA_ID).build()).build();
+				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetId(SUBMODEL_TECHNICAL_DATA_ID).build()).build();
 		Collection<AssetAdministrationShell> shells = new ArrayList<>();
 		shells.add(shell1);
 		shells.add(shell2);
@@ -96,51 +96,51 @@ public class TestAASEnvironmentSerialization {
 	@Test
 	public void testAASEnviromentSerializationWithJSON() throws SerializationException, IOException, DeserializationException {
 		boolean includeConceptDescription = true;
-		
+
 		String jsonSerialization = aasEnvironment.createJSONAASEnvironmentSerialization(getShellIds(createDummyShells()), getSubmodelIds(createDummySubmodels()), includeConceptDescription);
 		validateJSON(jsonSerialization, includeConceptDescription);
-		
+
 		validateRepositoriesState();
 	}
 
 	@Test
 	public void testAASEnviromentSerializationWithXML() throws SerializationException, IOException, SAXException, DeserializationException {
 		boolean includeConceptDescription = true;
-		
+
 		String xmlSerialization = aasEnvironment.createXMLAASEnvironmentSerialization(getShellIds(createDummyShells()), getSubmodelIds(createDummySubmodels()), includeConceptDescription);
 		validateXml(xmlSerialization, includeConceptDescription);
-		
+
 		validateRepositoriesState();
 	}
 
 	@Test
 	public void testAASEnviromentSerializationWithAASX() throws SerializationException, IOException, InvalidOperationException, InvalidFormatException, DeserializationException {
 		boolean includeConceptDescription = true;
-		
+
 		byte[] serialization = aasEnvironment.createAASXAASEnvironmentSerialization(getShellIds(createDummyShells()), getSubmodelIds(createDummySubmodels()), includeConceptDescription);
 		checkAASX(new ByteArrayInputStream(serialization), includeConceptDescription);
-		
+
 		validateRepositoriesState();
 	}
-	
+
 	@Test
 	public void testAASEnviromentSerializationWithJSONExcludeCD() throws SerializationException, IOException, DeserializationException {
 		boolean includeConceptDescription = false;
-		
+
 		String jsonSerialization = aasEnvironment.createJSONAASEnvironmentSerialization(getShellIds(createDummyShells()), getSubmodelIds(createDummySubmodels()), includeConceptDescription);
 		validateJSON(jsonSerialization, includeConceptDescription);
-		
+
 		validateRepositoriesState();
 	}
 
 	public static void validateJSON(String actual, boolean includeConceptDescription) throws DeserializationException {
-		Deserializer jsonDeserializer = new JsonDeserializer();
+		JsonDeserializer jsonDeserializer = new JsonDeserializer();
 		Environment aasEnvironment = jsonDeserializer.read(actual);
 		checkAASEnvironment(aasEnvironment, includeConceptDescription);
 	}
 
 	public static void validateXml(String actual, boolean includeConceptDescription) throws DeserializationException {
-		Deserializer xmlDeserializer = new XmlDeserializer();
+		XmlDeserializer xmlDeserializer = new XmlDeserializer();
 		Environment aasEnvironment = xmlDeserializer.read(actual);
 
 		checkAASEnvironment(aasEnvironment, includeConceptDescription);
@@ -153,24 +153,25 @@ public class TestAASEnvironmentSerialization {
 		checkAASEnvironment(environment, includeConceptDescription);
 		inputStream.close();
 	}
-	
+
 	public static Collection<ConceptDescription> createDummyConceptDescriptions() {
 		Collection<ConceptDescription> conceptDescriptions = new ArrayList<>();
-		
+
 		conceptDescriptions.add(new DefaultConceptDescription.Builder().id(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID_PROPERTY).build());
 		conceptDescriptions.add(new DefaultConceptDescription.Builder().id(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_SEMANTIC_ID_PROPERTY).build());
 		conceptDescriptions.add(new DefaultConceptDescription.Builder().id(CONCEPT_DESCRIPTION_ID_NOT_INCLUDED_IN_ENV).build());
-		
+
 		return conceptDescriptions;
 	}
-	
+
 	private static void checkAASEnvironment(Environment aasEnvironment, boolean areConceptDescriptionsIncluded) {
 		assertAasIds(aasEnvironment);
 
 		assertSubmodelIds(aasEnvironment);
-		
-		if (areConceptDescriptionsIncluded)
+
+		if (areConceptDescriptionsIncluded) {
 			assertConceptDescriptionIds(aasEnvironment);
+		}
 	}
 
 	private static void assertConceptDescriptionIds(Environment aasEnvironment) {
@@ -199,7 +200,7 @@ public class TestAASEnvironmentSerialization {
 	private List<String> getShellIds(Collection<AssetAdministrationShell> shells) {
 		return shells.stream().map(shell -> ((DefaultAssetAdministrationShell) shell).getId()).collect(Collectors.toList());
 	}
-	
+
 	private static List<String> retrieveSubmodelIds(Environment aasEnvironment) {
 		List<String> submodelIds = new ArrayList<>();
 		aasEnvironment.getSubmodels().forEach(s -> {
@@ -216,17 +217,15 @@ public class TestAASEnvironmentSerialization {
 		});
 		return aasIds;
 	}
-	
+
 	private static List<String> retrieveConceptDescriptionIds(Environment aasEnvironment) {
 		return aasEnvironment.getConceptDescriptions().stream().map(cd -> cd.getId()).collect(Collectors.toList());
 	}
-	
+
 	private void validateRepositoriesState() {
 		assertTrue(aasRepository.getAllAas(NO_LIMIT_PAGINATION_INFO).getResult().containsAll(createDummyShells()));
-		assertTrue(submodelRepository.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult()
-				.containsAll(createDummySubmodels()));
-		assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO).getResult()
-				.containsAll(createDummyConceptDescriptions()));
+		assertTrue(submodelRepository.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult().containsAll(createDummySubmodels()));
+		assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO).getResult().containsAll(createDummyConceptDescriptions()));
 	}
 
 }

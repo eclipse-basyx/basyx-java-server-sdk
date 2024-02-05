@@ -7,7 +7,7 @@
 		<groupId>org.eclipse.digitaltwin.basyx</groupId>
 		<artifactId>basyx.aasregistry</artifactId>
 		<version>${revision}</version>
-		<relativePath>..</relativePath>
+
 	</parent>
 	<artifactId>basyx.aasregistry-service-release-kafka-mongodb</artifactId>
 	<name>BaSyx AAS Registry Service Release Kafka MongoDB</name>
@@ -20,11 +20,6 @@
 	</properties>
 
 	<dependencies>
-		<dependency> 
-			<groupId>org.testcontainers</groupId>
-			<artifactId>mongodb</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.aasregistry-service-mongodb-storage</artifactId>
@@ -56,12 +51,6 @@
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.aasregistry-service-basetests</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.testcontainers</groupId>
-			<artifactId>kafka</artifactId>
-			<version>${testcontainers.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

@@ -26,20 +26,33 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.http;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
+import org.apache.hc.client5.http.ClientProtocolException;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.ProtocolException;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.http.HttpBaSyxHeader;
+import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.ResourceUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -52,12 +65,22 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  */
 public abstract class AasRepositoryHTTPSuite {
 	private static final String dummyAasId = "customIdentifier";
+	private static final String THUMBNAIL_FILE_PATH = "BaSyx-Logo.png";
+
+	private final String CURSOR = "AasNumber3Identifier";
+	private final String ENCODED_CURSOR = Base64UrlEncodedCursor.encodeCursor(CURSOR);
 
 	protected abstract String getURL();
 
 	@Before
 	@After
 	public abstract void resetRepository();
+
+	@Test
+	public void baSyxResponseHeader() throws IOException, ProtocolException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(getURL());
+		assertEquals(HttpBaSyxHeader.HEADER_VALUE, response.getHeader(HttpBaSyxHeader.HEADER_KEY).getValue());
+	}
 
 	@Test
 	public void aasUpload() throws IOException, ParseException {
@@ -83,6 +106,24 @@ public abstract class AasRepositoryHTTPSuite {
 		CloseableHttpResponse creationResponse = createAasOnServer(aasJsonContent);
 
 		assertEquals(HttpStatus.CONFLICT.value(), creationResponse.getCode());
+	}
+	
+	@Test
+	public void createAasWithEmptyId() throws FileNotFoundException, IOException {
+		String aasJsonContent = createDummyAasOnServer(getAasWithEmptyIdJSONString());
+
+		CloseableHttpResponse creationResponse = createAasOnServer(aasJsonContent);
+
+		assertEquals(HttpStatus.BAD_REQUEST.value(), creationResponse.getCode());
+	}
+	
+	@Test
+	public void createAasWithNullId() throws FileNotFoundException, IOException {
+		String aasJsonContent = createDummyAasOnServer(getAasWithNullIdJSONString());
+
+		CloseableHttpResponse creationResponse = createAasOnServer(aasJsonContent);
+
+		assertEquals(HttpStatus.BAD_REQUEST.value(), creationResponse.getCode());
 	}
 
 	@Test
@@ -117,7 +158,7 @@ public abstract class AasRepositoryHTTPSuite {
 		
 		String actualJsonFromServer = BaSyxHttpTestUtils.getResponseAsString(retrievalResponse);
 		
-		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedAasJSONString(), actualJsonFromServer);
+		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedAasJSONString(), getJSONWithoutCursorInfo(actualJsonFromServer));
 	}
 
 	@Test
@@ -179,7 +220,9 @@ public abstract class AasRepositoryHTTPSuite {
 		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(dummyAasId));
 
 		assertEquals(200, deleteResponse.getCode());
-		BaSyxHttpTestUtils.assertSameJSONContent(getSMReferenceRemovalJson(), BaSyxHttpTestUtils.getResponseAsString(getResponse));
+		
+		String response = BaSyxHttpTestUtils.getResponseAsString(getResponse);
+		BaSyxHttpTestUtils.assertSameJSONContent(getSMReferenceRemovalJson(), getJSONWithoutCursorInfo(response));
 
 	}
 
@@ -270,13 +313,77 @@ public abstract class AasRepositoryHTTPSuite {
 	@Test
 	public void paginationResult() throws FileNotFoundException, IOException, ParseException {
 		createMultipleAasOnServer();
-		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getURL() + "?limit=1");
-		String response = BaSyxHttpTestUtils.getResponseAsString(getResponse);
-		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedAas1JSONString(), response);
+
+		CloseableHttpResponse httpResponse = BaSyxHttpTestUtils.executeGetOnURL(getURL() + "?limit=1&cursor=" + ENCODED_CURSOR);
+
+		String response = BaSyxHttpTestUtils.getResponseAsString(httpResponse);
+		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedAas1JSONString(), getJSONWithoutCursorInfo(response));
+	}
+
+	@Test
+	public void uploadThumbnailToShell() throws IOException {
+		createDummyAasOnServer(getAas1JSONString());
+		CloseableHttpResponse getThumbnailResponse = uploadThumbnail(dummyAasId);
+
+		assertEquals(HttpStatus.OK.value(), getThumbnailResponse.getCode());
+
+		getThumbnailResponse.close();
+	}
+
+	@Test
+	public void getThumbnail() throws FileNotFoundException, IOException, ParseException {
+		createDummyAasOnServer(getAas1JSONString());
+
+		byte[] expectedFile = readBytesFromClasspath(THUMBNAIL_FILE_PATH);
+
+		uploadThumbnail(dummyAasId);
+
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), dummyAasId));
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+
+		byte[] actualFile = EntityUtils.toByteArray(response.getEntity());
+
+		response.close();
+
+		assertArrayEquals(expectedFile, actualFile);
+	}
+
+	@Test
+	public void getFileFromNotExistElement() throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), dummyAasId));
+
+		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
+
+		response.close();
+	}
+
+	@Test
+	public void deleteThumbnail() throws FileNotFoundException, IOException {
+		createDummyAasOnServer(getAas1JSONString());
+		uploadThumbnail(dummyAasId);
+
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeDeleteOnURL(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), dummyAasId));
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+
+		response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), dummyAasId));
+		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
+
+		response.close();
+	}
+
+	@Test
+	public void deleteNonExistingThumbnail() throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeDeleteOnURL(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), dummyAasId));
+
+		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
 
 	private String getPaginatedAas1JSONString() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("PaginatedAasSimple_1.json");
+	}
+	
+	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException {
+		return BaSyxHttpTestUtils.removeCursorFromJSON(response);
 	}
 
 	private CloseableHttpResponse updateSpecificAas(String dummyaasid, String aasJsonContent) throws IOException {
@@ -286,6 +393,7 @@ public abstract class AasRepositoryHTTPSuite {
 	private void createMultipleAasOnServer() throws FileNotFoundException, IOException {
 		createAasOnServer(getAas1JSONString());
 		createAasOnServer(getAas2JSONString());
+		createAasOnServer(getAas3JSONString());
 	}
 
 	private String createDummyAasOnServer(String aasJsonContent) throws FileNotFoundException, IOException {
@@ -320,6 +428,8 @@ public abstract class AasRepositoryHTTPSuite {
 		return getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
 	}
 
+
+
 	private void assertAasIsNotOnServer(String aasId) throws IOException {
 		CloseableHttpResponse getResponse = getSpecificAas(aasId);
 		assertEquals(HttpStatus.NOT_FOUND.value(), getResponse.getCode());
@@ -342,6 +452,18 @@ public abstract class AasRepositoryHTTPSuite {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AasSimple_1.json");
 	}
 	
+	private String getAas3JSONString() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AasSimple_3.json");
+	}
+	
+	private String getAasWithNullIdJSONString() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AasSimpleWithNullId.json");
+	}
+
+	private String getAasWithEmptyIdJSONString() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AasSimpleWithEmptyId.json");
+	}
+
 	private String getPaginatedAasJSONString() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AllPaginatedAas.json");
 	}
@@ -369,5 +491,23 @@ public abstract class AasRepositoryHTTPSuite {
 	private String getPaginatedSingleSMReferenceJson() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("PaginatedSingleSMReference.json");
 	}
+
+	private CloseableHttpResponse uploadThumbnail(String aasId) throws IOException {
+		CloseableHttpClient client = HttpClients.createDefault();
+
+		java.io.File file = ResourceUtils.getFile("classpath:" + THUMBNAIL_FILE_PATH);
+
+		HttpPut putRequest = BaSyxHttpTestUtils.createPutRequestWithFile(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), aasId), THUMBNAIL_FILE_PATH, file);
+
+		return BaSyxHttpTestUtils.executePutRequest(client, putRequest);
+	}
+
+	private byte[] readBytesFromClasspath(String fileName) throws FileNotFoundException, IOException {
+		ClassPathResource classPathResource = new ClassPathResource(fileName);
+		InputStream in = classPathResource.getInputStream();
+
+		return in.readAllBytes();
+	}
+
 
 }

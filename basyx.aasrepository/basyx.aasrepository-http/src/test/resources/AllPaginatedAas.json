@@ -1,7 +1,15 @@
 {
-	"paging_metadata": {
-	},
+	"paging_metadata": {},
 	"result": [
+		{
+			"modelType": "AssetAdministrationShell",
+			"assetInformation": {
+				"assetKind": "Instance",
+				"globalAssetId": "AasNumber3AssetId"
+			},
+			"id": "AasNumber3Identifier",
+			"idShort": "AasNumber3"
+		},
 		{
 			"modelType": "AssetAdministrationShell",
 			"assetInformation": {

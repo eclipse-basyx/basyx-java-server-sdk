@@ -4,6 +4,7 @@
         {
             "modelType": "Submodel",
             "id": "7A7104BDAB57E184",
+            "kind":"Instance",
             "idShort": "TechnicalData",
             "submodelElements": [
                 {
@@ -326,7 +327,7 @@
                     "modelType": "SubmodelElementList",
                     "category": "PARAMETER",
                     "idShort": "SubmodelElementList",
-                    "orderRelevant": false,
+                    "orderRelevant": true,
                     "value": [
                         {
                             "modelType": "Range",
@@ -406,7 +407,52 @@
             }
         },
         {
+			"id": "8A6344BDAB57E184",
+			"idShort": "FileTests",
+			"modelType": "Submodel",
+			"kind":"Instance",
+			"semanticId": {
+				"keys": [{
+						"type": "GlobalReference",
+						"value": "0173-1#01-AFZ615#016"
+					}
+				],
+				"type": "ExternalReference"
+			},
+			"submodelElements": [{
+					"category": "PARAMETER",
+					"contentType": "application/json",
+					"idShort": "FileData",
+					"modelType": "File",
+					"semanticId": {
+						"keys": [{
+								"type": "ConceptDescription",
+								"value": "0173-1#02-BAA120#008"
+							}
+						],
+						"type": "ExternalReference"
+					},
+					"value": "BaSyx-Logo.png"
+				}, {
+					"category": "PARAMETER",
+					"idShort": "NonFileParameter",
+					"modelType": "Property",
+					"semanticId": {
+						"keys": [{
+								"type": "ConceptDescription",
+								"value": "0173-1#02-BAA120#008"
+							}
+						],
+						"type": "ExternalReference"
+					},
+					"value": "5000",
+					"valueType": "xs:integer"
+				}
+			]
+		}, 
+		{
             "modelType": "Submodel",
+            "kind":"Instance",
             "id": "AC69B1CB44F07935",
             "idShort": "OperationalData",
             "submodelElements": [
@@ -430,6 +476,7 @@
         },
         {
             "modelType": "Submodel",
+            "kind":"Instance",
             "id": "simpleSubmodel001",
             "idShort": "simpleSubmodel001",
             "submodelElements": [
@@ -449,7 +496,7 @@
                 {
                     "modelType": "SubmodelElementList",
                     "idShort": "SimpleList",
-                    "orderRelevant": false,
+                    "orderRelevant": true,
                     "value": [
                         {
                             "modelType": "Property",

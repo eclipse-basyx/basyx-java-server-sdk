@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -55,6 +57,26 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasrepository-feature-registry-integration</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasrepository-feature-registry-integration</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasrepository-feature-authorization</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasrepository-feature-authorization</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.http</artifactId>
 			<classifier>tests</classifier>
 			<scope>test</scope>
@@ -67,7 +89,6 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
@@ -85,12 +106,22 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.authorization</artifactId>
+			<classifier>tests</classifier>
 		</dependency>
 	</dependencies>
 
@@ -103,74 +134,137 @@
 					<classifier>exec</classifier>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>sleep-for-a-while</id>
+						<phase>integration-test</phase>
+						<configuration>
+							<target>
+								<sleep seconds="10" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>auth-integ-test</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<asyncDestroyOnShutdown>true</asyncDestroyOnShutdown>
+							<executable>java</executable>
+							<skip>false</skip>
+							<arguments>
+								<argument>-classpath</argument>
+								<classpath />
+								<mainClass>
+									org.eclipse.digitaltwin.basyx.aasrepository.component.AasRepositoryComponent</mainClass>
+
+							</arguments>
+							<environmentVariables>
+								<spring.profiles.active>authorization</spring.profiles.active>
+							</environmentVariables>
+							<async>true</async>
+						</configuration>
+					</execution>
+					<execution>
+						<phase>post-integration-test</phase>
+						<goals />
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>**/*IT.java</exclude>
+							</excludes>
+							<includes>
+								<include>**/AuthorizedITAASRepository.java</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
-		
-		<pluginManagement>
-			<plugins>
-				<!-- Build the docker image -->
-				<plugin>
-					<groupId>io.fabric8</groupId>
-					<artifactId>docker-maven-plugin</artifactId>
-					<version>0.43.0</version>
-					<configuration>
-						<images>
-							<image>
-								<name>${docker.username}/${docker.image.name}</name>
-								<build>
-									<tags>
-										<tag>${docker.image.tag}</tag>
-									</tags>
-									<contextDir>${project.basedir}</contextDir>
-								</build>
-								<run>
-									<ports>
-										<port>${docker.host.port}:${docker.container.port}</port>
-									</ports>
-									<wait>
-										<url>${docker.container.waitForEndpoint}</url>
-										<time>60000</time>
-									</wait>
-								</run>
-							</image>
-						</images>
-						<verbose>true</verbose>
-					</configuration>
-					<executions>
-						<execution>
-							<id>docker:build</id>
-							<phase>package</phase>
-							<goals>
-								<goal>build</goal>
-							</goals>
-						</execution>
-						<execution>
-							<id>docker-compose-up</id>
-							<phase>pre-integration-test</phase>
-							<goals>
-								<goal>start</goal>
-							</goals>
-						</execution>
-						<execution>
-							<id>docker-compose-down</id>
-							<phase>post-integration-test</phase>
-							<goals>
-								<goal>stop</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 
 	<profiles>
 		<profile>
 			<id>docker</id>
+			<activation>
+				<property>
+					<name>docker.namespace</name>
+				</property>
+			</activation>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
+						<configuration>
+							<images>
+								<image>
+									<run>
+										<ports>
+											<port>
+												${docker.host.port}:${docker.container.port}</port>
+										</ports>
+										<wait>
+											<url>
+												${docker.container.waitForEndpoint}</url>
+											<time>60000</time>
+										</wait>
+										<env>
+											<SPRING_PROFILES_ACTIVE>integration</SPRING_PROFILES_ACTIVE>
+										</env>
+									</run>
+								</image>
+							</images>
+						</configuration>
+						<executions>
+							<execution>
+								<id>build-docker</id>
+							</execution>
+							<execution>
+								<id>push-docker</id>
+							</execution>
+							<execution>
+								<id>docker-compose-up</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>start</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>docker-compose-down</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>

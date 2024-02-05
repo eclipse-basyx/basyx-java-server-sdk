@@ -25,7 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -101,6 +100,7 @@ public class InMemorySubmodelService implements SubmodelService {
 		return submodelElementValueFactory.create(getSubmodelElement(idShort)).getValue();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setSubmodelElementValue(String idShort, SubmodelElementValue value) throws ElementDoesNotExistException {
 		SubmodelElementValueMapperFactory submodelElementValueFactory = new SubmodelElementValueMapperFactory();
@@ -130,7 +130,7 @@ public class InMemorySubmodelService implements SubmodelService {
 
 	@Override
 	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException, CollidingIdentifierException {
-		throwIfSubmodelElementExists(submodelElement.getIdShort());
+		throwIfSubmodelElementExists(getFullIdShortPath(idShortPath, submodelElement.getIdShort()));
 		
 		SubmodelElement parentSme = parser.getSubmodelElementFromIdShortPath(idShortPath);
 		if(parentSme instanceof SubmodelElementList) {
@@ -142,11 +142,20 @@ public class InMemorySubmodelService implements SubmodelService {
 		}
 		if (parentSme instanceof SubmodelElementCollection) {
 			SubmodelElementCollection collection = (SubmodelElementCollection) parentSme;
-			Collection<SubmodelElement> submodelElements = collection.getValue();
+			List<SubmodelElement> submodelElements = collection.getValue();
 			submodelElements.add(submodelElement);
 			collection.setValue(submodelElements);
 			return;
 		}
+	}
+	
+	@Override
+	public void updateSubmodelElement(String idShortPath, SubmodelElement submodelElement) {
+		deleteSubmodelElement(idShortPath);
+		
+		String idShortPathParentSME = parser.getIdShortPathOfParentElement(idShortPath);
+		
+		createSubmodelElement(idShortPathParentSME, submodelElement);
 	}
 
 	@Override
@@ -207,5 +216,9 @@ public class InMemorySubmodelService implements SubmodelService {
 		
 		InvokableOperation operation = (InvokableOperation) sme;
 		return operation.invoke(input);
+	}
+	
+	private String getFullIdShortPath(String idShortPath, String submodelElementId) {
+		return idShortPath + "." + submodelElementId;
 	}
 }

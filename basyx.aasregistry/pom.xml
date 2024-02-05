@@ -15,10 +15,7 @@
 	</parent>
 
 	<properties>
-		<docker.image.version>2.0.0-SNAPSHOT</docker.image.version>
-		<testcontainers.version>1.18.1</testcontainers.version>
 		<lombok.maven-plugin.version>1.18.20.0</lombok.maven-plugin.version>
-		<java.version>11</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -26,18 +23,15 @@
 		<swagger.codegen.version>3.0.42</swagger.codegen.version>
 		<spring.fox.version>3.0.0</spring.fox.version>
 		<openapi.folder.name>open-api</openapi.folder.name>
-		<openapi.base.name>Plattform_i40-AssetAdministrationShellRegistryServiceSpecification-V3.0.1_SSP-001-resolved.yaml</openapi.base.name>
+		<openapi.base.name>
+			Plattform_i40-AssetAdministrationShellRegistryServiceSpecification-V3.0.1_SSP-001-resolved.yaml
+		</openapi.base.name>
 		<openapi.name>Plattform_i40-Registry-and-Discovery.yaml</openapi.name>
-		<guava.version>31.0.1-jre</guava.version>
-		<maven-plugin.version>3.6.0</maven-plugin.version>
+		<guava.version>32.0.0-jre</guava.version>
+		<maven-plugin.version>3.9.0</maven-plugin.version>
 		<maven-project.version>3.0-alpha-2</maven-project.version>
 		<mustache.compiler.version>0.9.4</mustache.compiler.version>
-		<snakeyaml.version>1.30</snakeyaml.version>
-		<docker.maven.plugin.version>0.40.1</docker.maven.plugin.version>
 		<docker.image.name>${project.artifactId}</docker.image.name>
-		<docker.pull.registry>docker.io</docker.pull.registry>
-		<docker.target.platforms>linux/amd64,linux/arm64</docker.target.platforms>
-		<docker.registry>docker.io</docker.registry>
 		<openapitools.version>6.6.0</openapitools.version>
 		<openapitools.jacksonnullable.version>0.2.6</openapitools.jacksonnullable.version>
 		<jsr305.version>3.0.2</jsr305.version>
@@ -100,15 +94,11 @@
 					<version>${swagger.codegen.version}</version>
 				</plugin>
 				<plugin>
-					<!-- If you want to override templates you can copy these: https://github.com/OpenAPITools/openapi-generator/tree/v6.6.0/modules/openapi-generator/src/main/resources -->
+					<!-- If you want to override templates you can copy these:
+					https://github.com/OpenAPITools/openapi-generator/tree/v6.6.0/modules/openapi-generator/src/main/resources -->
 					<groupId>org.openapitools</groupId>
 					<artifactId>openapi-generator-maven-plugin</artifactId>
 					<version>${openapitools.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>io.fabric8</groupId>
-					<artifactId>docker-maven-plugin</artifactId>
-					<version>${docker.maven.plugin.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>de.dfki.cos.basys.common</groupId>
@@ -141,12 +131,6 @@
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator</artifactId>
 				<version>${openapitools.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.testcontainers</groupId>
-				<artifactId>mongodb</artifactId>
-				<version>${testcontainers.version}</version>
-				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -281,13 +265,13 @@
 		<profile>
 			<id>dockerbuild</id>
 			<activation>
-				<!-- This profile is always active if there is a Dockerfile and a user 
-					name is given -->
+				<!-- This profile is always active if there is a Dockerfile and
+				docker.namespace property is given -->
 				<file>
 					<exists>src/main/docker/Dockerfile</exists>
 				</file>
 				<property>
-					<name>docker.username</name>
+					<name>docker.namespace</name>
 				</property>
 			</activation>
 			<build>
@@ -312,61 +296,29 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
+						<configuration>
+							<images>
+								<image>
+									<build>
+										<assembly>
+											<descriptorRef>artifact</descriptorRef>
+										</assembly>
+										<dockerFile>Dockerfile</dockerFile>
+										<contextDir>
+											${project.basedir}/src/main/docker</contextDir>
+										<buildx>
+											<platforms>${docker.target.platforms}</platforms>
+										</buildx>
+									</build>
+								</image>
+							</images>
+						</configuration>
 						<executions>
 							<execution>
 								<id>build-docker</id>
-								<phase>package</phase>
-								<goals>
-									<goal>build</goal>
-								</goals>
-								<configuration>
-									<images>
-										<image>
-											<name>${docker.username}/${docker.image.name}</name>
-											<build>
-												<assembly>
-													<descriptorRef>artifact</descriptorRef>
-												</assembly>
-												<tags>
-													<tag>${docker.image.version}</tag>
-												</tags>
-												<dockerFile>Dockerfile</dockerFile>
-												<contextDir>${project.basedir}/src/main/docker</contextDir>
-												<!-- building non buildx image here to speed up build -->
-											</build>
-										</image>
-									</images>
-								</configuration>
 							</execution>
 							<execution>
 								<id>push-docker</id>
-								<phase>deploy</phase>
-								<goals>
-									<goal>build</goal>
-									<goal>push</goal>
-								</goals>
-								<configuration>
-									<images>
-										<image>
-											<name>${docker.username}/${docker.image.name}</name>
-											<!-- needs to be set to this registry https://github.com/fabric8io/docker-maven-plugin/pull/1578 -->
-											<registry>https://index.docker.io/v1/</registry>
-											<build>
-												<assembly>
-													<descriptorRef>artifact</descriptorRef>
-												</assembly>
-												<tags>
-													<tag>${docker.image.version}</tag>
-												</tags>
-												<dockerFile>Dockerfile</dockerFile>
-												<contextDir>${project.basedir}/src/main/docker</contextDir>
-												<buildx>
-													<platforms>${docker.target.platforms}</platforms>
-												</buildx>
-											</build>
-										</image>
-									</images>
-								</configuration>
 							</execution>
 						</executions>
 					</plugin>

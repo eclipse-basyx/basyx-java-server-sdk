@@ -1,0 +1,10 @@
+---
+basyx:
+  cors:
+    allowed-origins: "*"
+    allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://mongoAdmin:mongoPassword@mongo:27017

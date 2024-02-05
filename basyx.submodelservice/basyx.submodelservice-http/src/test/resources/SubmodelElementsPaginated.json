@@ -1,0 +1,20 @@
+{
+	"paging_metadata": {
+	},
+	"result": [
+		{
+			"modelType": "SubmodelElementList",
+			"idShort": "SimpleList",
+			"orderRelevant": true,
+			"value": [
+				{
+					"modelType": "Property",
+					"value": "4370",
+					"valueType": "xs:integer",
+					"category": "VARIABLE",
+					"idShort": "MySecondSubmodelElement"
+				}
+			]
+		}
+	]
+}

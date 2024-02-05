@@ -14,8 +14,7 @@
     "globalAssetId": "globalAssetId",
     "specificAssetIds": [
         {
-            "name": "assetName",
-            "value": "assetValue",
+            "assetName" : "assetValue",
             "externalSubjectId": {
             	"type": "ExternalReference",
 				"keys": [

@@ -45,9 +45,9 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEvent;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public abstract class ExtensionsTest extends BaseInterfaceTest {

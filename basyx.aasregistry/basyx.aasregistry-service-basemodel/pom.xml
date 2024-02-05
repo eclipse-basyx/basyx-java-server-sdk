@@ -7,7 +7,6 @@
 		<groupId>org.eclipse.digitaltwin.basyx</groupId>
 		<artifactId>basyx.aasregistry</artifactId>
 		<version>${revision}</version>
-		<relativePath>..</relativePath>
 	</parent>
 
 	<artifactId>basyx.aasregistry-service-basemodel</artifactId>
@@ -62,7 +61,7 @@
 					</execution>
 				</executions>
 			</plugin>
- 			<plugin>
+			<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
 				<executions>
@@ -89,6 +88,7 @@
 								<useSpringController>true</useSpringController>
 								<modelPackage>org.eclipse.digitaltwin.basyx.aasregistry.model</modelPackage>
 								<instantiationTypes>array=ArrayList,map=HashMap</instantiationTypes>
+								<useSpringBoot3>true</useSpringBoot3>
 							</configOptions>
 						</configuration>
 					</execution>
@@ -127,7 +127,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-ui</artifactId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

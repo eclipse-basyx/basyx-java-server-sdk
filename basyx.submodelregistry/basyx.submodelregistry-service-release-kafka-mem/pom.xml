@@ -7,7 +7,7 @@
 		<groupId>org.eclipse.digitaltwin.basyx</groupId>
 		<artifactId>basyx.submodelregistry</artifactId>
 		<version>${revision}</version>
-		<relativePath>..</relativePath>
+
 	</parent>
 
 	<artifactId>basyx.submodelregistry-service-release-kafka-mem</artifactId>
@@ -56,12 +56,6 @@
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.submodelregistry-service-basetests</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.testcontainers</groupId>
-			<artifactId>kafka</artifactId>
-			<version>${testcontainers.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

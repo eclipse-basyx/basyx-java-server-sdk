@@ -32,12 +32,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Component;
 
 /**
  * SubmodelRepository factory returning a MongoDb backend SubmodelRepository
  * 
- * @author jungjan
+ * @author jungjan, zhangzai
  *
  */
 @Component
@@ -49,13 +50,29 @@ public class MongoDBSubmodelRepositoryFactory implements SubmodelRepositoryFacto
 	private SubmodelServiceFactory submodelServiceFactory;
 	private Collection<Submodel> submodels;
 
+	private String smRepositoryName;
+	private GridFsTemplate gridFsTemplate;
+
 	@Autowired(required = false)
 	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory) {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
 		this.submodelServiceFactory = submodelServiceFactory;
 	}
-
+	
+	@Autowired(required = false)
+	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory,
+			GridFsTemplate gridFsTemplate) {
+		this(mongoTemplate, collectionName, submodelServiceFactory);
+		this.gridFsTemplate = gridFsTemplate;
+	}
+	
+	@Autowired(required = false)
+	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory, 
+			GridFsTemplate gridFsTemplate, @Value("${basyx.smrepo.name:sm-repo}") String smRepositoryName) {
+		this(mongoTemplate, collectionName, submodelServiceFactory, gridFsTemplate);
+		this.smRepositoryName = smRepositoryName;
+	}
 
 	@Autowired(required = false)
 	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory,
@@ -64,12 +81,20 @@ public class MongoDBSubmodelRepositoryFactory implements SubmodelRepositoryFacto
 		this.submodels = submodels;
 	}
 
+	@Autowired(required = false)
+	public MongoDBSubmodelRepositoryFactory(MongoTemplate mongoTemplate, @Value("${basyx.submodelrepository.mongodb.collectionName:submodel-repo}") String collectionName, SubmodelServiceFactory submodelServiceFactory,
+			Collection<Submodel> submodels, @Value("${basyx.smrepo.name:sm-repo}") String smRepositoryName, GridFsTemplate gridFsTemplate) {
+		this(mongoTemplate, collectionName, submodelServiceFactory, submodels);
+		this.smRepositoryName = smRepositoryName;
+		this.gridFsTemplate = gridFsTemplate;
+	}
+
 	@Override
 	public SubmodelRepository create() {
 		if (this.submodels == null || this.submodels.isEmpty()) {
-			return new MongoDBSubmodelRepository(mongoTemplate, collectionName, submodelServiceFactory);
+			return new MongoDBSubmodelRepository(mongoTemplate, collectionName, submodelServiceFactory, smRepositoryName, gridFsTemplate);
 		}
-		return new MongoDBSubmodelRepository(mongoTemplate, collectionName, submodelServiceFactory, submodels);
+		return new MongoDBSubmodelRepository(mongoTemplate, collectionName, submodelServiceFactory, submodels, smRepositoryName, gridFsTemplate);
 
 	}
 }

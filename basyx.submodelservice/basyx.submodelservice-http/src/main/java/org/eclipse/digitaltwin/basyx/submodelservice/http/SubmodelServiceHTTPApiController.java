@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,7 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
@@ -28,8 +28,8 @@ package org.eclipse.digitaltwin.basyx.submodelservice.http;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -38,6 +38,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.model.OperationRequest;
 import org.eclipse.digitaltwin.basyx.http.model.OperationResult;
+import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.eclipse.digitaltwin.basyx.pagination.GetSubmodelElementsResult;
@@ -56,7 +57,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-07-20T09:38:58.667119080Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-07-20T09:38:58.667119080Z[GMT]")
 @RestController
 public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi {
 
@@ -79,22 +80,29 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 	public ResponseEntity<PagedResult> getAllSubmodelElements(
 			@Min(1) @Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array", schema = @Schema(allowableValues = {
 					"1" }, minimum = "1")) @Valid @RequestParam(value = "limit", required = false) Integer limit,
-			@Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue", schema = @Schema()) @Valid @RequestParam(value = "cursor", required = false) String cursor,
+			@Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue", schema = @Schema()) @Valid @RequestParam(value = "cursor", required = false) Base64UrlEncodedCursor cursor,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" }, defaultValue = "withoutBlobValue")) @Valid @RequestParam(value = "extent", required = false, defaultValue = "withoutBlobValue") String extent) {
-		if (limit == null)
+		if (limit == null) {
 			limit = 100;
-		if (cursor == null)
-			cursor = "";
-		PaginationInfo pInfo = new PaginationInfo(limit, cursor);
+		}
+
+		String decodedCursor = "";
+		if (cursor != null) {
+			decodedCursor = cursor.getDecodedCursor();
+		}
+
+		PaginationInfo pInfo = new PaginationInfo(limit, decodedCursor);
 		CursorResult<List<SubmodelElement>> submodelElements = service.getSubmodelElements(pInfo);
 
 		GetSubmodelElementsResult paginatedSubmodelElement = new GetSubmodelElementsResult();
+
+		String encodedCursor = getEncodedCursorFromCursorResult(submodelElements);
+
 		paginatedSubmodelElement.setResult(submodelElements.getResult());
-		paginatedSubmodelElement
-				.setPagingMetadata(new PagedResultPagingMetadata().cursor(submodelElements.getCursor()));
+		paginatedSubmodelElement.setPagingMetadata(new PagedResultPagingMetadata().cursor(encodedCursor));
 
 		return new ResponseEntity<PagedResult>(paginatedSubmodelElement, HttpStatus.OK);
 	}
@@ -116,7 +124,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
 			@Min(1) @Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array", schema = @Schema(allowableValues = {
 					"1" }, minimum = "1")) @Valid @RequestParam(value = "limit", required = false) Integer limit,
-			@Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue", schema = @Schema()) @Valid @RequestParam(value = "cursor", required = false) String cursor,
+			@Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue", schema = @Schema()) @Valid @RequestParam(value = "cursor", required = false) Base64UrlEncodedCursor cursor,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
@@ -132,7 +140,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
 			@Min(1) @Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array", schema = @Schema(allowableValues = {
 					"1" }, minimum = "1")) @Valid @RequestParam(value = "limit", required = false) Integer limit,
-			@Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue", schema = @Schema()) @Valid @RequestParam(value = "cursor", required = false) String cursor,
+			@Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue", schema = @Schema()) @Valid @RequestParam(value = "cursor", required = false) Base64UrlEncodedCursor cursor,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
@@ -160,8 +168,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" }, defaultValue = "withoutBlobValue")) @Valid @RequestParam(value = "extent", required = false, defaultValue = "withoutBlobValue") String extent) {
 
-		SubmodelValueOnly result = new SubmodelValueOnly(
-				service.getSubmodelElements(NO_LIMIT_PAGINATION_INFO).getResult());
+		SubmodelValueOnly result = new SubmodelValueOnly(service.getSubmodelElements(NO_LIMIT_PAGINATION_INFO).getResult());
 
 		return new ResponseEntity<SubmodelValueOnly>(result, HttpStatus.OK);
 	}
@@ -172,7 +179,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 			@Parameter(in = ParameterIn.DEFAULT, description = "The SubmodelElement in its ValueOnly representation", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElementValue body,
 			@Min(1) @Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array", schema = @Schema(allowableValues = {
 					"1" }, minimum = "1")) @Valid @RequestParam(value = "limit", required = false) Integer limit,
-			@Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue", schema = @Schema()) @Valid @RequestParam(value = "cursor", required = false) String cursor,
+			@Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue", schema = @Schema()) @Valid @RequestParam(value = "cursor", required = false) Base64UrlEncodedCursor cursor,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
 					"core" }, defaultValue = "core")) @Valid @RequestParam(value = "level", required = false, defaultValue = "core") String level) {
 		service.setSubmodelElementValue(idShortPath, body);
@@ -194,6 +201,18 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		service.createSubmodelElement(idShortPath, body);
 		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
 	}
+	
+	@Override
+	public ResponseEntity<Void> putSubmodelElementByPath(
+			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
+			@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElement body,
+			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
+					"deep" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level) {
+		
+		service.updateSubmodelElement(idShortPath, body);
+
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
 
 	@Override
 	public ResponseEntity<OperationResult> invokeOperation(
@@ -209,6 +228,14 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		OperationResult operationResult = new OperationResult();
 		operationResult.setOutputArguments(Arrays.asList(result));
 		return operationResult;
+	}
+
+	private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
+		if (cursorResult == null || cursorResult.getCursor() == null) {
+			return null;
+		}
+
+		return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
 	}
 
 }

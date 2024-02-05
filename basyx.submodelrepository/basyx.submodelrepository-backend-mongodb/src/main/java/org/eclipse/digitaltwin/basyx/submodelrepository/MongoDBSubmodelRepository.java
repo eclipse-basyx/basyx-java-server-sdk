@@ -24,46 +24,71 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
+import org.apache.commons.io.FileUtils;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
+import org.apache.tika.utils.StringUtils;
+import org.bson.types.ObjectId;
+import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
+import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.result.DeleteResult;
 
 /**
  * MongoDB implementation of the SubmodelRepository
  * 
- * @author jungjan
+ * @author jungjan, kammognie, zhangzai, danish
  *
  */
 public class MongoDBSubmodelRepository implements SubmodelRepository {
+	
+	private Logger logger = LoggerFactory.getLogger(MongoDBSubmodelRepository.class);
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
-	private static final String ID = "_id";
-	private static String ID_JSON_PATH = "id";
+	private static final String MONGO_ID = "_id";
+	private static final String TEMP_DIR_PREFIX = "basyx-temp";
+	private static final String GRIDFS_ID_DELIMITER = "#";
+	private static final String ID_JSON_PATH = "id";
 
 	private MongoTemplate mongoTemplate;
 	private String collectionName;
 	private SubmodelServiceFactory submodelServiceFactory;
+	private String smRepositoryName;
+
+	private GridFsTemplate gridFsTemplate;
 
 	/**
 	 * Creates the MongoDBSubmodelRepository utilizing the passed
@@ -78,7 +103,28 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 		this.mongoTemplate = mongoTemplate;
 		this.collectionName = collectionName;
 		this.submodelServiceFactory = submodelServiceFactory;
-		configureIndexForSubmodelId(mongoTemplate);
+
+		configureDefaultGridFsTemplate(this.mongoTemplate);
+	}
+
+	/**
+	 * Creates the MongoDBSubmodelRepository utilizing the passed
+	 * SubmodelServiceFactory for creating new SubmodelServices and uses a
+	 * collectionName and a mongoTemplate for operating MongoDB
+	 * 
+	 * @param mongoTemplate
+	 * @param collectionName
+	 * @param submodelServiceFactory
+	 * @param smRepositoryName
+	 *            Name of the SubmodelRepository
+	 */
+	public MongoDBSubmodelRepository(MongoTemplate mongoTemplate, String collectionName, SubmodelServiceFactory submodelServiceFactory, String smRepositoryName, GridFsTemplate gridFsTemplate) {
+		this(mongoTemplate, collectionName, submodelServiceFactory);
+		this.smRepositoryName = smRepositoryName;
+		this.gridFsTemplate = gridFsTemplate;
+
+		if (this.gridFsTemplate == null)
+			configureDefaultGridFsTemplate(mongoTemplate);
 	}
 
 	/**
@@ -92,7 +138,36 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	 */
 	public MongoDBSubmodelRepository(MongoTemplate mongoTemplate, String collectionName, SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels) {
 		this(mongoTemplate, collectionName, submodelServiceFactory);
+		
+		throwIfMissingId(submodels);
+
 		initializeRemoteCollection(submodels);
+
+		configureDefaultGridFsTemplate(this.mongoTemplate);
+	}
+
+	/**
+	 * Creates the MongoDBSubmodelRepository utilizing the passed
+	 * SubmodelServiceFactory for creating new SubmodelServices and uses a
+	 * collectionName and a mongoTemplate for operating MongoDB. Additionally
+	 * initializes the MongoDB collection with a collection of submodels. And
+	 * configures the SubmodelRepository name.
+	 * 
+	 * @param mongoTemplate
+	 * @param collectionName
+	 * @param submodelServiceFactory
+	 * @param submodels
+	 * @param smRepositoryName
+	 *            Name of the SubmodelRepository
+	 */
+	public MongoDBSubmodelRepository(MongoTemplate mongoTemplate, String collectionName, SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels, String smRepositoryName, GridFsTemplate gridFsTemplate) {
+		this(mongoTemplate, collectionName, submodelServiceFactory, submodels);
+
+		this.smRepositoryName = smRepositoryName;
+		this.gridFsTemplate = gridFsTemplate;
+
+		if (this.gridFsTemplate == null)
+			configureDefaultGridFsTemplate(mongoTemplate);
 	}
 
 	private void initializeRemoteCollection(Collection<Submodel> submodels) {
@@ -100,12 +175,6 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 			return;
 		}
 		submodels.forEach(this::createSubmodel);
-	}
-
-	private void configureIndexForSubmodelId(MongoTemplate mongoTemplate) {
-		Index idIndex = new Index().on(ID_JSON_PATH, Direction.ASC);
-		mongoTemplate.indexOps(Submodel.class)
-				.ensureIndex(idIndex);
 	}
 
 	@Override
@@ -121,8 +190,7 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException {
-		Submodel submodel = mongoTemplate.findOne(new Query().addCriteria(Criteria.where(ID_JSON_PATH)
-				.is(submodelId)), Submodel.class, collectionName);
+		Submodel submodel = mongoTemplate.findOne(new Query().addCriteria(Criteria.where(ID_JSON_PATH).is(submodelId)), Submodel.class, collectionName);
 		if (submodel == null) {
 			throw new ElementDoesNotExistException(submodelId);
 		}
@@ -131,8 +199,7 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void updateSubmodel(String submodelId, Submodel submodel) throws ElementDoesNotExistException {
-		Query query = new Query().addCriteria(Criteria.where(ID_JSON_PATH)
-				.is(submodelId));
+		Query query = new Query().addCriteria(Criteria.where(ID_JSON_PATH).is(submodelId));
 
 		throwIfSubmodelDoesNotExist(query, submodelId);
 		throwIfMismatchingIds(submodelId, submodel);
@@ -156,14 +223,16 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
+	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException, MissingIdentifierException {
+		throwIfSubmodelIdEmptyOrNull(submodel.getId());
+
 		throwIfCollidesWithRemoteId(submodel);
+
 		mongoTemplate.save(submodel, collectionName);
 	}
 
 	private void throwIfCollidesWithRemoteId(Submodel submodel) {
-		if (mongoTemplate.exists(new Query().addCriteria(Criteria.where(ID_JSON_PATH)
-				.is(submodel.getId())), Submodel.class, collectionName)) {
+		if (mongoTemplate.exists(new Query().addCriteria(Criteria.where(ID_JSON_PATH).is(submodel.getId())), Submodel.class, collectionName)) {
 			throw new CollidingIdentifierException(submodel.getId());
 		}
 	}
@@ -173,8 +242,7 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo)
-			throws ElementDoesNotExistException {
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo) throws ElementDoesNotExistException {
 		return getSubmodelService(submodelId).getSubmodelElements(pInfo);
 	}
 
@@ -198,8 +266,7 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void deleteSubmodel(String submodelId) throws ElementDoesNotExistException {
-		DeleteResult result = mongoTemplate.remove(new Query().addCriteria(Criteria.where(ID_JSON_PATH)
-				.is(submodelId)), Submodel.class, collectionName);
+		DeleteResult result = mongoTemplate.remove(new Query().addCriteria(Criteria.where(ID_JSON_PATH).is(submodelId)), Submodel.class, collectionName);
 
 		if (result.getDeletedCount() == 0) {
 			throw new ElementDoesNotExistException(submodelId);
@@ -220,6 +287,20 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 		SubmodelService submodelService = getSubmodelService(submodelId);
 		submodelService.createSubmodelElement(idShortPath, submodelElement);
 
+		updateSubmodel(submodelId, submodelService.getSubmodel());
+	}
+	
+	@Override
+	public void updateSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
+		SubmodelService submodelService = getSubmodelService(submodelId);
+		
+		SubmodelElement element = submodelService.getSubmodelElement(idShortPath);
+		
+		if (isFileSubmodelElement(element) && !isFileSubmodelElement(submodelElement))
+			deleteAttachmentIfExists(submodelId, idShortPath);
+		
+		submodelService.updateSubmodelElement(idShortPath, submodelElement);
+		
 		updateSubmodel(submodelId, submodelService.getSubmodel());
 	}
 
@@ -243,8 +324,12 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 		return submodel;
 	}
 
-	private <T> String resolveCursor(PaginationInfo pRequest, List<T> foundDescriptors,
-			Function<T, String> idResolver) {
+	@Override
+	public String getName() {
+		return smRepositoryName == null ? SubmodelRepository.super.getName() : smRepositoryName;
+	}
+
+	private <T> String resolveCursor(PaginationInfo pRequest, List<T> foundDescriptors, Function<T, String> idResolver) {
 		if (foundDescriptors.isEmpty() || !pRequest.isPaged()) {
 			return null;
 		}
@@ -253,12 +338,12 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	}
 
 	private void applySorting(Query query, PaginationInfo pInfo) {
-		query.with(Sort.by(Direction.ASC, ID));
+		query.with(Sort.by(Direction.ASC, MONGO_ID));
 	}
 
 	private void applyPagination(Query query, PaginationInfo pInfo) {
 		if (pInfo.getCursor() != null) {
-			query.addCriteria(Criteria.where(ID).gt(pInfo.getCursor()));
+			query.addCriteria(Criteria.where(MONGO_ID).gt(pInfo.getCursor()));
 		}
 		if (pInfo.getLimit() != null) {
 			query.limit(pInfo.getLimit());
@@ -268,6 +353,174 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 	@Override
 	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
 		throw new FeatureNotSupportedException("Operation Invocation");
+	}
+
+	@Override
+	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) {
+		Query query = new Query().addCriteria(Criteria.where(ID_JSON_PATH).is(submodelId));
+
+		throwIfSubmodelDoesNotExist(query, submodelId);
+
+		SubmodelElement submodelElement = getSubmodelService(submodelId).getSubmodelElement(idShortPath);
+
+		throwIfSmElementIsNotAFile(submodelElement);
+
+		File fileSmElement = (File) submodelElement;
+
+		throwIfFileDoesNotExist(fileSmElement);
+
+		String fileId = getFileId(fileSmElement.getValue());
+
+		GridFSFile file = gridFsTemplate.findOne(new Query(Criteria.where(MONGO_ID).is(fileId)));
+
+		InputStream fileIs = getGridFsFileAsInputStream(file);
+
+		return createFileInTempDirectory(idShortPath, fileSmElement, fileIs);
+	}
+
+	@Override
+	public void deleteFileValue(String submodelId, String idShortPath) {
+		Query query = new Query().addCriteria(Criteria.where(ID_JSON_PATH).is(submodelId));
+
+		throwIfSubmodelDoesNotExist(query, submodelId);
+
+		SubmodelElement submodelElement = getSubmodelService(submodelId).getSubmodelElement(idShortPath);
+
+		throwIfSmElementIsNotAFile(submodelElement);
+
+		File fileSmElement = (File) submodelElement;
+
+		throwIfFileDoesNotExist(fileSmElement);
+
+		String fileId = getFileId(fileSmElement.getValue());
+
+		gridFsTemplate.delete(new Query(Criteria.where(MONGO_ID).is(fileId)));
+
+		FileBlobValue fileValue = new FileBlobValue(StringUtils.EMPTY, StringUtils.EMPTY);
+
+		setSubmodelElementValue(submodelId, idShortPath, fileValue);
+	}
+
+	@Override
+	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) {
+		Query query = new Query().addCriteria(Criteria.where(ID_JSON_PATH).is(submodelId));
+
+		throwIfSubmodelDoesNotExist(query, submodelId);
+
+		SubmodelElement submodelElement = getSubmodelService(submodelId).getSubmodelElement(idShortPath);
+
+		throwIfSmElementIsNotAFile(submodelElement);
+
+		File fileSmElement = (File) submodelElement;
+
+		ObjectId id = gridFsTemplate.store(inputStream, fileSmElement.getValue(), fileSmElement.getContentType());
+
+		FileBlobValue fileValue = new FileBlobValue(fileSmElement.getContentType(), appendFsIdToFileValue(fileSmElement, id));
+
+		setSubmodelElementValue(submodelId, idShortPath, fileValue);
+	}
+	
+	private void throwIfMissingId(Collection<Submodel> submodels) {
+	    submodels.stream().map(Submodel::getId).forEach(this::throwIfSubmodelIdEmptyOrNull);
+    }
+
+	private void throwIfSubmodelIdEmptyOrNull(String id) {
+		if (id == null || id.isBlank())
+			throw new MissingIdentifierException(id);
+	}
+
+	private void configureDefaultGridFsTemplate(MongoTemplate mongoTemplate) {
+		this.gridFsTemplate = new GridFsTemplate(mongoTemplate.getMongoDatabaseFactory(), mongoTemplate.getConverter());
+	}
+
+	private String appendFsIdToFileValue(File fileSmElement, ObjectId id) {
+		return id.toString() + GRIDFS_ID_DELIMITER + fileSmElement.getValue();
+	}
+
+	private java.io.File createFileInTempDirectory(String idShortPath, File fileSmElement, InputStream fileIs) {
+
+		Path tempDir = createTempDirectory(TEMP_DIR_PREFIX);
+
+		String absolutePath = tempDir.toAbsolutePath().toString();
+
+		String filePath = getFilePath(absolutePath, idShortPath, fileSmElement.getContentType());
+
+		java.io.File targetFile = new java.io.File(filePath);
+
+		try {
+			FileUtils.copyInputStreamToFile(fileIs, targetFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return targetFile;
+	}
+
+	private Path createTempDirectory(String prefix) {
+		Path tempDir = null;
+		try {
+			tempDir = Files.createTempDirectory(prefix);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return tempDir;
+	}
+
+	private InputStream getGridFsFileAsInputStream(GridFSFile file) {
+		InputStream fileIs = null;
+
+		try {
+			fileIs = gridFsTemplate.getResource(file).getInputStream();
+		} catch (IllegalStateException | IOException e1) {
+			e1.printStackTrace();
+		}
+		return fileIs;
+	}
+
+	private String getFileId(String value) {
+		return value.substring(0, value.indexOf(GRIDFS_ID_DELIMITER));
+	}
+
+	private void throwIfFileDoesNotExist(File fileSmElement) {
+		if (fileSmElement.getValue().isBlank() || fileSmElement.getValue().indexOf(GRIDFS_ID_DELIMITER) == -1)
+			throw new FileDoesNotExistException(fileSmElement.getIdShort());
+	}
+
+	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement) {
+
+		if (!(isFileSubmodelElement(submodelElement)))
+			throw new ElementNotAFileException(submodelElement.getIdShort());
+	}
+	
+	private boolean isFileSubmodelElement(SubmodelElement submodelElement) {
+		return submodelElement instanceof File;
+	}
+
+	private String getFilePath(String tmpDirectory, String idShortPath, String contentType) {
+		String fileName = idShortPath.replace("/", "-");
+
+		String extension = getFileExtension(contentType);
+
+		return tmpDirectory + "/" + fileName + extension;
+	}
+
+	private String getFileExtension(String contentType) {
+		MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
+		try {
+			MimeType mimeType = allTypes.forName(contentType);
+			return mimeType.getExtension();
+		} catch (MimeTypeException e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+	
+	private void deleteAttachmentIfExists(String submodelId, String idShortPath) {
+		try {
+			deleteFileValue(submodelId, idShortPath);
+		} catch (FileDoesNotExistException e) {
+			logger.info("The Submodel Element with idShortPath '{}' is a File Submodel Element but there is no file attachment associated with this.", idShortPath);
+		}
 	}
 
 }

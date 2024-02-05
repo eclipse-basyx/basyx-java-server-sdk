@@ -1,0 +1,67 @@
+version: "3.9"
+services:
+  aas-env:
+    image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
+    container_name: aas-env
+    volumes:
+      - ./aas-env.properties:/application/application.properties
+      - ./aas:/application/aas
+    # ports:
+    #   - 8081:8081
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: always
+
+  aas-registry:
+    image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: aas-registry
+    # ports:
+    #   - 8082:8080
+    volumes:
+      - ./aas-registry.yml:/workspace/config/application.yml
+    restart: always
+
+  aas-ui:
+    image: eclipsebasyx/aas-gui:v2-231107
+    container_name: aas-ui
+    environment:
+      VITE_REGISTRY_PATH: "http://localhost/registry"
+      VITE_AAS_REPO_PATH: "http://localhost/aas-repo"
+      VITE_SUBMODEL_REPO_PATH: "http://localhost/submodel-repo"
+      VITE_CD_REPO_PATH: "http://localhost/cd-repo"
+      VITE_BASE_PATH: "/aasui"
+    # ports:
+    #   - 3000:3000
+    restart: always
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf
+    restart: always
+  
+  mongo:
+    image: mongo:5.0.10
+    container_name: mongo
+    # Provide mongo config
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoAdmin
+      MONGO_INITDB_ROOT_PASSWORD: mongoPassword
+    #volumes:
+    # - ./data-vol:/data/db
+    # Set health checks to wait until mongo has started
+    healthcheck:
+      test: mongo
+      interval: 10s
+      start_period: 5s
+      retries: 5
+    # Maps tcp port to host
+    #ports:
+    # - 27017:27017
+    restart: always
+

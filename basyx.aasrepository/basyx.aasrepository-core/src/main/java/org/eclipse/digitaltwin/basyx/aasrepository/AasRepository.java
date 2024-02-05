@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -31,17 +33,18 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 /**
  * Specifies the overall AasRepository API
  * 
- * @author schnicke
+ * @author schnicke, kammognie
  *
  */
 public interface AasRepository {
-
+	
 	/**
 	 * Retrieves all Asset Administration Shells from the repository
 	 * 
@@ -63,8 +66,10 @@ public interface AasRepository {
 	 * 
 	 * @param aas
 	 *            the AAS to be created
+	 * @throws MissingIdentifierException
+	 *            for creating AAS
 	 */
-	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException;
+	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException, MissingIdentifierException;
 
 	/**
 	 * Deletes a specific AAS
@@ -122,7 +127,44 @@ public interface AasRepository {
 	 */
 	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException;
 
+	/**
+	 * Get Thumbnail of the specific aas
+	 * 
+	 * @param aasID
+	 *            the id of the AAS
+	 * @return the file of the thumbnail
+	 */
+	public File getThumbnail(String aasId);
+
+	/**
+	 * Set Thumbnail of the AAS
+	 * 
+	 * @param aasID
+	 *            the id of the AAS
+	 * @param fileName
+	 *            name of the thumbnail file with extension
+	 * @param contentType
+	 *            content type of the file
+	 * @param inputStream
+	 *            inputstream of the thumbnail file
+	 */
+	public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream);
+
+	/**
+	 * Delete the thumbnail file of the AAS
+	 * 
+	 * @param aasId
+	 *            the id of the AAS
+	 */
+	public void deleteThumbnail(String aasId);
+    
+	/**
+	 * Returns the name of the repository
+	 * 
+	 * @return repoName
+	 */
 	public default String getName() {
-		return "aasRepository-default-name";
+		return "aas-repo";
 	}
+	
 }

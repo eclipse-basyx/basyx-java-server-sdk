@@ -102,6 +102,16 @@ public interface SubmodelService {
 	 *             If the submodel element defined in the path does not exist
 	 */
 	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException;
+	
+	/**
+	 * Updates a submodel element
+	 * 
+	 * @param idShortPath
+	 * @param submodelElement
+	 * @throws ElementDoesNotExistException
+	 *             If the submodel element defined in the path does not exist
+	 */
+	public void updateSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException;
 
 	/**
 	 * Delete a submodel element in a submodel

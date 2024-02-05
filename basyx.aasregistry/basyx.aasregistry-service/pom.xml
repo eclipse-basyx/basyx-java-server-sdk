@@ -7,7 +7,6 @@
 		<groupId>org.eclipse.digitaltwin.basyx</groupId>
 		<artifactId>basyx.aasregistry</artifactId>
 		<version>${revision}</version>
-		<relativePath>..</relativePath>
 	</parent>
 
 	<artifactId>basyx.aasregistry-service</artifactId>
@@ -111,6 +110,7 @@
 								<modelPackage>org.eclipse.digitaltwin.basyx.aasregistry.model</modelPackage>
 								<delegatePattern>true</delegatePattern>
 								<documentationProvider>springdoc</documentationProvider>
+								<useSpringBoot3>true</useSpringBoot3>
 							</configOptions>
 						</configuration>
 					</execution>
@@ -134,24 +134,15 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-webmvc-core</artifactId>
-			<version>1.7.0</version>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-ui</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -177,8 +168,11 @@
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.core</artifactId>
-		</dependency>	
-
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.http</artifactId>
+		</dependency>
 		<!-- Test configuration -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

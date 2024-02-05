@@ -1,0 +1,49 @@
+{
+	"paging_metadata": {
+	},
+	"result": [{
+			"id": "8A6344BDAB57E184",
+			"idShort": "FileTests",
+			"modelType": "Submodel",
+			"kind":"Instance",
+			"semanticId": {
+				"keys": [{
+						"type": "GlobalReference",
+						"value": "0173-1#01-AFZ615#016"
+					}
+				],
+				"type": "ExternalReference"
+			},
+			"submodelElements": [{
+					"category": "PARAMETER",
+					"contentType": "application/json",
+					"idShort": "FileData",
+					"modelType": "File",
+					"semanticId": {
+						"keys": [{
+								"type": "ConceptDescription",
+								"value": "0173-1#02-BAA120#008"
+							}
+						],
+						"type": "ExternalReference"
+					},
+					"value": "BaSyx-Logo.png"
+				}, {
+					"category": "PARAMETER",
+					"idShort": "NonFileParameter",
+					"modelType": "Property",
+					"semanticId": {
+						"keys": [{
+								"type": "ConceptDescription",
+								"value": "0173-1#02-BAA120#008"
+							}
+						],
+						"type": "ExternalReference"
+					},
+					"value": "5000",
+					"valueType": "xs:integer"
+				}
+			]
+		}
+	]
+}

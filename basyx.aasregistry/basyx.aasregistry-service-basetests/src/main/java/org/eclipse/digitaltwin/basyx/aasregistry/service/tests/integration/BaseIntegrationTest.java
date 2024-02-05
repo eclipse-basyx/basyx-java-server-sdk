@@ -89,7 +89,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -137,21 +136,18 @@ public abstract class BaseIntegrationTest {
 	@Rule
 	public TestResourcesLoader resourceLoader = new TestResourcesLoader(BaseIntegrationTest.class.getPackageName(), mapper);
 
-	@Autowired
-	private BaseEventListener listener;
-
 	protected RegistryAndDiscoveryInterfaceApi api;
 
 	@Before
 	public void initClient() throws ApiException {
 		api = new RegistryAndDiscoveryInterfaceApi("http", "127.0.0.1", port);
 		api.deleteAllShellDescriptors();
-		listener.assertNoAdditionalMessage();
+		queue().assertNoAdditionalMessage();
 	}
 
 	@After
 	public void cleanup() throws ApiException {
-		listener.assertNoAdditionalMessage();
+		queue().assertNoAdditionalMessage();
 		GetAssetAdministrationShellDescriptorsResult result = api.getAllAssetAdministrationShellDescriptors(null, null, null, null);
 		for (AssetAdministrationShellDescriptor eachDescriptor : result.getResult()) {
 			api.deleteAssetAdministrationShellDescriptorById(eachDescriptor.getId());
@@ -178,7 +174,7 @@ public abstract class BaseIntegrationTest {
 		assertThat(IntStream.iterate(0, i -> i + 1).limit(300).parallel().mapToObj(op).filter(i -> i > 300).findAny()).isEmpty();
 		assertThat(api.getAssetAdministrationShellDescriptorById(descriptor.getId()).getSubmodelDescriptors()).hasSize(300);
 		for (int i = 0; i < 300; i++) {
-			RegistryEvent evt = listener.poll();
+			RegistryEvent evt = queue().poll();
 			assertThat(evt.getId()).isEqualTo(descriptor.getId());
 			assertThat(Integer.parseInt(evt.getSubmodelId())).isGreaterThanOrEqualTo(0).isLessThan(300);
 			
@@ -207,6 +203,7 @@ public abstract class BaseIntegrationTest {
 
 	@Test
 	public void whenDeleteAll_thenAllDescriptorsAreRemoved() throws ApiException {
+
 		for (int i = 0; i < DELETE_ALL_TEST_INSTANCE_COUNT; i++) {
 			AssetAdministrationShellDescriptor descr = new AssetAdministrationShellDescriptor();
 			String id = "id_" + i;
@@ -227,35 +224,35 @@ public abstract class BaseIntegrationTest {
 		HashSet<RegistryEvent> events = new HashSet<>();
 		// we do not have a specific order, so read all events first
 		for (int i = 0; i < DELETE_ALL_TEST_INSTANCE_COUNT; i++) {
-			events.add(listener.poll());
+			events.add(queue().poll());
 		}
 		for (int i = 0; i < DELETE_ALL_TEST_INSTANCE_COUNT; i++) {
 			assertThat(events.remove(RegistryEvent.builder().id("id_" + i).type(EventType.AAS_UNREGISTERED).build())).isTrue();
 		}
 		assertThat(events.isEmpty());
-		listener.assertNoAdditionalMessage();
+		queue().assertNoAdditionalMessage();
 	}
 
 	@Test
 	public void whenCreateAndDeleteDescriptors_thenAllDescriptorsAreRemoved() throws IOException, InterruptedException, TimeoutException, ApiException {
 		List<AssetAdministrationShellDescriptor> deployed = initialize();
-		List<AssetAdministrationShellDescriptor> all = api.getAllAssetAdministrationShellDescriptors(port, null, null, null).getResult();
+		List<AssetAdministrationShellDescriptor> all = api.getAllAssetAdministrationShellDescriptors(null, null, null, null).getResult();
 		assertThat(all).containsExactlyInAnyOrderElementsOf(deployed);
 
 		for (AssetAdministrationShellDescriptor eachDescriptor : all) {
 			deleteAdminAssetShellDescriptor(eachDescriptor.getId());
 		}
 
-		all = api.getAllAssetAdministrationShellDescriptors(port, null, null, null).getResult();
+		all = api.getAllAssetAdministrationShellDescriptors(null, null, null, null).getResult();
 		assertThat(all).isEmpty();
 
-		listener.assertNoAdditionalMessage();
+		queue().assertNoAdditionalMessage();
 	}
 
 	@Test
 	public void whenRegisterAndUnregisterSubmodel_thenSubmodelIsCreatedAndDeleted() throws IOException, InterruptedException, TimeoutException, ApiException {
 		List<AssetAdministrationShellDescriptor> deployed = initialize();
-		List<AssetAdministrationShellDescriptor> all = api.getAllAssetAdministrationShellDescriptors(port, null, null, null).getResult();
+		List<AssetAdministrationShellDescriptor> all = api.getAllAssetAdministrationShellDescriptors(null, null, null, null).getResult();
 		assertThat(all).asList().containsExactlyInAnyOrderElementsOf(deployed);
 
 		SubmodelDescriptor toRegister = resourceLoader.load(SubmodelDescriptor.class, "toregister");
@@ -282,7 +279,7 @@ public abstract class BaseIntegrationTest {
 		aasDescriptor = api.getAssetAdministrationShellDescriptorById(aasId);
 		assertThat(aasDescriptor.getSubmodelDescriptors()).doesNotContain(toRegister);
 
-		listener.assertNoAdditionalMessage();
+		queue().assertNoAdditionalMessage();
 	}
 
 	@Test
@@ -581,7 +578,7 @@ public abstract class BaseIntegrationTest {
 		assertThatEventWasSend(RegistryEvent.builder().id(descr.getId()).aasDescriptor(convert(descr)).type(EventType.AAS_REGISTERED).build());
 		String location = locations.get(0);
 		
-		String expectedSuffix = "/api/v3.0/shell-descriptors/aHR0cHM6Ly90ZXN0Lmlk";
+		String expectedSuffix = "/shell-descriptors/aHR0cHM6Ly90ZXN0Lmlk";
 		assertThat(location).endsWith(expectedSuffix);
 		assertRestResourceAvailable(location);
 	}
@@ -601,7 +598,7 @@ public abstract class BaseIntegrationTest {
 		
 		assertThatEventWasSend(RegistryEvent.builder().id(shell.getId()).submodelId(sm.getId()).submodelDescriptor(convert(sm)).type(EventType.SUBMODEL_REGISTERED).build());
 		
-		String expectedSuffix = "/api/v3.0/shell-descriptors/aHR0cHM6Ly9zaGVsbC5pZA==/submodel-descriptors/aHR0cHM6Ly9zbS5pZA==";
+		String expectedSuffix = "/shell-descriptors/aHR0cHM6Ly9zaGVsbC5pZA==/submodel-descriptors/aHR0cHM6Ly9zbS5pZA==";
 		assertThat(location).endsWith(expectedSuffix);
 		assertRestResourceAvailable(location);
 	}
@@ -616,7 +613,7 @@ public abstract class BaseIntegrationTest {
 	}	
 	
 	private void deleteAdminAssetShellDescriptor(String aasId) throws ApiException {
-		listener.reset();
+		queue().reset();
 
 		int response = api.deleteAssetAdministrationShellDescriptorByIdWithHttpInfo(URLEncoder.encode(aasId, StandardCharsets.UTF_8)).getStatusCode();
 		assertThat(response).isEqualTo(NO_CONTENT);
@@ -640,7 +637,7 @@ public abstract class BaseIntegrationTest {
 	}
 
 	private void assertThatEventWasSend(RegistryEvent expected) {
-		RegistryEvent evt = listener.poll();
+		RegistryEvent evt = queue().poll();
 		assertThat(evt).isEqualTo(expected);
 	}
 
@@ -674,4 +671,6 @@ public abstract class BaseIntegrationTest {
 		String data = mapper.writerFor(inCls).writeValueAsString(in);
 		return mapper.readerFor(outCls).readValue(data);
 	}
+
+	public abstract EventQueue queue();
 }

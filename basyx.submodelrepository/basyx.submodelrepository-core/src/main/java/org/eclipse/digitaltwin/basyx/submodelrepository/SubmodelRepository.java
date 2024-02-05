@@ -26,12 +26,16 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import java.util.List;
+import java.io.InputStream;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -40,7 +44,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 /**
  * Specifies the overall SubmodelRepository API
  * 
- * @author schnicke, danish
+ * @author schnicke, danish, kammognie
  *
  */
 public interface SubmodelRepository {
@@ -76,7 +80,17 @@ public interface SubmodelRepository {
 	 * @param submodel
 	 * @throws CollidingIdentifierException
 	 */
-	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException;
+	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException, MissingIdentifierException;
+	
+	/**
+	 * Updates a SubmodelElement
+	 * 
+	 * @param submodelIdentifier
+	 * @param idShortPath
+	 * @param submodelElement
+	 * @throws ElementDoesNotExistException
+	 */
+	public void updateSubmodelElement(String submodelIdentifier, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException;
 
 	/**
 	 * Deletes a Submodel
@@ -92,8 +106,7 @@ public interface SubmodelRepository {
 	 * @param submodelId
 	 * @return
 	 */
-	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo)
-			throws ElementDoesNotExistException;
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo) throws ElementDoesNotExistException;
 
 	/**
 	 * Retrieves a specific SubmodelElement of a Submodel
@@ -168,6 +181,15 @@ public interface SubmodelRepository {
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException;
 
 	/**
+	 * Returns the name of the repository
+	 * 
+	 * @return repoName
+	 */
+	public default String getName() {
+		return "sm-repo";
+	}
+
+	/**
 	 * Invokes an operation
 	 * 
 	 * @param submodelId
@@ -181,13 +203,6 @@ public interface SubmodelRepository {
 	 * @return
 	 */
 	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException;
-
-	/**
-	 * Returns the name of the submodel repository
-	 */
-	public default String getName() {
-		return "submodelRepository-default-name";
-	}
 
 	/**
 	 * Retrieves the Submodel as Value-Only_representation with the specific id
@@ -206,4 +221,48 @@ public interface SubmodelRepository {
 	 * @throws ElementDoesNotExistException
 	 */
 	public Submodel getSubmodelByIdMetadata(String submodelId) throws ElementDoesNotExistException;
+
+	/**
+	 * Retrieves the file of a file submodelelement
+	 * 
+	 * @param submodelId
+	 *            the Submodel id
+	 * @param idShortPath
+	 *            the IdShort path of the file element
+	 * @return
+	 * 
+	 * @throws ElementDoesNotExistException
+	 * @throws ElementNotAFileException
+	 * @throws FileDoesNotExistException
+	 */
+	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException;
+
+	/**
+	 * Uploads a file to a file submodelelement
+	 * 
+	 * @param submodelId
+	 *            the Submodel id
+	 * @param idShortPath
+	 *            the IdShort path of the file element
+	 * @param file
+	 *            the file object to upload
+	 * 
+	 * @throws ElementDoesNotExistException
+	 * @throws ElementNotAFileException
+	 */
+	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException;
+
+	/**
+	 * Deletes the file of a file submodelelement
+	 * 
+	 * @param submodelId
+	 *            the Submodel id
+	 * @param idShortPath
+	 *            the IdShort path of the file element
+	 * 
+	 * @throws ElementDoesNotExistException
+	 * @throws ElementNotAFileException
+	 * @throws FileDoesNotExistException
+	 */
+	public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException;
 }

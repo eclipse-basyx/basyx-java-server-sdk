@@ -26,16 +26,20 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
-import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+/**
+ * Spring application configured for tests.
+ * 
+ * @author schnicke, danish, kammognie
+ *
+ */
 @SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
 public class DummySubmodelRepositoryComponent {
 
-	@Bean
-	public InMemorySubmodelRepository createSubmodelRepository() {
-		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
+	public static void main(String[] args) {
+		SpringApplication.run(DummySubmodelRepositoryComponent.class, args);
 	}
 }

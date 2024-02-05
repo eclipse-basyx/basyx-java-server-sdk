@@ -29,14 +29,15 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.events.kafka.KafkaRegis
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.core.KafkaTemplate;
 
 @Configuration
 @ConditionalOnProperty(prefix = "events", name = "sink", havingValue = "kafka")
 public class KafkaRegistryEventsConfiguration {
 
 	@Bean
-	public RegistryEventSink eventSink() {
-		return new KafkaRegistryEventSink();
+	public RegistryEventSink eventSink(KafkaTemplate<String, String> template) {
+		return new KafkaRegistryEventSink(template);
 	}
 
 }

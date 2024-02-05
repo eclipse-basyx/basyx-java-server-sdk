@@ -28,6 +28,8 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.component;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 
 /**
  * Creates and starts the SubmodelRepository off-shelf-component
@@ -35,7 +37,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author schnicke
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
+@SpringBootApplication(
+		scanBasePackages = "org.eclipse.digitaltwin.basyx", 
+		exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
 public class SubmodelRepositoryComponent {
 	public static void main(String[] args) {
 		SpringApplication.run(SubmodelRepositoryComponent.class, args);

@@ -1,0 +1,49 @@
+{
+    "modelType": "Submodel",
+    "kind":"Instance",
+    "semanticId": {
+        "keys": [
+            {
+                "type": "GlobalReference",
+                "value": "0173-1#01-AFZ615#016"
+            }
+        ],
+        "type": "ExternalReference"
+    },
+    "id": "8A6344BDAB57E184",
+    "idShort": "FileTests",
+    "submodelElements": [
+        {
+            "modelType": "File",
+            "contentType": "application/json",
+            "value": "BaSyx-Logo.png",
+            "semanticId": {
+                "keys": [
+                    {
+                        "type": "ConceptDescription",
+                        "value": "0173-1#02-BAA120#008"
+                    }
+                ],
+                "type": "ExternalReference"
+            },
+            "category": "PARAMETER",
+            "idShort": "FileData"
+        },
+        {
+            "modelType": "Property",
+            "semanticId": {
+                "keys": [
+                    {
+                        "type": "ConceptDescription",
+                        "value": "0173-1#02-BAA120#008"
+                    }
+                ],
+                "type": "ExternalReference"
+            },
+            "value": "5000",
+            "valueType": "xs:integer",
+            "category": "PARAMETER",
+            "idShort": "NonFileParameter"
+        }
+   ]
+}

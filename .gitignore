@@ -3,6 +3,7 @@
 /.vs
 /.vscode
 /.idea
+**.iml
 launchSettings.json
 .project
 *.pubxml
@@ -31,7 +32,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders
-META-INF/*
+**/META-INF/*
 
 # External tool builders
 .externalToolBuilders/
@@ -86,3 +87,6 @@ META-INF/*
 **/open-api/Plattform_i40-Registry-and-Discovery.yaml
 **/open-api/Plattform_i40-SubmodelRegistry-and-Discovery.yaml
 **/open-api/temporary-extensions-result-file.yaml
+/.env
+
+**.iml

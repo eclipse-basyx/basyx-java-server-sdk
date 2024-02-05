@@ -7,7 +7,7 @@
 		<groupId>org.eclipse.digitaltwin.basyx</groupId>
 		<artifactId>basyx.submodelregistry</artifactId>
 		<version>${revision}</version>
-		<relativePath>..</relativePath>
+
 	</parent>
 
 	<artifactId>basyx.submodelregistry-client-native</artifactId>
@@ -60,7 +60,7 @@
 					</execution>
 				</executions>
 			</plugin>
-		 	<plugin>
+			<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
 				<executions>
@@ -83,18 +83,21 @@
 							<generateApiDocumentation>false</generateApiDocumentation>
 							<generateSupportingFiles>true</generateSupportingFiles>
 							<templateDirectory>${project.basedir}/templates</templateDirectory>
-							<supportingFilesToGenerate>AbstractOpenApiSchema.java,ServerConfiguration.java,ServerVariable.java,Configuration.java,JSON.java,ApiException.java,ApiResponse.java,ApiClient.java,Pair.java,RFC3339DateFormat.java</supportingFilesToGenerate>
+							<supportingFilesToGenerate>
+								AbstractOpenApiSchema.java,ServerConfiguration.java,ServerVariable.java,Configuration.java,JSON.java,ApiException.java,ApiResponse.java,ApiClient.java,Pair.java,RFC3339DateFormat.java
+							</supportingFilesToGenerate>
 							<configOptions>
 								<java8>true</java8>
 								<dateLibrary>java8</dateLibrary>
 								<sourceFolder>java</sourceFolder>
+								<useJakartaEe>true</useJakartaEe>
 							</configOptions>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
-			
+
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -112,10 +115,6 @@
 			<artifactId>jackson-databind-nullable</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>javax.annotation</groupId>
-			<artifactId>javax.annotation-api</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
@@ -126,6 +125,10 @@
 		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>jsr305</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.annotation</groupId>
+			<artifactId>jakarta.annotation-api</artifactId>
 		</dependency>
 	</dependencies>
 

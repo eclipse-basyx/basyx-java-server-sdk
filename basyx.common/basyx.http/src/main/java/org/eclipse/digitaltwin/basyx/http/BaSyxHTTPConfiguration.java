@@ -26,11 +26,17 @@
 
 package org.eclipse.digitaltwin.basyx.http;
 
+import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -43,6 +49,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  */
 @Configuration
 public class BaSyxHTTPConfiguration {
+	Logger logger = LoggerFactory.getLogger(BaSyxHTTPConfiguration.class);
 
 	/**
 	 * Returns a Jackson2ObjectMapperBuilder that is configured using the passed
@@ -60,5 +67,40 @@ public class BaSyxHTTPConfiguration {
 		}
 		
 		return builder;
+	}
+
+	/**
+	 * Collects a list of {@link CorsPathPatternProvider} and uses them to configure
+	 * CORS for the passed pathPatterns
+	 * 
+	 * @param configurationUrlProviders
+	 * @param allowedOrigins
+	 * @param allowedMethods
+	 * @return
+	 */
+	@Bean
+	public WebMvcConfigurer corsConfigurer(List<CorsPathPatternProvider> configurationUrlProviders,
+										   @Value("${basyx.cors.allowed-origins:}") String[] allowedOrigins,
+										   @Value("${basyx.cors.allowed-methods:}") String[] allowedMethods) {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				if (allowedOrigins.length == 0 && allowedMethods.length == 0)
+					return;
+
+				logger.info("---- Configuring CORS ----");
+
+				for (CorsPathPatternProvider provider : configurationUrlProviders) {
+					configureOrigins(allowedOrigins, allowedMethods, registry, provider.getPathPattern());
+				}
+			}
+
+			private void configureOrigins(String[] allowedOrigins, String[] allowedMethods, CorsRegistry registry, String pathPattern) {
+				logger.info(pathPattern + " configured with allowedOriginPatterns " + Arrays.toString(allowedOrigins));
+				logger.info(allowedMethods.length == 0 ? "No allowed methods configured" : pathPattern + " configured with allowedMethods " + Arrays.toString(allowedMethods));
+
+				registry.addMapping(pathPattern).allowedOriginPatterns(allowedOrigins).allowedMethods(allowedMethods);
+			}
+		};
 	}
 }

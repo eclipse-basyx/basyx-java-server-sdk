@@ -38,17 +38,24 @@ import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPatch;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.entity.mime.FileBody;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.springframework.core.io.ClassPathResource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Supports the tests working with the HTTP/REST API of AAS, Submodels, etc.
@@ -57,6 +64,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 public class BaSyxHttpTestUtils {
+
+	private static final String CURSOR = "cursor";
+	private static final String PAGING_METADATA_KEY = "paging_metadata";
 
 	/**
 	 * Reads the JSON String from a JSON file in the classpath
@@ -110,6 +120,12 @@ public class BaSyxHttpTestUtils {
 		HttpGet getRequest = createGetRequestWithHeader(url);
 		return client.execute(getRequest);
 	}
+	
+	public static CloseableHttpResponse executeAuthorizedGetOnURL(String url, String accessToken) throws IOException {
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpGet getRequest = createGetRequestWithAuthorizationHeader(url, accessToken);
+		return client.execute(getRequest);
+	}
 
 	/**
 	 * Performs a delete request on the passed URL
@@ -121,6 +137,12 @@ public class BaSyxHttpTestUtils {
 	public static CloseableHttpResponse executeDeleteOnURL(String url) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpDelete deleteRequest = createDeleteRequestWithHeader(url);
+		return client.execute(deleteRequest);
+	}
+	
+	public static CloseableHttpResponse executeAuthorizedDeleteOnURL(String url, String accessToken) throws IOException {
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpDelete deleteRequest = createDeleteRequestWithAuthorizationHeader(url, accessToken);
 		return client.execute(deleteRequest);
 	}
 
@@ -139,6 +161,13 @@ public class BaSyxHttpTestUtils {
 		return client.execute(putRequest);
 	}
 
+	public static CloseableHttpResponse executeAuthorizedPutOnURL(String url, String content, String accessToken) throws IOException {
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpPut putRequest = createPutRequestWithAuthorizationHeader(url, content, accessToken);
+		
+		return client.execute(putRequest);
+	}
+
 	/**
 	 * Performs a post request on the passed URL with the passed content
 	 * 
@@ -151,6 +180,13 @@ public class BaSyxHttpTestUtils {
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpPost aasCreateRequest = createPostRequest(url, content);
 
+		return client.execute(aasCreateRequest);
+	}
+	
+	public static CloseableHttpResponse executeAuthorizedPostOnURL(String url, String content, String accessToken) throws IOException {
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpPost aasCreateRequest = createAuthorizedPostRequest(url, content, accessToken);
+		
 		return client.execute(aasCreateRequest);
 	}
 
@@ -168,6 +204,80 @@ public class BaSyxHttpTestUtils {
 
 		return client.execute(patchRequest);
 	}
+	
+	public static CloseableHttpResponse executeAuthorizedPatchOnURL(String url, String content, String accessToken) throws IOException {
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpPatch patchRequest = createPatchRequestWithAuthorizationHeader(url, content, accessToken);
+		
+		return client.execute(patchRequest);
+	}
+	
+	/**
+	 * Removes cursor node from the paging_metadata provided in the JSON
+	 * 
+	 * @param inputJSON
+	 * @return
+	 * 
+	 * @throws JsonMappingException
+	 * @throws JsonProcessingException
+	 */
+	public static String removeCursorFromJSON(String inputJSON) throws JsonMappingException, JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
+
+        JsonNode rootNode = mapper.readTree(inputJSON);
+
+        if (rootNode.has(PAGING_METADATA_KEY)) {
+            ObjectNode pagingMetadata = (ObjectNode) rootNode.get(PAGING_METADATA_KEY);
+            
+            if (pagingMetadata.has(CURSOR))
+            	pagingMetadata.remove(CURSOR);
+        }
+        
+        return mapper.writeValueAsString(rootNode);
+	}
+
+	public static CloseableHttpResponse executePutRequest(CloseableHttpClient client, HttpPut putRequest) throws IOException {
+		CloseableHttpResponse response = client.execute(putRequest);
+
+		HttpEntity responseEntity = response.getEntity();
+
+		EntityUtils.consume(responseEntity);
+		return response;
+	}
+
+	public static HttpPut createPutRequestWithFile(String url, String fileName, java.io.File file) {
+		HttpPut putRequest = new HttpPut(url);
+
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+
+		builder.addPart("file", new FileBody(file));
+		builder.addTextBody("fileName", fileName);
+		builder.setContentType(ContentType.MULTIPART_FORM_DATA);
+
+		HttpEntity multipart = builder.build();
+		putRequest.setEntity(multipart);
+		return putRequest;
+	}
+	
+	public static HttpPut createPutRequestWithFileWithAuthorization(String url, String fileName, java.io.File file, String accessToken) {
+		HttpPut putRequest = new HttpPut(url);
+		
+		putRequest.setHeader("Authorization", "Bearer " + accessToken);
+		
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+		
+		builder.addPart("file", new FileBody(file));
+		builder.addTextBody("fileName", fileName);
+		builder.setContentType(ContentType.MULTIPART_FORM_DATA);
+		
+		HttpEntity multipart = builder.build();
+		putRequest.setEntity(multipart);
+		return putRequest;
+	}
+
+	public static String getThumbnailAccessURL(String url, String aasId) {
+		return url + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId) + "/asset-information/thumbnail";
+	}
 
 	private static HttpPatch createPatchRequestWithHeader(String url, String content) {
 		HttpPatch patchRequest = new HttpPatch(url);
@@ -175,6 +285,16 @@ public class BaSyxHttpTestUtils {
 		patchRequest.setHeader("Content-type", "application/json");
 		patchRequest.setEntity(new StringEntity(content));
 
+		return patchRequest;
+	}
+	
+	private static HttpPatch createPatchRequestWithAuthorizationHeader(String url, String content, String accessToken) {
+		HttpPatch patchRequest = new HttpPatch(url);
+		
+		patchRequest.setHeader("Content-type", "application/json");
+		patchRequest.setHeader("Authorization", "Bearer " + accessToken);
+		patchRequest.setEntity(new StringEntity(content));
+		
 		return patchRequest;
 	}
 
@@ -186,6 +306,16 @@ public class BaSyxHttpTestUtils {
 
 		return putRequest;
 	}
+	
+	private static HttpPut createPutRequestWithAuthorizationHeader(String url, String content, String accessToken) {
+		HttpPut putRequest = new HttpPut(url);
+		
+		putRequest.setHeader("Content-type", "application/json");
+		putRequest.setHeader("Authorization", "Bearer " + accessToken);
+		putRequest.setEntity(new StringEntity(content));
+		
+		return putRequest;
+	}
 
 	private static HttpPost createPostRequest(String url, String content) {
 		HttpPost aasCreateRequest = createPostRequestWithHeader(url);
@@ -195,10 +325,27 @@ public class BaSyxHttpTestUtils {
 
 		return aasCreateRequest;
 	}
+	
+	private static HttpPost createAuthorizedPostRequest(String url, String content, String accessToken) {
+		HttpPost aasCreateRequest = createPostRequestWithAuthorizationHeader(url, accessToken);
+		
+		StringEntity aasEntity = new StringEntity(content);
+		aasCreateRequest.setEntity(aasEntity);
+		
+		return aasCreateRequest;
+	}
 
 	private static HttpPost createPostRequestWithHeader(String url) {
 		HttpPost aasCreateRequest = new HttpPost(url);
 		aasCreateRequest.setHeader("Content-type", "application/json");
+		aasCreateRequest.setHeader("Accept", "application/json");
+		return aasCreateRequest;
+	}
+	
+	private static HttpPost createPostRequestWithAuthorizationHeader(String url, String accessToken) {
+		HttpPost aasCreateRequest = new HttpPost(url);
+		aasCreateRequest.setHeader("Content-type", "application/json");
+		aasCreateRequest.setHeader("Authorization", "Bearer " + accessToken);
 		aasCreateRequest.setHeader("Accept", "application/json");
 		return aasCreateRequest;
 	}
@@ -209,10 +356,25 @@ public class BaSyxHttpTestUtils {
 		aasCreateRequest.setHeader("Accept", "application/json");
 		return aasCreateRequest;
 	}
+	
+	private static HttpGet createGetRequestWithAuthorizationHeader(String url, String accessToken) {
+		HttpGet aasCreateRequest = new HttpGet(url);
+		aasCreateRequest.setHeader("Content-type", "application/json");
+		aasCreateRequest.setHeader("Authorization", "Bearer " + accessToken);
+		aasCreateRequest.setHeader("Accept", "application/json");
+		return aasCreateRequest;
+	}
 
 	private static HttpDelete createDeleteRequestWithHeader(String url) {
 		HttpDelete deleteRequest = new HttpDelete(url);
 		deleteRequest.setHeader("Content-type", "application/json");
+		return deleteRequest;
+	}
+	
+	private static HttpDelete createDeleteRequestWithAuthorizationHeader(String url, String accessToken) {
+		HttpDelete deleteRequest = new HttpDelete(url);
+		deleteRequest.setHeader("Content-type", "application/json");
+		deleteRequest.setHeader("Authorization", "Bearer " + accessToken);
 		return deleteRequest;
 	}
 }
