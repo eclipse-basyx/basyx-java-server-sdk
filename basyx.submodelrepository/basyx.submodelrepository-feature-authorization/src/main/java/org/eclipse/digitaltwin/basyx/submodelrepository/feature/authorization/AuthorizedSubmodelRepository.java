@@ -162,6 +162,15 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 		
 		decorated.createSubmodelElement(submodelId, idShortPath, smElement);
 	}
+	
+	@Override
+	public void updateSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
+		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, idShortPath));
+		
+		throwExceptionIfInsufficientPermission(isAuthorized);
+		
+		decorated.updateSubmodelElement(submodelId, idShortPath, submodelElement);
+	}
 
 	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
