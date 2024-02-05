@@ -6,32 +6,6 @@
 	<artifactId>basyx.aasregistry</artifactId>
 	<name>BaSyx aasregistry</name>
 	<description>BaSyx aasregistry</description>
-	<url>https://www.eclipse.org/basyx/</url>
-	<licenses>
-		<license>
-			<name>MIT</name>
-			<url>https://opensource.org/licenses/MIT</url>
-		</license>
-	</licenses>
-
-	<repositories>
-		<repository>
-			<id>central</id>
-			<name>Maven Central</name>
-			<layout>default</layout>
-			<url>https://repo1.maven.org/maven2</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
-	<scm>
-		<connection>scm:git:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</connection>
-		<developerConnection>scm:git:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</developerConnection>
-		<url>https://github.com/eclipse-basyx/basyx-java-server-sdk/tree/main</url>
-	</scm>
-	
 	<packaging>pom</packaging>
 
 	<parent>
