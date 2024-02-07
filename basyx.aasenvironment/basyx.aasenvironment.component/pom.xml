@@ -85,11 +85,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-			<artifactId>dataformat-xml</artifactId>
+			<artifactId>aas4j-dataformat-xml</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-			<artifactId>dataformat-aasx</artifactId>
+			<artifactId>aas4j-dataformat-aasx</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.xmlunit</groupId>

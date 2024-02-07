@@ -93,7 +93,7 @@ public class MetamodelCloneCreator {
 	
 	private List<AssetAdministrationShell> getDeserializedShells(String serializedShells) {
 		try {
-			return jsonDeserializer.readReferables(serializedShells, AssetAdministrationShell.class);
+			return jsonDeserializer.readList(serializedShells, AssetAdministrationShell.class);
 		} catch (DeserializationException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Unable to deserialize the AASs");
@@ -111,7 +111,7 @@ public class MetamodelCloneCreator {
 	
 	private List<Submodel> getDeserializedSubmodels(String serializedSubmodels) {
 		try {
-			return jsonDeserializer.readReferables(serializedSubmodels, Submodel.class);
+			return jsonDeserializer.readList(serializedSubmodels, Submodel.class);
 		} catch (DeserializationException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Unable to deserialize the Submodels");
@@ -129,7 +129,7 @@ public class MetamodelCloneCreator {
 	
 	private List<ConceptDescription> getDeserializedCDs(String serializedCDs) {
 		try {
-			return jsonDeserializer.readReferables(serializedCDs, ConceptDescription.class);
+			return jsonDeserializer.readList(serializedCDs, ConceptDescription.class);
 		} catch (DeserializationException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Unable to deserialize the Concept descriptions");
