@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -26,9 +26,9 @@
 package org.eclipse.digitaltwin.basyx.core.exceptions;
 
 /**
- * Indicates failure of automatic link between Repository and Registry
+ * Indicates failure while delegating the operation invocation
  * 
- * @author danish
+ * @author danish, marie
  *
  */
 @SuppressWarnings("serial")

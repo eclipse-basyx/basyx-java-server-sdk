@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,6 +22,7 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.operation.delegation;
 
 import java.io.File;
@@ -47,9 +48,9 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 
 /**
- * Decorator for linking {@link SubmodelRepository} with SubmodelRegistry
+ * Decorator for {@link SubmodelRepository} to delegate the operation request
  *
- * @author danish
+ * @author danish, marie
  *
  */
 public class OperationDelegationSubmodelRepository implements SubmodelRepository {
@@ -141,7 +142,7 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 		
 		InvokableOperation operation = (InvokableOperation) sme;
 		
-		Optional<Qualifier> optionalQualifier = operation.getQualifiers().stream().filter(qualifier -> qualifier.getType().equals("invocationDelegation")).findAny();
+		Optional<Qualifier> optionalQualifier = operation.getQualifiers().stream().filter(qualifier -> qualifier.getType().equals(HTTPOperationDelegation.INVOCATION_DELEGATION_TYPE)).findAny();
 		
 		if (!optionalQualifier.isPresent())
 			return operation.invoke(input);
