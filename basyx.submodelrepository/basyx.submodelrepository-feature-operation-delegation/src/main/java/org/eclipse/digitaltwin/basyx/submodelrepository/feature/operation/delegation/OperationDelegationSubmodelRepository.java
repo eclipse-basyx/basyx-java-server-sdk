@@ -45,8 +45,6 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Decorator for linking {@link SubmodelRepository} with SubmodelRegistry
@@ -55,7 +53,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class OperationDelegationSubmodelRepository implements SubmodelRepository {
-	private static Logger logger = LoggerFactory.getLogger(OperationDelegationSubmodelRepository.class);
 
 	private SubmodelRepository decorated;
 	private OperationDelegation operationDelegation;
@@ -67,13 +64,11 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 
 	@Override
 	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
-		// TODO Auto-generated method stub
 		return decorated.getAllSubmodels(pInfo);
 	}
 
 	@Override
 	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException {
-		// TODO Auto-generated method stub
 		return decorated.getSubmodel(submodelId);
 	}
 
@@ -102,7 +97,6 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 
 	@Override
 	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo) throws ElementDoesNotExistException {
-		// TODO Auto-generated method stub
 		return decorated.getSubmodelElements(submodelId, pInfo);
 	}
 
@@ -113,7 +107,6 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 
 	@Override
 	public SubmodelElementValue getSubmodelElementValue(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
-		// TODO Auto-generated method stub
 		return decorated.getSubmodelElementValue(submodelId, smeIdShort);
 	}
 
@@ -158,19 +151,16 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 
 	@Override
 	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) throws ElementDoesNotExistException {
-		// TODO Auto-generated method stub
 		return decorated.getSubmodelByIdValueOnly(submodelId);
 	}
 
 	@Override
 	public Submodel getSubmodelByIdMetadata(String submodelId) throws ElementDoesNotExistException {
-		// TODO Auto-generated method stub
 		return decorated.getSubmodelByIdMetadata(submodelId);
 	}
 
 	@Override
 	public File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		// TODO Auto-generated method stub
 		return decorated.getFileByPathSubmodel(submodelId, idShortPath);
 	}
 

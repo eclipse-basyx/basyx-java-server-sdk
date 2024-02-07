@@ -42,7 +42,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author danish
  */
 @Configuration
-//@ConditionalOnExpression("T(org.springframework.util.StringUtils).isEmpty('${basyx.submodel.delegation.operation.enabled:}') && !T(org.springframework.util.StringUtils).isEmpty('${basyx.externalurl:}')")
 @ConditionalOnExpression("#{${basyx.submodel.delegation.operation.enabled:true} or ${basyx.submodel.delegation.operation.enabled:false}}")
 public class OperationDelegationSubmodelRepositoryConfiguration {
 

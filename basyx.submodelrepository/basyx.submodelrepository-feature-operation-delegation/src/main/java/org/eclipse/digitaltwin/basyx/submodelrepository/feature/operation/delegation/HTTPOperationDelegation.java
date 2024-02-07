@@ -26,14 +26,14 @@ public class HTTPOperationDelegation implements OperationDelegation {
 		try {
 			return webClient.post().uri(uri).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(input)).exchangeToMono(response -> {
 				if (response.statusCode().isError()) {
-					throw new OperationDelegationException(String.format("Unable to delegate the invokation operation on the URI: '%s' the reponse code is %s", uri, response.statusCode()));
+					throw new OperationDelegationException(String.format("Unable to delegate the invocation operation on the URI: '%s' the response code is %s", uri, response.statusCode()));
 				} else {
 					return response.bodyToMono(OperationVariable[].class);
 				}
 			}).block();
 
 		} catch (WebClientResponseException e) {
-			throw new OperationDelegationException(String.format("Exception occurred while invokating operation on the URI: '%s' the error is %s", uri, e.getStackTrace()));
+			throw new OperationDelegationException(String.format("Exception occurred while invocing operation on the URI: '%s' the error is %s", uri, e.getStackTrace()));
 		}
 
 	}
