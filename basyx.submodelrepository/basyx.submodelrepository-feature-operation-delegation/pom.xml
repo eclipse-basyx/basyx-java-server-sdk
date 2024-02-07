@@ -18,6 +18,16 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelrepository-backend-inmemory</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelservice-backend-inmemory</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.http</artifactId>
 			<scope>test</scope>
 			<classifier>tests</classifier>
@@ -37,5 +47,11 @@
 			<artifactId>httpclient5</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mock-server</groupId>
+			<artifactId>mockserver-netty</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 </project>
