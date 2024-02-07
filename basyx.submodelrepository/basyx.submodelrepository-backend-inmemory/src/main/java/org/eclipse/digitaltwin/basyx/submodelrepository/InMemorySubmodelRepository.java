@@ -41,13 +41,13 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
-import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
-import org.apache.commons.io.IOUtils;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -252,7 +252,12 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
-		getSubmodelService(submodelId).deleteSubmodelElement(idShortPath);
+		try {
+			deleteFileValue(submodelId, idShortPath);
+		} catch (Exception e) {
+		} finally {
+			getSubmodelService(submodelId).deleteSubmodelElement(idShortPath);
+		}
 	}
 
 	@Override

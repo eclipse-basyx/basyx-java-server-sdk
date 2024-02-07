@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.apache.commons.io.FileUtils;
 import org.apache.tika.mime.MimeType;
 import org.apache.tika.mime.MimeTypeException;
@@ -40,12 +39,13 @@ import org.apache.tika.mime.MimeTypes;
 import org.apache.tika.utils.StringUtils;
 import org.bson.types.ObjectId;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
@@ -306,10 +306,15 @@ public class MongoDBSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
-		SubmodelService submodelService = getSubmodelService(submodelId);
-		submodelService.deleteSubmodelElement(idShortPath);
+		try {
+			deleteFileValue(submodelId, idShortPath);
+		} catch (Exception e) {
+		} finally {
+			SubmodelService submodelService = getSubmodelService(submodelId);
+			submodelService.deleteSubmodelElement(idShortPath);
 
-		updateSubmodel(submodelId, submodelService.getSubmodel());
+			updateSubmodel(submodelId, submodelService.getSubmodel());
+		}
 	}
 
 	@Override
