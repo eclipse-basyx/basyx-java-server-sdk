@@ -68,78 +68,74 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 	@Override
 	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
 		// TODO Auto-generated method stub
-		return null;
+		return decorated.getAllSubmodels(pInfo);
 	}
 
 	@Override
 	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException {
 		// TODO Auto-generated method stub
-		return null;
+		return decorated.getSubmodel(submodelId);
 	}
 
 	@Override
 	public void updateSubmodel(String submodelId, Submodel submodel) throws ElementDoesNotExistException {
-		// TODO Auto-generated method stub
+		decorated.updateSubmodel(submodelId, submodel);
 		
 	}
 
 	@Override
 	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException, MissingIdentifierException {
-		// TODO Auto-generated method stub
-		
+		decorated.createSubmodel(submodel);
 	}
 
 	@Override
 	public void updateSubmodelElement(String submodelIdentifier, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
-		// TODO Auto-generated method stub
+		decorated.updateSubmodelElement(submodelIdentifier, idShortPath, submodelElement);
 		
 	}
 
 	@Override
 	public void deleteSubmodel(String submodelId) throws ElementDoesNotExistException {
-		// TODO Auto-generated method stub
+		decorated.deleteSubmodel(submodelId);
 		
 	}
 
 	@Override
 	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo) throws ElementDoesNotExistException {
 		// TODO Auto-generated method stub
-		return null;
+		return decorated.getSubmodelElements(submodelId, pInfo);
 	}
 
 	@Override
 	public SubmodelElement getSubmodelElement(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
-		// TODO Auto-generated method stub
-		return null;
+		return decorated.getSubmodelElement(submodelId, smeIdShort);
 	}
 
 	@Override
 	public SubmodelElementValue getSubmodelElementValue(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
 		// TODO Auto-generated method stub
-		return null;
+		return decorated.getSubmodelElementValue(submodelId, smeIdShort);
 	}
 
 	@Override
 	public void setSubmodelElementValue(String submodelId, String smeIdShort, SubmodelElementValue value) throws ElementDoesNotExistException {
-		// TODO Auto-generated method stub
+		decorated.setSubmodelElementValue(submodelId, smeIdShort, value);
 		
 	}
 
 	@Override
 	public void createSubmodelElement(String submodelId, SubmodelElement smElement) {
-		// TODO Auto-generated method stub
-		
+		decorated.createSubmodelElement(submodelId, smElement);
 	}
 
 	@Override
 	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
-		// TODO Auto-generated method stub
-		
+		decorated.createSubmodelElement(submodelId, idShortPath, smElement);
 	}
 
 	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
-		// TODO Auto-generated method stub
+		decorated.deleteSubmodelElement(submodelId, idShortPath);
 		
 	}
 
@@ -154,40 +150,39 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 		
 		Optional<Qualifier> optionalQualifier = operation.getQualifiers().stream().filter(qualifier -> qualifier.getType().equals("invocationDelegation")).findAny();
 		
-		if (optionalQualifier.isPresent())
-			operationDelegation.delegate(optionalQualifier.get(), input);
-			
-		return operation.invoke(input);
+		if (!optionalQualifier.isPresent())
+			return operation.invoke(input);
+		
+		return	operationDelegation.delegate(optionalQualifier.get(), input);
 	}
 
 	@Override
 	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) throws ElementDoesNotExistException {
 		// TODO Auto-generated method stub
-		return null;
+		return decorated.getSubmodelByIdValueOnly(submodelId);
 	}
 
 	@Override
 	public Submodel getSubmodelByIdMetadata(String submodelId) throws ElementDoesNotExistException {
 		// TODO Auto-generated method stub
-		return null;
+		return decorated.getSubmodelByIdMetadata(submodelId);
 	}
 
 	@Override
 	public File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
 		// TODO Auto-generated method stub
-		return null;
+		return decorated.getFileByPathSubmodel(submodelId, idShortPath);
 	}
 
 	@Override
 	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
-		// TODO Auto-generated method stub
+		decorated.setFileValue(submodelId, idShortPath, fileName, inputStream);
 		
 	}
 
 	@Override
 	public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		// TODO Auto-generated method stub
-		
+		decorated.deleteFileValue(submodelId, idShortPath);
 	}
 
 }
