@@ -76,7 +76,6 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 	@Override
 	public void updateSubmodel(String submodelId, Submodel submodel) throws ElementDoesNotExistException {
 		decorated.updateSubmodel(submodelId, submodel);
-		
 	}
 
 	@Override
@@ -87,13 +86,11 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 	@Override
 	public void updateSubmodelElement(String submodelIdentifier, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
 		decorated.updateSubmodelElement(submodelIdentifier, idShortPath, submodelElement);
-		
 	}
 
 	@Override
 	public void deleteSubmodel(String submodelId) throws ElementDoesNotExistException {
 		decorated.deleteSubmodel(submodelId);
-		
 	}
 
 	@Override
@@ -114,7 +111,6 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 	@Override
 	public void setSubmodelElementValue(String submodelId, String smeIdShort, SubmodelElementValue value) throws ElementDoesNotExistException {
 		decorated.setSubmodelElementValue(submodelId, smeIdShort, value);
-		
 	}
 
 	@Override
@@ -130,7 +126,6 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
 		decorated.deleteSubmodelElement(submodelId, idShortPath);
-		
 	}
 
 	@Override

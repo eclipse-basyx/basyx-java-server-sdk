@@ -31,7 +31,7 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactor
 /**
  * Factory for creating {@link OperationDelegationSubmodelRepository}
  * 
- * @author danish
+ * @author danish marie
  */
 public class OperationDelegationSubmodelRepositoryFactory implements SubmodelRepositoryFactory {
 
