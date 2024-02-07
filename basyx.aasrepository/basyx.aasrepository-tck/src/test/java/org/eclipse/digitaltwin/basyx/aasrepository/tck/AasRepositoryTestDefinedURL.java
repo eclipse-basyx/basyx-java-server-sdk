@@ -76,7 +76,7 @@ public class AasRepositoryTestDefinedURL extends AasRepositoryHTTPSuite {
 		try {
 			CloseableHttpResponse response = getAllAas();
 			String jsonResponse = getJsonResponse(response);
-			List<AssetAdministrationShell> shells = deserializer.readReferables(jsonResponse, AssetAdministrationShell.class);
+			List<AssetAdministrationShell> shells = deserializer.readList(jsonResponse, AssetAdministrationShell.class);
 			return shells.stream().map(AssetAdministrationShell::getId).collect(Collectors.toList());
 		} catch (Exception e) {
 			throw new RuntimeException(e);

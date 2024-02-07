@@ -31,11 +31,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationResult;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
@@ -43,8 +44,6 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifierSize;
-import org.eclipse.digitaltwin.basyx.http.model.OperationRequest;
-import org.eclipse.digitaltwin.basyx.http.model.OperationResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
@@ -67,6 +66,8 @@ import org.springframework.web.multipart.MultipartFile;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-10T15:59:05.892Z[GMT]")
 @RestController
@@ -271,9 +272,9 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	}
 
 	private OperationResult createOperationResult(OperationVariable[] result) {
-		OperationResult operationResult = new OperationResult();
-		operationResult.setOutputArguments(Arrays.asList(result));
-		return operationResult;
+		return new DefaultOperationResult.Builder()
+				.outputArguments(Arrays.asList(result))
+				.build();
 	}
 
 	private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {

@@ -36,7 +36,6 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleAbstractTypeResolver;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
@@ -48,7 +47,6 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 @Component
 public class Aas4JHTTPSerializationExtension implements SerializationExtension {
 
-  protected JsonMapper mapper;
   protected SimpleAbstractTypeResolver typeResolver;
 
   public Aas4JHTTPSerializationExtension() {
