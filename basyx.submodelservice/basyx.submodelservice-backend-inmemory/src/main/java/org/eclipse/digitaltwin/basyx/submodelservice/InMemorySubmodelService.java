@@ -26,12 +26,10 @@
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
-import org.eclipse.digitaltwin.aas4j.v3.model.Qualifier;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
@@ -217,7 +215,6 @@ public class InMemorySubmodelService implements SubmodelService {
 			throw new NotInvokableException(idShortPath);
 		
 		InvokableOperation operation = (InvokableOperation) sme;
-		
 		return operation.invoke(input);
 	}
 	

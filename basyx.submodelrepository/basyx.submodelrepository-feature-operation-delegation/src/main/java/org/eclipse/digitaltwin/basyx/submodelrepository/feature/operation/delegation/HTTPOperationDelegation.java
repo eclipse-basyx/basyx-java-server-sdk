@@ -26,9 +26,7 @@ public class HTTPOperationDelegation implements OperationDelegation {
 		try {
 			return webClient.post().uri(uri).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(input)).exchangeToMono(response -> {
 				if (response.statusCode().isError()) {
-					return response.bodyToMono(OperationVariable[].class).flatMap(errorBody -> {
-						throw new OperationDelegationException(String.format("Unable to delegate the invokation operation on the URI: '%s' the error is %s", uri, errorBody));
-					});
+					throw new OperationDelegationException(String.format("Unable to delegate the invokation operation on the URI: '%s' the reponse code is %s", uri, response.statusCode()));
 				} else {
 					return response.bodyToMono(OperationVariable[].class);
 				}
