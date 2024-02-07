@@ -1,19 +1,34 @@
-# Submodel Repository - Registry Integration
-This feature automatically integrates the Descriptor with the Registry while creation of the Submodel at the Repository. <br>
-It also automatically removes the Descriptor from the Registry when the Submodel is removed from the Repository.
+# Submodel Repository - Operation Delegation
+An operation is a specific type of submodel element capable of performing server-side functions. However, in certain environments, this is not possible. Therefore, the operation can be delegated to an independent destination (such as an HTTP URL) to be executed. An example request body is given below.
+```
+{
+	"inputArguments": [
+		{
+		    "value": {
+		        "modelType": "Property",
+		        "valueType": "xs:int",
+		        "value": "5",
+		        "idShort": "input"
+		    }
+	 	}
+	]
+}
+```
 
-To enable this feature, the following two properties should be configured:
+This feature is enabled by default and to disable this the following property should be defined:
 
 ```
-basyx.submodelrepository.feature.registryintegration = {Submodel-Registry-Base-Url}
-basyx.externalurl = {Submodel-Repo-Base-Url}
+basyx.submodelrepository.feature.operation.delegation.enabled = false
 ```
 
-This feature gets enable automatically when both of the above defined properties are configured, i.e., no external enabled/disabled property is required.
+To create an operation delegation, a Submodel that has an Operation(-SubmodelElement) must be present:
+-	The Operation has neither input, output nor inout variables
+-	To achieve the Delegation functionality, a Qualifier of type "invocationDelegation" is added to the operation.
+-	As a value, the connection information (such as an HTTP URL) to the desired operation must be given.
 
-An example valid configuration:
+This means that operations can be delegated to endpoints of the same server as well as to external servers. For the front-end, it remains completely transparent whether an operation was called directly or delegated.
 
-```
-basyx.submodelrepository.feature.registryintegration = http://localhost:8060
-basyx.externalurl = http://localhost:8081
-```
+
+The independent destination where the request is to be delegated should support the request with a parameter ([OutputVariable[]](https://github.com/eclipse-aas4j/aas4j/blob/2abf04bc01f80bceafa575cf85da429d5fe63918/model/src/main/java/org/eclipse/digitaltwin/aas4j/v3/model/OperationVariable.java#L31)) and provide the output in a strict format ([OutputVariable[]](https://github.com/eclipse-aas4j/aas4j/blob/2abf04bc01f80bceafa575cf85da429d5fe63918/model/src/main/java/org/eclipse/digitaltwin/aas4j/v3/model/OperationVariable.java#L31))
+
+As of now, only delegation to HTTP URLs is supported.

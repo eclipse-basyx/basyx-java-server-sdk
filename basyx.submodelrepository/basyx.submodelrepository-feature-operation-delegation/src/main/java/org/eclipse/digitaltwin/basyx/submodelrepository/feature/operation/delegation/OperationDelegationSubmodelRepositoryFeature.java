@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,7 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.operation.delegation;
 
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.SubmodelRepositoryFeature;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,16 +33,16 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 /**
- * Feature for integrating Registry with {@link SubmodelRepository}
+ * Feature for delegating invocation request
  * 
- * @author danish
+ * @author danish, marie
  */
 @Component
-@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.submodelrepository.feature.registryintegration:}') && !T(org.springframework.util.StringUtils).isEmpty('${basyx.externalurl:}')")
+@ConditionalOnExpression("${" + OperationDelegationSubmodelRepositoryFeature.FEATURENAME + ".enabled:true}")
 public class OperationDelegationSubmodelRepositoryFeature implements SubmodelRepositoryFeature {
-	public static final String FEATURENAME = "basyx.submodelrepository.feature.registryintegration";
+	public static final String FEATURENAME = "basyx.submodelrepository.feature.operation.delegation";
 	
-	@Value("${basyx.submodelrepository.feature.registryintegration:false}")
+	@Value("${" + FEATURENAME + ".enabled:true}")
 	private boolean enabled;
 	
 	private OperationDelegation operationDelegation;
@@ -69,7 +68,7 @@ public class OperationDelegationSubmodelRepositoryFeature implements SubmodelRep
 
 	@Override
 	public String getName() {
-		return "SubmodelRepository Registry Integration";
+		return "SubmodelRepository Operation Delegation";
 	}
 
 	@Override

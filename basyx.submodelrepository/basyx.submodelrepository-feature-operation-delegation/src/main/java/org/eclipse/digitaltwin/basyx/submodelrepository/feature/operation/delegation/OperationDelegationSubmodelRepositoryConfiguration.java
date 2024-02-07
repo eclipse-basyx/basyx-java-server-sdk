@@ -37,13 +37,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Configuration for integrating {@link SubmodelRepository} with SubmodelRegistry
+ * Configuration for the {@link SubmodelRepository} with Operation Delegation
  * 
  * @author danish
  */
 @Configuration
-//@ConditionalOnExpression("T(org.springframework.util.StringUtils).isEmpty('${basyx.submodel.delegation.operation.enabled:}') && !T(org.springframework.util.StringUtils).isEmpty('${basyx.externalurl:}')")
-@ConditionalOnExpression("#{${basyx.submodel.delegation.operation.enabled:true} or ${basyx.submodel.delegation.operation.enabled:false}}")
+@ConditionalOnExpression("${" + OperationDelegationSubmodelRepositoryFeature.FEATURENAME + ".enabled:true}")
 public class OperationDelegationSubmodelRepositoryConfiguration {
 
 	@Bean
