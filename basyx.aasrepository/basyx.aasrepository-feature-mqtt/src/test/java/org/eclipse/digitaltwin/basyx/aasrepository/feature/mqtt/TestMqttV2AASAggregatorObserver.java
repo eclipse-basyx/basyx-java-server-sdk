@@ -122,7 +122,7 @@ public class TestMqttV2AASAggregatorObserver {
 	}
 
 	private AssetAdministrationShell deserializePayload(String payload) throws DeserializationException {
-		return new JsonDeserializer().readReferable(payload, AssetAdministrationShell.class);
+		return new JsonDeserializer().read(payload, AssetAdministrationShell.class);
 	}
 
 	private void addSubmodelReferenceToAas(AssetAdministrationShell shell) {

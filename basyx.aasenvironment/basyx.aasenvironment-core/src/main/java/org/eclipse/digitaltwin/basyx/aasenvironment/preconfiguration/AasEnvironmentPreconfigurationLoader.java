@@ -52,7 +52,6 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.Identifiabl
 import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.IdentifiableUploader.IdentifiableRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -248,7 +247,7 @@ public class AasEnvironmentPreconfigurationLoader {
 		if (isJsonFile(file.getPath())) {
 			JsonDeserializer deserializer = new JsonDeserializer();
 			try (FileInputStream fIn = new FileInputStream(file)) {
-				environment = deserializer.read(fIn);
+				environment = deserializer.read(fIn, Environment.class);
 			}
 		} else if (isXmlFile(file.getPath())) {
 			XmlDeserializer deserializer = new XmlDeserializer();
