@@ -28,16 +28,14 @@ package org.eclipse.digitaltwin.basyx.submodelservice.http;
 import java.util.Arrays;
 import java.util.List;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
-
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.eclipse.digitaltwin.basyx.http.model.OperationRequest;
-import org.eclipse.digitaltwin.basyx.http.model.OperationResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
@@ -56,6 +54,8 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-07-20T09:38:58.667119080Z[GMT]")
 @RestController
@@ -225,9 +225,9 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 	}
 
 	private OperationResult createOperationResult(OperationVariable[] result) {
-		OperationResult operationResult = new OperationResult();
-		operationResult.setOutputArguments(Arrays.asList(result));
-		return operationResult;
+		return new DefaultOperationResult.Builder()
+				.outputArguments(Arrays.asList(result))
+				.build();
 	}
 
 	private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
