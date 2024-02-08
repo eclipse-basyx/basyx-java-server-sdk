@@ -163,7 +163,7 @@ public class DummySubmodelFactory {
 	}
 
 	private static List<SubmodelElement> getAllSubmodelElementsList() {
-		return Stream.of(SubmodelServiceHelper.getAllSubmodelElementsWithoutInvokableOperation(), getOperationalDataSubmodelElements(),
+		return Stream.of(SubmodelServiceHelper.getAllSubmodelElements(), getOperationalDataSubmodelElements(),
 				createSimpleSubmodelElements()).flatMap(Collection::stream).collect(Collectors.toList());
 	}
 
