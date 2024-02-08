@@ -22,8 +22,7 @@ basyx.submodelrepository.feature.operation.delegation.enabled = false
 ```
 
 To create an operation delegation, a Submodel that has an Operation(-SubmodelElement) must be present:
--	The Operation has neither input, output nor inout variables
--	To achieve the Delegation functionality, a Qualifier of type "invocationDelegation" is added to the operation.
+-	To achieve the delegation functionality, a Qualifier of type "invocationDelegation" is added to the operation.
 -	As a value, the connection information (such as an HTTP URL) to the desired operation must be given.
 
 This means that operations can be delegated to endpoints of the same server as well as to external servers. For the front-end, it remains completely transparent whether an operation was called directly or delegated.

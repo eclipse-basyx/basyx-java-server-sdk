@@ -34,13 +34,11 @@ import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Qualifier;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.basyx.InvokableOperation;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -130,17 +128,12 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 
 	@Override
 	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
-		SubmodelElement sme = getSubmodelElement(submodelId, idShortPath);
+		SubmodelElement submodelElement = getSubmodelElement(submodelId, idShortPath);
 		
-		if (!(sme instanceof InvokableOperation))
-			throw new NotInvokableException(idShortPath);
-		
-		InvokableOperation operation = (InvokableOperation) sme;
-		
-		Optional<Qualifier> optionalQualifier = operation.getQualifiers().stream().filter(qualifier -> qualifier.getType().equals(HTTPOperationDelegation.INVOCATION_DELEGATION_TYPE)).findAny();
+		Optional<Qualifier> optionalQualifier = submodelElement.getQualifiers().stream().filter(qualifier -> qualifier.getType().equals(HTTPOperationDelegation.INVOCATION_DELEGATION_TYPE)).findAny();
 		
 		if (!optionalQualifier.isPresent())
-			return operation.invoke(input);
+			return decorated.invokeOperation(submodelId, idShortPath, input);
 		
 		return operationDelegation.delegate(optionalQualifier.get(), input);
 	}
