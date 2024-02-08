@@ -130,7 +130,7 @@ public class DummySubmodelFactory {
 				.build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_ID_SHORT)
 				.id(SUBMODEL_TECHNICAL_DATA_ID)
-				.submodelElements(SubmodelServiceHelper.getAllSubmodelElements())
+				.submodelElements(SubmodelServiceHelper.getAllSubmodelElementsWithoutInvokableOperation())
 				.build();
 	}
 	
@@ -163,7 +163,7 @@ public class DummySubmodelFactory {
 	}
 
 	private static List<SubmodelElement> getAllSubmodelElementsList() {
-		return Stream.of(SubmodelServiceHelper.getAllSubmodelElements(), getOperationalDataSubmodelElements(),
+		return Stream.of(SubmodelServiceHelper.getAllSubmodelElementsWithoutInvokableOperation(), getOperationalDataSubmodelElements(),
 				createSimpleSubmodelElements()).flatMap(Collection::stream).collect(Collectors.toList());
 	}
 
