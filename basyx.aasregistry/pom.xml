@@ -35,6 +35,7 @@
 		<jsr305.version>3.0.2</jsr305.version>
 		<jsonpatch.plugin.version>0.5.0</jsonpatch.plugin.version>
 		<patch.base-extensions.name>patch-base-extensions.yaml</patch.base-extensions.name>
+		<docker.context.dir>${project.basedir}/src/main/docker</docker.context.dir>
 	</properties>
 
 	<modules>
@@ -51,6 +52,7 @@
 		<module>basyx.aasregistry-service-release-log-mongodb</module>
 		<module>basyx.aasregistry-service-release-kafka-mem</module>
 		<module>basyx.aasregistry-service-release-kafka-mongodb</module>
+		<module>basyx.aasregistry-feature-authorization</module>
 
 	</modules>
 
@@ -148,6 +150,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasregistry-service-inmemory-storage</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-feature-authorization</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -279,6 +286,8 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
+						<version>0.43.3</version>
+						<inherited>false</inherited>
 						<configuration>
 							<images>
 								<image>

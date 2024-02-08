@@ -24,7 +24,10 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.configuration;
 
+import java.util.List;
+
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorageFeature;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.CursorEncodingRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.memory.InMemoryAasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.memory.ThreadSafeAasRegistryStorageDecorator;
@@ -32,13 +35,27 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import lombok.extern.log4j.Log4j2;
+
 @Configuration
+@Log4j2
 public class InMemoryAasStorageConfiguration {
 
+	
+	
 	@Bean
 	@ConditionalOnProperty(prefix = "registry", name = "type", havingValue = "inMemory")
-	public AasRegistryStorage storage() {
-		return new ThreadSafeAasRegistryStorageDecorator(new CursorEncodingRegistryStorage(new InMemoryAasRegistryStorage()));
+	public AasRegistryStorage storage(List<AasRegistryStorageFeature> features) {
+		log.info("Creating in-memory storage");
+		AasRegistryStorage storage = new ThreadSafeAasRegistryStorageDecorator(new CursorEncodingRegistryStorage(new InMemoryAasRegistryStorage()));
+		return applyFeatures(storage, features);
 	}
 
+	private AasRegistryStorage applyFeatures(AasRegistryStorage storage, List<AasRegistryStorageFeature> features) {
+		for (AasRegistryStorageFeature eachFeature : features) {
+			log.info("Activating feature " + eachFeature.getName());
+			storage = eachFeature.decorate(storage);
+		}
+		return storage;
+	}
 }

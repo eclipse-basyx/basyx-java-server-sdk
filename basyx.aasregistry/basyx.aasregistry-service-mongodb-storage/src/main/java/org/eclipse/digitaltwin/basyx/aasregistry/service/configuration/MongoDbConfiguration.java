@@ -24,9 +24,12 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.configuration;
 
+import java.util.List;
+
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorageFeature;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.CursorEncodingRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.MongoDbAasRegistryStorage;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -40,15 +43,30 @@ import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+import lombok.extern.log4j.Log4j2;
+
 @Configuration
 @ConditionalOnProperty(prefix = "registry", name = "type", havingValue = "mongodb")
 @EnableAsync
+@Log4j2
 public class MongoDbConfiguration {
 
 	@Bean
-	public AasRegistryStorage createStorage(MongoTemplate template) {
+	public AasRegistryStorage createStorage(MongoTemplate template, List<AasRegistryStorageFeature> features) {
+		log.info("Creating mongodb storage");
+		log.info("Creating mongodb indices");
 		initializeIndices(template);
-		return new CursorEncodingRegistryStorage(new MongoDbAasRegistryStorage(template));
+		AasRegistryStorage storage = new CursorEncodingRegistryStorage(new MongoDbAasRegistryStorage(template));
+		return applyFeatures(storage, features);
+
+	}
+	
+	private AasRegistryStorage applyFeatures(AasRegistryStorage storage, List<AasRegistryStorageFeature> features) {
+		for (AasRegistryStorageFeature eachFeature : features) {
+			log.info("Activating feature " + eachFeature.getName());
+			storage = eachFeature.decorate(storage);
+		}
+		return storage;
 	}
 
 	private void initializeIndices(MongoTemplate template) {
@@ -69,14 +87,14 @@ public class MongoDbConfiguration {
 
 	private void initializeShellExtensionIndices(IndexOperations ops) {
 		initializeSingleAscIndex(ops, AasRegistryPaths.extensions().name());
-		initializeSingleAscIndex(ops, AasRegistryPaths.extensions().value());	
+		initializeSingleAscIndex(ops, AasRegistryPaths.extensions().value());
 	}
 
 	private void initializeSubmodelExtensionIndices(IndexOperations ops) {
 		initializeSingleAscIndex(ops, AasRegistryPaths.submodelDescriptors().extensions().name());
 		initializeSingleAscIndex(ops, AasRegistryPaths.submodelDescriptors().extensions().value());
 	}
-	
+
 	private void initializeSingleAscIndex(IndexOperations ops, String path) {
 		Index smValueIndex = new Index(path, Direction.ASC);
 		ops.ensureIndex(smValueIndex);

@@ -10,7 +10,7 @@
 
 	</parent>
 	
-	<artifactId>basyx.aasregistry-service-release-log-mem</artifactId>
+	<artifactId>basyx.aasegistry-service-release-log-mem</artifactId>
 	
 	<properties>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>
@@ -18,6 +18,14 @@
 		<docker.image.name>aas-registry-log-mem</docker.image.name>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasregistry-feature-authorization</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.authorization</artifactId>
+		</dependency>
 		<dependency>
 		<!-- it was just marked as provided so we need to redefine it here -->
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
