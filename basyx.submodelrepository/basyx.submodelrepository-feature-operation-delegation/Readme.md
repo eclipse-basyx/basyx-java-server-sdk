@@ -28,6 +28,6 @@ To create an operation delegation, a Submodel that has an Operation(-SubmodelEle
 This means that operations can be delegated to endpoints of the same server as well as to external servers. For the front-end, it remains completely transparent whether an operation was called directly or delegated.
 
 
-The independent destination where the request is to be delegated should support the request with a parameter ([OutputVariable[]](https://github.com/eclipse-aas4j/aas4j/blob/2abf04bc01f80bceafa575cf85da429d5fe63918/model/src/main/java/org/eclipse/digitaltwin/aas4j/v3/model/OperationVariable.java#L31)) and provide the output in a strict format ([OutputVariable[]](https://github.com/eclipse-aas4j/aas4j/blob/2abf04bc01f80bceafa575cf85da429d5fe63918/model/src/main/java/org/eclipse/digitaltwin/aas4j/v3/model/OperationVariable.java#L31))
+The independent destination where the request is to be delegated should support the request with a parameter ([OperationVariable[]](https://github.com/eclipse-aas4j/aas4j/blob/2abf04bc01f80bceafa575cf85da429d5fe63918/model/src/main/java/org/eclipse/digitaltwin/aas4j/v3/model/OperationVariable.java#L31)) and provide the output in a strict format ([OperationVariable[]](https://github.com/eclipse-aas4j/aas4j/blob/2abf04bc01f80bceafa575cf85da429d5fe63918/model/src/main/java/org/eclipse/digitaltwin/aas4j/v3/model/OperationVariable.java#L31))
 
 As of now, only delegation to HTTP URLs is supported.
