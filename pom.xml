@@ -60,8 +60,10 @@
 	</repositories>
 
 	<scm>
-		<connection>scm:git:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</connection>
-		<developerConnection>scm:git:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</developerConnection>
+		<connection>
+			scm:git:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</connection>
+		<developerConnection>
+			scm:git:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</developerConnection>
 		<url>https://github.com/eclipse-basyx/basyx-java-server-sdk/tree/main</url>
 	</scm>
 
@@ -89,11 +91,11 @@
 				<configuration>
 					<updatePomFile>true</updatePomFile>
 					<pomElements>
-						<name/>
-						<description/>
-						<url/>
-						<developers/>
-						<scm/>
+						<name />
+						<description />
+						<url />
+						<developers />
+						<scm />
 					</pomElements>
 				</configuration>
 				<executions>
@@ -244,7 +246,7 @@
 									<buildx>
 										<platforms>
 											${docker.target.platforms}
-										</platforms>			
+										</platforms>
 									</buildx>
 								</build>
 								<run>
@@ -386,6 +388,13 @@
 				<artifactId>reflections</artifactId>
 				<version>0.10.2</version>
 			</dependency>
+			<dependency>
+				<groupId>org.mock-server</groupId>
+				<artifactId>mockserver-netty</artifactId>
+				<version>5.15.0</version>
+				<scope>test</scope>
+			</dependency>
+
 			<!-- Handles resources & files -->
 			<dependency>
 				<groupId>commons-io</groupId>
@@ -474,6 +483,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelrepository-feature-authorization</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-feature-operation-delegation</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -759,6 +773,12 @@
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-feature-operation-delegation</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
 			<!-- basyx.aasservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -977,7 +997,8 @@
 				</snapshotRepository>
 				<repository>
 					<id>ossrh</id>
-					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+					<url>
+						https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 				</repository>
 			</distributionManagement>
 			<build>
