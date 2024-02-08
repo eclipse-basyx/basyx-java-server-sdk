@@ -27,7 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasenvironment;
 import java.io.IOException;
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 
 /**
  * Specifies the overall AasEnvironment serialization API
