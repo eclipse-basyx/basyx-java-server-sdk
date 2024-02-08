@@ -31,6 +31,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
+import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -48,12 +49,15 @@ public class OperationDelegationSubmodelRepositoryConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public OperationDelegation getOperationDelegation(ObjectMapper mapper) {
-	
+
 		return new HTTPOperationDelegation(createWebClient(mapper));
 	}
-	
+
 	private WebClient createWebClient(ObjectMapper mapper) {
-		ExchangeStrategies strategies = ExchangeStrategies.builder().codecs(configurer -> configurer.defaultCodecs().jackson2JsonDecoder(new Jackson2JsonDecoder(mapper))).build();
+		ExchangeStrategies strategies = ExchangeStrategies.builder().codecs(configurer -> {
+			configurer.defaultCodecs().jackson2JsonEncoder(new Jackson2JsonEncoder(mapper));
+			configurer.defaultCodecs().jackson2JsonDecoder(new Jackson2JsonDecoder(mapper));
+		}).build();
 
 		return WebClient.builder().exchangeStrategies(strategies).build();
 	}
