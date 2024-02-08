@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -576,11 +577,11 @@ public abstract class SubmodelRepositorySuite {
 	// Has to be overwritten if backend does not support operations
 	@Test
 	public void invokeOperation() {
-		SubmodelRepository submodelRepo = getSubmodelRepositoryWithDummySubmodels();
+		SubmodelRepository submodelRepo = getSubmodelRepositoryWithInvokableOperation();
 
 		Property val = new DefaultProperty.Builder().idShort("in").value("2").build();
 
-		OperationVariable[] result = submodelRepo.invokeOperation(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_OPERATION_ID,
+		OperationVariable[] result = submodelRepo.invokeOperation(DummySubmodelFactory.SUBMODEL_ALL_SUBMODEL_ELEMENTS_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_OPERATION_ID,
 				new OperationVariable[] { SubmodelServiceHelper.createOperationVariable(val) });
 
 		Property ret = (Property) result[0].getValue();
@@ -623,6 +624,10 @@ public abstract class SubmodelRepositorySuite {
 		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodels();
 		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
 		return repo;
+	}
+
+	private SubmodelRepository getSubmodelRepositoryWithInvokableOperation() {
+		return getSubmodelRepository(Collections.singleton(DummySubmodelFactory.createSubmodelWithAllSubmodelElements()));
 	}
 
 	private SubmodelRepository getSubmodelRepositoryWithHierarchicalSubmodelElements() {
