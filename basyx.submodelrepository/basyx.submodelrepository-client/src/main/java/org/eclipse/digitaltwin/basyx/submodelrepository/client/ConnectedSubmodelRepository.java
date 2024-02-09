@@ -31,7 +31,9 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.internal.SubmodelRepositoryApi;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 import org.springframework.http.HttpStatus;
 
 
@@ -48,6 +50,7 @@ public class ConnectedSubmodelRepository {
 	 */
 
 	private SubmodelRepositoryApi repoApi;
+	private String submodelRepoUrl;
 
 	/**
 	 * 
@@ -56,6 +59,7 @@ public class ConnectedSubmodelRepository {
 	 */
 	public ConnectedSubmodelRepository(String submodelRepoUrl) {
 		this.repoApi = new SubmodelRepositoryApi(submodelRepoUrl);
+		this.submodelRepoUrl = submodelRepoUrl;
 	}
 
 	/**
@@ -114,9 +118,29 @@ public class ConnectedSubmodelRepository {
 		} catch (ApiException e) {
 			throw mapExceptionSubmodelAccess(submodelId, e);
 		}
-
 	}
 
+	/**
+	 * Retrieves a ConnectedSubmodelService for interacting with the Submodel on the
+	 * Server
+	 * 
+	 * @param submodelId
+	 * @return
+	 * @throws ElementDoesNotExistException
+	 */
+	public ConnectedSubmodelService getConnectedSubmodelService(String submodelId) throws ElementDoesNotExistException {
+		try {
+			repoApi.getSubmodelById(submodelId, "", "");
+			return new ConnectedSubmodelService(getSubmodelUrl(submodelId));
+		} catch (ApiException e) {
+			throw mapExceptionSubmodelAccess(submodelId, e);
+		}
+	}
+
+	private String getSubmodelUrl(String submodelId) {
+		return submodelRepoUrl + "/submodels/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
+	}
+	
 	private RuntimeException mapExceptionSubmodelAccess(String submodelId, ApiException e) {
 		if (e.getCode() == HttpStatus.NOT_FOUND.value()) {
 			return new ElementDoesNotExistException(submodelId);

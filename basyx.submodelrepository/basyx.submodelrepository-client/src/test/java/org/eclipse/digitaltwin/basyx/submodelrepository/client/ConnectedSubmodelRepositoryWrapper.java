@@ -41,6 +41,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 
@@ -167,6 +168,10 @@ public class ConnectedSubmodelRepositoryWrapper implements SubmodelRepository {
 	public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
 		// TODO Auto-generated method stub
 
+	}
+
+	public ConnectedSubmodelService getConnectedSubmodelService(String submodelId) throws ElementDoesNotExistException {
+		return repo.getConnectedSubmodelService(submodelId);
 	}
 
 }
