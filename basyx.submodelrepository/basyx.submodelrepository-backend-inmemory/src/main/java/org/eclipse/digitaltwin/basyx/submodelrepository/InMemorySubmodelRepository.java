@@ -252,7 +252,12 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
-		getSubmodelService(submodelId).deleteSubmodelElement(idShortPath);
+		try {
+			deleteFileValue(submodelId, idShortPath);
+		} catch (Exception e) {
+		} finally {
+			getSubmodelService(submodelId).deleteSubmodelElement(idShortPath);
+		}
 	}
 
 	@Override
