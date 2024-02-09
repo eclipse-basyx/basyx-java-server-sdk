@@ -52,13 +52,8 @@ public class TestInMemoryAasRepository extends AasRepositorySuite {
 		return new SimpleAasRepositoryFactory(backendProvider, new InMemoryAasServiceFactory()).create();
 	}
 
-	@Override
-	protected void sanitizeRepository() {
-		backendProvider.getCrudRepository().deleteAll();
-	}
-
 	@Test
-    public void getConfiguredInMemoryAasRepositoryName() {
+	public void getConfiguredInMemoryAasRepositoryName() {
 		AasRepository repo = new CrudAasRepository(backendProvider, new InMemoryAasServiceFactory(), CONFIGURED_AAS_REPO_NAME);
 		
 		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());

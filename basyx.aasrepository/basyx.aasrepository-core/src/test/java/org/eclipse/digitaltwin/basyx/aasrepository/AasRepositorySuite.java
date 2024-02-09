@@ -91,13 +91,9 @@ public abstract class AasRepositorySuite {
 
 	protected abstract AasRepository getAasRepository();
 
-	protected abstract void sanitizeRepository();
-
 	@Before
 	public void createAasRepoWithDummyAas() {
 		aasRepo = getAasRepository();
-
-		sanitizeRepository();
 
 		aas1 = new DefaultAssetAdministrationShell.Builder().id(AAS_1_ID).submodels(createDummyReference(DUMMY_SUBMODEL_ID)).build();
 

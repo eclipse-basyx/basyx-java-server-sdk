@@ -58,21 +58,20 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	private static final String COLLECTION = "testAasCollection";
 	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
 	
-	private MongoTemplate mongoTemplate;
+	private MongoTemplate mongoTemplate = createMongoTemplate();
+
+	@Override
+	public void createAasRepoWithDummyAas() {
+		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
+		super.createAasRepoWithDummyAas();
+	}
 
 	@Override
 	protected AasRepository getAasRepository() {
-		mongoTemplate = createMongoTemplate();
-		
 		AasBackendProvider aasBackendProvider = new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate);
 		AasRepositoryFactory aasRepositoryFactory = new SimpleAasRepositoryFactory(aasBackendProvider, new InMemoryAasServiceFactory());
 
 		return aasRepositoryFactory.create();
-	}
-
-	@Override
-	protected void sanitizeRepository() {
-		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
 	}
 
 	@Test
