@@ -34,6 +34,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShe
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
+import org.eclipse.digitaltwin.basyx.aasrepository.DummyAasFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
@@ -61,13 +62,8 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	private MongoTemplate mongoTemplate = createMongoTemplate();
 
 	@Override
-	public void createAasRepoWithDummyAas() {
-		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
-		super.createAasRepoWithDummyAas();
-	}
-
-	@Override
 	protected AasRepository getAasRepository() {
+		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
 		AasBackendProvider aasBackendProvider = new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate);
 		AasRepositoryFactory aasRepositoryFactory = new SimpleAasRepositoryFactory(aasBackendProvider, new InMemoryAasServiceFactory());
 
@@ -106,7 +102,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	}
 
 	private void addSubmodelReferenceToAas(AssetAdministrationShell expectedShell) {
-		expectedShell.setSubmodels(Arrays.asList(AasRepositorySuite.createDummyReference("dummySubmodel")));
+		expectedShell.setSubmodels(Arrays.asList(DummyAasFactory.createDummyReference("dummySubmodel")));
 	}
 
 	private AssetAdministrationShell createDummyShellOnRepo(AasRepository aasRepository) {

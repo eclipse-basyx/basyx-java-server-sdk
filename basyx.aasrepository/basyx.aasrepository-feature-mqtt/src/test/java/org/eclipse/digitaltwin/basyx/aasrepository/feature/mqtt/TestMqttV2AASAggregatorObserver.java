@@ -38,7 +38,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
+import org.eclipse.digitaltwin.basyx.aasrepository.DummyAasFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
@@ -126,7 +126,7 @@ public class TestMqttV2AASAggregatorObserver {
 	}
 
 	private void addSubmodelReferenceToAas(AssetAdministrationShell shell) {
-		List<Reference> submodelReferences = Arrays.asList(AasRepositorySuite.createDummyReference("dummySubmodelId1"));
+		List<Reference> submodelReferences = Arrays.asList(DummyAasFactory.createDummyReference("dummySubmodelId1"));
 		shell.setSubmodels(submodelReferences);
 	}
 

@@ -79,7 +79,11 @@ public abstract class SubmodelRepositorySuite {
 
 	protected abstract SubmodelRepository getSubmodelRepository();
 
-	protected abstract SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels);
+	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
+		SubmodelRepository repo = getSubmodelRepository();
+		submodels.forEach(repo::createSubmodel);
+		return repo;
+	}
 
 	@Test
 	public void getAllSubmodelsPreconfigured() {

@@ -53,11 +53,6 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
 	}
 
-	@Override
-	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
-		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), submodels);
-	}
-
 	@Test
 	public void getConfiguredInMemorySmRepositoryName() {
 		SubmodelRepository repo = new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory(), CONFIGURED_SM_REPO_NAME);
