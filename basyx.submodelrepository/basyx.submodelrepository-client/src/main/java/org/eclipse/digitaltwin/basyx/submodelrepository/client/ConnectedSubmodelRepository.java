@@ -41,9 +41,19 @@ import org.springframework.http.HttpStatus;
  * @author schnicke
  */
 public class ConnectedSubmodelRepository {
+	/*
+	 * Intentionally does not implement SubmodelRepository to avoid providing lots
+	 * of unimplemented endpoints and confusing the user. The method signatures,
+	 * however, are exactly the same.
+	 */
 
 	private SubmodelRepositoryApi repoApi;
 
+	/**
+	 * 
+	 * @param submodelRepoUrl
+	 *            the Url of the Submodel Repository without the "/submodels" part
+	 */
 	public ConnectedSubmodelRepository(String submodelRepoUrl) {
 		this.repoApi = new SubmodelRepositoryApi(submodelRepoUrl);
 	}

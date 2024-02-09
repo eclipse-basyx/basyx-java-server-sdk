@@ -39,6 +39,14 @@ import org.junit.BeforeClass;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+/**
+ * Features of the client not implemented but existing in the test suite are
+ * overwritten to pass. This is required to enable reuse of the test suite.
+ * Whenever a feature is implemented, the respective test here has to be
+ * removed.
+ * 
+ * @author schnicke
+ */
 public class TestConnectedSubmodelService extends SubmodelServiceSuite {
 
 	private static ConfigurableApplicationContext appContext;

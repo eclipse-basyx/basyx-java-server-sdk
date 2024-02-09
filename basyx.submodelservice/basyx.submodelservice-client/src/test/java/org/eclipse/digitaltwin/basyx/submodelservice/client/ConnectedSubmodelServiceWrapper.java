@@ -37,6 +37,12 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 
+/**
+ * Wraps a ConnectedSubmodelRepository into the SubmodelRepository interface.
+ * This wrapper is needed for leveraging the existing test suite.
+ * 
+ * @author schnicke
+ */
 public class ConnectedSubmodelServiceWrapper implements SubmodelService {
 
 	private ConnectedSubmodelService service;

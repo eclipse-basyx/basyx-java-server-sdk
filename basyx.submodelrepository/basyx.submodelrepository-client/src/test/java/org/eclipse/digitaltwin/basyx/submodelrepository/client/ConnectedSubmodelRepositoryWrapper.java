@@ -44,6 +44,12 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 
+/**
+ * Wraps a ConnectedSubmodelRepository into the SubmodelRepository interface.
+ * This wrapper is needed for leveraging the existing test suite.
+ * 
+ * @author schnicke
+ */
 public class ConnectedSubmodelRepositoryWrapper implements SubmodelRepository {
 
 	ConnectedSubmodelRepository repo;

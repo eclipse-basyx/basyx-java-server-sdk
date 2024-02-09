@@ -47,6 +47,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
+ * Features of the client not implemented but existing in the test suite are
+ * overwritten to pass. This is required to enable reuse of the test suite.
+ * Whenever a feature is implemented, the respective test here has to be
+ * removed.
+ * 
  * @author schnicke
  */
 public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
@@ -69,8 +74,6 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 		appContext.close();
 	}
 
-	// TESTS REFACTOREN in SUBMODELREPO vs. SUBMODEL -> Kapselklasse für SubmodelService
-	
 	@Override
 	public void getAllSubmodelsPreconfigured() {
 		// TODO: Not Implemented

@@ -53,6 +53,12 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
+/**
+ * Factory providing a JsonMapper that (a) is using AAS4J and (b) is using the
+ * ValueOnly configuration of BaSyx.
+ * 
+ * @author schnicke
+ */
 public class SubmodelSpecificJsonMapperFactory {
 	public JsonMapper create() {
 		JsonMapper mapper = new JsonMapperFactory().create(new SimpleAbstractTypeResolverFactory().create());

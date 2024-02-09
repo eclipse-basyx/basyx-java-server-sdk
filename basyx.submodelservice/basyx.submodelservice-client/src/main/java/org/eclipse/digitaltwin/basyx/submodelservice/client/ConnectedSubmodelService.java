@@ -34,9 +34,27 @@ import org.eclipse.digitaltwin.basyx.submodelservice.client.internal.SubmodelSer
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.springframework.http.HttpStatus;
 
+/**
+ * Provides access to a Submodel Service on a remote server - regardless if it
+ * is hosted on a Submodel Repository or standalone
+ * 
+ * @author schnicke
+ */
 public class ConnectedSubmodelService {
+	/*
+	 * Intentionally does not implement SubmodelService to avoid providing lots of
+	 * unimplemented endpoints and confusing the user. The method signatures,
+	 * however, are exactly the same.
+	 */
+
 	private SubmodelServiceApi repoApi;
 
+	/**
+	 * 
+	 * @param submodelServiceUrl
+	 *            the Url of the submodel service. Please note that for standalone
+	 *            submodels the "/submodel" part has to be included
+	 */
 	public ConnectedSubmodelService(String submodelServiceUrl) {
 		this.repoApi = new SubmodelServiceApi(submodelServiceUrl);
 	}
