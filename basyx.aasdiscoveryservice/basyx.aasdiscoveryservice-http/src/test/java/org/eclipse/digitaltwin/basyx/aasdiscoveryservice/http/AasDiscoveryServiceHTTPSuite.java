@@ -127,17 +127,9 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 	protected CloseableHttpResponse requestAllAssetLinks(String shellIdentifier) throws IOException, ParseException {
 		return BaSyxHttpTestUtils.executeGetOnURL(getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(shellIdentifier));
 	}
-	
-	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException {
-		return BaSyxHttpTestUtils.removeCursorFromJSON(response);
-	}
 
 	private String getNewAssetLinksJSON() throws IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("NewAssetLinks.json");
-	}
-
-	private String getAllShellIdsJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AllShellIDs.json");
 	}
 
 	private String getAllAssetLinksJSON() throws IOException {

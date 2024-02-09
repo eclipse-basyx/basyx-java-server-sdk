@@ -119,12 +119,13 @@ public class LookupApiController implements LookupApi {
 		if (assetIds == null)
 			return result;
 
-		for (Base64UrlEncodedIdentifier base64Hack : assetIds) {
+		for (Base64UrlEncodedIdentifier base64UrlEncodedIdentifier : assetIds) {
 
-			var decodedString = base64Hack.getIdentifier();
+			var decodedString = base64UrlEncodedIdentifier.getIdentifier();
 				result.add(objectMapper.readValue(decodedString, AssetLink.class));
 
 		}
+		
 		return result;
 	}
 

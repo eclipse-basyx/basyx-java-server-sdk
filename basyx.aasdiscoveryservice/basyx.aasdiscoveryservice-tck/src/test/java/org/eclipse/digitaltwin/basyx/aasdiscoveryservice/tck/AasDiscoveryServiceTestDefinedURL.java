@@ -29,7 +29,6 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.AasDiscoveryServiceHTTPSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,8 +60,8 @@ public class AasDiscoveryServiceTestDefinedURL extends AasDiscoveryServiceHTTPSu
 	}
 
 	private void createDummyAssetLinks() {
-		List<AssetAdministrationShell> dummyAssetLinks = AasDiscoveryServiceSuite.getMultipleDummyAasAssetLink();
-		dummyAssetLinks.forEach(this::createAssetLink);
+		List<AssetAdministrationShell> dummyAdministrationShells = AasDiscoveryServiceSuite.getMultipleDummyShells();
+		dummyAdministrationShells.forEach(this::createAssetLink);
 	}
 
 	private void createAssetLink(AssetAdministrationShell shell) {

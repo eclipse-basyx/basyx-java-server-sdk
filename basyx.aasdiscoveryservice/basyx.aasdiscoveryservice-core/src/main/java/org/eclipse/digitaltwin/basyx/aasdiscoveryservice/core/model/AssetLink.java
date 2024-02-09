@@ -25,10 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 
