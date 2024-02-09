@@ -25,7 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core;
 
-import static org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryUtils.deriveAssetLinksFromShell;
 import static org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryUtils.deriveShellFromIdAndSpecificAssetIds;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -62,10 +61,10 @@ public abstract class AasDiscoveryServiceSuite {
 	public void getAllAssetAdministrationShellIdsByAssetLink() {
 		AasDiscoveryService discoveryService = getAasDiscoveryService();
 
-		List<AssetAdministrationShell> assetLinks = getMultipleDummyAasAssetLink();
+		List<AssetAdministrationShell> assetAdministrationShells = getMultipleDummyShells();
 
-		assetLinks.stream()
-				.forEach(assetLink -> createAssetLink(assetLink, discoveryService));
+		assetAdministrationShells.stream()
+				.forEach(aas -> createAssetLink(aas, discoveryService));
 
 		List<String> expectedResult = new ArrayList<>(List.of("TestAasID1"));
 
@@ -86,10 +85,10 @@ public abstract class AasDiscoveryServiceSuite {
 	public void getAllAssetLinksById() {
 		AasDiscoveryService discoveryService = getAasDiscoveryService();
 
-		List<AssetAdministrationShell> assetLinks = getMultipleDummyAasAssetLink();
+		List<AssetAdministrationShell> assetAdministrationShells = getMultipleDummyShells();
 
-		assetLinks.stream()
-				.forEach(assetLink -> createAssetLink(assetLink, discoveryService));
+		assetAdministrationShells.stream()
+				.forEach(aas -> createAssetLink(aas, discoveryService));
 
 		List<SpecificAssetId> expectedResult = Arrays.asList(createDummySpecificAssetId("DummyAssetName3", "DummyAsset_3_Value"), createDummySpecificAssetId("DummyAssetName4", "DummyAsset_4_Value"));
 
@@ -125,8 +124,8 @@ public abstract class AasDiscoveryServiceSuite {
 
 		String shellIdentifier = "ExistingAASId";
 
-		AssetAdministrationShell assetLink = getSingleDummyAasAssetLink(shellIdentifier);
-		createAssetLink(assetLink, discoveryService);
+		AssetAdministrationShell assetAdministrationShell = getSingleDummyShell(shellIdentifier);
+		createAssetLink(assetAdministrationShell, discoveryService);
 
 		discoveryService.createAllAssetLinksById(shellIdentifier, new ArrayList<>());
 	}
@@ -137,10 +136,10 @@ public abstract class AasDiscoveryServiceSuite {
 
 		String shellIdentifier = "TestAasID1";
 
-		List<AssetAdministrationShell> assetLinks = getMultipleDummyAasAssetLink();
+		List<AssetAdministrationShell> assetAdministrationShells = getMultipleDummyShells();
 
-		assetLinks.stream()
-				.forEach(assetLink -> createAssetLink(assetLink, discoveryService));
+		assetAdministrationShells.stream()
+				.forEach(aas -> createAssetLink(aas, discoveryService));
 
 		discoveryService.deleteAllAssetLinksById(shellIdentifier);
 
@@ -159,7 +158,7 @@ public abstract class AasDiscoveryServiceSuite {
 		getAasDiscoveryService().deleteAllAssetLinksById(shellIdentifier);
 	}
 
-	public static List<AssetAdministrationShell> getMultipleDummyAasAssetLink() {
+	public static List<AssetAdministrationShell> getMultipleDummyShells() {
 		String dummyShellIdentifier_1 = "TestAasID1";
 		String dummyShellIdentifier_2 = "TestAasID2";
 
@@ -179,7 +178,7 @@ public abstract class AasDiscoveryServiceSuite {
 		aasDiscoveryService.createAllAssetLinksById(shell.getId(), shell.getAssetInformation().getSpecificAssetIds());
 	}
 
-	public static AssetAdministrationShell getSingleDummyAasAssetLink(String shellId) {
+	public static AssetAdministrationShell getSingleDummyShell(String shellId) {
 
 		SpecificAssetId specificAssetId_1 = createDummySpecificAssetId("TestAsset1", "TestAssetValue1");
 		SpecificAssetId specificAssetId_2 = createDummySpecificAssetId("TestAsset2", "TestAssetValue2");

@@ -110,10 +110,6 @@ public class MongoDBAasDiscoveryService implements AasDiscoveryService {
 		return assetIds;
 	}
 
-	private static Query getSingleObjectQuery(String shellIdentifier) {
-		return new Query().addCriteria(Criteria.where(SHELL_IDENTIFIER).is(shellIdentifier));
-	}
-
 	@Override
 	public void deleteAllAssetLinksById(String shellIdentifier) {
 		Query query = getSingleObjectQuery(shellIdentifier);
@@ -127,6 +123,10 @@ public class MongoDBAasDiscoveryService implements AasDiscoveryService {
 	@Override
 	public String getName() {
 		return aasDiscoveryServiceName == null ? AasDiscoveryService.super.getName() : aasDiscoveryServiceName;
+	}
+	
+	private static Query getSingleObjectQuery(String shellIdentifier) {
+		return new Query().addCriteria(Criteria.where(SHELL_IDENTIFIER).is(shellIdentifier));
 	}
 
 	private CursorResult<List<String>> paginateList(PaginationInfo pInfo, List<String> shellIdentifiers) {

@@ -28,8 +28,6 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
@@ -114,8 +112,7 @@ public class InMemoryAasDiscoveryService implements AasDiscoveryService {
 	}
 
 	private CursorResult<List<String>> paginateList(PaginationInfo pInfo, List<String> shellIdentifiers) {
-		TreeMap<String, String> shellIdentifierMap = shellIdentifiers.stream()
-				.collect(Collectors.toMap(Function.identity(), Function.identity(), (a, b) -> a, TreeMap::new));
+		TreeMap<String, String> shellIdentifierMap = shellIdentifiers.stream().collect(Collectors.toMap(Function.identity(), Function.identity(), (a, b) -> a, TreeMap::new));
 
 		PaginationSupport<String> paginationSupport = new PaginationSupport<>(shellIdentifierMap, Function.identity());
 

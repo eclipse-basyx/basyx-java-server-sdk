@@ -34,7 +34,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
@@ -88,8 +87,8 @@ public class TestMongoDBAasDiscoveryService extends AasDiscoveryServiceSuite {
 	}
 
 	private List<SpecificAssetId> createDummyAssetLinkOnDiscoveryService(String testShellIdentifier, AasDiscoveryService aasDiscoveryService) {
-		AssetAdministrationShell assetLink = getSingleDummyAasAssetLink(testShellIdentifier);
-		createAssetLink(assetLink, aasDiscoveryService);
+		AssetAdministrationShell aas = getSingleDummyShell(testShellIdentifier);
+		createAssetLink(aas, aasDiscoveryService);
 
 		SpecificAssetId specificAssetId_1 = createDummySpecificAssetId("TestAsset1", "TestAssetValue1");
 		SpecificAssetId specificAssetId_2 = createDummySpecificAssetId("TestAsset2", "TestAssetValue2");
