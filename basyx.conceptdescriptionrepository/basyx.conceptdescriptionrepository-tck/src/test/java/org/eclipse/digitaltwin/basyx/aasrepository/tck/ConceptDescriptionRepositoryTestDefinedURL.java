@@ -97,7 +97,7 @@ public class ConceptDescriptionRepositoryTestDefinedURL extends ConceptDescripti
 	private List<String> getAllConceptDescriptionIds() {
 		try {
 			String jsonResponse = getJsonResultList(requestAllConceptDescriptions());
-			List<ConceptDescription> conceptDescriptions = deserializer.readReferables(jsonResponse, ConceptDescription.class);
+			List<ConceptDescription> conceptDescriptions = deserializer.readList(jsonResponse, ConceptDescription.class);
 			return conceptDescriptions.stream().map(ConceptDescription::getId).collect(Collectors.toList());
 		} catch (Exception e) {
 			throw new RuntimeException(e);

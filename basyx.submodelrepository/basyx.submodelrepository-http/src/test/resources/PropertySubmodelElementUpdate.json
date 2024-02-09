@@ -1,0 +1,16 @@
+{
+	"modelType": "Property",
+	"semanticId": {
+		"keys": [
+			{
+				"type": "ConceptDescription",
+				"value": "0173-1#02-BAA120#008"
+			}
+		],
+		"type": "ExternalReference"
+	},
+	"value": "arbitraryValue",
+	"valueType": "xs:string",
+	"category": "property",
+	"idShort": "MaxRotationSpeed"
+}

@@ -10,6 +10,9 @@
 
 	</parent>
 	<artifactId>basyx.submodelregistry-service-release-kafka-mongodb</artifactId>
+	<name>BaSyx Submodel Registry Service Release Kafka MongoDB</name>
+	<description>BaSyx Submodel Registry Service Release Kafka MongoDB</description>
+	
 	<properties>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>
 		<start-class>org.eclipse.digitaltwin.basyx.submodelregistry.service.OpenApiGeneratorApplication</start-class>

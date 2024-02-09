@@ -27,7 +27,6 @@ package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -39,6 +38,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.junit.Test;
 import org.junit.Test.None;
+
+import com.google.common.collect.Lists;
 
 /**
  * Tests the {@link CrudSubmodelRepository} with InMemory backend
@@ -82,11 +83,11 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	}
 
 	private Collection<Submodel> createSubmodelCollectionWithCollidingIds() {
-		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
+		return Lists.newArrayList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
 	}
 	
 	private Collection<Submodel> createSubmodelCollectionWithUniqueIds() {
-		return Arrays.asList(DummySubmodelFactory.createSimpleDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
+		return Lists.newArrayList(DummySubmodelFactory.createSimpleDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
 	}
 	
 }

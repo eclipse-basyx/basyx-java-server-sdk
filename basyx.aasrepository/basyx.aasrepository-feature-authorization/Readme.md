@@ -73,7 +73,7 @@ Below is a reference table that shows which actions are used in what endpoints o
 |---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | READ    | GET /shells <br /> GET /shells/{aasIdentifier} <br /> GET /shells/{aasIdentifier}/submodel-refs <br /> GET /shells/{aasIdentifier}/asset-information <br /> GET /shells/{aasIdentifier}/asset-information/thumbnail |
 | CREATE  | POST /shells <br />                                                                                                                                                                                                 |
-| UPDATE  | PUT /shells/{aasIdentifier} <br /> POST /shells/{aasIdentifier}/submodel-refs <br /> PUT /shells/{aasIdentifier}/asset-information <br /> PUT /shells/{aasIdentifier}/asset-information/thumbnail                   |
-| DELETE  | DELETE /shells/{aasIdentifier} <br /> DELETE /shells/{aasIdentifier}/submodel-refs/{submodelIdentifier} <br /> DELETE /shells/{aasIdentifier}/asset-information/thumbnail                                           |
+| UPDATE  | PUT /shells/{aasIdentifier} <br /> POST /shells/{aasIdentifier}/submodel-refs <br /> PUT /shells/{aasIdentifier}/asset-information <br /> PUT /shells/{aasIdentifier}/asset-information/thumbnail  <br /> DELETE /shells/{aasIdentifier}/submodel-refs/{submodelIdentifier} <br /> DELETE /shells/{aasIdentifier}/asset-information/thumbnail                 |
+| DELETE  | DELETE /shells/{aasIdentifier}           |
 | EXECUTE | -                                                                                                                                                                                                                   |
 

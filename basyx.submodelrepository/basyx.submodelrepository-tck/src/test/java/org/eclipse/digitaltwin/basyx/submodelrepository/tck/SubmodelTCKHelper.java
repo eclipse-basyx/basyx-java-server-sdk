@@ -87,7 +87,7 @@ public class SubmodelTCKHelper {
 		try {
 			String jsonResponse = getJsonResponse(url);
 
-			List<Submodel> submodels = deserializer.readReferables(jsonResponse, Submodel.class);
+			List<Submodel> submodels = deserializer.readList(jsonResponse, Submodel.class);
 			return submodels.stream().map(Submodel::getId).collect(Collectors.toList());
 		} catch (Exception e) {
 			throw new RuntimeException(e);

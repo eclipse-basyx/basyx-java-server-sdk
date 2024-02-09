@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
- *
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -19,44 +19,27 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
+ * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.http.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+package org.eclipse.digitaltwin.basyx.core.exceptions;
 
 /**
- * Gets or Sets ExecutionState
+ * Indicates failure while delegating the operation invocation
+ * 
+ * @author danish, marie
+ *
  */
-public enum ExecutionState {
-  INITIATED("Initiated"),
-    RUNNING("Running"),
-    COMPLETED("Completed"),
-    CANCELED("Canceled"),
-    FAILED("Failed"),
-    TIMEOUT("Timeout");
+@SuppressWarnings("serial")
+public class OperationDelegationException extends RuntimeException {
 
-  private String value;
+	public OperationDelegationException() {
+		super();
+	}
+	
+	public OperationDelegationException(String message) {
+		super(message);
+	}
 
-  ExecutionState(String value) {
-    this.value = value;
-  }
-
-  @Override
-  @JsonValue
-  public String toString() {
-    return String.valueOf(value);
-  }
-
-  @JsonCreator
-  public static ExecutionState fromValue(String text) {
-    for (ExecutionState b : ExecutionState.values()) {
-      if (String.valueOf(b.value).equals(text)) {
-        return b;
-      }
-    }
-    return null;
-  }
 }

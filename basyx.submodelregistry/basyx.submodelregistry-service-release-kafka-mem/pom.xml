@@ -11,6 +11,8 @@
 	</parent>
 
 	<artifactId>basyx.submodelregistry-service-release-kafka-mem</artifactId>
+	<name>BaSyx Submodel Registry Service Release Kafka Mem</name>
+	<description>BaSyx Submodel Registry Service Release Kafka Mem</description>
 
 	<properties>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>

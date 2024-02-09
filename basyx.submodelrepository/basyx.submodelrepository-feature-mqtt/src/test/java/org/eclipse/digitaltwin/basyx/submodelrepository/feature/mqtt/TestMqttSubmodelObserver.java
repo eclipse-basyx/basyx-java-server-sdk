@@ -180,11 +180,11 @@ public class TestMqttSubmodelObserver {
 	}
 
 	private Submodel deserializeSubmodelPayload(String payload) throws DeserializationException {
-		return new JsonDeserializer().readReferable(payload, Submodel.class);
+		return new JsonDeserializer().read(payload, Submodel.class);
 	}
 
 	private SubmodelElement deserializeSubmodelElementPayload(String payload) throws DeserializationException {
-		return new JsonDeserializer().readReferable(payload, SubmodelElement.class);
+		return new JsonDeserializer().read(payload, SubmodelElement.class);
 	}
 
 	private Submodel createSubmodelDummy(String submodelId) {

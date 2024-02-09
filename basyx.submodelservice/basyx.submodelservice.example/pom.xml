@@ -8,6 +8,9 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>basyx.submodelservice.example</artifactId>
+	<name>BaSyx submodelservice.example</name>
+	<description>BaSyx submodelservice.example</description>
+	
 	<properties>
 		<docker.image.name>standalone_submodel_example</docker.image.name>
 		<docker.container.waitForEndpoint>
@@ -129,9 +132,9 @@
 							</execution>
 						</executions>
 					</plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
 					</plugin>
 				</plugins>
 			</build>

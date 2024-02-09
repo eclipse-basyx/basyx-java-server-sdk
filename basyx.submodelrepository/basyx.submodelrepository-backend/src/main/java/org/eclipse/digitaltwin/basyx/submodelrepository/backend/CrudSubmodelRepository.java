@@ -63,6 +63,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -74,6 +76,7 @@ import org.springframework.data.repository.CrudRepository;
  */
 public class CrudSubmodelRepository implements SubmodelRepository {
 
+	private Logger logger = LoggerFactory.getLogger(CrudSubmodelRepository.class);
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private CrudRepository<Submodel, String> submodelBackend;
 
@@ -200,6 +203,30 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
+	public void updateSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
+
+		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
+
+		SubmodelElement element = submodelService.getSubmodelElement(idShortPath);
+
+		throwIfMismatchingIds(element.getIdShort(), submodelElement.getIdShort());
+
+		if (isFileSubmodelElement(element) && !isFileSubmodelElement(submodelElement)) {
+
+			try {
+				deleteFileValue(submodelId, idShortPath);
+			} catch (FileDoesNotExistException e) {
+				logger.info("The Submodel Element with idShortPath '{}' is a File Submodel Element but there is no file attachment associated with this.", idShortPath);
+			}
+
+		}
+
+		submodelService.updateSubmodelElement(idShortPath, submodelElement);
+		
+		updateSubmodel(submodelId, submodelService.getSubmodel());
+	}
+
+	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
 		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
 
@@ -279,6 +306,10 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 		setSubmodelElementValue(submodelId, idShortPath, fileValue);
 	}
 
+	private boolean isFileSubmodelElement(SubmodelElement submodelElement) {
+		return submodelElement instanceof File;
+	}
+
 	private InputStream getFileInputStream(String filePath) {
 		InputStream fileContent;
 
@@ -307,13 +338,13 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 	}
 
 	private void createOutputStream(String filePath, byte[] content) throws IOException {
-		
+
 		try (OutputStream outputStream = new FileOutputStream(filePath)) {
 			outputStream.write(content);
 		} catch (IOException e) {
 			throw new FileHandlingException("Exception occurred while creating OutputStream from byte[]." + e.getMessage());
 		}
-		
+
 	}
 
 	private void initializeRemoteCollection(Collection<Submodel> submodels) {
@@ -340,7 +371,7 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 		try {
 			String submodelAsJSON = new JsonSerializer().write(submodel);
 
-			Submodel submodelDeepCopy = new JsonDeserializer().readReferable(submodelAsJSON, Submodel.class);
+			Submodel submodelDeepCopy = new JsonDeserializer().read(submodelAsJSON, Submodel.class);
 
 			submodelDeepCopy.setSubmodelElements(null);
 
@@ -354,7 +385,7 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement) {
 
-		if (!(submodelElement instanceof File))
+		if (!isFileSubmodelElement(submodelElement))
 			throw new ElementNotAFileException(submodelElement.getIdShort());
 	}
 

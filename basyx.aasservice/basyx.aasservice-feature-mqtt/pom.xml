@@ -9,6 +9,8 @@
 	</parent>
 
 	<artifactId>basyx.aasservice-feature-mqtt</artifactId>
+	<name>BaSyx AAS Service feature-mqtt</name>
+	<description>BaSyx AAS Service feature-mqtt</description>
 
 	<dependencies>
 		<dependency>

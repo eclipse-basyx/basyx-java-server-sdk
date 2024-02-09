@@ -18,6 +18,23 @@ In addition to the [general documentation](https://github.com/eclipse-basyx/basy
 Furthermore, we are providing easy to use [examples](examples) that can be leveraged for setting up your own AAS infrastructure.
 The future roadmap of BaSyx is described [here](https://github.com/eclipse-basyx/basyx-java-server-sdk/blob/main/docs/Roadmap.md).
 
+## Snapshot Releases
+We're distributing our SNAPSHOT releases via Maven Central. For using them, add the following part to your project's POM:
+
+```
+<repository>
+	<id>sonatype.snapshots</id>
+	<name>Sonatype Snapshot Repository</name>
+	<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+	<releases>
+		<enabled>false</enabled>
+	</releases>
+	<snapshots>
+		<enabled>true</enabled>
+	</snapshots>
+</repository>
+```
+
 ## Contributing
 
 If you would like to contribute, please notice the [contribution guidelines](CONTRIBUTING.md). The overall process is described in the [Eclipse wiki](https://wiki.eclipse.org/BaSyx_/_Developer_/_Contributing).

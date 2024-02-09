@@ -52,7 +52,7 @@ public interface AasDiscoveryService {
 	 * Returns a list of asset identifier key-value-pairs based on an Asset
 	 * Administration Shell id
 	 * 
-	 * @param aasIdentifier
+	 * @param shellIdentifier
 	 * @return a list of asset identifiers
 	 */
 	public List<SpecificAssetId> getAllAssetLinksById(String shellIdentifier);
@@ -62,7 +62,7 @@ public interface AasDiscoveryService {
 	 * Administration Shell for discoverable content. The existing content might
 	 * have to be deleted first.
 	 * 
-	 * @param aasIdentifier
+	 * @param shellIdentifier
 	 * @param assetIds
 	 * @return a list of asset identifiers
 	 */
@@ -72,7 +72,7 @@ public interface AasDiscoveryService {
 	 * Deletes all asset identifier key-value-pairs linked to an Asset
 	 * Administration Shell
 	 * 
-	 * @param aasIdentifier
+	 * @param shellIdentifier
 	 */
 	public void deleteAllAssetLinksById(String shellIdentifier);
 

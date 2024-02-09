@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.http</artifactId>
+	<name>BaSyx HTTP</name>
+	<description>BaSyx HTTP</description>
 
 	<dependencies>
 		<dependency>
@@ -42,7 +44,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-			<artifactId>dataformat-json</artifactId>
+			<artifactId>aas4j-dataformat-json</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>

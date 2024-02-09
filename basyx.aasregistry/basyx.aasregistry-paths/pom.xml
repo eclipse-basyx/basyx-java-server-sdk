@@ -11,6 +11,8 @@
 	</parent>
 
 	<artifactId>basyx.aasregistry-paths</artifactId>
+	<name>BaSyx AAS Registry Paths</name>
+	<description>BaSyx AAS Registry Paths</description>
 
 	<packaging>jar</packaging>
 

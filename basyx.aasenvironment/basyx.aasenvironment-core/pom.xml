@@ -9,6 +9,8 @@
 	</parent>
 
 	<artifactId>basyx.aasenvironment-core</artifactId>
+	<name>BaSyx AAS Environment Core</name>
+	<description>BaSyx AAS Environment Core</description>
 
 	<dependencies>
 		<dependency>
@@ -68,23 +70,23 @@
 
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-			<artifactId>dataformat-json</artifactId>
+			<artifactId>aas4j-dataformat-json</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-			<artifactId>dataformat-xml</artifactId>
+			<artifactId>aas4j-dataformat-xml</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-			<artifactId>dataformat-aasx</artifactId>
+			<artifactId>aas4j-dataformat-aasx</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-			<artifactId>dataformat-core</artifactId>
+			<artifactId>aas4j-dataformat-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-			<artifactId>model</artifactId>
+			<artifactId>aas4j-model</artifactId>
 		</dependency>
 
 		<dependency>

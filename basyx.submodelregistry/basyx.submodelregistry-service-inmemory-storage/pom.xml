@@ -11,6 +11,9 @@
 	</parent>
 
 	<artifactId>basyx.submodelregistry-service-inmemory-storage</artifactId>
+	<name>BaSyx Submodel Registry Service Inmemory Storage</name>
+	<description>BaSyx Submodel Registry Service Inmemory Storage</description>
+	
 	<packaging>jar</packaging>
 
 	<dependencies>

@@ -65,8 +65,8 @@ public class InMemoryAasDiscoveryService implements AasDiscoveryService {
 	/**
 	 * Creates the {@link InMemoryAasDiscoveryService}
 	 * 
-	 * @param name
-	 *            of the Aas Discovery Service
+	 * @param aasDiscoveryServiceName
+	 *            name of the Aas Discovery Service
 	 */
 	public InMemoryAasDiscoveryService(String aasDiscoveryServiceName) {
 		this.aasDiscoveryServiceName = aasDiscoveryServiceName;

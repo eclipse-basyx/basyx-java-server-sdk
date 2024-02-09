@@ -6,6 +6,8 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>basyx.submodelrepository-tck</artifactId>
+	<name>BaSyx submodelrepository-tck</name>
+	<description>BaSyx submodelrepository-tck</description>
 
 	<dependencies>
 		<dependency>

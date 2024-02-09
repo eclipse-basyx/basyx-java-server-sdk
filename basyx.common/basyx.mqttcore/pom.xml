@@ -6,10 +6,13 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>basyx.mqttcore</artifactId>
+	 <name>BaSyx mqtt core</name>
+	<description>BaSyx mqtt core</description>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-			<artifactId>dataformat-json</artifactId>
+			<artifactId>aas4j-dataformat-json</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.paho</groupId>

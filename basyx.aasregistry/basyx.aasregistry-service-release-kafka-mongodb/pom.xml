@@ -10,6 +10,9 @@
 
 	</parent>
 	<artifactId>basyx.aasregistry-service-release-kafka-mongodb</artifactId>
+	<name>BaSyx AAS Registry Service Release Kafka MongoDB</name>
+	<description>BaSyx AAS Registry Service Release Kafka MongoDB</description>
+	
 	<properties>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>
 		<start-class>org.eclipse.digitaltwin.basyx.aasregistry.service.OpenApiGeneratorApplication</start-class>

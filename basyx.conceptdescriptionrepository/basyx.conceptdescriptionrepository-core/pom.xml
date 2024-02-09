@@ -10,6 +10,7 @@
 
 	<artifactId>basyx.conceptdescriptionrepository-core</artifactId>
 	<name>Concept Description Repository Core</name>
+	<description>Concept Description Repository Core</description>
 
 	<dependencies>
 		<dependency>
@@ -19,7 +20,7 @@
 
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-			<artifactId>model</artifactId>
+			<artifactId>aas4j-model</artifactId>
 		</dependency>
 	</dependencies>
 </project>

@@ -11,7 +11,8 @@
 
 	<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
 	<name>Concept Description Repository Component</name>
-
+	<description>Concept Description Repository Component</description>
+	
 	<properties>
 		<docker.image.name>conceptdescription-repository</docker.image.name>
 		<docker.container.waitForEndpoint>
