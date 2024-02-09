@@ -6,6 +6,9 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>basyx.aasregistry-plugins</artifactId>
+	<name>BaSyx AAS Registry Plugins</name>
+	<description>BaSyx AAS Registry Plugins</description>
+	
 	<packaging>maven-plugin</packaging>
 	<properties></properties>
 	<dependencies>

@@ -11,6 +11,8 @@
 	</parent>
 
 	<artifactId>basyx.aasregistry-service-release-kafka-mem</artifactId>
+	<name>BaSyx AAS Registry Service Release Kafka Mem</name>
+	<description>BaSyx AAS Registry Service Release Kafka Mem</description>
 
 	<properties>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>

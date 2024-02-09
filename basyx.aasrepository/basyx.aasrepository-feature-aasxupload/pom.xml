@@ -9,6 +9,8 @@
 	</parent>
 
 	<artifactId>basyx.aasrepository-feature-aasxupload</artifactId>
+	<name>BaSyx AAS Repository feature-aasxupload</name>
+	<description>BaSyx AAS Repository feature-aasxupload</description>
 
 	<dependencies>
 		<dependency>

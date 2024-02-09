@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.aasregistry-service</artifactId>
+	<name>BaSyx AAS Registry Service</name>
+	<description>BaSyx AAS Registry Service</description>
 
 	<packaging>jar</packaging>
 

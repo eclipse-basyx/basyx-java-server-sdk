@@ -38,6 +38,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchExcep
 import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NullSubjectException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.OperationDelegationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -117,5 +118,10 @@ public class BaSyxExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(NullSubjectException.class)
 	public <T> ResponseEntity<T> handleNullSubjectException(NullSubjectException exception) {
 		return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+	}
+	
+	@ExceptionHandler(OperationDelegationException.class)
+	public <T> ResponseEntity<T> handleNullSubjectException(OperationDelegationException exception) {
+		return new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
 	}
 }

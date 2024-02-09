@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import java.util.List;
 import java.io.InputStream;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -81,6 +81,16 @@ public interface SubmodelRepository {
 	 * @throws CollidingIdentifierException
 	 */
 	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException, MissingIdentifierException;
+	
+	/**
+	 * Updates a SubmodelElement
+	 * 
+	 * @param submodelIdentifier
+	 * @param idShortPath
+	 * @param submodelElement
+	 * @throws ElementDoesNotExistException
+	 */
+	public void updateSubmodelElement(String submodelIdentifier, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException;
 
 	/**
 	 * Deletes a Submodel
@@ -234,8 +244,6 @@ public interface SubmodelRepository {
 	 *            the Submodel id
 	 * @param idShortPath
 	 *            the IdShort path of the file element
-	 * @param file
-	 *            the file object to upload
 	 * 
 	 * @throws ElementDoesNotExistException
 	 * @throws ElementNotAFileException

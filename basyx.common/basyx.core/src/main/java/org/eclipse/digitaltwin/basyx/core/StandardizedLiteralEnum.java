@@ -27,7 +27,7 @@ package org.eclipse.digitaltwin.basyx.core;
 
 /**
  * Enums with this interface hold a custom string literal that is used during e.g. XML serialization. You may use the
- * {@link org.eclipse.digitaltwin.basyx.http.StandardizedLiteralEnumHelper} to map a custom string literal to an enum.
+ * StandardizedLiteralEnumHelper to map a custom string literal to an enum.
  *
  * @author alexgordtop
  */

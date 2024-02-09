@@ -41,8 +41,32 @@
 			<id>fschnicke</id>
 			<name>Frank Schnicke</name>
 			<email>frank.schnicke@iese.fraunhofer.de</email>
+			<organizationUrl>https://www.iese.fraunhofer.de/</organizationUrl>
+			<url>https://projects.eclipse.org/projects/dt.basyx/who</url>
 		</developer>
 	</developers>
+
+
+	<repositories>
+		<repository>
+			<id>central</id>
+			<name>Maven Central</name>
+			<layout>default</layout>
+			<url>https://repo1.maven.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<scm>
+		<connection>
+			scm:git:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</connection>
+		<developerConnection>
+			scm:git:https://github.com/eclipse-basyx/basyx-java-server-sdk.git</developerConnection>
+		<url>https://github.com/eclipse-basyx/basyx-java-server-sdk/tree/main</url>
+	</scm>
+
 	<properties>
 		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -55,15 +79,25 @@
 		<docker.target.platforms>linux/amd64, linux/arm64</docker.target.platforms>
 		<docker.host.port>8081</docker.host.port>
 		<docker.container.port>8081</docker.container.port>
-		<aas4j-version>1.0.0-milestone-04</aas4j-version>
+		<aas4j-version>1.0.0-RC1</aas4j-version>
 	</properties>
+
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>flatten-maven-plugin</artifactId>
-				<version>1.4.1</version>
-				<configuration></configuration>
+				<version>1.5.0</version>
+				<configuration>
+					<updatePomFile>true</updatePomFile>
+					<pomElements>
+						<name />
+						<description />
+						<url />
+						<developers />
+						<scm />
+					</pomElements>
+				</configuration>
 				<executions>
 					<!-- enable flattening -->
 					<execution>
@@ -124,18 +158,12 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>attach-javadoc</id>
-						<phase>package</phase>
+						<id>attach-javadocs</id>
 						<goals>
-							<goal>javadoc</goal>
+							<goal>jar</goal>
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<additionalOptions>
-						<additionalOption>-Xdoclint:none</additionalOption>
-					</additionalOptions>
-				</configuration>
 			</plugin>
 		</plugins>
 		<pluginManagement>
@@ -160,6 +188,42 @@
 						</execution>
 					</executions>
 				</plugin>
+
+				<!-- Signing the artifacts -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>3.1.0</version>
+					<executions>
+						<execution>
+							<id>sign-artifacts</id>
+							<phase>verify</phase>
+							<goals>
+								<goal>sign</goal>
+							</goals>
+							<configuration>
+								<gpgArguments>
+									<arg>--pinentry-mode</arg>
+									<arg>loopback</arg>
+								</gpgArguments>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+
+				<!-- Upload to Maven Central -->
+				<plugin>
+					<groupId>org.sonatype.plugins</groupId>
+					<artifactId>nexus-staging-maven-plugin</artifactId>
+					<version>1.6.13</version>
+					<extensions>true</extensions>
+					<configuration>
+						<serverId>ossrh</serverId>
+						<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+						<autoReleaseAfterClose>true</autoReleaseAfterClose>
+						<stagingProfileId>2d2ac71e07682f</stagingProfileId>
+					</configuration>
+				</plugin>
 				<plugin>
 					<groupId>io.fabric8</groupId>
 					<artifactId>docker-maven-plugin</artifactId>
@@ -182,9 +246,14 @@
 									<buildx>
 										<platforms>
 											${docker.target.platforms}
-										</platforms>			
+										</platforms>
 									</buildx>
 								</build>
+								<run>
+									<network>
+										<mode>host</mode>
+									</network>
+								</run>
 							</image>
 						</images>
 						<verbose>true</verbose>
@@ -230,7 +299,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-				<artifactId>model</artifactId>
+				<artifactId>aas4j-model</artifactId>
 				<version>${aas4j-version}</version>
 				<exclusions>
 					<exclusion>
@@ -241,7 +310,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-				<artifactId>dataformat-json</artifactId>
+				<artifactId>aas4j-dataformat-json</artifactId>
 				<version>${aas4j-version}</version>
 				<exclusions>
 					<exclusion>
@@ -252,7 +321,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-				<artifactId>dataformat-xml</artifactId>
+				<artifactId>aas4j-dataformat-xml</artifactId>
 				<version>${aas4j-version}</version>
 				<exclusions>
 					<exclusion>
@@ -263,7 +332,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-				<artifactId>dataformat-core</artifactId>
+				<artifactId>aas4j-dataformat-core</artifactId>
 				<version>${aas4j-version}</version>
 				<exclusions>
 					<exclusion>
@@ -274,7 +343,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-				<artifactId>dataformat-aasx</artifactId>
+				<artifactId>aas4j-dataformat-aasx</artifactId>
 				<version>${aas4j-version}</version>
 				<exclusions>
 					<exclusion>
@@ -319,6 +388,13 @@
 				<artifactId>reflections</artifactId>
 				<version>0.10.2</version>
 			</dependency>
+			<dependency>
+				<groupId>org.mock-server</groupId>
+				<artifactId>mockserver-netty</artifactId>
+				<version>5.15.0</version>
+				<scope>test</scope>
+			</dependency>
+
 			<!-- Handles resources & files -->
 			<dependency>
 				<groupId>commons-io</groupId>
@@ -407,6 +483,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelrepository-feature-authorization</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-feature-operation-delegation</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -697,6 +778,12 @@
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-feature-operation-delegation</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
 			<!-- basyx.aasservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -910,4 +997,36 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>MavenCentral</id>
+			<distributionManagement>
+				<snapshotRepository>
+					<id>ossrh</id>
+					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+				</snapshotRepository>
+				<repository>
+					<id>ossrh</id>
+					<url>
+						https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+				</repository>
+			</distributionManagement>
+			<build>
+				<plugins>
+					<!-- Upload to maven central -->
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+					</plugin>
+
+					<!-- Signing the artifacts -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

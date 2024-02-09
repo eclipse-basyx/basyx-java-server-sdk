@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.aasregistry-client-native</artifactId>
+	<name>BaSyx AAS Registry Client Native</name>
+	<description>BaSyx AAS Registry Client Native</description>
 
 	<packaging>jar</packaging>
 	<properties>

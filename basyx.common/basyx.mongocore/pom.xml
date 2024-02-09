@@ -6,6 +6,8 @@
     <version>${revision}</version>
   </parent>
   <artifactId>basyx.mongodbcore</artifactId>
+  <name>BaSyx mongodb core</name>
+	<description>BaSyx mongodb core</description>
   
   <dependencies>
 	  <dependency>

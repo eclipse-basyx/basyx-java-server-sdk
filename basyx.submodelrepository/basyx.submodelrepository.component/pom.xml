@@ -10,7 +10,9 @@
 	</parent>
 
 	<artifactId>basyx.submodelrepository.component</artifactId>
-
+	<name>BaSyx submodelrepository.component</name>
+	<description>BaSyx submodelrepository.component</description>
+	
 	<properties>
 		<docker.image.name>submodel-repository</docker.image.name>
 		<docker.container.waitForEndpoint>
@@ -55,6 +57,16 @@
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.submodelrepository-feature-authorization</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelrepository-feature-operation-delegation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelrepository-feature-operation-delegation</artifactId>
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
@@ -225,53 +237,53 @@
 				</property>
 			</activation>
 			<build>
-				<plugins>
-					<plugin>
-						<groupId>io.fabric8</groupId>
-						<artifactId>docker-maven-plugin</artifactId>
-						<configuration>
-							<images>
-								<image>
-									<run>
-										<ports>
+			<plugins>
+				<plugin>
+					<groupId>io.fabric8</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<configuration>
+						<images>
+							<image>
+								<run>
+									<ports>
 											<port>
 												${docker.host.port}:${docker.container.port}</port>
-										</ports>
-										<wait>
+									</ports>
+									<wait>
 											<url>
 												${docker.container.waitForEndpoint}</url>
-											<time>60000</time>
-										</wait>
+										<time>60000</time>
+									</wait>
 										<env>
 											<SPRING_PROFILES_ACTIVE>integration</SPRING_PROFILES_ACTIVE>
 										</env>
-									</run>
-								</image>
-							</images>
-						</configuration>
-						<executions>
-							<execution>
+								</run>
+							</image>
+						</images>
+					</configuration>
+					<executions>
+						<execution>
 								<id>build-docker</id>
-							</execution>
-							<execution>
+						</execution>
+						<execution>
 								<id>push-docker</id>
 							</execution>
 							<execution>
-								<id>docker-compose-up</id>
-								<phase>pre-integration-test</phase>
-								<goals>
-									<goal>start</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>docker-compose-down</id>
-								<phase>post-integration-test</phase>
-								<goals>
-									<goal>stop</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
+							<id>docker-compose-up</id>
+							<phase>pre-integration-test</phase>
+							<goals>
+								<goal>start</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>docker-compose-down</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>stop</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-failsafe-plugin</artifactId>

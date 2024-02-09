@@ -6,6 +6,9 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>basyx.submodelrepository-feature-mqtt</artifactId>
+	<name>BaSyx submodelrepository-feature-mqtt</name>
+	<description>BaSyx submodelrepository-feature-mqtt</description>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -19,11 +22,6 @@
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.submodelrepository-core</artifactId>
 			<classifier>tests</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.submodelrepository-backend-inmemory</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

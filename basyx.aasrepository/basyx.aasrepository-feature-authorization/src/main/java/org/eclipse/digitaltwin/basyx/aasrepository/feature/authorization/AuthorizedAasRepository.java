@@ -123,7 +123,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public void removeSubmodelReference(String shellId, String submodelId) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.DELETE, new AasTargetInformation(shellId));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new AasTargetInformation(shellId));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -168,7 +168,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public void deleteThumbnail(String aasId) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.DELETE, new AasTargetInformation(aasId));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new AasTargetInformation(aasId));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		

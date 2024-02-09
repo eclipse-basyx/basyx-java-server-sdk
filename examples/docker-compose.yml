@@ -91,3 +91,6 @@ services:
       VITE_SUBMODEL_REPO_PATH: "http://localhost:8081/submodels"
       VITE_CD_REPO_PATH: "http://localhost:8081/concept-descriptions"
     restart: always
+    depends_on:
+      aas-env:
+        condition: service_healthy

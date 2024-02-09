@@ -6,7 +6,8 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>basyx.aasrepository-tck</artifactId>
-
+	<name>BaSyx AAS Repository TCK</name>
+	<description>BaSyx AAS Repository TCK</description>
 
 	<dependencies>
 		<dependency>

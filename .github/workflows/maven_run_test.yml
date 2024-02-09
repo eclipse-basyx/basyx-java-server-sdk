@@ -21,7 +21,7 @@ jobs:
       - name: Start environment
         run: docker compose up -d --wait
       - name: Install BaSyx
-        run: mvn clean install
+        run: mvn clean install -Ddocker.namespace=test
       - name: Stop environment
         if: always()
         run: docker compose down

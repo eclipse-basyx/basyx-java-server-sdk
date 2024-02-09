@@ -19,7 +19,7 @@
 
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-			<artifactId>model</artifactId>
+			<artifactId>aas4j-model</artifactId>
 		</dependency>
 	</dependencies>
 </project>

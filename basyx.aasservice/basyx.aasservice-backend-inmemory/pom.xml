@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.aasservice-backend-inmemory</artifactId>
+	<name>BaSyx AAS Service backend-inmemory</name>
+	<description>BaSyx AAS Service backend-inmemory</description>
 
 	<dependencies>
 		<dependency>

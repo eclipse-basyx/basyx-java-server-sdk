@@ -126,6 +126,11 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
 		decorated.createSubmodelElement(submodelId, submodelElement);
 	}
+	
+	@Override
+	public void updateSubmodelElement(String submodelIdentifier, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
+		decorated.updateSubmodelElement(submodelIdentifier, idShortPath, submodelElement);
+	}
 
 	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
@@ -172,9 +177,7 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 
 			logger.info("Submodel '{}' has been automatically linked with the Registry", submodel.getId());
 		} catch (ApiException e) {
-			e.printStackTrace();
-
-			throw new RepositoryRegistryLinkException(submodel.getId());
+			throw new RepositoryRegistryLinkException(submodel.getId(), e);
 		}
 	}
 
@@ -192,9 +195,7 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 
 			logger.info("Submodel '{}' has been automatically un-linked from the Registry.", submodelId);
 		} catch (ApiException e) {
-			e.printStackTrace();
-
-			throw new RepositoryRegistryUnlinkException(submodelId);
+			throw new RepositoryRegistryUnlinkException(submodelId, e);
 		}
 	}
 	

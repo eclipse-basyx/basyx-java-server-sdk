@@ -11,6 +11,8 @@
 	</parent>
 
 	<artifactId>basyx.aasregistry-service-kafka-events</artifactId>
+	<name>BaSyx AAS Registry Service Kafka Events</name>
+	<description>BaSyx AAS Registry Service Kafka Events</description>
 
 	<packaging>jar</packaging>
 

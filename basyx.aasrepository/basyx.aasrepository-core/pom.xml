@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.aasrepository-core</artifactId>
+	<name>BaSyx AAS Repository Core</name>
+	<description>BaSyx AAS Repository Core</description>
 
 	<dependencies>
 		<dependency>

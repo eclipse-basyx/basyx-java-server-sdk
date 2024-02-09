@@ -77,7 +77,7 @@ public interface AASXFileServer {
 	 * @param filename
 	 * @throws CollidingIdentifierException
 	 */
-	public PackageDescription createAASXPackage(List<String> shellIds, InputStream file, String fileName);
+	public PackageDescription createAASXPackage(List<String> shellIds, InputStream file, String filename);
 
 	/**
 	 * Deletes a AASX Package

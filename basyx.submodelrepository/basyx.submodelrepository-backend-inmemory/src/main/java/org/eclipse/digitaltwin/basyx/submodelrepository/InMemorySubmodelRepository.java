@@ -41,13 +41,13 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
-import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
-import org.apache.commons.io.IOUtils;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -175,7 +175,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	public void updateSubmodel(String id, Submodel submodel) throws ElementDoesNotExistException {
 		throwIfSubmodelDoesNotExist(id);
 
-		throwIfMismatchingIds(id, submodel);
+		throwIfMismatchingIds(id, submodel.getId());
 
 		submodelServices.put(id, submodelServiceFactory.create(submodel));
 	}
@@ -222,6 +222,28 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 
 		submodelServices.get(submodelId).createSubmodelElement(smElement);
 	}
+	
+	@Override
+	public void updateSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
+		
+		SubmodelService submodelService = getSubmodelService(submodelId);
+			
+		SubmodelElement element = submodelService.getSubmodelElement(idShortPath);
+		
+		throwIfMismatchingIds(element.getIdShort(), submodelElement.getIdShort());
+		
+		if (isFileSubmodelElement(element) && !isFileSubmodelElement(submodelElement)) {
+			
+			try {
+				deleteFileValue(submodelId, idShortPath);
+			} catch (FileDoesNotExistException e) {
+				logger.info("The Submodel Element with idShortPath '{}' is a File Submodel Element but there is no file attachment associated with this.", idShortPath);
+			}
+			
+		}
+		
+		submodelService.updateSubmodelElement(idShortPath, submodelElement);
+	}
 
 	@Override
 	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
@@ -243,7 +265,7 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 		Submodel submodel = getSubmodel(submodelId);
 		try {
 			String submodelAsJSON = new JsonSerializer().write(submodel);
-			Submodel submodelDeepCopy = new JsonDeserializer().readReferable(submodelAsJSON, Submodel.class);
+			Submodel submodelDeepCopy = new JsonDeserializer().read(submodelAsJSON, Submodel.class);
 			submodelDeepCopy.setSubmodelElements(null);
 			return submodelDeepCopy;
 		} catch (DeserializationException e) {
@@ -322,14 +344,17 @@ public class InMemorySubmodelRepository implements SubmodelRepository {
 	}
 
 	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement) {
-		if (!(submodelElement instanceof File))
+		if (!(isFileSubmodelElement(submodelElement)))
 			throw new ElementNotAFileException(submodelElement.getIdShort());
 	}
+	
+	private boolean isFileSubmodelElement(SubmodelElement submodelElement) {
+			return submodelElement instanceof File;
+	}
 
-	private void throwIfMismatchingIds(String smId, Submodel newSubmodel) {
-		String newSubmodelId = newSubmodel.getId();
+	private void throwIfMismatchingIds(String existingElementId, String newElementId) {
 
-		if (!smId.equals(newSubmodelId))
+		if (!existingElementId.equals(newElementId))
 			throw new IdentificationMismatchException();
 	}
 

@@ -10,7 +10,8 @@
 
 	<artifactId>basyx.conceptdescriptionrepository-backend-mongodb</artifactId>
 	<name>Concept Description Repository Backend MongoDB</name>
-
+	<description>Concept Description Repository Backend MongoDB</description>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>

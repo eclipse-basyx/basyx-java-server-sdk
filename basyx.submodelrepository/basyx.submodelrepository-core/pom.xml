@@ -9,6 +9,8 @@
 	</parent>
 
 	<artifactId>basyx.submodelrepository-core</artifactId>
+	<name>BaSyx Submodel Repository Core</name>
+	<description>BaSyx Submodel Repository Core</description>
 
 	<dependencies>
 		<dependency>
@@ -27,7 +29,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-			<artifactId>model</artifactId>
+			<artifactId>aas4j-model</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
