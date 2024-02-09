@@ -40,11 +40,11 @@ public class ConceptDescriptionTargetPermissionVerifier implements TargetPermiss
 	
 	@Override
 	public boolean isVerified(RbacRule rbacRule, ConceptDescriptionTargetInformation targetInformation) {
-		String shellId = targetInformation.getConceptDescriptionId();
+		String conceptDescriptionId = targetInformation.getConceptDescriptionId();
 		
 		ConceptDescriptionTargetInformation rbacRuleConceptDescriptionTargetInformation = (ConceptDescriptionTargetInformation) rbacRule.getTargetInformation();
 		
-		return rbacRuleConceptDescriptionTargetInformation.getConceptDescriptionId().equals(ALL_ALLOWED_WILDCARD) || rbacRuleConceptDescriptionTargetInformation.getConceptDescriptionId().equals(shellId);
+		return rbacRuleConceptDescriptionTargetInformation.getConceptDescriptionId().equals(ALL_ALLOWED_WILDCARD) || rbacRuleConceptDescriptionTargetInformation.getConceptDescriptionId().equals(conceptDescriptionId);
 	}
 
 }
