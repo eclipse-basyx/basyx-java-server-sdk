@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -19,24 +19,19 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.authorization.rbac;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.component;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.authorization.AuthorizedConceptDescriptionRepositoryTestSuite;
 
 /**
- * Convenient annotation for declaring a subtype of {@link TargetInformation}
+ * Integration test for the {@link AuthorizedAasRepository}
  * 
  * @author danish
+ *
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface TargetInformationSubtype {
-	String getValue();
+public class AuthorizedITConceptDescriptionRepository extends AuthorizedConceptDescriptionRepositoryTestSuite {
 }

@@ -23,20 +23,30 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.authorization.rbac;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.authorization;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepositoryFactory;
 
 /**
- * Convenient annotation for declaring a subtype of {@link TargetInformation}
+ * Factory for creating {@link AuthorizedConceptDescriptionRepository}
  * 
  * @author danish
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface TargetInformationSubtype {
-	String getValue();
+public class AuthorizedConceptDescriptionRepositoryFactory implements ConceptDescriptionRepositoryFactory {
+
+	private ConceptDescriptionRepositoryFactory decorated;
+	private RbacPermissionResolver<ConceptDescriptionTargetInformation> permissionResolver;
+
+	public AuthorizedConceptDescriptionRepositoryFactory(ConceptDescriptionRepositoryFactory decorated, RbacPermissionResolver<ConceptDescriptionTargetInformation> permissionResolver) {
+		this.decorated = decorated;
+		this.permissionResolver = permissionResolver;
+	}
+
+	@Override
+	public ConceptDescriptionRepository create() {
+		return new AuthorizedConceptDescriptionRepository(decorated.create(), permissionResolver);
+	}
+
 }
