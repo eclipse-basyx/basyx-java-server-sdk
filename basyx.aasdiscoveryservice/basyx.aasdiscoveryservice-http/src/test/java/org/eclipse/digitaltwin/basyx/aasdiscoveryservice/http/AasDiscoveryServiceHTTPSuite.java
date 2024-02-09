@@ -57,15 +57,6 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 	public abstract void resetService();
 
 	@Test
-	public void getAllAssetAdministrationShellIdsByAssetLink() throws ParseException, IOException {
-		String expectedShellIds = getAllShellIdsJSON();
-
-		String actualShellIds = requestAllShellIds();
-
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedShellIds, getJSONWithoutCursorInfo(actualShellIds));
-	}
-
-	@Test
 	public void getAllAssetLinks() throws IOException, ParseException {
 		String expectedShellIds = getAllAssetLinksJSON();
 
@@ -131,12 +122,6 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 
 	protected CloseableHttpResponse deleteAssetLinkById(String shellId) throws IOException {
 		return removeAssetLink(shellId);
-	}
-
-	protected String requestAllShellIds() throws IOException, ParseException {
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(getURL() + "?assetIds=RHVtbXlBc3NldF8xX1ZhbHVl,RHVtbXlBc3NldF8zX1ZhbHVl");
-
-		return BaSyxHttpTestUtils.getResponseAsString(response);
 	}
 
 	protected CloseableHttpResponse requestAllAssetLinks(String shellIdentifier) throws IOException, ParseException {

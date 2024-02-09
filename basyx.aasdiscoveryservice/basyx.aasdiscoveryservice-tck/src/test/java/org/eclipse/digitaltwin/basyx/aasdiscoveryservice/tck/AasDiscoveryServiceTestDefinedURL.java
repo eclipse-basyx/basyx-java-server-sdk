@@ -24,20 +24,20 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.tck;
 
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.util.List;
-
+import com.google.gson.Gson;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.AasDiscoveryServiceHTTPSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
+import java.io.IOException;
+import java.util.List;
+
+import static org.junit.Assert.fail;
 
 /**
  * 
@@ -61,30 +61,30 @@ public class AasDiscoveryServiceTestDefinedURL extends AasDiscoveryServiceHTTPSu
 	}
 
 	private void createDummyAssetLinks() {
-		List<AssetLink> dummyAssetLinks = AasDiscoveryServiceSuite.getMultipleDummyAasAssetLink();
+		List<AssetAdministrationShell> dummyAssetLinks = AasDiscoveryServiceSuite.getMultipleDummyAasAssetLink();
 		dummyAssetLinks.forEach(this::createAssetLink);
 	}
 
-	private void createAssetLink(AssetLink assetLink) {
+	private void createAssetLink(AssetAdministrationShell shell) {
 		try {
-			String specificAssetIdsJSON = gson.toJson(assetLink.getSpecificAssetIds());
-			CloseableHttpResponse creationResponse = createAssetLinks(assetLink.getShellIdentifier(), specificAssetIdsJSON);
+			String specificAssetIdsJSON = gson.toJson(shell.getAssetInformation().getSpecificAssetIds());
+			CloseableHttpResponse creationResponse = createAssetLinks(shell.getId(), specificAssetIdsJSON);
 
 			if (creationResponse.getCode() != 409) {
-				logger.info("Creating Asset Link with shell id '{}', ResponseCode is '{}'", assetLink.getShellIdentifier(), creationResponse.getCode());
+				logger.info("Creating Asset Link with shell id '{}', ResponseCode is '{}'", shell.getId(), creationResponse.getCode());
 				return;
 			}
 
-			resetAssetLink(assetLink);
+			resetAssetLink(shell);
 		} catch (IOException | ParseException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	private void resetAssetLink(AssetLink assetLink) {
-		deleteAssetLink(assetLink.getShellIdentifier());
+	private void resetAssetLink(AssetAdministrationShell shell) {
+		deleteAssetLink(shell.getId());
 
-		createAssetLink(assetLink);
+		createAssetLink(shell);
 	}
 
 	private void deleteAssetLink(String shellId) {
