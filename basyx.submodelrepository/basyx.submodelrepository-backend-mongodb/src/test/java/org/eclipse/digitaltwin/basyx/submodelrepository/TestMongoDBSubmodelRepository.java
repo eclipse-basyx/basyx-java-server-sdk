@@ -26,6 +26,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import static org.junit.Assert.assertEquals;
 
+import java.nio.file.Paths;
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -53,7 +54,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	private final String CONNECTION_URL = "mongodb://mongoAdmin:mongoPassword@localhost:27017";
 	private final MongoClient CLIENT = MongoClients.create(CONNECTION_URL);
 	private final MongoTemplate TEMPLATE = new MongoTemplate(CLIENT, "BaSyxTestDb");
-	private final GridFsTemplate GRIDFS_TEMPLATE = new GridFsTemplate(TEMPLATE.getMongoDatabaseFactory(), TEMPLATE.getConverter(), "TestSMEFiles");
+	private final GridFsTemplate GRIDFS_TEMPLATE = new GridFsTemplate(TEMPLATE.getMongoDatabaseFactory(), TEMPLATE.getConverter());
 	private static final String CONFIGURED_SM_REPO_NAME = "configured-sm-repo-name";
 	private static final String MONGO_ID = "_id";
 	private static final String GRIDFS_ID_DELIMITER = "#";
@@ -61,7 +62,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	@Override
 	protected SubmodelRepository getSubmodelRepository() {
 		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
-		
+
 		SubmodelBackendProvider submodelBackendProvider = new SubmodelMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, TEMPLATE);
 		SubmodelRepositoryFactory submodelRepositoryFactory = new SimpleSubmodelRepositoryFactory(submodelBackendProvider, new InMemorySubmodelServiceFactory());
 
@@ -74,7 +75,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 
 		// TODO: Remove this after MongoDB uses AAS4J serializer
 		submodels.forEach(this::removeInvokableFromInvokableOperation);
-		
+
 		SubmodelBackendProvider submodelBackendProvider = new SubmodelMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, TEMPLATE);
 		SubmodelRepositoryFactory submodelRepositoryFactory = new SimpleSubmodelRepositoryFactory(submodelBackendProvider, new InMemorySubmodelServiceFactory(), submodels, CONFIGURED_SM_REPO_NAME);
 
@@ -83,7 +84,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 
 	@Override
 	protected boolean fileExistsInStorage(String fileValue) {
-		String fileId = fileValue.substring(0, fileValue.indexOf(GRIDFS_ID_DELIMITER));
+		String fileId = getFileId(fileValue);
 
 		GridFSFile file = GRIDFS_TEMPLATE.findOne(new Query(Criteria.where(MONGO_ID).is(fileId)));
 
@@ -112,6 +113,13 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 
 	private void removeInvokableFromInvokableOperation(Submodel sm) {
 		sm.getSubmodelElements().stream().filter(InvokableOperation.class::isInstance).map(InvokableOperation.class::cast).forEach(o -> o.setInvokable(null));
+	}
+
+	private String getFileId(String value) {
+
+		String fileName = Paths.get(value).getFileName().toString();
+
+		return fileName.substring(0, fileName.indexOf(GRIDFS_ID_DELIMITER));
 	}
 
 }
