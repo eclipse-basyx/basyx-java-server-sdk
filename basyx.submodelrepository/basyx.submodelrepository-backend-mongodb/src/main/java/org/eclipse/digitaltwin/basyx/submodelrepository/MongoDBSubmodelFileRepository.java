@@ -32,10 +32,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.bson.types.ObjectId;
-import org.eclipse.digitaltwin.basyx.core.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.FileRepository;
+import org.eclipse.digitaltwin.basyx.core.file.FileMetadata;
+import org.eclipse.digitaltwin.basyx.core.file.FileRepository;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 

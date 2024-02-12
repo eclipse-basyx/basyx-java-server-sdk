@@ -35,10 +35,10 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 
 import org.apache.commons.io.IOUtils;
-import org.eclipse.digitaltwin.basyx.core.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.FileRepository;
+import org.eclipse.digitaltwin.basyx.core.file.FileMetadata;
+import org.eclipse.digitaltwin.basyx.core.file.FileRepository;
 
 /**
  * An InMemory implementation of the {@link FileRepository}

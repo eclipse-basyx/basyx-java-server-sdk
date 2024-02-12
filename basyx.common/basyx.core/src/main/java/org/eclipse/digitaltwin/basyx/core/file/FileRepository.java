@@ -23,11 +23,10 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.backend;
+package org.eclipse.digitaltwin.basyx.core.file;
 
 import java.io.InputStream;
 
-import org.eclipse.digitaltwin.basyx.core.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
 
