@@ -1,0 +1,66 @@
+[
+  {
+    "role": "basyx-reader",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionId": "*"
+    }
+  },
+  {
+    "role": "admin",
+    "action": ["CREATE", "READ", "UPDATE", "DELETE"],
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionId": "*"
+    }
+  },
+  {
+    "role": "basyx-reader-two",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionId": "specificConceptDescriptionId"
+    }
+  },
+  {
+    "role": "basyx-creator",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionId": "*"
+    }
+  },
+  {
+    "role": "basyx-updater",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionId": "*"
+    }
+  },
+  {
+    "role": "basyx-updater-two",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionId": "specificConceptDescriptionId"
+    }
+  },
+  {
+    "role": "basyx-deleter",
+    "action": "DELETE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionId": "*"
+    }
+  },
+  {
+    "role": "basyx-deleter-two",
+    "action": "DELETE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionId": "specificConceptDescriptionId-2"
+    }
+  }
+]

@@ -40,15 +40,23 @@ import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFact
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.gridfs.model.GridFSFile;
 
 public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	private final String COLLECTION = "submodelTestCollection";
 	private final String CONNECTION_URL = "mongodb://mongoAdmin:mongoPassword@localhost:27017";
 	private final MongoClient CLIENT = MongoClients.create(CONNECTION_URL);
 	private final MongoTemplate TEMPLATE = new MongoTemplate(CLIENT, "BaSyxTestDb");
+	private final GridFsTemplate GRIDFS_TEMPLATE = new GridFsTemplate(TEMPLATE.getMongoDatabaseFactory(), TEMPLATE.getConverter(), "TestSMEFiles");
 	private static final String CONFIGURED_SM_REPO_NAME = "configured-sm-repo-name";
+	private static final String MONGO_ID = "_id";
+	private static final String GRIDFS_ID_DELIMITER = "#";
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository() {
@@ -71,6 +79,15 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 		SubmodelRepositoryFactory submodelRepositoryFactory = new SimpleSubmodelRepositoryFactory(submodelBackendProvider, new InMemorySubmodelServiceFactory(), submodels, CONFIGURED_SM_REPO_NAME);
 
 		return submodelRepositoryFactory.create();
+	}
+
+	@Override
+	protected boolean fileExistsInStorage(String fileValue) {
+		String fileId = fileValue.substring(0, fileValue.indexOf(GRIDFS_ID_DELIMITER));
+
+		GridFSFile file = GRIDFS_TEMPLATE.findOne(new Query(Criteria.where(MONGO_ID).is(fileId)));
+
+		return file != null && GRIDFS_TEMPLATE.getResource(file).exists();
 	}
 
 	@Test

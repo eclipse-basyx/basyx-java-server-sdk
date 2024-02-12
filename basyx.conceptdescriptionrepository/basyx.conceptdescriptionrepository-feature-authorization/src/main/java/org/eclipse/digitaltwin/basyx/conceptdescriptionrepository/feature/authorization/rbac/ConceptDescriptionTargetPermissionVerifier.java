@@ -23,20 +23,28 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.authorization.rbac;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.authorization.rbac;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.authorization.ConceptDescriptionTargetInformation;
 
 /**
- * Convenient annotation for declaring a subtype of {@link TargetInformation}
+ * Verifies the {@link ConceptDescriptionTargetInformation} against the {@link RbacRule}
  * 
  * @author danish
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface TargetInformationSubtype {
-	String getValue();
+public class ConceptDescriptionTargetPermissionVerifier implements TargetPermissionVerifier<ConceptDescriptionTargetInformation> {
+
+	private static final String ALL_ALLOWED_WILDCARD = "*";
+	
+	@Override
+	public boolean isVerified(RbacRule rbacRule, ConceptDescriptionTargetInformation targetInformation) {
+		String conceptDescriptionId = targetInformation.getConceptDescriptionId();
+		
+		ConceptDescriptionTargetInformation rbacRuleConceptDescriptionTargetInformation = (ConceptDescriptionTargetInformation) rbacRule.getTargetInformation();
+		
+		return rbacRuleConceptDescriptionTargetInformation.getConceptDescriptionId().equals(ALL_ALLOWED_WILDCARD) || rbacRuleConceptDescriptionTargetInformation.getConceptDescriptionId().equals(conceptDescriptionId);
+	}
+
 }

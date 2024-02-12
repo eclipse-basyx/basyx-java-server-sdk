@@ -60,6 +60,13 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
 		return new SimpleSubmodelRepositoryFactory(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory(), submodels).create();
 	}
+	
+	@Override
+	protected boolean fileExistsInStorage(String fileValue) {
+		java.io.File file = new java.io.File(fileValue);
+		
+		return file.exists();
+	}
 
 	@Test
 	public void getConfiguredInMemorySmRepositoryName() {
@@ -89,5 +96,5 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	private Collection<Submodel> createSubmodelCollectionWithUniqueIds() {
 		return Lists.newArrayList(DummySubmodelFactory.createSimpleDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
 	}
-	
+
 }

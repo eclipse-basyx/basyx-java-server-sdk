@@ -222,13 +222,15 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 		}
 
 		submodelService.updateSubmodelElement(idShortPath, submodelElement);
-		
+
 		updateSubmodel(submodelId, submodelService.getSubmodel());
 	}
 
 	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
 		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
+
+		deleteAssociatedFile(submodelId, idShortPath);
 
 		submodelService.deleteSubmodelElement(idShortPath);
 
@@ -304,6 +306,14 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 		FileBlobValue fileValue = new FileBlobValue(" ", " ");
 
 		setSubmodelElementValue(submodelId, idShortPath, fileValue);
+	}
+	
+	private void deleteAssociatedFile(String submodelId, String idShortPath) {
+		try {
+			deleteFileValue(submodelId, idShortPath);
+		} catch (Exception e) {
+			return;
+		}
 	}
 
 	private boolean isFileSubmodelElement(SubmodelElement submodelElement) {
