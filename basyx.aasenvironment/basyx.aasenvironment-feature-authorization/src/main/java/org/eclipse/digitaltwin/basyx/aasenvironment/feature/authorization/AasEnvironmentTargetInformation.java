@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,42 +22,63 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformationSubtype;
 
 /**
- * Specialization of {@link TargetInformation} for Aas target information
+ * Specialization of {@link TargetInformation} for {@link AasEnvironment} target information
  *
  * @author danish
  */
-@TargetInformationSubtype(getValue = "aas")
-public class AasTargetInformation implements TargetInformation {
+@TargetInformationSubtype(getValue = "aas-environment")
+public class AasEnvironmentTargetInformation implements TargetInformation {
 	
-	private String aasId;
+	private List<String> aasIds;
+	private List<String> submodelIds;
+	private SerializationType serializationType;
 
 	@JsonCreator
-	public AasTargetInformation(final @JsonProperty("aasId") String aasId) {
-		this.aasId = aasId;
+	public AasEnvironmentTargetInformation(final @JsonProperty("aasIds") List<String> aasIds, final @JsonProperty("submodelIds") List<String> submodelIds, final @JsonProperty("serializationType") SerializationType serializationType) {
+		this.aasIds = aasIds;
+		this.submodelIds = submodelIds;
+		this.serializationType = serializationType;
 	}
 
 	@Override
 	public Map<String, Object> toMap() {
 		final Map<String, Object> map = new HashMap<>();
-		map.put("aasId", aasId);
+		map.put("aasIds", aasIds);
+		map.put("submodelIds", submodelIds);
+		map.put("serializationType", serializationType);
+		
 		return map;
+	}
+
+	public List<String> getAasIds() {
+		return aasIds;
+	}
+
+	public List<String> getSubmodelIds() {
+		return submodelIds;
+	}
+
+	public SerializationType getSerializationType() {
+		return serializationType;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(aasId);
+		return Objects.hash(aasIds, serializationType, submodelIds);
 	}
 
 	@Override
@@ -68,17 +89,13 @@ public class AasTargetInformation implements TargetInformation {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AasTargetInformation other = (AasTargetInformation) obj;
-		return Objects.equals(aasId, other.aasId);
+		AasEnvironmentTargetInformation other = (AasEnvironmentTargetInformation) obj;
+		return Objects.equals(aasIds, other.aasIds) && serializationType == other.serializationType && Objects.equals(submodelIds, other.submodelIds);
 	}
 
 	@Override
 	public String toString() {
-		return "AasTargetInformation [aasId=" + aasId + "]";
-	}
-	
-	public String getAasId() {
-		return aasId;
+		return "AasEnvironmentTargetInformation [aasIds=" + aasIds + ", submodelIds=" + submodelIds + ", serializationType=" + serializationType + "]";
 	}
 
 }

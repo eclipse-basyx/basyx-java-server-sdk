@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,33 +22,36 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasenvironment;
 
-import java.io.IOException;
+package org.eclipse.digitaltwin.basyx.aasenvironment.component;
+
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
+import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
+import org.eclipse.digitaltwin.basyx.aasenvironment.feature.AasEnvironmentFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
- * Specifies the overall AasEnvironment serialization API
+ * Prints all {@link AasEnvironment} features that are on the classpath
  * 
- * @author zhangzai, danish
+ * @author schnicke
  *
  */
-public interface AasEnvironmentSerialization {
+@Service
+public class AasEnvironmentFeaturePrinter {
 
-	/**
-	 * Generate serialization from given aas and
-	 * 
-	 * @param aasIds
-	 * @param submodelIds
-	 * @param includeConceptDescriptions
-	 * @return
-	 * @throws SerializationException
-	 */
-	public String createJSONAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException;
+	private static final Logger logger = LoggerFactory.getLogger(AasEnvironmentFeaturePrinter.class);
 
-	public String createXMLAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException;
+	@Autowired
+	public AasEnvironmentFeaturePrinter(List<AasEnvironmentFeature> features) {
+		logger.info("-------------------- Aas Environment Features: --------------------");
+		for (AasEnvironmentFeature feature : features) {
+			logger.info("BaSyxFeature " + feature.getName() + " is enabled: " + feature.isEnabled());
+		}
 
-	public byte[] createAASXAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException, IOException;
+		logger.info("----------------------------------------------------------------- ");
+	}
 }

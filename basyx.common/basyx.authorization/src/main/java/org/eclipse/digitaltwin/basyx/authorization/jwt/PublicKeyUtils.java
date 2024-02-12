@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,30 +23,45 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.component;
+package org.eclipse.digitaltwin.basyx.authorization.jwt;
 
-import java.util.List;
-
-import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
-import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentFactory;
-import org.eclipse.digitaltwin.basyx.aasenvironment.feature.AasEnvironmentFeature;
-import org.eclipse.digitaltwin.basyx.aasenvironment.feature.DecoratedAasEnvironmentFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import java.math.BigInteger;
+import java.security.KeyFactory;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.Base64;
 
 /**
- * Configuration for aas environment for dependency injection
+ * An utility class for {@link RSAPublicKey}
  * 
- * @author zhangzai
- *
+ * @author danish
  */
-@Configuration
-public class AasEnvironmentConfiguration {
+public class PublicKeyUtils {
 	
-	@Bean
-	@ConditionalOnMissingBean
-	public static AasEnvironment getAasEnvironment(AasEnvironmentFactory aasEnvironmentFactory, List<AasEnvironmentFeature> features) {
-		return new DecoratedAasEnvironmentFactory(aasEnvironmentFactory, features).create();
-	}
+	/**
+	 * Creates a {@link RSAPublicKey} with modulus and exponent
+	 * 
+	 * @param modulusBase64
+	 * @param exponentBase64
+	 * @return {@link RSAPublicKey}
+	 */
+	public static RSAPublicKey buildPublicKey(String modulusBase64, String exponentBase64) {
+		
+        try {
+            byte[] modulusBytes = Base64.getUrlDecoder().decode(modulusBase64);
+            byte[] exponentBytes = Base64.getUrlDecoder().decode(exponentBase64);
+
+            BigInteger modulus = new BigInteger(1, modulusBytes);
+            BigInteger exponent = new BigInteger(1, exponentBytes);
+
+            RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, exponent);
+            KeyFactory factory = KeyFactory.getInstance("RSA");
+
+            return (RSAPublicKey) factory.generatePublic(spec);
+        } catch (Exception e) {
+            throw new RuntimeException("Error building RSA public key", e);
+        }
+        
+    }
+
 }

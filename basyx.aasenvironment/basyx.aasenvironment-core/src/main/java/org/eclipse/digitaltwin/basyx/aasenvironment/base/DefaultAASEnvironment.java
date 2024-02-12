@@ -40,7 +40,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEnvironment;
-import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentSerialization;
+import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.ConceptDescriptionIdCollector;
 import org.eclipse.digitaltwin.basyx.aasenvironment.MetamodelCloneCreator;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
@@ -51,13 +51,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default implementation of {@link AasEnvironmentSerialization}
+ * Default implementation of {@link AasEnvironment}
  *
  * @author zhangzai, danish
  */
-public class DefaultAASEnvironmentSerialization implements AasEnvironmentSerialization {
+public class DefaultAASEnvironment implements AasEnvironment {
 
-	private static Logger logger = LoggerFactory.getLogger(DefaultAASEnvironmentSerialization.class);
+	private static Logger logger = LoggerFactory.getLogger(DefaultAASEnvironment.class);
 
 	private AasRepository aasRepository;
 	private SubmodelRepository submodelRepository;
@@ -67,7 +67,7 @@ public class DefaultAASEnvironmentSerialization implements AasEnvironmentSeriali
 	private AASXSerializer aasxSerializer = new AASXSerializer();
 	private MetamodelCloneCreator cloneCreator = new MetamodelCloneCreator();
 
-	public DefaultAASEnvironmentSerialization(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
+	public DefaultAASEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
 		this.aasRepository = aasRepository;
 		this.submodelRepository = submodelRepository;
 		this.conceptDescriptionRepository = conceptDescriptionRepository;

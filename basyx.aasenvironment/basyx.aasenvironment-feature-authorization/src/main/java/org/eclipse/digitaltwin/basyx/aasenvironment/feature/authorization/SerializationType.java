@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,30 +23,18 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.component;
-
-import java.util.List;
+package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization;
 
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
-import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentFactory;
-import org.eclipse.digitaltwin.basyx.aasenvironment.feature.AasEnvironmentFeature;
-import org.eclipse.digitaltwin.basyx.aasenvironment.feature.DecoratedAasEnvironmentFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
- * Configuration for aas environment for dependency injection
+ * Enums to represent the types of {@link AasEnvironment} serialization
  * 
- * @author zhangzai
- *
+ * @author danish
  */
-@Configuration
-public class AasEnvironmentConfiguration {
-	
-	@Bean
-	@ConditionalOnMissingBean
-	public static AasEnvironment getAasEnvironment(AasEnvironmentFactory aasEnvironmentFactory, List<AasEnvironmentFeature> features) {
-		return new DecoratedAasEnvironmentFactory(aasEnvironmentFactory, features).create();
-	}
+public enum SerializationType {
+	ALL,
+    AASX,
+    JSON,
+    XML
 }

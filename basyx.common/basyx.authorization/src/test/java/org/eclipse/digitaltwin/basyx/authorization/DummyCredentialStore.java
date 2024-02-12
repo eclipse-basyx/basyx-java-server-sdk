@@ -55,4 +55,7 @@ public class DummyCredentialStore {
 	public static final DummyCredential BASYX_EXECUTOR_TWO_CREDENTIAL = new DummyCredential("basyx.executor.2", "basyxexecutor2");
 	public static final DummyCredential BASYX_FILE_SME_READER_CREDENTIAL = new DummyCredential("basyx.file.sme.reader", "basyxfilesmereader");
 	public static final DummyCredential BASYX_FILE_SME_UPDATER_CREDENTIAL = new DummyCredential("basyx.file.sme.updater", "basyxfilesmeupdater");
+
+	public static final DummyCredential BASYX_READER_SERIALIZATION_CREDENTIAL = new DummyCredential("basyx.reader.serialization", "basyxreaderserialization");
+	public static final DummyCredential BASYX_READER_SERIALIZATION_CREDENTIAL_TWO = new DummyCredential("basyx.reader.serialization.2", "basyxreaderserialization2");
 }

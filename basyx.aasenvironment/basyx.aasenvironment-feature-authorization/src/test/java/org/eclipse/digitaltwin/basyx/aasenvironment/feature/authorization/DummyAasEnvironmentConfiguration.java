@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.component;
+package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization;
 
 import java.util.List;
 
@@ -36,17 +36,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Configuration for aas environment for dependency injection
+ * Dummy configuration for testing the {@link AasEnvironment} authorization feature
  * 
- * @author zhangzai
+ * @author danish
  *
  */
 @Configuration
-public class AasEnvironmentConfiguration {
+public class DummyAasEnvironmentConfiguration {
 	
 	@Bean
 	@ConditionalOnMissingBean
 	public static AasEnvironment getAasEnvironment(AasEnvironmentFactory aasEnvironmentFactory, List<AasEnvironmentFeature> features) {
 		return new DecoratedAasEnvironmentFactory(aasEnvironmentFactory, features).create();
 	}
+	
 }

@@ -22,31 +22,33 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasenvironment;
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.component;
-
+import java.io.IOException;
 import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
-import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentFactory;
-import org.eclipse.digitaltwin.basyx.aasenvironment.feature.AasEnvironmentFeature;
-import org.eclipse.digitaltwin.basyx.aasenvironment.feature.DecoratedAasEnvironmentFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
 
 /**
- * Configuration for aas environment for dependency injection
+ * Specifies the overall AasEnvironment API
  * 
- * @author zhangzai
+ * @author zhangzai, danish
  *
  */
-@Configuration
-public class AasEnvironmentConfiguration {
-	
-	@Bean
-	@ConditionalOnMissingBean
-	public static AasEnvironment getAasEnvironment(AasEnvironmentFactory aasEnvironmentFactory, List<AasEnvironmentFeature> features) {
-		return new DecoratedAasEnvironmentFactory(aasEnvironmentFactory, features).create();
-	}
+public interface AasEnvironment {
+
+	/**
+	 * Generate serialization from given aas and
+	 * 
+	 * @param aasIds
+	 * @param submodelIds
+	 * @param includeConceptDescriptions
+	 * @return
+	 * @throws SerializationException
+	 */
+	public String createJSONAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException;
+
+	public String createXMLAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException;
+
+	public byte[] createAASXAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException, IOException;
 }

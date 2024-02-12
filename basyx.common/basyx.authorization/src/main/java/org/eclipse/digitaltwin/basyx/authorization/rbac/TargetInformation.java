@@ -39,6 +39,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type", visible = true)
 public interface TargetInformation {
 	
-	public Map<String, String> toMap();
+	public Map<String, Object> toMap();
 
 }
