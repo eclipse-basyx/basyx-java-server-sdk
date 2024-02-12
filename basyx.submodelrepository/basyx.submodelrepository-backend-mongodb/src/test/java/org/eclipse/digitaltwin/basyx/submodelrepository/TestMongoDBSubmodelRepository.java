@@ -59,12 +59,11 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
-		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
+		SubmodelRepository repo = getSubmodelRepository();
 
-		// TODO: Remove this after MongoDB uses AAS4J serializer
-		submodels.forEach(this::removeInvokableFromInvokableOperation);
+		addSubmodelsToRepoWithoutInvokableOperations(submodels, repo);
 
-		return new MongoDBSubmodelRepositoryFactory(TEMPLATE, COLLECTION, SUBMODEL_SERVICE_FACTORY, submodels, CONFIGURED_SM_REPO_NAME, GRIDFS_TEMPLATE).create();
+		return repo;
 	}
 
 	@Test
@@ -86,8 +85,15 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 		super.invokeNonOperation();
 	}
 
-	private void removeInvokableFromInvokableOperation(Submodel sm) {
+	private static Submodel removeInvokableFromInvokableOperation(Submodel sm) {
 		sm.getSubmodelElements().stream().filter(InvokableOperation.class::isInstance).map(InvokableOperation.class::cast).forEach(o -> o.setInvokable(null));
+		return sm;
+	}
+
+	private static void addSubmodelsToRepoWithoutInvokableOperations(Collection<Submodel> submodels, SubmodelRepository repo) {
+		submodels.stream()
+		.map(TestMongoDBSubmodelRepository::removeInvokableFromInvokableOperation) // TODO: Remove this after MongoDB uses AAS4J serializer
+		.forEach(repo::createSubmodel);
 	}
 
 }
