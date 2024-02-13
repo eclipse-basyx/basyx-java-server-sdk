@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentSerialization;
 import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironmentSerialization;
+import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.AasEnvironmentLoader;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -36,7 +37,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Configuration for aas environment for dependency injection
  * 
- * @author zhangzai
+ * @author zhangzai, mateusmolina
  *
  */
 @Configuration
@@ -44,5 +45,10 @@ public class AasEnvironmentConfiguration {
 	@Bean
 	public AasEnvironmentSerialization createAasEnvironmentSerialization(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
 		return new DefaultAASEnvironmentSerialization(aasRepository, submodelRepository, conceptDescriptionRepository);
+	}
+
+	@Bean
+	public AasEnvironmentLoader createAasEnvironmentLoader(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
+		return new AasEnvironmentLoader(aasRepository, submodelRepository, conceptDescriptionRepository);
 	}
 }

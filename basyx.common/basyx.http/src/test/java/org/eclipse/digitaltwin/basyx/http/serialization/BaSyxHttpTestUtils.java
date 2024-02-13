@@ -245,6 +245,15 @@ public class BaSyxHttpTestUtils {
 		return response;
 	}
 
+	public static CloseableHttpResponse executePostRequest(CloseableHttpClient client, HttpPost postRequest) throws IOException {
+		CloseableHttpResponse response = client.execute(postRequest);
+
+		HttpEntity responseEntity = response.getEntity();
+
+		EntityUtils.consume(responseEntity);
+		return response;
+	}
+
 	public static HttpPut createPutRequestWithFile(String url, String fileName, java.io.File file) {
 		HttpPut putRequest = new HttpPut(url);
 
@@ -324,6 +333,19 @@ public class BaSyxHttpTestUtils {
 		aasCreateRequest.setEntity(aasEntity);
 
 		return aasCreateRequest;
+	}
+
+	public static HttpPost createPostRequestWithFile(String url, java.io.File file) {
+		HttpPost postRequest = new HttpPost(url);
+
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+
+		builder.addPart("file", new FileBody(file));
+		builder.setContentType(ContentType.MULTIPART_FORM_DATA);
+
+		HttpEntity multipart = builder.build();
+		postRequest.setEntity(multipart);
+		return postRequest;
 	}
 	
 	private static HttpPost createAuthorizedPostRequest(String url, String content, String accessToken) {
