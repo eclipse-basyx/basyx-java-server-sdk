@@ -25,31 +25,17 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.aasx.AASXDeserializer;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.aasx.InMemoryFile;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.xml.XmlDeserializer;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
-import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.basyx.aasenvironment.FileElementPathCollector;
-import org.eclipse.digitaltwin.basyx.aasenvironment.IdShortPathBuilder;
-import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.IdentifiableUploader.DelegatingIdentifiableRepository;
-import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.IdentifiableUploader.IdentifiableRepository;
+import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.AasEnvironmentLoader;
+import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
+import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment.EnvironmentType;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -77,8 +63,6 @@ public class AasEnvironmentPreconfigurationLoader {
 
 	private ResourceLoader resourceLoader;
 	
-	private List<InMemoryFile> relatedFiles;
-
 	@Autowired
 	public AasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, List<String> pathsToLoad) {
 		this.resourceLoader = resourceLoader;
@@ -93,17 +77,12 @@ public class AasEnvironmentPreconfigurationLoader {
 			throws IOException, DeserializationException, InvalidFormatException {
 		List<File> files = scanForEnvironments(pathsToLoad);
 
-		int numberOfFiles = files.size();
-    
-    IndentifiableAssertion check = new IndentifiableAssertion();
+		if (files.isEmpty())
+			return;
 
-		for (int i = 0; i < numberOfFiles; i++) {
-			File file = files.get(i);
-			logLoadingProcess(i, numberOfFiles, file.getName());
-			Environment environment = getEnvironmentFromFile(file);
-      check.assertNoDuplicateIds(environment);
-			addEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository, environment);
-		}
+		AasEnvironmentLoader envLoader = new AasEnvironmentLoader(aasRepository, submodelRepository, conceptDescriptionRepository);
+
+		envLoader.loadEnvironments(CompleteEnvironment.fromFiles(files));
 	}
 
 	private List<File> scanForEnvironments(List<String> pathsToLoad) throws IOException {
@@ -114,11 +93,6 @@ public class AasEnvironmentPreconfigurationLoader {
 		logger.info("Found " + files.size() + " preconfigured AAS environments");
 
 		return files;
-	}
-
-	private void logLoadingProcess(int current, int overall, String fileName) {
-		int currentForDisplay = current + 1;
-		logger.info("Loading AAS Environment (" + currentForDisplay + "/" + overall + ") from file " + fileName);
 	}
 
 	private List<File> resolveFiles(List<String> paths) throws IOException {
@@ -144,13 +118,6 @@ public class AasEnvironmentPreconfigurationLoader {
 				.getFile();
 	}
 
-	private void addEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository, Environment environment) {
-		if (isEnvironmentLoaded(environment)) {
-			createShellsOnRepositoryFromEnvironment(aasRepository, environment);
-			createSubmodelsOnRepositoryFromEnvironment(submodelRepository, environment);
-			createConceptDescriptionsOnRepositoryFromEnvironment(conceptDescriptionRepository, environment);
-		}
-	}
 
 	private List<File> extractFilesToLoadFromEnvironmentDirectory(String directoryToLoad) throws IllegalArgumentException, IOException {
 		File rootDirectory = getFile(directoryToLoad);
@@ -158,133 +125,8 @@ public class AasEnvironmentPreconfigurationLoader {
 
 		List<File> potentialEnvironments = directoryScanner.listFiles(rootDirectory);
 		return potentialEnvironments.stream()
-				.filter(file -> isAasxFile(file.getPath()) || isJsonFile(file.getPath()) || isXmlFile(file.getPath()))
+				.filter(file -> EnvironmentType.getFromFilePath(file.getPath()) != null)
 				.collect(Collectors.toList());
 	}
 
-	private void createConceptDescriptionsOnRepositoryFromEnvironment(ConceptDescriptionRepository cdRepo, Environment environment) {
-		IdentifiableRepository<ConceptDescription> repo = new DelegatingIdentifiableRepository<ConceptDescription>(cdRepo::getConceptDescription, cdRepo::updateConceptDescription, cdRepo::createConceptDescription);
-		IdentifiableUploader<ConceptDescription> uploader = new IdentifiableUploader<ConceptDescription>(repo);
-		for (ConceptDescription eachConceptDescription : environment.getConceptDescriptions()) {
-			boolean success = uploader.upload(eachConceptDescription);
-			logSuccessConceptDescription(eachConceptDescription.getId(), success);
-		}
-	}
-
-	private void logSuccessConceptDescription(String conceptDescriptionId, boolean success) {
-    if (!success) {
-		  logger.warn("Colliding Ids detected for ConceptDescription: " + conceptDescriptionId + ". If they are not identical, this is an error. Please note that the already existing ConceptDescription was not updated.");
-    } else {
-      logSuccess("conceptDescription", conceptDescriptionId, success);
-    }
-  }
-
-	private void createSubmodelsOnRepositoryFromEnvironment(SubmodelRepository submodelRepository, Environment environment) {
-		List<Submodel> submodels = environment.getSubmodels();
-
-		createSubmodelsOnRepository(submodelRepository, submodels);
-
-		if (relatedFiles == null || relatedFiles.isEmpty())
-			return;
-		
-		for (Submodel submodel : submodels) {
-			List<List<SubmodelElement>> idShortElementPathsOfAllFileSMEs = new FileElementPathCollector(submodel).collect();
-			
-			idShortElementPathsOfAllFileSMEs.stream().forEach(fileSMEIdShortPath -> setFileToFileElement(submodel.getId(), fileSMEIdShortPath, submodelRepository));
-		}
-	}
-
-	private void setFileToFileElement(String submodelId, List<SubmodelElement> fileSMEIdShortPathElements, SubmodelRepository submodelRepository) {
-		String fileSMEIdShortPath = new IdShortPathBuilder(new ArrayList<>(fileSMEIdShortPathElements)).build();
-		
-		org.eclipse.digitaltwin.aas4j.v3.model.File fileSME = (org.eclipse.digitaltwin.aas4j.v3.model.File) submodelRepository.getSubmodelElement(submodelId, fileSMEIdShortPath);
-		
-		InMemoryFile inMemoryFile = getAssociatedInMemoryFile(relatedFiles, fileSME.getValue());
-		
-		if (inMemoryFile == null) {
-			logger.info("Unable to set file to the SubmodelElement File with IdShortPath '{}' because it does not exist in the AASX file.", fileSMEIdShortPath);
-			
-			return;
-		}
-		
-		submodelRepository.setFileValue(submodelId, fileSMEIdShortPath, getFileName(inMemoryFile.getPath()), new ByteArrayInputStream(inMemoryFile.getFileContent()));
-	}
-
-	private String getFileName(String path) {
-		return FilenameUtils.getName(path);
-	}
-
-	private InMemoryFile getAssociatedInMemoryFile(List<InMemoryFile> relatedFiles, String value) {
-		
-		Optional<InMemoryFile> inMemoryFile = relatedFiles.stream().filter(file -> file.getPath().equals(value)).findAny();
-		
-		if (inMemoryFile.isEmpty())
-			return null;
-		
-		return inMemoryFile.get();
-	}
-
-	private void createShellsOnRepositoryFromEnvironment(AasRepository aasRepo, Environment environment) {
-		IdentifiableRepository<AssetAdministrationShell> repo = new DelegatingIdentifiableRepository<AssetAdministrationShell>(aasRepo::getAas, aasRepo::updateAas, aasRepo::createAas);
-		IdentifiableUploader<AssetAdministrationShell> uploader = new IdentifiableUploader<>(repo);
-		for (AssetAdministrationShell eachAas : environment.getAssetAdministrationShells()) {
-			boolean success = uploader.upload(eachAas);
-			logSuccess("shell", eachAas.getId(), success);
-		}
-	}
-
-	private void createSubmodelsOnRepository(SubmodelRepository smRepo, List<Submodel> submodels) {
-		IdentifiableRepository<Submodel> repo = new DelegatingIdentifiableRepository<Submodel>(smRepo::getSubmodel, smRepo::updateSubmodel, smRepo::createSubmodel);
-		IdentifiableUploader<Submodel> uploader = new IdentifiableUploader<>(repo);
-		for (Submodel eachSubmodel : submodels) {
-			boolean success = uploader.upload(eachSubmodel);
-			logSuccess("submodel", eachSubmodel.getId(), success);
-		}
-	}
-
-	private Environment getEnvironmentFromFile(File file) throws DeserializationException, InvalidFormatException, IOException {
-		Environment environment = null;
-		if (isJsonFile(file.getPath())) {
-			JsonDeserializer deserializer = new JsonDeserializer();
-			try (FileInputStream fIn = new FileInputStream(file)) {
-				environment = deserializer.read(fIn, Environment.class);
-			}
-		} else if (isXmlFile(file.getPath())) {
-			XmlDeserializer deserializer = new XmlDeserializer();
-			try (FileInputStream fIn = new FileInputStream(file)) {
-				environment = deserializer.read(fIn);
-			}
-		} else if (isAasxFile(file.getPath())) {
-			try (FileInputStream fIn = new FileInputStream(file)) {
-				AASXDeserializer deserializer = new AASXDeserializer(fIn);
-				relatedFiles = deserializer.getRelatedFiles();
-				environment = deserializer.read();
-			}
-		}
-		return environment;
-	}
-
-	private static boolean isJsonFile(String filePath) {
-		return filePath.endsWith(".json");
-	}
-
-	private static boolean isXmlFile(String filePath) {
-		return filePath.endsWith(".xml");
-	}
-
-	private static boolean isAasxFile(String filePath) {
-		return filePath.endsWith(".aasx");
-	}
-
-	private boolean isEnvironmentLoaded(Environment environment) {
-		return environment != null;
-	}
-
-	private void logSuccess(String resourceName, String id, boolean success) {
-		if (success) {
-			logger.info("Uploading " + resourceName + " " + id + " was successful!");
-		} else {
-			logger.warn("Uploading " + resourceName + " " + id + " was not successful!");
-		}
-	}
 }
