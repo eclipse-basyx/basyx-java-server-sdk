@@ -70,6 +70,11 @@ public interface AASEnvironmentHTTPApi {
 			@Parameter(in = ParameterIn.QUERY, description = "The Submodels' unique ids (UTF8-BASE64-URL-encoded)", schema = @Schema()) @Valid @RequestParam(value = "submodelIds", required = false) List<String> submodelIds,
 			@Parameter(in = ParameterIn.QUERY, description = "Include Concept Descriptions?", schema = @Schema(defaultValue = "true")) @Valid @RequestParam(value = "includeConceptDescriptions", required = false, defaultValue = "true") Boolean includeConceptDescriptions);
 
+
+	@Operation(summary = "Upload an environment file (XML, JSON, AASX)", description = "Uploads an environment file for processing.", tags = { "Environment API" })
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Environment successfully processed", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
+			@ApiResponse(responseCode = "400", description = "Bad Request, invalid file format or structure", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
+			@ApiResponse(responseCode = "500", description = "Internal Server Error, processing failure", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))) })
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
-	ResponseEntity<Boolean> uploadEnvironment(@Parameter(description = "A .aasx file") @Valid @RequestParam("file") MultipartFile aasxFile);
+	ResponseEntity<Boolean> uploadEnvironment(@Parameter(description = "An environment file (XML, JSON, AASX)") @Valid @RequestParam("file") MultipartFile envFile);
 }

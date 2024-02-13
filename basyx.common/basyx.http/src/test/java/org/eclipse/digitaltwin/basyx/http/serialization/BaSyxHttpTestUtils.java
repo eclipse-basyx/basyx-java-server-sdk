@@ -335,12 +335,12 @@ public class BaSyxHttpTestUtils {
 		return aasCreateRequest;
 	}
 
-	public static HttpPost createPostRequestWithFile(String url, java.io.File file) {
+	public static HttpPost createPostRequestWithFile(String url, java.io.File file, String contentType) {
 		HttpPost postRequest = new HttpPost(url);
 
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
-		builder.addPart("file", new FileBody(file));
+		builder.addPart("file", new FileBody(file, ContentType.create(contentType)));
 		builder.setContentType(ContentType.MULTIPART_FORM_DATA);
 
 		HttpEntity multipart = builder.build();

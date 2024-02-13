@@ -61,6 +61,8 @@ public class CompleteEnvironment {
 				return JSON;
 			case "application/xml":
 				return XML;
+			case "text/xml":
+				return XML;
 			default:
 				return null;
 			}
