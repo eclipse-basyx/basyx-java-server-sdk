@@ -55,7 +55,7 @@ import jakarta.validation.Valid;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-05-08T12:36:05.278579031Z[GMT]")
 @RestController
-public class SerializationApiController implements AASEnvironmentHTTPApi {
+public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 
 	private static final String ACCEPT_JSON = "application/json";
 	private static final String ACCEPT_XML = "application/xml";
@@ -68,7 +68,7 @@ public class SerializationApiController implements AASEnvironmentHTTPApi {
 	private final AasEnvironmentLoader aasEnvironmentLoader;
 
 	@Autowired
-	public SerializationApiController(HttpServletRequest request, AasEnvironmentSerialization aasEnvironmentSerialization, AasEnvironmentLoader aasEnvironmentLoader) {
+	public AasEnvironmentApiHTTPController(HttpServletRequest request, AasEnvironmentSerialization aasEnvironmentSerialization, AasEnvironmentLoader aasEnvironmentLoader) {
 		this.request = request;
 		this.aasEnvironment = aasEnvironmentSerialization;
 		this.aasEnvironmentLoader = aasEnvironmentLoader;
