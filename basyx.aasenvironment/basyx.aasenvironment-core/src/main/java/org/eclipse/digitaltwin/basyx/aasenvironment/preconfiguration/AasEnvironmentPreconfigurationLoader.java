@@ -82,7 +82,13 @@ public class AasEnvironmentPreconfigurationLoader {
 
 		AasEnvironmentLoader envLoader = new AasEnvironmentLoader(aasRepository, submodelRepository, conceptDescriptionRepository);
 
-		envLoader.loadEnvironments(CompleteEnvironment.fromFiles(files));
+		int filesCount = files.size();
+		int currenFileIndex = 0;
+
+		for (File file : files) {
+			logLoadingProcess(currenFileIndex++, filesCount, file.getName());
+			envLoader.loadEnvironment(CompleteEnvironment.fromFile(file));
+		}
 	}
 
 	private List<File> scanForEnvironments(List<String> pathsToLoad) throws IOException {
@@ -127,6 +133,10 @@ public class AasEnvironmentPreconfigurationLoader {
 		return potentialEnvironments.stream()
 				.filter(file -> EnvironmentType.getFromFilePath(file.getPath()) != null)
 				.collect(Collectors.toList());
+	}
+
+	private void logLoadingProcess(int current, int overall, String filename) {
+		logger.info("Loading AAS Environment (" + current + "/" + overall + ") from file '" + filename + "'");
 	}
 
 }

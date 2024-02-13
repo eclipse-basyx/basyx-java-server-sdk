@@ -69,16 +69,6 @@ public class AasEnvironmentLoader {
 		this.conceptDescriptionRepository = conceptDescriptionRepository;
 	}
 
-	public void loadEnvironments(List<CompleteEnvironment> environments) {
-		int envCount = environments.size();
-		int currentEnvIndex = 0;
-		
-		for (CompleteEnvironment env : environments) {
-			logLoadingProcess(currentEnvIndex++, envCount);
-			loadEnvironment(env);
-		}
-	}
-
 	public void loadEnvironment(CompleteEnvironment completeEnvironment) {
 		Environment environment = completeEnvironment.getEnvironment();
 
@@ -180,9 +170,4 @@ public class AasEnvironmentLoader {
 			logSuccess("conceptDescription", conceptDescriptionId, success);
 		}
 	}
-
-	private void logLoadingProcess(int current, int overall) {
-		logger.info("Loading AAS Environment (" + current + "/" + overall + ")");
-	}
-
 }

@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -91,15 +90,6 @@ public class CompleteEnvironment {
 
 	public List<InMemoryFile> getRelatedFiles() {
 		return relatedFiles;
-	}
-
-	public static List<CompleteEnvironment> fromFiles(List<File> files) throws DeserializationException, InvalidFormatException, IOException {
-		List<CompleteEnvironment> envs = new ArrayList<CompleteEnvironment>();
-
-		for (File file : files)
-			envs.add(fromFile(file));
-
-		return envs;
 	}
 
 	public static CompleteEnvironment fromFile(File file) throws DeserializationException, InvalidFormatException, IOException {
