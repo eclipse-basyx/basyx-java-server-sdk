@@ -22,7 +22,7 @@ spec:
         {{- if .Values.startup.enabled }}
         - name: startup
           emptyDir: {}
-        {{ end -}}
+        {{- end }}
         - name: {{ template "aas-environment.fullname" $ }}-config
           configMap:
             name: {{ template "aas-environment.fullname" $ }}-config
@@ -44,7 +44,7 @@ spec:
         volumeMounts:
           - name: startup
             mountPath: /repo
-      {{ end -}}
+      {{- end }}
       containers:
       - name: {{ .Chart.Name }}
         image: {{ .Values.image.name }}
