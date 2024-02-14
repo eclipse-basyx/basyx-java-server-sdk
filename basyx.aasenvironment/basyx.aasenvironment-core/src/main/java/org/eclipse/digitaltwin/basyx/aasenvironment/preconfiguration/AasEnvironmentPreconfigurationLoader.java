@@ -36,9 +36,6 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.AasEnvironmentLoader;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment.EnvironmentType;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,21 +70,19 @@ public class AasEnvironmentPreconfigurationLoader {
 		return pathsToLoad != null;
 	}
 
-	public void loadPreconfiguredEnvironments(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository)
+	public void loadPreconfiguredEnvironments(AasEnvironmentLoader environmentLoader)
 			throws IOException, DeserializationException, InvalidFormatException {
 		List<File> files = scanForEnvironments(pathsToLoad);
 
 		if (files.isEmpty())
 			return;
 
-		AasEnvironmentLoader envLoader = new AasEnvironmentLoader(aasRepository, submodelRepository, conceptDescriptionRepository);
-
 		int filesCount = files.size();
 		int currenFileIndex = 0;
 
 		for (File file : files) {
 			logLoadingProcess(currenFileIndex++, filesCount, file.getName());
-			envLoader.loadEnvironment(CompleteEnvironment.fromFile(file));
+			environmentLoader.loadEnvironment(CompleteEnvironment.fromFile(file));
 		}
 	}
 

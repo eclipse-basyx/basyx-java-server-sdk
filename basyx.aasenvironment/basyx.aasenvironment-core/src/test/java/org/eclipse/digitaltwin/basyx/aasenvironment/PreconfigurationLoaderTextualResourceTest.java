@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
+import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.AasEnvironmentLoader;
 import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.AasEnvironmentPreconfigurationLoader;
 import org.junit.Assert;
 import org.junit.Test;
@@ -45,13 +46,12 @@ public class PreconfigurationLoaderTextualResourceTest extends AasEnvironmentLoa
 	@Override
 	protected void loadRepositories(List<String> pathsToLoad) throws IOException, InvalidFormatException, DeserializationException {
 		AasEnvironmentPreconfigurationLoader envLoader = new AasEnvironmentPreconfigurationLoader(rLoader, pathsToLoad);
-		envLoader.loadPreconfiguredEnvironments(aasRepository, submodelRepository, conceptDescriptionRepository);
+		envLoader.loadPreconfiguredEnvironments(new AasEnvironmentLoader(aasRepository, submodelRepository, conceptDescriptionRepository));
 	}
 
 	@Test
 	public void testWithEmptyResource_NoElementsAreDeployed() throws InvalidFormatException, IOException, DeserializationException {
-		AasEnvironmentPreconfigurationLoader envLoader = new AasEnvironmentPreconfigurationLoader(rLoader, List.of());
-		envLoader.loadPreconfiguredEnvironments(aasRepository, submodelRepository, conceptDescriptionRepository);
+		loadRepositories(List.of());
 		Assert.assertTrue(aasRepository.getAllAas(ALL).getResult().isEmpty());
 		Assert.assertTrue(submodelRepository.getAllSubmodels(ALL).getResult().isEmpty());
 		Assert.assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(ALL).getResult().isEmpty());

@@ -29,9 +29,7 @@ import java.io.IOException;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.AasEnvironmentLoader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,21 +43,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class PreconfigurationLoaderInitializer implements InitializingBean {
 
-	private AasRepository aasRepository;
-
-	private SubmodelRepository submodelRepository;
-
-	private ConceptDescriptionRepository conceptDescriptionRepository;
+	private AasEnvironmentLoader environmentLoader;
 
 	private AasEnvironmentPreconfigurationLoader preconfigurationLoader;
 
 	@Autowired
-	public PreconfigurationLoaderInitializer(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository,
+	public PreconfigurationLoaderInitializer(AasEnvironmentLoader environmentLoader,
 			AasEnvironmentPreconfigurationLoader preconfigurationLoader) {
 		super();
-		this.aasRepository = aasRepository;
-		this.submodelRepository = submodelRepository;
-		this.conceptDescriptionRepository = conceptDescriptionRepository;
+		this.environmentLoader = environmentLoader;
 		this.preconfigurationLoader = preconfigurationLoader;
 	}
 
@@ -73,7 +65,7 @@ public class PreconfigurationLoaderInitializer implements InitializingBean {
 			return;
 		}
 
-		preconfigurationLoader.loadPreconfiguredEnvironments(aasRepository, submodelRepository, conceptDescriptionRepository);
+		preconfigurationLoader.loadPreconfiguredEnvironments(environmentLoader);
 	}
 
 }
