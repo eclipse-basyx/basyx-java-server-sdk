@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,43 +25,47 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.ConceptDescriptionBackendProvider;
+import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
+import org.springframework.data.mongodb.repository.support.MappingMongoEntityInformation;
+import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
 /**
- * ConceptDescriptionRepository factory returning a MongoDb backend
- * ConceptDescriptionRepository
  * 
- * @author schnicke, danish, kammognie
+ * MongoDB Backend Provider for the {@link ConceptDescription}
+ * 
+ * @author mateusmolina, despen, danish
  */
-@Component
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-public class MongoDBConceptDescriptionRepositoryFactory implements ConceptDescriptionRepositoryFactory {
-
-	private MongoTemplate mongoTemplate;
-	private String collectionName;
-	private String cdRepositoryName;
-
-	@Autowired(required = false)
-	public MongoDBConceptDescriptionRepositoryFactory(MongoTemplate mongoTemplate,
-			@Value("${basyx.conceptdescriptionrepository.mongodb.collectionName:conceptdescription-repo}") String collectionName) {
-		this.mongoTemplate = mongoTemplate;
-		this.collectionName = collectionName;
-	}
-
-	@Autowired(required = false)
-	public MongoDBConceptDescriptionRepositoryFactory(MongoTemplate mongoTemplate,
-			@Value("${basyx.conceptdescriptionrepository.mongodb.collectionName:conceptdescription-repo}") String collectionName,
-			@Value("${basyx.cdrepo.name:cd-repo}") String cdRepositoryName) {
-		this(mongoTemplate, collectionName);
-		this.cdRepositoryName = cdRepositoryName;
+@Component
+public class ConceptDescriptionMongoDBBackendProvider implements ConceptDescriptionBackendProvider {
+	
+	private BasyxMongoMappingContext mappingContext;
+	private MongoTemplate template;
+	
+	@Autowired
+	public ConceptDescriptionMongoDBBackendProvider(BasyxMongoMappingContext mappingContext, @Value("${basyx.cdrepository.mongodb.collectionName:cd-repo}") String collectionName, MongoTemplate template) {
+		super();
+		this.mappingContext = mappingContext;
+		this.template = template;
+		
+		mappingContext.addEntityMapping(ConceptDescription.class, collectionName);
 	}
 
 	@Override
-	public ConceptDescriptionRepository create() {
-		return new MongoDBConceptDescriptionRepository(mongoTemplate, collectionName, cdRepositoryName);
+	public CrudRepository<ConceptDescription, String> getCrudRepository() {
+		@SuppressWarnings("unchecked")
+		MongoPersistentEntity<ConceptDescription> entity = (MongoPersistentEntity<ConceptDescription>) mappingContext.getPersistentEntity(ConceptDescription.class);
+		
+		return new SimpleMongoRepository<>(new MappingMongoEntityInformation<>(entity), template);
 	}
+
 }
