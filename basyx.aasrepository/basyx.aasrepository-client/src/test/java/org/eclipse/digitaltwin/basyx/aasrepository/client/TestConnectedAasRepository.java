@@ -52,7 +52,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class TestConnectedAasRepository extends AasRepositorySuite {
 
 	private static ConfigurableApplicationContext appContext;
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 
 	@BeforeClass
 	public static void startAASRepo() throws Exception {
@@ -62,7 +61,7 @@ public class TestConnectedAasRepository extends AasRepositorySuite {
 	@After
 	public void removeAasFromRepo() {
 		AasRepository repo = appContext.getBean(AasRepository.class);
-		repo.getAllAas(NO_LIMIT_PAGINATION_INFO).getResult().stream().map(s -> s.getId()).forEach(repo::deleteAas);
+		repo.getAllAas(PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteAas);
 	}
 
 	@Override

@@ -29,12 +29,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import java.util.List;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
@@ -57,6 +53,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-10T15:59:05.892Z[GMT]")
 @RestController
@@ -104,7 +106,7 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 	}
 
 	@Override
-	public ResponseEntity<PagedResult> getAllAssetAdministrationShells(@Valid List<SpecificAssetId> assetIds, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor) {
+	public ResponseEntity<PagedResult> getAllAssetAdministrationShells(@Valid List<SpecificAssetId> assetIds, @Valid String idShort, @Min(0) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor) {
 		if (limit == null) {
 			limit = 100;
 		}
@@ -128,7 +130,7 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 	}
 
 	@Override
-	public ResponseEntity<PagedResult> getAllSubmodelReferencesAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor) {
+	public ResponseEntity<PagedResult> getAllSubmodelReferencesAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Min(0) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor) {
 		if (limit == null) {
 			limit = 100;
 		}
