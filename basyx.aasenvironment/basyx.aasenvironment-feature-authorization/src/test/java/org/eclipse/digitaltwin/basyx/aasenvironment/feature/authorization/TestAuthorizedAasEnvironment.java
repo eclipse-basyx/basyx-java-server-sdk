@@ -63,7 +63,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
  * 
  * @author danish
  */
-public class TestAasEnvironment {
+public class TestAuthorizedAasEnvironment {
 
 	private static String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
 	private static String clientId = "basyx-client-api";
