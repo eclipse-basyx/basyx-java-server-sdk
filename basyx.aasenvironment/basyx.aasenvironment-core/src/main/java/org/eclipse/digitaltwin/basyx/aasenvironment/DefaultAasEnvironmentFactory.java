@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,30 +23,36 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.component;
+package org.eclipse.digitaltwin.basyx.aasenvironment;
 
-import java.util.List;
-
-import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
-import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentFactory;
-import org.eclipse.digitaltwin.basyx.aasenvironment.feature.AasEnvironmentFeature;
-import org.eclipse.digitaltwin.basyx.aasenvironment.feature.DecoratedAasEnvironmentFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironment;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.springframework.stereotype.Component;
 
 /**
- * Configuration for aas environment for dependency injection
+ * Default {@link AasEnvironment} factory that creates an {@link AasEnvironment}
  * 
- * @author zhangzai
- *
+ * @author danish
+ * 
  */
-@Configuration
-public class AasEnvironmentConfiguration {
-	
-	@Bean
-	@ConditionalOnMissingBean
-	public static AasEnvironment getAasEnvironment(AasEnvironmentFactory aasEnvironmentFactory, List<AasEnvironmentFeature> features) {
-		return new DecoratedAasEnvironmentFactory(aasEnvironmentFactory, features).create();
+@Component
+public class DefaultAasEnvironmentFactory implements AasEnvironmentFactory {
+
+	private AasRepository aasRepository;
+	private SubmodelRepository submodelRepository;
+	private ConceptDescriptionRepository conceptDescriptionRepository;
+
+	public DefaultAasEnvironmentFactory(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
+		this.aasRepository = aasRepository;
+		this.submodelRepository = submodelRepository;
+		this.conceptDescriptionRepository = conceptDescriptionRepository;
 	}
+
+	@Override
+	public AasEnvironment create() {
+		return new DefaultAASEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository);
+	}
+
 }

@@ -593,6 +593,11 @@
 				<artifactId>basyx.aasenvironment-http</artifactId>
 				<version>${revision}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasenvironment-feature-authorization</artifactId>
+				<version>${revision}</version>
+			</dependency>
 			<!-- basyx.conceptdescriptionrepository -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -902,6 +907,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasenvironment-http</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasenvironment-feature-authorization</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>

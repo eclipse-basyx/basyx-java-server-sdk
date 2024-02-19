@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,30 +23,33 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.component;
+package org.eclipse.digitaltwin.basyx.authorization.jwt;
 
-import java.util.List;
+import java.security.interfaces.RSAPublicKey;
 
-import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
-import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentFactory;
-import org.eclipse.digitaltwin.basyx.aasenvironment.feature.AasEnvironmentFeature;
-import org.eclipse.digitaltwin.basyx.aasenvironment.feature.DecoratedAasEnvironmentFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 
 /**
- * Configuration for aas environment for dependency injection
+ * Decoder to perform {@link Jwt} decoding
  * 
- * @author zhangzai
- *
+ * @author danish
  */
-@Configuration
-public class AasEnvironmentConfiguration {
+public class JwtTokenDecoder {
 	
-	@Bean
-	@ConditionalOnMissingBean
-	public static AasEnvironment getAasEnvironment(AasEnvironmentFactory aasEnvironmentFactory, List<AasEnvironmentFeature> features) {
-		return new DecoratedAasEnvironmentFactory(aasEnvironmentFactory, features).create();
-	}
+	/**
+	 * Decodes the provided token with provided public key into Jwt
+	 * 
+	 * @param token
+	 * @param rsaPublicKey
+	 * 
+	 * @return {@link Jwt}
+	 */
+	public static Jwt decodeJwt(String token, RSAPublicKey rsaPublicKey) {
+        JwtDecoder jwtDecoder = NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
+        
+        return jwtDecoder.decode(token);
+    }
+
 }

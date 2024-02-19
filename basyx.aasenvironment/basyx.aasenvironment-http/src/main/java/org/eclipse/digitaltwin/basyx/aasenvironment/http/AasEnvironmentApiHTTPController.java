@@ -34,7 +34,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
-import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentSerialization;
+import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-05-08T12:36:05.278579031Z[GMT]")
 @RestController
-public class SerializationApiController implements AASEnvironmentHTTPApi {
+public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 
 	private static final String ACCEPT_JSON = "application/json";
 	private static final String ACCEPT_XML = "application/xml";
@@ -55,10 +55,10 @@ public class SerializationApiController implements AASEnvironmentHTTPApi {
 
 	private final HttpServletRequest request;
 
-	private final AasEnvironmentSerialization aasEnvironment;
+	private final AasEnvironment aasEnvironment;
 
 	@Autowired
-	public SerializationApiController(HttpServletRequest request, AasEnvironmentSerialization aasEnvironment) {
+	public AasEnvironmentApiHTTPController(HttpServletRequest request, AasEnvironment aasEnvironment) {
 		this.request = request;
 		this.aasEnvironment = aasEnvironment;
 	}

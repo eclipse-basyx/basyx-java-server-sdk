@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,30 +23,40 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.component;
+package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization;
 
 import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
-import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentFactory;
 import org.eclipse.digitaltwin.basyx.aasenvironment.feature.AasEnvironmentFeature;
-import org.eclipse.digitaltwin.basyx.aasenvironment.feature.DecoratedAasEnvironmentFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Configuration for aas environment for dependency injection
+ * Spring application configured for tests.
  * 
- * @author zhangzai
+ * @author danish
  *
  */
-@Configuration
-public class AasEnvironmentConfiguration {
+
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
+public class DummyAasEnvironmentComponent {
 	
-	@Bean
-	@ConditionalOnMissingBean
-	public static AasEnvironment getAasEnvironment(AasEnvironmentFactory aasEnvironmentFactory, List<AasEnvironmentFeature> features) {
-		return new DecoratedAasEnvironmentFactory(aasEnvironmentFactory, features).create();
+	private static final Logger logger = LoggerFactory.getLogger(DummyAasEnvironmentComponent.class);
+	
+	@Autowired
+	public void AasEnvironmentFeaturePrinter(List<AasEnvironmentFeature> features) {
+		logger.info("-------------------- Aas Environment Features: --------------------");
+		for (AasEnvironmentFeature feature : features) {
+			logger.info("BaSyxFeature " + feature.getName() + " is enabled: " + feature.isEnabled());
+		}
+
+		logger.info("----------------------------------------------------------------- ");
+	}
+	
+	public static void main(String[] args) {
+		SpringApplication.run(DummyAasEnvironmentComponent.class, args);
 	}
 }
