@@ -1,5 +1,5 @@
-# Concept Description Repository - Authorization
-This feature enables authorized access to the Concept Description Repository.
+# Aas Environment - Authorization
+This feature enables authorized access to the Aas Environment.
 
 To enable this feature, the following properties should be configured:
 
@@ -33,27 +33,33 @@ For configuring RBAC rules, all the rbac rules should be configured inside a jso
 ```
 [
   {
-    "role": "basyx-reader",
+    "role": "basyx-reader-serialization",
     "action": "READ",
     "targetInformation": {
-      "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "@type": "aas-environment",
+      "aasIds": ["shell001", "shell002"],
+      "submodelIds": ["7A7104BDAB57E184", "AC69B1CB44F07935"],
+      "serializationType": "AASX"
     }
   },
   {
     "role": "admin",
     "action": ["CREATE", "READ", "UPDATE", "DELETE"],
     "targetInformation": {
-      "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "@type": "aas-environment",
+      "aasIds": "*",
+      "submodelIds": "*",
+      "serializationType": "ALL"
     }
   },
   {
-    "role": "basyx-deleter",
-    "action": "DELETE",
+    "role": "basyx-reader-serialization-two",
+    "action": "READ",
     "targetInformation": {
-      "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "@type": "aas-environment",
+      "aasIds": ["shell001", "shell002"],
+      "submodelIds": ["7A7104BDAB57E184"],
+      "serializationType": "JSON"
     }
   }
  ]
@@ -61,19 +67,21 @@ For configuring RBAC rules, all the rbac rules should be configured inside a jso
 
 The role defines which role is allowed to perform the defined actions. The role is as per the configuration of identity providers or based on the organization. Action could be CREATE, READ, UPDATE, DELETE, and EXECUTE, there could be a single action or multiple actions as a list (cf. admin configuration above).
 
-The targetInformation defines coarse-grained control over the resource, you may define the conceptDescriptionId with a wildcard (\*), it means the defined role x with action y can access any Concept Description on the repository. You can also define a specific Concept Description Identifier in place of the wildcard (\*), then the role x with action y could be performed only on that particular Concept Description.
+The targetInformation defines coarse-grained control over the resource, you may define the aasIds and submodelIds with a wildcard (\*), it means the defined role x with action y can perform operations on all the AASs and Submodels. You can also define a specific aasIds and submodelIds in place of the wildcard (\*), then the role x with action y could be performed only on that particular AASs and Submodels. Please note that filtering option is currently not supported so, for serialization requests, if you specify some particular aasIds or submodelIds then serialization request will be denied if there are other AASs or Submodels exists in the environment apart from what configured in the rules. The serializationType could be JSON, AASX, XML, or ALL. 
 
-Note: The Action are fixed as of now and limited to (CREATE, READ, UPDATE, DELETE, and EXECUTE) but later user configurable mapping of these actions would be provided.
+Note: 
+* The Action are fixed as of now and limited to (CREATE, READ, UPDATE, DELETE, and EXECUTE) but later user configurable mapping of these actions would be provided.
+* For the serialization related requests there should be defined rules for accessing the AASs/Submodels/Concept Descriptions, as the serialization requires all of these elements. For e.g, a role with serialization is configured for Aas Environment target information but if there is no role for reading the AAS/Submodel/Concept Description then the request will be denied.
 
 ## Action table for RBAC
 
-Below is a reference table that shows which actions are used in what endpoints of the Concept Description Repository:
+Below is a reference table that shows which actions are used in what endpoints of the AasEnvironment:
 
 | Action  | Endpoint                                                                                                                                                                                                            |
 |---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| READ    | GET /concept-descriptions <br /> GET /concept-descriptions/{cdIdentifier} |
-| CREATE  | POST /concept-descriptions <br />                                                                                                                                                                                                 |
-| UPDATE  | PUT /concept-descriptions/{cdIdentifier} |
-| DELETE  | DELETE /concept-descriptions/{cdIdentifier}  |
+| READ    | GET /serialization |
+| CREATE  | -                                                                                                                                                                                                |
+| UPDATE  | -
+| DELETE  | -
 | EXECUTE | -                                                                                                                                                                                                                   |
 
