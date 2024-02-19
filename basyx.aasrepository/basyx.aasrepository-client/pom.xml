@@ -15,7 +15,6 @@
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.client</artifactId>
-			<version>${revision}</version>
 		</dependency>
 
 		<dependency>
@@ -55,7 +54,6 @@
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.aasservice-client</artifactId>
-			<version>${revision}</version>
 		</dependency>
 	</dependencies>
 </project>

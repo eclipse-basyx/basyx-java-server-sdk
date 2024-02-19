@@ -29,6 +29,7 @@ import java.net.http.HttpHeaders;
 
 import jakarta.annotation.Generated;
 
+@SuppressWarnings("serial")
 @Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-01-26T15:40:42.933294+01:00[Europe/Berlin]")
 public class ApiException extends RuntimeException {
     private int code = 0;
