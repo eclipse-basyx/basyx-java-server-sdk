@@ -69,7 +69,6 @@ public class AssetAdministrationShellServiceApi {
   private final Consumer<HttpRequest.Builder> memberVarInterceptor;
   private final Duration memberVarReadTimeout;
   private final Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
-  private final Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
 
   public AssetAdministrationShellServiceApi() {
     this(new ApiClient());
@@ -91,7 +90,6 @@ public class AssetAdministrationShellServiceApi {
     memberVarInterceptor = apiClient.getRequestInterceptor();
     memberVarReadTimeout = apiClient.getReadTimeout();
     memberVarResponseInterceptor = apiClient.getResponseInterceptor();
-    memberVarAsyncResponseInterceptor = apiClient.getAsyncResponseInterceptor();
   }
 
   protected ApiException getApiException(String operationId, HttpResponse<InputStream> response) throws IOException {
@@ -290,7 +288,7 @@ public class AssetAdministrationShellServiceApi {
 	 *            A server-generated identifier retrieved from pagingMetadata that
 	 *            specifies from which position the result listing should continue
 	 *            (optional)
-	 * @return CursorResult<List<Reference>>
+	 * @return CursorResult&lt;List&lt;Reference&gt;&gt;
 	 * @throws ApiException
 	 *             if fails to make API call
 	 */
@@ -309,7 +307,7 @@ public class AssetAdministrationShellServiceApi {
 	 *            A server-generated identifier retrieved from pagingMetadata that
 	 *            specifies from which position the result listing should continue
 	 *            (optional)
-	 * @return ApiResponse&lt;CursorResult<List<Reference>>&gt;
+	 * @return ApiResponse&lt;CursorResult&lt;List&lt;Reference&gt;&gt;&gt;
 	 * @throws ApiException
 	 *             if fails to make API call
 	 */
@@ -328,7 +326,7 @@ public class AssetAdministrationShellServiceApi {
 	 *            A server-generated identifier retrieved from pagingMetadata that
 	 *            specifies from which position the result listing should continue
 	 *            (optional)
-	 * @return ApiResponse&lt;CursorResult<List<Reference>>&gt;
+	 * @return ApiResponse&lt;CursorResult&lt;List&lt;Reference&gt;&gt;&gt;
 	 * @throws ApiException
 	 *             if fails to make API call
 	 */
@@ -370,10 +368,7 @@ public class AssetAdministrationShellServiceApi {
 
     List<Pair> localVarQueryParams = new ArrayList<>();
     StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-    String localVarQueryParameterBaseName;
-    localVarQueryParameterBaseName = "limit";
     localVarQueryParams.addAll(ApiClient.parameterToPairs("limit", limit));
-    localVarQueryParameterBaseName = "cursor";
     localVarQueryParams.addAll(ApiClient.parameterToPairs("cursor", cursor));
 
     if (!localVarQueryParams.isEmpty() || localVarQueryStringJoiner.length() != 0) {

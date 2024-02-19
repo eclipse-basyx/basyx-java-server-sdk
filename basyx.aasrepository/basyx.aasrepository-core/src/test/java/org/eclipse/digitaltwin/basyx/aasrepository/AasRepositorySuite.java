@@ -289,14 +289,16 @@ public abstract class AasRepositorySuite {
 	public void getPaginatedAssetAdministrationShellIterating() {
 		List<AssetAdministrationShell> expected = DummyAasFactory.createShells();
 		AasRepository aasRepo = getAasRepository(expected);
+		List<AssetAdministrationShell> retrieved = new ArrayList<>();
 
 		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null));
-		String cursor = result.getCursor();
+		retrieved.addAll(result.getResult());
 
+		String cursor = result.getCursor();
 		result = aasRepo.getAllAas(new PaginationInfo(1, cursor));
-		List<AssetAdministrationShell> resultList = result.getResult();
-		assertEquals(1, resultList.size());
-		assertEquals(DummyAasFactory.AASWITHASSETINFORMATION_ID, resultList.stream().findFirst().get().getId());
+		retrieved.addAll(result.getResult());
+
+		assertEquals(expected, retrieved);
 	}
 
 	@Test
@@ -355,7 +357,7 @@ public abstract class AasRepositorySuite {
 	}
 
 	@Test(expected = FileDoesNotExistException.class)
-	public void getNonExistingFile() {
+	public void getNonExistingThumbnail() {
 		AssetAdministrationShell aas = DummyAasFactory.createAasWithAssetInformation();
 		AasRepository aasRepo = getAasRepository(Collections.singleton(aas));
 
@@ -374,7 +376,7 @@ public abstract class AasRepositorySuite {
 	}
 
 	@Test(expected = FileDoesNotExistException.class)
-	public void deleteNonExistingFile() throws IOException {
+	public void deleteNonExistingThumbnail() throws IOException {
 		AssetAdministrationShell aas = DummyAasFactory.createAasWithAssetInformation();
 		AasRepository aasRepo = getAasRepository(Collections.singleton(aas));
 

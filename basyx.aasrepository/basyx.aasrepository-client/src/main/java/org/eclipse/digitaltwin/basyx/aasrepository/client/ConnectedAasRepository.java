@@ -26,18 +26,25 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.client;
 
-import java.util.Collections;
+import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.internal.AssetAdministrationShellRepositoryApi;
+import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -45,9 +52,10 @@ import org.springframework.http.HttpStatus;
  * 
  * @author schnicke
  */
-public class ConnectedAasRepository {
+public class ConnectedAasRepository implements AasRepository {
 
 	private AssetAdministrationShellRepositoryApi repoApi;
+	private String aasRepoUrl;
 
 	/**
 	 * 
@@ -55,13 +63,19 @@ public class ConnectedAasRepository {
 	 *            the Url of the AAS Repository without the "/shells" part
 	 */
 	public ConnectedAasRepository(String repoUrl) {
+		this.aasRepoUrl = repoUrl;
 		this.repoApi = new AssetAdministrationShellRepositoryApi(repoUrl);
 	}
 
+	/**
+	 * Not implemented
+	 */
+	@Override
 	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
-		return repoApi.getAllAssetAdministrationShells(Collections.emptyList(), "", pInfo.getLimit(), pInfo.getCursor());
+		throw new FeatureNotImplementedException();
 	}
 
+	@Override
 	public AssetAdministrationShell getAas(String aasId) throws ElementDoesNotExistException {
 		try {
 			return repoApi.getAssetAdministrationShellById(aasId);
@@ -70,6 +84,7 @@ public class ConnectedAasRepository {
 		}
 	}
 
+	@Override
 	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException, MissingIdentifierException {
 		try {
 			repoApi.postAssetAdministrationShell(aas);
@@ -78,6 +93,7 @@ public class ConnectedAasRepository {
 		}
 	}
 
+	@Override
 	public void deleteAas(String aasId) {
 		try {
 			repoApi.deleteAssetAdministrationShellById(aasId);
@@ -86,12 +102,70 @@ public class ConnectedAasRepository {
 		}
 	}
 
+	@Override
 	public void updateAas(String aasId, AssetAdministrationShell aas) {
 		try {
 			repoApi.putAssetAdministrationShellById(aasId, aas);
 		} catch (ApiException e) {
 			throw mapExceptionAasUpdate(aasId, e);
 		}
+	}
+
+	public ConnectedAasService getConnectedAasService(String aasId) {
+		return new ConnectedAasService(getAasUrl(aasId));
+	}
+
+	@Override
+	public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo) {
+		return getConnectedAasService(aasId).getSubmodelReferences(pInfo);
+	}
+
+	@Override
+	public void addSubmodelReference(String aasId, Reference submodelReference) {
+		getConnectedAasService(aasId).addSubmodelReference(submodelReference);
+	}
+
+	@Override
+	public void removeSubmodelReference(String aasId, String submodelId) {
+		getConnectedAasService(aasId).removeSubmodelReference(submodelId);
+	}
+
+	@Override
+	public void setAssetInformation(String aasId, AssetInformation aasInfo) throws ElementDoesNotExistException {
+		getConnectedAasService(aasId).setAssetInformation(aasInfo);
+	}
+
+	@Override
+	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException {
+		return getConnectedAasService(aasId).getAssetInformation();
+	}
+
+	/**
+	 * Not implemented
+	 */
+	@Override
+	public File getThumbnail(String aasId) {
+		throw new FeatureNotImplementedException();
+	}
+
+	/**
+	 * Not implemented
+	 */
+	@Override
+	public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
+		throw new FeatureNotImplementedException();
+	}
+
+	/**
+	 * Not implemented
+	 */
+	@Override
+	public void deleteThumbnail(String aasId) {
+		throw new FeatureNotImplementedException();
+	}
+
+	private String getAasUrl(String aasId) {
+		return aasRepoUrl + "/shells/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
 	}
 
 	private RuntimeException mapExceptionAasUpdate(String aasId, ApiException e) {

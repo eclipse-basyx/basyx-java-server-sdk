@@ -32,7 +32,6 @@ import java.io.IOException;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.DummyAasRepositoryComponent;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.After;
@@ -64,76 +63,27 @@ public class TestConnectedAasRepository extends AasRepositorySuite {
 		repo.getAllAas(PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteAas);
 	}
 
-	@Override
-	public void getSubmodelReferences() {
-		// TODO Auto-generated method stub
+	@AfterClass
+	public static void shutdownAASRepo() {
+		appContext.close();
 	}
 
 	@Override
-	public void getSubmodelReferencesOfNonExistingAas() {
+	public void getNonExistingThumbnail() {
 		// TODO Auto-generated method stub
-		throw new ElementDoesNotExistException();
+		throw new FileDoesNotExistException();
 	}
 
 	@Override
-	public void addSubmodelReference() {
+	public void deleteNonExistingThumbnail() throws IOException {
 		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void addSubmodelReferenceToNonExistingAas() {
-		// TODO Auto-generated method stub
-		throw new ElementDoesNotExistException();
-	}
-
-	@Override
-	public void removeSubmodelReference() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void removeNonExistingSubmodelReference() {
-		// TODO Auto-generated method stub
-		throw new ElementDoesNotExistException();
-	}
-
-	@Override
-	public void removeSubmodelReferenceOfNonExistingAas() {
-		// TODO Auto-generated method stub
-		throw new ElementDoesNotExistException();
-	}
-
-	@Override
-	public void getAssetInformation() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void getAssetInformationOfNonExistingAas() {
-		// TODO Auto-generated method stub
-		throw new ElementDoesNotExistException();
-	}
-
-	@Override
-	public void setAssetInformation() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void setAssetInformationOfNonExistingAas() {
-		// TODO Auto-generated method stub
-		throw new ElementDoesNotExistException();
-	}
-
-	@Override
-	public void getPaginatedSubmodelReferencesPaginated() {
-		// TODO Auto-generated method stub
+		throw new FileDoesNotExistException();
 	}
 
 	@Override
 	public void updateThumbnail() throws FileNotFoundException, IOException {
 		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -144,6 +94,7 @@ public class TestConnectedAasRepository extends AasRepositorySuite {
 	@Override
 	public void getThumbnail() throws IOException {
 		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -153,34 +104,13 @@ public class TestConnectedAasRepository extends AasRepositorySuite {
 	}
 
 	@Override
-	public void deleteNonExistingFile() throws IOException {
-		// TODO Auto-generated method stub
-		throw new FileDoesNotExistException();
-	}
-
-	@Override
-	public void getPaginatedAssetAdministrationShell() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
 	public void getPaginatedAssetAdministrationShellIterating() {
 		// TODO Auto-generated method stub
-	}
 
-	@Override
-	public void getNonExistingFile() {
-		// TODO Auto-generated method stub
-		throw new FileDoesNotExistException();
-	}
-
-	@AfterClass
-	public static void shutdownAASRepo() {
-		appContext.close();
 	}
 
 	@Override
 	protected AasRepository getAasRepository() {
-		return new ConnectedAasRepositoryWrapper(new ConnectedAasRepository("http://localhost:8080"));
+		return new ConnectedAasRepository("http://localhost:8080");
 	}
 }
