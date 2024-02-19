@@ -26,10 +26,17 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.client;
 
+import java.util.List;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.internal.SubmodelServiceApi;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.springframework.http.HttpStatus;
@@ -40,12 +47,7 @@ import org.springframework.http.HttpStatus;
  * 
  * @author schnicke
  */
-public class ConnectedSubmodelService {
-	/*
-	 * Intentionally does not implement SubmodelService to avoid providing lots of
-	 * unimplemented endpoints and confusing the user. The method signatures,
-	 * however, are exactly the same.
-	 */
+public class ConnectedSubmodelService implements SubmodelService {
 
 	private SubmodelServiceApi repoApi;
 
@@ -59,24 +61,12 @@ public class ConnectedSubmodelService {
 		this.repoApi = new SubmodelServiceApi(submodelServiceUrl);
 	}
 
-	/**
-	 * Retrieves the Submodel contained in the service
-	 * 
-	 * @return
-	 */
+	@Override
 	public Submodel getSubmodel() {
 		return repoApi.getSubmodel("", "");
 	}
 
-	/**
-	 * Retrieve specific SubmodelElement of the Submodel
-	 *
-	 * @param idShortPath
-	 *            the SubmodelElement IdShort
-	 * @return the SubmodelElement
-	 * @throws ElementDoesNotExistException
-	 *             if the SubmodelElement does not exist
-	 */
+	@Override
 	public SubmodelElement getSubmodelElement(String idShortPath) throws ElementDoesNotExistException {
 		try {
 			return repoApi.getSubmodelElementByPath(idShortPath, "", "");
@@ -85,15 +75,7 @@ public class ConnectedSubmodelService {
 		}
 	}
 
-	/**
-	 * Retrieves the value of a specific SubmodelElement of the Submodel
-	 * 
-	 * @param idShortPath
-	 *            the SubmodelElement idShortPath
-	 * @return the SubmodelElementValue
-	 * @throws ElementDoesNotExistException
-	 *             if the SubmodelElement does not exist
-	 */
+	@Override
 	public SubmodelElementValue getSubmodelElementValue(String idShortPath) throws ElementDoesNotExistException {
 		try {
 			return repoApi.getSubmodelElementByPathValueOnly(idShortPath, "", "");
@@ -102,16 +84,7 @@ public class ConnectedSubmodelService {
 		}
 	}
 
-	/**
-	 * Sets the value of a specific SubmodelElement of the Submodel
-	 * 
-	 * @param idShortPath
-	 *            the SubmodelElement IdShortPath
-	 * @param value
-	 *            the new value
-	 * @throws ElementDoesNotExistException
-	 *             if the SubmodelElement does not exist
-	 */
+	@Override
 	public void setSubmodelElementValue(String idShortPath, SubmodelElementValue value) throws ElementDoesNotExistException {
 		try {
 			repoApi.patchSubmodelElementByPathValueOnly(idShortPath, value, 0, "", "");
@@ -120,24 +93,12 @@ public class ConnectedSubmodelService {
 		}
 	}
 
-	/**
-	 * Creates a Submodel Element
-	 * 
-	 */
+	@Override
 	public void createSubmodelElement(SubmodelElement submodelElement) {
 		repoApi.postSubmodelElement(submodelElement);
 	}
 
-	/**
-	 * Create a nested submodel element
-	 * 
-	 * @param idShortPath
-	 *            the SubmodelElement IdShortPath
-	 * @param submodelElement
-	 *            the submodel element to be created
-	 * @throws ElementDoesNotExistException
-	 *             If the submodel element defined in the path does not exist
-	 */
+	@Override
 	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
 		try {
 			repoApi.postSubmodelElementByPath(idShortPath, submodelElement);
@@ -146,14 +107,7 @@ public class ConnectedSubmodelService {
 		}
 	}
 	
-	/**
-	 * Updates a submodel element
-	 * 
-	 * @param idShortPath
-	 * @param submodelElement
-	 * @throws ElementDoesNotExistException
-	 *             If the submodel element defined in the path does not exist
-	 */
+	@Override
 	public void updateSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
 		try {
 			repoApi.putSubmodelElementByPath(idShortPath, submodelElement, "");
@@ -162,14 +116,7 @@ public class ConnectedSubmodelService {
 		}
 	}
 
-	/**
-	 * Delete a submodel element in a submodel
-	 * 
-	 * @param idShortPath
-	 *            the SubmodelElement IdShortPath
-	 * @throws ElementDoesNotExistException
-	 *             If the submodel element defined in the path does not exist
-	 */
+	@Override
 	public void deleteSubmodelElement(String idShortPath) throws ElementDoesNotExistException {
 		try {
 			repoApi.deleteSubmodelElementByPath(idShortPath);
@@ -184,6 +131,16 @@ public class ConnectedSubmodelService {
 		}
 
 		return e;
+	}
+
+	@Override
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo) {
+		throw new FeatureNotImplementedException();
+	}
+
+	@Override
+	public OperationVariable[] invokeOperation(String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
+		throw new FeatureNotImplementedException();
 	}
 
 }

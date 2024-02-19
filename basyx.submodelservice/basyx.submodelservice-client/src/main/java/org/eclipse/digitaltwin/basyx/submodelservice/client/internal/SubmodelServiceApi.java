@@ -49,6 +49,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@SuppressWarnings("unused")
 @Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-02-08T10:09:10.597431+01:00[Europe/Berlin]")
 public class SubmodelServiceApi {
   private final HttpClient memberVarHttpClient;
@@ -57,7 +58,7 @@ public class SubmodelServiceApi {
   private final Consumer<HttpRequest.Builder> memberVarInterceptor;
   private final Duration memberVarReadTimeout;
   private final Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
-  private final Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
+	private final Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
 
   public SubmodelServiceApi() {
     this(new ApiClient());
@@ -80,7 +81,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
     memberVarInterceptor = apiClient.getRequestInterceptor();
     memberVarReadTimeout = apiClient.getReadTimeout();
     memberVarResponseInterceptor = apiClient.getResponseInterceptor();
-    memberVarAsyncResponseInterceptor = apiClient.getAsyncResponseInterceptor();
+	memberVarAsyncResponseInterceptor = apiClient.getAsyncResponseInterceptor();
   }
 
   protected ApiException getApiException(String operationId, HttpResponse<InputStream> response) throws IOException {

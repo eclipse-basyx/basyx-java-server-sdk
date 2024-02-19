@@ -26,14 +26,28 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.client;
 
+import java.io.File;
+import java.io.InputStream;
+import java.util.List;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.internal.SubmodelRepositoryApi;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.http.HttpStatus;
 
 
@@ -42,12 +56,7 @@ import org.springframework.http.HttpStatus;
  * 
  * @author schnicke
  */
-public class ConnectedSubmodelRepository {
-	/*
-	 * Intentionally does not implement SubmodelRepository to avoid providing lots
-	 * of unimplemented endpoints and confusing the user. The method signatures,
-	 * however, are exactly the same.
-	 */
+public class ConnectedSubmodelRepository implements SubmodelRepository {
 
 	private SubmodelRepositoryApi repoApi;
 	private String submodelRepoUrl;
@@ -69,6 +78,7 @@ public class ConnectedSubmodelRepository {
 	 * @return
 	 * @throws ElementDoesNotExistException
 	 */
+	@Override
 	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException {
 		try {
 			return repoApi.getSubmodelById(submodelId, "", "");
@@ -77,13 +87,7 @@ public class ConnectedSubmodelRepository {
 		}
 	}
 
-	/**
-	 * Updates an existing Submodel
-	 * 
-	 * @param submodelId
-	 * @param submodel
-	 * @throws ElementDoesNotExistException
-	 */
+	@Override
 	public void updateSubmodel(String submodelId, Submodel submodel) throws ElementDoesNotExistException {
 		try {
 			repoApi.putSubmodelById(submodelId, submodel);
@@ -92,12 +96,7 @@ public class ConnectedSubmodelRepository {
 		}
 	}
 
-	/**
-	 * Creates a new submodel
-	 * 
-	 * @param submodel
-	 * @throws CollidingIdentifierException
-	 */
+	@Override
 	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException, MissingIdentifierException {
 		try {
 			repoApi.postSubmodel(submodel);
@@ -106,12 +105,7 @@ public class ConnectedSubmodelRepository {
 		}
 	}
 
-	/**
-	 * Deletes a Submodel
-	 * 
-	 * @param submodelId
-	 * @throws ElementDoesNotExistException
-	 */
+	@Override
 	public void deleteSubmodel(String submodelId) throws ElementDoesNotExistException {
 		try {
 			repoApi.deleteSubmodelById(submodelId);
@@ -135,6 +129,99 @@ public class ConnectedSubmodelRepository {
 		} catch (ApiException e) {
 			throw mapExceptionSubmodelAccess(submodelId, e);
 		}
+	}
+
+	/**
+	 * Not Implemented
+	 */
+	@Override
+	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
+		throw new FeatureNotImplementedException();
+	}
+
+	@Override
+	public void updateSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
+		getConnectedSubmodelService(submodelId).updateSubmodelElement(idShortPath, submodelElement);
+	}
+
+	@Override
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo) throws ElementDoesNotExistException {
+		return getConnectedSubmodelService(submodelId).getSubmodelElements(pInfo);
+	}
+
+	@Override
+	public SubmodelElement getSubmodelElement(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
+		return getConnectedSubmodelService(submodelId).getSubmodelElement(smeIdShort);
+	}
+
+	@Override
+	public SubmodelElementValue getSubmodelElementValue(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
+		return getConnectedSubmodelService(submodelId).getSubmodelElementValue(smeIdShort);
+	}
+
+	@Override
+	public void setSubmodelElementValue(String submodelId, String smeIdShort, SubmodelElementValue value) throws ElementDoesNotExistException {
+		getConnectedSubmodelService(submodelId).setSubmodelElementValue(smeIdShort, value);
+	}
+
+	@Override
+	public void createSubmodelElement(String submodelId, SubmodelElement smElement) {
+		getConnectedSubmodelService(submodelId).createSubmodelElement(smElement);
+	}
+
+	@Override
+	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
+		getConnectedSubmodelService(submodelId).createSubmodelElement(idShortPath, smElement);
+	}
+
+	@Override
+	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
+		getConnectedSubmodelService(submodelId).deleteSubmodelElement(idShortPath);
+	}
+
+	@Override
+	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
+		return getConnectedSubmodelService(submodelId).invokeOperation(idShortPath, input);
+	}
+
+	/**
+	 * Not Implemented
+	 */
+	@Override
+	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) throws ElementDoesNotExistException {
+		throw new FeatureNotImplementedException();
+	}
+
+	/**
+	 * Not Implemented
+	 */
+	@Override
+	public Submodel getSubmodelByIdMetadata(String submodelId) throws ElementDoesNotExistException {
+		throw new FeatureNotImplementedException();
+	}
+
+	/**
+	 * Not Implemented
+	 */
+	@Override
+	public File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+		throw new FeatureNotImplementedException();
+	}
+
+	/**
+	 * Not Implemented
+	 */
+	@Override
+	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
+		throw new FeatureNotImplementedException();
+	}
+
+	/**
+	 * Not Implemented
+	 */
+	@Override
+	public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+		throw new FeatureNotImplementedException();
 	}
 
 	private String getSubmodelUrl(String submodelId) {

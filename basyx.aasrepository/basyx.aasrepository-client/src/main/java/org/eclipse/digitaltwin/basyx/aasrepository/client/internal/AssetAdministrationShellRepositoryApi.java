@@ -60,6 +60,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.annotation.Generated;
 
+@SuppressWarnings("unused")
 @Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-01-26T15:40:42.933294+01:00[Europe/Berlin]")
 public class AssetAdministrationShellRepositoryApi {
   private final HttpClient memberVarHttpClient;
@@ -68,6 +69,7 @@ public class AssetAdministrationShellRepositoryApi {
   private final Consumer<HttpRequest.Builder> memberVarInterceptor;
   private final Duration memberVarReadTimeout;
   private final Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
+
   private final Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
 
   public AssetAdministrationShellRepositoryApi() {

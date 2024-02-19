@@ -111,8 +111,20 @@ public class ConnectedAasRepository implements AasRepository {
 		}
 	}
 
-	public ConnectedAasService getConnectedAasService(String aasId) {
-		return new ConnectedAasService(getAasUrl(aasId));
+	/**
+	 * Retrieves a ConnectedAasService for interacting with the Aas on the Server
+	 * 
+	 * @param aasId
+	 * @return
+	 * @throws ElementDoesNotExistException
+	 */
+	public ConnectedAasService getConnectedAasService(String aasId) throws ElementDoesNotExistException {
+		try {
+			repoApi.getAssetAdministrationShellById(aasId);
+			return new ConnectedAasService(getAasUrl(aasId));
+		} catch (ApiException e) {
+			throw mapExceptionAasAccess(aasId, e);
+		}
 	}
 
 	@Override

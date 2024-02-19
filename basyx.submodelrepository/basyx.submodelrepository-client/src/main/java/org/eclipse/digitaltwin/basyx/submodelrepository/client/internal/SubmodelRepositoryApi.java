@@ -49,6 +49,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.annotation.Generated;
 
+@SuppressWarnings("unused")
 @Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-01-26T15:40:43.909837100+01:00[Europe/Berlin]")
 public class SubmodelRepositoryApi {
 	private final HttpClient memberVarHttpClient;

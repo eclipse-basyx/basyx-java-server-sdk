@@ -25,25 +25,20 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.client;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.DummySubmodelRepositoryComponent;
-import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -79,218 +74,120 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 		appContext.close();
 	}
 
-	@Test
-	public void getConnectedSubmodelService() {
-		Submodel expected = DummySubmodelFactory.createSimpleDataSubmodel();
-		ConnectedSubmodelRepositoryWrapper repo = getSubmodelRepository(Collections.singleton(expected));
-		Submodel actual = repo.getConnectedSubmodelService(expected.getId()).getSubmodel();
-		assertEquals(expected, actual);
-	}
-
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getConnectedSubmodelServiceNonExistingSubmodel() {
-		ConnectedSubmodelRepositoryWrapper repo = getSubmodelRepository();
+		ConnectedSubmodelRepository repo = getSubmodelRepository();
 		repo.getConnectedSubmodelService("nonExisting");
 	}
 
 	@Override
-	public void getAllSubmodelsPreconfigured() {
-		// TODO: Not Implemented
+	protected ConnectedSubmodelRepository getSubmodelRepository() {
+		return new ConnectedSubmodelRepository("http://localhost:8080");
 	}
 
 	@Override
-	public void getAllSubmodelsEmpty() {
-		// TODO: Not Implemented
-	}
-
-	@Override
-	public void updateExistingSubmodelWithMismatchId() {
-		// TODO: Not Implemented
-		throw new IdentificationMismatchException();
-	}
-
-	@Override
-	public void createSubmodelCollectionWithMissingId() {
-		// TODO: Not Implemented
-		throw new MissingIdentifierException();
-	}
-
-	@Override
-	public void updateNonFileSME() {
-		// TODO: Not Implemented
-	}
-
-	@Override
-	public void updateNonFileSMEWithFileSME() {
-		// TODO: Not Implemented
-	}
-
-	@Override
-	public void updateFileSMEWithNonFileSME() throws FileNotFoundException, IOException {
-		// TODO: Not Implemented
-	}
-
-	@Override
-	public void updateFileSMEWithFileSME() throws FileNotFoundException, IOException {
-		// TODO: Not Implemented
-	}
-
-	@Override
-	public void updateNonExistingSME() {
-		// TODO: Not Implemented
-		throw new ElementDoesNotExistException();
-	}
-
-	@Override
-	public void getSubmodelElements() {
-		// TODO: Not Implemented
-	}
-
-	@Override
-	public void getSubmodelElementsOfNonExistingSubmodel() {
-		// TODO: Not Implemented
-		throw new ElementDoesNotExistException();
+	protected ConnectedSubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
+		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
+		submodels.forEach(repo::createSubmodel);
+		return getSubmodelRepository();
 	}
 
 	@Override
 	public void getSubmodelElement() {
-		// TODO: Not Implemented
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
-	public void getNonExistingSubmodelElement() {
-		// TODO: Not Implemented
-		throw new ElementDoesNotExistException();
+	public void getPaginatedSubmodel() {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
-	public void getSubmodelElementOfNonExistingSubmodel() {
-		// TODO: Not Implemented
-		throw new ElementDoesNotExistException();
+	public void invokeOperation() {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
-	public void getPropertyValue() {
-		// TODO: Not Implemented
+	public void updateFileSMEWithFileSME() throws FileNotFoundException, IOException {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
-	public void getNonExistingSubmodelElementValue() {
-		// TODO: Not Implemented
-		throw new ElementDoesNotExistException();
-	}
+	public void updateFileSMEWithNonFileSME() throws FileNotFoundException, IOException {
+		// TODO Auto-generated method stub
 
-	@Override
-	public void getSubmodelElementValueOfNonExistingSubmodel() {
-		// TODO: Not Implemented
-		throw new ElementDoesNotExistException();
-	}
-
-	@Override
-	public void setPropertyValue() {
-		// TODO: Not Implemented
 	}
 
 	@Override
 	public void updateFile() {
-		// TODO: Not Implemented
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void getFile() {
-		// TODO: Not Implemented
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void getNonExistingFile() {
-		// TODO: Not Implemented
+		// TODO Auto-generated method stub
+
+		throw new FileDoesNotExistException();
+	}
+
+	@Override
+	public void getAllSubmodelsPreconfigured() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void deleteNonExistingFile() throws IOException {
+		// TODO Auto-generated method stub
+
 		throw new FileDoesNotExistException();
 	}
 
 	@Override
 	public void getFileFromNonFileSME() {
-		// TODO: Not Implemented
+		// TODO Auto-generated method stub
 		throw new ElementNotAFileException();
 	}
 
 	@Override
 	public void deleteFile() throws ElementDoesNotExistException, ElementNotAFileException, FileNotFoundException, IOException {
-		// TODO: Not Implemented
-	}
+		// TODO Auto-generated method stub
 
-	@Override
-	public void deleteNonExistingFile() throws IOException {
-		// TODO: Not Implemented
-		throw new FileDoesNotExistException();
-	}
-
-	@Override
-	public void setNonExistingSubmodelElementValue() {
-		// TODO: Not Implemented
-		throw new ElementDoesNotExistException();
-	}
-
-	@Override
-	public void setSubmodelElementValueOfNonExistingSubmodel() {
-		// TODO: Not Implemented
-		throw new ElementDoesNotExistException();
-	}
-
-	@Override
-	public void createSubmodelElement() {
-		// TODO: Not Implemented
-	}
-
-	@Override
-	public void deleteSubmodeleElement() {
-		// TODO: Not Implemented
-	}
-
-	@Override
-	public void createNestedSubmodelELement() {
-		// TODO: Not Implemented
-	}
-
-	@Override
-	public void deleteNestedSubmodelElementInSubmodelElementCollection() {
-		// TODO: Not Implemented
-	}
-
-	@Override
-	public void deleteNestedSubmodelElementInSubmodelElementList() {
-		// TODO: Not Implemented
-	}
-
-	@Override
-	public void getDefaultSubmodelRepositoryName() {
-		// TODO: Not Implemented
-	}
-
-	@Override
-	public void getPaginatedSubmodel() {
-		// TODO: Not Implemented
-	}
-
-	@Override
-	public void invokeOperation() {
-		// TODO: Not Implemented
 	}
 
 	@Override
 	public void invokeNonOperation() {
-		// TODO: Not Implemented
+		// TODO Auto-generated method stub
+
 		throw new NotInvokableException();
 	}
 
 	@Override
-	protected ConnectedSubmodelRepositoryWrapper getSubmodelRepository() {
-		return new ConnectedSubmodelRepositoryWrapper(new ConnectedSubmodelRepository("http://localhost:8080"));
+	public void getAllSubmodelsEmpty() {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
-	protected ConnectedSubmodelRepositoryWrapper getSubmodelRepository(Collection<Submodel> submodels) {
-		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
-		submodels.forEach(repo::createSubmodel);
-		return getSubmodelRepository();
+	public void getSubmodelElements() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void updateExistingSubmodelWithMismatchId() {
+		// TODO Auto-generated method stub
+		throw new IdentificationMismatchException();
 	}
 }
