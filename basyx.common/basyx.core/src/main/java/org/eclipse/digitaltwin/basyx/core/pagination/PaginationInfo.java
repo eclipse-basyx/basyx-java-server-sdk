@@ -30,6 +30,11 @@ public class PaginationInfo {
 	private Integer limit;
 	private String cursor;
 
+	// For deserialization
+	@SuppressWarnings("unused")
+	private PaginationInfo() {
+	}
+
 	public PaginationInfo(Integer limit, String cursor) {
 		this.limit = limit;
 		this.cursor = cursor;
