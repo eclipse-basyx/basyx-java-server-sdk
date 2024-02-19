@@ -61,7 +61,8 @@ public class DummyAASEnvironmentComponent {
 	public static final String CONCEPT_DESCRIPTION_ID_NOT_INCLUDED_IN_ENV = "IdNotToBeIncludedInSerializedEnv";
 
 	@Bean
-	public AasEnvironmentSerialization createAasEnvironment() {
+	@ConditionalOnMissingBean
+	public AasEnvironment createAasEnvironment() {
 		SubmodelRepository submodelRepository = new SimpleSubmodelRepositoryFactory(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory()).create();
 		AasRepository aasRepository = new SimpleAasRepositoryFactory(new AasInMemoryBackendProvider(), new InMemoryAasServiceFactory()).create();
 		ConceptDescriptionRepository conceptDescriptionRepository = new SimpleConceptDescriptionRepositoryFactory(new ConceptDescriptionInMemoryBackendProvider(), TestAASEnvironmentSerialization.createDummyConceptDescriptions()).create();
