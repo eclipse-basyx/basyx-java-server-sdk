@@ -6,6 +6,9 @@
     <version>${revision}</version>
   </parent>
   <artifactId>basyx.aasservice-client</artifactId>
+  <name>BaSyx AasServiceClient</name>
+	<description>BaSyx AasServiceClient enabling interactions with a
+		Aas Service</description>
   
   	<dependencies>
 		<dependency>
