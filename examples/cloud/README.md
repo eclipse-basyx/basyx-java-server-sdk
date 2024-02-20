@@ -14,6 +14,8 @@ The configuration for all these components are added as part of `values.basyx.ya
 
 - AAS Environment
 - AAS Registry
+- Submodel Registry
+- AAS Discovery
 - AAS GUI
 
 ### External
@@ -70,6 +72,8 @@ The configuration for external supporting charts are generally added as part of 
     - AAS-GUI: `https://aasdashboard.example.com`
     - AAS-Environment: `https://basyx.example.com`
     - AAS-Registry: `https://basyxregistry.example.com`
+    - Submodel-Registry: `https://basyxsmregistry.example.com`
+    - AAS-Discovery: `https://basyxdiscovery.example.com`
 
 5. In `values.basyx.yaml`, we must define the configuration for all the Basyx services. While most of the values are self-explanatory and drawn directly from the docker-compose example in the sibling folder, some considerations here include:
 
@@ -77,12 +81,17 @@ The configuration for external supporting charts are generally added as part of 
         - Choose an appropriate image for the AAS-Registry based on whether a MongoDB   and a Kafka broker are deployed alongside the cluster. (default is `eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT`)
         - In the example values file, the ingress is enabled and is `basyxregistry.example.com`.
         - Configuration for CORS is not perfect, and temporarily may be set to allow all traffic. Upcoming [RBAC support](https://github.com/eclipse-basyx/basyx-java-server-sdk/pull/159) may help solve access-control issues.
-    2. AAS-Environment:
+    2. SM-Registry:
+        - Choose an appropriate image (examples are available in the values file) and ingress hostname similar to that for the AAS-Registry.
+        - Configuration for CORS is also done as above.
+    3. AAS-Environment:
         - `startup.enabled = true` is a snippet that does a particularly specific seeding of initial AAS/AASX files from a Git repository into a Kubernetes emptyDir, and then mounts them to the AAS Environment. This is temporary, and further updates may expand the range of initial sources for initial AASX files.
         `startup.repo` is then a string with the link to the Git repository containing the files.
         - In the example values file, the ingress is enabled and is `basyx.example.com`.
         - Configuration for CORS also allows all host sources at this time.
-    3. AAS-GUI:
+    4. AAS-Discovery:
+        - AAS Discovery may be enabled if necessary. An ingress with hostname is supported, and configuration is similarly done as for the AAS Environment (with fewer parameters and no startup scripts).
+    5. AAS-GUI:
         - In the example values file, the ingress is enabled and is `aasdashboard.example.com`.
         - The environment variables for configuring the AAS environment and AAS registry paths currently works with HTTPS hosts only (plain HTTP, as would be possible with calls to pods in the same namespace in the same cluster, is not permitted and throws "not-secure" errors in console). As a result, both AAS environment and AAS registry must currently have an ingress and certificate each.
 
@@ -104,7 +113,7 @@ The configuration for external supporting charts are generally added as part of 
               configMapName: time-series-ui-plugin
         ```
 
-    4. Now, the full release may be installed. First, add the remote repositories you may need to Helm.
+    6. Now, the full release may be installed. First, add the remote repositories you may need to Helm.
 
         ```bash
         # For bitnami charts, Kafka, MongoDB, Influx, Grafana and others
