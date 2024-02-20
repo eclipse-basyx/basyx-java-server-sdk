@@ -110,6 +110,18 @@ public class TestConnectedAasRepository extends AasRepositorySuite {
 	}
 
 	@Override
+	public void getPaginatedAssetAdministrationShell() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void allAasRetrieval() throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	protected AasRepository getAasRepository() {
 		return new ConnectedAasRepository("http://localhost:8080");
 	}
