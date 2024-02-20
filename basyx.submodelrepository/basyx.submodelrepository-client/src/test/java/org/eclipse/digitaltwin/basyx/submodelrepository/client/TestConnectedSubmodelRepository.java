@@ -190,4 +190,15 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 		// TODO Auto-generated method stub
 		throw new IdentificationMismatchException();
 	}
+
+	@Override
+	public void deleteFileSubmodelElementDeletesFile() throws ElementDoesNotExistException, ElementNotAFileException, FileNotFoundException, IOException {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	protected boolean fileExistsInStorage(String fileValue) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
