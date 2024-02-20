@@ -28,7 +28,7 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization;
 import java.io.IOException;
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.Action;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
