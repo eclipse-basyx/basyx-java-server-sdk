@@ -49,7 +49,7 @@ import org.springframework.http.HttpStatus;
  */
 public class ConnectedSubmodelService implements SubmodelService {
 
-	private SubmodelServiceApi repoApi;
+	private SubmodelServiceApi serviceApi;
 
 	/**
 	 * 
@@ -58,18 +58,18 @@ public class ConnectedSubmodelService implements SubmodelService {
 	 *            submodels the "/submodel" part has to be included
 	 */
 	public ConnectedSubmodelService(String submodelServiceUrl) {
-		this.repoApi = new SubmodelServiceApi(submodelServiceUrl);
+		this.serviceApi = new SubmodelServiceApi(submodelServiceUrl);
 	}
 
 	@Override
 	public Submodel getSubmodel() {
-		return repoApi.getSubmodel("", "");
+		return serviceApi.getSubmodel("", "");
 	}
 
 	@Override
 	public SubmodelElement getSubmodelElement(String idShortPath) throws ElementDoesNotExistException {
 		try {
-			return repoApi.getSubmodelElementByPath(idShortPath, "", "");
+			return serviceApi.getSubmodelElementByPath(idShortPath, "", "");
 		} catch (ApiException e) {
 			throw mapExceptionSubmodelElementAccess(idShortPath, e);
 		}
@@ -78,7 +78,7 @@ public class ConnectedSubmodelService implements SubmodelService {
 	@Override
 	public SubmodelElementValue getSubmodelElementValue(String idShortPath) throws ElementDoesNotExistException {
 		try {
-			return repoApi.getSubmodelElementByPathValueOnly(idShortPath, "", "");
+			return serviceApi.getSubmodelElementByPathValueOnly(idShortPath, "", "");
 		} catch (ApiException e) {
 			throw mapExceptionSubmodelElementAccess(idShortPath, e);
 		}
@@ -87,7 +87,7 @@ public class ConnectedSubmodelService implements SubmodelService {
 	@Override
 	public void setSubmodelElementValue(String idShortPath, SubmodelElementValue value) throws ElementDoesNotExistException {
 		try {
-			repoApi.patchSubmodelElementByPathValueOnly(idShortPath, value, 0, "", "");
+			serviceApi.patchSubmodelElementByPathValueOnly(idShortPath, value, 0, "", "");
 		} catch (ApiException e) {
 			throw mapExceptionSubmodelElementAccess(idShortPath, e);
 		}
@@ -95,13 +95,13 @@ public class ConnectedSubmodelService implements SubmodelService {
 
 	@Override
 	public void createSubmodelElement(SubmodelElement submodelElement) {
-		repoApi.postSubmodelElement(submodelElement);
+		serviceApi.postSubmodelElement(submodelElement);
 	}
 
 	@Override
 	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
 		try {
-			repoApi.postSubmodelElementByPath(idShortPath, submodelElement);
+			serviceApi.postSubmodelElementByPath(idShortPath, submodelElement);
 		} catch (ApiException e) {
 			throw mapExceptionSubmodelElementAccess(idShortPath, e);
 		}
@@ -110,7 +110,7 @@ public class ConnectedSubmodelService implements SubmodelService {
 	@Override
 	public void updateSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
 		try {
-			repoApi.putSubmodelElementByPath(idShortPath, submodelElement, "");
+			serviceApi.putSubmodelElementByPath(idShortPath, submodelElement, "");
 		} catch (ApiException e) {
 			throw mapExceptionSubmodelElementAccess(idShortPath, e);
 		}
@@ -119,7 +119,7 @@ public class ConnectedSubmodelService implements SubmodelService {
 	@Override
 	public void deleteSubmodelElement(String idShortPath) throws ElementDoesNotExistException {
 		try {
-			repoApi.deleteSubmodelElementByPath(idShortPath);
+			serviceApi.deleteSubmodelElementByPath(idShortPath);
 		} catch (ApiException e) {
 			throw mapExceptionSubmodelElementAccess(idShortPath, e);
 		}
