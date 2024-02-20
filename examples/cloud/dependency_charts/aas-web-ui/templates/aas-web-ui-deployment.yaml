@@ -32,8 +32,10 @@ spec:
               value: {{ .Values.config.aasSubmodelsRepoUrl }}
             - name: VITE_CD_REPO_PATH
               value: {{ .Values.config.conceptdescriptionRepoUrl }}
-            - name: VITE_REGISTRY_PATH
+            - name: VITE_AAS_REGISTRY_PATH
               value: {{ .Values.config.aasRegistryUrl }}
+            - name: VITE_SUBMODEL_REGISTRY_PATH
+              value: {{ .Values.config.submodelRegistryUrl }}
             # - name: CHOCKIDAR_USEPOLLING
             #   value: "true"
             # - name: VITE_PRIMARY_COLOR
