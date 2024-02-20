@@ -1,0 +1,38 @@
+imagePullSecrets: []
+
+# Enabled by default
+enabled: true
+
+image: 
+  name: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
+  pullPolicy: IfNotPresent
+
+resources: {}
+podAnnotations: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  host: aas-discovery.local
+
+# Content of application.properties
+config: |
+  server.port=8080
+  spring.application.name=AAS Discovery Service
+
+  basyx.aasdiscoveryservice.name=aas-discovery-service
+
+  basyx.backend=MongoDB
+  spring.data.mongodb.host=mongo
+  spring.data.mongodb.database=aas-discovery
+  spring.data.mongodb.authentication-database=admin
+  spring.data.mongodb.username=mongoAdmin
+  spring.data.mongodb.password=mongoPassword
+
+  basyx.cors.allowed-origins=*
+  basyx.cors.allowed-methods=GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+
+

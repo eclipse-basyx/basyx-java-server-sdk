@@ -1,0 +1,5 @@
+apiVersion: v2
+description: A Helm chart for running the Basyx AAS Discovery (Basyx v2 - AAS v3)
+name: aas-discovery
+type: application
+version: 0.0.1
