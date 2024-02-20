@@ -23,11 +23,11 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.submodelrepository.http.testconfig;
 
-import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -45,6 +45,6 @@ public class DummySubmodelRepositoryConfig {
 	@Bean
 	@ConditionalOnMissingBean
 	public SubmodelRepository createSubmodelRepository() {
-		return new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory());
+		return new SimpleSubmodelRepositoryFactory(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory()).create();
 	}
 }

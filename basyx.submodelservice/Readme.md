@@ -17,6 +17,7 @@ It supports DotAAS Part 1 V3 and the following HTTP/REST endpoints defined in [D
   * GetAllSubmodelElements
   * PostSubmodelElement
   * PostSubmodelElementByPath
+  * PutSubmodelElementByPath
   * DeleteSubmodelElementByPath
   * PatchSubmodelElementByPath (including ValueOnly)
   * GetSubmodelElementValueByPath

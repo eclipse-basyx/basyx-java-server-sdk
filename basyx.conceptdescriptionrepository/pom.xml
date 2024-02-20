@@ -16,8 +16,10 @@
 	<modules>
 		<module>basyx.conceptdescriptionrepository-core</module>
 		<module>basyx.conceptdescriptionrepository-http</module>
+		<module>basyx.conceptdescriptionrepository-backend</module>
 		<module>basyx.conceptdescriptionrepository-backend-inmemory</module>
 		<module>basyx.conceptdescriptionrepository-backend-mongodb</module>
+		<module>basyx.conceptdescriptionrepository-feature-authorization</module>
 		<module>basyx.conceptdescriptionrepository-tck</module>
 		<module>basyx.conceptdescriptionrepository.component</module>
 	</modules>

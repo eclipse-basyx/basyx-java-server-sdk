@@ -53,6 +53,14 @@
       "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
       "attributes" : { }
     }, {
+      "id" : "9b70ce9b-1b39-4f5a-893d-9f8956cf5dad",
+      "name" : "basyx-reader-serialization-two",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
       "id" : "20c8f106-d2fb-422d-9045-22b28151f792",
       "name" : "basyx-sme-reader-two",
       "description" : "",
@@ -138,6 +146,14 @@
     }, {
       "id" : "f9df352e-269d-4a5d-a263-105d8ab3ae52",
       "name" : "basyx-reader",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
+      "id" : "469ec431-9a4f-4d87-80fe-cf2c7bbd5d37",
+      "name" : "basyx-reader-serialization",
       "description" : "",
       "composite" : false,
       "clientRole" : false,
@@ -561,7 +577,7 @@
   "otpPolicyLookAheadWindow" : 1,
   "otpPolicyPeriod" : 30,
   "otpPolicyCodeReusable" : false,
-  "otpSupportedApplications" : [ "totpAppMicrosoftAuthenticatorName", "totpAppGoogleName", "totpAppFreeOTPName" ],
+  "otpSupportedApplications" : [ "totpAppGoogleName", "totpAppMicrosoftAuthenticatorName", "totpAppFreeOTPName" ],
   "webAuthnPolicyRpEntityName" : "keycloak",
   "webAuthnPolicySignatureAlgorithms" : [ "ES256" ],
   "webAuthnPolicyRpId" : "",
@@ -825,6 +841,50 @@
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
     "realmRoles" : [ "basyx-reader-two", "default-roles-basyx" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "2d7a7bdb-c8d3-4684-8c06-8873aabd9968",
+    "createdTimestamp" : 1707983800892,
+    "username" : "basyx.reader.serialization",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "c35c2724-8ae9-4193-bd25-e5245df77f4d",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1707983812752,
+      "secretData" : "{\"value\":\"2PxseHKNw94KIO+vkxn+jLwrfRWFF3Eh6cTOviSyKTI=\",\"salt\":\"E8GDPR/T+enGFszv/XvlQA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "basyx-reader-serialization", "default-roles-basyx" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "113691d0-fc03-4607-8b64-97b646bded1f",
+    "createdTimestamp" : 1707983824403,
+    "username" : "basyx.reader.serialization.2",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "86bd4fdc-077c-4546-b80a-f51788f15b56",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1707983834216,
+      "secretData" : "{\"value\":\"LMmwk+0uIx2VOOD/Llx19E6oUW6Z+fye0dD6fft8JlI=\",\"salt\":\"mWFD3gAs2jncjP6tBu9C3g==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "basyx-reader-serialization-two", "default-roles-basyx" ],
     "notBefore" : 0,
     "groups" : [ ]
   }, {
@@ -1838,7 +1898,7 @@
       "subType" : "anonymous",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-address-mapper", "saml-user-attribute-mapper", "saml-role-list-mapper", "oidc-full-name-mapper", "oidc-usermodel-attribute-mapper", "oidc-usermodel-property-mapper", "saml-user-property-mapper", "oidc-sha256-pairwise-sub-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-address-mapper", "oidc-full-name-mapper", "saml-user-property-mapper", "saml-user-attribute-mapper", "saml-role-list-mapper", "oidc-usermodel-property-mapper", "oidc-usermodel-attribute-mapper", "oidc-sha256-pairwise-sub-mapper" ]
       }
     }, {
       "id" : "7256d195-1e91-4f63-a9c4-6bef95243a92",
@@ -1875,7 +1935,7 @@
       "subType" : "authenticated",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "saml-role-list-mapper", "saml-user-property-mapper", "oidc-usermodel-attribute-mapper", "oidc-address-mapper", "oidc-usermodel-property-mapper", "saml-user-attribute-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-full-name-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-usermodel-attribute-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-user-attribute-mapper", "oidc-address-mapper", "oidc-usermodel-property-mapper", "saml-user-property-mapper", "saml-role-list-mapper", "oidc-full-name-mapper" ]
       }
     }, {
       "id" : "face2c9e-4d23-44e2-9a09-74e1d8448bd3",

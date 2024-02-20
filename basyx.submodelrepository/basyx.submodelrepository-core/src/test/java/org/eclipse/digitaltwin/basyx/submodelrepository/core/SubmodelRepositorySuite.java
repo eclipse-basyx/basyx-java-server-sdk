@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.core;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -68,7 +69,7 @@ import org.springframework.core.io.ClassPathResource;
 /**
  * Testsuite for implementations of the SubmodelRepository interface
  * 
- * @author schnicke, danish, kammognie, zhangzai
+ * @author schnicke, danish, kammognie, zhangzai, mateusmolina
  *
  */
 public abstract class SubmodelRepositorySuite {
@@ -84,6 +85,8 @@ public abstract class SubmodelRepositorySuite {
 		submodels.forEach(repo::createSubmodel);
 		return repo;
 	}
+	
+	protected abstract boolean fileExistsInStorage(String fileValue);
 
 	@Test
 	public void getAllSubmodelsPreconfigured() {
@@ -560,6 +563,24 @@ public abstract class SubmodelRepositorySuite {
 		} catch (ElementDoesNotExistException expected) {
 
 		}
+	}
+
+	@Test
+	public void deleteFileSubmodelElementDeletesFile() throws ElementDoesNotExistException, ElementNotAFileException, FileNotFoundException, IOException {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+
+		final String filename = "SampleJsonFile.json";
+
+		repo.setFileValue(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, filename, getInputStreamOfFileFromClasspath(filename));
+
+		SubmodelElement submodelElement = repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
+		String fileValue = ((org.eclipse.digitaltwin.aas4j.v3.model.File) submodelElement).getValue();
+
+		assertTrue(fileExistsInStorage(fileValue));
+
+		repo.deleteSubmodelElement(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
+
+		assertFalse(fileExistsInStorage(fileValue));
 	}
 
 	@Test

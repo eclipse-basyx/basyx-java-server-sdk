@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -75,12 +76,17 @@ public class SimpleRbacPermissionResolver<T extends TargetInformation> implement
 	 */
 	public boolean hasPermission(final Action action, final T targetInformation) {
 		final Optional<RbacRule> matchingRule = getMatchingRules(roleAuthenticator.getRoles(), action, targetInformation).findAny();
+		
 		logger.info("roles: {}, action: {}, targetInfo: {} - matching-rule?: {}", roleAuthenticator.getRoles(), action, targetInformation, matchingRule);
+		
 		return matchingRule.isPresent();
 	}
 
 	private Stream<RbacRule> getMatchingRules(final List<String> roles, final Action action, final T targetInformation) {
-		return this.rbacStorage.getRbacRules().parallelStream().filter(rbacRule -> checkRolesMatchRbacRule(rbacRule, roles)).filter(rbacRule -> checkActionMatchesRbacRule(rbacRule, action))
+		
+		List<RbacRule> filteredRbacRulesForTargetInfo = this.rbacStorage.getRbacRules().stream().filter(rbacRule -> hasMatchingTargetInformation(targetInformation, rbacRule)).collect(Collectors.toList());
+		
+		return filteredRbacRulesForTargetInfo.parallelStream().filter(rbacRule -> checkRolesMatchRbacRule(rbacRule, roles)).filter(rbacRule -> checkActionMatchesRbacRule(rbacRule, action))
 				.filter(rbacRule -> checkRbacRuleMatchesTargetInfo(rbacRule, targetInformation));
 	}
 
@@ -94,10 +100,11 @@ public class SimpleRbacPermissionResolver<T extends TargetInformation> implement
 
 	private boolean checkRbacRuleMatchesTargetInfo(final RbacRule rbacRule, final T targetInformation) {
 		
-		if (!(targetInformation.getClass().isInstance(rbacRule.getTargetInformation())))
-			return false;
-		
 		return targetPermissionVerifier.isVerified(rbacRule, targetInformation);
 	}
 
+	private boolean hasMatchingTargetInformation(final T targetInformation, RbacRule rbacRule) {
+		
+		return targetInformation.getClass().isInstance(rbacRule.getTargetInformation());
+	}
 }
