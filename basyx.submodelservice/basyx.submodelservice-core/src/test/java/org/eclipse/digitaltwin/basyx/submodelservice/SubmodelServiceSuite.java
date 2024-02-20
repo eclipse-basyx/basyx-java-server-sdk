@@ -66,7 +66,7 @@ import org.junit.Test;
  *
  */
 public abstract class SubmodelServiceSuite {
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
+	protected static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	protected abstract SubmodelService getSubmodelService(Submodel submodel);
 
 	@Test
@@ -184,22 +184,19 @@ public abstract class SubmodelServiceSuite {
 
 	@Test
 	public void setHierachicalSubmodelElementValue() {
-		String expected = "205";
 		Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
 		String idShortPath = generateIdShortPath();
-		Property submodelElement = (Property) getSubmodelService(operationalData).getSubmodelElement(idShortPath);
-		submodelElement.setValue(expected);
-		submodelElement = (Property) getSubmodelService(operationalData).getSubmodelElement(idShortPath);
-		assertEquals(expected, submodelElement.getValue());
+		SubmodelService service = getSubmodelService(operationalData);
+		PropertyValue expectedValue = new PropertyValue("205");
+		service.setSubmodelElementValue(idShortPath, expectedValue);
+		assertEquals(expectedValue.getValue(), ((PropertyValue) service.getSubmodelElementValue(idShortPath)).getValue());
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
 	public void setNonExistentHierachicalSubmodelElementValue() {
-		String expected = "205";
 		Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
 		String idShortPath = generateNonExistentIdShortPath();
-		Property submodelElement = (Property) getSubmodelService(operationalData).getSubmodelElement(idShortPath);
-		submodelElement.setValue(expected);
+		getSubmodelService(operationalData).setSubmodelElementValue(idShortPath, new PropertyValue("205"));
 	}
 
 	@Test

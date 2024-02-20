@@ -130,7 +130,7 @@ public class DummySubmodelFactory {
 				.build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_ID_SHORT)
 				.id(SUBMODEL_TECHNICAL_DATA_ID)
-				.submodelElements(SubmodelServiceHelper.getAllSubmodelElements())
+				.submodelElements(SubmodelServiceHelper.getAllSubmodelElementsWithoutInvokableOperation())
 				.build();
 	}
 	
