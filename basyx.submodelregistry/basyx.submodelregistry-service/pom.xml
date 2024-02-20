@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.submodelregistry-service</artifactId>
+	<name>BaSyx Submodel Registry Service</name>
+	<description>BaSyx Submodel Registry Service</description>
 
 	<packaging>jar</packaging>
 
@@ -156,14 +158,17 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.openapitools</groupId>
-			<artifactId>jackson-databind-nullable</artifactId>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.http</artifactId>
 		</dependency>
-
 		<!-- Test configuration -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

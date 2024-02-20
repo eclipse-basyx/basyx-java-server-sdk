@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationConfig;
+import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.authorization.SubjectInformation;
 import org.eclipse.digitaltwin.basyx.authorization.SubjectInformationProvider;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NullSubjectException;
@@ -44,7 +44,7 @@ import org.springframework.stereotype.Service;
  * @author danish
  */
 @Service
-@ConditionalOnExpression(value = "${" + CommonAuthorizationConfig.ENABLED_PROPERTY_KEY + ":false} and ('${" + CommonAuthorizationConfig.JWT_BEARER_TOKEN_PROVIDER_PROPERTY_KEY + "}'.equals('keycloak') or '${" + CommonAuthorizationConfig.JWT_BEARER_TOKEN_PROVIDER_PROPERTY_KEY + "}'.isEmpty())")
+@ConditionalOnExpression(value = "${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false} and ('${" + CommonAuthorizationProperties.JWT_BEARER_TOKEN_PROVIDER_PROPERTY_KEY + "}'.equals('keycloak') or '${" + CommonAuthorizationProperties.JWT_BEARER_TOKEN_PROVIDER_PROPERTY_KEY + "}'.isEmpty())")
 public class KeycloakRoleProvider implements RoleProvider {
 
 	private static final String CLAIM_REALM_ACCESS = "realm_access";

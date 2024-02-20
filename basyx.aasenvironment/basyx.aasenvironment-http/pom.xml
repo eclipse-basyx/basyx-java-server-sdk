@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.aasenvironment-http</artifactId>
+	<name>BaSyx AAS Environment HTTP</name>
+	<description>BaSyx AAS Environment HTTP</description>
 
 	<dependencies>
 		<dependency>
@@ -62,7 +64,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-			<artifactId>dataformat-json</artifactId>
+			<artifactId>aas4j-dataformat-json</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

@@ -11,6 +11,8 @@
 	</parent>
 
 	<artifactId>basyx.submodelregistry-client-native</artifactId>
+	<name>BaSyx Submodel Registry Client Native</name>
+	<description>BaSyx Submodel Registry Client Native</description>
 
 	<packaging>jar</packaging>
 	<properties>

@@ -31,10 +31,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
-import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationConfig;
-
+import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -49,7 +47,7 @@ import java.util.ArrayList;
 public class RbacRuleConfiguration {
 	public static final String RULES_FILE_KEY = "basyx.aasrepository.feature.authorization.rbac.file";
 	
-	@Value("${" + CommonAuthorizationConfig.RBAC_FILE_PROPERTY_KEY + ":}")
+	@Value("${" + CommonAuthorizationProperties.RBAC_FILE_PROPERTY_KEY + ":}")
 	private String filePath;
 	
 	private ObjectMapper objectMapper;

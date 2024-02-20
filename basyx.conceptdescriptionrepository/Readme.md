@@ -15,8 +15,14 @@ The Swagger UI for the endpoint is available at:
 
 	http://{host}:{port}/swagger-ui/index.html
 
-It supports DotAAS Part 1 V3 and all HTTP/REST endpoints defined in [DotAAS Part 2 V3 - ConceptDescription Repository](https://app.swaggerhub.com/apis/Plattform_i40/ConceptDescriptionRepositoryServiceSpecification/V3.0_SSP-001).
-In addition, it supports InMemory as well as MongoDB backends. 
+It supports DotAAS Part 1 V3 and all HTTP/REST endpoints defined in [DotAAS Part 2 V3 - ConceptDescription Repository](https://app.swaggerhub.com/apis/Plattform_i40/ConceptDescriptionRepositoryServiceSpecification/V3.0.1_SSP-001).
+
+In addition, it supports the following backends:
+* InMemory
+* MongoDB
+
+Furthermore, the following features are provided:
+* [Concept Description Repository Authorization](basyx.conceptdescriptionrepository-feature-authorization)
 
 For a configuration example, see [application.properties](basyx.conceptdescriptionrepository.component/src/main/resources/application.properties)
 

@@ -25,8 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.testconfig;
 
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleConceptDescriptionRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.InMemoryConceptDescriptionRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,6 +44,6 @@ public class DummyConceptDescriptionRepositoryConfig {
 		@Bean
 		@ConditionalOnMissingBean
 		public ConceptDescriptionRepository createConceptDescriptionRepository() {
-			return new InMemoryConceptDescriptionRepository();
+			return new SimpleConceptDescriptionRepositoryFactory(new ConceptDescriptionInMemoryBackendProvider()).create();
 		}
 }

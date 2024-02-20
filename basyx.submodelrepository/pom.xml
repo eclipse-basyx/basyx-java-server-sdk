@@ -9,14 +9,19 @@
 	</parent>
 
 	<artifactId>basyx.submodelrepository</artifactId>
+	<name>BaSyx submodelrepository</name>
+	<description>BaSyx submodelrepository</description>
 	<packaging>pom</packaging>
 
 	<modules>
 		<module>basyx.submodelrepository-core</module>
 		<module>basyx.submodelrepository-http</module>
+		<module>basyx.submodelrepository-backend</module>
 		<module>basyx.submodelrepository-backend-inmemory</module>
 		<module>basyx.submodelrepository-feature-mqtt</module>
 		<module>basyx.submodelrepository-feature-registry-integration</module>
+		<module>basyx.submodelrepository-feature-authorization</module>
+		<module>basyx.submodelrepository-feature-operation-delegation</module>
 		<module>basyx.submodelrepository-tck</module>
 		<module>basyx.submodelrepository.component</module>
 		<module>basyx.submodelrepository-backend-mongodb</module>

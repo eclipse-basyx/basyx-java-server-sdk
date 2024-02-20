@@ -15,7 +15,7 @@ The Swagger UI for the endpoint is available at:
 
 	http://{host}:{port}/swagger-ui/index.html
 
-It supports DotAAS Part 1 V3 and the following HTTP/REST endpoints defined in [DotAAS Part 2 V3 - Submodel Repository](https://app.swaggerhub.com/apis/Plattform_i40/SubmodelRepositoryServiceSpecification/V3.0_SSP-001):
+It supports DotAAS Part 1 V3 and the following HTTP/REST endpoints defined in [DotAAS Part 2 V3 - Submodel Repository](https://app.swaggerhub.com/apis/Plattform_i40/SubmodelRepositoryServiceSpecification/V3.0.1_SSP-001):
 
 * Submodel Repository
   * GetAllSubmodels
@@ -27,6 +27,7 @@ It supports DotAAS Part 1 V3 and the following HTTP/REST endpoints defined in [D
   * GetAllSubmodelElements
   * PostSubmodelElement
   * PostSubmodelElementByPath
+  * PutSubmodelElementByPath
   * DeleteSubmodelElementByPath
   * PatchSubmodelElementByPath (including ValueOnly)
   * GetSubmodelElementValueByPath
@@ -41,6 +42,9 @@ In addition, it supports the following backends:
 
 Furthermore, the following features are provided:
 * [MQTT eventing](basyx.submodelrepository-feature-mqtt)
+* [Submodel Repository Authorization](basyx.submodelrepository-feature-authorization)
+* [Submodel Registry Integration](basyx.submodelrepository-feature-registry-integration)
+* [Operation Delegation](basyx.submodelrepository-feature-operation-delegation)
 
 For a configuration example, see [application.properties](basyx.submodelrepository.component/src/main/resources/application.properties)
 

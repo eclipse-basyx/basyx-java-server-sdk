@@ -44,6 +44,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -121,9 +122,50 @@ public class BaSyxHttpTestUtils {
 		return client.execute(getRequest);
 	}
 	
+	/**
+	 * Performs a get request on the passed URL
+	 * 
+	 * @param url
+	 * @param header
+	 * @return
+	 * @throws IOException
+	 */
+	public static CloseableHttpResponse executeGetOnURL(String url, Header header) throws IOException {
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpGet getRequest = createGetRequestWithHeader(url);
+		getRequest.setHeader(header);
+		
+		return client.execute(getRequest);
+	}
+	
+	/**
+	 * Performs a get request on secured endpoint
+	 * 
+	 * @param url
+	 * @param accessToken
+	 * @return
+	 * @throws IOException
+	 */
 	public static CloseableHttpResponse executeAuthorizedGetOnURL(String url, String accessToken) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpGet getRequest = createGetRequestWithAuthorizationHeader(url, accessToken);
+		return client.execute(getRequest);
+	}
+	
+	/**
+	 * Performs a get request on secured endpoint
+	 * 
+	 * @param url
+	 * @param accessToken
+	 * @param header
+	 * @return
+	 * @throws IOException
+	 */
+	public static CloseableHttpResponse executeAuthorizedGetOnURL(String url, String accessToken, Header header) throws IOException {
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpGet getRequest = createGetRequestWithAuthorizationHeader(url, accessToken);
+		getRequest.setHeader(header);
+		
 		return client.execute(getRequest);
 	}
 
@@ -245,8 +287,8 @@ public class BaSyxHttpTestUtils {
 		return response;
 	}
 
-	public static HttpPut createPutRequestWithFile(String url, String aasId, String fileName, java.io.File file) {
-		HttpPut putRequest = new HttpPut(getThumbnailAccessURL(url, aasId));
+	public static HttpPut createPutRequestWithFile(String url, String fileName, java.io.File file) {
+		HttpPut putRequest = new HttpPut(url);
 
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 

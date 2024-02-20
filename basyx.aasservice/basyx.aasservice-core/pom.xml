@@ -9,6 +9,8 @@
 	</parent>
 
 	<artifactId>basyx.aasservice-core</artifactId>
+	<name>BaSyx AAS Service Core</name>
+	<description>BaSyx AAS Service Core</description>
 
 	<dependencies>
 		<dependency>
@@ -18,7 +20,7 @@
 
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-			<artifactId>model</artifactId>
+			<artifactId>aas4j-model</artifactId>
 		</dependency>
 	</dependencies>
 </project>

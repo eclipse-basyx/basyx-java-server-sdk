@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.aasrepository.component</artifactId>
+	<name>BaSyx AAS Repository Component</name>
+	<description>BaSyx AAS Repository Component</description>
 
 	<properties>
 		<docker.image.name>aas-repository</docker.image.name>
@@ -115,6 +117,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.authorization</artifactId>
+			<classifier>tests</classifier>
 		</dependency>
 	</dependencies>
 

@@ -124,7 +124,7 @@ public class AttributeMapper {
 	}
 
 	/**
-	 * Maps {@link Submodel#getSemanticID()} from AAS4J to SubmodelRegistry client
+	 * Maps {@link Submodel#getSemanticId()} from AAS4J to SubmodelRegistry client
 	 * 
 	 * @param semanticId
 	 * @return the mapped semanticId

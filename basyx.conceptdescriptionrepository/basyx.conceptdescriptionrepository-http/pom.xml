@@ -11,6 +11,7 @@
 
 	<artifactId>basyx.conceptdescriptionrepository-http</artifactId>
 	<name>Concept Description Repository HTTP</name>
+	<description>Concept Description Repository HTTP</description>
 
 	<dependencies>
 		<dependency>
@@ -61,7 +62,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-			<artifactId>dataformat-json</artifactId>
+			<artifactId>aas4j-dataformat-json</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>

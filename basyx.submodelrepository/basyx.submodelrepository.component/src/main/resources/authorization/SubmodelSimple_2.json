@@ -1,0 +1,174 @@
+{
+    "modelType": "Submodel",
+    "kind":"Instance",
+    "semanticId": {
+        "keys": [
+            {
+                "type": "GlobalReference",
+                "value": "0173-1#01-AFZ615#016"
+            }
+        ],
+        "type": "ExternalReference"
+    },
+    "id": "specificSubmodelId-2",
+    "idShort": "FileTests",
+    "submodelElements": [
+        {
+			"modelType": "SubmodelElementCollection",
+			"category": "PARAMETER",
+			"idShort": "smc1",
+			"value": [
+				{
+					"modelType": "File",
+					"contentType": "application/json",
+					"value": "testFile.json",
+					"category": "PARAMETER",
+					"idShort": "FileData",
+					"semanticId": {
+						"keys": [
+							{
+								"type": "ConceptDescription",
+								"value": "0173-1#02-BAA120#008"
+							}
+						],
+						"type": "ExternalReference"
+					}
+				},
+				{
+					"modelType": "Property",
+					"value": "5000",
+					"valueType": "xs:integer",
+					"category": "PARAMETER",
+					"idShort": "specificSubmodelElementIdShort-2",
+					"semanticId": {
+						"keys": [
+							{
+								"type": "ConceptDescription",
+								"value": "0173-1#02-BAA120#008"
+							}
+						],
+						"type": "ExternalReference"
+					}
+				},
+				{
+					"modelType": "Operation",
+					"idShort": "square",
+					"inputVariables": [
+						{
+							"value": {
+								"modelType": "Property",
+								"valueType": "xs:int",
+								"idShort": "input"
+							}
+						}
+					],
+					"outputVariables": [
+						{
+							"value": {
+								"modelType": "Property",
+								"valueType": "xs:int",
+								"idShort": "result"
+							}
+						}
+					]
+				},
+				{
+					"modelType": "Operation",
+					"idShort": "cube",
+					"inputVariables": [
+						{
+							"value": {
+								"modelType": "Property",
+								"valueType": "xs:int",
+								"idShort": "input"
+							}
+						}
+					],
+					"outputVariables": [
+						{
+							"value": {
+								"modelType": "Property",
+								"valueType": "xs:int",
+								"idShort": "result"
+							}
+						}
+					]
+				}
+			],
+			"semanticId": {
+				"keys": [
+					{
+						"type": "ConceptDescription",
+						"value": "0173-1#02-BAA120#008"
+					}
+				],
+				"type": "ExternalReference"
+			}
+		},
+		{
+			"modelType": "SubmodelElementCollection",
+			"category": "PARAMETER",
+			"idShort": "smc2",
+			"value": [
+				{
+					"modelType": "File",
+					"contentType": "application/json",
+					"value": "testFile.json",
+					"category": "PARAMETER",
+					"idShort": "specificFileSubmodelElementIdShort",
+					"semanticId": {
+						"keys": [
+							{
+								"type": "ConceptDescription",
+								"value": "0173-1#02-BAA120#008"
+							}
+						],
+						"type": "ExternalReference"
+					}
+				},
+				{
+					"modelType": "Range",
+					"max": "300",
+					"min": "200",
+					"valueType": "xs:integer",
+					"category": "PARAMETER",
+					"idShort": "specificSubmodelElementIdShort-2",
+					"semanticId": {
+						"keys": [
+							{
+								"type": "ConceptDescription",
+								"value": "0173-1#02-BAA120#008"
+							}
+						],
+						"type": "ExternalReference"
+					}
+				},
+				{
+					"modelType": "Property",
+					"value": "5000",
+					"valueType": "xs:integer",
+					"category": "PARAMETER",
+					"idShort": "specificSubmodelElementIdShort-2",
+					"semanticId": {
+						"keys": [
+							{
+								"type": "ConceptDescription",
+								"value": "0173-1#02-BAA120#008"
+							}
+						],
+						"type": "ExternalReference"
+					}
+				}
+			],
+			"semanticId": {
+				"keys": [
+					{
+						"type": "ConceptDescription",
+						"value": "0173-1#02-BAA120#008"
+					}
+				],
+				"type": "ExternalReference"
+			}
+		}
+   ]
+}

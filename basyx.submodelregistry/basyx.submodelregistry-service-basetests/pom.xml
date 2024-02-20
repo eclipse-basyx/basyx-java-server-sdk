@@ -11,6 +11,9 @@
 	</parent>
 
 	<artifactId>basyx.submodelregistry-service-basetests</artifactId>
+	<name>BaSyx Submodel Registry Service Basetests</name>
+	<description>BaSyx Submodel Registry Service Basetests</description>
+	
 	<packaging>jar</packaging>
 
 	<properties>

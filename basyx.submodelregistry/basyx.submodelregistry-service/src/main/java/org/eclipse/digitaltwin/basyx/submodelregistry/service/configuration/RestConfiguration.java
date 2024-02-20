@@ -24,18 +24,22 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration;
 
+import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
+import org.eclipse.digitaltwin.basyx.http.CorsPathPatternProvider;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.api.LocationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Configuration
-public class RestConfiguration {
+@EnableWebMvc
+public class RestConfiguration extends BaSyxHTTPConfiguration  {
 	
 	@Bean
 	public LocationBuilder locationBuilder() {
@@ -52,5 +56,9 @@ public class RestConfiguration {
 		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL);
 		builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 		return new MappingJackson2HttpMessageConverter(builder.build());
+	}
+	@Bean
+	public CorsPathPatternProvider getSubmodelRegistryServiceCorsUrlProvider() {
+		return new CorsPathPatternProvider("/submodel-descriptors/**");
 	}
 }

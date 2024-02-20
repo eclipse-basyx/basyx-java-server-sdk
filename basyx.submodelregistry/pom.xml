@@ -4,6 +4,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>basyx.submodelregistry</artifactId>
+	<name>BaSyx submodelregistry</name>
+	<description>BaSyx submodelregistry</description>
 	<packaging>pom</packaging>
 
 	<parent>
@@ -270,6 +272,9 @@
 										<dockerFile>Dockerfile</dockerFile>
 										<contextDir>
 											${project.basedir}/src/main/docker</contextDir>
+										<buildx>
+											<platforms>${docker.target.platforms}</platforms>
+										</buildx>
 									</build>
 								</image>
 							</images>

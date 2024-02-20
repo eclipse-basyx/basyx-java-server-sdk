@@ -32,7 +32,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.hc.client5.http.ClientProtocolException;
@@ -45,12 +44,15 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.ProtocolException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.http.HttpBaSyxHeader;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,6 +62,7 @@ import org.springframework.util.ResourceUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.common.collect.Lists;
 
 /**
  * Base testsuite for all Submodel Repository HTTP tests
@@ -78,11 +81,17 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 
 	private final String CURSOR = "7A7104BDAB57E184";
 	private final String ENCODED_CURSOR = Base64UrlEncodedCursor.encodeCursor(CURSOR);
+	
+	@Test
+	public void baSyxResponseHeader() throws IOException, ProtocolException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(getURL());
+		assertEquals(HttpBaSyxHeader.HEADER_VALUE, response.getHeader(HttpBaSyxHeader.HEADER_KEY).getValue());
+	}
 
 	@Test
 	public void getAllSubmodelsPreconfigured() throws IOException, ParseException {
 		String submodelsJSON = BaSyxSubmodelHttpTestUtils.requestAllSubmodels(getURL());
-		String expectedSubmodelsJSON = getAllSubmodelJSON();
+		String expectedSubmodelsJSON = getJSONValueAsString("MultipleSubmodels.json");
 		
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelsJSON,getJSONWithoutCursorInfo(submodelsJSON));
 	}
@@ -90,14 +99,14 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	@Test
 	public void getSpecificSubmodel() throws ParseException, IOException {
 		String submodelJSON = requestSpecificSubmodelJSON(DummySubmodelFactory.createTechnicalDataSubmodel().getId());
-		String expectedSubmodelJSON = getSingleSubmodelJSON();
+		String expectedSubmodelJSON = getJSONValueAsString("SingleSubmodel.json");
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelJSON, submodelJSON);
 	}
 
 	@Test
 	public void getSpecificSubmodelMetadata() throws ParseException, IOException {
-		String expectedSubmodelJSON = getSingleSubmodelMetadataJSON();
+		String expectedSubmodelJSON = getJSONValueAsString("SingleSubmodelMetadata.json");
 
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSubmodelMetadataURL(DummySubmodelFactory.createTechnicalDataSubmodel().getId()));
 		assertEquals(HttpStatus.OK.value(), response.getCode());
@@ -115,7 +124,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	@Test
 	public void updateExistingSubmodel() throws IOException, ParseException {
 		String id = "7A7104BDAB57E184";
-		String expectedSubmodelJSON = getUpdatedSubmodelJSON();
+		String expectedSubmodelJSON = getJSONValueAsString("SingleSubmodelUpdate.json");
 
 		CloseableHttpResponse creationResponse = putSubmodel(id, expectedSubmodelJSON);
 
@@ -128,7 +137,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	@Test
 	public void updateNonExistingSubmodel() throws IOException {
 		String id = "nonExisting";
-		String expectedSubmodelJSON = getUpdatedSubmodelJSON();
+		String expectedSubmodelJSON = getJSONValueAsString("SingleSubmodelUpdate.json");
 
 		CloseableHttpResponse updateResponse = putSubmodel(id, expectedSubmodelJSON);
 
@@ -138,7 +147,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	@Test
 	public void updateSubmodelWithMismatchId() throws IOException, ParseException {
 		String id = "7A7104BDAB57E184";
-		String submodelUpdateJson = getUpdatedSubmodelWithMismatchIdJSON();
+		String submodelUpdateJson = getJSONValueAsString("SingleSubmodelUpdateMismatchId.json");
 
 		CloseableHttpResponse creationResponse = putSubmodel(id, submodelUpdateJson);
 
@@ -147,7 +156,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 
 	@Test
 	public void createSubmodelNewId() throws IOException, ParseException {
-		String submodelJSON = getNewSubmodelJSON();
+		String submodelJSON = getJSONValueAsString("SingleSubmodelNew.json");
 		CloseableHttpResponse creationResponse = BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
 
 		assertSubmodelCreationReponse(submodelJSON, creationResponse);
@@ -158,7 +167,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 
 	@Test
 	public void createSubmodelCollidingId() throws IOException {
-		String submodelJSON = getSingleSubmodelJSON();
+		String submodelJSON = getJSONValueAsString("SingleSubmodel.json");
 		CloseableHttpResponse creationResponse = BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
 
 		assertEquals(HttpStatus.CONFLICT.value(), creationResponse.getCode());
@@ -166,7 +175,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	
 	@Test
 	public void createSubmodelWithEmptyId() throws IOException {
-		String submodelJSON = getSingleSubmodelWithEmptyIdJSON();
+		String submodelJSON = getJSONValueAsString("SingleSubmodelWithEmptyId.json");
 		CloseableHttpResponse creationResponse = BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
 
 		assertEquals(HttpStatus.BAD_REQUEST.value(), creationResponse.getCode());
@@ -174,7 +183,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	
 	@Test
 	public void createSubmodelWithNullId() throws IOException {
-		String submodelJSON = getSingleSubmodelWithNullIdJSON();
+		String submodelJSON = getJSONValueAsString("SingleSubmodelWithNullId.json");
 		CloseableHttpResponse creationResponse = BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
 
 		assertEquals(HttpStatus.BAD_REQUEST.value(), creationResponse.getCode());
@@ -202,9 +211,81 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	public void getPaginatedSubmodel() throws ParseException, IOException {
 		String submodelsJSON = BaSyxSubmodelHttpTestUtils
 				.requestAllSubmodels(getURL() + "?limit=1&cursor=" + ENCODED_CURSOR);
-		String expected = getSubmodelsPaginatedJson();
+		String expected = getJSONValueAsString("SubmodelsPaginated.json");
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expected, getJSONWithoutCursorInfo(submodelsJSON));
+	}
+	
+	@Test
+	public void updateNonFileSME() throws FileNotFoundException, IOException, ParseException {
+		String element = getJSONValueAsString("PropertySubmodelElementUpdate.json");
+		
+		String idShortPathPropertyInSmeCol = SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT + "." + SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT;
+		
+		CloseableHttpResponse updatedResponse = updateElement(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID,idShortPathPropertyInSmeCol), element);
+		assertEquals(HttpStatus.NO_CONTENT.value(), updatedResponse.getCode());
+
+		CloseableHttpResponse fetchedResponse = BaSyxHttpTestUtils.executeGetOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID,idShortPathPropertyInSmeCol));
+		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedResponse));
+	}
+
+	@Test
+	public void updateNonFileSMEWithFileSME() throws FileNotFoundException, IOException, ParseException {
+		String element = getJSONValueAsString("FileSubmodelElementUpdate.json");
+		
+		String idShortPathPropertyInSmeCol = SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT + "." + SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT;
+		
+		CloseableHttpResponse updatedResponse = updateElement(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID,idShortPathPropertyInSmeCol), element);
+		assertEquals(HttpStatus.NO_CONTENT.value(), updatedResponse.getCode());
+		
+		CloseableHttpResponse fetchedResponse = BaSyxHttpTestUtils.executeGetOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID,idShortPathPropertyInSmeCol));
+		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedResponse));
+	}
+	
+	@Test
+	public void updateFileSMEWithNonFileSME() throws FileNotFoundException, IOException, ParseException {
+		String element = getJSONValueAsString("PropertySubmodelElementUpdateWithNewIdShort.json");
+		
+		String idShortPathPropertyInSmeCol = SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT + "." + SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT;
+		
+		uploadFileToSubmodelElement(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, idShortPathPropertyInSmeCol);
+		
+		CloseableHttpResponse fileResponse = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, idShortPathPropertyInSmeCol));
+		assertEquals(HttpStatus.OK.value(), fileResponse.getCode());
+		
+		CloseableHttpResponse updatedResponse = updateElement(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, idShortPathPropertyInSmeCol), element);
+		assertEquals(HttpStatus.NO_CONTENT.value(), updatedResponse.getCode());
+		
+		CloseableHttpResponse fetchedResponse = BaSyxHttpTestUtils.executeGetOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, idShortPathPropertyInSmeCol));
+		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedResponse));
+	}
+	
+	@Test
+	public void updateFileSMEWithFileSME() throws FileNotFoundException, IOException, ParseException {
+		String element = getJSONValueAsString("FileSubmodelElementUpdateWithNewIdShort.json");
+		
+		String idShortPathPropertyInSmeCol = SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT + "." + SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT;
+		
+		uploadFileToSubmodelElement(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, idShortPathPropertyInSmeCol);
+		
+		CloseableHttpResponse fileResponse = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, idShortPathPropertyInSmeCol));
+		assertEquals(HttpStatus.OK.value(), fileResponse.getCode());
+		
+		CloseableHttpResponse updatedResponse = updateElement(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID,idShortPathPropertyInSmeCol), element);
+		assertEquals(HttpStatus.NO_CONTENT.value(), updatedResponse.getCode());
+		
+		CloseableHttpResponse fetchedResponse = BaSyxHttpTestUtils.executeGetOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID,idShortPathPropertyInSmeCol));
+		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedResponse));
+	}
+	
+	@Test
+	public void updateNonExistingSME() throws FileNotFoundException, IOException, ParseException {
+		String element = getJSONValueAsString("PropertySubmodelElementUpdate.json");
+		
+		String idShortPathPropertyInSmeCol = SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT + ".NonExistingSMEIdShort";
+		
+		CloseableHttpResponse updatedResponse = updateElement(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID,idShortPathPropertyInSmeCol), element);
+		assertEquals(HttpStatus.NOT_FOUND.value(), updatedResponse.getCode());
 	}
 
 	@Test
@@ -310,6 +391,10 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 
 		return executePutRequest(client, putRequest);
 	}
+	
+	private CloseableHttpResponse updateElement(String url, String element) throws IOException {
+		return BaSyxHttpTestUtils.executePutOnURL(url, element);
+	}
 
 	private CloseableHttpResponse executePutRequest(CloseableHttpClient client, HttpPut putRequest) throws IOException {
 		CloseableHttpResponse response = client.execute(putRequest);
@@ -348,6 +433,10 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	private String createSubmodelMetadataURL(String id) {
 		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(getURL(), id) + "/$metadata";
 	}
+	
+	private String createSpecificSubmodelElementURL(String submodelId, String smeIdShortPath) {
+		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(getURL(), submodelId) + "/submodel-elements/" + smeIdShortPath;
+	}
 
 	private CloseableHttpResponse deleteSubmodelById(String submodelId) throws IOException {
 		return BaSyxHttpTestUtils.executeDeleteOnURL(getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId));
@@ -366,41 +455,9 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	private CloseableHttpResponse requestSubmodel(String submodelId) throws IOException {
 		return BaSyxHttpTestUtils.executeGetOnURL(BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(getURL(), submodelId));
 	}
-
-	private String getUpdatedSubmodelJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelUpdate.json");
-	}
-
-	private String getUpdatedSubmodelWithMismatchIdJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelUpdateMismatchId.json");
-	}
-
-	private String getNewSubmodelJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelNew.json");
-	}
-
-	private String getSingleSubmodelJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodel.json");
-	}
-
-	private String getSingleSubmodelMetadataJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelMetadata.json");
-	}
-
-	private String getAllSubmodelJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("MultipleSubmodels.json");
-	}
-
-	private String getSubmodelsPaginatedJson() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SubmodelsPaginated.json");
-	}
 	
-	private String getSingleSubmodelWithNullIdJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelWithNullId.json");
-	}
-
-	private String getSingleSubmodelWithEmptyIdJSON() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelWithEmptyId.json");
+	private String getJSONValueAsString(String fileName) throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath(fileName);
 	}
 	
 	private byte[] readBytesFromClasspath(String fileName) throws FileNotFoundException, IOException {
@@ -411,7 +468,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	}
 	
 	protected List<Submodel> createSubmodels() {
-		return Arrays.asList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createOperationalDataSubmodel(), DummySubmodelFactory.createSimpleDataSubmodel(), DummySubmodelFactory.createSubmodelWithFileElement());
+		return Lists.newArrayList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createOperationalDataSubmodel(), DummySubmodelFactory.createSimpleDataSubmodel(), DummySubmodelFactory.createSubmodelWithFileElement());
 	}
 
 }

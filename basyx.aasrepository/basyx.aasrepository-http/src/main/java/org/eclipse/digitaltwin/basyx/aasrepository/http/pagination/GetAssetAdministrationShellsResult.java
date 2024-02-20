@@ -37,7 +37,7 @@ import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Paginated wrapper for {@link AasRepository#getAllAas()}
+ * Paginated wrapper for {@link AasRepository#getAllAas(org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo)}
  */
 @Validated
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-05-22T07:02:56.105163402Z[GMT]")

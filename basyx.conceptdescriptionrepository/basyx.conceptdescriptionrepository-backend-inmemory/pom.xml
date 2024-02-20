@@ -10,13 +10,17 @@
 
 	<artifactId>basyx.conceptdescriptionrepository-backend-inmemory</artifactId>
 	<name>Concept Description Repository Backend InMemory</name>
-
+	<description>Concept Description Repository Backend InMemory</description>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.conceptdescriptionrepository-core</artifactId>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.conceptdescriptionrepository-backend</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.conceptdescriptionrepository-core</artifactId>

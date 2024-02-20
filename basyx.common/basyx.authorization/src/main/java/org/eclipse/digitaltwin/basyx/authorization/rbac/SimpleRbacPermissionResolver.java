@@ -27,9 +27,9 @@ package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.eclipse.digitaltwin.basyx.authorization.TargetInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,15 +74,19 @@ public class SimpleRbacPermissionResolver<T extends TargetInformation> implement
 	 * 
 	 * @return 
 	 */
-	@Override
 	public boolean hasPermission(final Action action, final T targetInformation) {
 		final Optional<RbacRule> matchingRule = getMatchingRules(roleAuthenticator.getRoles(), action, targetInformation).findAny();
+		
 		logger.info("roles: {}, action: {}, targetInfo: {} - matching-rule?: {}", roleAuthenticator.getRoles(), action, targetInformation, matchingRule);
+		
 		return matchingRule.isPresent();
 	}
 
 	private Stream<RbacRule> getMatchingRules(final List<String> roles, final Action action, final T targetInformation) {
-		return this.rbacStorage.getRbacRules().parallelStream().filter(rbacRule -> checkRolesMatchRbacRule(rbacRule, roles)).filter(rbacRule -> checkActionMatchesRbacRule(rbacRule, action))
+		
+		List<RbacRule> filteredRbacRulesForTargetInfo = this.rbacStorage.getRbacRules().stream().filter(rbacRule -> hasMatchingTargetInformation(targetInformation, rbacRule)).collect(Collectors.toList());
+		
+		return filteredRbacRulesForTargetInfo.parallelStream().filter(rbacRule -> checkRolesMatchRbacRule(rbacRule, roles)).filter(rbacRule -> checkActionMatchesRbacRule(rbacRule, action))
 				.filter(rbacRule -> checkRbacRuleMatchesTargetInfo(rbacRule, targetInformation));
 	}
 
@@ -91,12 +95,16 @@ public class SimpleRbacPermissionResolver<T extends TargetInformation> implement
 	}
 
 	private boolean checkActionMatchesRbacRule(final RbacRule rbacRule, final Action action) {
-		
 		return rbacRule.getAction().stream().anyMatch(rbacRuleAction -> rbacRuleAction.equals(action));
 	}
 
 	private boolean checkRbacRuleMatchesTargetInfo(final RbacRule rbacRule, final T targetInformation) {
+		
 		return targetPermissionVerifier.isVerified(rbacRule, targetInformation);
 	}
 
+	private boolean hasMatchingTargetInformation(final T targetInformation, RbacRule rbacRule) {
+		
+		return targetInformation.getClass().isInstance(rbacRule.getTargetInformation());
+	}
 }

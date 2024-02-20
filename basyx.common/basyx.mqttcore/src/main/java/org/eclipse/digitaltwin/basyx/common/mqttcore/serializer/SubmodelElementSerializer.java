@@ -84,7 +84,7 @@ public class SubmodelElementSerializer {
 	private static SubmodelElement getSubmodelElementWithoutValue(SubmodelElement submodelElement) throws SerializationException, DeserializationException {
 		// Copy the SubmodelElement to not modify the original.
 		String jsonToCopy = new JsonSerializer().write(submodelElement);
-		SubmodelElement localElement = new JsonDeserializer().readReferable(jsonToCopy, SubmodelElement.class);
+		SubmodelElement localElement = new JsonDeserializer().read(jsonToCopy, SubmodelElement.class);
 
 		if (submodelElement instanceof Blob) {
 			((Blob) localElement).setValue(null);

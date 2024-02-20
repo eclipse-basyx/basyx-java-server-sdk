@@ -11,6 +11,9 @@
 	</parent>
 
 	<artifactId>basyx.aasregistry-service-basetests</artifactId>
+	<name>BaSyx AAS Registry Service Basetests</name>
+	<description>BaSyx AAS Registry Service Basetests</description>
+	
 	<packaging>jar</packaging>
 
 	<properties>

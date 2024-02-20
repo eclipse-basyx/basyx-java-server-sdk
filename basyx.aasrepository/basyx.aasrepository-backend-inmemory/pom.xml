@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.aasrepository-backend-inmemory</artifactId>
+	<name>BaSyx AAS Repository backend-inmemory</name>
+	<description>BaSyx AAS Repository backend-inmemory</description>
 
 	<dependencies>
 		<dependency>

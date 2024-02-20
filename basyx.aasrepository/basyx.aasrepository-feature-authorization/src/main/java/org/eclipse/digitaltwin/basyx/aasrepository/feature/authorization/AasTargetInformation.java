@@ -30,13 +30,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.eclipse.digitaltwin.basyx.authorization.TargetInformation;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformationSubtype;
 
 /**
  * Specialization of {@link TargetInformation} for Aas target information
  *
  * @author danish
  */
+@TargetInformationSubtype(getValue = "aas")
 public class AasTargetInformation implements TargetInformation {
 	
 	private String aasId;
@@ -47,8 +49,8 @@ public class AasTargetInformation implements TargetInformation {
 	}
 
 	@Override
-	public Map<String, String> toMap() {
-		final Map<String, String> map = new HashMap<>();
+	public Map<String, Object> toMap() {
+		final Map<String, Object> map = new HashMap<>();
 		map.put("aasId", aasId);
 		return map;
 	}

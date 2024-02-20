@@ -26,10 +26,10 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.rbac.AasTargetPermissionVerifier;
-import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationConfig;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.SimpleRbacPermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.SimpleRbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RoleProvider;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -42,16 +42,16 @@ import org.springframework.context.annotation.Configuration;
  * @author danish
  */
 @Configuration
-@ConditionalOnExpression("#{${" + CommonAuthorizationConfig.ENABLED_PROPERTY_KEY + ":false}}")
+@ConditionalOnExpression("#{${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false}}")
 public class AuthorizedAasRepositoryConfiguration {
 	
 	@Bean
-	public TargetPermissionVerifier<AasTargetInformation> getTargetPermissionVerifier() {
+	public TargetPermissionVerifier<AasTargetInformation> getAasTargetPermissionVerifier() {
 		return new AasTargetPermissionVerifier();
 	}
 	
 	@Bean
-	public RbacPermissionResolver<AasTargetInformation> getPermissionResolver(RbacStorage rbacStorage, RoleProvider roleProvider, TargetPermissionVerifier<AasTargetInformation> targetPermissionVerifier) {
+	public RbacPermissionResolver<AasTargetInformation> getAasPermissionResolver(RbacStorage rbacStorage, RoleProvider roleProvider, TargetPermissionVerifier<AasTargetInformation> targetPermissionVerifier) {
 
 		return new SimpleRbacPermissionResolver<>(rbacStorage, roleProvider, targetPermissionVerifier);
 	}

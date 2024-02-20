@@ -11,7 +11,8 @@
 
 	<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
 	<name>Concept Description Repository Component</name>
-
+	<description>Concept Description Repository Component</description>
+	
 	<properties>
 		<docker.image.name>conceptdescription-repository</docker.image.name>
 		<docker.container.waitForEndpoint>
@@ -34,6 +35,16 @@
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.conceptdescriptionrepository-backend-mongodb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.conceptdescriptionrepository-feature-authorization</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.conceptdescriptionrepository-feature-authorization</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -102,6 +113,11 @@
 			<artifactId>gson</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.authorization</artifactId>
+			<classifier>tests</classifier>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -112,6 +128,79 @@
 				<configuration>
 					<classifier>exec</classifier>
 				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>sleep-for-a-while</id>
+						<phase>integration-test</phase>
+						<configuration>
+							<target>
+								<sleep seconds="10" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>auth-integ-test</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<asyncDestroyOnShutdown>true</asyncDestroyOnShutdown>
+							<executable>java</executable>
+							<skip>false</skip>
+							<arguments>
+								<argument>-classpath</argument>
+								<classpath />
+								<mainClass>
+									org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.component.ConceptDescriptionRepositoryComponent</mainClass>
+
+							</arguments>
+							<environmentVariables>
+								<spring.profiles.active>authorization</spring.profiles.active>
+							</environmentVariables>
+							<async>true</async>
+						</configuration>
+					</execution>
+					<execution>
+						<phase>post-integration-test</phase>
+						<goals />
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>**/*IT.java</exclude>
+							</excludes>
+							<includes>
+								<include>**/AuthorizedITConceptDescriptionRepository.java</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

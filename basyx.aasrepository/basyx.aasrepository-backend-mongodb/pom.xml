@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.aasrepository-backend-mongodb</artifactId>
+	<name>BaSyx AAS Repository backend-mongodb</name>
+	<description>BaSyx AAS Repository backend-mongodb</description>
 
 	<dependencies>
 		<dependency>

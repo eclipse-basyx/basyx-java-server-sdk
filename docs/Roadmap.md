@@ -17,7 +17,3 @@ For more details, see [basyx-databridge](https://github.com/eclipse-basyx/basyx-
 - Support for Asset Interface Description Submodel and Asset Interface Mapping Description Submodel (Q1/2024)
 - GUI-based Configuration (Q2/2024)
 - Integration of more complex data transformation, e.g., data aggregation of historic data (Q2/2024)
-
-### System of Record Integration
-For more details, see [basyx-applications](https://github.com/eclipse-basyx/basyx-applications/tree/main/dataintegrator)
-- Release of first prototype (Q4/2023)
