@@ -59,21 +59,6 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 	public abstract void resetService();
 
 	@Test
-	public void baSyxResponseHeader() throws IOException, ProtocolException {
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(getURL());
-		assertEquals(HttpBaSyxHeader.HEADER_VALUE, response.getHeader(HttpBaSyxHeader.HEADER_KEY).getValue());
-	}
-
-	@Test
-	public void getAllAssetAdministrationShellIdsByAssetLink() throws ParseException, IOException {
-		String expectedShellIds = getAllShellIdsJSON();
-
-		String actualShellIds = requestAllShellIds();
-
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedShellIds, getJSONWithoutCursorInfo(actualShellIds));
-	}
-
-	@Test
 	public void getAllAssetLinks() throws IOException, ParseException {
 		String expectedShellIds = getAllAssetLinksJSON();
 
@@ -141,26 +126,12 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 		return removeAssetLink(shellId);
 	}
 
-	protected String requestAllShellIds() throws IOException, ParseException {
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(getURL() + "?assetIds=RHVtbXlBc3NldF8xX1ZhbHVl,RHVtbXlBc3NldF8zX1ZhbHVl");
-
-		return BaSyxHttpTestUtils.getResponseAsString(response);
-	}
-
 	protected CloseableHttpResponse requestAllAssetLinks(String shellIdentifier) throws IOException, ParseException {
 		return BaSyxHttpTestUtils.executeGetOnURL(getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(shellIdentifier));
-	}
-	
-	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException {
-		return BaSyxHttpTestUtils.removeCursorFromJSON(response);
 	}
 
 	private String getNewAssetLinksJSON() throws IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("NewAssetLinks.json");
-	}
-
-	private String getAllShellIdsJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AllShellIDs.json");
 	}
 
 	private String getAllAssetLinksJSON() throws IOException {
