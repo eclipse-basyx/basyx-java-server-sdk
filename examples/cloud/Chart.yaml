@@ -10,6 +10,12 @@ dependencies:
   - name: aas-registry
     version: "0.0.1"
     repository: file://dependency_charts/aas-registry
+  - name: sm-registry
+    version: "0.0.1"
+    repository: file://dependency_charts/sm-registry
+  - name: aas-discovery
+    version: "0.0.1"
+    repository: file://dependency_charts/aas-discovery
   - name: aas-environment
     version: "0.0.1"
     repository: file://dependency_charts/aas-environment

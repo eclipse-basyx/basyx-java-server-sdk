@@ -22,37 +22,63 @@ aas-registry:
     enabled: true
     host: basyxregistry.example.com
   config: |-
-    servlet:
-      headers:
-        - path: /**
-          values:
-            Access-Control-Allow-Origin: "*"
-            Access-Control-Allow-Methods: POST,PUT,GET,DELETE,OPTIONS
-            Access-Control-Allow-Headers: Content-Type, Accept
-            Access-Control-Max-Age: 10000
-        - path: /api/v3.0/shell-descriptors
-          values:
-            Access-Control-Allow-Origin: "*"
-            Access-Control-Allow-Methods: POST,PUT,GET,DELETE,OPTIONS
-            Access-Control-Allow-Headers: Accept, Content-Type
-          methods: 
-            - OPTIONS
-        - path: /registry/shell-descriptors/search
-          values:
-            Access-Control-Allow-Origin: "*"
-            Access-Control-Allow-Methods: POST,GET,OPTIONS
-            Access-Control-Allow-Headers: Accept, Content-Type
-          methods: 
-            - OPTIONS
+    basyx:
+      cors:
+        allowed-origins: "*"
+        allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
+
+sm-registry:
+  image:
+    # Images similar to those above.
+    # name: eclipsebasyx/submodel-registry-log-mongodb:2.0.0-SNAPSHOT
+    name: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
+    pullPolicy: Always
+  service:
+    port: 8080
+  mongodb:
+    # connectionString: mongodb://adminUser:adminPassword@mongodb:27017
+    connectionString: null
+  ingress:
+    enabled: true
+    host: basyxsmregistry.example.com
+  config: |-
+    basyx:
+      cors:
+        allowed-origins: "*"
+        allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
+
+aas-discovery:
+  enabled: true
+  image: 
+    name: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
+    pullPolicy: IfNotPresent
+  service:
+    port: 8080
+  config: |-
+    server.port=8080
+    spring.application.name=AAS Discovery Service
+
+    basyx.aasdiscoveryservice.name=aas-discovery-service
+
+    basyx.backend=InMemory
+    # basyx.backend=MongoDB
+    # spring.data.mongodb.host=mongo
+    # spring.data.mongodb.database=aas-discovery
+    # spring.data.mongodb.authentication-database=admin
+    # spring.data.mongodb.username=mongoAdmin
+    # spring.data.mongodb.password=mongoPassword
+
+    basyx.cors.allowed-origins=*
+    basyx.cors.allowed-methods=GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+  ingress:
+    enabled: true
+    host: basyxdiscovery.example.com
 
 # Also needs an ingress.
 aas-environment:
   image: 
-    name: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
+    name: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
     pullPolicy: IfNotPresent
-  startup:
-    enabled: false
-    # repo: "https://github.com/abhishekmaha23/bic-df-aasx-examples"
   service:
     port: 8081
   config: |-
@@ -83,7 +109,7 @@ aas-environment:
 # Needs specific ingress.
 aas-web-ui:
   image:
-    name: eclipsebasyx/aas-gui:v2-231107
+    name: eclipsebasyx/aas-gui:v2-240125
     pullPolicy: Always
   ingress:
     enabled: true
@@ -93,6 +119,7 @@ aas-web-ui:
     aasSubmodelsRepoUrl: "https://basyx.example.com/submodels"
     conceptdescriptionRepoUrl: "https://basyx.example.com/concept-descriptions"
     aasRegistryUrl: "https://basyxregistry.example.com/api/v3.0"
+    submodelRegistryUrl: "https://basyxsmregistry.example.com/api/v3.0"
   externalPlugins:
     enabled: true
     plugins:
