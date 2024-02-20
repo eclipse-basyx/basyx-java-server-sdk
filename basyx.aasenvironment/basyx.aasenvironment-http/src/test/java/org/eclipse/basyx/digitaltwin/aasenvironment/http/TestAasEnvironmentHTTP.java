@@ -45,7 +45,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.ProtocolException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.TestAASEnvironmentSerialization;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.HttpBaSyxHeader;
