@@ -45,7 +45,7 @@ public class TestSubmodelServiceSubmodelElementsHTTP extends SubmodelServiceSubm
 	}
 
 	@After
-	public void shutdownSubmodelRepo() {
+	public void shutdownSubmodelService() {
 		appContext.close();
 	}
 

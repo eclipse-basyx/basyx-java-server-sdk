@@ -46,6 +46,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelrepository-core</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.submodelrepository-backend-inmemory</artifactId>
 			<scope>test</scope>
 		</dependency>

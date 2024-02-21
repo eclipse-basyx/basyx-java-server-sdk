@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.aasx.AASXDeserializer;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.xml.XmlDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;

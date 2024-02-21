@@ -1,0 +1,59 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.eclipse.digitaltwin.basyx</groupId>
+		<artifactId>basyx.aasrepository</artifactId>
+		<version>${revision}</version>
+	</parent>
+	<artifactId>basyx.aasrepository-client</artifactId>
+	<name>BaSyx AAS Repository Client</name>
+	<description>AAS Repository Client enabling interaction with an AAS
+		Repository</description>
+	<dependencies>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.client</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasrepository-core</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasrepository-core</artifactId>
+			<scope>test</scope>
+			<classifier>tests</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasrepository-http</artifactId>
+			<scope>test</scope>
+			<classifier>tests</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasrepository-http</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasrepository-backend-inmemory</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasservice-backend-inmemory</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasservice-client</artifactId>
+		</dependency>
+	</dependencies>
+</project>

@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;

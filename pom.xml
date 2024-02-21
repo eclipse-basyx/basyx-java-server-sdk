@@ -79,7 +79,7 @@
 		<docker.target.platforms>linux/amd64, linux/arm64</docker.target.platforms>
 		<docker.host.port>8081</docker.host.port>
 		<docker.container.port>8081</docker.container.port>
-		<aas4j-version>1.0.0-RC1</aas4j-version>
+		<aas4j-version>1.0.0</aas4j-version>
 	</properties>
 
 	<build>
@@ -1020,6 +1020,36 @@
 				<artifactId>basyx.aasxfileserver.component</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.client</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasservice-client</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-client</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openapitools</groupId>
+				<artifactId>jackson-databind-nullable</artifactId>
+				<version>0.2.6</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.code.findbugs</groupId>
+				<artifactId>jsr305</artifactId>
+				<version>3.0.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpmime</artifactId>
+				<version>4.5.14</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

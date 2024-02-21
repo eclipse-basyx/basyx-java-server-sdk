@@ -57,6 +57,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultFile;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultMultiLanguageProperty;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultRange;
@@ -333,7 +334,15 @@ public class SubmodelServiceHelper {
 						createInvokableOperation()));
 		return list;
 	}
-
+	
+	public static List<SubmodelElement> getAllSubmodelElementsWithoutInvokableOperation() {
+		List<SubmodelElement> list = new ArrayList<>();
+		list.addAll(
+				Lists.newArrayList(createPropertySubmodelElement(), createRangeSubmodelElement(), createMultiLanguagePropertySubmodelElement(), createFileSubmodelElement(), createEntitySubmodelElement(), createReferenceElementSubmodelElement(),
+						createRelationshipElementSubmodelElement(), createAnnotatedRelationshipElementSubmodelElement(), createBlobSubmodelElement(), createSubmodelElementCollection(), createSubmodelElementList(), createOperation()));
+		return list;
+	}
+	
 	public static OperationVariable createOperationVariable(Property val) {
 		return new DefaultOperationVariable.Builder().value(val).build();
 	}
@@ -357,6 +366,12 @@ public class SubmodelServiceHelper {
 	private static Operation createInvokableOperation() {
 		return new InvokableOperation.Builder().idShort(SUBMODEL_TECHNICAL_DATA_OPERATION_ID).inputVariables(createIntOperationVariable("input")).outputVariables(createIntOperationVariable("result"))
 				.invokable(SubmodelServiceHelper::square).build();
+	}
+
+	private static Operation createOperation() {
+		return new DefaultOperation.Builder().idShort(SUBMODEL_TECHNICAL_DATA_OPERATION_ID).inputVariables(createIntOperationVariable("input")).outputVariables(createIntOperationVariable("result"))
+				.build();
+
 	}
 
 	private static OperationVariable[] square(OperationVariable[] inputs) {
