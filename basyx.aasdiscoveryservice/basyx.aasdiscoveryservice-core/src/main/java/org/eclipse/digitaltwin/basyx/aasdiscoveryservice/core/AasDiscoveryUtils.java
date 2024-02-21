@@ -23,60 +23,44 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core;
 
-import java.util.Objects;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Represents the link between {@link AssetAdministrationShell} and
- * {@link SpecificAssetId}
+ * Utility class for {@link AasDiscoveryService}
  * 
- * @author danish
- *
  */
-public class AssetLink {
+public class AasDiscoveryUtils {
 
-	private String name;
-	private String value;
-
-	public AssetLink() {
+	private AasDiscoveryUtils() {
+		throw new IllegalStateException("Utility class");
 	}
 
-	public AssetLink(String name, String value) {
-		this.name = name;
-		this.value = value;
+	public static List<AssetLink> deriveAssetLinksFromShell(AssetAdministrationShell shell) {
+		List<SpecificAssetId> specificAssetIds = shell.getAssetInformation().getSpecificAssetIds();
+
+		return deriveAssetLinksFromSpecificAssetIds(specificAssetIds);
 	}
 
-	public String getName() {
-		return name;
+	public static List<AssetLink> deriveAssetLinksFromSpecificAssetIds(List<SpecificAssetId> specificAssetIds) {
+		List<AssetLink> assetLinks = new ArrayList<>();
+
+		specificAssetIds.forEach(assetId -> assetLinks.add(new AssetLink(assetId.getName(), assetId.getValue())));
+
+		return assetLinks;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
+	public static AssetAdministrationShell deriveShellFromIdAndSpecificAssetIds(String shellId, List<SpecificAssetId> specificAssetIds) {
+		DefaultAssetInformation assetInformation = new DefaultAssetInformation.Builder().specificAssetIds(specificAssetIds).build();
 
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		AssetLink assetLink = (AssetLink) o;
-		return Objects.equals(name, assetLink.name) && Objects.equals(value, assetLink.value);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(name, value);
+		return new DefaultAssetAdministrationShell.Builder().id(shellId).assetInformation(assetInformation).build();
 	}
 }
