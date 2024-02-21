@@ -31,8 +31,10 @@ import java.io.IOException;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.ProtocolException;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.http.HttpBaSyxHeader;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -55,16 +57,35 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 	@Before
 	@After
 	public abstract void resetService();
+	
+	@Test
+	public void baSyxResponseHeader() throws IOException, ProtocolException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(getURL());
+		assertEquals(HttpBaSyxHeader.HEADER_VALUE, response.getHeader(HttpBaSyxHeader.HEADER_KEY).getValue());
+	}
+
+	@Test
+	public void getAllAssetAdministrationShellIdsByAssetLink() throws ParseException, IOException {
+		String assetLinkJSON = getStringFromFile("NewAssetLinks.json");
+
+		createAssetLinks("NewDummyShellId", assetLinkJSON);
+		
+		String expectedShellIds = getStringFromFile("AllShellIds.json");
+
+		String actualShellIds = requestAllShellIds();
+
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedShellIds, getJSONWithoutCursorInfo(actualShellIds));
+	}
 
 	@Test
 	public void getAllAssetLinks() throws IOException, ParseException {
-		String expectedShellIds = getAllAssetLinksJSON();
+		String expectedAssetLinks = getStringFromFile("AllAssetLinks.json");
 
 		CloseableHttpResponse response = requestAllAssetLinks("TestAasID2");
 
 		String actualShellIds = BaSyxHttpTestUtils.getResponseAsString(response);
 
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedShellIds, actualShellIds);
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedAssetLinks, actualShellIds);
 	}
 
 	@Test
@@ -76,7 +97,7 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 
 	@Test
 	public void createAllAssetLinks() throws IOException, ParseException {
-		String assetLinkJSON = getNewAssetLinksJSON();
+		String assetLinkJSON = getStringFromFile("NewAssetLinks.json");
 
 		CloseableHttpResponse creationResponse = createAssetLinks("NewDummyShellId", assetLinkJSON);
 
@@ -92,7 +113,7 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 
 	@Test
 	public void createAssetLinksCollidingId() throws IOException, ParseException {
-		String assetLinkJSON = getNewAssetLinksJSON();
+		String assetLinkJSON = getStringFromFile("NewAssetLinks.json");
 		CloseableHttpResponse creationResponse = createAssetLinks("TestAasID2", assetLinkJSON);
 
 		assertEquals(HttpStatus.CONFLICT.value(), creationResponse.getCode());
@@ -127,13 +148,15 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 	protected CloseableHttpResponse requestAllAssetLinks(String shellIdentifier) throws IOException, ParseException {
 		return BaSyxHttpTestUtils.executeGetOnURL(getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(shellIdentifier));
 	}
+	
+	protected String requestAllShellIds() throws IOException, ParseException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(getURL() + "?assetIds=ewoJCSJuYW1lIjogIkR1bW15QXNzZXROYW1lMTAwIiwKCQkidmFsdWUiOiAiRHVtbXlBc3NldF8xMDBfVmFsdWUiCn0=,ewoJCSJuYW1lIjogIkR1bW15QXNzZXROYW1lMTM1IiwKCQkidmFsdWUiOiAiRHVtbXlBc3NldF8xMzVfVmFsdWUiCn0=");
 
-	private String getNewAssetLinksJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("NewAssetLinks.json");
+		return BaSyxHttpTestUtils.getResponseAsString(response);
 	}
 
-	private String getAllAssetLinksJSON() throws IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AllAssetLinks.json");
+	private String getStringFromFile(String filePath) throws IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath(filePath);
 	}
 
 	private void removeNewlyAddedAssetLinks(String shellId) throws IOException {
@@ -152,6 +175,10 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 		String response = BaSyxHttpTestUtils.getResponseAsString(creationResponse);
 
 		BaSyxHttpTestUtils.assertSameJSONContent(submodelJSON, response);
+	}
+	
+	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException {
+		return BaSyxHttpTestUtils.removeCursorFromJSON(response);
 	}
 
 }

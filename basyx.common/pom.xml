@@ -19,5 +19,6 @@
 		<module>basyx.mqttcore</module>
 		<module>basyx.mongocore</module>
 		<module>basyx.authorization</module>
+		<module>basyx.client</module>
 	</modules>
 </project>

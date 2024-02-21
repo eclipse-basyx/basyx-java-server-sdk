@@ -18,12 +18,12 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
  * @author fried
  *
  */
-public class DummyAssetAdministrationShell {
+public class DummyAssetAdministrationShellFactory {
 	public static final String SUBMODEL_ID = "DummySubmodelID";
 
 	public static Reference submodelReference = buildDummyReference();
 
-	public static AssetAdministrationShell getDummyShell() {
+	public static AssetAdministrationShell create() {
 		return new DefaultAssetAdministrationShell.Builder().id("arbitrary")
 				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
 						.globalAssetId(SUBMODEL_ID).build())

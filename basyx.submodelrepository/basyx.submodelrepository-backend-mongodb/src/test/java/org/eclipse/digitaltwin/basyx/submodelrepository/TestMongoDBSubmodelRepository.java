@@ -71,15 +71,11 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
-		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
+		SubmodelRepository repo = getSubmodelRepository();
 
-		// TODO: Remove this after MongoDB uses AAS4J serializer
-		submodels.forEach(this::removeInvokableFromInvokableOperation);
+		addSubmodelsToRepoWithoutInvokableOperations(submodels, repo);
 
-		SubmodelBackendProvider submodelBackendProvider = new SubmodelMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, TEMPLATE);
-		SubmodelRepositoryFactory submodelRepositoryFactory = new SimpleSubmodelRepositoryFactory(submodelBackendProvider, new InMemorySubmodelServiceFactory(), submodels, CONFIGURED_SM_REPO_NAME);
-
-		return submodelRepositoryFactory.create();
+		return repo;
 	}
 
 	@Override
@@ -89,6 +85,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 		GridFSFile file = GRIDFS_TEMPLATE.findOne(new Query(Criteria.where(MONGO_ID).is(fileId)));
 
 		return file != null && GRIDFS_TEMPLATE.getResource(file).exists();
+
 	}
 
 	@Test
@@ -111,8 +108,15 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 		super.invokeNonOperation();
 	}
 
-	private void removeInvokableFromInvokableOperation(Submodel sm) {
+	private static Submodel removeInvokableFromInvokableOperation(Submodel sm) {
 		sm.getSubmodelElements().stream().filter(InvokableOperation.class::isInstance).map(InvokableOperation.class::cast).forEach(o -> o.setInvokable(null));
+		return sm;
+	}
+
+	private static void addSubmodelsToRepoWithoutInvokableOperations(Collection<Submodel> submodels, SubmodelRepository repo) {
+		submodels.stream()
+		.map(TestMongoDBSubmodelRepository::removeInvokableFromInvokableOperation) // TODO: Remove this after MongoDB uses AAS4J serializer
+		.forEach(repo::createSubmodel);
 	}
 
 	private String getFileId(String value) {
