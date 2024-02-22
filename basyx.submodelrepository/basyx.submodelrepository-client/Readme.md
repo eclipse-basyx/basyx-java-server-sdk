@@ -1,5 +1,5 @@
 # Eclipse BaSyx - Submodel Repository Client
-The Submodel Repository Client is intended for interacting with an Submodel Repository conforming to the [Part 2](https://app.swaggerhub.com/apis/Plattform_i40/SubmodelRepositoryServiceSpecification/V3.0.1_SSP-001) specification of the IDTA.
+The Submodel Repository Client is intended for interacting with a Submodel Repository conforming to the [Part 2](https://app.swaggerhub.com/apis/Plattform_i40/SubmodelRepositoryServiceSpecification/V3.0.1_SSP-001) specification of the IDTA.
 
 It can be included in your project by adding it as an dependency to the pom.xml:
 
