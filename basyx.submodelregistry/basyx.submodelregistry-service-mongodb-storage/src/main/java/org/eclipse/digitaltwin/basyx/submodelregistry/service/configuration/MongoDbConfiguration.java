@@ -41,7 +41,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class MongoDbConfiguration {
 
 	@Bean
-	public SubmodelRegistryStorage createStorage(MongoTemplate template) {
+	public SubmodelRegistryStorage createSubmodelRegistryStorage(MongoTemplate template) {
 		return new CursorEncodingRegistryStorage(new MongoDbSubmodelRegistryStorage(template));
 	}
 
