@@ -29,18 +29,23 @@ package org.eclipse.digitaltwin.basyx.aasservice;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
+import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Test;
 
@@ -94,8 +99,8 @@ public abstract class AasServiceSuite {
 	@Test
 	public void removeSubmodelReference() {
 		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.create();
-		AasService aasService = getAasService(expected);
 		DummyAssetAdministrationShellFactory.addDummySubmodelReference(expected);
+		AasService aasService = getAasService(expected);
 
 		List<Reference> submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
 		aasService.removeSubmodelReference(DummyAssetAdministrationShellFactory.SUBMODEL_ID);
@@ -127,6 +132,19 @@ public abstract class AasServiceSuite {
 		assertEquals(assetInfo, aasService.getAssetInformation());
 	}
 
+	@Test
+	public void getPaginatedSubmodelReferencesPaginated() {
+		List<Reference> submodelReferences = createDummyReferences();
+		AssetAdministrationShell shell = new DefaultAssetAdministrationShell.Builder().id("paginatedAAS")
+				.submodels(submodelReferences).build();
+		AasService aasService = getAasService(shell);
+		PaginationInfo pInfo = new PaginationInfo(1, "");
+		CursorResult<List<Reference>> paginatedReferences = aasService.getSubmodelReferences(pInfo);
+		assertEquals(1, paginatedReferences.getResult().size());
+		assertEquals(submodelReferences.stream().findFirst().get(),
+				paginatedReferences.getResult().stream().findFirst().get());
+	}
+
 	private AssetInformation createDummyAssetInformation() {
 		AssetInformation assetInfo = new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
 				.globalAssetId("assetIDTestKey")
@@ -144,4 +162,18 @@ public abstract class AasServiceSuite {
 						new DefaultReference.Builder().keys(new DefaultKey.Builder().value("testKey").build()).build())
 				.build();
 	}
+
+	/**
+	 * @return 5 References each with value of smRef_(0-4)
+	 */
+	private List<Reference> createDummyReferences() {
+		List<Reference> referenceList = new ArrayList<>();
+		for (int i = 0; i < 5; i++) {
+			Reference ref = new DefaultReference.Builder().type(ReferenceTypes.MODEL_REFERENCE)
+					.keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value("smRef_" + i).build()).build();
+			referenceList.add(ref);
+		}
+		return referenceList;
+	}
+
 }
