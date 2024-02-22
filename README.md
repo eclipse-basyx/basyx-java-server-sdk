@@ -14,6 +14,9 @@ The following off-the-shelf components are available:
 * [Submodel Registry](basyx.submodelregistry)
 * [AAS Discovery](basyx.aasdiscoveryservice)
 
+In addition, a blueprint for a Type 2/ Type 3 standalone submodel is provided:
+* [Type 2/Type 3 Submodel](basyx.submodelservice)
+
 ## Client SDK
 In addition, the following Clients are available:
 * [AAS Repository Client](basyx.aasrepository/basyx.aasrepository-client)
