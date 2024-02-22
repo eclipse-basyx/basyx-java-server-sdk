@@ -52,9 +52,7 @@ public class CommonSecurityConfiguration {
 
 	private JwtAuthenticationConverter jwtAuthenticationConverter() {
 		JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-
-		JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-		converter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+		converter.setJwtGrantedAuthoritiesConverter(new JwtGrantedAuthoritiesConverter());
 
 		return converter;
 	}
