@@ -33,6 +33,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Collection;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.message.BasicHeader;
 import org.eclipse.basyx.digitaltwin.aasenvironment.http.DummyAASEnvironmentComponent;
 import org.eclipse.basyx.digitaltwin.aasenvironment.http.TestAasEnvironmentHTTP;
@@ -69,6 +70,7 @@ public class TestAuthorizedAasEnvironment {
 	private static String clientId = "basyx-client-api";
 	private static AccessTokenProvider tokenProvider;
 	private static ConfigurableApplicationContext appContext;
+	private static String healthEndpointUrl = "http://127.0.0.1:8081/actuator/health";
 	
 	@BeforeClass
 	public static void setUp() throws FileNotFoundException, IOException {
@@ -77,6 +79,16 @@ public class TestAuthorizedAasEnvironment {
 		appContext = new SpringApplication(DummyAASEnvironmentComponent.class).run(new String[] {});
 		
 		addDummyElementsToRepositories();
+	}
+	
+	@Test
+	public void healthEndpointWithoutAuthorization() throws IOException, ParseException {
+		String expectedHealthEndpointOutput = getStringFromFile("authorization/HealthOutput.json");
+		
+		CloseableHttpResponse healthCheckResponse = BaSyxHttpTestUtils.executeGetOnURL(healthEndpointUrl);
+		assertEquals(HttpStatus.OK.value(), healthCheckResponse.getCode());
+		
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedHealthEndpointOutput, BaSyxHttpTestUtils.getResponseAsString(healthCheckResponse));
 	}
 
 	@Test

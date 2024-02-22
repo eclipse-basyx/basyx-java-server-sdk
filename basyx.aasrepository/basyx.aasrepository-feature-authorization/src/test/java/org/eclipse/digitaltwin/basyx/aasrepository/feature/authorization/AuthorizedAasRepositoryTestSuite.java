@@ -37,6 +37,7 @@ import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.basyx.authorization.AccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.authorization.DummyCredential;
 import org.eclipse.digitaltwin.basyx.authorization.DummyCredentialStore;
@@ -63,6 +64,7 @@ public class AuthorizedAasRepositoryTestSuite {
 	private static final String THUMBNAIL_FILE_PATH = "authorization/" + THUMBNAIL_FILE_NAME;
 	public static String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
 	public static String aasRepositoryBaseUrl = "http://127.0.0.1:8087/shells";
+	public static String healthEndpointUrl = "http://127.0.0.1:8087/actuator/health";
 	public static String clientId = "basyx-client-api";
 	private static AccessTokenProvider tokenProvider;
 	
@@ -71,6 +73,16 @@ public class AuthorizedAasRepositoryTestSuite {
 		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
 		
 		createAasOnRepositoryWithAuthorization(getAasJSONString(AAS_SIMPLE_1_JSON), getAdminAccessToken());
+	}
+	
+	@Test
+	public void healthEndpointWithoutAuthorization() throws IOException, ParseException {
+		String expectedHealthEndpointOutput = getAasJSONString("authorization/HealthOutput.json");
+		
+		CloseableHttpResponse healthCheckResponse = BaSyxHttpTestUtils.executeGetOnURL(healthEndpointUrl);
+		assertEquals(HttpStatus.OK.value(), healthCheckResponse.getCode());
+		
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedHealthEndpointOutput, BaSyxHttpTestUtils.getResponseAsString(healthCheckResponse));
 	}
 
 	@Test
