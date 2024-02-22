@@ -201,4 +201,14 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	@Override
+	public void getPaginatedSubmodelElement() {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void paginationCursor() {
+		// TODO Auto-generated method stub
+	}
 }

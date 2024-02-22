@@ -23,60 +23,36 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb;
 
-import java.util.Objects;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
+import java.util.List;
+import java.util.Set;
 
-/**
- * Represents the link between {@link AssetAdministrationShell} and
- * {@link SpecificAssetId}
- * 
- * @author danish
- *
- */
-public class AssetLink {
+public class AasDiscoveryDocument {
+	private String shellIdentifier;
+	private Set<AssetLink> assetLinks;
+	private List<SpecificAssetId> specificAssetIds;
 
-	private String name;
-	private String value;
-
-	public AssetLink() {
+	public AasDiscoveryDocument() {
 	}
 
-	public AssetLink(String name, String value) {
-		this.name = name;
-		this.value = value;
+	public AasDiscoveryDocument(String shellIdentifier, Set<AssetLink> assetLinks, List<SpecificAssetId> specificAssetIds) {
+		this.shellIdentifier = shellIdentifier;
+		this.assetLinks = assetLinks;
+		this.specificAssetIds = specificAssetIds;
 	}
 
-	public String getName() {
-		return name;
+	public String getShellIdentifier() {
+		return shellIdentifier;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public Set<AssetLink> getAssetLinks() {
+		return assetLinks;
 	}
 
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		AssetLink assetLink = (AssetLink) o;
-		return Objects.equals(name, assetLink.name) && Objects.equals(value, assetLink.value);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(name, value);
+	public List<SpecificAssetId> getSpecificAssetIds() {
+		return specificAssetIds;
 	}
 }

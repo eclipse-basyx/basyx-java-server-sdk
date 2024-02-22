@@ -2,7 +2,6 @@
 	"paging_metadata": {
 	},
 	"result": [
-		"TestAasID1",
-		"TestAasID2"
+		"NewDummyShellId"
 	]
 }

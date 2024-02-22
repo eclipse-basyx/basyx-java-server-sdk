@@ -61,7 +61,9 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceSuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -72,7 +74,7 @@ import org.springframework.core.io.ClassPathResource;
  * @author schnicke, danish, kammognie, zhangzai, mateusmolina
  *
  */
-public abstract class SubmodelRepositorySuite {
+public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static final String DUMMY_FILE_CONTENT = "this is a file";
 	private static final String EMPTY_ID = " ";
@@ -305,54 +307,16 @@ public abstract class SubmodelRepositorySuite {
 		repo.deleteSubmodel("nonExisting");
 	}
 
-	@Test
-	public void getSubmodelElements() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		Collection<SubmodelElement> elements = repo.getSubmodelElements(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, NO_LIMIT_PAGINATION_INFO).getResult();
-		Collection<SubmodelElement> expectedElements = DummySubmodelFactory.createOperationalDataSubmodel().getSubmodelElements();
-		assertEquals(expectedElements, elements);
-	}
-
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getSubmodelElementsOfNonExistingSubmodel() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.getSubmodelElements("notExisting", NO_LIMIT_PAGINATION_INFO).getResult();
 	}
 
-	@Test
-	public void getSubmodelElement() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		SubmodelElement element = repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT);
-		SubmodelElement expectedElement = getExpectedSubmodelElement();
-
-		assertEquals(expectedElement, element);
-	}
-
-	@Test(expected = ElementDoesNotExistException.class)
-	public void getNonExistingSubmodelElement() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, "nonExisting");
-	}
-
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getSubmodelElementOfNonExistingSubmodel() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 		repo.getSubmodelElement("nonExisting", "doesNotMatter");
-	}
-
-	@Test
-	public void getPropertyValue() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		Object expected = ((Property) getExpectedSubmodelElement()).getValue();
-		Object value = repo.getSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT);
-
-		assertEquals(expected, ((PropertyValue) value).getValue());
-	}
-
-	@Test(expected = ElementDoesNotExistException.class)
-	public void getNonExistingSubmodelElementValue() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		repo.getSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, "nonExisting");
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
@@ -474,95 +438,12 @@ public abstract class SubmodelRepositorySuite {
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
-	public void setNonExistingSubmodelElementValue() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-
-		PropertyValue valueToWrite = new PropertyValue("400");
-
-		repo.setSubmodelElementValue(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, "nonExisting", valueToWrite);
-	}
-
-	@Test(expected = ElementDoesNotExistException.class)
 	public void setSubmodelElementValueOfNonExistingSubmodel() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 
 		PropertyValue valueToWrite = new PropertyValue("400");
 
 		repo.setSubmodelElementValue("nonExisting", "doesNotMatter", valueToWrite);
-	}
-
-	@Test
-	public void createSubmodelElement() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-
-		Property property = SubmodelServiceHelper.createDummyProperty("test321", "305", DataTypeDefXsd.INTEGER);
-		repo.createSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, property);
-
-		SubmodelElement sme = repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, "test321");
-		assertEquals("test321", sme.getIdShort());
-
-	}
-
-	@Test
-	public void deleteSubmodeleElement() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		repo.deleteSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_SIMPLE_DATA_ID_SHORT);
-
-		try {
-			repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, DummySubmodelFactory.SUBMODEL_ELEMENT_SIMPLE_DATA_ID_SHORT);
-			fail();
-		} catch (ElementDoesNotExistException expected) {
-		}
-	}
-
-	@Test
-	public void createNestedSubmodelELement() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		Property propertyInCollection = new DefaultProperty.Builder().idShort("test654").category("cat1").value("305").valueType(DataTypeDefXsd.INTEGER).build();
-		Property propertyInList = new DefaultProperty.Builder().idShort("test987").category("cat1").value("305").valueType(DataTypeDefXsd.INTEGER).build();
-
-		String idShortPathPropertyInSmeCol = DummySubmodelFactory.SUBMODEL_ELEMENT_COLLECTION_SIMPLE;
-		String idShortPathPropertyInSmeList = DummySubmodelFactory.SUBMODEL_ELEMENT_LIST_SIMPLE;
-		repo.createSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, idShortPathPropertyInSmeCol, propertyInCollection);
-		repo.createSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, idShortPathPropertyInSmeList, propertyInList);
-
-		idShortPathPropertyInSmeCol = idShortPathPropertyInSmeCol.concat(".test654");
-		SubmodelElement smeInCollection = repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, idShortPathPropertyInSmeCol);
-		assertEquals("test654", smeInCollection.getIdShort());
-
-		idShortPathPropertyInSmeList = idShortPathPropertyInSmeList.concat("[1]");
-		SubmodelElement propertyInSmeListCreated = repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_SIMPLE_DATA_ID, idShortPathPropertyInSmeList);
-		assertEquals("test987", propertyInSmeListCreated.getIdShort());
-	}
-
-	@Test
-	public void deleteNestedSubmodelElementInSubmodelElementCollection() {
-		SubmodelRepository repo = getSubmodelRepositoryWithHierarchicalSubmodelElements();
-
-		String idShortPathPropertyInSmeCol = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT + "." + DummySubmodelFactory.SUBMODEL_ELEMENT_SECOND_ID_SHORT;
-
-		repo.deleteSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, idShortPathPropertyInSmeCol);
-
-		try {
-			repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, idShortPathPropertyInSmeCol);
-			fail();
-		} catch (ElementDoesNotExistException expected) {
-
-		}
-	}
-
-	@Test
-	public void deleteNestedSubmodelElementInSubmodelElementList() {
-		SubmodelRepository repo = getSubmodelRepositoryWithHierarchicalSubmodelElements();
-
-		repo.deleteSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, generateIdShortPath());
-
-		try {
-			repo.getSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID, generateIdShortPath());
-			fail();
-		} catch (ElementDoesNotExistException expected) {
-
-		}
 	}
 
 	@Test
@@ -637,10 +518,6 @@ public abstract class SubmodelRepositorySuite {
 
 	}
 
-	private SubmodelElement getExpectedSubmodelElement() {
-		return DummySubmodelFactory.createOperationalDataSubmodel().getSubmodelElements().stream().filter(sme -> sme.getIdShort().equals(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT)).findAny().get();
-	}
-
 	private Submodel buildDummySubmodel(String id) {
 		return new DefaultSubmodel.Builder().id(id).submodelElements(new DefaultProperty.Builder().idShort("prop").value("testValue").valueType(DataTypeDefXsd.STRING).build()).build();
 	}
@@ -655,18 +532,8 @@ public abstract class SubmodelRepositorySuite {
 		return getSubmodelRepository(Collections.singleton(DummySubmodelFactory.createSubmodelWithAllSubmodelElements()));
 	}
 
-	private SubmodelRepository getSubmodelRepositoryWithHierarchicalSubmodelElements() {
-		Collection<Submodel> expectedSubmodels = Arrays.asList(DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements());
-		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
-		return repo;
-	}
-
 	private void assertIsEmpty(Collection<Submodel> submodels) {
 		assertTrue(submodels.isEmpty());
-	}
-
-	private String generateIdShortPath() {
-		return DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT + "." + DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_LIST_ID_SHORT + "[0]";
 	}
 
 	private InputStream getInputStreamOfFileFromClasspath(String fileName) throws FileNotFoundException, IOException {
@@ -683,4 +550,8 @@ public abstract class SubmodelRepositorySuite {
 		return FilenameUtils.getExtension(filename);
 	}
 
+	@Override
+	public SubmodelService getSubmodelService(Submodel submodel) {
+		return new SubmodelRepositorySubmodelServiceWrapper(getSubmodelRepository(), submodel);
+	}
 }
