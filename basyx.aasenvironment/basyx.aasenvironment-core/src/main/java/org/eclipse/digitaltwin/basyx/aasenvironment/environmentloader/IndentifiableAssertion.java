@@ -22,7 +22,7 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration;
+package org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader;
 
 import java.util.HashSet;
 import java.util.List;

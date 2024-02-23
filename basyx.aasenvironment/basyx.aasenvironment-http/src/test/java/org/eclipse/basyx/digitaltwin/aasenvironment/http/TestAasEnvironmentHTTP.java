@@ -26,6 +26,7 @@
 package org.eclipse.basyx.digitaltwin.aasenvironment.http;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,6 +40,7 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -47,9 +49,12 @@ import org.apache.hc.core5.http.ProtocolException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.TestAASEnvironmentSerialization;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.HttpBaSyxHeader;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -60,15 +65,26 @@ import org.springframework.util.ResourceUtils;
 
 public class TestAasEnvironmentHTTP {
 
-	public static final String ACCEPT_JSON = "application/json";
-	public static final String ACCEPT_XML = "application/xml";
-	public static final String ACCEPT_AASX = "application/asset-administration-shell-package+xml";
+	public static final String JSON_MIMETYPE = "application/json";
+	public static final String XML_MIMETYPE = "application/xml";
+	public static final String AASX_MIMETYPE = "application/asset-administration-shell-package+xml";
+
+	private static final String AASX_ENV_PATH = "testEnvironment.aasx";
+	private static final String JSON_ENV_PATH = "testEnvironment.json";
+	private static final String XML_ENV_PATH = "testEnvironment.xml";
+	private static final String WRONGEXT_ENV_PATH = "testEnvironment.txt";
 
 	private static ConfigurableApplicationContext appContext;
+	private static SubmodelRepository submodelRepo;
+	private static AasRepository aasRepo;
+	private static ConceptDescriptionRepository conceptDescriptionRepo;
 
 	@BeforeClass
 	public static void startAasRepo() throws Exception {
 		appContext = new SpringApplication(DummyAASEnvironmentComponent.class).run(new String[] {});
+		submodelRepo = appContext.getBean(SubmodelRepository.class);
+		aasRepo = appContext.getBean(AasRepository.class);
+		conceptDescriptionRepo = appContext.getBean(ConceptDescriptionRepository.class);
 	}
 
 	@Test
@@ -81,7 +97,7 @@ public class TestAasEnvironmentHTTP {
 	public void testAASEnvironmentSertializationWithJSON() throws IOException, ParseException, DeserializationException {
 		boolean includeConceptDescription = true;
 
-		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), ACCEPT_JSON);
+		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), JSON_MIMETYPE);
 		String actual = BaSyxHttpTestUtils.getResponseAsString(response);
 		TestAASEnvironmentSerialization.validateJSON(actual, includeConceptDescription);
 	}
@@ -90,7 +106,7 @@ public class TestAasEnvironmentHTTP {
 	public void testAASEnvironmentSertializationWithXML() throws IOException, ParseException, DeserializationException {
 		boolean includeConceptDescription = true;
 
-		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), ACCEPT_XML);
+		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), XML_MIMETYPE);
 		String actual = BaSyxHttpTestUtils.getResponseAsString(response);
 		TestAASEnvironmentSerialization.validateXml(actual, includeConceptDescription);
 	}
@@ -99,7 +115,7 @@ public class TestAasEnvironmentHTTP {
 	public void testAASEnvironmentSertializationWithAASX() throws IOException, ParseException, DeserializationException, InvalidFormatException {
 		boolean includeConceptDescription = true;
 
-		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), ACCEPT_AASX);
+		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), AASX_MIMETYPE);
 		assertEquals(HttpStatus.OK.value(), response.getCode());
 
 		TestAASEnvironmentSerialization.checkAASX(response.getEntity()
@@ -110,7 +126,7 @@ public class TestAasEnvironmentHTTP {
 	public void testAASEnvironmentSertializationWithAASXExcludeCD() throws IOException, ParseException, DeserializationException, InvalidFormatException {
 		boolean includeConceptDescription = false;
 
-		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), ACCEPT_AASX);
+		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), AASX_MIMETYPE);
 		assertEquals(HttpStatus.OK.value(), response.getCode());
 
 		TestAASEnvironmentSerialization.checkAASX(response.getEntity()
@@ -121,7 +137,7 @@ public class TestAasEnvironmentHTTP {
 	public void testAASEnvironmentWithWrongParameter() throws IOException {
 		boolean includeConceptDescription = true;
 
-		CloseableHttpResponse response = executeGetOnURL(getSerializationURL(new ArrayList<String>(), new ArrayList<String>(), includeConceptDescription), ACCEPT_JSON);
+		CloseableHttpResponse response = executeGetOnURL(getSerializationURL(new ArrayList<String>(), new ArrayList<String>(), includeConceptDescription), JSON_MIMETYPE);
 		assertEquals(HttpStatus.BAD_REQUEST.value(), response.getCode());
 	}
 
@@ -142,8 +158,48 @@ public class TestAasEnvironmentHTTP {
 
 		aasIds.add("wrongAasId");
 		submodelIds.add("wrongSubmodelId");
-		CloseableHttpResponse response = executeGetOnURL(getSerializationURL(aasIds, submodelIds, includeConceptDescription), ACCEPT_JSON);
+		CloseableHttpResponse response = executeGetOnURL(getSerializationURL(aasIds, submodelIds, includeConceptDescription), JSON_MIMETYPE);
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
+	}
+
+	@Test
+	public void testEnvironmentUpload_AASX() throws IOException, InvalidFormatException, UnsupportedOperationException, DeserializationException, ParseException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executePostRequest(HttpClients.createDefault(), createPostRequestWithFile(AASX_ENV_PATH, AASX_MIMETYPE));
+
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+
+		assertNotNull(aasRepo.getAas("http://customer.com/aas/9175_7013_7091_9168"));
+		assertNotNull(submodelRepo.getSubmodel("http://i40.customer.com/type/1/1/7A7104BDAB57E184"));
+		assertNotNull(conceptDescriptionRepo.getConceptDescription("http://www.vdi2770.com/blatt1/Entwurf/Okt18/cd/Description/Title"));
+	}
+
+	@Test
+	public void testEnvironmentUpload_JSON() throws IOException, InvalidFormatException, UnsupportedOperationException, DeserializationException, ParseException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executePostRequest(HttpClients.createDefault(), createPostRequestWithFile(JSON_ENV_PATH, JSON_MIMETYPE));
+
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+
+		assertNotNull(aasRepo.getAas("https://acplt.test/Test_AssetAdministrationShell"));
+		assertNotNull(submodelRepo.getSubmodel("http://acplt.test/Submodels/Assets/TestAsset/Identification"));
+		assertNotNull(conceptDescriptionRepo.getConceptDescription("https://acplt.test/Test_ConceptDescription"));
+	}
+
+	@Test
+	public void testEnvironmentUpload_XML() throws IOException, InvalidFormatException, UnsupportedOperationException, DeserializationException, ParseException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executePostRequest(HttpClients.createDefault(), createPostRequestWithFile(XML_ENV_PATH, XML_MIMETYPE));
+
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+
+		assertNotNull(aasRepo.getAas("http://customer.test/aas/9175_7013_7091_9168"));
+		assertNotNull(submodelRepo.getSubmodel("http://i40.customer.test/type/1/1/7A7104BDAB57E184"));
+		assertNotNull(conceptDescriptionRepo.getConceptDescription("http://www.vdi2770.test/blatt1/Entwurf/Okt18/cd/Description/Title"));
+	}
+
+	@Test
+	public void testEnvironmentUpload_WrongExtension() throws IOException, InvalidFormatException, UnsupportedOperationException, DeserializationException, ParseException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executePostRequest(HttpClients.createDefault(), createPostRequestWithFile(WRONGEXT_ENV_PATH, "text/plain"));
+
+		assertEquals(HttpStatus.BAD_REQUEST.value(), response.getCode());
 	}
 
 	public static String createSerializationURL(boolean includeConceptDescription) {
@@ -163,8 +219,18 @@ public class TestAasEnvironmentHTTP {
 		return aasCreateRequest;
 	}
 
-	private static String getURL() {
+	private static HttpPost createPostRequestWithFile(String filepath, String contentType) throws FileNotFoundException {
+		java.io.File file = ResourceUtils.getFile("classpath:" + filepath);
+
+		return BaSyxHttpTestUtils.createPostRequestWithFile(getAASXUploadURL(), file, contentType);
+	}
+
+	public static String getURL() {
 		return "http://localhost:8081";
+	}
+
+	private static String getAASXUploadURL() {
+		return getURL() + "/upload";
 	}
 
 	public static String getSerializationURL(Collection<String> aasIds, Collection<String> submodelIds, boolean includeConceptDescription) {
@@ -191,7 +257,7 @@ public class TestAasEnvironmentHTTP {
 		}
 		return results;
 	}
-
+	
 	public String readStringFromFile(String fileName) throws FileNotFoundException, IOException {
 		File file = ResourceUtils.getFile(fileName);
 		InputStream in = new FileInputStream(file);
@@ -202,5 +268,4 @@ public class TestAasEnvironmentHTTP {
 	public static void shutdown() {
 		appContext.close();
 	}
-
 }

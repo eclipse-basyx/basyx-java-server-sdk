@@ -29,8 +29,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
+import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.AasEnvironmentLoader;
+import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
+import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment.EnvironmentType;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +45,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -59,10 +65,13 @@ public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 
 	private final AasEnvironment aasEnvironment;
 
+	private final AasEnvironmentLoader aasEnvironmentLoader;
+
 	@Autowired
-	public AasEnvironmentApiHTTPController(HttpServletRequest request, AasEnvironment aasEnvironment) {
+	public AasEnvironmentApiHTTPController(HttpServletRequest request, AasEnvironment aasEnvironment, AasEnvironmentLoader aasEnvironmentLoader) {
 		this.request = request;
 		this.aasEnvironment = aasEnvironment;
+		this.aasEnvironmentLoader = aasEnvironmentLoader;
 	}
 
 	@Override
@@ -94,6 +103,24 @@ public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 		} catch (SerializationException | IOException e) {
 			return new ResponseEntity<Resource>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	@Override
+	public ResponseEntity<Boolean> uploadEnvironment(MultipartFile envFile) {
+		try {
+			EnvironmentType envType = EnvironmentType.getFromMimeType(envFile.getContentType());
+
+			if (envType == null)
+				envType = EnvironmentType.AASX;
+
+			aasEnvironmentLoader.loadEnvironment(CompleteEnvironment.fromInputStream(envFile.getInputStream(), envType));
+
+		} catch (InvalidFormatException e) {
+			return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
+		} catch (DeserializationException | IOException e) {
+			return new ResponseEntity<Boolean>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	private List<String> getOriginalIds(List<String> ids) {
