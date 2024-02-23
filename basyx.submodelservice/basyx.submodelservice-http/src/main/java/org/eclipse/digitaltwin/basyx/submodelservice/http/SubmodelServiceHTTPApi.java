@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.http;
 
+import java.util.List;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
 import org.eclipse.digitaltwin.aas4j.v3.model.Result;
@@ -303,6 +305,24 @@ public interface SubmodelServiceHTTPApi {
 	@RequestMapping(value = "/submodel/submodel-elements/{idShortPath}", produces = { "application/json" }, consumes = { "application/json" }, method = RequestMethod.PUT)
 	ResponseEntity<Void> putSubmodelElementByPath(@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElement body,
+			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
+					"deep" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level);
+
+	@Operation(summary = "Updates the values of the Submodel", description = "", tags = {
+			"Submodel API" })
+	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Submodel updated successfully"),
+
+			@ApiResponse(responseCode = "400", description = "Bad Request, e.g. the request parameters of the format of the request body is wrong.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
+
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
+
+			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
+
+			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
+	@RequestMapping(value = "/submodel/$value", produces = { "application/json" }, consumes = {
+			"application/json" }, method = RequestMethod.PATCH)
+	ResponseEntity<Void> patchSubmodelValueOnly(
+			@Parameter(in = ParameterIn.DEFAULT, description = "Submodel object in its ValueOnly representation", required = false, schema = @Schema()) @Valid @RequestBody List<SubmodelElement> body,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
 					"deep" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level);
 }

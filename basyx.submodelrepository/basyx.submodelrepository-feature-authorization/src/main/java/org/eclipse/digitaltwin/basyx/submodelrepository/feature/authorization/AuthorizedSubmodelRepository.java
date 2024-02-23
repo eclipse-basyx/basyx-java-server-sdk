@@ -239,4 +239,14 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 			throw new InsufficientPermissionException("Insufficient Permission: The current subject does not have the required permissions for this operation.");
 	}
 
+	@Override
+	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
+		boolean isAuthorized = permissionResolver.hasPermission(Action.CREATE,
+				new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
+
+		throwExceptionIfInsufficientPermission(isAuthorized);
+
+		decorated.patchSubmodelElements(submodelId, submodelElementList);
+	}
+
 }

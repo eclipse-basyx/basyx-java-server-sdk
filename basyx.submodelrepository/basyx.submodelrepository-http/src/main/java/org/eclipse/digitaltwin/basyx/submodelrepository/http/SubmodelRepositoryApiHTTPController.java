@@ -296,4 +296,11 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public ResponseEntity<Void> patchSubmodelByIdValueOnly(Base64UrlEncodedIdentifier submodelIdentifier,
+			@Valid List<SubmodelElement> body, @Valid String level) {
+		repository.patchSubmodelElements(submodelIdentifier.getIdentifier(), body);
+		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+	}
 }

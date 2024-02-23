@@ -110,5 +110,9 @@ public class SubmodelRepositorySubmodelServiceWrapper implements SubmodelService
 		return repoApi.invokeOperation(submodelId, idShortPath, input);
 	}
 
+	@Override
+	public void patchSubmodelElements(List<SubmodelElement> submodelElementList) {
+		repoApi.patchSubmodelElements(submodelId, submodelElementList);
+	}
 
 }

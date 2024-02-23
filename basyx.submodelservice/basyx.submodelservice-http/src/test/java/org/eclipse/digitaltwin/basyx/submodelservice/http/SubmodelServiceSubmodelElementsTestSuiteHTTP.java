@@ -480,6 +480,19 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 	}
 
 	@Test
+	public void patchSubmodelValues() throws FileNotFoundException, IOException, ParseException {
+		String patch = getJSONValueAsString("value/newSubmodelValue.json");
+
+		CloseableHttpResponse patchResponse = BaSyxHttpTestUtils.executePatchOnURL(createSubmodelValueURL(), patch);
+		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(createSubmodelValueURL());
+
+		String expected = getJSONValueAsString("value/expectedNewSubmodelValue.json");
+
+		assertEquals(HttpStatus.NO_CONTENT.value(), patchResponse.getCode());
+		BaSyxHttpTestUtils.assertSameJSONContent(expected, BaSyxHttpTestUtils.getResponseAsString(getResponse));
+	}
+
+	@Test
 	public void invokeOperation() throws FileNotFoundException, IOException, ParseException {
 		String parameters = getJSONValueAsString("operation/parameters.json");
 		CloseableHttpResponse response = requestOperationInvocation(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_OPERATION_ID, parameters);
