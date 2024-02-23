@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
+import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.Action;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionException;
@@ -80,6 +81,11 @@ public class AuthorizedAasEnvironment implements AasEnvironment {
 	private void throwExceptionIfInsufficientPermission(boolean isAuthorized) {
 		if (!isAuthorized)
 			throw new InsufficientPermissionException("Insufficient Permission: The current subject does not have the required permissions for this operation.");
+	}
+
+	@Override
+	public void loadEnvironment(CompleteEnvironment completeEnvironment) {
+		decorated.loadEnvironment(completeEnvironment);
 	}
 
 }

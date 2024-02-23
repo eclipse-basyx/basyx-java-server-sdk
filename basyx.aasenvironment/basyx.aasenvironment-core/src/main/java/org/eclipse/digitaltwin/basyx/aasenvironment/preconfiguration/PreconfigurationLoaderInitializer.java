@@ -29,7 +29,7 @@ import java.io.IOException;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
-import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.AasEnvironmentLoader;
+import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,12 +43,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class PreconfigurationLoaderInitializer implements InitializingBean {
 
-	private AasEnvironmentLoader environmentLoader;
+	private AasEnvironment environmentLoader;
 
 	private AasEnvironmentPreconfigurationLoader preconfigurationLoader;
 
 	@Autowired
-	public PreconfigurationLoaderInitializer(AasEnvironmentLoader environmentLoader,
+	public PreconfigurationLoaderInitializer(AasEnvironment environmentLoader,
 			AasEnvironmentPreconfigurationLoader preconfigurationLoader) {
 		super();
 		this.environmentLoader = environmentLoader;

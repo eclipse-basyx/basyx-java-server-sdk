@@ -33,7 +33,6 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
-import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.AasEnvironmentLoader;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment.EnvironmentType;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
@@ -65,13 +64,10 @@ public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 
 	private final AasEnvironment aasEnvironment;
 
-	private final AasEnvironmentLoader aasEnvironmentLoader;
-
 	@Autowired
-	public AasEnvironmentApiHTTPController(HttpServletRequest request, AasEnvironment aasEnvironment, AasEnvironmentLoader aasEnvironmentLoader) {
+	public AasEnvironmentApiHTTPController(HttpServletRequest request, AasEnvironment aasEnvironment) {
 		this.request = request;
 		this.aasEnvironment = aasEnvironment;
-		this.aasEnvironmentLoader = aasEnvironmentLoader;
 	}
 
 	@Override
@@ -113,7 +109,7 @@ public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 			if (envType == null)
 				envType = EnvironmentType.AASX;
 
-			aasEnvironmentLoader.loadEnvironment(CompleteEnvironment.fromInputStream(envFile.getInputStream(), envType));
+			aasEnvironment.loadEnvironment(CompleteEnvironment.fromInputStream(envFile.getInputStream(), envType));
 
 		} catch (InvalidFormatException e) {
 			return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);

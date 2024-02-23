@@ -54,8 +54,8 @@ public class AasEnvironmentConfiguration {
 		return new DecoratedAasEnvironmentFactory(aasEnvironmentFactory, features).create();
 	}
 
-	@Bean
-	public AasEnvironmentLoader createAasEnvironmentLoader(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
-		return new AasEnvironmentLoader(aasRepository, submodelRepository, conceptDescriptionRepository);
-	}
+//	@Bean
+//	public AasEnvironmentLoader createAasEnvironmentLoader(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
+//		return new AasEnvironmentLoader(aasRepository, submodelRepository, conceptDescriptionRepository);
+//	}
 }
