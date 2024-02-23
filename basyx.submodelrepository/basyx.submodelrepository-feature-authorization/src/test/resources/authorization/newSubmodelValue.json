@@ -1,0 +1,440 @@
+[
+	  {
+	    "modelType": "AnnotatedRelationshipElement",
+	    "category": "PARAMETER",
+	    "idShort": "new_AnnotatedRelationshipElement",
+	    "first": {
+	      "keys": [
+	        {
+	          "type": "DataElement",
+	          "value": "new_DataElement"
+	        }
+	      ],
+	      "type": "ModelReference"
+	    },
+    "second": {
+      "keys": [
+        {
+          "type": "BasicEventElement",
+          "value": "new_BasicEventElement"
+        }
+      ],
+      "type": "ExternalReference"
+    },
+    "annotations": [
+      {
+        "modelType": "Property",
+        "value": "new_5000",
+        "valueType": "xs:integer",
+        "category": "PARAMETER",
+        "idShort": "new_MaxRotationSpeed",
+        "semanticId": {
+          "keys": [
+            {
+              "type": "ConceptDescription",
+              "value": "new_0173-1#02-BAA120#008"
+            }
+          ],
+          "type": "ExternalReference"
+        }
+      },
+      {
+        "modelType": "Range",
+        "max": "300",
+        "min": "200",
+        "valueType": "xs:integer",
+        "category": "PARAMETER",
+        "idShort": "new_RotationSpeedRange",
+        "semanticId": {
+          "keys": [
+            {
+              "type": "ConceptDescription",
+              "value": "new_0173-1#02-BAA120#008"
+            }
+          ],
+          "type": "ExternalReference"
+        }
+      }
+    ],
+    "semanticId": {
+      "keys": [
+        {
+          "type": "ConceptDescription",
+          "value": "new_0173-1#02-BAA120#008"
+        }
+      ],
+      "type": "ExternalReference"
+    }
+  },
+  {
+    "modelType": "Blob",
+    "contentType": "application/xml",
+    "value": "VGVzdCBjb250ZW50IG9mIFhNTCBmaWxl",
+    "category": "PARAMETER",
+    "idShort": "new_BlobData",
+    "semanticId": {
+      "keys": [
+        {
+          "type": "ConceptDescription",
+          "value": "new_0173-1#02-BAA120#008"
+        }
+      ],
+      "type": "ExternalReference"
+    }
+  },
+  {
+    "modelType": "Entity",
+    "entityType": "CoManagedEntity",
+    "specificAssetIds": [
+      {
+        "name": "specificAssetIdName",
+        "value": "new_specificValue"
+      }
+    ],
+    "statements": [
+      {
+        "modelType": "Property",
+        "value": "new_5000",
+        "valueType": "xs:integer",
+        "category": "PARAMETER",
+        "idShort": "new_MaxRotationSpeed",
+        "semanticId": {
+          "keys": [
+            {
+              "type": "ConceptDescription",
+              "value": "new_0173-1#02-BAA120#008"
+            }
+          ],
+          "type": "ExternalReference"
+        }
+      },
+      {
+        "modelType": "Range",
+        "max": "300",
+        "min": "200",
+        "valueType": "xs:integer",
+        "category": "PARAMETER",
+        "idShort": "new_RotationSpeedRange",
+        "semanticId": {
+          "keys": [
+            {
+              "type": "ConceptDescription",
+              "value": "new_0173-1#02-BAA120#008"
+            }
+          ],
+          "type": "ExternalReference"
+        }
+      }
+    ],
+    "category": "Entity",
+    "idShort": "new_EntityData",
+    "globalAssetId": "globalAssetID",
+    "semanticId": {
+      "keys": [
+        {
+          "type": "ConceptDescription",
+          "value": "new_0173-1#02-BAA120#008"
+        }
+      ],
+      "type": "ExternalReference"
+    }
+  },
+  {
+    "modelType": "File",
+    "contentType": "application/json",
+    "value": "new_testFile.json",
+    "category": "PARAMETER",
+    "idShort": "new_FileData",
+    "semanticId": {
+      "keys": [
+        {
+          "type": "ConceptDescription",
+          "value": "new_0173-1#02-BAA120#008"
+        }
+      ],
+      "type": "ExternalReference"
+    }
+  },
+  {
+    "modelType": "Property",
+    "value": "new_5000",
+    "valueType": "xs:integer",
+    "category": "PARAMETER",
+    "idShort": "new_MaxRotationSpeed",
+    "semanticId": {
+      "keys": [
+        {
+          "type": "ConceptDescription",
+          "value": "new_0173-1#02-BAA120#008"
+        }
+      ],
+      "type": "ExternalReference"
+    }
+  },
+  {
+    "modelType": "MultiLanguageProperty",
+    "category": "PARAM",
+    "idShort": "new_MultiLanguage",
+    "semanticId": {
+      "keys": [
+        {
+          "type": "ConceptDescription",
+          "value": "new_0173-1#02-BAA120#008"
+        }
+      ],
+      "type": "ExternalReference"
+    },
+    "value": [
+      {
+        "language": "en",
+        "text": "Hello"
+      },
+      {
+        "language": "de",
+        "text": "Hallo"
+      }
+    ]
+  },
+  {
+    "modelType": "ReferenceElement",
+    "category": "PARAMETER",
+    "idShort": "new_ReferenceElement",
+    "value": {
+      "keys": [
+        {
+          "type": "DataElement",
+          "value": "new_DataElement"
+        }
+      ],
+      "type": "ModelReference"
+    },
+    "semanticId": {
+      "keys": [
+        {
+          "type": "ConceptDescription",
+          "value": "new_0173-1#02-BAA120#008"
+        }
+      ],
+      "type": "ExternalReference"
+    }
+  },
+  {
+    "modelType": "RelationshipElement",
+    "category": "PARAMETER",
+    "idShort": "new_RelationshipElement",
+    "first": {
+      "keys": [
+        {
+          "type": "DataElement",
+          "value": "new_DataElement"
+        }
+      ],
+      "type": "ModelReference"
+    },
+    "second": {
+      "keys": [
+        {
+          "type": "BasicEventElement",
+          "value": "new_BasicEventElement"
+        }
+      ],
+      "type": "ExternalReference"
+    },
+    "semanticId": {
+      "keys": [
+        {
+          "type": "ConceptDescription",
+          "value": "new_0173-1#02-BAA120#008"
+        }
+      ],
+      "type": "ExternalReference"
+    }
+  },
+  {
+    "modelType": "Property",
+    "value": "new_4370",
+    "valueType": "xs:integer",
+    "category": "VARIABLE",
+    "idShort": "new_RotationSpeed",
+    "semanticId": {
+      "keys": [
+        {
+          "type": "ConceptDescription",
+          "value": "new_http://customer.com/cd/1/1/18EBD56F6B43D895"
+        }
+      ],
+      "type": "ExternalReference"
+    }
+  },
+  {
+    "modelType": "Range",
+    "max": "300",
+    "min": "200",
+    "valueType": "xs:integer",
+    "category": "PARAMETER",
+    "idShort": "new_RotationSpeedRange",
+    "semanticId": {
+      "keys": [
+        {
+          "type": "ConceptDescription",
+          "value": "new_0173-1#02-BAA120#008"
+        }
+      ],
+      "type": "ExternalReference"
+    }
+  },
+  {
+    "modelType": "SubmodelElementCollection",
+    "idShort": "new_SimpleCollection",
+    "value": [
+      {
+        "modelType": "Property",
+        "value": "new_4370",
+        "valueType": "xs:integer",
+        "category": "VARIABLE",
+        "idShort": "new_MyFirstSubmodelElement"
+      }
+    ]
+  },
+  {
+    "modelType": "SubmodelElementList",
+    "idShort": "new_SimpleList",
+    "orderRelevant": true,
+    "value": [
+      {
+        "modelType": "Property",
+        "value": "new_4370",
+        "valueType": "xs:integer",
+        "category": "VARIABLE",
+        "idShort": "new_MySecondSubmodelElement"
+      }
+    ]
+  },
+  {
+    "modelType": "SubmodelElementCollection",
+    "category": "PARAMETER",
+    "idShort": "new_SubmodelElementCollection",
+    "value": [
+      {
+        "modelType": "File",
+        "contentType": "application/json",
+        "value": "new_testFile.json",
+        "category": "PARAMETER",
+        "idShort": "new_FileData",
+        "semanticId": {
+          "keys": [
+            {
+              "type": "ConceptDescription",
+              "value": "new_0173-1#02-BAA120#008"
+            }
+          ],
+          "type": "ExternalReference"
+        }
+      },
+      {
+        "modelType": "Property",
+        "value": "new_5000",
+        "valueType": "xs:integer",
+        "category": "PARAMETER",
+        "idShort": "new_MaxRotationSpeed",
+        "semanticId": {
+          "keys": [
+            {
+              "type": "ConceptDescription",
+              "value": "new_0173-1#02-BAA120#008"
+            }
+          ],
+          "type": "ExternalReference"
+        }
+      }
+    ],
+    "semanticId": {
+      "keys": [
+        {
+          "type": "ConceptDescription",
+          "value": "new_0173-1#02-BAA120#008"
+        }
+      ],
+      "type": "ExternalReference"
+    }
+  },
+  {
+    "modelType": "SubmodelElementList",
+    "category": "PARAMETER",
+    "idShort": "new_SubmodelElementList",
+    "orderRelevant": true,
+    "value": [
+      {
+        "modelType": "Range",
+        "max": "300",
+        "min": "200",
+        "valueType": "xs:integer",
+        "category": "PARAMETER",
+        "idShort": "new_RotationSpeedRange",
+        "semanticId": {
+          "keys": [
+            {
+              "type": "ConceptDescription",
+              "value": "new_0173-1#02-BAA120#008"
+            }
+          ],
+          "type": "ExternalReference"
+        }
+      },
+      {
+        "modelType": "Property",
+        "value": "new_5000",
+        "valueType": "xs:integer",
+        "category": "PARAMETER",
+        "idShort": "new_MaxRotationSpeed",
+        "semanticId": {
+          "keys": [
+            {
+              "type": "ConceptDescription",
+              "value": "new_0173-1#02-BAA120#008"
+            }
+          ],
+          "type": "ExternalReference"
+        }
+      }
+    ],
+    "semanticId": {
+      "keys": [
+        {
+          "type": "ConceptDescription",
+          "value": "new_0173-1#02-BAA120#008"
+        }
+      ],
+      "type": "ExternalReference"
+    }
+  },
+  {
+    "modelType": "Property",
+    "value": "new_4370",
+    "valueType": "xs:integer",
+    "category": "VARIABLE",
+    "idShort": "new_elementToDelete"
+  },
+  {
+    "modelType": "Operation",
+    "idShort": "new_square",
+    "inputVariables": [
+      {
+        "value": {
+          "modelType": "Property",
+          "valueType": "xs:int",
+          "idShort": "new_input"
+        }
+      }
+    ],
+    "outputVariables": [
+      {
+        "value": {
+          "modelType": "Property",
+          "valueType": "xs:int",
+          "idShort": "new_result"
+        }
+      }
+    ]
+  }
+]
