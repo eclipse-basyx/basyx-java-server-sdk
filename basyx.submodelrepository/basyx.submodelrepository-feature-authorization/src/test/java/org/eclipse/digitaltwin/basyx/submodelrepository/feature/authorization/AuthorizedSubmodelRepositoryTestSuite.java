@@ -75,6 +75,7 @@ public class AuthorizedSubmodelRepositoryTestSuite {
 	public static String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
 	public static String submodelRepositoryBaseUrl = "http://127.0.0.1:8088";
 	public static String clientId = "basyx-client-api";
+	public static String healthEndpointUrl = "http://127.0.0.1:8088/actuator/health";
 	private static AccessTokenProvider tokenProvider;
 	private static final String FILE_NAME = "BaSyx-Logo.png";
 
@@ -83,6 +84,16 @@ public class AuthorizedSubmodelRepositoryTestSuite {
 		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
 
 		createElementOnRepositoryWithAuthorization(createSubmodelRepositoryUrl(submodelRepositoryBaseUrl), getSubmodelJSONString(SUBMODEL_SIMPLE_1_JSON), getAdminAccessToken());
+	}
+	
+	@Test
+	public void healthEndpointWithoutAuthorization() throws IOException, ParseException {
+		String expectedHealthEndpointOutput = getJSONValueAsString("authorization/HealthOutput.json");
+		
+		CloseableHttpResponse healthCheckResponse = BaSyxHttpTestUtils.executeGetOnURL(healthEndpointUrl);
+		assertEquals(HttpStatus.OK.value(), healthCheckResponse.getCode());
+		
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedHealthEndpointOutput, BaSyxHttpTestUtils.getResponseAsString(healthCheckResponse));
 	}
 
 	@Test

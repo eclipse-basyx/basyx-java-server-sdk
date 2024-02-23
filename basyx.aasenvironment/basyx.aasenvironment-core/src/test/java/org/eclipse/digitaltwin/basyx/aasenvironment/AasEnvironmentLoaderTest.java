@@ -30,27 +30,28 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.AasEnvironmentLoader;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.InMemoryConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.ResourceLoader;
+
 
 /**
  * Tests the behavior of {@link AasEnvironmentLoader}
@@ -72,16 +73,16 @@ public class AasEnvironmentLoaderTest {
 	protected AasRepository aasRepository;
 	protected SubmodelRepository submodelRepository;
 	protected ConceptDescriptionRepository conceptDescriptionRepository;
-	protected ResourceLoader rLoader = new DefaultResourceLoader();
+	protected DefaultResourceLoader rLoader = new DefaultResourceLoader();
 
 	@Before
 	public void setUp() {
-		submodelRepository = Mockito.spy(new InMemorySubmodelRepository(new InMemorySubmodelServiceFactory()));
-		aasRepository = Mockito.spy(new SimpleAasRepositoryFactory(new AasInMemoryBackendProvider(), new InMemoryAasServiceFactory()).create());
-		conceptDescriptionRepository = Mockito.spy(new InMemoryConceptDescriptionRepository("cdRepo"));
+		submodelRepository = Mockito.spy(new CrudSubmodelRepository(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory()));
+		aasRepository = Mockito.spy(new CrudAasRepository(new AasInMemoryBackendProvider(), new InMemoryAasServiceFactory()));
+		conceptDescriptionRepository = Mockito.spy(new CrudConceptDescriptionRepository(new ConceptDescriptionInMemoryBackendProvider()));
 	}
 
-	protected void loadRepositories(List<String> pathsToLoad) throws IOException, InvalidFormatException, DeserializationException {
+	protected void loadRepositories(List<String> pathsToLoad) throws IOException, DeserializationException, InvalidFormatException {
 		AasEnvironmentLoader envLoader = new AasEnvironmentLoader(aasRepository, submodelRepository, conceptDescriptionRepository);
 		for (String path: pathsToLoad) {
 			File file = rLoader.getResource(path).getFile();
@@ -90,7 +91,7 @@ public class AasEnvironmentLoaderTest {
 	}
 
 	@Test
-	public void testWithResourceFile_AllElementsAreDeployed() throws InvalidFormatException, IOException, DeserializationException, SerializationException {
+	public void testWithResourceFile_AllElementsAreDeployed() throws InvalidFormatException, IOException, DeserializationException {
 		loadRepositories(List.of(TEST_ENVIRONMENT_JSON));
 
 		Assert.assertEquals(2, aasRepository.getAllAas(ALL).getResult().size());
@@ -99,7 +100,7 @@ public class AasEnvironmentLoaderTest {
 	}
 
 	@Test
-	public void testDeployedTwiceNoVersion_AllDeployedButNotOverriden() throws InvalidFormatException, IOException, DeserializationException, SerializationException {
+	public void testDeployedTwiceNoVersion_AllDeployedButNotOverriden() throws InvalidFormatException, IOException, DeserializationException {
 		loadRepositories(List.of(TEST_ENVIRONMENT_JSON));
 		loadRepositories(List.of(TEST_ENVIRONMENT_JSON));
 
@@ -115,7 +116,7 @@ public class AasEnvironmentLoaderTest {
 	}
 
 	@Test
-	public void testDeployedTwiceWithSameVersion_AllDeployedButNotOverriden() throws InvalidFormatException, IOException, DeserializationException, SerializationException {
+	public void testDeployedTwiceWithSameVersion_AllDeployedButNotOverriden() throws InvalidFormatException, IOException, DeserializationException {
 		loadRepositories(List.of(TEST_ENVIRONMENT_VERSION_ON_SECOND_JSON));
 		loadRepositories(List.of(TEST_ENVIRONMENT_VERSION_ON_SECOND_JSON));
 
@@ -131,7 +132,7 @@ public class AasEnvironmentLoaderTest {
 	}
 
 	@Test
-	public void testDeployedTwiceNewRevision_ElementsAreOverriden() throws InvalidFormatException, IOException, DeserializationException, SerializationException {
+	public void testDeployedTwiceNewRevision_ElementsAreOverriden() throws InvalidFormatException, IOException, DeserializationException {
 		loadRepositories(List.of(TEST_ENVIRONMENT_VERSION_ON_SECOND_JSON));
 		loadRepositories(List.of(TEST_ENVIRONMENT_VERSION_AND_REVISION_ON_SECOND_JSON));
 

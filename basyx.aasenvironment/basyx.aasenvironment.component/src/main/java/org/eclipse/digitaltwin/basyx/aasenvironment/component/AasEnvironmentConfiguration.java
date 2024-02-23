@@ -25,12 +25,17 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
-import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentSerialization;
-import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironmentSerialization;
+import java.util.List;
+
+import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
+import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentFactory;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.AasEnvironmentLoader;
+import org.eclipse.digitaltwin.basyx.aasenvironment.feature.AasEnvironmentFeature;
+import org.eclipse.digitaltwin.basyx.aasenvironment.feature.DecoratedAasEnvironmentFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -42,9 +47,11 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class AasEnvironmentConfiguration {
+	
 	@Bean
-	public AasEnvironmentSerialization createAasEnvironmentSerialization(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
-		return new DefaultAASEnvironmentSerialization(aasRepository, submodelRepository, conceptDescriptionRepository);
+	@ConditionalOnMissingBean
+	public static AasEnvironment getAasEnvironment(AasEnvironmentFactory aasEnvironmentFactory, List<AasEnvironmentFeature> features) {
+		return new DecoratedAasEnvironmentFactory(aasEnvironmentFactory, features).create();
 	}
 
 	@Bean

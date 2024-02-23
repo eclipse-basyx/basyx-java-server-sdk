@@ -11,25 +11,15 @@ middleware that integrates traditional production systems (e.g. PLC controllers)
 and state-of-the art IT technology (BPMN engine, SOA) to enable next generation
 of production automation.
 
-* https://projects.eclipse.org/projects/technology.basyx
+* https://projects.eclipse.org/projects/dt.basyx
 
 ## Developer resources
 
-Information regarding source code management, builds, coding standards, and
-more.
-
-* https://projects.eclipse.org/projects/technology.basyx/developer
-
 The project maintains the following source code repositories
 
-* https://git.eclipse.org/r/plugins/gitiles/basyx/basyx
-* https://git.eclipse.org/r/plugins/gitiles/basyx/basyx.website
+* https://github.com/eclipse-basyx/
 
-This project uses Bugzilla to track ongoing development and issues.
-
-* Search for issues: https://bugs.eclipse.org/bugs/buglist.cgi?product=Basyx
-* Create a new report:
-   https://bugs.eclipse.org/bugs/enter_bug.cgi?product=Basyx
+This project uses GitHub to track ongoing development and issues.
 
 Be sure to search for existing bugs before you create another one. Remember that
 contributions are always welcome!

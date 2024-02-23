@@ -30,9 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.SerializationException;
-import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentSerialization;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
+import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.AasEnvironmentLoader;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment.EnvironmentType;
@@ -63,14 +63,14 @@ public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 
 	private final HttpServletRequest request;
 
-	private final AasEnvironmentSerialization aasEnvironment;
+	private final AasEnvironment aasEnvironment;
 
 	private final AasEnvironmentLoader aasEnvironmentLoader;
 
 	@Autowired
-	public AasEnvironmentApiHTTPController(HttpServletRequest request, AasEnvironmentSerialization aasEnvironmentSerialization, AasEnvironmentLoader aasEnvironmentLoader) {
+	public AasEnvironmentApiHTTPController(HttpServletRequest request, AasEnvironment aasEnvironment, AasEnvironmentLoader aasEnvironmentLoader) {
 		this.request = request;
-		this.aasEnvironment = aasEnvironmentSerialization;
+		this.aasEnvironment = aasEnvironment;
 		this.aasEnvironmentLoader = aasEnvironmentLoader;
 	}
 

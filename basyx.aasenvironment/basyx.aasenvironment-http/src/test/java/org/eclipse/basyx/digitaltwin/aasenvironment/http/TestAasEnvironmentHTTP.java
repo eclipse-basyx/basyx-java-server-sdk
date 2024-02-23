@@ -47,7 +47,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.ProtocolException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.DeserializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.TestAASEnvironmentSerialization;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
@@ -65,9 +65,9 @@ import org.springframework.util.ResourceUtils;
 
 public class TestAasEnvironmentHTTP {
 
-	private static final String JSON_MIMETYPE = "application/json";
-	private static final String XML_MIMETYPE = "application/xml";
-	private static final String AASX_MIMETYPE = "application/asset-administration-shell-package+xml";
+	public static final String JSON_MIMETYPE = "application/json";
+	public static final String XML_MIMETYPE = "application/xml";
+	public static final String AASX_MIMETYPE = "application/asset-administration-shell-package+xml";
 
 	private static final String AASX_ENV_PATH = "testEnvironment.aasx";
 	private static final String JSON_ENV_PATH = "testEnvironment.json";
@@ -202,7 +202,7 @@ public class TestAasEnvironmentHTTP {
 		assertEquals(HttpStatus.BAD_REQUEST.value(), response.getCode());
 	}
 
-	private String createSerializationURL(boolean includeConceptDescription) {
+	public static String createSerializationURL(boolean includeConceptDescription) {
 		return getSerializationURL(createIdCollection(DummyAASEnvironmentComponent.AAS_TECHNICAL_DATA_ID, DummyAASEnvironmentComponent.AAS_OPERATIONAL_DATA_ID),
 				createIdCollection(DummyAASEnvironmentComponent.SUBMODEL_OPERATIONAL_DATA_ID, DummyAASEnvironmentComponent.SUBMODEL_TECHNICAL_DATA_ID), includeConceptDescription);
 	}
@@ -225,7 +225,7 @@ public class TestAasEnvironmentHTTP {
 		return BaSyxHttpTestUtils.createPostRequestWithFile(getAASXUploadURL(), file, contentType);
 	}
 
-	private static String getURL() {
+	public static String getURL() {
 		return "http://localhost:8081";
 	}
 
@@ -233,14 +233,14 @@ public class TestAasEnvironmentHTTP {
 		return getURL() + "/upload";
 	}
 
-	private String getSerializationURL(Collection<String> aasIds, Collection<String> submodelIds, boolean includeConceptDescription) {
+	public static String getSerializationURL(Collection<String> aasIds, Collection<String> submodelIds, boolean includeConceptDescription) {
 		String aasIdsArrayString = createIdsArrayString(aasIds);
 		String submodelIdsArrayString = createIdsArrayString(submodelIds);
 
 		return getURL() + "/serialization?aasIds=" + aasIdsArrayString + "&submodelIds=" + submodelIdsArrayString + "&includeConceptDescriptions=" + includeConceptDescription;
 	}
 
-	private String createIdsArrayString(Collection<String> ids) {
+	private static String createIdsArrayString(Collection<String> ids) {
 		String idsArrayString = "";
 		for (String id : ids) {
 			if (!idsArrayString.isEmpty())
@@ -250,7 +250,7 @@ public class TestAasEnvironmentHTTP {
 		return idsArrayString;
 	}
 
-	private List<String> createIdCollection(String... ids) {
+	public static List<String> createIdCollection(String... ids) {
 		List<String> results = new ArrayList<>();
 		for (String id : ids) {
 			results.add(id);

@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
@@ -46,7 +47,7 @@ public interface AasDiscoveryService {
 	 * @param assetIds
 	 * @return a list of all matching Aas Ids
 	 */
-	public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo, List<String> assetIds);
+	public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo, List<AssetLink> assetIds);
 
 	/**
 	 * Returns a list of asset identifier key-value-pairs based on an Asset

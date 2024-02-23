@@ -1,9 +1,9 @@
 package org.eclipse.digitaltwin.basyx.http;
 
+import org.springframework.stereotype.Component;
+
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import jakarta.validation.constraints.Size;
-import org.springframework.stereotype.Component;
 
 @Component
 public class Base64UrlEncodedIdentifierSizeValidator implements ConstraintValidator<Base64UrlEncodedIdentifierSize, Base64UrlEncodedIdentifier> {
