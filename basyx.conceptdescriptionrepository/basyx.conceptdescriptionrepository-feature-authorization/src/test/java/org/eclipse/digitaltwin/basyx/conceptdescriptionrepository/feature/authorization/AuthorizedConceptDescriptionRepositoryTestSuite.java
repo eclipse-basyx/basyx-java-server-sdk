@@ -33,6 +33,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.basyx.authorization.AccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.authorization.DummyCredential;
 import org.eclipse.digitaltwin.basyx.authorization.DummyCredentialStore;
@@ -56,6 +57,7 @@ public class AuthorizedConceptDescriptionRepositoryTestSuite {
 	private static final String SPECIFIC_CONCEPT_DESCRIPTION_ID = "specificConceptDescriptionId";
 	public static String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
 	public static String conceptDescriptionRepositoryBaseUrl = "http://127.0.0.1:8089";
+	public static String healthEndpointUrl = "http://127.0.0.1:8089/actuator/health";
 	public static String clientId = "basyx-client-api";
 	private static AccessTokenProvider tokenProvider;
 	
@@ -64,6 +66,16 @@ public class AuthorizedConceptDescriptionRepositoryTestSuite {
 		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
 		
 		createConceptDescriptionOnRepositoryWithAuthorization(getConceptDescriptionJSONString(CONCEPT_DESCRIPTION_SIMPLE_1_JSON), getAdminAccessToken());
+	}
+	
+	@Test
+	public void healthEndpointWithoutAuthorization() throws IOException, ParseException {
+		String expectedHealthEndpointOutput = getConceptDescriptionJSONString("authorization/HealthOutput.json");
+		
+		CloseableHttpResponse healthCheckResponse = BaSyxHttpTestUtils.executeGetOnURL(healthEndpointUrl);
+		assertEquals(HttpStatus.OK.value(), healthCheckResponse.getCode());
+		
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedHealthEndpointOutput, BaSyxHttpTestUtils.getResponseAsString(healthCheckResponse));
 	}
 
 	@Test
