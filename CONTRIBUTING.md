@@ -11,14 +11,9 @@ middleware that integrates traditional production systems (e.g. PLC controllers)
 and state-of-the art IT technology (BPMN engine, SOA) to enable next generation
 of production automation.
 
-* https://projects.eclipse.org/projects/technology.basyx
+* https://projects.eclipse.org/projects/dt.basyx
 
 ## Developer resources
-
-Information regarding source code management, builds, coding standards, and
-more.
-
-* https://projects.eclipse.org/projects/dt.basyx
 
 The project maintains the following source code repositories
 
