@@ -66,9 +66,9 @@ public class DummyAASEnvironmentComponent {
 	}
 
 	public void initRepositories(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
-		createDummySubmodels().forEach(sm -> submodelRepository.createSubmodel(sm));
-		createDummyShells().forEach(aas -> aasRepository.createAas(aas));
-		createDummyConceptDescriptions().forEach(cd -> conceptDescriptionRepository.createConceptDescription(cd));
+		createDummySubmodels().forEach(submodelRepository::createSubmodel);
+		createDummyShells().forEach(aasRepository::createAas);
+		createDummyConceptDescriptions().forEach(conceptDescriptionRepository::createConceptDescription);
 	}
 
 	private Collection<Submodel> createDummySubmodels() {

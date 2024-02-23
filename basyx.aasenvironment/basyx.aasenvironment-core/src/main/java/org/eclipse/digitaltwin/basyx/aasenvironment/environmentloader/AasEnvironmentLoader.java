@@ -84,9 +84,9 @@ public class AasEnvironmentLoader {
 		IdentifiableRepository<ConceptDescription> repo = new DelegatingIdentifiableRepository<ConceptDescription>(conceptDescriptionRepository::getConceptDescription, conceptDescriptionRepository::updateConceptDescription,
 				conceptDescriptionRepository::createConceptDescription);
 		IdentifiableUploader<ConceptDescription> uploader = new IdentifiableUploader<ConceptDescription>(repo);
-		for (ConceptDescription eachConceptDescription : environment.getConceptDescriptions()) {
-			boolean success = uploader.upload(eachConceptDescription);
-			logSuccessConceptDescription(eachConceptDescription.getId(), success);
+		for (ConceptDescription conceptDescription : environment.getConceptDescriptions()) {
+			boolean success = uploader.upload(conceptDescription);
+			logSuccessConceptDescription(conceptDescription.getId(), success);
 		}
 	}
 
@@ -138,18 +138,18 @@ public class AasEnvironmentLoader {
 	private void createShellsOnRepositoryFromEnvironment(Environment environment) {
 		IdentifiableRepository<AssetAdministrationShell> repo = new DelegatingIdentifiableRepository<AssetAdministrationShell>(aasRepository::getAas, aasRepository::updateAas, aasRepository::createAas);
 		IdentifiableUploader<AssetAdministrationShell> uploader = new IdentifiableUploader<>(repo);
-		for (AssetAdministrationShell eachAas : environment.getAssetAdministrationShells()) {
-			boolean success = uploader.upload(eachAas);
-			logSuccess("shell", eachAas.getId(), success);
+		for (AssetAdministrationShell shell : environment.getAssetAdministrationShells()) {
+			boolean success = uploader.upload(shell);
+			logSuccess("shell", shell.getId(), success);
 		}
 	}
 
 	private void createSubmodelsOnRepository(List<Submodel> submodels) {
 		IdentifiableRepository<Submodel> repo = new DelegatingIdentifiableRepository<Submodel>(submodelRepository::getSubmodel, submodelRepository::updateSubmodel, submodelRepository::createSubmodel);
 		IdentifiableUploader<Submodel> uploader = new IdentifiableUploader<>(repo);
-		for (Submodel eachSubmodel : submodels) {
-			boolean success = uploader.upload(eachSubmodel);
-			logSuccess("submodel", eachSubmodel.getId(), success);
+		for (Submodel submodel : submodels) {
+			boolean success = uploader.upload(submodel);
+			logSuccess("submodel", submodel.getId(), success);
 		}
 	}
 

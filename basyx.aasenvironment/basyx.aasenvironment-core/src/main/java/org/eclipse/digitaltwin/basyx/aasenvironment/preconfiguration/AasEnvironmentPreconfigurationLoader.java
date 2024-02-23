@@ -131,7 +131,7 @@ public class AasEnvironmentPreconfigurationLoader {
 	}
 
 	private void logLoadingProcess(int current, int overall, String filename) {
-		logger.info("Loading AAS Environment (" + current + "/" + overall + ") from file '" + filename + "'");
+		logger.info("Loading AAS Environment ({}/{}) from file '{}'", current, overall, filename);
 	}
 
 }

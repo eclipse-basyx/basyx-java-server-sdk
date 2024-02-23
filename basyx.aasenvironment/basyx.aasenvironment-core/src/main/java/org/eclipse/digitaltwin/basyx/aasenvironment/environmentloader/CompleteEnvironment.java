@@ -96,20 +96,20 @@ public class CompleteEnvironment {
 		return fromInputStream(new FileInputStream(file), EnvironmentType.getFromFilePath(file.getPath()));
 	}
 
-	public static CompleteEnvironment fromInputStream(InputStream fIn, EnvironmentType envType) throws DeserializationException, InvalidFormatException, IOException {
+	public static CompleteEnvironment fromInputStream(InputStream inputStream, EnvironmentType envType) throws DeserializationException, InvalidFormatException, IOException {
 		Environment environment = null;
 		List<InMemoryFile> relatedFiles = null;
 
 		if(envType == EnvironmentType.JSON) {
 			JsonDeserializer deserializer = new JsonDeserializer();
-			environment = deserializer.read(fIn, Environment.class);
+			environment = deserializer.read(inputStream, Environment.class);
 		}
 		if(envType == EnvironmentType.XML) {
 			XmlDeserializer deserializer = new XmlDeserializer();
-			environment = deserializer.read(fIn);
+			environment = deserializer.read(inputStream);
 		}
 		if(envType == EnvironmentType.AASX) {
-			AASXDeserializer deserializer = new AASXDeserializer(fIn);
+			AASXDeserializer deserializer = new AASXDeserializer(inputStream);
 			relatedFiles = deserializer.getRelatedFiles();
 			environment = deserializer.read();
 		}
