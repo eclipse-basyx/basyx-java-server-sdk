@@ -1074,7 +1074,7 @@ public class AuthorizedSubmodelRepositoryTestSuite {
 
 	@Test
 	public void patchSubmodelValueWithCorrectRoleAndPermission() throws IOException {
-		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_CREDENTIAL);
+		String accessToken = getAccessToken(DummyCredentialStore.BASYX_CREATOR_CREDENTIAL);
 
 		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPatchRequest(
 				getSpecificSubmodelValueOnlyAccessURL(SPECIFIC_SUBMODEL_ID),
@@ -1085,7 +1085,7 @@ public class AuthorizedSubmodelRepositoryTestSuite {
 
 	@Test
 	public void patchSubmodelValueWithCorrectRoleAndSpecificSubmodelPermission() throws IOException {
-		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_TWO_CREDENTIAL);
+		String accessToken = getAccessToken(DummyCredentialStore.BASYX_CREATOR_CREDENTIAL);
 
 		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPatchRequest(
 				getSpecificSubmodelValueOnlyAccessURL(SPECIFIC_SUBMODEL_ID),
