@@ -27,8 +27,13 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
+import org.eclipse.digitaltwin.aas4j.v3.model.Identifiable;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.Action;
@@ -85,7 +90,23 @@ public class AuthorizedAasEnvironment implements AasEnvironment {
 
 	@Override
 	public void loadEnvironment(CompleteEnvironment completeEnvironment) {
+		Environment environment = completeEnvironment.getEnvironment();
+		
+		boolean isAuthorized = permissionResolver.hasPermission(Action.CREATE, new AasEnvironmentTargetInformation(getAasIds(environment.getAssetAdministrationShells()), getSubmodelIds(environment.getSubmodels()), SerializationType.ALL));
+		
+		throwExceptionIfInsufficientPermission(isAuthorized);
+		
 		decorated.loadEnvironment(completeEnvironment);
+	}
+
+	private List<String> getSubmodelIds(List<Submodel> submodels) {
+		
+		return submodels.stream().map(Identifiable::getId).collect(Collectors.toList());
+	}
+
+	private List<String> getAasIds(List<AssetAdministrationShell> assetAdministrationShells) {
+		
+		return assetAdministrationShells.stream().map(Identifiable::getId).collect(Collectors.toList());
 	}
 
 }

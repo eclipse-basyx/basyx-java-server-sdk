@@ -390,6 +390,20 @@ public class BaSyxHttpTestUtils {
 		return postRequest;
 	}
 	
+	public static HttpPost createAuthorizedPostRequestWithFile(String url, java.io.File file, String contentType, String accessToken) {
+		HttpPost postRequest = new HttpPost(url);
+		postRequest.setHeader("Authorization", "Bearer " + accessToken);
+		
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+		
+		builder.addPart("file", new FileBody(file, ContentType.create(contentType)));
+		builder.setContentType(ContentType.MULTIPART_FORM_DATA);
+		
+		HttpEntity multipart = builder.build();
+		postRequest.setEntity(multipart);
+		return postRequest;
+	}
+	
 	private static HttpPost createAuthorizedPostRequest(String url, String content, String accessToken) {
 		HttpPost aasCreateRequest = createPostRequestWithAuthorizationHeader(url, accessToken);
 		

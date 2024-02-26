@@ -58,4 +58,8 @@ public class DummyCredentialStore {
 
 	public static final DummyCredential BASYX_READER_SERIALIZATION_CREDENTIAL = new DummyCredential("basyx.reader.serialization", "basyxreaderserialization");
 	public static final DummyCredential BASYX_READER_SERIALIZATION_CREDENTIAL_TWO = new DummyCredential("basyx.reader.serialization.2", "basyxreaderserialization2");
+
+	public static final DummyCredential BASYX_UPLOADER = new DummyCredential("basyx.uploader", "basyxuploader");
+	public static final DummyCredential BASYX_UPLOADER_TWO = new DummyCredential("basyx.uploader.2", "basyxuploader2");
+	public static final DummyCredential BASYX_UPLOADER_THREE = new DummyCredential("basyx.uploader.3", "basyxuploader3");
 }

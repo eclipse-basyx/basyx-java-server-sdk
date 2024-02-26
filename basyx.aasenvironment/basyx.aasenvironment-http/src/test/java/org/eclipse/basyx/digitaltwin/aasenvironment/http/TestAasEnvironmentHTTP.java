@@ -69,10 +69,10 @@ public class TestAasEnvironmentHTTP {
 	public static final String XML_MIMETYPE = "application/xml";
 	public static final String AASX_MIMETYPE = "application/asset-administration-shell-package+xml";
 
-	private static final String AASX_ENV_PATH = "testEnvironment.aasx";
-	private static final String JSON_ENV_PATH = "testEnvironment.json";
-	private static final String XML_ENV_PATH = "testEnvironment.xml";
-	private static final String WRONGEXT_ENV_PATH = "testEnvironment.txt";
+	public static final String AASX_ENV_PATH = "testEnvironment.aasx";
+	public static final String JSON_ENV_PATH = "testEnvironment.json";
+	public static final String XML_ENV_PATH = "testEnvironment.xml";
+	public static final String WRONGEXT_ENV_PATH = "testEnvironment.txt";
 
 	private static ConfigurableApplicationContext appContext;
 	private static SubmodelRepository submodelRepo;

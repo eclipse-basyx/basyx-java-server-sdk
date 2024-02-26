@@ -34,6 +34,7 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
  */
 public enum SerializationType {
 	ALL,
+	ANY,
     AASX,
     JSON,
     XML
