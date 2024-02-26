@@ -94,7 +94,6 @@ public class TestAuthorizedAasEnvironmentSerialization {
 	
 	@AfterClass
 	public static void tearDown() {
-		
 		appContext.close();
 	}
 	
