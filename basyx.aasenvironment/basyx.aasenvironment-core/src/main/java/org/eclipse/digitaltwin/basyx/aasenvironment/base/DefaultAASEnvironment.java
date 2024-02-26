@@ -53,7 +53,7 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.IdShortPathBuilder;
 import org.eclipse.digitaltwin.basyx.aasenvironment.MetamodelCloneCreator;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.IdentifiableUploader;
-import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.IndentifiableAssertion;
+import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.IdentifiableAssertion;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.IdentifiableUploader.DelegatingIdentifiableRepository;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.IdentifiableUploader.IdentifiableRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
@@ -81,7 +81,7 @@ public class DefaultAASEnvironment implements AasEnvironment {
 	private XmlSerializer xmlSerializer = new XmlSerializer();
 	private AASXSerializer aasxSerializer = new AASXSerializer();
 	private MetamodelCloneCreator cloneCreator = new MetamodelCloneCreator();
-	private IndentifiableAssertion checker = new IndentifiableAssertion();
+	private IdentifiableAssertion checker = new IdentifiableAssertion();
 
 	public DefaultAASEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
 		this.aasRepository = aasRepository;

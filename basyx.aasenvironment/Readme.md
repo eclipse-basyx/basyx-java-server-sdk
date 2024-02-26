@@ -37,3 +37,6 @@ Furthermore, if Identifiables (AAS, Submodels, ConceptDescriptions) are already 
 
 
 For examples, see [application.properties](./basyx.aasenvironment.component/src/main/resources/application.properties)
+
+## AAS Environment Features
+* [AAS Environment Authorization](basyx.aasenvironment-feature-authorization)

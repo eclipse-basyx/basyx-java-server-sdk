@@ -37,12 +37,10 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.ParseException;
-import org.apache.hc.core5.http.message.BasicHeader;
 import org.eclipse.basyx.digitaltwin.aasenvironment.http.TestAasEnvironmentHTTP;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.aasenvironment.TestAASEnvironmentSerialization;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.authorization.AccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.authorization.DummyCredential;
@@ -53,7 +51,8 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -64,11 +63,11 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.util.ResourceUtils;
 
 /**
- * Tests for {@link AuthorizedAasEnvironment} feature
+ * Tests for {@link AuthorizedAasEnvironment} upload feature
  * 
  * @author danish
  */
-public class TestAuthorizedAasEnvironment {
+public class TestAuthorizedAasEnvironmentUpload {
 
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
@@ -81,8 +80,8 @@ public class TestAuthorizedAasEnvironment {
 	
 	private static String healthEndpointUrl = "http://127.0.0.1:8081/actuator/health";
 
-	@BeforeClass
-	public static void setUp() throws FileNotFoundException, IOException {
+	@Before
+	public void setUp() throws FileNotFoundException, IOException {
 		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
 
 		appContext = new SpringApplication(DummyAasEnvironmentComponent.class).run(new String[] {});
@@ -92,17 +91,9 @@ public class TestAuthorizedAasEnvironment {
 		conceptDescriptionRepo = appContext.getBean(ConceptDescriptionRepository.class);
 	}
 	
-	public void initializeRepositories() throws FileNotFoundException, IOException {
-		configureSecurityContext();
-
-		createDummyShellsOnRepository(TestAASEnvironmentSerialization.createDummyShells(), aasRepo);
-		createDummySubmodelsOnRepository(TestAASEnvironmentSerialization.createDummySubmodels(), submodelRepo);
-		createDummyConceptDescriptionsOnRepository(TestAASEnvironmentSerialization.createDummyConceptDescriptions(), conceptDescriptionRepo);
-
-		clearSecurityContext();
-	}
-	
+	@After
 	public void reset() throws FileNotFoundException, IOException {
+		
 		configureSecurityContext();
 		
 		Collection<AssetAdministrationShell> assetAdministrationShells = aasRepo.getAllAas(NO_LIMIT_PAGINATION_INFO).getResult();
@@ -114,6 +105,8 @@ public class TestAuthorizedAasEnvironment {
 		conceptDescriptions.stream().forEach(cd -> conceptDescriptionRepo.deleteConceptDescription(cd.getId()));
 		
 		clearSecurityContext();
+		
+		appContext.close();
 	}
 
 	@Test
@@ -125,109 +118,9 @@ public class TestAuthorizedAasEnvironment {
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedHealthEndpointOutput, BaSyxHttpTestUtils.getResponseAsString(healthCheckResponse));
 	}
-
-	@Test
-	public void createSerializationWithCorrectRoleAndPermission() throws IOException {
-		initializeRepositories();
-		
-		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_CREDENTIAL;
-
-		boolean includeConceptDescription = true;
-
-		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
-
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(TestAasEnvironmentHTTP.createSerializationURL(includeConceptDescription), accessToken, new BasicHeader("Accept", TestAasEnvironmentHTTP.JSON_MIMETYPE));
-		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
-		
-		reset();
-	}
-
-	@Test
-	public void createSerializationWithCorrectRoleAndSpecificSerializationPermission() throws IOException {
-		initializeRepositories();
-		
-		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL;
-
-		boolean includeConceptDescription = true;
-
-		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
-
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(TestAasEnvironmentHTTP.createSerializationURL(includeConceptDescription), accessToken, new BasicHeader("Accept", TestAasEnvironmentHTTP.AASX_MIMETYPE));
-		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
-		
-		reset();
-	}
-
-	@Test
-	public void createSerializationWithCorrectRoleAndUnauthorizedSpecificSerializationPermission() throws IOException {
-		initializeRepositories();
-		
-		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL;
-
-		boolean includeConceptDescription = true;
-
-		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
-
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(TestAasEnvironmentHTTP.createSerializationURL(includeConceptDescription), accessToken, new BasicHeader("Accept", TestAasEnvironmentHTTP.JSON_MIMETYPE));
-		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
-		
-		reset();
-	}
-
-	@Test
-	public void createSerializationWithInsufficientPermissionRole() throws IOException {
-		initializeRepositories();
-		
-		DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPDATER_CREDENTIAL;
-
-		boolean includeConceptDescription = true;
-
-		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
-
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(TestAasEnvironmentHTTP.createSerializationURL(includeConceptDescription), accessToken, new BasicHeader("Accept", TestAasEnvironmentHTTP.XML_MIMETYPE));
-		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
-		
-		reset();
-	}
-
-	@Test
-	public void createSerializationWithNoAuthorization() throws IOException {
-		boolean includeConceptDescription = true;
-
-		CloseableHttpResponse retrievalResponse = getElementWithNoAuthorization(TestAasEnvironmentHTTP.createSerializationURL(includeConceptDescription), new BasicHeader("Accept", TestAasEnvironmentHTTP.XML_MIMETYPE));
-		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
-	}
-
-	@Test
-	public void createSerializationWithCorrectRoleAndSpecificTargetPermission() throws IOException {
-		initializeRepositories();
-		
-		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_SERIALIZATION_CREDENTIAL;
-
-		boolean includeConceptDescription = true;
-
-		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
-
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(TestAasEnvironmentHTTP.createSerializationURL(includeConceptDescription), accessToken, new BasicHeader("Accept", TestAasEnvironmentHTTP.AASX_MIMETYPE));
-		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
-		
-		reset();
-	}
-
-	@Test
-	public void createSerializationWithCorrectRoleAndInsufficientTargetPermission() throws IOException {
-		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_SERIALIZATION_CREDENTIAL_TWO;
-
-		boolean includeConceptDescription = true;
-
-		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
-
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(TestAasEnvironmentHTTP.createSerializationURL(includeConceptDescription), accessToken, new BasicHeader("Accept", TestAasEnvironmentHTTP.JSON_MIMETYPE));
-		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
-	}
 	
 	@Test
-	public void uploadWithCorrectRoleAndPermission() throws IOException {
+	public void uploadWithCorrectRoleAndPermission() throws IOException {		
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPLOADER;
 
 		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
@@ -239,7 +132,7 @@ public class TestAuthorizedAasEnvironment {
 	}
 	
 	@Test
-	public void uploadWithCorrectRoleAndSpecificSerializationPermission() throws IOException {
+	public void uploadWithCorrectRoleAndSpecificAasPermission() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPLOADER_TWO;
 
 		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
@@ -266,6 +159,14 @@ public class TestAuthorizedAasEnvironment {
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
 
+	protected CloseableHttpResponse getElementWithAuthorization(String url, String accessToken, Header header) throws IOException {
+		return BaSyxHttpTestUtils.executeAuthorizedGetOnURL(url, accessToken, header);
+	}
+
+	protected CloseableHttpResponse getElementWithNoAuthorization(String url, Header header) throws IOException {
+		return BaSyxHttpTestUtils.executeGetOnURL(url, header);
+	}
+	
 	private void clearSecurityContext() {
 		SecurityContextHolder.clearContext();
 	}
@@ -281,14 +182,6 @@ public class TestAuthorizedAasEnvironment {
 		Jwt jwt = JwtTokenDecoder.decodeJwt(adminToken, rsaPublicKey);
 
 		SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
-	}
-
-	protected CloseableHttpResponse getElementWithAuthorization(String url, String accessToken, Header header) throws IOException {
-		return BaSyxHttpTestUtils.executeAuthorizedGetOnURL(url, accessToken, header);
-	}
-
-	protected CloseableHttpResponse getElementWithNoAuthorization(String url, Header header) throws IOException {
-		return BaSyxHttpTestUtils.executeGetOnURL(url, header);
 	}
 	
 	private static HttpPost createAuthorizedPostRequestWithFile(String filepath, String contentType, String accessToken) throws FileNotFoundException {
@@ -311,18 +204,6 @@ public class TestAuthorizedAasEnvironment {
 		DummyCredential dummyCredential = DummyCredentialStore.ADMIN_CREDENTIAL;
 
 		return tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
-	}
-
-	private static void createDummyConceptDescriptionsOnRepository(Collection<ConceptDescription> conceptDescriptions, ConceptDescriptionRepository conceptDescriptionRepository) {
-		conceptDescriptions.stream().forEach(conceptDescriptionRepository::createConceptDescription);
-	}
-
-	private static void createDummySubmodelsOnRepository(Collection<Submodel> submodels, SubmodelRepository submodelRepository) {
-		submodels.stream().forEach(submodelRepository::createSubmodel);
-	}
-
-	private static void createDummyShellsOnRepository(Collection<AssetAdministrationShell> shells, AasRepository aasRepository) {
-		shells.stream().forEach(aasRepository::createAas);
 	}
 
 	private static String getStringFromFile(String fileName) throws FileNotFoundException, IOException {

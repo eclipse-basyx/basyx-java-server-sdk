@@ -54,7 +54,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 
 
 /**
- * Tests the behavior of
+ * Tests the behavior of {@link AasEnvironment} loader functionality
  * 
  * @author sonnenberg, mateusmolina
  *

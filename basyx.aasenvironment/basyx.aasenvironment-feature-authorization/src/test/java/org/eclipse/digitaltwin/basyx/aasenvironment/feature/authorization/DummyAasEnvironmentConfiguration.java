@@ -50,10 +50,4 @@ public class DummyAasEnvironmentConfiguration {
 		return new DecoratedAasEnvironmentFactory(aasEnvironmentFactory, features).create();
 	}
 
-//	@Bean
-//	@ConditionalOnMissingBean
-//	public AasEnvironmentLoader createAasEnvironmentLoader(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
-//		return new AasEnvironmentLoader(aasRepository, submodelRepository, conceptDescriptionRepository);
-//	}
-
 }

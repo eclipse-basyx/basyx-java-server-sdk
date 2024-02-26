@@ -38,7 +38,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierExceptio
  * @author Gerhard Sonnenberg DFKI GmbH
  *
  */
-public class IndentifiableAssertion {
+public class IdentifiableAssertion {
 
 	private final Set<String> currentShellIds = new HashSet<>();
 	private final Set<String> currentSubmodelIds = new HashSet<>();

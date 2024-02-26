@@ -302,8 +302,7 @@
     "targetInformation": {
       "@type": "aas-environment",
       "aasIds": "*",
-      "submodelIds": "*",
-      "serializationType": "ALL"
+      "submodelIds": "*"
     }
   },
   {
@@ -312,8 +311,7 @@
     "targetInformation": {
       "@type": "aas-environment",
       "aasIds": "*",
-      "submodelIds": "*",
-      "serializationType": "ALL"
+      "submodelIds": "*"
     }
   },
   {
@@ -322,8 +320,7 @@
     "targetInformation": {
       "@type": "aas-environment",
       "aasIds": "*",
-      "submodelIds": "*",
-      "serializationType": "AASX"
+      "submodelIds": "*"
     }
   },
   {
@@ -357,8 +354,7 @@
     "targetInformation": {
       "@type": "aas-environment",
       "aasIds": "*",
-      "submodelIds": "*",
-      "serializationType": "XML"
+      "submodelIds": "*"
     }
   },
   {
@@ -367,8 +363,7 @@
     "targetInformation": {
       "@type": "aas-environment",
       "aasIds": ["shell001", "shell002"],
-      "submodelIds": ["7A7104BDAB57E184", "AC69B1CB44F07935"],
-      "serializationType": "AASX"
+      "submodelIds": ["7A7104BDAB57E184", "AC69B1CB44F07935"]
     }
   },
   {
@@ -402,8 +397,7 @@
     "targetInformation": {
       "@type": "aas-environment",
       "aasIds": ["shell001", "shell002"],
-      "submodelIds": ["7A7104BDAB57E184"],
-      "serializationType": "JSON"
+      "submodelIds": ["7A7104BDAB57E184"]
     }
   }
 ]

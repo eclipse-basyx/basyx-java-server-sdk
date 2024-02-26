@@ -59,11 +59,6 @@ public class DummyAASEnvironmentComponent {
 		return new DefaultAASEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository);
 	}
 
-//	@Bean
-//	public AasEnvironmentLoader createAasEnvironmentLoader(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
-//		return new AasEnvironmentLoader(aasRepository, submodelRepository, conceptDescriptionRepository);
-//	}
-
 	public void initRepositories(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
 		createDummySubmodels().forEach(submodelRepository::createSubmodel);
 		createDummyShells().forEach(aasRepository::createAas);

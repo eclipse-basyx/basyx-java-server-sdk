@@ -58,7 +58,7 @@ public class AuthorizedAasEnvironment implements AasEnvironment {
 
 	@Override
 	public String createJSONAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasEnvironmentTargetInformation(aasIds, submodelIds, SerializationType.JSON));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasEnvironmentTargetInformation(aasIds, submodelIds));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -67,7 +67,7 @@ public class AuthorizedAasEnvironment implements AasEnvironment {
 
 	@Override
 	public String createXMLAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasEnvironmentTargetInformation(aasIds, submodelIds, SerializationType.XML));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasEnvironmentTargetInformation(aasIds, submodelIds));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -76,7 +76,7 @@ public class AuthorizedAasEnvironment implements AasEnvironment {
 
 	@Override
 	public byte[] createAASXAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException, IOException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasEnvironmentTargetInformation(aasIds, submodelIds, SerializationType.AASX));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasEnvironmentTargetInformation(aasIds, submodelIds));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -92,7 +92,7 @@ public class AuthorizedAasEnvironment implements AasEnvironment {
 	public void loadEnvironment(CompleteEnvironment completeEnvironment) {
 		Environment environment = completeEnvironment.getEnvironment();
 		
-		boolean isAuthorized = permissionResolver.hasPermission(Action.CREATE, new AasEnvironmentTargetInformation(getAasIds(environment.getAssetAdministrationShells()), getSubmodelIds(environment.getSubmodels()), SerializationType.ALL));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.CREATE, new AasEnvironmentTargetInformation(getAasIds(environment.getAssetAdministrationShells()), getSubmodelIds(environment.getSubmodels())));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
