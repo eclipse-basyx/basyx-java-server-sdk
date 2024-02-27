@@ -87,6 +87,7 @@ services:
     environment:
       VITE_AAS_REGISTRY_PATH: "http://localhost:8082"
       VITE_SUBMODEL_REGISTRY_PATH: "http://localhost:8083"
+      VITE_AAS_DISCOVERY_PATH: "http://localhost:8084"
       VITE_AAS_REPO_PATH: "http://localhost:8081/shells"
       VITE_SUBMODEL_REPO_PATH: "http://localhost:8081/submodels"
       VITE_CD_REPO_PATH: "http://localhost:8081/concept-descriptions"
