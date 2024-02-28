@@ -127,8 +127,6 @@ public class TestAuthorizedAasEnvironmentUpload {
 
 		CloseableHttpResponse retrievalResponse = BaSyxHttpTestUtils.executePostRequest(HttpClients.createDefault(), createAuthorizedPostRequestWithFile(TestAasEnvironmentHTTP.AASX_ENV_PATH, TestAasEnvironmentHTTP.AASX_MIMETYPE, accessToken));
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
-		
-		reset();
 	}
 	
 	@Test
@@ -139,8 +137,6 @@ public class TestAuthorizedAasEnvironmentUpload {
 
 		CloseableHttpResponse retrievalResponse = BaSyxHttpTestUtils.executePostRequest(HttpClients.createDefault(), createAuthorizedPostRequestWithFile(TestAasEnvironmentHTTP.AASX_ENV_PATH, TestAasEnvironmentHTTP.AASX_MIMETYPE, accessToken));
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
-		
-		reset();
 	}
 	
 	@Test
