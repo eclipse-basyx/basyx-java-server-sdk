@@ -43,15 +43,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class PreconfigurationLoaderInitializer implements InitializingBean {
 
-	private AasEnvironment environmentLoader;
+	private AasEnvironment aasEnvironment;
 
 	private AasEnvironmentPreconfigurationLoader preconfigurationLoader;
 
 	@Autowired
-	public PreconfigurationLoaderInitializer(AasEnvironment environmentLoader,
+	public PreconfigurationLoaderInitializer(AasEnvironment aasEnvironment,
 			AasEnvironmentPreconfigurationLoader preconfigurationLoader) {
 		super();
-		this.environmentLoader = environmentLoader;
+		this.aasEnvironment = aasEnvironment;
 		this.preconfigurationLoader = preconfigurationLoader;
 	}
 
@@ -65,7 +65,7 @@ public class PreconfigurationLoaderInitializer implements InitializingBean {
 			return;
 		}
 
-		preconfigurationLoader.loadPreconfiguredEnvironments(environmentLoader);
+		preconfigurationLoader.loadPreconfiguredEnvironments(aasEnvironment);
 	}
 
 }

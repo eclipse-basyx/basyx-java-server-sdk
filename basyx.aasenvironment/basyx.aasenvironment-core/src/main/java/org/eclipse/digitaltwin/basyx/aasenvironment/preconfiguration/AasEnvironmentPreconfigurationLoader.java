@@ -70,7 +70,7 @@ public class AasEnvironmentPreconfigurationLoader {
 		return pathsToLoad != null;
 	}
 
-	public void loadPreconfiguredEnvironments(AasEnvironment environmentLoader)
+	public void loadPreconfiguredEnvironments(AasEnvironment aasEnvironment)
 			throws IOException, DeserializationException, InvalidFormatException {
 		List<File> files = scanForEnvironments(pathsToLoad);
 
@@ -82,7 +82,7 @@ public class AasEnvironmentPreconfigurationLoader {
 
 		for (File file : files) {
 			logLoadingProcess(currenFileIndex++, filesCount, file.getName());
-			environmentLoader.loadEnvironment(CompleteEnvironment.fromFile(file));
+			aasEnvironment.loadEnvironment(CompleteEnvironment.fromFile(file));
 		}
 	}
 
