@@ -55,6 +55,11 @@ public class BasyxControllerAdvice {
 		return newResultEntity(ex, HttpStatus.valueOf(ex.getStatusCode().value()));
 	}
 
+	@ExceptionHandler(TransactionResponseNotFoundException.class)
+	public <T> ResponseEntity<T> handleTransactionResponseNotFound(TransactionResponseNotFoundException ex) {
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
+
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Result> handleExceptions(Exception ex) {
 		return newResultEntity(ex, HttpStatus.INTERNAL_SERVER_ERROR);

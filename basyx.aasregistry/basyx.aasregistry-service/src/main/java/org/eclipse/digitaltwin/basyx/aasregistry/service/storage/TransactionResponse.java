@@ -27,6 +27,8 @@ package org.eclipse.digitaltwin.basyx.aasregistry.service.storage;
 
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import io.micrometer.common.lang.Nullable;
 
 /**
@@ -34,8 +36,9 @@ import io.micrometer.common.lang.Nullable;
  * 
  * @author mateusmolina
  */
-public record TransactionResponse(long id, TransactionStatus transactionStatus, @Nullable String message) {
-	public enum TransactionStatus {
-		RUNNING, ERROR, SUCCESSFUL
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public record TransactionResponse(long id, ExecutionState transactionStatus, @Nullable String message) {
+	public enum ExecutionState {
+		INITIATED, RUNNING, COMPLETED, CANCELED, FAILED, TIMEOUT;
 	}
 }

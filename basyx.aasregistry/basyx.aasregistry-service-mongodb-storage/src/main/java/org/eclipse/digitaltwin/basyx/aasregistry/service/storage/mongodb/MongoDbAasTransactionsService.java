@@ -50,45 +50,22 @@ public class MongoDbAasTransactionsService implements AasTransactionsService {
 
 	private final AasRegistryStorage storage;
 
-	private final Map<Long, TransactionResponse> transactionStatusMap = new ConcurrentHashMap<>();
-	private final AtomicLong transactionIdCounter = new AtomicLong(0);
-
 	public MongoDbAasTransactionsService(AasRegistryStorage storage) {
 		this.storage = storage;
 	}
 
 	@Override
-	public TransactionResponse insertBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors) {
-		long transactionId = transactionIdCounter.incrementAndGet();
-		transactionStatusMap.put(transactionId, new TransactionResponse(transactionId, TransactionResponse.TransactionStatus.RUNNING, null));
-
+	public void insertBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors) {
 		descriptors.forEach(desc -> storage.insertAasDescriptor(desc));
-
-		return new TransactionResponse(transactionId, TransactionResponse.TransactionStatus.SUCCESSFUL, null);
 	}
 
 	@Override
-	public TransactionResponse deleteBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors) {
-		long transactionId = transactionIdCounter.incrementAndGet();
-		transactionStatusMap.put(transactionId, new TransactionResponse(transactionId, TransactionResponse.TransactionStatus.RUNNING, null));
-
-		descriptors.forEach(desc -> storage.removeAasDescriptor(desc.getId()));
-
-		return new TransactionResponse(transactionId, TransactionResponse.TransactionStatus.SUCCESSFUL, null);
+	public void deleteBulkAasDescriptors(List<String> descriptorIdentifiers) {
+		descriptorIdentifiers.forEach(id -> storage.removeAasDescriptor(id));
 	}
 
 	@Override
-	public TransactionResponse putBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors) {
-		long transactionId = transactionIdCounter.incrementAndGet();
-		transactionStatusMap.put(transactionId, new TransactionResponse(transactionId, TransactionResponse.TransactionStatus.RUNNING, null));
-
+	public void putBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors) {
 		descriptors.forEach(desc -> storage.replaceAasDescriptor(desc.getId(), desc));
-
-		return new TransactionResponse(transactionId, TransactionResponse.TransactionStatus.SUCCESSFUL, null);
-	}
-
-	@Override
-	public TransactionResponse getTransactionResponse(long transactionResponseId) {
-		return transactionStatusMap.get(transactionResponseId);
 	}
 }

@@ -79,9 +79,7 @@ public class MongoDbAasTransactionsServiceTest {
 
                 List<AssetAdministrationShellDescriptor> descriptors = generateTestListOfDescriptors(NUM_GEN_DESCRIPTORS);
 
-                TransactionResponse response = transactionsService.insertBulkAasDescriptors(descriptors);
-
-                Assertions.assertEquals(TransactionResponse.TransactionStatus.SUCCESSFUL, response.transactionStatus());
+                transactionsService.insertBulkAasDescriptors(descriptors);
 
                 assertThat(getAllAasDescriptors()).containsExactlyInAnyOrderElementsOf(descriptors);
         }
@@ -105,9 +103,7 @@ public class MongoDbAasTransactionsServiceTest {
 
                 List<AssetAdministrationShellDescriptor> toDeleteDescriptors = new ArrayList<>(descriptors.subList(0, 3));
 
-                TransactionResponse response = transactionsService.deleteBulkAasDescriptors(toDeleteDescriptors);
-
-                Assertions.assertEquals(TransactionResponse.TransactionStatus.SUCCESSFUL, response.transactionStatus());
+                transactionsService.deleteBulkAasDescriptors(toDeleteDescriptors);
 
                 assertThat(getAllAasDescriptors()).doesNotContainAnyElementsOf(toDeleteDescriptors);
         }
@@ -137,9 +133,7 @@ public class MongoDbAasTransactionsServiceTest {
                 List<AssetAdministrationShellDescriptor> updatedDescriptors = generateTestListOfDescriptors(NUM_GEN_DESCRIPTORS);
                 updatedDescriptors.forEach(desc -> desc.idShort(desc.getId() + "_idShort"));
 
-                TransactionResponse response = transactionsService.putBulkAasDescriptors(updatedDescriptors);
-
-                Assertions.assertEquals(TransactionResponse.TransactionStatus.SUCCESSFUL, response.transactionStatus());
+                transactionsService.putBulkAasDescriptors(updatedDescriptors);
 
                 assertThat(getAllAasDescriptors()).containsExactlyInAnyOrderElementsOf(updatedDescriptors);
         }

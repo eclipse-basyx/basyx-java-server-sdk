@@ -23,21 +23,18 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasregistry.service.storage;
+package org.eclipse.digitaltwin.basyx.aasregistry.service.errors;
 
-import java.util.List;
+public class TransactionResponseNotFoundException extends RuntimeException {
 
-import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
+    private static final long serialVersionUID = 1L;
 
-/**
- * Service Interface for Bulk Transactions
- * 
- * @author mateusmolina
- */
-public interface AasTransactionsService {
-	public void insertBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors);
+    public TransactionResponseNotFoundException() {
+        super();
+    }
 
-	public void deleteBulkAasDescriptors(List<String> descriptorIdentifiers);
+    public TransactionResponseNotFoundException(long transactionId) {
+        super("Transaction '" + String.valueOf(transactionId) + "' was not found");
+    }
 
-	public void putBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors);
 }
