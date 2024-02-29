@@ -23,34 +23,30 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb;
+package org.eclipse.digitaltwin.basyx.aasregistry.service.storage;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNotFoundException;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasTransactionsService;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.TransactionResponse;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * MongoDb Implementation of the AAS Transactions Service
+ * Default Implementation of the AAS Transactions Service
  * 
  * @author mateusmolina
  */
 @Service
+@ConditionalOnMissingBean
 @Transactional(rollbackFor = { AasDescriptorAlreadyExistsException.class, AasDescriptorNotFoundException.class })
-public class MongoDbAasTransactionsService implements AasTransactionsService {
+public class DefaultAasTransactionsService implements AasTransactionsService {
 
 	private final AasRegistryStorage storage;
 
-	public MongoDbAasTransactionsService(AasRegistryStorage storage) {
+	public DefaultAasTransactionsService(AasRegistryStorage storage) {
 		this.storage = storage;
 	}
 

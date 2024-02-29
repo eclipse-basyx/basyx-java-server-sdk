@@ -35,6 +35,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.TransactionResp
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,7 +55,7 @@ import jakarta.validation.Valid;
  * @author mateusmolina
  */
 @Controller
-@ConditionalOnBean(AasTransactionsService.class)
+@ConditionalOnBean(PlatformTransactionManager.class)
 public class AasRegistryBulkApiController {
 
 	private final AasTransactionsService aasTransactionsService;
