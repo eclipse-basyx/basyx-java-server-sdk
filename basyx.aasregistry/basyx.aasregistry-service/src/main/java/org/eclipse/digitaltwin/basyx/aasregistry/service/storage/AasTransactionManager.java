@@ -56,10 +56,10 @@ public class AasTransactionManager {
     public long runTransactionAsync(Runnable transactionTask) {
         long transactionId = transactionIdCounter.incrementAndGet();
 
-        putTransaction(transactionId, TransactionResponse.ExecutionState.RUNNING, null);
+        putTransaction(transactionId, TransactionResponse.ExecutionState.INITIATED, null);
 
         executorService.submit(() -> {
-            putTransaction(transactionId, TransactionResponse.ExecutionState.INITIATED, null);
+            putTransaction(transactionId, TransactionResponse.ExecutionState.RUNNING, null);
             try {
                 transactionTask.run();
                 putTransaction(transactionId, TransactionResponse.ExecutionState.COMPLETED, null);
