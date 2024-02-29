@@ -23,18 +23,20 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasregistry.service.errors;
+package org.eclipse.digitaltwin.basyx.aasregistry.service.storage;
 
-public class TransactionResponseNotFoundException extends RuntimeException {
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-    private static final long serialVersionUID = 1L;
+import io.micrometer.common.lang.Nullable;
 
-    public TransactionResponseNotFoundException() {
-        super();
-    }
-
-    public TransactionResponseNotFoundException(long transactionId) {
-        super("Transaction '" + String.valueOf(transactionId) + "' was not found");
-    }
-
+/**
+ * Result from a Bulk Operation
+ * 
+ * @author mateusmolina
+ */
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public record BulkOperationResult(long id, ExecutionState transactionStatus, @Nullable String message) {
+	public enum ExecutionState {
+		INITIATED, RUNNING, COMPLETED, CANCELED, FAILED, TIMEOUT;
+	}
 }

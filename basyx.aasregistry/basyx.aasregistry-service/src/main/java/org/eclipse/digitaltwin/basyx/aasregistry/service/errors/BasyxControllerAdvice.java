@@ -55,8 +55,8 @@ public class BasyxControllerAdvice {
 		return newResultEntity(ex, HttpStatus.valueOf(ex.getStatusCode().value()));
 	}
 
-	@ExceptionHandler(TransactionResponseNotFoundException.class)
-	public <T> ResponseEntity<T> handleTransactionResponseNotFound(TransactionResponseNotFoundException ex) {
+	@ExceptionHandler(BulkOperationResultNotFoundException.class)
+	public <T> ResponseEntity<T> handleBulkOperationResultNotFound(BulkOperationResultNotFoundException ex) {
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 

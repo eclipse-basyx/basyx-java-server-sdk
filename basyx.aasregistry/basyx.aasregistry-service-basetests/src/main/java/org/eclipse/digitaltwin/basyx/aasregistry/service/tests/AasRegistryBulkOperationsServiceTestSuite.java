@@ -35,23 +35,23 @@ import java.util.stream.IntStream;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasTransactionsService;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryBulkOperationsService;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test Suite for AAS Transaction Service
+ * Test Suite for Bulk Operations Service
  * 
  * @author mateusmolina
  */
-public abstract class AasTransactionsServiceTestSuite {
+public abstract class AasRegistryBulkOperationsServiceTestSuite {
     private static final int NUM_GEN_DESCRIPTORS = 10;
 
     abstract AasRegistryStorage getAasRegistryStorage();
 
-    abstract AasTransactionsService getTransactionsService();
+    abstract AasRegistryBulkOperationsService getBulkOperationsService();
 
     @BeforeEach
     public void cleanUpRepository() {
@@ -63,7 +63,7 @@ public abstract class AasTransactionsServiceTestSuite {
 
         List<AssetAdministrationShellDescriptor> descriptors = generateTestListOfDescriptors(NUM_GEN_DESCRIPTORS);
 
-        getTransactionsService().insertBulkAasDescriptors(descriptors);
+        getBulkOperationsService().insertBulkAasDescriptors(descriptors);
 
         assertThat(getAllAasDescriptors()).containsExactlyInAnyOrderElementsOf(descriptors);
     }
@@ -73,7 +73,7 @@ public abstract class AasTransactionsServiceTestSuite {
         List<AssetAdministrationShellDescriptor> descriptors = generateTestListOfDescriptors(NUM_GEN_DESCRIPTORS);
         descriptors.get(5).setId("descriptor7");
 
-        assertThrows(Exception.class, () -> getTransactionsService().insertBulkAasDescriptors(descriptors));
+        assertThrows(Exception.class, () -> getBulkOperationsService().insertBulkAasDescriptors(descriptors));
 
         assertThat(getAllAasDescriptors()).isEmpty();
     }
@@ -87,7 +87,7 @@ public abstract class AasTransactionsServiceTestSuite {
         List<AssetAdministrationShellDescriptor> toDeleteDescriptors = new ArrayList<>(descriptors.subList(0, 3));
         List<String> toDeleteDescriptorIds = toDeleteDescriptors.stream().map(desc -> desc.getId()).collect(Collectors.toList());
 
-        getTransactionsService().deleteBulkAasDescriptors(toDeleteDescriptorIds);
+        getBulkOperationsService().deleteBulkAasDescriptors(toDeleteDescriptorIds);
 
         assertThat(getAllAasDescriptors()).doesNotContainAnyElementsOf(toDeleteDescriptors);
     }
@@ -103,7 +103,7 @@ public abstract class AasTransactionsServiceTestSuite {
         toDeleteDescriptors.add(new AssetAdministrationShellDescriptor("incorrectDescriptor1"));
         List<String> toDeleteDescriptorIds = toDeleteDescriptors.stream().map(desc -> desc.getId()).collect(Collectors.toList());
 
-        assertThrows(Exception.class, () -> getTransactionsService().deleteBulkAasDescriptors(toDeleteDescriptorIds));
+        assertThrows(Exception.class, () -> getBulkOperationsService().deleteBulkAasDescriptors(toDeleteDescriptorIds));
 
         assertThat(getAllAasDescriptors()).containsExactlyInAnyOrderElementsOf(descriptors);
     }
@@ -118,7 +118,7 @@ public abstract class AasTransactionsServiceTestSuite {
         List<AssetAdministrationShellDescriptor> updatedDescriptors = generateTestListOfDescriptors(NUM_GEN_DESCRIPTORS);
         updatedDescriptors.forEach(desc -> desc.idShort(desc.getId() + "_idShort"));
 
-        getTransactionsService().putBulkAasDescriptors(updatedDescriptors);
+        getBulkOperationsService().putBulkAasDescriptors(updatedDescriptors);
 
         assertThat(getAllAasDescriptors()).containsExactlyInAnyOrderElementsOf(updatedDescriptors);
     }
@@ -135,7 +135,7 @@ public abstract class AasTransactionsServiceTestSuite {
 
         updatedDescriptors.get(2).setId("incorrectDescriptor");
 
-        assertThrows(Exception.class, () -> getTransactionsService().putBulkAasDescriptors(updatedDescriptors));
+        assertThrows(Exception.class, () -> getBulkOperationsService().putBulkAasDescriptors(updatedDescriptors));
 
         assertThat(getAllAasDescriptors()).containsExactlyInAnyOrderElementsOf(descriptors);
     }

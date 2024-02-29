@@ -27,9 +27,9 @@ package org.eclipse.digitaltwin.basyx.aasregistry.service.configuration;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasTransactionsService;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryBulkOperationsService;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.CursorEncodingRegistryStorage;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DefaultAasTransactionsService;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DefaultAasBulkOperationsService;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.MongoDbAasRegistryStorage;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -54,8 +54,8 @@ public class MongoDbConfiguration {
 	}
 
 	@Bean
-	public AasTransactionsService createAasTransactionsService(AasRegistryStorage storage) {
-		return new DefaultAasTransactionsService(storage);
+	public AasRegistryBulkOperationsService createAasRegistryBulkOperationsService(AasRegistryStorage storage) {
+		return new DefaultAasBulkOperationsService(storage);
 	}
 
 	private void initializeIndices(MongoTemplate template) {

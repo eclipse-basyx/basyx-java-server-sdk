@@ -29,13 +29,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasTransactionManager;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasTransactionsService;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.TransactionResponse;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.BulkOperationResultManager;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryBulkOperationsService;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.BulkOperationResult;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,14 +54,14 @@ import jakarta.validation.Valid;
  * @author mateusmolina
  */
 @Controller
-@ConditionalOnBean(PlatformTransactionManager.class)
+@ConditionalOnBean(AasRegistryBulkOperationsService.class)
 public class AasRegistryBulkApiController {
 
-	private final AasTransactionsService aasTransactionsService;
+	private final AasRegistryBulkOperationsService aasTransactionsService;
 
-	private final AasTransactionManager aasTransactionManager;
+	private final BulkOperationResultManager aasTransactionManager;
 
-	public AasRegistryBulkApiController(AasTransactionsService aasTransactionsService, AasTransactionManager aasTransactionManager) {
+	public AasRegistryBulkApiController(AasRegistryBulkOperationsService aasTransactionsService, BulkOperationResultManager aasTransactionManager) {
 		this.aasTransactionsService = aasTransactionsService;
 		this.aasTransactionManager = aasTransactionManager;
 	}
@@ -70,7 +69,7 @@ public class AasRegistryBulkApiController {
 	@PostMapping("/bulk/shell-descriptors")
 	public ResponseEntity<String> postBulkShellDescriptors(
 			@Parameter(name = "AssetAdministrationShellDescriptor", description = "List of Asset Administration Shell Descriptor objects", required = true) @Valid @RequestBody List<AssetAdministrationShellDescriptor> assetAdministrationShellDescriptors) {
-		long transactionId = aasTransactionManager.runTransactionAsync(() -> aasTransactionsService.insertBulkAasDescriptors(assetAdministrationShellDescriptors));
+		long transactionId = aasTransactionManager.runOperationAsync(() -> aasTransactionsService.insertBulkAasDescriptors(assetAdministrationShellDescriptors));
 
 		return ResponseEntity.ok(getTraceableLinkForTransaction(transactionId));
 	}
@@ -78,7 +77,7 @@ public class AasRegistryBulkApiController {
 	@PutMapping("/bulk/shell-descriptors")
 	public ResponseEntity<String> putBulkShellDescriptors(
 			@Parameter(name = "AssetAdministrationShellDescriptor", description = "List of Asset Administration Shell Descriptor objects", required = true) @Valid @RequestBody List<AssetAdministrationShellDescriptor> assetAdministrationShellDescriptors) {
-		long transactionId = aasTransactionManager.runTransactionAsync(() -> aasTransactionsService.putBulkAasDescriptors(assetAdministrationShellDescriptors));
+		long transactionId = aasTransactionManager.runOperationAsync(() -> aasTransactionsService.putBulkAasDescriptors(assetAdministrationShellDescriptors));
 
 		return ResponseEntity.ok(getTraceableLinkForTransaction(transactionId));
 	}
@@ -88,19 +87,19 @@ public class AasRegistryBulkApiController {
 			@Parameter(name = "aasIdentifier", description = "List of Asset Administration Shell Descriptor unique identifiers (UTF8-BASE64-URL-encoded)", required = true, in = ParameterIn.PATH) @Valid @RequestBody List<String> aasIdentifiersBase64) {
 		List<String> aasIdentifiersFromBase64EncodedParams = aasIdentifiersBase64.stream().map(AasRegistryBulkApiController::decodeIdentifier).collect(Collectors.toList());
 
-		long transactionId = aasTransactionManager.runTransactionAsync(() -> aasTransactionsService.deleteBulkAasDescriptors(aasIdentifiersFromBase64EncodedParams));
+		long transactionId = aasTransactionManager.runOperationAsync(() -> aasTransactionsService.deleteBulkAasDescriptors(aasIdentifiersFromBase64EncodedParams));
 
 		return ResponseEntity.ok(getTraceableLinkForTransaction(transactionId));
 	}
 
 	@GetMapping("/bulk/status/{handleId}")
 	public ResponseEntity<String> getBulkStatus(@Parameter(in = ParameterIn.PATH, description = "The handleId for the transaction", required = true, schema = @Schema()) @PathVariable("handleId") long handleId) {
-		return ResponseEntity.ok(aasTransactionManager.getTransactionStatus(handleId));
+		return ResponseEntity.ok(aasTransactionManager.getBulkOperationResultStatus(handleId));
 	}
 
 	@GetMapping("/bulk/result/{handleId}")
-	public ResponseEntity<TransactionResponse> getBulkResult(@Parameter(in = ParameterIn.PATH, description = "The handleId for the transaction", required = true, schema = @Schema()) @PathVariable("handleId") long handleId) {
-		return ResponseEntity.ok(aasTransactionManager.getTransactionResponse(handleId));
+	public ResponseEntity<BulkOperationResult> getBulkResult(@Parameter(in = ParameterIn.PATH, description = "The handleId for the transaction", required = true, schema = @Schema()) @PathVariable("handleId") long handleId) {
+		return ResponseEntity.ok(aasTransactionManager.getBulkOperationResult(handleId));
 	}
 
 	private String getTraceableLinkForTransaction(long transactionId) {

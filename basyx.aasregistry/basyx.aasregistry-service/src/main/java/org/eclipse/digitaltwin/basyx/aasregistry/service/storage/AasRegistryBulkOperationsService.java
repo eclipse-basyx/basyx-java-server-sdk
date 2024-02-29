@@ -25,20 +25,19 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.service.storage;
 
+import java.util.List;
 
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-
-import io.micrometer.common.lang.Nullable;
+import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 
 /**
- * Transaction Response
+ * Service Interface for Bulk Operations
  * 
  * @author mateusmolina
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public record TransactionResponse(long id, ExecutionState transactionStatus, @Nullable String message) {
-	public enum ExecutionState {
-		INITIATED, RUNNING, COMPLETED, CANCELED, FAILED, TIMEOUT;
-	}
+public interface AasRegistryBulkOperationsService {
+	public void insertBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors);
+
+	public void deleteBulkAasDescriptors(List<String> descriptorIdentifiers);
+
+	public void putBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors);
 }

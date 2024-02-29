@@ -31,7 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.TransactionResponseNotFoundException;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.BulkOperationResultNotFoundException;
 import org.springframework.stereotype.Component;
 
 /**
@@ -40,52 +40,52 @@ import org.springframework.stereotype.Component;
  * @author mateusmolina
  */
 @Component
-public class AasTransactionManager {
+public class BulkOperationResultManager {
 
-    private final Map<Long, TransactionResponse> transactionResponseMap = new ConcurrentHashMap<>();
-    private final AtomicLong transactionIdCounter = new AtomicLong(0);
+    private final Map<Long, BulkOperationResult> bulkResultMap = new ConcurrentHashMap<>();
+    private final AtomicLong bulkResultIdCounter = new AtomicLong(0);
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     /**
      * Runs a Transactional Runnable async
      * 
-     * @param transactionTask
-     * @return transactionId, traceable using {@link #getTransactionResponse(long)}
+     * @param operation
+     * @return transactionId, traceable using {@link #getBulkOperationResult(long)}
      */
-    public long runTransactionAsync(Runnable transactionTask) {
-        long transactionId = transactionIdCounter.incrementAndGet();
+    public long runOperationAsync(Runnable operation) {
+        long operationId = bulkResultIdCounter.incrementAndGet();
 
-        putTransaction(transactionId, TransactionResponse.ExecutionState.INITIATED, null);
+        putBulkOperationResult(operationId, BulkOperationResult.ExecutionState.INITIATED, null);
 
         executorService.submit(() -> {
-            putTransaction(transactionId, TransactionResponse.ExecutionState.RUNNING, null);
+            putBulkOperationResult(operationId, BulkOperationResult.ExecutionState.RUNNING, null);
             try {
-                transactionTask.run();
-                putTransaction(transactionId, TransactionResponse.ExecutionState.COMPLETED, null);
+                operation.run();
+                putBulkOperationResult(operationId, BulkOperationResult.ExecutionState.COMPLETED, null);
             } catch (Exception e) {
-                putTransaction(transactionId, TransactionResponse.ExecutionState.FAILED, e.getMessage());
+                putBulkOperationResult(operationId, BulkOperationResult.ExecutionState.FAILED, e.getMessage());
             }
         });
 
-        return transactionId;
+        return operationId;
     }
 
-    public TransactionResponse getTransactionResponse(long transactionResponseId) throws TransactionResponseNotFoundException {
-        if (!transactionResponseMap.containsKey(transactionResponseId))
-            throw new TransactionResponseNotFoundException(transactionResponseId);
+    public BulkOperationResult getBulkOperationResult(long bulkResultId) throws BulkOperationResultNotFoundException {
+        if (!bulkResultMap.containsKey(bulkResultId))
+            throw new BulkOperationResultNotFoundException(bulkResultId);
 
-        return transactionResponseMap.get(transactionResponseId);
+        return bulkResultMap.get(bulkResultId);
     }
 
-    public String getTransactionStatus(long transactionResponseId) {
-        if (!transactionResponseMap.containsKey(transactionResponseId))
-            throw new TransactionResponseNotFoundException(transactionResponseId);
+    public String getBulkOperationResultStatus(long transactionResponseId) {
+        if (!bulkResultMap.containsKey(transactionResponseId))
+            throw new BulkOperationResultNotFoundException(transactionResponseId);
 
-        return transactionResponseMap.get(transactionResponseId).transactionStatus().toString();
+        return bulkResultMap.get(transactionResponseId).transactionStatus().toString();
     }
 
-    private void putTransaction(long transactionId, TransactionResponse.ExecutionState newExecutionState, String message) {
-        transactionResponseMap.put(transactionId, new TransactionResponse(transactionId, newExecutionState, null));
+    private void putBulkOperationResult(long transactionId, BulkOperationResult.ExecutionState newExecutionState, String message) {
+        bulkResultMap.put(transactionId, new BulkOperationResult(transactionId, newExecutionState, null));
     }
 }

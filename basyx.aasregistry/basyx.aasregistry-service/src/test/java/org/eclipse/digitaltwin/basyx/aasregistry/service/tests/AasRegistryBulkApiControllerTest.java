@@ -41,12 +41,12 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.AasRegistryBulkApiController;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.BasyxControllerAdvice;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.TransactionResponseNotFoundException;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.BulkOperationResultNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventSink;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasTransactionManager;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasTransactionsService;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.TransactionResponse;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.BulkOperationResultManager;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryBulkOperationsService;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.BulkOperationResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -78,10 +78,10 @@ public class AasRegistryBulkApiControllerTest {
     public RegistryEventSink eventSink;
 
     @MockBean
-    private AasTransactionsService aasTransactionsService;
+    private AasRegistryBulkOperationsService bulkOperationsService;
 
     @MockBean
-    private AasTransactionManager aasTransactionManager;
+    private BulkOperationResultManager bulkResultManager;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -89,76 +89,76 @@ public class AasRegistryBulkApiControllerTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new AasRegistryBulkApiController(aasTransactionsService, aasTransactionManager)).setControllerAdvice(new BasyxControllerAdvice()).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new AasRegistryBulkApiController(bulkOperationsService, bulkResultManager)).setControllerAdvice(new BasyxControllerAdvice()).build();
     }
 
     @Test
     public void postBulkShellDescriptorsTest() throws Exception {
-        long transactionId = 2L;
-        when(aasTransactionManager.runTransactionAsync(any(Runnable.class))).thenReturn(transactionId);
+        long opId = 2L;
+        when(bulkResultManager.runOperationAsync(any(Runnable.class))).thenReturn(opId);
 
         mockMvc.perform(post("/bulk/shell-descriptors").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(anyList()))).andExpect(status().isOk())
-                .andExpect(content().string("http://localhost/bulk/status/" + transactionId));
+                .andExpect(content().string("http://localhost/bulk/status/" + opId));
     }
 
     @Test
     public void putBulkShellDescriptorsTest() throws Exception {
-        long transactionId = 2L;
-        when(aasTransactionManager.runTransactionAsync(any(Runnable.class))).thenReturn(transactionId);
+        long opId = 2L;
+        when(bulkResultManager.runOperationAsync(any(Runnable.class))).thenReturn(opId);
 
         mockMvc.perform(put("/bulk/shell-descriptors").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(anyList()))).andExpect(status().isOk())
-                .andExpect(content().string("http://localhost/bulk/status/" + transactionId));
+                .andExpect(content().string("http://localhost/bulk/status/" + opId));
     }
 
     @Test
     public void deleteBulkShellDescriptorsTest() throws Exception {
-        long transactionId = 2L;
+        long opId = 2L;
         List<String> listIdentifiers = List.of("desc1", "desc2");
         List<String> listEncodedIdentifiers = List.of("ZGVzYzE", "ZGVzYzI");
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
 
-        when(aasTransactionManager.runTransactionAsync(runnableCaptor.capture())).thenReturn(transactionId);
+        when(bulkResultManager.runOperationAsync(runnableCaptor.capture())).thenReturn(opId);
 
         mockMvc.perform(delete("/bulk/shell-descriptors").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(listEncodedIdentifiers))).andExpect(status().isOk())
-                .andExpect(content().string("http://localhost/bulk/status/" + transactionId));
+                .andExpect(content().string("http://localhost/bulk/status/" + opId));
 
         runnableCaptor.getValue().run();
 
-        verify(aasTransactionsService).deleteBulkAasDescriptors(eq(listIdentifiers));
+        verify(bulkOperationsService).deleteBulkAasDescriptors(eq(listIdentifiers));
     }
 
     @Test
     public void getBulkStatusTest() throws Exception {
-        long transactionId = 2L;
-        when(aasTransactionManager.getTransactionStatus(transactionId)).thenReturn("COMPLETE");
+        long opId = 2L;
+        when(bulkResultManager.getBulkOperationResultStatus(opId)).thenReturn("COMPLETE");
 
-        mockMvc.perform(get("/bulk/status/{handleId}", transactionId)).andExpect(status().isOk()).andExpect(content().string("COMPLETE"));
+        mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isOk()).andExpect(content().string("COMPLETE"));
     }
 
     @Test
     public void getBulkStatus_withNonExistingTransaction() throws Exception {
-        long transactionId = 2L;
-        when(aasTransactionManager.getTransactionStatus(transactionId)).thenThrow(TransactionResponseNotFoundException.class);
+        long opId = 2L;
+        when(bulkResultManager.getBulkOperationResultStatus(opId)).thenThrow(BulkOperationResultNotFoundException.class);
 
-        mockMvc.perform(get("/bulk/status/{handleId}", transactionId)).andExpect(status().isNotFound());
+        mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isNotFound());
     }
 
     @Test
     public void getBulkResultTest() throws Exception {
-        long transactionId = 2L;
-        TransactionResponse expectedResponse = new TransactionResponse(transactionId, TransactionResponse.ExecutionState.RUNNING, null);
-        when(aasTransactionManager.getTransactionResponse(transactionId)).thenReturn(expectedResponse);
+        long opId = 2L;
+        BulkOperationResult expectedResponse = new BulkOperationResult(opId, BulkOperationResult.ExecutionState.RUNNING, null);
+        when(bulkResultManager.getBulkOperationResult(opId)).thenReturn(expectedResponse);
 
-        mockMvc.perform(get("/bulk/result/{handleId}", transactionId)).andExpect(status().isOk()).andExpect(content().string(objectMapper.writeValueAsString(expectedResponse)));
+        mockMvc.perform(get("/bulk/result/{handleId}", opId)).andExpect(status().isOk()).andExpect(content().string(objectMapper.writeValueAsString(expectedResponse)));
     }
 
     @Test
     public void getBulkResult_withNonExistingTransaction() throws Exception {
-        long transactionId = 2L;
-        when(aasTransactionManager.getTransactionResponse(transactionId)).thenThrow(TransactionResponseNotFoundException.class);
+        long opId = 2L;
+        when(bulkResultManager.getBulkOperationResult(opId)).thenThrow(BulkOperationResultNotFoundException.class);
 
-        mockMvc.perform(get("/bulk/result/{handleId}", transactionId)).andExpect(status().isNotFound());
+        mockMvc.perform(get("/bulk/result/{handleId}", opId)).andExpect(status().isNotFound());
     }
 
 }

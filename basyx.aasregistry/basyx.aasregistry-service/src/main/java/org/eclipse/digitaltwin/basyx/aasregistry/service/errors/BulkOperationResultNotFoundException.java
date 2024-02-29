@@ -23,21 +23,18 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasregistry.service.storage;
+package org.eclipse.digitaltwin.basyx.aasregistry.service.errors;
 
-import java.util.List;
+public class BulkOperationResultNotFoundException extends RuntimeException {
 
-import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
+    private static final long serialVersionUID = 1L;
 
-/**
- * Service Interface for Bulk Transactions
- * 
- * @author mateusmolina
- */
-public interface AasTransactionsService {
-	public void insertBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors);
+    public BulkOperationResultNotFoundException() {
+        super();
+    }
 
-	public void deleteBulkAasDescriptors(List<String> descriptorIdentifiers);
+    public BulkOperationResultNotFoundException(long bulkResultId) {
+        super("Bulk result '" + String.valueOf(bulkResultId) + "' was not found");
+    }
 
-	public void putBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors);
 }

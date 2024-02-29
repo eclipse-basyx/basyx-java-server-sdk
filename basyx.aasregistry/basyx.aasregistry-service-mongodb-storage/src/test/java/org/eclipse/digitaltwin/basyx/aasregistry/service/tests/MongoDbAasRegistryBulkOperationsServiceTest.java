@@ -27,7 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasregistry.service.tests;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.MongoDbConfiguration;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasTransactionsService;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryBulkOperationsService;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -44,12 +44,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = { MongoDbConfiguration.class })
 @EnableAutoConfiguration
 @ExtendWith(SpringExtension.class)
-public class MongoDbAasTransactionsServiceTest extends AasTransactionsServiceTestSuite {
+public class MongoDbAasRegistryBulkOperationsServiceTest extends AasRegistryBulkOperationsServiceTestSuite {
         @Autowired
         private AasRegistryStorage aasRegistryStorage;
 
         @Autowired
-        private AasTransactionsService transactionalService;
+        private AasRegistryBulkOperationsService bulkOperationsService;
 
         @Override
         AasRegistryStorage getAasRegistryStorage() {
@@ -57,7 +57,7 @@ public class MongoDbAasTransactionsServiceTest extends AasTransactionsServiceTes
         }
 
         @Override
-        AasTransactionsService getTransactionsService() {
-                return transactionalService;
+        AasRegistryBulkOperationsService getBulkOperationsService() {
+                return bulkOperationsService;
         }
 }

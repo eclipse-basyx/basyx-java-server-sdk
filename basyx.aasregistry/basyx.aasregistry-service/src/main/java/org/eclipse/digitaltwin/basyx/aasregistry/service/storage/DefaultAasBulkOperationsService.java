@@ -30,8 +30,6 @@ import java.util.List;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNotFoundException;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -39,14 +37,12 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  * @author mateusmolina
  */
-@Service
-@ConditionalOnMissingBean
 @Transactional(rollbackFor = { AasDescriptorAlreadyExistsException.class, AasDescriptorNotFoundException.class })
-public class DefaultAasTransactionsService implements AasTransactionsService {
+public class DefaultAasBulkOperationsService implements AasRegistryBulkOperationsService {
 
 	private final AasRegistryStorage storage;
 
-	public DefaultAasTransactionsService(AasRegistryStorage storage) {
+	public DefaultAasBulkOperationsService(AasRegistryStorage storage) {
 		this.storage = storage;
 	}
 
