@@ -38,9 +38,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.MongoDbCo
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasTransactionsService;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.TransactionResponse;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -100,10 +98,10 @@ public class MongoDbAasTransactionsServiceTest {
                 List<AssetAdministrationShellDescriptor> descriptors = generateTestListOfDescriptors(NUM_GEN_DESCRIPTORS);
 
                 addAllNonTransactionally(descriptors);
-
                 List<AssetAdministrationShellDescriptor> toDeleteDescriptors = new ArrayList<>(descriptors.subList(0, 3));
+                List<String> toDeleteDescriptorIds = toDeleteDescriptors.stream().map(desc -> desc.getId()).collect(Collectors.toList());
 
-                transactionsService.deleteBulkAasDescriptors(toDeleteDescriptors);
+                transactionsService.deleteBulkAasDescriptors(toDeleteDescriptorIds);
 
                 assertThat(getAllAasDescriptors()).doesNotContainAnyElementsOf(toDeleteDescriptors);
         }
@@ -117,8 +115,9 @@ public class MongoDbAasTransactionsServiceTest {
 
                 List<AssetAdministrationShellDescriptor> toDeleteDescriptors = new ArrayList<>(descriptors.subList(0, 3));
                 toDeleteDescriptors.add(new AssetAdministrationShellDescriptor("incorrectDescriptor1"));
+                List<String> toDeleteDescriptorIds = toDeleteDescriptors.stream().map(desc -> desc.getId()).collect(Collectors.toList());
 
-                assertThrows(Exception.class, () -> transactionsService.deleteBulkAasDescriptors(toDeleteDescriptors));
+                assertThrows(Exception.class, () -> transactionsService.deleteBulkAasDescriptors(toDeleteDescriptorIds));
 
                 assertThat(getAllAasDescriptors()).containsExactlyInAnyOrderElementsOf(descriptors);
         }
