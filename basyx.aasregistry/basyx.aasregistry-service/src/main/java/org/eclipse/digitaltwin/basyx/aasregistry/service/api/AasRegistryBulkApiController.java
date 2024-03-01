@@ -68,7 +68,7 @@ public class AasRegistryBulkApiController implements AasRegistryBulkApi {
 			@Parameter(name = "AssetAdministrationShellDescriptor", description = "List of Asset Administration Shell Descriptor objects", required = true) @Valid @RequestBody List<AssetAdministrationShellDescriptor> assetAdministrationShellDescriptors) {
 		long transactionId = aasTransactionManager.runOperationAsync(() -> aasTransactionsService.insertBulkAasDescriptors(assetAdministrationShellDescriptors));
 
-		return ResponseEntity.ok(getTraceableLinkForTransaction(transactionId));
+		return ResponseEntity.accepted().body(getTraceableLinkForTransaction(transactionId));
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class AasRegistryBulkApiController implements AasRegistryBulkApi {
 			@Parameter(name = "AssetAdministrationShellDescriptor", description = "List of Asset Administration Shell Descriptor objects", required = true) @Valid @RequestBody List<AssetAdministrationShellDescriptor> assetAdministrationShellDescriptors) {
 		long transactionId = aasTransactionManager.runOperationAsync(() -> aasTransactionsService.putBulkAasDescriptors(assetAdministrationShellDescriptors));
 
-		return ResponseEntity.ok(getTraceableLinkForTransaction(transactionId));
+		return ResponseEntity.accepted().body(getTraceableLinkForTransaction(transactionId));
 	}
 
 	@Override
@@ -86,11 +86,11 @@ public class AasRegistryBulkApiController implements AasRegistryBulkApi {
 
 		long transactionId = aasTransactionManager.runOperationAsync(() -> aasTransactionsService.deleteBulkAasDescriptors(aasIdentifiersFromBase64EncodedParams));
 
-		return ResponseEntity.ok(getTraceableLinkForTransaction(transactionId));
+		return ResponseEntity.accepted().body(getTraceableLinkForTransaction(transactionId));
 	}
 
 	@Override
-	public ResponseEntity<Void> getBulkStatus(@Parameter(in = ParameterIn.PATH, description = "The handleId for the transaction", required = true, schema = @Schema()) @PathVariable("handleId") long handleId) {
+	public ResponseEntity<Void> getBulkOperationStatus(@Parameter(in = ParameterIn.PATH, description = "The handleId for the transaction", required = true, schema = @Schema()) @PathVariable("handleId") long handleId) {
 		BulkOperationResult.ExecutionState status = aasTransactionManager.getBulkOperationResultStatus(handleId);
 
 		switch (status) {
@@ -110,7 +110,7 @@ public class AasRegistryBulkApiController implements AasRegistryBulkApi {
 	}
 
 	@Override
-	public ResponseEntity<BulkOperationResult> getBulkResult(@Parameter(in = ParameterIn.PATH, description = "The handleId for the transaction", required = true, schema = @Schema()) @PathVariable("handleId") long handleId) {
+	public ResponseEntity<BulkOperationResult> getBulkOperationResult(@Parameter(in = ParameterIn.PATH, description = "The handleId for the transaction", required = true, schema = @Schema()) @PathVariable("handleId") long handleId) {
 		return ResponseEntity.ok(aasTransactionManager.getBulkOperationResult(handleId));
 	}
 

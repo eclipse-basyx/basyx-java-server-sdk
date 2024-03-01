@@ -97,7 +97,7 @@ public class AasRegistryBulkApiControllerTest {
         long opId = 2L;
         when(bulkResultManager.runOperationAsync(any(Runnable.class))).thenReturn(opId);
 
-        mockMvc.perform(post("/bulk/shell-descriptors").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(anyList()))).andExpect(status().isOk())
+        mockMvc.perform(post("/bulk/shell-descriptors").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(anyList()))).andExpect(status().isAccepted())
                 .andExpect(content().string("http://localhost/bulk/status/" + opId));
     }
 
@@ -106,7 +106,7 @@ public class AasRegistryBulkApiControllerTest {
         long opId = 2L;
         when(bulkResultManager.runOperationAsync(any(Runnable.class))).thenReturn(opId);
 
-        mockMvc.perform(put("/bulk/shell-descriptors").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(anyList()))).andExpect(status().isOk())
+        mockMvc.perform(put("/bulk/shell-descriptors").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(anyList()))).andExpect(status().isAccepted())
                 .andExpect(content().string("http://localhost/bulk/status/" + opId));
     }
 
@@ -120,7 +120,7 @@ public class AasRegistryBulkApiControllerTest {
 
         when(bulkResultManager.runOperationAsync(runnableCaptor.capture())).thenReturn(opId);
 
-        mockMvc.perform(delete("/bulk/shell-descriptors").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(listEncodedIdentifiers))).andExpect(status().isOk())
+        mockMvc.perform(delete("/bulk/shell-descriptors").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(listEncodedIdentifiers))).andExpect(status().isAccepted())
                 .andExpect(content().string("http://localhost/bulk/status/" + opId));
 
         runnableCaptor.getValue().run();
