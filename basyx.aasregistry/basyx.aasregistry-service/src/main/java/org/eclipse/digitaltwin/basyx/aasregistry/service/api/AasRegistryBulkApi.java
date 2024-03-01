@@ -48,8 +48,10 @@ import jakarta.validation.Valid;
 /**
  * Interface for the AAS Registry Bulk API
  * 
- * Based on specifcation:
- * {@link https://app.swaggerhub.com/apis/Plattform_i40/AssetAdministrationShellRegistryServiceSpecification/V3.1.0_SSP-003}
+ * Based on V3.1.0_SSP-003
+ * 
+ * @see <a href=
+ *      "https://app.swaggerhub.com/apis/Plattform_i40/AssetAdministrationShellRegistryServiceSpecification/V3.1.0_SSP-003">V3.1.0_SSP-003</a>
  * 
  * @author mateusmolina
  */
