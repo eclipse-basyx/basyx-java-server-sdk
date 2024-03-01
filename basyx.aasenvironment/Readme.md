@@ -38,9 +38,11 @@ Furthermore, if Identifiables (AAS, Submodels, ConceptDescriptions) are already 
 
 For examples, see [application.properties](./basyx.aasenvironment.component/src/main/resources/application.properties)
 
-
 ## AAS Environment Upload Endpoint
 
 AAS environments (e.g. XML, JSON, AASX) can be uploaded to the `/upload` endpoint. 
     
 The upload follows the same rules as the preconfiguration in terms of handling existing AAS, submodels and concept descriptions. In order for the file to be recognized correctly, please make sure that its MIME type is properly configured.
+
+## AAS Environment Features
+* [AAS Environment Authorization](basyx.aasenvironment-feature-authorization)

@@ -45,13 +45,11 @@ public class AasEnvironmentTargetInformation implements TargetInformation {
 	
 	private List<String> aasIds;
 	private List<String> submodelIds;
-	private SerializationType serializationType;
 
 	@JsonCreator
-	public AasEnvironmentTargetInformation(final @JsonProperty("aasIds") List<String> aasIds, final @JsonProperty("submodelIds") List<String> submodelIds, final @JsonProperty("serializationType") SerializationType serializationType) {
+	public AasEnvironmentTargetInformation(final @JsonProperty("aasIds") List<String> aasIds, final @JsonProperty("submodelIds") List<String> submodelIds) {
 		this.aasIds = aasIds;
 		this.submodelIds = submodelIds;
-		this.serializationType = serializationType;
 	}
 
 	@Override
@@ -59,7 +57,6 @@ public class AasEnvironmentTargetInformation implements TargetInformation {
 		final Map<String, Object> map = new HashMap<>();
 		map.put("aasIds", aasIds);
 		map.put("submodelIds", submodelIds);
-		map.put("serializationType", serializationType);
 		
 		return map;
 	}
@@ -72,13 +69,9 @@ public class AasEnvironmentTargetInformation implements TargetInformation {
 		return submodelIds;
 	}
 
-	public SerializationType getSerializationType() {
-		return serializationType;
-	}
-
 	@Override
 	public int hashCode() {
-		return Objects.hash(aasIds, serializationType, submodelIds);
+		return Objects.hash(aasIds, submodelIds);
 	}
 
 	@Override
@@ -90,12 +83,12 @@ public class AasEnvironmentTargetInformation implements TargetInformation {
 		if (getClass() != obj.getClass())
 			return false;
 		AasEnvironmentTargetInformation other = (AasEnvironmentTargetInformation) obj;
-		return Objects.equals(aasIds, other.aasIds) && serializationType == other.serializationType && Objects.equals(submodelIds, other.submodelIds);
+		return Objects.equals(aasIds, other.aasIds) && Objects.equals(submodelIds, other.submodelIds);
 	}
 
 	@Override
 	public String toString() {
-		return "AasEnvironmentTargetInformation [aasIds=" + aasIds + ", submodelIds=" + submodelIds + ", serializationType=" + serializationType + "]";
+		return "AasEnvironmentTargetInformation [aasIds=" + aasIds + ", submodelIds=" + submodelIds;
 	}
 
 }

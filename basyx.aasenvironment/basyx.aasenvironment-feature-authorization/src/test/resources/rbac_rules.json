@@ -265,6 +265,15 @@
     }
   },
   {
+    "role": "basyx-creator",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "aas-environment",
+      "aasIds": "*",
+      "submodelIds": "*"
+    }
+  },
+  {
     "role": "basyx-updater",
     "action": "UPDATE",
     "targetInformation": {
@@ -302,8 +311,7 @@
     "targetInformation": {
       "@type": "aas-environment",
       "aasIds": "*",
-      "submodelIds": "*",
-      "serializationType": "ALL"
+      "submodelIds": "*"
     }
   },
   {
@@ -312,8 +320,7 @@
     "targetInformation": {
       "@type": "aas-environment",
       "aasIds": "*",
-      "submodelIds": "*",
-      "serializationType": "ALL"
+      "submodelIds": "*"
     }
   },
   {
@@ -322,8 +329,7 @@
     "targetInformation": {
       "@type": "aas-environment",
       "aasIds": "*",
-      "submodelIds": "*",
-      "serializationType": "AASX"
+      "submodelIds": "*"
     }
   },
   {
@@ -357,8 +363,7 @@
     "targetInformation": {
       "@type": "aas-environment",
       "aasIds": "*",
-      "submodelIds": "*",
-      "serializationType": "XML"
+      "submodelIds": "*"
     }
   },
   {
@@ -367,8 +372,7 @@
     "targetInformation": {
       "@type": "aas-environment",
       "aasIds": ["shell001", "shell002"],
-      "submodelIds": ["7A7104BDAB57E184", "AC69B1CB44F07935"],
-      "serializationType": "AASX"
+      "submodelIds": ["7A7104BDAB57E184", "AC69B1CB44F07935"]
     }
   },
   {
@@ -402,8 +406,235 @@
     "targetInformation": {
       "@type": "aas-environment",
       "aasIds": ["shell001", "shell002"],
-      "submodelIds": ["7A7104BDAB57E184"],
-      "serializationType": "JSON"
+      "submodelIds": ["7A7104BDAB57E184"]
+    }
+  },
+  {
+    "role": "basyx-uploader",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "aas",
+      "aasId": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "aas",
+      "aasId": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelId": "*",
+      "submodelElementIdShortPath": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionId": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionId": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelId": "*",
+      "submodelElementIdShortPath": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelId": "*",
+      "submodelElementIdShortPath": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionId": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "aas-environment",
+      "aasIds": "*",
+      "submodelIds": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader-two",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "aas",
+      "aasId": "http://customer.com/aas/9175_7013_7091_9168"
+    }
+  },
+  {
+    "role": "basyx-uploader-two",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "aas",
+      "aasId": "http://customer.com/aas/9175_7013_7091_9168"
+    }
+  },
+  {
+    "role": "basyx-uploader-two",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelId": "*",
+      "submodelElementIdShortPath": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader-two",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionId": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader-two",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionId": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader-two",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelId": "*",
+      "submodelElementIdShortPath": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader-two",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelId": "*",
+      "submodelElementIdShortPath": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader-two",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionId": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader-two",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "aas-environment",
+      "aasIds": "http://customer.com/aas/9175_7013_7091_9168",
+      "submodelIds": ["http://i40.customer.com/type/1/1/7A7104BDAB57E184", "http://i40.customer.com/type/1/1/1A7B62B529F19152", "http://i40.customer.com/instance/1/1/AC69B1CB44F07935"]
+    }
+  },
+  {
+    "role": "basyx-uploader-three",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "aas",
+      "aasId": "http://customer.com/aas/9175_7013_7091_9168"
+    }
+  },
+  {
+    "role": "basyx-uploader-three",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "aas",
+      "aasId": "http://customer.com/aas/9175_7013_7091_9168"
+    }
+  },
+  {
+    "role": "basyx-uploader-three",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelId": "*",
+      "submodelElementIdShortPath": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader-three",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionId": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader-three",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionId": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader-three",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelId": "*",
+      "submodelElementIdShortPath": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader-three",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelId": "*",
+      "submodelElementIdShortPath": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader-three",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionId": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader-three",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "aas-environment",
+      "aasIds": "AuthorizedAasID",
+      "submodelIds": ["http://i40.customer.com/type/1/1/7A7104BDAB57E184", "http://i40.customer.com/type/1/1/1A7B62B529F19152", "http://i40.customer.com/instance/1/1/AC69B1CB44F07935"]
     }
   }
 ]

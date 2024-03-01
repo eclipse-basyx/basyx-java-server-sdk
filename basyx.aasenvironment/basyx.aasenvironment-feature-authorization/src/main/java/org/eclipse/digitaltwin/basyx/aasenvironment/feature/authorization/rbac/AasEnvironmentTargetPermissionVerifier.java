@@ -28,7 +28,6 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization.rbac;
 import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization.AasEnvironmentTargetInformation;
-import org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization.SerializationType;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
 
@@ -45,20 +44,13 @@ public class AasEnvironmentTargetPermissionVerifier implements TargetPermissionV
 	public boolean isVerified(RbacRule rbacRule, AasEnvironmentTargetInformation targetInformation) {
 		List<String> targetInformationShellIds = targetInformation.getAasIds();
 		List<String> targetInformationSubmdelIds = targetInformation.getSubmodelIds();
-		SerializationType targetInformationSerializationType = targetInformation.getSerializationType();
 		
 		AasEnvironmentTargetInformation rbacRuleAasEnvironmentTargetInformation = (AasEnvironmentTargetInformation) rbacRule.getTargetInformation();
 		
 		List<String> rbacRuleShellIds = rbacRuleAasEnvironmentTargetInformation.getAasIds();
 		List<String> rbacRuleSubmdelIds = rbacRuleAasEnvironmentTargetInformation.getSubmodelIds();
-		SerializationType rbacRuleSerializationType = rbacRuleAasEnvironmentTargetInformation.getSerializationType();
 		
-		return areShellsAllowed(rbacRuleShellIds, targetInformationShellIds) && areSubmodelsAllowed(rbacRuleSubmdelIds, targetInformationSubmdelIds) && isSerializationTypeAllowed(rbacRuleSerializationType, targetInformationSerializationType);
-	}
-	
-	private boolean isSerializationTypeAllowed(SerializationType rbacRuleSerializationType, SerializationType targetInformationSerializationType) {
-		
-		return rbacRuleSerializationType.equals(SerializationType.ALL) || rbacRuleSerializationType.equals(targetInformationSerializationType);
+		return areShellsAllowed(rbacRuleShellIds, targetInformationShellIds) && areSubmodelsAllowed(rbacRuleSubmdelIds, targetInformationSubmdelIds);
 	}
 
 	private boolean areShellsAllowed(List<String> rbacRuleShellIds, List<String> targetInformationShellIds) {

@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
-import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.AasEnvironmentLoader;
+import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
@@ -54,7 +54,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 
 
 /**
- * Tests the behavior of {@link AasEnvironmentLoader}
+ * Tests the behavior of {@link AasEnvironment} loader functionality
  * 
  * @author sonnenberg, mateusmolina
  *
@@ -83,7 +83,8 @@ public class AasEnvironmentLoaderTest {
 	}
 
 	protected void loadRepositories(List<String> pathsToLoad) throws IOException, DeserializationException, InvalidFormatException {
-		AasEnvironmentLoader envLoader = new AasEnvironmentLoader(aasRepository, submodelRepository, conceptDescriptionRepository);
+		DefaultAASEnvironment envLoader = new DefaultAASEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository);
+		
 		for (String path: pathsToLoad) {
 			File file = rLoader.getResource(path).getFile();
 			envLoader.loadEnvironment(CompleteEnvironment.fromFile(file));

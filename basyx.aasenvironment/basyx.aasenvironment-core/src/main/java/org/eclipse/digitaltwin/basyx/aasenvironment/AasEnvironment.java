@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
+import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 
 /**
  * Specifies the overall AasEnvironment API
@@ -51,4 +52,6 @@ public interface AasEnvironment {
 	public String createXMLAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException;
 
 	public byte[] createAASXAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException, IOException;
+	
+	public void loadEnvironment(CompleteEnvironment completeEnvironment);
 }

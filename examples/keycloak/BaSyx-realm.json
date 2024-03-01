@@ -69,6 +69,14 @@
       "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
       "attributes" : { }
     }, {
+      "id" : "14dd6864-bcbd-46c3-b9b6-269ce036badc",
+      "name" : "basyx-uploader-three",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
       "id" : "502bc902-9de6-4552-98b0-55187b847272",
       "name" : "user",
       "description" : "",
@@ -197,8 +205,24 @@
       "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
       "attributes" : { }
     }, {
+      "id" : "7b698a18-f272-4178-a6a2-d09e714c488e",
+      "name" : "basyx-uploader-two",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
       "id" : "09fa63ab-86ae-40bb-9497-56ee46070200",
       "name" : "basyx-sme-reader",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
+      "id" : "7065a5d2-3ab5-471a-be8c-cda64b6ce319",
+      "name" : "basyx-uploader",
       "description" : "",
       "composite" : false,
       "clientRole" : false,
@@ -577,7 +601,7 @@
   "otpPolicyLookAheadWindow" : 1,
   "otpPolicyPeriod" : 30,
   "otpPolicyCodeReusable" : false,
-  "otpSupportedApplications" : [ "totpAppGoogleName", "totpAppMicrosoftAuthenticatorName", "totpAppFreeOTPName" ],
+  "otpSupportedApplications" : [ "totpAppMicrosoftAuthenticatorName", "totpAppGoogleName", "totpAppFreeOTPName" ],
   "webAuthnPolicyRpEntityName" : "keycloak",
   "webAuthnPolicySignatureAlgorithms" : [ "ES256" ],
   "webAuthnPolicyRpId" : "",
@@ -1039,6 +1063,72 @@
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
     "realmRoles" : [ "basyx-updater-two", "default-roles-basyx" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "cb7df854-827d-4d34-a01f-33cdf07f5cea",
+    "createdTimestamp" : 1708702290219,
+    "username" : "basyx.uploader",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "7df6170e-1631-434d-8380-62f750c563cf",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1708702304670,
+      "secretData" : "{\"value\":\"M7YGdklaJzphwjjWGLfb990lR4NY4rbLTQ1LAPptEuc=\",\"salt\":\"MEYVvEIkg54+jjXQS47dbA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-basyx", "basyx-uploader" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "3c94e1e0-caac-48c3-a31c-c9f555233a46",
+    "createdTimestamp" : 1708932762171,
+    "username" : "basyx.uploader.2",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "0d4049cb-293b-4f76-b82b-5ba9ee4530f2",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1708932779332,
+      "secretData" : "{\"value\":\"jNTZeVbTOOtuokGeXGhYd5Aa+G9TkCS1RFikWtULN/w=\",\"salt\":\"9St8VUxP3iiO2jZYM7whww==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-basyx", "basyx-uploader-two" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "c1a592bd-536f-4a3e-8193-c17d479814f3",
+    "createdTimestamp" : 1708934121191,
+    "username" : "basyx.uploader.3",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "7cd8fd3f-8c83-43b9-9fb7-6203e7c7376c",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1708934138452,
+      "secretData" : "{\"value\":\"BenBZDPAZWMjSh21uER8mw7PSEdXw8xRh7YPlWsNUno=\",\"salt\":\"ioGE5CqXT8XyCWkcbi9ETA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "basyx-uploader-three", "default-roles-basyx" ],
     "notBefore" : 0,
     "groups" : [ ]
   }, {
@@ -1898,7 +1988,7 @@
       "subType" : "anonymous",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-address-mapper", "oidc-full-name-mapper", "saml-user-property-mapper", "saml-user-attribute-mapper", "saml-role-list-mapper", "oidc-usermodel-property-mapper", "oidc-usermodel-attribute-mapper", "oidc-sha256-pairwise-sub-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-sha256-pairwise-sub-mapper", "saml-role-list-mapper", "oidc-usermodel-property-mapper", "oidc-full-name-mapper", "oidc-address-mapper", "saml-user-attribute-mapper", "saml-user-property-mapper", "oidc-usermodel-attribute-mapper" ]
       }
     }, {
       "id" : "7256d195-1e91-4f63-a9c4-6bef95243a92",
@@ -1935,7 +2025,7 @@
       "subType" : "authenticated",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-usermodel-attribute-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-user-attribute-mapper", "oidc-address-mapper", "oidc-usermodel-property-mapper", "saml-user-property-mapper", "saml-role-list-mapper", "oidc-full-name-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-sha256-pairwise-sub-mapper", "oidc-usermodel-attribute-mapper", "saml-user-property-mapper", "oidc-usermodel-property-mapper", "saml-role-list-mapper", "oidc-full-name-mapper", "oidc-address-mapper", "saml-user-attribute-mapper" ]
       }
     }, {
       "id" : "face2c9e-4d23-44e2-9a09-74e1d8448bd3",

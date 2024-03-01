@@ -37,7 +37,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironment;
-import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.AasEnvironmentLoader;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -58,11 +57,6 @@ public class DummyAASEnvironmentComponent {
 	public AasEnvironment createAasEnvironmentSerialization(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
 		initRepositories(aasRepository, submodelRepository, conceptDescriptionRepository);
 		return new DefaultAASEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository);
-	}
-
-	@Bean
-	public AasEnvironmentLoader createAasEnvironmentLoader(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
-		return new AasEnvironmentLoader(aasRepository, submodelRepository, conceptDescriptionRepository);
 	}
 
 	public void initRepositories(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {

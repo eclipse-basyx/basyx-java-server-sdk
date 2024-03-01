@@ -24,14 +24,19 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasenvironment.base;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FilenameUtils;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.aasx.AASXSerializer;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.aasx.InMemoryFile;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.xml.XmlSerializer;
@@ -39,10 +44,18 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.ConceptDescriptionIdCollector;
+import org.eclipse.digitaltwin.basyx.aasenvironment.FileElementPathCollector;
+import org.eclipse.digitaltwin.basyx.aasenvironment.IdShortPathBuilder;
 import org.eclipse.digitaltwin.basyx.aasenvironment.MetamodelCloneCreator;
+import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
+import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.IdentifiableUploader;
+import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.IdentifiableAssertion;
+import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.IdentifiableUploader.DelegatingIdentifiableRepository;
+import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.IdentifiableUploader.IdentifiableRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
@@ -68,6 +81,7 @@ public class DefaultAASEnvironment implements AasEnvironment {
 	private XmlSerializer xmlSerializer = new XmlSerializer();
 	private AASXSerializer aasxSerializer = new AASXSerializer();
 	private MetamodelCloneCreator cloneCreator = new MetamodelCloneCreator();
+	private IdentifiableAssertion checker = new IdentifiableAssertion();
 
 	public DefaultAASEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
 		this.aasRepository = aasRepository;
@@ -95,6 +109,108 @@ public class DefaultAASEnvironment implements AasEnvironment {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		aasxSerializer.write(aasEnvironment, null, outputStream);
 		return outputStream.toByteArray();
+	}
+	
+	public void loadEnvironment(CompleteEnvironment completeEnvironment) {
+		Environment environment = completeEnvironment.getEnvironment();
+
+		if (environment == null)
+			return;
+
+		checker.assertNoDuplicateIds(environment);
+
+		createShellsOnRepositoryFromEnvironment(environment);
+		createSubmodelsOnRepositoryFromEnvironment(environment, completeEnvironment.getRelatedFiles());
+		createConceptDescriptionsOnRepositoryFromEnvironment(environment);
+	}
+
+	private void createConceptDescriptionsOnRepositoryFromEnvironment(Environment environment) {
+		IdentifiableRepository<ConceptDescription> repo = new DelegatingIdentifiableRepository<ConceptDescription>(conceptDescriptionRepository::getConceptDescription, conceptDescriptionRepository::updateConceptDescription,
+				conceptDescriptionRepository::createConceptDescription);
+		IdentifiableUploader<ConceptDescription> uploader = new IdentifiableUploader<ConceptDescription>(repo);
+		for (ConceptDescription conceptDescription : environment.getConceptDescriptions()) {
+			boolean success = uploader.upload(conceptDescription);
+			logSuccessConceptDescription(conceptDescription.getId(), success);
+		}
+	}
+
+	private void createSubmodelsOnRepositoryFromEnvironment(Environment environment, List<InMemoryFile> relatedFiles) {
+		List<Submodel> submodels = environment.getSubmodels();
+
+		createSubmodelsOnRepository(submodels);
+
+		if (relatedFiles == null || relatedFiles.isEmpty())
+			return;
+
+		for (Submodel submodel : submodels) {
+			List<List<SubmodelElement>> idShortElementPathsOfAllFileSMEs = new FileElementPathCollector(submodel).collect();
+
+			idShortElementPathsOfAllFileSMEs.stream().forEach(fileSMEIdShortPath -> setFileToFileElement(submodel.getId(), fileSMEIdShortPath, relatedFiles));
+		}
+	}
+
+	private void setFileToFileElement(String submodelId, List<SubmodelElement> fileSMEIdShortPathElements, List<InMemoryFile> relatedFiles) {
+		String fileSMEIdShortPath = new IdShortPathBuilder(new ArrayList<>(fileSMEIdShortPathElements)).build();
+
+		org.eclipse.digitaltwin.aas4j.v3.model.File fileSME = (org.eclipse.digitaltwin.aas4j.v3.model.File) submodelRepository.getSubmodelElement(submodelId, fileSMEIdShortPath);
+
+		InMemoryFile inMemoryFile = getAssociatedInMemoryFile(relatedFiles, fileSME.getValue());
+
+		if (inMemoryFile == null) {
+			logger.info("Unable to set file to the SubmodelElement File with IdShortPath '{}' because it does not exist in the AASX file.", fileSMEIdShortPath);
+
+			return;
+		}
+
+		submodelRepository.setFileValue(submodelId, fileSMEIdShortPath, getFileName(inMemoryFile.getPath()), new ByteArrayInputStream(inMemoryFile.getFileContent()));
+	}
+
+	private String getFileName(String path) {
+		return FilenameUtils.getName(path);
+	}
+
+	private InMemoryFile getAssociatedInMemoryFile(List<InMemoryFile> relatedFiles, String value) {
+
+		Optional<InMemoryFile> inMemoryFile = relatedFiles.stream().filter(file -> file.getPath().equals(value)).findAny();
+
+		if (inMemoryFile.isEmpty())
+			return null;
+
+		return inMemoryFile.get();
+	}
+
+	private void createShellsOnRepositoryFromEnvironment(Environment environment) {
+		IdentifiableRepository<AssetAdministrationShell> repo = new DelegatingIdentifiableRepository<AssetAdministrationShell>(aasRepository::getAas, aasRepository::updateAas, aasRepository::createAas);
+		IdentifiableUploader<AssetAdministrationShell> uploader = new IdentifiableUploader<>(repo);
+		for (AssetAdministrationShell shell : environment.getAssetAdministrationShells()) {
+			boolean success = uploader.upload(shell);
+			logSuccess("shell", shell.getId(), success);
+		}
+	}
+
+	private void createSubmodelsOnRepository(List<Submodel> submodels) {
+		IdentifiableRepository<Submodel> repo = new DelegatingIdentifiableRepository<Submodel>(submodelRepository::getSubmodel, submodelRepository::updateSubmodel, submodelRepository::createSubmodel);
+		IdentifiableUploader<Submodel> uploader = new IdentifiableUploader<>(repo);
+		for (Submodel submodel : submodels) {
+			boolean success = uploader.upload(submodel);
+			logSuccess("submodel", submodel.getId(), success);
+		}
+	}
+
+	private void logSuccess(String resourceName, String id, boolean success) {
+		if (success) {
+			logger.info("Uploading " + resourceName + " " + id + " was successful!");
+		} else {
+			logger.warn("Uploading " + resourceName + " " + id + " was not successful!");
+		}
+	}
+
+	private void logSuccessConceptDescription(String conceptDescriptionId, boolean success) {
+		if (!success) {
+			logger.warn("Colliding Ids detected for ConceptDescription: " + conceptDescriptionId + ". If they are not identical, this is an error. Please note that the already existing ConceptDescription was not updated.");
+		} else {
+			logSuccess("conceptDescription", conceptDescriptionId, success);
+		}
 	}
 
 	private Environment createEnvironment(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) {

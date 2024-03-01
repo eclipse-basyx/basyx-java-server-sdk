@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
-import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.AasEnvironmentLoader;
+import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.AasEnvironmentPreconfigurationLoader;
 import org.junit.Assert;
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class PreconfigurationLoaderTextualResourceTest extends AasEnvironmentLoa
 	@Override
 	protected void loadRepositories(List<String> pathsToLoad) throws IOException, InvalidFormatException, DeserializationException {
 		AasEnvironmentPreconfigurationLoader envLoader = new AasEnvironmentPreconfigurationLoader(rLoader, pathsToLoad);
-		envLoader.loadPreconfiguredEnvironments(new AasEnvironmentLoader(aasRepository, submodelRepository, conceptDescriptionRepository));
+		envLoader.loadPreconfiguredEnvironments(new DefaultAASEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository));
 	}
 
 	@Test

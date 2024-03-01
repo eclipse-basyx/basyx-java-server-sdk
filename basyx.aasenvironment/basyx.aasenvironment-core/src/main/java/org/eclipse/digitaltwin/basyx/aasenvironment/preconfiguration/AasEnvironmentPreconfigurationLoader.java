@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
-import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.AasEnvironmentLoader;
+import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment.EnvironmentType;
 import org.slf4j.Logger;
@@ -70,7 +70,7 @@ public class AasEnvironmentPreconfigurationLoader {
 		return pathsToLoad != null;
 	}
 
-	public void loadPreconfiguredEnvironments(AasEnvironmentLoader environmentLoader)
+	public void loadPreconfiguredEnvironments(AasEnvironment aasEnvironment)
 			throws IOException, DeserializationException, InvalidFormatException {
 		List<File> files = scanForEnvironments(pathsToLoad);
 
@@ -82,7 +82,7 @@ public class AasEnvironmentPreconfigurationLoader {
 
 		for (File file : files) {
 			logLoadingProcess(currenFileIndex++, filesCount, file.getName());
-			environmentLoader.loadEnvironment(CompleteEnvironment.fromFile(file));
+			aasEnvironment.loadEnvironment(CompleteEnvironment.fromFile(file));
 		}
 	}
 
