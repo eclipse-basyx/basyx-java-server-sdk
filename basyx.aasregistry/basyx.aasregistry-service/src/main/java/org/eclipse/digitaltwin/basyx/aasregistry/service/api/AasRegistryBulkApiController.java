@@ -35,13 +35,9 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.BulkOperationRe
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import io.swagger.v3.oas.annotations.Parameter;
@@ -54,9 +50,9 @@ import jakarta.validation.Valid;
  * 
  * @author mateusmolina
  */
-@Controller
+@RestController
 @ConditionalOnBean(AasRegistryBulkOperationsService.class)
-public class AasRegistryBulkApiController {
+public class AasRegistryBulkApiController implements AasRegistryBulkApi {
 
 	private final AasRegistryBulkOperationsService aasTransactionsService;
 
@@ -67,7 +63,7 @@ public class AasRegistryBulkApiController {
 		this.aasTransactionManager = aasTransactionManager;
 	}
 
-	@PostMapping("/bulk/shell-descriptors")
+	@Override
 	public ResponseEntity<String> postBulkShellDescriptors(
 			@Parameter(name = "AssetAdministrationShellDescriptor", description = "List of Asset Administration Shell Descriptor objects", required = true) @Valid @RequestBody List<AssetAdministrationShellDescriptor> assetAdministrationShellDescriptors) {
 		long transactionId = aasTransactionManager.runOperationAsync(() -> aasTransactionsService.insertBulkAasDescriptors(assetAdministrationShellDescriptors));
@@ -75,7 +71,7 @@ public class AasRegistryBulkApiController {
 		return ResponseEntity.ok(getTraceableLinkForTransaction(transactionId));
 	}
 
-	@PutMapping("/bulk/shell-descriptors")
+	@Override
 	public ResponseEntity<String> putBulkShellDescriptors(
 			@Parameter(name = "AssetAdministrationShellDescriptor", description = "List of Asset Administration Shell Descriptor objects", required = true) @Valid @RequestBody List<AssetAdministrationShellDescriptor> assetAdministrationShellDescriptors) {
 		long transactionId = aasTransactionManager.runOperationAsync(() -> aasTransactionsService.putBulkAasDescriptors(assetAdministrationShellDescriptors));
@@ -83,7 +79,7 @@ public class AasRegistryBulkApiController {
 		return ResponseEntity.ok(getTraceableLinkForTransaction(transactionId));
 	}
 
-	@DeleteMapping("/bulk/shell-descriptors")
+	@Override
 	public ResponseEntity<String> deleteBulkShellDescriptors(
 			@Parameter(name = "aasIdentifier", description = "List of Asset Administration Shell Descriptor unique identifiers (UTF8-BASE64-URL-encoded)", required = true, in = ParameterIn.PATH) @Valid @RequestBody List<String> aasIdentifiersBase64) {
 		List<String> aasIdentifiersFromBase64EncodedParams = aasIdentifiersBase64.stream().map(AasRegistryBulkApiController::decodeIdentifier).collect(Collectors.toList());
@@ -93,7 +89,7 @@ public class AasRegistryBulkApiController {
 		return ResponseEntity.ok(getTraceableLinkForTransaction(transactionId));
 	}
 
-	@GetMapping("/bulk/status/{handleId}")
+	@Override
 	public ResponseEntity<Void> getBulkStatus(@Parameter(in = ParameterIn.PATH, description = "The handleId for the transaction", required = true, schema = @Schema()) @PathVariable("handleId") long handleId) {
 		BulkOperationResult.ExecutionState status = aasTransactionManager.getBulkOperationResultStatus(handleId);
 
@@ -113,7 +109,7 @@ public class AasRegistryBulkApiController {
 		}
 	}
 
-	@GetMapping("/bulk/result/{handleId}")
+	@Override
 	public ResponseEntity<BulkOperationResult> getBulkResult(@Parameter(in = ParameterIn.PATH, description = "The handleId for the transaction", required = true, schema = @Schema()) @PathVariable("handleId") long handleId) {
 		return ResponseEntity.ok(aasTransactionManager.getBulkOperationResult(handleId));
 	}
