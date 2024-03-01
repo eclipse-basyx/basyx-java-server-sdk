@@ -78,11 +78,11 @@ public class BulkOperationResultManager {
         return bulkResultMap.get(bulkResultId);
     }
 
-    public String getBulkOperationResultStatus(long transactionResponseId) {
+    public BulkOperationResult.ExecutionState getBulkOperationResultStatus(long transactionResponseId) {
         if (!bulkResultMap.containsKey(transactionResponseId))
             throw new BulkOperationResultNotFoundException(transactionResponseId);
 
-        return bulkResultMap.get(transactionResponseId).transactionStatus().toString();
+        return bulkResultMap.get(transactionResponseId).transactionStatus();
     }
 
     private void putBulkOperationResult(long transactionId, BulkOperationResult.ExecutionState newExecutionState, String message) {

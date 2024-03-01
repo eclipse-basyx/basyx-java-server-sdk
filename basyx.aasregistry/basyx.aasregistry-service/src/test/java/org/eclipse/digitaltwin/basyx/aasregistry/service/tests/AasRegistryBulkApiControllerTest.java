@@ -43,10 +43,10 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.api.AasRegistryBulkApiC
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.BasyxControllerAdvice;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.BulkOperationResultNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventSink;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.BulkOperationResultManager;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryBulkOperationsService;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.BulkOperationResult;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.BulkOperationResultManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -129,12 +129,45 @@ public class AasRegistryBulkApiControllerTest {
     }
 
     @Test
-    public void getBulkStatusTest() throws Exception {
+    public void getBulkStatusTest_withCompletedTransaction() throws Exception {
         long opId = 2L;
-        when(bulkResultManager.getBulkOperationResultStatus(opId)).thenReturn("COMPLETE");
+        when(bulkResultManager.getBulkOperationResultStatus(opId)).thenReturn(BulkOperationResult.ExecutionState.COMPLETED);
 
-        mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isOk()).andExpect(content().string("COMPLETE"));
+        mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isNoContent());
     }
+
+    @Test
+    public void getBulkStatusTest_withFailedTransaction() throws Exception {
+        long opId = 2L;
+        when(bulkResultManager.getBulkOperationResultStatus(opId)).thenReturn(BulkOperationResult.ExecutionState.FAILED);
+
+        mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void getBulkStatusTest_withTimedOutTransaction() throws Exception {
+        long opId = 2L;
+        when(bulkResultManager.getBulkOperationResultStatus(opId)).thenReturn(BulkOperationResult.ExecutionState.TIMEOUT);
+
+        mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isRequestTimeout());
+    }
+
+    @Test
+    public void getBulkStatusTest_withInitiated() throws Exception {
+        long opId = 2L;
+        when(bulkResultManager.getBulkOperationResultStatus(opId)).thenReturn(BulkOperationResult.ExecutionState.INITIATED);
+
+        mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isOk());
+    }
+
+    @Test
+    public void getBulkStatusTest_withRunning() throws Exception {
+        long opId = 2L;
+        when(bulkResultManager.getBulkOperationResultStatus(opId)).thenReturn(BulkOperationResult.ExecutionState.RUNNING);
+
+        mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isOk());
+    }
+
 
     @Test
     public void getBulkStatus_withNonExistingTransaction() throws Exception {

@@ -29,10 +29,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.BulkOperationResultManager;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryBulkOperationsService;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.BulkOperationResult;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.BulkOperationResultManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -93,8 +94,23 @@ public class AasRegistryBulkApiController {
 	}
 
 	@GetMapping("/bulk/status/{handleId}")
-	public ResponseEntity<String> getBulkStatus(@Parameter(in = ParameterIn.PATH, description = "The handleId for the transaction", required = true, schema = @Schema()) @PathVariable("handleId") long handleId) {
-		return ResponseEntity.ok(aasTransactionManager.getBulkOperationResultStatus(handleId));
+	public ResponseEntity<Void> getBulkStatus(@Parameter(in = ParameterIn.PATH, description = "The handleId for the transaction", required = true, schema = @Schema()) @PathVariable("handleId") long handleId) {
+		BulkOperationResult.ExecutionState status = aasTransactionManager.getBulkOperationResultStatus(handleId);
+
+		switch (status) {
+		case INITIATED:
+			return ResponseEntity.ok().build();
+		case RUNNING:
+			return ResponseEntity.ok().build();
+		case COMPLETED:
+			return ResponseEntity.noContent().build();
+		case FAILED:
+			return ResponseEntity.badRequest().build();
+		case TIMEOUT:
+			return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).build();
+		default:
+			return ResponseEntity.badRequest().build();
+		}
 	}
 
 	@GetMapping("/bulk/result/{handleId}")
