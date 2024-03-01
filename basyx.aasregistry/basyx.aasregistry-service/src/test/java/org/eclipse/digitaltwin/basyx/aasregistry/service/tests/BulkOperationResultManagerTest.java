@@ -48,11 +48,11 @@ public class BulkOperationResultManagerTest {
         BulkOperationResultManager bulkResultManager = new BulkOperationResultManager();
 
         long transactionId = bulkResultManager.runOperationAsync(BulkOperationResultManagerTest::sleepFor500);
-        assertEquals(BulkOperationResult.ExecutionState.INITIATED.toString(), bulkResultManager.getBulkOperationResultStatus(transactionId));
+        assertEquals(BulkOperationResult.ExecutionState.INITIATED, bulkResultManager.getBulkOperationResultStatus(transactionId));
         Thread.sleep(250);
-        assertEquals(BulkOperationResult.ExecutionState.RUNNING.toString(), bulkResultManager.getBulkOperationResultStatus(transactionId));
+        assertEquals(BulkOperationResult.ExecutionState.RUNNING, bulkResultManager.getBulkOperationResultStatus(transactionId));
         Thread.sleep(300);
-        assertEquals(BulkOperationResult.ExecutionState.COMPLETED.toString(), bulkResultManager.getBulkOperationResultStatus(transactionId));
+        assertEquals(BulkOperationResult.ExecutionState.COMPLETED, bulkResultManager.getBulkOperationResultStatus(transactionId));
     }
 
     @Test
@@ -60,11 +60,11 @@ public class BulkOperationResultManagerTest {
         BulkOperationResultManager bulkResultManager = new BulkOperationResultManager();
 
         long transactionId = bulkResultManager.runOperationAsync(BulkOperationResultManagerTest::sleepFor500AndThrow);
-        assertEquals(BulkOperationResult.ExecutionState.INITIATED.toString(), bulkResultManager.getBulkOperationResultStatus(transactionId));
+        assertEquals(BulkOperationResult.ExecutionState.INITIATED, bulkResultManager.getBulkOperationResultStatus(transactionId));
         Thread.sleep(250);
-        assertEquals(BulkOperationResult.ExecutionState.RUNNING.toString(), bulkResultManager.getBulkOperationResultStatus(transactionId));
+        assertEquals(BulkOperationResult.ExecutionState.RUNNING, bulkResultManager.getBulkOperationResultStatus(transactionId));
         Thread.sleep(300);
-        assertEquals(BulkOperationResult.ExecutionState.FAILED.toString(), bulkResultManager.getBulkOperationResultStatus(transactionId));
+        assertEquals(BulkOperationResult.ExecutionState.FAILED, bulkResultManager.getBulkOperationResultStatus(transactionId));
     }
 
     @Test
@@ -85,7 +85,7 @@ public class BulkOperationResultManagerTest {
         long transactionId = bulkResultManager.runOperationAsync(BulkOperationResultManagerTest::doNothing);
         Thread.sleep(100);
 
-        assertEquals(BulkOperationResult.ExecutionState.COMPLETED.toString(), bulkResultManager.getBulkOperationResultStatus(transactionId));
+        assertEquals(BulkOperationResult.ExecutionState.COMPLETED, bulkResultManager.getBulkOperationResultStatus(transactionId));
         assertThrows(BulkOperationResultNotFoundException.class, () -> bulkResultManager.getBulkOperationResultStatus(transactionId + 1));
     }
 
