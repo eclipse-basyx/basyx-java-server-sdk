@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository;
+package org.eclipse.digitaltwin.basyx.core.filerepository;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,14 +34,11 @@ import java.nio.file.Paths;
 import org.bson.types.ObjectId;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
-import org.eclipse.digitaltwin.basyx.core.file.FileMetadata;
-import org.eclipse.digitaltwin.basyx.core.file.FileRepository;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
-
-import org.springframework.data.mongodb.core.query.Query;
 
 /**
  * A MongoDB implementation of the {@link FileRepository}
@@ -76,7 +73,7 @@ public class MongoDBSubmodelFileRepository implements FileRepository {
 
 		if (!exists(fileId))
 			throw new FileDoesNotExistException();
-		
+
 		String mongoDBfileId = getFileId(fileId);
 
 		GridFSFile file = getFile(mongoDBfileId);
@@ -89,7 +86,7 @@ public class MongoDBSubmodelFileRepository implements FileRepository {
 
 		if (!exists(fileId))
 			throw new FileDoesNotExistException();
-		
+
 		String mongoDBfileId = getFileId(fileId);
 
 		gridFsTemplate.delete(new Query(Criteria.where(MONGO_ID).is(mongoDBfileId)));
@@ -97,9 +94,9 @@ public class MongoDBSubmodelFileRepository implements FileRepository {
 
 	@Override
 	public boolean exists(String fileId) {
-		
+
 		String mongoDBfileId = getFileId(fileId);
-		
+
 		if (mongoDBfileId.isBlank())
 			return false;
 
@@ -107,20 +104,20 @@ public class MongoDBSubmodelFileRepository implements FileRepository {
 
 		return gridFSFile != null;
 	}
-	
+
 	private String getFileId(String value) {
-		
+
 		if (value.isBlank())
 			return "";
-		
+
 		String fileName = Paths.get(value).getFileName().toString();
-		
+
 		try {
 			return fileName.substring(0, fileName.indexOf(GRIDFS_ID_DELIMITER));
 		} catch (IndexOutOfBoundsException e) {
 			return "";
 		}
-		
+
 	}
 
 	private GridFSFile getFile(String mongoDBfileId) {
@@ -138,22 +135,22 @@ public class MongoDBSubmodelFileRepository implements FileRepository {
 	}
 
 	private String createFilePath(String id, String fileName) {
-		
+
 		Path tempDir = createTempDirectory(TEMP_DIR_PREFIX);
 
 		String temporaryDirectoryPath = tempDir.toAbsolutePath().toString();
 
 		return temporaryDirectoryPath + "/" + id + GRIDFS_ID_DELIMITER + fileName;
 	}
-	
+
 	private Path createTempDirectory(String prefix) {
-		
+
 		try {
 			return Files.createTempDirectory(prefix);
 		} catch (IOException e) {
 			throw new FileHandlingException("Exception occurred while creating temporary directory with prefix '" + TEMP_DIR_PREFIX + "'." + e.getMessage());
 		}
-		
+
 	}
 
 }

@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository;
+package org.eclipse.digitaltwin.basyx.core.filerepository;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -37,15 +37,13 @@ import java.nio.file.Paths;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
-import org.eclipse.digitaltwin.basyx.core.file.FileMetadata;
-import org.eclipse.digitaltwin.basyx.core.file.FileRepository;
 
 /**
  * An InMemory implementation of the {@link FileRepository}
  * 
  * @author danish
  */
-public class InMemorySubmodelFileRepository implements FileRepository {
+public class InMemoryFileRepository implements FileRepository {
 
 	private static final String TEMP_DIRECTORY_PREFIX = "basyx-temp";
 	private String tmpDirectory = getTemporaryDirectoryPath();
@@ -53,7 +51,7 @@ public class InMemorySubmodelFileRepository implements FileRepository {
 	@Override
 	public String save(FileMetadata fileMetadata) throws FileHandlingException {
 		String filePath = createFilePath(fileMetadata.getFileName());
-		
+
 		java.io.File targetFile = new java.io.File(filePath);
 
 		try (FileOutputStream outStream = new FileOutputStream(targetFile)) {
@@ -61,7 +59,7 @@ public class InMemorySubmodelFileRepository implements FileRepository {
 		} catch (IOException e) {
 			throw new FileHandlingException(fileMetadata.getFileName());
 		}
-		
+
 		fileMetadata.setFileName(filePath);
 
 		return filePath;
@@ -69,7 +67,7 @@ public class InMemorySubmodelFileRepository implements FileRepository {
 
 	@Override
 	public InputStream find(String fileId) throws FileDoesNotExistException {
-		
+
 		try {
 			return new FileInputStream(fileId);
 		} catch (FileNotFoundException e) {
@@ -79,10 +77,10 @@ public class InMemorySubmodelFileRepository implements FileRepository {
 
 	@Override
 	public void delete(String fileId) throws FileDoesNotExistException {
-		
+
 		if (!exists(fileId))
 			throw new FileDoesNotExistException();
-		
+
 		java.io.File tmpFile = new java.io.File(fileId);
 
 		tmpFile.delete();
@@ -90,36 +88,36 @@ public class InMemorySubmodelFileRepository implements FileRepository {
 
 	@Override
 	public boolean exists(String fileId) {
-		
+
 		if (fileId.isBlank() || !isFilePathValid(fileId))
 			return false;
-		
+
 		return Files.exists(Paths.get(fileId));
 	}
-	
+
 	private boolean isFilePathValid(String filePath) {
-		
+
 		try {
 			Paths.get(filePath);
 		} catch (InvalidPathException | NullPointerException ex) {
 			return false;
 		}
-		
+
 		return true;
 	}
 
 	private String getTemporaryDirectoryPath() {
 		String tempDirectoryPath = "";
-		
+
 		try {
 			tempDirectoryPath = Files.createTempDirectory(TEMP_DIRECTORY_PREFIX).toAbsolutePath().toString();
 		} catch (IOException e) {
 			throw new RuntimeException(String.format("Unable to create the temporary directory with prefix: %s", TEMP_DIRECTORY_PREFIX));
 		}
-		
+
 		return tempDirectoryPath;
 	}
-	
+
 	private String createFilePath(String fileName) {
 		return tmpDirectory + "/" + fileName;
 	}
