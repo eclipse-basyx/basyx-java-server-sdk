@@ -1085,7 +1085,7 @@ public class AuthorizedSubmodelRepositoryTestSuite {
 
 	@Test
 	public void patchSubmodelValueWithCorrectRoleAndUnauthorizedSpecificSubmodel() throws IOException {
-		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_TWO_CREDENTIAL);
+		String accessToken = getAccessToken(DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL);
 
 		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPatchRequest(getSpecificSubmodelValueOnlyAccessURL(SPECIFIC_SUBMODEL_ID), getJSONValueAsString("authorization/newSubmodelValue.json"), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
