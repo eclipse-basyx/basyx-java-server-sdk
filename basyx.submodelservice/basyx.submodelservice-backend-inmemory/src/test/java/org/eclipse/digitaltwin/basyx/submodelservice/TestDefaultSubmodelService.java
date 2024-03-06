@@ -27,17 +27,18 @@
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 
 /**
  * 
  * @author schnicke
  *
  */
-public class TestInMemorySubmodelService extends SubmodelServiceSuite {
+public class TestDefaultSubmodelService extends SubmodelServiceSuite {
 
 	@Override
 	protected SubmodelService getSubmodelService(Submodel submodel) {
-		return new InMemorySubmodelServiceFactory().create(submodel);
+		return new DefaultSubmodelServiceFactory(new InMemoryFileRepository()).create(submodel);
 	}
 
 }

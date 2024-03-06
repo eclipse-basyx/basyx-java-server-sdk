@@ -27,22 +27,28 @@
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.springframework.stereotype.Component;
 
 /**
- * SubmodelService factory returning an in-memory backend SubmodelService
+ * SubmodelService factory
  * 
- * @author schnicke
+ * @author schnicke, mateusmolina
  *
  */
-@ConditionalOnExpression("'${basyx.submodelservice.backend}'.equals('InMemory') or '${basyx.backend}'.equals('InMemory')")
 @Component
-public class InMemorySubmodelServiceFactory implements SubmodelServiceFactory {
+public class DefaultSubmodelServiceFactory implements SubmodelServiceFactory {
+
+	private final FileRepository fileRepository;
+
+	public DefaultSubmodelServiceFactory(FileRepository fileRepository) {
+		super();
+		this.fileRepository = fileRepository;
+	}
 
 	@Override
 	public SubmodelService create(Submodel submodel) {
-		return new InMemorySubmodelService(submodel);
+		return new DefaultSubmodelService(submodel, fileRepository);
 	}
 
 }

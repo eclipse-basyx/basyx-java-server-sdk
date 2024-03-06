@@ -38,6 +38,7 @@ import org.eclipse.digitaltwin.basyx.InvokableOperation;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -54,9 +55,10 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapper;
  * @author schnicke, danish
  * 
  */
-public class InMemorySubmodelService implements SubmodelService {
+public class DefaultSubmodelService implements SubmodelService {
 
 	private final Submodel submodel;
+	private final FileRepository fileRepository;
 	private HierarchicalSubmodelElementParser parser;
 	private SubmodelElementIdShortHelper helper = new SubmodelElementIdShortHelper();
 
@@ -65,8 +67,9 @@ public class InMemorySubmodelService implements SubmodelService {
 	 * 
 	 * @param submodel
 	 */
-	public InMemorySubmodelService(Submodel submodel) {
+	public DefaultSubmodelService(Submodel submodel, FileRepository fileRepository) {
 		this.submodel = submodel;
+		this.fileRepository = fileRepository;
 		parser = new HierarchicalSubmodelElementParser(submodel);
 	}
 

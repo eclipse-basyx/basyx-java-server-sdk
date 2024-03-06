@@ -25,8 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.http;
 
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
+import org.eclipse.digitaltwin.basyx.submodelservice.DefaultSubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +37,7 @@ public class DummySubmodelServiceComponent {
 
 	@Bean
 	public SubmodelService getSubmodelService() {
-		return new InMemorySubmodelServiceFactory()
+		return new DefaultSubmodelServiceFactory(new InMemoryFileRepository())
 				.create(DummySubmodelFactory.createSubmodelWithAllSubmodelElements());
 	}
 }

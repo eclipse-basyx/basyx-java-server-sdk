@@ -26,8 +26,9 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.example;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
+import org.eclipse.digitaltwin.basyx.submodelservice.DefaultSubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -43,7 +44,7 @@ public class DummySubmodelServiceComponent {
 	@Bean
 	public SubmodelService createSubmodelService() {
 		Submodel submodel = DummySubmodelFactory.createTechnicalDataSubmodel();
-		return new InMemorySubmodelService(submodel);
+		return new DefaultSubmodelService(submodel, new InMemoryFileRepository());
 	}
 
 }

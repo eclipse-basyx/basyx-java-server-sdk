@@ -24,14 +24,15 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
+import org.eclipse.digitaltwin.basyx.submodelservice.DefaultSubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Provides a InMemorySubmodelServiceFactory for usage in the MongoDB Submodel
+ * Provides a DefaultSubmodelServiceFactory for usage in the MongoDB Submodel
  * Repository backend.<br>
  * <br>
  * This is needed to ensure that the SubmodelServiceFeatures are processed
@@ -44,7 +45,7 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
 public class MongoDBSubmodelRepositoryConfiguration {
 	@Bean
-	public SubmodelServiceFactory getInMemorySubmodelServiceFactory() {
-		return new InMemorySubmodelServiceFactory();
+	public SubmodelServiceFactory getInMemorySubmodelServiceFactory(FileRepository fileRepository) {
+		return new DefaultSubmodelServiceFactory(fileRepository);
 	}
 }

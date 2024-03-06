@@ -44,6 +44,12 @@
 			<artifactId>commons-io</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>
+				basyx.filerepository-backend-inmemory
+			</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

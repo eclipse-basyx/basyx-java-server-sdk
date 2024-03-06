@@ -34,10 +34,11 @@ import org.eclipse.digitaltwin.basyx.InvokableOperation;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
+import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SubmodelBackendProvider;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.DefaultSubmodelServiceFactory;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -64,7 +65,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
 
 		SubmodelBackendProvider submodelBackendProvider = new SubmodelMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, TEMPLATE);
-		SubmodelRepositoryFactory submodelRepositoryFactory = new SimpleSubmodelRepositoryFactory(submodelBackendProvider, new InMemorySubmodelServiceFactory());
+		SubmodelRepositoryFactory submodelRepositoryFactory = new SimpleSubmodelRepositoryFactory(submodelBackendProvider, new DefaultSubmodelServiceFactory(new MongoDBFileRepository(GRIDFS_TEMPLATE)));
 
 		return submodelRepositoryFactory.create();
 	}
@@ -91,7 +92,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	@Test
 	public void getConfiguredMongoDBSmRepositoryName() {
 		SubmodelBackendProvider submodelBackendProvider = new SubmodelMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, TEMPLATE);
-		SubmodelRepository repo = new SimpleSubmodelRepositoryFactory(submodelBackendProvider, new InMemorySubmodelServiceFactory(), CONFIGURED_SM_REPO_NAME).create();
+		SubmodelRepository repo = new SimpleSubmodelRepositoryFactory(submodelBackendProvider, new DefaultSubmodelServiceFactory(new MongoDBFileRepository(GRIDFS_TEMPLATE)), CONFIGURED_SM_REPO_NAME).create();
 
 		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
 	}
