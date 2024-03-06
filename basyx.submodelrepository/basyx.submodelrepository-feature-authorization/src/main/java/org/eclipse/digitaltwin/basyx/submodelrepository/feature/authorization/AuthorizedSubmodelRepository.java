@@ -56,7 +56,6 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 	private static final String ALL_ALLOWED_WILDCARD = "*";
 	private SubmodelRepository decorated;
 	private RbacPermissionResolver<SubmodelTargetInformation> permissionResolver;
-	
 
 	public AuthorizedSubmodelRepository(SubmodelRepository decorated, RbacPermissionResolver<SubmodelTargetInformation> permissionResolver) {
 		this.decorated = decorated;
@@ -66,187 +65,186 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 	@Override
 	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(ALL_ALLOWED_WILDCARD, ALL_ALLOWED_WILDCARD));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		return decorated.getAllSubmodels(pInfo);
 	}
 
 	@Override
 	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		return decorated.getSubmodel(submodelId);
 	}
 
 	@Override
 	public void updateSubmodel(String submodelId, Submodel submodel) throws ElementDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		decorated.updateSubmodel(submodelId, submodel);
 	}
 
 	@Override
 	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.CREATE, new SubmodelTargetInformation(submodel.getId(), ALL_ALLOWED_WILDCARD));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		decorated.createSubmodel(submodel);
 	}
 
 	@Override
 	public void deleteSubmodel(String submodelId) throws ElementDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.DELETE, new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		decorated.deleteSubmodel(submodelId);
 	}
 
 	@Override
 	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo) throws ElementDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		return decorated.getSubmodelElements(submodelId, pInfo);
 	}
 
 	@Override
 	public SubmodelElement getSubmodelElement(String submodelId, String smeIdShortPath) throws ElementDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(submodelId, smeIdShortPath));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		return decorated.getSubmodelElement(submodelId, smeIdShortPath);
 	}
 
 	@Override
 	public SubmodelElementValue getSubmodelElementValue(String submodelId, String smeIdShortPath) throws ElementDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(submodelId, smeIdShortPath));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		return decorated.getSubmodelElementValue(submodelId, smeIdShortPath);
 	}
 
 	@Override
 	public void setSubmodelElementValue(String submodelId, String smeIdShortPath, SubmodelElementValue value) throws ElementDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, smeIdShortPath));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		decorated.setSubmodelElementValue(submodelId, smeIdShortPath, value);
 	}
 
 	@Override
 	public void createSubmodelElement(String submodelId, SubmodelElement smElement) {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		decorated.createSubmodelElement(submodelId, smElement);
 	}
 
 	@Override
 	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, idShortPath));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		decorated.createSubmodelElement(submodelId, idShortPath, smElement);
 	}
-	
+
 	@Override
 	public void updateSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, idShortPath));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		decorated.updateSubmodelElement(submodelId, idShortPath, submodelElement);
 	}
 
 	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, idShortPath));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
-		decorated.deleteSubmodelElement(submodelId, idShortPath);		
+
+		decorated.deleteSubmodelElement(submodelId, idShortPath);
 	}
 
 	@Override
 	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.EXECUTE, new SubmodelTargetInformation(submodelId, idShortPath));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		return decorated.invokeOperation(submodelId, idShortPath, input);
 	}
 
 	@Override
 	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) throws ElementDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		return decorated.getSubmodelByIdValueOnly(submodelId);
 	}
 
 	@Override
 	public Submodel getSubmodelByIdMetadata(String submodelId) throws ElementDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		return decorated.getSubmodelByIdMetadata(submodelId);
 	}
 
 	@Override
 	public File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(submodelId, idShortPath));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		return decorated.getFileByPathSubmodel(submodelId, idShortPath);
 	}
 
 	@Override
 	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, idShortPath));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		decorated.setFileValue(submodelId, idShortPath, fileName, inputStream);
 	}
 
 	@Override
 	public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, idShortPath));
-		
+
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		
+
 		decorated.deleteFileValue(submodelId, idShortPath);
-	}
-	
-	private void throwExceptionIfInsufficientPermission(boolean isAuthorized) {
-		if (!isAuthorized)
-			throw new InsufficientPermissionException("Insufficient Permission: The current subject does not have the required permissions for this operation.");
 	}
 
 	@Override
 	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.CREATE,
-				new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
 		decorated.patchSubmodelElements(submodelId, submodelElementList);
+	}
+
+	private void throwExceptionIfInsufficientPermission(boolean isAuthorized) {
+		if (!isAuthorized)
+			throw new InsufficientPermissionException("Insufficient Permission: The current subject does not have the required permissions for this operation.");
 	}
 
 }

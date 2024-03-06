@@ -484,11 +484,12 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 		String patch = getJSONValueAsString("value/newSubmodelValue.json");
 
 		CloseableHttpResponse patchResponse = BaSyxHttpTestUtils.executePatchOnURL(createSubmodelValueURL(), patch);
+		assertEquals(HttpStatus.NO_CONTENT.value(), patchResponse.getCode());
+		
 		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(createSubmodelValueURL());
 
 		String expected = getJSONValueAsString("value/expectedNewSubmodelValue.json");
 
-		assertEquals(HttpStatus.NO_CONTENT.value(), patchResponse.getCode());
 		BaSyxHttpTestUtils.assertSameJSONContent(expected, BaSyxHttpTestUtils.getResponseAsString(getResponse));
 	}
 

@@ -124,7 +124,7 @@ public interface SubmodelService {
 	public void deleteSubmodelElement(String idShortPath) throws ElementDoesNotExistException;
 
 	/**
-	 * Replaces the submodel element list in a submodel
+	 * Replaces the submodel elements in a submodel
 	 * 
 	 * @param submodelElementList
 	 */

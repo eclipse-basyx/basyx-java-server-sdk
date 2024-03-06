@@ -215,8 +215,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 	}
 
 	@Override
-	public ResponseEntity<Void> patchSubmodelValueOnly(
-			@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody List<SubmodelElement> body,
+	public ResponseEntity<Void> patchSubmodelValueOnly(@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody List<SubmodelElement> body,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = {
 					"deep" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level) {
 

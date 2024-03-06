@@ -450,7 +450,7 @@ public interface SubmodelRepositoryHTTPApi {
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Operation request object", required = true, schema = @Schema()) @Valid @RequestBody OperationRequest body,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines whether an operation invocation is performed asynchronously or synchronously", schema = @Schema(defaultValue = "false")) @Valid @RequestParam(value = "async", required = false, defaultValue = "false") Boolean async);
-	
+
 	@Operation(summary = "Updates an existing submodel element at a specified path within submodel elements hierarchy", description = "", tags = { "Submodel Repository API" })
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Submodel element updated successfully"),
 
@@ -487,13 +487,11 @@ public interface SubmodelRepositoryHTTPApi {
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
 
 	})
-	@RequestMapping(value = "/submodels/{submodelIdentifier}/$value", produces = {
-			"application/json" }, method = RequestMethod.PATCH)
+	@RequestMapping(value = "/submodels/{submodelIdentifier}/$value", produces = { "application/json" }, method = RequestMethod.PATCH)
 	ResponseEntity<Void> patchSubmodelByIdValueOnly(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Submodel object in its ValueOnly representation", required = false, schema = @Schema()) @Valid @RequestBody List<SubmodelElement> body,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level);
 
-	
 }
