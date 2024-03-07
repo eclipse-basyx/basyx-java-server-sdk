@@ -47,17 +47,17 @@ public class DefaultAasBulkOperationsService implements AasRegistryBulkOperation
 	}
 
 	@Override
-	public void insertBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors) {
-		descriptors.forEach(desc -> storage.insertAasDescriptor(desc));
+	public void createBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors) {
+		descriptors.forEach(storage::insertAasDescriptor);
 	}
 
 	@Override
 	public void deleteBulkAasDescriptors(List<String> descriptorIdentifiers) {
-		descriptorIdentifiers.forEach(id -> storage.removeAasDescriptor(id));
+		descriptorIdentifiers.forEach(storage::removeAasDescriptor);
 	}
 
 	@Override
-	public void putBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors) {
+	public void updateBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors) {
 		descriptors.forEach(desc -> storage.replaceAasDescriptor(desc.getId(), desc));
 	}
 }

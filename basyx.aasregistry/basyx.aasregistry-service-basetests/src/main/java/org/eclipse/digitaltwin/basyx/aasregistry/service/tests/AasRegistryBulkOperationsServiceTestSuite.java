@@ -63,7 +63,7 @@ public abstract class AasRegistryBulkOperationsServiceTestSuite {
 
         List<AssetAdministrationShellDescriptor> descriptors = generateTestListOfDescriptors(NUM_GEN_DESCRIPTORS);
 
-        getBulkOperationsService().insertBulkAasDescriptors(descriptors);
+        getBulkOperationsService().createBulkAasDescriptors(descriptors);
 
         assertThat(getAllAasDescriptors()).containsExactlyInAnyOrderElementsOf(descriptors);
     }
@@ -73,7 +73,7 @@ public abstract class AasRegistryBulkOperationsServiceTestSuite {
         List<AssetAdministrationShellDescriptor> descriptors = generateTestListOfDescriptors(NUM_GEN_DESCRIPTORS);
         descriptors.get(5).setId("descriptor7");
 
-        assertThrows(Exception.class, () -> getBulkOperationsService().insertBulkAasDescriptors(descriptors));
+        assertThrows(Exception.class, () -> getBulkOperationsService().createBulkAasDescriptors(descriptors));
 
         assertThat(getAllAasDescriptors()).isEmpty();
     }
@@ -118,7 +118,7 @@ public abstract class AasRegistryBulkOperationsServiceTestSuite {
         List<AssetAdministrationShellDescriptor> updatedDescriptors = generateTestListOfDescriptors(NUM_GEN_DESCRIPTORS);
         updatedDescriptors.forEach(desc -> desc.idShort(desc.getId() + "_idShort"));
 
-        getBulkOperationsService().putBulkAasDescriptors(updatedDescriptors);
+        getBulkOperationsService().updateBulkAasDescriptors(updatedDescriptors);
 
         assertThat(getAllAasDescriptors()).containsExactlyInAnyOrderElementsOf(updatedDescriptors);
     }
@@ -135,7 +135,7 @@ public abstract class AasRegistryBulkOperationsServiceTestSuite {
 
         updatedDescriptors.get(2).setId("incorrectDescriptor");
 
-        assertThrows(Exception.class, () -> getBulkOperationsService().putBulkAasDescriptors(updatedDescriptors));
+        assertThrows(Exception.class, () -> getBulkOperationsService().updateBulkAasDescriptors(updatedDescriptors));
 
         assertThat(getAllAasDescriptors()).containsExactlyInAnyOrderElementsOf(descriptors);
     }

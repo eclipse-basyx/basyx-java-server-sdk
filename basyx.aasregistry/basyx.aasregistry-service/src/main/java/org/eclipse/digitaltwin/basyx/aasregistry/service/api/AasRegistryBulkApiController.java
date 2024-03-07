@@ -66,7 +66,7 @@ public class AasRegistryBulkApiController implements AasRegistryBulkApi {
 	@Override
 	public ResponseEntity<String> postBulkShellDescriptors(
 			@Parameter(name = "AssetAdministrationShellDescriptor", description = "List of Asset Administration Shell Descriptor objects", required = true) @Valid @RequestBody List<AssetAdministrationShellDescriptor> assetAdministrationShellDescriptors) {
-		long transactionId = aasTransactionManager.runOperationAsync(() -> aasTransactionsService.insertBulkAasDescriptors(assetAdministrationShellDescriptors));
+		long transactionId = aasTransactionManager.runOperationAsync(() -> aasTransactionsService.createBulkAasDescriptors(assetAdministrationShellDescriptors));
 
 		return ResponseEntity.accepted().body(getTraceableLinkForTransaction(transactionId));
 	}
@@ -74,7 +74,7 @@ public class AasRegistryBulkApiController implements AasRegistryBulkApi {
 	@Override
 	public ResponseEntity<String> putBulkShellDescriptors(
 			@Parameter(name = "AssetAdministrationShellDescriptor", description = "List of Asset Administration Shell Descriptor objects", required = true) @Valid @RequestBody List<AssetAdministrationShellDescriptor> assetAdministrationShellDescriptors) {
-		long transactionId = aasTransactionManager.runOperationAsync(() -> aasTransactionsService.putBulkAasDescriptors(assetAdministrationShellDescriptors));
+		long transactionId = aasTransactionManager.runOperationAsync(() -> aasTransactionsService.updateBulkAasDescriptors(assetAdministrationShellDescriptors));
 
 		return ResponseEntity.accepted().body(getTraceableLinkForTransaction(transactionId));
 	}

@@ -30,8 +30,8 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.BulkOperationResultNotFoundException;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.BulkOperationResultManager;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.BulkOperationResult;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.BulkOperationResultManager;
 import org.junit.Test;
 
 import lombok.SneakyThrows;
@@ -68,7 +68,7 @@ public class BulkOperationResultManagerTest {
     }
 
     @Test
-    public void testGetBulkOperationResult() throws InterruptedException {
+	public void getBulkOperationResult() throws InterruptedException {
         BulkOperationResultManager bulkResultManager = new BulkOperationResultManager();
 
         long transactionId = bulkResultManager.runOperationAsync(BulkOperationResultManagerTest::doNothing);
@@ -79,7 +79,7 @@ public class BulkOperationResultManagerTest {
     }
 
     @Test
-    public void testGetBulkOperationResultStatus() throws InterruptedException {
+	public void getBulkOperationResultStatus() throws InterruptedException {
         BulkOperationResultManager bulkResultManager = new BulkOperationResultManager();
 
         long transactionId = bulkResultManager.runOperationAsync(BulkOperationResultManagerTest::doNothing);
@@ -90,7 +90,7 @@ public class BulkOperationResultManagerTest {
     }
 
     @Test
-    public void testMultipleOperations() {
+	public void multipleOperations() {
         BulkOperationResultManager bulkResultManager = new BulkOperationResultManager();
 
         long id1 = bulkResultManager.runOperationAsync(BulkOperationResultManagerTest::doNothing);

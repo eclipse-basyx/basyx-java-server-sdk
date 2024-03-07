@@ -71,6 +71,13 @@ public class BulkOperationResultManager {
         return operationId;
     }
 
+	/**
+	 * Retrieves an already registered BulkOperationResult
+	 * 
+	 * @param bulkResultId
+	 * @return BulkOperationResult
+	 * @throws BulkOperationResultNotFoundException
+	 */
     public BulkOperationResult getBulkOperationResult(long bulkResultId) throws BulkOperationResultNotFoundException {
         if (!bulkResultMap.containsKey(bulkResultId))
             throw new BulkOperationResultNotFoundException(bulkResultId);
@@ -78,6 +85,12 @@ public class BulkOperationResultManager {
         return bulkResultMap.get(bulkResultId);
     }
 
+	/**
+	 * Retrieves the ExecutionState of an already registered BulkOperationResult
+	 * 
+	 * @param transactionResponseId
+	 * @return ExecutionState
+	 */
     public BulkOperationResult.ExecutionState getBulkOperationResultStatus(long transactionResponseId) {
         if (!bulkResultMap.containsKey(transactionResponseId))
             throw new BulkOperationResultNotFoundException(transactionResponseId);
@@ -86,6 +99,6 @@ public class BulkOperationResultManager {
     }
 
     private void putBulkOperationResult(long transactionId, BulkOperationResult.ExecutionState newExecutionState, String message) {
-        bulkResultMap.put(transactionId, new BulkOperationResult(transactionId, newExecutionState, null));
+		bulkResultMap.put(transactionId, new BulkOperationResult(transactionId, newExecutionState, message));
     }
 }

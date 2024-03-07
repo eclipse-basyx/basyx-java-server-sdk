@@ -68,130 +68,129 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @WebMvcTest(AasRegistryBulkApiController.class)
 public class AasRegistryBulkApiControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-    @MockBean
-    private AasRegistryStorage storage;
+	@MockBean
+	private AasRegistryStorage storage;
 
-    @MockBean
-    public RegistryEventSink eventSink;
+	@MockBean
+	public RegistryEventSink eventSink;
 
-    @MockBean
-    private AasRegistryBulkOperationsService bulkOperationsService;
+	@MockBean
+	private AasRegistryBulkOperationsService bulkOperationsService;
 
-    @MockBean
-    private BulkOperationResultManager bulkResultManager;
+	@MockBean
+	private BulkOperationResultManager bulkResultManager;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+	@Autowired
+	private ObjectMapper objectMapper;
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new AasRegistryBulkApiController(bulkOperationsService, bulkResultManager)).setControllerAdvice(new BasyxControllerAdvice()).build();
-    }
+	@BeforeEach
+	public void setup() {
+		MockitoAnnotations.openMocks(this);
+		mockMvc = MockMvcBuilders.standaloneSetup(new AasRegistryBulkApiController(bulkOperationsService, bulkResultManager)).setControllerAdvice(new BasyxControllerAdvice()).build();
+	}
 
-    @Test
-    public void postBulkShellDescriptorsTest() throws Exception {
-        long opId = 2L;
-        when(bulkResultManager.runOperationAsync(any(Runnable.class))).thenReturn(opId);
+	@Test
+	public void postBulkShellDescriptors() throws Exception {
+		long opId = 2L;
+		when(bulkResultManager.runOperationAsync(any(Runnable.class))).thenReturn(opId);
 
-        mockMvc.perform(post("/bulk/shell-descriptors").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(anyList()))).andExpect(status().isAccepted())
-                .andExpect(content().string("http://localhost/bulk/status/" + opId));
-    }
+		mockMvc.perform(post("/bulk/shell-descriptors").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(anyList()))).andExpect(status().isAccepted())
+				.andExpect(content().string("http://localhost/bulk/status/" + opId));
+	}
 
-    @Test
-    public void putBulkShellDescriptorsTest() throws Exception {
-        long opId = 2L;
-        when(bulkResultManager.runOperationAsync(any(Runnable.class))).thenReturn(opId);
+	@Test
+	public void putBulkShellDescriptors() throws Exception {
+		long opId = 2L;
+		when(bulkResultManager.runOperationAsync(any(Runnable.class))).thenReturn(opId);
 
-        mockMvc.perform(put("/bulk/shell-descriptors").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(anyList()))).andExpect(status().isAccepted())
-                .andExpect(content().string("http://localhost/bulk/status/" + opId));
-    }
+		mockMvc.perform(put("/bulk/shell-descriptors").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(anyList()))).andExpect(status().isAccepted())
+				.andExpect(content().string("http://localhost/bulk/status/" + opId));
+	}
 
-    @Test
-    public void deleteBulkShellDescriptorsTest() throws Exception {
-        long opId = 2L;
-        List<String> listIdentifiers = List.of("desc1", "desc2");
-        List<String> listEncodedIdentifiers = List.of("ZGVzYzE", "ZGVzYzI");
+	@Test
+	public void deleteBulkShellDescriptors() throws Exception {
+		long opId = 2L;
+		List<String> listIdentifiers = List.of("desc1", "desc2");
+		List<String> listEncodedIdentifiers = List.of("ZGVzYzE", "ZGVzYzI");
 
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+		ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
 
-        when(bulkResultManager.runOperationAsync(runnableCaptor.capture())).thenReturn(opId);
+		when(bulkResultManager.runOperationAsync(runnableCaptor.capture())).thenReturn(opId);
 
-        mockMvc.perform(delete("/bulk/shell-descriptors").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(listEncodedIdentifiers))).andExpect(status().isAccepted())
-                .andExpect(content().string("http://localhost/bulk/status/" + opId));
+		mockMvc.perform(delete("/bulk/shell-descriptors").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(listEncodedIdentifiers))).andExpect(status().isAccepted())
+				.andExpect(content().string("http://localhost/bulk/status/" + opId));
 
-        runnableCaptor.getValue().run();
+		runnableCaptor.getValue().run();
 
-        verify(bulkOperationsService).deleteBulkAasDescriptors(eq(listIdentifiers));
-    }
+		verify(bulkOperationsService).deleteBulkAasDescriptors(eq(listIdentifiers));
+	}
 
-    @Test
-    public void getBulkStatusTest_withCompletedTransaction() throws Exception {
-        long opId = 2L;
-        when(bulkResultManager.getBulkOperationResultStatus(opId)).thenReturn(BulkOperationResult.ExecutionState.COMPLETED);
+	@Test
+	public void getBulkStatus_withCompletedTransaction() throws Exception {
+		long opId = 2L;
+		when(bulkResultManager.getBulkOperationResultStatus(opId)).thenReturn(BulkOperationResult.ExecutionState.COMPLETED);
 
-        mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isNoContent());
-    }
+		mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isNoContent());
+	}
 
-    @Test
-    public void getBulkStatusTest_withFailedTransaction() throws Exception {
-        long opId = 2L;
-        when(bulkResultManager.getBulkOperationResultStatus(opId)).thenReturn(BulkOperationResult.ExecutionState.FAILED);
+	@Test
+	public void getBulkStatus_withFailedTransaction() throws Exception {
+		long opId = 2L;
+		when(bulkResultManager.getBulkOperationResultStatus(opId)).thenReturn(BulkOperationResult.ExecutionState.FAILED);
 
-        mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isBadRequest());
-    }
+		mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isBadRequest());
+	}
 
-    @Test
-    public void getBulkStatusTest_withTimedOutTransaction() throws Exception {
-        long opId = 2L;
-        when(bulkResultManager.getBulkOperationResultStatus(opId)).thenReturn(BulkOperationResult.ExecutionState.TIMEOUT);
+	@Test
+	public void getBulkStatus_withTimedOutTransaction() throws Exception {
+		long opId = 2L;
+		when(bulkResultManager.getBulkOperationResultStatus(opId)).thenReturn(BulkOperationResult.ExecutionState.TIMEOUT);
 
-        mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isRequestTimeout());
-    }
+		mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isRequestTimeout());
+	}
 
-    @Test
-    public void getBulkStatusTest_withInitiated() throws Exception {
-        long opId = 2L;
-        when(bulkResultManager.getBulkOperationResultStatus(opId)).thenReturn(BulkOperationResult.ExecutionState.INITIATED);
+	@Test
+	public void getBulkStatus_withInitiated() throws Exception {
+		long opId = 2L;
+		when(bulkResultManager.getBulkOperationResultStatus(opId)).thenReturn(BulkOperationResult.ExecutionState.INITIATED);
 
-        mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isOk());
-    }
+		mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isOk());
+	}
 
-    @Test
-    public void getBulkStatusTest_withRunning() throws Exception {
-        long opId = 2L;
-        when(bulkResultManager.getBulkOperationResultStatus(opId)).thenReturn(BulkOperationResult.ExecutionState.RUNNING);
+	@Test
+	public void getBulkStatus_withRunning() throws Exception {
+		long opId = 2L;
+		when(bulkResultManager.getBulkOperationResultStatus(opId)).thenReturn(BulkOperationResult.ExecutionState.RUNNING);
 
-        mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isOk());
-    }
+		mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isOk());
+	}
 
+	@Test
+	public void getBulkStatus_withNonExistingTransaction() throws Exception {
+		long opId = 2L;
+		when(bulkResultManager.getBulkOperationResultStatus(opId)).thenThrow(BulkOperationResultNotFoundException.class);
 
-    @Test
-    public void getBulkStatus_withNonExistingTransaction() throws Exception {
-        long opId = 2L;
-        when(bulkResultManager.getBulkOperationResultStatus(opId)).thenThrow(BulkOperationResultNotFoundException.class);
+		mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isNotFound());
+	}
 
-        mockMvc.perform(get("/bulk/status/{handleId}", opId)).andExpect(status().isNotFound());
-    }
+	@Test
+	public void getBulkResult() throws Exception {
+		long opId = 2L;
+		BulkOperationResult expectedResponse = new BulkOperationResult(opId, BulkOperationResult.ExecutionState.RUNNING, null);
+		when(bulkResultManager.getBulkOperationResult(opId)).thenReturn(expectedResponse);
 
-    @Test
-    public void getBulkResultTest() throws Exception {
-        long opId = 2L;
-        BulkOperationResult expectedResponse = new BulkOperationResult(opId, BulkOperationResult.ExecutionState.RUNNING, null);
-        when(bulkResultManager.getBulkOperationResult(opId)).thenReturn(expectedResponse);
+		mockMvc.perform(get("/bulk/result/{handleId}", opId)).andExpect(status().isOk()).andExpect(content().string(objectMapper.writeValueAsString(expectedResponse)));
+	}
 
-        mockMvc.perform(get("/bulk/result/{handleId}", opId)).andExpect(status().isOk()).andExpect(content().string(objectMapper.writeValueAsString(expectedResponse)));
-    }
+	@Test
+	public void getBulkResult_withNonExistingTransaction() throws Exception {
+		long opId = 2L;
+		when(bulkResultManager.getBulkOperationResult(opId)).thenThrow(BulkOperationResultNotFoundException.class);
 
-    @Test
-    public void getBulkResult_withNonExistingTransaction() throws Exception {
-        long opId = 2L;
-        when(bulkResultManager.getBulkOperationResult(opId)).thenThrow(BulkOperationResultNotFoundException.class);
-
-        mockMvc.perform(get("/bulk/result/{handleId}", opId)).andExpect(status().isNotFound());
-    }
+		mockMvc.perform(get("/bulk/result/{handleId}", opId)).andExpect(status().isNotFound());
+	}
 
 }

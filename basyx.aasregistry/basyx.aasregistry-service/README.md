@@ -8,15 +8,15 @@ Use the basyx.aasregistry-basemodel project if you want to use just POJOs genera
 
 ## AAS Registry Bulk API
 
-The AAS Registry Bulk API facilitates efficient management of Asset Administration Shell (AAS) Descriptors through bulk operations. It is designed for high-volume handling, enabling batch creation, update, and deletion of AAS Descriptors, alongside querying operation statuses and results.
+The AAS Registry Bulk API facilitates efficient management of Asset Administration Shell (AAS) Descriptors through bulk operations. It is designed for high-volume handling, enabling bulk creation, update, and deletion of AAS Descriptors, alongside querying operation statuses and results.
 
 _Note:_ This API is currently only available for the MongoDB backend. It's enabled automatically for this configuration.
 
 ### Endpoints
 
-- **POST /bulk/shell-descriptors**: Batch creation of AAS Descriptors.
+- **POST /bulk/shell-descriptors**: Bulk creation of AAS Descriptors.
 - **PUT /bulk/shell-descriptors**: Bulk update of existing AAS Descriptors.
-- **DELETE /bulk/shell-descriptors**: Batch deletion of AAS Descriptors by their identifiers.
+- **DELETE /bulk/shell-descriptors**: Bulk deletion of AAS Descriptors by their identifiers.
 - **GET /bulk/status/{handleId}**: Retrieve the status of a bulk operation.
 - **GET /bulk/result/{handleId}**: Obtain the result of a completed bulk operation.
 

@@ -25,6 +25,11 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.service.errors;
 
+/**
+ * Exception thrown when a BulkOperationResult is not found
+ * 
+ * @author mateusmolina
+ */
 public class BulkOperationResultNotFoundException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;

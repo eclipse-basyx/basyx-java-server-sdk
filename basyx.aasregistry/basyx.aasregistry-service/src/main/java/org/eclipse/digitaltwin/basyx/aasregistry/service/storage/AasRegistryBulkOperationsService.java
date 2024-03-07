@@ -35,9 +35,28 @@ import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellD
  * @author mateusmolina
  */
 public interface AasRegistryBulkOperationsService {
-	public void insertBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors);
 
+	/**
+	 * Creates AAS Descriptors in a bulk operation
+	 * 
+	 * @param List
+	 *            of shell descriptors
+	 */
+	public void createBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors);
+
+	/**
+	 * Deletes AAS Descriptors in a bulk operation
+	 * 
+	 * @param List
+	 *            of shell descriptors
+	 */
 	public void deleteBulkAasDescriptors(List<String> descriptorIdentifiers);
 
-	public void putBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors);
+	/**
+	 * Updates AAS Descriptors in a bulk operation
+	 * 
+	 * @param List
+	 *            of shell descriptors
+	 */
+	public void updateBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors);
 }
