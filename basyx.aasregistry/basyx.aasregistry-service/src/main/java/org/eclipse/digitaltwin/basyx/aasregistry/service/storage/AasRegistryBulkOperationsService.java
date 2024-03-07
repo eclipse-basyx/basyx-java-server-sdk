@@ -39,24 +39,24 @@ public interface AasRegistryBulkOperationsService {
 	/**
 	 * Creates AAS Descriptors in a bulk operation
 	 * 
-	 * @param List
-	 *            of shell descriptors
+	 * @param descriptors
+	 *            List of shell descriptors
 	 */
 	public void createBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors);
 
 	/**
 	 * Deletes AAS Descriptors in a bulk operation
 	 * 
-	 * @param List
-	 *            of shell descriptors
+	 * @param descriptorIdentifiers
+	 *            List of shell descriptors identifiers
 	 */
 	public void deleteBulkAasDescriptors(List<String> descriptorIdentifiers);
 
 	/**
 	 * Updates AAS Descriptors in a bulk operation
 	 * 
-	 * @param List
-	 *            of shell descriptors
+	 * @param descriptors
+	 *            List of shell descriptors
 	 */
 	public void updateBulkAasDescriptors(List<AssetAdministrationShellDescriptor> descriptors);
 }

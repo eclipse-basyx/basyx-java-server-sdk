@@ -48,11 +48,12 @@ public class BulkOperationResultManager {
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     /**
-     * Runs a Transactional Runnable async
-     * 
-     * @param operation
-     * @return transactionId, traceable using {@link #getBulkOperationResult(long)}
-     */
+	 * Runs a Transactional Runnable async
+	 * 
+	 * @param operation
+	 *            An operation to be executed async
+	 * @return transactionId, traceable using {@link #getBulkOperationResult(long)}
+	 */
     public long runOperationAsync(Runnable operation) {
         long operationId = bulkResultIdCounter.incrementAndGet();
 
