@@ -11,6 +11,9 @@
 
 	<artifactId>basyx.submodelrepository-feature-authorization</artifactId>
 
+	<name>BaSyx Submodelrepository feature-authorization</name>
+	<description>BaSyx Submodelrepository feature-authorization</description>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>

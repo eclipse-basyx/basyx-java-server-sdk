@@ -10,7 +10,9 @@
 	</parent>
 
 	<artifactId>basyx.conceptdescriptionrepository-backend</artifactId>
-
+	<name>Concept Description Repository Backend</name>
+	<description>Concept Description Repository Backend</description>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>

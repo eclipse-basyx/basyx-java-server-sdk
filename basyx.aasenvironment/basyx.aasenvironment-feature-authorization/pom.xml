@@ -9,6 +9,9 @@
 		<version>${revision}</version>
 	</parent>
 
+	<name>BaSyx AAS Environment feature-authorization</name>
+	<description>BaSyx AAS Environment feature-authorization</description>
+
 	<artifactId>basyx.aasenvironment-feature-authorization</artifactId>
 
 	<dependencies>
