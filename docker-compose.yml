@@ -19,6 +19,17 @@ services:
     networks:
       - basyx-java-server-sdk
 
+  mongo-with-repl:
+    image: mongo:5.0.10
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
+    ports:
+      - 27018:27017
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate() }" | mongosh --port 27017 --quiet
+      interval: 5s
+      start_period: 0s
+      retries: 10
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.2
     environment:
