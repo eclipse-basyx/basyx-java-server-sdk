@@ -97,6 +97,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		 	<plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-jar-plugin</artifactId>
 	            <executions>
 	                <execution>
 	                    <id>empty-javadoc-jar</id>
@@ -110,7 +117,7 @@
 	                    </configuration>
 	                </execution>
 	            </executions>
-			</plugin>
+        	</plugin>
 		</plugins>
 	</build>
 	<dependencies>
