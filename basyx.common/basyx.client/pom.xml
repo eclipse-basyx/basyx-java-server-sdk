@@ -8,9 +8,9 @@
 	<artifactId>basyx.client</artifactId>
 
 	<name>BaSyx Client Base</name>
-	<description>BaSyx Client Base</description
+	<description>BaSyx Client Base</description>
 
-<dependencies>
+	<dependencies>
 	 <dependency>
 		  <groupId>org.eclipse.digitaltwin.basyx</groupId>
 		  <artifactId>basyx.http</artifactId>
