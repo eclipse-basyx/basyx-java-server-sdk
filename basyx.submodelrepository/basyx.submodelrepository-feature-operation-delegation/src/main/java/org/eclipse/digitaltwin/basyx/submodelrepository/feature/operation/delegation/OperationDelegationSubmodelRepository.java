@@ -168,5 +168,10 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 	public String getName() {
 		return decorated.getName();
 	}
+
+	@Override
+	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
+		decorated.patchSubmodelElements(submodelId, submodelElementList);
+	}
 	
 }

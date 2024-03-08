@@ -224,4 +224,9 @@ public class DefaultSubmodelService implements SubmodelService {
 	private String getFullIdShortPath(String idShortPath, String submodelElementId) {
 		return idShortPath + "." + submodelElementId;
 	}
+
+	@Override
+	public void patchSubmodelElements(List<SubmodelElement> submodelElementList) {
+		this.submodel.setSubmodelElements(submodelElementList);
+	}
 }

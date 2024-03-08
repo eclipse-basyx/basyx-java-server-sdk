@@ -263,4 +263,13 @@ public interface SubmodelRepository {
 	 * @throws FileDoesNotExistException
 	 */
 	public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException;
+
+	/**
+	 * Replaces the submodel elements in a submodel
+	 * 
+	 * @param submodelId
+	 *           the Submodel id
+	 * @param submodelElementList
+	 */
+	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList);
 }

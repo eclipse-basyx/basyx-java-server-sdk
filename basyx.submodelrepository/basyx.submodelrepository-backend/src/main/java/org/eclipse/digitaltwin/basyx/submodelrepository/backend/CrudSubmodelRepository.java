@@ -438,4 +438,11 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 			throw new ElementDoesNotExistException(submodelId);
 	}
 
+	@Override
+	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
+		Submodel submodel = getSubmodel(submodelId);
+		submodel.setSubmodelElements(submodelElementList);
+		submodelBackend.save(submodel);
+	}
+
 }

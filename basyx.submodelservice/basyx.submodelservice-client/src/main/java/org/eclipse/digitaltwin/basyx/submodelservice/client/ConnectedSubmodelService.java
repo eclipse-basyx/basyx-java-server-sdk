@@ -143,4 +143,9 @@ public class ConnectedSubmodelService implements SubmodelService {
 		throw new FeatureNotImplementedException();
 	}
 
+	@Override
+	public void patchSubmodelElements(List<SubmodelElement> submodelElementList) {
+		throw new FeatureNotImplementedException();
+	}
+
 }
