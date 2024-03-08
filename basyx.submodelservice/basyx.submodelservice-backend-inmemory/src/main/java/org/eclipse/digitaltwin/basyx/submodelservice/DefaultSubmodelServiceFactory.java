@@ -42,7 +42,6 @@ public class DefaultSubmodelServiceFactory implements SubmodelServiceFactory {
 	private final FileRepository fileRepository;
 
 	public DefaultSubmodelServiceFactory(FileRepository fileRepository) {
-		super();
 		this.fileRepository = fileRepository;
 	}
 

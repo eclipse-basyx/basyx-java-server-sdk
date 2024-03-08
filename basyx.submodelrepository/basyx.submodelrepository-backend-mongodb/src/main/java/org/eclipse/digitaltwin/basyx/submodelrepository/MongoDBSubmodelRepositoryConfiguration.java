@@ -25,11 +25,12 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.eclipse.digitaltwin.basyx.submodelservice.DefaultSubmodelServiceFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBFileRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
 /**
  * Provides a DefaultSubmodelServiceFactory for usage in the MongoDB Submodel
@@ -38,14 +39,19 @@ import org.springframework.context.annotation.Configuration;
  * This is needed to ensure that the SubmodelServiceFeatures are processed
  * correctly when utilizing MongoDb
  * 
- * @author jungjan
+ * @author jungjan, mateusmolina
  *
  */
 @Configuration
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
 public class MongoDBSubmodelRepositoryConfiguration {
 	@Bean
-	public SubmodelServiceFactory getInMemorySubmodelServiceFactory(FileRepository fileRepository) {
-		return new DefaultSubmodelServiceFactory(fileRepository);
+	public FileRepository getFileRepository(GridFsTemplate gridFsTemplate) {
+		return new MongoDBFileRepository(gridFsTemplate);
+	}
+
+	@Bean
+	public GridFsTemplate getGridFsTemplate(MongoTemplate template) {
+		return new GridFsTemplate(template.getMongoDatabaseFactory(), template.getConverter());
 	}
 }

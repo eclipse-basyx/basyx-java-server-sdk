@@ -52,8 +52,8 @@ import org.springframework.context.annotation.Primary;
 public class SubmodelRepositoryConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
-	public SubmodelRepository getSubmodelRepository(SubmodelRepositoryFactory aasRepositoryFactory, List<SubmodelRepositoryFeature> features) {
-		return new DecoratedSubmodelRepositoryFactory(aasRepositoryFactory, features).create();
+	public SubmodelRepository getSubmodelRepository(SubmodelRepositoryFactory submodelRepositoryFactory, List<SubmodelRepositoryFeature> features) {
+		return new DecoratedSubmodelRepositoryFactory(submodelRepositoryFactory, features).create();
 	}
 
 	@Primary

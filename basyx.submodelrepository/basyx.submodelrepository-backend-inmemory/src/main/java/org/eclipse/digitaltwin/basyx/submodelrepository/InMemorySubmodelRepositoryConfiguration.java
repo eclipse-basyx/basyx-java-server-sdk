@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -19,41 +19,28 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-package org.eclipse.digitaltwin.basyx.submodelservice.example;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Provides the spring bean configuration for the {@link SubmodelService}
- * utilizing all found features for the respective services
+ * Configuration for the InMemory Backend of the SubmodelRepository
  * 
- * @author fried
- *
+ * @author mateusmolina
  */
 @Configuration
-public class ExampleSubmodelConfiguration {
+@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
+public class InMemorySubmodelRepositoryConfiguration {
 	@Bean
-	public SubmodelService getSubmodelService(SubmodelServiceFactory factory, Submodel submodel) {
-		return factory.create(submodel);
-	}
-
-	@Bean
-	static FileRepository getFileRepository() {
+	public FileRepository getFileRepository() {
 		return new InMemoryFileRepository();
 	}
 
-	@Bean
-	public static Submodel getSubmodel() {
-		return new ExampleSubmodelFactory().create();
-	}
 }
