@@ -209,4 +209,9 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 		}
 	}
 
+	@Override
+	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
+		decorated.patchSubmodelElements(submodelId, submodelElementList);
+	}
+
 }

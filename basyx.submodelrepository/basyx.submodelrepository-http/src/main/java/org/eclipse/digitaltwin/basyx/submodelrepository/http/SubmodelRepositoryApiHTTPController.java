@@ -102,7 +102,8 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	}
 
 	@Override
-	public ResponseEntity<PagedResult> getAllSubmodels(@Base64UrlEncodedIdentifierSize(min = 1, max = 3072) @Valid Base64UrlEncodedIdentifier semanticId, @Valid String idShort, @Min(1) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor, @Valid String level, @Valid String extent) {
+	public ResponseEntity<PagedResult> getAllSubmodels(@Base64UrlEncodedIdentifierSize(min = 1, max = 3072) @Valid Base64UrlEncodedIdentifier semanticId, @Valid String idShort, @Min(1) @Valid Integer limit,
+			@Valid Base64UrlEncodedCursor cursor, @Valid String level, @Valid String extent) {
 		if (limit == null) {
 			limit = 100;
 		}
@@ -176,7 +177,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		repository.createSubmodelElement(submodelIdentifier.getIdentifier(), body);
 		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
 	}
-	
+
 	@Override
 	public ResponseEntity<Void> putSubmodelElementByPathSubmodelRepo(
 			@Parameter(in = ParameterIn.PATH, description = "The Submodel’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("submodelIdentifier") Base64UrlEncodedIdentifier submodelIdentifier,
@@ -248,6 +249,12 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		}
 	}
 
+	@Override
+	public ResponseEntity<Void> patchSubmodelByIdValueOnly(Base64UrlEncodedIdentifier submodelIdentifier, @Valid List<SubmodelElement> body, @Valid String level) {
+		repository.patchSubmodelElements(submodelIdentifier.getIdentifier(), body);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+
 	private ResponseEntity<Void> handleSubmodelElementValueSetRequest(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, SubmodelElementValue body) {
 		repository.setSubmodelElementValue(submodelIdentifier.getIdentifier(), idShortPath, body);
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
@@ -272,9 +279,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	}
 
 	private OperationResult createOperationResult(OperationVariable[] result) {
-		return new DefaultOperationResult.Builder()
-				.outputArguments(Arrays.asList(result))
-				.build();
+		return new DefaultOperationResult.Builder().outputArguments(Arrays.asList(result)).build();
 	}
 
 	private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
@@ -296,4 +301,5 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 			e.printStackTrace();
 		}
 	}
+
 }

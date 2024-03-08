@@ -240,4 +240,9 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 		return e;
 	}
 
+	@Override
+	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
+		throw new FeatureNotImplementedException();
+	}
+
 }

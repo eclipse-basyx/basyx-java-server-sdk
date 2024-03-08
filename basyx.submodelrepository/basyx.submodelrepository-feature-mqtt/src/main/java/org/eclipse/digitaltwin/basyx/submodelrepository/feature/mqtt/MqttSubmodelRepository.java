@@ -209,4 +209,10 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 		decorated.setFileValue(submodelId, idShortPath, fileName, inputStream);
 	}
 
+	@Override
+	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
+		// TODO: Eventing
+		decorated.patchSubmodelElements(submodelId, submodelElementList);
+	}
+
 }

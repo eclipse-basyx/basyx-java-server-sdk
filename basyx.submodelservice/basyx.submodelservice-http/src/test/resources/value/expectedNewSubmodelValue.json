@@ -1,0 +1,131 @@
+{
+    "new_MultiLanguage": [
+        {
+            "en": "Hello"
+        },
+        {
+            "de": "Hallo"
+        }
+    ],
+    "new_SimpleList": [
+        "new_4370"
+    ],
+    "new_SubmodelElementCollection": [
+        {
+            "new_FileData": {
+                "contentType": "application/json",
+                "value": "new_testFile.json"
+            }
+        },
+        {
+            "new_MaxRotationSpeed": "new_5000"
+        }
+    ],
+    "new_BlobData": {
+        "contentType": "application/xml",
+        "value": "Test content of XML file"
+    },
+    "new_MaxRotationSpeed": "new_5000",
+    "new_RelationshipElement": {
+        "first": {
+            "type": "ModelReference",
+            "keys": [
+                {
+                    "type": "DataElement",
+                    "value": "new_DataElement"
+                }
+            ]
+        },
+        "second": {
+            "type": "ExternalReference",
+            "keys": [
+                {
+                    "type": "BasicEventElement",
+                    "value": "new_BasicEventElement"
+                }
+            ]
+        }
+    },
+    "new_SubmodelElementList": [
+        {
+            "min": 200,
+            "max": 300
+        },
+        "new_5000"
+    ],
+    "new_ReferenceElement": {
+        "type": "ModelReference",
+        "keys": [
+            {
+                "type": "DataElement",
+                "value": "new_DataElement"
+            }
+        ]
+    },
+    "new_SimpleCollection": [
+        {
+            "new_MyFirstSubmodelElement": "new_4370"
+        }
+    ],
+    "new_FileData": {
+        "contentType": "application/json",
+        "value": "new_testFile.json"
+    },
+    "new_AnnotatedRelationshipElement": {
+        "first": {
+            "type": "ModelReference",
+            "keys": [
+                {
+                    "type": "DataElement",
+                    "value": "new_DataElement"
+                }
+            ]
+        },
+        "second": {
+            "type": "ExternalReference",
+            "keys": [
+                {
+                    "type": "BasicEventElement",
+                    "value": "new_BasicEventElement"
+                }
+            ]
+        },
+        "annotation": [
+            {
+                "new_MaxRotationSpeed": "new_5000"
+            },
+            {
+                "new_RotationSpeedRange": {
+                    "min": 200,
+                    "max": 300
+                }
+            }
+        ]
+    },
+    "new_EntityData": {
+        "statements": [
+            {
+                "new_MaxRotationSpeed": "new_5000"
+            },
+            {
+                "new_RotationSpeedRange": {
+                    "min": 200,
+                    "max": 300
+                }
+            }
+        ],
+        "entityType": "CoManagedEntity",
+        "globalAssetId": "globalAssetID",
+        "specificAssetIds": [
+            {
+                "specificAssetIdName": "new_specificValue"
+            }
+        ]
+    },
+    "new_RotationSpeed": "new_4370",
+    "new_elementToDelete": "new_4370",
+    "new_RotationSpeedRange": {
+        "min": 200,
+        "max": 300
+    }
+}
