@@ -30,7 +30,7 @@ Furthermore, we are providing easy to use [examples](examples) that can be lever
 The future roadmap of BaSyx is described [here](https://github.com/eclipse-basyx/basyx-java-server-sdk/blob/main/docs/Roadmap.md).
 
 ## Snapshot Releases
-We're distributing our SNAPSHOT releases via Maven Central. For using them, add the following part to your project's POM:
+We're distributing our SNAPSHOT releases via DockerHub and Maven Central. For using the snapshots from Maven Central, add the following part to your project's POM:
 
 ```
 <repository>
