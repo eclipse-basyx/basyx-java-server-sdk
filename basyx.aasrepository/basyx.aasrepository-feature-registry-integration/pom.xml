@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.aasrepository-feature-registry-integration</artifactId>
+	<name>BaSyx AAS Repository feature-registry-integration</name>
+	<description>BaSyx AAS Repository feature-registry-integration</description>
 
 	<dependencies>
 		<dependency>

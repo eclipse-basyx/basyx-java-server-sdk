@@ -8,6 +8,9 @@
 		<artifactId>basyx.aasrepository</artifactId>
 		<version>${revision}</version>
 	</parent>
+	
+	<name>BaSyx AAS Repository backend</name>
+	<description>BaSyx AAS Repository backend</description>
 
 	<artifactId>basyx.aasrepository-backend</artifactId>
 

@@ -10,6 +10,9 @@
 	</parent>
 
 	<artifactId>basyx.submodelrepository-feature-registry-integration</artifactId>
+	<name>BaSyx Submodelrepository feature-registry-integration</name>
+	<description>BaSyx Submodelrepository feature-registry-integration</description>
+
 
 	<dependencies>
 		<dependency>

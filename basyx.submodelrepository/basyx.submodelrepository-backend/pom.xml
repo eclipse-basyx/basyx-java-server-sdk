@@ -11,6 +11,9 @@
 
 	<artifactId>basyx.submodelrepository-backend</artifactId>
 
+	<name>BaSyx Submodelrepository backend</name>
+	<description>BaSyx Submodelrepository backend</description>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>

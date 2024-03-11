@@ -8,6 +8,9 @@
 		<artifactId>basyx.submodelrepository</artifactId>
 		<version>${revision}</version>
 	</parent>
+	
+	<name>BaSyx Submodelrepository feature-operation-delegation</name>
+	<description>BaSyx Submodelrepository feature-operation-delegation</description>
 
 	<artifactId>basyx.submodelrepository-feature-operation-delegation</artifactId>
 

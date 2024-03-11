@@ -10,6 +10,9 @@
 	</parent>
 
 	<artifactId>basyx.conceptdescriptionrepository-feature-authorization</artifactId>
+	<name>BaSyx ConceptDescription Repository feature-authorization</name>
+	<description>BaSyx ConceptDescription Repository feature-authorization</description>
+
 
 	<dependencies>
 		<dependency>
