@@ -19,10 +19,10 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose up -d --wait
+        run: docker compose --project-directory ./ci up -d --wait
       - name: Install BaSyx
         run: mvn clean install -Ddocker.namespace=test
       - name: Stop environment
         if: always()
-        run: docker compose down
+        run: docker  compose --project-directory ./ci down
      
