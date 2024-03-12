@@ -98,7 +98,7 @@ services:
   
   keycloak:
       build:
-        context: ./examples/keycloak
+        context: ./../examples/keycloak
       volumes:
         - ./:/opt/jboss/keycloak/imports
       ports:
