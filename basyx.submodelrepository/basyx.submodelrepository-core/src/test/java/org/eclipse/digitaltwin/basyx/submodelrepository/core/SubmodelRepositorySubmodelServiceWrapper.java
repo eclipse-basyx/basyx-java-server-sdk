@@ -25,12 +25,16 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.core;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -113,6 +117,21 @@ public class SubmodelRepositorySubmodelServiceWrapper implements SubmodelService
 	@Override
 	public void patchSubmodelElements(List<SubmodelElement> submodelElementList) {
 		repoApi.patchSubmodelElements(submodelId, submodelElementList);
+	}
+
+	@Override
+	public File getFileByPath(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+		return repoApi.getFileByPathSubmodel(submodelId, idShortPath);
+	}
+
+	@Override
+	public void setFileValue(String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
+		repoApi.setFileValue(submodelId, idShortPath, fileName, inputStream);
+	}
+
+	@Override
+	public void deleteFileValue(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+		repoApi.deleteFileValue(submodelId, idShortPath);
 	}
 
 }
