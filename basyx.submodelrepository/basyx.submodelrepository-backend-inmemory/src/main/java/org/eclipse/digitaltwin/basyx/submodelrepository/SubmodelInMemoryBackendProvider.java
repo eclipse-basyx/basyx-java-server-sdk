@@ -26,8 +26,6 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SubmodelBackendProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.repository.CrudRepository;
@@ -46,11 +44,6 @@ public class SubmodelInMemoryBackendProvider implements SubmodelBackendProvider 
 	@Override
 	public CrudRepository<Submodel, String> getCrudRepository() {
 		return new SubmodelInMemoryBackend();
-	}
-
-	@Override
-	public FileRepository getFileRepository() {
-		return new InMemoryFileRepository();
 	}
 
 }

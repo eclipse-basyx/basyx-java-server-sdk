@@ -25,10 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.backend;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -41,7 +38,6 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
@@ -49,19 +45,14 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
-import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.slf4j.Logger;
@@ -72,7 +63,7 @@ import org.springframework.data.repository.CrudRepository;
  * Default Implementation for the {@link SubmodelRepository} based on Spring
  * {@link CrudRepository}
  * 
- * @author danish
+ * @author danish, mateusmolina
  *
  */
 public class CrudSubmodelRepository implements SubmodelRepository {
@@ -82,14 +73,12 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 	private CrudRepository<Submodel, String> submodelBackend;
 
 	private SubmodelServiceFactory submodelServiceFactory;
-	private FileRepository fileHandlingBackend;
 
 	private String submodelRepositoryName = null;
 
 	public CrudSubmodelRepository(SubmodelBackendProvider submodelBackendProvider, SubmodelServiceFactory submodelServiceFactory) {
 		this.submodelBackend = submodelBackendProvider.getCrudRepository();
 		this.submodelServiceFactory = submodelServiceFactory;
-		this.fileHandlingBackend = submodelBackendProvider.getFileRepository();
 	}
 
 	public CrudSubmodelRepository(SubmodelBackendProvider submodelBackendProvider, SubmodelServiceFactory submodelServiceFactory, String submodelRepositoryName) {
@@ -212,16 +201,6 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 		throwIfMismatchingIds(element.getIdShort(), submodelElement.getIdShort());
 
-		if (isFileSubmodelElement(element) && !isFileSubmodelElement(submodelElement)) {
-
-			try {
-				deleteFileValue(submodelId, idShortPath);
-			} catch (FileDoesNotExistException e) {
-				logger.info("The Submodel Element with idShortPath '{}' is a File Submodel Element but there is no file attachment associated with this.", idShortPath);
-			}
-
-		}
-
 		submodelService.updateSubmodelElement(idShortPath, submodelElement);
 
 		updateSubmodel(submodelId, submodelService.getSubmodel());
@@ -230,8 +209,6 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
 		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
-
-		deleteAssociatedFile(submodelId, idShortPath);
 
 		submodelService.deleteSubmodelElement(idShortPath);
 
@@ -258,105 +235,29 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
 
-		SubmodelElement submodelElement = getSubmodelElement(submodelId, idShortPath);
-
-		throwIfSmElementIsNotAFile(submodelElement);
-
-		File fileSmElement = (File) submodelElement;
-		String filePath = getFilePath(fileSmElement);
-
-		InputStream fileContent = getFileInputStream(filePath);
-
-		return createFile(filePath, fileContent);
+		return submodelService.getFileByPath(idShortPath);
 	}
 
 	@Override
 	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
-		SubmodelElement submodelElement = getSubmodelElement(submodelId, idShortPath);
+		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
 
-		throwIfSmElementIsNotAFile(submodelElement);
+		submodelService.setFileValue(idShortPath, fileName, inputStream);
 
-		File fileSmElement = (File) submodelElement;
-
-		if (fileHandlingBackend.exists(fileSmElement.getValue()))
-			fileHandlingBackend.delete(fileSmElement.getValue());
-
-		String uniqueFileName = createUniqueFileName(submodelId, idShortPath, fileName);
-
-		FileMetadata fileMetadata = new FileMetadata(uniqueFileName, fileSmElement.getContentType(), inputStream);
-
-		String filePath = fileHandlingBackend.save(fileMetadata);
-
-		FileBlobValue fileValue = new FileBlobValue(fileSmElement.getContentType(), filePath);
-
-		setSubmodelElementValue(submodelId, idShortPath, fileValue);
+		updateSubmodel(submodelId, submodelService.getSubmodel());
 	}
 
 	@Override
 	public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		SubmodelElement submodelElement = getSubmodelElement(submodelId, idShortPath);
+		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
 
-		throwIfSmElementIsNotAFile(submodelElement);
+		submodelService.deleteFileValue(idShortPath);
 
-		File fileSubmodelElement = (File) submodelElement;
-		String filePath = fileSubmodelElement.getValue();
-
-		fileHandlingBackend.delete(filePath);
-
-		FileBlobValue fileValue = new FileBlobValue(" ", " ");
-
-		setSubmodelElementValue(submodelId, idShortPath, fileValue);
+		updateSubmodel(submodelId, submodelService.getSubmodel());
 	}
 	
-	private void deleteAssociatedFile(String submodelId, String idShortPath) {
-		try {
-			deleteFileValue(submodelId, idShortPath);
-		} catch (Exception e) {
-			return;
-		}
-	}
-
-	private boolean isFileSubmodelElement(SubmodelElement submodelElement) {
-		return submodelElement instanceof File;
-	}
-
-	private InputStream getFileInputStream(String filePath) {
-		InputStream fileContent;
-
-		try {
-			fileContent = fileHandlingBackend.find(filePath);
-		} catch (FileDoesNotExistException e) {
-			throw new FileDoesNotExistException(String.format("File at path '%s' could not be found.", filePath));
-		}
-
-		return fileContent;
-	}
-
-	private java.io.File createFile(String filePath, InputStream fileIs) {
-
-		try {
-			byte[] content = fileIs.readAllBytes();
-			fileIs.close();
-
-			createOutputStream(filePath, content);
-
-			return new java.io.File(filePath);
-		} catch (IOException e) {
-			throw new FileHandlingException("Exception occurred while creating file from the InputStream." + e.getMessage());
-		}
-
-	}
-
-	private void createOutputStream(String filePath, byte[] content) throws IOException {
-
-		try (OutputStream outputStream = new FileOutputStream(filePath)) {
-			outputStream.write(content);
-		} catch (IOException e) {
-			throw new FileHandlingException("Exception occurred while creating OutputStream from byte[]." + e.getMessage());
-		}
-
-	}
 
 	private void initializeRemoteCollection(Collection<Submodel> submodels) {
 		if (submodels == null || submodels.isEmpty())
@@ -392,20 +293,6 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 		} catch (SerializationException e) {
 			throw new RuntimeException("Unable to serialize the Submodel", e);
 		}
-	}
-
-	private void throwIfSmElementIsNotAFile(SubmodelElement submodelElement) {
-
-		if (!isFileSubmodelElement(submodelElement))
-			throw new ElementNotAFileException(submodelElement.getIdShort());
-	}
-
-	private String getFilePath(File fileSubmodelElement) {
-		return fileSubmodelElement.getValue();
-	}
-
-	private String createUniqueFileName(String submodelId, String idShortPath, String fileName) {
-		return Base64UrlEncodedIdentifier.encodeIdentifier(submodelId) + "-" + idShortPath.replace("/", "-") + "-" + fileName;
 	}
 
 	private SubmodelService getSubmodelServiceOrThrow(String submodelId) {

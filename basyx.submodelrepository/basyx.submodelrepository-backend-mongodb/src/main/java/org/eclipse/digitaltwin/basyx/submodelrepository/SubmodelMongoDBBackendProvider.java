@@ -27,15 +27,12 @@ package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBSubmodelFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SubmodelBackendProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.data.mongodb.repository.support.MappingMongoEntityInformation;
 import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
 import org.springframework.data.repository.CrudRepository;
@@ -70,15 +67,6 @@ public class SubmodelMongoDBBackendProvider implements SubmodelBackendProvider {
 		MongoPersistentEntity<Submodel> entity = (MongoPersistentEntity<Submodel>) mappingContext.getPersistentEntity(Submodel.class);
 		
 		return new SimpleMongoRepository<>(new MappingMongoEntityInformation<>(entity), template);
-	}
-
-	@Override
-	public FileRepository getFileRepository() {
-		return new MongoDBSubmodelFileRepository(configureDefaultGridFsTemplate(template));
-	}
-	
-	private GridFsTemplate configureDefaultGridFsTemplate(MongoTemplate mongoTemplate) {
-		return new GridFsTemplate(mongoTemplate.getMongoDatabaseFactory(), mongoTemplate.getConverter());
 	}
 
 }

@@ -79,6 +79,12 @@ public abstract class SubmodelServiceSuite {
 
 	protected abstract SubmodelService getSubmodelService(Submodel submodel);
 
+	/**
+	 * SubmodelService independent way to check if a file exists in storage
+	 * 
+	 * @param fileValue
+	 * @return
+	 */
 	protected abstract boolean fileExistsInStorage(String fileValue);
 
 	private static final String DUMMY_JSON_1 = "{\"name\":\"SampleJsonFile\",\"description\":\"A JSON file for verification\",\"version\":1}";
@@ -393,9 +399,9 @@ public abstract class SubmodelServiceSuite {
 
 		submodelService.setFileValue(idShortPathPropertyInSmeCol, "jsonFile1.json", getInputStreamOfDummyFile(DUMMY_JSON_1));
 
-		java.io.File file = submodelService.getFileByPath(idShortPathPropertyInSmeCol);
+		String fileValue = ((File) submodelService.getSubmodelElement(idShortPathPropertyInSmeCol)).getValue();
 
-		assertTrue(file.exists());
+		assertTrue(fileExistsInStorage(fileValue));
 
 		Property newProperty = SubmodelServiceHelper.createDummyProperty(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "4005", DataTypeDefXsd.INT);
 
@@ -404,7 +410,7 @@ public abstract class SubmodelServiceSuite {
 		Property updatedProperty = (Property) submodelService.getSubmodelElement(idShortPathPropertyInSmeCol);
 
 		assertEquals(newProperty, updatedProperty);
-		assertFalse(file.exists());
+		assertFalse(fileExistsInStorage(fileValue));
 	}
 
 	@Test
