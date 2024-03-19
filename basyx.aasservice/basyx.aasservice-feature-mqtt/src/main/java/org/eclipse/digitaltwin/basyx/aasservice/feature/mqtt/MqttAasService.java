@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasservice.feature.mqtt;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -182,5 +184,20 @@ public class MqttAasService implements AasService {
 	@Override
 	public AssetInformation getAssetInformation() {
 		return decorated.getAssetInformation();
+	}
+
+	@Override
+	public File getThumbnail() {
+		return decorated.getThumbnail();
+	}
+
+	@Override
+	public void setThumbnail(String fileName, String contentType, InputStream inputStream) {
+		decorated.setThumbnail(fileName, contentType, inputStream);
+	}
+
+	@Override
+	public void deleteThumbnail() {
+		decorated.deleteThumbnail();
 	}
 }
