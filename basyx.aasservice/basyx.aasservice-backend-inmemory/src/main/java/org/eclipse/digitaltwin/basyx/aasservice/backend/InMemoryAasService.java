@@ -24,6 +24,11 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasservice.backend;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -34,8 +39,13 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Key;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -43,19 +53,22 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 /**
  * Implements the AasService as in-memory variant
  * 
- * @author schnicke
+ * @author schnicke, mateusmolina
  * 
  */
 public class InMemoryAasService implements AasService {
 	private AssetAdministrationShell aas;
+
+	private final FileRepository fileRepository;
 
 	/**
 	 * Creates the InMemory AasService containing the passed AAS
 	 * 
 	 * @param aas
 	 */
-	public InMemoryAasService(AssetAdministrationShell aas) {
+	public InMemoryAasService(AssetAdministrationShell aas, FileRepository fileRepository) {
 		this.aas = aas;
+		this.fileRepository = fileRepository;
 	}
 
 	@Override
@@ -129,5 +142,62 @@ public class InMemoryAasService implements AasService {
 			return ""; // Return an empty string if no ID is found
 		};
 	}
-	
+
+	@Override
+	public File getThumbnail() {
+		Resource resource = getAssetInformation().getDefaultThumbnail();
+
+		String filePath = resource.getPath();
+
+		InputStream fileIs = fileRepository.find(filePath);
+
+		try {
+			byte[] content = fileIs.readAllBytes();
+			fileIs.close();
+
+			createOutputStream(filePath, content);
+
+			return new java.io.File(filePath);
+		} catch (IOException e) {
+			throw new FileHandlingException("Exception occurred while creating file from the InputStream." + e.getMessage());
+		}
+	}
+
+	@Override
+	public void setThumbnail(String fileName, String contentType, InputStream inputStream) {
+		String filePath = fileRepository.save(new FileMetadata(fileName, contentType, inputStream));
+
+		setAssetInformation(configureAssetInformationThumbnail(getAssetInformation(), contentType, filePath));
+	}
+
+	@Override
+	public void deleteThumbnail() {
+		String thumbnailPath = getAssetInformation().getDefaultThumbnail().getPath();
+
+		try {
+			fileRepository.delete(thumbnailPath);
+		} finally {
+			setAssetInformation(configureAssetInformationThumbnail(getAssetInformation(), "", ""));
+		}
+
+	}
+
+	private void createOutputStream(String filePath, byte[] content) throws IOException {
+
+		try (OutputStream outputStream = new FileOutputStream(filePath)) {
+			outputStream.write(content);
+		} catch (IOException e) {
+			throw new FileHandlingException("Exception occurred while creating OutputStream from byte[]." + e.getMessage());
+		}
+
+	}
+
+	private static AssetInformation configureAssetInformationThumbnail(AssetInformation assetInformation, String contentType, String filePath) {
+		Resource resource = new DefaultResource();
+		resource.setContentType(contentType);
+		resource.setPath(filePath);
+		assetInformation.setDefaultThumbnail(resource);
+		return assetInformation;
+	}
+
 }

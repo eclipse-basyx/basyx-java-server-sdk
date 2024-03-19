@@ -28,9 +28,13 @@ package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
 
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
+import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBFileRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
 /**
  * Provides a InMemoryAasServiceFactory for usage in the MongoDB Aas Repository
@@ -46,7 +50,16 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
 public class AasMongoDBRepositoryConfiguration {
 	@Bean
-	public AasServiceFactory getAasServiceFactory() {
-		return new InMemoryAasServiceFactory();
+	public AasServiceFactory getAasServiceFactory(FileRepository fileRepository) {
+		return new InMemoryAasServiceFactory(fileRepository);
+	}
+
+	@Bean
+	public FileRepository getFileRepository(MongoTemplate mongoTemplate) {
+		return new MongoDBFileRepository(configureDefaultGridFsTemplate(mongoTemplate));
+	}
+	
+	private GridFsTemplate configureDefaultGridFsTemplate(MongoTemplate mongoTemplate) {
+		return new GridFsTemplate(mongoTemplate.getMongoDatabaseFactory(), mongoTemplate.getConverter());
 	}
 }

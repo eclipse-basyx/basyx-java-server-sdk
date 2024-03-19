@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,41 +23,23 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory;
 
-import static org.junit.Assert.assertEquals;
-
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
-import org.junit.Test;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * Tests the {@link InMemoryAasRepository} name
+ * Configuration for the AAS InMemory Backend
  * 
- * @author schnicke, kammognie, mateusmolina
- *
+ * @author mateusmolina
  */
-public class TestInMemoryAasRepository extends AasRepositorySuite {
-	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
-	
-	private AasBackendProvider backendProvider = new AasInMemoryBackendProvider();
+@Configuration
+public class AasInMemoryBackendConfiguration {
 
-	@Override
-	protected AasRepository getAasRepository() {
-		return new SimpleAasRepositoryFactory(backendProvider, new InMemoryAasServiceFactory(new InMemoryFileRepository())).create();
+	@Bean
+	public FileRepository getFileRepository() {
+		return new InMemoryFileRepository();
 	}
-
-	@Test
-	public void getConfiguredInMemoryAasRepositoryName() {
-		AasRepository repo = new CrudAasRepository(backendProvider, new InMemoryAasServiceFactory(new InMemoryFileRepository()), CONFIGURED_AAS_REPO_NAME);
-		
-		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
-	}
-
 }

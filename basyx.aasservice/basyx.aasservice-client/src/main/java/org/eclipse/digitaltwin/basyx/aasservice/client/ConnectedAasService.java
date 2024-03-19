@@ -26,6 +26,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasservice.client;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -35,6 +37,7 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.client.internal.AssetAdministrationShellServiceApi;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.springframework.http.HttpStatus;
@@ -121,5 +124,22 @@ public class ConnectedAasService implements AasService {
 		}
 
 		return e;
+	}
+
+	@Override
+	public File getThumbnail() {
+		throw new FeatureNotImplementedException();
+	}
+
+	@Override
+	public void setThumbnail(String fileName, String contentType, InputStream inputStream) {
+		throw new FeatureNotImplementedException();
+
+	}
+
+	@Override
+	public void deleteThumbnail() {
+		throw new FeatureNotImplementedException();
+
 	}
 }
