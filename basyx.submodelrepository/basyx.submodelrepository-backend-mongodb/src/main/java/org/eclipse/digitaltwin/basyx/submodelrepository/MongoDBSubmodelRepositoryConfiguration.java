@@ -25,7 +25,7 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBSubmodelFileRepository;
+import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -54,7 +54,7 @@ public class MongoDBSubmodelRepositoryConfiguration {
 
 	@Bean
 	public FileRepository getFileRepository(MongoTemplate mongoTemplate) {
-		return new MongoDBSubmodelFileRepository(configureDefaultGridFsTemplate(mongoTemplate));
+		return new MongoDBFileRepository(configureDefaultGridFsTemplate(mongoTemplate));
 	}
 
 	private GridFsTemplate configureDefaultGridFsTemplate(MongoTemplate mongoTemplate) {

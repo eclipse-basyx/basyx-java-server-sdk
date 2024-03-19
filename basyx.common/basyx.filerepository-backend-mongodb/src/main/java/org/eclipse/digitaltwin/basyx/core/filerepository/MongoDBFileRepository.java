@@ -45,7 +45,7 @@ import com.mongodb.client.gridfs.model.GridFSFile;
  * 
  * @author danish
  */
-public class MongoDBSubmodelFileRepository implements FileRepository {
+public class MongoDBFileRepository implements FileRepository {
 
 	private static final String MONGO_ID = "_id";
 	private static final String GRIDFS_ID_DELIMITER = "#";
@@ -53,7 +53,7 @@ public class MongoDBSubmodelFileRepository implements FileRepository {
 
 	private GridFsTemplate gridFsTemplate;
 
-	public MongoDBSubmodelFileRepository(GridFsTemplate gridFsTemplate) {
+	public MongoDBFileRepository(GridFsTemplate gridFsTemplate) {
 		this.gridFsTemplate = gridFsTemplate;
 	}
 

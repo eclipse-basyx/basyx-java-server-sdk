@@ -34,7 +34,7 @@ import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBSubmodelFileRepository;
+import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SubmodelBackendProvider;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
@@ -59,7 +59,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	@Override
 	protected SubmodelRepository getSubmodelRepository() {
 		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
-		fileRepository = new MongoDBSubmodelFileRepository(GRIDFS_TEMPLATE);
+		fileRepository = new MongoDBFileRepository(GRIDFS_TEMPLATE);
 
 		SubmodelBackendProvider submodelBackendProvider = new SubmodelMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, TEMPLATE);
 		SubmodelRepositoryFactory submodelRepositoryFactory = new SimpleSubmodelRepositoryFactory(submodelBackendProvider, new InMemorySubmodelServiceFactory(fileRepository));
