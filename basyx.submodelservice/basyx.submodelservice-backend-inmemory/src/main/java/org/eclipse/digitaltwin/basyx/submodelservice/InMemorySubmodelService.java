@@ -172,6 +172,8 @@ public class InMemorySubmodelService implements SubmodelService {
 
 	@Override
 	public void deleteSubmodelElement(String idShortPath) throws ElementDoesNotExistException {
+		deleteAssociatedFileIfAny(idShortPath);
+
 		if (!helper.isNestedIdShortPath(idShortPath)) {
 			deleteFlatSubmodelElement(idShortPath);
 			return;
@@ -291,11 +293,10 @@ public class InMemorySubmodelService implements SubmodelService {
 		setSubmodelElementValue(idShortPath, fileValue);
 	}
 
-	private void deleteAssociatedFile(String idShortPath) {
+	private void deleteAssociatedFileIfAny(String idShortPath) {
 		try {
 			deleteFileValue(idShortPath);
 		} catch (Exception e) {
-			return;
 		}
 	}
 

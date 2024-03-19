@@ -40,4 +40,10 @@ public class TestInMemorySubmodelService extends SubmodelServiceSuite {
 		return new InMemorySubmodelServiceFactory().create(submodel);
 	}
 
+	@Override
+	protected boolean fileExistsInStorage(String fileValue) {
+		java.io.File file = new java.io.File(fileValue);
+
+		return file.exists();
+	}
 }
