@@ -1,0 +1,134 @@
+version: "3.9"
+services:
+  
+  aas-registry-log-mem:
+    image: ecbasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: aas-registry-log-mem_2
+    ports:
+      - "8051:8080"
+    # environment:
+    #   SERVER_SERVLET_CONTEXT_PATH: /
+    #   BASYX_CORS_ALLOWED_ORIGIN: "*"
+    #   BASYX_CORS_ALLOWED_METHODS: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
+    volumes:
+      - ./aas-registry.yml:/workspace/config/application.yml
+      - ./rbac_rules.json:/workspace/rbac_rules.json
+    # depends_on:
+    #   - reverse-proxy
+    # restart: always
+    networks:
+      - basyx-java-server-sdk
+  
+  # reverse-proxy:
+  #   image: nginx:alpine
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - keycloak
+  #   networks:
+  #     - basyx-java-server-sdk
+  
+  keycloak:
+    build:
+      context: ./examples/keycloak
+    volumes:
+      - ./:/opt/jboss/keycloak/imports
+    ports:
+      - 9096:8080
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    networks:
+      - basyx-java-server-sdk
+
+  # mongo:
+  #   image: mongo:5.0.10
+  #   # Provide mongo config
+  #   restart: always
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: mongoAdmin
+  #     MONGO_INITDB_ROOT_PASSWORD: mongoPassword
+  #   # Set health checks to wait until mongo has started
+  #   healthcheck:
+  #     test: mongo
+  #     interval: 10s
+  #     start_period: 5s
+  #     retries: 5
+  #   # Maps tcp port to host
+  #   ports:
+  #     - 27017:27017
+  #   networks:
+  #     - basyx-java-server-sdk
+
+  # zookeeper:
+  #   image: confluentinc/cp-zookeeper:7.5.2
+  #   environment:
+  #     ZOOKEEPER_CLIENT_PORT: 2181
+  #     ZOOKEEPER_TICK_TIME: 2000
+  #   healthcheck:
+  #     test: nc -z localhost 2181 || exit -1
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 10
+  #     start_period: 10s
+  #   networks:
+  #     - basyx-java-server-sdk
+
+  # akhq:
+  #   image: tchiotludo/akhq:0.24.0
+  #   container_name: akhq_1
+  #   environment:
+  #     AKHQ_CONFIGURATION: |
+  #       akhq:
+  #         connections:
+  #           docker-kafka-server:
+  #             properties:
+  #               bootstrap.servers: "kafka:29092"
+  #   ports:
+  #     - 8086:8080
+  #   restart: always
+  #   depends_on:
+  #     - kafka
+  #   networks:
+  #     - basyx-java-server-sdk
+
+  # kafka:
+  #   image: confluentinc/cp-kafka:7.5.2
+  #   ports:
+  #     - 9092:9092
+  #   environment:
+  #     KAFKA_BROKER_ID: 1
+  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+  #     KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  #   healthcheck:
+  #     test: nc -z localhost 9092 || exit -1
+  #     interval: 5s
+  #     timeout: 10s
+  #     retries: 10
+  #     start_period: 15s
+  #   depends_on:
+  #     zookeeper:
+  #       condition: service_healthy
+  #   networks:
+  #     - basyx-java-server-sdk
+  
+  # sm-registry-log-mem:
+  #   image: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
+  #   container_name: sm-registry-log-mem_1
+  #   environment:
+  #     SERVER_SERVLET_CONTEXT_PATH: /
+  #   ports:
+  #     - "8060:8080"
+  #   restart: always
+  #   networks:
+  #     - basyx-java-server-sdk
+
+networks:
+  basyx-java-server-sdk:
+    name: basyx-java-server-sdk
+    driver: bridge

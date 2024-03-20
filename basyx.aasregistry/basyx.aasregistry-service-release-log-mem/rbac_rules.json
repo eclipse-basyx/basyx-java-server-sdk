@@ -1,0 +1,18 @@
+[
+  {
+    "role": "admin",
+    "action": ["CREATE", "READ", "UPDATE", "DELETE"],
+    "targetInformation": {
+      "@type": "aas-registry",
+      "aasId": "*"
+    }
+  },
+  {
+    "role": "basyx-reader",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "aas-registry",
+      "aasId": "*"
+    }
+  }
+]
