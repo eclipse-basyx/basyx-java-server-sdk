@@ -43,6 +43,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
@@ -147,17 +148,19 @@ public class InMemoryAasService implements AasService {
 	public File getThumbnail() {
 		Resource resource = getAssetInformation().getDefaultThumbnail();
 
-		String filePath = resource.getPath();
-
-		InputStream fileIs = fileRepository.find(filePath);
 
 		try {
+			String filePath = resource.getPath();
+
+			InputStream fileIs = fileRepository.find(filePath);
 			byte[] content = fileIs.readAllBytes();
 			fileIs.close();
 
 			createOutputStream(filePath, content);
 
 			return new java.io.File(filePath);
+		} catch (NullPointerException e) {
+			throw new FileDoesNotExistException();
 		} catch (IOException e) {
 			throw new FileHandlingException("Exception occurred while creating file from the InputStream." + e.getMessage());
 		}
@@ -172,10 +175,11 @@ public class InMemoryAasService implements AasService {
 
 	@Override
 	public void deleteThumbnail() {
-		String thumbnailPath = getAssetInformation().getDefaultThumbnail().getPath();
-
 		try {
+			String thumbnailPath = getAssetInformation().getDefaultThumbnail().getPath();
 			fileRepository.delete(thumbnailPath);
+		} catch (NullPointerException e) {
+			throw new FileDoesNotExistException();
 		} finally {
 			setAssetInformation(configureAssetInformationThumbnail(getAssetInformation(), "", ""));
 		}
