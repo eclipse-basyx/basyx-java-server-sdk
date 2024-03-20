@@ -25,6 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.http.testconfig;
 
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
@@ -45,6 +46,6 @@ public class DummySubmodelRepositoryConfig {
 	@Bean
 	@ConditionalOnMissingBean
 	public SubmodelRepository createSubmodelRepository() {
-		return new SimpleSubmodelRepositoryFactory(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory()).create();
+		return new SimpleSubmodelRepositoryFactory(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())).create();
 	}
 }

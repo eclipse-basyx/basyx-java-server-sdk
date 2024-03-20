@@ -28,7 +28,6 @@ package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
@@ -43,10 +42,6 @@ import org.springframework.stereotype.Component;
 public class InMemorySubmodelServiceFactory implements SubmodelServiceFactory {
 
 	private final FileRepository fileRepository;
-
-	public InMemorySubmodelServiceFactory() {
-		this.fileRepository = new InMemoryFileRepository();
-	}
 
 	public InMemorySubmodelServiceFactory(FileRepository fileRepository) {
 		this.fileRepository = fileRepository;

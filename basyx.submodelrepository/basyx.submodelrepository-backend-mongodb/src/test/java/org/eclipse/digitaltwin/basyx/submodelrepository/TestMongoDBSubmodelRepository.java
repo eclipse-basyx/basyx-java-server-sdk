@@ -84,7 +84,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	@Test
 	public void getConfiguredMongoDBSmRepositoryName() {
 		SubmodelBackendProvider submodelBackendProvider = new SubmodelMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, TEMPLATE);
-		SubmodelRepository repo = new SimpleSubmodelRepositoryFactory(submodelBackendProvider, new InMemorySubmodelServiceFactory(), CONFIGURED_SM_REPO_NAME).create();
+		SubmodelRepository repo = new SimpleSubmodelRepositoryFactory(submodelBackendProvider, new InMemorySubmodelServiceFactory(fileRepository), CONFIGURED_SM_REPO_NAME).create();
 
 		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
 	}

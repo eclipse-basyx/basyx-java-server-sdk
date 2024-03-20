@@ -37,12 +37,16 @@ import java.nio.file.Paths;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.stereotype.Component;
 
 /**
  * An InMemory implementation of the {@link FileRepository}
  * 
  * @author danish
  */
+@Component
+@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
 public class InMemoryFileRepository implements FileRepository {
 
 	private static final String TEMP_DIRECTORY_PREFIX = "basyx-temp";

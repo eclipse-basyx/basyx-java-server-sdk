@@ -34,9 +34,13 @@ import java.nio.file.Paths;
 import org.bson.types.ObjectId;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.stereotype.Component;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
 
@@ -45,6 +49,8 @@ import com.mongodb.client.gridfs.model.GridFSFile;
  * 
  * @author danish
  */
+@Component
+@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
 public class MongoDBFileRepository implements FileRepository {
 
 	private static final String MONGO_ID = "_id";
@@ -53,8 +59,17 @@ public class MongoDBFileRepository implements FileRepository {
 
 	private GridFsTemplate gridFsTemplate;
 
+	@Autowired
+	public MongoDBFileRepository(MongoTemplate mongoTemplate) {
+		this(buildDefaultGridFsTemplate(mongoTemplate));
+	}
+
 	public MongoDBFileRepository(GridFsTemplate gridFsTemplate) {
 		this.gridFsTemplate = gridFsTemplate;
+	}
+
+	public static GridFsTemplate buildDefaultGridFsTemplate(MongoTemplate mongoTemplate) {
+		return new GridFsTemplate(mongoTemplate.getMongoDatabaseFactory(), mongoTemplate.getConverter());
 	}
 
 	@Override

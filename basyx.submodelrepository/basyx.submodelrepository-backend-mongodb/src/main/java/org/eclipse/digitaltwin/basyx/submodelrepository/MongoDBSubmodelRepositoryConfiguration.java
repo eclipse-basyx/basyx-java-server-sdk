@@ -24,15 +24,12 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBFileRepository;
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
 /**
  * Provides a InMemorySubmodelServiceFactory for usage in the MongoDB Submodel
@@ -49,15 +46,6 @@ import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 public class MongoDBSubmodelRepositoryConfiguration {
 	@Bean
 	public SubmodelServiceFactory getInMemorySubmodelServiceFactory() {
-		return new InMemorySubmodelServiceFactory();
-	}
-
-	@Bean
-	public FileRepository getFileRepository(MongoTemplate mongoTemplate) {
-		return new MongoDBFileRepository(configureDefaultGridFsTemplate(mongoTemplate));
-	}
-
-	private GridFsTemplate configureDefaultGridFsTemplate(MongoTemplate mongoTemplate) {
-		return new GridFsTemplate(mongoTemplate.getMongoDatabaseFactory(), mongoTemplate.getConverter());
+		return new InMemorySubmodelServiceFactory(new InMemoryFileRepository());
 	}
 }
