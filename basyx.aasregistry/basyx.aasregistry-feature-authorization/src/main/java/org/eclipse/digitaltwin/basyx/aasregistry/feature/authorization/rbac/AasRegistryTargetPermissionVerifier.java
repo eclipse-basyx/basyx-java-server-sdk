@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,23 +25,24 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.rbac;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.AasTargetInformation;
+import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.AasRegistryTargetInformation;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
 
 /**
- * Verifies the {@link AasTargetInformation} against the {@link RbacRule}
- * 
+ * Verifies the {@link AasRegistryTargetInformation} against the {@link RbacRule}
+ *
+ * @author geso02
  */
-public class AasTargetPermissionVerifier implements TargetPermissionVerifier<AasTargetInformation> {
+public class AasRegistryTargetPermissionVerifier implements TargetPermissionVerifier<AasRegistryTargetInformation> {
 
 	public static final String ALL_ALLOWED_WILDCARD = "*";
 	
 	@Override
-	public boolean isVerified(RbacRule rbacRule, AasTargetInformation targetInformation) {
+	public boolean isVerified(RbacRule rbacRule, AasRegistryTargetInformation targetInformation) {
 		String shellId = targetInformation.getAasId();
 		
-		AasTargetInformation rbacRuleAasTargetInformation = (AasTargetInformation) rbacRule.getTargetInformation();
+		AasRegistryTargetInformation rbacRuleAasTargetInformation = (AasRegistryTargetInformation) rbacRule.getTargetInformation();
 		
 		return rbacRuleAasTargetInformation.getAasId().equals(ALL_ALLOWED_WILDCARD) || rbacRuleAasTargetInformation.getAasId().equals(shellId);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -28,7 +28,7 @@ package org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.rbac.AasTargetPermissionVerifier;
+import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.rbac.AasRegistryTargetPermissionVerifier;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchRequest;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchResponse;
@@ -48,21 +48,21 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 /**
  * Decorator for authorized {@link AasRegistryStorage}
  *
- *
+ * @author geso02, danish
  */
 public class AuthorizedAasRegistryStorage implements AasRegistryStorage {
 
 	private AasRegistryStorage decorated;
-	private RbacPermissionResolver<AasTargetInformation> permissionResolver;
+	private RbacPermissionResolver<AasRegistryTargetInformation> permissionResolver;
 	
-	public AuthorizedAasRegistryStorage(AasRegistryStorage decorated, RbacPermissionResolver<AasTargetInformation> permissionResolver) {
+	public AuthorizedAasRegistryStorage(AasRegistryStorage decorated, RbacPermissionResolver<AasRegistryTargetInformation> permissionResolver) {
 		this.decorated = decorated;
 		this.permissionResolver = permissionResolver;
 	}
 
 	@Override
 	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(PaginationInfo pRequest, DescriptorFilter filter) {
-		assertHasPermission(Action.READ, AasTargetPermissionVerifier.ALL_ALLOWED_WILDCARD);
+		assertHasPermission(Action.READ, AasRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD);
 		return decorated.getAllAasDescriptors(pRequest, filter);
 	}
 
@@ -82,9 +82,10 @@ public class AuthorizedAasRegistryStorage implements AasRegistryStorage {
 	public void replaceAasDescriptor(String aasDescriptorId, AssetAdministrationShellDescriptor descriptor) throws AasDescriptorNotFoundException {
 		assertHasPermission(Action.UPDATE, aasDescriptorId);
 		String newId = descriptor.getId();
-		if (aasDescriptorId != newId) {
+
+		if (!aasDescriptorId.equals(newId))
 			assertHasPermission(Action.CREATE, newId);
-		}
+
 		decorated.replaceAasDescriptor(aasDescriptorId, descriptor);
 	}
 
@@ -126,18 +127,18 @@ public class AuthorizedAasRegistryStorage implements AasRegistryStorage {
 
 	@Override
 	public Set<String> clear() {
-		assertHasPermission(Action.DELETE, AasTargetPermissionVerifier.ALL_ALLOWED_WILDCARD);
+		assertHasPermission(Action.DELETE, AasRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD);
 		return decorated.clear();
 	}
 
 	@Override
 	public ShellDescriptorSearchResponse searchAasDescriptors(ShellDescriptorSearchRequest request) {
-		assertHasPermission(Action.READ, AasTargetPermissionVerifier.ALL_ALLOWED_WILDCARD);
+		assertHasPermission(Action.READ, AasRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD);
 		return decorated.searchAasDescriptors(request);
 	}
 	
 	private void assertHasPermission(Action action, String aasId) {
-		boolean isAuthorized = permissionResolver.hasPermission(action, new AasTargetInformation(aasId));
+		boolean isAuthorized = permissionResolver.hasPermission(action, new AasRegistryTargetInformation(aasId));
 		throwExceptionIfInsufficientPermission(isAuthorized);
 	}
 	

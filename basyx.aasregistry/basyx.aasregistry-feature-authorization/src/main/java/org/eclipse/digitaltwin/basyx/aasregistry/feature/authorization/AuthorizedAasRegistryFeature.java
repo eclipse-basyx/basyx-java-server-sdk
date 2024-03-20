@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -37,7 +37,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Feature for authorized {@link AasRegistryStorage}
- * 
+ *
+ * @author geso02
  */
 @Component
 @ConditionalOnExpression("#{${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false}}")
@@ -47,10 +48,10 @@ public class AuthorizedAasRegistryFeature implements AasRegistryStorageFeature {
 	@Value("${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":}")
 	private boolean enabled;
 	
-	private RbacPermissionResolver<AasTargetInformation> permissionResolver;
+	private RbacPermissionResolver<AasRegistryTargetInformation> permissionResolver;
 
 	@Autowired
-	public AuthorizedAasRegistryFeature(RbacPermissionResolver<AasTargetInformation> permissionResolver) {
+	public AuthorizedAasRegistryFeature(RbacPermissionResolver<AasRegistryTargetInformation> permissionResolver) {
 		this.permissionResolver = permissionResolver;
 	}
 

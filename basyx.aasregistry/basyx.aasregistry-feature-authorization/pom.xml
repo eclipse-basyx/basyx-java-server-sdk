@@ -42,12 +42,6 @@
 			<classifier>tests</classifier>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.aasrepository-http</artifactId>
-			<classifier>tests</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
 			<artifactId>httpclient5</artifactId>
 			<scope>test</scope>
@@ -55,6 +49,12 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasregistry-service-inmemory-storage</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

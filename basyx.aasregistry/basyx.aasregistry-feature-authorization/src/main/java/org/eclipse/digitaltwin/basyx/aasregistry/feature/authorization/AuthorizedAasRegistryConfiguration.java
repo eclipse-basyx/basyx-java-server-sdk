@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.rbac.AasTargetPermissionVerifier;
+import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.rbac.AasRegistryTargetPermissionVerifier;
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
@@ -33,7 +33,6 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.RoleProvider;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.SimpleRbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
-import org.eclipse.digitaltwin.basyx.http.BaSyxExceptionHandler;
 import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,37 +42,31 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Configuration for authorized {@link AuthorizedAasRegistryStorage}
- * 
+ *
+ * @author geso02, danish
  */
 @Configuration
 @ConditionalOnExpression("#{${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false}}")
 public class AuthorizedAasRegistryConfiguration {
 
-	private static final Logger logger = LoggerFactory.getLogger(AuthorizedAasRegistryConfiguration.class);
 	@Bean
-	public TargetPermissionVerifier<AasTargetInformation> getAasTargetPermissionVerifier() {
-		return new AasTargetPermissionVerifier();
+	public TargetPermissionVerifier<AasRegistryTargetInformation> getAasTargetPermissionVerifier() {
+		return new AasRegistryTargetPermissionVerifier();
 	}
 	
 	@Bean
-	public RbacPermissionResolver<AasTargetInformation> getAasPermissionResolver(RbacStorage rbacStorage, RoleProvider roleProvider, TargetPermissionVerifier<AasTargetInformation> targetPermissionVerifier) {
+	public RbacPermissionResolver<AasRegistryTargetInformation> getAasPermissionResolver(RbacStorage rbacStorage, RoleProvider roleProvider, TargetPermissionVerifier<AasRegistryTargetInformation> targetPermissionVerifier) {
 		return new SimpleRbacPermissionResolver<>(rbacStorage, roleProvider, targetPermissionVerifier);
 	}
 
 	@Bean
-	public AuthorizedAasRegistryFeature getAasStorageFeature(RbacPermissionResolver<AasTargetInformation> rbacPermissionResolver) {
+	public AuthorizedAasRegistryFeature getAasStorageFeature(RbacPermissionResolver<AasRegistryTargetInformation> rbacPermissionResolver) {
 		return new AuthorizedAasRegistryFeature(rbacPermissionResolver);
 	}
 
 	@Bean
 	public SerializationExtension getExtension() {
-		logger.info("Setting BaSyx SerializationExtension");
 		return new Aas4JHTTPSerializationExtension();
 	}
 
-//	@Bean
-//	public BaSyxExceptionHandler getExceptionHandler() {
-//		logger.info("Setting BaSyx Exception Handler");
-//		return new BaSyxExceptionHandler();
-//	}
 }

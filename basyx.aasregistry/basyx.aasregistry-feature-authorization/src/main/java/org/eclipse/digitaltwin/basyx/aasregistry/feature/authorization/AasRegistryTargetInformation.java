@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -34,16 +34,18 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformationSubtype;
 
 /**
- * Specialization of {@link TargetInformation} for Aas target information
+ * Specialization of {@link TargetInformation} for Aas Registry target information
+ *
+ * @author geso02, danish
  *
  */
 @TargetInformationSubtype(getValue = "aas-registry")
-public class AasTargetInformation implements TargetInformation {
+public class AasRegistryTargetInformation implements TargetInformation {
 	
 	private String aasId;
 
 	@JsonCreator
-	public AasTargetInformation(final @JsonProperty("aasId") String aasId) {
+	public AasRegistryTargetInformation(final @JsonProperty("aasId") String aasId) {
 		this.aasId = aasId;
 	}
 
@@ -67,7 +69,7 @@ public class AasTargetInformation implements TargetInformation {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AasTargetInformation other = (AasTargetInformation) obj;
+		AasRegistryTargetInformation other = (AasRegistryTargetInformation) obj;
 		return Objects.equals(aasId, other.aasId);
 	}
 
