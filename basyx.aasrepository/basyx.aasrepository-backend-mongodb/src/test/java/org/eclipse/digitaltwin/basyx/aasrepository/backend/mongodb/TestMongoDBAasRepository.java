@@ -41,8 +41,10 @@ import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFa
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
+import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBFileRepository;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -59,13 +61,15 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	private static final String COLLECTION = "testAasCollection";
 	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
 	
-	private MongoTemplate mongoTemplate = createMongoTemplate();
+	private static MongoTemplate mongoTemplate = createMongoTemplate();
+
+	private static GridFsTemplate gridFsTemplate = configureDefaultGridFsTemplate(mongoTemplate);
 
 	@Override
 	protected AasRepository getAasRepository() {
 		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
 		AasBackendProvider aasBackendProvider = new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate);
-		AasRepositoryFactory aasRepositoryFactory = new SimpleAasRepositoryFactory(aasBackendProvider, new InMemoryAasServiceFactory());
+		AasRepositoryFactory aasRepositoryFactory = new SimpleAasRepositoryFactory(aasBackendProvider, new InMemoryAasServiceFactory(new MongoDBFileRepository(gridFsTemplate)));
 
 		return aasRepositoryFactory.create();
 	}
@@ -96,7 +100,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	
 	@Test
 	public void getConfiguredMongoDBAasRepositoryName() {
-		AasRepository repo = new CrudAasRepository(new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate), new InMemoryAasServiceFactory(), CONFIGURED_AAS_REPO_NAME);
+		AasRepository repo = new CrudAasRepository(new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate), new InMemoryAasServiceFactory(new MongoDBFileRepository(gridFsTemplate)), CONFIGURED_AAS_REPO_NAME);
 		
 		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
 	}
@@ -112,7 +116,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		return expectedShell;
 	}
 	
-	private MongoTemplate createMongoTemplate() {
+	private static MongoTemplate createMongoTemplate() {
 		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
 		
 		MongoClient client = MongoClients.create(connectionURL);
@@ -120,4 +124,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		return new MongoTemplate(client, "BaSyxTestDb");
 	}
 
+	private static GridFsTemplate configureDefaultGridFsTemplate(MongoTemplate mongoTemplate) {
+		return new GridFsTemplate(mongoTemplate.getMongoDatabaseFactory(), mongoTemplate.getConverter());
+	}
 }

@@ -48,6 +48,7 @@ import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFac
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener;
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
 import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
 import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
@@ -102,7 +103,7 @@ public class TestMqttAasService extends AasServiceSuite {
 	}
 
 	private static AasServiceFactory createMqttAasServiceFactory(MqttClient client) {
-		AasServiceFactory serviceFactory = new InMemoryAasServiceFactory();
+		AasServiceFactory serviceFactory = new InMemoryAasServiceFactory(new InMemoryFileRepository());
 		MqttAasServiceFeature mqttFeature = new MqttAasServiceFeature(client, aasRepository, objectMapper);
 		
 		return mqttFeature.decorate(serviceFactory);

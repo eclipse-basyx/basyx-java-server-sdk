@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.core.file;
+package org.eclipse.digitaltwin.basyx.core.filerepository;
 
 import java.io.InputStream;
 

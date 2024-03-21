@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasservice;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -35,7 +37,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 /**
  * Specifies the overall AasService API
  * 
- * @author schnicke
+ * @author schnicke, mateusmolina
  *
  */
 public interface AasService {
@@ -75,4 +77,29 @@ public interface AasService {
 	 * @return the Asset-Information of the AAS
 	 */
 	public AssetInformation getAssetInformation();	
+
+	/**
+	 * Get Thumbnail of the specific aas
+	 * 
+	 * @return the file of the thumbnail
+	 */
+	public File getThumbnail();
+
+	/**
+	 * Set Thumbnail of the AAS
+	 * 
+	 * @param fileName
+	 *            name of the thumbnail file with extension
+	 * @param contentType
+	 *            content type of the file
+	 * @param inputStream
+	 *            inputstream of the thumbnail file
+	 */
+	public void setThumbnail(String fileName, String contentType, InputStream inputStream);
+
+	/**
+	 * Delete the thumbnail file of the AAS
+	 * 
+	 */
+	public void deleteThumbnail();
 }

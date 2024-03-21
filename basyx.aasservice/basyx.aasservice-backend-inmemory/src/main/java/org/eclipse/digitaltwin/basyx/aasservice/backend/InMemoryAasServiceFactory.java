@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasservice.backend;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
@@ -39,8 +40,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class InMemoryAasServiceFactory implements AasServiceFactory {
 
+	private final FileRepository fileRepository;
+
+	public InMemoryAasServiceFactory(FileRepository fileRepository) {
+		this.fileRepository = fileRepository;
+	}
+
 	@Override
 	public AasService create(AssetAdministrationShell aas) {
-		return new InMemoryAasService(aas);
+		return new InMemoryAasService(aas, fileRepository);
 	}
 }

@@ -24,6 +24,7 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -45,6 +46,6 @@ import org.springframework.context.annotation.Configuration;
 public class MongoDBSubmodelRepositoryConfiguration {
 	@Bean
 	public SubmodelServiceFactory getInMemorySubmodelServiceFactory() {
-		return new InMemorySubmodelServiceFactory();
+		return new InMemorySubmodelServiceFactory(new InMemoryFileRepository());
 	}
 }

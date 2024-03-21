@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.example;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
@@ -48,7 +49,7 @@ public class ExampleSubmodelConfiguration {
 
 	@Bean
 	static SubmodelServiceFactory getSubmodelServiceFactory() {
-		return new InMemorySubmodelServiceFactory();
+		return new InMemorySubmodelServiceFactory(new InMemoryFileRepository());
 	}
 
 	@Bean

@@ -25,11 +25,15 @@
 
 package org.eclipse.digitaltwin.basyx.aasservice.client;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.DummyAasRepositoryComponent;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceSuite;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.junit.After;
@@ -70,4 +74,36 @@ public class TestConnectedAasService extends AasServiceSuite {
 
 	}
 
+	@Override
+	public void updateThumbnail() throws FileNotFoundException, IOException {
+		// TODO test not implemented
+	}
+
+	@Override
+	public void setThumbnail() throws FileNotFoundException, IOException {
+		// TODO test not implemented
+	}
+
+	@Override
+	public void getThumbnail() throws IOException {
+		// TODO test not implemented
+	}
+
+	@Override
+	public void getNonExistingThumbnail() {
+		// TODO test not implemented
+		throw new FileDoesNotExistException();
+	}
+
+	@Override
+	public void deleteThumbnail() throws FileNotFoundException, IOException {
+		// TODO test not implemented
+		throw new FileDoesNotExistException();
+	}
+
+	@Override
+	public void deleteNonExistingThumbnail() throws IOException {
+		// TODO test not implemented
+		throw new FileDoesNotExistException();
+	}
 }
