@@ -39,7 +39,12 @@ import org.springframework.context.annotation.Configuration;
 public class AASEnvironmentConfiguration {
 
 	@Bean
-	public CorsPathPatternProvider getAASEnvironmentRepoCorsUrlProvider() {
+	public CorsPathPatternProvider getAASEnvironmentSerializationRepoCorsUrlProvider() {
 		return new CorsPathPatternProvider("/serialization");
+	}
+
+	@Bean
+	public CorsPathPatternProvider getAASEnvironmentUploadRepoCorsUrlProvider() {
+		return new CorsPathPatternProvider("/upload");
 	}
 }
