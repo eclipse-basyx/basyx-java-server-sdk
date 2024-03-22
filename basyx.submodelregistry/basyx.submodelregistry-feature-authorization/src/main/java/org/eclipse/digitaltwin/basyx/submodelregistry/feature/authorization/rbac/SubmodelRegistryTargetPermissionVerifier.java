@@ -23,21 +23,28 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasregistry.regression.feature.authorization;
+package org.eclipse.digitaltwin.basyx.submodelregistry.feature.authorization.rbac;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.AuthorizedAasRegistryStorage;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.eclipse.digitaltwin.basyx.submodelregistry.feature.authorization.SubmodelRegistryTargetInformation;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
 
 /**
- * Creates and starts the {@link AuthorizedAasRegistryStorage} for tests
- * 
- * @author danish
+ * Verifies the {@link SubmodelRegistryTargetInformation} against the {@link RbacRule}
  *
+ * @author danish
  */
-@SpringBootApplication(scanBasePackages = {"org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization","org.eclipse.digitaltwin.basyx.aasregistry.service.api","org.eclipse.digitaltwin.basyx.aasregistry.service.events","org.eclipse.digitaltwin.basyx.authorization.rbac", "org.eclipse.digitaltwin.basyx.authorization", "org.eclipse.digitaltwin.basyx.aasregistry.service.configuration"})
-public class DummyAasRegistryComponent {
-	public static void main(String[] args) {
-		SpringApplication.run(DummyAasRegistryComponent.class, args);
+public class SubmodelRegistryTargetPermissionVerifier implements TargetPermissionVerifier<SubmodelRegistryTargetInformation> {
+
+	public static final String ALL_ALLOWED_WILDCARD = "*";
+	
+	@Override
+	public boolean isVerified(RbacRule rbacRule, SubmodelRegistryTargetInformation targetInformation) {
+		String submodelId = targetInformation.getSubmodelId();
+		
+		SubmodelRegistryTargetInformation rbacRuleSubmodelTargetInformation = (SubmodelRegistryTargetInformation) rbacRule.getTargetInformation();
+		
+		return rbacRuleSubmodelTargetInformation.getSubmodelId().equals(ALL_ALLOWED_WILDCARD) || rbacRuleSubmodelTargetInformation.getSubmodelId().equals(submodelId);
 	}
+
 }

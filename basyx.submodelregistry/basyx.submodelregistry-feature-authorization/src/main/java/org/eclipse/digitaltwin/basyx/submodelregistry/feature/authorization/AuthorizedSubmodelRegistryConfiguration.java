@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,9 +23,8 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization;
+package org.eclipse.digitaltwin.basyx.submodelregistry.feature.authorization;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.rbac.AasRegistryTargetPermissionVerifier;
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
@@ -34,36 +33,37 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.SimpleRbacPermissionReso
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
 import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
+import org.eclipse.digitaltwin.basyx.submodelregistry.feature.authorization.rbac.SubmodelRegistryTargetPermissionVerifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Configuration for authorized {@link AuthorizedAasRegistryStorage}
+ * Configuration for authorized {@link AuthorizedSubmodelRegistryStorage}
  *
- * @author geso02, danish
+ * @author danish
  */
 @Configuration
 @ConditionalOnExpression("#{${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false}}")
-public class AuthorizedAasRegistryConfiguration {
+public class AuthorizedSubmodelRegistryConfiguration {
 
 	@Bean
-	public TargetPermissionVerifier<AasRegistryTargetInformation> getAasTargetPermissionVerifier() {
-		return new AasRegistryTargetPermissionVerifier();
+	public TargetPermissionVerifier<SubmodelRegistryTargetInformation> getSubmodelRegistryTargetPermissionVerifier() {
+		return new SubmodelRegistryTargetPermissionVerifier();
 	}
 	
 	@Bean
-	public RbacPermissionResolver<AasRegistryTargetInformation> getAasPermissionResolver(RbacStorage rbacStorage, RoleProvider roleProvider, TargetPermissionVerifier<AasRegistryTargetInformation> targetPermissionVerifier) {
+	public RbacPermissionResolver<SubmodelRegistryTargetInformation> getSubmodelRegistryPermissionResolver(RbacStorage rbacStorage, RoleProvider roleProvider, TargetPermissionVerifier<SubmodelRegistryTargetInformation> targetPermissionVerifier) {
 		return new SimpleRbacPermissionResolver<>(rbacStorage, roleProvider, targetPermissionVerifier);
 	}
 
 	@Bean
-	public AuthorizedAasRegistryFeature getAasStorageFeature(RbacPermissionResolver<AasRegistryTargetInformation> rbacPermissionResolver) {
-		return new AuthorizedAasRegistryFeature(rbacPermissionResolver);
+	public AuthorizedSubmodelRegistryFeature getSubmodelRegistryStorageFeature(RbacPermissionResolver<SubmodelRegistryTargetInformation> rbacPermissionResolver) {
+		return new AuthorizedSubmodelRegistryFeature(rbacPermissionResolver);
 	}
 
 	@Bean
-	public SerializationExtension getExtension() {
+	public SerializationExtension getSubmodelRegistryExtension() {
 		return new Aas4JHTTPSerializationExtension();
 	}
 

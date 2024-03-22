@@ -23,21 +23,21 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasregistry.regression.feature.authorization;
+package org.eclipse.digitaltwin.basyx.submodelregistry.regression.feature.authorization;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.AuthorizedAasRegistryStorage;
+import org.eclipse.digitaltwin.basyx.submodelregistry.feature.authorization.AuthorizedSubmodelRegistryStorage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Creates and starts the {@link AuthorizedAasRegistryStorage} for tests
+ * Creates and starts the {@link AuthorizedSubmodelRegistryStorage} for tests
  * 
  * @author danish
  *
  */
-@SpringBootApplication(scanBasePackages = {"org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization","org.eclipse.digitaltwin.basyx.aasregistry.service.api","org.eclipse.digitaltwin.basyx.aasregistry.service.events","org.eclipse.digitaltwin.basyx.authorization.rbac", "org.eclipse.digitaltwin.basyx.authorization", "org.eclipse.digitaltwin.basyx.aasregistry.service.configuration"})
-public class DummyAasRegistryComponent {
+@SpringBootApplication(scanBasePackages = {"org.eclipse.digitaltwin.basyx.submodelregistry.feature.authorization","org.eclipse.digitaltwin.basyx.submodelregistry.service.api","org.eclipse.digitaltwin.basyx.submodelregistry.service.events","org.eclipse.digitaltwin.basyx.authorization.rbac", "org.eclipse.digitaltwin.basyx.authorization", "org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration"})
+public class DummySubmodelRegistryComponent {
 	public static void main(String[] args) {
-		SpringApplication.run(DummyAasRegistryComponent.class, args);
+		SpringApplication.run(DummySubmodelRegistryComponent.class, args);
 	}
 }

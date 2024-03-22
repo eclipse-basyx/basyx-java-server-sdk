@@ -50,6 +50,7 @@
 		<module>basyx.submodelregistry-service-release-kafka-mem</module>
 		<module>basyx.submodelregistry-service-release-log-mongodb</module>
 		<module>basyx.submodelregistry-service-release-kafka-mongodb</module>
+		<module>basyx.submodelregistry-feature-authorization</module>
 	</modules>
 
 	<developers>
@@ -183,6 +184,11 @@
 				<groupId>com.github.spullara.mustache.java</groupId>
 				<artifactId>compiler</artifactId>
 				<version>${mustache.compiler.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelregistry-feature-authorization</artifactId>
+				<version>${project.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
