@@ -47,5 +47,11 @@ AAS environments (e.g. XML, JSON, AASX) can be uploaded by a multipart/form-data
     
 The upload follows the same rules as the preconfiguration in terms of handling existing AAS, submodels and concept descriptions. In order for the file to be recognized correctly, please make sure that its MIME type is properly configured.
 
+[!NOTE] 
+If the AAS Environment file (XML, JSON, or AASX) size exceeds the below mentioned default limit, it is important to set the below two properties in the application.properties based on the size of the file to be uploaded:
+
+	spring.servlet.multipart.max-file-size (default 1 MB)
+	spring.servlet.multipart.max-request-size (default 10 MB)
+
 ## AAS Environment Features
 * [AAS Environment Authorization](basyx.aasenvironment-feature-authorization)
