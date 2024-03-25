@@ -121,16 +121,25 @@ public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 
 	private List<String> getOriginalIds(List<String> ids) {
 		List<String> results = new ArrayList<>();
+		
+		if (!areValidIds(ids))
+			return results;
+		
 		ids.forEach(id -> {
 			results.add(Base64UrlEncodedIdentifier.fromEncodedValue(id).getIdentifier());
 		});
+		
 		return results;
 	}
 
 	private boolean areParametersValid(String accept, @Valid List<String> aasIds, @Valid List<String> submodelIds) {
-		if (aasIds.isEmpty() || submodelIds.isEmpty()) {
+		if (!areValidIds(aasIds) && !areValidIds(submodelIds))
 			return false;
-		}
+		
 		return (accept.equals(ACCEPT_AASX) || accept.equals(ACCEPT_JSON) || accept.equals(ACCEPT_XML));
+	}
+
+	private boolean areValidIds(List<String> identifiers) {
+		return identifiers != null && !identifiers.isEmpty();
 	}
 }
