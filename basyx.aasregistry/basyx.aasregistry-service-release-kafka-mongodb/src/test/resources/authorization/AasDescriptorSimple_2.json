@@ -1,0 +1,52 @@
+{
+  "description": null,
+  "displayName": null,
+  "extensions": null,
+  "administration": null,
+  "assetKind": "Type",
+  "assetType": "TestAsset",
+  "endpoints": [
+    {
+      "interface": "AAS-3.0",
+      "protocolInformation": {
+        "href": "http://127.0.0.1:8080/shells/ZHVtbXlTaGVsbElkXzM",
+        "endpointProtocol": "http",
+        "endpointProtocolVersion": null,
+        "subprotocol": null,
+        "subprotocolBody": null,
+        "subprotocolBodyEncoding": null,
+        "securityAttributes": null
+      }
+    }
+  ],
+  "globalAssetId": "DummyGlobalAssetId-Test-2",
+  "idShort": "specificAasIdShort-2",
+  "id": "specificAasId-2",
+  "specificAssetIds": null,
+  "submodelDescriptors": [
+    {
+      "description": null,
+      "displayName": null,
+      "extensions": null,
+      "administration": null,
+      "idShort": "specificAasIdShort-2-SM",
+      "id": "specificAasId-2-SM",
+      "semanticId": null,
+      "supplementalSemanticId": null,
+      "endpoints": [
+        {
+          "interface": "AAS-3.0",
+          "protocolInformation": {
+            "href": "http://127.0.0.1:8080/shell-descriptors/c3BlY2lmaWNBYXNJZC0y/submodel-descriptors/c3BlY2lmaWNBYXNJZC0yLVNN",
+            "endpointProtocol": "http",
+            "endpointProtocolVersion": null,
+            "subprotocol": null,
+            "subprotocolBody": null,
+            "subprotocolBodyEncoding": null,
+            "securityAttributes": null
+          }
+        }
+      ]
+    }
+  ]
+}

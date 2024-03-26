@@ -18,11 +18,7 @@
 		<start-class>org.eclipse.digitaltwin.basyx.aasregistry.service.OpenApiGeneratorApplication</start-class>
 		<docker.image.name>aas-registry-kafka-mem</docker.image.name>
 	</properties>
-	<dependencies>		
-	<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.aasregistry-feature-authorization</artifactId>
-		</dependency>
+	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.authorization</artifactId>

@@ -37,7 +37,6 @@
 		<jsr305.version>3.0.2</jsr305.version>
 		<jsonpatch.plugin.version>0.5.0</jsonpatch.plugin.version>
 		<patch.base-extensions.name>patch-base-extensions.yaml</patch.base-extensions.name>
-		<docker.context.dir>${project.basedir}/src/main/docker</docker.context.dir>
 	</properties>
 
 	<modules>

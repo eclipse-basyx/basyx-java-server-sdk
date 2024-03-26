@@ -1,0 +1,19 @@
+{
+  "page": {
+    "index": 0,
+    "size": 10000
+  },
+  "sortBy": {
+    "direction": "ASC",
+    "path": [
+      "idShort"
+    ]
+  },
+  "query": {
+    "path": "submodelDescriptors.idShort",
+    "value": "^dummyShellIdShort_.*",
+    "extensionName": null,
+    "queryType": "regex",
+    "combinedWith": null
+  }
+}

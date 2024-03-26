@@ -57,14 +57,4 @@ public class AuthorizedAasRegistryConfiguration {
 		return new SimpleRbacPermissionResolver<>(rbacStorage, roleProvider, targetPermissionVerifier);
 	}
 
-	@Bean
-	public AuthorizedAasRegistryFeature getAasStorageFeature(RbacPermissionResolver<AasRegistryTargetInformation> rbacPermissionResolver) {
-		return new AuthorizedAasRegistryFeature(rbacPermissionResolver);
-	}
-
-	@Bean
-	public SerializationExtension getExtension() {
-		return new Aas4JHTTPSerializationExtension();
-	}
-
 }

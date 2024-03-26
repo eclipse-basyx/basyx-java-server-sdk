@@ -57,14 +57,4 @@ public class AuthorizedSubmodelRegistryConfiguration {
 		return new SimpleRbacPermissionResolver<>(rbacStorage, roleProvider, targetPermissionVerifier);
 	}
 
-	@Bean
-	public AuthorizedSubmodelRegistryFeature getSubmodelRegistryStorageFeature(RbacPermissionResolver<SubmodelRegistryTargetInformation> rbacPermissionResolver) {
-		return new AuthorizedSubmodelRegistryFeature(rbacPermissionResolver);
-	}
-
-	@Bean
-	public SerializationExtension getSubmodelRegistryExtension() {
-		return new Aas4JHTTPSerializationExtension();
-	}
-
 }

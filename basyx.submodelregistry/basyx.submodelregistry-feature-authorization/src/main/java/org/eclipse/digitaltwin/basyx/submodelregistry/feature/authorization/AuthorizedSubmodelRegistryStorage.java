@@ -72,11 +72,14 @@ public class AuthorizedSubmodelRegistryStorage implements SubmodelRegistryStorag
 	}
 
 	public void replaceSubmodelDescriptor(String submodelId, SubmodelDescriptor descriptor) throws SubmodelNotFoundException {
-		assertHasPermission(Action.UPDATE, submodelId);
 		String newId = descriptor.getId();
 
-		if (!submodelId.equals(newId))
+		if (!submodelId.equals(newId)) {
+			assertHasPermission(Action.DELETE, submodelId);
 			assertHasPermission(Action.CREATE, newId);
+		}
+		else
+			assertHasPermission(Action.UPDATE, submodelId);
 
 		decorated.replaceSubmodelDescriptor(submodelId, descriptor);
 	}

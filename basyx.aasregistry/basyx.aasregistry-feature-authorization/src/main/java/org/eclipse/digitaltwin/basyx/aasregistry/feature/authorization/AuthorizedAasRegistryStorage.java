@@ -80,11 +80,13 @@ public class AuthorizedAasRegistryStorage implements AasRegistryStorage {
 
 	@Override
 	public void replaceAasDescriptor(String aasDescriptorId, AssetAdministrationShellDescriptor descriptor) throws AasDescriptorNotFoundException {
-		assertHasPermission(Action.UPDATE, aasDescriptorId);
 		String newId = descriptor.getId();
 
-		if (!aasDescriptorId.equals(newId))
+		if (!aasDescriptorId.equals(newId)) {
+			assertHasPermission(Action.DELETE, aasDescriptorId);
 			assertHasPermission(Action.CREATE, newId);
+		} else
+			assertHasPermission(Action.UPDATE, aasDescriptorId);
 
 		decorated.replaceAasDescriptor(aasDescriptorId, descriptor);
 	}

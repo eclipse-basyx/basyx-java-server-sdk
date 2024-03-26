@@ -37,7 +37,7 @@ For configuring RBAC rules, all the rbac rules should be configured inside a jso
     "action": "READ",
     "targetInformation": {
       "@type": "submodel-registry",
-      "aasId": "*"
+      "submodelId": "*"
     }
   },
   {
@@ -45,7 +45,7 @@ For configuring RBAC rules, all the rbac rules should be configured inside a jso
     "action": ["CREATE", "READ", "UPDATE", "DELETE"],
     "targetInformation": {
       "@type": "submodel-registry",
-      "aasId": "*"
+      "submodelId": "*"
     }
   },
   {
@@ -53,7 +53,7 @@ For configuring RBAC rules, all the rbac rules should be configured inside a jso
     "action": "DELETE",
     "targetInformation": {
       "@type": "submodel-registry",
-      "aasId": "specificSubmodelId"
+      "submodelId": "specificSubmodelId"
     }
   }
  ]
