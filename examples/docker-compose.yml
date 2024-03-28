@@ -80,17 +80,17 @@ services:
         condition: service_healthy
       
   aas-web-ui_v2:
-    image: eclipsebasyx/aas-gui:v2-240227
+    image: eclipsebasyx/aas-gui:v2-240327
     container_name: aas-web-ui_v2
     ports:
       - "3000:3000"
     environment:
-      VITE_AAS_REGISTRY_PATH: "http://localhost:8082"
-      VITE_SUBMODEL_REGISTRY_PATH: "http://localhost:8083"
-      VITE_AAS_DISCOVERY_PATH: "http://localhost:8084"
-      VITE_AAS_REPO_PATH: "http://localhost:8081/shells"
-      VITE_SUBMODEL_REPO_PATH: "http://localhost:8081/submodels"
-      VITE_CD_REPO_PATH: "http://localhost:8081/concept-descriptions"
+      AAS_REGISTRY_PATH: "http://localhost:8082"
+      SUBMODEL_REGISTRY_PATH: "http://localhost:8083"
+      AAS_DISCOVERY_PATH: "http://localhost:8084"
+      AAS_REPO_PATH: "http://localhost:8081/shells"
+      SUBMODEL_REPO_PATH: "http://localhost:8081/submodels"
+      CD_REPO_PATH: "http://localhost:8081/concept-descriptions"
     restart: always
     depends_on:
       aas-env:
