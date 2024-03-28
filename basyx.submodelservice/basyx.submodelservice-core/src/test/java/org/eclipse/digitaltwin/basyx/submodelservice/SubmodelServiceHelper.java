@@ -127,6 +127,7 @@ public class SubmodelServiceHelper {
 	public static final String SUBMODEL_TECHNICAL_DATA_FILE_CATEGORY = "PARAMETER";
 	public static final String SUBMODEL_TECHNICAL_DATA_FILE_VALUE = "testFile.json";
 	public static final String SUBMODEL_TECHNICAL_DATA_FILE_CONTENT_TYPE = "application/json";
+	public static final String SUBMODEL_TECHNICAL_NON_FILE = "application/json";
 
 	// SUBMODEL_ELEMENT_B_DATA
 	public static final String SUBMODEL_TECHNICAL_DATA_BLOB_ID_SHORT = "BlobData";
@@ -329,7 +330,8 @@ public class SubmodelServiceHelper {
 	public static List<SubmodelElement> getAllSubmodelElements() {
 		List<SubmodelElement> list = new ArrayList<>();
 		list.addAll(
-				Lists.newArrayList(createPropertySubmodelElement(), createRangeSubmodelElement(), createMultiLanguagePropertySubmodelElement(), createFileSubmodelElement(), createEntitySubmodelElement(), createReferenceElementSubmodelElement(),
+				Lists.newArrayList(createPropertySubmodelElement(), createRangeSubmodelElement(), createMultiLanguagePropertySubmodelElement(), createFileSubmodelElement(), createEntitySubmodelElement(),
+						createReferenceElementSubmodelElement(),
 						createRelationshipElementSubmodelElement(), createAnnotatedRelationshipElementSubmodelElement(), createBlobSubmodelElement(), createSubmodelElementCollection(), createSubmodelElementList(),
 						createInvokableOperation()));
 		return list;

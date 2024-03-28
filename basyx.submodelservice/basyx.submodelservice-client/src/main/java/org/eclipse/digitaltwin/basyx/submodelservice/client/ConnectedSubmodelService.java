@@ -26,6 +26,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.client;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
@@ -33,7 +35,9 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
@@ -145,6 +149,21 @@ public class ConnectedSubmodelService implements SubmodelService {
 
 	@Override
 	public void patchSubmodelElements(List<SubmodelElement> submodelElementList) {
+		throw new FeatureNotImplementedException();
+	}
+
+	@Override
+	public File getFileByPath(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+		throw new FeatureNotImplementedException();
+	}
+
+	@Override
+	public void setFileValue(String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
+		throw new FeatureNotImplementedException();
+	}
+
+	@Override
+	public void deleteFileValue(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
 		throw new FeatureNotImplementedException();
 	}
 

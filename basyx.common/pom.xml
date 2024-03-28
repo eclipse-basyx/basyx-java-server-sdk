@@ -20,5 +20,8 @@
 		<module>basyx.mongocore</module>
 		<module>basyx.authorization</module>
 		<module>basyx.client</module>
+		<module>basyx.filerepository-backend</module>
+		<module>basyx.filerepository-backend-inmemory</module>
+		<module>basyx.filerepository-backend-mongodb</module>
 	</modules>
 </project>

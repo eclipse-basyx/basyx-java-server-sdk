@@ -41,6 +41,7 @@ import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactor
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -77,7 +78,7 @@ public class AasEnvironmentLoaderTest {
 
 	@Before
 	public void setUp() {
-		submodelRepository = Mockito.spy(new CrudSubmodelRepository(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory()));
+		submodelRepository = Mockito.spy(new CrudSubmodelRepository(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())));
 		aasRepository = Mockito.spy(new CrudAasRepository(new AasInMemoryBackendProvider(), new InMemoryAasServiceFactory()));
 		conceptDescriptionRepository = Mockito.spy(new CrudConceptDescriptionRepository(new ConceptDescriptionInMemoryBackendProvider()));
 	}
