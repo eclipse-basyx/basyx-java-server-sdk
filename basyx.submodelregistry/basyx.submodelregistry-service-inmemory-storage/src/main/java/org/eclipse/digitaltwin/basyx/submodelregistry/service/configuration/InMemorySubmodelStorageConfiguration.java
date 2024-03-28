@@ -24,21 +24,39 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration;
 
+import lombok.extern.log4j.Log4j2;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.CursorEncodingRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
+import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorageFeature;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.memory.InMemorySubmodelRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.memory.ThreadSafeSubmodelRegistryStorageDecorator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 @Configuration
+@Log4j2
 public class InMemorySubmodelStorageConfiguration {
 
 	@Bean
 	@ConditionalOnProperty(prefix = "registry", name = "type", havingValue = "inMemory")
-	public SubmodelRegistryStorage storage() {
-		return new ThreadSafeSubmodelRegistryStorageDecorator(new CursorEncodingRegistryStorage(new InMemorySubmodelRegistryStorage()));
+	public SubmodelRegistryStorage storage(List<SubmodelRegistryStorageFeature> features) {
+		log.info("Creating in-memory storage");
+
+		SubmodelRegistryStorage storage = new ThreadSafeSubmodelRegistryStorageDecorator(new CursorEncodingRegistryStorage(new InMemorySubmodelRegistryStorage()));
+
+		return applyFeatures(storage, features);
+	}
+
+	private SubmodelRegistryStorage applyFeatures(SubmodelRegistryStorage storage, List<SubmodelRegistryStorageFeature> features) {
+		for (SubmodelRegistryStorageFeature eachFeature : features) {
+			log.info("Activating feature " + eachFeature.getName());
+			storage = eachFeature.decorate(storage);
+		}
+
+		return storage;
 	}
 
 }

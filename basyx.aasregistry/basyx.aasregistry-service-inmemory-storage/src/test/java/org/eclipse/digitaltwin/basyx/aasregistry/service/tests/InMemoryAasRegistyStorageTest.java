@@ -47,7 +47,7 @@ public class InMemoryAasRegistyStorageTest extends AasRegistryStorageTest {
 	public AasRegistryStorage createCloningInMemoryStorage() {
 		// we save the initial storage state in some testcases
 		// so we do not want to alter the object and thus need a deep copy
-		return new CloningAasRegistryStorageDecorator(new InMemoryAasStorageConfiguration().storage());
+		return new CloningAasRegistryStorageDecorator(new InMemoryAasStorageConfiguration().storage(List.of()));
 	}
 	
 	

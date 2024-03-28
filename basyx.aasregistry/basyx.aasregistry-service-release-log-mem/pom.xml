@@ -19,7 +19,16 @@
 		<start-class> org.eclipse.digitaltwin.basyx.aasregistry.service.OpenApiGeneratorApplication</start-class>
 		<docker.image.name>aas-registry-log-mem</docker.image.name>
 	</properties>
+
 	<dependencies>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasregistry-feature-authorization</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.authorization</artifactId>
+		</dependency>
 		<dependency>
 		<!-- it was just marked as provided so we need to redefine it here -->
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -49,9 +58,15 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasregistry-service-basetests</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 </project>

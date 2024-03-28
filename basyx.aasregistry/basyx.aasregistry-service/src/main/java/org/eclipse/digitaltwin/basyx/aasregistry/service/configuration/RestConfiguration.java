@@ -26,8 +26,10 @@ package org.eclipse.digitaltwin.basyx.aasregistry.service.configuration;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetKind;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.LocationBuilder;
+import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
 import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
 import org.eclipse.digitaltwin.basyx.http.CorsPathPatternProvider;
+import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -59,6 +61,11 @@ public class RestConfiguration extends BaSyxHTTPConfiguration implements WebMvcC
 	@Bean
 	public CorsPathPatternProvider getAasRegistryServiceCorsUrlProvider() {
 		return new CorsPathPatternProvider("/shell-descriptors/**");
+	}
+
+	@Bean
+	public SerializationExtension getExtension() {
+		return new Aas4JHTTPSerializationExtension();
 	}
 
 	@Override

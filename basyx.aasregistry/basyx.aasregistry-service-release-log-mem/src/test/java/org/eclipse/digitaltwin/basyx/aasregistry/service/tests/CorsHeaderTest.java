@@ -11,16 +11,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringRunner.class)
-@TestPropertySource(properties = { "spring.profiles.active=logEvents,inMemoryStorage", "basyx.cors.allowed-origins=*", "basyx.cors.allowed-methods=GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD" })
+@TestPropertySource(properties = {"spring.profiles.active=logEvents,inMemoryStorage", "basyx.cors.allowed-origins=*", "basyx.cors.allowed-methods=GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD" })
 public class CorsHeaderTest {
 
 	@Value("${local.server.port}")

@@ -1,0 +1,24 @@
+{
+  "description": null,
+  "displayName": null,
+  "extensions": null,
+  "administration": null,
+  "idShort": "specificSubmodelIdShort-2",
+  "id": "specificSubmodelId-2",
+  "semanticId": null,
+  "supplementalSemanticId": null,
+  "endpoints": [
+    {
+      "interface": "AAS-3.0",
+      "protocolInformation": {
+        "href": "http://127.0.0.1:8080/submodel-descriptors/c3BlY2lmaWNTdWJtb2RlbElkLTI=",
+        "endpointProtocol": "http",
+        "endpointProtocolVersion": null,
+        "subprotocol": null,
+        "subprotocolBody": null,
+        "subprotocolBodyEncoding": null,
+        "securityAttributes": null
+      }
+    }
+  ]
+}

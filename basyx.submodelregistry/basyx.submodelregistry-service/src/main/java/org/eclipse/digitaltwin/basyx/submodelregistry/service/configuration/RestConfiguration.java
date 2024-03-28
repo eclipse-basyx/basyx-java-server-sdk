@@ -24,8 +24,10 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration;
 
+import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
 import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
 import org.eclipse.digitaltwin.basyx.http.CorsPathPatternProvider;
+import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.api.LocationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,5 +62,10 @@ public class RestConfiguration extends BaSyxHTTPConfiguration  {
 	@Bean
 	public CorsPathPatternProvider getSubmodelRegistryServiceCorsUrlProvider() {
 		return new CorsPathPatternProvider("/submodel-descriptors/**");
+	}
+
+	@Bean
+	public SerializationExtension getSubmodelRegistryExtension() {
+		return new Aas4JHTTPSerializationExtension();
 	}
 }

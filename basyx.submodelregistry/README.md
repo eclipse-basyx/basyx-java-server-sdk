@@ -41,10 +41,10 @@ Install maven generate jars:
 mvn clean install
 ```
 
-In order to build the docker images, you need to specify *docker.username* and *docker.password* properties (here without running tests):
+In order to build the docker images, you need to specify *docker.namespace* and *docker.password* properties (here without running tests):
 
 ``` shell
-MAVEN_OPS='-Xmx2048 -Xms1024' mvn clean install -DskipTests -Ddocker.username=eclipsebasyx -Ddocker.password=""
+MAVEN_OPS='-Xmx2048 -Xms1024' mvn clean install -DskipTests -Ddocker.namespace=eclipsebasyx -Ddocker.password=""
 ```
 
 You can now check your images from command-line and push the images:
@@ -54,7 +54,7 @@ docker images   ...
 Or you can directly push them from maven. 
 
 ``` shell 
-MAVEN_OPS='-Xmx2048 -Xms1024' mvn deploy -Ddocker.registry=docker.io -Ddocker.username=eclipsebasyx -Ddocker.password=pwd
+MAVEN_OPS='-Xmx2048 -Xms1024' mvn deploy -Ddocker.registry=docker.io -Ddocker.namespace=eclipsebasyx -Ddocker.password=pwd
 ```
 In addition, maven deploy will also deploy your maven artifacts, so you can do everything in one step.
 

@@ -19,7 +19,16 @@
 		<start-class>org.eclipse.digitaltwin.basyx.aasregistry.service.OpenApiGeneratorApplication</start-class>
 		<docker.image.name>aas-registry-log-mongodb</docker.image.name>
 	</properties>
+
 	<dependencies>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.authorization</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasregistry-feature-authorization</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.aasregistry-service-mongodb-storage</artifactId>
@@ -43,6 +52,11 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasregistry-service-basetests</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

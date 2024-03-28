@@ -111,7 +111,7 @@ public class BaSyxExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@ExceptionHandler(InsufficientPermissionException.class)
-	public <T> ResponseEntity<T> handleInsufficientPermissionException(InsufficientPermissionException exception) {
+	public <T> ResponseEntity<T> handleInsufficientPermissionException(InsufficientPermissionException exception, WebRequest request) {
 		return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 	}
 	

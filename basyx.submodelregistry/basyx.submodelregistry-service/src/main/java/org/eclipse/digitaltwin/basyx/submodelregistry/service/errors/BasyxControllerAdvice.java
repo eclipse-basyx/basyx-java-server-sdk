@@ -26,6 +26,7 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.service.errors;
 
 import java.time.OffsetDateTime;
 
+import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.Message;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.Message.MessageTypeEnum;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.Result;
@@ -59,6 +60,11 @@ public class BasyxControllerAdvice {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Result> handleExceptions(Exception ex) {
 		return newResultEntity(ex, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(InsufficientPermissionException.class)
+	public ResponseEntity<Result> handleInsufficientPermissionException(InsufficientPermissionException exception) {
+		return newResultEntity(exception, HttpStatus.FORBIDDEN);
 	}
 
 	private ResponseEntity<Result> newResultEntity(Exception ex, HttpStatus status) {
