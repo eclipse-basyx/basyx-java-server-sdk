@@ -71,7 +71,7 @@ import static org.junit.Assert.assertEquals;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public abstract class AuthorizedSubmodelRegistryTestSuite {
 
-    private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
+    private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(10, null);
     private static final String SUBMODEL_DESCRIPTOR_SIMPLE_2_JSON = "authorization/SubmodelDescriptorSimple_2.json";
     private static final String SUBMODEL_DESCRIPTOR_SIMPLE_1_JSON = "authorization/SubmodelDescriptorSimple_1.json";
     private static final String SPECIFIC_SUBMODEL_ID_2 = "specificSubmodelId-2";

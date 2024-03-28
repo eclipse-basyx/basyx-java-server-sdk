@@ -23,6 +23,8 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.submodelregistry.service.release.log.mongodb.tests;
+
 import org.eclipse.digitaltwin.basyx.authorization.AccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.AuthorizedSubmodelRegistryTestSuite;
 import org.springframework.test.context.TestPropertySource;
