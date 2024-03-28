@@ -35,7 +35,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author danish
  *
  */
-@SpringBootApplication(scanBasePackages = {"org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization","org.eclipse.digitaltwin.basyx.aasregistry.service.api","org.eclipse.digitaltwin.basyx.aasregistry.service.events","org.eclipse.digitaltwin.basyx.authorization.rbac", "org.eclipse.digitaltwin.basyx.authorization", "org.eclipse.digitaltwin.basyx.aasregistry.service.configuration"})
+@SpringBootApplication(scanBasePackages = {"org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization","org.eclipse.digitaltwin.basyx.aasregistry.service.api","org.eclipse.digitaltwin.basyx.aasregistry.service.events","org.eclipse.digitaltwin.basyx.authorization.rbac", "org.eclipse.digitaltwin.basyx.authorization", "org.eclipse.digitaltwin.basyx.aasregistry.service.configuration", "org.eclipse.digitaltwin.basyx.aasregistry.service.errors"})
 public class DummyAasRegistryComponent {
 	public static void main(String[] args) {
 		SpringApplication.run(DummyAasRegistryComponent.class, args);

@@ -28,12 +28,14 @@ import java.time.OffsetDateTime;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.Message;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.Message.MessageTypeEnum;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.Result;
+import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 
 @ControllerAdvice
@@ -58,6 +60,11 @@ public class BasyxControllerAdvice {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Result> handleExceptions(Exception ex) {
 		return newResultEntity(ex, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(InsufficientPermissionException.class)
+	public ResponseEntity<Result> handleInsufficientPermissionException(InsufficientPermissionException exception) {
+		return newResultEntity(exception, HttpStatus.FORBIDDEN);
 	}
 
 	private ResponseEntity<Result> newResultEntity(Exception ex, HttpStatus status) {
