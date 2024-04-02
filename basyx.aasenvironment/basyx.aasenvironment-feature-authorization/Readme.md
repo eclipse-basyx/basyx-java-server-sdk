@@ -75,11 +75,11 @@ Note:
 
 Below is a reference table that shows which actions are used in what endpoints of the AasEnvironment:
 
-| Action  | Endpoint                                                                                                                                                                                                            |
-|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Action  | Endpoint           |
+|---------|--------------------|
 | READ    | GET /serialization |
-| CREATE  | -                                                                                                                                                                                                |
-| UPDATE  | -
-| DELETE  | -
-| EXECUTE | -                                                                                                                                                                                                                   |
+| CREATE  | POST /update       |
+| UPDATE  | -                  
+| DELETE  | -                  
+| EXECUTE | -                  |
 

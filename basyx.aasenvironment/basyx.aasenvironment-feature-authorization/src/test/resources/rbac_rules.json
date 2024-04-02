@@ -4,7 +4,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "*"
+      "aasIds": "*"
     }
   },
   {
@@ -12,7 +12,7 @@
     "action": ["CREATE", "READ", "UPDATE", "DELETE"],
     "targetInformation": {
       "@type": "aas",
-      "aasId": "*"
+      "aasIds": "*"
     }
   },
   {
@@ -20,7 +20,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "specificAasId"
+      "aasIds": "specificAasId"
     }
   },
   {
@@ -28,7 +28,7 @@
     "action": "CREATE",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "*"
+      "aasIds": "*"
     }
   },
   {
@@ -36,7 +36,7 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "*"
+      "aasIds": "*"
     }
   },
   {
@@ -44,7 +44,7 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "specificAasId"
+      "aasIds": "specificAasId"
     }
   },
   {
@@ -52,7 +52,7 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "*"
+      "aasIds": "*"
     }
   },
   {
@@ -60,7 +60,7 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "specificAasId-2"
+      "aasIds": "specificAasId-2"
     }
   },
   {
@@ -68,7 +68,7 @@
     "action": "DELETE",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "*"
+      "aasIds": "*"
     }
   },
   {
@@ -76,7 +76,7 @@
     "action": "DELETE",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "specificAasId-2"
+      "aasIds": "specificAasId-2"
     }
   },
   {
@@ -84,8 +84,8 @@
     "action": "READ",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -93,8 +93,8 @@
     "action": ["CREATE", "READ", "UPDATE", "DELETE", "EXECUTE"],
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -102,8 +102,8 @@
     "action": "READ",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "specificSubmodelId",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "specificSubmodelId",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -111,8 +111,8 @@
     "action": "READ",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "specificSubmodelId",
-      "submodelElementIdShortPath": "smc2.specificSubmodelElementIdShort"
+      "submodelIds": "specificSubmodelId",
+      "submodelElementIdShortPaths": "smc2.specificSubmodelElementIdShort"
     }
   },
   {
@@ -120,8 +120,8 @@
     "action": "READ",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "specificSubmodelId",
-      "submodelElementIdShortPath": "smc2.specificFileSubmodelElementIdShort"
+      "submodelIds": "specificSubmodelId",
+      "submodelElementIdShortPaths": "smc2.specificFileSubmodelElementIdShort"
     }
   },
   {
@@ -129,8 +129,8 @@
     "action": "CREATE",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -138,8 +138,8 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -147,8 +147,8 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "specificSubmodelId",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "specificSubmodelId",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -156,8 +156,8 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "specificSubmodelId",
-      "submodelElementIdShortPath": "smc2.specificFileSubmodelElementIdShort"
+      "submodelIds": "specificSubmodelId",
+      "submodelElementIdShortPaths": "smc2.specificFileSubmodelElementIdShort"
     }
   },
   {
@@ -165,8 +165,8 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "specificSubmodelId",
-      "submodelElementIdShortPath": "smc2"
+      "submodelIds": "specificSubmodelId",
+      "submodelElementIdShortPaths": "smc2"
     }
   },
   {
@@ -174,8 +174,8 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "specificSubmodelId-2",
-      "submodelElementIdShortPath": "smc1.specificSubmodelElementIdShort-2"
+      "submodelIds": "specificSubmodelId-2",
+      "submodelElementIdShortPaths": "smc1.specificSubmodelElementIdShort-2"
     }
   },
   {
@@ -183,8 +183,8 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "specificSubmodelId-2",
-      "submodelElementIdShortPath": "smc2.specificFileSubmodelElementIdShort"
+      "submodelIds": "specificSubmodelId-2",
+      "submodelElementIdShortPaths": "smc2.specificFileSubmodelElementIdShort"
     }
   },
   {
@@ -192,8 +192,8 @@
     "action": "DELETE",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -201,8 +201,8 @@
     "action": "DELETE",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "specificSubmodelId-2",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "specificSubmodelId-2",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -210,8 +210,8 @@
     "action": "EXECUTE",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -219,8 +219,8 @@
     "action": "EXECUTE",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "specificSubmodelId",
-      "submodelElementIdShortPath": "square"
+      "submodelIds": "specificSubmodelId",
+      "submodelElementIdShortPaths": "square"
     }
   },
   {
@@ -228,8 +228,8 @@
     "action": "READ",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "specificSubmodelId-2",
-      "submodelElementIdShortPath": "smc2.specificFileSubmodelElementIdShort"
+      "submodelIds": "specificSubmodelId-2",
+      "submodelElementIdShortPaths": "smc2.specificFileSubmodelElementIdShort"
     }
   },
   {
@@ -237,7 +237,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -245,7 +245,7 @@
     "action": ["CREATE", "READ", "UPDATE", "DELETE"],
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -253,7 +253,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "specificConceptDescriptionId"
+      "conceptDescriptionIds": "specificConceptDescriptionId"
     }
   },
   {
@@ -261,7 +261,7 @@
     "action": "CREATE",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -278,7 +278,7 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -286,7 +286,7 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "specificConceptDescriptionId"
+      "conceptDescriptionIds": "specificConceptDescriptionId"
     }
   },
   {
@@ -294,7 +294,7 @@
     "action": "DELETE",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -302,7 +302,7 @@
     "action": "DELETE",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "specificConceptDescriptionId-2"
+      "conceptDescriptionIds": "specificConceptDescriptionId-2"
     }
   },
   {
@@ -337,7 +337,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "*"
+      "aasIds": "*"
     }
   },
   {
@@ -345,8 +345,8 @@
     "action": "READ",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -354,7 +354,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -380,7 +380,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "*"
+      "aasIds": "*"
     }
   },
   {
@@ -388,8 +388,8 @@
     "action": "READ",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -397,7 +397,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -414,7 +414,7 @@
     "action": "CREATE",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "*"
+      "aasIds": "*"
     }
   },
   {
@@ -422,7 +422,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "*"
+      "aasIds": "*"
     }
   },
   {
@@ -430,8 +430,8 @@
     "action": "READ",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -439,7 +439,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -447,7 +447,7 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -455,8 +455,8 @@
     "action": "CREATE",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -464,8 +464,8 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -473,7 +473,7 @@
     "action": "CREATE",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -490,7 +490,7 @@
     "action": "CREATE",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "http://customer.com/aas/9175_7013_7091_9168"
+      "aasIds": "http://customer.com/aas/9175_7013_7091_9168"
     }
   },
   {
@@ -498,7 +498,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "http://customer.com/aas/9175_7013_7091_9168"
+      "aasIds": "http://customer.com/aas/9175_7013_7091_9168"
     }
   },
   {
@@ -506,8 +506,8 @@
     "action": "READ",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -515,7 +515,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -523,7 +523,7 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -531,8 +531,8 @@
     "action": "CREATE",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -540,8 +540,8 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -549,7 +549,7 @@
     "action": "CREATE",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -566,7 +566,7 @@
     "action": "CREATE",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "http://customer.com/aas/9175_7013_7091_9168"
+      "aasIds": "http://customer.com/aas/9175_7013_7091_9168"
     }
   },
   {
@@ -574,7 +574,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "http://customer.com/aas/9175_7013_7091_9168"
+      "aasIds": "http://customer.com/aas/9175_7013_7091_9168"
     }
   },
   {
@@ -582,8 +582,8 @@
     "action": "READ",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -591,7 +591,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -599,7 +599,7 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -607,8 +607,8 @@
     "action": "CREATE",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -616,8 +616,8 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -625,7 +625,7 @@
     "action": "CREATE",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {

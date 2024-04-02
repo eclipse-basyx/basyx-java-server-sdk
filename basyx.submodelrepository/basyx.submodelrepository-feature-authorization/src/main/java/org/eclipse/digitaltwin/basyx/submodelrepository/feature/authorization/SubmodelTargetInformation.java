@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -41,26 +42,26 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformationSubtype
 @TargetInformationSubtype(getValue = "submodel")
 public class SubmodelTargetInformation implements TargetInformation {
 	
-	private String submodelId;
-	private String submodelElementIdShortPath;
+	private List<String> submodelIds;
+	private List<String> submodelElementIdShortPaths;
 
 	@JsonCreator
-	public SubmodelTargetInformation(final @JsonProperty("submodelId") String submodelId, final @JsonProperty("submodelElementIdShortPath") String submodelElementIdShortPath) {
-		this.submodelId = submodelId;
-		this.submodelElementIdShortPath = submodelElementIdShortPath;
+	public SubmodelTargetInformation(final @JsonProperty("submodelIds") List<String> submodelIds, final @JsonProperty("submodelElementIdShortPaths") List<String> submodelElementIdShortPaths) {
+		this.submodelIds = submodelIds;
+		this.submodelElementIdShortPaths = submodelElementIdShortPaths;
 	}
 
 	@Override
 	public Map<String, Object> toMap() {
 		final Map<String, Object> map = new HashMap<>();
-		map.put("submodelId", submodelId);
-		map.put("submodelElementIdShortPath", submodelElementIdShortPath);
+		map.put("submodelIds", submodelIds);
+		map.put("submodelElementIdShortPaths", submodelElementIdShortPaths);
 		return map;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(submodelElementIdShortPath, submodelId);
+		return Objects.hash(submodelElementIdShortPaths, submodelIds);
 	}
 
 	@Override
@@ -72,20 +73,20 @@ public class SubmodelTargetInformation implements TargetInformation {
 		if (getClass() != obj.getClass())
 			return false;
 		SubmodelTargetInformation other = (SubmodelTargetInformation) obj;
-		return Objects.equals(submodelElementIdShortPath, other.submodelElementIdShortPath) && Objects.equals(submodelId, other.submodelId);
+		return Objects.equals(submodelElementIdShortPaths, other.submodelElementIdShortPaths) && Objects.equals(submodelIds, other.submodelIds);
 	}
 
 	@Override
 	public String toString() {
-		return "SubmodelTargetInformation [submodelId=" + submodelId + ", submodelElementIdShortPath=" + submodelElementIdShortPath + "]";
+		return "SubmodelTargetInformation [submodelIds=" + submodelIds + ", submodelElementIdShortPaths=" + submodelElementIdShortPaths + "]";
 	}
 
-	public String getSubmodelId() {
-		return submodelId;
+	public List<String> getSubmodelIds() {
+		return submodelIds;
 	}
 
-	public String getSubmodelElementIdShortPath() {
-		return submodelElementIdShortPath;
+	public List<String> getSubmodelElementIdShortPaths() {
+		return submodelElementIdShortPaths;
 	}
 
 }

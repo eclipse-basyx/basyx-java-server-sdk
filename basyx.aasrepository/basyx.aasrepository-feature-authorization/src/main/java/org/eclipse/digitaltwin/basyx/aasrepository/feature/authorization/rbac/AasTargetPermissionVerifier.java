@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.rbac;
 
+import java.util.List;
+
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.AasTargetInformation;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
@@ -40,11 +42,23 @@ public class AasTargetPermissionVerifier implements TargetPermissionVerifier<Aas
 	
 	@Override
 	public boolean isVerified(RbacRule rbacRule, AasTargetInformation targetInformation) {
-		String shellId = targetInformation.getAasId();
+		List<String> targetInformationShellIds = targetInformation.getAasIds();
 		
 		AasTargetInformation rbacRuleAasTargetInformation = (AasTargetInformation) rbacRule.getTargetInformation();
 		
-		return rbacRuleAasTargetInformation.getAasId().equals(ALL_ALLOWED_WILDCARD) || rbacRuleAasTargetInformation.getAasId().equals(shellId);
+		List<String> rbacRuleShellIds = rbacRuleAasTargetInformation.getAasIds();
+		
+		return areShellsAllowed(rbacRuleShellIds, targetInformationShellIds);
+	}
+	
+	private boolean areShellsAllowed(List<String> rbacRuleShellIds, List<String> targetInformationShellIds) {
+		
+		return allShellsAllowed(rbacRuleShellIds) || rbacRuleShellIds.containsAll(targetInformationShellIds);	
+	}
+	
+	private boolean allShellsAllowed(List<String> rbacRuleShellIds) {
+		
+		return rbacRuleShellIds.size() == 1 && rbacRuleShellIds.get(0).equals(ALL_ALLOWED_WILDCARD);
 	}
 
 }
