@@ -45,7 +45,7 @@ public class RestConfiguration extends BaSyxHTTPConfiguration  {
 	public LocationBuilder submodelRegistryLocationBuilder() {
 		return new DefaultLocationBuilder();
 	}
-	
+
 	@Bean
 	public RestTemplate submodelRegistryRestTemplate() {
 		return new RestTemplate();
