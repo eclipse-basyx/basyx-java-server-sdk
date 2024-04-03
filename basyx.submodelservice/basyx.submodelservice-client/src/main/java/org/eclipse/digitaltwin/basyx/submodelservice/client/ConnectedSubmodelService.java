@@ -49,7 +49,7 @@ import org.springframework.http.HttpStatus;
  * Provides access to a Submodel Service on a remote server - regardless if it
  * is hosted on a Submodel Repository or standalone
  * 
- * @author schnicke
+ * @author schnicke, mateusmolina
  */
 public class ConnectedSubmodelService implements SubmodelService {
 
@@ -139,7 +139,7 @@ public class ConnectedSubmodelService implements SubmodelService {
 
 	@Override
 	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo) {
-		throw new FeatureNotImplementedException();
+		return serviceApi.getAllSubmodelElements(pInfo.getLimit(), pInfo.getCursor(), null, null);
 	}
 
 	@Override
@@ -166,5 +166,4 @@ public class ConnectedSubmodelService implements SubmodelService {
 	public void deleteFileValue(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
 		throw new FeatureNotImplementedException();
 	}
-
 }

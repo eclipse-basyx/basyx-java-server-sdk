@@ -85,24 +85,6 @@ public class TestConnectedSubmodelService extends SubmodelServiceSuite {
 	}
 
 	@Override
-	public void getSubmodelElements() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void getPaginatedSubmodelElement() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void paginationCursor() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void invokeOperation() {
 		// TODO Auto-generated method stub
 

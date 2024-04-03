@@ -93,18 +93,6 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 	}
 
 	@Override
-	public void getSubmodelElement() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void getPaginatedSubmodel() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void invokeOperation() {
 		// TODO Auto-generated method stub
 
@@ -142,12 +130,6 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 	}
 
 	@Override
-	public void getAllSubmodelsPreconfigured() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void deleteNonExistingFile() throws IOException {
 		// TODO Auto-generated method stub
 
@@ -174,18 +156,6 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 	}
 
 	@Override
-	public void getAllSubmodelsEmpty() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void getSubmodelElements() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void updateExistingSubmodelWithMismatchId() {
 		// TODO Auto-generated method stub
 		throw new IdentificationMismatchException();
@@ -202,13 +172,4 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 		return false;
 	}
 	
-	@Override
-	public void getPaginatedSubmodelElement() {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	public void paginationCursor() {
-		// TODO Auto-generated method stub
-	}
 }

@@ -75,7 +75,7 @@ import org.junit.Test;
  *
  */
 public abstract class SubmodelServiceSuite {
-	protected static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
+	protected static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(null, null);
 
 	protected abstract SubmodelService getSubmodelService(Submodel submodel);
 

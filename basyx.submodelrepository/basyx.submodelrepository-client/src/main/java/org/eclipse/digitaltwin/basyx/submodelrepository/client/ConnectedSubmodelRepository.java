@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.client;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
@@ -54,7 +55,7 @@ import org.springframework.http.HttpStatus;
 /**
  * Provides access to a Submodel Repository on a remote server
  * 
- * @author schnicke
+ * @author schnicke, mateusmolina
  */
 public class ConnectedSubmodelRepository implements SubmodelRepository {
 
@@ -131,12 +132,17 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 		}
 	}
 
-	/**
-	 * Not Implemented
-	 */
 	@Override
 	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
-		throw new FeatureNotImplementedException();
+		try{
+			return repoApi.getAllSubmodels(null, null, pInfo.getLimit(), pInfo.getCursor(), null, null);
+		} catch (ApiException e) {
+			if (e.getCode() == HttpStatus.INTERNAL_SERVER_ERROR.value())
+				return new CursorResult<>("", new ArrayList<>());
+			else
+				throw e;
+		}
+
 	}
 
 	@Override

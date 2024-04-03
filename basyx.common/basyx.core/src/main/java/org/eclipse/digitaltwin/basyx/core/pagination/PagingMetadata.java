@@ -1,6 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 DFKI GmbH (https://www.dfki.de/en/web)
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -26,33 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.core.pagination;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-public class CursorResult<T> {
-	private final PagingMetadata pagingMetadata;
-	private final T result;
-
-	@JsonCreator
-	public CursorResult(@JsonProperty("paging_metadata") PagingMetadata pagingMetadata, @JsonProperty("result") T result) {
-		this.pagingMetadata = pagingMetadata;
-		this.result = result;
-	}
-
-	public CursorResult(String cursor, T result) {
-		this.pagingMetadata = new PagingMetadata(cursor);
-		this.result = result;
-	}
-
-	public PagingMetadata getPagingMetadata() {
-		return pagingMetadata;
-	}
-
-	public String getCursor() {
-		return pagingMetadata == null ? null : pagingMetadata.cursor();
-	}
-
-	public T getResult() {
-		return result;
-	}
+/**
+ * PagingMetadata for correct deserialization of CursorResult
+ * 
+ * @author mateusmolina
+ */
+public record PagingMetadata(String cursor) {
 }

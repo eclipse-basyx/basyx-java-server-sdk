@@ -67,12 +67,9 @@ public class ConnectedAasRepository implements AasRepository {
 		this.repoApi = new AssetAdministrationShellRepositoryApi(repoUrl);
 	}
 
-	/**
-	 * Not implemented
-	 */
 	@Override
 	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
-		throw new FeatureNotImplementedException();
+		return repoApi.getAllAssetAdministrationShells(null, null, pInfo.getLimit(), pInfo.getCursor());
 	}
 
 	@Override

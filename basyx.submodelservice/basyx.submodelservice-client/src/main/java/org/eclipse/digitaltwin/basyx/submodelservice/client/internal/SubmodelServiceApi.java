@@ -44,6 +44,8 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiClient;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiResponse;
 import org.eclipse.digitaltwin.basyx.client.internal.Pair;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -1020,5 +1022,104 @@ public SubmodelServiceApi(ApiClient apiClient) {
 				memberVarInterceptor.accept(localVarRequestBuilder);
 			}
 			return localVarRequestBuilder;
+		}
+
+		/**
+		 * Returns all submodel elements including their hierarchy
+		 * 
+		 * @param limit
+		 *            The maximum number of elements in the response array (optional)
+		 * @param cursor
+		 *            A server-generated identifier retrieved from pagingMetadata that
+		 *            specifies from which position the result listing should continue
+		 *            (optional)
+		 * @param level
+		 *            Determines the structural depth of the respective resource content
+		 *            (optional, default to deep)
+		 * @param extent
+		 *            Determines to which extent the resource is being serialized
+		 *            (optional, default to withoutBlobValue)
+		 * @return CursorResult&#60;List&#60;SubmodelElement&#62;&#62;
+		 * @throws ApiException
+		 *             if fails to make API call
+		 */
+		public CursorResult<List<SubmodelElement>> getAllSubmodelElements(Integer limit, String cursor, String level, String extent) throws ApiException {
+			cursor = cursor == null ? null : Base64UrlEncoder.encode(cursor);
+
+			ApiResponse<CursorResult<List<SubmodelElement>>> localVarResponse = getAllSubmodelElementsApiResponse(limit, cursor, level, extent);
+
+			return getDecodedCursorResult(localVarResponse.getData());
+		}
+
+
+		private ApiResponse<CursorResult<List<SubmodelElement>>> getAllSubmodelElementsApiResponse(Integer limit, String cursor, String level, String extent) throws ApiException {
+			HttpRequest.Builder localVarRequestBuilder = getAllSubmodelElementsRequestBuilder(limit, cursor, level, extent);
+			try {
+				HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
+				if (memberVarResponseInterceptor != null) {
+					memberVarResponseInterceptor.accept(localVarResponse);
+				}
+				try {
+					if (localVarResponse.statusCode() / 100 != 2) {
+						throw getApiException("getAllSubmodelElements", localVarResponse);
+					}
+					return new ApiResponse<CursorResult<List<SubmodelElement>>>(localVarResponse.statusCode(), localVarResponse.headers().map(),
+							localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<CursorResult<List<SubmodelElement>>>() {
+							}) // closes the InputStream
+					);
+				} finally {
+				}
+			} catch (IOException e) {
+				throw new ApiException(e);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				throw new ApiException(e);
+			}
+		}
+
+		private HttpRequest.Builder getAllSubmodelElementsRequestBuilder(Integer limit, String cursor, String level, String extent) throws ApiException {
+
+			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+
+			String localVarPath = "/submodel-elements";
+
+			List<Pair> localVarQueryParams = new ArrayList<>();
+			StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+			String localVarQueryParameterBaseName;
+			localVarQueryParameterBaseName = "limit";
+			localVarQueryParams.addAll(ApiClient.parameterToPairs("limit", limit));
+			localVarQueryParameterBaseName = "cursor";
+			localVarQueryParams.addAll(ApiClient.parameterToPairs("cursor", cursor));
+			localVarQueryParameterBaseName = "level";
+			localVarQueryParams.addAll(ApiClient.parameterToPairs("level", level));
+			localVarQueryParameterBaseName = "extent";
+			localVarQueryParams.addAll(ApiClient.parameterToPairs("extent", extent));
+
+			if (!localVarQueryParams.isEmpty() || localVarQueryStringJoiner.length() != 0) {
+				StringJoiner queryJoiner = new StringJoiner("&");
+				localVarQueryParams.forEach(p -> queryJoiner.add(p.getName() + '=' + p.getValue()));
+				if (localVarQueryStringJoiner.length() != 0) {
+					queryJoiner.add(localVarQueryStringJoiner.toString());
+				}
+				localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath + '?' + queryJoiner.toString()));
+			} else {
+				localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
+			}
+
+			localVarRequestBuilder.header("Accept", "application/json");
+
+			localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
+			if (memberVarReadTimeout != null) {
+				localVarRequestBuilder.timeout(memberVarReadTimeout);
+			}
+			if (memberVarInterceptor != null) {
+				memberVarInterceptor.accept(localVarRequestBuilder);
+			}
+			return localVarRequestBuilder;
+		}
+
+		private static <T> CursorResult<T> getDecodedCursorResult(CursorResult<T> cursorResult) {
+			String decodedCursor = cursorResult.getCursor() == null ? null : Base64UrlEncoder.decode(cursorResult.getCursor());
+			return new CursorResult<>(decodedCursor, cursorResult.getResult());
 		}
 }

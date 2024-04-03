@@ -54,6 +54,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiResponse;
 import org.eclipse.digitaltwin.basyx.client.internal.Pair;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -404,63 +405,20 @@ public class AssetAdministrationShellRepositoryApi {
 	 *            A server-generated identifier retrieved from pagingMetadata that
 	 *            specifies from which position the result listing should continue
 	 *            (optional)
-	 * @return GetAssetAdministrationShellsResult
+	 * @return CursorResult&#60;List&#60;SubmodelElement&#62;&#62;
 	 * @throws ApiException
 	 *             if fails to make API call
 	 */
 	public CursorResult<List<AssetAdministrationShell>> getAllAssetAdministrationShells(List<String> assetIds, String idShort, Integer limit, String cursor) throws ApiException {
-
-		ApiResponse<CursorResult<List<AssetAdministrationShell>>> localVarResponse = getAllAssetAdministrationShellsWithHttpInfo(assetIds, idShort, limit, cursor);
-		return localVarResponse.getData();
-	}
-
-	/**
-	 * Returns all Asset Administration Shells
-	 * 
-	 * @param assetIds
-	 *            A list of specific Asset identifiers. Each Asset identifier is a
-	 *            base64-url-encoded
-	 *            [SpecificAssetId](./model-part1.yaml#/components/schemas/SpecificAssetId)
-	 *            (optional
-	 * @param idShort
-	 *            The Asset Administration Shell’s IdShort (optional)
-	 * @param limit
-	 *            The maximum number of elements in the response array (optional)
-	 * @param cursor
-	 *            A server-generated identifier retrieved from pagingMetadata that
-	 *            specifies from which position the result listing should continue
-	 *            (optional)
-	 * @return ApiResponse&lt;GetAssetAdministrationShellsResult&gt;
-	 * @throws ApiException
-	 *             if fails to make API call
-	 */
-	public ApiResponse<CursorResult<List<AssetAdministrationShell>>> getAllAssetAdministrationShellsWithHttpInfo(List<String> assetIds, String idShort, Integer limit, String cursor) throws ApiException {
+		cursor = cursor == null ? null : Base64UrlEncoder.encode(cursor);
 		List<String> assetIdsAsBytes = ApiClient.base64UrlEncode(assetIds);
-		return getAllAssetAdministrationShellsWithHttpInfoNoUrlEncoding(assetIdsAsBytes, idShort, limit, cursor);
 
+		ApiResponse<CursorResult<List<AssetAdministrationShell>>> localVarResponse = getAllAssetAdministrationShellsApiResponse(assetIdsAsBytes, idShort, limit, cursor);
+
+		return getDecodedCursorResult(localVarResponse.getData());
 	}
 
-	/**
-	 * Returns all Asset Administration Shells
-	 * 
-	 * @param assetIds
-	 *            A list of specific Asset identifiers. Each Asset identifier is a
-	 *            base64-url-encoded
-	 *            [SpecificAssetId](./model-part1.yaml#/components/schemas/SpecificAssetId)
-	 *            (optional
-	 * @param idShort
-	 *            The Asset Administration Shell’s IdShort (optional)
-	 * @param limit
-	 *            The maximum number of elements in the response array (optional)
-	 * @param cursor
-	 *            A server-generated identifier retrieved from pagingMetadata that
-	 *            specifies from which position the result listing should continue
-	 *            (optional)
-	 * @return ApiResponse&lt;GetAssetAdministrationShellsResult&gt;
-	 * @throws ApiException
-	 *             if fails to make API call
-	 */
-	public ApiResponse<CursorResult<List<AssetAdministrationShell>>> getAllAssetAdministrationShellsWithHttpInfoNoUrlEncoding(List<String> assetIds, String idShort, Integer limit, String cursor) throws ApiException {
+	private ApiResponse<CursorResult<List<AssetAdministrationShell>>> getAllAssetAdministrationShellsApiResponse(List<String> assetIds, String idShort, Integer limit, String cursor) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = getAllAssetAdministrationShellsRequestBuilder(assetIds, idShort, limit, cursor);
 		try {
 			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
@@ -1519,5 +1477,9 @@ public class AssetAdministrationShellRepositoryApi {
     }
     return localVarRequestBuilder;
   }
-  
+
+	private static <T> CursorResult<T> getDecodedCursorResult(CursorResult<T> cursorResult) {
+		String decodedCursor = cursorResult.getCursor() == null ? null : Base64UrlEncoder.decode(cursorResult.getCursor());
+		return new CursorResult<>(decodedCursor, cursorResult.getResult());
+	}
 }
