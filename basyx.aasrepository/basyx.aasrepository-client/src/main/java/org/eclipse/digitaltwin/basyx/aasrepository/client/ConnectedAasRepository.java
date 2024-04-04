@@ -39,7 +39,6 @@ import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
@@ -51,7 +50,7 @@ import org.springframework.http.HttpStatus;
 /**
  * Provides access to an Aas Repository on a remote server
  * 
- * @author schnicke
+ * @author schnicke, mateusmolina
  */
 public class ConnectedAasRepository implements AasRepository {
 
@@ -151,28 +150,19 @@ public class ConnectedAasRepository implements AasRepository {
 		return getConnectedAasService(aasId).getAssetInformation();
 	}
 
-	/**
-	 * Not implemented
-	 */
 	@Override
 	public File getThumbnail(String aasId) {
-		throw new FeatureNotImplementedException();
+		return getConnectedAasService(aasId).getThumbnail();
 	}
 
-	/**
-	 * Not implemented
-	 */
 	@Override
 	public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
-		throw new FeatureNotImplementedException();
+		getConnectedAasService(aasId).setThumbnail(fileName, contentType, inputStream);
 	}
 
-	/**
-	 * Not implemented
-	 */
 	@Override
 	public void deleteThumbnail(String aasId) {
-		throw new FeatureNotImplementedException();
+		getConnectedAasService(aasId).deleteThumbnail();
 	}
 
 	private String getAasUrl(String aasId) {
