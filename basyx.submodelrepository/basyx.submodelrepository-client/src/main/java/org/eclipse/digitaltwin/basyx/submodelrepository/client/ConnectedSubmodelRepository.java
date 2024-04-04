@@ -208,28 +208,19 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 		throw new FeatureNotImplementedException();
 	}
 
-	/**
-	 * Not Implemented
-	 */
 	@Override
 	public File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		throw new FeatureNotImplementedException();
+		return getConnectedSubmodelService(submodelId).getFileByPath(idShortPath);
 	}
 
-	/**
-	 * Not Implemented
-	 */
 	@Override
 	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
-		throw new FeatureNotImplementedException();
+		getConnectedSubmodelService(submodelId).setFileValue(idShortPath, fileName, inputStream);
 	}
 
-	/**
-	 * Not Implemented
-	 */
 	@Override
 	public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		throw new FeatureNotImplementedException();
+		getConnectedSubmodelService(submodelId).deleteFileValue(idShortPath);
 	}
 
 	private String getSubmodelUrl(String submodelId) {

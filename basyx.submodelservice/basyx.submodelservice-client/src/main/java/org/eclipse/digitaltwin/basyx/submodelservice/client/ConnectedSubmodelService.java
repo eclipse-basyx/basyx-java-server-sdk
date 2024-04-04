@@ -130,14 +130,6 @@ public class ConnectedSubmodelService implements SubmodelService {
 		}
 	}
 
-	private RuntimeException mapExceptionSubmodelElementAccess(String idShortPath, ApiException e) {
-		if (e.getCode() == HttpStatus.NOT_FOUND.value()) {
-			return new ElementDoesNotExistException(idShortPath);
-		}
-
-		return e;
-	}
-
 	@Override
 	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo) {
 		String encodedCursor = pInfo.getCursor() == null ? null : Base64UrlEncoder.encode(pInfo.getCursor());
@@ -156,16 +148,47 @@ public class ConnectedSubmodelService implements SubmodelService {
 
 	@Override
 	public File getFileByPath(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		throw new FeatureNotImplementedException();
+		try {
+			return serviceApi.getFileByPath(idShortPath);
+		} catch (ApiException e) {
+			throw mapExceptionFileAccess(e);
+		}
 	}
 
 	@Override
 	public void setFileValue(String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
-		throw new FeatureNotImplementedException();
+		try {
+			serviceApi.putFileByPath(idShortPath, fileName, inputStream);
+		} catch (ApiException e) {
+			throw mapExceptionFileAccess(e);
+		}
 	}
 
 	@Override
 	public void deleteFileValue(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		throw new FeatureNotImplementedException();
+		try {
+			serviceApi.deleteFileByPath(idShortPath);
+		} catch (ApiException e) {
+			throw mapExceptionFileAccess(e);
+		}
 	}
+
+	private RuntimeException mapExceptionFileAccess(ApiException e) {
+		if (e.getCode() == HttpStatus.NOT_FOUND.value())
+			return new FileDoesNotExistException();
+
+		if (e.getCode() == HttpStatus.PRECONDITION_FAILED.value())
+			return new ElementNotAFileException();
+
+		return e;
+	}
+
+	private RuntimeException mapExceptionSubmodelElementAccess(String idShortPath, ApiException e) {
+		if (e.getCode() == HttpStatus.NOT_FOUND.value()) {
+			return new ElementDoesNotExistException(idShortPath);
+		}
+
+		return e;
+	}
+
 }
