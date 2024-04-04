@@ -30,7 +30,6 @@ import java.util.Collection;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
@@ -86,19 +85,6 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
 		submodels.forEach(repo::createSubmodel);
 		return getSubmodelRepository();
-	}
-
-	@Override
-	public void invokeOperation() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void invokeNonOperation() {
-		// TODO Auto-generated method stub
-
-		throw new NotInvokableException();
 	}
 
 	@Override

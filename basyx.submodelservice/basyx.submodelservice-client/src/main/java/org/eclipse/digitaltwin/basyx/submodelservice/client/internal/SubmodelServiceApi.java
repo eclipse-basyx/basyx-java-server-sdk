@@ -48,6 +48,8 @@ import javax.annotation.processing.Generated;
 
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiClient;
@@ -1371,6 +1373,108 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			return localVarRequestBuilder;
 		}
 
+		/**
+		 * Synchronously invokes an Operation at a specified path
+		 * 
+		 * @param idShortPath
+		 *            IdShort path to the submodel element (dot-separated) (required)
+		 * @param operationRequest
+		 *            Operation request object (required)
+		 * @return OperationResult
+		 * @throws ApiException
+		 *             if fails to make API call
+		 */
+		public OperationResult invokeOperation(String idShortPath, OperationRequest operationRequest) throws ApiException {
+
+			ApiResponse<OperationResult> localVarResponse = invokeOperationWithHttpInfo(idShortPath, operationRequest);
+			return localVarResponse.getData();
+		}
+
+		/**
+		 * Synchronously invokes an Operation at a specified path
+		 * 
+		 * @param idShortPath
+		 *            IdShort path to the submodel element (dot-separated) (required)
+		 * @param operationRequest
+		 *            Operation request object (required)
+		 * @return ApiResponse&lt;OperationResult&gt;
+		 * @throws ApiException
+		 *             if fails to make API call
+		 */
+		public ApiResponse<OperationResult> invokeOperationWithHttpInfo(String idShortPath, OperationRequest operationRequest) throws ApiException {
+			return invokeOperationWithHttpInfoNoUrlEncoding(idShortPath, operationRequest);
+
+		}
+
+		/**
+		 * Synchronously invokes an Operation at a specified path
+		 * 
+		 * @param idShortPath
+		 *            IdShort path to the submodel element (dot-separated) (required)
+		 * @param operationRequest
+		 *            Operation request object (required)
+		 * @return ApiResponse&lt;OperationResult&gt;
+		 * @throws ApiException
+		 *             if fails to make API call
+		 */
+		public ApiResponse<OperationResult> invokeOperationWithHttpInfoNoUrlEncoding(String idShortPath, OperationRequest operationRequest) throws ApiException {
+			HttpRequest.Builder localVarRequestBuilder = invokeOperationRequestBuilder(idShortPath, operationRequest);
+			try {
+				HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
+				if (memberVarResponseInterceptor != null) {
+					memberVarResponseInterceptor.accept(localVarResponse);
+				}
+				try {
+					if (localVarResponse.statusCode() / 100 != 2) {
+						throw getApiException("invokeOperation", localVarResponse);
+					}
+					return new ApiResponse<OperationResult>(localVarResponse.statusCode(), localVarResponse.headers().map(),
+							localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<OperationResult>() {
+							}) // closes the InputStream
+					);
+				} finally {
+				}
+			} catch (IOException e) {
+				throw new ApiException(e);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				throw new ApiException(e);
+			}
+		}
+
+		private HttpRequest.Builder invokeOperationRequestBuilder(String idShortPath, OperationRequest operationRequest) throws ApiException {
+			// verify the required parameter 'idShortPath' is set
+			if (idShortPath == null) {
+				throw new ApiException(400, "Missing the required parameter 'idShortPath' when calling invokeOperation");
+			}
+			// verify the required parameter 'operationRequest' is set
+			if (operationRequest == null) {
+				throw new ApiException(400, "Missing the required parameter 'operationRequest' when calling invokeOperation");
+			}
+
+			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+
+			String localVarPath = "/submodel-elements/{idShortPath}/invoke".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
+
+			localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
+
+			localVarRequestBuilder.header("Content-Type", "application/json");
+			localVarRequestBuilder.header("Accept", "application/json");
+
+			try {
+				byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(operationRequest);
+				localVarRequestBuilder.method("POST", HttpRequest.BodyPublishers.ofByteArray(localVarPostBody));
+			} catch (IOException e) {
+				throw new ApiException(e);
+			}
+			if (memberVarReadTimeout != null) {
+				localVarRequestBuilder.timeout(memberVarReadTimeout);
+			}
+			if (memberVarInterceptor != null) {
+				memberVarInterceptor.accept(localVarRequestBuilder);
+			}
+			return localVarRequestBuilder;
+		}
 		private static String extractFileName(HttpHeaders headers) {
 			Optional<String> contentType = headers.firstValue("Content-Type");
 			try {

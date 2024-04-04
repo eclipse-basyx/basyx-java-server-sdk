@@ -27,7 +27,6 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.client;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.DummySubmodelRepositoryComponent;
@@ -81,17 +80,4 @@ public class TestConnectedSubmodelService extends SubmodelServiceSuite {
 
 		return file.exists();
 	}
-
-	@Override
-	public void invokeOperation() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void invokeNonOperation() {
-		// TODO Auto-generated method stub
-		throw new NotInvokableException();
-	}
-
 }

@@ -30,14 +30,19 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationRequest;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.OperationDelegationException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
@@ -136,9 +141,19 @@ public class ConnectedSubmodelService implements SubmodelService {
 		return serviceApi.getAllSubmodelElements(pInfo.getLimit(), encodedCursor, null, null);
 	}
 
+	/**
+	 * Invoke synchronously
+	 */
 	@Override
 	public OperationVariable[] invokeOperation(String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
-		throw new FeatureNotImplementedException();
+		OperationRequest request = new DefaultOperationRequest.Builder().inputArguments(List.of(input)).build();
+		try {
+			OperationResult result = serviceApi.invokeOperation(idShortPath, request);
+
+			return result.getOutputArguments().toArray(new OperationVariable[0]);
+		} catch (ApiException e) {
+			throw mapExceptionOperationExecution(idShortPath, e);
+		}
 	}
 
 	@Override
@@ -151,7 +166,7 @@ public class ConnectedSubmodelService implements SubmodelService {
 		try {
 			return serviceApi.getFileByPath(idShortPath);
 		} catch (ApiException e) {
-			throw mapExceptionFileAccess(e);
+			throw mapExceptionFileAccess(idShortPath, e);
 		}
 	}
 
@@ -160,7 +175,7 @@ public class ConnectedSubmodelService implements SubmodelService {
 		try {
 			serviceApi.putFileByPath(idShortPath, fileName, inputStream);
 		} catch (ApiException e) {
-			throw mapExceptionFileAccess(e);
+			throw mapExceptionFileAccess(idShortPath, e);
 		}
 	}
 
@@ -169,16 +184,16 @@ public class ConnectedSubmodelService implements SubmodelService {
 		try {
 			serviceApi.deleteFileByPath(idShortPath);
 		} catch (ApiException e) {
-			throw mapExceptionFileAccess(e);
+			throw mapExceptionFileAccess(idShortPath, e);
 		}
 	}
 
-	private RuntimeException mapExceptionFileAccess(ApiException e) {
+	private RuntimeException mapExceptionFileAccess(String idShortPath, ApiException e) {
 		if (e.getCode() == HttpStatus.NOT_FOUND.value())
-			return new FileDoesNotExistException();
+			return new FileDoesNotExistException(idShortPath);
 
 		if (e.getCode() == HttpStatus.PRECONDITION_FAILED.value())
-			return new ElementNotAFileException();
+			return new ElementNotAFileException(idShortPath);
 
 		return e;
 	}
@@ -189,6 +204,17 @@ public class ConnectedSubmodelService implements SubmodelService {
 		}
 
 		return e;
+	}
+
+	private RuntimeException mapExceptionOperationExecution(String idShortPath, ApiException e) {
+		if (e.getCode() == HttpStatus.FAILED_DEPENDENCY.value())
+			return new OperationDelegationException();
+
+		if (e.getCode() == HttpStatus.METHOD_NOT_ALLOWED.value())
+			return new NotInvokableException(idShortPath);
+
+		return mapExceptionSubmodelElementAccess(idShortPath, e);
+
 	}
 
 }
