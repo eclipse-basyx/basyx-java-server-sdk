@@ -29,7 +29,7 @@ import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
@@ -88,9 +88,11 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 	}
 
 	@Override
+	@Test(expected = MissingIdentifierException.class)
 	public void updateExistingSubmodelWithMismatchId() {
-		// TODO Auto-generated method stub
-		throw new IdentificationMismatchException();
+		// TODO There should be a way to differentiate between both exceptions through
+		// the Http response
+		super.updateExistingSubmodelWithMismatchId();
 	}
 
 	@Override
