@@ -54,7 +54,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiResponse;
 import org.eclipse.digitaltwin.basyx.client.internal.Pair;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
-import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
+import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -410,15 +410,12 @@ public class AssetAdministrationShellRepositoryApi {
 	 *             if fails to make API call
 	 */
 	public CursorResult<List<AssetAdministrationShell>> getAllAssetAdministrationShells(List<String> assetIds, String idShort, Integer limit, String cursor) throws ApiException {
-		cursor = cursor == null ? null : Base64UrlEncoder.encode(cursor);
-		List<String> assetIdsAsBytes = ApiClient.base64UrlEncode(assetIds);
+		ApiResponse<Base64UrlEncodedCursorResult<List<AssetAdministrationShell>>> localVarResponse = getAllAssetAdministrationShellsApiResponse(assetIds, idShort, limit, cursor);
 
-		ApiResponse<CursorResult<List<AssetAdministrationShell>>> localVarResponse = getAllAssetAdministrationShellsApiResponse(assetIdsAsBytes, idShort, limit, cursor);
-
-		return getDecodedCursorResult(localVarResponse.getData());
+		return localVarResponse.getData();
 	}
 
-	private ApiResponse<CursorResult<List<AssetAdministrationShell>>> getAllAssetAdministrationShellsApiResponse(List<String> assetIds, String idShort, Integer limit, String cursor) throws ApiException {
+	private ApiResponse<Base64UrlEncodedCursorResult<List<AssetAdministrationShell>>> getAllAssetAdministrationShellsApiResponse(List<String> assetIds, String idShort, Integer limit, String cursor) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = getAllAssetAdministrationShellsRequestBuilder(assetIds, idShort, limit, cursor);
 		try {
 			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
@@ -429,8 +426,8 @@ public class AssetAdministrationShellRepositoryApi {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("getAllAssetAdministrationShells", localVarResponse);
 				}
-				return new ApiResponse<CursorResult<List<AssetAdministrationShell>>>(localVarResponse.statusCode(), localVarResponse.headers().map(),
-						localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<CursorResult<List<AssetAdministrationShell>>>() {
+				return new ApiResponse<>(localVarResponse.statusCode(), localVarResponse.headers().map(),
+						localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<Base64UrlEncodedCursorResult<List<AssetAdministrationShell>>>() {
 						}) // closes the InputStream
 				);
 			} finally {
@@ -484,123 +481,6 @@ public class AssetAdministrationShellRepositoryApi {
 		return localVarRequestBuilder;
 	}
 
-	/**
-	 * Returns all submodel references
-	 * 
-	 * @param aasIdentifier
-	 *            The Asset Administration Shell’s unique id
-	 *            (UTF8-BASE64-URL-encoded) (required)
-	 * @param limit
-	 *            The maximum number of elements in the response array (optional)
-	 * @param cursor
-	 *            A server-generated identifier retrieved from pagingMetadata that
-	 *            specifies from which position the result listing should continue
-	 *            (optional)
-	 * @return GetReferencesResult
-	 * @throws ApiException
-	 *             if fails to make API call
-	 */
-	public CursorResult<List<Reference>> getAllSubmodelReferencesAasRepository(String aasIdentifier, Integer limit, String cursor) throws ApiException {
-
-		ApiResponse<CursorResult<List<Reference>>> localVarResponse = getAllSubmodelReferencesAasRepositoryWithHttpInfo(aasIdentifier, limit, cursor);
-    return localVarResponse.getData();
-  }
-
-  /**
-   * Returns all submodel references
-   * 
-   * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded) (required)
-   * @param limit The maximum number of elements in the response array (optional)
-   * @param cursor A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue (optional)
-   * @return ApiResponse&lt;GetReferencesResult&gt;
-   * @throws ApiException if fails to make API call
-   */
-	public ApiResponse<CursorResult<List<Reference>>> getAllSubmodelReferencesAasRepositoryWithHttpInfo(String aasIdentifier, Integer limit, String cursor) throws ApiException {
-    String  aasIdentifierAsBytes = ApiClient.base64UrlEncode(aasIdentifier);
-  	return getAllSubmodelReferencesAasRepositoryWithHttpInfoNoUrlEncoding(aasIdentifierAsBytes, limit, cursor);
- 	
- }
-
-
-  /**
-   * Returns all submodel references
-   * 
-   * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded) (required)
-   * @param limit The maximum number of elements in the response array (optional)
-   * @param cursor A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue (optional)
-   * @return ApiResponse&lt;GetReferencesResult&gt;
-   * @throws ApiException if fails to make API call
-   */
-	public ApiResponse<CursorResult<List<Reference>>> getAllSubmodelReferencesAasRepositoryWithHttpInfoNoUrlEncoding(String aasIdentifier, Integer limit, String cursor) throws ApiException {
-    HttpRequest.Builder localVarRequestBuilder = getAllSubmodelReferencesAasRepositoryRequestBuilder(aasIdentifier, limit, cursor);
-    try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
-          localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
-      try {
-        if (localVarResponse.statusCode()/ 100 != 2) {
-          throw getApiException("getAllSubmodelReferencesAasRepository", localVarResponse);
-        }
-		return new ApiResponse<CursorResult<List<Reference>>>(
-          localVarResponse.statusCode(),
-          localVarResponse.headers().map(),
-          localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<CursorResult<List<Reference>>>() {}) // closes the InputStream
-        );
-      } finally {
-      }
-    } catch (IOException e) {
-      throw new ApiException(e);
-    }
-    catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new ApiException(e);
-    }
-  }
-
-  private HttpRequest.Builder getAllSubmodelReferencesAasRepositoryRequestBuilder(String aasIdentifier, Integer limit, String cursor) throws ApiException {
-    // verify the required parameter 'aasIdentifier' is set
-    if (aasIdentifier == null) {
-      throw new ApiException(400, "Missing the required parameter 'aasIdentifier' when calling getAllSubmodelReferencesAasRepository");
-    }
-
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
-    String localVarPath = "/shells/{aasIdentifier}/submodel-refs"
-        .replace("{aasIdentifier}", ApiClient.urlEncode(aasIdentifier.toString()));
-
-    List<Pair> localVarQueryParams = new ArrayList<>();
-    StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-    String localVarQueryParameterBaseName;
-    localVarQueryParameterBaseName = "limit";
-    localVarQueryParams.addAll(ApiClient.parameterToPairs("limit", limit));
-    localVarQueryParameterBaseName = "cursor";
-    localVarQueryParams.addAll(ApiClient.parameterToPairs("cursor", cursor));
-
-    if (!localVarQueryParams.isEmpty() || localVarQueryStringJoiner.length() != 0) {
-      StringJoiner queryJoiner = new StringJoiner("&");
-      localVarQueryParams.forEach(p -> queryJoiner.add(p.getName() + '=' + p.getValue()));
-      if (localVarQueryStringJoiner.length() != 0) {
-        queryJoiner.add(localVarQueryStringJoiner.toString());
-      }
-      localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath + '?' + queryJoiner.toString()));
-    } else {
-      localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
-    }
-
-    localVarRequestBuilder.header("Accept", "application/json");
-
-    localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
-    if (memberVarReadTimeout != null) {
-      localVarRequestBuilder.timeout(memberVarReadTimeout);
-    }
-    if (memberVarInterceptor != null) {
-      memberVarInterceptor.accept(localVarRequestBuilder);
-    }
-    return localVarRequestBuilder;
-  }
   /**
    * Returns a specific Asset Administration Shell
    * 
@@ -1477,9 +1357,4 @@ public class AssetAdministrationShellRepositoryApi {
     }
     return localVarRequestBuilder;
   }
-
-	private static <T> CursorResult<T> getDecodedCursorResult(CursorResult<T> cursorResult) {
-		String decodedCursor = cursorResult.getCursor() == null ? null : Base64UrlEncoder.decode(cursorResult.getCursor());
-		return new CursorResult<>(decodedCursor, cursorResult.getResult());
-	}
 }

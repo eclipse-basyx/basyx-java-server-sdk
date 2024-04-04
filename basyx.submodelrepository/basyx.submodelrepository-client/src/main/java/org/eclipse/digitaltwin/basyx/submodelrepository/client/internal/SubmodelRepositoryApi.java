@@ -44,7 +44,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiResponse;
 import org.eclipse.digitaltwin.basyx.client.internal.Pair;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
-import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
+import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -528,14 +528,12 @@ public class SubmodelRepositoryApi {
 	 *             if fails to make API call
 	 */
 	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, String idShort, Integer limit, String cursor, String level, String extent) throws ApiException {
-		cursor = cursor == null ? null : Base64UrlEncoder.encode(cursor);
+		ApiResponse<Base64UrlEncodedCursorResult<List<Submodel>>> localVarResponse = getAllSubmodelsApiResponse(semanticId, idShort, limit, cursor, level, extent);
 
-		ApiResponse<CursorResult<List<Submodel>>> localVarResponse = getAllSubmodelsApiResponse(semanticId, idShort, limit, cursor, level, extent);
-
-		return getDecodedCursorResult(localVarResponse.getData());
+		return localVarResponse.getData();
 	}
 
-	private ApiResponse<CursorResult<List<Submodel>>> getAllSubmodelsApiResponse(String semanticId, String idShort, Integer limit, String cursor, String level, String extent) throws ApiException {
+	private ApiResponse<Base64UrlEncodedCursorResult<List<Submodel>>> getAllSubmodelsApiResponse(String semanticId, String idShort, Integer limit, String cursor, String level, String extent) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = getAllSubmodelsRequestBuilder(semanticId, idShort, limit, cursor, level, extent);
 		try {
 			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
@@ -546,8 +544,8 @@ public class SubmodelRepositoryApi {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("getAllSubmodels", localVarResponse);
 				}
-				return new ApiResponse<CursorResult<List<Submodel>>>(localVarResponse.statusCode(), localVarResponse.headers().map(),
-						localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<CursorResult<List<Submodel>>>() {
+				return new ApiResponse<>(localVarResponse.statusCode(), localVarResponse.headers().map(),
+						localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<Base64UrlEncodedCursorResult<List<Submodel>>>() {
 						}) // closes the InputStream
 				);
 			} finally {
@@ -603,10 +601,5 @@ public class SubmodelRepositoryApi {
 			memberVarInterceptor.accept(localVarRequestBuilder);
 		}
 		return localVarRequestBuilder;
-	}
-
-	private static <T> CursorResult<T> getDecodedCursorResult(CursorResult<T> cursorResult) {
-		String decodedCursor = cursorResult.getCursor() == null ? null : Base64UrlEncoder.decode(cursorResult.getCursor());
-		return new CursorResult<>(decodedCursor, cursorResult.getResult());
 	}
 }

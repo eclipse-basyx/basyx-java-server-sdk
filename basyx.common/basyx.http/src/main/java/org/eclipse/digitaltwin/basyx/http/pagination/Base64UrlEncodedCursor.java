@@ -36,13 +36,15 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 public class Base64UrlEncodedCursor {
 
 	private final String encodedCursor;
+	private final String decodedCursor;
 
 	public Base64UrlEncodedCursor(String encodedCursor) {
 		this.encodedCursor = encodedCursor;
+		this.decodedCursor = encodedCursor == null ? null : Base64UrlEncoder.decode(encodedCursor);
 	}
 
 	public String getDecodedCursor() {
-		return Base64UrlEncoder.decode(encodedCursor);
+		return decodedCursor;
 	}
 
 	public String getEncodedCursor() {

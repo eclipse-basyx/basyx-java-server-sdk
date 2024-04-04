@@ -45,6 +45,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -69,7 +70,8 @@ public class ConnectedAasRepository implements AasRepository {
 
 	@Override
 	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
-		return repoApi.getAllAssetAdministrationShells(null, null, pInfo.getLimit(), pInfo.getCursor());
+		String encodedCursor = pInfo.getCursor() == null ? null : Base64UrlEncoder.encode(pInfo.getCursor());
+		return repoApi.getAllAssetAdministrationShells(null, null, pInfo.getLimit(), encodedCursor);
 	}
 
 	@Override

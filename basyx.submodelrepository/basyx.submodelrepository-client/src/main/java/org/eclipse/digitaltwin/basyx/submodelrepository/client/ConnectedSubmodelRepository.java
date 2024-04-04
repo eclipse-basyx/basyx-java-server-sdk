@@ -44,6 +44,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.internal.SubmodelRepositoryApi;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
@@ -135,7 +136,8 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 	@Override
 	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
 		try{
-			return repoApi.getAllSubmodels(null, null, pInfo.getLimit(), pInfo.getCursor(), null, null);
+			String encodedCursor = pInfo.getCursor() == null ? null : Base64UrlEncoder.encode(pInfo.getCursor());
+			return repoApi.getAllSubmodels(null, null, pInfo.getLimit(), encodedCursor, null, null);
 		} catch (ApiException e) {
 			if (e.getCode() == HttpStatus.INTERNAL_SERVER_ERROR.value())
 				return new CursorResult<>("", new ArrayList<>());

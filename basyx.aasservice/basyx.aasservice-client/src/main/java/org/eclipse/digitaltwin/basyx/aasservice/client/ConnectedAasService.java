@@ -40,6 +40,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -68,7 +69,8 @@ public class ConnectedAasService implements AasService {
 	@Override
 	public CursorResult<List<Reference>> getSubmodelReferences(PaginationInfo pInfo) throws ElementDoesNotExistException {
 		try {
-			return serviceApi.getAllSubmodelReferences(pInfo.getLimit(), pInfo.getCursor());
+			String encodedCursor = pInfo.getCursor() == null ? null : Base64UrlEncoder.encode(pInfo.getCursor());
+			return serviceApi.getAllSubmodelReferences(pInfo.getLimit(), encodedCursor);
 		} catch (ApiException e) {
 			throw mapAasAccess(e);
 		}

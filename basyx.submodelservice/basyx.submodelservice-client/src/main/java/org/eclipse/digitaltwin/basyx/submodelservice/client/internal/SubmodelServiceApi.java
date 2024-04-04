@@ -45,7 +45,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiResponse;
 import org.eclipse.digitaltwin.basyx.client.internal.Pair;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
-import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
+import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -1044,15 +1044,13 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		 *             if fails to make API call
 		 */
 		public CursorResult<List<SubmodelElement>> getAllSubmodelElements(Integer limit, String cursor, String level, String extent) throws ApiException {
-			cursor = cursor == null ? null : Base64UrlEncoder.encode(cursor);
+			ApiResponse<Base64UrlEncodedCursorResult<List<SubmodelElement>>> localVarResponse = getAllSubmodelElementsApiResponse(limit, cursor, level, extent);
 
-			ApiResponse<CursorResult<List<SubmodelElement>>> localVarResponse = getAllSubmodelElementsApiResponse(limit, cursor, level, extent);
-
-			return getDecodedCursorResult(localVarResponse.getData());
+			return localVarResponse.getData();
 		}
 
 
-		private ApiResponse<CursorResult<List<SubmodelElement>>> getAllSubmodelElementsApiResponse(Integer limit, String cursor, String level, String extent) throws ApiException {
+		private ApiResponse<Base64UrlEncodedCursorResult<List<SubmodelElement>>> getAllSubmodelElementsApiResponse(Integer limit, String cursor, String level, String extent) throws ApiException {
 			HttpRequest.Builder localVarRequestBuilder = getAllSubmodelElementsRequestBuilder(limit, cursor, level, extent);
 			try {
 				HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
@@ -1063,8 +1061,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 					if (localVarResponse.statusCode() / 100 != 2) {
 						throw getApiException("getAllSubmodelElements", localVarResponse);
 					}
-					return new ApiResponse<CursorResult<List<SubmodelElement>>>(localVarResponse.statusCode(), localVarResponse.headers().map(),
-							localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<CursorResult<List<SubmodelElement>>>() {
+					return new ApiResponse<Base64UrlEncodedCursorResult<List<SubmodelElement>>>(localVarResponse.statusCode(), localVarResponse.headers().map(),
+							localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<Base64UrlEncodedCursorResult<List<SubmodelElement>>>() {
 							}) // closes the InputStream
 					);
 				} finally {
@@ -1116,10 +1114,5 @@ public SubmodelServiceApi(ApiClient apiClient) {
 				memberVarInterceptor.accept(localVarRequestBuilder);
 			}
 			return localVarRequestBuilder;
-		}
-
-		private static <T> CursorResult<T> getDecodedCursorResult(CursorResult<T> cursorResult) {
-			String decodedCursor = cursorResult.getCursor() == null ? null : Base64UrlEncoder.decode(cursorResult.getCursor());
-			return new CursorResult<>(decodedCursor, cursorResult.getResult());
 		}
 }

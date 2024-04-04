@@ -57,6 +57,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiResponse;
 import org.eclipse.digitaltwin.basyx.client.internal.Pair;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.http.description.ServiceDescription;
+import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -278,7 +279,7 @@ public class AssetAdministrationShellServiceApi {
     }
     return localVarRequestBuilder;
   }
-  
+
 	/**
 	 * Returns all submodel references
 	 * 
@@ -293,70 +294,33 @@ public class AssetAdministrationShellServiceApi {
 	 *             if fails to make API call
 	 */
 	public CursorResult<List<Reference>> getAllSubmodelReferences(Integer limit, String cursor) throws ApiException {
+		ApiResponse<Base64UrlEncodedCursorResult<List<Reference>>> localVarResponse = getAllSubmodelReferencesApiResponse(limit, cursor);
+		return localVarResponse.getData();
+	}
 
-		ApiResponse<CursorResult<List<Reference>>> localVarResponse = getAllSubmodelReferencesWithHttpInfo(limit, cursor);
-    return localVarResponse.getData();
-  }
-
-  	/**
-	 * Returns all submodel references
-	 * 
-	 * @param limit
-	 *            The maximum number of elements in the response array (optional)
-	 * @param cursor
-	 *            A server-generated identifier retrieved from pagingMetadata that
-	 *            specifies from which position the result listing should continue
-	 *            (optional)
-	 * @return ApiResponse&lt;CursorResult&lt;List&lt;Reference&gt;&gt;&gt;
-	 * @throws ApiException
-	 *             if fails to make API call
-	 */
-	public ApiResponse<CursorResult<List<Reference>>> getAllSubmodelReferencesWithHttpInfo(Integer limit, String cursor) throws ApiException {
-  	return getAllSubmodelReferencesWithHttpInfoNoUrlEncoding(limit, cursor);
- 	
- }
-
-
-  	/**
-	 * Returns all submodel references
-	 * 
-	 * @param limit
-	 *            The maximum number of elements in the response array (optional)
-	 * @param cursor
-	 *            A server-generated identifier retrieved from pagingMetadata that
-	 *            specifies from which position the result listing should continue
-	 *            (optional)
-	 * @return ApiResponse&lt;CursorResult&lt;List&lt;Reference&gt;&gt;&gt;
-	 * @throws ApiException
-	 *             if fails to make API call
-	 */
-	public ApiResponse<CursorResult<List<Reference>>> getAllSubmodelReferencesWithHttpInfoNoUrlEncoding(Integer limit, String cursor) throws ApiException {
-    HttpRequest.Builder localVarRequestBuilder = getAllSubmodelReferencesRequestBuilder(limit, cursor);
+	private ApiResponse<Base64UrlEncodedCursorResult<List<Reference>>> getAllSubmodelReferencesApiResponse(Integer limit, String cursor) throws ApiException {
+		HttpRequest.Builder localVarRequestBuilder = getAllSubmodelReferencesRequestBuilder(limit, cursor);
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
-          localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
+			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
+			if (memberVarResponseInterceptor != null) {
+				memberVarResponseInterceptor.accept(localVarResponse);
       }
-      try {
-        if (localVarResponse.statusCode()/ 100 != 2) {
-          throw getApiException("getAllSubmodelReferences", localVarResponse);
-        }
-		return new ApiResponse<CursorResult<List<Reference>>>(
-          localVarResponse.statusCode(),
-          localVarResponse.headers().map(),
-				localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<CursorResult<List<Reference>>>() {
+			try {
+				if (localVarResponse.statusCode() / 100 != 2) {
+					throw getApiException("getAllSubmodelReferences", localVarResponse);
+				}
+		return new ApiResponse<Base64UrlEncodedCursorResult<List<Reference>>>(
+						localVarResponse.statusCode(), localVarResponse.headers().map(),
+				localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<Base64UrlEncodedCursorResult<List<Reference>>>() {
 				}) // closes the InputStream
-        );
-      } finally {
-      }
-    } catch (IOException e) {
-      throw new ApiException(e);
-    }
-    catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new ApiException(e);
+				);
+			} finally {
+			}
+		} catch (IOException e) {
+			throw new ApiException(e);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new ApiException(e);
     }
   }
 

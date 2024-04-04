@@ -26,30 +26,17 @@
 
 package org.eclipse.digitaltwin.basyx.core.pagination;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class CursorResult<T> {
-	private final PagingMetadata pagingMetadata;
+	private final String cursor;
 	private final T result;
 
-	@JsonCreator
-	public CursorResult(@JsonProperty("paging_metadata") PagingMetadata pagingMetadata, @JsonProperty("result") T result) {
-		this.pagingMetadata = pagingMetadata;
-		this.result = result;
-	}
-
 	public CursorResult(String cursor, T result) {
-		this.pagingMetadata = new PagingMetadata(cursor);
+		this.cursor = cursor;
 		this.result = result;
-	}
-
-	public PagingMetadata getPagingMetadata() {
-		return pagingMetadata;
 	}
 
 	public String getCursor() {
-		return pagingMetadata == null ? null : pagingMetadata.cursor();
+		return cursor;
 	}
 
 	public T getResult() {

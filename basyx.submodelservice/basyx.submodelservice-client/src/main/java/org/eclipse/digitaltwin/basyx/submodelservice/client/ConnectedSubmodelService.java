@@ -40,6 +40,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedExcept
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.internal.SubmodelServiceApi;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -139,7 +140,8 @@ public class ConnectedSubmodelService implements SubmodelService {
 
 	@Override
 	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo) {
-		return serviceApi.getAllSubmodelElements(pInfo.getLimit(), pInfo.getCursor(), null, null);
+		String encodedCursor = pInfo.getCursor() == null ? null : Base64UrlEncoder.encode(pInfo.getCursor());
+		return serviceApi.getAllSubmodelElements(pInfo.getLimit(), encodedCursor, null, null);
 	}
 
 	@Override
