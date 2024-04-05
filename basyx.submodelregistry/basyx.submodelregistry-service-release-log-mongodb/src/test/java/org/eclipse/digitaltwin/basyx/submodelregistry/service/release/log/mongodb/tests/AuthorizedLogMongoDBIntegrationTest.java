@@ -25,7 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.release.log.mongodb.tests;
 
-import org.eclipse.digitaltwin.basyx.authorization.AccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.AuthorizedSubmodelRegistryTestSuite;
 import org.springframework.test.context.TestPropertySource;
 
@@ -36,13 +35,5 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {"spring.profiles.active=logEvents,mongoDbStorage", "spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:9096/realms/BaSyx", "basyx.feature.authorization.enabled=true", "basyx.feature.authorization.type=rbac", "basyx.feature.authorization.jwtBearerTokenProvider=keycloak", "basyx.feature.authorization.rbac.file=classpath:rbac_rules.json", "spring.data.mongodb.database=submodelregistry", "spring.data.mongodb.uri=mongodb://mongoAdmin:mongoPassword@localhost:27017/"})
 public class AuthorizedLogMongoDBIntegrationTest extends AuthorizedSubmodelRegistryTestSuite {
-
-    @Override
-    public AccessTokenProvider getAccessTokenProvider() {
-        String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
-        String clientId = "basyx-client-api";
-
-        return new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
-    }
 
 }

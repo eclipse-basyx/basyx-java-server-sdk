@@ -83,8 +83,6 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
     @Autowired
     private SubmodelRegistryStorage storage;
 
-    public abstract AccessTokenProvider getAccessTokenProvider();
-
     @Before
     public void initializeRepositories() throws IOException {
         configureSecurityContext();
@@ -487,6 +485,13 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
 
     private String getSpecificSubmodelDescriptorAccessURL(String submodelId) {
         return submodelRegistryBaseUrl + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
+    }
+
+    private AccessTokenProvider getAccessTokenProvider() {
+        String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
+        String clientId = "basyx-client-api";
+
+        return new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
     }
 
 }

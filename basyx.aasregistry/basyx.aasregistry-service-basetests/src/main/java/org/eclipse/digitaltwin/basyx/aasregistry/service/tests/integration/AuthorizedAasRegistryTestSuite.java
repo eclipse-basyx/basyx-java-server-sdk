@@ -84,8 +84,6 @@ public abstract class AuthorizedAasRegistryTestSuite {
     @Autowired
     private AasRegistryStorage storage;
 
-    public abstract AccessTokenProvider getAccessTokenProvider();
-
     @Before
     public void initializeRepositories() throws IOException {
         configureSecurityContext();
@@ -750,6 +748,13 @@ public abstract class AuthorizedAasRegistryTestSuite {
         } catch (MalformedURLException e) {
             throw new RuntimeException("The AAS Registry Base url is malformed. " + e.getMessage());
         }
+    }
+
+    private AccessTokenProvider getAccessTokenProvider() {
+        String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
+        String clientId = "basyx-client-api";
+
+        return new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
     }
 
 }

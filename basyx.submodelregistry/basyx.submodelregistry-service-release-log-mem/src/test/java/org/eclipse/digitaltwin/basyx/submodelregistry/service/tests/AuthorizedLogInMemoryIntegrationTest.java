@@ -25,7 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.tests;
 
-import org.eclipse.digitaltwin.basyx.authorization.AccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.AuthorizedSubmodelRegistryTestSuite;
 import org.springframework.test.context.TestPropertySource;
 
@@ -36,13 +35,5 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {"spring.profiles.active=logEvents,inMemoryStorage", "spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:9096/realms/BaSyx", "basyx.feature.authorization.enabled=true", "basyx.feature.authorization.type=rbac", "basyx.feature.authorization.jwtBearerTokenProvider=keycloak", "basyx.feature.authorization.rbac.file=classpath:rbac_rules.json"})
 public class AuthorizedLogInMemoryIntegrationTest extends AuthorizedSubmodelRegistryTestSuite {
-
-    @Override
-    public AccessTokenProvider getAccessTokenProvider() {
-        String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
-        String clientId = "basyx-client-api";
-
-        return new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
-    }
 
 }
