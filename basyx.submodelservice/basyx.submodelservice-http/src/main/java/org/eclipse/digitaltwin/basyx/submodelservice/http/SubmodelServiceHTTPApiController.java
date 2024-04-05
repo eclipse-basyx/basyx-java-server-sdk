@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.http;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,6 +36,9 @@ import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationResult;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
@@ -44,12 +49,15 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -246,6 +254,57 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		}
 
 		return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
+	}
+
+	@Override
+	public ResponseEntity<Resource> getFileByPath(String idShortPath) {
+		Resource resource = new FileSystemResource(service.getFileByPath(idShortPath));
+
+		return new ResponseEntity<>(resource, HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Void> putFileByPath(String idShortPath, String fileName, @Valid MultipartFile file) {
+		InputStream fileInputstream = null;
+		try {
+			fileInputstream = file.getInputStream();
+			service.setFileValue(idShortPath, fileName, fileInputstream);
+			closeInputStream(fileInputstream);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (ElementDoesNotExistException e) {
+			closeInputStream(fileInputstream);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (ElementNotAFileException e) {
+			closeInputStream(fileInputstream);
+			return new ResponseEntity<>(HttpStatus.PRECONDITION_FAILED);
+		} catch (IOException e) {
+			closeInputStream(fileInputstream);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@Override
+	public ResponseEntity<Void> deleteFileByPath(String idShortPath) {
+		try {
+			service.deleteFileValue(idShortPath);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (FileDoesNotExistException | ElementDoesNotExistException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (ElementNotAFileException e) {
+			return new ResponseEntity<>(HttpStatus.PRECONDITION_FAILED);
+		}
+	}
+
+	private void closeInputStream(InputStream fileInputstream) {
+		if (fileInputstream == null) {
+			return;
+		}
+
+		try {
+			fileInputstream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

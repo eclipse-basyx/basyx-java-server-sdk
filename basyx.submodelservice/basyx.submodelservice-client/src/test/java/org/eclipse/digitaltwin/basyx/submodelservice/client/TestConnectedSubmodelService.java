@@ -27,6 +27,8 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.client;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -76,6 +78,13 @@ public class TestConnectedSubmodelService extends SubmodelServiceSuite {
 	}
 
 	@Override
+	protected boolean fileExistsInStorage(String fileValue) {
+		java.io.File file = new java.io.File(fileValue);
+
+		return file.exists();
+	}
+
+	@Override
 	public void getSubmodelElements() {
 		// TODO Auto-generated method stub
 
@@ -105,4 +114,57 @@ public class TestConnectedSubmodelService extends SubmodelServiceSuite {
 		throw new NotInvokableException();
 	}
 
+	@Override
+	public void deleteFileSubmodelElementDeletesFile() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void updateFileSMEWithNonFileSME() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void updateFileSMEWithFileSME() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void getNonExistingFile() {
+		throw new FileDoesNotExistException();
+
+	}
+
+	@Override
+	public void deleteNonExistingFile() {
+		throw new FileDoesNotExistException();
+
+	}
+
+	@Override
+	public void getFileFromNonFileSME() {
+		throw new ElementNotAFileException();
+
+	}
+
+	@Override
+	public void deleteFile() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void getFile() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void updateFile() {
+		// TODO Auto-generated method stub
+
+	}
 }

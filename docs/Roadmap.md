@@ -6,6 +6,7 @@ Here, a list of features, components and general updates that are planned in the
 - AAS Client SDK (continuous)
 - AASX File Server with MongoDB and InMemory Persistency (Q2/2024)
 - Dynamic integration of features/backends in AAS Infrastructure OTS components (Q2/2024)
+- Dynamic Configuration of RBAC Security based on Submodels (Q2/2024)
 - Code Generation based on AASX files (Client, ...) (Q3/2024)
 
 ## BaSyx AAS Integration Components
