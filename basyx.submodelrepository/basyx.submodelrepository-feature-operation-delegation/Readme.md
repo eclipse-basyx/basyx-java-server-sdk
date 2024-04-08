@@ -1,18 +1,17 @@
 # Submodel Repository - Operation Delegation
 An operation is a specific type of submodel element capable of performing server-side functions. However, in certain environments, this is not possible. Therefore, the operation can be delegated to an independent destination (such as an HTTP URL) to be executed. An example request body is given below.
+
 ```
-{
-	"inputArguments": [
-		{
-		    "value": {
-		        "modelType": "Property",
-		        "valueType": "xs:int",
-		        "value": "5",
-		        "idShort": "input"
-		    }
-	 	}
-	]
-}
+[
+    {
+        "value": {
+            "modelType": "Property",
+            "value": "5",
+            "valueType": "xs:int",
+            "idShort": "int"
+        }
+    }
+]
 ```
 
 This feature is enabled by default and to disable this the following property should be defined:

@@ -1,0 +1,24 @@
+{
+  "description": null,
+  "displayName": null,
+  "extensions": null,
+  "administration": null,
+  "idShort": "dummyShellIdShort_3-1-SM",
+  "id": "dummyShellId_3-1-SM",
+  "semanticId": null,
+  "supplementalSemanticId": null,
+  "endpoints": [
+    {
+      "interface": "AAS-3.0",
+      "protocolInformation": {
+        "href": "http://127.0.0.1:8080/shell-descriptors/ZHVtbXlTaGVsbElkXzM/submodel-descriptors/ZHVtbXlTaGVsbElkXzMtMS1TTQ==",
+        "endpointProtocol": "http",
+        "endpointProtocolVersion": null,
+        "subprotocol": null,
+        "subprotocolBody": null,
+        "subprotocolBodyEncoding": null,
+        "securityAttributes": null
+      }
+    }
+  ]
+}

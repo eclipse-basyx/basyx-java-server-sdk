@@ -24,8 +24,10 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration;
 
+import lombok.extern.log4j.Log4j2;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.CursorEncodingRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
+import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorageFeature;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.mongodb.MongoDbSubmodelRegistryStorage;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -35,18 +37,35 @@ import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+import java.util.List;
+
 @Configuration
 @ConditionalOnProperty(prefix = "registry", name = "type", havingValue = "mongodb")
 @EnableAsync
+@Log4j2
 public class MongoDbConfiguration {
 
 	@Bean
-	public SubmodelRegistryStorage createSubmodelRegistryStorage(MongoTemplate template) {
-		return new CursorEncodingRegistryStorage(new MongoDbSubmodelRegistryStorage(template));
+	public SubmodelRegistryStorage createSubmodelRegistryStorage(MongoTemplate template, List<SubmodelRegistryStorageFeature> features) {
+		log.info("Creating mongodb storage");
+
+		SubmodelRegistryStorage storage = new CursorEncodingRegistryStorage(new MongoDbSubmodelRegistryStorage(template));
+
+		return applyFeatures(storage, features);
 	}
 
 	@Bean
 	public MongoTransactionManager transactionManager(MongoDatabaseFactory dbFactory) {
 		return new MongoTransactionManager(dbFactory);
 	}
+
+	private SubmodelRegistryStorage applyFeatures(SubmodelRegistryStorage storage, List<SubmodelRegistryStorageFeature> features) {
+		for (SubmodelRegistryStorageFeature eachFeature : features) {
+			log.info("Activating feature " + eachFeature.getName());
+			storage = eachFeature.decorate(storage);
+		}
+
+		return storage;
+	}
+
 }
