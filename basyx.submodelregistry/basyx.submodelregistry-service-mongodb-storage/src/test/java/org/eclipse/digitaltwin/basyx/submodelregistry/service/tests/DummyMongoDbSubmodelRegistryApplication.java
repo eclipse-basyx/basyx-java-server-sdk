@@ -25,42 +25,19 @@
 
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.tests;
 
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.PersistencyTestSuite;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Persistency test for MongoDbSubmodelRegistry
+ * Test application for MongoDB Persistency
  * 
  * @author mateusmolina
  */
-public class MongoDbSubmodelRegistryPersistencyTest extends PersistencyTestSuite {
+@SpringBootApplication
+public class DummyMongoDbSubmodelRegistryApplication {
+	public static final String COLLECTION = "submodeldescriptors";
 
-	private static ConfigurableApplicationContext applicationContext;
-
-	@BeforeClass
-	public static void initComponent() {
-		applicationContext = new SpringApplication(DummyMongoDbSubmodelRegistryApplication.class).run();
-	}
-
-	@Before
-	public void clearTemplate() {
-		applicationContext.getBean(MongoTemplate.class).remove(new Query(), DummyMongoDbSubmodelRegistryApplication.COLLECTION);
-	}
-
-	@Override
-	protected SubmodelRegistryStorage getStorage() {
-		return applicationContext.getBean(SubmodelRegistryStorage.class);
-	}
-
-	@Override
-	protected void restartComponent() {
-		applicationContext.close();
-		initComponent();
+	public static void main(String[] args) {
+		SpringApplication.run(DummyMongoDbSubmodelRegistryApplication.class, args);
 	}
 }
