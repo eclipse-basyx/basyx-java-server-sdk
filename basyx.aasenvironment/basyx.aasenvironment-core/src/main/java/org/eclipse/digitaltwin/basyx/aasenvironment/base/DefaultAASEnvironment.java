@@ -45,6 +45,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.ConceptDescriptionIdCollector;
@@ -113,13 +114,14 @@ public class DefaultAASEnvironment implements AasEnvironment {
 	
 	public void loadEnvironment(CompleteEnvironment completeEnvironment) {
 		Environment environment = completeEnvironment.getEnvironment();
+		List<InMemoryFile> relatedFiles = completeEnvironment.getRelatedFiles();
 
 		if (environment == null)
 			return;
 
 		checker.assertNoDuplicateIds(environment);
 
-		createShellsOnRepositoryFromEnvironment(environment);
+		createShellsOnRepositoryFromEnvironment(environment, relatedFiles);
 		createSubmodelsOnRepositoryFromEnvironment(environment, completeEnvironment.getRelatedFiles());
 		createConceptDescriptionsOnRepositoryFromEnvironment(environment);
 	}
@@ -179,13 +181,53 @@ public class DefaultAASEnvironment implements AasEnvironment {
 		return inMemoryFile.get();
 	}
 
-	private void createShellsOnRepositoryFromEnvironment(Environment environment) {
+	private void createShellsOnRepositoryFromEnvironment(Environment environment, List<InMemoryFile> relatedFiles) {
 		IdentifiableRepository<AssetAdministrationShell> repo = new DelegatingIdentifiableRepository<AssetAdministrationShell>(aasRepository::getAas, aasRepository::updateAas, aasRepository::createAas);
 		IdentifiableUploader<AssetAdministrationShell> uploader = new IdentifiableUploader<>(repo);
 		for (AssetAdministrationShell shell : environment.getAssetAdministrationShells()) {
 			boolean success = uploader.upload(shell);
+			setThumbnail(shell, relatedFiles);
 			logSuccess("shell", shell.getId(), success);
 		}
+	}
+
+	private void setThumbnail(AssetAdministrationShell shell, List<InMemoryFile> relatedFiles) {
+		if (relatedFiles == null || relatedFiles.isEmpty())
+			return;
+
+		Resource thumbnailResource = aasRepository.getAssetInformation(shell.getId()).getDefaultThumbnail();
+
+		if (thumbnailResource == null || !isValidPath(thumbnailResource.getPath()) || !isValidContentType(thumbnailResource.getContentType())) {
+			logger.info("Could not find thumbnail resource for aas {}", shell.getId());
+			return;
+		}
+
+		String thumbnailPath = thumbnailResource.getPath();
+		String thumbnailContentType = thumbnailResource.getContentType();
+
+		Optional<InMemoryFile> optionalInMemoryFile = relatedFiles.stream().filter(file -> file.getPath().equals(thumbnailPath)).findAny();
+
+		if (optionalInMemoryFile.isEmpty()) {
+			logger.info("Thumbnail file specified at path {} for aas {} could not be found.", thumbnailPath, shell.getId());
+			return;
+		}
+
+		byte[] thumbnailContent = optionalInMemoryFile.get().getFileContent();
+
+		if (thumbnailContent.length == 0) {
+			logger.info("Thumbnail content for aas {} is empty.", thumbnailPath);
+			return;
+		}
+
+		aasRepository.setThumbnail(shell.getId(), getFileName(thumbnailPath), thumbnailContentType, new ByteArrayInputStream(thumbnailContent));
+	}
+
+	private boolean isValidContentType(String contentType) {
+		return contentType != null && !contentType.isBlank();
+	}
+
+	private boolean isValidPath(String path) {
+		return path != null && !path.isBlank();
 	}
 
 	private void createSubmodelsOnRepository(List<Submodel> submodels) {

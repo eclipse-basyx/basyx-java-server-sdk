@@ -45,6 +45,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.CrudRepository;
 
@@ -237,8 +238,12 @@ public class CrudAasRepository implements AasRepository {
 	private void updateThumbnailFile(String aasId, String fileName, String contentType, InputStream inputStream, Resource thumbnail) {
 		String path = thumbnail.getPath();
 		AASThumbnailHandler.deleteExistingFile(path);
-		String filePath = createFile(aasId, fileName, inputStream);
+		String filePath = createFile(encodeIdentifier(aasId), fileName, inputStream);
 		AASThumbnailHandler.updateThumbnail(this, aasId, contentType, filePath);
+	}
+
+	private String encodeIdentifier(String aasId) {
+		return new Base64UrlEncodedIdentifier(aasId).getEncodedIdentifier();
 	}
 
 	private String createFile(String aasId, String fileName, InputStream inputStream) {

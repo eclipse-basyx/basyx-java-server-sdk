@@ -90,7 +90,7 @@ public class AASThumbnailHandler {
 
 		try {
 			Files.deleteIfExists(Paths.get(path, ""));
-		} catch (IOException e) {
+		} catch (IOException | InvalidPathException e) {
 			logger.error("Unable to delete the file having path '{}'", path);
 		}
 	}
