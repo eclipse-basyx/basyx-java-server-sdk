@@ -33,7 +33,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * 
  * @author mateusmolina
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration")
 public class DummyMongoDbSubmodelRegistryApplication {
 	public static final String COLLECTION = "submodeldescriptors";
 
