@@ -427,6 +427,14 @@
   },
   {
     "role": "basyx-uploader",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "aas",
+      "aasId": "*"
+    }
+  },
+  {
+    "role": "basyx-uploader",
     "action": "READ",
     "targetInformation": {
       "@type": "submodel",
@@ -488,6 +496,14 @@
   {
     "role": "basyx-uploader-two",
     "action": "CREATE",
+    "targetInformation": {
+      "@type": "aas",
+      "aasId": "http://customer.com/aas/9175_7013_7091_9168"
+    }
+  },
+  {
+    "role": "basyx-uploader-two",
+    "action": "UPDATE",
     "targetInformation": {
       "@type": "aas",
       "aasId": "http://customer.com/aas/9175_7013_7091_9168"
