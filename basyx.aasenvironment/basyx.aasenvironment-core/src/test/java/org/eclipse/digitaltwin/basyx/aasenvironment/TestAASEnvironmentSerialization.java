@@ -100,9 +100,11 @@ public class TestAASEnvironmentSerialization {
 	@Test
 	public void testAASEnviromentSerializationWithJSON() throws SerializationException, IOException, DeserializationException {
 		boolean includeConceptDescription = true;
+		boolean aasIdsIncluded = true;
+		boolean submodelIdsIncluded = true;
 
 		String jsonSerialization = aasEnvironment.createJSONAASEnvironmentSerialization(getShellIds(createDummyShells()), getSubmodelIds(createDummySubmodels()), includeConceptDescription);
-		validateJSON(jsonSerialization, includeConceptDescription);
+		validateJSON(jsonSerialization, aasIdsIncluded, submodelIdsIncluded, includeConceptDescription);
 
 		validateRepositoriesState();
 	}
@@ -110,9 +112,11 @@ public class TestAASEnvironmentSerialization {
 	@Test
 	public void testAASEnviromentSerializationWithXML() throws SerializationException, IOException, SAXException, DeserializationException {
 		boolean includeConceptDescription = true;
+		boolean aasIdsIncluded = true;
+		boolean submodelIdsIncluded = true;
 
 		String xmlSerialization = aasEnvironment.createXMLAASEnvironmentSerialization(getShellIds(createDummyShells()), getSubmodelIds(createDummySubmodels()), includeConceptDescription);
-		validateXml(xmlSerialization, includeConceptDescription);
+		validateXml(xmlSerialization, aasIdsIncluded, submodelIdsIncluded, includeConceptDescription);
 
 		validateRepositoriesState();
 	}
@@ -120,9 +124,11 @@ public class TestAASEnvironmentSerialization {
 	@Test
 	public void testAASEnviromentSerializationWithAASX() throws SerializationException, IOException, InvalidOperationException, InvalidFormatException, DeserializationException {
 		boolean includeConceptDescription = true;
+		boolean aasIdsIncluded = true;
+		boolean submodelIdsIncluded = true;
 
 		byte[] serialization = aasEnvironment.createAASXAASEnvironmentSerialization(getShellIds(createDummyShells()), getSubmodelIds(createDummySubmodels()), includeConceptDescription);
-		checkAASX(new ByteArrayInputStream(serialization), includeConceptDescription);
+		checkAASX(new ByteArrayInputStream(serialization), aasIdsIncluded, submodelIdsIncluded, includeConceptDescription);
 
 		validateRepositoriesState();
 	}
@@ -130,31 +136,33 @@ public class TestAASEnvironmentSerialization {
 	@Test
 	public void testAASEnviromentSerializationWithJSONExcludeCD() throws SerializationException, IOException, DeserializationException {
 		boolean includeConceptDescription = false;
+		boolean aasIdsIncluded = true;
+		boolean submodelIdsIncluded = true;
 
 		String jsonSerialization = aasEnvironment.createJSONAASEnvironmentSerialization(getShellIds(createDummyShells()), getSubmodelIds(createDummySubmodels()), includeConceptDescription);
-		validateJSON(jsonSerialization, includeConceptDescription);
+		validateJSON(jsonSerialization, aasIdsIncluded, submodelIdsIncluded, includeConceptDescription);
 
 		validateRepositoriesState();
 	}
 
-	public static void validateJSON(String actual, boolean includeConceptDescription) throws DeserializationException {
+	public static void validateJSON(String actual, boolean areAASsIncluded, boolean areSubmodelsIncluded, boolean includeConceptDescription) throws DeserializationException {
 		JsonDeserializer jsonDeserializer = new JsonDeserializer();
 		Environment aasEnvironment = jsonDeserializer.read(actual, Environment.class);
-		checkAASEnvironment(aasEnvironment, includeConceptDescription);
+		checkAASEnvironment(aasEnvironment, areAASsIncluded, areSubmodelsIncluded, includeConceptDescription);
 	}
 
-	public static void validateXml(String actual, boolean includeConceptDescription) throws DeserializationException {
+	public static void validateXml(String actual, boolean areAASsIncluded, boolean areSubmodelsIncluded, boolean includeConceptDescription) throws DeserializationException {
 		XmlDeserializer xmlDeserializer = new XmlDeserializer();
 		Environment aasEnvironment = xmlDeserializer.read(actual);
 
-		checkAASEnvironment(aasEnvironment, includeConceptDescription);
+		checkAASEnvironment(aasEnvironment, areAASsIncluded, areSubmodelsIncluded, includeConceptDescription);
 	}
 
-	public static void checkAASX(InputStream inputStream, boolean includeConceptDescription) throws IOException, InvalidFormatException, DeserializationException {
+	public static void checkAASX(InputStream inputStream, boolean areAASsIncluded, boolean areSubmodelsIncluded, boolean includeConceptDescription) throws IOException, InvalidFormatException, DeserializationException {
 		AASXDeserializer aasxDeserializer = new AASXDeserializer(inputStream);
 		Environment environment = aasxDeserializer.read();
 
-		checkAASEnvironment(environment, includeConceptDescription);
+		checkAASEnvironment(environment, areAASsIncluded, areSubmodelsIncluded, includeConceptDescription);
 		inputStream.close();
 	}
 
@@ -168,14 +176,15 @@ public class TestAASEnvironmentSerialization {
 		return conceptDescriptions;
 	}
 
-	private static void checkAASEnvironment(Environment aasEnvironment, boolean areConceptDescriptionsIncluded) {
-		assertAasIds(aasEnvironment);
+	private static void checkAASEnvironment(Environment aasEnvironment, boolean areAASsIncluded, boolean areSubmodelsIncluded, boolean areConceptDescriptionsIncluded) {
+		if (areAASsIncluded)
+			assertAasIds(aasEnvironment);
 
-		assertSubmodelIds(aasEnvironment);
+		if (areSubmodelsIncluded)
+			assertSubmodelIds(aasEnvironment);
 
-		if (areConceptDescriptionsIncluded) {
+		if (areConceptDescriptionsIncluded)
 			assertConceptDescriptionIds(aasEnvironment);
-		}
 	}
 
 	private static void assertConceptDescriptionIds(Environment aasEnvironment) {
