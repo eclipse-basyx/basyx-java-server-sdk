@@ -27,20 +27,12 @@ package org.eclipse.digitaltwin.basyx.aasrepository;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
@@ -49,13 +41,11 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceSuite;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
 
 /**
  * Testsuite for implementations of the AasRepository interface
@@ -67,9 +57,6 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 	private final PaginationInfo noLimitPaginationInfo = new PaginationInfo(0, "");
 	private static final String AAS_EMPTY_ID = " ";
 	private static final String AAS_NULL_ID = null;
-
-	private static final String THUMBNAIL_FILE_PATH_1 = "BaSyx-Logo-1.png";
-	private static final String THUMBNAIL_FILE_PATH_2 = "BaSyx-Logo-2.png";
 
 	protected abstract AasRepository getAasRepository();
 
@@ -251,87 +238,6 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 		retrieved.addAll(result.getResult());
 
 		assertEquals(expected, retrieved);
-	}
-
-	@Test
-	public void updateThumbnail() throws FileNotFoundException, IOException {
-		AssetAdministrationShell aas = DummyAasFactory.createAasWithAssetInformation();
-		AasRepository aasRepo = getAasRepository(Collections.singleton(aas));
-
-		// Set the thumbnail of the AAS for the first time
-		aasRepo.setThumbnail(aas.getId(), THUMBNAIL_FILE_PATH_1, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_1));
-
-		// Set the thumbnail of the AAS for the second time with a new figure
-		aasRepo.setThumbnail(aas.getId(), THUMBNAIL_FILE_PATH_2, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_2));
-
-		File retrievedThumbnail = aasRepo.getThumbnail(aas.getId());
-
-		assertEquals(readFile("src/test/resources/" + THUMBNAIL_FILE_PATH_2, Charset.defaultCharset()), new String(FileUtils.readFileToByteArray(retrievedThumbnail), Charset.defaultCharset()));
-
-	}
-
-	@Test
-	public void setThumbnail() throws FileNotFoundException, IOException {
-		AssetAdministrationShell aas = DummyAasFactory.createAasWithAssetInformation();
-		AasRepository aasRepo = getAasRepository(Collections.singleton(aas));
-
-		aasRepo.setThumbnail(aas.getId(), THUMBNAIL_FILE_PATH_1, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_1));
-
-		File retrievedThumbnail = aasRepo.getThumbnail(aas.getId());
-
-		assertEquals(readFile("src/test/resources/" + THUMBNAIL_FILE_PATH_1, Charset.defaultCharset()), new String(FileUtils.readFileToByteArray(retrievedThumbnail), Charset.defaultCharset()));
-
-	}
-
-	@Test
-	public void getThumbnail() throws IOException {
-		AssetAdministrationShell aas = DummyAasFactory.createAasWithAssetInformation();
-		AasRepository aasRepo = getAasRepository(Collections.singleton(aas));
-
-		aasRepo.setThumbnail(aas.getId(), THUMBNAIL_FILE_PATH_1, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_1));
-
-		File retrievedThumbnail = aasRepo.getThumbnail(aas.getId());
-
-		assertEquals(readFile("src/test/resources/" + THUMBNAIL_FILE_PATH_1, Charset.defaultCharset()), new String(FileUtils.readFileToByteArray(retrievedThumbnail), Charset.defaultCharset()));
-	}
-
-	@Test(expected = FileDoesNotExistException.class)
-	public void getNonExistingThumbnail() {
-		AssetAdministrationShell aas = DummyAasFactory.createAasWithAssetInformation();
-		AasRepository aasRepo = getAasRepository(Collections.singleton(aas));
-
-		aasRepo.getThumbnail(aas.getId());
-	}
-
-	@Test(expected = FileDoesNotExistException.class)
-	public void deleteThumbnail() throws FileNotFoundException, IOException {
-		AssetAdministrationShell aas = DummyAasFactory.createAasWithAssetInformation();
-		AasRepository aasRepo = getAasRepository(Collections.singleton(aas));
-
-		aasRepo.setThumbnail(aas.getId(), THUMBNAIL_FILE_PATH_1, "", getInputStreamOfFileFromClasspath(THUMBNAIL_FILE_PATH_1));
-		aasRepo.deleteThumbnail(aas.getId());
-
-		aasRepo.getThumbnail(aas.getId());
-	}
-
-	@Test(expected = FileDoesNotExistException.class)
-	public void deleteNonExistingThumbnail() throws IOException {
-		AssetAdministrationShell aas = DummyAasFactory.createAasWithAssetInformation();
-		AasRepository aasRepo = getAasRepository(Collections.singleton(aas));
-
-		aasRepo.deleteThumbnail(aas.getId());
-	}
-
-	private static String readFile(String path, Charset encoding) throws IOException {
-		byte[] encoded = Files.readAllBytes(Paths.get(path));
-
-		return new String(encoded, encoding);
-	}
-	
-	private InputStream getInputStreamOfFileFromClasspath(String fileName) throws FileNotFoundException, IOException {
-		ClassPathResource classPathResource = new ClassPathResource(fileName);
-
-		return classPathResource.getInputStream();
 	}
 
 	@Override

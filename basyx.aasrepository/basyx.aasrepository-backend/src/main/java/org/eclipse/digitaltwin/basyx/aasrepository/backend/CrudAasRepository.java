@@ -34,7 +34,6 @@ import java.util.stream.StreamSupport;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
@@ -163,34 +162,25 @@ public class CrudAasRepository implements AasRepository {
 
 	@Override
 	public File getThumbnail(String aasId) {
-		Resource resource = getAssetInformation(aasId).getDefaultThumbnail();
-
-		AASThumbnailHandler.throwIfFileDoesNotExist(aasId, resource);
-		String filePath = resource.getPath();
-		return new File(filePath);
+		return getAasServiceOrThrow(aasId).getThumbnail();
 	}
 
 	@Override
 	public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
-		Resource thumbnail = getAssetInformation(aasId).getDefaultThumbnail();
+		AasService aasService = getAasServiceOrThrow(aasId);
 
-		if (thumbnail != null) {
-			updateThumbnailFile(aasId, fileName, contentType, inputStream, thumbnail);
-			return;
-		}
+		aasService.setThumbnail(fileName, contentType, inputStream);
 
-		String filePath = createFile(aasId, fileName, inputStream);
-		AASThumbnailHandler.setNewThumbnail(this, aasId, contentType, filePath);
+		updateAas(aasId, aasService.getAAS());
 	}
 
 	@Override
 	public void deleteThumbnail(String aasId) {
-		Resource thumbnail = getAssetInformation(aasId).getDefaultThumbnail();
-		AASThumbnailHandler.throwIfFileDoesNotExist(aasId, thumbnail);
+		AasService aasService = getAasServiceOrThrow(aasId);
 
-		deleteThumbnailFile(thumbnail);
+		aasService.deleteThumbnail();
 
-		updateThumbnailInAssetInformation(aasId);
+		updateAas(aasId, aasService.getAAS());
 	}
 
 	private AasService getAasServiceOrThrow(String aasId) {
@@ -221,35 +211,4 @@ public class CrudAasRepository implements AasRepository {
 		if (!aasBackend.existsById(aasId))
 			throw new ElementDoesNotExistException(aasId);
 	}
-
-	private void updateThumbnailInAssetInformation(String aasId) {
-		AssetInformation assetInfor = getAssetInformation(aasId);
-		assetInfor.getDefaultThumbnail().setContentType("");
-		assetInfor.getDefaultThumbnail().setPath("");
-		setAssetInformation(aasId, assetInfor);
-	}
-
-	private void deleteThumbnailFile(Resource thumbnail) {
-		String filePath = thumbnail.getPath();
-		java.io.File tmpFile = new java.io.File(filePath);
-		tmpFile.delete();
-	}
-
-	private void updateThumbnailFile(String aasId, String fileName, String contentType, InputStream inputStream, Resource thumbnail) {
-		String path = thumbnail.getPath();
-		AASThumbnailHandler.deleteExistingFile(path);
-		String filePath = createFile(encodeIdentifier(aasId), fileName, inputStream);
-		AASThumbnailHandler.updateThumbnail(this, aasId, contentType, filePath);
-	}
-
-	private String encodeIdentifier(String aasId) {
-		return new Base64UrlEncodedIdentifier(aasId).getEncodedIdentifier();
-	}
-
-	private String createFile(String aasId, String fileName, InputStream inputStream) {
-		String filePath = AASThumbnailHandler.createFilePath(AASThumbnailHandler.getTemporaryDirectoryPath(), aasId, fileName);
-		AASThumbnailHandler.createFileAtSpecifiedPath(fileName, inputStream, filePath);
-		return filePath;
-	}
-
 }
