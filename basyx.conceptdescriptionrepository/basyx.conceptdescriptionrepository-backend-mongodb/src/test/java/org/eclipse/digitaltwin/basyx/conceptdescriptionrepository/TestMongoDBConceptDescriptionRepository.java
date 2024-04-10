@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
 
 import static org.junit.Assert.assertEquals;
 

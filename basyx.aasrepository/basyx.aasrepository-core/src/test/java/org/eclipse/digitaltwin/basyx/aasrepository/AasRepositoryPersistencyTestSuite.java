@@ -25,45 +25,55 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
+import org.apache.commons.io.IOUtils;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.basyx.aasservice.AasServiceSuite;
+import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFactory;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
- * Persitency TestSuite for AasDiscovery
+ * Persistency TestSuite for {@link AasRepository}
  * 
- * @author mateusmolina
+ * @author danish
  */
 public abstract class AasRepositoryPersistencyTestSuite {
-	public final static String DUMMY_SHELL_IDENTIFIER = "DummyShellID";
 
 	protected abstract AasRepository getAasRepository();
 
 	protected abstract void restartComponent();
 
 	@Test
-	public void assetLinkIsPersisted() {
-		AssetAdministrationShell aas = AasDiscoveryServiceSuite.getSingleDummyShell(DUMMY_SHELL_IDENTIFIER);
-		AasDiscoveryServiceSuite.createAssetLink(aas, getAasRepository());
-
-		List<SpecificAssetId> expectedAssetIDs = buildSpecificAssedIds();
+	public void shellIsPersisted() {
+		AssetAdministrationShell expectedAas = DummyAasFactory.createAasWithSubmodelReference();
+		getAasRepository().createAas(expectedAas);
 
 		restartComponent();
 
-		List<SpecificAssetId> actualAssetIDs = getAasRepository().getAllAssetLinksById(DUMMY_SHELL_IDENTIFIER);
+		AssetAdministrationShell actualAas = getAasRepository().getAas(DummyAasFactory.AASWITHSUBMODELREF_ID);
 
-		assertEquals(expectedAssetIDs, actualAssetIDs);
+		assertEquals(expectedAas, actualAas);
 	}
 
-	private static List<SpecificAssetId> buildSpecificAssedIds() {
-		SpecificAssetId specificAssetId_1 = AasDiscoveryServiceSuite.createDummySpecificAssetId("TestAsset1", "TestAssetValue1");
-		SpecificAssetId specificAssetId_2 = AasDiscoveryServiceSuite.createDummySpecificAssetId("TestAsset2", "TestAssetValue2");
+	@Test
+	public void thumbnailIsPersisted() throws IOException {
+		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.create();
+		getAasRepository().createAas(shell);
 
-		return Arrays.asList(specificAssetId_1, specificAssetId_2);
+		getAasRepository().setThumbnail("arbitrary", "dummyImgA.jpeg", "image/jpeg", AasServiceSuite.createDummyImageIS_A());
+
+		restartComponent();
+
+		InputStream actualThumbnailIs = new FileInputStream(getAasRepository().getThumbnail(shell.getId()));
+
+		InputStream expectedThumbnailIs = AasServiceSuite.createDummyImageIS_A();
+
+		assertTrue(IOUtils.contentEquals(expectedThumbnailIs, actualThumbnailIs));
 	}
 }
