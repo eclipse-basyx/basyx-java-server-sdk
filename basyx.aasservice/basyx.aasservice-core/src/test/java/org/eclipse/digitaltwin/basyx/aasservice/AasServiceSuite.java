@@ -29,9 +29,19 @@ package org.eclipse.digitaltwin.basyx.aasservice;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+
+import org.apache.commons.io.IOUtils;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
@@ -45,6 +55,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Test;
@@ -52,7 +63,7 @@ import org.junit.Test;
 /**
  * Testsuite for implementations of the AasService interface
  * 
- * @author schnicke
+ * @author schnicke, mateusmolina
  *
  */
 public abstract class AasServiceSuite {
@@ -145,6 +156,74 @@ public abstract class AasServiceSuite {
 				paginatedReferences.getResult().stream().findFirst().get());
 	}
 
+	@Test
+	public void updateThumbnail() throws FileNotFoundException, IOException {
+		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.createWithDefaultThumbnail();
+		AasService aasService = getAasService(shell);
+
+		aasService.setThumbnail("dummyImgA.jpeg", "", createDummyImageIS_A());
+
+		InputStream actualThumbnailIs = new FileInputStream(aasService.getThumbnail());
+
+		InputStream expectedThumbnail = createDummyImageIS_A();
+
+		assertTrue(IOUtils.contentEquals(expectedThumbnail, actualThumbnailIs));
+	}
+
+	@Test
+	public void setThumbnail() throws FileNotFoundException, IOException {
+		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.create();
+		AasService aasService = getAasService(shell);
+
+		aasService.setThumbnail("dummyImgA.jpeg", "", createDummyImageIS_A());
+
+		InputStream actualThumbnailIs = new FileInputStream(aasService.getThumbnail());
+
+		InputStream expectedThumbnail = createDummyImageIS_A();
+
+		assertTrue(IOUtils.contentEquals(expectedThumbnail, actualThumbnailIs));
+	}
+
+	@Test
+	public void getThumbnail() throws IOException {
+		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.create();
+		AasService aasService = getAasService(shell);
+
+		aasService.setThumbnail("dummyImgA.jpeg", "", createDummyImageIS_A());
+
+		InputStream actualThumbnailIs = new FileInputStream(aasService.getThumbnail());
+
+		InputStream expectedThumbnail = createDummyImageIS_A();
+
+		assertTrue(IOUtils.contentEquals(expectedThumbnail, actualThumbnailIs));
+	}
+
+	@Test(expected = FileDoesNotExistException.class)
+	public void getNonExistingThumbnail() {
+		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.create();
+		AasService aasService = getAasService(shell);
+
+		aasService.getThumbnail();
+	}
+
+	@Test(expected = FileDoesNotExistException.class)
+	public void deleteThumbnail() throws FileNotFoundException, IOException {
+		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.createWithDefaultThumbnail();
+		AasService aasService = getAasService(shell);
+		
+		aasService.deleteThumbnail();
+
+		aasService.getThumbnail();
+	}
+
+	@Test(expected = FileDoesNotExistException.class)
+	public void deleteNonExistingThumbnail() throws IOException {
+		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.create();
+		AasService aasService = getAasService(shell);
+
+		aasService.deleteThumbnail();
+	}
+
 	private AssetInformation createDummyAssetInformation() {
 		AssetInformation assetInfo = new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
 				.globalAssetId("assetIDTestKey")
@@ -176,4 +255,19 @@ public abstract class AasServiceSuite {
 		return referenceList;
 	}
 
+	private static InputStream createDummyImageIS_A() throws IOException {
+		return createDummyImageIS(0x000000);
+	}
+
+	private static InputStream createDummyImageIS(int color) throws IOException {
+		BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+
+		image.setRGB(0, 0, 0x000000);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write(image, "jpeg", baos);
+
+		byte[] imageData = baos.toByteArray();
+		return new ByteArrayInputStream(imageData);
+	}
 }
