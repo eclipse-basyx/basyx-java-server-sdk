@@ -50,9 +50,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>
-				basyx.filerepository-backend-inmemory
-			</artifactId>
+			<artifactId>basyx.filerepository-backend-inmemory</artifactId>
 		</dependency>
 	</dependencies>
 </project>

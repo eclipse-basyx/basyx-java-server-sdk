@@ -166,4 +166,5 @@ public class ConnectedAasService implements AasService {
 
 		return e;
 	}
+
 }

@@ -53,6 +53,7 @@
 		<module>basyx.aasregistry-service-release-log-mongodb</module>
 		<module>basyx.aasregistry-service-release-kafka-mem</module>
 		<module>basyx.aasregistry-service-release-kafka-mongodb</module>
+		<module>basyx.aasregistry-feature-authorization</module>
 
 	</modules>
 
@@ -150,6 +151,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasregistry-service-inmemory-storage</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-feature-authorization</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

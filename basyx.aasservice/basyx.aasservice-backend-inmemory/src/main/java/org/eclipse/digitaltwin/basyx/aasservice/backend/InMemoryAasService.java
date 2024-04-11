@@ -148,17 +148,8 @@ public class InMemoryAasService implements AasService {
 	public File getThumbnail() {
 		Resource resource = getAssetInformation().getDefaultThumbnail();
 
-
 		try {
-			String filePath = resource.getPath();
-
-			InputStream fileIs = fileRepository.find(filePath);
-			byte[] content = fileIs.readAllBytes();
-			fileIs.close();
-
-			createOutputStream(filePath, content);
-
-			return new java.io.File(filePath);
+			return getResourceContent(resource);
 		} catch (NullPointerException e) {
 			throw new FileDoesNotExistException();
 		} catch (IOException e) {
@@ -202,6 +193,18 @@ public class InMemoryAasService implements AasService {
 		resource.setPath(filePath);
 		assetInformation.setDefaultThumbnail(resource);
 		return assetInformation;
+	}
+
+	private File getResourceContent(Resource resource) throws IOException {
+		String filePath = resource.getPath();
+
+		InputStream fileIs = fileRepository.find(filePath);
+		byte[] content = fileIs.readAllBytes();
+		fileIs.close();
+
+		createOutputStream(filePath, content);
+
+		return new java.io.File(filePath);
 	}
 
 }
