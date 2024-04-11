@@ -186,19 +186,19 @@ public class DefaultAASEnvironment implements AasEnvironment {
 		IdentifiableUploader<AssetAdministrationShell> uploader = new IdentifiableUploader<>(repo);
 		for (AssetAdministrationShell shell : environment.getAssetAdministrationShells()) {
 			boolean success = uploader.upload(shell);
-			setThumbnail(shell, relatedFiles);
+			setThumbnail(shell.getId(), relatedFiles);
 			logSuccess("shell", shell.getId(), success);
 		}
 	}
 
-	private void setThumbnail(AssetAdministrationShell shell, List<InMemoryFile> relatedFiles) {
+	private void setThumbnail(String shellId, List<InMemoryFile> relatedFiles) {
 		if (relatedFiles == null || relatedFiles.isEmpty())
 			return;
 
-		Resource thumbnailResource = aasRepository.getAssetInformation(shell.getId()).getDefaultThumbnail();
+		Resource thumbnailResource = aasRepository.getAssetInformation(shellId).getDefaultThumbnail();
 
 		if (thumbnailResource == null || !isValidPath(thumbnailResource.getPath()) || !isValidContentType(thumbnailResource.getContentType())) {
-			logger.info("Could not find thumbnail resource for aas {}", shell.getId());
+			logger.info("Could not find thumbnail resource for aas {}", shellId);
 			return;
 		}
 
@@ -208,7 +208,7 @@ public class DefaultAASEnvironment implements AasEnvironment {
 		Optional<InMemoryFile> optionalInMemoryFile = relatedFiles.stream().filter(file -> file.getPath().equals(thumbnailPath)).findAny();
 
 		if (optionalInMemoryFile.isEmpty()) {
-			logger.info("Thumbnail file specified at path {} for aas {} could not be found.", thumbnailPath, shell.getId());
+			logger.info("Thumbnail file specified at path {} for aas {} could not be found.", thumbnailPath, shellId);
 			return;
 		}
 
@@ -219,7 +219,7 @@ public class DefaultAASEnvironment implements AasEnvironment {
 			return;
 		}
 
-		aasRepository.setThumbnail(shell.getId(), getFileName(thumbnailPath), thumbnailContentType, new ByteArrayInputStream(thumbnailContent));
+		aasRepository.setThumbnail(shellId, getFileName(thumbnailPath), thumbnailContentType, new ByteArrayInputStream(thumbnailContent));
 	}
 
 	private boolean isValidContentType(String contentType) {
