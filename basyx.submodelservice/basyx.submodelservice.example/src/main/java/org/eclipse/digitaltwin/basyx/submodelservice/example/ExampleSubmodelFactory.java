@@ -74,7 +74,7 @@ public class ExampleSubmodelFactory {
 				.idShort("test")
 				.build();
 		Operation square = createInvokableOperation();
-		List<SubmodelElement> smeList = Arrays.asList(sme1, square);
+		List<SubmodelElement> smeList = new ArrayList<>(Arrays.asList(sme1, square));
 
 		Submodel submodel = new DefaultSubmodel.Builder().category("TestCategory")
 				.description(description)
