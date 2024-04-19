@@ -73,6 +73,8 @@ public class TestAasEnvironmentHTTP {
 	private static final String JSON_ENV_PATH = "testEnvironment.json";
 	private static final String XML_ENV_PATH = "testEnvironment.xml";
 	private static final String WRONGEXT_ENV_PATH = "testEnvironment.txt";
+	private static final String JSON_OPERATIONALDATA_ENV_PATH = "operationalDataEnvironment.json";
+	private static final String BASIC_EVENT_VALUE_ONLY = "BasicEventValueOnly.json";
 
 	private static ConfigurableApplicationContext appContext;
 	private static SubmodelRepository submodelRepo;
@@ -102,6 +104,17 @@ public class TestAasEnvironmentHTTP {
 		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), JSON_MIMETYPE);
 		String actual = BaSyxHttpTestUtils.getResponseAsString(response);
 		TestAASEnvironmentSerialization.validateJSON(actual, aasIdsIncluded, submodelIdsIncluded, includeConceptDescription);
+	}
+
+	@Test
+	public void testAASEnvironmentSerialization_ValueOnly() throws FileNotFoundException, IOException, ParseException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executePostRequest(HttpClients.createDefault(), createPostRequestWithFile(JSON_OPERATIONALDATA_ENV_PATH, JSON_MIMETYPE));
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+
+		response = executeGetOnURL(getOperationalDataValueOnlyURL(), JSON_MIMETYPE);
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+
+		BaSyxHttpTestUtils.assertSameJSONContent(BaSyxHttpTestUtils.readJSONStringFromClasspath(BASIC_EVENT_VALUE_ONLY), BaSyxHttpTestUtils.getResponseAsString(response));
 	}
 
 	@Test
@@ -263,6 +276,10 @@ public class TestAasEnvironmentHTTP {
 
 	private static String getAASXUploadURL() {
 		return getURL() + "/upload";
+	}
+
+	public static String getOperationalDataValueOnlyURL() {
+		return getURL() + "/submodels/d3d3LmV4YW1wbGUuY29tL2lkcy9zbS8yMjIyXzgwNDFfMTA0Ml84MDU3/$value";
 	}
 
 	public static String getSerializationURL(Collection<String> aasIds, Collection<String> submodelIds, boolean includeConceptDescription) {

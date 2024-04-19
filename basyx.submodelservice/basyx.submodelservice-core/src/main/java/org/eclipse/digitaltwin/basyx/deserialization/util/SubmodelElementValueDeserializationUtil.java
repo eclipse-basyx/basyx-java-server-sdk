@@ -31,11 +31,13 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.eclipse.digitaltwin.basyx.submodelservice.value.AnnotatedRelationshipElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.BasicEventValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.EntityValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.RangeValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.RelationshipElementValue;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -53,6 +55,10 @@ public class SubmodelElementValueDeserializationUtil {
 
 	public static boolean isTypeOfPropertyValue(JsonNode node) {
 		return node.isValueNode() && node.isTextual();
+	}
+
+	public static boolean isTypeOfBasicEventValue(JsonNode node) {
+		return isTypeOf(BasicEventValue.class, node);
 	}
 
 	public static boolean isTypeOfFileBlobValue(JsonNode node) {
