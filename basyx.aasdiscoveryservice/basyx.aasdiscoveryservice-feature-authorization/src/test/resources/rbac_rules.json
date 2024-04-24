@@ -1,0 +1,53 @@
+[
+  {
+    "role": "basyx-assetid-creator",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "aas-discovery-service",
+      "aasIds": "*",
+      "assetIds": [
+        {
+          "name": "*",
+          "value": "*"
+        }
+      ]
+    }
+  },
+  {
+    "role": "basyx-assetid-discoverer",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "aas-discovery-service",
+      "aasIds": "*",
+      "assetIds": [
+        {
+          "name": "*",
+          "value": "*"
+        }
+      ]
+    }
+  },
+  {
+    "role": "basyx-assetid-deleter",
+    "action": "DELETE",
+    "targetInformation": {
+      "@type": "aas-discovery-service",
+      "aasIds": "*",
+      "assetIds": [
+        {
+          "name": "*",
+          "value": "*"
+        }
+      ]
+    }
+  },
+  {
+    "role": "basyx-aas-discoverer",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "aas-discovery-service",
+      "aasIds": "*",
+      "assetIds": []
+    }
+  }
+]

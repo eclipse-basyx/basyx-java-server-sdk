@@ -25,58 +25,32 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.feature.authorization;
 
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory.InMemoryAasDiscoveryService;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory.InMemoryAasDiscoveryServiceFactory;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.feature.AasDiscoveryServiceFeature;
-import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 /**
- * Authorized Feature of the {@link AasDiscoveryService}
+ * Mocked variant of {@link InMemoryAasDiscoveryServiceFactory} that enables
+ * direct access to the underlying service.
  *
  * @author mateusmolina
  *
  */
-@Component
-@ConditionalOnExpression("#{${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false}}")
-@Order(0)
-public class AuthorizedAasDiscoveryServiceFeature implements AasDiscoveryServiceFeature {
+public class MockAasDiscoveryServiceFactory implements AasDiscoveryServiceFactory {
+	private final AasDiscoveryService aasDiscoveryService;
 
-	@Value("${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":}")
-	private boolean enabled;
-
-	private RbacPermissionResolver<AasDiscoveryServiceTargetInformation> permissionResolver;
-
-	@Autowired
-	public AuthorizedAasDiscoveryServiceFeature(RbacPermissionResolver<AasDiscoveryServiceTargetInformation> permissionResolver) {
-		this.permissionResolver = permissionResolver;
+	public MockAasDiscoveryServiceFactory() {
+		this.aasDiscoveryService = new InMemoryAasDiscoveryService();
 	}
 
 	@Override
-	public AasDiscoveryServiceFactory decorate(AasDiscoveryServiceFactory aasDiscoveryServiceFactory) {
-		return new AuthorizedAasDiscoveryServiceFactory(aasDiscoveryServiceFactory, permissionResolver);
+	public AasDiscoveryService create() {
+		return aasDiscoveryService;
 	}
 
-	@Override
-	public void initialize() {
+	AasDiscoveryService getAasDiscoveryService() {
+		return aasDiscoveryService;
 	}
 
-	@Override
-	public void cleanUp() {
- }
-
-	@Override
-	public String getName() {
-		return "Aas Dicovery Service Authorization";
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
 }
