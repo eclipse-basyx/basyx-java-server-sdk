@@ -41,11 +41,9 @@ import org.eclipse.digitaltwin.basyx.authorization.DummyCredentialStore;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 
@@ -55,11 +53,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Tests for {@link AuthorizedAasDiscoveryService} feature
+ * Test Suite for {@link AuthorizedAasDiscoveryService} feature
  * 
  * @author mateusmolina
  */
-public class TestAuthorizedAasDiscoveryService {
+public abstract class AuthorizedAasDiscoveryServiceSuite {
 
 	private static final DummyCredential INSUFFICIENT_CREDENTIAL = DummyCredentialStore.BASYX_UPDATER_CREDENTIAL;
 	private static String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
@@ -67,9 +65,6 @@ public class TestAuthorizedAasDiscoveryService {
 	private static String clientId = "basyx-client-api";
 
 	private static AccessTokenProvider tokenProvider;
-	private static ConfigurableApplicationContext appContext;
-	private static AasDiscoveryService unauthDiscoveryService;
-	private static ObjectMapper objectMapper;
 
 	private static final String AASID1 = "TestAasID1";
 	private static final String AASID2 = "TestAasID2";
@@ -79,34 +74,26 @@ public class TestAuthorizedAasDiscoveryService {
 	private static final String ASSETLINKS_SET2_PATH = "authorization/AssetLinks_Set2.json";
 	private static final String HEALTHOUTPUT_PATH = "authorization/HealthOutput.json";
 
-	@BeforeClass
-	public static void setUp() throws FileNotFoundException, IOException {
-		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
+	protected abstract ConfigurableApplicationContext getAppContext();
+	protected abstract AasDiscoveryService getUnauthDiscoveryService();
 
-		appContext = new SpringApplication(DummyAasDiscoveryServiceComponent.class).run(new String[] {});
-		
-		unauthDiscoveryService = appContext.getBean(MockAasDiscoveryServiceFactory.class).getAasDiscoveryService();
-		objectMapper = appContext.getBean(ObjectMapper.class);
-	}
-	
-	@AfterClass
-	public static void tearDown() {
-		appContext.close();
+	@BeforeClass
+	public static void setUpTokenProvider() throws FileNotFoundException, IOException {
+		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
 	}
 
 	@Before
 	public void initializeRepositories() throws Exception {
 		String expectedAssetIds = getStringFromFile(ASSETLINKS_SET1_PATH);
-		unauthDiscoveryService.createAllAssetLinksById(AASID1, createSpecificAssetIdsFromJson(expectedAssetIds));
+		getUnauthDiscoveryService().createAllAssetLinksById(AASID1, createSpecificAssetIdsFromJson(getAppContext().getBean(ObjectMapper.class), expectedAssetIds));
 	}
 
 	@After
 	public void reset() throws Exception {
 		try {
-			unauthDiscoveryService.deleteAllAssetLinksById(AASID1);
-			unauthDiscoveryService.deleteAllAssetLinksById(AASID2);
+			getUnauthDiscoveryService().deleteAllAssetLinksById(AASID1);
+			getUnauthDiscoveryService().deleteAllAssetLinksById(AASID2);
 		} catch (Exception e) {
-			
 		}
 	}
 
@@ -204,7 +191,7 @@ public class TestAuthorizedAasDiscoveryService {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath(fileName);
 	}
 
-	private static List<SpecificAssetId> createSpecificAssetIdsFromJson(String json) throws JsonMappingException, JsonProcessingException {
+	private static List<SpecificAssetId> createSpecificAssetIdsFromJson(ObjectMapper objectMapper, String json) throws JsonMappingException, JsonProcessingException {
 		return objectMapper.readValue(json, new TypeReference<List<SpecificAssetId>>() {});
 	}
 
