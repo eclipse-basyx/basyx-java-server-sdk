@@ -52,6 +52,12 @@ public class AasDiscoveryServiceTargetPermissionVerifier implements TargetPermis
 		List<String> rbacRuleShellIds = rbacRuleAasDiscoveryServiceTargetInformation.getAasIds();
 		List<AssetLink> rbacRuleAssetLinks = rbacRuleAasDiscoveryServiceTargetInformation.getAssetLinks();
 
+		if (rbacRuleShellIds == null || rbacRuleShellIds.isEmpty())
+			return areAssetLinksAllowed(rbacRuleAssetLinks, targetInformationAssetLinks);
+
+		if (rbacRuleAssetLinks == null || rbacRuleAssetLinks.isEmpty())
+			return areShellsAllowed(rbacRuleShellIds, targetInformationShellIds);
+
 		return areShellsAllowed(rbacRuleShellIds, targetInformationShellIds) && areAssetLinksAllowed(rbacRuleAssetLinks, targetInformationAssetLinks);
 	}
 

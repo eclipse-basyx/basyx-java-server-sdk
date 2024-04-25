@@ -5,12 +5,7 @@
     "targetInformation": {
       "@type": "aas-discovery-service",
       "aasIds": "*",
-      "assetIds": [
-        {
-          "name": "*",
-          "value": "*"
-        }
-      ]
+      "assetIds": []
     }
   },
   {
@@ -19,12 +14,7 @@
     "targetInformation": {
       "@type": "aas-discovery-service",
       "aasIds": "*",
-      "assetIds": [
-        {
-          "name": "*",
-          "value": "*"
-        }
-      ]
+      "assetIds": []
     }
   },
   {
@@ -33,12 +23,7 @@
     "targetInformation": {
       "@type": "aas-discovery-service",
       "aasIds": "*",
-      "assetIds": [
-        {
-          "name": "*",
-          "value": "*"
-        }
-      ]
+      "assetIds": []
     }
   },
   {
@@ -46,8 +31,13 @@
     "action": "READ",
     "targetInformation": {
       "@type": "aas-discovery-service",
-      "aasIds": "*",
-      "assetIds": []
+      "aasIds": null,
+      "assetIds": [
+        {
+          "name": "*",
+          "value": "*"
+        }
+      ]
     }
   }
 ]
