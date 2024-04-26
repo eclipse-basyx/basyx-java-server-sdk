@@ -57,7 +57,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 /**
  * Tests the behavior of {@link AasEnvironment} loader functionality
  * 
- * @author sonnenberg, mateusmolina
+ * @author sonnenberg, mateusmolina, danish
  *
  */
 public class AasEnvironmentLoaderTest {
@@ -161,4 +161,56 @@ public class AasEnvironmentLoaderTest {
 		String expectedMsg = new CollidingIdentifierException("sm1").getMessage();
 		Assert.assertThrows(expectedMsg, CollidingIdentifierException.class, () -> loadRepositories(List.of(TEST_ENVIRONMENT_SUBMODELS_ONLY_JSON, TEST_ENVIRONMENT_SUBMODELS_ONLY_JSON)));
 	}
+	
+	@Test
+	public void testWithResourceFile_NoExceptionsWhenReuploadAfterElementsAreRemoved() throws InvalidFormatException, IOException, DeserializationException {
+		AasEnvironment envLoader = new DefaultAASEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository);
+		
+		loadRepositoriesWithEnvironment(List.of(TEST_ENVIRONMENT_JSON), envLoader);
+
+		Assert.assertEquals(2, aasRepository.getAllAas(ALL).getResult().size());
+		Assert.assertEquals(2, submodelRepository.getAllSubmodels(ALL).getResult().size());
+		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(ALL).getResult().size());
+		
+		deleteElementsFromRepos();
+		
+		loadRepositoriesWithEnvironment(List.of(TEST_ENVIRONMENT_JSON), envLoader);
+		
+		Assert.assertEquals(2, aasRepository.getAllAas(ALL).getResult().size());
+		Assert.assertEquals(2, submodelRepository.getAllSubmodels(ALL).getResult().size());
+		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(ALL).getResult().size());
+	}
+	
+	@Test
+	public void testWithResourceFile_ExceptionIsThrownWhenReuploadWithExistingElements() throws InvalidFormatException, IOException, DeserializationException {
+		AasEnvironment envLoader = new DefaultAASEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository);
+		
+		loadRepositoriesWithEnvironment(List.of(TEST_ENVIRONMENT_JSON), envLoader);
+
+		Assert.assertEquals(2, aasRepository.getAllAas(ALL).getResult().size());
+		Assert.assertEquals(2, submodelRepository.getAllSubmodels(ALL).getResult().size());
+		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(ALL).getResult().size());
+		
+		String expectedMsg = new CollidingIdentifierException("aas1").getMessage();
+		Assert.assertThrows(expectedMsg, CollidingIdentifierException.class, () -> loadRepositoriesWithEnvironment(List.of(TEST_ENVIRONMENT_JSON), envLoader));
+	}
+	
+	private void loadRepositoriesWithEnvironment(List<String> pathsToLoad, AasEnvironment aasEnvironment) throws IOException, DeserializationException, InvalidFormatException {
+		
+		for (String path: pathsToLoad) {
+			File file = rLoader.getResource(path).getFile();
+			aasEnvironment.loadEnvironment(CompleteEnvironment.fromFile(file));
+		}
+	}
+	
+	private void deleteElementsFromRepos() {
+		aasRepository.getAllAas(ALL).getResult().stream().forEach(aas -> aasRepository.deleteAas(aas.getId()));
+		submodelRepository.getAllSubmodels(ALL).getResult().stream().forEach(sm -> submodelRepository.deleteSubmodel(sm.getId()));
+		conceptDescriptionRepository.getAllConceptDescriptions(ALL).getResult().stream().forEach(cd -> conceptDescriptionRepository.deleteConceptDescription(cd.getId()));
+		
+		Assert.assertEquals(0, aasRepository.getAllAas(ALL).getResult().size());
+		Assert.assertEquals(0, submodelRepository.getAllSubmodels(ALL).getResult().size());
+		Assert.assertEquals(0, conceptDescriptionRepository.getAllConceptDescriptions(ALL).getResult().size());
+	}
+	
 }
