@@ -82,12 +82,13 @@ public class DefaultAASEnvironment implements AasEnvironment {
 	private XmlSerializer xmlSerializer = new XmlSerializer();
 	private AASXSerializer aasxSerializer = new AASXSerializer();
 	private MetamodelCloneCreator cloneCreator = new MetamodelCloneCreator();
-	private IdentifiableAssertion checker = new IdentifiableAssertion();
-
+	private IdentifiableAssertion checker;
+	
 	public DefaultAASEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
 		this.aasRepository = aasRepository;
 		this.submodelRepository = submodelRepository;
 		this.conceptDescriptionRepository = conceptDescriptionRepository;
+		this.checker = new IdentifiableAssertion(aasRepository, submodelRepository);
 	}
 
 	@Override
