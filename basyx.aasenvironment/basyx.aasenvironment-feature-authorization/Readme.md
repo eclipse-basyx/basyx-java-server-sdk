@@ -79,7 +79,7 @@ Below is a reference table that shows which actions are used in what endpoints o
 |---------|--------------------|
 | READ    | GET /serialization |
 | CREATE  | POST /update       |
-| UPDATE  | -                  
-| DELETE  | -                  
+| UPDATE  | -                  |
+| DELETE  | -                  |
 | EXECUTE | -                  |
 
