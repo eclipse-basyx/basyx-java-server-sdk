@@ -28,7 +28,7 @@ spring.security.oauth2.resourceserver.jwt.issuer-uri= http://localhost:9096/real
 
 ## RBAC rule configuration
 
-For configuring RBAC rules, all the rbac rules should be configured inside a json file, the rules are defined as below:
+For configuring RBAC rules, all the rbac rules should be configured inside a json file, the rules are defined as below: 
 
 ```
 [
