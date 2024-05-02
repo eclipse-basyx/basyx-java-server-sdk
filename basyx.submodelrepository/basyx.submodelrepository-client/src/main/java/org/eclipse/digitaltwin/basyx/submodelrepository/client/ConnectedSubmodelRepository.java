@@ -38,7 +38,6 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
@@ -192,20 +191,14 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 		return getConnectedSubmodelService(submodelId).invokeOperation(idShortPath, input);
 	}
 
-	/**
-	 * Not Implemented
-	 */
 	@Override
 	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) throws ElementDoesNotExistException {
-		throw new FeatureNotImplementedException();
+		return new SubmodelValueOnly(getSubmodelByIdMetadata(submodelId).getSubmodelElements());
 	}
 
-	/**
-	 * Not Implemented
-	 */
 	@Override
 	public Submodel getSubmodelByIdMetadata(String submodelId) throws ElementDoesNotExistException {
-		throw new FeatureNotImplementedException();
+		return repoApi.getSubmodelById(submodelId, null, null);
 	}
 
 	@Override
@@ -241,7 +234,7 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
-		throw new FeatureNotImplementedException();
+		getConnectedSubmodelService(submodelId).patchSubmodelElements(submodelElementList);
 	}
 
 }

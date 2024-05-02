@@ -39,7 +39,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationRequest;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.OperationDelegationException;
@@ -49,6 +48,7 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.internal.SubmodelServiceApi;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.factory.SubmodelElementValueMapperFactory;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -61,6 +61,8 @@ public class ConnectedSubmodelService implements SubmodelService {
 
 	private SubmodelServiceApi serviceApi;
 
+	private final SubmodelElementValueMapperFactory submodelElementValueMapperFactory;
+
 	/**
 	 * 
 	 * @param submodelServiceUrl
@@ -69,6 +71,7 @@ public class ConnectedSubmodelService implements SubmodelService {
 	 */
 	public ConnectedSubmodelService(String submodelServiceUrl) {
 		this.serviceApi = new SubmodelServiceApi(submodelServiceUrl);
+		this.submodelElementValueMapperFactory = new SubmodelElementValueMapperFactory();
 	}
 
 	@Override
@@ -158,7 +161,7 @@ public class ConnectedSubmodelService implements SubmodelService {
 
 	@Override
 	public void patchSubmodelElements(List<SubmodelElement> submodelElementList) {
-		throw new FeatureNotImplementedException();
+		submodelElementList.forEach(this::patchSubmodelElement);
 	}
 
 	@Override
@@ -214,7 +217,11 @@ public class ConnectedSubmodelService implements SubmodelService {
 			return new NotInvokableException(idShortPath);
 
 		return mapExceptionSubmodelElementAccess(idShortPath, e);
+	}
 
+	private void patchSubmodelElement(SubmodelElement submodelElement) {
+		SubmodelElementValue seValue = submodelElementValueMapperFactory.create(submodelElement).getValue();
+		setSubmodelElementValue(submodelElement.getIdShort(), seValue);
 	}
 
 }
