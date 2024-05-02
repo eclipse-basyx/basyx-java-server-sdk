@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.channels.Channels;
@@ -38,7 +39,9 @@ import java.nio.channels.Pipe;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import javax.annotation.processing.Generated;
@@ -57,6 +60,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.Pair;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.http.description.ServiceDescription;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
+import org.springframework.util.MimeTypeUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -707,7 +711,7 @@ public class AssetAdministrationShellServiceApi {
 			if (localVarResponse.body() == null) {
 				return new ApiResponse<File>(localVarResponse.statusCode(), localVarResponse.headers().map(), null);
 			} else {
-				File tempFile = File.createTempFile("thumbnail", ".tmp");
+				File tempFile = File.createTempFile(buildUniqueFilename(), extractFileName(localVarResponse.headers()));
 				try (FileOutputStream out = new FileOutputStream(tempFile)) {
 					localVarResponse.body().transferTo(out);
 					return new ApiResponse<File>(localVarResponse.statusCode(), localVarResponse.headers().map(), tempFile);
@@ -1100,6 +1104,19 @@ public class AssetAdministrationShellServiceApi {
 			memberVarInterceptor.accept(localVarRequestBuilder);
 		}
 		return localVarRequestBuilder;
+	}
+
+	private static String extractFileName(HttpHeaders headers) {
+		Optional<String> contentType = headers.firstValue("Content-Type");
+		try {
+			return "." + MimeTypeUtils.parseMimeType(contentType.get()).getSubtype();
+		} catch (Exception e) {
+			return ".tmp";
+		}
+	}
+
+	private static String buildUniqueFilename() {
+		return UUID.randomUUID().toString();
 	}
 
 }

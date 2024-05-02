@@ -1475,6 +1475,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			}
 			return localVarRequestBuilder;
 		}
+
 		private static String extractFileName(HttpHeaders headers) {
 			Optional<String> contentType = headers.firstValue("Content-Type");
 			try {
