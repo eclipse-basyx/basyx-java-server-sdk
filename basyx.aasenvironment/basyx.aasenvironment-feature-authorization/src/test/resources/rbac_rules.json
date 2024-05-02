@@ -430,7 +430,7 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "*"
+      "aasIds": "*"
     }
   },
   {
@@ -506,7 +506,7 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "http://customer.com/aas/9175_7013_7091_9168"
+      "aasIds": "http://customer.com/aas/9175_7013_7091_9168"
     }
   },
   {
