@@ -7,10 +7,12 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 
 /**
  * Class containing a Dummy Shell for Unit testing
@@ -30,6 +32,11 @@ public class DummyAssetAdministrationShellFactory {
 				.build();
 	}
 
+	public static AssetAdministrationShell createWithDefaultThumbnail() {
+		return new DefaultAssetAdministrationShell.Builder().id("arbitrary")
+				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetId(SUBMODEL_ID).defaultThumbnail(buildDummyThumbnailResource()).build()).build();
+	}
+
 	/**
 	 * Add the Dummy SubmodelReference to the given aas
 	 * 
@@ -45,4 +52,9 @@ public class DummyAssetAdministrationShellFactory {
 		return new DefaultReference.Builder()
 				.keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(SUBMODEL_ID).build()).build();
 	}
+
+	private static Resource buildDummyThumbnailResource() {
+		return new DefaultResource.Builder().path("").contentType("").build();
+	}
+
 }

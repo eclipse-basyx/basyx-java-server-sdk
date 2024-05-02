@@ -33,6 +33,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AnnotatedRelationshipElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.BasicEventElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
 import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
@@ -45,6 +46,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.AnnotatedRelationshipElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.BasicEventValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.EntityValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
@@ -72,6 +74,7 @@ public class ValueMapperUtil {
             Map.entry(Range.class, RangeValue.class),
             Map.entry(MultiLanguageProperty.class, MultiLanguagePropertyValue.class),
             Map.entry(File.class, FileBlobValue.class),
+			Map.entry(BasicEventElement.class, BasicEventValue.class),
             Map.entry(Blob.class, FileBlobValue.class),
             Map.entry(Entity.class, EntityValue.class),
             Map.entry(ReferenceElement.class, ReferenceElementValue.class),

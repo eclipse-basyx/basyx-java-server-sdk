@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -79,6 +81,22 @@ public class AasRepositoryAasServiceWrapper implements AasService {
 	@Override
 	public AssetInformation getAssetInformation() {
 		return repoApi.getAssetInformation(aasId);
+	}
+
+	@Override
+	public File getThumbnail() {
+		return repoApi.getThumbnail(aasId);
+	}
+
+	@Override
+	public void setThumbnail(String fileName, String contentType, InputStream inputStream) {
+		repoApi.setThumbnail(aasId, fileName, contentType, inputStream);
+
+	}
+
+	@Override
+	public void deleteThumbnail() {
+		repoApi.deleteThumbnail(aasId);
 	}
 
 }

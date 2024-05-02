@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -139,6 +140,16 @@ public class TestPreconfiguration {
 
 		assertNotNull(submodel1);
 		assertNotNull(submodel2);
+	}
+
+	@Test
+	public void getThumbnail() throws IOException {
+		File file = aasRepo.getThumbnail("http://customer.com/aas/9175_7013_7091_9168");
+
+		InputStream expectedContent = getClass().getClassLoader().getResourceAsStream("testFiles/verwaltungsschale-detail-part1.png");
+		InputStream actualContent = new FileInputStream(file);
+
+		assertTrue(IOUtils.contentEquals(expectedContent, actualContent));
 	}
 
 	@Test

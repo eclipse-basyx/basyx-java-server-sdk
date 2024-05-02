@@ -73,6 +73,8 @@ public class TestAasEnvironmentHTTP {
 	private static final String JSON_ENV_PATH = "testEnvironment.json";
 	private static final String XML_ENV_PATH = "testEnvironment.xml";
 	private static final String WRONGEXT_ENV_PATH = "testEnvironment.txt";
+	private static final String JSON_OPERATIONALDATA_ENV_PATH = "operationalDataEnvironment.json";
+	private static final String BASIC_EVENT_VALUE_ONLY = "BasicEventValueOnly.json";
 
 	private static ConfigurableApplicationContext appContext;
 	private static SubmodelRepository submodelRepo;
@@ -96,41 +98,84 @@ public class TestAasEnvironmentHTTP {
 	@Test
 	public void testAASEnvironmentSertializationWithJSON() throws IOException, ParseException, DeserializationException {
 		boolean includeConceptDescription = true;
+		boolean aasIdsIncluded = true;
+		boolean submodelIdsIncluded = true;
 
 		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), JSON_MIMETYPE);
 		String actual = BaSyxHttpTestUtils.getResponseAsString(response);
-		TestAASEnvironmentSerialization.validateJSON(actual, includeConceptDescription);
+		TestAASEnvironmentSerialization.validateJSON(actual, aasIdsIncluded, submodelIdsIncluded, includeConceptDescription);
+	}
+
+	@Test
+	public void testAASEnvironmentSerialization_ValueOnly() throws FileNotFoundException, IOException, ParseException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executePostRequest(HttpClients.createDefault(), createPostRequestWithFile(JSON_OPERATIONALDATA_ENV_PATH, JSON_MIMETYPE));
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+
+		response = executeGetOnURL(getOperationalDataValueOnlyURL(), JSON_MIMETYPE);
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+
+		BaSyxHttpTestUtils.assertSameJSONContent(BaSyxHttpTestUtils.readJSONStringFromClasspath(BASIC_EVENT_VALUE_ONLY), BaSyxHttpTestUtils.getResponseAsString(response));
 	}
 
 	@Test
 	public void testAASEnvironmentSertializationWithXML() throws IOException, ParseException, DeserializationException {
 		boolean includeConceptDescription = true;
+		boolean aasIdsIncluded = true;
+		boolean submodelIdsIncluded = true;
 
 		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), XML_MIMETYPE);
 		String actual = BaSyxHttpTestUtils.getResponseAsString(response);
-		TestAASEnvironmentSerialization.validateXml(actual, includeConceptDescription);
+		TestAASEnvironmentSerialization.validateXml(actual, aasIdsIncluded, submodelIdsIncluded, includeConceptDescription);
 	}
 
 	@Test
 	public void testAASEnvironmentSertializationWithAASX() throws IOException, ParseException, DeserializationException, InvalidFormatException {
 		boolean includeConceptDescription = true;
+		boolean aasIdsIncluded = true;
+		boolean submodelIdsIncluded = true;
 
 		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), AASX_MIMETYPE);
 		assertEquals(HttpStatus.OK.value(), response.getCode());
 
-		TestAASEnvironmentSerialization.checkAASX(response.getEntity()
-				.getContent(), includeConceptDescription);
+		TestAASEnvironmentSerialization.checkAASX(response.getEntity().getContent(), aasIdsIncluded, submodelIdsIncluded, includeConceptDescription);
 	}
 
 	@Test
 	public void testAASEnvironmentSertializationWithAASXExcludeCD() throws IOException, ParseException, DeserializationException, InvalidFormatException {
 		boolean includeConceptDescription = false;
+		boolean aasIdsIncluded = true;
+		boolean submodelIdsIncluded = true;
 
 		CloseableHttpResponse response = executeGetOnURL(createSerializationURL(includeConceptDescription), AASX_MIMETYPE);
 		assertEquals(HttpStatus.OK.value(), response.getCode());
 
-		TestAASEnvironmentSerialization.checkAASX(response.getEntity()
-				.getContent(), includeConceptDescription);
+		TestAASEnvironmentSerialization.checkAASX(response.getEntity().getContent(), aasIdsIncluded, submodelIdsIncluded, includeConceptDescription);
+	}
+	
+	@Test
+	public void aasEnvironmentSertializationOnlyAasIds() throws IOException, ParseException, DeserializationException {
+		boolean includeConceptDescription = false;
+		boolean aasIdsIncluded = true;
+		boolean submodelIdsIncluded = false;
+
+		CloseableHttpResponse response = executeGetOnURL(getSerializationURLOnlyAas(createIdCollection(DummyAASEnvironmentComponent.AAS_TECHNICAL_DATA_ID, DummyAASEnvironmentComponent.AAS_OPERATIONAL_DATA_ID), includeConceptDescription), JSON_MIMETYPE);
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+		
+		String actual = BaSyxHttpTestUtils.getResponseAsString(response);
+		TestAASEnvironmentSerialization.validateJSON(actual, aasIdsIncluded, submodelIdsIncluded, includeConceptDescription);
+	}
+	
+	@Test
+	public void aasEnvironmentSertializationOnlySubmodelIds() throws IOException, ParseException, DeserializationException {
+		boolean includeConceptDescription = true;
+		boolean aasIdsIncluded = false;
+		boolean submodelIdsIncluded = true;
+
+		CloseableHttpResponse response = executeGetOnURL(getSerializationURLOnlySubmodels(createIdCollection(DummyAASEnvironmentComponent.SUBMODEL_OPERATIONAL_DATA_ID, DummyAASEnvironmentComponent.SUBMODEL_TECHNICAL_DATA_ID), includeConceptDescription), JSON_MIMETYPE);
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+		
+		String actual = BaSyxHttpTestUtils.getResponseAsString(response);
+		TestAASEnvironmentSerialization.validateJSON(actual, aasIdsIncluded, submodelIdsIncluded, includeConceptDescription);
 	}
 
 	@Test
@@ -233,11 +278,35 @@ public class TestAasEnvironmentHTTP {
 		return getURL() + "/upload";
 	}
 
+	public static String getOperationalDataValueOnlyURL() {
+		return getURL() + "/submodels/d3d3LmV4YW1wbGUuY29tL2lkcy9zbS8yMjIyXzgwNDFfMTA0Ml84MDU3/$value";
+	}
+
 	public static String getSerializationURL(Collection<String> aasIds, Collection<String> submodelIds, boolean includeConceptDescription) {
 		String aasIdsArrayString = createIdsArrayString(aasIds);
 		String submodelIdsArrayString = createIdsArrayString(submodelIds);
 
-		return getURL() + "/serialization?aasIds=" + aasIdsArrayString + "&submodelIds=" + submodelIdsArrayString + "&includeConceptDescriptions=" + includeConceptDescription;
+		return getURL() + "/serialization?" + getAasIdsParameter(aasIdsArrayString) + "&" + getSubmodelIdsParameter(submodelIdsArrayString) + "&includeConceptDescriptions=" + includeConceptDescription;
+	}
+	
+	private static String getSerializationURLOnlyAas(Collection<String> aasIds, boolean includeConceptDescription) {
+		String aasIdsArrayString = createIdsArrayString(aasIds);
+
+		return getURL() + "/serialization?" + getAasIdsParameter(aasIdsArrayString) + "&includeConceptDescriptions=" + includeConceptDescription;
+	}
+	
+	private static String getSerializationURLOnlySubmodels(Collection<String> submodelIds, boolean includeConceptDescription) {
+		String submodelIdsArrayString = createIdsArrayString(submodelIds);
+		
+		return getURL() + "/serialization?" + getSubmodelIdsParameter(submodelIdsArrayString) + "&includeConceptDescriptions=" + includeConceptDescription;
+	}
+	
+	private static String getAasIdsParameter(String aasIdsArrayString) {
+		return "aasIds=" + aasIdsArrayString;
+	}
+	
+	private static String getSubmodelIdsParameter(String submodelIdsArrayString) {
+		return "submodelIds=" + submodelIdsArrayString;
 	}
 
 	private static String createIdsArrayString(Collection<String> ids) {

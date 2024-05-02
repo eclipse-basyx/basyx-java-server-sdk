@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 the Eclipse BaSyx Authors
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -19,33 +19,28 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
+ * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
-/**
- * Provides a InMemorySubmodelServiceFactory for usage in the MongoDB Submodel
- * Repository backend.<br>
- * <br>
- * This is needed to ensure that the SubmodelServiceFeatures are processed
- * correctly when utilizing MongoDb
- * 
- * @author jungjan
- *
- */
-@Configuration
-@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-public class MongoDBSubmodelRepositoryConfiguration {
-	@Bean
-	public SubmodelServiceFactory getInMemorySubmodelServiceFactory(FileRepository fileRepository) {
-		return new InMemorySubmodelServiceFactory(fileRepository);
+public class BasicEventValue implements SubmodelElementValue {
+
+	private ReferenceValue observed;
+
+	@SuppressWarnings("unused")
+	private BasicEventValue() {
+		super();
 	}
+
+	public BasicEventValue(ReferenceValue observed) {
+		super();
+		this.observed = observed;
+	}
+
+	public ReferenceValue getObserved() {
+		return observed;
+	}
+
 }

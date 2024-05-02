@@ -49,7 +49,7 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 public class AasDescriptorFactory {
 
 	private static final String AAS_INTERFACE = "AAS-3.0";
-	private static final String AAS_REPOSITORY_PATH = "/shells";
+	private static final String AAS_REPOSITORY_PATH = "shells";
 	
 	private AssetAdministrationShell shell;
 	private String aasRepositoryURL;
