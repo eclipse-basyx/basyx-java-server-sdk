@@ -108,13 +108,7 @@ The `role` defines which role is allowed to perform the defined actions. The `ac
 
 ### Special Configuration Notes
 
-1. **Behavior for Null or Empty `aasIds` or `assetIds`**:
-   - When `aasIds` or `assetIds` in the `rbac_config.json` is null or empty, it signifies that the specific rule does not require filtering based on those identifiers.
-   - The wildcard `*` for `assetIds` must be inserted in both the `name` and `value` to indicate non-specific filtering for the `READ` endpoint on `/lookup/shells`.
-
-2. **Endpoint Specific Requirements**:
-   - The `READ` endpoint `GET /lookup/shells` requires a list of `assetIds` when specified; otherwise, a wildcard can be used.
-   - Other endpoints focused on actions like `CREATE`, `DELETE` primarily require `aasIds`. The `assetIds` can be null or empty, which implies no filtering based on asset identifiers.
+- The wildcard `*` for `assetIds` must be inserted in both the `name` and `value` to indicate non-specific filtering for the `READ` endpoint on `/lookup/shells`.
 
 ## Action Table for RBAC
 

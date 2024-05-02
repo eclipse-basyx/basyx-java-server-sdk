@@ -46,12 +46,12 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnExpression("#{${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false}}")
 public class AuthorizedAasDiscoveryServiceConfiguration {
 	@Bean
-	public TargetPermissionVerifier<AasDiscoveryServiceTargetInformation> getAasEnvironmentTargetPermissionVerifier() {
+	public TargetPermissionVerifier<AasDiscoveryServiceTargetInformation> geAasDiscoveryServiceTargetPermissionVerifier() {
 		return new AasDiscoveryServiceTargetPermissionVerifier();
 	}
 
 	@Bean
-	public RbacPermissionResolver<AasDiscoveryServiceTargetInformation> getAasEnvironmentPermissionResolver(RbacStorage rbacStorage, RoleProvider roleProvider,
+	public RbacPermissionResolver<AasDiscoveryServiceTargetInformation> getAasDiscoveryServicePermissionResolver(RbacStorage rbacStorage, RoleProvider roleProvider,
 			TargetPermissionVerifier<AasDiscoveryServiceTargetInformation> targetPermissionVerifier) {
 
 		return new SimpleRbacPermissionResolver<>(rbacStorage, roleProvider, targetPermissionVerifier);

@@ -130,6 +130,15 @@ public abstract class AuthorizedAasDiscoveryServiceSuite {
 	}
 
 	@Test
+	public void createAllAssetLinksById_withNoAuthorization() throws IOException {
+		String expectedAssetIds = getStringFromFile(ASSETLINKS_SET2_PATH);
+
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executePostOnURL(Endpoints.postAllAssetLinksById(AASID2_ENCODED), expectedAssetIds);
+
+		assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getCode());
+	}
+
+	@Test
 	public void getAllAssetLinkByIdUrl_withCorrectRoleAndPermission() throws IOException {
 		String accessToken = getToken(DummyCredentialStore.BASYX_ASSETID_DISCOVERER);
 
@@ -145,6 +154,13 @@ public abstract class AuthorizedAasDiscoveryServiceSuite {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeAuthorizedGetOnURL(Endpoints.getAllAssetLinkById(AASID1_ENCODED), accessToken);
 
 		assertEquals(HttpStatus.FORBIDDEN.value(), response.getCode());
+	}
+
+	@Test
+	public void getAllAssetLinkByIdUrl_withNoAuthorization() throws IOException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(Endpoints.getAllAssetLinkById(AASID1_ENCODED));
+
+		assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getCode());
 	}
 
 	@Test
@@ -164,6 +180,13 @@ public abstract class AuthorizedAasDiscoveryServiceSuite {
 
 		assertEquals(HttpStatus.FORBIDDEN.value(), response.getCode());
 	}
+	
+	@Test
+	public void getAllAasIdsByAssetLink_withNoAuthorization() throws IOException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(Endpoints.getAllAasIdsByAssetLink());
+		
+		assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getCode());
+	}
 
 	@Test
 	public void deleteAllAssetLinksById_withCorrectRoleAndPermission() throws IOException {
@@ -181,6 +204,13 @@ public abstract class AuthorizedAasDiscoveryServiceSuite {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeAuthorizedDeleteOnURL(Endpoints.deleteAllAssetLinksById(AASID1_ENCODED), accessToken);
 
 		assertEquals(HttpStatus.FORBIDDEN.value(), response.getCode());
+	}
+
+	@Test
+	public void deleteAllAssetLinksById_withNoAuthorization() throws IOException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeDeleteOnURL(Endpoints.deleteAllAssetLinksById(AASID1_ENCODED));
+
+		assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getCode());
 	}
 
 	private static String getToken(DummyCredential credential) {
