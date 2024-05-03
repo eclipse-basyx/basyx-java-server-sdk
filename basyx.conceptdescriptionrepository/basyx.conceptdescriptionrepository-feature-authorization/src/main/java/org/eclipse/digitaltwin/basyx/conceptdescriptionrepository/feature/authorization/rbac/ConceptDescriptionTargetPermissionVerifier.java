@@ -29,6 +29,8 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.authorization.ConceptDescriptionTargetInformation;
 
+import java.util.List;
+
 /**
  * Verifies the {@link ConceptDescriptionTargetInformation} against the {@link RbacRule}
  * 
@@ -40,11 +42,23 @@ public class ConceptDescriptionTargetPermissionVerifier implements TargetPermiss
 	
 	@Override
 	public boolean isVerified(RbacRule rbacRule, ConceptDescriptionTargetInformation targetInformation) {
-		String conceptDescriptionId = targetInformation.getConceptDescriptionId();
+		List<String> targetInformationConceptDescriptionIds = targetInformation.getConceptDescriptionIds();
 		
 		ConceptDescriptionTargetInformation rbacRuleConceptDescriptionTargetInformation = (ConceptDescriptionTargetInformation) rbacRule.getTargetInformation();
-		
-		return rbacRuleConceptDescriptionTargetInformation.getConceptDescriptionId().equals(ALL_ALLOWED_WILDCARD) || rbacRuleConceptDescriptionTargetInformation.getConceptDescriptionId().equals(conceptDescriptionId);
+
+		List<String> rbacRuleConceptDescriptionIds = rbacRuleConceptDescriptionTargetInformation.getConceptDescriptionIds();
+
+		return areConceptDescriptionsAllowed(rbacRuleConceptDescriptionIds, targetInformationConceptDescriptionIds);
+	}
+
+	private boolean areConceptDescriptionsAllowed(List<String> rbacRuleConceptDescriptionIds, List<String> targetInformationConceptDescriptionIds) {
+
+		return allConceptDescriptionsAllowed(rbacRuleConceptDescriptionIds) || rbacRuleConceptDescriptionIds.containsAll(targetInformationConceptDescriptionIds);
+	}
+
+	private boolean allConceptDescriptionsAllowed(List<String> rbacRuleShellIds) {
+
+		return rbacRuleShellIds.size() == 1 && rbacRuleShellIds.get(0).equals(ALL_ALLOWED_WILDCARD);
 	}
 
 }

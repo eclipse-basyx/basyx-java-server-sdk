@@ -28,7 +28,7 @@ spring.security.oauth2.resourceserver.jwt.issuer-uri= http://localhost:9096/real
 
 ## RBAC rule configuration
 
-For configuring RBAC rules, all the rbac rules should be configured inside a json file, the rules are defined as below:
+For configuring RBAC rules, all the rbac rules should be configured inside a json file, the rules are defined as below: 
 
 ```
 [
@@ -75,11 +75,11 @@ Note:
 
 Below is a reference table that shows which actions are used in what endpoints of the AasEnvironment:
 
-| Action  | Endpoint                                                                                                                                                                                                            |
-|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Action  | Endpoint           |
+|---------|--------------------|
 | READ    | GET /serialization |
-| CREATE  | -                                                                                                                                                                                                |
-| UPDATE  | -
-| DELETE  | -
-| EXECUTE | -                                                                                                                                                                                                                   |
+| CREATE  | POST /update       |
+| UPDATE  | -                  |
+| DELETE  | -                  |
+| EXECUTE | -                  |
 

@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.rbac;
 
+import java.util.List;
+
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.SubmodelTargetInformation;
@@ -41,15 +43,28 @@ public class SubmodelTargetPermissionVerifier implements TargetPermissionVerifie
 	@Override
 	public boolean isVerified(RbacRule rbacRule, SubmodelTargetInformation targetInformation) {
 		
-		String submodelId = targetInformation.getSubmodelId();
-		String submodelElementIdShortPath = targetInformation.getSubmodelElementIdShortPath();
+		List<String> targetInformationSubmodelIds = targetInformation.getSubmodelIds();
+		List<String> targetInformationSubmodelElementIdShortPath = targetInformation.getSubmodelElementIdShortPaths();
 		
 		SubmodelTargetInformation rbacRuleSubmodelTargetInformation = (SubmodelTargetInformation) rbacRule.getTargetInformation();
+		
+		List<String> rbacRuleSubmodelIds = rbacRuleSubmodelTargetInformation.getSubmodelIds();
+		List<String> rbacRuleSubmodelElementIdShortPath = rbacRuleSubmodelTargetInformation.getSubmodelElementIdShortPaths();
 
-		if (rbacRuleSubmodelTargetInformation.getSubmodelId().equals(ALL_ALLOWED_WILDCARD) || rbacRuleSubmodelTargetInformation.getSubmodelId().equals(submodelId))
-			return rbacRuleSubmodelTargetInformation.getSubmodelElementIdShortPath().equals(ALL_ALLOWED_WILDCARD) || rbacRuleSubmodelTargetInformation.getSubmodelElementIdShortPath().equals(submodelElementIdShortPath);
+		if (areElementsAllowed(rbacRuleSubmodelIds, targetInformationSubmodelIds))
+			return areElementsAllowed(rbacRuleSubmodelElementIdShortPath, targetInformationSubmodelElementIdShortPath);
 		
 		return false;
+	}
+	
+	private boolean areElementsAllowed(List<String> rbacRuleIds, List<String> targetInformationIds) {
+		
+		return allElementsAllowed(rbacRuleIds) || rbacRuleIds.containsAll(targetInformationIds);	
+	}
+	
+	private boolean allElementsAllowed(List<String> rbacRuleIds) {
+		
+		return rbacRuleIds.size() == 1 && rbacRuleIds.get(0).equals(ALL_ALLOWED_WILDCARD);
 	}
 
 }
