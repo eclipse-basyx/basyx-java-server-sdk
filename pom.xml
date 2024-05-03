@@ -275,7 +275,7 @@
 								</build>
 								<run>
 									<network>
-										<mode>host</mode>
+										<mode>bridge</mode>
 									</network>
 								</run>
 							</image>
