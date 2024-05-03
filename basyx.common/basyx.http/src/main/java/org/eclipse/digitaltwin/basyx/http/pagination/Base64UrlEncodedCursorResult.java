@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,42 +25,32 @@
 
 package org.eclipse.digitaltwin.basyx.http.pagination;
 
-import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Represents a Base64URL encoded cursor
- *
- * @author mateusmolina, despen
+ * A encoded implementation of CursorResult. To be used during deserialization.
+ * 
+ * @author mateusmolina
  *
  */
-public class Base64UrlEncodedCursor {
+public class Base64UrlEncodedCursorResult<T> extends CursorResult<T> {
 
-	private final String encodedCursor;
-	private final String decodedCursor;
+	private final Base64UrlEncodedCursor encodedCursor;
 
-	public Base64UrlEncodedCursor(String encodedCursor) {
-		this.encodedCursor = encodedCursor;
-		this.decodedCursor = encodedCursor == null ? null : Base64UrlEncoder.decode(encodedCursor);
+	@JsonCreator
+	public Base64UrlEncodedCursorResult(@JsonProperty("paging_metadata") PagedResultPagingMetadata pagingMetadata, @JsonProperty("result") T result) {
+		this(pagingMetadata == null ? null : new Base64UrlEncodedCursor(pagingMetadata.getCursor()), result);
 	}
 
-	public String getDecodedCursor() {
-		return decodedCursor;
+	public Base64UrlEncodedCursorResult(Base64UrlEncodedCursor base64UrlEncodedCursor, T result) {
+		super(base64UrlEncodedCursor == null ? null : base64UrlEncodedCursor.getDecodedCursor(), result);
+		encodedCursor = base64UrlEncodedCursor;
 	}
 
-	public String getEncodedCursor() {
+	public Base64UrlEncodedCursor getEncodedCursor() {
 		return encodedCursor;
-	}
-
-	@Override
-	public String toString() {
-		return "Base64UrlEncodedCursor [cursor=" + encodedCursor + "]";
-	}
-
-	public static Base64UrlEncodedCursor fromUnencodedCursor(String unencodedCursor) {
-		return new Base64UrlEncodedCursor(encodeCursor(unencodedCursor));
-	}
-
-	public static String encodeCursor(String unencodedCursor) {
-		return Base64UrlEncoder.encode(unencodedCursor);
 	}
 }

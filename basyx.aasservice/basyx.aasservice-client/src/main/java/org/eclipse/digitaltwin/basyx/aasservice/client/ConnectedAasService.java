@@ -37,16 +37,18 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.client.internal.AssetAdministrationShellServiceApi;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.springframework.http.HttpStatus;
 
 /**
  * Provides access to a Aas Service on a remote server - regardless if it is
  * hosted on a Aas Repository or standalone
  * 
- * @author schnicke
+ * @author schnicke, mateusmolina
  */
 public class ConnectedAasService implements AasService {
 
@@ -68,7 +70,8 @@ public class ConnectedAasService implements AasService {
 	@Override
 	public CursorResult<List<Reference>> getSubmodelReferences(PaginationInfo pInfo) throws ElementDoesNotExistException {
 		try {
-			return serviceApi.getAllSubmodelReferences(pInfo.getLimit(), pInfo.getCursor());
+			String encodedCursor = pInfo.getCursor() == null ? null : Base64UrlEncoder.encode(pInfo.getCursor());
+			return serviceApi.getAllSubmodelReferences(pInfo.getLimit(), encodedCursor);
 		} catch (ApiException e) {
 			throw mapAasAccess(e);
 		}
@@ -88,7 +91,7 @@ public class ConnectedAasService implements AasService {
 		try {
 			serviceApi.deleteSubmodelReferenceById(submodelId);
 		} catch (ApiException e) {
-			throw mapAasAccess(submodelId, e);
+			throw mapSubmodelAccess(submodelId, e);
 		}
 	}
 
@@ -110,13 +113,51 @@ public class ConnectedAasService implements AasService {
 		}
 	}
 
-	private RuntimeException mapAasAccess(String shellId, ApiException e) {
-		if (e.getCode() == HttpStatus.NOT_FOUND.value()) {
-			return new ElementDoesNotExistException(shellId);
+	@Override
+	public File getThumbnail() {
+		try {
+			return serviceApi.getThumbnail();
+		} catch (ApiException e) {
+			throw mapThumbnailAccess(e);
 		}
+	}
+
+	@Override
+	public void setThumbnail(String fileName, String contentType, InputStream inputStream) {
+		try {
+			serviceApi.putThumbnail(fileName, contentType, inputStream);
+		} catch (ApiException e) {
+			throw mapThumbnailAccess(e);
+		}
+
+	}
+
+	@Override
+	public void deleteThumbnail() {
+		try {
+			serviceApi.deleteThumbnail();
+		} catch (ApiException e) {
+			throw mapThumbnailAccess(e);
+		}
+	}
+
+	private RuntimeException mapThumbnailAccess(ApiException e) {
+		if (e.getCode() == HttpStatus.NOT_FOUND.value())
+			return new FileDoesNotExistException();
+
+		if (e.getCode() == HttpStatus.PRECONDITION_FAILED.value())
+			return new ElementNotAFileException();
 
 		return e;
 	}
+
+	private RuntimeException mapSubmodelAccess(String submodelId, ApiException e) {
+		if (e.getCode() == HttpStatus.NOT_FOUND.value())
+			return new ElementDoesNotExistException(submodelId);
+		
+		return e;
+	}
+
 
 	private RuntimeException mapAasAccess(ApiException e) {
 		if (e.getCode() == HttpStatus.NOT_FOUND.value()) {
@@ -126,20 +167,4 @@ public class ConnectedAasService implements AasService {
 		return e;
 	}
 
-	@Override
-	public File getThumbnail() {
-		throw new FeatureNotImplementedException();
-	}
-
-	@Override
-	public void setThumbnail(String fileName, String contentType, InputStream inputStream) {
-		throw new FeatureNotImplementedException();
-
-	}
-
-	@Override
-	public void deleteThumbnail() {
-		throw new FeatureNotImplementedException();
-
-	}
 }

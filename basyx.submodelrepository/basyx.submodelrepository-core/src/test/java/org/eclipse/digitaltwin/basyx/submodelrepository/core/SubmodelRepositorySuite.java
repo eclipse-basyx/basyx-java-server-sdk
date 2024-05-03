@@ -62,7 +62,7 @@ import org.junit.Test;
  *
  */
 public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
+	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(null, null);
 	private static final String EMPTY_ID = " ";
 	private static final String NULL_ID = null;
 

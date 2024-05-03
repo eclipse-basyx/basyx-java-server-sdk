@@ -30,13 +30,6 @@ public class CursorResult<T> {
 	private final String cursor;
 	private final T result;
 
-	// For deserialization
-	@SuppressWarnings("unused")
-	private CursorResult() {
-		this.result = null;
-		this.cursor = null;
-	}
-	
 	public CursorResult(String cursor, T result) {
 		this.cursor = cursor;
 		this.result = result;
