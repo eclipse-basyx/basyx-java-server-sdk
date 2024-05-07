@@ -26,20 +26,31 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 
-public class ConnectedBlob implements ConnectedSubmodelElement<FileBlobValue, Blob> {
+public class ConnectedBlob implements ConnectedSubmodelElement<byte[], Blob> {
 
-	@Override
-	public FileBlobValue getValue() {
-		// TODO Auto-generated method stub
-		return null;
+	private String submodelServiceUrl;
+	private String idShort;
+	private ConnectedSubmodelService service;
+
+	public ConnectedBlob(String submodelServiceUrl, String idShort) {
+		this.submodelServiceUrl = submodelServiceUrl;
+		this.idShort = idShort;
+		service = new ConnectedSubmodelService(submodelServiceUrl);
 	}
 
 	@Override
-	public void setValue(FileBlobValue value) {
-		// TODO Auto-generated method stub
+	public byte[] getValue() {
+		Blob blobElement = (Blob) service.getSubmodelElement(idShort);
+		return blobElement.getValue();
+	}
 
+	@Override
+	public void setValue(byte[] value) {
+		Blob blobElement = (Blob) service.getSubmodelElement(idShort);
+		blobElement.setValue(value);
+		service.updateSubmodelElement(idShort, blobElement);
 	}
 
 	@Override
