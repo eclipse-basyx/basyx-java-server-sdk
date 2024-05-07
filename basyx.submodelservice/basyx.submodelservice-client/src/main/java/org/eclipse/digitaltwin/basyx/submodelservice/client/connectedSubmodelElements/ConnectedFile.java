@@ -28,7 +28,7 @@ package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelEl
 import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 
-public class ConnectedBlob implements ConnectedSubmodelElement<FileBlobValue, Blob> {
+public class ConnectedFile implements ConnectedSubmodelElement<FileBlobValue, Blob> {
 
 	@Override
 	public FileBlobValue getValue() {
