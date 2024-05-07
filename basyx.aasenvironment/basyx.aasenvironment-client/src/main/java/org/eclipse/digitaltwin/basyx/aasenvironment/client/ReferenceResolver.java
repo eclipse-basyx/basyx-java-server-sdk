@@ -29,38 +29,23 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
-import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
 
 /**
- * Resolves an SubmodelDescriptor into a Submodel
+ * Resolves a list of {@link Reference} into relevant objects
  *
  * @author mateusmolina
  *
  */
-public class SubmodelDescriptorResolver {
+public class ReferenceResolver {
 
 	private final EndpointResolver endpointResolver;
 
-	public SubmodelDescriptorResolver(EndpointResolver endpointResolver) {
+	public ReferenceResolver(EndpointResolver endpointResolver) {
 		this.endpointResolver = endpointResolver;
 	}
 
-	public Submodel resolveSubmodelDescriptor(SubmodelDescriptor smDescriptor) {
-		String endpoint = endpointResolver.resolveEndpoint(resolveEndpointList(smDescriptor.getEndpoints()));
-
-		ConnectedSubmodelService smService = new ConnectedSubmodelService(endpoint);
-
-		return smService.getSubmodel();
-	}
-
-	public Reference deriveReferenceFromSubmodelDescriptor(SubmodelDescriptor smDescriptor) {
-		// TODO not implemented
-		return null;
-	}
-
-	private static List<String> resolveEndpointList(List<Endpoint> endpoints) {
-		return endpoints.stream().map(Endpoint::toUrlQueryString).toList();
+	public Submodel resolveSubmodelFromReferences(String smIdentifier, List<Reference> references) {
+		throw new FeatureNotImplementedException();
 	}
 }

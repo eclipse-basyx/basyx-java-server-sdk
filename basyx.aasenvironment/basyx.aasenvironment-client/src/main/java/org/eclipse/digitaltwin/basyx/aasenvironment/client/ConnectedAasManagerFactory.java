@@ -59,6 +59,8 @@ public class ConnectedAasManagerFactory {
 	private SubmodelDescriptorResolver smDescriptorResolver;
 	private SubmodelDescriptorFactory smDescriptorFactory;
 	
+	private ReferenceResolver referenceResolver;
+
 	public ConnectedAasManagerFactory(String aasRegistryBaseUrl, String aasRepositoryBaseUrl, String submodelRegistryBaseUrl, String submodelBaseRepositoryUrl) {
 		registryAndDiscoveryInterfaceApi = new RegistryAndDiscoveryInterfaceApi(aasRegistryBaseUrl);
 		connectedAasRepository = new ConnectedAasRepository(aasRegistryBaseUrl);
@@ -75,13 +77,16 @@ public class ConnectedAasManagerFactory {
 
 		aasDescriptorFactory = buildAasDescriptorFactory(aasRepositoryBaseUrl, objectMapper);
 		smDescriptorFactory = buildSmDescriptorFactory(aasRepositoryBaseUrl, objectMapper);
+
+		referenceResolver = new ReferenceResolver(endpointResolver);
 	}
 
 	public ConnectedAasManagerFactory() {
 	}
 
 	public ConnectedAasManager build() {
-		return new ConnectedAasManager(connectedAasRepository, registryAndDiscoveryInterfaceApi, connectedSubmodelRepository, submodelRegistryApi, aasDescriptorResolver, aasDescriptorFactory, smDescriptorResolver, smDescriptorFactory);
+		return new ConnectedAasManager(connectedAasRepository, registryAndDiscoveryInterfaceApi, connectedSubmodelRepository, submodelRegistryApi, aasDescriptorResolver, aasDescriptorFactory, smDescriptorResolver, smDescriptorFactory,
+				referenceResolver);
 	}
 
 	public void setConnectedAasRepository(ConnectedAasRepository connectedAasRepository) {
@@ -114,6 +119,10 @@ public class ConnectedAasManagerFactory {
 
 	public void setSmDescriptorFactory(SubmodelDescriptorFactory smDescriptorFactory) {
 		this.smDescriptorFactory = smDescriptorFactory;
+	}
+
+	public void setReferenceResolver(ReferenceResolver referenceResolver) {
+		this.referenceResolver = referenceResolver;
 	}
 
 	private static ObjectMapper buildObjectMapper() {

@@ -25,7 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
+import java.util.List;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
@@ -33,6 +36,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.SubmodelDescriptorFactory;
 
@@ -56,12 +60,14 @@ public class ConnectedAasManager implements AasManager {
 	private final SubmodelDescriptorResolver smDescriptorResolver;
 	private final SubmodelDescriptorFactory smDescriptorFactory;
 
+	private final ReferenceResolver referenceResolver;
+
 	public static ConnectedAasManager fromUrls(String aasRegistryBaseUrl, String aasRepositoryBaseUrl, String submodelRegistryBaseUrl, String submodelBaseRepositoryUrl) {
 		return new ConnectedAasManagerFactory(aasRegistryBaseUrl, aasRepositoryBaseUrl, submodelRegistryBaseUrl, submodelBaseRepositoryUrl).build();
 	}
 
 	public ConnectedAasManager(ConnectedAasRepository aasRepository, RegistryAndDiscoveryInterfaceApi aasRegistryApi, ConnectedSubmodelRepository smRepository, SubmodelRegistryApi smRegistryApi,
-			AasDescriptorResolver aasDescriptorResolver, AasDescriptorFactory aasDescriptorFactory, SubmodelDescriptorResolver smDescriptorResolver, SubmodelDescriptorFactory smDescriptorFactory) {
+			AasDescriptorResolver aasDescriptorResolver, AasDescriptorFactory aasDescriptorFactory, SubmodelDescriptorResolver smDescriptorResolver, SubmodelDescriptorFactory smDescriptorFactory, ReferenceResolver referenceResolver) {
 		this.aasRepository = aasRepository;
 		this.aasRegistryApi = aasRegistryApi;
 		this.smRepository = smRepository;
@@ -70,16 +76,16 @@ public class ConnectedAasManager implements AasManager {
 		this.aasDescriptorFactory = aasDescriptorFactory;
 		this.smDescriptorResolver = smDescriptorResolver;
 		this.smDescriptorFactory = smDescriptorFactory;
+		this.referenceResolver = referenceResolver;
 	}
 
 	@Override
 	public AssetAdministrationShell getAas(String identifier) {
 		try {
 			AssetAdministrationShellDescriptor descriptor = aasRegistryApi.getAssetAdministrationShellDescriptorById(identifier);
-
 			return aasDescriptorResolver.resolveAasDescriptor(descriptor);
-
 		} catch (org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -87,13 +93,28 @@ public class ConnectedAasManager implements AasManager {
 
 	@Override
 	public Submodel getSubmodel(String identifier) {
-		// TODO Auto-generated method stub
+		try {
+			SubmodelDescriptor descriptor = smRegistryApi.getSubmodelDescriptorById(identifier);
+			return smDescriptorResolver.resolveSubmodelDescriptor(descriptor);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public Submodel getSubmodelOfAas(String aasIdentifier, String smIdentifier) {
-		// TODO Auto-generated method stub
+		try {
+			AssetAdministrationShellDescriptor aasDescriptor = aasRegistryApi.getAssetAdministrationShellDescriptorById(aasIdentifier);
+			AssetAdministrationShell aas = aasDescriptorResolver.resolveAasDescriptor(aasDescriptor);
+			List<Reference> references = aas.getSubmodels();
+
+			return referenceResolver.resolveSubmodelFromReferences(smIdentifier, references);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 
@@ -101,42 +122,49 @@ public class ConnectedAasManager implements AasManager {
 	public void deleteAas(String identifier) {
 		try {
 			aasRegistryApi.deleteAssetAdministrationShellDescriptorById(identifier);
+			aasRepository.deleteAas(identifier);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		aasRepository.deleteAas(identifier);
-
 	}
 
 	@Override
 	public void deleteSubmodelOfAas(String aasIdentifier, String smIdentifier) {
 		try {
 			smRegistryApi.deleteSubmodelDescriptorById(smIdentifier);
+			aasRepository.removeSubmodelReference(aasIdentifier, smIdentifier);
+			smRepository.deleteSubmodel(smIdentifier);
 		} catch (ApiException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		aasRepository.removeSubmodelReference(aasIdentifier, smIdentifier);
-
-		smRepository.deleteSubmodel(smIdentifier);
-
 	}
 
 	@Override
 	public void createAas(AssetAdministrationShell aas) {
 		aasRepository.createAas(aas);
-
-//		aasRegistryApi.postAssetAdministrationShellDescriptor(aas);
-
+		AssetAdministrationShellDescriptor descriptor = aasDescriptorFactory.create(aas);
+		try {
+			aasRegistryApi.postAssetAdministrationShellDescriptor(descriptor);
+		} catch (org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void createSubmodelInAas(String aasIdentifier, Submodel submodel) {
-		// TODO Auto-generated method stub
+		smRepository.createSubmodel(submodel);
+		SubmodelDescriptor descriptor = smDescriptorFactory.create(submodel);
+		try {
+			smRegistryApi.postSubmodelDescriptor(descriptor);
+			Reference ref = smDescriptorResolver.deriveReferenceFromSubmodelDescriptor(descriptor);
+			aasRepository.addSubmodelReference(aasIdentifier, ref);
+		} catch (ApiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-	
+
 }
 

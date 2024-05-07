@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -66,6 +67,8 @@ public class TestConnectedAasManager {
 	private SubmodelDescriptorResolver smDescriptorResolver;
 	private SubmodelDescriptorFactory smDescriptorFactory;
 
+	private ReferenceResolver referenceResolver;
+
 	@Before
 	public void setupRepositories() {
 		connectedAasRepository = mock(ConnectedAasRepository.class);
@@ -76,6 +79,7 @@ public class TestConnectedAasManager {
 		aasDescriptorFactory = mock(AasDescriptorFactory.class);
 		smDescriptorResolver = mock(SubmodelDescriptorResolver.class);
 		smDescriptorFactory = mock(SubmodelDescriptorFactory.class);
+		referenceResolver = mock(ReferenceResolver.class);
 
 		ConnectedAasManagerFactory factory = new ConnectedAasManagerFactory();
 		factory.setConnectedAasRepository(connectedAasRepository);
@@ -86,6 +90,7 @@ public class TestConnectedAasManager {
 		factory.setAasDescriptorResolver(aasDescriptorResolver);
 		factory.setSmDescriptorResolver(smDescriptorResolver);
 		factory.setSmDescriptorFactory(smDescriptorFactory);
+		factory.setReferenceResolver(referenceResolver);
 
 		aasManager = factory.build();
 	}
@@ -118,7 +123,7 @@ public class TestConnectedAasManager {
 
 		inOrder.verify(connectedSmRepository, times(1)).createSubmodel(expectedSm);
 		inOrder.verify(smRegistryApi, times(1)).postSubmodelDescriptor(expectedDescriptor);
-		inOrder.verify(connectedAasRepository, times(1)).addSubmodelReference(TestFixture.AAS_POS1_ID, any());
+		inOrder.verify(connectedAasRepository, times(1)).addSubmodelReference(eq(TestFixture.AAS_POS1_ID), any());
 	}
 
 	@Test
@@ -176,8 +181,7 @@ public class TestConnectedAasManager {
 
 		when(aasRegistryApi.getAssetAdministrationShellDescriptorById(TestFixture.AAS_POS1_ID)).thenReturn(expectedAasDescriptor);
 		when(aasDescriptorResolver.resolveAasDescriptor(expectedAasDescriptor)).thenReturn(expectedAas);
-		when(smRegistryApi.getSubmodelDescriptorById(TestFixture.SM_POS1_ID)).thenReturn(expectedSmDescriptor);
-		when(smDescriptorResolver.resolveSubmodelDescriptor(expectedSmDescriptor)).thenReturn(expectedSm);
+		when(referenceResolver.resolveSubmodelFromReferences(eq(TestFixture.SM_POS1_ID), any())).thenReturn(expectedSm);
 
 		Submodel actualSm = aasManager.getSubmodelOfAas(TestFixture.AAS_POS1_ID, TestFixture.SM_POS1_ID);
 
