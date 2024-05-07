@@ -28,9 +28,13 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AasDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.SubmodelDescriptorFactory;
 
 /**
  * Connected variant of the {@link AasManager}
@@ -42,23 +46,42 @@ public class ConnectedAasManager implements AasManager {
 
 	private final ConnectedAasRepository aasRepository;
 	private final ConnectedSubmodelRepository smRepository;
+
 	private final RegistryAndDiscoveryInterfaceApi aasRegistryApi;
 	private final SubmodelRegistryApi smRegistryApi;
 
-	public ConnectedAasManager(String aasRepositoryUrl, String aasRegistryUrl, String smRepositoryUrl, String smRegistryUrl) {
-		this(new ConnectedAasRepository(aasRepositoryUrl), new RegistryAndDiscoveryInterfaceApi(aasRegistryUrl), new ConnectedSubmodelRepository(smRepositoryUrl), new SubmodelRegistryApi(smRegistryUrl));
+	private final AasDescriptorResolver aasDescriptorResolver;
+	private final AasDescriptorFactory aasDescriptorFactory;
+
+	private final SubmodelDescriptorResolver smDescriptorResolver;
+	private final SubmodelDescriptorFactory smDescriptorFactory;
+
+	public static ConnectedAasManager fromUrls(String aasRegistryBaseUrl, String aasRepositoryBaseUrl, String submodelRegistryBaseUrl, String submodelBaseRepositoryUrl) {
+		return new ConnectedAasManagerFactory(aasRegistryBaseUrl, aasRepositoryBaseUrl, submodelRegistryBaseUrl, submodelBaseRepositoryUrl).build();
 	}
 
-	public ConnectedAasManager(ConnectedAasRepository aasRepository, RegistryAndDiscoveryInterfaceApi aasRegistryApi, ConnectedSubmodelRepository smRepository, SubmodelRegistryApi smRegistryApi) {
+	public ConnectedAasManager(ConnectedAasRepository aasRepository, RegistryAndDiscoveryInterfaceApi aasRegistryApi, ConnectedSubmodelRepository smRepository, SubmodelRegistryApi smRegistryApi,
+			AasDescriptorResolver aasDescriptorResolver, AasDescriptorFactory aasDescriptorFactory, SubmodelDescriptorResolver smDescriptorResolver, SubmodelDescriptorFactory smDescriptorFactory) {
 		this.aasRepository = aasRepository;
 		this.aasRegistryApi = aasRegistryApi;
 		this.smRepository = smRepository;
 		this.smRegistryApi = smRegistryApi;
+		this.aasDescriptorResolver = aasDescriptorResolver;
+		this.aasDescriptorFactory = aasDescriptorFactory;
+		this.smDescriptorResolver = smDescriptorResolver;
+		this.smDescriptorFactory = smDescriptorFactory;
 	}
 
 	@Override
 	public AssetAdministrationShell getAas(String identifier) {
-		// TODO Auto-generated method stub
+		try {
+			AssetAdministrationShellDescriptor descriptor = aasRegistryApi.getAssetAdministrationShellDescriptorById(identifier);
+
+			return aasDescriptorResolver.resolveAasDescriptor(descriptor);
+
+		} catch (org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
@@ -76,26 +99,44 @@ public class ConnectedAasManager implements AasManager {
 
 	@Override
 	public void deleteAas(String identifier) {
-		// TODO Auto-generated method stub
+		try {
+			aasRegistryApi.deleteAssetAdministrationShellDescriptorById(identifier);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		aasRepository.deleteAas(identifier);
 
 	}
 
 	@Override
 	public void deleteSubmodelOfAas(String aasIdentifier, String smIdentifier) {
-		// TODO Auto-generated method stub
+		try {
+			smRegistryApi.deleteSubmodelDescriptorById(smIdentifier);
+		} catch (ApiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		aasRepository.removeSubmodelReference(aasIdentifier, smIdentifier);
+
+		smRepository.deleteSubmodel(smIdentifier);
 
 	}
 
 	@Override
 	public void createAas(AssetAdministrationShell aas) {
-		// TODO Auto-generated method stub
+		aasRepository.createAas(aas);
+
+//		aasRegistryApi.postAssetAdministrationShellDescriptor(aas);
 
 	}
 
 	@Override
-	public void createSubmodelOfAas(String aasIdentifier, Submodel submodel) {
+	public void createSubmodelInAas(String aasIdentifier, Submodel submodel) {
 		// TODO Auto-generated method stub
-
 	}
+	
 }
 

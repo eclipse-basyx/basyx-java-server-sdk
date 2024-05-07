@@ -38,7 +38,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 public interface AasManager {
 
 	/**
-	 * Retrieves an AAS by its identifier.
+	 * Retrieves an AAS in an AAS registry by its identifier.
 	 *
 	 * @param identifier
 	 *            The identifier of the AAS to retrieve.
@@ -47,7 +47,7 @@ public interface AasManager {
 	public AssetAdministrationShell getAas(String identifier);
 
 	/**
-	 * Retrieves a submodel by its identifier.
+	 * Retrieves a Submodel in a Submodel registry by its identifier.
 	 *
 	 * @param identifier
 	 *            The identifier of the submodel to retrieve.
@@ -56,7 +56,7 @@ public interface AasManager {
 	public Submodel getSubmodel(String identifier);
 
 	/**
-	 * Retrieves a submodel associated with a specified AAS.
+	 * Retrieves a Submodel associated with a specified AAS.
 	 *
 	 * @param aasIdentifier
 	 *            The identifier of the AAS.
@@ -100,7 +100,7 @@ public interface AasManager {
 	 * @param submodel
 	 *            The Submodel object to create under the specified AAS.
 	 */
-	public void createSubmodelOfAas(String aasIdentifier, Submodel submodel);
+	public void createSubmodelInAas(String aasIdentifier, Submodel submodel);
 
 
 }
