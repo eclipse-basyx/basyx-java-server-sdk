@@ -25,27 +25,18 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
-import java.util.List;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Resolves a list of {@link Reference} into relevant objects
+ * DummyAasEnvironmentComponent
  *
  * @author mateusmolina
  *
  */
-public class ReferenceResolver {
-
-	private final EndpointResolver endpointResolver;
-
-	public ReferenceResolver(EndpointResolver endpointResolver) {
-		this.endpointResolver = endpointResolver;
-	}
-
-	public Submodel resolveSubmodelFromReferences(String smIdentifier, List<Reference> references) {
-		throw new FeatureNotImplementedException();
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
+public class DummyAasEnvironmentComponent {
+	public static void main(String[] args) {
+		SpringApplication.run(DummyAasEnvironmentComponent.class, args);
 	}
 }

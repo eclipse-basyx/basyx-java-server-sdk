@@ -23,38 +23,30 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.client;
+package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
 
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
-import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
 
 /**
- * Resolves an AasDescriptor into an AssetAdministrationShell
+ * Resolves a list of {@link Reference} into relevant objects
  *
  * @author mateusmolina
  *
  */
-public class AasDescriptorResolver {
+public class ReferenceResolver {
 
 	private final EndpointResolver endpointResolver;
 
-	public AasDescriptorResolver(EndpointResolver endpointResolver) {
+	public ReferenceResolver(EndpointResolver endpointResolver) {
 		this.endpointResolver = endpointResolver;
 	}
 
-	public AssetAdministrationShell resolveAasDescriptor(AssetAdministrationShellDescriptor aasDescriptor) {
-		String endpoint = endpointResolver.resolveEndpoint(resolveEndpointList(aasDescriptor.getEndpoints()));
-
-		ConnectedAasService aasService = new ConnectedAasService(endpoint);
-
-		return aasService.getAAS();
+	public Submodel resolveSubmodelFromReferences(String smIdentifier, List<Reference> references) {
+		throw new FeatureNotImplementedException();
 	}
 
-	private static List<String> resolveEndpointList(List<Endpoint> endpoints) {
-		return endpoints.stream().map(Endpoint::toUrlQueryString).toList();
-	}
 }

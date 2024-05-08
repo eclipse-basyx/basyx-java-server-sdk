@@ -23,44 +23,21 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.client;
-
-import java.util.List;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
-import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
+package org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions;
 
 /**
- * Resolves an SubmodelDescriptor into a Submodel
+ * Indicates a failure in finding a valid endpoint from a list of endpoints
  *
  * @author mateusmolina
  *
  */
-public class SubmodelDescriptorResolver {
-
-	private final EndpointResolver endpointResolver;
-
-	public SubmodelDescriptorResolver(EndpointResolver endpointResolver) {
-		this.endpointResolver = endpointResolver;
+@SuppressWarnings("serial")
+public class NoValidEndpointFoundException extends RuntimeException {
+	public NoValidEndpointFoundException(String endpoints) {
+		super(getMessage(endpoints));
 	}
 
-	public Submodel resolveSubmodelDescriptor(SubmodelDescriptor smDescriptor) {
-		String endpoint = endpointResolver.resolveEndpoint(resolveEndpointList(smDescriptor.getEndpoints()));
-
-		ConnectedSubmodelService smService = new ConnectedSubmodelService(endpoint);
-
-		return smService.getSubmodel();
-	}
-
-	public Reference deriveReferenceFromSubmodelDescriptor(SubmodelDescriptor smDescriptor) {
-		// TODO not implemented
-		return null;
-	}
-
-	private static List<String> resolveEndpointList(List<Endpoint> endpoints) {
-		return endpoints.stream().map(Endpoint::toUrlQueryString).toList();
+	public static String getMessage(String endpoints) {
+		return "No valid endpoint found in " + endpoints;
 	}
 }

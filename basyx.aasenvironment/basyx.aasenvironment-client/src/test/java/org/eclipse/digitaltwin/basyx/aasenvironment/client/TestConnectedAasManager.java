@@ -35,6 +35,10 @@ import static org.mockito.Mockito.when;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.NoValidEndpointFoundException;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.AasDescriptorResolver;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.ReferenceResolver;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.SubmodelDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
@@ -69,6 +73,8 @@ public class TestConnectedAasManager {
 
 	private ReferenceResolver referenceResolver;
 
+	private static final TestFixture FIXTURE = new TestFixture();
+
 	@Before
 	public void setupRepositories() {
 		connectedAasRepository = mock(ConnectedAasRepository.class);
@@ -97,8 +103,8 @@ public class TestConnectedAasManager {
 
 	@Test
 	public void createAas() throws ApiException {
-		AssetAdministrationShell expectedAas = TestFixture.buildAasPos1();
-		AssetAdministrationShellDescriptor expectedDescriptor = TestFixture.buildAasPos1Descriptor();
+		AssetAdministrationShell expectedAas = FIXTURE.buildAasPos1();
+		AssetAdministrationShellDescriptor expectedDescriptor = FIXTURE.buildAasPos1Descriptor();
 
 		when(aasDescriptorFactory.create(expectedAas)).thenReturn(expectedDescriptor);
 
@@ -112,8 +118,8 @@ public class TestConnectedAasManager {
 
 	@Test
 	public void createSubmodelInAas() throws Exception {
-		Submodel expectedSm = TestFixture.buildSmPos1();
-		SubmodelDescriptor expectedDescriptor = TestFixture.buildSmPos1Descriptor();
+		Submodel expectedSm = FIXTURE.buildSmPos1();
+		SubmodelDescriptor expectedDescriptor = FIXTURE.buildSmPos1Descriptor();
 
 		when(smDescriptorFactory.create(expectedSm)).thenReturn(expectedDescriptor);
 
@@ -148,9 +154,9 @@ public class TestConnectedAasManager {
 	}
 
 	@Test
-	public void getAas() throws ApiException {
-		AssetAdministrationShellDescriptor expectedDescriptor = TestFixture.buildAasPos1Descriptor();
-		AssetAdministrationShell expectedAas = TestFixture.buildAasPos1();
+	public void getAas() throws ApiException, NoValidEndpointFoundException {
+		AssetAdministrationShellDescriptor expectedDescriptor = FIXTURE.buildAasPos1Descriptor();
+		AssetAdministrationShell expectedAas = FIXTURE.buildAasPos1();
 		
 		when(aasRegistryApi.getAssetAdministrationShellDescriptorById(TestFixture.AAS_POS1_ID)).thenReturn(expectedDescriptor);
 		when(aasDescriptorResolver.resolveAasDescriptor(expectedDescriptor)).thenReturn(expectedAas);
@@ -161,8 +167,8 @@ public class TestConnectedAasManager {
 
 	@Test
 	public void getSubmodel() throws Exception {
-		SubmodelDescriptor expectedDescriptor = TestFixture.buildSmPos1Descriptor();
-		Submodel expectedSm = TestFixture.buildSmPos1();
+		SubmodelDescriptor expectedDescriptor = FIXTURE.buildSmPos1Descriptor();
+		Submodel expectedSm = FIXTURE.buildSmPos1();
 
 		when(smRegistryApi.getSubmodelDescriptorById(TestFixture.SM_POS1_ID)).thenReturn(expectedDescriptor);
 		when(smDescriptorResolver.resolveSubmodelDescriptor(expectedDescriptor)).thenReturn(expectedSm);
@@ -174,10 +180,9 @@ public class TestConnectedAasManager {
 
 	@Test
 	public void getSubmodelOfAas() throws Exception {
-		AssetAdministrationShellDescriptor expectedAasDescriptor = TestFixture.buildAasPos1Descriptor();
-		AssetAdministrationShell expectedAas = TestFixture.buildAasPos1();
-		SubmodelDescriptor expectedSmDescriptor = TestFixture.buildSmPos1Descriptor();
-		Submodel expectedSm = TestFixture.buildSmPos1();
+		AssetAdministrationShellDescriptor expectedAasDescriptor = FIXTURE.buildAasPos1Descriptor();
+		AssetAdministrationShell expectedAas = FIXTURE.buildAasPos1();
+		Submodel expectedSm = FIXTURE.buildSmPos1();
 
 		when(aasRegistryApi.getAssetAdministrationShellDescriptorById(TestFixture.AAS_POS1_ID)).thenReturn(expectedAasDescriptor);
 		when(aasDescriptorResolver.resolveAasDescriptor(expectedAasDescriptor)).thenReturn(expectedAas);

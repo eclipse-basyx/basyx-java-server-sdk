@@ -32,50 +32,82 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShe
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.DummyAasDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.DummySubmodelDescriptorFactory;
 
 /**
- * TestFixture
+ * Test fixture for {@link ConnectedAasManager} and related Components
  *
  * @author mateusmolina
  *
  */
 public class TestFixture {
 	public static final String AAS_PRE1_ID = "aasPre1";
+	public static final String AAS_PRE1_ID_ENCODED = Base64UrlEncoder.encode(AAS_PRE1_ID);
+	public static final String AAS_PRE1_IDSHORT = "aasPre1IdShort";
+	public static final String AAS_PRE1_GLOBALASSETID = "globalAssetIdPre1";
+
 	public static final String SM_PRE1_ID = "smPre1";
+	public static final String SM_PRE1_IDSHORT = "smPre1IdShort";
+	public static final String SM_PRE1_ID_ENCODED = Base64UrlEncoder.encode(SM_PRE1_ID);
+
 
 	public static final String AAS_POS1_ID = "aasPos1";
-	public static final String SM_POS1_ID = "smPos1";
+	public static final String AAS_POS1_ID_ENCODED = Base64UrlEncoder.encode(AAS_POS1_ID);
+	public static final String AAS_POS1_IDSHORT = "aasPos1IdShort";
+	public static final String AAS_POS1_GLOBALASSETID = "globalAssetIdPos1";
 
-	public static AssetAdministrationShell buildAasPre1() {
-		return new DefaultAssetAdministrationShell.Builder().id(AAS_PRE1_ID).build();
+	public static final String SM_POS1_ID = "smPos1";
+	public static final String SM_POS1_ID_ENCODED = Base64UrlEncoder.encode(SM_POS1_ID);
+	public static final String SM_POS1_IDSHORT = "smPos1IdShort";
+
+	private String aasRepositoryBasePath = "http://localhost:8081";
+	private String smRepositoryBasePath = "http://localhost:8081";;
+
+	public TestFixture(String aasRepositoryBasePath, String smRepositoryBasePath) {
+		this.aasRepositoryBasePath = aasRepositoryBasePath;
+		this.smRepositoryBasePath = smRepositoryBasePath;
 	}
 
-	public static Reference buildSmPre1Ref() {
+	public TestFixture() {
+	}
+
+	public AssetAdministrationShell buildAasPre1() {
+		return new DefaultAssetAdministrationShell.Builder().id(AAS_PRE1_ID).idShort(AAS_PRE1_IDSHORT).build();
+	}
+
+	public AssetAdministrationShellDescriptor buildAasPre1Descriptor() {
+		return DummyAasDescriptorFactory.createDummyDescriptor(AAS_PRE1_ID, AAS_PRE1_IDSHORT, AAS_PRE1_GLOBALASSETID, aasRepositoryBasePath);
+	}
+
+	public Reference buildSmPre1Ref() {
 		return new DefaultReference.Builder().build();
 	}
 
-	public static Submodel buildSmPre1() {
-		return new DefaultSubmodel.Builder().id(SM_PRE1_ID).build();
+	public Submodel buildSmPre1() {
+		return new DefaultSubmodel.Builder().id(SM_PRE1_ID).idShort(SM_PRE1_IDSHORT).build();
 	}
 
-	public static AssetAdministrationShell buildAasPos1() {
-		return new DefaultAssetAdministrationShell.Builder().id(AAS_POS1_ID).build();
+	public SubmodelDescriptor buildSmPre1Descriptor() {
+		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_PRE1_ID, SM_PRE1_IDSHORT, smRepositoryBasePath);
 	}
 
-	public static AssetAdministrationShellDescriptor buildAasPos1Descriptor() {
-		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
-		descriptor.id(AAS_POS1_ID);
-		return descriptor;
+	public AssetAdministrationShell buildAasPos1() {
+		return new DefaultAssetAdministrationShell.Builder().id(AAS_POS1_ID).idShort(AAS_POS1_IDSHORT).build();
 	}
 
-	public static SubmodelDescriptor buildSmPos1Descriptor() {
-		SubmodelDescriptor descriptor = new SubmodelDescriptor();
-		descriptor.id(SM_POS1_ID);
-		return descriptor;
+	public AssetAdministrationShellDescriptor buildAasPos1Descriptor() {
+		return DummyAasDescriptorFactory.createDummyDescriptor(AAS_POS1_ID, AAS_POS1_IDSHORT, AAS_POS1_GLOBALASSETID, aasRepositoryBasePath);
 	}
 
-	public static Submodel buildSmPos1() {
-		return new DefaultSubmodel.Builder().id(SM_POS1_ID).build();
+	public SubmodelDescriptor buildSmPos1Descriptor() {
+		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_POS1_ID, SM_POS1_IDSHORT, smRepositoryBasePath);
 	}
+
+	public Submodel buildSmPos1() {
+		return new DefaultSubmodel.Builder().id(SM_POS1_ID).idShort(SM_POS1_IDSHORT).build();
+	}
+
 }

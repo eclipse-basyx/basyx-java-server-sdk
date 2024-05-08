@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.NoValidEndpointFoundException;
 
 /**
  * Interface for a component that manages Asset Administration Shell (AAS) and
@@ -44,7 +45,7 @@ public interface AasManager {
 	 *            The identifier of the AAS to retrieve.
 	 * @return The retrieved AAS object.
 	 */
-	public AssetAdministrationShell getAas(String identifier);
+	public AssetAdministrationShell getAas(String identifier) throws NoValidEndpointFoundException;
 
 	/**
 	 * Retrieves a Submodel in a Submodel registry by its identifier.

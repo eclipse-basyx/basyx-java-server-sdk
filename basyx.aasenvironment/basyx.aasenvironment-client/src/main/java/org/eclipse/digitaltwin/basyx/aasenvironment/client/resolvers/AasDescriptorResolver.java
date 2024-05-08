@@ -23,25 +23,32 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.client;
+package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
 
-import java.util.List;
-
-import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
+import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
 
 /**
- * Resolves a list of endpoints based on find first working strategy
+ * Resolves an AasDescriptor into an AssetAdministrationShell
  *
  * @author mateusmolina
  *
  */
-public class EndpointResolver {
-	
-	public String resolveEndpoint(List<String> endpoints) {
-		return findFirstWorkingEndpoint(endpoints);
+public class AasDescriptorResolver {
+
+	private final EndpointResolver endpointResolver;
+
+	public AasDescriptorResolver(EndpointResolver endpointResolver) {
+		this.endpointResolver = endpointResolver;
 	}
 
-	private String findFirstWorkingEndpoint(List<String> endpoints) {
-		throw new FeatureNotImplementedException();
+	public AssetAdministrationShell resolveAasDescriptor(AssetAdministrationShellDescriptor aasDescriptor) {
+		String endpoint = endpointResolver.resolveAasEndpoint(aasDescriptor.getEndpoints());
+
+		ConnectedAasService aasService = new ConnectedAasService(endpoint);
+
+		return aasService.getAAS();
 	}
+
 }
