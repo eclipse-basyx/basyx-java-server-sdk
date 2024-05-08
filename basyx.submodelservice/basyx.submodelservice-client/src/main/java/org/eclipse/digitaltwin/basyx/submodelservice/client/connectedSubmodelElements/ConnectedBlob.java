@@ -55,8 +55,8 @@ public class ConnectedBlob implements ConnectedSubmodelElement<byte[], Blob> {
 
 	@Override
 	public Blob getSubmodelElement() {
-		// TODO Auto-generated method stub
-		return null;
+		Blob blobElement = (Blob) service.getSubmodelElement(idShort);
+		return blobElement;
 	}
 
 }

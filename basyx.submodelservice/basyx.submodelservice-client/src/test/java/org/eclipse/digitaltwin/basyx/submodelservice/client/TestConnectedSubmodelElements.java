@@ -29,12 +29,12 @@ package org.eclipse.digitaltwin.basyx.submodelservice.client;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultBlob;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.DummySubmodelRepositoryComponent;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedBlob;
 import org.junit.After;
 import org.junit.Before;
@@ -45,6 +45,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 public class TestConnectedSubmodelElements {
 
+	private static final String BLOB_IDSHORT = "ExampleBlob";
+	private static final String EXPECTED_STRING = "This is a test";
 	private static final String SUBMODEL_ID_SHORT = "submodelIdShort";
 	private static final String SUBMODEL_ID = "submodelId";
 	private static final String ACCESS_URL = "http://localhost:8080/submodels/";
@@ -62,32 +64,42 @@ public class TestConnectedSubmodelElements {
 
 	@Test
 	public void getBlobValue() {
-		String expectedString = "This is a test";
-		byte[] expectedValue = expectedString.getBytes();
-		Submodel sm = new DefaultSubmodel.Builder().id(SUBMODEL_ID).idShort(SUBMODEL_ID_SHORT).submodelElements(new DefaultBlob.Builder().idShort("ExampleBlob").contentType("application/pdf").value(expectedValue).build()).build();
-		SubmodelService service = getSubmodelService(sm);
-		ConnectedBlob blob = new ConnectedBlob(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), "ExampleBlob");
-		assertTrue(new String(blob.getValue()).equals(expectedString));
+		byte[] expectedValue = EXPECTED_STRING.getBytes();
+		Submodel sm = createSubmodel(createBlobWithValue(expectedValue));
+		ConnectedBlob blob = new ConnectedBlob(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), BLOB_IDSHORT);
+		assertTrue(new String(blob.getValue()).equals(EXPECTED_STRING));
 	}
 
 	@Test
 	public void setBlobValue() {
-		String expectedString = "This is a test";
-		byte[] expectedValue = expectedString.getBytes();
-		Submodel sm = new DefaultSubmodel.Builder().id(SUBMODEL_ID).idShort(SUBMODEL_ID_SHORT).submodelElements(new DefaultBlob.Builder().idShort("ExampleBlob").contentType("application/pdf").value(expectedValue).build()).build();
-		SubmodelService service = getSubmodelService(sm);
-		ConnectedBlob blob = new ConnectedBlob(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), "ExampleBlob");
+		byte[] expectedValue = EXPECTED_STRING.getBytes();
+		Submodel sm = createSubmodel(createBlobWithValue(expectedValue));
+		ConnectedBlob blob = new ConnectedBlob(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), BLOB_IDSHORT);
 		String newString = "This is a new test";
 		byte[] newValue = newString.getBytes();
 		blob.setValue(newValue);
 		assertTrue(new String(blob.getValue()).equals(newString));
 	}
 
-	private SubmodelService getSubmodelService(Submodel submodel) {
+	@Test
+	public void getBlobSubmodelElement() {
+		byte[] expectedValue = EXPECTED_STRING.getBytes();
+		Submodel sm = createSubmodel(createBlobWithValue(expectedValue));
+		ConnectedBlob blob = new ConnectedBlob(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), BLOB_IDSHORT);
+		assertTrue(new String(blob.getSubmodelElement().getValue()).equals(EXPECTED_STRING));
+	}
+
+	private DefaultBlob createBlobWithValue(byte[] expectedValue) {
+		return new DefaultBlob.Builder().idShort(BLOB_IDSHORT).contentType("application/pdf").value(expectedValue).build();
+	}
+
+	private Submodel createSubmodel(SubmodelElement submodelElement) {
+		Submodel submodel = new DefaultSubmodel.Builder().id(SUBMODEL_ID).idShort(SUBMODEL_ID_SHORT).submodelElements(submodelElement).build();
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
 		repo.createSubmodel(submodel);
 		String base64UrlEncodedId = Base64UrlEncodedIdentifier.encodeIdentifier(submodel.getId());
-		return new ConnectedSubmodelService(getSubmodelServiceUrl(base64UrlEncodedId));
+		new ConnectedSubmodelService(getSubmodelServiceUrl(base64UrlEncodedId));
+		return submodel;
 	}
 
 	private String getSubmodelServiceUrl(String base64UrlEncodedId) {
