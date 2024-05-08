@@ -26,26 +26,34 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
+import org.eclipse.digitaltwin.aas4j.v3.model.File;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultFile;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 
-public class ConnectedFile implements ConnectedSubmodelElement<FileBlobValue, Blob> {
+public class ConnectedFile extends ConnectedSubmodelElement<FileBlobValue, File> {
+
+
+	public ConnectedFile(String submodelServiceUrl, String idShortPath) {
+		super(submodelServiceUrl, idShortPath);
+	}
 
 	@Override
 	public FileBlobValue getValue() {
-		// TODO Auto-generated method stub
-		return null;
+		File file = (File)service.getSubmodelElement(this.idShortPath);
+		return new FileBlobValue(file.getContentType(),file.getValue());
 	}
 
 	@Override
 	public void setValue(FileBlobValue value) {
-		// TODO Auto-generated method stub
-
+		service.setSubmodelElementValue(this.idShortPath,value);
 	}
 
 	@Override
-	public Blob getSubmodelElement() {
-		// TODO Auto-generated method stub
-		return null;
+	public File getSubmodelElement() {
+		return (File)service.getSubmodelElement(this.idShortPath);
 	}
 
 }

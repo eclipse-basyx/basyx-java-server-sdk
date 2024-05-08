@@ -29,7 +29,11 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AnnotatedRelationshipElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.AnnotatedRelationshipElementValue;
 
 public class ConnectedAnnotatedRelationshipElement
-		implements ConnectedSubmodelElement<AnnotatedRelationshipElementValue, AnnotatedRelationshipElement> {
+		extends ConnectedSubmodelElement<AnnotatedRelationshipElementValue, AnnotatedRelationshipElement> {
+
+	public ConnectedAnnotatedRelationshipElement(String submodelServiceUrl, String idShort) {
+		super(submodelServiceUrl, idShort);
+	}
 
 	@Override
 	public AnnotatedRelationshipElementValue getValue() {

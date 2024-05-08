@@ -28,7 +28,11 @@ package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelEl
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceElementValue;
 
-public class ConnectedReferenceElement implements ConnectedSubmodelElement<ReferenceElementValue, ReferenceElement> {
+public class ConnectedReferenceElement extends ConnectedSubmodelElement<ReferenceElementValue, ReferenceElement> {
+
+	public ConnectedReferenceElement(String submodelServiceUrl, String idShort) {
+		super(submodelServiceUrl, idShort);
+	}
 
 	@Override
 	public ReferenceElementValue getValue() {

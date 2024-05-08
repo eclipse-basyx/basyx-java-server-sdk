@@ -28,7 +28,11 @@ package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelEl
 import org.eclipse.digitaltwin.aas4j.v3.model.BasicEventElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.BasicEventValue;
 
-public class ConnectedBasicEventElement implements ConnectedSubmodelElement<BasicEventValue, BasicEventElement> {
+public class ConnectedBasicEventElement extends ConnectedSubmodelElement<BasicEventValue, BasicEventElement> {
+
+	public ConnectedBasicEventElement(String submodelServiceUrl, String idShort) {
+		super(submodelServiceUrl, idShort);
+	}
 
 	@Override
 	public BasicEventValue getValue() {

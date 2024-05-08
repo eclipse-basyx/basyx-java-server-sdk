@@ -26,13 +26,21 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.EntityValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
 
-public class ConnectedEntity implements ConnectedSubmodelElement<EntityValue, Entity> {
+import java.util.ArrayList;
+import java.util.List;
 
-	@Override
+public class ConnectedEntity extends ConnectedSubmodelElement<EntityValue, Entity> {
+
+    public ConnectedEntity(String submodelServiceUrl, String idShortPath) {
+		super(submodelServiceUrl, idShortPath);
+    }
+
+    @Override
 	public EntityValue getValue() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

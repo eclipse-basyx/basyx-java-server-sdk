@@ -29,15 +29,9 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 
-public class ConnectedProperty {
-	private String idShortPath;
-
-	private ConnectedSubmodelService service;
-
+public class ConnectedProperty extends ConnectedSubmodelElement<PropertyValue,Property> {
 	public ConnectedProperty(String submodelServiceUrl, String idShortPath) {
-		super();
-		this.idShortPath = idShortPath;
-		service = new ConnectedSubmodelService(submodelServiceUrl);
+		super(submodelServiceUrl,idShortPath);
 	}
 
 	public PropertyValue getValue() {
@@ -48,7 +42,7 @@ public class ConnectedProperty {
 		service.setSubmodelElementValue(idShortPath, value);
 	}
 
-	public Property getProperty() {
+	public Property getSubmodelElement() {
 		return (Property) service.getSubmodelElement(idShortPath);
 	}
 }

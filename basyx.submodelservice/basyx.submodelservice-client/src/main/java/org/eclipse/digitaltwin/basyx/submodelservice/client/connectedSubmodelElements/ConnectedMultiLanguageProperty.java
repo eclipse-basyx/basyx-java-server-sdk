@@ -28,7 +28,11 @@ package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelEl
 import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 
-public class ConnectedMultiLanguageProperty implements ConnectedSubmodelElement<FileBlobValue, Blob> {
+public class ConnectedMultiLanguageProperty extends ConnectedSubmodelElement<FileBlobValue, Blob> {
+
+	public ConnectedMultiLanguageProperty(String submodelServiceUrl, String idShort) {
+		super(submodelServiceUrl, idShort);
+	}
 
 	@Override
 	public FileBlobValue getValue() {

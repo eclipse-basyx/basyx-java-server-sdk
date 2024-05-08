@@ -29,21 +29,24 @@ package org.eclipse.digitaltwin.basyx.submodelservice.client;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Property;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultBlob;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.*;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.*;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.DummySubmodelRepositoryComponent;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedBlob;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedEntity;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedFile;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedProperty;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.EntityValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
 import org.junit.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+
+import java.util.ArrayList;
 
 
 public class TestConnectedSubmodelElements {
@@ -97,13 +100,13 @@ public class TestConnectedSubmodelElements {
 
 	@Test
 	public void getPropertyValue(){
-		ConnectedProperty property = getConnectedProperty();
+		ConnectedProperty property = getConnectedProperty(getDefaultProperty());
 		assertEquals(EXPECTED_STRING, property.getValue().getValue());
 	}
 
 	@Test
 	public void setPropertyValue(){
-		ConnectedProperty property = getConnectedProperty();
+		ConnectedProperty property = getConnectedProperty(getDefaultProperty());
 		String newValue = "This is a new test";
 		property.setValue(new PropertyValue(newValue));
 		String actual = property.getValue().getValue();
@@ -113,18 +116,80 @@ public class TestConnectedSubmodelElements {
 	@Test
 	public void getProperty(){
 		Property expected = getDefaultProperty();
-		ConnectedProperty property = getConnectedProperty();
-		assertEquals(property.getValue().getValue(),expected.getValue());
+		ConnectedProperty property = getConnectedProperty(expected);
+		assertEquals(expected.getValue(),property.getSubmodelElement().getValue());
+	}
+	@Test
+	public void getFileValue(){
+		ConnectedFile file = getConnectedFile(getDefaultFile());
+		assertEquals(EXPECTED_STRING,file.getValue().getValue());
+	}
+
+	@Test
+	public void setFileValue(){
+		ConnectedFile file = getConnectedFile(getDefaultFile());
+		String newValue = "This is a new test";
+		file.setValue(new FileBlobValue("plain/text",newValue));
+		String actual = file.getValue().getValue();
+		assertEquals(newValue, actual);
+	}
+
+	@Test
+	public void getFile(){
+		File expected = getDefaultFile();
+		ConnectedFile file = getConnectedFile(expected);
+		assertEquals(expected.getValue(),file.getSubmodelElement().getValue());
+	}
+
+	@Test
+	public void getEntityValue(){
+		ConnectedEntity entity = getConnectedEntity(getDefaultEntity());
+		assertEquals(EXPECTED_STRING,entity.getValue().getGlobalAssetId());
+	}
+
+	@Test
+	public void setEntityValue(){
+		Entity entity = getDefaultEntity();
+		ConnectedEntity connectedEntity = getConnectedEntity(entity);
+
+		EntityValue newValue = new EntityValue(new ArrayList<>(),EntityType.SELF_MANAGED_ENTITY,"New Value",new ArrayList<>());
+		connectedEntity.setValue(newValue);
+		EntityValue actual = connectedEntity.getValue();
+		assertEquals(newValue.getGlobalAssetId(),actual.getGlobalAssetId());
+	}
+
+	@Test
+	public void getEntity(){
+		Entity expected = getDefaultEntity();
+		ConnectedEntity entity = getConnectedEntity(expected);
+		assertEquals(expected.getIdShort(),entity.getSubmodelElement().getIdShort());
+	}
+
+	private static DefaultEntity getDefaultEntity(){
+		return new DefaultEntity.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).globalAssetId(EXPECTED_STRING).build();
+	}
+
+	private ConnectedEntity getConnectedEntity(Entity entity) {
+		Submodel sm = createSubmodel(entity);
+		return new ConnectedEntity(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())),SUBMODEL_ELEMENT_ID_SHORT);
+	}
+
+	private static DefaultFile getDefaultFile() {
+		return new DefaultFile.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).value(EXPECTED_STRING).contentType("plain/text").build();
+	}
+
+	private ConnectedFile getConnectedFile(File file) {
+		Submodel sm = createSubmodel(file);
+        return new ConnectedFile(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())),SUBMODEL_ELEMENT_ID_SHORT);
 	}
 
 	private static DefaultProperty getDefaultProperty() {
 		return new DefaultProperty.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).value(EXPECTED_STRING).build();
 	}
 
-	private ConnectedProperty getConnectedProperty() {
-		Submodel sm = createSubmodel(getDefaultProperty());
-		ConnectedProperty property = new ConnectedProperty(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())),SUBMODEL_ELEMENT_ID_SHORT);
-		return property;
+	private ConnectedProperty getConnectedProperty(Property property) {
+		Submodel sm = createSubmodel(property);
+        return new ConnectedProperty(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())),SUBMODEL_ELEMENT_ID_SHORT);
 	}
 
 	private ConnectedBlob getConnectedBlob(byte[] expectedValue) {

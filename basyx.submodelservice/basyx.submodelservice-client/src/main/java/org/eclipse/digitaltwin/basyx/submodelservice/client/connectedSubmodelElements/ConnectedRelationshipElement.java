@@ -29,7 +29,11 @@ import org.eclipse.digitaltwin.aas4j.v3.model.RelationshipElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.RelationshipElementValue;
 
 public class ConnectedRelationshipElement
-		implements ConnectedSubmodelElement<RelationshipElementValue, RelationshipElement> {
+		extends ConnectedSubmodelElement<RelationshipElementValue, RelationshipElement> {
+
+	public ConnectedRelationshipElement(String submodelServiceUrl, String idShort) {
+		super(submodelServiceUrl, idShort);
+	}
 
 	@Override
 	public RelationshipElementValue getValue() {

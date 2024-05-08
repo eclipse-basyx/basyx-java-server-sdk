@@ -26,36 +26,29 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
-import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 
-public class ConnectedBlob implements ConnectedSubmodelElement<byte[], Blob> {
+public class ConnectedBlob extends ConnectedSubmodelElement<byte[], Blob> {
 
-	private String submodelServiceUrl;
-	private String idShort;
-	private ConnectedSubmodelService service;
-
-	public ConnectedBlob(String submodelServiceUrl, String idShort) {
-		this.submodelServiceUrl = submodelServiceUrl;
-		this.idShort = idShort;
-		service = new ConnectedSubmodelService(submodelServiceUrl);
+	public ConnectedBlob(String submodelServiceUrl, String idShortPath) {
+		super(submodelServiceUrl, idShortPath);
 	}
 
 	@Override
 	public byte[] getValue() {
-		Blob blobElement = (Blob) service.getSubmodelElement(idShort);
+		Blob blobElement = (Blob) this.service.getSubmodelElement(idShortPath);
 		return blobElement.getValue();
 	}
 
 	@Override
 	public void setValue(byte[] value) {
-		Blob blobElement = (Blob) service.getSubmodelElement(idShort);
+		Blob blobElement = (Blob) service.getSubmodelElement(idShortPath);
 		blobElement.setValue(value);
-		service.updateSubmodelElement(idShort, blobElement);
+		service.updateSubmodelElement(idShortPath, blobElement);
 	}
 
 	@Override
 	public Blob getSubmodelElement() {
-		Blob blobElement = (Blob) service.getSubmodelElement(idShort);
+		Blob blobElement = (Blob) service.getSubmodelElement(idShortPath);
 		return blobElement;
 	}
 
