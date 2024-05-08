@@ -38,10 +38,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.GetAssetAdministrationShellDescriptorsResult;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.Test;
@@ -62,7 +59,7 @@ public class AasRepositoryRegistryTestLink {
 	public static String aasRepoBaseUrl = "http://localhost:8081";
 	public static String aasRegistryUrl = "http://localhost:8050";
 
-	private static final AssetAdministrationShellDescriptor DUMMY_DESCRIPTOR = createExpectedDescriptor();
+	private static final AssetAdministrationShellDescriptor DUMMY_DESCRIPTOR = DummyAasDescriptorFactory.createDummyDescriptor(DUMMY_AAS_ID, DUMMY_IDSHORT, DUMMY_GLOBAL_ASSETID, aasRepoBaseUrl);
 
 	@Test
 	public void createAas() throws FileNotFoundException, IOException, ApiException {
@@ -127,49 +124,6 @@ public class AasRepositoryRegistryTestLink {
 
 	private String getSpecificAasAccessURL(String aasId) {
 		return createAasRepositoryUrl(aasRepoBaseUrl) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
-	}
-
-	private static AssetAdministrationShellDescriptor createExpectedDescriptor() {
-
-		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
-
-		descriptor.setId(DUMMY_AAS_ID);
-		descriptor.setIdShort(DUMMY_IDSHORT);
-		descriptor.setAssetKind(AssetKind.INSTANCE);
-		descriptor.setGlobalAssetId(DUMMY_GLOBAL_ASSETID);
-		descriptor.addEndpointsItem(createEndpointItem());
-
-		return descriptor;
-	}
-
-	private static Endpoint createEndpointItem() {
-		Endpoint endpoint = new Endpoint();
-		endpoint.setInterface("AAS-3.0");
-		endpoint.setProtocolInformation(createProtocolInformation());
-
-		return endpoint;
-	}
-
-	private static ProtocolInformation createProtocolInformation() {
-		String href = createHref();
-
-		ProtocolInformation protocolInformation = new ProtocolInformation();
-		protocolInformation.setHref(href);
-		protocolInformation.endpointProtocol(getProtocol(href));
-
-		return protocolInformation;
-	}
-
-	private static String createHref() {
-		return String.format("%s/%s", createAasRepositoryUrl(aasRepoBaseUrl), Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_AAS_ID));
-	}
-
-	private static String getProtocol(String endpoint) {
-		try {
-			return new URL(endpoint).getProtocol();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException();
-		}
 	}
 
 	private static String createAasRepositoryUrl(String aasRepositoryBaseURL) {
