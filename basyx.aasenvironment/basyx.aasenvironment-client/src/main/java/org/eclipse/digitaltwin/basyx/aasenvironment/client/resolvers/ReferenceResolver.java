@@ -26,10 +26,13 @@
 package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 
 /**
  * Resolves a list of {@link Reference} into relevant objects
@@ -39,14 +42,18 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedExcept
  */
 public class ReferenceResolver {
 
-	private final EndpointResolver endpointResolver;
+	private final EndpointResolver<Reference> endpointResolver;
 
-	public ReferenceResolver(EndpointResolver endpointResolver) {
+	public ReferenceResolver(EndpointResolver<Reference> endpointResolver) {
 		this.endpointResolver = endpointResolver;
 	}
 
 	public Submodel resolveSubmodelFromReferences(String smIdentifier, List<Reference> references) {
-		throw new FeatureNotImplementedException();
+		List<String> baseSmPaths = endpointResolver.resolveAll(references);
+		
+		Optional<Submodel> submodel = baseSmPaths.stream().map(ConnectedSubmodelService::new).map(ConnectedSubmodelService::getSubmodel).filter(sm -> Objects.equals(sm.getId(), smIdentifier)).findFirst();
+
+		return submodel.orElseThrow(() -> new ElementDoesNotExistException(smIdentifier));
 	}
 
 }

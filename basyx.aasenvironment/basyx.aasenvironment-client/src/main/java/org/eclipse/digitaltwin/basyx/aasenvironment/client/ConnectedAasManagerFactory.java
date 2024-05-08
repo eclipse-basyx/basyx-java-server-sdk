@@ -29,6 +29,9 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.AasDescript
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.EndpointResolver;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.ReferenceResolver;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.SubmodelDescriptorResolver;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.AasRegistryEndpointURIParser;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.ReferenceURIParser;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.SubmodelRegistryEndpointURIParser;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AasDescriptorFactory;
@@ -72,17 +75,15 @@ public class ConnectedAasManagerFactory {
 		submodelRegistryApi = new SubmodelRegistryApi(submodelRegistryBaseUrl);
 		connectedSubmodelRepository = new ConnectedSubmodelRepository(submodelBaseRepositoryUrl);
 			
-		EndpointResolver endpointResolver = new EndpointResolver();
-
-		aasDescriptorResolver = new AasDescriptorResolver(endpointResolver);
-		smDescriptorResolver = new SubmodelDescriptorResolver(endpointResolver);
+		aasDescriptorResolver = new AasDescriptorResolver(new EndpointResolver<>(new AasRegistryEndpointURIParser()));
+		smDescriptorResolver = new SubmodelDescriptorResolver(new EndpointResolver<>(new SubmodelRegistryEndpointURIParser()));
 		
 		ObjectMapper objectMapper = buildObjectMapper();
 
 		aasDescriptorFactory = buildAasDescriptorFactory(aasRepositoryBaseUrl, objectMapper);
 		smDescriptorFactory = buildSmDescriptorFactory(aasRepositoryBaseUrl, objectMapper);
 
-		referenceResolver = new ReferenceResolver(endpointResolver);
+		referenceResolver = new ReferenceResolver(new EndpointResolver<>(new ReferenceURIParser()));
 	}
 
 	public ConnectedAasManagerFactory() {

@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.NoValidEndpointFoundException;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.URIParser;
 
 /**
  * Resolves a list of endpoints based on find first working strategy
@@ -39,25 +39,28 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
  * @author mateusmolina
  *
  */
-public class EndpointResolver {
+public class EndpointResolver<T> {
 	
+	private final URIParser<T> parser;
+
 	private int timeout = 3000;
 
-	public EndpointResolver() {
+	public EndpointResolver(URIParser<T> parser) {
+		this.parser = parser;
 	}
 
-	public EndpointResolver(int timeout) {
+	public EndpointResolver(URIParser<T> parser, int timeout) {
+		this(parser);
 		this.timeout = timeout;
 	}
 
-	public String resolveAasEndpoint(List<Endpoint> endpoints) {
-		List<URI> uris = endpoints.stream().map(EndpointResolver::parseEndpoint).flatMap(Optional::stream).toList();
+	public String resolveFirst(List<T> endpoints) {
+		List<URI> uris = endpoints.stream().map(parser::parse).flatMap(Optional::stream).toList();
 		return findFirstWorkingURI(uris).orElseThrow(() -> new NoValidEndpointFoundException(endpoints.toString())).toString();
 	}
 
-	public String resolveSubmodelEndpoint(List<org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint> endpoints) {
-		List<URI> uris = endpoints.stream().map(EndpointResolver::parseEndpoint).flatMap(Optional::stream).toList();
-		return findFirstWorkingURI(uris).orElseThrow(() -> new NoValidEndpointFoundException(endpoints.toString())).toString();
+	public List<String> resolveAll(List<T> endpoints) {
+		return endpoints.stream().map(parser::parse).flatMap(Optional::stream).filter(this::isURIWorking).map(URI::toString).toList();
 	}
 
 	private Optional<URI> findFirstWorkingURI(List<URI> uris) {
@@ -79,36 +82,6 @@ public class EndpointResolver {
 			if (connection != null) {
 				connection.disconnect();
 			}
-		}
-	}
-
-	public static Optional<URI> parseEndpoint(Endpoint endpoint) {
-		try {
-			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation().getHref() == null)
-				return Optional.empty();
-
-			String baseHref = endpoint.getProtocolInformation().getHref();
-			// TODO not working: String queryString = "?" + endpoint.toUrlQueryString();
-			String queryString = "";
-			URI uri = new URI(baseHref + queryString);
-			return Optional.of(uri);
-		} catch (Exception e) {
-			return Optional.empty();
-		}
-	}
-
-	public static Optional<URI> parseEndpoint(org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint endpoint) {
-		try {
-			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation().getHref() == null)
-				return Optional.empty();
-
-			String baseHref = endpoint.getProtocolInformation().getHref();
-			// TODO not working: String queryString = "?" + endpoint.toUrlQueryString();
-			String queryString = "";
-			URI uri = new URI(baseHref + queryString);
-			return Optional.of(uri);
-		} catch (Exception e) {
-			return Optional.empty();
 		}
 	}
 }

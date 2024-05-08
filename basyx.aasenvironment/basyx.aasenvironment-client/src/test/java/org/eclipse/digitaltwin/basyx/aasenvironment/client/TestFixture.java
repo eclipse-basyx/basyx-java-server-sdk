@@ -25,10 +25,16 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Key;
+import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
@@ -83,7 +89,11 @@ public class TestFixture {
 	}
 
 	public Reference buildSmPre1Ref() {
-		return new DefaultReference.Builder().build();
+		return new DefaultReference.Builder().keys(buildSmPref1RefKey()).build();
+	}
+
+	public Key buildSmPref1RefKey() {
+		return new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(createSmRepositoryUrl(smRepositoryBasePath, SM_PRE1_ID_ENCODED)).build();
 	}
 
 	public Submodel buildSmPre1() {
@@ -110,4 +120,12 @@ public class TestFixture {
 		return new DefaultSubmodel.Builder().id(SM_POS1_ID).idShort(SM_POS1_IDSHORT).build();
 	}
 
+	private static String createSmRepositoryUrl(String smBaseUrl, String encodedId) {
+		try {
+			URL url = new URL(new URL(smBaseUrl), "submodels/" + encodedId);
+			return url.toString();
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

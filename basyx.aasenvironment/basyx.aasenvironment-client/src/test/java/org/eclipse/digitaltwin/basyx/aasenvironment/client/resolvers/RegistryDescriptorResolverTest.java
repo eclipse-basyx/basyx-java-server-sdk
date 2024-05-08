@@ -27,10 +27,15 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.DummyAasEnvironmentComponent;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.TestFixture;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.AasRegistryEndpointURIParser;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.ReferenceURIParser;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.SubmodelRegistryEndpointURIParser;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -41,8 +46,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
- * Tests for {@link AasDescriptorResolver} and
- * {@link SubmodelDescriptorResolver}
+ * Tests for {@link AasDescriptorResolver}, {@link SubmodelDescriptorResolver}
+ * and {@link ReferenceResolver}
  *
  * @author mateusmolina
  *
@@ -73,10 +78,9 @@ public class RegistryDescriptorResolverTest {
 		appContext.close();
 	}
 
-
 	@Test
 	public void resolveAasDescriptor() throws ApiException {
-		AasDescriptorResolver resolver = new AasDescriptorResolver(new EndpointResolver());
+		AasDescriptorResolver resolver = new AasDescriptorResolver(new EndpointResolver<>(new AasRegistryEndpointURIParser()));
 		
 		AssetAdministrationShell expectedAas = FIXTURE.buildAasPre1();
 		AssetAdministrationShell actualAas = resolver.resolveAasDescriptor(FIXTURE.buildAasPre1Descriptor());
@@ -86,10 +90,20 @@ public class RegistryDescriptorResolverTest {
 
 	@Test
 	public void resolveSmDescriptor() throws ApiException {
-		SubmodelDescriptorResolver resolver = new SubmodelDescriptorResolver(new EndpointResolver());
+		SubmodelDescriptorResolver resolver = new SubmodelDescriptorResolver(new EndpointResolver<>(new SubmodelRegistryEndpointURIParser()));
 
 		Submodel expectedSm = FIXTURE.buildSmPre1();
 		Submodel actualSm = resolver.resolveSubmodelDescriptor(FIXTURE.buildSmPre1Descriptor());
+
+		assertEquals(expectedSm, actualSm);
+	}
+
+	@Test
+	public void resolveReference() {
+		ReferenceResolver resolver = new ReferenceResolver(new EndpointResolver<>(new ReferenceURIParser()));
+		
+		Submodel expectedSm = FIXTURE.buildSmPre1();
+		Submodel actualSm = resolver.resolveSubmodelFromReferences(TestFixture.SM_PRE1_ID, List.of(FIXTURE.buildSmPre1Ref()));
 
 		assertEquals(expectedSm, actualSm);
 	}

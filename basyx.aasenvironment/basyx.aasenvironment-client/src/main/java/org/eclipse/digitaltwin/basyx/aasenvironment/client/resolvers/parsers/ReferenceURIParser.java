@@ -23,33 +23,38 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
+package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
-import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
+import java.net.URI;
+import java.util.Optional;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 
 /**
- * Resolves an AasDescriptor into an AssetAdministrationShell
+ * Parser for Reference model
  *
  * @author mateusmolina
  *
  */
-public class AasDescriptorResolver {
+public class ReferenceURIParser implements URIParser<Reference> {
 
-	private final EndpointResolver<Endpoint> endpointResolver;
-
-	public AasDescriptorResolver(EndpointResolver<Endpoint> endpointResolver) {
-		this.endpointResolver = endpointResolver;
+	@Override
+	public Optional<URI> parse(Reference reference) {
+		return parseReference(reference);
 	}
 
-	public AssetAdministrationShell resolveAasDescriptor(AssetAdministrationShellDescriptor aasDescriptor) {
-		String endpoint = endpointResolver.resolveFirst(aasDescriptor.getEndpoints());
+	// Only compatible with ExternalReferences for the moment
+	private static Optional<URI> parseReference(Reference reference) {
+		try {
+			if (reference == null)
+				return Optional.empty();
 
-		ConnectedAasService aasService = new ConnectedAasService(endpoint);
+			String address = reference.getKeys().get(0).getValue();
 
-		return aasService.getAAS();
+			URI uri = new URI(address);
+			return Optional.of(uri);
+		} catch (Exception e) {
+			return Optional.empty();
+		}
 	}
-
 }

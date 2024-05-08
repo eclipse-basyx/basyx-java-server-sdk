@@ -23,33 +23,17 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
+package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
-import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
+import java.net.URI;
+import java.util.Optional;
 
 /**
- * Resolves an AasDescriptor into an AssetAdministrationShell
+ * Parses an object into an URI
  *
  * @author mateusmolina
  *
  */
-public class AasDescriptorResolver {
-
-	private final EndpointResolver<Endpoint> endpointResolver;
-
-	public AasDescriptorResolver(EndpointResolver<Endpoint> endpointResolver) {
-		this.endpointResolver = endpointResolver;
-	}
-
-	public AssetAdministrationShell resolveAasDescriptor(AssetAdministrationShellDescriptor aasDescriptor) {
-		String endpoint = endpointResolver.resolveFirst(aasDescriptor.getEndpoints());
-
-		ConnectedAasService aasService = new ConnectedAasService(endpoint);
-
-		return aasService.getAAS();
-	}
-
+public interface URIParser<T> {
+	public Optional<URI> parse(T object);
 }

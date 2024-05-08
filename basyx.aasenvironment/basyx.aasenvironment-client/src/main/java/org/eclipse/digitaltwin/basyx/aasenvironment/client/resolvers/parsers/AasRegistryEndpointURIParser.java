@@ -23,33 +23,38 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
+package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
+import java.net.URI;
+import java.util.Optional;
+
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
-import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
 
 /**
- * Resolves an AasDescriptor into an AssetAdministrationShell
+ * Parser for AasRegistry Endpoint Model
  *
  * @author mateusmolina
  *
  */
-public class AasDescriptorResolver {
+public class AasRegistryEndpointURIParser implements URIParser<Endpoint> {
 
-	private final EndpointResolver<Endpoint> endpointResolver;
-
-	public AasDescriptorResolver(EndpointResolver<Endpoint> endpointResolver) {
-		this.endpointResolver = endpointResolver;
+	@Override
+	public Optional<URI> parse(Endpoint endpoint) {
+		return parseEndpoint(endpoint);
 	}
 
-	public AssetAdministrationShell resolveAasDescriptor(AssetAdministrationShellDescriptor aasDescriptor) {
-		String endpoint = endpointResolver.resolveFirst(aasDescriptor.getEndpoints());
+	private static Optional<URI> parseEndpoint(Endpoint endpoint) {
+		try {
+			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation().getHref() == null)
+				return Optional.empty();
 
-		ConnectedAasService aasService = new ConnectedAasService(endpoint);
-
-		return aasService.getAAS();
+			String baseHref = endpoint.getProtocolInformation().getHref();
+			// TODO not working: String queryString = "?" + endpoint.toUrlQueryString();
+			String queryString = "";
+			URI uri = new URI(baseHref + queryString);
+			return Optional.of(uri);
+		} catch (Exception e) {
+			return Optional.empty();
+		}
 	}
-
 }
