@@ -35,22 +35,4 @@ public class ConnectedRelationshipElement
 		super(submodelServiceUrl, idShort);
 	}
 
-	@Override
-	public RelationshipElementValue getValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setValue(RelationshipElementValue value) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public RelationshipElement getSubmodelElement() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

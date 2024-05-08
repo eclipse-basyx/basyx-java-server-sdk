@@ -34,22 +34,4 @@ public class ConnectedRange extends ConnectedSubmodelElement<RangeValue, Range> 
 		super(submodelServiceUrl, idShort);
 	}
 
-	@Override
-	public RangeValue getValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setValue(RangeValue value) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public Range getSubmodelElement() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

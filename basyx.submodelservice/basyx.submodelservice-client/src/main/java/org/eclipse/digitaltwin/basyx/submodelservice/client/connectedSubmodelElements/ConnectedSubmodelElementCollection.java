@@ -34,22 +34,4 @@ public class ConnectedSubmodelElementCollection extends ConnectedSubmodelElement
 		super(submodelServiceUrl, idShort);
 	}
 
-	@Override
-	public SubmodelElementCollectionValue getValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setValue(SubmodelElementCollectionValue value) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public SubmodelElementCollection getSubmodelElement() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

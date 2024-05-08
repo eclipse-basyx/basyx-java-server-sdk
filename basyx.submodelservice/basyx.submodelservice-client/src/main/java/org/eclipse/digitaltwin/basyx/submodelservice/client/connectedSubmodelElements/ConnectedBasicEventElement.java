@@ -34,22 +34,4 @@ public class ConnectedBasicEventElement extends ConnectedSubmodelElement<BasicEv
 		super(submodelServiceUrl, idShort);
 	}
 
-	@Override
-	public BasicEventValue getValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setValue(BasicEventValue value) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public BasicEventElement getSubmodelElement() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

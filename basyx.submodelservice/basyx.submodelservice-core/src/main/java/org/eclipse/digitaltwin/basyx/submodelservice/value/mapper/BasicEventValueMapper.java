@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.BasicEventElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.BasicEventValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceValue;
 
@@ -40,7 +41,7 @@ public class BasicEventValueMapper implements ValueMapper<BasicEventValue> {
 
 	@Override
 	public void setValue(BasicEventValue basicEventValue) {
-
+		basicEvent.setObserved(new DefaultReference.Builder().type(basicEventValue.getObserved().getType()).keys(basicEventValue.getObserved().getKeys()).build());
 	}
 
 	@Override

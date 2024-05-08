@@ -34,23 +34,4 @@ public class ConnectedReferenceElement extends ConnectedSubmodelElement<Referenc
 		super(submodelServiceUrl, idShort);
 	}
 
-	@Override
-	public ReferenceElementValue getValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setValue(ReferenceElementValue value) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public ReferenceElement getSubmodelElement() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
 }

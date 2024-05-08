@@ -35,22 +35,4 @@ public class ConnectedAnnotatedRelationshipElement
 		super(submodelServiceUrl, idShort);
 	}
 
-	@Override
-	public AnnotatedRelationshipElementValue getValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setValue(AnnotatedRelationshipElementValue value) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public AnnotatedRelationshipElement getSubmodelElement() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

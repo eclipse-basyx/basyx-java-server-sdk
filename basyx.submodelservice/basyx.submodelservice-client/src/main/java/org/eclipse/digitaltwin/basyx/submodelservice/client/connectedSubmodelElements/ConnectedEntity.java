@@ -26,12 +26,8 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.EntityValue;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.EntityValueMapper;
 
 public class ConnectedEntity extends ConnectedSubmodelElement<EntityValue, Entity> {
 
@@ -41,19 +37,20 @@ public class ConnectedEntity extends ConnectedSubmodelElement<EntityValue, Entit
 
     @Override
 	public EntityValue getValue() {
-		return null;
+		Entity entity = (Entity) service.getSubmodelElement(idShortPath);
+		EntityValueMapper entityValueMapper = new EntityValueMapper(entity);
+		return entityValueMapper.getValue();
 	}
 
 	@Override
 	public void setValue(EntityValue value) {
-		// TODO Auto-generated method stub
-
+		service.setSubmodelElementValue(idShortPath, value);
 	}
 
 	@Override
 	public Entity getSubmodelElement() {
-		// TODO Auto-generated method stub
-		return null;
+		Entity entity = (Entity) service.getSubmodelElement(idShortPath);
+		return entity;
 	}
 
 }

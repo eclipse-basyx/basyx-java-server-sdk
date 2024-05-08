@@ -27,26 +27,61 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.client;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.*;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.AnnotatedRelationshipElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
+import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
+import org.eclipse.digitaltwin.aas4j.v3.model.EntityType;
+import org.eclipse.digitaltwin.aas4j.v3.model.File;
+import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
+import org.eclipse.digitaltwin.aas4j.v3.model.Property;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.RelationshipElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAnnotatedRelationshipElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultBasicEventElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultBlob;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEntity;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultFile;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultMultiLanguageProperty;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultRelationshipElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.DummySubmodelRepositoryComponent;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedAnnotatedRelationshipElement;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedBasicEventElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedBlob;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedEntity;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedFile;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedMultiLanguageProperty;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedProperty;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedRelationshipElement;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.AnnotatedRelationshipElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.BasicEventValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.EntityValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
-import org.junit.*;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.RelationshipElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.AnnotatedRelationshipElementValueMapper;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.BasicEventValueMapper;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.BlobValueMapper;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.RelationshipElementValueMapper;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import java.util.ArrayList;
 
 
 public class TestConnectedSubmodelElements {
@@ -76,26 +111,26 @@ public class TestConnectedSubmodelElements {
 
 	@Test
 	public void getBlobValue() {
-		byte[] expectedValue = EXPECTED_STRING.getBytes();
-		ConnectedBlob blob = getConnectedBlob(expectedValue);
-		assertTrue(new String(blob.getValue()).equals(EXPECTED_STRING));
+		ConnectedBlob blob = getConnectedBlob(getDefaultBlob());
+		assertEquals(EXPECTED_STRING, blob.getValue().getValue());
 	}
 
 	@Test
 	public void setBlobValue() {
-		byte[] expectedValue = EXPECTED_STRING.getBytes();
-		ConnectedBlob blob = getConnectedBlob(expectedValue);
-		String newString = "This is a new test";
-		byte[] newValue = newString.getBytes();
-		blob.setValue(newValue);
-        assertEquals(new String(blob.getValue()), newString);
+		ConnectedBlob blob = getConnectedBlob(getDefaultBlob());
+		String newValue = "This is a new test";
+		blob.setValue(new FileBlobValue("text/plain", newValue));
+		String actual = blob.getValue().getValue();
+		assertEquals(newValue, actual);
 	}
 
 	@Test
-	public void getBlobSubmodelElement() {
-		byte[] expectedValue = EXPECTED_STRING.getBytes();
-		ConnectedBlob blob = getConnectedBlob(expectedValue);
-        assertEquals(EXPECTED_STRING, new String(blob.getSubmodelElement().getValue()));
+	public void getBlob() {
+		Blob expected = getDefaultBlob();
+		ConnectedBlob blob = getConnectedBlob(expected);
+		BlobValueMapper valueMapperExpected = new BlobValueMapper(expected);
+		BlobValueMapper valueMapper = new BlobValueMapper(blob.getSubmodelElement());
+		assertEquals(valueMapperExpected.getValue().getValue(), valueMapper.getValue().getValue());
 	}
 
 	@Test
@@ -117,12 +152,12 @@ public class TestConnectedSubmodelElements {
 	public void getProperty(){
 		Property expected = getDefaultProperty();
 		ConnectedProperty property = getConnectedProperty(expected);
-		assertEquals(expected.getValue(),property.getSubmodelElement().getValue());
+		assertEquals(expected.getValue(), property.getSubmodelElement().getValue());
 	}
 	@Test
 	public void getFileValue(){
 		ConnectedFile file = getConnectedFile(getDefaultFile());
-		assertEquals(EXPECTED_STRING,file.getValue().getValue());
+		assertEquals(EXPECTED_STRING, file.getValue().getValue());
 	}
 
 	@Test
@@ -138,31 +173,171 @@ public class TestConnectedSubmodelElements {
 	public void getFile(){
 		File expected = getDefaultFile();
 		ConnectedFile file = getConnectedFile(expected);
-		assertEquals(expected.getValue(),file.getSubmodelElement().getValue());
+		assertEquals(expected.getValue(), file.getSubmodelElement().getValue());
 	}
 
 	@Test
 	public void getEntityValue(){
 		ConnectedEntity entity = getConnectedEntity(getDefaultEntity());
-		assertEquals(EXPECTED_STRING,entity.getValue().getGlobalAssetId());
+		assertEquals(EXPECTED_STRING, entity.getValue().getGlobalAssetId());
 	}
 
 	@Test
 	public void setEntityValue(){
 		Entity entity = getDefaultEntity();
 		ConnectedEntity connectedEntity = getConnectedEntity(entity);
-
-		EntityValue newValue = new EntityValue(new ArrayList<>(),EntityType.SELF_MANAGED_ENTITY,"New Value",new ArrayList<>());
+		EntityValue newValue = new EntityValue(new ArrayList<>(), EntityType.SELF_MANAGED_ENTITY, "New Value", new ArrayList<>());
 		connectedEntity.setValue(newValue);
 		EntityValue actual = connectedEntity.getValue();
-		assertEquals(newValue.getGlobalAssetId(),actual.getGlobalAssetId());
+		assertEquals(newValue.getGlobalAssetId(), actual.getGlobalAssetId());
 	}
 
 	@Test
 	public void getEntity(){
 		Entity expected = getDefaultEntity();
 		ConnectedEntity entity = getConnectedEntity(expected);
-		assertEquals(expected.getIdShort(),entity.getSubmodelElement().getIdShort());
+		assertEquals(expected.getIdShort(), entity.getSubmodelElement().getIdShort());
+	}
+
+	@Test
+	public void getRelationshipElementValue() {
+		ConnectedRelationshipElement relationshipElement = getConnectedRelationshipElement(getDefaultRelationshipElement());
+		assertEquals(EXPECTED_STRING, relationshipElement.getValue().getFirst().getKeys().get(0).getValue());
+	}
+
+	@Test
+	public void setRelationshipElementValue() {
+		RelationshipElement relationshipElement = getDefaultRelationshipElement();
+		ConnectedRelationshipElement connectedRelationshipElement = getConnectedRelationshipElement(relationshipElement);
+		RelationshipElementValueMapper valueMapper = new RelationshipElementValueMapper(relationshipElement);
+		valueMapper.setValue(new RelationshipElementValue(createReferenceValue(getReference("newKey1")), createReferenceValue(getReference("newKey2"))));
+		connectedRelationshipElement.setValue(valueMapper.getValue());
+		RelationshipElementValue actual = connectedRelationshipElement.getValue();
+		assertEquals("newKey1", actual.getFirst().getKeys().get(0).getValue());
+		assertEquals("newKey2", actual.getSecond().getKeys().get(0).getValue());
+	}
+
+	@Test
+	public void getRelationshipElement() {
+		RelationshipElement expected = getDefaultRelationshipElement();
+		ConnectedRelationshipElement relationshipElement = getConnectedRelationshipElement(expected);
+		assertEquals(expected.getFirst().getKeys().get(0).getValue(), relationshipElement.getSubmodelElement().getFirst().getKeys().get(0).getValue());
+	}
+	
+	@Test
+	public void getAnnotatedRelationshipElementValue() {
+		ConnectedAnnotatedRelationshipElement annotatedRelationshipElement = getConnectedAnnotatedRelationshipElement(getDefaultAnnotatedRelationshipElement());
+		assertEquals(EXPECTED_STRING, annotatedRelationshipElement.getValue().getFirst().getKeys().get(0).getValue());
+	}
+
+	@Test
+	public void setAnnotatedRelationshipElementValue() {
+		AnnotatedRelationshipElement annotatedRelationshipElement = getDefaultAnnotatedRelationshipElement();
+		ConnectedAnnotatedRelationshipElement connectedAnnotatedRelationshipElement = getConnectedAnnotatedRelationshipElement(annotatedRelationshipElement);
+		AnnotatedRelationshipElementValueMapper valueMapper = new AnnotatedRelationshipElementValueMapper(annotatedRelationshipElement);
+		valueMapper.setValue(new AnnotatedRelationshipElementValue(createReferenceValue(getReference("newKey1")), createReferenceValue(getReference("newKey2")), new ArrayList<>()));
+		connectedAnnotatedRelationshipElement.setValue(valueMapper.getValue());
+		AnnotatedRelationshipElementValue actual = connectedAnnotatedRelationshipElement.getValue();
+		assertEquals("newKey1", actual.getFirst().getKeys().get(0).getValue());
+		assertEquals("newKey2", actual.getSecond().getKeys().get(0).getValue());
+	}
+
+	@Test
+	public void getAnnotatedRelationshipElement() {
+		AnnotatedRelationshipElement expected = getDefaultAnnotatedRelationshipElement();
+		ConnectedAnnotatedRelationshipElement annotatedRelationshipElement = getConnectedAnnotatedRelationshipElement(expected);
+		assertEquals(expected.getFirst().getKeys().get(0).getValue(), annotatedRelationshipElement.getSubmodelElement().getFirst().getKeys().get(0).getValue());
+	}
+
+	@Test
+	public void getBasicEventElementValue() {
+		ConnectedBasicEventElement basicEventElement = getConnectedBasicEventElement(getDefaultBasicEventElement());
+		assertEquals(EXPECTED_STRING, basicEventElement.getValue().getObserved().getKeys().get(0).getValue());
+	}
+
+	@Test
+	public void setBasicEventElementValue() {
+		DefaultBasicEventElement basicEventElement = getDefaultBasicEventElement();
+		ConnectedBasicEventElement connectedBasicEventElement = getConnectedBasicEventElement(basicEventElement);
+		BasicEventValue newValue = new BasicEventValue(createReferenceValue(getReference("newValue")));
+		connectedBasicEventElement.setValue(newValue);
+		BasicEventValueMapper valueMapper = new BasicEventValueMapper(basicEventElement);
+		String actual = valueMapper.getValue().getObserved().getKeys().get(0).getValue();
+		assertEquals("newValue", actual);
+	}
+
+	@Test
+	public void getBasicEventElement() {
+		DefaultBasicEventElement expected = getDefaultBasicEventElement();
+		ConnectedBasicEventElement basicEventElement = getConnectedBasicEventElement(expected);
+		assertEquals(expected.getObserved().getKeys().get(0).getValue(), basicEventElement.getSubmodelElement().getObserved().getKeys().get(0).getValue());
+	}
+
+	@Test
+	public void getMultiLanguagePropertyValue() {
+		ConnectedMultiLanguageProperty multiLanguageProperty = getConnectedMultiLanguageProperty(getDefaultMultiLanguageProperty());
+		assertEquals(EXPECTED_STRING, multiLanguageProperty.getValue().getValue().get(0).getText());
+	}
+
+	@Test
+	public void setMultiLanguagePropertyValue() {
+		DefaultMultiLanguageProperty multiLanguageProperty = getDefaultMultiLanguageProperty();
+		ConnectedMultiLanguageProperty connectedMultiLanguageProperty = getConnectedMultiLanguageProperty(multiLanguageProperty);
+		DefaultLangStringTextType newValue = new DefaultLangStringTextType.Builder().text("newText").language("de").build();
+		multiLanguageProperty.setValue(Arrays.asList(newValue));
+		String actual = connectedMultiLanguageProperty.getValue().getValue().get(0).getText();
+		assertEquals(newValue.getText(), actual);
+	}
+
+	@Test
+	public void getMultiLanguageProperty() {
+		DefaultMultiLanguageProperty expected = getDefaultMultiLanguageProperty();
+		ConnectedMultiLanguageProperty multiLanguageProperty = getConnectedMultiLanguageProperty(expected);
+		assertEquals(expected.getValue().get(0).getText(), multiLanguageProperty.getSubmodelElement().getValue().get(0).getText());
+	}
+
+	private DefaultMultiLanguageProperty getDefaultMultiLanguageProperty() {
+		return new DefaultMultiLanguageProperty.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).value(Arrays.asList(new DefaultLangStringTextType.Builder().text(EXPECTED_STRING).language("de").build())).build();
+	}
+
+	private ConnectedMultiLanguageProperty getConnectedMultiLanguageProperty(DefaultMultiLanguageProperty property) {
+		Submodel sm = createSubmodel(property);
+		return new ConnectedMultiLanguageProperty(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), SUBMODEL_ELEMENT_ID_SHORT);
+	}
+
+	private DefaultBasicEventElement getDefaultBasicEventElement() {
+		return new DefaultBasicEventElement.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).observed(getReference(EXPECTED_STRING)).build();
+	}
+
+	private ConnectedBasicEventElement getConnectedBasicEventElement(DefaultBasicEventElement basicEventElement) {
+		Submodel sm = createSubmodel(basicEventElement);
+		return new ConnectedBasicEventElement(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), SUBMODEL_ELEMENT_ID_SHORT);
+	}
+
+	private static DefaultAnnotatedRelationshipElement getDefaultAnnotatedRelationshipElement() {
+		return new DefaultAnnotatedRelationshipElement.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).first(getReference(EXPECTED_STRING)).second(getReference(EXPECTED_STRING)).build();
+	}
+
+	private ConnectedAnnotatedRelationshipElement getConnectedAnnotatedRelationshipElement(AnnotatedRelationshipElement annotatedRelationshipElement) {
+		Submodel sm = createSubmodel(annotatedRelationshipElement);
+		return new ConnectedAnnotatedRelationshipElement(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), SUBMODEL_ELEMENT_ID_SHORT);
+	}
+
+	private ReferenceValue createReferenceValue(Reference reference) {
+		return new ReferenceValue(reference.getType(), reference.getKeys());
+	}
+
+	private static DefaultRelationshipElement getDefaultRelationshipElement() {
+		return new DefaultRelationshipElement.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).first(getReference(EXPECTED_STRING)).second(getReference(EXPECTED_STRING)).build();
+	}
+
+	private static DefaultReference getReference(String keyValue) {
+		return new DefaultReference.Builder().keys(new DefaultKey.Builder().value(keyValue).type(KeyTypes.PROPERTY).build()).build();
+	}
+
+	private ConnectedRelationshipElement getConnectedRelationshipElement(RelationshipElement relationshipElement) {
+		Submodel sm = createSubmodel(relationshipElement);
+		return new ConnectedRelationshipElement(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())),SUBMODEL_ELEMENT_ID_SHORT);
 	}
 
 	private static DefaultEntity getDefaultEntity(){
@@ -175,7 +350,7 @@ public class TestConnectedSubmodelElements {
 	}
 
 	private static DefaultFile getDefaultFile() {
-		return new DefaultFile.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).value(EXPECTED_STRING).contentType("plain/text").build();
+		return new DefaultFile.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).value(EXPECTED_STRING).contentType("text/plain").build();
 	}
 
 	private ConnectedFile getConnectedFile(File file) {
@@ -192,14 +367,16 @@ public class TestConnectedSubmodelElements {
         return new ConnectedProperty(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())),SUBMODEL_ELEMENT_ID_SHORT);
 	}
 
-	private ConnectedBlob getConnectedBlob(byte[] expectedValue) {
-		Submodel sm = createSubmodel(createBlobWithValue(expectedValue));
-		ConnectedBlob blob = new ConnectedBlob(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), SUBMODEL_ELEMENT_ID_SHORT);
-		return blob;
+	private ConnectedBlob getConnectedBlob(Blob blob) {
+		Submodel sm = createSubmodel(blob);
+		return new ConnectedBlob(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), SUBMODEL_ELEMENT_ID_SHORT);
 	}
 
-	private DefaultBlob createBlobWithValue(byte[] expectedValue) {
-		return new DefaultBlob.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).contentType("application/pdf").value(expectedValue).build();
+	private Blob getDefaultBlob() {
+		Blob blob = new DefaultBlob.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).build();
+		BlobValueMapper valueMapper = new BlobValueMapper(blob);
+		valueMapper.setValue(new FileBlobValue("text/plain", EXPECTED_STRING));
+		return blob;
 	}
 
 	private Submodel createSubmodel(SubmodelElement submodelElement) {

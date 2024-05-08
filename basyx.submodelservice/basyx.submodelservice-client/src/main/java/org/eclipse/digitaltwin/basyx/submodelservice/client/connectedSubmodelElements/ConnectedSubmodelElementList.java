@@ -34,22 +34,4 @@ public class ConnectedSubmodelElementList extends ConnectedSubmodelElement<Submo
 		super(submodelServiceUrl, idShort);
 	}
 
-	@Override
-	public SubmodelElementListValue getValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setValue(SubmodelElementListValue value) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public SubmodelElementList getSubmodelElement() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
