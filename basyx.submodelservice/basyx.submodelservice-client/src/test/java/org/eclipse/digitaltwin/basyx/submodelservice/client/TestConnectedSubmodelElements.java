@@ -26,71 +26,115 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.client;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultBlob;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.DummySubmodelRepositoryComponent;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedBlob;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedProperty;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
+import org.junit.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 
 public class TestConnectedSubmodelElements {
 
-	private static final String BLOB_IDSHORT = "ExampleBlob";
+	private static final String SUBMODEL_ELEMENT_ID_SHORT = "ExampleIdShort";
 	private static final String EXPECTED_STRING = "This is a test";
 	private static final String SUBMODEL_ID_SHORT = "submodelIdShort";
 	private static final String SUBMODEL_ID = "submodelId";
 	private static final String ACCESS_URL = "http://localhost:8080/submodels/";
 	private static ConfigurableApplicationContext appContext;
 
-	@Before
-	public void startSubmodelService() throws Exception {
+	@BeforeClass
+	public static void startSubmodelService() throws Exception {
 		appContext = new SpringApplication(DummySubmodelRepositoryComponent.class).run(new String[] {});
 	}
 
-	@After
-	public void shutdownSubmodelService() {
+	@AfterClass
+	public static void shutdownSubmodelService() {
 		appContext.close();
+	}
+
+	@After
+	public void cleanUpService(){
+		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
+		repo.deleteSubmodel(SUBMODEL_ID);
 	}
 
 	@Test
 	public void getBlobValue() {
 		byte[] expectedValue = EXPECTED_STRING.getBytes();
-		Submodel sm = createSubmodel(createBlobWithValue(expectedValue));
-		ConnectedBlob blob = new ConnectedBlob(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), BLOB_IDSHORT);
+		ConnectedBlob blob = getConnectedBlob(expectedValue);
 		assertTrue(new String(blob.getValue()).equals(EXPECTED_STRING));
 	}
 
 	@Test
 	public void setBlobValue() {
 		byte[] expectedValue = EXPECTED_STRING.getBytes();
-		Submodel sm = createSubmodel(createBlobWithValue(expectedValue));
-		ConnectedBlob blob = new ConnectedBlob(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), BLOB_IDSHORT);
+		ConnectedBlob blob = getConnectedBlob(expectedValue);
 		String newString = "This is a new test";
 		byte[] newValue = newString.getBytes();
 		blob.setValue(newValue);
-		assertTrue(new String(blob.getValue()).equals(newString));
+        assertEquals(new String(blob.getValue()), newString);
 	}
 
 	@Test
 	public void getBlobSubmodelElement() {
 		byte[] expectedValue = EXPECTED_STRING.getBytes();
+		ConnectedBlob blob = getConnectedBlob(expectedValue);
+        assertEquals(EXPECTED_STRING, new String(blob.getSubmodelElement().getValue()));
+	}
+
+	@Test
+	public void getPropertyValue(){
+		ConnectedProperty property = getConnectedProperty();
+		assertEquals(EXPECTED_STRING, property.getValue().getValue());
+	}
+
+	@Test
+	public void setPropertyValue(){
+		ConnectedProperty property = getConnectedProperty();
+		String newValue = "This is a new test";
+		property.setValue(new PropertyValue(newValue));
+		String actual = property.getValue().getValue();
+		assertEquals(newValue, actual);
+	}
+
+	@Test
+	public void getProperty(){
+		Property expected = getDefaultProperty();
+		ConnectedProperty property = getConnectedProperty();
+		assertEquals(property.getValue().getValue(),expected.getValue());
+	}
+
+	private static DefaultProperty getDefaultProperty() {
+		return new DefaultProperty.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).value(EXPECTED_STRING).build();
+	}
+
+	private ConnectedProperty getConnectedProperty() {
+		Submodel sm = createSubmodel(getDefaultProperty());
+		ConnectedProperty property = new ConnectedProperty(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())),SUBMODEL_ELEMENT_ID_SHORT);
+		return property;
+	}
+
+	private ConnectedBlob getConnectedBlob(byte[] expectedValue) {
 		Submodel sm = createSubmodel(createBlobWithValue(expectedValue));
-		ConnectedBlob blob = new ConnectedBlob(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), BLOB_IDSHORT);
-		assertTrue(new String(blob.getSubmodelElement().getValue()).equals(EXPECTED_STRING));
+		ConnectedBlob blob = new ConnectedBlob(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), SUBMODEL_ELEMENT_ID_SHORT);
+		return blob;
 	}
 
 	private DefaultBlob createBlobWithValue(byte[] expectedValue) {
-		return new DefaultBlob.Builder().idShort(BLOB_IDSHORT).contentType("application/pdf").value(expectedValue).build();
+		return new DefaultBlob.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).contentType("application/pdf").value(expectedValue).build();
 	}
 
 	private Submodel createSubmodel(SubmodelElement submodelElement) {
