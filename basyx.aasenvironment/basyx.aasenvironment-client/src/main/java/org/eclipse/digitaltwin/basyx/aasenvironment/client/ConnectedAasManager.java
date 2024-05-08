@@ -31,6 +31,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.NoValidEndpointFoundException;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.RegistryHttpRequestException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.AasDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.ReferenceResolver;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.SubmodelDescriptorResolver;
@@ -38,7 +39,6 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscovery
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AasDescriptorFactory;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodelRepository;
@@ -85,74 +85,77 @@ public class ConnectedAasManager implements AasManager {
 
 	@Override
 	public AssetAdministrationShell getAas(String identifier) throws NoValidEndpointFoundException {
+		AssetAdministrationShellDescriptor descriptor;
+
 		try {
-			AssetAdministrationShellDescriptor descriptor = aasRegistryApi.getAssetAdministrationShellDescriptorById(identifier);
-			return aasDescriptorResolver.resolveAasDescriptor(descriptor);
-		} catch (org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			descriptor = aasRegistryApi.getAssetAdministrationShellDescriptorById(identifier);
+		} catch (Exception e) {
+			throw new RegistryHttpRequestException(identifier, e);
 		}
-		return null;
+		return aasDescriptorResolver.resolveAasDescriptor(descriptor);
 	}
 
 	@Override
 	public Submodel getSubmodel(String identifier) {
+		SubmodelDescriptor descriptor;
+
 		try {
-			SubmodelDescriptor descriptor = smRegistryApi.getSubmodelDescriptorById(identifier);
-			return smDescriptorResolver.resolveSubmodelDescriptor(descriptor);
+			descriptor = smRegistryApi.getSubmodelDescriptorById(identifier);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RegistryHttpRequestException(identifier, e);
 		}
-		return null;
+
+		return smDescriptorResolver.resolveSubmodelDescriptor(descriptor);
 	}
 
 	@Override
 	public Submodel getSubmodelOfAas(String aasIdentifier, String smIdentifier) {
-		try {
-			AssetAdministrationShellDescriptor aasDescriptor = aasRegistryApi.getAssetAdministrationShellDescriptorById(aasIdentifier);
-			AssetAdministrationShell aas = aasDescriptorResolver.resolveAasDescriptor(aasDescriptor);
-			List<Reference> references = aas.getSubmodels();
+		AssetAdministrationShellDescriptor aasDescriptor;
 
-			return referenceResolver.resolveSubmodelFromReferences(smIdentifier, references);
+		try {
+			aasDescriptor = aasRegistryApi.getAssetAdministrationShellDescriptorById(aasIdentifier);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RegistryHttpRequestException(aasIdentifier, e);
 		}
-		return null;
+
+		AssetAdministrationShell aas = aasDescriptorResolver.resolveAasDescriptor(aasDescriptor);
+		List<Reference> references = aas.getSubmodels();
+
+		return referenceResolver.resolveSubmodelFromReferences(smIdentifier, references);
 	}
 
 	@Override
 	public void deleteAas(String identifier) {
 		try {
 			aasRegistryApi.deleteAssetAdministrationShellDescriptorById(identifier);
-			aasRepository.deleteAas(identifier);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RegistryHttpRequestException(identifier, e);
 		}
+
+		aasRepository.deleteAas(identifier);
 	}
 
 	@Override
 	public void deleteSubmodelOfAas(String aasIdentifier, String smIdentifier) {
 		try {
 			smRegistryApi.deleteSubmodelDescriptorById(smIdentifier);
-			aasRepository.removeSubmodelReference(aasIdentifier, smIdentifier);
-			smRepository.deleteSubmodel(smIdentifier);
-		} catch (ApiException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new RegistryHttpRequestException(aasIdentifier, e);
 		}
+
+		aasRepository.removeSubmodelReference(aasIdentifier, smIdentifier);
+		smRepository.deleteSubmodel(smIdentifier);
 	}
 
 	@Override
 	public void createAas(AssetAdministrationShell aas) {
 		aasRepository.createAas(aas);
 		AssetAdministrationShellDescriptor descriptor = aasDescriptorFactory.create(aas);
+
 		try {
 			aasRegistryApi.postAssetAdministrationShellDescriptor(descriptor);
-		} catch (org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new RegistryHttpRequestException(aas.getId(), e);
 		}
 	}
 
@@ -160,14 +163,15 @@ public class ConnectedAasManager implements AasManager {
 	public void createSubmodelInAas(String aasIdentifier, Submodel submodel) {
 		smRepository.createSubmodel(submodel);
 		SubmodelDescriptor descriptor = smDescriptorFactory.create(submodel);
+
 		try {
 			smRegistryApi.postSubmodelDescriptor(descriptor);
-			Reference ref = smDescriptorResolver.deriveReferenceFromSubmodelDescriptor(descriptor);
-			aasRepository.addSubmodelReference(aasIdentifier, ref);
-		} catch (ApiException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new RegistryHttpRequestException(aasIdentifier, e);
 		}
+
+		Reference ref = smDescriptorResolver.deriveReferenceFromSubmodelDescriptor(descriptor);
+		aasRepository.addSubmodelReference(aasIdentifier, ref);
 	}
 
 }
