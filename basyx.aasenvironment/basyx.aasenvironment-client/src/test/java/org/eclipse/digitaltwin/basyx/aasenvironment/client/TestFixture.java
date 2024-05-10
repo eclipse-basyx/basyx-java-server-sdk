@@ -25,8 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Key;
@@ -69,19 +68,16 @@ public class TestFixture {
 	public static final String SM_POS1_ID_ENCODED = Base64UrlEncoder.encode(SM_POS1_ID);
 	public static final String SM_POS1_IDSHORT = "smPos1IdShort";
 
-	private String aasRepositoryBasePath = "http://localhost:8081";
-	private String smRepositoryBasePath = "http://localhost:8081";;
+	private final String aasRepositoryBasePath;
+	private final String smRepositoryBasePath;
 
 	public TestFixture(String aasRepositoryBasePath, String smRepositoryBasePath) {
 		this.aasRepositoryBasePath = aasRepositoryBasePath;
 		this.smRepositoryBasePath = smRepositoryBasePath;
 	}
 
-	public TestFixture() {
-	}
-
 	public AssetAdministrationShell buildAasPre1() {
-		return new DefaultAssetAdministrationShell.Builder().id(AAS_PRE1_ID).idShort(AAS_PRE1_IDSHORT).build();
+		return new DefaultAssetAdministrationShell.Builder().id(AAS_PRE1_ID).idShort(AAS_PRE1_IDSHORT).submodels(List.of(buildSmPre1Ref())).build();
 	}
 
 	public AssetAdministrationShellDescriptor buildAasPre1Descriptor() {
@@ -93,7 +89,7 @@ public class TestFixture {
 	}
 
 	public Key buildSmPref1RefKey() {
-		return new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(createSmRepositoryUrl(smRepositoryBasePath, SM_PRE1_ID_ENCODED)).build();
+		return new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(SM_PRE1_ID).build();
 	}
 
 	public Submodel buildSmPre1() {
@@ -120,12 +116,4 @@ public class TestFixture {
 		return new DefaultSubmodel.Builder().id(SM_POS1_ID).idShort(SM_POS1_IDSHORT).build();
 	}
 
-	private static String createSmRepositoryUrl(String smBaseUrl, String encodedId) {
-		try {
-			URL url = new URL(new URL(smBaseUrl), "submodels/" + encodedId);
-			return url.toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException(e);
-		}
-	}
 }

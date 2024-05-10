@@ -57,17 +57,6 @@ public interface AasManager {
 	public Submodel getSubmodel(String identifier);
 
 	/**
-	 * Retrieves a Submodel associated with a specified AAS.
-	 *
-	 * @param aasIdentifier
-	 *            The identifier of the AAS.
-	 * @param smIdentifier
-	 *            The identifier of the submodel.
-	 * @return The retrieved Submodel object associated with the specified AAS.
-	 */
-	public Submodel getSubmodelOfAas(String aasIdentifier, String smIdentifier);
-
-	/**
 	 * Deletes an AAS by its identifier.
 	 *
 	 * @param identifier

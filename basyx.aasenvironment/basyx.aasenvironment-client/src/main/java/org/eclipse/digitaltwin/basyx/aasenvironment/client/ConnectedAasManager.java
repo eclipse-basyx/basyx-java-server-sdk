@@ -25,8 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
-import java.util.List;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -66,21 +64,22 @@ public class ConnectedAasManager implements AasManager {
 
 	private final ReferenceResolver referenceResolver;
 
-	public static ConnectedAasManager fromUrls(String aasRegistryBaseUrl, String aasRepositoryBaseUrl, String submodelRegistryBaseUrl, String submodelBaseRepositoryUrl) {
-		return new ConnectedAasManagerFactory(aasRegistryBaseUrl, aasRepositoryBaseUrl, submodelRegistryBaseUrl, submodelBaseRepositoryUrl).build();
+	public ConnectedAasManager(String aasRegistryBaseUrl, String aasRepositoryBaseUrl, String submodelRegistryBaseUrl, String submodelBaseRepositoryUrl) {
+		this(new RegistryAndDiscoveryInterfaceApi(aasRegistryBaseUrl), new ConnectedAasRepository(aasRepositoryBaseUrl), aasRepositoryBaseUrl, new SubmodelRegistryApi(submodelRegistryBaseUrl),
+				new ConnectedSubmodelRepository(submodelBaseRepositoryUrl), submodelBaseRepositoryUrl);
 	}
 
-	public ConnectedAasManager(ConnectedAasRepository aasRepository, RegistryAndDiscoveryInterfaceApi aasRegistryApi, ConnectedSubmodelRepository smRepository, SubmodelRegistryApi smRegistryApi,
-			AasDescriptorResolver aasDescriptorResolver, AasDescriptorFactory aasDescriptorFactory, SubmodelDescriptorResolver smDescriptorResolver, SubmodelDescriptorFactory smDescriptorFactory, ReferenceResolver referenceResolver) {
+	ConnectedAasManager(RegistryAndDiscoveryInterfaceApi aasRegistryApi, ConnectedAasRepository aasRepository, String aasRepositoryBaseUrl, SubmodelRegistryApi smRegistryApi, ConnectedSubmodelRepository smRepository,
+			String submodelBaseRepositoryUrl) {
 		this.aasRepository = aasRepository;
 		this.aasRegistryApi = aasRegistryApi;
 		this.smRepository = smRepository;
 		this.smRegistryApi = smRegistryApi;
-		this.aasDescriptorResolver = aasDescriptorResolver;
-		this.aasDescriptorFactory = aasDescriptorFactory;
-		this.smDescriptorResolver = smDescriptorResolver;
-		this.smDescriptorFactory = smDescriptorFactory;
-		this.referenceResolver = referenceResolver;
+		this.aasDescriptorResolver = ConnectedAasManagerHelper.buildAasDescriptorResolver();
+		this.aasDescriptorFactory = ConnectedAasManagerHelper.buildAasDescriptorFactory(aasRepositoryBaseUrl);
+		this.smDescriptorResolver = ConnectedAasManagerHelper.buildSubmodelDescriptorResolver();
+		this.smDescriptorFactory = ConnectedAasManagerHelper.buildSmDescriptorFactory(submodelBaseRepositoryUrl);
+		this.referenceResolver = ConnectedAasManagerHelper.buildReferenceResolver();
 	}
 
 	@Override
@@ -106,22 +105,6 @@ public class ConnectedAasManager implements AasManager {
 		}
 
 		return smDescriptorResolver.resolveSubmodelDescriptor(descriptor);
-	}
-
-	@Override
-	public Submodel getSubmodelOfAas(String aasIdentifier, String smIdentifier) {
-		AssetAdministrationShellDescriptor aasDescriptor;
-
-		try {
-			aasDescriptor = aasRegistryApi.getAssetAdministrationShellDescriptorById(aasIdentifier);
-		} catch (Exception e) {
-			throw new RegistryHttpRequestException(aasIdentifier, e);
-		}
-
-		AssetAdministrationShell aas = aasDescriptorResolver.resolveAasDescriptor(aasDescriptor);
-		List<Reference> references = aas.getSubmodels();
-
-		return referenceResolver.resolveSubmodelFromReferences(smIdentifier, references);
 	}
 
 	@Override
@@ -169,6 +152,9 @@ public class ConnectedAasManager implements AasManager {
 		} catch (Exception e) {
 			throw new RegistryHttpRequestException(aasIdentifier, e);
 		}
+
+		// reference create using AASUtils
+		// TODO use from reference
 
 		Reference ref = smDescriptorResolver.deriveReferenceFromSubmodelDescriptor(descriptor);
 		aasRepository.addSubmodelReference(aasIdentifier, ref);
