@@ -127,6 +127,7 @@ public class TestConnectedAasManager {
 		inOrder.verify(aasRegistryApi, times(1)).postAssetAdministrationShellDescriptor(expectedDescriptor);
 
 		assertEquals(expectedAas, aasRepository.getAas(TestFixture.AAS_POS1_ID));
+		assertEquals(expectedDescriptor, new RegistryAndDiscoveryInterfaceApi(AAS_REGISTRY_BASE_PATH).getAssetAdministrationShellDescriptorById(TestFixture.AAS_POS1_ID));
 	}
 
 	@Test
@@ -143,6 +144,7 @@ public class TestConnectedAasManager {
 		inOrder.verify(connectedAasRepository, times(1)).addSubmodelReference(eq(TestFixture.AAS_PRE1_ID), any());
 
 		assertEquals(expectedSm, smRepository.getSubmodel(TestFixture.SM_POS1_ID));
+		assertEquals(expectedDescriptor, new SubmodelRegistryApi(SM_REGISTRY_BASE_PATH).getSubmodelDescriptorById(TestFixture.SM_POS1_ID));
 	}
 
 	@Test
@@ -155,6 +157,7 @@ public class TestConnectedAasManager {
 		inOrder.verify(connectedAasRepository, times(1)).deleteAas(TestFixture.AAS_PRE1_ID);
 
 		assertThrows(ElementDoesNotExistException.class, () -> aasRepository.getAas(TestFixture.AAS_PRE1_ID));
+		assertThrows(Exception.class, () -> new RegistryAndDiscoveryInterfaceApi(AAS_REGISTRY_BASE_PATH).getAssetAdministrationShellDescriptorById(TestFixture.AAS_PRE1_ID));
 	}
 
 	@Test
@@ -168,6 +171,7 @@ public class TestConnectedAasManager {
 		inOrder.verify(connectedSmRepository, times(1)).deleteSubmodel(TestFixture.SM_PRE1_ID);
 
 		assertThrows(ElementDoesNotExistException.class, () -> smRepository.getSubmodel(TestFixture.SM_PRE1_ID));
+		assertThrows(Exception.class, () -> new SubmodelRegistryApi(SM_REGISTRY_BASE_PATH).getSubmodelDescriptorById(TestFixture.SM_PRE1_ID));
 	}
 
 	@Test
