@@ -27,14 +27,11 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.DummyAasEnvironmentComponent;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.TestFixture;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.AasRegistryEndpointURIParser;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.ReferenceURIParser;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.SubmodelRegistryEndpointURIParser;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
@@ -47,7 +44,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * Tests for {@link AasDescriptorResolver}, {@link SubmodelDescriptorResolver}
- * and {@link ReferenceResolver}
  *
  * @author mateusmolina
  *
@@ -98,13 +94,4 @@ public class RegistryDescriptorResolverTest {
 		assertEquals(expectedSm, actualSm);
 	}
 
-	@Test
-	public void resolveReference() {
-		ReferenceResolver resolver = new ReferenceResolver(new EndpointResolver<>(new ReferenceURIParser()));
-		
-		Submodel expectedSm = FIXTURE.buildSmPre1();
-		Submodel actualSm = resolver.resolveSubmodelFromReferences(TestFixture.SM_PRE1_ID, List.of(FIXTURE.buildSmPre1Ref()));
-
-		assertEquals(expectedSm, actualSm);
-	}
 }

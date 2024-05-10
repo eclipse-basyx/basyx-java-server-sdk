@@ -25,14 +25,14 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
-import java.util.List;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.Key;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
@@ -77,7 +77,11 @@ public class TestFixture {
 	}
 
 	public AssetAdministrationShell buildAasPre1() {
-		return new DefaultAssetAdministrationShell.Builder().id(AAS_PRE1_ID).idShort(AAS_PRE1_IDSHORT).submodels(List.of(buildSmPre1Ref())).build();
+		return new DefaultAssetAdministrationShell.Builder().id(AAS_PRE1_ID).idShort(AAS_PRE1_IDSHORT).submodels(buildSmPre1Ref()).assetInformation(buildAasPre1AssetInformation()).build();
+	}
+
+	public AssetInformation buildAasPre1AssetInformation() {
+		return new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetId(AAS_PRE1_GLOBALASSETID).build();
 	}
 
 	public AssetAdministrationShellDescriptor buildAasPre1Descriptor() {
@@ -85,11 +89,7 @@ public class TestFixture {
 	}
 
 	public Reference buildSmPre1Ref() {
-		return new DefaultReference.Builder().keys(buildSmPref1RefKey()).build();
-	}
-
-	public Key buildSmPref1RefKey() {
-		return new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(SM_PRE1_ID).build();
+		return new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(SM_PRE1_ID).build()).build();
 	}
 
 	public Submodel buildSmPre1() {
@@ -97,11 +97,15 @@ public class TestFixture {
 	}
 
 	public SubmodelDescriptor buildSmPre1Descriptor() {
-		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_PRE1_ID, SM_PRE1_IDSHORT, smRepositoryBasePath);
+		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_PRE1_ID, SM_PRE1_IDSHORT, smRepositoryBasePath, null);
 	}
 
 	public AssetAdministrationShell buildAasPos1() {
-		return new DefaultAssetAdministrationShell.Builder().id(AAS_POS1_ID).idShort(AAS_POS1_IDSHORT).build();
+		return new DefaultAssetAdministrationShell.Builder().id(AAS_POS1_ID).idShort(AAS_POS1_IDSHORT).assetInformation(buildAasPos1AssetInformation()).build();
+	}
+
+	public AssetInformation buildAasPos1AssetInformation() {
+		return new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetId(AAS_POS1_GLOBALASSETID).build();
 	}
 
 	public AssetAdministrationShellDescriptor buildAasPos1Descriptor() {
@@ -109,7 +113,7 @@ public class TestFixture {
 	}
 
 	public SubmodelDescriptor buildSmPos1Descriptor() {
-		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_POS1_ID, SM_POS1_IDSHORT, smRepositoryBasePath);
+		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_POS1_ID, SM_POS1_IDSHORT, smRepositoryBasePath, null);
 	}
 
 	public Submodel buildSmPos1() {

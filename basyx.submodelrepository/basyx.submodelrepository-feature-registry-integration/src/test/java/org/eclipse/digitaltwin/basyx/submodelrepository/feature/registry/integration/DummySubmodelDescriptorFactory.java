@@ -47,19 +47,19 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescr
 public class DummySubmodelDescriptorFactory {
 	private static final String SUBMODEL_REPOSITORY_PATH = "/submodels";
 
-	public static SubmodelDescriptor createDummyDescriptor(String smId, String idShort, String smRepoBaseUrl) {
+	public static SubmodelDescriptor createDummyDescriptor(String smId, String idShort, String smRepoBaseUrl, Reference semanticId) {
 
 		SubmodelDescriptor descriptor = new SubmodelDescriptor();
 
 		descriptor.setId(smId);
 		descriptor.setIdShort(idShort);
-		descriptor.setSemanticId(createSemanticId());
+		descriptor.setSemanticId(semanticId);
 		descriptor.addEndpointsItem(createEndpointItem(smId, smRepoBaseUrl));
 
 		return descriptor;
 	}
 
-	private static Reference createSemanticId() {
+	public static Reference createSemanticId() {
 		return new Reference().keys(Arrays.asList(new Key().type(KeyTypes.GLOBALREFERENCE).value("0173-1#01-AFZ615#016"))).type(ReferenceTypes.EXTERNALREFERENCE);
 	}
 

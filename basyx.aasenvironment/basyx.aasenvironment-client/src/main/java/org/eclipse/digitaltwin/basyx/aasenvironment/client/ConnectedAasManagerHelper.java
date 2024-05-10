@@ -28,10 +28,8 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.AasDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.EndpointResolver;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.ReferenceResolver;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.SubmodelDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.AasRegistryEndpointURIParser;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.ReferenceURIParser;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.SubmodelRegistryEndpointURIParser;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
@@ -50,7 +48,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 class ConnectedAasManagerHelper {
 
-	public static ObjectMapper objectMapper = buildObjectMapper();
+	public static final ObjectMapper objectMapper = buildObjectMapper();
+
+	private ConnectedAasManagerHelper() {
+	}
 
 	public static ObjectMapper buildObjectMapper() {
 		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL);
@@ -65,10 +66,6 @@ class ConnectedAasManagerHelper {
 
 	public static SubmodelDescriptorResolver buildSubmodelDescriptorResolver() {
 		return new SubmodelDescriptorResolver(new EndpointResolver<>(new SubmodelRegistryEndpointURIParser()));
-	}
-
-	public static ReferenceResolver buildReferenceResolver() {
-		return new ReferenceResolver(new EndpointResolver<>(new ReferenceURIParser()));
 	}
 
 	public static AasDescriptorFactory buildAasDescriptorFactory(String aasRepositoryBaseUrl) {

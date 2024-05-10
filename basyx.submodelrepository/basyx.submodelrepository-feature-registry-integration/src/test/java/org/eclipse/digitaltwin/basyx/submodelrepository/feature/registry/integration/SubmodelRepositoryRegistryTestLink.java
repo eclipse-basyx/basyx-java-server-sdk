@@ -59,7 +59,7 @@ public class SubmodelRepositoryRegistryTestLink {
 	public static String submodelRepoBaseUrl = "http://localhost:8081";
 	public static String submodelRegistryUrl = "http://localhost:8060";
 
-	private static final SubmodelDescriptor DUMMY_DESCRIPTOR = DummySubmodelDescriptorFactory.createDummyDescriptor(DUMMY_SUBMODEL_ID, SUMMY_SUBMODEL_IDSHORT, submodelRepoBaseUrl);
+	private static final SubmodelDescriptor DUMMY_DESCRIPTOR = DummySubmodelDescriptorFactory.createDummyDescriptor(DUMMY_SUBMODEL_ID, SUMMY_SUBMODEL_IDSHORT, submodelRepoBaseUrl, DummySubmodelDescriptorFactory.createSemanticId());
 
 	@Test
 	public void createSubmodel() throws FileNotFoundException, IOException, ApiException {

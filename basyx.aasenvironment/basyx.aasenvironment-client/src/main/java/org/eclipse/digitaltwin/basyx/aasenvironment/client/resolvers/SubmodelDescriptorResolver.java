@@ -59,12 +59,10 @@ public class SubmodelDescriptorResolver {
 	}
 
 	public Reference deriveReferenceFromSubmodelDescriptor(SubmodelDescriptor smDescriptor) {
-		String endpoint = endpointResolver.resolveFirst(smDescriptor.getEndpoints());
-
-		return new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE).keys(generateKeyFromEndpoint(endpoint)).build();
+		return new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE).keys(generateKeyFromId(smDescriptor.getId())).build();
 	}
 
-	private static Key generateKeyFromEndpoint(String endpoint) {
-		return new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(endpoint).build();
+	private static Key generateKeyFromId(String smId) {
+		return new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(smId).build();
 	}
 }
