@@ -33,12 +33,14 @@ import java.util.Arrays;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AnnotatedRelationshipElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
+import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
 import org.eclipse.digitaltwin.aas4j.v3.model.EntityType;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.RelationshipElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
@@ -51,9 +53,13 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultMultiLanguageProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultRange;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReferenceElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultRelationshipElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.DummySubmodelRepositoryComponent;
@@ -64,12 +70,18 @@ import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelEle
 import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedFile;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedMultiLanguageProperty;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedProperty;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedRange;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedReferenceElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedRelationshipElement;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedSubmodelElementCollection;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements.ConnectedSubmodelElementList;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.AnnotatedRelationshipElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.BasicEventValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.EntityValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.RangeValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.RelationshipElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.AnnotatedRelationshipElementValueMapper;
@@ -196,7 +208,7 @@ public class TestConnectedSubmodelElements {
 	public void getEntity(){
 		Entity expected = getDefaultEntity();
 		ConnectedEntity entity = getConnectedEntity(expected);
-		assertEquals(expected.getIdShort(), entity.getSubmodelElement().getIdShort());
+		assertEquals(expected.getGlobalAssetId(), entity.getSubmodelElement().getGlobalAssetId());
 	}
 
 	@Test
@@ -296,6 +308,151 @@ public class TestConnectedSubmodelElements {
 		assertEquals(expected.getValue().get(0).getText(), multiLanguageProperty.getSubmodelElement().getValue().get(0).getText());
 	}
 
+	@Test
+	public void getRangeValue() {
+		ConnectedRange range = getConnectedRange(getDefaultRange());
+		assertEquals(0, range.getValue().getMin());
+		assertEquals(10, range.getValue().getMax());
+	}
+
+	@Test
+	public void setRangeValue() {
+		DefaultRange range = getDefaultRange();
+		ConnectedRange connectedRange = getConnectedRange(range);
+		RangeValue newValue = new RangeValue(1, 11);
+		connectedRange.setValue(newValue);
+		RangeValue actual = connectedRange.getValue();
+		assertEquals(1, actual.getMin());
+		assertEquals(11, actual.getMax());
+	}
+
+	@Test
+	public void getRange() {
+		DefaultRange expected = getDefaultRange();
+		ConnectedRange range = getConnectedRange(expected);
+		assertEquals(expected.getMin(), range.getSubmodelElement().getMin());
+		assertEquals(expected.getMax(), range.getSubmodelElement().getMax());
+	}
+
+	@Test
+	public void getReferenceValue() {
+		ConnectedReferenceElement reference = getConnectedReference(getDefaultReferenceElement());
+		assertEquals(EXPECTED_STRING, reference.getValue().getReferenceValue().getKeys().get(0).getValue());
+	}
+
+	@Test
+	public void setReferenceValue() {
+		DefaultReferenceElement referenceElement = getDefaultReferenceElement();
+		ConnectedReferenceElement connectedReferenceElement = getConnectedReference(referenceElement);
+		ReferenceElementValue newValue = new ReferenceElementValue(createReferenceValue(getReference("newKey")));
+		connectedReferenceElement.setValue(newValue);
+		ReferenceElementValue actual = connectedReferenceElement.getValue();
+		assertEquals("newKey", actual.getReferenceValue().getKeys().get(0).getValue());
+	}
+
+	@Test
+	public void getReferenceElement() {
+		DefaultReferenceElement expected = getDefaultReferenceElement();
+		ConnectedReferenceElement reference = getConnectedReference(expected);
+		assertEquals(expected.getValue().getKeys().get(0).getValue(), reference.getSubmodelElement().getValue().getKeys().get(0).getValue());
+	}
+
+	@Test
+	public void getSubmodelElementCollectionValue() {
+		ConnectedSubmodelElementCollection submodelElementCollection = getConnectedSubmodelElementCollection(getDefaultSubmodelElementCollection());
+		assertEquals(1, submodelElementCollection.getSubmodelElement().getValue().size());
+	}
+
+	// TODO: Fix the setValue of SubmodelElementCollectionValue (the serializer
+	// expects the valueType which is not part of the SubmodelElementCollectionValue
+	// -> therefore it's deserialized as MultiLanguageProperty instead of Property)
+	// @Test
+	// public void setSubmodelElementCollectionValue() {
+	// DefaultSubmodelElementCollection submodelElementCollection =
+	// getDefaultSubmodelElementCollection();
+	// ConnectedSubmodelElementCollection connectedSubmodelElementCollection =
+	// getConnectedSubmodelElementCollection(submodelElementCollection);
+	// SubmodelElementCollectionValueMapper valueMapper = new
+	// SubmodelElementCollectionValueMapper(submodelElementCollection);
+	// System.out.println(valueMapper.getValue().getValue());
+	// connectedSubmodelElementCollection.setValue(valueMapper.getValue());
+	// assertEquals(2,
+	// connectedSubmodelElementCollection.getValue().getValue().size());
+	// }
+
+	@Test
+	public void getSubmodelElementCollection() {
+		DefaultSubmodelElementCollection expected = getDefaultSubmodelElementCollection();
+		ConnectedSubmodelElementCollection submodelElementCollection = getConnectedSubmodelElementCollection(expected);
+		assertEquals(expected.getValue().size(), submodelElementCollection.getSubmodelElement().getValue().size());
+	}
+
+	// @Test
+	// public void getSubmodelElementListValue() {
+	// ConnectedSubmodelElementList submodelElementList =
+	// getConnectedSubmodelElementList(getDefaultSubmodelElementList());
+	// assertEquals(1,
+	// submodelElementList.getValue().getSubmodelElementValues().size());
+	// }
+	//
+	// @Test
+	// public void setSubmodelElementListValue() {
+	// DefaultSubmodelElementList submodelElementList =
+	// getDefaultSubmodelElementList();
+	// ConnectedSubmodelElementList connectedSubmodelElementList =
+	// getConnectedSubmodelElementList(submodelElementList);
+	// SubmodelElementListValueMapper valueMapper = new
+	// SubmodelElementListValueMapper(submodelElementList);
+	// connectedSubmodelElementList.setValue(valueMapper.getValue());
+	// assertEquals(2,
+	// connectedSubmodelElementList.getValue().getSubmodelElementValues().size());
+	// }
+	//
+	// @Test
+	// public void getSubmodelElementList() {
+	// DefaultSubmodelElementList expected = getDefaultSubmodelElementList();
+	// ConnectedSubmodelElementList submodelElementList =
+	// getConnectedSubmodelElementList(expected);
+	// assertEquals(expected.getValue().size(),
+	// submodelElementList.getSubmodelElement().getValue().size());
+	// }
+
+	private DefaultSubmodelElementList getDefaultSubmodelElementList() {
+		return new DefaultSubmodelElementList.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).value(getDefaultAnnotatedRelationshipElement()).build();
+	}
+
+	private ConnectedSubmodelElementList getConnectedSubmodelElementList(DefaultSubmodelElementList submodelElementList) {
+		Submodel sm = createSubmodel(submodelElementList);
+		return new ConnectedSubmodelElementList(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), SUBMODEL_ELEMENT_ID_SHORT);
+	}
+
+	private DefaultSubmodelElementCollection getDefaultSubmodelElementCollection() {
+		return new DefaultSubmodelElementCollection.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).value(getDefaultProperty()).build();
+	}
+
+	private ConnectedSubmodelElementCollection getConnectedSubmodelElementCollection(DefaultSubmodelElementCollection submodelElementCollection) {
+		Submodel sm = createSubmodel(submodelElementCollection);
+		return new ConnectedSubmodelElementCollection(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), SUBMODEL_ELEMENT_ID_SHORT);
+	}
+
+	private DefaultReferenceElement getDefaultReferenceElement() {
+		return new DefaultReferenceElement.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).value(getReference(EXPECTED_STRING)).build();
+	}
+
+	private ConnectedReferenceElement getConnectedReference(DefaultReferenceElement referenceElement) {
+		Submodel sm = createSubmodel(referenceElement);
+		return new ConnectedReferenceElement(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), SUBMODEL_ELEMENT_ID_SHORT);
+	}
+
+	private DefaultRange getDefaultRange() {
+		return new DefaultRange.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).min("0").max("10").build();
+	}
+
+	private ConnectedRange getConnectedRange(DefaultRange range) {
+		Submodel sm = createSubmodel(range);
+		return new ConnectedRange(getSubmodelServiceUrl(Base64UrlEncodedIdentifier.encodeIdentifier(sm.getId())), SUBMODEL_ELEMENT_ID_SHORT);
+	}
+
 	private DefaultMultiLanguageProperty getDefaultMultiLanguageProperty() {
 		return new DefaultMultiLanguageProperty.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).value(Arrays.asList(new DefaultLangStringTextType.Builder().text(EXPECTED_STRING).language("de").build())).build();
 	}
@@ -332,7 +489,7 @@ public class TestConnectedSubmodelElements {
 	}
 
 	private static DefaultReference getReference(String keyValue) {
-		return new DefaultReference.Builder().keys(new DefaultKey.Builder().value(keyValue).type(KeyTypes.PROPERTY).build()).build();
+		return new DefaultReference.Builder().keys(new DefaultKey.Builder().value(keyValue).type(KeyTypes.PROPERTY).build()).type(ReferenceTypes.EXTERNAL_REFERENCE).build();
 	}
 
 	private ConnectedRelationshipElement getConnectedRelationshipElement(RelationshipElement relationshipElement) {
@@ -359,7 +516,7 @@ public class TestConnectedSubmodelElements {
 	}
 
 	private static DefaultProperty getDefaultProperty() {
-		return new DefaultProperty.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).value(EXPECTED_STRING).build();
+		return new DefaultProperty.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).value(EXPECTED_STRING).valueType(DataTypeDefXsd.STRING).build();
 	}
 
 	private ConnectedProperty getConnectedProperty(Property property) {
