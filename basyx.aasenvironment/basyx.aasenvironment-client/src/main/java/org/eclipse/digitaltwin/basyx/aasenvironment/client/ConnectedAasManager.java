@@ -42,12 +42,12 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodel
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.SubmodelDescriptorFactory;
 
 /**
- * Connected variant of the {@link AasManager}
+ * Client component for executing consolidated Repository and Registry requests
  *
  * @author mateusmolina
  *
  */
-public class ConnectedAasManager implements AasManager {
+public class ConnectedAasManager {
 
 	private final ConnectedAasRepository aasRepository;
 	private final ConnectedSubmodelRepository smRepository;
@@ -61,6 +61,14 @@ public class ConnectedAasManager implements AasManager {
 	private final SubmodelDescriptorResolver smDescriptorResolver;
 	private final SubmodelDescriptorFactory smDescriptorFactory;
 
+	/**
+	 * Default constructor for a {@link ConnectedAasManager} instance
+	 * 
+	 * @param aasRegistryBaseUrl
+	 * @param aasRepositoryBaseUrl
+	 * @param submodelRegistryBaseUrl
+	 * @param submodelBaseRepositoryUrl
+	 */
 	public ConnectedAasManager(String aasRegistryBaseUrl, String aasRepositoryBaseUrl, String submodelRegistryBaseUrl, String submodelBaseRepositoryUrl) {
 		this(new RegistryAndDiscoveryInterfaceApi(aasRegistryBaseUrl), new ConnectedAasRepository(aasRepositoryBaseUrl), aasRepositoryBaseUrl, new SubmodelRegistryApi(submodelRegistryBaseUrl),
 				new ConnectedSubmodelRepository(submodelBaseRepositoryUrl), submodelBaseRepositoryUrl);
@@ -78,7 +86,13 @@ public class ConnectedAasManager implements AasManager {
 		this.smDescriptorFactory = ConnectedAasManagerHelper.buildSmDescriptorFactory(submodelBaseRepositoryUrl);
 	}
 
-	@Override
+	/**
+	 * Retrieves an AAS in an AAS registry by its identifier.
+	 *
+	 * @param identifier
+	 *            The identifier of the AAS to retrieve.
+	 * @return The retrieved AAS object.
+	 */
 	public AssetAdministrationShell getAas(String identifier) throws NoValidEndpointFoundException {
 		AssetAdministrationShellDescriptor descriptor;
 
@@ -90,7 +104,13 @@ public class ConnectedAasManager implements AasManager {
 		return aasDescriptorResolver.resolveAasDescriptor(descriptor);
 	}
 
-	@Override
+	/**
+	 * Retrieves a Submodel in a Submodel registry by its identifier.
+	 *
+	 * @param identifier
+	 *            The identifier of the submodel to retrieve.
+	 * @return The retrieved Submodel object.
+	 */
 	public Submodel getSubmodel(String identifier) {
 		SubmodelDescriptor descriptor;
 
@@ -103,7 +123,12 @@ public class ConnectedAasManager implements AasManager {
 		return smDescriptorResolver.resolveSubmodelDescriptor(descriptor);
 	}
 
-	@Override
+	/**
+	 * Deletes an AAS by its identifier.
+	 *
+	 * @param identifier
+	 *            The identifier of the AAS to delete.
+	 */
 	public void deleteAas(String identifier) {
 		try {
 			aasRegistryApi.deleteAssetAdministrationShellDescriptorById(identifier);
@@ -114,7 +139,14 @@ public class ConnectedAasManager implements AasManager {
 		aasRepository.deleteAas(identifier);
 	}
 
-	@Override
+	/**
+	 * Deletes a submodel associated with a specified AAS.
+	 *
+	 * @param aasIdentifier
+	 *            The identifier of the AAS.
+	 * @param smIdentifier
+	 *            The identifier of the submodel to delete.
+	 */
 	public void deleteSubmodelOfAas(String aasIdentifier, String smIdentifier) {
 		try {
 			smRegistryApi.deleteSubmodelDescriptorById(smIdentifier);
@@ -126,7 +158,12 @@ public class ConnectedAasManager implements AasManager {
 		smRepository.deleteSubmodel(smIdentifier);
 	}
 
-	@Override
+	/**
+	 * Creates a new AAS
+	 *
+	 * @param aas
+	 *            The AAS object to create.
+	 */
 	public void createAas(AssetAdministrationShell aas) {
 		aasRepository.createAas(aas);
 		AssetAdministrationShellDescriptor descriptor = aasDescriptorFactory.create(aas);
@@ -138,7 +175,14 @@ public class ConnectedAasManager implements AasManager {
 		}
 	}
 
-	@Override
+	/**
+	 * Creates a submodel under a specified AAS.
+	 *
+	 * @param aasIdentifier
+	 *            The identifier of the AAS.
+	 * @param submodel
+	 *            The Submodel object to create under the specified AAS.
+	 */
 	public void createSubmodelInAas(String aasIdentifier, Submodel submodel) {
 		smRepository.createSubmodel(submodel);
 		SubmodelDescriptor descriptor = smDescriptorFactory.create(submodel);
