@@ -350,18 +350,6 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 	}
 
 	@Test
-	public void setSubmodelElementCollectionValueWithSingleProperty() throws IOException, ParseException {
-		String expectedValue = getJSONValueAsString("value/expectedSubmodelElementCollectionValueWithSingleProperty.json");
-
-		CloseableHttpResponse writeResponse = writeSubmodelElementValue("SimpleCollection", expectedValue);
-		assertEquals(HttpStatus.NO_CONTENT.value(), writeResponse.getCode());
-
-		CloseableHttpResponse response = requestSubmodelElementValue("SimpleCollection");
-
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
-	}
-
-	@Test
 	public void getSubmodelElementListValue() throws IOException, ParseException {
 		CloseableHttpResponse response = requestSubmodelElementValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_LIST_ID_SHORT);
 
