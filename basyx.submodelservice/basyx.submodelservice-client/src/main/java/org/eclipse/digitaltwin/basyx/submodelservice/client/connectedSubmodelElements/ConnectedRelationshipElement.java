@@ -28,6 +28,12 @@ package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelEl
 import org.eclipse.digitaltwin.aas4j.v3.model.RelationshipElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.RelationshipElementValue;
 
+/**
+ * Connected variant of {@link RealtionshipElement}
+ * 
+ * @author zielstor, fried
+ * 
+ */
 public class ConnectedRelationshipElement
 		extends ConnectedSubmodelElement<RelationshipElementValue, RelationshipElement> {
 

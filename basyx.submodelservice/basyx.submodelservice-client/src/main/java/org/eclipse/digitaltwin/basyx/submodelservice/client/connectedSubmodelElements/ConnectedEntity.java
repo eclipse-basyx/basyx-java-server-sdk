@@ -29,6 +29,12 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.EntityValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.EntityValueMapper;
 
+/**
+ * Connected variant of {@link Entity}
+ * 
+ * @author zielstor, fried
+ * 
+ */
 public class ConnectedEntity extends ConnectedSubmodelElement<EntityValue, Entity> {
 
     public ConnectedEntity(String submodelServiceUrl, String idShortPath) {
@@ -42,15 +48,5 @@ public class ConnectedEntity extends ConnectedSubmodelElement<EntityValue, Entit
 		return entityValueMapper.getValue();
 	}
 
-	@Override
-	public void setValue(EntityValue value) {
-		service.setSubmodelElementValue(idShortPath, value);
-	}
-
-	@Override
-	public Entity getSubmodelElement() {
-		Entity entity = (Entity) service.getSubmodelElement(idShortPath);
-		return entity;
-	}
 
 }

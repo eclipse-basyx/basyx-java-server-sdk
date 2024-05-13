@@ -28,6 +28,12 @@ package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelEl
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 
+/**
+ * Connected variant of {@link File}
+ * 
+ * @author zielstor, fried
+ * 
+ */
 public class ConnectedFile extends ConnectedSubmodelElement<FileBlobValue, File> {
 
 	public ConnectedFile(String submodelServiceUrl, String idShortPath) {

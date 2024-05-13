@@ -28,6 +28,12 @@ package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelEl
 import org.eclipse.digitaltwin.aas4j.v3.model.Range;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.RangeValue;
 
+/**
+ * Connected variant of {@link Range}
+ * 
+ * @author zielstor, fried
+ * 
+ */
 public class ConnectedRange extends ConnectedSubmodelElement<RangeValue, Range> {
 
 	public ConnectedRange(String submodelServiceUrl, String idShort) {

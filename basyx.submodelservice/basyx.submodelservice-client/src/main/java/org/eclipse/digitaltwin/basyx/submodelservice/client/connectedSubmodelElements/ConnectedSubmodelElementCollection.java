@@ -28,6 +28,12 @@ package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelEl
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollectionValue;
 
+/**
+ * Connected variant of {@link SubmodelElementCollection}
+ * 
+ * @author zielstor, fried
+ * 
+ */
 public class ConnectedSubmodelElementCollection extends ConnectedSubmodelElement<SubmodelElementCollectionValue, SubmodelElementCollection> {
 
 	public ConnectedSubmodelElementCollection(String submodelServiceUrl, String idShort) {

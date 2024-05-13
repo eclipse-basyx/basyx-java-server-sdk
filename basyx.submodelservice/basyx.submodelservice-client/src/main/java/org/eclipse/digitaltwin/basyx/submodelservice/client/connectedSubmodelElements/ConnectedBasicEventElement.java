@@ -28,6 +28,12 @@ package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelEl
 import org.eclipse.digitaltwin.aas4j.v3.model.BasicEventElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.BasicEventValue;
 
+/**
+ * Connected variant of {@link BasicEventElement}
+ * 
+ * @author zielstor, fried
+ * 
+ */
 public class ConnectedBasicEventElement extends ConnectedSubmodelElement<BasicEventValue, BasicEventElement> {
 
 	public ConnectedBasicEventElement(String submodelServiceUrl, String idShort) {

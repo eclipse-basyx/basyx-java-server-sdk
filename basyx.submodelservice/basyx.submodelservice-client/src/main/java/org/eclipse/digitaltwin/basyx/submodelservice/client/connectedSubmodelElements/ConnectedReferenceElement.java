@@ -28,6 +28,12 @@ package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelEl
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceElementValue;
 
+/**
+ * Connected variant of {@link ReferenceElement}
+ * 
+ * @author zielstor, fried
+ * 
+ */
 public class ConnectedReferenceElement extends ConnectedSubmodelElement<ReferenceElementValue, ReferenceElement> {
 
 	public ConnectedReferenceElement(String submodelServiceUrl, String idShort) {

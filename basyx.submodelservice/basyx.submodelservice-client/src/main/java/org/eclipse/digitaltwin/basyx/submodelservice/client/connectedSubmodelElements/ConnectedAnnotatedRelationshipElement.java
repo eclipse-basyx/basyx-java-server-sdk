@@ -28,6 +28,12 @@ package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelEl
 import org.eclipse.digitaltwin.aas4j.v3.model.AnnotatedRelationshipElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.AnnotatedRelationshipElementValue;
 
+/**
+ * Connected variant of {@link AnnotatedRelationshipElement}
+ * 
+ * @author zielstor, fried
+ * 
+ */
 public class ConnectedAnnotatedRelationshipElement
 		extends ConnectedSubmodelElement<AnnotatedRelationshipElementValue, AnnotatedRelationshipElement> {
 

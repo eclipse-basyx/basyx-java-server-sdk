@@ -28,6 +28,12 @@ package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelEl
 import org.eclipse.digitaltwin.aas4j.v3.model.MultiLanguageProperty;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 
+/**
+ * Connected variant of {@link MultiLanguageProperty}
+ * 
+ * @author zielstor, fried
+ * 
+ */
 public class ConnectedMultiLanguageProperty extends ConnectedSubmodelElement<MultiLanguagePropertyValue, MultiLanguageProperty> {
 
 	public ConnectedMultiLanguageProperty(String submodelServiceUrl, String idShort) {

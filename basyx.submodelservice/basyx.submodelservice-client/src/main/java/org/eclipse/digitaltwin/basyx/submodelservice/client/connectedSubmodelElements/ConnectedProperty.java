@@ -28,6 +28,12 @@ package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelEl
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 
+/**
+ * Connected variant of {@link Property}
+ * 
+ * @author zielstor, fried
+ * 
+ */
 public class ConnectedProperty extends ConnectedSubmodelElement<PropertyValue,Property> {
 	public ConnectedProperty(String submodelServiceUrl, String idShortPath) {
 		super(submodelServiceUrl,idShortPath);
