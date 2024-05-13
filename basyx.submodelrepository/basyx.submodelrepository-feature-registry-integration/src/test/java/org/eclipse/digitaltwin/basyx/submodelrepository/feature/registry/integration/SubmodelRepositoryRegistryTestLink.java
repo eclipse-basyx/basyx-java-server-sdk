@@ -26,12 +26,12 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,13 +41,14 @@ import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.GetSubmodelDescriptorsResult;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Key;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.KeyTypes;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Reference;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ReferenceTypes;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
@@ -57,7 +58,7 @@ import org.springframework.http.HttpStatus;
  * @author danish
  */
 public class SubmodelRepositoryRegistryTestLink {
-	
+
 	private static final String SUBMODEL_REPOSITORY_PATH = "/submodels";
 
 	private static final String SUMMY_SUBMODEL_IDSHORT = "TechnicalData";
@@ -66,7 +67,12 @@ public class SubmodelRepositoryRegistryTestLink {
 	public static String submodelRepoBaseUrl = "http://localhost:8081";
 	public static String submodelRegistryUrl = "http://localhost:8060";
 
-	private static final SubmodelDescriptor DUMMY_DESCRIPTOR = createExpectedDescriptor();
+	private SubmodelDescriptor dummyDescriptor = createExpectedDescriptor();
+
+	@Before
+	public void setUp() throws IOException {
+		deleteSubmodelFromRepo(DUMMY_SUBMODEL_ID);
+	}
 
 	@Test
 	public void createSubmodel() throws FileNotFoundException, IOException, ApiException {
@@ -77,7 +83,7 @@ public class SubmodelRepositoryRegistryTestLink {
 
 		SubmodelDescriptor actualDescriptor = retrieveDescriptorFromRegistry();
 
-		assertEquals(DUMMY_DESCRIPTOR, actualDescriptor);
+		assertEquals(dummyDescriptor, actualDescriptor);
 
 		resetRepository();
 	}
@@ -94,7 +100,7 @@ public class SubmodelRepositoryRegistryTestLink {
 
 		assertDescriptionDeletionAtRegistry();
 	}
-	
+
 	private SubmodelDescriptor retrieveDescriptorFromRegistry() throws ApiException {
 		SubmodelRegistryApi api = new SubmodelRegistryApi(submodelRegistryUrl);
 
@@ -113,12 +119,14 @@ public class SubmodelRepositoryRegistryTestLink {
 
 	private void assertDescriptionDeletionAtRegistry() throws ApiException {
 		SubmodelRegistryApi api = new SubmodelRegistryApi(submodelRegistryUrl);
-
-		GetSubmodelDescriptorsResult result = api.getAllSubmodelDescriptors(null, null);
-
-		List<SubmodelDescriptor> actualDescriptors = result.getResult();
-
-		assertTrue(actualDescriptors.isEmpty());
+		try {
+			api.getSubmodelDescriptorById(DUMMY_SUBMODEL_ID);
+			Assert.fail();
+		} catch (ApiException ex) {
+			if (ex.getCode() != 404) {
+				Assert.fail();
+			}
+		}
 	}
 
 	private String getSubmodelJSONString() throws FileNotFoundException, IOException {
@@ -126,13 +134,15 @@ public class SubmodelRepositoryRegistryTestLink {
 	}
 
 	private CloseableHttpResponse createSubmodelOnRepo(String aasJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(createSubmodelRepositoryUrl(submodelRepoBaseUrl), aasJsonContent);
+		String repoUrl = getFirstRepoUrl();
+		return BaSyxHttpTestUtils.executePostOnURL(createSubmodelRepositoryUrl(repoUrl), aasJsonContent);
 	}
 
 	private String getSpecificSubmodelAccessURL(String aasId) {
-		return createSubmodelRepositoryUrl(submodelRepoBaseUrl) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
+		String repoUrl = getFirstRepoUrl();
+		return createSubmodelRepositoryUrl(repoUrl) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
 	}
-
+	
 	private static SubmodelDescriptor createExpectedDescriptor() {
 
 		SubmodelDescriptor descriptor = new SubmodelDescriptor();
@@ -140,7 +150,7 @@ public class SubmodelRepositoryRegistryTestLink {
 		descriptor.setId(DUMMY_SUBMODEL_ID);
 		descriptor.setIdShort(SUMMY_SUBMODEL_IDSHORT);
 		descriptor.setSemanticId(createSemanticId());
-		descriptor.addEndpointsItem(createEndpointItem());
+		descriptor.setEndpoints(createEndpoints());
 
 		return descriptor;
 	}
@@ -149,16 +159,20 @@ public class SubmodelRepositoryRegistryTestLink {
 		return new Reference().keys(Arrays.asList(new Key().type(KeyTypes.GLOBALREFERENCE).value("0173-1#01-AFZ615#016"))).type(ReferenceTypes.EXTERNALREFERENCE);
 	}
 
-	private static Endpoint createEndpointItem() {
-		Endpoint endpoint = new Endpoint();
-		endpoint.setInterface("SUBMODEL-3.0");
-		endpoint.setProtocolInformation(createProtocolInformation());
+	private static List<Endpoint> createEndpoints() {
+		List<Endpoint> endpoints = new ArrayList<>();
+		for (String url : List.of(submodelRepoBaseUrl.split(","))) {
+			Endpoint endpoint = new Endpoint();
+			endpoint.setInterface("SUBMODEL-3.0");
+			endpoint.setProtocolInformation(createProtocolInformation(url));
+			endpoints.add(endpoint);
+		}
+		return endpoints;
 
-		return endpoint;
 	}
 
-	private static ProtocolInformation createProtocolInformation() {
-		String href = createHref();
+	private static ProtocolInformation createProtocolInformation(String url) {
+		String href = createHref(url);
 
 		ProtocolInformation protocolInformation = new ProtocolInformation();
 		protocolInformation.setHref(href);
@@ -167,8 +181,8 @@ public class SubmodelRepositoryRegistryTestLink {
 		return protocolInformation;
 	}
 
-	private static String createHref() {
-		return String.format("%s/%s", createSubmodelRepositoryUrl(submodelRepoBaseUrl), Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_SUBMODEL_ID));
+	private static String createHref(String url) {
+		return String.format("%s/%s", createSubmodelRepositoryUrl(url), Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_SUBMODEL_ID));
 	}
 
 	private static String getProtocol(String endpoint) {
@@ -178,7 +192,7 @@ public class SubmodelRepositoryRegistryTestLink {
 			throw new RuntimeException();
 		}
 	}
-	
+
 	private static String createSubmodelRepositoryUrl(String smRepositoryBaseURL) {
 
 		try {
@@ -188,4 +202,7 @@ public class SubmodelRepositoryRegistryTestLink {
 		}
 	}
 
+	private String getFirstRepoUrl() {
+		return submodelRepoBaseUrl.split(",")[0];
+	}
 }

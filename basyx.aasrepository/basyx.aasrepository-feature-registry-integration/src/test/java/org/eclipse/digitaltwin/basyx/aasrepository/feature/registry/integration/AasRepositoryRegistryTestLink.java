@@ -26,12 +26,12 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -40,10 +40,11 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscovery
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.GetAssetAdministrationShellDescriptorsResult;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
@@ -62,8 +63,13 @@ public class AasRepositoryRegistryTestLink {
 	public static String aasRepoBaseUrl = "http://localhost:8081";
 	public static String aasRegistryUrl = "http://localhost:8050";
 
-	private static final AssetAdministrationShellDescriptor DUMMY_DESCRIPTOR = createExpectedDescriptor();
+	private AssetAdministrationShellDescriptor dummyDescriptor = createExpectedDescriptor(aasRepoBaseUrl);
 
+	@Before
+	public void setUp() throws IOException {
+		deleteAasFromRepo(DUMMY_AAS_ID);
+	}
+	
 	@Test
 	public void createAas() throws FileNotFoundException, IOException, ApiException {
 		String aasJsonContent = getAas1JSONString();
@@ -73,7 +79,21 @@ public class AasRepositoryRegistryTestLink {
 
 		AssetAdministrationShellDescriptor actualDescriptor = retrieveDescriptorFromRegistry();
 
-		assertEquals(DUMMY_DESCRIPTOR, actualDescriptor);
+		assertEquals(dummyDescriptor, actualDescriptor);
+
+		resetRepository();
+	}
+
+	@Test
+	public void createRepoEndpointsAas() throws FileNotFoundException, IOException, ApiException {
+		String aasJsonContent = getAas1JSONString();
+
+		CloseableHttpResponse creationResponse = createAasOnRepo(aasJsonContent);
+		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
+
+		AssetAdministrationShellDescriptor actualDescriptor = retrieveDescriptorFromRegistry();
+
+		assertEquals(dummyDescriptor, actualDescriptor);
 
 		resetRepository();
 	}
@@ -109,12 +129,14 @@ public class AasRepositoryRegistryTestLink {
 
 	private void assertDescriptionDeletionAtRegistry() throws ApiException {
 		RegistryAndDiscoveryInterfaceApi api = new RegistryAndDiscoveryInterfaceApi(aasRegistryUrl);
-
-		GetAssetAdministrationShellDescriptorsResult result = api.getAllAssetAdministrationShellDescriptors(null, null, null, null);
-
-		List<AssetAdministrationShellDescriptor> actualDescriptors = result.getResult();
-
-		assertTrue(actualDescriptors.isEmpty());
+		try {
+			api.getAssetAdministrationShellDescriptorById(DUMMY_AAS_ID);
+			Assert.fail();
+		} catch (ApiException ex) {
+			if (ex.getCode() != 404) {
+				Assert.fail();
+			}
+		}
 	}
 
 	private String getAas1JSONString() throws FileNotFoundException, IOException {
@@ -122,14 +144,17 @@ public class AasRepositoryRegistryTestLink {
 	}
 
 	private CloseableHttpResponse createAasOnRepo(String aasJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(createAasRepositoryUrl(aasRepoBaseUrl), aasJsonContent);
+		String repoUrl = getFirstRepoUrl();
+		return BaSyxHttpTestUtils.executePostOnURL(createAasRepositoryUrl(repoUrl), aasJsonContent);
 	}
+
 
 	private String getSpecificAasAccessURL(String aasId) {
-		return createAasRepositoryUrl(aasRepoBaseUrl) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
+		String repoUrl = getFirstRepoUrl();
+		return createAasRepositoryUrl(repoUrl) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
 	}
-
-	private static AssetAdministrationShellDescriptor createExpectedDescriptor() {
+	
+	private static AssetAdministrationShellDescriptor createExpectedDescriptor(String repoUrlString) {
 
 		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
 
@@ -137,21 +162,24 @@ public class AasRepositoryRegistryTestLink {
 		descriptor.setIdShort(DUMMY_IDSHORT);
 		descriptor.setAssetKind(AssetKind.INSTANCE);
 		descriptor.setGlobalAssetId(DUMMY_GLOBAL_ASSETID);
-		descriptor.addEndpointsItem(createEndpointItem());
+		descriptor.setEndpoints(createEndpoints(List.of(repoUrlString.split(","))));
 
 		return descriptor;
 	}
 
-	private static Endpoint createEndpointItem() {
-		Endpoint endpoint = new Endpoint();
-		endpoint.setInterface("AAS-3.0");
-		endpoint.setProtocolInformation(createProtocolInformation());
-
-		return endpoint;
+	private static List<Endpoint> createEndpoints(List<String> urls) {
+		List<Endpoint> endpoints = new ArrayList<>(urls.size());
+		for (String eachUrl : urls) {
+			Endpoint endpoint = new Endpoint();
+			endpoint.setInterface("AAS-3.0");
+			endpoint.setProtocolInformation(createProtocolInformation(eachUrl));
+			endpoints.add(endpoint);
+		}
+		return endpoints;
 	}
 
-	private static ProtocolInformation createProtocolInformation() {
-		String href = createHref();
+	private static ProtocolInformation createProtocolInformation(String url) {
+		String href = createHref(url);
 
 		ProtocolInformation protocolInformation = new ProtocolInformation();
 		protocolInformation.setHref(href);
@@ -160,8 +188,8 @@ public class AasRepositoryRegistryTestLink {
 		return protocolInformation;
 	}
 
-	private static String createHref() {
-		return String.format("%s/%s", createAasRepositoryUrl(aasRepoBaseUrl), Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_AAS_ID));
+	private static String createHref(String url) {
+		return String.format("%s/%s", createAasRepositoryUrl(url), Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_AAS_ID));
 	}
 
 	private static String getProtocol(String endpoint) {
@@ -180,5 +208,8 @@ public class AasRepositoryRegistryTestLink {
 			throw new RuntimeException("The AAS Repository Base url is malformed. " + e.getMessage());
 		}
 	}
-
+	
+	private String getFirstRepoUrl() {
+		return aasRepoBaseUrl.split(",")[0];
+	}
 }

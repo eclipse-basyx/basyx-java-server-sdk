@@ -26,6 +26,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
+import java.util.List;
+
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
@@ -48,9 +50,8 @@ public class RegistryIntegrationAasRepositoryConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public AasRepositoryRegistryLink getAasRepositoryRegistryLink(@Value("${basyx.aasrepository.feature.registryintegration}") String registryBasePath, @Value("${basyx.externalurl}") String aasRepositoryBaseURL) {
-	
-		return new AasRepositoryRegistryLink(new RegistryAndDiscoveryInterfaceApi(registryBasePath), aasRepositoryBaseURL);
+	public AasRepositoryRegistryLink getAasRepositoryRegistryLink(@Value("${basyx.aasrepository.feature.registryintegration}") String registryBasePath, @Value("#{'${basyx.externalurl}'.split(',')}") List<String> aasRepositoryBaseURLs) {
+		return new AasRepositoryRegistryLink(new RegistryAndDiscoveryInterfaceApi(registryBasePath), aasRepositoryBaseURLs);
 	}
 	
 	@Bean

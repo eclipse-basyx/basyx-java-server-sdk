@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
 
+import java.util.List;
+
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper;
@@ -47,9 +49,8 @@ public class RegistryIntegrationSubmodelRepositoryConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public SubmodelRepositoryRegistryLink getSubmodelRepositoryRegistryLink(@Value("${basyx.submodelrepository.feature.registryintegration}") String registryBasePath, @Value("${basyx.externalurl}") String submodelRepositoryBaseURL) {
-	
-		return new SubmodelRepositoryRegistryLink(new SubmodelRegistryApi(registryBasePath), submodelRepositoryBaseURL);
+	public SubmodelRepositoryRegistryLink getSubmodelRepositoryRegistryLink(@Value("${basyx.submodelrepository.feature.registryintegration}") String registryBasePath, @Value("#{'${basyx.externalurl}'.split(',')}") List<String> submodelRepositoryBaseURLs) {
+		return new SubmodelRepositoryRegistryLink(new SubmodelRegistryApi(registryBasePath), submodelRepositoryBaseURLs);
 	}
 	
 	@Bean

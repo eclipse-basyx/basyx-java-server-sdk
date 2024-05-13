@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AdministrativeInformation;
@@ -50,16 +51,16 @@ public class AasDescriptorFactory {
 
 	private static final String AAS_INTERFACE = "AAS-3.0";
 	private static final String AAS_REPOSITORY_PATH = "shells";
-	
-	private AssetAdministrationShell shell;
-	private String aasRepositoryURL;
 
-	private AttributeMapper attributeMapper;
+	private final AssetAdministrationShell shell;
+	private final List<String> aasRepositoryURLs;
 
-	public AasDescriptorFactory(AssetAdministrationShell shell, String aasRepositoryBaseURL, AttributeMapper attributeMapper) {
+	private final AttributeMapper attributeMapper;
+
+	public AasDescriptorFactory(AssetAdministrationShell shell, List<String> aasRepositoryBaseURLs, AttributeMapper attributeMapper) {
 		super();
 		this.shell = shell;
-		this.aasRepositoryURL = createAasRepositoryUrl(aasRepositoryBaseURL);
+		this.aasRepositoryURLs = createAasRepositoryUrls(aasRepositoryBaseURLs);
 		this.attributeMapper = attributeMapper;
 	}
 
@@ -76,7 +77,7 @@ public class AasDescriptorFactory {
 
 		setIdShort(shell.getIdShort(), descriptor);
 
-		setEndpointItem(shell.getId(), descriptor);
+		addEndpointItems(shell.getId(), descriptor);
 
 		setDescription(shell.getDescription(), descriptor);
 
@@ -151,18 +152,22 @@ public class AasDescriptorFactory {
 		descriptor.setGlobalAssetId(assetInformation.getGlobalAssetId());
 	}
 
-	private void setEndpointItem(String shellId, AssetAdministrationShellDescriptor descriptor) {
+	private void addEndpointItems(String shellId, AssetAdministrationShellDescriptor descriptor) {
+		for (String eachUrl : aasRepositoryURLs) {
+			addEndpointItem(eachUrl, shellId, descriptor);
+		}
+	}
 
+	private void addEndpointItem(String url, String shellId, AssetAdministrationShellDescriptor descriptor) {
 		Endpoint endpoint = new Endpoint();
 		endpoint.setInterface(AAS_INTERFACE);
-		ProtocolInformation protocolInformation = createProtocolInformation(shellId);
+		ProtocolInformation protocolInformation = createProtocolInformation(url, shellId);
 		endpoint.setProtocolInformation(protocolInformation);
-
 		descriptor.addEndpointsItem(endpoint);
 	}
 
-	private ProtocolInformation createProtocolInformation(String shellId) {
-		String href = String.format("%s/%s", aasRepositoryURL, Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
+	private ProtocolInformation createProtocolInformation(String url, String shellId) {
+		String href = String.format("%s/%s", url, Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
 
 		ProtocolInformation protocolInformation = new ProtocolInformation();
 		protocolInformation.endpointProtocol(getProtocol(href));
@@ -187,13 +192,17 @@ public class AasDescriptorFactory {
 		}
 	}
 
-	private String createAasRepositoryUrl(String aasRepositoryBaseURL) {
-
-		try {
-			return new URL(new URL(aasRepositoryBaseURL), AAS_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The AAS Repository Base url is malformed.\n" + e.getMessage());
+	private List<String> createAasRepositoryUrls(List<String> aasRepositoryBaseURLs) {
+		List<String> repositoryUrls = new ArrayList<String>(aasRepositoryBaseURLs.size());
+		for (String eachUrl : aasRepositoryBaseURLs) {
+			try {
+				String url = new URL(new URL(eachUrl), AAS_REPOSITORY_PATH).toString();
+				repositoryUrls.add(url);
+			} catch (MalformedURLException e) {
+				throw new RuntimeException("The AAS Repository Base url is malformed.\n" + e.getMessage());
+			}
 		}
+		return repositoryUrls;
 	}
 
 }

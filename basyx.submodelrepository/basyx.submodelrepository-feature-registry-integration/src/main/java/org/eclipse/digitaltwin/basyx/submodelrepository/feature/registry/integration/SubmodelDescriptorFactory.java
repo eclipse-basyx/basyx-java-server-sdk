@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integr
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AdministrativeInformation;
@@ -51,15 +52,15 @@ public class SubmodelDescriptorFactory {
 	private static final String SUBMODEL_INTERFACE = "SUBMODEL-3.0";
 	private static final String SUBMODEL_REPOSITORY_PATH = "submodels";
 
-	private Submodel submodel;
-	private String submodelRepositoryURL;
+	private final Submodel submodel;
+	private final List<String> submodelRepositoryURLs;
 
-	private AttributeMapper attributeMapper;
+	private final AttributeMapper attributeMapper;
 
-	public SubmodelDescriptorFactory(Submodel submodel, String submodelRepositoryBaseURL, AttributeMapper attributeMapper) {
+	public SubmodelDescriptorFactory(Submodel submodel, List<String> submodelRepositoryBaseURLs, AttributeMapper attributeMapper) {
 		super();
 		this.submodel = submodel;
-		this.submodelRepositoryURL = createSubmodelRepositoryUrl(submodelRepositoryBaseURL);
+		this.submodelRepositoryURLs = createSubmodelRepositoryUrls(submodelRepositoryBaseURLs);
 		this.attributeMapper = attributeMapper;
 	}
 
@@ -76,7 +77,7 @@ public class SubmodelDescriptorFactory {
 
 		setIdShort(submodel.getIdShort(), descriptor);
 
-		setEndpointItem(submodel.getId(), descriptor);
+		addEndpointItems(submodel.getId(), descriptor);
 
 		setDescription(submodel.getDescription(), descriptor);
 
@@ -141,18 +142,23 @@ public class SubmodelDescriptorFactory {
 		descriptor.setSupplementalSemanticId(attributeMapper.mapSupplementalSemanticId(supplementalSemanticIds));
 	}
 
-	private void setEndpointItem(String shellId, SubmodelDescriptor descriptor) {
-
+	private void addEndpointItems(String shellId, SubmodelDescriptor descriptor) {
+		for (String eachUrl : submodelRepositoryURLs) {
+			addEndpointItem(eachUrl, shellId, descriptor);
+		}
+	}
+	
+	private void addEndpointItem(String url, String shellId, SubmodelDescriptor descriptor) {
 		Endpoint endpoint = new Endpoint();
 		endpoint.setInterface(SUBMODEL_INTERFACE);
-		ProtocolInformation protocolInformation = createProtocolInformation(shellId);
+		ProtocolInformation protocolInformation = createProtocolInformation(url, shellId);
 		endpoint.setProtocolInformation(protocolInformation);
 
 		descriptor.addEndpointsItem(endpoint);
 	}
 
-	private ProtocolInformation createProtocolInformation(String shellId) {
-		String href = String.format("%s/%s", submodelRepositoryURL, Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
+	private ProtocolInformation createProtocolInformation(String url, String shellId) {
+		String href = String.format("%s/%s", url, Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
 
 		ProtocolInformation protocolInformation = new ProtocolInformation();
 		protocolInformation.endpointProtocol(getProtocol(href));
@@ -177,13 +183,17 @@ public class SubmodelDescriptorFactory {
 		}
 	}
 
-	private String createSubmodelRepositoryUrl(String submodelRepositoryBaseURL) {
-
-		try {
-			return new URL(new URL(submodelRepositoryBaseURL), SUBMODEL_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The Submodel Repository Base url is malformed.\n" + e.getMessage());
+	private List<String> createSubmodelRepositoryUrls(List<String> submodelRepositoryBaseURLs) {
+		List<String> repositoryUrls = new ArrayList<String>(submodelRepositoryBaseURLs.size());
+		for (String eachUrl : submodelRepositoryBaseURLs) {
+			try {
+				String url = new URL(new URL(eachUrl), SUBMODEL_REPOSITORY_PATH).toString();
+				repositoryUrls.add(url);
+			} catch (MalformedURLException e) {
+				throw new RuntimeException("The Submodel Repository Base url is malformed.\n" + e.getMessage());
+			}
 		}
+		return repositoryUrls;
 	}
 
 }
