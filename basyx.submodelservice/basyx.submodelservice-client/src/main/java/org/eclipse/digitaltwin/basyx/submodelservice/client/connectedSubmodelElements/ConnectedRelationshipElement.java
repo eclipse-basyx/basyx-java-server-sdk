@@ -29,14 +29,18 @@ import org.eclipse.digitaltwin.aas4j.v3.model.RelationshipElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.RelationshipElementValue;
 
 /**
- * Connected variant of {@link RealtionshipElement}
+ * Connected variant of {@link RelationshipElement}
  * 
  * @author zielstor, fried
  * 
  */
 public class ConnectedRelationshipElement
 		extends ConnectedSubmodelElement<RelationshipElementValue, RelationshipElement> {
-
+	/**
+	 * 
+	 * @param submodelServiceUrl URL of the submodel service
+	 * @param idShort            idShort of the submodel element
+	 */
 	public ConnectedRelationshipElement(String submodelServiceUrl, String idShort) {
 		super(submodelServiceUrl, idShort);
 	}

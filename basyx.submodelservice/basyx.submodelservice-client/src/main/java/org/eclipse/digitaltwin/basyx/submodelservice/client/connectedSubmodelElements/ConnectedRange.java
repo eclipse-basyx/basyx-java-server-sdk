@@ -35,7 +35,11 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.RangeValue;
  * 
  */
 public class ConnectedRange extends ConnectedSubmodelElement<RangeValue, Range> {
-
+	/**
+	 * 
+	 * @param submodelServiceUrl URL of the submodel service
+	 * @param idShort            idShort of the submodel element
+	 */
 	public ConnectedRange(String submodelServiceUrl, String idShort) {
 		super(submodelServiceUrl, idShort);
 	}

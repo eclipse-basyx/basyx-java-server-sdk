@@ -16,6 +16,12 @@ public class ConnectedSubmodelElement<E extends SubmodelElementValue, T extends 
 	protected String submodelServiceUrl;
 	protected String idShortPath;
 	protected ConnectedSubmodelService service;
+
+	/**
+	 * 
+	 * @param submodelServiceUrl URL of the submodel service
+	 * @param idShort            idShort of the submodel element
+	 */
 	public ConnectedSubmodelElement(String submodelServiceUrl, String idShort){
 		this.submodelServiceUrl = submodelServiceUrl;
 		this.idShortPath = idShort;

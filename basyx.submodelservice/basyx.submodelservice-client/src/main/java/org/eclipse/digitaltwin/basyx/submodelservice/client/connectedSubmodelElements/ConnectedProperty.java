@@ -35,6 +35,11 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
  * 
  */
 public class ConnectedProperty extends ConnectedSubmodelElement<PropertyValue,Property> {
+	/**
+	 * 
+	 * @param submodelServiceUrl URL of the submodel service
+	 * @param idShort            idShort of the submodel element
+	 */
 	public ConnectedProperty(String submodelServiceUrl, String idShortPath) {
 		super(submodelServiceUrl,idShortPath);
 	}

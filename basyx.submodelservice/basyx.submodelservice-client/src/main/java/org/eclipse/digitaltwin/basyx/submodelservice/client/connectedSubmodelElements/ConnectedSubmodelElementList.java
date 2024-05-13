@@ -36,6 +36,11 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementListVa
  */
 public class ConnectedSubmodelElementList extends ConnectedSubmodelElement<SubmodelElementListValue, SubmodelElementList> {
 
+	/**
+	 * 
+	 * @param submodelServiceUrl URL of the submodel service
+	 * @param idShort            idShort of the submodel element
+	 */
 	public ConnectedSubmodelElementList(String submodelServiceUrl, String idShort) {
 		super(submodelServiceUrl, idShort);
 	}

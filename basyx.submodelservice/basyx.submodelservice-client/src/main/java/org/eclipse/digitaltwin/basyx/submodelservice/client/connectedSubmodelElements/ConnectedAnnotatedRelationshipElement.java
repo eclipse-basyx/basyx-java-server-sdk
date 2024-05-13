@@ -36,7 +36,11 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.AnnotatedRelationship
  */
 public class ConnectedAnnotatedRelationshipElement
 		extends ConnectedSubmodelElement<AnnotatedRelationshipElementValue, AnnotatedRelationshipElement> {
-
+	/**
+	 * 
+	 * @param submodelServiceUrl URL of the submodel service
+	 * @param idShort            idShort of the submodel element
+	 */
 	public ConnectedAnnotatedRelationshipElement(String submodelServiceUrl, String idShort) {
 		super(submodelServiceUrl, idShort);
 	}

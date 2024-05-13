@@ -36,7 +36,11 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.EntityValueMap
  * 
  */
 public class ConnectedEntity extends ConnectedSubmodelElement<EntityValue, Entity> {
-
+	/**
+	 * 
+	 * @param submodelServiceUrl URL of the submodel service
+	 * @param idShort            idShort of the submodel element
+	 */
     public ConnectedEntity(String submodelServiceUrl, String idShortPath) {
 		super(submodelServiceUrl, idShortPath);
     }

@@ -35,7 +35,11 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.BasicEventValue;
  * 
  */
 public class ConnectedBasicEventElement extends ConnectedSubmodelElement<BasicEventValue, BasicEventElement> {
-
+	/**
+	 * 
+	 * @param submodelServiceUrl URL of the submodel service
+	 * @param idShort            idShort of the submodel element
+	 */
 	public ConnectedBasicEventElement(String submodelServiceUrl, String idShort) {
 		super(submodelServiceUrl, idShort);
 	}

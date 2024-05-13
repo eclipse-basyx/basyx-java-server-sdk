@@ -35,7 +35,11 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguageProperty
  * 
  */
 public class ConnectedMultiLanguageProperty extends ConnectedSubmodelElement<MultiLanguagePropertyValue, MultiLanguageProperty> {
-
+	/**
+	 * 
+	 * @param submodelServiceUrl URL of the submodel service
+	 * @param idShort            idShort of the submodel element
+	 */
 	public ConnectedMultiLanguageProperty(String submodelServiceUrl, String idShort) {
 		super(submodelServiceUrl, idShort);
 	}

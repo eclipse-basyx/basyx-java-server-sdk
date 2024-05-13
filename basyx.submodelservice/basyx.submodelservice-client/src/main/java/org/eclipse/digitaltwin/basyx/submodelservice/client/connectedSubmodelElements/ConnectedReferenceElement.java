@@ -35,7 +35,11 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceElementValue
  * 
  */
 public class ConnectedReferenceElement extends ConnectedSubmodelElement<ReferenceElementValue, ReferenceElement> {
-
+	/**
+	 * 
+	 * @param submodelServiceUrl URL of the submodel service
+	 * @param idShort            idShort of the submodel element
+	 */
 	public ConnectedReferenceElement(String submodelServiceUrl, String idShort) {
 		super(submodelServiceUrl, idShort);
 	}
