@@ -88,6 +88,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.AnnotatedRelat
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.BasicEventValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.BlobValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.RelationshipElementValueMapper;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.SubmodelElementCollectionValueMapper;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.SubmodelElementListValueMapper;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -363,22 +365,15 @@ public class TestConnectedSubmodelElements {
 		assertEquals(1, submodelElementCollection.getSubmodelElement().getValue().size());
 	}
 
-	// TODO: Fix the setValue of SubmodelElementCollectionValue (the serializer
-	// expects the valueType which is not part of the SubmodelElementCollectionValue
-	// -> therefore it's deserialized as MultiLanguageProperty instead of Property)
-	// @Test
-	// public void setSubmodelElementCollectionValue() {
-	// DefaultSubmodelElementCollection submodelElementCollection =
-	// getDefaultSubmodelElementCollection();
-	// ConnectedSubmodelElementCollection connectedSubmodelElementCollection =
-	// getConnectedSubmodelElementCollection(submodelElementCollection);
-	// SubmodelElementCollectionValueMapper valueMapper = new
-	// SubmodelElementCollectionValueMapper(submodelElementCollection);
-	// System.out.println(valueMapper.getValue().getValue());
-	// connectedSubmodelElementCollection.setValue(valueMapper.getValue());
-	// assertEquals(2,
-	// connectedSubmodelElementCollection.getValue().getValue().size());
-	// }
+	@Test
+	public void setSubmodelElementCollectionValue() {
+		DefaultSubmodelElementCollection submodelElementCollection = getDefaultSubmodelElementCollection();
+		ConnectedSubmodelElementCollection connectedSubmodelElementCollection = getConnectedSubmodelElementCollection(submodelElementCollection);
+		submodelElementCollection.getValue().add(getDefaultMultiLanguageProperty());
+		SubmodelElementCollectionValueMapper valueMapper = new SubmodelElementCollectionValueMapper(submodelElementCollection);
+		connectedSubmodelElementCollection.setValue(valueMapper.getValue());
+		assertEquals(2, connectedSubmodelElementCollection.getValue().getValue().size());
+	}
 
 	@Test
 	public void getSubmodelElementCollection() {
@@ -387,35 +382,28 @@ public class TestConnectedSubmodelElements {
 		assertEquals(expected.getValue().size(), submodelElementCollection.getSubmodelElement().getValue().size());
 	}
 
-	// @Test
-	// public void getSubmodelElementListValue() {
-	// ConnectedSubmodelElementList submodelElementList =
-	// getConnectedSubmodelElementList(getDefaultSubmodelElementList());
-	// assertEquals(1,
-	// submodelElementList.getValue().getSubmodelElementValues().size());
-	// }
-	//
-	// @Test
-	// public void setSubmodelElementListValue() {
-	// DefaultSubmodelElementList submodelElementList =
-	// getDefaultSubmodelElementList();
-	// ConnectedSubmodelElementList connectedSubmodelElementList =
-	// getConnectedSubmodelElementList(submodelElementList);
-	// SubmodelElementListValueMapper valueMapper = new
-	// SubmodelElementListValueMapper(submodelElementList);
-	// connectedSubmodelElementList.setValue(valueMapper.getValue());
-	// assertEquals(2,
-	// connectedSubmodelElementList.getValue().getSubmodelElementValues().size());
-	// }
-	//
-	// @Test
-	// public void getSubmodelElementList() {
-	// DefaultSubmodelElementList expected = getDefaultSubmodelElementList();
-	// ConnectedSubmodelElementList submodelElementList =
-	// getConnectedSubmodelElementList(expected);
-	// assertEquals(expected.getValue().size(),
-	// submodelElementList.getSubmodelElement().getValue().size());
-	// }
+	@Test
+	public void getSubmodelElementListValue() {
+		ConnectedSubmodelElementList submodelElementList = getConnectedSubmodelElementList(getDefaultSubmodelElementList());
+		assertEquals(1, submodelElementList.getValue().getSubmodelElementValues().size());
+	}
+
+	@Test
+	public void setSubmodelElementListValue() {
+		DefaultSubmodelElementList submodelElementList = getDefaultSubmodelElementList();
+		ConnectedSubmodelElementList connectedSubmodelElementList = getConnectedSubmodelElementList(submodelElementList);
+		submodelElementList.getValue().add(getDefaultProperty());
+		SubmodelElementListValueMapper valueMapper = new SubmodelElementListValueMapper(submodelElementList);
+		connectedSubmodelElementList.setValue(valueMapper.getValue());
+		assertEquals(2, connectedSubmodelElementList.getValue().getSubmodelElementValues().size());
+	}
+
+	@Test
+	public void getSubmodelElementList() {
+		DefaultSubmodelElementList expected = getDefaultSubmodelElementList();
+		ConnectedSubmodelElementList submodelElementList = getConnectedSubmodelElementList(expected);
+		assertEquals(expected.getValue().size(), submodelElementList.getSubmodelElement().getValue().size());
+	}
 
 	private DefaultSubmodelElementList getDefaultSubmodelElementList() {
 		return new DefaultSubmodelElementList.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).value(getDefaultAnnotatedRelationshipElement()).build();
@@ -427,7 +415,7 @@ public class TestConnectedSubmodelElements {
 	}
 
 	private DefaultSubmodelElementCollection getDefaultSubmodelElementCollection() {
-		return new DefaultSubmodelElementCollection.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).value(getDefaultProperty()).build();
+		return new DefaultSubmodelElementCollection.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).value(getDefaultMultiLanguageProperty()).build();
 	}
 
 	private ConnectedSubmodelElementCollection getConnectedSubmodelElementCollection(DefaultSubmodelElementCollection submodelElementCollection) {
