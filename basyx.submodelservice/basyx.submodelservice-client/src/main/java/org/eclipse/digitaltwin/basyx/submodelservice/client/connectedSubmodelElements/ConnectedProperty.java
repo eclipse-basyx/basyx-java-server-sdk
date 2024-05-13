@@ -38,7 +38,7 @@ public class ConnectedProperty extends ConnectedSubmodelElement<PropertyValue,Pr
 	/**
 	 * 
 	 * @param submodelServiceUrl URL of the submodel service
-	 * @param idShort            idShort of the submodel element
+	 * @param idShortPath        idShort of the submodel element
 	 */
 	public ConnectedProperty(String submodelServiceUrl, String idShortPath) {
 		super(submodelServiceUrl,idShortPath);

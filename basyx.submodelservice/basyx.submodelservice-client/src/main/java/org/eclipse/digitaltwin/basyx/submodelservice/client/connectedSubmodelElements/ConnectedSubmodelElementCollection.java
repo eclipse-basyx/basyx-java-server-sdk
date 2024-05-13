@@ -38,10 +38,10 @@ public class ConnectedSubmodelElementCollection extends ConnectedSubmodelElement
 	/**
 	 * 
 	 * @param submodelServiceUrl URL of the submodel service
-	 * @param idShort            idShort of the submodel element
+	 * @param idShortPath            idShort of the submodel element
 	 */
-	public ConnectedSubmodelElementCollection(String submodelServiceUrl, String idShort) {
-		super(submodelServiceUrl, idShort);
+	public ConnectedSubmodelElementCollection(String submodelServiceUrl, String idShortPath) {
+		super(submodelServiceUrl, idShortPath);
 	}
 
 }

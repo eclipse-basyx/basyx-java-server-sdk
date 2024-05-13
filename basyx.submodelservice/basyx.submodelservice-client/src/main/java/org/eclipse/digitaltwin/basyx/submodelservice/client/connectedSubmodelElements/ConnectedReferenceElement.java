@@ -38,10 +38,10 @@ public class ConnectedReferenceElement extends ConnectedSubmodelElement<Referenc
 	/**
 	 * 
 	 * @param submodelServiceUrl URL of the submodel service
-	 * @param idShort            idShort of the submodel element
+	 * @param idShortPath            idShort of the submodel element
 	 */
-	public ConnectedReferenceElement(String submodelServiceUrl, String idShort) {
-		super(submodelServiceUrl, idShort);
+	public ConnectedReferenceElement(String submodelServiceUrl, String idShortPath) {
+		super(submodelServiceUrl, idShortPath);
 	}
 
 }

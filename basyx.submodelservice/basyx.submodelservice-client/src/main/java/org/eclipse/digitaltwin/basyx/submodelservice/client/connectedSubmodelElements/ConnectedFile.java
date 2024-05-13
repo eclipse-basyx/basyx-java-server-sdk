@@ -38,7 +38,7 @@ public class ConnectedFile extends ConnectedSubmodelElement<FileBlobValue, File>
 	/**
 	 * 
 	 * @param submodelServiceUrl URL of the submodel service
-	 * @param idShort            idShort of the submodel element
+	 * @param idShortPath        idShort of the submodel element
 	 */
 	public ConnectedFile(String submodelServiceUrl, String idShortPath) {
 		super(submodelServiceUrl, idShortPath);

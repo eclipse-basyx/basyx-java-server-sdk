@@ -39,10 +39,10 @@ public class ConnectedRelationshipElement
 	/**
 	 * 
 	 * @param submodelServiceUrl URL of the submodel service
-	 * @param idShort            idShort of the submodel element
+	 * @param idShortPath            idShort of the submodel element
 	 */
-	public ConnectedRelationshipElement(String submodelServiceUrl, String idShort) {
-		super(submodelServiceUrl, idShort);
+	public ConnectedRelationshipElement(String submodelServiceUrl, String idShortPath) {
+		super(submodelServiceUrl, idShortPath);
 	}
 
 }

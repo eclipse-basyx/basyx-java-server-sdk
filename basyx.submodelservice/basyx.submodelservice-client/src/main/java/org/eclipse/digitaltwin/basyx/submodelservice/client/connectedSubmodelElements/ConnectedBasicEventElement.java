@@ -38,10 +38,10 @@ public class ConnectedBasicEventElement extends ConnectedSubmodelElement<BasicEv
 	/**
 	 * 
 	 * @param submodelServiceUrl URL of the submodel service
-	 * @param idShort            idShort of the submodel element
+	 * @param idShortPath        idShort of the submodel element
 	 */
-	public ConnectedBasicEventElement(String submodelServiceUrl, String idShort) {
-		super(submodelServiceUrl, idShort);
+	public ConnectedBasicEventElement(String submodelServiceUrl, String idShortPath) {
+		super(submodelServiceUrl, idShortPath);
 	}
 
 }

@@ -38,10 +38,10 @@ public class ConnectedRange extends ConnectedSubmodelElement<RangeValue, Range> 
 	/**
 	 * 
 	 * @param submodelServiceUrl URL of the submodel service
-	 * @param idShort            idShort of the submodel element
+	 * @param idShortPath            idShort of the submodel element
 	 */
-	public ConnectedRange(String submodelServiceUrl, String idShort) {
-		super(submodelServiceUrl, idShort);
+	public ConnectedRange(String submodelServiceUrl, String idShortPath) {
+		super(submodelServiceUrl, idShortPath);
 	}
 
 }
