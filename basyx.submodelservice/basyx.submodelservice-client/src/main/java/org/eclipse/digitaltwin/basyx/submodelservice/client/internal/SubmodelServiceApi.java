@@ -24,27 +24,42 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelservice.client.internal;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.channels.Channels;
+import java.nio.channels.Pipe;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import javax.annotation.processing.Generated;
 
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiClient;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiResponse;
 import org.eclipse.digitaltwin.basyx.client.internal.Pair;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.springframework.util.MimeTypeUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -1020,5 +1035,457 @@ public SubmodelServiceApi(ApiClient apiClient) {
 				memberVarInterceptor.accept(localVarRequestBuilder);
 			}
 			return localVarRequestBuilder;
+		}
+
+		/**
+		 * Returns all submodel elements including their hierarchy
+		 * 
+		 * @param limit
+		 *            The maximum number of elements in the response array (optional)
+		 * @param cursor
+		 *            A server-generated identifier retrieved from pagingMetadata that
+		 *            specifies from which position the result listing should continue
+		 *            (optional)
+		 * @param level
+		 *            Determines the structural depth of the respective resource content
+		 *            (optional, default to deep)
+		 * @param extent
+		 *            Determines to which extent the resource is being serialized
+		 *            (optional, default to withoutBlobValue)
+		 * @return CursorResult&#60;List&#60;SubmodelElement&#62;&#62;
+		 * @throws ApiException
+		 *             if fails to make API call
+		 */
+		public CursorResult<List<SubmodelElement>> getAllSubmodelElements(Integer limit, String cursor, String level, String extent) throws ApiException {
+			ApiResponse<Base64UrlEncodedCursorResult<List<SubmodelElement>>> localVarResponse = getAllSubmodelElementsApiResponse(limit, cursor, level, extent);
+
+			return localVarResponse.getData();
+		}
+
+
+		private ApiResponse<Base64UrlEncodedCursorResult<List<SubmodelElement>>> getAllSubmodelElementsApiResponse(Integer limit, String cursor, String level, String extent) throws ApiException {
+			HttpRequest.Builder localVarRequestBuilder = getAllSubmodelElementsRequestBuilder(limit, cursor, level, extent);
+			try {
+				HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
+				if (memberVarResponseInterceptor != null) {
+					memberVarResponseInterceptor.accept(localVarResponse);
+				}
+				try {
+					if (localVarResponse.statusCode() / 100 != 2) {
+						throw getApiException("getAllSubmodelElements", localVarResponse);
+					}
+					return new ApiResponse<Base64UrlEncodedCursorResult<List<SubmodelElement>>>(localVarResponse.statusCode(), localVarResponse.headers().map(),
+							localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<Base64UrlEncodedCursorResult<List<SubmodelElement>>>() {
+							}) // closes the InputStream
+					);
+				} finally {
+				}
+			} catch (IOException e) {
+				throw new ApiException(e);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				throw new ApiException(e);
+			}
+		}
+
+		private HttpRequest.Builder getAllSubmodelElementsRequestBuilder(Integer limit, String cursor, String level, String extent) throws ApiException {
+
+			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+
+			String localVarPath = "/submodel-elements";
+
+			List<Pair> localVarQueryParams = new ArrayList<>();
+			StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+			String localVarQueryParameterBaseName;
+			localVarQueryParameterBaseName = "limit";
+			localVarQueryParams.addAll(ApiClient.parameterToPairs("limit", limit));
+			localVarQueryParameterBaseName = "cursor";
+			localVarQueryParams.addAll(ApiClient.parameterToPairs("cursor", cursor));
+			localVarQueryParameterBaseName = "level";
+			localVarQueryParams.addAll(ApiClient.parameterToPairs("level", level));
+			localVarQueryParameterBaseName = "extent";
+			localVarQueryParams.addAll(ApiClient.parameterToPairs("extent", extent));
+
+			if (!localVarQueryParams.isEmpty() || localVarQueryStringJoiner.length() != 0) {
+				StringJoiner queryJoiner = new StringJoiner("&");
+				localVarQueryParams.forEach(p -> queryJoiner.add(p.getName() + '=' + p.getValue()));
+				if (localVarQueryStringJoiner.length() != 0) {
+					queryJoiner.add(localVarQueryStringJoiner.toString());
+				}
+				localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath + '?' + queryJoiner.toString()));
+			} else {
+				localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
+			}
+
+			localVarRequestBuilder.header("Accept", "application/json");
+
+			localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
+			if (memberVarReadTimeout != null) {
+				localVarRequestBuilder.timeout(memberVarReadTimeout);
+			}
+			if (memberVarInterceptor != null) {
+				memberVarInterceptor.accept(localVarRequestBuilder);
+			}
+			return localVarRequestBuilder;
+		}
+
+		/**
+		 * Uploads file content to an existing submodel element at a specified path
+		 * within submodel elements hierarchy
+		 * 
+		 * @param idShortPath
+		 *            IdShort path to the submodel element (dot-separated) (required)
+		 * @param fileName
+		 *            (optional)
+		 * @param inputStream
+		 *            (optional)
+		 * @throws ApiException
+		 *             if fails to make API call
+		 */
+		public void putFileByPath(String idShortPath, String fileName, InputStream inputStream) throws ApiException {
+			putFileByPathApiResponse(idShortPath, fileName, inputStream);
+		}
+
+		private ApiResponse<Void> putFileByPathApiResponse(String idShortPath, String fileName, InputStream inputStream) throws ApiException {
+			try {
+				HttpRequest.Builder localVarRequestBuilder = putFileByPathRequestBuilder(idShortPath, fileName, inputStream);
+				HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
+				if (memberVarResponseInterceptor != null) {
+					memberVarResponseInterceptor.accept(localVarResponse);
+				}
+				try {
+					if (localVarResponse.statusCode() / 100 != 2) {
+						throw getApiException("putFileByPath", localVarResponse);
+					}
+					return new ApiResponse<Void>(localVarResponse.statusCode(), localVarResponse.headers().map(), null);
+				} finally {
+					// Drain the InputStream
+					while (localVarResponse.body().read() != -1) {
+						// Ignore
+					}
+					localVarResponse.body().close();
+				}
+			} catch (IOException e) {
+				throw new ApiException(e);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				throw new ApiException(e);
+			}
+		}
+
+		private HttpRequest.Builder putFileByPathRequestBuilder(String idShortPath, String fileName, InputStream inputStream) throws ApiException, IOException {
+			if (idShortPath == null)
+				throw new ApiException(400, "Missing the required parameter 'idShortPath' when calling putFileByPath");
+			if (inputStream == null)
+				throw new ApiException(400, "Missing the required parameter 'inputStream' when calling putFileByPath");
+
+			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+
+			String localVarPath = "/submodel-elements/{idShortPath}/attachment".replace("{idShortPath}", ApiClient.urlEncode(idShortPath));
+
+			localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
+
+			localVarRequestBuilder.header("Accept", "application/json");
+
+			var multiPartBuilder = MultipartEntityBuilder.create();
+			multiPartBuilder.addTextBody("fileName", fileName);
+			multiPartBuilder.addBinaryBody("file", inputStream, ContentType.DEFAULT_BINARY, fileName);
+
+			var entity = multiPartBuilder.build();
+			HttpRequest.BodyPublisher formDataPublisher;
+
+			Pipe pipe = Pipe.open();
+			new Thread(() -> {
+				try (OutputStream outputStream = Channels.newOutputStream(pipe.sink())) {
+					entity.writeTo(outputStream);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}).start();
+
+			formDataPublisher = HttpRequest.BodyPublishers.ofInputStream(() -> Channels.newInputStream(pipe.source()));
+
+			localVarRequestBuilder.header("Content-Type", entity.getContentType().getValue()).method("PUT", formDataPublisher);
+
+			if (memberVarReadTimeout != null) {
+				localVarRequestBuilder.timeout(memberVarReadTimeout);
+			}
+			if (memberVarInterceptor != null) {
+				memberVarInterceptor.accept(localVarRequestBuilder);
+			}
+			return localVarRequestBuilder;
+		}
+
+		/**
+		 * Deletes file content of an existing submodel element at a specified path
+		 * within submodel elements hierarchy
+		 * 
+		 * @param idShortPath
+		 *            IdShort path to the submodel element (dot-separated) (required)
+		 * @throws ApiException
+		 *             if fails to make API call
+		 */
+		public void deleteFileByPath(String idShortPath) throws ApiException {
+
+			deleteFileByPathWithHttpInfo(idShortPath);
+		}
+
+		/**
+		 * Deletes file content of an existing submodel element at a specified path
+		 * within submodel elements hierarchy
+		 * 
+		 * @param idShortPath
+		 *            IdShort path to the submodel element (dot-separated) (required)
+		 * @return ApiResponse&lt;Void&gt;
+		 * @throws ApiException
+		 *             if fails to make API call
+		 */
+		public ApiResponse<Void> deleteFileByPathWithHttpInfo(String idShortPath) throws ApiException {
+			return deleteFileByPathWithHttpInfoNoUrlEncoding(idShortPath);
+
+		}
+
+		/**
+		 * Deletes file content of an existing submodel element at a specified path
+		 * within submodel elements hierarchy
+		 * 
+		 * @param idShortPath
+		 *            IdShort path to the submodel element (dot-separated) (required)
+		 * @return ApiResponse&lt;Void&gt;
+		 * @throws ApiException
+		 *             if fails to make API call
+		 */
+		public ApiResponse<Void> deleteFileByPathWithHttpInfoNoUrlEncoding(String idShortPath) throws ApiException {
+			HttpRequest.Builder localVarRequestBuilder = deleteFileByPathRequestBuilder(idShortPath);
+			try {
+				HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
+				if (memberVarResponseInterceptor != null) {
+					memberVarResponseInterceptor.accept(localVarResponse);
+				}
+				try {
+					if (localVarResponse.statusCode() / 100 != 2) {
+						throw getApiException("deleteFileByPath", localVarResponse);
+					}
+					return new ApiResponse<Void>(localVarResponse.statusCode(), localVarResponse.headers().map(), null);
+				} finally {
+					// Drain the InputStream
+					while (localVarResponse.body().read() != -1) {
+						// Ignore
+					}
+					localVarResponse.body().close();
+				}
+			} catch (IOException e) {
+				throw new ApiException(e);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				throw new ApiException(e);
+			}
+		}
+
+		private HttpRequest.Builder deleteFileByPathRequestBuilder(String idShortPath) throws ApiException {
+			// verify the required parameter 'idShortPath' is set
+			if (idShortPath == null) {
+				throw new ApiException(400, "Missing the required parameter 'idShortPath' when calling deleteFileByPath");
+			}
+
+			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+
+			String localVarPath = "/submodel-elements/{idShortPath}/attachment".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
+
+			localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
+
+			localVarRequestBuilder.header("Accept", "application/json");
+
+			localVarRequestBuilder.method("DELETE", HttpRequest.BodyPublishers.noBody());
+			if (memberVarReadTimeout != null) {
+				localVarRequestBuilder.timeout(memberVarReadTimeout);
+			}
+			if (memberVarInterceptor != null) {
+				memberVarInterceptor.accept(localVarRequestBuilder);
+			}
+			return localVarRequestBuilder;
+		}
+
+		/**
+		 * Downloads file content from a specific submodel element from the Submodel at
+		 * a specified path
+		 * 
+		 * @param idShortPath
+		 *            IdShort path to the submodel element (dot-separated) (required)
+		 * @return File
+		 * @throws ApiException
+		 *             if fails to make API call
+		 */
+		public File getFileByPath(String idShortPath) throws ApiException {
+			ApiResponse<File> localVarResponse = getFileByPathApiResponse(idShortPath);
+			return localVarResponse.getData();
+		}
+
+		private ApiResponse<File> getFileByPathApiResponse(String idShortPath) throws ApiException {
+			HttpRequest.Builder localVarRequestBuilder = getFileByPathRequestBuilder(idShortPath);
+			try {
+				HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
+				if (memberVarResponseInterceptor != null) {
+					memberVarResponseInterceptor.accept(localVarResponse);
+				}
+				if (localVarResponse.statusCode() / 100 != 2) {
+					throw getApiException("getFileByPath", localVarResponse);
+				}
+				if (localVarResponse.body() == null) {
+					return new ApiResponse<File>(localVarResponse.statusCode(), localVarResponse.headers().map(), null);
+				} else {
+					File tempFile = File.createTempFile(buildUniqueFilename(), extractFileName(localVarResponse.headers()));
+					try (FileOutputStream out = new FileOutputStream(tempFile)) {
+						localVarResponse.body().transferTo(out);
+						return new ApiResponse<File>(localVarResponse.statusCode(), localVarResponse.headers().map(), tempFile);
+					} finally {
+						localVarResponse.body().close();
+					}
+				}
+			} catch (IOException e) {
+				throw new ApiException(e);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				throw new ApiException(e);
+			}
+		}
+
+		private HttpRequest.Builder getFileByPathRequestBuilder(String idShortPath) throws ApiException {
+			if (idShortPath == null) {
+				throw new ApiException(400, "Missing the required parameter 'idShortPath' when calling getFileByPath");
+			}
+
+			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+
+			String localVarPath = "/submodel-elements/{idShortPath}/attachment".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
+
+			localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
+
+			localVarRequestBuilder.header("Accept", "application/octet-stream, application/json");
+
+			localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
+			if (memberVarReadTimeout != null) {
+				localVarRequestBuilder.timeout(memberVarReadTimeout);
+			}
+			if (memberVarInterceptor != null) {
+				memberVarInterceptor.accept(localVarRequestBuilder);
+			}
+			return localVarRequestBuilder;
+		}
+
+		/**
+		 * Synchronously invokes an Operation at a specified path
+		 * 
+		 * @param idShortPath
+		 *            IdShort path to the submodel element (dot-separated) (required)
+		 * @param operationRequest
+		 *            Operation request object (required)
+		 * @return OperationResult
+		 * @throws ApiException
+		 *             if fails to make API call
+		 */
+		public OperationResult invokeOperation(String idShortPath, OperationRequest operationRequest) throws ApiException {
+
+			ApiResponse<OperationResult> localVarResponse = invokeOperationWithHttpInfo(idShortPath, operationRequest);
+			return localVarResponse.getData();
+		}
+
+		/**
+		 * Synchronously invokes an Operation at a specified path
+		 * 
+		 * @param idShortPath
+		 *            IdShort path to the submodel element (dot-separated) (required)
+		 * @param operationRequest
+		 *            Operation request object (required)
+		 * @return ApiResponse&lt;OperationResult&gt;
+		 * @throws ApiException
+		 *             if fails to make API call
+		 */
+		public ApiResponse<OperationResult> invokeOperationWithHttpInfo(String idShortPath, OperationRequest operationRequest) throws ApiException {
+			return invokeOperationWithHttpInfoNoUrlEncoding(idShortPath, operationRequest);
+
+		}
+
+		/**
+		 * Synchronously invokes an Operation at a specified path
+		 * 
+		 * @param idShortPath
+		 *            IdShort path to the submodel element (dot-separated) (required)
+		 * @param operationRequest
+		 *            Operation request object (required)
+		 * @return ApiResponse&lt;OperationResult&gt;
+		 * @throws ApiException
+		 *             if fails to make API call
+		 */
+		public ApiResponse<OperationResult> invokeOperationWithHttpInfoNoUrlEncoding(String idShortPath, OperationRequest operationRequest) throws ApiException {
+			HttpRequest.Builder localVarRequestBuilder = invokeOperationRequestBuilder(idShortPath, operationRequest);
+			try {
+				HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
+				if (memberVarResponseInterceptor != null) {
+					memberVarResponseInterceptor.accept(localVarResponse);
+				}
+				try {
+					if (localVarResponse.statusCode() / 100 != 2) {
+						throw getApiException("invokeOperation", localVarResponse);
+					}
+					return new ApiResponse<OperationResult>(localVarResponse.statusCode(), localVarResponse.headers().map(),
+							localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<OperationResult>() {
+							}) // closes the InputStream
+					);
+				} finally {
+				}
+			} catch (IOException e) {
+				throw new ApiException(e);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				throw new ApiException(e);
+			}
+		}
+
+		private HttpRequest.Builder invokeOperationRequestBuilder(String idShortPath, OperationRequest operationRequest) throws ApiException {
+			// verify the required parameter 'idShortPath' is set
+			if (idShortPath == null) {
+				throw new ApiException(400, "Missing the required parameter 'idShortPath' when calling invokeOperation");
+			}
+			// verify the required parameter 'operationRequest' is set
+			if (operationRequest == null) {
+				throw new ApiException(400, "Missing the required parameter 'operationRequest' when calling invokeOperation");
+			}
+
+			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+
+			String localVarPath = "/submodel-elements/{idShortPath}/invoke".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
+
+			localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
+
+			localVarRequestBuilder.header("Content-Type", "application/json");
+			localVarRequestBuilder.header("Accept", "application/json");
+
+			try {
+				byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(operationRequest);
+				localVarRequestBuilder.method("POST", HttpRequest.BodyPublishers.ofByteArray(localVarPostBody));
+			} catch (IOException e) {
+				throw new ApiException(e);
+			}
+			if (memberVarReadTimeout != null) {
+				localVarRequestBuilder.timeout(memberVarReadTimeout);
+			}
+			if (memberVarInterceptor != null) {
+				memberVarInterceptor.accept(localVarRequestBuilder);
+			}
+			return localVarRequestBuilder;
+		}
+
+		private static String extractFileName(HttpHeaders headers) {
+			Optional<String> contentType = headers.firstValue("Content-Type");
+			try {
+				return "." + MimeTypeUtils.parseMimeType(contentType.get()).getSubtype();
+			} catch (Exception e) {
+				return ".tmp";
+			}
+		}
+
+		private static String buildUniqueFilename() {
+			return UUID.randomUUID().toString();
 		}
 }

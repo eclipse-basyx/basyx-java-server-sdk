@@ -26,13 +26,9 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.client;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.DummyAasRepositoryComponent;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -46,7 +42,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * Whenever a feature is implemented, the respective test here has to be
  * removed.
  * 
- * @author schnicke
+ * @author schnicke, mateusmolina
  */
 public class TestConnectedAasRepository extends AasRepositorySuite {
 
@@ -66,59 +62,6 @@ public class TestConnectedAasRepository extends AasRepositorySuite {
 	@AfterClass
 	public static void shutdownAASRepo() {
 		appContext.close();
-	}
-
-	@Override
-	public void getNonExistingThumbnail() {
-		// TODO Auto-generated method stub
-		throw new FileDoesNotExistException();
-	}
-
-	@Override
-	public void deleteNonExistingThumbnail() throws IOException {
-		// TODO Auto-generated method stub
-		throw new FileDoesNotExistException();
-	}
-
-	@Override
-	public void updateThumbnail() throws FileNotFoundException, IOException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setThumbnail() throws FileNotFoundException, IOException {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void getThumbnail() throws IOException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void deleteThumbnail() throws FileNotFoundException, IOException {
-		// TODO Auto-generated method stub
-		throw new FileDoesNotExistException();
-	}
-
-	@Override
-	public void getPaginatedAssetAdministrationShellIterating() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void getPaginatedAssetAdministrationShell() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void allAasRetrieval() throws Exception {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

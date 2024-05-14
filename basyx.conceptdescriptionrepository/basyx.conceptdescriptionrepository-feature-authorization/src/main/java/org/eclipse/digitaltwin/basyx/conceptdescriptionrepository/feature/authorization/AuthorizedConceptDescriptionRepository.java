@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.authorization;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
@@ -57,7 +59,7 @@ public class AuthorizedConceptDescriptionRepository implements ConceptDescriptio
 
 	@Override
 	public CursorResult<List<ConceptDescription>> getAllConceptDescriptions(PaginationInfo pInfo) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new ConceptDescriptionTargetInformation("*"));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new ConceptDescriptionTargetInformation(getIdAsList("*")));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -66,7 +68,7 @@ public class AuthorizedConceptDescriptionRepository implements ConceptDescriptio
 
 	@Override
 	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIdShort(String idShort, PaginationInfo pInfo) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new ConceptDescriptionTargetInformation("*"));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new ConceptDescriptionTargetInformation(getIdAsList("*")));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -75,7 +77,7 @@ public class AuthorizedConceptDescriptionRepository implements ConceptDescriptio
 
 	@Override
 	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIsCaseOf(Reference isCaseOf, PaginationInfo pInfo) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new ConceptDescriptionTargetInformation("*"));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new ConceptDescriptionTargetInformation(getIdAsList("*")));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -84,7 +86,7 @@ public class AuthorizedConceptDescriptionRepository implements ConceptDescriptio
 
 	@Override
 	public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByDataSpecificationReference(Reference dataSpecificationReference, PaginationInfo pInfo) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new ConceptDescriptionTargetInformation("*"));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new ConceptDescriptionTargetInformation(getIdAsList("*")));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -93,7 +95,7 @@ public class AuthorizedConceptDescriptionRepository implements ConceptDescriptio
 
 	@Override
 	public ConceptDescription getConceptDescription(String conceptDescriptionId) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new ConceptDescriptionTargetInformation(conceptDescriptionId));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new ConceptDescriptionTargetInformation(getIdAsList(conceptDescriptionId)));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -102,7 +104,7 @@ public class AuthorizedConceptDescriptionRepository implements ConceptDescriptio
 
 	@Override
 	public void updateConceptDescription(String conceptDescriptionId, ConceptDescription conceptDescription) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new ConceptDescriptionTargetInformation(conceptDescriptionId));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new ConceptDescriptionTargetInformation(getIdAsList(conceptDescriptionId)));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -111,7 +113,7 @@ public class AuthorizedConceptDescriptionRepository implements ConceptDescriptio
 
 	@Override
 	public void createConceptDescription(ConceptDescription conceptDescription) throws CollidingIdentifierException, MissingIdentifierException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.CREATE, new ConceptDescriptionTargetInformation(conceptDescription.getId()));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.CREATE, new ConceptDescriptionTargetInformation(getIdAsList(conceptDescription.getId())));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -121,11 +123,15 @@ public class AuthorizedConceptDescriptionRepository implements ConceptDescriptio
 
 	@Override
 	public void deleteConceptDescription(String conceptDescriptionId) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.DELETE, new ConceptDescriptionTargetInformation(conceptDescriptionId));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.DELETE, new ConceptDescriptionTargetInformation(getIdAsList(conceptDescriptionId)));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
 		decorated.deleteConceptDescription(conceptDescriptionId);
+	}
+
+	private List<String> getIdAsList(String id) {
+		return new ArrayList<>(Arrays.asList(id));
 	}
 	
 	private void throwExceptionIfInsufficientPermission(boolean isAuthorized) {

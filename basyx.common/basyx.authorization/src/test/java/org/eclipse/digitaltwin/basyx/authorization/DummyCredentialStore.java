@@ -62,4 +62,9 @@ public class DummyCredentialStore {
 	public static final DummyCredential BASYX_UPLOADER = new DummyCredential("basyx.uploader", "basyxuploader");
 	public static final DummyCredential BASYX_UPLOADER_TWO = new DummyCredential("basyx.uploader.2", "basyxuploader2");
 	public static final DummyCredential BASYX_UPLOADER_THREE = new DummyCredential("basyx.uploader.3", "basyxuploader3");
+	
+	public static final DummyCredential BASYX_ASSETID_DISCOVERER = new DummyCredential("basyx.assetid.discoverer", "basyxassetiddiscoverer");
+	public static final DummyCredential BASYX_AAS_DISCOVERER = new DummyCredential("basyx.aas.discoverer", "basyxaasdiscoverer");
+	public static final DummyCredential BASYX_ASSETID_CREATOR = new DummyCredential("basyx.assetid.creator", "basyxassetidcreator");
+	public static final DummyCredential BASYX_ASSETID_DELETER = new DummyCredential("basyx.assetid.deleter", "basyxassetiddeleter");
 }

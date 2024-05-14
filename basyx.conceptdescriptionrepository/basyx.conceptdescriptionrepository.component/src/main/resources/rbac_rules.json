@@ -4,7 +4,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -12,7 +12,7 @@
     "action": ["CREATE", "READ", "UPDATE", "DELETE"],
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -20,7 +20,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "specificConceptDescriptionId"
+      "conceptDescriptionIds": ["testCDId1","specificConceptDescriptionId","testCDId2"]
     }
   },
   {
@@ -28,7 +28,7 @@
     "action": "CREATE",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -36,7 +36,7 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -44,7 +44,7 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "specificConceptDescriptionId"
+      "conceptDescriptionIds": "specificConceptDescriptionId"
     }
   },
   {
@@ -52,7 +52,7 @@
     "action": "DELETE",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "*"
+      "conceptDescriptionIds": "*"
     }
   },
   {
@@ -60,7 +60,7 @@
     "action": "DELETE",
     "targetInformation": {
       "@type": "concept-description",
-      "conceptDescriptionId": "specificConceptDescriptionId-2"
+      "conceptDescriptionIds": "specificConceptDescriptionId-2"
     }
   }
 ]

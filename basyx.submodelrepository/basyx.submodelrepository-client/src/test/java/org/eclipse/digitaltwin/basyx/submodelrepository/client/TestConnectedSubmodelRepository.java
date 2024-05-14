@@ -25,16 +25,11 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.client;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
@@ -52,7 +47,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * Whenever a feature is implemented, the respective test here has to be
  * removed.
  * 
- * @author schnicke
+ * @author schnicke, mateusmolina
  */
 public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 	private static ConfigurableApplicationContext appContext;
@@ -93,122 +88,17 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 	}
 
 	@Override
-	public void getSubmodelElement() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void getPaginatedSubmodel() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void invokeOperation() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void updateFileSMEWithFileSME() throws FileNotFoundException, IOException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void updateFileSMEWithNonFileSME() throws FileNotFoundException, IOException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void updateFile() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void getFile() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void getNonExistingFile() {
-		// TODO Auto-generated method stub
-
-		throw new FileDoesNotExistException();
-	}
-
-	@Override
-	public void getAllSubmodelsPreconfigured() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void deleteNonExistingFile() throws IOException {
-		// TODO Auto-generated method stub
-
-		throw new FileDoesNotExistException();
-	}
-
-	@Override
-	public void getFileFromNonFileSME() {
-		// TODO Auto-generated method stub
-		throw new ElementNotAFileException();
-	}
-
-	@Override
-	public void deleteFile() throws ElementDoesNotExistException, ElementNotAFileException, FileNotFoundException, IOException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void invokeNonOperation() {
-		// TODO Auto-generated method stub
-
-		throw new NotInvokableException();
-	}
-
-	@Override
-	public void getAllSubmodelsEmpty() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void getSubmodelElements() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
+	@Test(expected = MissingIdentifierException.class)
 	public void updateExistingSubmodelWithMismatchId() {
-		// TODO Auto-generated method stub
-		throw new IdentificationMismatchException();
-	}
-
-	@Override
-	public void deleteFileSubmodelElementDeletesFile() throws ElementDoesNotExistException, ElementNotAFileException, FileNotFoundException, IOException {
-		// TODO Auto-generated method stub
+		// TODO There should be a way to differentiate between both exceptions through
+		// the Http response
+		super.updateExistingSubmodelWithMismatchId();
 	}
 
 	@Override
 	protected boolean fileExistsInStorage(String fileValue) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	@Override
-	public void getPaginatedSubmodelElement() {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	public void paginationCursor() {
-		// TODO Auto-generated method stub
+		java.io.File file = new java.io.File(fileValue);
+
+		return file.exists();
 	}
 }

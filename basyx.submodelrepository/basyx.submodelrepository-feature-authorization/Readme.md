@@ -37,8 +37,8 @@ For configuring RBAC rules, all the rbac rules should be configured inside a jso
     "action": "READ",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -46,8 +46,8 @@ For configuring RBAC rules, all the rbac rules should be configured inside a jso
     "action": ["CREATE", "READ", "UPDATE", "DELETE", "EXECUTE"],
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "*",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -55,8 +55,8 @@ For configuring RBAC rules, all the rbac rules should be configured inside a jso
     "action": "READ",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "specificSubmodelId",
-      "submodelElementIdShortPath": "*"
+      "submodelIds": "specificSubmodelId",
+      "submodelElementIdShortPaths": "*"
     }
   },
   {
@@ -64,8 +64,8 @@ For configuring RBAC rules, all the rbac rules should be configured inside a jso
     "action": "READ",
     "targetInformation": {
       "@type": "submodel",
-      "submodelId": "specificSubmodelId",
-      "submodelElementIdShortPath": "smc2.specificSubmodelElementIdShort"
+      "submodelIds": ["specificSubmodelId", "testSMId1", "testSMId2"],
+      "submodelElementIdShortPaths": ["testSMEIdShortPath1","smc2.specificSubmodelElementIdShort","testSMEIdShortPath2"]
     }
   }
  ]
@@ -73,7 +73,8 @@ For configuring RBAC rules, all the rbac rules should be configured inside a jso
 
 The role defines which role is allowed to perform the defined actions. The role is as per the configuration of identity providers or based on the organization. Action could be CREATE, READ, UPDATE, DELETE, and EXECUTE, there could be a single action or multiple actions as a list (cf. admin configuration above).
 
-The targetInformation defines coarse-grained control over the resource, you may define the submodelId and submodelElementIdShortPath with a wildcard (\*), it means the defined role x with action y can access any Submodel and any SubmodelElement on the repository. You can also define a specific Submodel Identifier in place of the wildcard (\*), then the role x with action y could be performed only on that particular Submodel. Similarly, you can define a specific SubmodelElement IdShort path, then you can only access the SubmodelElement corresponding to that IdShort path. It means that the whole Submodel GET request would not be possible if the IdShort path for a specific SubmodelElement is provided, because the requestor only has access for a specific SubmodelElement.
+The targetInformation defines coarse-grained control over the resource, you may define the submodelIds and submodelElementIdShortPaths with a wildcard (\*), it means the defined role x with action y can access any Submodel and any SubmodelElement on the repository. You can also define a specific Submodel Identifier in place of the wildcard (\*), then the role x with action y could be performed only on that particular Submodel. Similarly, you can define a specific SubmodelElement IdShort path, then you can only access the SubmodelElement corresponding to that IdShort path. It means that the whole Submodel GET request would not be possible if the IdShort path for a specific SubmodelElement is provided, because the requestor only has access for a specific SubmodelElement.
+There could be a single submodelId/submodelElementIdShortPath or multiple submodelIds/submodelElementIdShortPaths as a list (cf. basyx-sme-reader).
 
 Note: The Action are fixed as of now and limited to (CREATE, READ, UPDATE, DELETE and EXECUTE) but later user configurable mapping of these actions would be provided.
 

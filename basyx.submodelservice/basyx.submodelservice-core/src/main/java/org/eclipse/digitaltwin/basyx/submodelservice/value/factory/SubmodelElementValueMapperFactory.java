@@ -25,6 +25,7 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.value.factory;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AnnotatedRelationshipElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.BasicEventElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
 import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
@@ -38,6 +39,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.exception.ValueMapperNotFoundException;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.AnnotatedRelationshipElementValueMapper;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.BasicEventValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.BlobValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.EntityValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.FileValueMapper;
@@ -68,6 +70,8 @@ public class SubmodelElementValueMapperFactory {
 			return new MultiLanguagePropertyValueMapper((MultiLanguageProperty) submodelElement);
 		} else if (submodelElement instanceof File) {
 			return new FileValueMapper((File) submodelElement);
+		} else if (submodelElement instanceof BasicEventElement) {
+			return new BasicEventValueMapper((BasicEventElement) submodelElement);
 		} else if (submodelElement instanceof Blob) {
 			return new BlobValueMapper((Blob) submodelElement);
 		} else if (submodelElement instanceof Entity) {

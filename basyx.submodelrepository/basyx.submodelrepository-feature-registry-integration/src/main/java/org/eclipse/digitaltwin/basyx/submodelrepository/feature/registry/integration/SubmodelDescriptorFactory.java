@@ -49,7 +49,7 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integra
 public class SubmodelDescriptorFactory {
 
 	private static final String SUBMODEL_INTERFACE = "SUBMODEL-3.0";
-	private static final String SUBMODEL_REPOSITORY_PATH = "/submodels";
+	private static final String SUBMODEL_REPOSITORY_PATH = "submodels";
 
 	private Submodel submodel;
 	private String submodelRepositoryURL;
@@ -91,6 +91,11 @@ public class SubmodelDescriptorFactory {
 		setSupplementalSemanticId(submodel.getSupplementalSemanticIds(), descriptor);
 
 		return descriptor;
+	}
+
+	public SubmodelDescriptor create(Submodel submodel) {
+		this.submodel = submodel;
+		return create();
 	}
 
 	private void setDescription(List<LangStringTextType> descriptions, SubmodelDescriptor descriptor) {

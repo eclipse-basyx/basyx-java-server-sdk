@@ -27,6 +27,8 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
@@ -64,7 +66,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(ALL_ALLOWED_WILDCARD, ALL_ALLOWED_WILDCARD));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(getIdAsList(ALL_ALLOWED_WILDCARD), getIdAsList(ALL_ALLOWED_WILDCARD)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -73,7 +75,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(ALL_ALLOWED_WILDCARD)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -82,7 +84,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void updateSubmodel(String submodelId, Submodel submodel) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(ALL_ALLOWED_WILDCARD)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -91,7 +93,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.CREATE, new SubmodelTargetInformation(submodel.getId(), ALL_ALLOWED_WILDCARD));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.CREATE, new SubmodelTargetInformation(getIdAsList(submodel.getId()), getIdAsList(ALL_ALLOWED_WILDCARD)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -100,7 +102,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void deleteSubmodel(String submodelId) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.DELETE, new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.DELETE, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(ALL_ALLOWED_WILDCARD)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -109,7 +111,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(ALL_ALLOWED_WILDCARD)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -118,7 +120,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public SubmodelElement getSubmodelElement(String submodelId, String smeIdShortPath) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(submodelId, smeIdShortPath));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(smeIdShortPath)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -127,7 +129,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public SubmodelElementValue getSubmodelElementValue(String submodelId, String smeIdShortPath) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(submodelId, smeIdShortPath));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(smeIdShortPath)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -136,7 +138,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void setSubmodelElementValue(String submodelId, String smeIdShortPath, SubmodelElementValue value) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, smeIdShortPath));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(smeIdShortPath)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -145,7 +147,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void createSubmodelElement(String submodelId, SubmodelElement smElement) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(ALL_ALLOWED_WILDCARD)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -154,7 +156,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, idShortPath));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(idShortPath)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -163,7 +165,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void updateSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, idShortPath));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(idShortPath)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -172,7 +174,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, idShortPath));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(idShortPath)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -181,7 +183,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.EXECUTE, new SubmodelTargetInformation(submodelId, idShortPath));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.EXECUTE, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(idShortPath)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -190,7 +192,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(ALL_ALLOWED_WILDCARD)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -199,7 +201,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public Submodel getSubmodelByIdMetadata(String submodelId) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(ALL_ALLOWED_WILDCARD)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -208,7 +210,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(submodelId, idShortPath));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(idShortPath)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -217,7 +219,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, idShortPath));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(idShortPath)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -226,7 +228,7 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, idShortPath));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(idShortPath)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
@@ -235,11 +237,15 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(submodelId, ALL_ALLOWED_WILDCARD));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(ALL_ALLOWED_WILDCARD)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
 		decorated.patchSubmodelElements(submodelId, submodelElementList);
+	}
+	
+	private List<String> getIdAsList(String id) {
+		return new ArrayList<>(Arrays.asList(id));
 	}
 
 	private void throwExceptionIfInsufficientPermission(boolean isAuthorized) {

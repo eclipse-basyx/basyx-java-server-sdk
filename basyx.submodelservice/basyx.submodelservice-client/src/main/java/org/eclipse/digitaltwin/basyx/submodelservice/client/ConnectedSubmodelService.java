@@ -30,30 +30,38 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationRequest;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.OperationDelegationException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.internal.SubmodelServiceApi;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.factory.SubmodelElementValueMapperFactory;
 import org.springframework.http.HttpStatus;
 
 /**
  * Provides access to a Submodel Service on a remote server - regardless if it
  * is hosted on a Submodel Repository or standalone
  * 
- * @author schnicke
+ * @author schnicke, mateusmolina
  */
 public class ConnectedSubmodelService implements SubmodelService {
 
 	private SubmodelServiceApi serviceApi;
+
+	private final SubmodelElementValueMapperFactory submodelElementValueMapperFactory;
 
 	/**
 	 * 
@@ -63,6 +71,7 @@ public class ConnectedSubmodelService implements SubmodelService {
 	 */
 	public ConnectedSubmodelService(String submodelServiceUrl) {
 		this.serviceApi = new SubmodelServiceApi(submodelServiceUrl);
+		this.submodelElementValueMapperFactory = new SubmodelElementValueMapperFactory();
 	}
 
 	@Override
@@ -129,6 +138,69 @@ public class ConnectedSubmodelService implements SubmodelService {
 		}
 	}
 
+	@Override
+	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo) {
+		String encodedCursor = pInfo.getCursor() == null ? null : Base64UrlEncoder.encode(pInfo.getCursor());
+		return serviceApi.getAllSubmodelElements(pInfo.getLimit(), encodedCursor, null, null);
+	}
+
+	/**
+	 * Invoke synchronously
+	 */
+	@Override
+	public OperationVariable[] invokeOperation(String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
+		OperationRequest request = new DefaultOperationRequest.Builder().inputArguments(List.of(input)).build();
+		try {
+			OperationResult result = serviceApi.invokeOperation(idShortPath, request);
+
+			return result.getOutputArguments().toArray(new OperationVariable[0]);
+		} catch (ApiException e) {
+			throw mapExceptionOperationExecution(idShortPath, e);
+		}
+	}
+
+	@Override
+	public void patchSubmodelElements(List<SubmodelElement> submodelElementList) {
+		submodelElementList.forEach(this::patchSubmodelElement);
+	}
+
+	@Override
+	public File getFileByPath(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+		try {
+			return serviceApi.getFileByPath(idShortPath);
+		} catch (ApiException e) {
+			throw mapExceptionFileAccess(idShortPath, e);
+		}
+	}
+
+	@Override
+	public void setFileValue(String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
+		try {
+			serviceApi.putFileByPath(idShortPath, fileName, inputStream);
+		} catch (ApiException e) {
+			throw mapExceptionFileAccess(idShortPath, e);
+		}
+	}
+
+	@Override
+	public void deleteFileValue(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+		try {
+			serviceApi.deleteFileByPath(idShortPath);
+		} catch (ApiException e) {
+			throw mapExceptionFileAccess(idShortPath, e);
+		}
+	}
+
+	private RuntimeException mapExceptionFileAccess(String idShortPath, ApiException e) {
+		if (e.getCode() == HttpStatus.NOT_FOUND.value())
+			return new FileDoesNotExistException(idShortPath);
+
+		if (e.getCode() == HttpStatus.PRECONDITION_FAILED.value())
+			return new ElementNotAFileException(idShortPath);
+
+		return e;
+	}
+
 	private RuntimeException mapExceptionSubmodelElementAccess(String idShortPath, ApiException e) {
 		if (e.getCode() == HttpStatus.NOT_FOUND.value()) {
 			return new ElementDoesNotExistException(idShortPath);
@@ -137,34 +209,19 @@ public class ConnectedSubmodelService implements SubmodelService {
 		return e;
 	}
 
-	@Override
-	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo) {
-		throw new FeatureNotImplementedException();
+	private RuntimeException mapExceptionOperationExecution(String idShortPath, ApiException e) {
+		if (e.getCode() == HttpStatus.FAILED_DEPENDENCY.value())
+			return new OperationDelegationException();
+
+		if (e.getCode() == HttpStatus.METHOD_NOT_ALLOWED.value())
+			return new NotInvokableException(idShortPath);
+
+		return mapExceptionSubmodelElementAccess(idShortPath, e);
 	}
 
-	@Override
-	public OperationVariable[] invokeOperation(String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
-		throw new FeatureNotImplementedException();
-	}
-
-	@Override
-	public void patchSubmodelElements(List<SubmodelElement> submodelElementList) {
-		throw new FeatureNotImplementedException();
-	}
-
-	@Override
-	public File getFileByPath(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		throw new FeatureNotImplementedException();
-	}
-
-	@Override
-	public void setFileValue(String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
-		throw new FeatureNotImplementedException();
-	}
-
-	@Override
-	public void deleteFileValue(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		throw new FeatureNotImplementedException();
+	private void patchSubmodelElement(SubmodelElement submodelElement) {
+		SubmodelElementValue seValue = submodelElementValueMapperFactory.create(submodelElement).getValue();
+		setSubmodelElementValue(submodelElement.getIdShort(), seValue);
 	}
 
 }

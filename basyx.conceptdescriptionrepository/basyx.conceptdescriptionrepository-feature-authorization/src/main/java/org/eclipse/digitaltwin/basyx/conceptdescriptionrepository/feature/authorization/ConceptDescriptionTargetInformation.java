@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.autho
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -41,23 +42,23 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformationSubtype
 @TargetInformationSubtype(getValue = "concept-description")
 public class ConceptDescriptionTargetInformation implements TargetInformation {
 	
-	private String conceptDescriptionId;
+	private List<String> conceptDescriptionIds;
 
 	@JsonCreator
-	public ConceptDescriptionTargetInformation(final @JsonProperty("conceptDescriptionId") String conceptDescriptionId) {
-		this.conceptDescriptionId = conceptDescriptionId;
+	public ConceptDescriptionTargetInformation(final @JsonProperty("conceptDescriptionIds") List<String> conceptDescriptionIds) {
+		this.conceptDescriptionIds = conceptDescriptionIds;
 	}
 
 	@Override
 	public Map<String, Object> toMap() {
 		final Map<String, Object> map = new HashMap<>();
-		map.put("conceptDescriptionId", conceptDescriptionId);
+		map.put("conceptDescriptionIds", conceptDescriptionIds);
 		return map;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(conceptDescriptionId);
+		return Objects.hash(conceptDescriptionIds);
 	}
 
 	@Override
@@ -69,16 +70,16 @@ public class ConceptDescriptionTargetInformation implements TargetInformation {
 		if (getClass() != obj.getClass())
 			return false;
 		ConceptDescriptionTargetInformation other = (ConceptDescriptionTargetInformation) obj;
-		return Objects.equals(conceptDescriptionId, other.conceptDescriptionId);
+		return Objects.equals(conceptDescriptionIds, other.conceptDescriptionIds);
 	}
 
 	@Override
 	public String toString() {
-		return "ConceptDescriptionTargetInformation [conceptDescriptionId=" + conceptDescriptionId + "]";
+		return "ConceptDescriptionTargetInformation [conceptDescriptionIds=" + conceptDescriptionIds + "]";
 	}
 
-	public String getConceptDescriptionId() {
-		return conceptDescriptionId;
+	public List<String> getConceptDescriptionIds() {
+		return conceptDescriptionIds;
 	}
 
 }

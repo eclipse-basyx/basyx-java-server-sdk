@@ -37,7 +37,7 @@ For configuring RBAC rules, all the rbac rules should be configured inside a jso
     "action": "READ",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "*"
+      "aasIds": "*"
     }
   },
   {
@@ -45,7 +45,7 @@ For configuring RBAC rules, all the rbac rules should be configured inside a jso
     "action": ["CREATE", "READ", "UPDATE", "DELETE"],
     "targetInformation": {
       "@type": "aas",
-      "aasId": "*"
+      "aasIds": "*"
     }
   },
   {
@@ -53,7 +53,7 @@ For configuring RBAC rules, all the rbac rules should be configured inside a jso
     "action": "DELETE",
     "targetInformation": {
       "@type": "aas",
-      "aasId": "specificAasId"
+      "aasIds": ["testAasId1", "specificAasId", "testAasId2"]
     }
   }
  ]
@@ -61,13 +61,13 @@ For configuring RBAC rules, all the rbac rules should be configured inside a jso
 
 The role defines which role is allowed to perform the defined actions. The role is as per the configuration of identity providers or based on the organization. Action could be CREATE, READ, UPDATE, DELETE, and EXECUTE, there could be a single action or multiple actions as a list (cf. admin configuration above).
 
-The targetInformation defines coarse-grained control over the resource, you may define the aasId with a wildcard (\*), it means the defined role x with action y can access any Asset Administration Shell on the repository. You can also define a specific AAS Identifier in place of the wildcard (\*), then the role x with action y could be performed only on that particular AAS.
+The targetInformation defines coarse-grained control over the resource, you may define the aasIds with a wildcard (\*), it means the defined role x with action y can access any Asset Administration Shell on the repository. You can also define a specific AAS Identifier in place of the wildcard (\*), then the role x with action y could be performed only on that particular AAS. There could be a single aasId or multiple aasIds as a list (cf. basyx-deleter above). 
 
 Note: The Action are fixed as of now and limited to (CREATE, READ, UPDATE, DELETE, and EXECUTE) but later user configurable mapping of these actions would be provided.
 
 ## Action table for RBAC
 
-Below is a reference table that shows which actions are used in what endpoints of the AAS Repository:
+Below is a reference table that shows which actions are used in what endpoints of the AAS Repository: 
 
 | Action  | Endpoint                                                                                                                                                                                                            |
 |---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

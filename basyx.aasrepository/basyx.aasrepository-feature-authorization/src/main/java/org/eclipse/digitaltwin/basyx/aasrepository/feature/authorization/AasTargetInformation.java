@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -41,23 +42,23 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformationSubtype
 @TargetInformationSubtype(getValue = "aas")
 public class AasTargetInformation implements TargetInformation {
 	
-	private String aasId;
+	private List<String> aasIds;
 
 	@JsonCreator
-	public AasTargetInformation(final @JsonProperty("aasId") String aasId) {
-		this.aasId = aasId;
+	public AasTargetInformation(final @JsonProperty("aasIds") List<String> aasIds) {
+		this.aasIds = aasIds;
 	}
 
 	@Override
 	public Map<String, Object> toMap() {
 		final Map<String, Object> map = new HashMap<>();
-		map.put("aasId", aasId);
+		map.put("aasIds", aasIds);
 		return map;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(aasId);
+		return Objects.hash(aasIds);
 	}
 
 	@Override
@@ -69,16 +70,16 @@ public class AasTargetInformation implements TargetInformation {
 		if (getClass() != obj.getClass())
 			return false;
 		AasTargetInformation other = (AasTargetInformation) obj;
-		return Objects.equals(aasId, other.aasId);
+		return Objects.equals(aasIds, other.aasIds);
 	}
 
 	@Override
 	public String toString() {
-		return "AasTargetInformation [aasId=" + aasId + "]";
+		return "AasTargetInformation [aasIds=" + aasIds + "]";
 	}
 	
-	public String getAasId() {
-		return aasId;
+	public List<String> getAasIds() {
+		return aasIds;
 	}
 
 }

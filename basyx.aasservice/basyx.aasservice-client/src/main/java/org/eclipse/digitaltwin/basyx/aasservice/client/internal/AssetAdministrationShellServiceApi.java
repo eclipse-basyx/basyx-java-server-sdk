@@ -24,14 +24,14 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasservice.client.internal;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.channels.Channels;
@@ -39,12 +39,14 @@ import java.nio.channels.Pipe;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import javax.annotation.processing.Generated;
 
-import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonMapperFactory;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.SimpleAbstractTypeResolverFactory;
@@ -57,6 +59,8 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiResponse;
 import org.eclipse.digitaltwin.basyx.client.internal.Pair;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.http.description.ServiceDescription;
+import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
+import org.springframework.util.MimeTypeUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -263,7 +267,7 @@ public class AssetAdministrationShellServiceApi {
 
     HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
-    String localVarPath = "/assetinformation/thumbnail";
+	String localVarPath = "/asset-information/thumbnail";
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
@@ -278,7 +282,7 @@ public class AssetAdministrationShellServiceApi {
     }
     return localVarRequestBuilder;
   }
-  
+
 	/**
 	 * Returns all submodel references
 	 * 
@@ -293,70 +297,33 @@ public class AssetAdministrationShellServiceApi {
 	 *             if fails to make API call
 	 */
 	public CursorResult<List<Reference>> getAllSubmodelReferences(Integer limit, String cursor) throws ApiException {
+		ApiResponse<Base64UrlEncodedCursorResult<List<Reference>>> localVarResponse = getAllSubmodelReferencesApiResponse(limit, cursor);
+		return localVarResponse.getData();
+	}
 
-		ApiResponse<CursorResult<List<Reference>>> localVarResponse = getAllSubmodelReferencesWithHttpInfo(limit, cursor);
-    return localVarResponse.getData();
-  }
-
-  	/**
-	 * Returns all submodel references
-	 * 
-	 * @param limit
-	 *            The maximum number of elements in the response array (optional)
-	 * @param cursor
-	 *            A server-generated identifier retrieved from pagingMetadata that
-	 *            specifies from which position the result listing should continue
-	 *            (optional)
-	 * @return ApiResponse&lt;CursorResult&lt;List&lt;Reference&gt;&gt;&gt;
-	 * @throws ApiException
-	 *             if fails to make API call
-	 */
-	public ApiResponse<CursorResult<List<Reference>>> getAllSubmodelReferencesWithHttpInfo(Integer limit, String cursor) throws ApiException {
-  	return getAllSubmodelReferencesWithHttpInfoNoUrlEncoding(limit, cursor);
- 	
- }
-
-
-  	/**
-	 * Returns all submodel references
-	 * 
-	 * @param limit
-	 *            The maximum number of elements in the response array (optional)
-	 * @param cursor
-	 *            A server-generated identifier retrieved from pagingMetadata that
-	 *            specifies from which position the result listing should continue
-	 *            (optional)
-	 * @return ApiResponse&lt;CursorResult&lt;List&lt;Reference&gt;&gt;&gt;
-	 * @throws ApiException
-	 *             if fails to make API call
-	 */
-	public ApiResponse<CursorResult<List<Reference>>> getAllSubmodelReferencesWithHttpInfoNoUrlEncoding(Integer limit, String cursor) throws ApiException {
-    HttpRequest.Builder localVarRequestBuilder = getAllSubmodelReferencesRequestBuilder(limit, cursor);
+	private ApiResponse<Base64UrlEncodedCursorResult<List<Reference>>> getAllSubmodelReferencesApiResponse(Integer limit, String cursor) throws ApiException {
+		HttpRequest.Builder localVarRequestBuilder = getAllSubmodelReferencesRequestBuilder(limit, cursor);
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
-          localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
+			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
+			if (memberVarResponseInterceptor != null) {
+				memberVarResponseInterceptor.accept(localVarResponse);
       }
-      try {
-        if (localVarResponse.statusCode()/ 100 != 2) {
-          throw getApiException("getAllSubmodelReferences", localVarResponse);
-        }
-		return new ApiResponse<CursorResult<List<Reference>>>(
-          localVarResponse.statusCode(),
-          localVarResponse.headers().map(),
-				localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<CursorResult<List<Reference>>>() {
+			try {
+				if (localVarResponse.statusCode() / 100 != 2) {
+					throw getApiException("getAllSubmodelReferences", localVarResponse);
+				}
+		return new ApiResponse<Base64UrlEncodedCursorResult<List<Reference>>>(
+						localVarResponse.statusCode(), localVarResponse.headers().map(),
+				localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<Base64UrlEncodedCursorResult<List<Reference>>>() {
 				}) // closes the InputStream
-        );
-      } finally {
-      }
-    } catch (IOException e) {
-      throw new ApiException(e);
-    }
-    catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new ApiException(e);
+				);
+			} finally {
+			}
+		} catch (IOException e) {
+			throw new ApiException(e);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new ApiException(e);
     }
   }
 
@@ -715,58 +682,56 @@ public class AssetAdministrationShellServiceApi {
     return localVarResponse.getData();
   }
 
-  /**
-   * 
-   * 
-   * @return ApiResponse&lt;File&gt;
-   * @throws ApiException if fails to make API call
-   */
- public ApiResponse<File> getThumbnailWithHttpInfo() throws ApiException {
-  	return getThumbnailWithHttpInfoNoUrlEncoding();
- 	
- }
+	/**
+	 * 
+	 * 
+	 * @return ApiResponse&lt;File&gt;
+	 * @throws ApiException
+	 *             if fails to make API call
+	 */
+	public ApiResponse<File> getThumbnailWithHttpInfo() throws ApiException {
+		return getThumbnailWithHttpInfoNoUrlEncoding();
+	}
 
-
-  /**
-   * 
-   * 
-   * @return ApiResponse&lt;File&gt;
-   * @throws ApiException if fails to make API call
-   */
-  public ApiResponse<File> getThumbnailWithHttpInfoNoUrlEncoding() throws ApiException {
-    HttpRequest.Builder localVarRequestBuilder = getThumbnailRequestBuilder();
-    try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
-          localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
-      try {
-        if (localVarResponse.statusCode()/ 100 != 2) {
-          throw getApiException("getThumbnail", localVarResponse);
-        }
-        return new ApiResponse<File>(
-          localVarResponse.statusCode(),
-          localVarResponse.headers().map(),
-          localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<File>() {}) // closes the InputStream
-        );
-      } finally {
-      }
-    } catch (IOException e) {
-      throw new ApiException(e);
-    }
-    catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new ApiException(e);
-    }
-  }
+	/**
+	 * @return ApiResponse&lt;File&gt;
+	 * @throws ApiException
+	 *             if fails to make API call
+	 */
+	public ApiResponse<File> getThumbnailWithHttpInfoNoUrlEncoding() throws ApiException {
+		HttpRequest.Builder localVarRequestBuilder = getThumbnailRequestBuilder();
+		try {
+			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
+			if (memberVarResponseInterceptor != null) {
+				memberVarResponseInterceptor.accept(localVarResponse);
+			}
+			if (localVarResponse.statusCode() / 100 != 2) {
+				throw getApiException("getThumbnail", localVarResponse);
+			}
+			if (localVarResponse.body() == null) {
+				return new ApiResponse<File>(localVarResponse.statusCode(), localVarResponse.headers().map(), null);
+			} else {
+				File tempFile = File.createTempFile(buildUniqueFilename(), extractFileName(localVarResponse.headers()));
+				try (FileOutputStream out = new FileOutputStream(tempFile)) {
+					localVarResponse.body().transferTo(out);
+					return new ApiResponse<File>(localVarResponse.statusCode(), localVarResponse.headers().map(), tempFile);
+				} finally {
+					localVarResponse.body().close();
+				}
+			}
+		} catch (IOException e) {
+			throw new ApiException(e);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new ApiException(e);
+		}
+	}
 
   private HttpRequest.Builder getThumbnailRequestBuilder() throws ApiException {
 
     HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
-    String localVarPath = "/assetinformation/thumbnail";
+	String localVarPath = "/asset-information/thumbnail";
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
@@ -1060,126 +1025,98 @@ public class AssetAdministrationShellServiceApi {
     }
     return localVarRequestBuilder;
   }
-  /**
-   * 
-   * 
-   * @param fileName  (optional)
-   * @param _file  (optional)
-   * @throws ApiException if fails to make API call
-   */
-  public void putThumbnail(String fileName, File _file) throws ApiException {
-
-    putThumbnailWithHttpInfo(fileName, _file);
-  }
-
-  /**
-   * 
-   * 
-   * @param fileName  (optional)
-   * @param _file  (optional)
-   * @return ApiResponse&lt;Void&gt;
-   * @throws ApiException if fails to make API call
-   */
- public ApiResponse<Void> putThumbnailWithHttpInfo(String fileName, File _file) throws ApiException {
-  	return putThumbnailWithHttpInfoNoUrlEncoding(fileName, _file);
- 	
- }
-
-
-  /**
-   * 
-   * 
-   * @param fileName  (optional)
-   * @param _file  (optional)
-   * @return ApiResponse&lt;Void&gt;
-   * @throws ApiException if fails to make API call
-   */
-  public ApiResponse<Void> putThumbnailWithHttpInfoNoUrlEncoding(String fileName, File _file) throws ApiException {
-    HttpRequest.Builder localVarRequestBuilder = putThumbnailRequestBuilder(fileName, _file);
-    try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
-          localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
-      try {
-        if (localVarResponse.statusCode()/ 100 != 2) {
-          throw getApiException("putThumbnail", localVarResponse);
-        }
-        return new ApiResponse<Void>(
-          localVarResponse.statusCode(),
-          localVarResponse.headers().map(),
-          null
-        );
-      } finally {
-        // Drain the InputStream
-        while (localVarResponse.body().read() != -1) {
-            // Ignore
-        }
-        localVarResponse.body().close();
-      }
-    } catch (IOException e) {
-      throw new ApiException(e);
-    }
-    catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new ApiException(e);
-    }
-  }
-
-  private HttpRequest.Builder putThumbnailRequestBuilder(String fileName, File _file) throws ApiException {
-
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
-    String localVarPath = "/assetinformation/thumbnail";
-
-    localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
-
-    localVarRequestBuilder.header("Accept", "application/json");
-
-    MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
-    boolean hasFiles = false;
-    multiPartBuilder.addTextBody("fileName", fileName.toString());
-    multiPartBuilder.addBinaryBody("file", _file);
-    hasFiles = true;
-    HttpEntity entity = multiPartBuilder.build();
-    HttpRequest.BodyPublisher formDataPublisher;
-    if (hasFiles) {
-        Pipe pipe;
-        try {
-            pipe = Pipe.open();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        new Thread(() -> {
-            try (OutputStream outputStream = Channels.newOutputStream(pipe.sink())) {
-                entity.writeTo(outputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
-        formDataPublisher = HttpRequest.BodyPublishers.ofInputStream(() -> Channels.newInputStream(pipe.source()));
-    } else {
-        ByteArrayOutputStream formOutputStream = new ByteArrayOutputStream();
-        try {
-            entity.writeTo(formOutputStream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        formDataPublisher = HttpRequest.BodyPublishers
-            .ofInputStream(() -> new ByteArrayInputStream(formOutputStream.toByteArray()));
-    }
-    localVarRequestBuilder
-        .header("Content-Type", entity.getContentType().getValue())
-        .method("PUT", formDataPublisher);
-    if (memberVarReadTimeout != null) {
-      localVarRequestBuilder.timeout(memberVarReadTimeout);
-    }
-    if (memberVarInterceptor != null) {
-      memberVarInterceptor.accept(localVarRequestBuilder);
-    }
-    return localVarRequestBuilder;
-  }
   
+	/**
+	 * 
+	 * @param fileName
+	 * @param contentTypeStr
+	 * @param inputStream
+	 * @throws ApiException
+	 */
+	public void putThumbnail(String fileName, String contentTypeStr, InputStream inputStream) throws ApiException {
+		ContentType contentType = ContentType.DEFAULT_BINARY;
+		try {
+			contentType = ContentType.parse(contentTypeStr);
+		} catch (Exception e) {
+			System.err.println("Error parsing content type: " + e.getMessage());
+		}
+
+		putThumbnailWithHttpInfoNoUrlEncoding(fileName, contentType, inputStream);
+	}
+
+	private ApiResponse<Void> putThumbnailWithHttpInfoNoUrlEncoding(String fileName, ContentType contentType, InputStream inputStream) throws ApiException {
+		HttpRequest.Builder localVarRequestBuilder = putThumbnailRequestBuilder(fileName, contentType, inputStream);
+		try {
+			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
+			if (memberVarResponseInterceptor != null) {
+				memberVarResponseInterceptor.accept(localVarResponse);
+			}
+			try {
+				if (localVarResponse.statusCode() / 100 != 2) {
+					throw getApiException("putThumbnail", localVarResponse);
+				}
+				return new ApiResponse<Void>(localVarResponse.statusCode(), localVarResponse.headers().map(), null);
+			} finally {
+				localVarResponse.body().close();
+			}
+		} catch (IOException e) {
+			throw new ApiException(e);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new ApiException(e);
+		}
+	}
+
+	private HttpRequest.Builder putThumbnailRequestBuilder(String fileName, ContentType contentType, InputStream inputStream) throws ApiException {
+		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+		String localVarPath = "/asset-information/thumbnail";
+		localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
+		localVarRequestBuilder.header("Accept", "application/json");
+
+		// Building multipart/form-data
+		var multiPartBuilder = MultipartEntityBuilder.create();
+		multiPartBuilder.addTextBody("fileName", fileName);
+		multiPartBuilder.addBinaryBody("file", inputStream, contentType, fileName);
+		var entity = multiPartBuilder.build();
+
+		Pipe pipe;
+		try {
+			pipe = Pipe.open();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		new Thread(() -> {
+			try (OutputStream outputStream = Channels.newOutputStream(pipe.sink())) {
+				entity.writeTo(outputStream);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}).start();
+
+		HttpRequest.BodyPublisher formDataPublisher = HttpRequest.BodyPublishers.ofInputStream(() -> Channels.newInputStream(pipe.source()));
+
+		localVarRequestBuilder.header("Content-Type", entity.getContentType().getValue()).method("PUT", formDataPublisher);
+
+		if (memberVarReadTimeout != null) {
+			localVarRequestBuilder.timeout(memberVarReadTimeout);
+		}
+		if (memberVarInterceptor != null) {
+			memberVarInterceptor.accept(localVarRequestBuilder);
+		}
+		return localVarRequestBuilder;
+	}
+
+	private static String extractFileName(HttpHeaders headers) {
+		Optional<String> contentType = headers.firstValue("Content-Type");
+		try {
+			return "." + MimeTypeUtils.parseMimeType(contentType.get()).getSubtype();
+		} catch (Exception e) {
+			return ".tmp";
+		}
+	}
+
+	private static String buildUniqueFilename() {
+		return UUID.randomUUID().toString();
+	}
+
 }

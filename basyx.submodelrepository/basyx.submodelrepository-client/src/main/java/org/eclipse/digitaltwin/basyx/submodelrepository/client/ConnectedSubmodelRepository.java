@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.client;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
@@ -37,12 +38,12 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.internal.SubmodelRepositoryApi;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
@@ -54,7 +55,7 @@ import org.springframework.http.HttpStatus;
 /**
  * Provides access to a Submodel Repository on a remote server
  * 
- * @author schnicke
+ * @author schnicke, mateusmolina
  */
 public class ConnectedSubmodelRepository implements SubmodelRepository {
 
@@ -131,12 +132,18 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 		}
 	}
 
-	/**
-	 * Not Implemented
-	 */
 	@Override
 	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
-		throw new FeatureNotImplementedException();
+		try{
+			String encodedCursor = pInfo.getCursor() == null ? null : Base64UrlEncoder.encode(pInfo.getCursor());
+			return repoApi.getAllSubmodels(null, null, pInfo.getLimit(), encodedCursor, null, null);
+		} catch (ApiException e) {
+			if (e.getCode() == HttpStatus.INTERNAL_SERVER_ERROR.value())
+				return new CursorResult<>("", new ArrayList<>());
+			else
+				throw e;
+		}
+
 	}
 
 	@Override
@@ -184,44 +191,29 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 		return getConnectedSubmodelService(submodelId).invokeOperation(idShortPath, input);
 	}
 
-	/**
-	 * Not Implemented
-	 */
 	@Override
 	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) throws ElementDoesNotExistException {
-		throw new FeatureNotImplementedException();
+		return new SubmodelValueOnly(getSubmodelByIdMetadata(submodelId).getSubmodelElements());
 	}
 
-	/**
-	 * Not Implemented
-	 */
 	@Override
 	public Submodel getSubmodelByIdMetadata(String submodelId) throws ElementDoesNotExistException {
-		throw new FeatureNotImplementedException();
+		return repoApi.getSubmodelById(submodelId, null, null);
 	}
 
-	/**
-	 * Not Implemented
-	 */
 	@Override
 	public File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		throw new FeatureNotImplementedException();
+		return getConnectedSubmodelService(submodelId).getFileByPath(idShortPath);
 	}
 
-	/**
-	 * Not Implemented
-	 */
 	@Override
 	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
-		throw new FeatureNotImplementedException();
+		getConnectedSubmodelService(submodelId).setFileValue(idShortPath, fileName, inputStream);
 	}
 
-	/**
-	 * Not Implemented
-	 */
 	@Override
 	public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		throw new FeatureNotImplementedException();
+		getConnectedSubmodelService(submodelId).deleteFileValue(idShortPath);
 	}
 
 	private String getSubmodelUrl(String submodelId) {
@@ -242,7 +234,7 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
-		throw new FeatureNotImplementedException();
+		getConnectedSubmodelService(submodelId).patchSubmodelElements(submodelElementList);
 	}
 
 }

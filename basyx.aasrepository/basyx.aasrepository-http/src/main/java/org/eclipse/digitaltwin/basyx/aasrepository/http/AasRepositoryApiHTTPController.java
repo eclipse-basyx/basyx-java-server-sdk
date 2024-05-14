@@ -45,6 +45,7 @@ import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -186,14 +187,10 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 
 	@Override
 	public ResponseEntity<Resource> getThumbnailAasRepository(Base64UrlEncodedIdentifier aasIdentifier) {
-		try {
-			FileInputStream fileInputStream = new FileInputStream(aasRepository.getThumbnail(aasIdentifier.getIdentifier()));
-			Resource resource = new InputStreamResource(fileInputStream);
-			return new ResponseEntity<Resource>(resource, HttpStatus.OK);
-		} catch (FileNotFoundException e) {
-			return new ResponseEntity<Resource>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
+        Resource resource = new FileSystemResource(aasRepository.getThumbnail(aasIdentifier.getIdentifier()));
+
+        return new ResponseEntity<>(resource, HttpStatus.OK);
+    }
 
 	@Override
 	public ResponseEntity<Void> putThumbnailAasRepository(Base64UrlEncodedIdentifier aasIdentifier, String fileName, @Valid MultipartFile file) {

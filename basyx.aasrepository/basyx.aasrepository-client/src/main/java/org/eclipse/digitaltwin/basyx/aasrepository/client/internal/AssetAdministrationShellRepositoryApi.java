@@ -24,26 +24,18 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.client.internal;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.channels.Channels;
-import java.nio.channels.Pipe;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonMapperFactory;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.SimpleAbstractTypeResolverFactory;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -54,6 +46,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiResponse;
 import org.eclipse.digitaltwin.basyx.client.internal.Pair;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -199,96 +192,6 @@ public class AssetAdministrationShellRepositoryApi {
     return localVarRequestBuilder;
   }
   /**
-   * 
-   * 
-   * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded) (required)
-   * @throws ApiException if fails to make API call
-   */
-  public void deleteThumbnailAasRepository(String aasIdentifier) throws ApiException {
-
-    deleteThumbnailAasRepositoryWithHttpInfo(aasIdentifier);
-  }
-
-  /**
-   * 
-   * 
-   * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded) (required)
-   * @return ApiResponse&lt;Void&gt;
-   * @throws ApiException if fails to make API call
-   */
- public ApiResponse<Void> deleteThumbnailAasRepositoryWithHttpInfo(String aasIdentifier) throws ApiException {
-    String  aasIdentifierAsBytes = ApiClient.base64UrlEncode(aasIdentifier);
-  	return deleteThumbnailAasRepositoryWithHttpInfoNoUrlEncoding(aasIdentifierAsBytes);
- 	
- }
-
-
-  /**
-   * 
-   * 
-   * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded) (required)
-   * @return ApiResponse&lt;Void&gt;
-   * @throws ApiException if fails to make API call
-   */
-  public ApiResponse<Void> deleteThumbnailAasRepositoryWithHttpInfoNoUrlEncoding(String aasIdentifier) throws ApiException {
-    HttpRequest.Builder localVarRequestBuilder = deleteThumbnailAasRepositoryRequestBuilder(aasIdentifier);
-    try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
-          localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
-      try {
-        if (localVarResponse.statusCode()/ 100 != 2) {
-          throw getApiException("deleteThumbnailAasRepository", localVarResponse);
-        }
-        return new ApiResponse<Void>(
-          localVarResponse.statusCode(),
-          localVarResponse.headers().map(),
-          null
-        );
-      } finally {
-        // Drain the InputStream
-        while (localVarResponse.body().read() != -1) {
-            // Ignore
-        }
-        localVarResponse.body().close();
-      }
-    } catch (IOException e) {
-      throw new ApiException(e);
-    }
-    catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new ApiException(e);
-    }
-  }
-
-  private HttpRequest.Builder deleteThumbnailAasRepositoryRequestBuilder(String aasIdentifier) throws ApiException {
-    // verify the required parameter 'aasIdentifier' is set
-    if (aasIdentifier == null) {
-      throw new ApiException(400, "Missing the required parameter 'aasIdentifier' when calling deleteThumbnailAasRepository");
-    }
-
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
-    String localVarPath = "/shells/{aasIdentifier}/asset-information/thumbnail"
-        .replace("{aasIdentifier}", ApiClient.urlEncode(aasIdentifier.toString()));
-
-    localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
-
-    localVarRequestBuilder.header("Accept", "application/json");
-
-    localVarRequestBuilder.method("DELETE", HttpRequest.BodyPublishers.noBody());
-    if (memberVarReadTimeout != null) {
-      localVarRequestBuilder.timeout(memberVarReadTimeout);
-    }
-    if (memberVarInterceptor != null) {
-      memberVarInterceptor.accept(localVarRequestBuilder);
-    }
-    return localVarRequestBuilder;
-  }
-  /**
    * Deletes the submodel reference from the Asset Administration Shell. Does not delete the submodel itself!
    * 
    * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded) (required)
@@ -404,63 +307,17 @@ public class AssetAdministrationShellRepositoryApi {
 	 *            A server-generated identifier retrieved from pagingMetadata that
 	 *            specifies from which position the result listing should continue
 	 *            (optional)
-	 * @return GetAssetAdministrationShellsResult
+	 * @return CursorResult&#60;List&#60;SubmodelElement&#62;&#62;
 	 * @throws ApiException
 	 *             if fails to make API call
 	 */
 	public CursorResult<List<AssetAdministrationShell>> getAllAssetAdministrationShells(List<String> assetIds, String idShort, Integer limit, String cursor) throws ApiException {
+		ApiResponse<Base64UrlEncodedCursorResult<List<AssetAdministrationShell>>> localVarResponse = getAllAssetAdministrationShellsApiResponse(assetIds, idShort, limit, cursor);
 
-		ApiResponse<CursorResult<List<AssetAdministrationShell>>> localVarResponse = getAllAssetAdministrationShellsWithHttpInfo(assetIds, idShort, limit, cursor);
 		return localVarResponse.getData();
 	}
 
-	/**
-	 * Returns all Asset Administration Shells
-	 * 
-	 * @param assetIds
-	 *            A list of specific Asset identifiers. Each Asset identifier is a
-	 *            base64-url-encoded
-	 *            [SpecificAssetId](./model-part1.yaml#/components/schemas/SpecificAssetId)
-	 *            (optional
-	 * @param idShort
-	 *            The Asset Administration Shell’s IdShort (optional)
-	 * @param limit
-	 *            The maximum number of elements in the response array (optional)
-	 * @param cursor
-	 *            A server-generated identifier retrieved from pagingMetadata that
-	 *            specifies from which position the result listing should continue
-	 *            (optional)
-	 * @return ApiResponse&lt;GetAssetAdministrationShellsResult&gt;
-	 * @throws ApiException
-	 *             if fails to make API call
-	 */
-	public ApiResponse<CursorResult<List<AssetAdministrationShell>>> getAllAssetAdministrationShellsWithHttpInfo(List<String> assetIds, String idShort, Integer limit, String cursor) throws ApiException {
-		List<String> assetIdsAsBytes = ApiClient.base64UrlEncode(assetIds);
-		return getAllAssetAdministrationShellsWithHttpInfoNoUrlEncoding(assetIdsAsBytes, idShort, limit, cursor);
-
-	}
-
-	/**
-	 * Returns all Asset Administration Shells
-	 * 
-	 * @param assetIds
-	 *            A list of specific Asset identifiers. Each Asset identifier is a
-	 *            base64-url-encoded
-	 *            [SpecificAssetId](./model-part1.yaml#/components/schemas/SpecificAssetId)
-	 *            (optional
-	 * @param idShort
-	 *            The Asset Administration Shell’s IdShort (optional)
-	 * @param limit
-	 *            The maximum number of elements in the response array (optional)
-	 * @param cursor
-	 *            A server-generated identifier retrieved from pagingMetadata that
-	 *            specifies from which position the result listing should continue
-	 *            (optional)
-	 * @return ApiResponse&lt;GetAssetAdministrationShellsResult&gt;
-	 * @throws ApiException
-	 *             if fails to make API call
-	 */
-	public ApiResponse<CursorResult<List<AssetAdministrationShell>>> getAllAssetAdministrationShellsWithHttpInfoNoUrlEncoding(List<String> assetIds, String idShort, Integer limit, String cursor) throws ApiException {
+	private ApiResponse<Base64UrlEncodedCursorResult<List<AssetAdministrationShell>>> getAllAssetAdministrationShellsApiResponse(List<String> assetIds, String idShort, Integer limit, String cursor) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = getAllAssetAdministrationShellsRequestBuilder(assetIds, idShort, limit, cursor);
 		try {
 			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
@@ -471,8 +328,8 @@ public class AssetAdministrationShellRepositoryApi {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("getAllAssetAdministrationShells", localVarResponse);
 				}
-				return new ApiResponse<CursorResult<List<AssetAdministrationShell>>>(localVarResponse.statusCode(), localVarResponse.headers().map(),
-						localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<CursorResult<List<AssetAdministrationShell>>>() {
+				return new ApiResponse<>(localVarResponse.statusCode(), localVarResponse.headers().map(),
+						localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<Base64UrlEncodedCursorResult<List<AssetAdministrationShell>>>() {
 						}) // closes the InputStream
 				);
 			} finally {
@@ -526,123 +383,6 @@ public class AssetAdministrationShellRepositoryApi {
 		return localVarRequestBuilder;
 	}
 
-	/**
-	 * Returns all submodel references
-	 * 
-	 * @param aasIdentifier
-	 *            The Asset Administration Shell’s unique id
-	 *            (UTF8-BASE64-URL-encoded) (required)
-	 * @param limit
-	 *            The maximum number of elements in the response array (optional)
-	 * @param cursor
-	 *            A server-generated identifier retrieved from pagingMetadata that
-	 *            specifies from which position the result listing should continue
-	 *            (optional)
-	 * @return GetReferencesResult
-	 * @throws ApiException
-	 *             if fails to make API call
-	 */
-	public CursorResult<List<Reference>> getAllSubmodelReferencesAasRepository(String aasIdentifier, Integer limit, String cursor) throws ApiException {
-
-		ApiResponse<CursorResult<List<Reference>>> localVarResponse = getAllSubmodelReferencesAasRepositoryWithHttpInfo(aasIdentifier, limit, cursor);
-    return localVarResponse.getData();
-  }
-
-  /**
-   * Returns all submodel references
-   * 
-   * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded) (required)
-   * @param limit The maximum number of elements in the response array (optional)
-   * @param cursor A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue (optional)
-   * @return ApiResponse&lt;GetReferencesResult&gt;
-   * @throws ApiException if fails to make API call
-   */
-	public ApiResponse<CursorResult<List<Reference>>> getAllSubmodelReferencesAasRepositoryWithHttpInfo(String aasIdentifier, Integer limit, String cursor) throws ApiException {
-    String  aasIdentifierAsBytes = ApiClient.base64UrlEncode(aasIdentifier);
-  	return getAllSubmodelReferencesAasRepositoryWithHttpInfoNoUrlEncoding(aasIdentifierAsBytes, limit, cursor);
- 	
- }
-
-
-  /**
-   * Returns all submodel references
-   * 
-   * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded) (required)
-   * @param limit The maximum number of elements in the response array (optional)
-   * @param cursor A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue (optional)
-   * @return ApiResponse&lt;GetReferencesResult&gt;
-   * @throws ApiException if fails to make API call
-   */
-	public ApiResponse<CursorResult<List<Reference>>> getAllSubmodelReferencesAasRepositoryWithHttpInfoNoUrlEncoding(String aasIdentifier, Integer limit, String cursor) throws ApiException {
-    HttpRequest.Builder localVarRequestBuilder = getAllSubmodelReferencesAasRepositoryRequestBuilder(aasIdentifier, limit, cursor);
-    try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
-          localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
-      try {
-        if (localVarResponse.statusCode()/ 100 != 2) {
-          throw getApiException("getAllSubmodelReferencesAasRepository", localVarResponse);
-        }
-		return new ApiResponse<CursorResult<List<Reference>>>(
-          localVarResponse.statusCode(),
-          localVarResponse.headers().map(),
-          localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<CursorResult<List<Reference>>>() {}) // closes the InputStream
-        );
-      } finally {
-      }
-    } catch (IOException e) {
-      throw new ApiException(e);
-    }
-    catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new ApiException(e);
-    }
-  }
-
-  private HttpRequest.Builder getAllSubmodelReferencesAasRepositoryRequestBuilder(String aasIdentifier, Integer limit, String cursor) throws ApiException {
-    // verify the required parameter 'aasIdentifier' is set
-    if (aasIdentifier == null) {
-      throw new ApiException(400, "Missing the required parameter 'aasIdentifier' when calling getAllSubmodelReferencesAasRepository");
-    }
-
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
-    String localVarPath = "/shells/{aasIdentifier}/submodel-refs"
-        .replace("{aasIdentifier}", ApiClient.urlEncode(aasIdentifier.toString()));
-
-    List<Pair> localVarQueryParams = new ArrayList<>();
-    StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-    String localVarQueryParameterBaseName;
-    localVarQueryParameterBaseName = "limit";
-    localVarQueryParams.addAll(ApiClient.parameterToPairs("limit", limit));
-    localVarQueryParameterBaseName = "cursor";
-    localVarQueryParams.addAll(ApiClient.parameterToPairs("cursor", cursor));
-
-    if (!localVarQueryParams.isEmpty() || localVarQueryStringJoiner.length() != 0) {
-      StringJoiner queryJoiner = new StringJoiner("&");
-      localVarQueryParams.forEach(p -> queryJoiner.add(p.getName() + '=' + p.getValue()));
-      if (localVarQueryStringJoiner.length() != 0) {
-        queryJoiner.add(localVarQueryStringJoiner.toString());
-      }
-      localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath + '?' + queryJoiner.toString()));
-    } else {
-      localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
-    }
-
-    localVarRequestBuilder.header("Accept", "application/json");
-
-    localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
-    if (memberVarReadTimeout != null) {
-      localVarRequestBuilder.timeout(memberVarReadTimeout);
-    }
-    if (memberVarInterceptor != null) {
-      memberVarInterceptor.accept(localVarRequestBuilder);
-    }
-    return localVarRequestBuilder;
-  }
   /**
    * Returns a specific Asset Administration Shell
    * 
@@ -904,93 +644,7 @@ public class AssetAdministrationShellRepositoryApi {
     }
     return localVarRequestBuilder;
   }
-  /**
-   * 
-   * 
-   * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded) (required)
-   * @return File
-   * @throws ApiException if fails to make API call
-   */
-  public File getThumbnailAasRepository(String aasIdentifier) throws ApiException {
 
-    ApiResponse<File> localVarResponse = getThumbnailAasRepositoryWithHttpInfo(aasIdentifier);
-    return localVarResponse.getData();
-  }
-
-  /**
-   * 
-   * 
-   * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded) (required)
-   * @return ApiResponse&lt;File&gt;
-   * @throws ApiException if fails to make API call
-   */
- public ApiResponse<File> getThumbnailAasRepositoryWithHttpInfo(String aasIdentifier) throws ApiException {
-    String  aasIdentifierAsBytes = ApiClient.base64UrlEncode(aasIdentifier);
-  	return getThumbnailAasRepositoryWithHttpInfoNoUrlEncoding(aasIdentifierAsBytes);
- 	
- }
-
-
-  /**
-   * 
-   * 
-   * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded) (required)
-   * @return ApiResponse&lt;File&gt;
-   * @throws ApiException if fails to make API call
-   */
-  public ApiResponse<File> getThumbnailAasRepositoryWithHttpInfoNoUrlEncoding(String aasIdentifier) throws ApiException {
-    HttpRequest.Builder localVarRequestBuilder = getThumbnailAasRepositoryRequestBuilder(aasIdentifier);
-    try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
-          localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
-      try {
-        if (localVarResponse.statusCode()/ 100 != 2) {
-          throw getApiException("getThumbnailAasRepository", localVarResponse);
-        }
-        return new ApiResponse<File>(
-          localVarResponse.statusCode(),
-          localVarResponse.headers().map(),
-          localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<File>() {}) // closes the InputStream
-        );
-      } finally {
-      }
-    } catch (IOException e) {
-      throw new ApiException(e);
-    }
-    catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new ApiException(e);
-    }
-  }
-
-  private HttpRequest.Builder getThumbnailAasRepositoryRequestBuilder(String aasIdentifier) throws ApiException {
-    // verify the required parameter 'aasIdentifier' is set
-    if (aasIdentifier == null) {
-      throw new ApiException(400, "Missing the required parameter 'aasIdentifier' when calling getThumbnailAasRepository");
-    }
-
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
-    String localVarPath = "/shells/{aasIdentifier}/asset-information/thumbnail"
-        .replace("{aasIdentifier}", ApiClient.urlEncode(aasIdentifier.toString()));
-
-    localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
-
-    localVarRequestBuilder.header("Accept", "application/octet-stream, application/json");
-
-    localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
-    if (memberVarReadTimeout != null) {
-      localVarRequestBuilder.timeout(memberVarReadTimeout);
-    }
-    if (memberVarInterceptor != null) {
-      memberVarInterceptor.accept(localVarRequestBuilder);
-    }
-    return localVarRequestBuilder;
-  }
   /**
    * Creates a new Asset Administration Shell
    * 
@@ -1389,135 +1043,4 @@ public class AssetAdministrationShellRepositoryApi {
     }
     return localVarRequestBuilder;
   }
-  /**
-   * 
-   * 
-   * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded) (required)
-   * @param fileName  (optional)
-   * @param _file  (optional)
-   * @throws ApiException if fails to make API call
-   */
-  public void putThumbnailAasRepository(String aasIdentifier, String fileName, File _file) throws ApiException {
-
-    putThumbnailAasRepositoryWithHttpInfo(aasIdentifier, fileName, _file);
-  }
-
-  /**
-   * 
-   * 
-   * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded) (required)
-   * @param fileName  (optional)
-   * @param _file  (optional)
-   * @return ApiResponse&lt;Void&gt;
-   * @throws ApiException if fails to make API call
-   */
- public ApiResponse<Void> putThumbnailAasRepositoryWithHttpInfo(String aasIdentifier, String fileName, File _file) throws ApiException {
-    String  aasIdentifierAsBytes = ApiClient.base64UrlEncode(aasIdentifier);
-  	return putThumbnailAasRepositoryWithHttpInfoNoUrlEncoding(aasIdentifierAsBytes, fileName, _file);
- 	
- }
-
-
-  /**
-   * 
-   * 
-   * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded) (required)
-   * @param fileName  (optional)
-   * @param _file  (optional)
-   * @return ApiResponse&lt;Void&gt;
-   * @throws ApiException if fails to make API call
-   */
-  public ApiResponse<Void> putThumbnailAasRepositoryWithHttpInfoNoUrlEncoding(String aasIdentifier, String fileName, File _file) throws ApiException {
-    HttpRequest.Builder localVarRequestBuilder = putThumbnailAasRepositoryRequestBuilder(aasIdentifier, fileName, _file);
-    try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
-          localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
-      try {
-        if (localVarResponse.statusCode()/ 100 != 2) {
-          throw getApiException("putThumbnailAasRepository", localVarResponse);
-        }
-        return new ApiResponse<Void>(
-          localVarResponse.statusCode(),
-          localVarResponse.headers().map(),
-          null
-        );
-      } finally {
-        // Drain the InputStream
-        while (localVarResponse.body().read() != -1) {
-            // Ignore
-        }
-        localVarResponse.body().close();
-      }
-    } catch (IOException e) {
-      throw new ApiException(e);
-    }
-    catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new ApiException(e);
-    }
-  }
-
-  private HttpRequest.Builder putThumbnailAasRepositoryRequestBuilder(String aasIdentifier, String fileName, File _file) throws ApiException {
-    // verify the required parameter 'aasIdentifier' is set
-    if (aasIdentifier == null) {
-      throw new ApiException(400, "Missing the required parameter 'aasIdentifier' when calling putThumbnailAasRepository");
-    }
-
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
-    String localVarPath = "/shells/{aasIdentifier}/asset-information/thumbnail"
-        .replace("{aasIdentifier}", ApiClient.urlEncode(aasIdentifier.toString()));
-
-    localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
-
-    localVarRequestBuilder.header("Accept", "application/json");
-
-    MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
-    boolean hasFiles = false;
-    multiPartBuilder.addTextBody("fileName", fileName.toString());
-    multiPartBuilder.addBinaryBody("file", _file);
-    hasFiles = true;
-    HttpEntity entity = multiPartBuilder.build();
-    HttpRequest.BodyPublisher formDataPublisher;
-    if (hasFiles) {
-        Pipe pipe;
-        try {
-            pipe = Pipe.open();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        new Thread(() -> {
-            try (OutputStream outputStream = Channels.newOutputStream(pipe.sink())) {
-                entity.writeTo(outputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
-        formDataPublisher = HttpRequest.BodyPublishers.ofInputStream(() -> Channels.newInputStream(pipe.source()));
-    } else {
-        ByteArrayOutputStream formOutputStream = new ByteArrayOutputStream();
-        try {
-            entity.writeTo(formOutputStream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        formDataPublisher = HttpRequest.BodyPublishers
-            .ofInputStream(() -> new ByteArrayInputStream(formOutputStream.toByteArray()));
-    }
-    localVarRequestBuilder
-        .header("Content-Type", entity.getContentType().getValue())
-        .method("PUT", formDataPublisher);
-    if (memberVarReadTimeout != null) {
-      localVarRequestBuilder.timeout(memberVarReadTimeout);
-    }
-    if (memberVarInterceptor != null) {
-      memberVarInterceptor.accept(localVarRequestBuilder);
-    }
-    return localVarRequestBuilder;
-  }
-  
 }

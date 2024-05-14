@@ -19,5 +19,6 @@
 		<module>basyx.aasdiscoveryservice-backend-inmemory</module>
 		<module>basyx.aasdiscoveryservice-tck</module>
 		<module>basyx.aasdiscoveryservice.component</module>
+		<module>basyx.aasdiscoveryservice-feature-authorization</module>
 	</modules>
 </project>

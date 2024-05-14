@@ -61,6 +61,22 @@
       "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
       "attributes" : { }
     }, {
+      "id" : "4bbc59ce-901e-49b9-adeb-0511469595df",
+      "name" : "basyx-aas-discoverer",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
+      "id" : "52e7db01-dd27-4589-a530-ec8491bd2026",
+      "name" : "basyx-assetid-deleter",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
       "id" : "20c8f106-d2fb-422d-9045-22b28151f792",
       "name" : "basyx-sme-reader-two",
       "description" : "",
@@ -86,6 +102,14 @@
           "basyx-client-api" : [ "basyx-user" ]
         }
       },
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
+      "id" : "d3323aef-0e1f-4ec0-ba54-e0b3f9a897eb",
+      "name" : "basyx-assetid-discoverer",
+      "description" : "",
+      "composite" : false,
       "clientRole" : false,
       "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
       "attributes" : { }
@@ -279,6 +303,14 @@
     }, {
       "id" : "afb72d5e-0841-452d-b3e0-5268dcba4c2a",
       "name" : "visitor",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
+      "id" : "b007c30e-c4bc-46ad-b72f-8ce67ec129fd",
+      "name" : "basyx-assetid-creator",
       "description" : "",
       "composite" : false,
       "clientRole" : false,
@@ -623,6 +655,28 @@
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister" : false,
   "webAuthnPolicyPasswordlessAcceptableAaguids" : [ ],
   "users" : [ {
+    "id" : "856b093b-ef9f-4bd0-92ca-662f680c73cc",
+    "createdTimestamp" : 1713968958846,
+    "username" : "basyx.aas.discoverer",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "bc4944be-c8e2-4c91-81cc-9478a0795906",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1713968969072,
+      "secretData" : "{\"value\":\"V1xFTsjw4G4nJY+ftBt4CavQs1d8zf0ybVtUhxQR0yg=\",\"salt\":\"XjYZbMDK9iyDdsZe2WXb6A==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "basyx-aas-discoverer", "default-roles-basyx" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
     "id" : "aef2b331-f694-4503-b0da-1412c77842ba",
     "createdTimestamp" : 1702179260496,
     "username" : "basyx.asset.updater",
@@ -664,6 +718,72 @@
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
     "realmRoles" : [ "basyx-asset-updater-two", "default-roles-basyx" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "bcbd95b2-2ec4-42a6-9b1d-39dabf0454c3",
+    "createdTimestamp" : 1713969008326,
+    "username" : "basyx.assetid.creator",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "81b26fa2-4eda-45d7-a8be-4b6d64b3d813",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1713971859329,
+      "secretData" : "{\"value\":\"yNEw5ey4rT1a0dONFUpVe7YaNfIrobNkCdL6DZjBj1A=\",\"salt\":\"JLMeQM7gjHenb5JhfzhWQA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "basyx-assetid-creator", "default-roles-basyx" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "2def798c-7547-42fe-8915-be493d740005",
+    "createdTimestamp" : 1713969038565,
+    "username" : "basyx.assetid.deleter",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "fa285b2c-9a2d-4400-a524-508b0a16f4c3",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1713969048116,
+      "secretData" : "{\"value\":\"28gYVMfDZofypgu67nmV5Kv2KrPGEFshT5tYvj+LPf8=\",\"salt\":\"ZZI9X8eR7pl7YqmgC06FYw==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "basyx-assetid-deleter", "default-roles-basyx" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "3527f121-116c-429b-bf0d-78bf4a8b5abe",
+    "createdTimestamp" : 1713968905507,
+    "username" : "basyx.assetid.discoverer",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "4f3427f8-9da2-4372-a54b-c1e54dc8da68",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1713968917922,
+      "secretData" : "{\"value\":\"uUOChDW0wpWybeiWSqsyqKSfLN0CWANylCjzNavInB4=\",\"salt\":\"TsyGowE4zc8gsp4wRREOAQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "basyx-assetid-discoverer", "default-roles-basyx" ],
     "notBefore" : 0,
     "groups" : [ ]
   }, {
