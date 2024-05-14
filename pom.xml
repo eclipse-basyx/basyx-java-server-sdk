@@ -275,7 +275,8 @@
 								</build>
 								<run>
 									<network>
-										<mode>host</mode>
+									   <mode>custom</mode>
+									   <name>basyx-java-server-sdk</name>
 									</network>
 								</run>
 							</image>
