@@ -27,7 +27,6 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -51,7 +50,7 @@ public abstract class AasDiscoveryPersistencyTestSuite {
 		AssetAdministrationShell aas = AasDiscoveryServiceSuite.getSingleDummyShell(DUMMY_SHELL_IDENTIFIER);
 		AasDiscoveryServiceSuite.createAssetLink(aas, getAasDiscoveryService());
 
-		List<SpecificAssetId> expectedAssetIDs = buildSpecificAssetIds();
+		List<SpecificAssetId> expectedAssetIDs = AasDiscoveryServiceSuite.buildSpecificAssetIds();
 
 		restartComponent();
 
@@ -60,10 +59,4 @@ public abstract class AasDiscoveryPersistencyTestSuite {
 		assertEquals(expectedAssetIDs, actualAssetIDs);
 	}
 
-	private static List<SpecificAssetId> buildSpecificAssetIds() {
-		SpecificAssetId specificAssetId_1 = AasDiscoveryServiceSuite.createDummySpecificAssetId("TestAsset1", "TestAssetValue1");
-		SpecificAssetId specificAssetId_2 = AasDiscoveryServiceSuite.createDummySpecificAssetId("TestAsset2", "TestAssetValue2");
-
-		return Arrays.asList(specificAssetId_1, specificAssetId_2);
-	}
 }
