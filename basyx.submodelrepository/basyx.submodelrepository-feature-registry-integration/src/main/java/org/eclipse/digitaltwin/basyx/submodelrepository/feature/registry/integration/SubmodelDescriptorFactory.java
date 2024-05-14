@@ -93,6 +93,11 @@ public class SubmodelDescriptorFactory {
 		return descriptor;
 	}
 
+	public SubmodelDescriptor create(Submodel submodel) {
+		this.submodel = submodel;
+		return create();
+	}
+
 	private void setDescription(List<LangStringTextType> descriptions, SubmodelDescriptor descriptor) {
 
 		if (descriptions == null || descriptions.isEmpty())
