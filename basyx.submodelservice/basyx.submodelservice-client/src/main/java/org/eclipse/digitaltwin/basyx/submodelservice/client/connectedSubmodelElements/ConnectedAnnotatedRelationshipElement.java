@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,31 +23,26 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
+package org.eclipse.digitaltwin.basyx.submodelservice.client.connectedSubmodelElements;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.BasicEventElement;
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.BasicEventValue;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceValue;
+import org.eclipse.digitaltwin.aas4j.v3.model.AnnotatedRelationshipElement;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.AnnotatedRelationshipElementValue;
 
-public class BasicEventValueMapper implements ValueMapper<BasicEventValue> {
-	private BasicEventElement basicEvent;
-
-
-	public BasicEventValueMapper(BasicEventElement basicEvent) {
-		this.basicEvent = basicEvent;
-	}
-
-	@Override
-	public void setValue(BasicEventValue basicEventValue) {
-		basicEvent.setObserved(new DefaultReference.Builder().type(basicEventValue.getObserved().getType()).keys(basicEventValue.getObserved().getKeys()).build());
-	}
-
-	@Override
-	public BasicEventValue getValue() {
-		Reference referenceElement = basicEvent.getObserved();
-		return new BasicEventValue(new ReferenceValue(referenceElement.getType(), referenceElement.getKeys()));
+/**
+ * Connected variant of {@link AnnotatedRelationshipElement}
+ * 
+ * @author zielstor, fried
+ * 
+ */
+public class ConnectedAnnotatedRelationshipElement
+		extends ConnectedSubmodelElement<AnnotatedRelationshipElementValue, AnnotatedRelationshipElement> {
+	/**
+	 * 
+	 * @param submodelServiceUrl URL of the submodel service
+	 * @param idShortPath        idShort of the submodel element
+	 */
+	public ConnectedAnnotatedRelationshipElement(String submodelServiceUrl, String idShortPath) {
+		super(submodelServiceUrl, idShortPath);
 	}
 
 }
