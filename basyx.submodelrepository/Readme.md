@@ -49,3 +49,7 @@ Furthermore, the following features are provided:
 For a configuration example, see [application.properties](basyx.submodelrepository.component/src/main/resources/application.properties)
 
 The Health Endpoint and CORS Documentation can be found [here](../docs/Readme.md). 
+
+
+**Note**
+To configure the favicon , add the favicon.ico to ``basyx-java-server-sdk\basyx.common\basyx.http\src\main\resources\static``.
