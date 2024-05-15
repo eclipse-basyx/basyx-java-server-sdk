@@ -26,6 +26,8 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
@@ -40,13 +42,25 @@ import org.springframework.stereotype.Component;
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
 public class SimpleAasDiscoveryFactory implements AasDiscoveryServiceFactory {
 
-	/**
-	 * Creates a new {@link AasDiscoveryService}
-	 *
-	 * @return
-	 */
+	private AasDiscoveryBackendProvider aasBackendProvider;
+
+	private String aasRepositoryName = null;
+
+	@Autowired(required = false)
+	public SimpleAasDiscoveryFactory(AasDiscoveryBackendProvider aasBackendProvider) {
+		this.aasBackendProvider = aasBackendProvider;
+	}
+
+	@Autowired(required = false)
+	public SimpleAasDiscoveryFactory(AasDiscoveryBackendProvider aasBackendProvider,
+			@Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
+		this(aasBackendProvider);
+		this.aasRepositoryName = aasRepositoryName;
+	}
+
 	@Override
 	public AasDiscoveryService create() {
-		return null;
+		return new CrudAasDiscovery(aasBackendProvider, aasRepositoryName);
 	}
+
 }

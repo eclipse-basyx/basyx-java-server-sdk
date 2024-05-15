@@ -3,7 +3,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.junit.Test;
-import org.springframework.data.repository.CrudRepository;
 
 /*******************************************************************************
  * Copyright (C) 2024 the Eclipse BaSyx Authors
@@ -35,18 +34,7 @@ public class CrudAasDiscoveryTest {
 
     @Test
     public void getConfiguredAasDiscoveryName(){
-		AasDiscoveryService service = new CrudAasDiscovery(new AasDiscoveryBackendProvider() {
-
-			@Override
-			public CrudRepository<AssetLinksWithShellIdentifier, String> getAssetLinkCrudRepository() {
-				return null;
-			}
-
-			@Override
-			public CrudRepository<AssetIdsWithShellIdentifier, String> getAssetIdCrudRepository() {
-				return null;
-			}
-		}, () -> null, CONFIGURED_AAS_DISCOVERY_NAME);
+		AasDiscoveryService service = new SimpleAasDiscoveryFactory(null, CONFIGURED_AAS_DISCOVERY_NAME).create();
 
         assertEquals(CONFIGURED_AAS_DISCOVERY_NAME,service.getName());
     }

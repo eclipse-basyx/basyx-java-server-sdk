@@ -41,5 +41,9 @@
 			<artifactId>basyx.mongodbcore</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasdiscoveryservice-backend</artifactId>
+		</dependency>
 	</dependencies>
 </project>

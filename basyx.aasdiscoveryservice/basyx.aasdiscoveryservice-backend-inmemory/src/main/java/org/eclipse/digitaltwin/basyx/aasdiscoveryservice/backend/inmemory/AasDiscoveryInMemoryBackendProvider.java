@@ -26,8 +26,7 @@
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryBackendProvider;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AssetIdsWithShellIdentifier;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AssetLinksWithShellIdentifier;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocument;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
@@ -42,23 +41,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class AasDiscoveryInMemoryBackendProvider implements AasDiscoveryBackendProvider {
 
-	private final AasDiscoveryInMemoryBackendAssetLink assetLinkCrudRepository;
-	private final AasDiscoveryInMemoryBackendAssetId assetIdCrudRepository;
+	private AasDiscoveryInMemoryCrudRepository repository;
 
 	public AasDiscoveryInMemoryBackendProvider() {
-		this.assetLinkCrudRepository = new AasDiscoveryInMemoryBackendAssetLink();
-		this.assetIdCrudRepository = new AasDiscoveryInMemoryBackendAssetId();
+		this.repository = new AasDiscoveryInMemoryCrudRepository();
 	}
 
 	@Override
-	public CrudRepository<AssetLinksWithShellIdentifier, String> getAssetLinkCrudRepository() {
-		return assetLinkCrudRepository;
+	public CrudRepository<AasDiscoveryDocument, String> getCrudRepository() {
+		return repository;
 	}
-
-	@Override
-	public CrudRepository<AssetIdsWithShellIdentifier, String> getAssetIdCrudRepository() {
-		return assetIdCrudRepository;
-	}
-
 
 }

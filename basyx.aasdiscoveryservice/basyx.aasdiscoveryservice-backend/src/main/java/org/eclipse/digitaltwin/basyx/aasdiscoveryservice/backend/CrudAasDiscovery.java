@@ -38,7 +38,6 @@ import java.util.stream.StreamSupport;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 import org.eclipse.digitaltwin.basyx.core.exceptions.AssetLinkDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
@@ -58,15 +57,15 @@ import org.springframework.data.repository.CrudRepository;
 public class CrudAasDiscovery implements AasDiscoveryService {
 
 	private AasDiscoveryBackendProvider provider;
-	private AasDiscoveryServiceFactory factory;
 	private String aasDiscoveryServiceName;
 
-	public CrudAasDiscovery(AasDiscoveryBackendProvider provider, AasDiscoveryServiceFactory factory){
+	public CrudAasDiscovery(AasDiscoveryBackendProvider provider) {
 		this.provider = provider;
-		this.factory = factory;
 	}
-	public CrudAasDiscovery(AasDiscoveryBackendProvider provider, AasDiscoveryServiceFactory factory,@Value("${basyx.aasdiscovery.name:aas-discovery}") String aasDiscoveryName){
-		this(provider, factory);
+
+	public CrudAasDiscovery(AasDiscoveryBackendProvider provider,
+			@Value("${basyx.aasdiscovery.name:aas-discovery}") String aasDiscoveryName) {
+		this(provider);
 		this.aasDiscoveryServiceName = aasDiscoveryName;
 	}
 
@@ -97,9 +96,10 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 
 		throwIfAssetLinkDoesNotExist(assetLinks, shellIdentifier);
 
-		AssetIdsWithShellIdentifier assetIdList = provider.getAssetIdCrudRepository().findById(shellIdentifier).get();
+		AasDiscoveryDocument aasDiscoveryDocument = provider.getCrudRepository().findById(shellIdentifier)
+				.orElseThrow(() -> new AssetLinkDoesNotExistException(shellIdentifier));
 
-		return assetIdList.getAssetIds();
+		return aasDiscoveryDocument.getSpecificAssetIds();
 	}
 
 	/**
@@ -122,10 +122,9 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 			throwIfAssetLinkExists(assetLinks, shellIdentifier);
 
 			List<AssetLink> shellAssetLinks = deriveAssetLinksFromSpecificAssetIds(specificAssetIds);
-			provider.getAssetIdCrudRepository()
-					.save(new AssetIdsWithShellIdentifier(shellIdentifier, specificAssetIds));
-			provider.getAssetLinkCrudRepository()
-					.save(new AssetLinksWithShellIdentifier(shellIdentifier, new HashSet<>(shellAssetLinks)));
+			AasDiscoveryDocument aasDiscoveryDocument = new AasDiscoveryDocument(shellIdentifier,
+					new HashSet<>(shellAssetLinks), specificAssetIds);
+			provider.getCrudRepository().save(aasDiscoveryDocument);
 		}
 
 		return specificAssetIds;
@@ -144,8 +143,7 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 		synchronized (assetLinks) {
 			throwIfAssetLinkDoesNotExist(assetLinks, shellIdentifier);
 
-			provider.getAssetIdCrudRepository().deleteById(shellIdentifier);
-			provider.getAssetLinkCrudRepository().deleteById(shellIdentifier);
+			provider.getCrudRepository().deleteById(shellIdentifier);
 		}
 	}
 
@@ -165,22 +163,21 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	}
 
 	private Map<String, List<SpecificAssetId>> getAssetIds() {
-		Iterable<AssetIdsWithShellIdentifier> assetIdsWithShellIdentifier = provider.getAssetIdCrudRepository()
-				.findAll();
-		List<AssetIdsWithShellIdentifier> assetIdList = StreamSupport
-				.stream(assetIdsWithShellIdentifier.spliterator(), false).collect(Collectors.toList());
-		AssetIdValueMapper assetIdValueMapper = new AssetIdValueMapper(assetIdList);
-		Map<String, List<SpecificAssetId>> assetIds = assetIdValueMapper.get();
+		Iterable<AasDiscoveryDocument> aasDiscoveryDocuments = provider.getCrudRepository().findAll();
+		List<AasDiscoveryDocument> aasDiscoveryDocumentList = StreamSupport
+				.stream(aasDiscoveryDocuments.spliterator(), false).collect(Collectors.toList());
+		Map<String, List<SpecificAssetId>> assetIds = aasDiscoveryDocumentList.stream().collect(
+				Collectors.toMap(AasDiscoveryDocument::getShellIdentifier, AasDiscoveryDocument::getSpecificAssetIds));
 		return assetIds;
 	}
 
 	private Map<String, Set<AssetLink>> getAssetLinks() {
-		Iterable<AssetLinksWithShellIdentifier> assetLinksWithShellIdentifier = provider.getAssetLinkCrudRepository()
-				.findAll();
-		List<AssetLinksWithShellIdentifier> assetLinkList = StreamSupport
-				.stream(assetLinksWithShellIdentifier.spliterator(), false).collect(Collectors.toList());
-		AssetLinkValueMapper assetLinkValueMapper = new AssetLinkValueMapper(assetLinkList);
-		Map<String, Set<AssetLink>> assetLinks = assetLinkValueMapper.get();
+		Iterable<AasDiscoveryDocument> aasDiscoveryDocuments = provider.getCrudRepository().findAll();
+		List<AasDiscoveryDocument> aasDiscoveryDocumentList = StreamSupport
+				.stream(aasDiscoveryDocuments.spliterator(), false).collect(Collectors.toList());
+		Map<String, Set<AssetLink>> assetLinks = aasDiscoveryDocumentList.stream()
+				.collect(Collectors.toMap(AasDiscoveryDocument::getShellIdentifier, AasDiscoveryDocument::getAssetLinks,
+						(a, b) -> a, TreeMap::new));
 		return assetLinks;
 	}
 

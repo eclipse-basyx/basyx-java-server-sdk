@@ -32,7 +32,5 @@ import org.springframework.data.repository.CrudRepository;
  * @author mateusmolina, despen
  */
 public interface AasDiscoveryBackendProvider {
-	public CrudRepository<AssetLinksWithShellIdentifier, String> getAssetLinkCrudRepository();
-
-	public CrudRepository<AssetIdsWithShellIdentifier, String> getAssetIdCrudRepository();
+	public CrudRepository<AasDiscoveryDocument, String> getCrudRepository();
 }

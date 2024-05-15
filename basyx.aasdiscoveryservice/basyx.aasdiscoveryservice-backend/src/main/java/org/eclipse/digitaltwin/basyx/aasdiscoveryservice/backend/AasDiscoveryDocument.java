@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,24 +25,34 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
+import java.util.List;
 import java.util.Set;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
-
-public class AssetLinksWithShellIdentifier {
+public class AasDiscoveryDocument {
+	private String shellIdentifier;
 	private Set<AssetLink> assetLinks;
-	private String shellId;
+	private List<SpecificAssetId> specificAssetIds;
 
-	public AssetLinksWithShellIdentifier(String shellId, Set<AssetLink> assetLinks) {
-		this.shellId = shellId;
+	public AasDiscoveryDocument() {
+	}
+
+	public AasDiscoveryDocument(String shellIdentifier, Set<AssetLink> assetLinks, List<SpecificAssetId> specificAssetIds) {
+		this.shellIdentifier = shellIdentifier;
 		this.assetLinks = assetLinks;
+		this.specificAssetIds = specificAssetIds;
+	}
+
+	public String getShellIdentifier() {
+		return shellIdentifier;
 	}
 
 	public Set<AssetLink> getAssetLinks() {
 		return assetLinks;
 	}
 
-	public String getShellId() {
-		return shellId;
+	public List<SpecificAssetId> getSpecificAssetIds() {
+		return specificAssetIds;
 	}
 }
