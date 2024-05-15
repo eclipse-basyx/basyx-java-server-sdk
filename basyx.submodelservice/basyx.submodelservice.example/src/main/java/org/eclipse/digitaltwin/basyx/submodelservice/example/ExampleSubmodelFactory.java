@@ -27,7 +27,6 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.example;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
@@ -48,6 +47,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.InvokableOperation;
+
+import com.google.common.collect.Lists;
 
 /**
  * Factory for creating an example submodel to be hosted as standalone submodel
@@ -74,7 +75,7 @@ public class ExampleSubmodelFactory {
 				.idShort("test")
 				.build();
 		Operation square = createInvokableOperation();
-		List<SubmodelElement> smeList = Arrays.asList(sme1, square);
+		List<SubmodelElement> smeList = Lists.newArrayList(sme1, square);
 
 		Submodel submodel = new DefaultSubmodel.Builder().category("TestCategory")
 				.description(description)

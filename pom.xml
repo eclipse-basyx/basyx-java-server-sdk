@@ -275,7 +275,8 @@
 								</build>
 								<run>
 									<network>
-										<mode>host</mode>
+									   <mode>custom</mode>
+									   <name>basyx-java-server-sdk</name>
 									</network>
 								</run>
 							</image>
@@ -544,6 +545,11 @@
 				<artifactId>basyx.submodelrepository-backend-mongodb</artifactId>
 				<version>${revision}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-client</artifactId>
+				<version>${revision}</version>
+			</dependency>
 			<!-- basyx.aasservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -616,6 +622,11 @@
 				<artifactId>basyx.aasrepository.component</artifactId>
 				<version>${revision}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-client</artifactId>
+				<version>${revision}</version>
+			</dependency>
 			<!-- basyx.aasenvironment -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -635,6 +646,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasenvironment-feature-authorization</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasenvironment-client</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<!-- basyx.conceptdescriptionrepository -->
@@ -861,6 +877,12 @@
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-client</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
 			<!-- basyx.aasservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -953,6 +975,12 @@
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-client</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
 			<!-- basyx.aasenvironment -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -975,6 +1003,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasenvironment-feature-authorization</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasenvironment-client</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>

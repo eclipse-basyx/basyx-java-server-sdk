@@ -255,7 +255,7 @@ public abstract class AasServiceSuite {
 		return referenceList;
 	}
 
-	private static InputStream createDummyImageIS_A() throws IOException {
+	public static InputStream createDummyImageIS_A() throws IOException {
 		return createDummyImageIS(0x000000);
 	}
 

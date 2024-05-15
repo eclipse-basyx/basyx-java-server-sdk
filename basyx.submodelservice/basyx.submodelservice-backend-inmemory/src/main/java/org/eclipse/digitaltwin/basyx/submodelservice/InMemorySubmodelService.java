@@ -166,7 +166,10 @@ public class InMemorySubmodelService implements SubmodelService {
 		deleteSubmodelElement(idShortPath);
 
 		String idShortPathParentSME = parser.getIdShortPathOfParentElement(idShortPath);
-
+		if (idShortPath.equals(idShortPathParentSME)) {
+			createSubmodelElement(submodelElement);
+			return;
+		}
 		createSubmodelElement(idShortPathParentSME, submodelElement);
 	}
 
