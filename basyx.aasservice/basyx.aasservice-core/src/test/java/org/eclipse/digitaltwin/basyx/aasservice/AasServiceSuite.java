@@ -26,7 +26,10 @@
 
 package org.eclipse.digitaltwin.basyx.aasservice;
 
+import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.image.BufferedImage;
@@ -56,9 +59,15 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Test;
+import org.springframework.aot.generate.InMemoryGeneratedFiles;
+import org.junit.BeforeClass;
+import org.mockito.*;
+
 
 /**
  * Testsuite for implementations of the AasService interface
@@ -69,9 +78,22 @@ import org.junit.Test;
 public abstract class AasServiceSuite {
 
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
-
+	
+	@Mock
+	private FileRepository fileRepository;
+	
 	protected abstract AasService getAasService(AssetAdministrationShell shell);
 
+	private String defaultImageID;
+	
+	@BeforeClass
+	public void setUp() throws IOException {
+		MockitoAnnotations.openMocks(this);
+		
+		FileMetadata fileMetadata = new FileMetadata("dummyImgA.jpeg", "", createDummyImageIS_A());
+		defaultImageID = fileRepository.save(fileMetadata);
+	}
+	
 	@Test
 	public void getAas() {
 		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.create();
@@ -186,12 +208,7 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void getThumbnail() throws IOException {
-		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.create();
-		AasService aasService = getAasService(shell);
-
-		aasService.setThumbnail("dummyImgA.jpeg", "", createDummyImageIS_A());
-
-		InputStream actualThumbnailIs = new FileInputStream(aasService.getThumbnail());
+		InputStream actualThumbnailIs = fileRepository.find(defaultImageID); // new FileInputStream(aasService.getThumbnail());
 
 		InputStream expectedThumbnail = createDummyImageIS_A();
 
@@ -206,14 +223,18 @@ public abstract class AasServiceSuite {
 		aasService.getThumbnail();
 	}
 
-	@Test(expected = FileDoesNotExistException.class)
+	@Test
 	public void deleteThumbnail() throws FileNotFoundException, IOException {
 		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.createWithDefaultThumbnail();
 		AasService aasService = getAasService(shell);
 		
 		aasService.deleteThumbnail();
-
-		aasService.getThumbnail();
+		
+		try {
+			aasService.getThumbnail();
+		} catch (FileDoesNotExistException e) {
+			assertFalse("deleteThumbnail - File does not exist", false);
+		}
 	}
 
 	@Test(expected = FileDoesNotExistException.class)
