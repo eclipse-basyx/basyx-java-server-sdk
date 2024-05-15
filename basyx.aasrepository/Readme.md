@@ -49,5 +49,5 @@ For a configuration example, see [application.properties](basyx.aasrepository.co
 
 The Health Endpoint and CORS Documentation can be found [here](../docs/Readme.md). 
 
-**Note**
-To configure the favicon , add the favicon.ico to ``basyx-java-server-sdk\basyx.common\basyx.http\src\main\resources\static``.
+## Configure Favicon
+To configure the favicon, add the favicon.ico to [basyx-java-server-sdk\basyx.common\basyx.http\src\main\resources\static](../basyx.common/basyx.http/src/main/resources/static/).
