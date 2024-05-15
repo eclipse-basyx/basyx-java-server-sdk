@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,25 +22,17 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
-
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.CrudAasDiscovery;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.SimpleAasDiscoveryFactory;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
+import org.springframework.data.repository.CrudRepository;
 
 /**
- * Tests the {@link InMemoryAasDiscoveryService}
+ * Backend provider for the AAS
  * 
- * @author zhangzai
- *
+ * @author mateusmolina, despen
  */
-public class TestInMemoryAasDiscoveryService extends AasDiscoveryServiceSuite {
+public interface AasDiscoveryBackendProvider {
+	public CrudRepository<AssetLinksWithShellIdentifier, String> getAssetLinkCrudRepository();
 
-	@Override
-	protected AasDiscoveryService getAasDiscoveryService() {
-		return new CrudAasDiscovery(new AasDiscoveryInMemoryBackendProvider(),new SimpleAasDiscoveryFactory());
-	}
-
+	public CrudRepository<AssetIdsWithShellIdentifier, String> getAssetIdCrudRepository();
 }

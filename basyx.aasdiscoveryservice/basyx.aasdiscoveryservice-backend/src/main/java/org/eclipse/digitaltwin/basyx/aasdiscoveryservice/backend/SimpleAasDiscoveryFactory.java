@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,25 +22,31 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
-
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.CrudAasDiscovery;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.SimpleAasDiscoveryFactory;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.stereotype.Component;
 
 /**
- * Tests the {@link InMemoryAasDiscoveryService}
+ * Simple AAS repository factory that creates a {@link CrudAasDiscovery} with
+ * a backend provider and a service factory
  * 
- * @author zhangzai
- *
+ * @author mateusmolina
+ * 
  */
-public class TestInMemoryAasDiscoveryService extends AasDiscoveryServiceSuite {
+@Component
+@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
+public class SimpleAasDiscoveryFactory implements AasDiscoveryServiceFactory {
 
+	/**
+	 * Creates a new {@link AasDiscoveryService}
+	 *
+	 * @return
+	 */
 	@Override
-	protected AasDiscoveryService getAasDiscoveryService() {
-		return new CrudAasDiscovery(new AasDiscoveryInMemoryBackendProvider(),new SimpleAasDiscoveryFactory());
+	public AasDiscoveryService create() {
+		return null;
 	}
-
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,22 +25,15 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.CrudAasDiscovery;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.SimpleAasDiscoveryFactory;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-/**
- * Tests the {@link InMemoryAasDiscoveryService}
- * 
- * @author zhangzai
- *
- */
-public class TestInMemoryAasDiscoveryService extends AasDiscoveryServiceSuite {
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 
-	@Override
-	protected AasDiscoveryService getAasDiscoveryService() {
-		return new CrudAasDiscovery(new AasDiscoveryInMemoryBackendProvider(),new SimpleAasDiscoveryFactory());
-	}
-
+public class AasDiscoveryInMemoryStore {
+	private final Map<String, Set<AssetLink>> assetLinks = new LinkedHashMap<>();
+	private final Map<String, List<SpecificAssetId>> assetIds = new LinkedHashMap<>();
 }

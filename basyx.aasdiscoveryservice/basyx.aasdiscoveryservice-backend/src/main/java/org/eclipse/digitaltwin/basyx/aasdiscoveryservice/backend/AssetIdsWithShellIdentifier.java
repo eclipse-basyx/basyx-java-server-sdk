@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,24 +23,27 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.CrudAasDiscovery;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.SimpleAasDiscoveryFactory;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
+import java.util.List;
 
-/**
- * Tests the {@link InMemoryAasDiscoveryService}
- * 
- * @author zhangzai
- *
- */
-public class TestInMemoryAasDiscoveryService extends AasDiscoveryServiceSuite {
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 
-	@Override
-	protected AasDiscoveryService getAasDiscoveryService() {
-		return new CrudAasDiscovery(new AasDiscoveryInMemoryBackendProvider(),new SimpleAasDiscoveryFactory());
+public class AssetIdsWithShellIdentifier {
+	private List<SpecificAssetId> assetIds;
+	private String shellId;
+
+	public AssetIdsWithShellIdentifier(String shellId, List<SpecificAssetId> assetIds) {
+		this.shellId = shellId;
+		this.assetIds = assetIds;
 	}
 
+	public List<SpecificAssetId> getAssetIds() {
+		return assetIds;
+	}
+
+	public String getShellId() {
+		return shellId;
+	}
 }
+

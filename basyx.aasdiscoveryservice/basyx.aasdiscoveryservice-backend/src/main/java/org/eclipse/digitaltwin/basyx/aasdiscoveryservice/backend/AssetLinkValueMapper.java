@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,24 +23,37 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.CrudAasDiscovery;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.SimpleAasDiscoveryFactory;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-/**
- * Tests the {@link InMemoryAasDiscoveryService}
- * 
- * @author zhangzai
- *
- */
-public class TestInMemoryAasDiscoveryService extends AasDiscoveryServiceSuite {
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 
-	@Override
-	protected AasDiscoveryService getAasDiscoveryService() {
-		return new CrudAasDiscovery(new AasDiscoveryInMemoryBackendProvider(),new SimpleAasDiscoveryFactory());
+public class AssetLinkValueMapper {
+
+	private List<AssetLinksWithShellIdentifier> links;
+
+	public AssetLinkValueMapper(List<AssetLinksWithShellIdentifier> links) {
+		this.links = links;
 	}
 
+	public Map<String, Set<AssetLink>> get() {
+		Map<String, Set<AssetLink>> assetLinks = new HashMap<>();
+		for (AssetLinksWithShellIdentifier link : links) {
+			assetLinks.put(link.getShellId(), link.getAssetLinks());
+		}
+		return assetLinks;
+	}
+
+	public static List<AssetLinksWithShellIdentifier> convert(Map<String, Set<AssetLink>> assetLinks) {
+		List<AssetLinksWithShellIdentifier> assetLinkList = new ArrayList<>();
+		for (Map.Entry<String, Set<AssetLink>> entry : assetLinks.entrySet()) {
+			assetLinkList.add(new AssetLinksWithShellIdentifier(entry.getKey(), entry.getValue()));
+		}
+		return assetLinkList;
+	}
 }

@@ -25,22 +25,40 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.CrudAasDiscovery;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.SimpleAasDiscoveryFactory;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryBackendProvider;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AssetIdsWithShellIdentifier;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AssetLinksWithShellIdentifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Component;
 
 /**
- * Tests the {@link InMemoryAasDiscoveryService}
  * 
- * @author zhangzai
- *
+ * InMemory backend provider for the AAS
+ * 
+ * @author mateusmolina
  */
-public class TestInMemoryAasDiscoveryService extends AasDiscoveryServiceSuite {
+@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
+@Component
+public class AasDiscoveryInMemoryBackendProvider implements AasDiscoveryBackendProvider {
+
+	private final AasDiscoveryInMemoryBackendAssetLink assetLinkCrudRepository;
+	private final AasDiscoveryInMemoryBackendAssetId assetIdCrudRepository;
+
+	public AasDiscoveryInMemoryBackendProvider() {
+		this.assetLinkCrudRepository = new AasDiscoveryInMemoryBackendAssetLink();
+		this.assetIdCrudRepository = new AasDiscoveryInMemoryBackendAssetId();
+	}
 
 	@Override
-	protected AasDiscoveryService getAasDiscoveryService() {
-		return new CrudAasDiscovery(new AasDiscoveryInMemoryBackendProvider(),new SimpleAasDiscoveryFactory());
+	public CrudRepository<AssetLinksWithShellIdentifier, String> getAssetLinkCrudRepository() {
+		return assetLinkCrudRepository;
 	}
+
+	@Override
+	public CrudRepository<AssetIdsWithShellIdentifier, String> getAssetIdCrudRepository() {
+		return assetIdCrudRepository;
+	}
+
 
 }
