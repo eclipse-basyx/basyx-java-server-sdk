@@ -32,10 +32,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 /**
- * Simple AAS repository factory that creates a {@link CrudAasDiscovery} with
- * a backend provider and a service factory
+ * Simple AAS Discovery factory that creates a {@link CrudAasDiscovery} with a
+ * backend provider and a service factory
  * 
- * @author mateusmolina
+ * @author zielstor, fried
  * 
  */
 @Component

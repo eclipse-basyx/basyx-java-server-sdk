@@ -33,9 +33,9 @@ import org.springframework.stereotype.Component;
 
 /**
  * 
- * InMemory backend provider for the AAS
+ * InMemory backend provider for the AAS Discovery
  * 
- * @author mateusmolina
+ * @author zielstor, fried
  */
 @ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
 @Component

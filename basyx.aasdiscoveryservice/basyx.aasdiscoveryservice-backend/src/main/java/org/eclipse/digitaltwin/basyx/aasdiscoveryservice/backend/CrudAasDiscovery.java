@@ -51,7 +51,7 @@ import org.springframework.data.repository.CrudRepository;
  * Default Implementation for the {@link AasDiscoveryService} based on Spring
  * {@link CrudRepository}
  * 
- * @author mateusmolina, despen, zhangzai, kammognie
+ * @author zielstor, fried
  *
  */
 public class CrudAasDiscovery implements AasDiscoveryService {

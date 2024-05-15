@@ -38,6 +38,11 @@ import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDoc
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 import org.springframework.data.repository.CrudRepository;
 
+/**
+ * In-memory implementation of the {@link CrudRepository} for the AAS Discovery
+ * 
+ * @author zielstor, fried
+ */
 public class AasDiscoveryInMemoryCrudRepository implements CrudRepository<AasDiscoveryDocument, String> {
 
 	private final Map<String, Set<AssetLink>> assetLinks = new LinkedHashMap<>();

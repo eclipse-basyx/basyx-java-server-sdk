@@ -36,6 +36,11 @@ import org.springframework.data.mongodb.repository.support.MappingMongoEntityInf
 import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
 import org.springframework.data.repository.CrudRepository;
 
+/**
+ * MongoDB backend provider for the AAS Discovery
+ * 
+ * @author zielstor, fried
+ */
 public class AasDiscoveryMongoDBBackendProvider implements AasDiscoveryBackendProvider {
 
 	private BasyxMongoMappingContext mappingContext;
@@ -58,7 +63,6 @@ public class AasDiscoveryMongoDBBackendProvider implements AasDiscoveryBackendPr
 		@SuppressWarnings("unchecked")
 		MongoPersistentEntity<AasDiscoveryDocument> entity = (MongoPersistentEntity<AasDiscoveryDocument>) mappingContext
 				.getPersistentEntity(AasDiscoveryDocument.class);
-
 		return new SimpleMongoRepository<>(new MappingMongoEntityInformation<>(entity), template);
 	}
 
