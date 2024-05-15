@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,42 +25,42 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryBackendProvider;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocument;
+import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
+import org.springframework.data.mongodb.repository.support.MappingMongoEntityInformation;
+import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
+import org.springframework.data.repository.CrudRepository;
 
-/**
- * {@link AasDiscoveryService} factory returning a MongoDB backend
- * 
- * @author danish
- */
-@Component
-@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-public class MongoDBAasDiscoveryServiceFactory implements AasDiscoveryServiceFactory {
+public class AasDiscoveryMongoDBBackendProvider implements AasDiscoveryBackendProvider {
 
-	private MongoTemplate mongoTemplate;
-	private String collectionName;
-	private String aasDiscoveryServiceName;
+	private BasyxMongoMappingContext mappingContext;
 
-	@Autowired(required = false)
-	public MongoDBAasDiscoveryServiceFactory(MongoTemplate mongoTemplate, @Value("${basyx.aasdiscoveryservice.mongodb.collectionName:aasdiscovery-service}") String collectionName) {
-		this.mongoTemplate = mongoTemplate;
-		this.collectionName = collectionName;
-	}
+	private MongoTemplate template;
 
-	@Autowired(required = false)
-	public MongoDBAasDiscoveryServiceFactory(MongoTemplate mongoTemplate, @Value("${basyx.aasdiscoveryservice.mongodb.collectionName:aasdiscovery-service}") String collectionName,
-			@Value("${basyx.aasdiscoveryservice.name:aas-discovery-service}") String aasDiscoveryServiceName) {
-		this(mongoTemplate, collectionName);
-		this.aasDiscoveryServiceName = aasDiscoveryServiceName;
+	@Autowired
+	public AasDiscoveryMongoDBBackendProvider(BasyxMongoMappingContext mappingContext,
+			@Value("${basyx.aasdiscoveryservice.mongodb.collectionName:aasdiscovery-service}") String collectionName,
+			MongoTemplate template) {
+		super();
+		this.mappingContext = mappingContext;
+		this.template = template;
+
+		mappingContext.addEntityMapping(AasDiscoveryDocument.class, collectionName);
 	}
 
 	@Override
-	public AasDiscoveryService create() {
-		return new MongoDBAasDiscoveryService(mongoTemplate, collectionName, aasDiscoveryServiceName);
+	public CrudRepository<AasDiscoveryDocument, String> getCrudRepository() {
+		@SuppressWarnings("unchecked")
+		MongoPersistentEntity<AasDiscoveryDocument> entity = (MongoPersistentEntity<AasDiscoveryDocument>) mappingContext
+				.getPersistentEntity(AasDiscoveryDocument.class);
+
+		return new SimpleMongoRepository<>(new MappingMongoEntityInformation<>(entity), template);
 	}
+
+
 }

@@ -25,12 +25,15 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
+import org.springframework.data.annotation.Id;
+
 public class AasDiscoveryDocument {
+	@Id
 	private String shellIdentifier;
 	private Set<AssetLink> assetLinks;
 	private List<SpecificAssetId> specificAssetIds;

@@ -92,14 +92,11 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	 */
 	@Override
 	public List<SpecificAssetId> getAllAssetLinksById(String shellIdentifier) {
-		Map<String, Set<AssetLink>> assetLinks = getAssetLinks();
+		Map<String, List<SpecificAssetId>> assetIds = getAssetIds();
 
-		throwIfAssetLinkDoesNotExist(assetLinks, shellIdentifier);
+		throwIfSpecificAssetIdLinkDoesNotExist(assetIds, shellIdentifier);
 
-		AasDiscoveryDocument aasDiscoveryDocument = provider.getCrudRepository().findById(shellIdentifier)
-				.orElseThrow(() -> new AssetLinkDoesNotExistException(shellIdentifier));
-
-		return aasDiscoveryDocument.getSpecificAssetIds();
+		return assetIds.get(shellIdentifier);
 	}
 
 	/**
@@ -159,6 +156,12 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 
 	private void throwIfAssetLinkDoesNotExist(Map<String, Set<AssetLink>> assetLinks, String shellIdentifier) {
 		if (!assetLinks.containsKey(shellIdentifier))
+			throw new AssetLinkDoesNotExistException(shellIdentifier);
+	}
+
+	private void throwIfSpecificAssetIdLinkDoesNotExist(Map<String, List<SpecificAssetId>> assetIds,
+			String shellIdentifier) {
+		if (!assetIds.containsKey(shellIdentifier))
 			throw new AssetLinkDoesNotExistException(shellIdentifier);
 	}
 
