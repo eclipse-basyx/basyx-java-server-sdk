@@ -68,8 +68,8 @@ public class TestAuthorizedCDRepository {
 	private static final String SPECIFIC_CONCEPT_DESCRIPTION_ID_2 = "specificConceptDescriptionId-2";
 	private static final String SPECIFIC_CONCEPT_DESCRIPTION_ID = "specificConceptDescriptionId";
 	public static String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
-	public static String conceptDescriptionRepositoryBaseUrl = "http://127.0.0.1:8089";
-	public static String healthEndpointUrl = "http://127.0.0.1:8089/actuator/health";
+	public static String conceptDescriptionRepositoryBaseUrl = "http://127.0.0.1:8081";
+	public static String healthEndpointUrl = "http://127.0.0.1:8081/actuator/health";
 	public static String clientId = "basyx-client-api";
 	private static AccessTokenProvider tokenProvider;
 	private static ConceptDescriptionRepository cdRepo;
