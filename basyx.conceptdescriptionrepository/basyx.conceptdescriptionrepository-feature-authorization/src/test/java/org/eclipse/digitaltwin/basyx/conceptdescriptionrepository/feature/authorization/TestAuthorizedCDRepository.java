@@ -31,24 +31,36 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.interfaces.RSAPublicKey;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
+import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.authorization.AccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.authorization.DummyCredential;
 import org.eclipse.digitaltwin.basyx.authorization.DummyCredentialStore;
+import org.eclipse.digitaltwin.basyx.authorization.jwt.JwtTokenDecoder;
+import org.eclipse.digitaltwin.basyx.authorization.jwt.PublicKeyUtils;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 /**
  * Integration test for {@link AuthorizedConceptDescriptionRepository} feature
  * 
  * @author danish
  */
-public class AuthorizedConceptDescriptionRepositoryTestSuite {
+public class TestAuthorizedCDRepository {
 
 	private static final String CONCEPT_DESCRIPTION_REPOSITORY_PATH = "/concept-descriptions";
 	private static final String CONCEPT_DESCRIPTION_SIMPLE_2_JSON = "authorization/ConceptDescriptionSimple_2.json";
@@ -60,17 +72,23 @@ public class AuthorizedConceptDescriptionRepositoryTestSuite {
 	public static String healthEndpointUrl = "http://127.0.0.1:8089/actuator/health";
 	public static String clientId = "basyx-client-api";
 	private static AccessTokenProvider tokenProvider;
+	private static ConceptDescriptionRepository cdRepo;
+	private static ConfigurableApplicationContext appContext;
 	
 	@BeforeClass
-	public static void setUp() throws FileNotFoundException, IOException {
+	public static void setUp() throws FileNotFoundException, IOException, DeserializationException {
 		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
+
+		appContext = new SpringApplication(DummyAuthorizedCDRepositoryComponent.class).run(new String[] {});
+
+		cdRepo = appContext.getBean(ConceptDescriptionRepository.class);
 		
-		createConceptDescriptionOnRepositoryWithAuthorization(getConceptDescriptionJSONString(CONCEPT_DESCRIPTION_SIMPLE_1_JSON), getAdminAccessToken());
+		initializeRepository();
 	}
 	
 	@Test
 	public void healthEndpointWithoutAuthorization() throws IOException, ParseException {
-		String expectedHealthEndpointOutput = getConceptDescriptionJSONString("authorization/HealthOutput.json");
+		String expectedHealthEndpointOutput = getStringFromFile("authorization/HealthOutput.json");
 		
 		CloseableHttpResponse healthCheckResponse = BaSyxHttpTestUtils.executeGetOnURL(healthEndpointUrl);
 		assertEquals(HttpStatus.OK.value(), healthCheckResponse.getCode());
@@ -154,7 +172,7 @@ public class AuthorizedConceptDescriptionRepositoryTestSuite {
 	public void createCDWithCorrectRoleAndPermission() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_CREATOR_CREDENTIAL);
 		
-		CloseableHttpResponse retrievalResponse = createConceptDescriptionOnRepositoryWithAuthorization(getConceptDescriptionJSONString(CONCEPT_DESCRIPTION_SIMPLE_2_JSON), accessToken);
+		CloseableHttpResponse retrievalResponse = createConceptDescriptionOnRepositoryWithAuthorization(getStringFromFile(CONCEPT_DESCRIPTION_SIMPLE_2_JSON), accessToken);
 		assertEquals(HttpStatus.CREATED.value(), retrievalResponse.getCode());
 		
 		deleteElementWithAuthorization(getSpecificCDAccessURL(SPECIFIC_CONCEPT_DESCRIPTION_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
@@ -164,13 +182,13 @@ public class AuthorizedConceptDescriptionRepositoryTestSuite {
 	public void createCDWithInsufficientPermissionRole() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_READER_CREDENTIAL);
 		
-		CloseableHttpResponse retrievalResponse = createConceptDescriptionOnRepositoryWithAuthorization(getConceptDescriptionJSONString(CONCEPT_DESCRIPTION_SIMPLE_2_JSON), accessToken);
+		CloseableHttpResponse retrievalResponse = createConceptDescriptionOnRepositoryWithAuthorization(getStringFromFile(CONCEPT_DESCRIPTION_SIMPLE_2_JSON), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 	
 	@Test
 	public void createCDWithNoAuthorization() throws IOException {
-		CloseableHttpResponse retrievalResponse = createConceptDescriptionOnRepositoryWithNoAuthorization(getConceptDescriptionJSONString(CONCEPT_DESCRIPTION_SIMPLE_2_JSON));
+		CloseableHttpResponse retrievalResponse = createConceptDescriptionOnRepositoryWithNoAuthorization(getStringFromFile(CONCEPT_DESCRIPTION_SIMPLE_2_JSON));
 		
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
@@ -179,7 +197,7 @@ public class AuthorizedConceptDescriptionRepositoryTestSuite {
 	public void updateCDWithCorrectRoleAndPermission() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_CREDENTIAL);
 		
-		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificCDAccessURL(SPECIFIC_CONCEPT_DESCRIPTION_ID), getConceptDescriptionJSONString(CONCEPT_DESCRIPTION_SIMPLE_1_JSON), accessToken);
+		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificCDAccessURL(SPECIFIC_CONCEPT_DESCRIPTION_ID), getStringFromFile(CONCEPT_DESCRIPTION_SIMPLE_1_JSON), accessToken);
 		assertEquals(HttpStatus.NO_CONTENT.value(), retrievalResponse.getCode());
 	}
 	
@@ -187,7 +205,7 @@ public class AuthorizedConceptDescriptionRepositoryTestSuite {
 	public void updateCDWithCorrectRoleAndSpecificCDPermission() throws IOException {		
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_TWO_CREDENTIAL);
 		
-		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificCDAccessURL(SPECIFIC_CONCEPT_DESCRIPTION_ID), getConceptDescriptionJSONString(CONCEPT_DESCRIPTION_SIMPLE_1_JSON), accessToken);
+		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificCDAccessURL(SPECIFIC_CONCEPT_DESCRIPTION_ID), getStringFromFile(CONCEPT_DESCRIPTION_SIMPLE_1_JSON), accessToken);
 		assertEquals(HttpStatus.NO_CONTENT.value(), retrievalResponse.getCode());
 	}
 	
@@ -195,7 +213,7 @@ public class AuthorizedConceptDescriptionRepositoryTestSuite {
 	public void updateCDWithCorrectRoleAndUnauthorizedSpecificCD() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_TWO_CREDENTIAL);
 		
-		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificCDAccessURL(SPECIFIC_CONCEPT_DESCRIPTION_ID_2), getConceptDescriptionJSONString(CONCEPT_DESCRIPTION_SIMPLE_1_JSON), accessToken);
+		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificCDAccessURL(SPECIFIC_CONCEPT_DESCRIPTION_ID_2), getStringFromFile(CONCEPT_DESCRIPTION_SIMPLE_1_JSON), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 	
@@ -203,20 +221,20 @@ public class AuthorizedConceptDescriptionRepositoryTestSuite {
 	public void updateCDWithInsufficientPermissionRole() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_READER_CREDENTIAL);
 		
-		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificCDAccessURL(SPECIFIC_CONCEPT_DESCRIPTION_ID), getConceptDescriptionJSONString(CONCEPT_DESCRIPTION_SIMPLE_1_JSON), accessToken);
+		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificCDAccessURL(SPECIFIC_CONCEPT_DESCRIPTION_ID), getStringFromFile(CONCEPT_DESCRIPTION_SIMPLE_1_JSON), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 	
 	@Test
 	public void updateCDWithNoAuthorization() throws IOException {
-		CloseableHttpResponse retrievalResponse = updateElementWithNoAuthorizationPutRequest(getSpecificCDAccessURL(SPECIFIC_CONCEPT_DESCRIPTION_ID), getConceptDescriptionJSONString(CONCEPT_DESCRIPTION_SIMPLE_1_JSON));
+		CloseableHttpResponse retrievalResponse = updateElementWithNoAuthorizationPutRequest(getSpecificCDAccessURL(SPECIFIC_CONCEPT_DESCRIPTION_ID), getStringFromFile(CONCEPT_DESCRIPTION_SIMPLE_1_JSON));
 		
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
 
 	@Test
 	public void deleteCDWithCorrectRoleAndPermission() throws IOException {
-		createConceptDescriptionOnRepositoryWithAuthorization(getConceptDescriptionJSONString(CONCEPT_DESCRIPTION_SIMPLE_2_JSON), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
+		createConceptDescriptionOnRepositoryWithAuthorization(getStringFromFile(CONCEPT_DESCRIPTION_SIMPLE_2_JSON), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 		
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_DELETER_CREDENTIAL);
 		
@@ -230,7 +248,7 @@ public class AuthorizedConceptDescriptionRepositoryTestSuite {
 	
 	@Test
 	public void deleteCDWithCorrectRoleAndSpecificCDPermission() throws IOException {
-		createConceptDescriptionOnRepositoryWithAuthorization(getConceptDescriptionJSONString(CONCEPT_DESCRIPTION_SIMPLE_2_JSON), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
+		createConceptDescriptionOnRepositoryWithAuthorization(getStringFromFile(CONCEPT_DESCRIPTION_SIMPLE_2_JSON), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 		
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_DELETER_TWO_CREDENTIAL);
 		
@@ -269,6 +287,37 @@ public class AuthorizedConceptDescriptionRepositoryTestSuite {
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 		
 		assertElementExistsOnServer(getSpecificCDAccessURL(SPECIFIC_CONCEPT_DESCRIPTION_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
+	}
+	
+	private static void initializeRepository() throws FileNotFoundException, IOException, DeserializationException {
+		configureSecurityContext();
+		
+		ConceptDescription dummyConceptDescription = new JsonDeserializer().read(getStringFromFile(CONCEPT_DESCRIPTION_SIMPLE_1_JSON), ConceptDescription.class);
+
+		createDummyConceptDescriptionOnRepository(dummyConceptDescription, cdRepo);
+
+		clearSecurityContext();
+	}
+	
+	private static void createDummyConceptDescriptionOnRepository(ConceptDescription conceptDescription, ConceptDescriptionRepository cdRepo) {
+		cdRepo.createConceptDescription(conceptDescription);
+	}
+	
+	private static void configureSecurityContext() throws FileNotFoundException, IOException {
+		String adminToken = getAdminAccessToken();
+
+		String modulus = getStringFromFile("authorization/modulus.txt");
+		String exponent = "AQAB";
+
+		RSAPublicKey rsaPublicKey = PublicKeyUtils.buildPublicKey(modulus, exponent);
+
+		Jwt jwt = JwtTokenDecoder.decodeJwt(adminToken, rsaPublicKey);
+
+		SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
+	}
+	
+	private static void clearSecurityContext() {
+		SecurityContextHolder.clearContext();
 	}
 	
 	private void assertElementIsNotOnServer(String url, String accessToken) throws IOException {
@@ -329,7 +378,7 @@ public class AuthorizedConceptDescriptionRepositoryTestSuite {
 		return BaSyxHttpTestUtils.executeDeleteOnURL(url);
 	}
 	
-	private static String getConceptDescriptionJSONString(String fileName) throws FileNotFoundException, IOException {
+	private static String getStringFromFile(String fileName) throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath(fileName);
 	}
 
