@@ -53,7 +53,7 @@ public class SimpleAASXFileServerFactory implements AASXFileServerFactory {
 
 	@Autowired(required = false)
 	public SimpleAASXFileServerFactory(AASXFileServerBackendProvider aasxFileServerBackendProvider,
-			@Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
+			@Value("${basyx.aasxfileserver.name:aasx-fileserver}") String aasRepositoryName) {
 		this(aasxFileServerBackendProvider);
 		this.aasxFileServerName = aasRepositoryName;
 	}
