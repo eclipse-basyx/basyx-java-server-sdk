@@ -59,10 +59,24 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	private AasDiscoveryBackendProvider provider;
 	private String aasDiscoveryServiceName;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param provider
+	 *            The backend provider
+	 */
 	public CrudAasDiscovery(AasDiscoveryBackendProvider provider) {
 		this.provider = provider;
 	}
 
+	/**
+	 * Constructor
+	 * 
+	 * @param provider
+	 *            The backend provider
+	 * @param aasDiscoveryName
+	 *            The name of the AAS discovery service
+	 */
 	public CrudAasDiscovery(AasDiscoveryBackendProvider provider,
 			@Value("${basyx.aasdiscovery.name:aas-discovery}") String aasDiscoveryName) {
 		this(provider);
@@ -70,11 +84,14 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	}
 
 	/**
-	 * Returns a list of Asset Administration Shell ids based on asset identifiers
+	 * Returns a list of Asset Administration Shell ids based on asset identifier
+	 * key-value-pairs
 	 *
 	 * @param pInfo
+	 *            pagination information
 	 * @param assetIds
-	 * @return a list of all matching Aas Ids
+	 *            a list of asset links
+	 * @return a list of Asset Administration Shell ids
 	 */
 	@Override
 	public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo, List<AssetLink> assetIds) {
@@ -88,6 +105,7 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	 * Administration Shell id
 	 *
 	 * @param shellIdentifier
+	 *            the shell identifier
 	 * @return a list of asset identifiers
 	 */
 	@Override
@@ -105,7 +123,9 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	 * have to be deleted first.
 	 *
 	 * @param shellIdentifier
-	 * @param assetIds
+	 *            the shell identifier
+	 * @param specificAssetIds
+	 *            a list of asset identifiers
 	 * @return a list of asset identifiers
 	 */
 	@Override
@@ -132,6 +152,7 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	 * Administration Shell
 	 *
 	 * @param shellIdentifier
+	 *            the shell identifier
 	 */
 	@Override
 	public void deleteAllAssetLinksById(String shellIdentifier) {

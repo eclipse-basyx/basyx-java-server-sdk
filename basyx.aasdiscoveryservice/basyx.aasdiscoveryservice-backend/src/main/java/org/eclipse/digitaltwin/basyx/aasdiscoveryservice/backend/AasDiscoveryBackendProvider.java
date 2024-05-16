@@ -32,5 +32,11 @@ import org.springframework.data.repository.CrudRepository;
  * @author zielstor, fried
  */
 public interface AasDiscoveryBackendProvider {
+
+	/**
+	 * Get the CRUD repository for the AAS Discovery
+	 * 
+	 * @return The CRUD repository
+	 */
 	public CrudRepository<AasDiscoveryDocument, String> getCrudRepository();
 }

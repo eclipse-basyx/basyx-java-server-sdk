@@ -33,5 +33,10 @@ import org.springframework.data.repository.CrudRepository;
  * @author zielstor, fried
  */
 public interface AASXFileServerBackendProvider {
+	/**
+	 * Get the CRUD repository for the AAS Discovery
+	 * 
+	 * @return The CRUD repository
+	 */
 	public CrudRepository<Package, String> getCrudRepository();
 }

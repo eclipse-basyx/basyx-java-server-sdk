@@ -40,24 +40,46 @@ public class AasDiscoveryDocument {
 	private String shellIdentifier;
 	private Set<AssetLink> assetLinks;
 	private List<SpecificAssetId> specificAssetIds;
-
-	public AasDiscoveryDocument() {
-	}
-
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param shellIdentifier
+	 *            The shell identifier
+	 * @param assetLinks
+	 *            The asset links
+	 * @param specificAssetIds
+	 *            The specific asset ids
+	 */
 	public AasDiscoveryDocument(String shellIdentifier, Set<AssetLink> assetLinks, List<SpecificAssetId> specificAssetIds) {
 		this.shellIdentifier = shellIdentifier;
 		this.assetLinks = assetLinks;
 		this.specificAssetIds = specificAssetIds;
 	}
 
+	/**
+	 * Get the shell identifier
+	 * 
+	 * @return The shell identifier
+	 */
 	public String getShellIdentifier() {
 		return shellIdentifier;
 	}
 
+	/**
+	 * Get the asset links
+	 * 
+	 * @return The asset links
+	 */
 	public Set<AssetLink> getAssetLinks() {
 		return assetLinks;
 	}
 
+	/**
+	 * Get the specific asset ids
+	 * 
+	 * @return The specific asset ids
+	 */
 	public List<SpecificAssetId> getSpecificAssetIds() {
 		return specificAssetIds;
 	}

@@ -46,11 +46,25 @@ public class SimpleAasDiscoveryFactory implements AasDiscoveryServiceFactory {
 
 	private String aasRepositoryName = null;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param aasBackendProvider
+	 *            The backend provider
+	 */
 	@Autowired(required = false)
 	public SimpleAasDiscoveryFactory(AasDiscoveryBackendProvider aasBackendProvider) {
 		this.aasBackendProvider = aasBackendProvider;
 	}
 
+	/**
+	 * Constructor
+	 * 
+	 * @param aasBackendProvider
+	 *            The backend provider
+	 * @param aasRepositoryName
+	 *            The name of the AAS repository
+	 */
 	@Autowired(required = false)
 	public SimpleAasDiscoveryFactory(AasDiscoveryBackendProvider aasBackendProvider,
 			@Value("${basyx.aasdiscoveryservice.name:aas-discovery-service}") String aasRepositoryName) {

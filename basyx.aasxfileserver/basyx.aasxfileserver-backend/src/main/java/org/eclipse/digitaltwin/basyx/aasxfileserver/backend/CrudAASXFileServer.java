@@ -51,9 +51,17 @@ public class CrudAASXFileServer implements AASXFileServer {
 	private String aasxFileServerName;
 	private AtomicInteger packageId = new AtomicInteger(0);
 
-	public CrudAASXFileServer(AASXFileServerBackendProvider aasxFileServerBackendProvider, String aasRepositoryName) {
+	/**
+	 * Constructor
+	 * 
+	 * @param aasxFileServerBackendProvider
+	 *            The backend provider
+	 * @param aasxFileServerName
+	 *            The AASX file server name
+	 */
+	public CrudAASXFileServer(AASXFileServerBackendProvider aasxFileServerBackendProvider, String aasxFileServerName) {
 		this.aasxFileServerBackendProvider = aasxFileServerBackendProvider;
-		this.aasxFileServerName = aasRepositoryName;
+		this.aasxFileServerName = aasxFileServerName;
 	}
 
 	@Override

@@ -46,11 +46,25 @@ public class SimpleAASXFileServerFactory implements AASXFileServerFactory {
 
 	private String aasxFileServerName = null;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param aasxFileServerBackendProvider
+	 *            The backend provider
+	 */
 	@Autowired(required = false)
 	public SimpleAASXFileServerFactory(AASXFileServerBackendProvider aasxFileServerBackendProvider) {
 		this.aasxFileServerBackendProvider = aasxFileServerBackendProvider;
 	}
 
+	/**
+	 * Constructor
+	 * 
+	 * @param aasxFileServerBackendProvider
+	 *            The backend provider
+	 * @param aasRepositoryName
+	 *            The AASX file server name
+	 */
 	@Autowired(required = false)
 	public SimpleAASXFileServerFactory(AASXFileServerBackendProvider aasxFileServerBackendProvider,
 			@Value("${basyx.aasxfileserver.name:aasx-fileserver}") String aasRepositoryName) {
