@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasxfileserver;
 
 import static org.junit.Assert.assertEquals;
 
+import org.eclipse.digitaltwin.basyx.aasxfileserver.backend.SimpleAASXFileServerFactory;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.core.AASXFileServerSuite;
 import org.junit.Test;
 
@@ -42,7 +43,7 @@ public class TestInMemoryAASXFileServer extends AASXFileServerSuite {
 
 	@Override
 	protected AASXFileServer getAASXFileServer() {
-		return new InMemoryAASXFileServer();
+		return new SimpleAASXFileServerFactory(new AASXFileServerInMemoryBackendProvider()).create();
 	}
 
 	@Test

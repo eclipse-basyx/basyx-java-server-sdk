@@ -22,30 +22,45 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasxfileserver.backend;
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
-
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryBackendProvider;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocument;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
 /**
- * 
- * InMemory backend provider for the AAS Discovery
+ * Simple AAS Discovery factory that creates a {@link CrudAASXFileServer} with a
+ * backend provider and a service factory
  * 
  * @author zielstor, fried
+ * 
  */
-@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
 @Component
-public class AasDiscoveryInMemoryBackendProvider implements AasDiscoveryBackendProvider {
+@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
+public class SimpleAASXFileServerFactory implements AASXFileServerFactory {
 
-	private AasDiscoveryInMemoryCrudRepository repository = new AasDiscoveryInMemoryCrudRepository();
+	private AASXFileServerBackendProvider aasxFileServerBackendProvider;
+
+	private String aasxFileServerName = null;
+
+	@Autowired(required = false)
+	public SimpleAASXFileServerFactory(AASXFileServerBackendProvider aasxFileServerBackendProvider) {
+		this.aasxFileServerBackendProvider = aasxFileServerBackendProvider;
+	}
+
+	@Autowired(required = false)
+	public SimpleAASXFileServerFactory(AASXFileServerBackendProvider aasxFileServerBackendProvider,
+			@Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
+		this(aasxFileServerBackendProvider);
+		this.aasxFileServerName = aasRepositoryName;
+	}
 
 	@Override
-	public CrudRepository<AasDiscoveryDocument, String> getCrudRepository() {
-		return repository;
+	public AASXFileServer create() {
+		return new CrudAASXFileServer(aasxFileServerBackendProvider, aasxFileServerName);
 	}
 
 }

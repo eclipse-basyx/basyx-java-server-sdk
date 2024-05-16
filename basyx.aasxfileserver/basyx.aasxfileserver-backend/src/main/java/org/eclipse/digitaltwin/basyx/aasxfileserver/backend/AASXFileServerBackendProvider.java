@@ -22,30 +22,16 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasxfileserver.backend;
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
-
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryBackendProvider;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocument;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.model.Package;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Component;
 
 /**
- * 
- * InMemory backend provider for the AAS Discovery
+ * Backend provider for the AAS Discovery
  * 
  * @author zielstor, fried
  */
-@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
-@Component
-public class AasDiscoveryInMemoryBackendProvider implements AasDiscoveryBackendProvider {
-
-	private AasDiscoveryInMemoryCrudRepository repository = new AasDiscoveryInMemoryCrudRepository();
-
-	@Override
-	public CrudRepository<AasDiscoveryDocument, String> getCrudRepository() {
-		return repository;
-	}
-
+public interface AASXFileServerBackendProvider {
+	public CrudRepository<Package, String> getCrudRepository();
 }

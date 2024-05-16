@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -34,8 +34,6 @@ import org.springframework.data.annotation.Id;
 
 /**
  * Represents a document in the AAS discovery service
- * 
- * @author zielstor, fried
  */
 public class AasDiscoveryDocument {
 	@Id
