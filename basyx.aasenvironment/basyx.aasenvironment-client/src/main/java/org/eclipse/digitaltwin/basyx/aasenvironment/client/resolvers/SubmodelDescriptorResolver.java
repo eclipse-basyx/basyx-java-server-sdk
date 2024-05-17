@@ -28,12 +28,6 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
 import java.net.URI;
 import java.util.Optional;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Key;
-import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
@@ -56,14 +50,6 @@ public class SubmodelDescriptorResolver {
 		String endpoint = endpointResolver.resolveFirst(smDescriptor.getEndpoints(), SubmodelDescriptorResolver::parseEndpoint);
 
 		return new ConnectedSubmodelService(endpoint);
-	}
-
-	public Reference deriveReferenceFromSubmodelDescriptor(SubmodelDescriptor smDescriptor) {
-		return new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE).keys(generateKeyFromId(smDescriptor.getId())).build();
-	}
-
-	private static Key generateKeyFromId(String smId) {
-		return new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(smId).build();
 	}
 
 	private static Optional<URI> parseEndpoint(Endpoint endpoint) {
