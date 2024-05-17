@@ -25,6 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
 
+import java.net.URI;
+import java.util.Optional;
+
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
@@ -37,18 +40,30 @@ import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
  */
 public class AasDescriptorResolver {
 
-	private final EndpointResolver<Endpoint> endpointResolver;
+	private final EndpointResolver endpointResolver;
 
-	public AasDescriptorResolver(EndpointResolver<Endpoint> endpointResolver) {
+	public AasDescriptorResolver(EndpointResolver endpointResolver) {
 		this.endpointResolver = endpointResolver;
 	}
 
 	public ConnectedAasService resolveAasDescriptor(AssetAdministrationShellDescriptor aasDescriptor) {
-		String endpoint = endpointResolver.resolveFirst(aasDescriptor.getEndpoints());
+		String endpoint = endpointResolver.resolveFirst(aasDescriptor.getEndpoints(), AasDescriptorResolver::parseEndpoint);
 
-		ConnectedAasService aasService = new ConnectedAasService(endpoint);
-
-		return aasService;
+		return new ConnectedAasService(endpoint);
 	}
 
+	private static Optional<URI> parseEndpoint(Endpoint endpoint) {
+		try {
+			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation().getHref() == null)
+				return Optional.empty();
+
+			String baseHref = endpoint.getProtocolInformation().getHref();
+			// TODO not working: String queryString = "?" + endpoint.toUrlQueryString();
+			String queryString = "";
+			URI uri = new URI(baseHref + queryString);
+			return Optional.of(uri);
+		} catch (Exception e) {
+			return Optional.empty();
+		}
+	}
 }

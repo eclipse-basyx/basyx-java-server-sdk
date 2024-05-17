@@ -29,8 +29,6 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.AasDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.EndpointResolver;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.SubmodelDescriptorResolver;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.AasRegistryEndpointURIParser;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.SubmodelRegistryEndpointURIParser;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
@@ -61,11 +59,11 @@ class ConnectedAasManagerHelper {
 	}
 
 	public static AasDescriptorResolver buildAasDescriptorResolver() {
-		return new AasDescriptorResolver(new EndpointResolver<>(new AasRegistryEndpointURIParser()));
+		return new AasDescriptorResolver(new EndpointResolver());
 	}
 
 	public static SubmodelDescriptorResolver buildSubmodelDescriptorResolver() {
-		return new SubmodelDescriptorResolver(new EndpointResolver<>(new SubmodelRegistryEndpointURIParser()));
+		return new SubmodelDescriptorResolver(new EndpointResolver());
 	}
 
 	public static AasDescriptorFactory buildAasDescriptorFactory(String aasRepositoryBaseUrl) {

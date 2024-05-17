@@ -25,6 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
 
+import java.net.URI;
+import java.util.Optional;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.Key;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
@@ -43,18 +46,16 @@ import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelSer
  */
 public class SubmodelDescriptorResolver {
 
-	private final EndpointResolver<Endpoint> endpointResolver;
+	private final EndpointResolver endpointResolver;
 
-	public SubmodelDescriptorResolver(EndpointResolver<Endpoint> endpointResolver) {
+	public SubmodelDescriptorResolver(EndpointResolver endpointResolver) {
 		this.endpointResolver = endpointResolver;
 	}
 
 	public ConnectedSubmodelService resolveSubmodelDescriptor(SubmodelDescriptor smDescriptor) {
-		String endpoint = endpointResolver.resolveFirst(smDescriptor.getEndpoints());
+		String endpoint = endpointResolver.resolveFirst(smDescriptor.getEndpoints(), SubmodelDescriptorResolver::parseEndpoint);
 
-		ConnectedSubmodelService smService = new ConnectedSubmodelService(endpoint);
-
-		return smService;
+		return new ConnectedSubmodelService(endpoint);
 	}
 
 	public Reference deriveReferenceFromSubmodelDescriptor(SubmodelDescriptor smDescriptor) {
@@ -63,5 +64,20 @@ public class SubmodelDescriptorResolver {
 
 	private static Key generateKeyFromId(String smId) {
 		return new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(smId).build();
+	}
+
+	private static Optional<URI> parseEndpoint(Endpoint endpoint) {
+		try {
+			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation().getHref() == null)
+				return Optional.empty();
+
+			String baseHref = endpoint.getProtocolInformation().getHref();
+			// TODO not working: String queryString = "?" + endpoint.toUrlQueryString();
+			String queryString = "";
+			URI uri = new URI(baseHref + queryString);
+			return Optional.of(uri);
+		} catch (Exception e) {
+			return Optional.empty();
+		}
 	}
 }
