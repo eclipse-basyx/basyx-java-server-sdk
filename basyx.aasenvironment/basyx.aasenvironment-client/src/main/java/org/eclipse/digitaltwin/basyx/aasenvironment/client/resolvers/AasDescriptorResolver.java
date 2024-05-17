@@ -25,7 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
@@ -44,12 +43,12 @@ public class AasDescriptorResolver {
 		this.endpointResolver = endpointResolver;
 	}
 
-	public AssetAdministrationShell resolveAasDescriptor(AssetAdministrationShellDescriptor aasDescriptor) {
+	public ConnectedAasService resolveAasDescriptor(AssetAdministrationShellDescriptor aasDescriptor) {
 		String endpoint = endpointResolver.resolveFirst(aasDescriptor.getEndpoints());
 
 		ConnectedAasService aasService = new ConnectedAasService(endpoint);
 
-		return aasService.getAAS();
+		return aasService;
 	}
 
 }

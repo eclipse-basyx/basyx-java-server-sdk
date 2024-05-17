@@ -29,7 +29,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Key;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
@@ -50,12 +49,12 @@ public class SubmodelDescriptorResolver {
 		this.endpointResolver = endpointResolver;
 	}
 
-	public Submodel resolveSubmodelDescriptor(SubmodelDescriptor smDescriptor) {
+	public ConnectedSubmodelService resolveSubmodelDescriptor(SubmodelDescriptor smDescriptor) {
 		String endpoint = endpointResolver.resolveFirst(smDescriptor.getEndpoints());
 
 		ConnectedSubmodelService smService = new ConnectedSubmodelService(endpoint);
 
-		return smService.getSubmodel();
+		return smService;
 	}
 
 	public Reference deriveReferenceFromSubmodelDescriptor(SubmodelDescriptor smDescriptor) {

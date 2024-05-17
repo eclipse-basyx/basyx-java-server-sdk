@@ -36,10 +36,12 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscovery
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AasDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.SubmodelDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 
 /**
  * Client component for executing consolidated Repository and Registry requests
@@ -87,13 +89,13 @@ public class ConnectedAasManager {
 	}
 
 	/**
-	 * Retrieves an AAS in an AAS registry by its identifier.
+	 * Retrieves a ConnectedAasService in an AAS registry by its identifier.
 	 *
 	 * @param identifier
 	 *            The identifier of the AAS to retrieve.
-	 * @return The retrieved AAS object.
+	 * @return The retrieved ConnectedAasService object.
 	 */
-	public AssetAdministrationShell getAas(String identifier) throws NoValidEndpointFoundException {
+	public ConnectedAasService getAas(String identifier) throws NoValidEndpointFoundException {
 		AssetAdministrationShellDescriptor descriptor;
 
 		try {
@@ -105,13 +107,14 @@ public class ConnectedAasManager {
 	}
 
 	/**
-	 * Retrieves a Submodel in a Submodel registry by its identifier.
+	 * Retrieves a ConnectedSubmodelService in a Submodel registry by its
+	 * identifier.
 	 *
 	 * @param identifier
 	 *            The identifier of the submodel to retrieve.
-	 * @return The retrieved Submodel object.
+	 * @return The retrieved ConnectedSubmodelService object.
 	 */
-	public Submodel getSubmodel(String identifier) {
+	public ConnectedSubmodelService getSubmodel(String identifier) {
 		SubmodelDescriptor descriptor;
 
 		try {
