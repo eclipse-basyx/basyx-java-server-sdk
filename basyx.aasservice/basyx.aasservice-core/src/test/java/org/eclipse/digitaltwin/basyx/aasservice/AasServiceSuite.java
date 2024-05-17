@@ -48,14 +48,19 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
+import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Test;
@@ -73,14 +78,18 @@ public abstract class AasServiceSuite {
 	
 	protected abstract AasService getAasService(AssetAdministrationShell shell);
 
-	private AasService defaultAasService;
+	private FileRepository fileRepository;
+	private AasService aasServiceWithThumbnail;
 	
 	@Before
 	public void setUp() throws IOException {
 		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.create();
-		defaultAasService = getAasService(expected);
+		aasServiceWithThumbnail = getAasService(expected);
+
+		FileMetadata defaultThumbnail = new FileMetadata("dummyImgA.jpeg", "", createDummyImageIS_A());
+		fileRepository = new InMemoryFileRepository();
 		
-		defaultAasService.setThumbnail("dummyImgA.jpeg", "", createDummyImageIS_A());
+		setAasThumbnail(defaultThumbnail, fileRepository, aasServiceWithThumbnail);
 	}
 	
 	@Test
@@ -169,9 +178,13 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void updateThumbnail() throws FileNotFoundException, IOException {
-		defaultAasService.setThumbnail("dummyImgB.jpeg", "", createDummyImageIS_B());
+		setAasThumbnail(
+			new FileMetadata("dummyImgB.jpeg", "", createDummyImageIS_B()), 
+			fileRepository, 
+			aasServiceWithThumbnail
+		);
 
-		InputStream actualThumbnailIs = new FileInputStream(defaultAasService.getThumbnail());
+		InputStream actualThumbnailIs = new FileInputStream(aasServiceWithThumbnail.getThumbnail());
 
 		InputStream expectedThumbnail = createDummyImageIS_B();
 
@@ -194,7 +207,12 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void getThumbnail() throws IOException {
-		InputStream actualThumbnailIs = new FileInputStream(defaultAasService.getThumbnail());;
+		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.create();
+		AasService aasService = getAasService(shell);
+
+		aasService.setThumbnail("dummyImgA.jpeg", "", createDummyImageIS_A());
+		
+		InputStream actualThumbnailIs = new FileInputStream(aasServiceWithThumbnail.getThumbnail());;
 
 		InputStream expectedThumbnail = createDummyImageIS_A();
 
@@ -211,10 +229,10 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void deleteThumbnail() throws FileNotFoundException, IOException {
-		defaultAasService.deleteThumbnail();
+		aasServiceWithThumbnail.deleteThumbnail();
 		
 		try {
-			defaultAasService.getThumbnail();
+			aasServiceWithThumbnail.getThumbnail();
 		} catch (FileDoesNotExistException e) {
 			assertTrue("deleteThumbnail - File deleted successfuly", true);
 		}
@@ -257,6 +275,16 @@ public abstract class AasServiceSuite {
 			referenceList.add(ref);
 		}
 		return referenceList;
+	}
+	
+	private void setAasThumbnail(FileMetadata thumbnail, FileRepository repo, AasService aas) {
+		String thumbnailFilePath = repo.save(thumbnail);
+		
+		Resource defaultResource = new DefaultResource.Builder().path(thumbnailFilePath).contentType("").build();
+		AssetInformation defaultAasAssetInformation = aas.getAssetInformation();
+		defaultAasAssetInformation.setDefaultThumbnail(defaultResource);
+		
+		aas.setAssetInformation(defaultAasAssetInformation);
 	}
 
 	private static InputStream createDummyImageIS_A() throws IOException {
