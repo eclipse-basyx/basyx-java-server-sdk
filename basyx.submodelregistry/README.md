@@ -61,3 +61,6 @@ In addition, maven deploy will also deploy your maven artifacts, so you can do e
 Have a look at the *docker-compose* sub-folder to see how the created images could be referenced in docker-compose files.
 
 Consider updating the [image name pattern](pom.xml#L16) if you want a different image name.
+
+## Configure Favicon
+To configure the favicon, add the favicon.ico to [basyx-java-server-sdk\basyx.common\basyx.http\src\main\resources\static](../basyx.common/basyx.http/src/main/resources/static/).

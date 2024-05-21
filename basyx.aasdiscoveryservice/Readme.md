@@ -23,3 +23,6 @@ For a configuration example, see [application.properties](basyx.aasdiscoveryserv
 The Health Endpoint and CORS Documentation can be found [here](../docs/Readme.md). 
 
 Right now, no additional input parameters modifying the output (e.g., cursor, serializationModifier) are supported.
+
+## Configure Favicon
+To configure the favicon, add the favicon.ico to [basyx-java-server-sdk\basyx.common\basyx.http\src\main\resources\static](../basyx.common/basyx.http/src/main/resources/static/).
