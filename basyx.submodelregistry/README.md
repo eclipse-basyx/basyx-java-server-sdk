@@ -62,6 +62,5 @@ Have a look at the *docker-compose* sub-folder to see how the created images cou
 
 Consider updating the [image name pattern](pom.xml#L16) if you want a different image name.
 
-
 ## Configure Favicon
 To configure the favicon, add the favicon.ico to [basyx-java-server-sdk\basyx.common\basyx.http\src\main\resources\static](../basyx.common/basyx.http/src/main/resources/static/).
