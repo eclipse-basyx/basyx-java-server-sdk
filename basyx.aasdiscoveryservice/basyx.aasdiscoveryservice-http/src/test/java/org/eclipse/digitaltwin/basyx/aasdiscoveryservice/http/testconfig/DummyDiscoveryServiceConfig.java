@@ -50,8 +50,8 @@ public class DummyDiscoveryServiceConfig {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public AasDiscoveryService createAasDiscoveryService(MongoTemplate template) {
-		return new SimpleAasDiscoveryFactory(new AasDiscoveryMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, template)).create();
+	public AasDiscoveryService createAasDiscoveryService() {
+		return new SimpleAasDiscoveryFactory(new AasDiscoveryMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, createTemplate())).create();
 	}
 
 	private MongoTemplate createTemplate() {
