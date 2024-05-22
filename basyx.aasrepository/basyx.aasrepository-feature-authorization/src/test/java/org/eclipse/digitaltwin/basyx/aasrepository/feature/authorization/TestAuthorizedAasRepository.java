@@ -32,20 +32,38 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.interfaces.RSAPublicKey;
 
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ParseException;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
+import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
+import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.authorization.AccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.authorization.DummyCredential;
 import org.eclipse.digitaltwin.basyx.authorization.DummyCredentialStore;
+import org.eclipse.digitaltwin.basyx.authorization.jwt.JwtTokenDecoder;
+import org.eclipse.digitaltwin.basyx.authorization.jwt.PublicKeyUtils;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.util.ResourceUtils;
 
 /**
@@ -53,7 +71,7 @@ import org.springframework.util.ResourceUtils;
  * 
  * @author danish
  */
-public class AuthorizedAasRepositoryTestSuite {
+public class TestAuthorizedAasRepository {
 
 	private static final String AAS_REPOSITORY_PATH = "/shells";
 	private static final String AAS_SIMPLE_2_JSON = "authorization/AasSimple_2.json";
@@ -63,16 +81,27 @@ public class AuthorizedAasRepositoryTestSuite {
 	private static final String THUMBNAIL_FILE_NAME = "BaSyx-Logo.png";
 	private static final String THUMBNAIL_FILE_PATH = "authorization/" + THUMBNAIL_FILE_NAME;
 	public static String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
-	public static String aasRepositoryBaseUrl = "http://127.0.0.1:8087/shells";
-	public static String healthEndpointUrl = "http://127.0.0.1:8087/actuator/health";
+	public static String aasRepositoryBaseUrl = "http://127.0.0.1:8081/shells";
+	public static String healthEndpointUrl = "http://127.0.0.1:8081/actuator/health";
 	public static String clientId = "basyx-client-api";
 	private static AccessTokenProvider tokenProvider;
+	private static AasRepository aasRepo;
+	private static ConfigurableApplicationContext appContext;
 	
 	@BeforeClass
 	public static void setUp() throws FileNotFoundException, IOException {
 		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
-		
-		createAasOnRepositoryWithAuthorization(getAasJSONString(AAS_SIMPLE_1_JSON), getAdminAccessToken());
+
+		appContext = new SpringApplication(DummyAuthorizedAasRepositoryComponent.class).run(new String[] {});
+
+		aasRepo = appContext.getBean(AasRepository.class);
+
+		initializeRepository();
+	}
+	
+	@AfterClass
+	public static void tearDown() {
+		appContext.close();
 	}
 	
 	@Test
@@ -632,6 +661,36 @@ public class AuthorizedAasRepositoryTestSuite {
 		CloseableHttpResponse retrievalResponse = deleteElementWithNoAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(createAasRepositoryUrl(aasRepositoryBaseUrl), SPECIFIC_SHELL_ID));
 		
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
+	}
+	
+	private static AssetAdministrationShell createDummyShell(String id, String idShort, String submodelId) {
+		return new DefaultAssetAdministrationShell.Builder().id(SPECIFIC_SHELL_ID).idShort("ExampleMotor").assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetId("globalAssetId").build())
+				.submodels(new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(submodelId).build()).type(ReferenceTypes.EXTERNAL_REFERENCE).build()).build();
+	}
+
+	private static void initializeRepository() throws FileNotFoundException, IOException {
+		configureSecurityContext();
+
+		aasRepo.createAas(createDummyShell(SPECIFIC_SHELL_ID, "ExampleMotor", "http://i40.customer.com/type/1/1/testSubmodel"));
+		
+		SecurityContextHolder.clearContext();
+	}
+
+	private static void configureSecurityContext() throws FileNotFoundException, IOException {
+		String adminToken = getAdminAccessToken();
+
+		String modulus = getStringFromFile("authorization/modulus.txt");
+		String exponent = "AQAB";
+
+		RSAPublicKey rsaPublicKey = PublicKeyUtils.buildPublicKey(modulus, exponent);
+
+		Jwt jwt = JwtTokenDecoder.decodeJwt(adminToken, rsaPublicKey);
+
+		SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
+	}
+
+	private static String getStringFromFile(String fileName) throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath(fileName);
 	}
 	
 	private String getSpecificAssetInformationAccessURL(String aasID) {

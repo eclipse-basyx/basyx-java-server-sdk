@@ -1,7 +1,7 @@
 {
 	"modelType": "AssetAdministrationShell",
 	"idShort": "ExampleMotor2",
-	"id": "specificAasId2",
+	"id": "specificAasId-2",
 	"assetInformation": {
 		"assetKind": "Instance",
 		"globalAssetId": "globalAssetId"
@@ -11,7 +11,7 @@
 			"keys": [
 				{
 					"type": "Submodel",
-					"value": "http://i40.customer.com/type/1/1/testSubmodel43"
+					"value": "http://i40.customer.com/type/1/1/testSubmodel"
 				}
 			],
 			"type": "ExternalReference"

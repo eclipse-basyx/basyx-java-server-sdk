@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
- *
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -19,19 +19,26 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
+ * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.component;
+package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
 
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.authorization.AuthorizedConceptDescriptionRepositoryTestSuite;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Integration test for the {@link AuthorizedAasRepository}
+ * Spring application configured for tests.
  * 
  * @author danish
  *
  */
-public class AuthorizedITConceptDescriptionRepository extends AuthorizedConceptDescriptionRepositoryTestSuite {
+
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
+public class DummyAuthorizedSubmodelRepositoryComponent {
+	
+	public static void main(String[] args) {
+		SpringApplication.run(DummyAuthorizedSubmodelRepositoryComponent.class, args);
+	}
 }

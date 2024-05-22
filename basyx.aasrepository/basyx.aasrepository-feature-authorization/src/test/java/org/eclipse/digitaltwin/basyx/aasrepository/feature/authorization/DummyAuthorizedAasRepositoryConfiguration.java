@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
- *
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -19,20 +19,35 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
+ * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.component;
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
 
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.AuthorizedSubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.AuthorizedSubmodelRepositoryTestSuite;
+import java.util.List;
+
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.DecoratedAasRepositoryFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 
 /**
- * Integration test for the {@link AuthorizedSubmodelRepository}
+ * Configuration for tests
  * 
  * @author danish
  *
  */
-public class AuthorizedITSubmodelRepository extends AuthorizedSubmodelRepositoryTestSuite {
+@Configuration
+public class DummyAuthorizedAasRepositoryConfiguration {
+
+	@Bean
+	@ConditionalOnMissingBean
+	public static AasRepository getAasRepository(AasRepositoryFactory aasRepositoryFactory, List<AasRepositoryFeature> features) {
+		return new DecoratedAasRepositoryFactory(aasRepositoryFactory, features).create();
+	}
 }
