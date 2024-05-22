@@ -103,37 +103,6 @@ public class TestAuthorizedSubmodelRepository {
 		
 		initializeRepository();
 	}
-	
-	private static void initializeRepository() throws FileNotFoundException, IOException, DeserializationException {
-		configureSecurityContext();
-		
-		Submodel dummySubmodel = new JsonDeserializer().read(getStringFromFile(SUBMODEL_SIMPLE_1_JSON), Submodel.class);
-
-		createDummySubmodelsOnRepository(dummySubmodel, submodelRepo);
-
-		clearSecurityContext();
-	}
-	
-	private static void clearSecurityContext() {
-		SecurityContextHolder.clearContext();
-	}
-	
-	private static void createDummySubmodelsOnRepository(Submodel submodel, SubmodelRepository submodelRepository) {
-		submodelRepository.createSubmodel(submodel);
-	}
-
-	private static void configureSecurityContext() throws FileNotFoundException, IOException {
-		String adminToken = getAdminAccessToken();
-
-		String modulus = getStringFromFile("authorization/modulus.txt");
-		String exponent = "AQAB";
-
-		RSAPublicKey rsaPublicKey = PublicKeyUtils.buildPublicKey(modulus, exponent);
-
-		Jwt jwt = JwtTokenDecoder.decodeJwt(adminToken, rsaPublicKey);
-
-		SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
-	}
 
 	@Test
 	public void healthEndpointWithoutAuthorization() throws IOException, ParseException {
@@ -1153,6 +1122,29 @@ public class TestAuthorizedSubmodelRepository {
 		CloseableHttpResponse retrievalResponse = updateElementWithNoAuthorizationPatchRequest(getSpecificSubmodelAccessURL(SPECIFIC_SUBMODEL_ID), getStringFromFile(SUBMODEL_SIMPLE_1_JSON));
 
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
+	}
+	
+	private static void initializeRepository() throws FileNotFoundException, IOException, DeserializationException {
+		configureSecurityContext();
+		
+		Submodel dummySubmodel = new JsonDeserializer().read(getStringFromFile(SUBMODEL_SIMPLE_1_JSON), Submodel.class);
+
+		submodelRepo.createSubmodel(dummySubmodel);
+
+		SecurityContextHolder.clearContext();
+	}
+
+	private static void configureSecurityContext() throws FileNotFoundException, IOException {
+		String adminToken = getAdminAccessToken();
+
+		String modulus = getStringFromFile("authorization/modulus.txt");
+		String exponent = "AQAB";
+
+		RSAPublicKey rsaPublicKey = PublicKeyUtils.buildPublicKey(modulus, exponent);
+
+		Jwt jwt = JwtTokenDecoder.decodeJwt(adminToken, rsaPublicKey);
+
+		SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
 	}
 
 	private CloseableHttpResponse uploadFileToSubmodelElementWithAuthorization(String url, String fileName, java.io.File file, String accessToken) throws IOException {

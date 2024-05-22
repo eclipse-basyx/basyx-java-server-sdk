@@ -294,13 +294,9 @@ public class TestAuthorizedCDRepository {
 		
 		ConceptDescription dummyConceptDescription = new JsonDeserializer().read(getStringFromFile(CONCEPT_DESCRIPTION_SIMPLE_1_JSON), ConceptDescription.class);
 
-		createDummyConceptDescriptionOnRepository(dummyConceptDescription, cdRepo);
+		cdRepo.createConceptDescription(dummyConceptDescription);
 
-		clearSecurityContext();
-	}
-	
-	private static void createDummyConceptDescriptionOnRepository(ConceptDescription conceptDescription, ConceptDescriptionRepository cdRepo) {
-		cdRepo.createConceptDescription(conceptDescription);
+		SecurityContextHolder.clearContext();
 	}
 	
 	private static void configureSecurityContext() throws FileNotFoundException, IOException {
@@ -314,10 +310,6 @@ public class TestAuthorizedCDRepository {
 		Jwt jwt = JwtTokenDecoder.decodeJwt(adminToken, rsaPublicKey);
 
 		SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
-	}
-	
-	private static void clearSecurityContext() {
-		SecurityContextHolder.clearContext();
 	}
 	
 	private void assertElementIsNotOnServer(String url, String accessToken) throws IOException {
