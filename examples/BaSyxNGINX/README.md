@@ -1,6 +1,6 @@
 # BaSyx V2 NGINX Example
 
-This folder contains example configurations and a docker compose file for setting up the BaSyx V2 infrastructure with nginx.
+This folder contains an example configuration for setting up the BaSyx V2 infrastructure with nginx.
 
 After executing 
 
@@ -9,31 +9,26 @@ docker-compose up -d
 ```
 
 the following components are started:
-* AAS Repository (http://localhost/aas-repo)
-* Submodel Repository (http://localhost/submodel-repo)
-* ConceptDescription Repository (http://localhost/cd-repo)
-* AAS Registry (http://localhost/registry)
-* AAS Web UI (http://localhost/aasui)
+* AAS Environment (http://localhost/aas-env/)
+* AAS Registry (http://localhost/aas-registry/)
+* Submodel Registry (http://localhost/sm-registry/)
+* AAS Discovery Service (http://localhost/aas-discovery/)
+* AAS Web UI (http://localhost/aas-ui/)
 
+## Configuration
 
-As of right now you have to register all Asset Administration Shells on your own (possible through the UI).
+### NGINX
 
-You can use the following endpoints to register Asset Administration Shells which are included in the example:
+The NGINX configuration is located in the `nginx` folder.
+You can change the the path to the BaSyx V2 components by modifying the `nginx/nginx.conf` file.
 
-```bash
-http://localhost/aas-repo/aHR0cHM6Ly9hY3BsdC5vcmcvVGVzdF9Bc3NldEFkbWluaXN0cmF0aW9uU2hlbGw=
-```
+### BaSyx V2 components
 
-```bash
-http://localhost/aas-repo/aHR0cHM6Ly9hY3BsdC5vcmcvVGVzdF9Bc3NldEFkbWluaXN0cmF0aW9uU2hlbGxfTWFuZGF0b3J5
-```
+The BaSyx V2 Registries are configured in the `docker-compose.yml` file.
+You can change the port mappings as well as the context path there.
 
-```bash
-http://localhost/aas-repo/aHR0cHM6Ly9hY3BsdC5vcmcvVGVzdF9Bc3NldEFkbWluaXN0cmF0aW9uU2hlbGwyX01hbmRhdG9yeQ==
-```
+To change the context path of the AAS Environment and the AAS Discovery Service, you have to modify the `basyx/aas-env.properties` file and the `basyx/aas-discovery.properties` file.
 
-```bash
-http://localhost/aas-repo/aHR0cHM6Ly9hY3BsdC5vcmcvVGVzdF9Bc3NldEFkbWluaXN0cmF0aW9uU2hlbGxfTWlzc2luZw==
-```
+### AAS Env Registry Integration
 
-![alt text](../RegisterAAS.png "Register Asset Administration Shells")
+To ensure that the Registries contain the correct URLs of the AASs and Submodels, the `basyx.externalurl` property in the `basyx/aas-env.properties` file must be set to the URL of the AAS Environment.
