@@ -1,67 +1,96 @@
-version: "3.9"
+version: '3'
+
 services:
-  aas-env:
-    image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
-    container_name: aas-env
-    volumes:
-      - ./aas-env.properties:/application/application.properties
-      - ./aas:/application/aas
-    # ports:
-    #   - 8081:8081
-    depends_on:
-      mongo:
-        condition: service_healthy
-    restart: always
-
-  aas-registry:
-    image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
-    container_name: aas-registry
-    # ports:
-    #   - 8082:8080
-    volumes:
-      - ./aas-registry.yml:/workspace/config/application.yml
-    restart: always
-
-  aas-ui:
-    image: eclipsebasyx/aas-gui:v2-231107
-    container_name: aas-ui
-    environment:
-      VITE_REGISTRY_PATH: "http://localhost/registry"
-      VITE_AAS_REPO_PATH: "http://localhost/aas-repo"
-      VITE_SUBMODEL_REPO_PATH: "http://localhost/submodel-repo"
-      VITE_CD_REPO_PATH: "http://localhost/cd-repo"
-      VITE_BASE_PATH: "/aasui"
-    # ports:
-    #   - 3000:3000
-    restart: always
-
+  # nginx
   nginx:
-    image: nginx:latest
+    image: nginx:alpine
     container_name: nginx
     ports:
       - "80:80"
     volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     restart: always
-  
-  mongo:
-    image: mongo:5.0.10
-    container_name: mongo
-    # Provide mongo config
+    depends_on:
+      aas-env:
+        condition: service_started
+      aas-registry:
+        condition: service_healthy
+      sm-registry:
+        condition: service_healthy
+      aas-discovery:
+        condition: service_started
+      aas-web-ui:
+        condition: service_started
+
+  # AAS Environment
+  aas-env:
+    image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
+    container_name: aas-env
+    volumes:
+      - ./basyx/aas-env.properties:/application/application.properties
+      - ./aas:/application/aas
+    ports:
+      - 8081:8081
+    restart: always
+    depends_on:
+      aas-registry:
+        condition: service_healthy
+      sm-registry:
+        condition: service_healthy
+
+  # AAS Registry
+  aas-registry:
+    image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: aas-registry
+    ports:
+      - 8082:8080
     environment:
-      MONGO_INITDB_ROOT_USERNAME: mongoAdmin
-      MONGO_INITDB_ROOT_PASSWORD: mongoPassword
-    #volumes:
-    # - ./data-vol:/data/db
-    # Set health checks to wait until mongo has started
-    healthcheck:
-      test: mongo
-      interval: 10s
-      start_period: 5s
-      retries: 5
-    # Maps tcp port to host
-    #ports:
-    # - 27017:27017
+      SERVER_PORT: 8080
+      SERVER_SERVLET_CONTEXT_PATH: /aas-registry
+      BASYX_CORS_ALLOWED_ORIGIN: "*"
+      BASYX_CORS_ALLOWED_METHODS: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
     restart: always
 
+  # Submodel Registry
+  sm-registry:
+    image: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: sm-registry
+    ports:
+      - 8083:8080
+    environment:
+      SERVER_PORT: 8080
+      SERVER_SERVLET_CONTEXT_PATH: /sm-registry
+      BASYX_CORS_ALLOWED_ORIGIN: "*"
+      BASYX_CORS_ALLOWED_METHODS: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
+    restart: always
+
+  # AAS Discovery
+  aas-discovery:
+    image: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
+    container_name: aas-discovery
+    ports:
+      - 8084:8081
+    volumes:
+      - ./basyx/aas-discovery.properties:/application/application.properties
+    restart: always
+  
+  # AAS Web UI
+  aas-web-ui:
+    image: eclipsebasyx/aas-gui:v2-240515
+    container_name: aas-ui
+    ports:
+      - "3000:3000"
+    user: 1001:1001
+    environment:
+      AAS_DISCOVERY_PATH: "http://localhost/aas-discovery/lookup/shells"
+      AAS_REGISTRY_PATH: "http://localhost/aas-registry/shell-descriptors"
+      SUBMODEL_REGISTRY_PATH: "http://localhost/sm-registry/submodel-descriptors"
+      AAS_REPO_PATH: "http://localhost/aas-env/shells"
+      SUBMODEL_REPO_PATH: "http://localhost/aas-env/submodels"
+      CD_REPO_PATH: "http://localhost/aas-env/concept-descriptions"
+      BASE_PATH: "/aas-ui" # without trailing slash
+      LOGO_PATH: "Logo/HTW.svg"
+    restart: always
+    depends_on:
+      aas-env:
+        condition: service_started
