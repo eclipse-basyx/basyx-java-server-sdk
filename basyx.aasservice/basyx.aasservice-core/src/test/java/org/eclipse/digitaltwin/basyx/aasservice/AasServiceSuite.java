@@ -185,7 +185,6 @@ public abstract class AasServiceSuite {
 		);
 
 		InputStream actualThumbnailIs = new FileInputStream(aasServiceWithThumbnail.getThumbnail());
-
 		InputStream expectedThumbnail = createDummyImageIS_B();
 
 		assertTrue(IOUtils.contentEquals(expectedThumbnail, actualThumbnailIs));
