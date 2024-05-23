@@ -6,6 +6,10 @@ name: Java CI with Maven
 on:
   pull_request:
     branches: [ main ]
+    paths-ignore:
+      - 'docs/**'
+      - 'examples/**'
+      - 'README.md'
 
 jobs:
   build:
@@ -25,4 +29,3 @@ jobs:
       - name: Stop environment
         if: always()
         run: docker  compose --project-directory ./ci down
-     
