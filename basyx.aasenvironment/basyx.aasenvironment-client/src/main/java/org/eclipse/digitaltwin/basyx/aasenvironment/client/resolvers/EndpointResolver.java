@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.NoValidEndpointFoundException;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.URIParser;
 
 /**
  * Resolves a list of endpoints based on find first working strategy
@@ -39,28 +38,24 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.URI
  * @author mateusmolina
  *
  */
-public class EndpointResolver<T> {
+public class EndpointResolver {
 	
-	private final URIParser<T> parser;
-
 	private int timeout = 3000;
 
-	public EndpointResolver(URIParser<T> parser) {
-		this.parser = parser;
+	public EndpointResolver() {
 	}
 
-	public EndpointResolver(URIParser<T> parser, int timeout) {
-		this(parser);
+	public EndpointResolver(int timeout) {
 		this.timeout = timeout;
 	}
 
-	public String resolveFirst(List<T> endpoints) {
-		List<URI> uris = endpoints.stream().map(parser::parse).flatMap(Optional::stream).toList();
+	public <T> String resolveFirst(List<T> endpoints, URIParser<T> uriParser) {
+		List<URI> uris = endpoints.stream().map(uriParser::parse).flatMap(Optional::stream).toList();
 		return findFirstWorkingURI(uris).orElseThrow(() -> new NoValidEndpointFoundException(endpoints.toString())).toString();
 	}
 
-	public List<String> resolveAll(List<T> endpoints) {
-		return endpoints.stream().map(parser::parse).flatMap(Optional::stream).filter(this::isURIWorking).map(URI::toString).toList();
+	public <T> List<String> resolveAll(List<T> endpoints, URIParser<T> uriParser) {
+		return endpoints.stream().map(uriParser::parse).flatMap(Optional::stream).filter(this::isURIWorking).map(URI::toString).toList();
 	}
 
 	private Optional<URI> findFirstWorkingURI(List<URI> uris) {

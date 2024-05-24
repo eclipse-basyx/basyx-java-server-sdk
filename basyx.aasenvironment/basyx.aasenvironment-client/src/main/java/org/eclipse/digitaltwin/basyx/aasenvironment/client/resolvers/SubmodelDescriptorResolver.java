@@ -25,13 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Key;
-import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
+import java.net.URI;
+import java.util.Optional;
+
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
@@ -44,25 +40,30 @@ import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelSer
  */
 public class SubmodelDescriptorResolver {
 
-	private final EndpointResolver<Endpoint> endpointResolver;
+	private final EndpointResolver endpointResolver;
 
-	public SubmodelDescriptorResolver(EndpointResolver<Endpoint> endpointResolver) {
+	public SubmodelDescriptorResolver(EndpointResolver endpointResolver) {
 		this.endpointResolver = endpointResolver;
 	}
 
-	public Submodel resolveSubmodelDescriptor(SubmodelDescriptor smDescriptor) {
-		String endpoint = endpointResolver.resolveFirst(smDescriptor.getEndpoints());
+	public ConnectedSubmodelService resolveSubmodelDescriptor(SubmodelDescriptor smDescriptor) {
+		String endpoint = endpointResolver.resolveFirst(smDescriptor.getEndpoints(), SubmodelDescriptorResolver::parseEndpoint);
 
-		ConnectedSubmodelService smService = new ConnectedSubmodelService(endpoint);
-
-		return smService.getSubmodel();
+		return new ConnectedSubmodelService(endpoint);
 	}
 
-	public Reference deriveReferenceFromSubmodelDescriptor(SubmodelDescriptor smDescriptor) {
-		return new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE).keys(generateKeyFromId(smDescriptor.getId())).build();
-	}
+	private static Optional<URI> parseEndpoint(Endpoint endpoint) {
+		try {
+			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation().getHref() == null)
+				return Optional.empty();
 
-	private static Key generateKeyFromId(String smId) {
-		return new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(smId).build();
+			String baseHref = endpoint.getProtocolInformation().getHref();
+			// TODO not working: String queryString = "?" + endpoint.toUrlQueryString();
+			String queryString = "";
+			URI uri = new URI(baseHref + queryString);
+			return Optional.of(uri);
+		} catch (Exception e) {
+			return Optional.empty();
+		}
 	}
 }

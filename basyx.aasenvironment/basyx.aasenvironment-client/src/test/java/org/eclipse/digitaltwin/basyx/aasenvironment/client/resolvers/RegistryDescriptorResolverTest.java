@@ -31,8 +31,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.DummyAasEnvironmentComponent;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.TestFixture;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.AasRegistryEndpointURIParser;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.SubmodelRegistryEndpointURIParser;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -76,20 +74,20 @@ public class RegistryDescriptorResolverTest {
 
 	@Test
 	public void resolveAasDescriptor() throws ApiException {
-		AasDescriptorResolver resolver = new AasDescriptorResolver(new EndpointResolver<>(new AasRegistryEndpointURIParser()));
+		AasDescriptorResolver resolver = new AasDescriptorResolver(new EndpointResolver());
 		
 		AssetAdministrationShell expectedAas = FIXTURE.buildAasPre1();
-		AssetAdministrationShell actualAas = resolver.resolveAasDescriptor(FIXTURE.buildAasPre1Descriptor());
+		AssetAdministrationShell actualAas = resolver.resolveAasDescriptor(FIXTURE.buildAasPre1Descriptor()).getAAS();
 
 		assertEquals(expectedAas, actualAas);
 	}
 
 	@Test
 	public void resolveSmDescriptor() throws ApiException {
-		SubmodelDescriptorResolver resolver = new SubmodelDescriptorResolver(new EndpointResolver<>(new SubmodelRegistryEndpointURIParser()));
+		SubmodelDescriptorResolver resolver = new SubmodelDescriptorResolver(new EndpointResolver());
 
 		Submodel expectedSm = FIXTURE.buildSmPre1();
-		Submodel actualSm = resolver.resolveSubmodelDescriptor(FIXTURE.buildSmPre1Descriptor());
+		Submodel actualSm = resolver.resolveSubmodelDescriptor(FIXTURE.buildSmPre1Descriptor()).getSubmodel();
 
 		assertEquals(expectedSm, actualSm);
 	}
