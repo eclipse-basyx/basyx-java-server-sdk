@@ -191,8 +191,9 @@ public class TestConnectedAasManager {
 	@Test
 	public void getAas() throws ApiException, NoValidEndpointFoundException {
 		AssetAdministrationShell expectedAas = FIXTURE.buildAasPre1();
-		
-		AssetAdministrationShell actualAas = aasManager.getAas(TestFixture.AAS_PRE1_ID).getAAS();
+
+		AssetAdministrationShell actualAas = aasManager.getAas(TestFixture.AAS_PRE1_ID)
+				.getAAS();
 
 		assertEquals(expectedAas, actualAas);
 	}
@@ -201,7 +202,8 @@ public class TestConnectedAasManager {
 	public void getSubmodel() throws Exception {
 		Submodel expectedSm = FIXTURE.buildSmPre1();
 
-		Submodel actualSm = aasManager.getSubmodel(TestFixture.SM_PRE1_ID).getSubmodel();
+		Submodel actualSm = aasManager.getSubmodel(TestFixture.SM_PRE1_ID)
+				.getSubmodel();
 
 		assertEquals(expectedSm, actualSm);
 	}
@@ -209,17 +211,17 @@ public class TestConnectedAasManager {
 	@Test
 	public void getAllSubmodels() {
 		Submodel otherExpectedSubmodel = FIXTURE.buildSmPos1();
-		Submodel[] expectedSubmodel = {FIXTURE.buildSmPre1(), otherExpectedSubmodel};
-		
+		Submodel[] expectedSubmodel = { FIXTURE.buildSmPre1(), otherExpectedSubmodel };
+
 		aasManager.createSubmodelInAas(TestFixture.AAS_PRE1_ID, otherExpectedSubmodel);
-		
+
 		List<ConnectedSubmodelService> actualSubmodelServices = aasManager.getAllSubmodels(TestFixture.AAS_PRE1_ID);
-		List<Submodel> actualSubmodels = actualSubmodelServices.stream().map(submodelService -> submodelService.getSubmodel()).collect(Collectors.toList());
+		List<Submodel> actualSubmodels = actualSubmodelServices.stream()
+				.map(submodelService -> submodelService.getSubmodel())
+				.collect(Collectors.toList());
 		assertEquals(Arrays.asList(expectedSubmodel), actualSubmodels);
-		
 
 	}
-
 
 	private void populateRegistries() {
 		try {
