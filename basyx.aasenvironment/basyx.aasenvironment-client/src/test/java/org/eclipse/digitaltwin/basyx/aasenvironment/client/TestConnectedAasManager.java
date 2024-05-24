@@ -35,6 +35,7 @@ import static org.mockito.Mockito.times;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -49,6 +50,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistr
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -189,8 +191,8 @@ public class TestConnectedAasManager {
 	@Test
 	public void getAas() throws ApiException, NoValidEndpointFoundException {
 		AssetAdministrationShell expectedAas = FIXTURE.buildAasPre1();
-
-		AssetAdministrationShell actualAas = aasManager.getAas(TestFixture.AAS_PRE1_ID);
+		
+		AssetAdministrationShell actualAas = aasManager.getAas(TestFixture.AAS_PRE1_ID).getAAS();
 
 		assertEquals(expectedAas, actualAas);
 	}
@@ -199,7 +201,7 @@ public class TestConnectedAasManager {
 	public void getSubmodel() throws Exception {
 		Submodel expectedSm = FIXTURE.buildSmPre1();
 
-		Submodel actualSm = aasManager.getSubmodel(TestFixture.SM_PRE1_ID);
+		Submodel actualSm = aasManager.getSubmodel(TestFixture.SM_PRE1_ID).getSubmodel();
 
 		assertEquals(expectedSm, actualSm);
 	}
@@ -211,7 +213,8 @@ public class TestConnectedAasManager {
 		
 		aasManager.createSubmodelInAas(TestFixture.AAS_PRE1_ID, otherExpectedSubmodel);
 		
-		List<Submodel> actualSubmodels = aasManager.getAllSubmodels(TestFixture.AAS_PRE1_ID);
+		List<ConnectedSubmodelService> actualSubmodelServices = aasManager.getAllSubmodels(TestFixture.AAS_PRE1_ID);
+		List<Submodel> actualSubmodels = actualSubmodelServices.stream().map(submodelService -> submodelService.getSubmodel()).collect(Collectors.toList());
 		assertEquals(Arrays.asList(expectedSubmodel), actualSubmodels);
 		
 
@@ -255,10 +258,6 @@ public class TestConnectedAasManager {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-	}
-	
-	private void AddSubnmodelAsExternalReference() {
-		
 	}
 
 	private void cleanUpRepositories() {

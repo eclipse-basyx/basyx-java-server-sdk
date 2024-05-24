@@ -26,6 +26,7 @@ package org.eclipse.digitaltwin.basyx.aasregistry.service.events;
 
 import org.slf4j.Marker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
@@ -41,6 +42,7 @@ import lombok.extern.log4j.Log4j2;
 public class RegistryEventLogSink implements RegistryEventSink {
 
 	@Autowired
+	@Qualifier("mappingJackson2HttpMessageConverter")
 	private MappingJackson2HttpMessageConverter converter;
 
 	@Override
