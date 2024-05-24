@@ -101,7 +101,7 @@ public class MongoDbConfiguration {
 	}
 
 	@Bean
-	public MongoTransactionManager transactionManager(MongoDatabaseFactory dbFactory) {
+	public MongoTransactionManager mongoDbTransactionManager(MongoDatabaseFactory dbFactory) {
 		return new MongoTransactionManager(dbFactory);
 	}
 }

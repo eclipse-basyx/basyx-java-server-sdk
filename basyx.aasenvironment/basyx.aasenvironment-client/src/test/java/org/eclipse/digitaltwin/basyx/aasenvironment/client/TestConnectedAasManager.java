@@ -189,8 +189,8 @@ public class TestConnectedAasManager {
 	@Test
 	public void getAas() throws ApiException, NoValidEndpointFoundException {
 		AssetAdministrationShell expectedAas = FIXTURE.buildAasPre1();
-
-		AssetAdministrationShell actualAas = aasManager.getAas(TestFixture.AAS_PRE1_ID);
+		
+		AssetAdministrationShell actualAas = aasManager.getAas(TestFixture.AAS_PRE1_ID).getAAS();
 
 		assertEquals(expectedAas, actualAas);
 	}
@@ -199,7 +199,7 @@ public class TestConnectedAasManager {
 	public void getSubmodel() throws Exception {
 		Submodel expectedSm = FIXTURE.buildSmPre1();
 
-		Submodel actualSm = aasManager.getSubmodel(TestFixture.SM_PRE1_ID);
+		Submodel actualSm = aasManager.getSubmodel(TestFixture.SM_PRE1_ID).getSubmodel();
 
 		assertEquals(expectedSm, actualSm);
 	}

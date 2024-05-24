@@ -29,8 +29,6 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.AasDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.EndpointResolver;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.SubmodelDescriptorResolver;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.AasRegistryEndpointURIParser;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.SubmodelRegistryEndpointURIParser;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
@@ -53,28 +51,28 @@ class ConnectedAasManagerHelper {
 	private ConnectedAasManagerHelper() {
 	}
 
-	public static ObjectMapper buildObjectMapper() {
+	static ObjectMapper buildObjectMapper() {
 		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL);
 		Aas4JHTTPSerializationExtension extension = new Aas4JHTTPSerializationExtension();
 		extension.extend(builder);
 		return builder.build();
 	}
 
-	public static AasDescriptorResolver buildAasDescriptorResolver() {
-		return new AasDescriptorResolver(new EndpointResolver<>(new AasRegistryEndpointURIParser()));
+	static AasDescriptorResolver buildAasDescriptorResolver() {
+		return new AasDescriptorResolver(new EndpointResolver());
 	}
 
-	public static SubmodelDescriptorResolver buildSubmodelDescriptorResolver() {
-		return new SubmodelDescriptorResolver(new EndpointResolver<>(new SubmodelRegistryEndpointURIParser()));
+	static SubmodelDescriptorResolver buildSubmodelDescriptorResolver() {
+		return new SubmodelDescriptorResolver(new EndpointResolver());
 	}
 
-	public static AasDescriptorFactory buildAasDescriptorFactory(String aasRepositoryBaseUrl) {
+	static AasDescriptorFactory buildAasDescriptorFactory(String aasRepositoryBaseUrl) {
 		AttributeMapper attributeMapper = new AttributeMapper(objectMapper);
 
 		return new AasDescriptorFactory(null, aasRepositoryBaseUrl, attributeMapper);
 	}
 
-	public static SubmodelDescriptorFactory buildSmDescriptorFactory(String aasRepositoryBaseUrl) {
+	static SubmodelDescriptorFactory buildSmDescriptorFactory(String aasRepositoryBaseUrl) {
 		org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper attributeMapperSm = new org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper(
 				objectMapper);
 		return new SubmodelDescriptorFactory(null, aasRepositoryBaseUrl, attributeMapperSm);
