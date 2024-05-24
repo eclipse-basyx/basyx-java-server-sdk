@@ -37,7 +37,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescr
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 
 /**
- * Resolves an SubmodelDescriptor into a Submodel
+ * Resolves a SubmodelDescriptor into a Submodel
  *
  * @author mateusmolina
  *

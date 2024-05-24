@@ -25,8 +25,15 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.util.AasUtils;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Key;
+import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.NoValidEndpointFoundException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.RegistryHttpRequestException;
@@ -69,12 +76,15 @@ public class ConnectedAasManager {
 	 * @param submodelRegistryBaseUrl
 	 * @param submodelBaseRepositoryUrl
 	 */
-	public ConnectedAasManager(String aasRegistryBaseUrl, String aasRepositoryBaseUrl, String submodelRegistryBaseUrl, String submodelBaseRepositoryUrl) {
-		this(new RegistryAndDiscoveryInterfaceApi(aasRegistryBaseUrl), new ConnectedAasRepository(aasRepositoryBaseUrl), aasRepositoryBaseUrl, new SubmodelRegistryApi(submodelRegistryBaseUrl),
+	public ConnectedAasManager(String aasRegistryBaseUrl, String aasRepositoryBaseUrl, String submodelRegistryBaseUrl,
+			String submodelBaseRepositoryUrl) {
+		this(new RegistryAndDiscoveryInterfaceApi(aasRegistryBaseUrl), new ConnectedAasRepository(aasRepositoryBaseUrl),
+				aasRepositoryBaseUrl, new SubmodelRegistryApi(submodelRegistryBaseUrl),
 				new ConnectedSubmodelRepository(submodelBaseRepositoryUrl), submodelBaseRepositoryUrl);
 	}
 
-	ConnectedAasManager(RegistryAndDiscoveryInterfaceApi aasRegistryApi, ConnectedAasRepository aasRepository, String aasRepositoryBaseUrl, SubmodelRegistryApi smRegistryApi, ConnectedSubmodelRepository smRepository,
+	ConnectedAasManager(RegistryAndDiscoveryInterfaceApi aasRegistryApi, ConnectedAasRepository aasRepository,
+			String aasRepositoryBaseUrl, SubmodelRegistryApi smRegistryApi, ConnectedSubmodelRepository smRepository,
 			String submodelBaseRepositoryUrl) {
 		this.aasRepository = aasRepository;
 		this.aasRegistryApi = aasRegistryApi;
@@ -89,8 +99,7 @@ public class ConnectedAasManager {
 	/**
 	 * Retrieves an AAS in an AAS registry by its identifier.
 	 *
-	 * @param identifier
-	 *            The identifier of the AAS to retrieve.
+	 * @param identifier The identifier of the AAS to retrieve.
 	 * @return The retrieved AAS object.
 	 */
 	public AssetAdministrationShell getAas(String identifier) throws NoValidEndpointFoundException {
@@ -107,8 +116,7 @@ public class ConnectedAasManager {
 	/**
 	 * Retrieves a Submodel in a Submodel registry by its identifier.
 	 *
-	 * @param identifier
-	 *            The identifier of the submodel to retrieve.
+	 * @param identifier The identifier of the submodel to retrieve.
 	 * @return The retrieved Submodel object.
 	 */
 	public Submodel getSubmodel(String identifier) {
@@ -124,10 +132,22 @@ public class ConnectedAasManager {
 	}
 
 	/**
+	 * Retrieves all registered Submodels of a registered Asset Administration Shell
+	 *
+	 * @param identifier The identifier of the Shell to retrieve.
+	 * @return The retrieved Submodel object.
+	 */
+	public List<Submodel> getAllSubmodels(String shellIdentifier) {
+		AssetAdministrationShell shell = getAas(shellIdentifier);
+		List<Reference> submodelReferences = shell.getSubmodels();
+		return submodelReferences.parallelStream().map(this::extractSubmodelIedntifierFromReference)
+				.map(this::getSubmodel).collect(Collectors.toList());
+	}
+
+	/**
 	 * Deletes an AAS by its identifier.
 	 *
-	 * @param identifier
-	 *            The identifier of the AAS to delete.
+	 * @param identifier The identifier of the AAS to delete.
 	 */
 	public void deleteAas(String identifier) {
 		try {
@@ -142,10 +162,8 @@ public class ConnectedAasManager {
 	/**
 	 * Deletes a submodel associated with a specified AAS.
 	 *
-	 * @param aasIdentifier
-	 *            The identifier of the AAS.
-	 * @param smIdentifier
-	 *            The identifier of the submodel to delete.
+	 * @param aasIdentifier The identifier of the AAS.
+	 * @param smIdentifier  The identifier of the submodel to delete.
 	 */
 	public void deleteSubmodelOfAas(String aasIdentifier, String smIdentifier) {
 		try {
@@ -161,8 +179,7 @@ public class ConnectedAasManager {
 	/**
 	 * Creates a new AAS
 	 *
-	 * @param aas
-	 *            The AAS object to create.
+	 * @param aas The AAS object to create.
 	 */
 	public void createAas(AssetAdministrationShell aas) {
 		aasRepository.createAas(aas);
@@ -178,10 +195,8 @@ public class ConnectedAasManager {
 	/**
 	 * Creates a submodel under a specified AAS.
 	 *
-	 * @param aasIdentifier
-	 *            The identifier of the AAS.
-	 * @param submodel
-	 *            The Submodel object to create under the specified AAS.
+	 * @param aasIdentifier The identifier of the AAS.
+	 * @param submodel      The Submodel object to create under the specified AAS.
 	 */
 	public void createSubmodelInAas(String aasIdentifier, Submodel submodel) {
 		smRepository.createSubmodel(submodel);
@@ -196,5 +211,27 @@ public class ConnectedAasManager {
 		aasRepository.addSubmodelReference(aasIdentifier, AasUtils.toReference(submodel));
 	}
 
-}
+	private String extractSubmodelIedntifierFromReference(Reference submodelReference) {
+		assertIsSubmodelReference(submodelReference);
+		Key submodelKey = extractSubmodelKeyFromReference(submodelReference);
+		return submodelKey.getValue();
+	}
 
+	private void assertIsSubmodelReference(Reference submodelReference) {
+		if (!submodelReference.getType().equals(ReferenceTypes.MODEL_REFERENCE)) {
+			throw new RuntimeException("A submodel reference must be of type MODEL_REFERENCE.");
+		}
+		assertFirstKeyIsOfTypeSubmodel(submodelReference);
+	}
+
+	private void assertFirstKeyIsOfTypeSubmodel(Reference submodelReference) {
+		if (!extractSubmodelKeyFromReference(submodelReference).getType().equals(KeyTypes.SUBMODEL)) {
+			throw new RuntimeException("The first key of a submodelReference must be of KeyType SUBMODEL submodel..");
+		}
+	}
+
+	private Key extractSubmodelKeyFromReference(Reference submodelReference) {
+		return submodelReference.getKeys().get(0);
+	}
+
+}
