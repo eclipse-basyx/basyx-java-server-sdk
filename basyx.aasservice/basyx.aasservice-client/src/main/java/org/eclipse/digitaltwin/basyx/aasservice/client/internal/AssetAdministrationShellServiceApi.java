@@ -73,17 +73,26 @@ public class AssetAdministrationShellServiceApi {
   private final Consumer<HttpRequest.Builder> memberVarInterceptor;
   private final Duration memberVarReadTimeout;
   private final Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
+  private HttpRequest.Builder httpRequestBuilder;
 
   public AssetAdministrationShellServiceApi() {
     this(new ApiClient());
+    this.httpRequestBuilder = HttpRequest.newBuilder();
   }
 
   public AssetAdministrationShellServiceApi(ObjectMapper mapper, String baseUri) {
     this(new ApiClient(HttpClient.newBuilder(), mapper, baseUri));
+    this.httpRequestBuilder = HttpRequest.newBuilder();
   }
   
   public AssetAdministrationShellServiceApi(String baseUri) {
 		this(new ApiClient(HttpClient.newBuilder(), new JsonMapperFactory().create(new SimpleAbstractTypeResolverFactory().create()), baseUri));
+		this.httpRequestBuilder = HttpRequest.newBuilder();
+  }
+  
+  public AssetAdministrationShellServiceApi(String baseUri, HttpRequest.Builder httpRequestBuilder) {
+		this(baseUri);
+		this.httpRequestBuilder = httpRequestBuilder;
   }
 
 
@@ -182,9 +191,9 @@ public class AssetAdministrationShellServiceApi {
 			throw new ApiException(400, "Missing the required parameter 'submodelIdentifier' when calling deleteSubmodelReferenceById");
 		}
 
-		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
 		String localVarPath = "/submodel-refs/{submodelIdentifier}".replace("{submodelIdentifier}", ApiClient.urlEncode(submodelIdentifier.toString()));
+		
+		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 		localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
@@ -265,9 +274,9 @@ public class AssetAdministrationShellServiceApi {
 
   private HttpRequest.Builder deleteThumbnailRequestBuilder() throws ApiException {
 
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
 	String localVarPath = "/asset-information/thumbnail";
+	
+	HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
@@ -329,9 +338,9 @@ public class AssetAdministrationShellServiceApi {
 
   private HttpRequest.Builder getAllSubmodelReferencesRequestBuilder(Integer limit, String cursor) throws ApiException {
 
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
     String localVarPath = "/submodel-refs";
+    
+    HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
     List<Pair> localVarQueryParams = new ArrayList<>();
     StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
@@ -421,8 +430,8 @@ public class AssetAdministrationShellServiceApi {
 
   private HttpRequest.Builder getAssetAdministrationShellRequestBuilder() throws ApiException {
 
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
+	HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();  
+	
 	localVarRequestBuilder.uri(URI.create(memberVarBaseUri));
 
     localVarRequestBuilder.header("Accept", "application/json");
@@ -575,9 +584,9 @@ public class AssetAdministrationShellServiceApi {
 
   private HttpRequest.Builder getAssetInformationRequestBuilder() throws ApiException {
 
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
 	String localVarPath = "/asset-information";
+	
+	HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
@@ -729,9 +738,9 @@ public class AssetAdministrationShellServiceApi {
 
   private HttpRequest.Builder getThumbnailRequestBuilder() throws ApiException {
 
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
 	String localVarPath = "/asset-information/thumbnail";
+	
+	HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
@@ -814,9 +823,9 @@ public class AssetAdministrationShellServiceApi {
       throw new ApiException(400, "Missing the required parameter 'reference' when calling postSubmodelReference");
     }
 
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
     String localVarPath = "/submodel-refs";
+    
+    HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
@@ -1002,9 +1011,9 @@ public class AssetAdministrationShellServiceApi {
       throw new ApiException(400, "Missing the required parameter 'assetInformation' when calling putAssetInformation");
     }
 
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
 	String localVarPath = "/asset-information";
+	
+	HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
@@ -1068,8 +1077,11 @@ public class AssetAdministrationShellServiceApi {
 	}
 
 	private HttpRequest.Builder putThumbnailRequestBuilder(String fileName, ContentType contentType, InputStream inputStream) throws ApiException {
-		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+		
 		String localVarPath = "/asset-information/thumbnail";
+		
+		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+		
 		localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 		localVarRequestBuilder.header("Accept", "application/json");
 

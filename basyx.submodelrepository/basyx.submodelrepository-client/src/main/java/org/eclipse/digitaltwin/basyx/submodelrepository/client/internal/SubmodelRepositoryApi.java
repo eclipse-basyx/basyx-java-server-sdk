@@ -43,6 +43,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiClient;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiResponse;
 import org.eclipse.digitaltwin.basyx.client.internal.Pair;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
 
@@ -61,6 +62,7 @@ public class SubmodelRepositoryApi {
 	private final Duration memberVarReadTimeout;
 	private final Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
 	private final Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
+	private HttpRequest.Builder httpRequestBuilder;
 
 	public SubmodelRepositoryApi() {
 		this(new ApiClient());
@@ -68,10 +70,17 @@ public class SubmodelRepositoryApi {
 
 	public SubmodelRepositoryApi(ObjectMapper mapper, String baseUri) {
 		this(new ApiClient(HttpClient.newBuilder(), mapper, baseUri));
+		this.httpRequestBuilder = HttpRequest.newBuilder();
 	}
 
 	public SubmodelRepositoryApi(String baseUri) {
 		this(new ApiClient(HttpClient.newBuilder(), new JsonMapperFactory().create(new SimpleAbstractTypeResolverFactory().create()), baseUri));
+		this.httpRequestBuilder = HttpRequest.newBuilder();
+	}
+	
+	public SubmodelRepositoryApi(String baseUri, HttpRequest.Builder httpRequestBuilder) {
+		this(new ApiClient(HttpClient.newBuilder(), new JsonMapperFactory().create(new SimpleAbstractTypeResolverFactory().create()), baseUri));
+		this.httpRequestBuilder = httpRequestBuilder;
 	}
 
 	public SubmodelRepositoryApi(ApiClient apiClient) {
@@ -183,7 +192,7 @@ public class SubmodelRepositoryApi {
 			throw new ApiException(400, "Missing the required parameter 'submodelIdentifier' when calling getSubmodelById");
 		}
 
-		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 		String localVarPath = "/submodels/{submodelIdentifier}".replace("{submodelIdentifier}", ApiClient.urlEncode(submodelIdentifier.toString()));
 
@@ -287,7 +296,7 @@ public class SubmodelRepositoryApi {
 			throw new ApiException(400, "Missing the required parameter 'submodel' when calling postSubmodel");
 		}
 
-		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 		String localVarPath = "/submodels";
 
@@ -391,7 +400,7 @@ public class SubmodelRepositoryApi {
 			throw new ApiException(400, "Missing the required parameter 'submodel' when calling putSubmodelById");
 		}
 
-		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 		String localVarPath = "/submodels/{submodelIdentifier}".replace("{submodelIdentifier}", ApiClient.urlEncode(submodelIdentifier.toString()));
 
@@ -485,7 +494,7 @@ public class SubmodelRepositoryApi {
 			throw new ApiException(400, "Missing the required parameter 'submodelIdentifier' when calling deleteSubmodelById");
 		}
 
-		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 		String localVarPath = "/submodels/{submodelIdentifier}".replace("{submodelIdentifier}", ApiClient.urlEncode(submodelIdentifier.toString()));
 
@@ -560,7 +569,7 @@ public class SubmodelRepositoryApi {
 
 	private HttpRequest.Builder getAllSubmodelsRequestBuilder(String semanticId, String idShort, Integer limit, String cursor, String level, String extent) throws ApiException {
 
-		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 		String localVarPath = "/submodels";
 

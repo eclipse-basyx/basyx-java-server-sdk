@@ -31,11 +31,13 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.NoValidEndpointFoundException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.RegistryHttpRequestException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.AasDescriptorResolver;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.Resolver;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.SubmodelDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AasDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodelRepository;
@@ -55,10 +57,10 @@ public class ConnectedAasManager {
 	private final RegistryAndDiscoveryInterfaceApi aasRegistryApi;
 	private final SubmodelRegistryApi smRegistryApi;
 
-	private final AasDescriptorResolver aasDescriptorResolver;
+	private final DescriptorResolver<AssetAdministrationShellDescriptor, AssetAdministrationShell> aasDescriptorResolver;
 	private final AasDescriptorFactory aasDescriptorFactory;
 
-	private final SubmodelDescriptorResolver smDescriptorResolver;
+	private final DescriptorResolver<SubmodelDescriptor, Submodel> smDescriptorResolver;
 	private final SubmodelDescriptorFactory smDescriptorFactory;
 
 	/**
@@ -85,6 +87,18 @@ public class ConnectedAasManager {
 		this.smDescriptorResolver = ConnectedAasManagerHelper.buildSubmodelDescriptorResolver();
 		this.smDescriptorFactory = ConnectedAasManagerHelper.buildSmDescriptorFactory(submodelBaseRepositoryUrl);
 	}
+	
+	ConnectedAasManager(RegistryAndDiscoveryInterfaceApi aasRegistryApi, ConnectedAasRepository aasRepository, String aasRepositoryBaseUrl, SubmodelRegistryApi smRegistryApi, ConnectedSubmodelRepository smRepository,
+			String submodelBaseRepositoryUrl, Resolver resolver) {
+		this.aasRepository = aasRepository;
+		this.aasRegistryApi = aasRegistryApi;
+		this.smRepository = smRepository;
+		this.smRegistryApi = smRegistryApi;
+		this.aasDescriptorResolver = resolver.getAasDescriptorResolver();
+		this.aasDescriptorFactory = ConnectedAasManagerHelper.buildAasDescriptorFactory(aasRepositoryBaseUrl);
+		this.smDescriptorResolver = resolver.getSubmodelDescriptorResolver();
+		this.smDescriptorFactory = ConnectedAasManagerHelper.buildSmDescriptorFactory(submodelBaseRepositoryUrl);
+	}
 
 	/**
 	 * Retrieves an AAS in an AAS registry by its identifier.
@@ -101,7 +115,7 @@ public class ConnectedAasManager {
 		} catch (Exception e) {
 			throw new RegistryHttpRequestException(identifier, e);
 		}
-		return aasDescriptorResolver.resolveAasDescriptor(descriptor);
+		return aasDescriptorResolver.resolveDescriptor(descriptor);
 	}
 
 	/**
@@ -120,7 +134,7 @@ public class ConnectedAasManager {
 			throw new RegistryHttpRequestException(identifier, e);
 		}
 
-		return smDescriptorResolver.resolveSubmodelDescriptor(descriptor);
+		return smDescriptorResolver.resolveDescriptor(descriptor);
 	}
 
 	/**

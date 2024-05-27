@@ -64,19 +64,27 @@ public class AssetAdministrationShellRepositoryApi {
   private final Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
 
   private final Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
+  private HttpRequest.Builder httpRequestBuilder;
 
   public AssetAdministrationShellRepositoryApi() {
     this(new ApiClient());
+    this.httpRequestBuilder = HttpRequest.newBuilder();
   }
 
   public AssetAdministrationShellRepositoryApi(ObjectMapper mapper, String baseUri) {
     this(new ApiClient(HttpClient.newBuilder(), mapper, baseUri));
+    this.httpRequestBuilder = HttpRequest.newBuilder();
   }
   
   public AssetAdministrationShellRepositoryApi(String baseUri) {
 		this(new ApiClient(HttpClient.newBuilder(), new JsonMapperFactory().create(new SimpleAbstractTypeResolverFactory().create()), baseUri));
+		this.httpRequestBuilder = HttpRequest.newBuilder();
   }
-
+  
+  public AssetAdministrationShellRepositoryApi(String baseUri, HttpRequest.Builder httpRequestBuilder) {
+		this(baseUri);
+		this.httpRequestBuilder = httpRequestBuilder;
+  }
 
   public AssetAdministrationShellRepositoryApi(ApiClient apiClient) {
     memberVarHttpClient = apiClient.getHttpClient();
@@ -173,10 +181,10 @@ public class AssetAdministrationShellRepositoryApi {
       throw new ApiException(400, "Missing the required parameter 'aasIdentifier' when calling deleteAssetAdministrationShellById");
     }
 
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
     String localVarPath = "/shells/{aasIdentifier}"
         .replace("{aasIdentifier}", ApiClient.urlEncode(aasIdentifier.toString()));
+    
+    HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
@@ -344,9 +352,9 @@ public class AssetAdministrationShellRepositoryApi {
 
 	private HttpRequest.Builder getAllAssetAdministrationShellsRequestBuilder(List<String> assetIds, String idShort, Integer limit, String cursor) throws ApiException {
 
-		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
 		String localVarPath = "/shells";
+		
+		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 		List<Pair> localVarQueryParams = new ArrayList<>();
 		StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
@@ -452,10 +460,10 @@ public class AssetAdministrationShellRepositoryApi {
       throw new ApiException(400, "Missing the required parameter 'aasIdentifier' when calling getAssetAdministrationShellById");
     }
 
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
     String localVarPath = "/shells/{aasIdentifier}"
         .replace("{aasIdentifier}", ApiClient.urlEncode(aasIdentifier.toString()));
+    
+    HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
@@ -713,9 +721,9 @@ public class AssetAdministrationShellRepositoryApi {
       throw new ApiException(400, "Missing the required parameter 'assetAdministrationShell' when calling postAssetAdministrationShell");
     }
 
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
     String localVarPath = "/shells";
+    
+    HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
@@ -916,10 +924,10 @@ public class AssetAdministrationShellRepositoryApi {
       throw new ApiException(400, "Missing the required parameter 'assetAdministrationShell' when calling putAssetAdministrationShellById");
     }
 
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
-
     String localVarPath = "/shells/{aasIdentifier}"
         .replace("{aasIdentifier}", ApiClient.urlEncode(aasIdentifier.toString()));
+    
+    HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 

@@ -57,6 +57,10 @@ public class ConnectedAasService implements AasService {
 	public ConnectedAasService(String aasServiceUrl) {
 		this.serviceApi = new AssetAdministrationShellServiceApi(aasServiceUrl);
 	}
+	
+	public ConnectedAasService(String aasServiceUrl, AssetAdministrationShellServiceApi assetAdministrationShellServiceApi) {
+		this.serviceApi = assetAdministrationShellServiceApi;
+	}
 
 	@Override
 	public AssetAdministrationShell getAAS() throws ElementDoesNotExistException {
