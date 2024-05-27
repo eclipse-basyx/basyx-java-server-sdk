@@ -136,7 +136,7 @@ public class ConnectedAasManager {
 	/**
 	 * Retrieves all registered Submodels of a registered Asset Administration Shell
 	 *
-	 * @param identifier
+	 * @param shellIdentifier
 	 *            The identifier of the Shell to retrieve.
 	 * @return The retrieved Submodel object.
 	 */
