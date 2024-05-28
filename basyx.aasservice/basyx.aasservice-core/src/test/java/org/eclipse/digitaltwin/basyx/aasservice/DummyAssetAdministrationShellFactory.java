@@ -32,11 +32,6 @@ public class DummyAssetAdministrationShellFactory {
 				.build();
 	}
 
-	public static AssetAdministrationShell createWithDefaultThumbnail() {
-		return new DefaultAssetAdministrationShell.Builder().id("arbitrary")
-				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetId(SUBMODEL_ID).defaultThumbnail(buildDummyThumbnailResource()).build()).build();
-	}
-
 	/**
 	 * Add the Dummy SubmodelReference to the given aas
 	 * 
@@ -51,10 +46,6 @@ public class DummyAssetAdministrationShellFactory {
 	private static Reference buildDummyReference() {
 		return new DefaultReference.Builder()
 				.keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(SUBMODEL_ID).build()).build();
-	}
-
-	private static Resource buildDummyThumbnailResource() {
-		return new DefaultResource.Builder().path("").contentType("").build();
 	}
 
 }
