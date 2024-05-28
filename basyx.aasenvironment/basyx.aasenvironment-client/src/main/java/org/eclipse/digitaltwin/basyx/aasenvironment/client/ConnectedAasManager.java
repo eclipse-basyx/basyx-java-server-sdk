@@ -53,7 +53,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelSer
 /**
  * Client component for executing consolidated Repository and Registry requests
  *
- * @author mateusmolina
+ * @author mateusmolina, jungjan
  *
  */
 public class ConnectedAasManager {
@@ -144,7 +144,7 @@ public class ConnectedAasManager {
 		AssetAdministrationShell shell = getAas(shellIdentifier).getAAS();
 		List<Reference> submodelReferences = shell.getSubmodels();
 		return submodelReferences.parallelStream()
-				.map(this::extractSubmodelIedntifierFromReference)
+				.map(this::extractSubmodelIdentifierFromReference)
 				.map(this::getSubmodel)
 				.collect(Collectors.toList());
 	}
@@ -222,7 +222,7 @@ public class ConnectedAasManager {
 		aasRepository.addSubmodelReference(aasIdentifier, AasUtils.toReference(submodel));
 	}
 
-	private String extractSubmodelIedntifierFromReference(Reference submodelReference) {
+	private String extractSubmodelIdentifierFromReference(Reference submodelReference) {
 		assertIsSubmodelReference(submodelReference);
 		Key submodelKey = extractSubmodelKeyFromReference(submodelReference);
 		return submodelKey.getValue();
