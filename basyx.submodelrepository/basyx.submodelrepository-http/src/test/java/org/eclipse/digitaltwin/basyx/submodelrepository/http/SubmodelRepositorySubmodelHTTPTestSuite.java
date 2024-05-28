@@ -230,17 +230,18 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	}
 
 	@Test
-	public void updateNonFileRootSME() throws FileNotFoundException, IOException, ParseException {
+	public void updateNonNestedSME() throws FileNotFoundException, IOException, ParseException {
 	        
 	    String submodelJSON = getJSONValueAsString("SingleSubmodelNew.json");
 	    CloseableHttpResponse creationResponse = BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
 	    assertSubmodelCreationReponse(submodelJSON, creationResponse);
 	        
-	    String element = getJSONValueAsString("PropertySubmodelElementUpdate.json");
-	        
+	    String element = getJSONValueAsString("PropertySubmodelElementUpdate.json");  
 	    String idShortPathPropertyInRootSme = "MaxRotationSpeed";
+
 	    CloseableHttpResponse updatedResponse = updateElement(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID,idShortPathPropertyInRootSme), element);
 	    assertEquals(HttpStatus.NO_CONTENT.value(), updatedResponse.getCode());
+
 	    CloseableHttpResponse fetchedResponse = BaSyxHttpTestUtils.executeGetOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID,idShortPathPropertyInRootSme));
 	    BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedResponse));
 	}
