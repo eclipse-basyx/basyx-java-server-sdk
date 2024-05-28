@@ -206,11 +206,6 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void getThumbnail() throws IOException {
-		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.create();
-		AasService aasService = getAasService(shell);
-
-		aasService.setThumbnail("dummyImgA.jpeg", "", createDummyImageIS_A());
-		
 		InputStream actualThumbnailIs = new FileInputStream(aasServiceWithThumbnail.getThumbnail());;
 
 		InputStream expectedThumbnail = createDummyImageIS_A();
