@@ -211,7 +211,7 @@ public class TestConnectedAasManager {
 	@Test
 	public void getAllSubmodels() {
 		Submodel otherExpectedSubmodel = FIXTURE.buildSmPos1();
-		Submodel[] expectedSubmodel = { FIXTURE.buildSmPre1(), otherExpectedSubmodel };
+		Submodel[] expectedSubmodels = { FIXTURE.buildSmPre1(), otherExpectedSubmodel };
 
 		aasManager.createSubmodelInAas(TestFixture.AAS_PRE1_ID, otherExpectedSubmodel);
 
@@ -219,7 +219,7 @@ public class TestConnectedAasManager {
 		List<Submodel> actualSubmodels = actualSubmodelServices.stream()
 				.map(submodelService -> submodelService.getSubmodel())
 				.collect(Collectors.toList());
-		assertEquals(Arrays.asList(expectedSubmodel), actualSubmodels);
+		assertEquals(Arrays.asList(expectedSubmodels), actualSubmodels);
 
 	}
 
