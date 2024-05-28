@@ -134,7 +134,6 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 
 		Map<String, Set<AssetLink>> assetLinks = getAssetLinks();
 
-		Map<String, List<SpecificAssetId>> assetIds = getAssetIds();
 		synchronized (assetLinks) {
 			throwIfAssetLinkExists(assetLinks, shellIdentifier);
 
@@ -157,7 +156,6 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	@Override
 	public void deleteAllAssetLinksById(String shellIdentifier) {
 		Map<String, Set<AssetLink>> assetLinks = getAssetLinks();
-		Map<String, List<SpecificAssetId>> assetIds = getAssetIds();
 		synchronized (assetLinks) {
 			throwIfAssetLinkDoesNotExist(assetLinks, shellIdentifier);
 

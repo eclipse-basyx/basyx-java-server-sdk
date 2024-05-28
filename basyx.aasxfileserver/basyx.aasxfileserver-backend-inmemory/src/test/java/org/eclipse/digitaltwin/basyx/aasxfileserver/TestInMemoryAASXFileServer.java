@@ -32,7 +32,7 @@ import org.eclipse.digitaltwin.basyx.aasxfileserver.core.AASXFileServerSuite;
 import org.junit.Test;
 
 /**
- * Tests the {@link InMemoryAASXFileServer}
+ * Tests the {@link AASXFileServerInMemoryBackendProvider}
  * 
  * @author chaithra
  *
@@ -48,7 +48,7 @@ public class TestInMemoryAASXFileServer extends AASXFileServerSuite {
 
 	@Test
 	public void getConfiguredInMemoryAASXFileServer() {
-		AASXFileServer server = new InMemoryAASXFileServer(CONFIGURED_AASX_SERVER_NAME);
+		AASXFileServer server =  new SimpleAASXFileServerFactory(new AASXFileServerInMemoryBackendProvider(),CONFIGURED_AASX_SERVER_NAME).create();
 
 		assertEquals(CONFIGURED_AASX_SERVER_NAME, server.getName());
 	}
