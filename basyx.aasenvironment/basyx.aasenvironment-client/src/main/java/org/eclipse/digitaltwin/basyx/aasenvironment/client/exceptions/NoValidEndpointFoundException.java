@@ -33,11 +33,16 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions;
  */
 @SuppressWarnings("serial")
 public class NoValidEndpointFoundException extends RuntimeException {
+	/**
+	 * Constructs a NoValidEndpointException
+	 * 
+	 * @param endpoints
+	 */
 	public NoValidEndpointFoundException(String endpoints) {
 		super(getMessage(endpoints));
 	}
 
-	public static String getMessage(String endpoints) {
+	private static String getMessage(String endpoints) {
 		return "No valid endpoint found in " + endpoints;
 	}
 }

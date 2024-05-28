@@ -39,33 +39,69 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.NoValidEnd
  *
  */
 public class EndpointResolver {
-	
+
 	private int timeout = 3000;
 
+	/**
+	 * Creates an EndpointResolver with default timeout
+	 */
 	public EndpointResolver() {
 	}
 
+	/**
+	 * Creates an EndpointResolver with a custom timeout
+	 * 
+	 * @param timeout
+	 */
 	public EndpointResolver(int timeout) {
 		this.timeout = timeout;
 	}
 
+	/**
+	 * Resolves the first working Endpoint from a list of endpoints
+	 * 
+	 * @param <T>
+	 * @param endpoints
+	 * @param uriParser
+	 * @return
+	 */
 	public <T> String resolveFirst(List<T> endpoints, URIParser<T> uriParser) {
-		List<URI> uris = endpoints.stream().map(uriParser::parse).flatMap(Optional::stream).toList();
-		return findFirstWorkingURI(uris).orElseThrow(() -> new NoValidEndpointFoundException(endpoints.toString())).toString();
+		List<URI> uris = endpoints.stream()
+				.map(uriParser::parse)
+				.flatMap(Optional::stream)
+				.toList();
+		return findFirstWorkingURI(uris).orElseThrow(() -> new NoValidEndpointFoundException(endpoints.toString()))
+				.toString();
 	}
 
+	/**
+	 * Resolves all working endpoints from a list of endpoints
+	 * 
+	 * @param <T>
+	 * @param endpoints
+	 * @param uriParser
+	 * @return
+	 */
 	public <T> List<String> resolveAll(List<T> endpoints, URIParser<T> uriParser) {
-		return endpoints.stream().map(uriParser::parse).flatMap(Optional::stream).filter(this::isURIWorking).map(URI::toString).toList();
+		return endpoints.stream()
+				.map(uriParser::parse)
+				.flatMap(Optional::stream)
+				.filter(this::isURIWorking)
+				.map(URI::toString)
+				.toList();
 	}
 
 	private Optional<URI> findFirstWorkingURI(List<URI> uris) {
-		return uris.stream().filter(this::isURIWorking).findFirst();
+		return uris.stream()
+				.filter(this::isURIWorking)
+				.findFirst();
 	}
 
 	private boolean isURIWorking(URI uri) {
 		HttpURLConnection connection = null;
 		try {
-			connection = (HttpURLConnection) uri.toURL().openConnection();
+			connection = (HttpURLConnection) uri.toURL()
+					.openConnection();
 			connection.setRequestMethod("HEAD");
 			connection.setConnectTimeout(timeout);
 			connection.setReadTimeout(timeout);

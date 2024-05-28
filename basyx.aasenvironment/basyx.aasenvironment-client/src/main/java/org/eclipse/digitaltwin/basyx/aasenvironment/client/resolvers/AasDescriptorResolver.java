@@ -42,10 +42,21 @@ public class AasDescriptorResolver {
 
 	private final EndpointResolver endpointResolver;
 
+	/**
+	 * Creates an AASDescriptorResolver
+	 * 
+	 * @param endpointResolver
+	 */
 	public AasDescriptorResolver(EndpointResolver endpointResolver) {
 		this.endpointResolver = endpointResolver;
 	}
 
+	/**
+	 * Resolves an AASDescriptor to a ConnectedAasService
+	 * 
+	 * @param aasDescriptor
+	 * @return
+	 */
 	public ConnectedAasService resolveAasDescriptor(AssetAdministrationShellDescriptor aasDescriptor) {
 		String endpoint = endpointResolver.resolveFirst(aasDescriptor.getEndpoints(), AasDescriptorResolver::parseEndpoint);
 
@@ -54,10 +65,12 @@ public class AasDescriptorResolver {
 
 	private static Optional<URI> parseEndpoint(Endpoint endpoint) {
 		try {
-			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation().getHref() == null)
+			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation()
+					.getHref() == null)
 				return Optional.empty();
 
-			String baseHref = endpoint.getProtocolInformation().getHref();
+			String baseHref = endpoint.getProtocolInformation()
+					.getHref();
 			// TODO not working: String queryString = "?" + endpoint.toUrlQueryString();
 			String queryString = "";
 			URI uri = new URI(baseHref + queryString);

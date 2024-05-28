@@ -33,7 +33,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescr
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 
 /**
- * Resolves an SubmodelDescriptor into a Submodel
+ * Resolves a SubmodelDescriptor into a Submodel
  *
  * @author mateusmolina
  *
@@ -42,10 +42,22 @@ public class SubmodelDescriptorResolver {
 
 	private final EndpointResolver endpointResolver;
 
+	/**
+	 * Constructs a SubmodelDescriptorResolver
+	 * 
+	 * @param endpointResolver
+	 */
 	public SubmodelDescriptorResolver(EndpointResolver endpointResolver) {
 		this.endpointResolver = endpointResolver;
 	}
 
+	/**
+	 * Resolves a Submodel Descriptor to a Connected SubmodelService
+	 * 
+	 * @param smDescriptor
+	 *            the Submodel Descriptor to be resolved
+	 * @return the Connected submodelserver
+	 */
 	public ConnectedSubmodelService resolveSubmodelDescriptor(SubmodelDescriptor smDescriptor) {
 		String endpoint = endpointResolver.resolveFirst(smDescriptor.getEndpoints(), SubmodelDescriptorResolver::parseEndpoint);
 
@@ -54,10 +66,12 @@ public class SubmodelDescriptorResolver {
 
 	private static Optional<URI> parseEndpoint(Endpoint endpoint) {
 		try {
-			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation().getHref() == null)
+			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation()
+					.getHref() == null)
 				return Optional.empty();
 
-			String baseHref = endpoint.getProtocolInformation().getHref();
+			String baseHref = endpoint.getProtocolInformation()
+					.getHref();
 			// TODO not working: String queryString = "?" + endpoint.toUrlQueryString();
 			String queryString = "";
 			URI uri = new URI(baseHref + queryString);

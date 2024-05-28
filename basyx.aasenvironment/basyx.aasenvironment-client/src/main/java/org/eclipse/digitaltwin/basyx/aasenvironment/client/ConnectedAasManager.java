@@ -25,8 +25,15 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.util.AasUtils;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Key;
+import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.NoValidEndpointFoundException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.RegistryHttpRequestException;
@@ -46,7 +53,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelSer
 /**
  * Client component for executing consolidated Repository and Registry requests
  *
- * @author mateusmolina
+ * @author mateusmolina, jungjan
  *
  */
 public class ConnectedAasManager {
@@ -127,6 +134,22 @@ public class ConnectedAasManager {
 	}
 
 	/**
+	 * Retrieves all registered Submodels of a registered Asset Administration Shell
+	 *
+	 * @param shellIdentifier
+	 *            The identifier of the Shell to retrieve.
+	 * @return The retrieved Submodel object.
+	 */
+	public List<ConnectedSubmodelService> getAllSubmodels(String shellIdentifier) {
+		AssetAdministrationShell shell = getAas(shellIdentifier).getAAS();
+		List<Reference> submodelReferences = shell.getSubmodels();
+		return submodelReferences.parallelStream()
+				.map(this::extractSubmodelIdentifierFromReference)
+				.map(this::getSubmodel)
+				.collect(Collectors.toList());
+	}
+
+	/**
 	 * Deletes an AAS by its identifier.
 	 *
 	 * @param identifier
@@ -199,5 +222,30 @@ public class ConnectedAasManager {
 		aasRepository.addSubmodelReference(aasIdentifier, AasUtils.toReference(submodel));
 	}
 
-}
+	private String extractSubmodelIdentifierFromReference(Reference submodelReference) {
+		assertIsSubmodelReference(submodelReference);
+		Key submodelKey = extractSubmodelKeyFromReference(submodelReference);
+		return submodelKey.getValue();
+	}
 
+	private void assertIsSubmodelReference(Reference submodelReference) {
+		if (!submodelReference.getType()
+				.equals(ReferenceTypes.MODEL_REFERENCE)) {
+			throw new RuntimeException("A submodel reference must be of type MODEL_REFERENCE.");
+		}
+		assertFirstKeyIsOfTypeSubmodel(submodelReference);
+	}
+
+	private void assertFirstKeyIsOfTypeSubmodel(Reference submodelReference) {
+		if (!extractSubmodelKeyFromReference(submodelReference).getType()
+				.equals(KeyTypes.SUBMODEL)) {
+			throw new RuntimeException("The first key of a submodelReference must be of KeyType SUBMODEL submodel..");
+		}
+	}
+
+	private Key extractSubmodelKeyFromReference(Reference submodelReference) {
+		return submodelReference.getKeys()
+				.get(0);
+	}
+
+}
