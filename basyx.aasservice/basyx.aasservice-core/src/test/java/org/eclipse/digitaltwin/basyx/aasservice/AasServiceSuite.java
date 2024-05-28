@@ -297,7 +297,7 @@ public abstract class AasServiceSuite {
 	private static InputStream createDummyImageIS(int color) throws IOException {
 		BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
 
-		image.setRGB(0, 0, 0x000000);
+		image.setRGB(0, 0, color);
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ImageIO.write(image, "jpeg", baos);
