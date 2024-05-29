@@ -366,10 +366,7 @@ public abstract class SubmodelServiceSuite {
     public void updateNonNestedSME() {
         Submodel technicalSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
         SubmodelService submodelService = getSubmodelService(technicalSubmodel);
-        Property property = new DefaultProperty();
-		
-        property.setIdShort("test123");
-        property.setValue("205");
+        Property property = createDummyProperty("test123");
 
         submodelService.createSubmodelElement(property);
 
