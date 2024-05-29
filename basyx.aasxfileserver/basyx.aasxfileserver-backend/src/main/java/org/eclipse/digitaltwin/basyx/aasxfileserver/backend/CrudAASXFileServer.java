@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,59 +22,55 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-
-package org.eclipse.digitaltwin.basyx.aasxfileserver;
+package org.eclipse.digitaltwin.basyx.aasxfileserver.backend;
 
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.model.Package;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackageDescription;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackagesBody;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.springframework.data.repository.CrudRepository;
 
 /**
- * In-Memory implementation of the {@link AASXFileServer}
- *
- * @author chaithra
+ * Default Implementation for the {@link AASXFileServer} based on Spring
+ * {@link CrudRepository}
+ * 
+ * @author zielstor, fried
  *
  */
-public class InMemoryAASXFileServer implements AASXFileServer {
+public class CrudAASXFileServer implements AASXFileServer {
 
-	private Map<String, Package> packageMap = new LinkedHashMap<>();
+	private AASXFileServerBackendProvider aasxFileServerBackendProvider;
+	private String aasxFileServerName;
 	private AtomicInteger packageId = new AtomicInteger(0);
 
-	private String aasxFileServerName;
-
 	/**
-	 * Creates the InMemoryAASXFileServer
+	 * Constructor
 	 * 
-	 */
-	public InMemoryAASXFileServer() {
-	}
-
-	/**
-	 * Creates the InMemoryAASXFileServer
-	 * 
+	 * @param aasxFileServerBackendProvider
+	 *            The backend provider
 	 * @param aasxFileServerName
-	 *            Name of the CDRepository
+	 *            The AASX file server name
 	 */
-	public InMemoryAASXFileServer(String aasxFileServerName) {
+	public CrudAASXFileServer(AASXFileServerBackendProvider aasxFileServerBackendProvider, String aasxFileServerName) {
+		this.aasxFileServerBackendProvider = aasxFileServerBackendProvider;
 		this.aasxFileServerName = aasxFileServerName;
 	}
 
 	@Override
 	public Collection<PackageDescription> getAllAASXPackageIds(String shellId) {
-		Collection<PackageDescription> packageDescriptions = packageMap.values().stream().map(Package::getPackageDescription).collect(Collectors.toList());
-		
+		Collection<PackageDescription> packageDescriptions = getPackages().stream().map(Package::getPackageDescription).collect(Collectors.toList());
+
 		if (shellId == null || shellId.isBlank())
 			return packageDescriptions;
-		
+
 		return packageDescriptions.stream().filter(packageDesc -> containsShellId(packageDesc, shellId)).collect(Collectors.toList());
 	}
 
@@ -82,7 +78,7 @@ public class InMemoryAASXFileServer implements AASXFileServer {
 	public InputStream getAASXByPackageId(String packageId) throws ElementDoesNotExistException {
 		throwIfAASXPackageIdDoesNotExist(packageId);
 
-		return packageMap.get(packageId).getPackagesBody().getFile();
+		return aasxFileServerBackendProvider.getCrudRepository().findById(packageId).get().getPackagesBody().getFile();
 	}
 
 	@Override
@@ -109,7 +105,7 @@ public class InMemoryAASXFileServer implements AASXFileServer {
 	public void deleteAASXByPackageId(String packageId) throws ElementDoesNotExistException {
 		throwIfAASXPackageIdDoesNotExist(packageId);
 
-		packageMap.remove(packageId);
+		aasxFileServerBackendProvider.getCrudRepository().deleteById(packageId);
 	}
 
 	@Override
@@ -139,11 +135,11 @@ public class InMemoryAASXFileServer implements AASXFileServer {
 
 		Package aasxPackage = new Package(newPackageId, packageDescription, packagesBody);
 
-		packageMap.put(newPackageId, aasxPackage);
+		aasxFileServerBackendProvider.getCrudRepository().save(aasxPackage);
 	}
 
 	private void updateAASXPackage(String packageId, List<String> shellIds, InputStream file, String filename) {
-		Package aasxPackage = this.packageMap.get(packageId);
+		Package aasxPackage = aasxFileServerBackendProvider.getCrudRepository().findById(packageId).get();
 
 		updatePackagesBody(shellIds, file, filename, aasxPackage.getPackagesBody());
 
@@ -158,12 +154,17 @@ public class InMemoryAASXFileServer implements AASXFileServer {
 
 	private void throwIfAASXPackageIdDoesNotExist(String id) {
 
-		if (!packageMap.containsKey(id))
+		if (!aasxFileServerBackendProvider.getCrudRepository().existsById(id))
 			throw new ElementDoesNotExistException(id);
 	}
-	
+
 	private boolean containsShellId(PackageDescription packageDesc, String shellId) {
 		return packageDesc.getAasIds().stream().anyMatch(aasId -> aasId.equals(shellId));
+	}
+
+	private List<Package> getPackages() {
+		Iterable<Package> aasxFileServerPackages = aasxFileServerBackendProvider.getCrudRepository().findAll();
+		return StreamSupport.stream(aasxFileServerPackages.spliterator(), false).collect(Collectors.toList());
 	}
 
 }

@@ -22,35 +22,21 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasxfileserver.backend;
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.feature.authorization;
-
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.SimpleAasDiscoveryFactory;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory.AasDiscoveryInMemoryBackendProvider;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.model.Package;
+import org.springframework.data.repository.CrudRepository;
 
 /**
- * Mocked variant of {@link InMemoryAasDiscoveryServiceFactory} that enables
- * direct access to the underlying service.
- *
- * @author mateusmolina
- *
+ * Backend provider for the AAS Discovery
+ * 
+ * @author zielstor, fried
  */
-public class MockAasDiscoveryServiceFactory implements AasDiscoveryServiceFactory {
-	private final AasDiscoveryService aasDiscoveryService;
-
-	public MockAasDiscoveryServiceFactory() {
-		this.aasDiscoveryService = new SimpleAasDiscoveryFactory(new AasDiscoveryInMemoryBackendProvider()).create();
-	}
-
-	@Override
-	public AasDiscoveryService create() {
-		return aasDiscoveryService;
-	}
-
-	AasDiscoveryService getAasDiscoveryService() {
-		return aasDiscoveryService;
-	}
-
+public interface AASXFileServerBackendProvider {
+	/**
+	 * Get the CRUD repository for the AAS Discovery
+	 * 
+	 * @return The CRUD repository
+	 */
+	public CrudRepository<Package, String> getCrudRepository();
 }

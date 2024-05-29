@@ -36,5 +36,9 @@
 			<artifactId>commons-io</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasxfileserver-backend</artifactId>
+		</dependency>
 	</dependencies>
 </project>
