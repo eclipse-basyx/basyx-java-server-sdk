@@ -54,6 +54,7 @@
 		<module>basyx.aasregistry-service-release-kafka-mem</module>
 		<module>basyx.aasregistry-service-release-kafka-mongodb</module>
 		<module>basyx.aasregistry-feature-authorization</module>
+		<module>basyx.aasregistry-feature-hierarchy</module>
 
 	</modules>
 
