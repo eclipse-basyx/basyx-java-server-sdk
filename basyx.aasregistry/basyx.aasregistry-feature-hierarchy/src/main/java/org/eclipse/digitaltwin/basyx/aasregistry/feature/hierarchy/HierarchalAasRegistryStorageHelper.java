@@ -25,41 +25,30 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorageFeature;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.stereotype.Component;
+import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Feature for hierarchal {@link AasRegistryStorage}
+ * HierarchalAasRegistryStorageHelper
  *
  * @author mateusmolina
+ *
  */
-@Component
-@ConditionalOnExpression("${" + HierarchalAasRegistryFeature.FEATURENAME + ".enabled:false}")
-public class HierarchalAasRegistryFeature implements AasRegistryStorageFeature {
-	public static final String FEATURENAME = "basyx.aasregistry.feature.hierarchy";
-
-	@Value("${" + FEATURENAME + ".enabled:false}")
-	private boolean enabled;
-
-	@Value("${" + FEATURENAME + ".delegatedUrl}")
-	private String delegatedUrl;
-
-	@Override
-	public AasRegistryStorage decorate(AasRegistryStorage storage) {
-		return new HierarchalAasRegistryStorage(storage, delegatedUrl);
+public final class HierarchalAasRegistryStorageHelper {
+	public static org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor mapEqModel(ObjectMapper objectMapper, AssetAdministrationShellDescriptor aasRegistryDescriptor) {
+		try {
+			return objectMapper.convertValue(aasRegistryDescriptor, org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor.class);
+		} catch (Exception e) {
+			throw new RuntimeException("Conversion error", e);
+		}
 	}
 
-	@Override
-	public String getName() {
-		return "AasRegistry Hierarchy";
+	public static AssetAdministrationShellDescriptor mapEqModel(ObjectMapper objectMapper, org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor aasRegistryDescriptor) {
+		try {
+			return objectMapper.convertValue(aasRegistryDescriptor, AssetAdministrationShellDescriptor.class);
+		} catch (Exception e) {
+			throw new RuntimeException("Conversion error", e);
+		}
 	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
-
 }

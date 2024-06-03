@@ -34,6 +34,7 @@ import java.io.IOException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.HierarchalAasRegistryFeature;
+import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.HierarchalAasRegistryStorageHelper;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
@@ -68,6 +69,7 @@ public class TestHierarchalAasRegistry {
 		aasRegistryHierarchal = appContext.getBean(AasRegistryStorage.class);
 		objectMapper = appContext.getBean(ObjectMapper.class);
 		
+		cleanUpDelegatedRegistry();
 		setupDelegatedRegistry();
 		setupHierarchalRegistry();
 	}
@@ -109,7 +111,7 @@ public class TestHierarchalAasRegistry {
 		RegistryAndDiscoveryInterfaceApi clientFacade = new RegistryAndDiscoveryInterfaceApi(DELEGATED_REGISTRY_URL);
 		AssetAdministrationShellDescriptor descriptor = aasDescriptorFactory.getAasDescriptor_DelegatedOnly();
 		
-		clientFacade.postAssetAdministrationShellDescriptor(DummyAasDescriptorFactory.convertToClientAasDescriptor(objectMapper, descriptor));
+		clientFacade.postAssetAdministrationShellDescriptor(HierarchalAasRegistryStorageHelper.mapEqModel(objectMapper, descriptor));
 	}
 
 	private static void cleanUpDelegatedRegistry() throws ApiException {

@@ -37,8 +37,6 @@ import org.eclipse.digitaltwin.basyx.aasregistry.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
  * DummyAasDescriptorFactory
  *
@@ -60,14 +58,6 @@ public class DummyAasDescriptorFactory {
 
 	public AssetAdministrationShellDescriptor getAasDescriptor_DelegatedOnly() {
 		return createDummyDescriptor(repoBaseUrl, AASDESCRIPTOR_ID_DELEGATEDONLY, buildTestAasIdShort(AASDESCRIPTOR_ID_DELEGATEDONLY));
-	}
-
-	public static org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor convertToClientAasDescriptor(ObjectMapper objectMapper, AssetAdministrationShellDescriptor aasRegistryDescriptor) {
-		try {
-			return objectMapper.convertValue(aasRegistryDescriptor, org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor.class);
-		} catch (Exception e) {
-			throw new RuntimeException("Conversion error", e);
-		}
 	}
 
 	private static AssetAdministrationShellDescriptor createDummyDescriptor(String baseUrl, String shellId, String shellIdShort) {

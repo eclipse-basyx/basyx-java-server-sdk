@@ -41,6 +41,8 @@ basyx:
   cors:
     allowed-origins: "*"
     allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
-  feature:
-    hierarchy:
-      enabled: true
+  aasregistry:
+    feature:
+      hierarchy:
+        enabled: true
+        delegatedUrl: http://localhost:8050

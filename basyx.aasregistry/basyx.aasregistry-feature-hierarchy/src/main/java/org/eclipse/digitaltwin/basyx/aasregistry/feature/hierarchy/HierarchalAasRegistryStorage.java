@@ -28,6 +28,8 @@ package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchRequest;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchResponse;
@@ -40,7 +42,10 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStor
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Decorator for hierarchal {@link AasRegistryStorage}
@@ -49,10 +54,15 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
  */
 public class HierarchalAasRegistryStorage implements AasRegistryStorage {
 
-	private AasRegistryStorage decorated;
+	private final AasRegistryStorage decorated;
 
-	public HierarchalAasRegistryStorage(AasRegistryStorage decorated) {
+	private final RegistryAndDiscoveryInterfaceApi delegatedClientApi;
+
+	private final ObjectMapper objectMapper = new ObjectMapper();
+
+	public HierarchalAasRegistryStorage(AasRegistryStorage decorated, String delegatedUrl) {
 		this.decorated = decorated;
+		this.delegatedClientApi = new RegistryAndDiscoveryInterfaceApi(delegatedUrl);
 	}
 
 	@Override
@@ -62,7 +72,15 @@ public class HierarchalAasRegistryStorage implements AasRegistryStorage {
 
 	@Override
 	public AssetAdministrationShellDescriptor getAasDescriptor(String aasDescriptorId) throws AasDescriptorNotFoundException {
-		return decorated.getAasDescriptor(aasDescriptorId);
+		try {
+			return decorated.getAasDescriptor(aasDescriptorId);
+		} catch (AasDescriptorNotFoundException e) {
+			try {
+				return HierarchalAasRegistryStorageHelper.mapEqModel(objectMapper, delegatedClientApi.getAssetAdministrationShellDescriptorById(aasDescriptorId));
+			} catch (ApiException e1) {
+				throw mapApiException(e1, aasDescriptorId);
+			}
+		}
 	}
 
 	@Override
@@ -115,4 +133,10 @@ public class HierarchalAasRegistryStorage implements AasRegistryStorage {
 		return decorated.searchAasDescriptors(request);
 	}
 
+	private RuntimeException mapApiException(ApiException e, String aasDescriptorId) {
+		if (HttpStatusCode.valueOf(e.getCode()).equals(HttpStatus.NOT_FOUND))
+			return new AasDescriptorNotFoundException(aasDescriptorId);
+
+		return new RuntimeException(e);
+	}
 }
