@@ -1,13 +1,6 @@
-# BaSyx V2 Examples
-This folder contains example configurations and docker compose files for setting up the BaSyx V2 infrastructure.
+# BaSyx Infrastructure Setup
 
-
-## Standalone Submodel
-For definining standalone submodels, see [Submodel Service](../basyx.submodelservice)
-
-## Infrastructure Example
-
-After executing 
+After executing
 
 ```bash
 docker-compose up -d
@@ -24,8 +17,3 @@ the following components are started:
 
 By leveraging the registry integration features of AAS Repository and Submodel Repository, the preconfigured AAS Environment serializations are loaded and automatically registered.
 
-## BaSyx with NGINX
-See the separate [NGINX example](BaSyxNGINX) for a comprehensive setup leveraging NGINX.
-
-## BaSyx Time Series Data Example
-See the separate [Time Series example](https://github.com/eclipse-basyx/basyx-applications/tree/main/aas-gui/examples/TimeSeriesData) for a comprehensive setup leveraging InfluxDB.

@@ -1,10 +1,9 @@
-# BaSyx Setup
-This is your BaSyx setup. To run the BaSyx containers, you need to have Docker installed on your device.
+# BaSyx Operation Delegation Example Setup
+To run the example containers, you need to have Docker installed on your device.
 
-## How to run the BaSyx containers
-1. Extract the zip file on your device.
-2. Open a terminal and navigate to the extracted folder.
-3. Run the following command to start the BaSyx containers:
+## How to start the example containers
+1. Open a terminal in this folder
+2. Run the following command to start the BaSyx containers:
 ```
 docker-compose up -d
 ```
@@ -13,6 +12,11 @@ docker-compose up -d
 - AAS Environment: [http://localhost:8081](http://localhost:8081)
 - AAS Registry: [http://localhost:8082](http://localhost:8082)
 - Submodel Registry: [http://localhost:8083](http://localhost:8083)
+- AAS Web GUI: [http://localhost:3000](http://localhost:3000) 
+- Delegated Operation Service [http://localhost:8087](http://localhost:8087) 
 
-## Include your own Asset Administration Shells
-To include your own Asset Administration Shells, you can either put them in the `aas` folder or upload them via the AAS Web UI.
+## How to use
+1. Open the AAS Web GUI
+![Screenshot of the AAS Web GUI showcasing the Operation](AASWebGUI.png)
+2. Open the Operation
+3. Enter a value and execute

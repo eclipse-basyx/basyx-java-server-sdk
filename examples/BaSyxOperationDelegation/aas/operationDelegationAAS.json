@@ -1,0 +1,83 @@
+{
+  "assetAdministrationShells": [
+    {
+      "idShort": "delegationAAS",
+      "displayName": [
+        {
+          "language": "en",
+          "text": "Example Operation Delegation AAS"
+        }
+      ],
+      "id": "https://example.com/ids/sm/3232_7030_6042_8042",
+      "assetInformation": {
+        "assetKind": "Instance",
+        "globalAssetId": "https://example.com/ids/asset/4122_7030_6042_5649"
+      },
+      "submodels": [
+        {
+          "type": "ModelReference",
+          "keys": [
+            {
+              "type": "Submodel",
+              "value": "https://example.com/ids/sm/3232_7030_6042_2542"
+            }
+          ]
+        }
+      ],
+      "modelType": "AssetAdministrationShell"
+    }
+  ],
+  "submodels": [
+    {
+      "idShort": "delegationSubmodel",
+      "displayName": [
+        {
+          "language": "en",
+          "text": "Example Operation Delegation Submodel"
+        }
+      ],
+      "id": "https://example.com/ids/sm/3232_7030_6042_2542",
+      "kind": "Instance",
+      "submodelElements": [
+        {
+          "idShort": "exampleOperation",
+          "displayName": [
+            {
+              "language": "en",
+              "text": "Example Operation"
+            }
+          ],
+          "qualifiers": [
+            {
+              "kind": "ConceptQualifier",
+              "type": "invocationDelegation",
+              "valueType": "xs:string",
+              "value": "http://example-operation-service:8080/operation-invocation"
+            }
+          ],
+          "inputVariables": [
+            {
+              "value": {
+                "idShort": "input",
+                "valueType": "xs:int",
+                "modelType": "Property"
+              }
+            }
+          ],
+          "outputVariables": [
+            {
+              "value": {
+                "idShort": "result",
+                "valueType": "xs:int",
+                "modelType": "Property"
+              }
+            }
+          ],
+          "modelType": "Operation"
+        }
+      ],
+      "modelType": "Submodel"
+    }
+  ],
+  "conceptDescriptions": []
+}

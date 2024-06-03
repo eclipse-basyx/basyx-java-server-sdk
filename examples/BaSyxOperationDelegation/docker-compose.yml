@@ -45,3 +45,11 @@ services:
     depends_on:
       aas-env:
         condition: service_healthy
+  example-operation-service:
+    build:
+      context: ./exampleOperationService
+      dockerfile: Dockerfile
+    container_name: example-operation
+    ports:
+      - '8087:8080'
+    restart: always
