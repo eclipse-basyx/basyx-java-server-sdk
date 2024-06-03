@@ -77,6 +77,8 @@ public abstract class AasServiceSuite {
 	
 	protected abstract AasService getAasService(AssetAdministrationShell shell);
 	
+	private FileRepository fileRepository;
+	
 	@Test
 	public void getAas() {
 		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.create();
@@ -163,13 +165,10 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void updateThumbnail() throws FileNotFoundException, IOException {
-		Object[] setup = thumbnailSetUp();
-		FileRepository fileRepository = (FileRepository) setup[0];
-		AasService aasServiceWithThumbnail = (AasService) setup[1];
+		AasService aasServiceWithThumbnail = thumbnailSetUp();
 		
 		setAasThumbnail(
 			new FileMetadata("dummyImgB.jpeg", "", createDummyImageIS_B()), 
-			fileRepository, 
 			aasServiceWithThumbnail
 		);
 
@@ -195,8 +194,7 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void getThumbnail() throws IOException {
-		Object[] setup = thumbnailSetUp();
-		AasService aasServiceWithThumbnail = (AasService) setup[1];
+		AasService aasServiceWithThumbnail = thumbnailSetUp();
 		
 		InputStream actualThumbnailIs = new FileInputStream(aasServiceWithThumbnail.getThumbnail());;
 
@@ -215,8 +213,7 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void deleteThumbnail() throws FileNotFoundException, IOException {
-		Object[] setup = thumbnailSetUp();
-		AasService aasServiceWithThumbnail = (AasService) setup[1];
+		AasService aasServiceWithThumbnail = thumbnailSetUp();
 		
 		aasServiceWithThumbnail.deleteThumbnail();
 		
@@ -235,16 +232,16 @@ public abstract class AasServiceSuite {
 		aasService.deleteThumbnail();
 	}
 	
-	private Object[] thumbnailSetUp() throws IOException {
+	private AasService thumbnailSetUp() throws IOException {
 		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.create();
 		AasService aasServiceWithThumbnail = getAasService(expected);
 
 		FileMetadata defaultThumbnail = new FileMetadata("dummyImgA.jpeg", "", createDummyImageIS_A());
-		FileRepository fileRepository = new InMemoryFileRepository();
+		fileRepository = new InMemoryFileRepository();
 		
-		setAasThumbnail(defaultThumbnail, fileRepository, aasServiceWithThumbnail);
+		setAasThumbnail(defaultThumbnail, aasServiceWithThumbnail);
 	
-		return new Object[]{fileRepository, aasServiceWithThumbnail};
+		return aasServiceWithThumbnail;
 	}
 
 	private AssetInformation createDummyAssetInformation() {
@@ -278,8 +275,8 @@ public abstract class AasServiceSuite {
 		return referenceList;
 	}
 	
-	private void setAasThumbnail(FileMetadata thumbnail, FileRepository repo, AasService aas) {
-		String thumbnailFilePath = repo.save(thumbnail);
+	private void setAasThumbnail(FileMetadata thumbnail, AasService aas) {
+		String thumbnailFilePath = fileRepository.save(thumbnail);
 		
 		Resource defaultResource = new DefaultResource.Builder().path(thumbnailFilePath).contentType("").build();
 		AssetInformation defaultAasAssetInformation = aas.getAssetInformation();
