@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization;
+package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy;
 
 import java.util.List;
 import java.util.Set;
