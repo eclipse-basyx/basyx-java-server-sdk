@@ -25,12 +25,96 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.regression.feature.hierarchy;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
+import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.HierarchalAasRegistryFeature;
+import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNotFoundException;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
- * TestHierarchalAasRegistry
+ * Test for {@link HierarchalAasRegistryFeature}
  *
  * @author mateusmolina
  *
  */
 public class TestHierarchalAasRegistry {
+	private static final String DELEGATED_REGISTRY_URL = "http://localhost:8050";
+	private static final String REPO_BASE_URL = "http://127.0.0.1:8080";
 
+	private static DummyAasDescriptorFactory aasDescriptorFactory = new DummyAasDescriptorFactory(REPO_BASE_URL);
+
+	private static ConfigurableApplicationContext appContext;
+	private static AasRegistryStorage aasRegistryHierarchal;
+	private static ObjectMapper objectMapper;
+
+	@BeforeClass
+	public static void setUp() throws FileNotFoundException, IOException, ApiException {
+		appContext = new SpringApplication(DummyAasRegistryComponent.class).run(new String[] {});
+		
+		aasRegistryHierarchal = appContext.getBean(AasRegistryStorage.class);
+		objectMapper = appContext.getBean(ObjectMapper.class);
+		
+		setupDelegatedRegistry();
+		setupHierarchalRegistry();
+	}
+	
+	@AfterClass
+	public static void cleanUp() throws ApiException {
+		cleanUpDelegatedRegistry();
+		appContext.close();
+	}
+
+	@Test
+	public void getAasDescriptor_InHierarchal() {
+		AssetAdministrationShellDescriptor actualDescriptor = aasRegistryHierarchal.getAasDescriptor(DummyAasDescriptorFactory.AASDESCRIPTOR_ID_HIERARCHALONLY);
+		
+		AssetAdministrationShellDescriptor expectedDescriptor = aasDescriptorFactory.getAasDescriptor_HierarchalOnly();
+
+		assertEquals(expectedDescriptor, actualDescriptor);
+	}
+
+	@Test
+	public void getAasDescriptor_ThroughDelegated() {
+		AssetAdministrationShellDescriptor actualDescriptor = aasRegistryHierarchal.getAasDescriptor(DummyAasDescriptorFactory.AASDESCRIPTOR_ID_DELEGATEDONLY);
+
+		AssetAdministrationShellDescriptor expectedDescriptor = aasDescriptorFactory.getAasDescriptor_DelegatedOnly();
+
+		assertEquals(expectedDescriptor, actualDescriptor);
+	}
+
+	@Test
+	public void getNonExistingDescriptor() {
+		assertThrows(AasDescriptorNotFoundException.class, () -> aasRegistryHierarchal.getAasDescriptor("nonExistingAasDescriptor"));
+	}
+
+	private static void setupHierarchalRegistry() {
+		aasRegistryHierarchal.insertAasDescriptor(aasDescriptorFactory.getAasDescriptor_HierarchalOnly());
+	}
+
+	private static void setupDelegatedRegistry() throws ApiException {
+		RegistryAndDiscoveryInterfaceApi clientFacade = new RegistryAndDiscoveryInterfaceApi(DELEGATED_REGISTRY_URL);
+		AssetAdministrationShellDescriptor descriptor = aasDescriptorFactory.getAasDescriptor_DelegatedOnly();
+		
+		clientFacade.postAssetAdministrationShellDescriptor(DummyAasDescriptorFactory.convertToClientAasDescriptor(objectMapper, descriptor));
+	}
+
+	private static void cleanUpDelegatedRegistry() throws ApiException {
+		RegistryAndDiscoveryInterfaceApi clientFacade = new RegistryAndDiscoveryInterfaceApi(DELEGATED_REGISTRY_URL);
+
+		clientFacade.deleteAllShellDescriptors();
+	}
 }
