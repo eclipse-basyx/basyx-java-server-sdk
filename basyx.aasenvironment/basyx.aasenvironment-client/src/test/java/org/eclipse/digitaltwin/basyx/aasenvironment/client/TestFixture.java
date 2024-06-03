@@ -30,6 +30,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
@@ -89,7 +90,7 @@ public class TestFixture {
 	}
 
 	public Reference buildSmPre1Ref() {
-		return new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(SM_PRE1_ID).build()).build();
+		return new DefaultReference.Builder().type(ReferenceTypes.MODEL_REFERENCE).keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(SM_PRE1_ID).build()).build();
 	}
 
 	public Submodel buildSmPre1() {

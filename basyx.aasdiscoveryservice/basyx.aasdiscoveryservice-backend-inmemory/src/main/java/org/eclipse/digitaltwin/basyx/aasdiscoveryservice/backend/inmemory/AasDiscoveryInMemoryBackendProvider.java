@@ -23,38 +23,29 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
 
-import java.net.URI;
-import java.util.Optional;
-
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryBackendProvider;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocument;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Component;
 
 /**
- * Parser for AasRegistry Endpoint Model
- *
- * @author mateusmolina
- *
+ * 
+ * InMemory backend provider for the AAS Discovery
+ * 
+ * @author zielstor, fried
  */
-public class AasRegistryEndpointURIParser implements URIParser<Endpoint> {
+@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
+@Component
+public class AasDiscoveryInMemoryBackendProvider implements AasDiscoveryBackendProvider {
+
+	private AasDiscoveryInMemoryCrudRepository repository = new AasDiscoveryInMemoryCrudRepository();
 
 	@Override
-	public Optional<URI> parse(Endpoint endpoint) {
-		return parseEndpoint(endpoint);
+	public CrudRepository<AasDiscoveryDocument, String> getCrudRepository() {
+		return repository;
 	}
 
-	private static Optional<URI> parseEndpoint(Endpoint endpoint) {
-		try {
-			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation().getHref() == null)
-				return Optional.empty();
-
-			String baseHref = endpoint.getProtocolInformation().getHref();
-			// TODO not working: String queryString = "?" + endpoint.toUrlQueryString();
-			String queryString = "";
-			URI uri = new URI(baseHref + queryString);
-			return Optional.of(uri);
-		} catch (Exception e) {
-			return Optional.empty();
-		}
-	}
 }

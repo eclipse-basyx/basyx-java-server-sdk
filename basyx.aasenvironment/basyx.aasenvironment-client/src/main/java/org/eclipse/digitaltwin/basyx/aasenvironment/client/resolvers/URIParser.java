@@ -23,38 +23,18 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers;
+package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
 
 import java.net.URI;
 import java.util.Optional;
 
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
-
 /**
- * Parser for SubmodelRegistry Endpoint Model
+ * Parses an object into an URI
  *
  * @author mateusmolina
  *
  */
-public class SubmodelRegistryEndpointURIParser implements URIParser<Endpoint> {
-
-	@Override
-	public Optional<URI> parse(Endpoint endpoint) {
-		return parseEndpoint(endpoint);
-	}
-
-	private static Optional<URI> parseEndpoint(Endpoint endpoint) {
-		try {
-			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation().getHref() == null)
-				return Optional.empty();
-
-			String baseHref = endpoint.getProtocolInformation().getHref();
-			// TODO not working: String queryString = "?" + endpoint.toUrlQueryString();
-			String queryString = "";
-			URI uri = new URI(baseHref + queryString);
-			return Optional.of(uri);
-		} catch (Exception e) {
-			return Optional.empty();
-		}
-	}
+@FunctionalInterface
+interface URIParser<T> {
+	public Optional<URI> parse(T object);
 }
