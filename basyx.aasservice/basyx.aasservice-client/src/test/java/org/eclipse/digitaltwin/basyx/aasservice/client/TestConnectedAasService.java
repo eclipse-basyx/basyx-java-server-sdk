@@ -30,6 +30,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.DummyAasRepositoryComponent;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceSuite;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.junit.After;
@@ -68,5 +69,10 @@ public class TestConnectedAasService extends AasServiceSuite {
 		String base64UrlEncodedId = Base64UrlEncodedIdentifier.encodeIdentifier(shell.getId());
 		return new ConnectedAasService("http://localhost:8080/shells/" + base64UrlEncodedId);
 
+	}
+
+	@Override
+	protected FileRepository getFileRepository() {
+		return null;
 	}
 }

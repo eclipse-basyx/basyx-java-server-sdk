@@ -28,13 +28,25 @@ package org.eclipse.digitaltwin.basyx.aasservice;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 
 public class TestInMemoryAasService extends AasServiceSuite {
-
+	
+	private FileRepository fileRepository;
+	
+	public TestInMemoryAasService() {
+		fileRepository = new InMemoryFileRepository();
+	}
+	
 	@Override
 	protected AasService getAasService(AssetAdministrationShell shell) {
-		return new InMemoryAasServiceFactory(new InMemoryFileRepository()).create(shell);
+		return new InMemoryAasServiceFactory(fileRepository).create(shell);
+	}
+
+	@Override
+	protected FileRepository getFileRepository() {
+		return fileRepository;
 	}
 
 }

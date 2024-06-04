@@ -41,6 +41,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFa
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBFileRepository;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -65,13 +66,24 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 
 	private static GridFsTemplate gridFsTemplate = configureDefaultGridFsTemplate(mongoTemplate);
 
+	private FileRepository fileRepository;
+	
+	public TestMongoDBAasRepository() {
+		fileRepository = new MongoDBFileRepository(gridFsTemplate);
+	}
+	
 	@Override
 	protected AasRepository getAasRepository() {
 		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
 		AasBackendProvider aasBackendProvider = new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate);
-		AasRepositoryFactory aasRepositoryFactory = new SimpleAasRepositoryFactory(aasBackendProvider, new InMemoryAasServiceFactory(new MongoDBFileRepository(gridFsTemplate)));
+		AasRepositoryFactory aasRepositoryFactory = new SimpleAasRepositoryFactory(aasBackendProvider, new InMemoryAasServiceFactory(fileRepository));
 
 		return aasRepositoryFactory.create();
+	}
+	
+	@Override
+	public FileRepository getFileRepository() {
+		return fileRepository;
 	}
 
 	@Test
@@ -100,7 +112,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	
 	@Test
 	public void getConfiguredMongoDBAasRepositoryName() {
-		AasRepository repo = new CrudAasRepository(new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate), new InMemoryAasServiceFactory(new MongoDBFileRepository(gridFsTemplate)), CONFIGURED_AAS_REPO_NAME);
+		AasRepository repo = new CrudAasRepository(new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate), new InMemoryAasServiceFactory(fileRepository), CONFIGURED_AAS_REPO_NAME);
 		
 		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
 	}

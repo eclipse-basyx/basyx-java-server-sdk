@@ -31,6 +31,13 @@ public class DummyAssetAdministrationShellFactory {
 						.globalAssetId(SUBMODEL_ID).build())
 				.build();
 	}
+	
+	public static AssetAdministrationShell createForThumbnail() {
+		return new DefaultAssetAdministrationShell.Builder().id("dummyAasForThumbnail")
+				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
+						.globalAssetId(SUBMODEL_ID).build())
+				.build();
+	}
 
 	/**
 	 * Add the Dummy SubmodelReference to the given aas

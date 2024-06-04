@@ -63,6 +63,7 @@ import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -76,8 +77,25 @@ public abstract class AasServiceSuite {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	
 	protected abstract AasService getAasService(AssetAdministrationShell shell);
+	protected abstract FileRepository getFileRepository();
 	
 	private FileRepository fileRepository;
+	private AasService aasServiceWithThumbnail;
+	
+	@Before
+	public void setUp() throws IOException {
+		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.createForThumbnail();
+		aasServiceWithThumbnail = getAasService(expected);
+
+		FileMetadata defaultThumbnail = new FileMetadata("dummyImgA.jpeg", "", createDummyImageIS_A());
+		fileRepository = getFileRepository(); 
+		
+		if (fileRepository == null) {
+			fileRepository = new InMemoryFileRepository();
+		}
+		
+		setAasThumbnail(defaultThumbnail, aasServiceWithThumbnail);
+	}
 	
 	@Test
 	public void getAas() {
@@ -91,7 +109,7 @@ public abstract class AasServiceSuite {
 		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.create();
 		DummyAssetAdministrationShellFactory.addDummySubmodelReference(expected);
 		AasService aasService = getAasService(expected);
-
+		
 		List<Reference> submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
 		Reference submodelReference = getFirstSubmodelReference(submodelReferences);
 		assertEquals(DummyAssetAdministrationShellFactory.submodelReference, submodelReference);
@@ -165,8 +183,6 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void updateThumbnail() throws FileNotFoundException, IOException {
-		AasService aasServiceWithThumbnail = thumbnailSetUp();
-		
 		setAasThumbnail(
 			new FileMetadata("dummyImgB.jpeg", "", createDummyImageIS_B()), 
 			aasServiceWithThumbnail
@@ -194,8 +210,6 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void getThumbnail() throws IOException {
-		AasService aasServiceWithThumbnail = thumbnailSetUp();
-		
 		InputStream actualThumbnailIs = new FileInputStream(aasServiceWithThumbnail.getThumbnail());;
 
 		InputStream expectedThumbnail = createDummyImageIS_A();
@@ -213,8 +227,6 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void deleteThumbnail() throws FileNotFoundException, IOException {
-		AasService aasServiceWithThumbnail = thumbnailSetUp();
-		
 		aasServiceWithThumbnail.deleteThumbnail();
 		
 		try {
@@ -230,18 +242,6 @@ public abstract class AasServiceSuite {
 		AasService aasService = getAasService(shell);
 
 		aasService.deleteThumbnail();
-	}
-	
-	private AasService thumbnailSetUp() throws IOException {
-		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.create();
-		AasService aasServiceWithThumbnail = getAasService(expected);
-
-		FileMetadata defaultThumbnail = new FileMetadata("dummyImgA.jpeg", "", createDummyImageIS_A());
-		fileRepository = new InMemoryFileRepository();
-		
-		setAasThumbnail(defaultThumbnail, aasServiceWithThumbnail);
-	
-		return aasServiceWithThumbnail;
 	}
 
 	private AssetInformation createDummyAssetInformation() {

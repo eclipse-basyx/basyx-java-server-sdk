@@ -48,6 +48,7 @@ import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFac
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
 import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
@@ -56,6 +57,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -79,7 +81,13 @@ public class TestMqttAasService extends AasServiceSuite {
 	private static AasServiceFactory mqttAasServiceFactory;
 
 	private static ObjectMapper objectMapper;
-
+	
+	private FileRepository fileRepository;
+	
+	public TestMqttAasService() {
+		fileRepository = new InMemoryFileRepository();
+	}
+	
 	@BeforeClass
 	public static void setUpClass() throws MqttException, IOException {
 		objectMapper = configureObjectMapper();
@@ -102,6 +110,12 @@ public class TestMqttAasService extends AasServiceSuite {
 		return mqttAasServiceFactory.create(shell);
 	}
 
+
+	@Override
+	protected FileRepository getFileRepository() {
+		return fileRepository;
+	}
+	
 	private static AasServiceFactory createMqttAasServiceFactory(MqttClient client) {
 		AasServiceFactory serviceFactory = new InMemoryAasServiceFactory(new InMemoryFileRepository());
 		MqttAasServiceFeature mqttFeature = new MqttAasServiceFeature(client, aasRepository, objectMapper);
