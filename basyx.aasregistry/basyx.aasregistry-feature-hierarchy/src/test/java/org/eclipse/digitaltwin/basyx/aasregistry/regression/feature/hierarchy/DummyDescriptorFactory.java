@@ -38,29 +38,41 @@ import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 
 /**
- * DummyAasDescriptorFactory
+ * DummyDescriptorFactory
  *
  * @author mateusmolina
  *
  */
-public class DummyAasDescriptorFactory {
+public class DummyDescriptorFactory {
 	public static final String AASDESCRIPTOR_ID_HIERARCHALONLY = "AASDESCRIPTOR_ID_HIERARCHALONLY";
+	public static final String SMDESCRIPTOR_ID_HIERARCHALONLY = "SMDESCRIPTOR_ID_HIERARCHALONLY";
+
 	public static final String AASDESCRIPTOR_ID_DELEGATEDONLY = "AASDESCRIPTOR_ID_DELEGATEDONLY";
+	public static final String SMDESCRIPTOR_ID_DELEGATEDONLY = "SMDESCRIPTOR_ID_DELEGATEDONLY";
+
 	private final String repoBaseUrl;
 
-	public DummyAasDescriptorFactory(String repoBaseUrl) {
+	public DummyDescriptorFactory(String repoBaseUrl) {
 		this.repoBaseUrl = repoBaseUrl;
 	}
 
 	public AssetAdministrationShellDescriptor getAasDescriptor_HierarchalOnly() {
-		return createDummyDescriptor(repoBaseUrl, AASDESCRIPTOR_ID_HIERARCHALONLY, buildTestAasIdShort(AASDESCRIPTOR_ID_HIERARCHALONLY));
+		return createDummyDescriptor(repoBaseUrl, AASDESCRIPTOR_ID_HIERARCHALONLY, buildIdShort(AASDESCRIPTOR_ID_HIERARCHALONLY), getSmDescriptor_HierarchalOnly());
+	}
+
+	public SubmodelDescriptor getSmDescriptor_HierarchalOnly() {
+		return createDummySubmodelDescriptor(repoBaseUrl, SMDESCRIPTOR_ID_HIERARCHALONLY, buildIdShort(SMDESCRIPTOR_ID_HIERARCHALONLY));
 	}
 
 	public AssetAdministrationShellDescriptor getAasDescriptor_DelegatedOnly() {
-		return createDummyDescriptor(repoBaseUrl, AASDESCRIPTOR_ID_DELEGATEDONLY, buildTestAasIdShort(AASDESCRIPTOR_ID_DELEGATEDONLY));
+		return createDummyDescriptor(repoBaseUrl, AASDESCRIPTOR_ID_DELEGATEDONLY, buildIdShort(AASDESCRIPTOR_ID_DELEGATEDONLY), getSmDescriptor_DelegatedOnly());
 	}
 
-	private static AssetAdministrationShellDescriptor createDummyDescriptor(String baseUrl, String shellId, String shellIdShort) {
+	public SubmodelDescriptor getSmDescriptor_DelegatedOnly() {
+		return createDummySubmodelDescriptor(repoBaseUrl, SMDESCRIPTOR_ID_DELEGATEDONLY, buildIdShort(SMDESCRIPTOR_ID_DELEGATEDONLY));
+	}
+
+	private static AssetAdministrationShellDescriptor createDummyDescriptor(String baseUrl, String shellId, String shellIdShort, SubmodelDescriptor submodelDescriptor) {
 		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor(shellId);
 		descriptor.setIdShort(shellIdShort);
 		descriptor.setAssetKind(AssetKind.TYPE);
@@ -68,7 +80,7 @@ public class DummyAasDescriptorFactory {
 
 		setEndpointItem(baseUrl, shellId, descriptor);
 		descriptor.setGlobalAssetId("DummyGlobalAssetId");
-		descriptor.addSubmodelDescriptorsItem(createDummySubmodelDescriptor(baseUrl, shellId + "-SM", shellIdShort + "-SM"));
+		descriptor.addSubmodelDescriptorsItem(submodelDescriptor);
 
 		return descriptor;
 	}
@@ -114,7 +126,7 @@ public class DummyAasDescriptorFactory {
 		}
 	}
 
-	private static String buildTestAasIdShort(String aasId) {
+	private static String buildIdShort(String aasId) {
 		return aasId + "IdShort";
 	}
 }

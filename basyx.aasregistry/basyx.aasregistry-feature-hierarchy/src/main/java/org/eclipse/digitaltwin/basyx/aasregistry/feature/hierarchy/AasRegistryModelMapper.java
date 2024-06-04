@@ -26,17 +26,21 @@
 package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
+import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * HierarchalAasRegistryStorageHelper
+ * AasRegistryModelMapper
  *
  * @author mateusmolina
  *
  */
-public final class HierarchalAasRegistryStorageHelper {
-	public static org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor mapEqModel(ObjectMapper objectMapper, AssetAdministrationShellDescriptor aasRegistryDescriptor) {
+public final class AasRegistryModelMapper {
+
+	private static final ObjectMapper objectMapper = new ObjectMapper();
+
+	public static org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor mapEqModel(AssetAdministrationShellDescriptor aasRegistryDescriptor) {
 		try {
 			return objectMapper.convertValue(aasRegistryDescriptor, org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor.class);
 		} catch (Exception e) {
@@ -44,9 +48,25 @@ public final class HierarchalAasRegistryStorageHelper {
 		}
 	}
 
-	public static AssetAdministrationShellDescriptor mapEqModel(ObjectMapper objectMapper, org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor aasRegistryDescriptor) {
+	public static AssetAdministrationShellDescriptor mapEqModel(org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor aasRegistryDescriptor) {
 		try {
 			return objectMapper.convertValue(aasRegistryDescriptor, AssetAdministrationShellDescriptor.class);
+		} catch (Exception e) {
+			throw new RuntimeException("Conversion error", e);
+		}
+	}
+
+	public static org.eclipse.digitaltwin.basyx.aasregistry.client.model.SubmodelDescriptor mapEqModel(SubmodelDescriptor smRegistryDescriptor) {
+		try {
+			return objectMapper.convertValue(smRegistryDescriptor, org.eclipse.digitaltwin.basyx.aasregistry.client.model.SubmodelDescriptor.class);
+		} catch (Exception e) {
+			throw new RuntimeException("Conversion error", e);
+		}
+	}
+
+	public static SubmodelDescriptor mapEqModel(org.eclipse.digitaltwin.basyx.aasregistry.client.model.SubmodelDescriptor smRegistryDescriptor) {
+		try {
+			return objectMapper.convertValue(smRegistryDescriptor, SubmodelDescriptor.class);
 		} catch (Exception e) {
 			throw new RuntimeException("Conversion error", e);
 		}
