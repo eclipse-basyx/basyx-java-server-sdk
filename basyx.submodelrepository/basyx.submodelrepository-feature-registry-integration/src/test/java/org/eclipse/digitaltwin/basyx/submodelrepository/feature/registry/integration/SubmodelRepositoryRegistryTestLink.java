@@ -35,6 +35,7 @@ import java.net.URL;
 import java.util.List;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
@@ -53,13 +54,13 @@ public class SubmodelRepositoryRegistryTestLink {
 	
 	private static final String SUBMODEL_REPOSITORY_PATH = "/submodels";
 
-	private static final String SUMMY_SUBMODEL_IDSHORT = "TechnicalData";
+	private static final String DUMMY_SUBMODEL_IDSHORT = "TechnicalData";
 	private static final String DUMMY_SUBMODEL_ID = "7A7104BDAB57E184";
 
 	public static String submodelRepoBaseUrl = "http://localhost:8081";
 	public static String submodelRegistryUrl = "http://localhost:8060";
 
-	private static final SubmodelDescriptor DUMMY_DESCRIPTOR = DummySubmodelDescriptorFactory.createDummyDescriptor(DUMMY_SUBMODEL_ID, SUMMY_SUBMODEL_IDSHORT, submodelRepoBaseUrl, DummySubmodelDescriptorFactory.createSemanticId());
+	private static final SubmodelDescriptor DUMMY_DESCRIPTOR = DummySubmodelDescriptorFactory.createDummyDescriptor(DUMMY_SUBMODEL_ID, DUMMY_SUBMODEL_IDSHORT, submodelRepoBaseUrl, DummySubmodelDescriptorFactory.createSemanticId());
 
 	@Test
 	public void createSubmodel() throws FileNotFoundException, IOException, ApiException {
@@ -71,6 +72,22 @@ public class SubmodelRepositoryRegistryTestLink {
 		SubmodelDescriptor actualDescriptor = retrieveDescriptorFromRegistry();
 
 		assertEquals(DUMMY_DESCRIPTOR, actualDescriptor);
+
+		resetRepository();
+	}
+
+	@Test
+	public void createSubmodelElementInSubmodelElementCollection() throws FileNotFoundException, IOException, ApiException, ParseException {
+		String submodelJsonContent = getSubmodelJSONString();
+		String submodelElementJsonContent = getSinglePropertyJSONString();
+
+		CloseableHttpResponse creationResponse = createSubmodelOnRepo(submodelJsonContent);
+		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
+
+		CloseableHttpResponse submodelElementCreationResponse = createSubmodelElementOnRepo(submodelElementJsonContent);
+		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificSubmodelAccessURL(DUMMY_SUBMODEL_ID));
+
+		BaSyxHttpTestUtils.assertSameJSONContent(getExpectedSubmodel(), BaSyxHttpTestUtils.getResponseAsString(getResponse));
 
 		resetRepository();
 	}
@@ -118,12 +135,26 @@ public class SubmodelRepositoryRegistryTestLink {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodel.json");
 	}
 
-	private CloseableHttpResponse createSubmodelOnRepo(String aasJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(createSubmodelRepositoryUrl(submodelRepoBaseUrl), aasJsonContent);
+	private String getSinglePropertyJSONString() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleProperty.json");
 	}
 
-	private String getSpecificSubmodelAccessURL(String aasId) {
-		return createSubmodelRepositoryUrl(submodelRepoBaseUrl) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
+	private String getExpectedSubmodel() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("ExpectedSubmodel.json");
+	}
+
+	private CloseableHttpResponse createSubmodelOnRepo(String submodelJsonContent) throws IOException {
+		return BaSyxHttpTestUtils.executePostOnURL(createSubmodelRepositoryUrl(submodelRepoBaseUrl), submodelJsonContent);
+	}
+
+	private CloseableHttpResponse createSubmodelElementOnRepo(String submodelElementJsonContent) throws IOException {
+		return BaSyxHttpTestUtils.executePostOnURL(
+				getSpecificSubmodelAccessURL(DUMMY_SUBMODEL_ID) + "/submodel-elements/SubmodelElementCollection",
+				submodelElementJsonContent);
+	}
+
+	private String getSpecificSubmodelAccessURL(String submodelId) {
+		return createSubmodelRepositoryUrl(submodelRepoBaseUrl) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
 	}
 	
 	private static String createSubmodelRepositoryUrl(String smRepositoryBaseURL) {
