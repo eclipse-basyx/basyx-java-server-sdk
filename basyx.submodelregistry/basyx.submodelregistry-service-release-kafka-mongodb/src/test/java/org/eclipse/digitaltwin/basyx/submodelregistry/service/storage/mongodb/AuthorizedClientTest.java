@@ -45,7 +45,7 @@ public class AuthorizedClientTest extends BaseIntegrationTest {
 	@Before
 	@Override
 	public void initClient() throws ApiException {
-		api = new AuthorizedConnectedSubmodelRegistry("http://127.0.0.1:" + port, new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialGrant("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom")));
+		api = new AuthorizedConnectedSubmodelRegistry("http://127.0.0.1:" + port, new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialGrant(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom"))));
 		api.deleteAllSubmodelDescriptors();
 		queue().assertNoAdditionalMessage();
 	}
