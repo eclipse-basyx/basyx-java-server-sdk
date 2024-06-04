@@ -44,7 +44,7 @@ public class AuthorizedConnectedAasRepository extends ConnectedAasRepository {
 	private TokenManager tokenManager;
 
 	public AuthorizedConnectedAasRepository(String repoUrl, TokenManager tokenManager) {
-		super(new AssetAdministrationShellRepositoryApi(repoUrl, getRequestBuilder(tokenManager)));
+		super(repoUrl, new AssetAdministrationShellRepositoryApi(repoUrl, getRequestBuilder(tokenManager)));
 		this.tokenManager = tokenManager;
 	}
 
