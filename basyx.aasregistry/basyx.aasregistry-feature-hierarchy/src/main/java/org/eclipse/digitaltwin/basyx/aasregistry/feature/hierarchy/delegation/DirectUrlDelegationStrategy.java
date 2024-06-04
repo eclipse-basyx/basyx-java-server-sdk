@@ -23,47 +23,28 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy;
+package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.delegation;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.delegation.DelegationStrategy;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorageFeature;
+import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.HierarchalAasRegistryFeature;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
 /**
- * Feature for hierarchal {@link AasRegistryStorage}
+ * Generates delegation URL based on value of delegatedUrl property
  *
  * @author mateusmolina
+ *
  */
 @Component
-@ConditionalOnExpression("${" + HierarchalAasRegistryFeature.FEATURENAME + ".enabled:false}")
-public class HierarchalAasRegistryFeature implements AasRegistryStorageFeature {
-	public static final String FEATURENAME = "basyx.aasregistry.feature.hierarchy";
-
-	@Value("${" + FEATURENAME + ".enabled:false}")
-	private boolean enabled;
-
-	private DelegationStrategy delegationStrategy;
-	
-	public HierarchalAasRegistryFeature(DelegationStrategy delegationStrategy) {
-		this.delegationStrategy = delegationStrategy;
-	}
+@ConditionalOnMissingBean
+public class DirectUrlDelegationStrategy implements DelegationStrategy {
+	@Value("${" + HierarchalAasRegistryFeature.FEATURENAME + ".delegatedUrl}")
+	private String delegatedUrl;
 
 	@Override
-	public AasRegistryStorage decorate(AasRegistryStorage storage) {
-		return new HierarchalAasRegistryStorage(storage, delegationStrategy.buildDelegationUrl());
-	}
-
-	@Override
-	public String getName() {
-		return "AasRegistry Hierarchy";
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
+	public String buildDelegationUrl() {
+		return delegatedUrl;
 	}
 
 }
