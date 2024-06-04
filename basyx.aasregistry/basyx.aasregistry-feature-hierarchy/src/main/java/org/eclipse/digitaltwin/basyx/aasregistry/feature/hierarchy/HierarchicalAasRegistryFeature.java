@@ -33,13 +33,18 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 /**
- * Feature for hierarchal {@link AasRegistryStorage}
- *
+ * Hierarchical {@link AasRegistryStorage} feature
+ * 
+ * When this feature is enabled, retrieval requests will be delegated to the
+ * next AasRegistry.
+ * 
+ * The next AasRegistry is selected via a {@link DelegationStrategy}
+ * 
  * @author mateusmolina
  */
 @Component
-@ConditionalOnExpression("${" + HierarchalAasRegistryFeature.FEATURENAME + ".enabled:false}")
-public class HierarchalAasRegistryFeature implements AasRegistryStorageFeature {
+@ConditionalOnExpression("${" + HierarchicalAasRegistryFeature.FEATURENAME + ".enabled:false}")
+public class HierarchicalAasRegistryFeature implements AasRegistryStorageFeature {
 	public static final String FEATURENAME = "basyx.aasregistry.feature.hierarchy";
 
 	@Value("${" + FEATURENAME + ".enabled:false}")
@@ -47,7 +52,7 @@ public class HierarchalAasRegistryFeature implements AasRegistryStorageFeature {
 
 	private DelegationStrategy delegationStrategy;
 	
-	public HierarchalAasRegistryFeature(DelegationStrategy delegationStrategy) {
+	public HierarchicalAasRegistryFeature(DelegationStrategy delegationStrategy) {
 		this.delegationStrategy = delegationStrategy;
 	}
 

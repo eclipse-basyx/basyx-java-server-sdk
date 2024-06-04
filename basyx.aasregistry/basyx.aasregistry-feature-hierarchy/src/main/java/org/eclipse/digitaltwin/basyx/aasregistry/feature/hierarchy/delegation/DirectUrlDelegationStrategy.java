@@ -25,9 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.delegation;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.HierarchalAasRegistryFeature;
+import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.HierarchicalAasRegistryFeature;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
 /**
@@ -37,9 +36,8 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-@ConditionalOnMissingBean
 public class DirectUrlDelegationStrategy implements DelegationStrategy {
-	@Value("${" + HierarchalAasRegistryFeature.FEATURENAME + ".delegatedUrl}")
+	@Value("${" + HierarchicalAasRegistryFeature.FEATURENAME + ".delegatedUrl}")
 	private String delegatedUrl;
 
 	@Override

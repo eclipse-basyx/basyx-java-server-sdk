@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasregistry.regression.feature.hierarchy;
+package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -33,8 +33,6 @@ import java.io.IOException;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.HierarchalAasRegistryFeature;
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.mappers.AasRegistryModelMapper;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNotFoundException;
@@ -47,12 +45,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
- * Test for {@link HierarchalAasRegistryFeature}
+ * Test for {@link HierarchicalAasRegistryFeature}
  *
  * @author mateusmolina
  *
  */
-public class TestHierarchalAasRegistry {
+public class TestHierarchicalAasRegistry {
 	private static final String DELEGATED_REGISTRY_URL = "http://localhost:8050";
 	private static final String REPO_BASE_URL = "http://127.0.0.1:8080";
 

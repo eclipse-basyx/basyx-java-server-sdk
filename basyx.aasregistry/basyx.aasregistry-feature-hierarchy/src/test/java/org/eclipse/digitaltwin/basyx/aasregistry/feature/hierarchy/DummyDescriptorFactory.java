@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasregistry.regression.feature.hierarchy;
+package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -43,32 +43,32 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
  * @author mateusmolina
  *
  */
-public class DummyDescriptorFactory {
-	public static final String AASDESCRIPTOR_ID_HIERARCHALONLY = "AASDESCRIPTOR_ID_HIERARCHALONLY";
-	public static final String SMDESCRIPTOR_ID_HIERARCHALONLY = "SMDESCRIPTOR_ID_HIERARCHALONLY";
+class DummyDescriptorFactory {
+	static final String AASDESCRIPTOR_ID_HIERARCHALONLY = "AASDESCRIPTOR_ID_HIERARCHALONLY";
+	static final String SMDESCRIPTOR_ID_HIERARCHALONLY = "SMDESCRIPTOR_ID_HIERARCHALONLY";
 
-	public static final String AASDESCRIPTOR_ID_DELEGATEDONLY = "AASDESCRIPTOR_ID_DELEGATEDONLY";
-	public static final String SMDESCRIPTOR_ID_DELEGATEDONLY = "SMDESCRIPTOR_ID_DELEGATEDONLY";
+	static final String AASDESCRIPTOR_ID_DELEGATEDONLY = "AASDESCRIPTOR_ID_DELEGATEDONLY";
+	static final String SMDESCRIPTOR_ID_DELEGATEDONLY = "SMDESCRIPTOR_ID_DELEGATEDONLY";
 
 	private final String repoBaseUrl;
 
-	public DummyDescriptorFactory(String repoBaseUrl) {
+	DummyDescriptorFactory(String repoBaseUrl) {
 		this.repoBaseUrl = repoBaseUrl;
 	}
 
-	public AssetAdministrationShellDescriptor getAasDescriptor_HierarchalOnly() {
+	AssetAdministrationShellDescriptor getAasDescriptor_HierarchalOnly() {
 		return createDummyDescriptor(repoBaseUrl, AASDESCRIPTOR_ID_HIERARCHALONLY, buildIdShort(AASDESCRIPTOR_ID_HIERARCHALONLY), getSmDescriptor_HierarchalOnly());
 	}
 
-	public SubmodelDescriptor getSmDescriptor_HierarchalOnly() {
+	SubmodelDescriptor getSmDescriptor_HierarchalOnly() {
 		return createDummySubmodelDescriptor(repoBaseUrl, SMDESCRIPTOR_ID_HIERARCHALONLY, buildIdShort(SMDESCRIPTOR_ID_HIERARCHALONLY));
 	}
 
-	public AssetAdministrationShellDescriptor getAasDescriptor_DelegatedOnly() {
+	AssetAdministrationShellDescriptor getAasDescriptor_DelegatedOnly() {
 		return createDummyDescriptor(repoBaseUrl, AASDESCRIPTOR_ID_DELEGATEDONLY, buildIdShort(AASDESCRIPTOR_ID_DELEGATEDONLY), getSmDescriptor_DelegatedOnly());
 	}
 
-	public SubmodelDescriptor getSmDescriptor_DelegatedOnly() {
+	SubmodelDescriptor getSmDescriptor_DelegatedOnly() {
 		return createDummySubmodelDescriptor(repoBaseUrl, SMDESCRIPTOR_ID_DELEGATEDONLY, buildIdShort(SMDESCRIPTOR_ID_DELEGATEDONLY));
 	}
 

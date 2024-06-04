@@ -23,10 +23,9 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.mappers;
+package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.HierarchalAasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNotFoundException;
@@ -37,42 +36,42 @@ import org.springframework.http.HttpStatusCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Maps objects conversions for {@link HierarchalAasRegistryStorage}
+ * Handles internal model mapping for {@link HierarchalAasRegistryStorage}
  *
  * @author mateusmolina
  *
  */
-public final class AasRegistryModelMapper {
+final class AasRegistryModelMapper {
 
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 
 	private AasRegistryModelMapper() {
 	}
 
-	public static org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor mapEqModel(AssetAdministrationShellDescriptor aasRegistryDescriptor) {
+	static org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor mapEqModel(AssetAdministrationShellDescriptor aasRegistryDescriptor) {
 			return objectMapper.convertValue(aasRegistryDescriptor, org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor.class);
 	}
 
-	public static AssetAdministrationShellDescriptor mapEqModel(org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor aasRegistryDescriptor) {
+	static AssetAdministrationShellDescriptor mapEqModel(org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor aasRegistryDescriptor) {
 			return objectMapper.convertValue(aasRegistryDescriptor, AssetAdministrationShellDescriptor.class);
 	}
 
-	public static org.eclipse.digitaltwin.basyx.aasregistry.client.model.SubmodelDescriptor mapEqModel(SubmodelDescriptor smRegistryDescriptor) {
+	static org.eclipse.digitaltwin.basyx.aasregistry.client.model.SubmodelDescriptor mapEqModel(SubmodelDescriptor smRegistryDescriptor) {
 			return objectMapper.convertValue(smRegistryDescriptor, org.eclipse.digitaltwin.basyx.aasregistry.client.model.SubmodelDescriptor.class);
 	}
 
-	public static SubmodelDescriptor mapEqModel(org.eclipse.digitaltwin.basyx.aasregistry.client.model.SubmodelDescriptor smRegistryDescriptor) {
+	static SubmodelDescriptor mapEqModel(org.eclipse.digitaltwin.basyx.aasregistry.client.model.SubmodelDescriptor smRegistryDescriptor) {
 			return objectMapper.convertValue(smRegistryDescriptor, SubmodelDescriptor.class);
 	}
 
-	public static RuntimeException mapApiException(ApiException e, String aasDescriptorId) {
+	static RuntimeException mapApiException(ApiException e, String aasDescriptorId) {
 		if (HttpStatusCode.valueOf(e.getCode()).equals(HttpStatus.NOT_FOUND))
 			return new AasDescriptorNotFoundException(aasDescriptorId);
 
 		return new RuntimeException(e);
 	}
 
-	public static RuntimeException mapApiException(ApiException e, String aasDescriptorId, String smId) {
+	static RuntimeException mapApiException(ApiException e, String aasDescriptorId, String smId) {
 		if (HttpStatusCode.valueOf(e.getCode()).equals(HttpStatus.NOT_FOUND) && checkIfSubmodelNotFound(e, aasDescriptorId, smId))
 			return new SubmodelNotFoundException(aasDescriptorId, smId);
 

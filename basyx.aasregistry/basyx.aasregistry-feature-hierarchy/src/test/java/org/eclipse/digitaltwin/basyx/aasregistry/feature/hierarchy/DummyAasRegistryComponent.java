@@ -23,14 +23,13 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasregistry.regression.feature.hierarchy;
+package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.HierarchalAasRegistryFeature;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Creates and starts the {@link HierarchalAasRegistryFeature} for tests
+ * Creates and starts the {@link HierarchicalAasRegistryFeature} for tests
  * 
  * @author mateusmolina
  *

@@ -30,7 +30,6 @@ import java.util.Set;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.mappers.AasRegistryModelMapper;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchRequest;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchResponse;
@@ -45,7 +44,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 /**
- * Decorator for hierarchal {@link AasRegistryStorage}
+ * Decorator for Hierarchical {@link AasRegistryStorage}
  *
  * @author mateusmolina
  */
