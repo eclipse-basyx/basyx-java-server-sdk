@@ -58,7 +58,7 @@ public class ConnectedAasService implements AasService {
 		this.serviceApi = new AssetAdministrationShellServiceApi(aasServiceUrl);
 	}
 	
-	public ConnectedAasService(String aasServiceUrl, AssetAdministrationShellServiceApi assetAdministrationShellServiceApi) {
+	public ConnectedAasService(AssetAdministrationShellServiceApi assetAdministrationShellServiceApi) {
 		this.serviceApi = assetAdministrationShellServiceApi;
 	}
 

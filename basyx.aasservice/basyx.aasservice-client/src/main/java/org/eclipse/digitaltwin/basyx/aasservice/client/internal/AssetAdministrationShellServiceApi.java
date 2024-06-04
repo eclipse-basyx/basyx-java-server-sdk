@@ -79,11 +79,21 @@ public class AssetAdministrationShellServiceApi {
     this(new ApiClient());
     this.httpRequestBuilder = HttpRequest.newBuilder();
   }
+  
+  public AssetAdministrationShellServiceApi(HttpRequest.Builder httpRequestBuilder) {
+		this();
+		this.httpRequestBuilder = httpRequestBuilder;
+}
 
   public AssetAdministrationShellServiceApi(ObjectMapper mapper, String baseUri) {
     this(new ApiClient(HttpClient.newBuilder(), mapper, baseUri));
     this.httpRequestBuilder = HttpRequest.newBuilder();
   }
+  
+  public AssetAdministrationShellServiceApi(ObjectMapper mapper, String baseUri, HttpRequest.Builder httpRequestBuilder) {
+		this(mapper, baseUri);
+		this.httpRequestBuilder = httpRequestBuilder;
+}
   
   public AssetAdministrationShellServiceApi(String baseUri) {
 		this(new ApiClient(HttpClient.newBuilder(), new JsonMapperFactory().create(new SimpleAbstractTypeResolverFactory().create()), baseUri));

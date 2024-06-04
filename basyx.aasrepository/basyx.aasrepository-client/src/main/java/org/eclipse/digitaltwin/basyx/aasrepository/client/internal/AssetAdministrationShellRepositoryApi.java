@@ -73,7 +73,7 @@ public class AssetAdministrationShellRepositoryApi {
   
   public AssetAdministrationShellRepositoryApi(HttpRequest.Builder httpRequestBuilder) {
 		this();
-				this.httpRequestBuilder = httpRequestBuilder;
+		this.httpRequestBuilder = httpRequestBuilder;
   }
 
   public AssetAdministrationShellRepositoryApi(ObjectMapper mapper, String baseUri) {

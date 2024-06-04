@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.aasservice.client;
 
 import java.io.IOException;
@@ -33,19 +32,21 @@ import org.eclipse.digitaltwin.basyx.aasservice.client.internal.AssetAdministrat
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 
 /**
- * Provides access to an Authorized Aas Repository on a remote server
+ * Provides access to an Authorized Aas Service on a remote server - regardless if it is
+ * hosted on a Aas Repository or standalone
  * 
  * @author danish
  */
 public class AuthorizedConnectedAasService extends ConnectedAasService {
-
+	
 	/**
 	 * 
 	 * @param repoUrl
-	 *            the Url of the AAS Repository without the "/shells" part
+	 * 				the Url of the AAS Repository without the "/shells" part
+	 * @param tokenManager
 	 */
 	public AuthorizedConnectedAasService(String repoUrl, TokenManager tokenManager) {
-		super(repoUrl, new AssetAdministrationShellServiceApi(repoUrl, getRequestBuilder(tokenManager)));
+		super(new AssetAdministrationShellServiceApi(repoUrl, getRequestBuilder(tokenManager)));
 	}
 	
 	private static HttpRequest.Builder getRequestBuilder(TokenManager tokenManager) {
@@ -53,7 +54,6 @@ public class AuthorizedConnectedAasService extends ConnectedAasService {
 			return HttpRequest.newBuilder()
 			        .header("Authorization", "Bearer " + tokenManager.getAccessToken());
 		} catch (IOException e) {
-			e.printStackTrace();
 			throw new RuntimeException("Unable to request access token");
 		}
 	}
