@@ -29,6 +29,8 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.feature.authorization.Subm
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
 
+import java.util.List;
+
 /**
  * Verifies the {@link SubmodelRegistryTargetInformation} against the {@link RbacRule}
  *
@@ -37,14 +39,25 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier
 public class SubmodelRegistryTargetPermissionVerifier implements TargetPermissionVerifier<SubmodelRegistryTargetInformation> {
 
 	public static final String ALL_ALLOWED_WILDCARD = "*";
-	
+
 	@Override
 	public boolean isVerified(RbacRule rbacRule, SubmodelRegistryTargetInformation targetInformation) {
-		String submodelId = targetInformation.getSubmodelId();
-		
+		List<String> targetInformationSubmodelIds = targetInformation.getSubmodelIds();
+
 		SubmodelRegistryTargetInformation rbacRuleSubmodelTargetInformation = (SubmodelRegistryTargetInformation) rbacRule.getTargetInformation();
-		
-		return rbacRuleSubmodelTargetInformation.getSubmodelId().equals(ALL_ALLOWED_WILDCARD) || rbacRuleSubmodelTargetInformation.getSubmodelId().equals(submodelId);
+
+		List<String> rbacRuleSubmodelIds = rbacRuleSubmodelTargetInformation.getSubmodelIds();
+
+		return areSubmodelsAllowed(rbacRuleSubmodelIds, targetInformationSubmodelIds);
+	}
+
+	private boolean areSubmodelsAllowed(List<String> rbacRuleSubmodelIds, List<String> targetInformationSubmodelIds) {
+		return allSubmodelsAllowed(rbacRuleSubmodelIds) || rbacRuleSubmodelIds.containsAll(targetInformationSubmodelIds);
+	}
+
+	private boolean allSubmodelsAllowed(List<String> rbacRuleSubmodelIds) {
+
+		return rbacRuleSubmodelIds.size() == 1 && rbacRuleSubmodelIds.get(0).equals(ALL_ALLOWED_WILDCARD);
 	}
 
 }
