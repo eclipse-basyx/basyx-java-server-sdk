@@ -33,8 +33,8 @@ import java.io.IOException;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.AasRegistryModelMapper;
 import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.HierarchalAasRegistryFeature;
+import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.mappers.AasRegistryModelMapper;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNotFoundException;

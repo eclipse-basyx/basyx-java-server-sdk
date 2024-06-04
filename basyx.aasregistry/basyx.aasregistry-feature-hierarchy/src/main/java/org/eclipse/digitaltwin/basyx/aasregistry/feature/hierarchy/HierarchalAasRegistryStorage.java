@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
+import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.mappers.AasRegistryModelMapper;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchRequest;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchResponse;
@@ -42,8 +43,6 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStor
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 
 /**
  * Decorator for hierarchal {@link AasRegistryStorage}
@@ -74,7 +73,7 @@ public class HierarchalAasRegistryStorage implements AasRegistryStorage {
 			try {
 				return AasRegistryModelMapper.mapEqModel(delegatedClientApi.getAssetAdministrationShellDescriptorById(aasDescriptorId));
 			} catch (ApiException e1) {
-				throw mapApiException(e1, aasDescriptorId);
+				throw AasRegistryModelMapper.mapApiException(e1, aasDescriptorId);
 			}
 		}
 	}
@@ -107,7 +106,7 @@ public class HierarchalAasRegistryStorage implements AasRegistryStorage {
 			try {
 				return AasRegistryModelMapper.mapEqModel(delegatedClientApi.getSubmodelDescriptorByIdThroughSuperpath(aasDescriptorId, submodelId));
 			} catch (ApiException e1) {
-				throw mapApiException(e1, aasDescriptorId, submodelId);
+				throw AasRegistryModelMapper.mapApiException(e1, aasDescriptorId, submodelId);
 			}
 		}
 	}
@@ -137,22 +136,4 @@ public class HierarchalAasRegistryStorage implements AasRegistryStorage {
 		return decorated.searchAasDescriptors(request);
 	}
 
-	private static RuntimeException mapApiException(ApiException e, String aasDescriptorId) {
-		if (HttpStatusCode.valueOf(e.getCode()).equals(HttpStatus.NOT_FOUND))
-			return new AasDescriptorNotFoundException(aasDescriptorId);
-
-		return new RuntimeException(e);
-	}
-
-	private static RuntimeException mapApiException(ApiException e, String aasDescriptorId, String smId) {
-		if (HttpStatusCode.valueOf(e.getCode()).equals(HttpStatus.NOT_FOUND) && checkIfSubmodelNotFound(e, aasDescriptorId, smId))
-			return new SubmodelNotFoundException(aasDescriptorId, smId);
-		
-		return mapApiException(e, aasDescriptorId);
-	}
-
-	private static boolean checkIfSubmodelNotFound(ApiException e, String aasDescriptorId, String smId) {
-		SubmodelNotFoundException expectedException = new SubmodelNotFoundException(aasDescriptorId, smId);
-		return e.getMessage().contains(expectedException.getReason());
-	}
 }
