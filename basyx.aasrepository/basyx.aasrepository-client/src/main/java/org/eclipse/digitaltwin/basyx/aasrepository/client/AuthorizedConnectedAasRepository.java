@@ -28,14 +28,11 @@ package org.eclipse.digitaltwin.basyx.aasrepository.client;
 import java.io.IOException;
 import java.net.http.HttpRequest;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.internal.AssetAdministrationShellRepositoryApi;
 import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
 import org.eclipse.digitaltwin.basyx.aasservice.client.AuthorizedConnectedAasService;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
-import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 
 /**
  * Provides access to an Authorized Aas Repository on a remote server
@@ -47,7 +44,7 @@ public class AuthorizedConnectedAasRepository extends ConnectedAasRepository {
 	private TokenManager tokenManager;
 
 	public AuthorizedConnectedAasRepository(String repoUrl, TokenManager tokenManager) {
-		super(repoUrl, new AssetAdministrationShellRepositoryApi(repoUrl, getRequestBuilder(tokenManager)));
+		super(new AssetAdministrationShellRepositoryApi(repoUrl, getRequestBuilder(tokenManager)));
 		this.tokenManager = tokenManager;
 	}
 

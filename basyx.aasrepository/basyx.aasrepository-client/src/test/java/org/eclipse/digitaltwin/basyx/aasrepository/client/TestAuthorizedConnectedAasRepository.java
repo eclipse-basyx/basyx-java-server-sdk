@@ -27,18 +27,13 @@ package org.eclipse.digitaltwin.basyx.aasrepository.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.fail;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Collections;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
 import org.eclipse.digitaltwin.basyx.aasrepository.DummyAasFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.DummyAuthorizedAasRepositoryComponent;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.TestAuthorizedAasRepository;
 import org.eclipse.digitaltwin.basyx.aasservice.client.TestAuthorizedConnectedAasService;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;

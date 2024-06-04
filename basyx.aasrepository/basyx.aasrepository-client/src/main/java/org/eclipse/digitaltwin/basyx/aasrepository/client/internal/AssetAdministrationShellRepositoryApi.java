@@ -70,10 +70,20 @@ public class AssetAdministrationShellRepositoryApi {
     this(new ApiClient());
     this.httpRequestBuilder = HttpRequest.newBuilder();
   }
+  
+  public AssetAdministrationShellRepositoryApi(HttpRequest.Builder httpRequestBuilder) {
+		this();
+				this.httpRequestBuilder = httpRequestBuilder;
+  }
 
   public AssetAdministrationShellRepositoryApi(ObjectMapper mapper, String baseUri) {
     this(new ApiClient(HttpClient.newBuilder(), mapper, baseUri));
     this.httpRequestBuilder = HttpRequest.newBuilder();
+  }
+  
+  public AssetAdministrationShellRepositoryApi(ObjectMapper mapper, String baseUri, HttpRequest.Builder httpRequestBuilder) {
+		this(mapper, baseUri);
+		this.httpRequestBuilder = httpRequestBuilder;
   }
   
   public AssetAdministrationShellRepositoryApi(String baseUri) {

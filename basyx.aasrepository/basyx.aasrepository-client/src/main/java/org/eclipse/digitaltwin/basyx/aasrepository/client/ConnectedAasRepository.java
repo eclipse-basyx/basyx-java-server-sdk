@@ -67,8 +67,7 @@ public class ConnectedAasRepository implements AasRepository {
 		this.repoApi = new AssetAdministrationShellRepositoryApi(repoUrl);
 	}
 	
-	public ConnectedAasRepository(String repoUrl, AssetAdministrationShellRepositoryApi assetAdministrationShellRepositoryApi) {
-		this.aasRepoUrl = repoUrl;
+	public ConnectedAasRepository(AssetAdministrationShellRepositoryApi assetAdministrationShellRepositoryApi) {
 		this.repoApi = assetAdministrationShellRepositoryApi;
 	}
 
