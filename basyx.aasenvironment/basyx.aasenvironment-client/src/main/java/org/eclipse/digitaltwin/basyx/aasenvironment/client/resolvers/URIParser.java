@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers;
+package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
 
 import java.net.URI;
 import java.util.Optional;
@@ -34,6 +34,7 @@ import java.util.Optional;
  * @author mateusmolina
  *
  */
+@FunctionalInterface
 public interface URIParser<T> {
 	public Optional<URI> parse(T object);
 }

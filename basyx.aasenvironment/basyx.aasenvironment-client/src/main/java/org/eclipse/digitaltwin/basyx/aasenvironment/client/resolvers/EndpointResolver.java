@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.NoValidEndpointFoundException;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.URIParser;
 
 /**
  * Resolves a list of endpoints based on find first working strategy
@@ -39,38 +38,70 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.URI
  * @author mateusmolina
  *
  */
-public class EndpointResolver<T> {
-	
-	private final URIParser<T> parser;
+public class EndpointResolver {
 
 	private int timeout = 3000;
 
-	public EndpointResolver(URIParser<T> parser) {
-		this.parser = parser;
+	/**
+	 * Creates an EndpointResolver with default timeout
+	 */
+	public EndpointResolver() {
 	}
 
-	public EndpointResolver(URIParser<T> parser, int timeout) {
-		this(parser);
+	/**
+	 * Creates an EndpointResolver with a custom timeout
+	 * 
+	 * @param timeout
+	 */
+	public EndpointResolver(int timeout) {
 		this.timeout = timeout;
 	}
 
-	public String resolveFirst(List<T> endpoints) {
-		List<URI> uris = endpoints.stream().map(parser::parse).flatMap(Optional::stream).toList();
-		return findFirstWorkingURI(uris).orElseThrow(() -> new NoValidEndpointFoundException(endpoints.toString())).toString();
+	/**
+	 * Resolves the first working Endpoint from a list of endpoints
+	 * 
+	 * @param <T>
+	 * @param endpoints
+	 * @param uriParser
+	 * @return
+	 */
+	public <T> String resolveFirst(List<T> endpoints, URIParser<T> uriParser) {
+		List<URI> uris = endpoints.stream()
+				.map(uriParser::parse)
+				.flatMap(Optional::stream)
+				.toList();
+		return findFirstWorkingURI(uris).orElseThrow(() -> new NoValidEndpointFoundException(endpoints.toString()))
+				.toString();
 	}
 
-	public List<String> resolveAll(List<T> endpoints) {
-		return endpoints.stream().map(parser::parse).flatMap(Optional::stream).filter(this::isURIWorking).map(URI::toString).toList();
+	/**
+	 * Resolves all working endpoints from a list of endpoints
+	 * 
+	 * @param <T>
+	 * @param endpoints
+	 * @param uriParser
+	 * @return
+	 */
+	public <T> List<String> resolveAll(List<T> endpoints, URIParser<T> uriParser) {
+		return endpoints.stream()
+				.map(uriParser::parse)
+				.flatMap(Optional::stream)
+				.filter(this::isURIWorking)
+				.map(URI::toString)
+				.toList();
 	}
 
 	private Optional<URI> findFirstWorkingURI(List<URI> uris) {
-		return uris.stream().filter(this::isURIWorking).findFirst();
+		return uris.stream()
+				.filter(this::isURIWorking)
+				.findFirst();
 	}
 
 	private boolean isURIWorking(URI uri) {
 		HttpURLConnection connection = null;
 		try {
-			connection = (HttpURLConnection) uri.toURL().openConnection();
+			connection = (HttpURLConnection) uri.toURL()
+					.openConnection();
 			connection.setRequestMethod("HEAD");
 			connection.setConnectTimeout(timeout);
 			connection.setReadTimeout(timeout);

@@ -25,28 +25,35 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.util.AasUtils;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Key;
+import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.NoValidEndpointFoundException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.RegistryHttpRequestException;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.AasDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.Resolver;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.SubmodelDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver;
+import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.SubmodelDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 
 /**
  * Client component for executing consolidated Repository and Registry requests
  *
- * @author mateusmolina
+ * @author mateusmolina, jungjan
  *
  */
 public class ConnectedAasManager {
@@ -57,10 +64,10 @@ public class ConnectedAasManager {
 	private final RegistryAndDiscoveryInterfaceApi aasRegistryApi;
 	private final SubmodelRegistryApi smRegistryApi;
 
-	private final DescriptorResolver<AssetAdministrationShellDescriptor, AssetAdministrationShell> aasDescriptorResolver;
+	private final DescriptorResolver<AssetAdministrationShellDescriptor, ConnectedAasService> aasDescriptorResolver;
 	private final AasDescriptorFactory aasDescriptorFactory;
 
-	private final DescriptorResolver<SubmodelDescriptor, Submodel> smDescriptorResolver;
+	private final DescriptorResolver<SubmodelDescriptor, ConnectedSubmodelService> smDescriptorResolver;
 	private final SubmodelDescriptorFactory smDescriptorFactory;
 
 	/**
@@ -101,13 +108,13 @@ public class ConnectedAasManager {
 	}
 
 	/**
-	 * Retrieves an AAS in an AAS registry by its identifier.
+	 * Retrieves a ConnectedAasService in an AAS registry by its identifier.
 	 *
 	 * @param identifier
 	 *            The identifier of the AAS to retrieve.
-	 * @return The retrieved AAS object.
+	 * @return The retrieved ConnectedAasService object.
 	 */
-	public AssetAdministrationShell getAas(String identifier) throws NoValidEndpointFoundException {
+	public ConnectedAasService getAas(String identifier) throws NoValidEndpointFoundException {
 		AssetAdministrationShellDescriptor descriptor;
 
 		try {
@@ -119,13 +126,14 @@ public class ConnectedAasManager {
 	}
 
 	/**
-	 * Retrieves a Submodel in a Submodel registry by its identifier.
+	 * Retrieves a ConnectedSubmodelService in a Submodel registry by its
+	 * identifier.
 	 *
 	 * @param identifier
 	 *            The identifier of the submodel to retrieve.
-	 * @return The retrieved Submodel object.
+	 * @return The retrieved ConnectedSubmodelService object.
 	 */
-	public Submodel getSubmodel(String identifier) {
+	public ConnectedSubmodelService getSubmodel(String identifier) {
 		SubmodelDescriptor descriptor;
 
 		try {
@@ -135,6 +143,22 @@ public class ConnectedAasManager {
 		}
 
 		return smDescriptorResolver.resolveDescriptor(descriptor);
+	}
+
+	/**
+	 * Retrieves all registered Submodels of a registered Asset Administration Shell
+	 *
+	 * @param shellIdentifier
+	 *            The identifier of the Shell to retrieve.
+	 * @return The retrieved Submodel object.
+	 */
+	public List<ConnectedSubmodelService> getAllSubmodels(String shellIdentifier) {
+		AssetAdministrationShell shell = getAas(shellIdentifier).getAAS();
+		List<Reference> submodelReferences = shell.getSubmodels();
+		return submodelReferences.parallelStream()
+				.map(this::extractSubmodelIdentifierFromReference)
+				.map(this::getSubmodel)
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -210,5 +234,30 @@ public class ConnectedAasManager {
 		aasRepository.addSubmodelReference(aasIdentifier, AasUtils.toReference(submodel));
 	}
 
-}
+	private String extractSubmodelIdentifierFromReference(Reference submodelReference) {
+		assertIsSubmodelReference(submodelReference);
+		Key submodelKey = extractSubmodelKeyFromReference(submodelReference);
+		return submodelKey.getValue();
+	}
 
+	private void assertIsSubmodelReference(Reference submodelReference) {
+		if (!submodelReference.getType()
+				.equals(ReferenceTypes.MODEL_REFERENCE)) {
+			throw new RuntimeException("A submodel reference must be of type MODEL_REFERENCE.");
+		}
+		assertFirstKeyIsOfTypeSubmodel(submodelReference);
+	}
+
+	private void assertFirstKeyIsOfTypeSubmodel(Reference submodelReference) {
+		if (!extractSubmodelKeyFromReference(submodelReference).getType()
+				.equals(KeyTypes.SUBMODEL)) {
+			throw new RuntimeException("The first key of a submodelReference must be of KeyType SUBMODEL submodel..");
+		}
+	}
+
+	private Key extractSubmodelKeyFromReference(Reference submodelReference) {
+		return submodelReference.getKeys()
+				.get(0);
+	}
+
+}

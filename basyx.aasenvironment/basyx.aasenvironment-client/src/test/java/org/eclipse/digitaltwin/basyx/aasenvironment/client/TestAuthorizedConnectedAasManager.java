@@ -34,8 +34,6 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.EndpointRes
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.Resolver;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.authorization.AuthorizedAasDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.authorization.AuthorizedSubmodelDescriptorResolver;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.AasRegistryEndpointURIParser;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.parsers.SubmodelRegistryEndpointURIParser;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
@@ -43,16 +41,19 @@ import org.eclipse.digitaltwin.basyx.aasregistry.main.client.AuthorizedConnected
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.AuthorizedConnectedAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository;
+import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
 import org.eclipse.digitaltwin.basyx.aasservice.client.TestAuthorizedConnectedAasService;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialGrant;
+import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.AuthorizedConnectedSubmodelRegistry;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.AuthorizedConnectedSubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 import org.junit.BeforeClass;
 import org.springframework.boot.SpringApplication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -89,7 +90,10 @@ public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
 	
 	@Override
 	protected ConnectedAasManager getConnectedAasManager() {
-		Resolver resolver = new Resolver(new AuthorizedAasDescriptorResolver(new EndpointResolver<>(new AasRegistryEndpointURIParser()), TOKEN_MANAGER), new AuthorizedSubmodelDescriptorResolver(new EndpointResolver<>(new SubmodelRegistryEndpointURIParser()), TOKEN_MANAGER));
+		DescriptorResolver<AssetAdministrationShellDescriptor, ConnectedAasService> aasDescriptorResolver = new AuthorizedAasDescriptorResolver(new EndpointResolver(), TOKEN_MANAGER);
+		DescriptorResolver<SubmodelDescriptor, ConnectedSubmodelService> smDescriptorResolver = new AuthorizedSubmodelDescriptorResolver(new EndpointResolver(), TOKEN_MANAGER);
+		
+		Resolver resolver = new Resolver(aasDescriptorResolver, smDescriptorResolver);
 		
 		aasManager = new AuthorizedConnectedAasManager(aasRegistryApi, connectedAasRepository, AAS_REPOSITORY_BASE_PATH, smRegistryApi, connectedSmRepository, SM_REPOSITORY_BASE_PATH, resolver);
 		
@@ -130,7 +134,7 @@ public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
 	
 	@Override
 	protected Submodel getSubmodelFromManager(String submodelId) {
-		return aasManager.getSubmodel(submodelId);
+		return aasManager.getSubmodel(submodelId).getSubmodel();
 	}
 	
 	@Override
@@ -175,7 +179,7 @@ public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
 	
 	@Override
 	protected AssetAdministrationShell getAasFromManager(String shellId) {
-		return aasManager.getAas(shellId);
+		return aasManager.getAas(shellId).getAAS();
 	}
 	
 	@Override

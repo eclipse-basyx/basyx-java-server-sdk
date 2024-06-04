@@ -16,6 +16,10 @@
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.aasdiscoveryservice-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasdiscoveryservice-backend</artifactId>
+		</dependency> 
 		
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -23,7 +27,10 @@
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
-
+		<dependency>
+		    <groupId>org.springframework.data</groupId>
+		    <artifactId>spring-data-commons</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>

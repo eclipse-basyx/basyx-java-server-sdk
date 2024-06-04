@@ -25,7 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import java.net.URI;
+import java.util.Optional;
+
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
@@ -37,21 +39,45 @@ import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver
  * @author mateusmolina
  *
  */
-public class AasDescriptorResolver implements DescriptorResolver<AssetAdministrationShellDescriptor, AssetAdministrationShell> {
+public class AasDescriptorResolver implements DescriptorResolver<AssetAdministrationShellDescriptor, ConnectedAasService> {
 
-	private final EndpointResolver<Endpoint> endpointResolver;
+	private final EndpointResolver endpointResolver;
 
-	public AasDescriptorResolver(EndpointResolver<Endpoint> endpointResolver) {
+	/**
+	 * Creates an AASDescriptorResolver
+	 * 
+	 * @param endpointResolver
+	 */
+	public AasDescriptorResolver(EndpointResolver endpointResolver) {
 		this.endpointResolver = endpointResolver;
 	}
+	
+	/**
+	 * Resolves an AASDescriptor to a ConnectedAasService
+	 * 
+	 * @param aasDescriptor
+	 * @return
+	 */
+	public ConnectedAasService resolveDescriptor(AssetAdministrationShellDescriptor aasDescriptor) {
+		String endpoint = endpointResolver.resolveFirst(aasDescriptor.getEndpoints(), AasDescriptorResolver::parseEndpoint);
 
-	@Override
-	public AssetAdministrationShell resolveDescriptor(AssetAdministrationShellDescriptor aasDescriptor) {
-		String endpoint = endpointResolver.resolveFirst(aasDescriptor.getEndpoints());
-
-		ConnectedAasService aasService = new ConnectedAasService(endpoint);
-
-		return aasService.getAAS();
+		return new ConnectedAasService(endpoint);
 	}
 
+	public static Optional<URI> parseEndpoint(Endpoint endpoint) {
+		try {
+			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation()
+					.getHref() == null)
+				return Optional.empty();
+
+			String baseHref = endpoint.getProtocolInformation()
+					.getHref();
+			// TODO not working: String queryString = "?" + endpoint.toUrlQueryString();
+			String queryString = "";
+			URI uri = new URI(baseHref + queryString);
+			return Optional.of(uri);
+		} catch (Exception e) {
+			return Optional.empty();
+		}
+	}
 }

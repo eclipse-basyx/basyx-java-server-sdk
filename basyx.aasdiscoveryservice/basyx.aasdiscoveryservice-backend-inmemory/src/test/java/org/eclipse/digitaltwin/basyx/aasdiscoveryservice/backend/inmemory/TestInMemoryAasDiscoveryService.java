@@ -25,6 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
 
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.SimpleAasDiscoveryFactory;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
 
@@ -38,7 +39,7 @@ public class TestInMemoryAasDiscoveryService extends AasDiscoveryServiceSuite {
 
 	@Override
 	protected AasDiscoveryService getAasDiscoveryService() {
-		return new InMemoryAasDiscoveryService();
+		return new SimpleAasDiscoveryFactory(new AasDiscoveryInMemoryBackendProvider()).create();
 	}
 
 }
