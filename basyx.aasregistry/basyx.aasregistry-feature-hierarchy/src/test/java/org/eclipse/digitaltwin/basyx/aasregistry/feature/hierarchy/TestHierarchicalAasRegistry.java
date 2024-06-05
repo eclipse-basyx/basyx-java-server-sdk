@@ -30,6 +30,8 @@ import static org.junit.Assert.assertThrows;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
@@ -38,6 +40,8 @@ import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -115,6 +119,28 @@ public class TestHierarchicalAasRegistry {
 		SubmodelDescriptor expectedDescriptor = descriptorFactory.getSmDescriptor_DelegatedOnly();
 
 		assertEquals(expectedDescriptor, actualDescriptor);
+	}
+
+	@Test
+	public void getAllSubmodelDescriptor_InHierarchal() {
+		CursorResult<List<SubmodelDescriptor>> actualDescriptors = aasRegistryHierarchical.getAllSubmodels(DummyDescriptorFactory.AASDESCRIPTOR_ID_HIERARCHALONLY, new PaginationInfo(1, null));
+
+		SubmodelDescriptor expectedDescriptor = descriptorFactory.getSmDescriptor_HierarchalOnly();
+
+		List<SubmodelDescriptor> expectedDescriptors = Arrays.asList(expectedDescriptor);
+
+		assertEquals(expectedDescriptors, actualDescriptors.getResult());
+	}
+
+	@Test
+	public void getAllSubmodelDescriptor_ThroughDelegated() {
+		CursorResult<List<SubmodelDescriptor>> actualDescriptors = aasRegistryHierarchical.getAllSubmodels(DummyDescriptorFactory.AASDESCRIPTOR_ID_DELEGATEDONLY, new PaginationInfo(1, null));
+
+		SubmodelDescriptor expectedDescriptor = descriptorFactory.getSmDescriptor_DelegatedOnly();
+
+		List<SubmodelDescriptor> expectedDescriptors = Arrays.asList(expectedDescriptor);
+
+		assertEquals(expectedDescriptors, actualDescriptors.getResult());
 	}
 
 	@Test

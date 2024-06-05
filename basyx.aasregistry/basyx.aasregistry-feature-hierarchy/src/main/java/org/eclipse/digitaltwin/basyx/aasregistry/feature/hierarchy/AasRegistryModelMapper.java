@@ -25,14 +25,19 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy;
 
+import java.util.List;
+
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.GetSubmodelDescriptorsResult;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.AasDescriptorNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelNotFoundException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -62,6 +67,12 @@ final class AasRegistryModelMapper {
 
 	static SubmodelDescriptor mapEqModel(org.eclipse.digitaltwin.basyx.aasregistry.client.model.SubmodelDescriptor smRegistryDescriptor) {
 			return objectMapper.convertValue(smRegistryDescriptor, SubmodelDescriptor.class);
+	}
+
+	static CursorResult<List<SubmodelDescriptor>> mapEqModel(GetSubmodelDescriptorsResult descriptorResult) {
+		List<SubmodelDescriptor> submodelDescs = objectMapper.convertValue(descriptorResult.getResult(), new TypeReference<List<SubmodelDescriptor>>() {
+		});
+		return new CursorResult<>(descriptorResult.getPagingMetadata().getCursor(), submodelDescs);
 	}
 
 	static RuntimeException mapApiException(ApiException e, String aasDescriptorId) {

@@ -95,7 +95,15 @@ public class HierarchicalAasRegistryStorage implements AasRegistryStorage {
 
 	@Override
 	public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(String aasDescriptorId, PaginationInfo pRequest) throws AasDescriptorNotFoundException {
-		return decorated.getAllSubmodels(aasDescriptorId, pRequest);
+		try {
+			return decorated.getAllSubmodels(aasDescriptorId, pRequest);
+		} catch (AasDescriptorNotFoundException e) {
+			try {
+				return AasRegistryModelMapper.mapEqModel(getDelegatedRegistryApi(aasDescriptorId).getAllSubmodelDescriptorsThroughSuperpath(aasDescriptorId, pRequest.getLimit(), pRequest.getCursor()));
+			} catch (ApiException e1) {
+				throw AasRegistryModelMapper.mapApiException(e1, aasDescriptorId);
+			}
+		}
 	}
 
 	@Override
