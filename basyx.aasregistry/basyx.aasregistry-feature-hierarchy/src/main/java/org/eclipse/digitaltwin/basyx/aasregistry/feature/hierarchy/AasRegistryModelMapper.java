@@ -36,7 +36,7 @@ import org.springframework.http.HttpStatusCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Handles internal model mapping for {@link HierarchalAasRegistryStorage}
+ * Handles internal model mapping for {@link HierarchicalAasRegistryStorage}
  *
  * @author mateusmolina
  *

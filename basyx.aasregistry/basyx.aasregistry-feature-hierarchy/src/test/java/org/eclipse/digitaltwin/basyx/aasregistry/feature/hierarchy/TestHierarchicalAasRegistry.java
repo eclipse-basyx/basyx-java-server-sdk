@@ -57,13 +57,13 @@ public class TestHierarchicalAasRegistry {
 	private static DummyDescriptorFactory descriptorFactory = new DummyDescriptorFactory(REPO_BASE_URL);
 
 	private static ConfigurableApplicationContext appContext;
-	private static AasRegistryStorage aasRegistryHierarchal;
+	private static AasRegistryStorage aasRegistryHierarchical;
 
 	@BeforeClass
 	public static void setUp() throws FileNotFoundException, IOException, ApiException {
 		appContext = new SpringApplication(DummyAasRegistryComponent.class).run(new String[] {});
 		
-		aasRegistryHierarchal = appContext.getBean(AasRegistryStorage.class);
+		aasRegistryHierarchical = appContext.getBean(AasRegistryStorage.class);
 		
 		cleanUpDelegatedRegistry();
 		setupDelegatedRegistry();
@@ -78,7 +78,7 @@ public class TestHierarchicalAasRegistry {
 
 	@Test
 	public void getAasDescriptor_InHierarchal() {
-		AssetAdministrationShellDescriptor actualDescriptor = aasRegistryHierarchal.getAasDescriptor(DummyDescriptorFactory.AASDESCRIPTOR_ID_HIERARCHALONLY);
+		AssetAdministrationShellDescriptor actualDescriptor = aasRegistryHierarchical.getAasDescriptor(DummyDescriptorFactory.AASDESCRIPTOR_ID_HIERARCHALONLY);
 		
 		AssetAdministrationShellDescriptor expectedDescriptor = descriptorFactory.getAasDescriptor_HierarchalOnly();
 
@@ -87,7 +87,7 @@ public class TestHierarchicalAasRegistry {
 
 	@Test
 	public void getAasDescriptor_ThroughDelegated() {
-		AssetAdministrationShellDescriptor actualDescriptor = aasRegistryHierarchal.getAasDescriptor(DummyDescriptorFactory.AASDESCRIPTOR_ID_DELEGATEDONLY);
+		AssetAdministrationShellDescriptor actualDescriptor = aasRegistryHierarchical.getAasDescriptor(DummyDescriptorFactory.AASDESCRIPTOR_ID_DELEGATEDONLY);
 
 		AssetAdministrationShellDescriptor expectedDescriptor = descriptorFactory.getAasDescriptor_DelegatedOnly();
 
@@ -96,12 +96,12 @@ public class TestHierarchicalAasRegistry {
 
 	@Test
 	public void getNonExistingAasDescriptor() {
-		assertThrows(AasDescriptorNotFoundException.class, () -> aasRegistryHierarchal.getAasDescriptor("nonExistingAasDescriptor"));
+		assertThrows(AasDescriptorNotFoundException.class, () -> aasRegistryHierarchical.getAasDescriptor("nonExistingAasDescriptor"));
 	}
 
 	@Test
 	public void getSubmodelDescriptor_InHierarchal() {
-		SubmodelDescriptor actualDescriptor = aasRegistryHierarchal.getSubmodel(DummyDescriptorFactory.AASDESCRIPTOR_ID_HIERARCHALONLY, DummyDescriptorFactory.SMDESCRIPTOR_ID_HIERARCHALONLY);
+		SubmodelDescriptor actualDescriptor = aasRegistryHierarchical.getSubmodel(DummyDescriptorFactory.AASDESCRIPTOR_ID_HIERARCHALONLY, DummyDescriptorFactory.SMDESCRIPTOR_ID_HIERARCHALONLY);
 
 		SubmodelDescriptor expectedDescriptor = descriptorFactory.getSmDescriptor_HierarchalOnly();
 
@@ -110,7 +110,7 @@ public class TestHierarchicalAasRegistry {
 
 	@Test
 	public void getSubmodelDescriptor_ThroughDelegated() {
-		SubmodelDescriptor actualDescriptor = aasRegistryHierarchal.getSubmodel(DummyDescriptorFactory.AASDESCRIPTOR_ID_DELEGATEDONLY, DummyDescriptorFactory.SMDESCRIPTOR_ID_DELEGATEDONLY);
+		SubmodelDescriptor actualDescriptor = aasRegistryHierarchical.getSubmodel(DummyDescriptorFactory.AASDESCRIPTOR_ID_DELEGATEDONLY, DummyDescriptorFactory.SMDESCRIPTOR_ID_DELEGATEDONLY);
 
 		SubmodelDescriptor expectedDescriptor = descriptorFactory.getSmDescriptor_DelegatedOnly();
 
@@ -119,13 +119,13 @@ public class TestHierarchicalAasRegistry {
 
 	@Test
 	public void getNonExistingSmDescriptor() {
-		assertThrows(SubmodelNotFoundException.class, () -> aasRegistryHierarchal.getSubmodel(DummyDescriptorFactory.AASDESCRIPTOR_ID_HIERARCHALONLY, "nonExistingSubmodel"));
-		assertThrows(SubmodelNotFoundException.class, () -> aasRegistryHierarchal.getSubmodel(DummyDescriptorFactory.AASDESCRIPTOR_ID_DELEGATEDONLY, "nonExistingSubmodel"));
-		assertThrows(AasDescriptorNotFoundException.class, () -> aasRegistryHierarchal.getSubmodel("nonExistingAas", "nonExistingSubmodel"));
+		assertThrows(SubmodelNotFoundException.class, () -> aasRegistryHierarchical.getSubmodel(DummyDescriptorFactory.AASDESCRIPTOR_ID_HIERARCHALONLY, "nonExistingSubmodel"));
+		assertThrows(SubmodelNotFoundException.class, () -> aasRegistryHierarchical.getSubmodel(DummyDescriptorFactory.AASDESCRIPTOR_ID_DELEGATEDONLY, "nonExistingSubmodel"));
+		assertThrows(AasDescriptorNotFoundException.class, () -> aasRegistryHierarchical.getSubmodel("nonExistingAas", "nonExistingSubmodel"));
 	}
 
 	private static void setupHierarchalRegistry() {
-		aasRegistryHierarchal.insertAasDescriptor(descriptorFactory.getAasDescriptor_HierarchalOnly());
+		aasRegistryHierarchical.insertAasDescriptor(descriptorFactory.getAasDescriptor_HierarchalOnly());
 	}
 
 	private static void setupDelegatedRegistry() throws ApiException {

@@ -25,17 +25,24 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.delegation;
 
+import java.util.Optional;
+
 /**
- * Defines a strategy for building the DelegationUrl
+ * DelegationStrategy
  *
  * @author mateusmolina
  *
  */
+@FunctionalInterface
 public interface DelegationStrategy {
 	/**
-	 * Builds the URL for the delegation AAS Registry
-	 * 
-	 * @return URL of the registry, to which the request will be delegated
+	 * Builds the URL for the delegation AAS Registry.
+	 *
+	 * @param aasId
+	 *            The ID of the AAS for which the delegated registry URL is to be
+	 *            built.
+	 * @return An Optional containing the delegated AAS Registry URL if it can be
+	 *         constructed, or an empty Optional otherwise.
 	 */
-	public String buildDelegationUrl();
+	public Optional<String> buildDelegatedRegistryUrl(String aasId);
 }

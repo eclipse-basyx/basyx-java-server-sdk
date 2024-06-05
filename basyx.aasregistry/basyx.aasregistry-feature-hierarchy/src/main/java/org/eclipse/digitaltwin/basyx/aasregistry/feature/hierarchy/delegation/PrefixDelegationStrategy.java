@@ -25,24 +25,60 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.delegation;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Optional;
+
 import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.HierarchicalAasRegistryFeature;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * Generates delegation URL based on value of delegatedUrl property
+ * Generates delegation URL based on value of the prefix attribute. Default
+ * value is 'registry'.
  *
  * @author mateusmolina
  *
  */
 @Component
-public class DirectUrlDelegationStrategy implements DelegationStrategy {
-	@Value("${" + HierarchicalAasRegistryFeature.FEATURENAME + ".delegatedUrl}")
-	private String delegatedUrl;
+public class PrefixDelegationStrategy implements DelegationStrategy {
+	private final String prefix;
 
-	@Override
-	public String buildDelegationUrl() {
-		return delegatedUrl;
+	public PrefixDelegationStrategy(@Value("${" + HierarchicalAasRegistryFeature.FEATURENAME + ".prefix:registry}") String prefix) {
+		this.prefix = prefix;
 	}
 
+	@Override
+	public Optional<String> buildDelegatedRegistryUrl(String aasId) {
+		return Optional.ofNullable(aasId).map(this::extractDelegationUrl);
+	}
+
+	private String extractDelegationUrl(String aasId) {
+		URL url;
+
+		try {
+			url = new URL(aasId);
+		} catch (MalformedURLException e) {
+			return null;
+		}
+
+		String host = url.getHost();
+		int port = url.getPort();
+		String protocol = url.getProtocol();
+
+		StringBuilder registryUrl = new StringBuilder();
+
+		registryUrl.append(protocol).append("://");
+
+		if (prefix != null && !prefix.isBlank())
+			registryUrl.append(prefix).append(".");
+
+		registryUrl.append(host);
+
+		if (port != -1) {
+			registryUrl.append(":").append(port);
+		}
+
+		return registryUrl.toString();
+    }
 }

@@ -45,4 +45,4 @@ basyx:
     feature:
       hierarchy:
         enabled: true
-        delegatedUrl: http://localhost:8050
+        prefix: 

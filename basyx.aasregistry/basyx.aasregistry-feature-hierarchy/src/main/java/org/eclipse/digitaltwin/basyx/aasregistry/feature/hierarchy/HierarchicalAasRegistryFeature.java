@@ -58,7 +58,7 @@ public class HierarchicalAasRegistryFeature implements AasRegistryStorageFeature
 
 	@Override
 	public AasRegistryStorage decorate(AasRegistryStorage storage) {
-		return new HierarchalAasRegistryStorage(storage, delegationStrategy.buildDelegationUrl());
+		return new HierarchicalAasRegistryStorage(storage, delegationStrategy);
 	}
 
 	@Override
