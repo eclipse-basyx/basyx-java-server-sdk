@@ -44,8 +44,8 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
  *
  */
 class DummyDescriptorFactory {
-	static final String AASDESCRIPTOR_ID_HIERARCHALONLY = "AASDESCRIPTOR_ID_HIERARCHALONLY";
-	static final String SMDESCRIPTOR_ID_HIERARCHALONLY = "SMDESCRIPTOR_ID_HIERARCHALONLY";
+	static final String AASDESCRIPTOR_ID_ROOTONLY = "AASDESCRIPTOR_ID_ROOTONLY";
+	static final String SMDESCRIPTOR_ID_ROOTONLY = "SMDESCRIPTOR_ID_ROOTONLY";
 
 	static final String AASDESCRIPTOR_ID_DELEGATEDONLY = "http://localhost:8050/test/aas";
 	static final String SMDESCRIPTOR_ID_DELEGATEDONLY = "SMDESCRIPTOR_ID_DELEGATEDONLY";
@@ -56,12 +56,12 @@ class DummyDescriptorFactory {
 		this.repoBaseUrl = repoBaseUrl;
 	}
 
-	AssetAdministrationShellDescriptor getAasDescriptor_HierarchalOnly() {
-		return createDummyDescriptor(repoBaseUrl, AASDESCRIPTOR_ID_HIERARCHALONLY, buildIdShort(AASDESCRIPTOR_ID_HIERARCHALONLY), getSmDescriptor_HierarchalOnly());
+	AssetAdministrationShellDescriptor getAasDescriptor_RootOnly() {
+		return createDummyDescriptor(repoBaseUrl, AASDESCRIPTOR_ID_ROOTONLY, buildIdShort(AASDESCRIPTOR_ID_ROOTONLY), getSmDescriptor_RootOnly());
 	}
 
-	SubmodelDescriptor getSmDescriptor_HierarchalOnly() {
-		return createDummySubmodelDescriptor(repoBaseUrl, SMDESCRIPTOR_ID_HIERARCHALONLY, buildIdShort(SMDESCRIPTOR_ID_HIERARCHALONLY));
+	SubmodelDescriptor getSmDescriptor_RootOnly() {
+		return createDummySubmodelDescriptor(repoBaseUrl, SMDESCRIPTOR_ID_ROOTONLY, buildIdShort(SMDESCRIPTOR_ID_ROOTONLY));
 	}
 
 	AssetAdministrationShellDescriptor getAasDescriptor_DelegatedOnly() {
