@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.client.internal.authorization;
 import java.io.IOException;
 
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.AccessTokenProvider;
+import org.eclipse.digitaltwin.basyx.core.exceptions.AccessTokenRetrievalException;
 
 import com.nimbusds.oauth2.sdk.AccessTokenResponse;
 import com.nimbusds.oauth2.sdk.token.AccessToken;
@@ -76,14 +77,14 @@ public class TokenManager {
             try {
 				return requestAccessToken(grant.getAccessTokenResponse(tokenEndpoint, refreshToken));
 			} catch (IOException e) {
-				throw new RuntimeException("Error occurred while retrieving access token" + e.getMessage());
+				throw new AccessTokenRetrievalException("Error occurred while retrieving access token" + e.getMessage());
 			}
         }
 
         try {
 			return requestAccessToken(grant.getAccessTokenResponse(tokenEndpoint));
 		} catch (IOException e) {
-			throw new RuntimeException("Error occurred while retrieving access token" + e.getMessage());
+			throw new AccessTokenRetrievalException("Error occurred while retrieving access token" + e.getMessage());
 		}
     }
 	

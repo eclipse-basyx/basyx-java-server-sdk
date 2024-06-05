@@ -32,6 +32,7 @@ import java.util.Collection;
 
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.PasswordCredential;
+import org.eclipse.digitaltwin.basyx.core.exceptions.AccessTokenRetrievalException;
 
 import com.nimbusds.oauth2.sdk.AccessTokenResponse;
 import com.nimbusds.oauth2.sdk.Scope;
@@ -104,11 +105,11 @@ public class PasswordCredentialAccessTokenProvider implements AccessTokenProvide
 		try {
 			response = TokenResponse.parse(request.toHTTPRequest().send());
 		} catch (ParseException | IOException e) {
-			throw new RuntimeException("Error occurred while retrieving access token");
+			throw new AccessTokenRetrievalException("Error occurred while retrieving access token" + e.getMessage());
 		}
 		
 		if (!response.indicatesSuccess())
-			throw new RuntimeException("Error occurred while retrieving access token" + response.toErrorResponse().toString());
+			throw new AccessTokenRetrievalException("Error occurred while retrieving access token" + response.toErrorResponse().toString());
 
 		return response.toSuccessResponse();
 	}
@@ -117,7 +118,7 @@ public class PasswordCredentialAccessTokenProvider implements AccessTokenProvide
 		try {
 			return new URI(tokenEndpoint);
 		} catch (URISyntaxException e) {
-			throw new RuntimeException("Error occurred while retrieving access token" + e.getMessage());
+			throw new RuntimeException(e.getMessage());
 		}
 	}
 
