@@ -33,7 +33,6 @@ import org.apache.kafka.common.TopicPartition;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.BaseIntegrationTest;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.EventQueue;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaHandler;

@@ -36,7 +36,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.DummyAasFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.DummyAuthorizedAasRepositoryComponent;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.TestAuthorizedAasRepository;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceSuite;
 import org.eclipse.digitaltwin.basyx.authorization.AccessTokenProvider;
@@ -47,7 +46,7 @@ import org.eclipse.digitaltwin.basyx.authorization.jwt.PublicKeyUtils;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
-import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialGrant;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
@@ -64,10 +63,13 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 /**
- * @author schnicke, mateusmolina
+ * Tests for authorized ConnectedAasService
+ * 
+ * @author danish
  */
 public class TestAuthorizedConnectedAasService extends AasServiceSuite {
 
+	private static final String AAS_REPO_URL = "http://localhost:8081/shells/";
 	private static ConfigurableApplicationContext appContext;
 	private static final String PROFILE = "authorization";
 	public static String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
@@ -100,7 +102,7 @@ public class TestAuthorizedConnectedAasService extends AasServiceSuite {
 		
 		createDummyShellOnRepo("dummyAasId");
 
-		AasService aasService = new AuthorizedConnectedAasService("http://localhost:8081/shells/" + "dummyAasId", mockTokenManager);
+		AasService aasService = new AuthorizedConnectedAasService(AAS_REPO_URL + "dummyAasId", mockTokenManager);
 
 		ApiException exception = assertThrows(ApiException.class, () -> {
 			aasService.getAAS();
@@ -125,7 +127,7 @@ public class TestAuthorizedConnectedAasService extends AasServiceSuite {
 		AasRepository repo = appContext.getBean(AasRepository.class);
 		repo.createAas(shell);
 		String base64UrlEncodedId = Base64UrlEncodedIdentifier.encodeIdentifier(shell.getId());
-		return new AuthorizedConnectedAasService("http://localhost:8081/shells/" + base64UrlEncodedId, new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialGrant(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom"))));
+		return new AuthorizedConnectedAasService(AAS_REPO_URL + base64UrlEncodedId, new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom"))));
 	}
 	
 	public static void configureSecurityContext(AccessTokenProvider accessTokenProvider) throws FileNotFoundException, IOException {

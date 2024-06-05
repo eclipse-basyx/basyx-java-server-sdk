@@ -34,9 +34,9 @@ import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
 import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver;
 
 /**
- * Resolves an AasDescriptor into an AssetAdministrationShell
+ * Resolves an AasDescriptor into a {@link ConnectedAasService}
  *
- * @author mateusmolina
+ * @author mateusmolina, danish
  *
  */
 public class AasDescriptorResolver implements DescriptorResolver<AssetAdministrationShellDescriptor, ConnectedAasService> {

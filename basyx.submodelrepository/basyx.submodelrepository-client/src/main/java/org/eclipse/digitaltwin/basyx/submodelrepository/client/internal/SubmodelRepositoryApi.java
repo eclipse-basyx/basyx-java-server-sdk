@@ -67,10 +67,20 @@ public class SubmodelRepositoryApi {
 	public SubmodelRepositoryApi() {
 		this(new ApiClient());
 	}
+	
+	public SubmodelRepositoryApi(HttpRequest.Builder httpRequestBuilder) {
+		this();
+		this.httpRequestBuilder = httpRequestBuilder;
+	}
 
 	public SubmodelRepositoryApi(ObjectMapper mapper, String baseUri) {
 		this(new ApiClient(HttpClient.newBuilder(), mapper, baseUri));
 		this.httpRequestBuilder = HttpRequest.newBuilder();
+	}
+	
+	public SubmodelRepositoryApi(ObjectMapper mapper, String baseUri, HttpRequest.Builder httpRequestBuilder) {
+		this(mapper, baseUri);
+		this.httpRequestBuilder = httpRequestBuilder;
 	}
 
 	public SubmodelRepositoryApi(String baseUri) {
@@ -79,7 +89,7 @@ public class SubmodelRepositoryApi {
 	}
 	
 	public SubmodelRepositoryApi(String baseUri, HttpRequest.Builder httpRequestBuilder) {
-		this(new ApiClient(HttpClient.newBuilder(), new JsonMapperFactory().create(new SimpleAbstractTypeResolverFactory().create()), baseUri));
+		this(baseUri);
 		this.httpRequestBuilder = httpRequestBuilder;
 	}
 

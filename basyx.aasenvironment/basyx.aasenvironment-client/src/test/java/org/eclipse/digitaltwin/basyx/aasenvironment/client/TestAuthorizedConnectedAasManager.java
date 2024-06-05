@@ -45,7 +45,7 @@ import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
 import org.eclipse.digitaltwin.basyx.aasservice.client.TestAuthorizedConnectedAasService;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
-import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialGrant;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.AuthorizedConnectedSubmodelRegistry;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
@@ -59,16 +59,16 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
- * Test for {@link ConnectedAasManager}
+ * Test for {@link AuthorizedConnectedAasManager}
  * 
- * @author mateusmolina
+ * @author danish
  *
  */
 public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
 	
 	private static final String PROFILE = "authorization";
 	
-	private final static TokenManager TOKEN_MANAGER = new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialGrant(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom")));
+	private final static TokenManager TOKEN_MANAGER = new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom")));
 	
 	private static AuthorizedConnectedAasRepository connectedAasRepository;
 	private static AuthorizedConnectedSubmodelRepository connectedSmRepository;

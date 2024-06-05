@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.submodelservice.client;
 
 import java.io.IOException;
@@ -33,7 +32,8 @@ import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.internal.SubmodelServiceApi;
 
 /**
- * Provides access to an Authorized Aas Repository on a remote server
+ * Provides access to an authorized Submodel Service on a remote server - regardless if it
+ * is hosted on a Submodel Repository or standalone
  * 
  * @author danish
  */
@@ -42,7 +42,8 @@ public class AuthorizedConnectedSubmodelService extends ConnectedSubmodelService
 	/**
 	 * 
 	 * @param repoUrl
-	 *            the Url of the AAS Repository without the "/shells" part
+	 * 				the Url of the Submodel Repository without the "/submodels" part
+	 * @param tokenManager
 	 */
 	public AuthorizedConnectedSubmodelService(String repoUrl, TokenManager tokenManager) {
 		super(new SubmodelServiceApi(repoUrl, getRequestBuilder(tokenManager)));

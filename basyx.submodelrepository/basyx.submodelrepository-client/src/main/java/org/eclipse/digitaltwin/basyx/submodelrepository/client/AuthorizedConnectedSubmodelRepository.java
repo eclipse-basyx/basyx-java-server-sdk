@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.submodelrepository.client;
 
 import java.io.IOException;
@@ -36,7 +35,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.client.AuthorizedConnectedS
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 
 /**
- * Provides access to an Authorized Aas Repository on a remote server
+ * Provides access to an Authorized Submodel Repository on a remote server
  * 
  * @author danish
  */
@@ -64,7 +63,6 @@ public class AuthorizedConnectedSubmodelRepository extends ConnectedSubmodelRepo
 			return HttpRequest.newBuilder()
 			        .header("Authorization", "Bearer " + tokenManager.getAccessToken());
 		} catch (IOException e) {
-			e.printStackTrace();
 			throw new RuntimeException("Unable to request access token");
 		}
 	}

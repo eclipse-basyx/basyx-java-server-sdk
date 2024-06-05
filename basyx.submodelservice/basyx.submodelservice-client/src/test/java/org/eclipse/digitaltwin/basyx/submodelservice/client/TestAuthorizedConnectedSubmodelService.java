@@ -41,7 +41,7 @@ import org.eclipse.digitaltwin.basyx.authorization.jwt.PublicKeyUtils;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
-import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialGrant;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
@@ -63,10 +63,13 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 /**
- * @author schnicke, mateusmolina
+ * Tests the authorized Connected Submodel Service
+ * 
+ * @author danish
  */
 public class TestAuthorizedConnectedSubmodelService extends SubmodelServiceSuite {
 
+	private static final String SUBMODEL_REPO_URL = "http://localhost:8081/submodels/";
 	private static ConfigurableApplicationContext appContext;
 	private static final String PROFILE = "authorization";
 	public static String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
@@ -99,7 +102,7 @@ public class TestAuthorizedConnectedSubmodelService extends SubmodelServiceSuite
 		
 		createDummyShellOnRepo("dummySubmodelId");
 
-		SubmodelService submodelService = new AuthorizedConnectedSubmodelService("http://localhost:8081/submodels/" + "dummySubmodelId", mockTokenManager);
+		SubmodelService submodelService = new AuthorizedConnectedSubmodelService(SUBMODEL_REPO_URL + "dummySubmodelId", mockTokenManager);
 
 		ApiException exception = assertThrows(ApiException.class, () -> {
 			submodelService.getSubmodel();
@@ -124,7 +127,7 @@ public class TestAuthorizedConnectedSubmodelService extends SubmodelServiceSuite
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
 		repo.createSubmodel(submodel);
 		String base64UrlEncodedId = Base64UrlEncodedIdentifier.encodeIdentifier(submodel.getId());
-		return new AuthorizedConnectedSubmodelService("http://localhost:8081/submodels/" + base64UrlEncodedId, new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialGrant(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom"))));
+		return new AuthorizedConnectedSubmodelService(SUBMODEL_REPO_URL + base64UrlEncodedId, new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom"))));
 	}
 
 	@Override

@@ -38,7 +38,7 @@ import org.eclipse.digitaltwin.basyx.aasservice.client.TestAuthorizedConnectedAa
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
-import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialGrant;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -102,6 +102,6 @@ public class TestAuthorizedConnectedAasRepository extends AasRepositorySuite {
 
 	@Override
 	protected AasRepository getAasRepository() {
-		return new AuthorizedConnectedAasRepository("http://localhost:8081", new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialGrant(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom"))));
+		return new AuthorizedConnectedAasRepository("http://localhost:8081", new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom"))));
 	}
 }

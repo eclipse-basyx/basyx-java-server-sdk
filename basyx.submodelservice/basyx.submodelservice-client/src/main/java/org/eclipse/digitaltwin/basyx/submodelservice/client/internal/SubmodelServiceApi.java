@@ -79,22 +79,32 @@ public class SubmodelServiceApi {
   public SubmodelServiceApi() {
     this(new ApiClient());
     this.httpRequestBuilder = HttpRequest.newBuilder();
-}
+  }
+  
+  public SubmodelServiceApi(HttpRequest.Builder httpRequestBuilder) {
+		this();
+		this.httpRequestBuilder = httpRequestBuilder;
+  }
 
   public SubmodelServiceApi(ObjectMapper mapper, String baseUri) {
     this(new ApiClient(HttpClient.newBuilder(), mapper, baseUri));
     this.httpRequestBuilder = HttpRequest.newBuilder();
-}
+  }
+  
+  public SubmodelServiceApi(ObjectMapper mapper, String baseUri, HttpRequest.Builder httpRequestBuilder) {
+		this(mapper, baseUri);
+		this.httpRequestBuilder = httpRequestBuilder;
+  }
 
-public SubmodelServiceApi(String baseUri) {
-	this(new ApiClient(HttpClient.newBuilder(), new SubmodelSpecificJsonMapperFactory().create(), baseUri));
-	this.httpRequestBuilder = HttpRequest.newBuilder();
-}
+	public SubmodelServiceApi(String baseUri) {
+		this(new ApiClient(HttpClient.newBuilder(), new SubmodelSpecificJsonMapperFactory().create(), baseUri));
+		this.httpRequestBuilder = HttpRequest.newBuilder();
+	}
 
-public SubmodelServiceApi(String baseUri, HttpRequest.Builder httpRequestBuilder) {
-	this(new ApiClient(HttpClient.newBuilder(), new SubmodelSpecificJsonMapperFactory().create(), baseUri));
-	this.httpRequestBuilder = httpRequestBuilder;
-}
+	public SubmodelServiceApi(String baseUri, HttpRequest.Builder httpRequestBuilder) {
+		this(baseUri);
+		this.httpRequestBuilder = httpRequestBuilder;
+	}
 
 
 

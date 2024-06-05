@@ -34,9 +34,9 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescr
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 
 /**
- * Resolves a SubmodelDescriptor into a Submodel
+ * Resolves a SubmodelDescriptor into a {@link ConnectedSubmodelService}
  *
- * @author mateusmolina
+ * @author mateusmolina, danish
  *
  */
 public class SubmodelDescriptorResolver implements DescriptorResolver<SubmodelDescriptor, ConnectedSubmodelService> {

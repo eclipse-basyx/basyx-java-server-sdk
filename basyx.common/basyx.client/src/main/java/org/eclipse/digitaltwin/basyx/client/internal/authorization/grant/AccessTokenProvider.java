@@ -23,25 +23,32 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasenvironment.client;
+package org.eclipse.digitaltwin.basyx.client.internal.authorization.grant;
 
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.Resolver;
-import org.eclipse.digitaltwin.basyx.aasregistry.main.client.AuthorizedConnectedAasRegistry;
-import org.eclipse.digitaltwin.basyx.aasrepository.client.AuthorizedConnectedAasRepository;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.AuthorizedConnectedSubmodelRegistry;
-import org.eclipse.digitaltwin.basyx.submodelrepository.client.AuthorizedConnectedSubmodelRepository;
+import com.nimbusds.oauth2.sdk.AccessTokenResponse;
 
 /**
- * Authorized client component for executing consolidated Repository and Registry requests
- *
+ * An interface for access token providers with different flows.
+ * 
  * @author danish
- *
  */
-public class AuthorizedConnectedAasManager extends ConnectedAasManager {
-
-	AuthorizedConnectedAasManager(AuthorizedConnectedAasRegistry authorizedAasRegistryApi, AuthorizedConnectedAasRepository authorizedAasRepository, String authorizedAasRepositoryBaseUrl, AuthorizedConnectedSubmodelRegistry authorizedSubmodelRegistryApi, AuthorizedConnectedSubmodelRepository authorizedSubmodelRepository,
-			String authorizedSubmodelBaseRepositoryUrl, Resolver resolver) {
-		super(authorizedAasRegistryApi, authorizedAasRepository, authorizedAasRepositoryBaseUrl, authorizedSubmodelRegistryApi, authorizedSubmodelRepository, authorizedSubmodelBaseRepositoryUrl, resolver);
-	}
+public interface AccessTokenProvider {
 	
+	/**
+	 * Provides an access token response
+	 * 
+	 * @param tokenEndpoint
+	 * @return accessTokenResponse
+	 */
+	AccessTokenResponse getAccessTokenResponse(String tokenEndpoint);
+	
+	/**
+	 * Provides an access token response
+	 * 
+	 * @param tokenEndpoint
+	 * @param refreshToken
+	 * @return accessTokenResponse
+	 */
+	AccessTokenResponse getAccessTokenResponse(String tokenEndpoint, String refreshToken);
+
 }

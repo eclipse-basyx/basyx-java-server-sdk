@@ -66,9 +66,19 @@ public class {{classname}} {
     this.httpRequestBuilder = HttpRequest.newBuilder();
   }
   
+  public {{classname}}(HttpRequest.Builder httpRequestBuilder) {
+    this(new ApiClient());
+    this.httpRequestBuilder = httpRequestBuilder;
+  }
+  
   public {{classname}}(String protocol, String host, int port) {
     this(protocol + "://" + host + ":" + port);
     this.httpRequestBuilder = HttpRequest.newBuilder();
+  }
+  
+  public {{classname}}(String protocol, String host, int port, HttpRequest.Builder httpRequestBuilder) {
+    this(protocol + "://" + host + ":" + port);
+    this.httpRequestBuilder = httpRequestBuilder;
   }
 
   public {{classname}}(String basePath) {

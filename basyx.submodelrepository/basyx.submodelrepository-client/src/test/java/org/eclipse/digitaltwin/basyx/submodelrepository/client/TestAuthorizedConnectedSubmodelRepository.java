@@ -35,7 +35,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
-import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialGrant;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -60,6 +60,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 public class TestAuthorizedConnectedSubmodelRepository extends SubmodelRepositorySuite {
 
+	private static final String SUBMODEL_REPO_URL = "http://localhost:8081";
 	private static ConfigurableApplicationContext appContext;
 	private static final String PROFILE = "authorization";
 
@@ -92,7 +93,7 @@ public class TestAuthorizedConnectedSubmodelRepository extends SubmodelRepositor
 
 		Mockito.when(mockTokenManager.getAccessToken()).thenReturn("mockedAccessToken");
 
-		SubmodelRepository submodelRepository = new AuthorizedConnectedSubmodelRepository("http://localhost:8081", mockTokenManager);
+		SubmodelRepository submodelRepository = new AuthorizedConnectedSubmodelRepository(SUBMODEL_REPO_URL, mockTokenManager);
 
 		Submodel expected = DummySubmodelFactory.createSimpleDataSubmodel();
 
@@ -105,7 +106,7 @@ public class TestAuthorizedConnectedSubmodelRepository extends SubmodelRepositor
 
 	@Override
 	protected ConnectedSubmodelRepository getSubmodelRepository() {
-		return new AuthorizedConnectedSubmodelRepository("http://localhost:8081", new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialGrant(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom"))));
+		return new AuthorizedConnectedSubmodelRepository(SUBMODEL_REPO_URL, new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom"))));
 	}
 	
 	@Override
