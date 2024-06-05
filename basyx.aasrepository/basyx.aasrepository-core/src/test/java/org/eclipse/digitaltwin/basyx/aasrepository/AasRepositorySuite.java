@@ -43,7 +43,6 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Test;
@@ -244,10 +243,5 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 	@Override
 	public AasService getAasService(AssetAdministrationShell shell) {
 		return new AasRepositoryAasServiceWrapper(getAasRepository(), shell);
-	}
-	
-	@Override
-	public FileRepository getFileRepository() {
-		return null;
 	}
 }

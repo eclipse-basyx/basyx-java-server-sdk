@@ -31,6 +31,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.http.DummyAasRepositoryCompon
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceSuite;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.junit.After;
@@ -73,6 +74,6 @@ public class TestConnectedAasService extends AasServiceSuite {
 
 	@Override
 	protected FileRepository getFileRepository() {
-		return null;
+		return new InMemoryFileRepository();
 	}
 }

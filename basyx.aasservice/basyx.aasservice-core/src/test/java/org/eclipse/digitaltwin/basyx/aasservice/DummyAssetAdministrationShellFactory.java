@@ -21,6 +21,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
  *
  */
 public class DummyAssetAdministrationShellFactory {
+	public static final String GLOBAL_ASSET_ID = "GlobalAssetID";
 	public static final String SUBMODEL_ID = "DummySubmodelID";
 
 	public static Reference submodelReference = buildDummyReference();
@@ -28,14 +29,14 @@ public class DummyAssetAdministrationShellFactory {
 	public static AssetAdministrationShell create() {
 		return new DefaultAssetAdministrationShell.Builder().id("arbitrary")
 				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
-						.globalAssetId(SUBMODEL_ID).build())
+						.globalAssetId(GLOBAL_ASSET_ID).build())
 				.build();
 	}
 	
 	public static AssetAdministrationShell createForThumbnail() {
-		return new DefaultAssetAdministrationShell.Builder().id("dummyAasForThumbnail")
+		return new DefaultAssetAdministrationShell.Builder().id("arbitraryAasForThumbnail")
 				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
-						.globalAssetId(SUBMODEL_ID).build())
+						.globalAssetId(GLOBAL_ASSET_ID).build())
 				.build();
 	}
 

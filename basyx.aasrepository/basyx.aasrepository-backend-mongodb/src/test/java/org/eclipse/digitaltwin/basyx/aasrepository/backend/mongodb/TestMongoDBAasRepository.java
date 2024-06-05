@@ -66,11 +66,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 
 	private static GridFsTemplate gridFsTemplate = configureDefaultGridFsTemplate(mongoTemplate);
 
-	private FileRepository fileRepository;
-	
-	public TestMongoDBAasRepository() {
-		fileRepository = new MongoDBFileRepository(gridFsTemplate);
-	}
+	private static FileRepository fileRepository = new MongoDBFileRepository(gridFsTemplate);
 	
 	@Override
 	protected AasRepository getAasRepository() {

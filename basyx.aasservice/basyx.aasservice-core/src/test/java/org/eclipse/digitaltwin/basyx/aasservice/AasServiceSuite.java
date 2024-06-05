@@ -27,6 +27,7 @@
 package org.eclipse.digitaltwin.basyx.aasservice;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.image.BufferedImage;
@@ -79,7 +80,6 @@ public abstract class AasServiceSuite {
 	protected abstract AasService getAasService(AssetAdministrationShell shell);
 	protected abstract FileRepository getFileRepository();
 	
-	private FileRepository fileRepository;
 	private AasService aasServiceWithThumbnail;
 	
 	@Before
@@ -88,11 +88,6 @@ public abstract class AasServiceSuite {
 		aasServiceWithThumbnail = getAasService(expected);
 
 		FileMetadata defaultThumbnail = new FileMetadata("dummyImgA.jpeg", "", createDummyImageIS_A());
-		fileRepository = getFileRepository(); 
-		
-		if (fileRepository == null) {
-			fileRepository = new InMemoryFileRepository();
-		}
 		
 		setAasThumbnail(defaultThumbnail, aasServiceWithThumbnail);
 	}
@@ -183,10 +178,7 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void updateThumbnail() throws FileNotFoundException, IOException {
-		setAasThumbnail(
-			new FileMetadata("dummyImgB.jpeg", "", createDummyImageIS_B()), 
-			aasServiceWithThumbnail
-		);
+		aasServiceWithThumbnail.setThumbnail("dummyImgB.jpeg", "", createDummyImageIS_B());
 
 		InputStream actualThumbnailIs = new FileInputStream(aasServiceWithThumbnail.getThumbnail());
 		InputStream expectedThumbnail = createDummyImageIS_B();
@@ -229,11 +221,7 @@ public abstract class AasServiceSuite {
 	public void deleteThumbnail() throws FileNotFoundException, IOException {
 		aasServiceWithThumbnail.deleteThumbnail();
 		
-		try {
-			aasServiceWithThumbnail.getThumbnail();
-		} catch (FileDoesNotExistException e) {
-			assertTrue("deleteThumbnail - File deleted successfuly", true);
-		}
+		assertThrows(FileDoesNotExistException.class, () -> aasServiceWithThumbnail.getThumbnail());
 	}
 
 	@Test(expected = FileDoesNotExistException.class)
@@ -276,7 +264,7 @@ public abstract class AasServiceSuite {
 	}
 	
 	private void setAasThumbnail(FileMetadata thumbnail, AasService aas) {
-		String thumbnailFilePath = fileRepository.save(thumbnail);
+		String thumbnailFilePath = getFileRepository().save(thumbnail);
 		
 		Resource defaultResource = new DefaultResource.Builder().path(thumbnailFilePath).contentType("").build();
 		AssetInformation defaultAasAssetInformation = aas.getAssetInformation();

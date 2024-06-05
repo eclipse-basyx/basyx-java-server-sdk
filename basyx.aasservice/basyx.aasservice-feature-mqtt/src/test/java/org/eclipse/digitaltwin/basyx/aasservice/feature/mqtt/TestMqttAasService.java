@@ -82,11 +82,7 @@ public class TestMqttAasService extends AasServiceSuite {
 
 	private static ObjectMapper objectMapper;
 	
-	private FileRepository fileRepository;
-	
-	public TestMqttAasService() {
-		fileRepository = new InMemoryFileRepository();
-	}
+	private static FileRepository fileRepository = new InMemoryFileRepository();
 	
 	@BeforeClass
 	public static void setUpClass() throws MqttException, IOException {
@@ -117,7 +113,7 @@ public class TestMqttAasService extends AasServiceSuite {
 	}
 	
 	private static AasServiceFactory createMqttAasServiceFactory(MqttClient client) {
-		AasServiceFactory serviceFactory = new InMemoryAasServiceFactory(new InMemoryFileRepository());
+		AasServiceFactory serviceFactory = new InMemoryAasServiceFactory(fileRepository);
 		MqttAasServiceFeature mqttFeature = new MqttAasServiceFeature(client, aasRepository, objectMapper);
 		
 		return mqttFeature.decorate(serviceFactory);
