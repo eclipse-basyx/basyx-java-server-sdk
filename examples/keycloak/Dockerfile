@@ -1,7 +1,7 @@
 FROM quay.io/keycloak/keycloak:22.0.0
 
 # Make the realm configuration available for import
-COPY BaSyx-realm.json /opt/keycloak_import/
+COPY /realm/BaSyx-realm.json /opt/keycloak_import/
 
 # Import the realm and user
 RUN /opt/keycloak/bin/kc.sh import --file /opt/keycloak_import/BaSyx-realm.json

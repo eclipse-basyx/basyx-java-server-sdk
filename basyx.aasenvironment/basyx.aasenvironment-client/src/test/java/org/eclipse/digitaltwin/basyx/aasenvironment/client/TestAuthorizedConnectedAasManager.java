@@ -67,8 +67,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
 	
 	private static final String PROFILE = "authorization";
+	protected final static String AAS_REGISTRY_BASE_PATH = "http://localhost:8051";
+	protected final static String SM_REGISTRY_BASE_PATH = "http://localhost:8061";
 	
 	private final static TokenManager TOKEN_MANAGER = new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom")));
+	private final static TokenManager TOKEN_MANAGER_REGISTRY = new TokenManager("http://localhost:9097/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom")));
 	
 	private static AuthorizedConnectedAasRepository connectedAasRepository;
 	private static AuthorizedConnectedSubmodelRepository connectedSmRepository;
@@ -103,7 +106,7 @@ public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
 	@Override
 	protected SubmodelRegistryApi getConnectedSubmodelRegistry() {
 		 
-		smRegistryApi = spy(new AuthorizedConnectedSubmodelRegistry(SM_REGISTRY_BASE_PATH,  TOKEN_MANAGER));
+		smRegistryApi = spy(new AuthorizedConnectedSubmodelRegistry(SM_REGISTRY_BASE_PATH,  TOKEN_MANAGER_REGISTRY));
 		
 		return smRegistryApi;
 	}
@@ -111,7 +114,7 @@ public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
 	@Override
 	protected RegistryAndDiscoveryInterfaceApi getConnectedAasRegistry() {
 		
-		aasRegistryApi = spy(new AuthorizedConnectedAasRegistry(AAS_REGISTRY_BASE_PATH, TOKEN_MANAGER));
+		aasRegistryApi = spy(new AuthorizedConnectedAasRegistry(AAS_REGISTRY_BASE_PATH, TOKEN_MANAGER_REGISTRY));
 		
 		return aasRegistryApi;
 	}
@@ -138,8 +141,8 @@ public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
 	}
 	
 	@Override
-	protected AssetAdministrationShellDescriptor getDescriptorFromAasRegistry(String basePath, String shellId) throws ApiException {
-		return new AuthorizedConnectedAasRegistry(basePath, TOKEN_MANAGER).getAssetAdministrationShellDescriptorById(shellId);
+	protected AssetAdministrationShellDescriptor getDescriptorFromAasRegistry(String shellId) throws ApiException {
+		return new AuthorizedConnectedAasRegistry(AAS_REGISTRY_BASE_PATH, TOKEN_MANAGER_REGISTRY).getAssetAdministrationShellDescriptorById(shellId);
 	}
 
 	@Override
@@ -158,8 +161,8 @@ public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
 	}
 	
 	@Override
-	protected SubmodelDescriptor getDescriptorFromSubmodelRegistry(String basePath, String submodelId) throws org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException {
-		return new AuthorizedConnectedSubmodelRegistry(basePath, TOKEN_MANAGER).getSubmodelDescriptorById(submodelId);
+	protected SubmodelDescriptor getDescriptorFromSubmodelRegistry(String submodelId) throws org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException {
+		return new AuthorizedConnectedSubmodelRegistry(SM_REGISTRY_BASE_PATH, TOKEN_MANAGER_REGISTRY).getSubmodelDescriptorById(submodelId);
 	}
 
 	@Override
@@ -185,20 +188,12 @@ public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
 	@Override
 	protected void populateRegistries() {
 		try {
-			TestAuthorizedConnectedAasService.configureSecurityContext(TestAuthorizedConnectedAasService.getTokenProvider());
-			
-			new AuthorizedConnectedAasRegistry(AAS_REGISTRY_BASE_PATH, TOKEN_MANAGER).postAssetAdministrationShellDescriptor(FIXTURE.buildAasPre1Descriptor());
-			
-			SecurityContextHolder.clearContext();
+			new AuthorizedConnectedAasRegistry(AAS_REGISTRY_BASE_PATH, TOKEN_MANAGER_REGISTRY).postAssetAdministrationShellDescriptor(FIXTURE.buildAasPre1Descriptor());
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 		try {
-			TestAuthorizedConnectedAasService.configureSecurityContext(TestAuthorizedConnectedAasService.getTokenProvider());
-			
-			new AuthorizedConnectedSubmodelRegistry(SM_REGISTRY_BASE_PATH, TOKEN_MANAGER).postSubmodelDescriptor(FIXTURE.buildSmPre1Descriptor());
-			
-			SecurityContextHolder.clearContext();
+			new AuthorizedConnectedSubmodelRegistry(SM_REGISTRY_BASE_PATH, TOKEN_MANAGER_REGISTRY).postSubmodelDescriptor(FIXTURE.buildSmPre1Descriptor());
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -207,20 +202,12 @@ public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
 	@Override
 	protected void cleanUpRegistries() {
 		try {
-			TestAuthorizedConnectedAasService.configureSecurityContext(TestAuthorizedConnectedAasService.getTokenProvider());
-			
-			new AuthorizedConnectedAasRegistry(AAS_REGISTRY_BASE_PATH, TOKEN_MANAGER).deleteAllShellDescriptors();
-			
-			SecurityContextHolder.clearContext();
+			new AuthorizedConnectedAasRegistry(AAS_REGISTRY_BASE_PATH, TOKEN_MANAGER_REGISTRY).deleteAllShellDescriptors();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 		try {
-			TestAuthorizedConnectedAasService.configureSecurityContext(TestAuthorizedConnectedAasService.getTokenProvider());
-			
-			new SubmodelRegistryApi(SM_REGISTRY_BASE_PATH).deleteAllSubmodelDescriptors();
-			
-			SecurityContextHolder.clearContext();
+			new AuthorizedConnectedSubmodelRegistry(SM_REGISTRY_BASE_PATH, TOKEN_MANAGER_REGISTRY).deleteAllSubmodelDescriptors();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}

@@ -133,7 +133,7 @@ public class TestConnectedAasManager {
 				.postAssetAdministrationShellDescriptor(expectedDescriptor);
 
 		assertEquals(expectedAas, getAasFromRepo(TestFixture.AAS_POS1_ID));
-		assertEquals(expectedDescriptor, getDescriptorFromAasRegistry(AAS_REGISTRY_BASE_PATH, TestFixture.AAS_POS1_ID));
+		assertEquals(expectedDescriptor, getDescriptorFromAasRegistry(TestFixture.AAS_POS1_ID));
 	}
 
 	@Test
@@ -153,7 +153,7 @@ public class TestConnectedAasManager {
 				.addSubmodelReference(eq(TestFixture.AAS_PRE1_ID), any());
 
 		assertEquals(expectedSm, getSubmodelFromRepo(TestFixture.SM_POS1_ID));
-		assertEquals(expectedDescriptor, getDescriptorFromSubmodelRegistry(SM_REGISTRY_BASE_PATH, TestFixture.SM_POS1_ID));
+		assertEquals(expectedDescriptor, getDescriptorFromSubmodelRegistry(TestFixture.SM_POS1_ID));
 	}
 
 	@Test
@@ -168,7 +168,7 @@ public class TestConnectedAasManager {
 				.deleteAas(TestFixture.AAS_PRE1_ID);
 
 		assertThrows(ElementDoesNotExistException.class, () -> getAasFromRepo(TestFixture.AAS_PRE1_ID));
-		assertThrows(Exception.class, () -> getDescriptorFromAasRegistry(AAS_REGISTRY_BASE_PATH, TestFixture.AAS_PRE1_ID));
+		assertThrows(Exception.class, () -> getDescriptorFromAasRegistry(TestFixture.AAS_PRE1_ID));
 	}
 
 	@Test
@@ -185,7 +185,7 @@ public class TestConnectedAasManager {
 				.deleteSubmodel(TestFixture.SM_PRE1_ID);
 
 		assertThrows(ElementDoesNotExistException.class, () -> getSubmodelFromRepo(TestFixture.SM_PRE1_ID));
-		assertThrows(Exception.class, () -> getDescriptorFromSubmodelRegistry(SM_REGISTRY_BASE_PATH, TestFixture.SM_PRE1_ID));
+		assertThrows(Exception.class, () -> getDescriptorFromSubmodelRegistry(TestFixture.SM_PRE1_ID));
 	}
 
 	@Test
@@ -212,16 +212,16 @@ public class TestConnectedAasManager {
 		return aasManager.getSubmodel(submodelId).getSubmodel();
 	}
 	
-	protected AssetAdministrationShellDescriptor getDescriptorFromAasRegistry(String basePath, String shellId) throws ApiException {
-		return new RegistryAndDiscoveryInterfaceApi(basePath).getAssetAdministrationShellDescriptorById(shellId);
+	protected AssetAdministrationShellDescriptor getDescriptorFromAasRegistry(String shellId) throws ApiException {
+		return new RegistryAndDiscoveryInterfaceApi(AAS_REGISTRY_BASE_PATH).getAssetAdministrationShellDescriptorById(shellId);
 	}
 
 	protected AssetAdministrationShell getAasFromRepo(String shellId) {
 		return aasRepository.getAas(shellId);
 	}
 	
-	protected SubmodelDescriptor getDescriptorFromSubmodelRegistry(String basePath, String submodelId) throws org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException {
-		return new SubmodelRegistryApi(basePath).getSubmodelDescriptorById(submodelId);
+	protected SubmodelDescriptor getDescriptorFromSubmodelRegistry(String submodelId) throws org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException {
+		return new SubmodelRegistryApi(SM_REGISTRY_BASE_PATH).getSubmodelDescriptorById(submodelId);
 	}
 
 	protected Submodel getSubmodelFromRepo(String submodelId) {
