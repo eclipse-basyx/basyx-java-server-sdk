@@ -14,16 +14,18 @@ To enable the Hierarchical AasRegistry Feature, add the following property to yo
 basyx.aasregistry.feature.hierarchy.enabled=true
 ```
 
-The next step is to set up the desired delegation strategy.
-
 ### Delegation Strategy
 
 Currently, only one delegation strategy is implemented:
 
-#### Direct Url Delegation Strategy
+#### Prefix Delegation Strategy
 
-Delegates requests directly to a URL specified by the `basyx.aasregistry.feature.hierarchy.delegatedUrl` property. For example:
+Delegates requests based on the `aasDescriptorId` value. If the ID is an URL, a prefix (defaut `registry`) is appended to the URL and used as delegation endpoint.  
+
+The prefix can be configured by the property `basyx.aasregistry.feature.hierarchy.prefix`. Please refer to the example below:
 
 ```properties
-basyx.aasregistry.feature.hierarchy.delegatedUrl=http://localhost:8050
+basyx.aasregistry.feature.hierarchy.prefix=registry
 ```
+
+If this property is left with an empty string, no prefix is appended to the URL contained in the `aasDecriptorId`.
