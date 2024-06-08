@@ -40,11 +40,17 @@ import java.util.stream.Collectors;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.NoValidEndpointFoundException;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.AasDescriptorResolver;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.DescriptorResolverManager;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.EndpointResolver;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.SubmodelDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository;
+import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
+import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
@@ -233,7 +239,12 @@ public class TestConnectedAasManager {
 	}
 	
 	protected ConnectedAasManager getConnectedAasManager() {
-		return new ConnectedAasManager(aasRegistryApi, connectedAasRepository, AAS_REPOSITORY_BASE_PATH, smRegistryApi, connectedSmRepository, SM_REPOSITORY_BASE_PATH);
+		DescriptorResolver<AssetAdministrationShellDescriptor, ConnectedAasService> aasDescriptorResolver = new AasDescriptorResolver(new EndpointResolver());
+		DescriptorResolver<SubmodelDescriptor, ConnectedSubmodelService> smDescriptorResolver = new SubmodelDescriptorResolver(new EndpointResolver());
+		
+		DescriptorResolverManager descriptorResolverManager = new DescriptorResolverManager(aasDescriptorResolver, smDescriptorResolver);
+		
+		return new ConnectedAasManager(aasRegistryApi, connectedAasRepository, smRegistryApi, connectedSmRepository, descriptorResolverManager);
 	}
 
 	protected SubmodelRegistryApi getConnectedSubmodelRegistry() {
