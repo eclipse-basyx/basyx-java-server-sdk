@@ -37,6 +37,9 @@ import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
  * @author danish
  */
 public class AuthorizedConnectedAasRegistry extends RegistryAndDiscoveryInterfaceApi {
+	
+	private final TokenManager tokenManager;
+	private final String aasRegistryBasePath;
 
 	/**
 	 * 
@@ -46,6 +49,16 @@ public class AuthorizedConnectedAasRegistry extends RegistryAndDiscoveryInterfac
 	 */
 	public AuthorizedConnectedAasRegistry(String basePath, TokenManager tokenManager) {
 		super(basePath, getRequestBuilder(tokenManager));
+		this.aasRegistryBasePath = basePath;
+		this.tokenManager = tokenManager;
+	}
+	
+	public String getBaseUrl() {
+		return aasRegistryBasePath;
+	}
+	
+	public TokenManager getTokenManager() {
+		return tokenManager;
 	}
 
 	private static HttpRequest.Builder getRequestBuilder(TokenManager tokenManager) {

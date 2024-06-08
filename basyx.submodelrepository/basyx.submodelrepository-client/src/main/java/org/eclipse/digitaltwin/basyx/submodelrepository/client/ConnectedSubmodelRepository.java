@@ -76,6 +76,10 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 		this.submodelRepoUrl = submodelRepoUrl;
 		this.repoApi = submodelRepositoryApi;
 	}
+	
+	public String getBaseUrl() {
+		return submodelRepoUrl;
+	}
 
 	/**
 	 * Retrieves the Submodel with the specific id

@@ -37,9 +37,22 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistr
  * @author danish
  */
 public class AuthorizedConnectedSubmodelRegistry extends SubmodelRegistryApi {
+	
+	private final TokenManager tokenManager;
+	private final String submodelRegistryBasePath;
 
 	public AuthorizedConnectedSubmodelRegistry(String basePath, TokenManager tokenManager) {
 		super(basePath, getRequestBuilder(tokenManager));
+		this.submodelRegistryBasePath = basePath;
+		this.tokenManager = tokenManager;
+	}
+	
+	public String getBaseUrl() {
+		return submodelRegistryBasePath;
+	}
+	
+	public TokenManager getTokenManager() {
+		return tokenManager;
 	}
 
 	private static HttpRequest.Builder getRequestBuilder(TokenManager tokenManager) {

@@ -36,12 +36,12 @@ import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelSer
  * 
  * @author danish
  */
-public class Resolver {
+public class DescriptorResolverManager {
 	
 	private DescriptorResolver<AssetAdministrationShellDescriptor, ConnectedAasService> aasDescriptorResolver;
 	private DescriptorResolver<SubmodelDescriptor, ConnectedSubmodelService> submodelDescriptorResolver;
 	
-	public Resolver(DescriptorResolver<AssetAdministrationShellDescriptor, ConnectedAasService> aasDescriptorResolver, DescriptorResolver<SubmodelDescriptor, ConnectedSubmodelService> submodelDescriptorResolver) {
+	public DescriptorResolverManager(DescriptorResolver<AssetAdministrationShellDescriptor, ConnectedAasService> aasDescriptorResolver, DescriptorResolver<SubmodelDescriptor, ConnectedSubmodelService> submodelDescriptorResolver) {
 		super();
 		this.aasDescriptorResolver = aasDescriptorResolver;
 		this.submodelDescriptorResolver = submodelDescriptorResolver;

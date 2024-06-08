@@ -71,6 +71,10 @@ public class ConnectedAasRepository implements AasRepository {
 		this.aasRepoUrl = repoUrl;
 		this.repoApi = assetAdministrationShellRepositoryApi;
 	}
+	
+	public String getBaseUrl() {
+		return aasRepoUrl;
+	}
 
 	@Override
 	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {

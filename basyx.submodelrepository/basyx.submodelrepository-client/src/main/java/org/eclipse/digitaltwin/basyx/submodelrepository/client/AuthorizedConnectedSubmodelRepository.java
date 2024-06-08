@@ -48,6 +48,10 @@ public class AuthorizedConnectedSubmodelRepository extends ConnectedSubmodelRepo
 		this.tokenManager = tokenManager;
 	}
 	
+	public TokenManager getTokenManager() {
+		return tokenManager;
+	}
+	
 	@Override
 	public ConnectedSubmodelService getConnectedSubmodelService(String submodelId) {
 		try {

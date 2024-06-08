@@ -37,7 +37,10 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.NoValidEndpointFoundException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.RegistryHttpRequestException;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.Resolver;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.AasDescriptorResolver;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.DescriptorResolverManager;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.EndpointResolver;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.SubmodelDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository;
@@ -53,7 +56,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelSer
 /**
  * Client component for executing consolidated Repository and Registry requests
  *
- * @author mateusmolina, jungjan
+ * @author mateusmolina, jungjan, danish
  *
  */
 public class ConnectedAasManager {
@@ -79,34 +82,21 @@ public class ConnectedAasManager {
 	 * @param submodelBaseRepositoryUrl
 	 */
 	public ConnectedAasManager(String aasRegistryBaseUrl, String aasRepositoryBaseUrl, String submodelRegistryBaseUrl, String submodelBaseRepositoryUrl) {
-		this(new RegistryAndDiscoveryInterfaceApi(aasRegistryBaseUrl), new ConnectedAasRepository(aasRepositoryBaseUrl), aasRepositoryBaseUrl, new SubmodelRegistryApi(submodelRegistryBaseUrl),
-				new ConnectedSubmodelRepository(submodelBaseRepositoryUrl), submodelBaseRepositoryUrl);
-	}
-
-	ConnectedAasManager(RegistryAndDiscoveryInterfaceApi aasRegistryApi, ConnectedAasRepository aasRepository, String aasRepositoryBaseUrl, SubmodelRegistryApi smRegistryApi, ConnectedSubmodelRepository smRepository,
-			String submodelBaseRepositoryUrl) {
-		this.aasRepository = aasRepository;
-		this.aasRegistryApi = aasRegistryApi;
-		this.smRepository = smRepository;
-		this.smRegistryApi = smRegistryApi;
-		this.aasDescriptorResolver = ConnectedAasManagerHelper.buildAasDescriptorResolver();
-		this.aasDescriptorFactory = ConnectedAasManagerHelper.buildAasDescriptorFactory(aasRepositoryBaseUrl);
-		this.smDescriptorResolver = ConnectedAasManagerHelper.buildSubmodelDescriptorResolver();
-		this.smDescriptorFactory = ConnectedAasManagerHelper.buildSmDescriptorFactory(submodelBaseRepositoryUrl);
+		this(new RegistryAndDiscoveryInterfaceApi(aasRegistryBaseUrl), new ConnectedAasRepository(aasRepositoryBaseUrl), new SubmodelRegistryApi(submodelRegistryBaseUrl),
+				new ConnectedSubmodelRepository(submodelBaseRepositoryUrl), getResolver());
 	}
 	
-	ConnectedAasManager(RegistryAndDiscoveryInterfaceApi aasRegistryApi, ConnectedAasRepository aasRepository, String aasRepositoryBaseUrl, SubmodelRegistryApi smRegistryApi, ConnectedSubmodelRepository smRepository,
-			String submodelBaseRepositoryUrl, Resolver resolver) {
+	ConnectedAasManager(RegistryAndDiscoveryInterfaceApi aasRegistryApi, ConnectedAasRepository aasRepository, SubmodelRegistryApi smRegistryApi, ConnectedSubmodelRepository smRepository, DescriptorResolverManager resolver) {
 		this.aasRepository = aasRepository;
 		this.aasRegistryApi = aasRegistryApi;
 		this.smRepository = smRepository;
 		this.smRegistryApi = smRegistryApi;
 		this.aasDescriptorResolver = resolver.getAasDescriptorResolver();
-		this.aasDescriptorFactory = ConnectedAasManagerHelper.buildAasDescriptorFactory(aasRepositoryBaseUrl);
+		this.aasDescriptorFactory = ConnectedAasManagerHelper.buildAasDescriptorFactory(aasRepository.getBaseUrl());
 		this.smDescriptorResolver = resolver.getSubmodelDescriptorResolver();
-		this.smDescriptorFactory = ConnectedAasManagerHelper.buildSmDescriptorFactory(submodelBaseRepositoryUrl);
+		this.smDescriptorFactory = ConnectedAasManagerHelper.buildSmDescriptorFactory(smRepository.getBaseUrl());
 	}
-
+	
 	/**
 	 * Retrieves a ConnectedAasService in an AAS registry by its identifier.
 	 *
@@ -114,7 +104,7 @@ public class ConnectedAasManager {
 	 *            The identifier of the AAS to retrieve.
 	 * @return The retrieved ConnectedAasService object.
 	 */
-	public ConnectedAasService getAas(String identifier) throws NoValidEndpointFoundException {
+	public ConnectedAasService getAasService(String identifier) throws NoValidEndpointFoundException {
 		AssetAdministrationShellDescriptor descriptor;
 
 		try {
@@ -133,7 +123,7 @@ public class ConnectedAasManager {
 	 *            The identifier of the submodel to retrieve.
 	 * @return The retrieved ConnectedSubmodelService object.
 	 */
-	public ConnectedSubmodelService getSubmodel(String identifier) {
+	public ConnectedSubmodelService getSubmodelService(String identifier) {
 		SubmodelDescriptor descriptor;
 
 		try {
@@ -153,11 +143,11 @@ public class ConnectedAasManager {
 	 * @return The retrieved Submodel object.
 	 */
 	public List<ConnectedSubmodelService> getAllSubmodels(String shellIdentifier) {
-		AssetAdministrationShell shell = getAas(shellIdentifier).getAAS();
+		AssetAdministrationShell shell = getAasService(shellIdentifier).getAAS();
 		List<Reference> submodelReferences = shell.getSubmodels();
 		return submodelReferences.parallelStream()
 				.map(this::extractSubmodelIdentifierFromReference)
-				.map(this::getSubmodel)
+				.map(this::getSubmodelService)
 				.collect(Collectors.toList());
 	}
 
@@ -258,6 +248,13 @@ public class ConnectedAasManager {
 	private Key extractSubmodelKeyFromReference(Reference submodelReference) {
 		return submodelReference.getKeys()
 				.get(0);
+	}
+	
+	private static DescriptorResolverManager getResolver() {
+		DescriptorResolver<AssetAdministrationShellDescriptor, ConnectedAasService> aasDescriptorResolver = new AasDescriptorResolver(new EndpointResolver());
+		DescriptorResolver<SubmodelDescriptor, ConnectedSubmodelService> smDescriptorResolver = new SubmodelDescriptorResolver(new EndpointResolver());
+		
+		return new DescriptorResolverManager(aasDescriptorResolver, smDescriptorResolver);
 	}
 
 }
