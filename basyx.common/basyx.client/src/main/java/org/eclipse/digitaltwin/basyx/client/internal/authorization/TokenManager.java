@@ -42,24 +42,24 @@ import com.nimbusds.oauth2.sdk.token.RefreshToken;
 public class TokenManager {
 	
 	private String tokenEndpoint;
-	private AccessTokenProvider grant;
+	private AccessTokenProvider accessTokenProvider;
 	private String accessToken;
     private String refreshToken;
     private long accessTokenExpiryTime;
     private long refreshTokenExpiryTime;
 	
-	public TokenManager(String tokenEndpoint, AccessTokenProvider grant) {
+	public TokenManager(String tokenEndpoint, AccessTokenProvider accessTokenProvider) {
 		super();
 		this.tokenEndpoint = tokenEndpoint;
-		this.grant = grant;
+		this.accessTokenProvider = accessTokenProvider;
 	}
 
 	public String getTokenEndpoint() {
 		return tokenEndpoint;
 	}
 
-	public AccessTokenProvider getGrant() {
-		return this.grant;
+	public AccessTokenProvider getAccessTokenProvider() {
+		return this.accessTokenProvider;
 	}
 	
 	/**
@@ -75,14 +75,14 @@ public class TokenManager {
 
         if (refreshToken != null && System.currentTimeMillis() < refreshTokenExpiryTime) {
             try {
-				return requestAccessToken(grant.getAccessTokenResponse(tokenEndpoint, refreshToken));
+				return requestAccessToken(accessTokenProvider.getAccessTokenResponse(tokenEndpoint, refreshToken));
 			} catch (IOException e) {
 				throw new AccessTokenRetrievalException("Error occurred while retrieving access token" + e.getMessage());
 			}
         }
 
         try {
-			return requestAccessToken(grant.getAccessTokenResponse(tokenEndpoint));
+			return requestAccessToken(accessTokenProvider.getAccessTokenResponse(tokenEndpoint));
 		} catch (IOException e) {
 			throw new AccessTokenRetrievalException("Error occurred while retrieving access token" + e.getMessage());
 		}
