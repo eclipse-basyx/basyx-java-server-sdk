@@ -366,19 +366,14 @@ public abstract class SubmodelServiceSuite {
     public void updateNonNestedSME() {
         Submodel technicalSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
         SubmodelService submodelService = getSubmodelService(technicalSubmodel);
-
         Property property = createDummyProperty("test123");
-
         submodelService.createSubmodelElement(property);
-
         String idShortPathRootSME = "test123";
 
         Property expectedUpdatedProperty = SubmodelServiceHelper.createDummyProperty("test123", "arbitraryValue", DataTypeDefXsd.STRING);
-		
         submodelService.updateSubmodelElement(idShortPathRootSME, expectedUpdatedProperty);
 
         Property actualUpdatedProperty = (Property) submodelService.getSubmodelElement(idShortPathRootSME);
-
         assertEquals(expectedUpdatedProperty, actualUpdatedProperty);
     }	
 	
