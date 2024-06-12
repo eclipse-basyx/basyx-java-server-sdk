@@ -34,6 +34,14 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions;
 @SuppressWarnings("serial")
 public class RegistryHttpRequestException extends RuntimeException {
 
+	/**
+	 * Constructs a RegistryHttpRequestExcrption
+	 * 
+	 * @param id
+	 *            The Identifier of the Identifiable
+	 * @param th
+	 *            The original exception
+	 */
 	public RegistryHttpRequestException(String id, Throwable th) {
 		super(getMessage(id), th);
 	}

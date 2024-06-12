@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,36 +23,29 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
-import java.util.List;
-import java.util.Set;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryBackendProvider;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocument;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Component;
 
-public class AasDiscoveryDocument {
-	private String shellIdentifier;
-	private Set<AssetLink> assetLinks;
-	private List<SpecificAssetId> specificAssetIds;
+/**
+ * 
+ * InMemory backend provider for the AAS Discovery
+ * 
+ * @author zielstor, fried
+ */
+@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
+@Component
+public class AasDiscoveryInMemoryBackendProvider implements AasDiscoveryBackendProvider {
 
-	public AasDiscoveryDocument() {
+	private AasDiscoveryInMemoryCrudRepository repository = new AasDiscoveryInMemoryCrudRepository();
+
+	@Override
+	public CrudRepository<AasDiscoveryDocument, String> getCrudRepository() {
+		return repository;
 	}
 
-	public AasDiscoveryDocument(String shellIdentifier, Set<AssetLink> assetLinks, List<SpecificAssetId> specificAssetIds) {
-		this.shellIdentifier = shellIdentifier;
-		this.assetLinks = assetLinks;
-		this.specificAssetIds = specificAssetIds;
-	}
-
-	public String getShellIdentifier() {
-		return shellIdentifier;
-	}
-
-	public Set<AssetLink> getAssetLinks() {
-		return assetLinks;
-	}
-
-	public List<SpecificAssetId> getSpecificAssetIds() {
-		return specificAssetIds;
-	}
 }

@@ -32,8 +32,12 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.SimpleAasDiscoveryFactory;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
+import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
+import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
@@ -53,11 +57,14 @@ public class TestMongoDBAasDiscoveryService extends AasDiscoveryServiceSuite {
 
 	@Override
 	protected AasDiscoveryService getAasDiscoveryService() {
-		MongoTemplate template = createTemplate();
+		MongoTemplate mongoTemplate = createTemplate();
+		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
+		AasDiscoveryMongoDBBackendProvider aasDiscoveryBackendProvider = new AasDiscoveryMongoDBBackendProvider(
+				new BasyxMongoMappingContext(),
+				COLLECTION, mongoTemplate);
+		AasDiscoveryServiceFactory aasDiscoveryFactory = new SimpleAasDiscoveryFactory(aasDiscoveryBackendProvider);
 
-		clearDatabase(template);
-
-		return new MongoDBAasDiscoveryServiceFactory(template, COLLECTION).create();
+		return aasDiscoveryFactory.create();
 	}
 
 	@Test
@@ -66,7 +73,11 @@ public class TestMongoDBAasDiscoveryService extends AasDiscoveryServiceSuite {
 
 		clearDatabase(template);
 
-		AasDiscoveryService service = new MongoDBAasDiscoveryService(template, COLLECTION, CONFIGURED_AAS_DISC_SERV_NAME);
+		AasDiscoveryMongoDBBackendProvider aasDiscoveryBackendProvider = new AasDiscoveryMongoDBBackendProvider(
+				new BasyxMongoMappingContext(), COLLECTION, template);
+		AasDiscoveryServiceFactory aasDiscoveryFactory = new SimpleAasDiscoveryFactory(aasDiscoveryBackendProvider,
+				CONFIGURED_AAS_DISC_SERV_NAME);
+		AasDiscoveryService service = aasDiscoveryFactory.create();
 
 		assertEquals(CONFIGURED_AAS_DISC_SERV_NAME, service.getName());
 	}

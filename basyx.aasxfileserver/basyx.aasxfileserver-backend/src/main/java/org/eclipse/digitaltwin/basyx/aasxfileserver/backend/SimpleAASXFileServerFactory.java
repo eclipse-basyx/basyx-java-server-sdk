@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,45 +22,59 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasxfileserver.backend;
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb;
-
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
 /**
- * {@link AasDiscoveryService} factory returning a MongoDB backend
+ * Simple AAS Discovery factory that creates a {@link CrudAASXFileServer} with a
+ * backend provider and a service factory
  * 
- * @author danish
+ * @author zielstor, fried
+ * 
  */
 @Component
-@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-public class MongoDBAasDiscoveryServiceFactory implements AasDiscoveryServiceFactory {
+@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
+public class SimpleAASXFileServerFactory implements AASXFileServerFactory {
 
-	private MongoTemplate mongoTemplate;
-	private String collectionName;
-	private String aasDiscoveryServiceName;
+	private AASXFileServerBackendProvider aasxFileServerBackendProvider;
 
+	private String aasxFileServerName = null;
+
+	/**
+	 * Constructor
+	 * 
+	 * @param aasxFileServerBackendProvider
+	 *            The backend provider
+	 */
 	@Autowired(required = false)
-	public MongoDBAasDiscoveryServiceFactory(MongoTemplate mongoTemplate, @Value("${basyx.aasdiscoveryservice.mongodb.collectionName:aasdiscovery-service}") String collectionName) {
-		this.mongoTemplate = mongoTemplate;
-		this.collectionName = collectionName;
+	public SimpleAASXFileServerFactory(AASXFileServerBackendProvider aasxFileServerBackendProvider) {
+		this.aasxFileServerBackendProvider = aasxFileServerBackendProvider;
 	}
 
+	/**
+	 * Constructor
+	 * 
+	 * @param aasxFileServerBackendProvider
+	 *            The backend provider
+	 * @param aasRepositoryName
+	 *            The AASX file server name
+	 */
 	@Autowired(required = false)
-	public MongoDBAasDiscoveryServiceFactory(MongoTemplate mongoTemplate, @Value("${basyx.aasdiscoveryservice.mongodb.collectionName:aasdiscovery-service}") String collectionName,
-			@Value("${basyx.aasdiscoveryservice.name:aas-discovery-service}") String aasDiscoveryServiceName) {
-		this(mongoTemplate, collectionName);
-		this.aasDiscoveryServiceName = aasDiscoveryServiceName;
+	public SimpleAASXFileServerFactory(AASXFileServerBackendProvider aasxFileServerBackendProvider,
+			@Value("${basyx.aasxfileserver.name:aasx-fileserver}") String aasRepositoryName) {
+		this(aasxFileServerBackendProvider);
+		this.aasxFileServerName = aasRepositoryName;
 	}
 
 	@Override
-	public AasDiscoveryService create() {
-		return new MongoDBAasDiscoveryService(mongoTemplate, collectionName, aasDiscoveryServiceName);
+	public AASXFileServer create() {
+		return new CrudAASXFileServer(aasxFileServerBackendProvider, aasxFileServerName);
 	}
+
 }

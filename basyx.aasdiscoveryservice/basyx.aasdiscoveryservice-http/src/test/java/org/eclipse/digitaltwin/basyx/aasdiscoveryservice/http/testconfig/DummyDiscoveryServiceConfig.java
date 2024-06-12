@@ -25,8 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.testconfig;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.MongoDBAasDiscoveryService;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.SimpleAasDiscoveryFactory;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.AasDiscoveryMongoDBBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
+import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,7 +51,7 @@ public class DummyDiscoveryServiceConfig {
 	@Bean
 	@ConditionalOnMissingBean
 	public AasDiscoveryService createAasDiscoveryService() {
-		return new MongoDBAasDiscoveryService(createTemplate(), COLLECTION);
+		return new SimpleAasDiscoveryFactory(new AasDiscoveryMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, createTemplate())).create();
 	}
 
 	private MongoTemplate createTemplate() {

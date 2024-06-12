@@ -25,7 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb;
 
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.SimpleAasDiscoveryFactory;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
+import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -47,7 +49,8 @@ public class DummyDiscoveryServiceConfig {
 
 	@Bean
 	public AasDiscoveryService createAasDiscoveryService(MongoTemplate template) {
-		return new MongoDBAasDiscoveryService(template, COLLECTION);
+		return new SimpleAasDiscoveryFactory(
+				new AasDiscoveryMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, template)).create();
 	}
 
 	@Bean
