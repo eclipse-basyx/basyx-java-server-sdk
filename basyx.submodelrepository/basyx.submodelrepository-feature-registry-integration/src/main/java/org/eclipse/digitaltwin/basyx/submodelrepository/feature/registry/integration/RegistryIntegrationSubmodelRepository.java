@@ -124,7 +124,7 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 
 	@Override
 	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
-		decorated.createSubmodelElement(submodelId, submodelElement);
+		decorated.createSubmodelElement(submodelId, idShortPath, submodelElement);
 	}
 	
 	@Override
