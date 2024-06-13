@@ -49,22 +49,16 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
-import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -78,20 +72,8 @@ public abstract class AasServiceSuite {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	
 	protected abstract AasService getAasService(AssetAdministrationShell shell);
-	protected abstract FileRepository getFileRepository();
-	
-	private AasService aasServiceWithThumbnail;
-	
-	@Before
-	public void setUp() throws IOException {
-		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.createForThumbnail();
-		aasServiceWithThumbnail = getAasService(expected);
-
-		FileMetadata defaultThumbnail = new FileMetadata("dummyImgA.jpeg", "", createDummyImageIS_A());
+	protected abstract AasService getAasServiceWithThumbnail() throws IOException;
 		
-		setAasThumbnail(defaultThumbnail, aasServiceWithThumbnail);
-	}
-	
 	@Test
 	public void getAas() {
 		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.create();
@@ -178,6 +160,8 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void updateThumbnail() throws FileNotFoundException, IOException {
+		AasService aasServiceWithThumbnail = getAasServiceWithThumbnail();
+		
 		aasServiceWithThumbnail.setThumbnail("dummyImgB.jpeg", "", createDummyImageIS_B());
 
 		InputStream actualThumbnailIs = new FileInputStream(aasServiceWithThumbnail.getThumbnail());
@@ -202,6 +186,8 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void getThumbnail() throws IOException {
+		AasService aasServiceWithThumbnail = getAasServiceWithThumbnail();
+		
 		InputStream actualThumbnailIs = new FileInputStream(aasServiceWithThumbnail.getThumbnail());;
 
 		InputStream expectedThumbnail = createDummyImageIS_A();
@@ -219,6 +205,8 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void deleteThumbnail() throws FileNotFoundException, IOException {
+		AasService aasServiceWithThumbnail = getAasServiceWithThumbnail();	
+		
 		aasServiceWithThumbnail.deleteThumbnail();
 		
 		assertThrows(FileDoesNotExistException.class, () -> aasServiceWithThumbnail.getThumbnail());
@@ -261,16 +249,6 @@ public abstract class AasServiceSuite {
 			referenceList.add(ref);
 		}
 		return referenceList;
-	}
-	
-	private void setAasThumbnail(FileMetadata thumbnail, AasService aas) {
-		String thumbnailFilePath = getFileRepository().save(thumbnail);
-		
-		Resource defaultResource = new DefaultResource.Builder().path(thumbnailFilePath).contentType("").build();
-		AssetInformation defaultAasAssetInformation = aas.getAssetInformation();
-		defaultAasAssetInformation.setDefaultThumbnail(defaultResource);
-		
-		aas.setAssetInformation(defaultAasAssetInformation);
 	}
 
 	public static InputStream createDummyImageIS_A() throws IOException {

@@ -28,12 +28,21 @@ package org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.AasService;
+import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.junit.Test;
@@ -55,11 +64,25 @@ public class TestInMemoryAasRepository extends AasRepositorySuite {
 	protected AasRepository getAasRepository() {
 		return new SimpleAasRepositoryFactory(backendProvider, new InMemoryAasServiceFactory(fileRepository)).create();
 	}
-	
+
 	@Override
-	public FileRepository getFileRepository() {
-		return fileRepository;
+	protected AasService getAasServiceWithThumbnail() throws IOException {
+		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.createForThumbnail();
+		AasService aasServiceWithThumbnail = getAasService(expected);
+
+		FileMetadata defaultThumbnail = new FileMetadata("dummyImgA.jpeg", "", createDummyImageIS_A());
+		
+		String thumbnailFilePath = fileRepository.save(defaultThumbnail);
+		
+		Resource defaultResource = new DefaultResource.Builder().path(thumbnailFilePath).contentType("").build();
+		AssetInformation defaultAasAssetInformation = aasServiceWithThumbnail.getAssetInformation();
+		defaultAasAssetInformation.setDefaultThumbnail(defaultResource);
+		
+		aasServiceWithThumbnail.setAssetInformation(defaultAasAssetInformation);
+	
+		return aasServiceWithThumbnail;
 	}
+	
 	
 	@Test
 	public void getConfiguredInMemoryAasRepositoryName() {
@@ -67,5 +90,4 @@ public class TestInMemoryAasRepository extends AasRepositorySuite {
 		
 		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
 	}
-
 }
