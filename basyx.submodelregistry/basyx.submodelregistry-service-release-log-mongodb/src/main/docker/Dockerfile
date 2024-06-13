@@ -11,8 +11,6 @@ RUN true
 COPY --from=builder spring-boot-loader/ ./
 COPY --from=builder application/ ./
 ENV SPRING_PROFILES_ACTIVE=logEvents,mongoDbStorage
-ARG PORT=8080
-ENV SERVER_PORT=${PORT}
 ARG CONTEXT_PATH=/
 ENV SERVER_SERVLET_CONTEXT_PATH=${CONTEXT_PATH}
 EXPOSE ${SERVER_PORT}
