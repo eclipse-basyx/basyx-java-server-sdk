@@ -18,6 +18,7 @@
 		<module>basyx.aasenvironment-core</module>
 		<module>basyx.aasenvironment-http</module>
 		<module>basyx.aasenvironment-feature-authorization</module>
+		<module>basyx.aasenvironment-client</module>
 	</modules>
 
 </project>

@@ -95,6 +95,11 @@ public class AasDescriptorFactory {
 		return descriptor;
 	}
 
+	public AssetAdministrationShellDescriptor create(AssetAdministrationShell shell) {
+		this.shell = shell;
+		return create();
+	}
+
 	private void setDescription(List<LangStringTextType> descriptions, AssetAdministrationShellDescriptor descriptor) {
 
 		if (descriptions == null || descriptions.isEmpty())

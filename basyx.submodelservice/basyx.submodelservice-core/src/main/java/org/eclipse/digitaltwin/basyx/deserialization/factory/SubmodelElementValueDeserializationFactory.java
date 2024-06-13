@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.deserialization.factory;
 
 import static org.eclipse.digitaltwin.basyx.deserialization.util.SubmodelElementValueDeserializationUtil.isTypeOfAnnotatedRelationshipElementValue;
+import static org.eclipse.digitaltwin.basyx.deserialization.util.SubmodelElementValueDeserializationUtil.isTypeOfBasicEventValue;
 import static org.eclipse.digitaltwin.basyx.deserialization.util.SubmodelElementValueDeserializationUtil.isTypeOfEntityValue;
 import static org.eclipse.digitaltwin.basyx.deserialization.util.SubmodelElementValueDeserializationUtil.isTypeOfFileBlobValue;
 import static org.eclipse.digitaltwin.basyx.deserialization.util.SubmodelElementValueDeserializationUtil.isTypeOfMultiLanguagePropertyValue;
@@ -38,6 +39,7 @@ import static org.eclipse.digitaltwin.basyx.deserialization.util.SubmodelElement
 
 import org.eclipse.digitaltwin.basyx.deserialization.exception.SubmodelElementValueDeserializationException;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.AnnotatedRelationshipElementValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.BasicEventValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.EntityValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
@@ -86,10 +88,12 @@ public class SubmodelElementValueDeserializationFactory {
 			return mapper.convertValue(node, RelationshipElementValue.class);
 		} else if (isTypeOfAnnotatedRelationshipElementValue(node)) {
 			return mapper.convertValue(node, AnnotatedRelationshipElementValue.class);
-		} else if (isTypeOfSubmodelElementCollectionValue(node)) {
-			return new SubmodelElementCollectionValueDeserializationFactory(mapper, node).create();
 		} else if (isTypeOfSubmodelElementListValue(node)) {
 			return new SubmodelElementListValueDeserializationFactory(mapper, node).create();
+		} else if (isTypeOfSubmodelElementCollectionValue(node)) {
+			return new SubmodelElementCollectionValueDeserializationFactory(mapper, node).create();
+		} else if (isTypeOfBasicEventValue(node)) {
+			return mapper.convertValue(node, BasicEventValue.class);
 		}
 
 		throw new SubmodelElementValueDeserializationException();

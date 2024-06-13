@@ -27,11 +27,12 @@ package org.eclipse.digitaltwin.basyx.aasxfileserver;
 
 import static org.junit.Assert.assertEquals;
 
+import org.eclipse.digitaltwin.basyx.aasxfileserver.backend.SimpleAASXFileServerFactory;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.core.AASXFileServerSuite;
 import org.junit.Test;
 
 /**
- * Tests the {@link InMemoryAASXFileServer}
+ * Tests the {@link AASXFileServerInMemoryBackendProvider}
  * 
  * @author chaithra
  *
@@ -42,12 +43,12 @@ public class TestInMemoryAASXFileServer extends AASXFileServerSuite {
 
 	@Override
 	protected AASXFileServer getAASXFileServer() {
-		return new InMemoryAASXFileServer();
+		return new SimpleAASXFileServerFactory(new AASXFileServerInMemoryBackendProvider()).create();
 	}
 
 	@Test
 	public void getConfiguredInMemoryAASXFileServer() {
-		AASXFileServer server = new InMemoryAASXFileServer(CONFIGURED_AASX_SERVER_NAME);
+		AASXFileServer server =  new SimpleAASXFileServerFactory(new AASXFileServerInMemoryBackendProvider(),CONFIGURED_AASX_SERVER_NAME).create();
 
 		assertEquals(CONFIGURED_AASX_SERVER_NAME, server.getName());
 	}

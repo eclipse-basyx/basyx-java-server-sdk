@@ -1,0 +1,66 @@
+[
+  {
+    "role": "basyx-reader",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": "*"
+    }
+  },
+  {
+    "role": "admin",
+    "action": ["CREATE", "READ", "UPDATE", "DELETE"],
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": "*"
+    }
+  },
+  {
+    "role": "basyx-reader-two",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": ["testCDId1","specificConceptDescriptionId","testCDId2"]
+    }
+  },
+  {
+    "role": "basyx-creator",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": "*"
+    }
+  },
+  {
+    "role": "basyx-updater",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": "*"
+    }
+  },
+  {
+    "role": "basyx-updater-two",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": "specificConceptDescriptionId"
+    }
+  },
+  {
+    "role": "basyx-deleter",
+    "action": "DELETE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": "*"
+    }
+  },
+  {
+    "role": "basyx-deleter-two",
+    "action": "DELETE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": "specificConceptDescriptionId-2"
+    }
+  }
+]

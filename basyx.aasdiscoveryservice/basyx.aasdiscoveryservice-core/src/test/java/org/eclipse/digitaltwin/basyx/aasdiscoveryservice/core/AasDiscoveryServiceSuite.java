@@ -180,12 +180,16 @@ public abstract class AasDiscoveryServiceSuite {
 
 	public static AssetAdministrationShell getSingleDummyShell(String shellId) {
 
-		SpecificAssetId specificAssetId_1 = createDummySpecificAssetId("TestAsset1", "TestAssetValue1");
-		SpecificAssetId specificAssetId_2 = createDummySpecificAssetId("TestAsset2", "TestAssetValue2");
-
-		DefaultAssetInformation assetInformation = new DefaultAssetInformation.Builder().specificAssetIds(Arrays.asList(specificAssetId_1, specificAssetId_2)).build();
+		DefaultAssetInformation assetInformation = new DefaultAssetInformation.Builder().specificAssetIds(buildSpecificAssetIds()).build();
 
 		return new DefaultAssetAdministrationShell.Builder().id(shellId).assetInformation(assetInformation).build();
+	}
+	
+	public static List<SpecificAssetId> buildSpecificAssetIds() {
+		SpecificAssetId specificAssetId_1 = AasDiscoveryServiceSuite.createDummySpecificAssetId("TestAsset1", "TestAssetValue1");
+		SpecificAssetId specificAssetId_2 = AasDiscoveryServiceSuite.createDummySpecificAssetId("TestAsset2", "TestAssetValue2");
+
+		return Arrays.asList(specificAssetId_1, specificAssetId_2);
 	}
 
 	protected static SpecificAssetId createDummySpecificAssetId(String name, String value) {

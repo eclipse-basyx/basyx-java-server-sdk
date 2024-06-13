@@ -20,5 +20,6 @@
 		<module>basyx.aasdiscoveryservice-tck</module>
 		<module>basyx.aasdiscoveryservice.component</module>
 		<module>basyx.aasdiscoveryservice-feature-authorization</module>
-	</modules>
+        <module>basyx.aasdiscoveryservice-backend</module>
+    </modules>
 </project>
