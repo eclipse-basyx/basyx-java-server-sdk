@@ -26,9 +26,6 @@
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
 
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.AasDescriptorResolver;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.EndpointResolver;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.SubmodelDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
@@ -41,7 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Provides builder methods for {@link ConnectedAasManager} dependencies
  *
- * @author mateusmolina
+ * @author mateusmolina, danish
  *
  */
 class ConnectedAasManagerHelper {
@@ -56,14 +53,6 @@ class ConnectedAasManagerHelper {
 		Aas4JHTTPSerializationExtension extension = new Aas4JHTTPSerializationExtension();
 		extension.extend(builder);
 		return builder.build();
-	}
-
-	static AasDescriptorResolver buildAasDescriptorResolver() {
-		return new AasDescriptorResolver(new EndpointResolver());
-	}
-
-	static SubmodelDescriptorResolver buildSubmodelDescriptorResolver() {
-		return new SubmodelDescriptorResolver(new EndpointResolver());
 	}
 
 	static AasDescriptorFactory buildAasDescriptorFactory(String aasRepositoryBaseUrl) {

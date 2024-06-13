@@ -25,6 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
 
+import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver;
 import java.net.URI;
 import java.util.Optional;
 
@@ -33,12 +34,12 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescr
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 
 /**
- * Resolves a SubmodelDescriptor into a Submodel
+ * Resolves a SubmodelDescriptor into a {@link ConnectedSubmodelService}
  *
- * @author mateusmolina
+ * @author mateusmolina, danish
  *
  */
-public class SubmodelDescriptorResolver {
+public class SubmodelDescriptorResolver implements DescriptorResolver<SubmodelDescriptor, ConnectedSubmodelService> {
 
 	private final EndpointResolver endpointResolver;
 
@@ -58,13 +59,13 @@ public class SubmodelDescriptorResolver {
 	 *            the Submodel Descriptor to be resolved
 	 * @return the Connected submodelserver
 	 */
-	public ConnectedSubmodelService resolveSubmodelDescriptor(SubmodelDescriptor smDescriptor) {
+	public ConnectedSubmodelService resolveDescriptor(SubmodelDescriptor smDescriptor) {
 		String endpoint = endpointResolver.resolveFirst(smDescriptor.getEndpoints(), SubmodelDescriptorResolver::parseEndpoint);
 
 		return new ConnectedSubmodelService(endpoint);
 	}
 
-	private static Optional<URI> parseEndpoint(Endpoint endpoint) {
+	public static Optional<URI> parseEndpoint(Endpoint endpoint) {
 		try {
 			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation()
 					.getHref() == null)

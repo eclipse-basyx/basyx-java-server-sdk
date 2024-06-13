@@ -35,6 +35,6 @@ import java.util.Optional;
  *
  */
 @FunctionalInterface
-interface URIParser<T> {
+public interface URIParser<T> {
 	public Optional<URI> parse(T object);
 }

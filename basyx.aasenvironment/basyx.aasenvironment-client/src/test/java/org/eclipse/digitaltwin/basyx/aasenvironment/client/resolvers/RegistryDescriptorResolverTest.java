@@ -77,7 +77,8 @@ public class RegistryDescriptorResolverTest {
 		AasDescriptorResolver resolver = new AasDescriptorResolver(new EndpointResolver());
 		
 		AssetAdministrationShell expectedAas = FIXTURE.buildAasPre1();
-		AssetAdministrationShell actualAas = resolver.resolveAasDescriptor(FIXTURE.buildAasPre1Descriptor()).getAAS();
+
+		AssetAdministrationShell actualAas = resolver.resolveDescriptor(FIXTURE.buildAasPre1Descriptor()).getAAS();
 
 		assertEquals(expectedAas, actualAas);
 	}
@@ -87,7 +88,8 @@ public class RegistryDescriptorResolverTest {
 		SubmodelDescriptorResolver resolver = new SubmodelDescriptorResolver(new EndpointResolver());
 
 		Submodel expectedSm = FIXTURE.buildSmPre1();
-		Submodel actualSm = resolver.resolveSubmodelDescriptor(FIXTURE.buildSmPre1Descriptor()).getSubmodel();
+		
+		Submodel actualSm = resolver.resolveDescriptor(FIXTURE.buildSmPre1Descriptor()).getSubmodel();
 
 		assertEquals(expectedSm, actualSm);
 	}

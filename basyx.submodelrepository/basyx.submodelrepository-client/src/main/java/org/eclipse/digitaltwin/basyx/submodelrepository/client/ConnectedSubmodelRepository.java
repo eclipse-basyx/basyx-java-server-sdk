@@ -71,6 +71,15 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 		this.repoApi = new SubmodelRepositoryApi(submodelRepoUrl);
 		this.submodelRepoUrl = submodelRepoUrl;
 	}
+	
+	public ConnectedSubmodelRepository(String submodelRepoUrl, SubmodelRepositoryApi submodelRepositoryApi) {
+		this.submodelRepoUrl = submodelRepoUrl;
+		this.repoApi = submodelRepositoryApi;
+	}
+	
+	public String getBaseUrl() {
+		return submodelRepoUrl;
+	}
 
 	/**
 	 * Retrieves the Submodel with the specific id
@@ -216,11 +225,11 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 		getConnectedSubmodelService(submodelId).deleteFileValue(idShortPath);
 	}
 
-	private String getSubmodelUrl(String submodelId) {
+	protected String getSubmodelUrl(String submodelId) {
 		return submodelRepoUrl + "/submodels/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
 	}
 	
-	private RuntimeException mapExceptionSubmodelAccess(String submodelId, ApiException e) {
+	protected RuntimeException mapExceptionSubmodelAccess(String submodelId, ApiException e) {
 		if (e.getCode() == HttpStatus.NOT_FOUND.value()) {
 			return new ElementDoesNotExistException(submodelId);
 		} else if (e.getCode() == HttpStatus.CONFLICT.value()) {

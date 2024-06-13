@@ -74,18 +74,37 @@ public class SubmodelServiceApi {
   private final Duration memberVarReadTimeout;
   private final Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
 	private final Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
+	private HttpRequest.Builder httpRequestBuilder;
 
   public SubmodelServiceApi() {
     this(new ApiClient());
-}
+    this.httpRequestBuilder = HttpRequest.newBuilder();
+  }
+  
+  public SubmodelServiceApi(HttpRequest.Builder httpRequestBuilder) {
+		this();
+		this.httpRequestBuilder = httpRequestBuilder;
+  }
 
   public SubmodelServiceApi(ObjectMapper mapper, String baseUri) {
     this(new ApiClient(HttpClient.newBuilder(), mapper, baseUri));
-}
+    this.httpRequestBuilder = HttpRequest.newBuilder();
+  }
+  
+  public SubmodelServiceApi(ObjectMapper mapper, String baseUri, HttpRequest.Builder httpRequestBuilder) {
+		this(mapper, baseUri);
+		this.httpRequestBuilder = httpRequestBuilder;
+  }
 
-public SubmodelServiceApi(String baseUri) {
-	this(new ApiClient(HttpClient.newBuilder(), new SubmodelSpecificJsonMapperFactory().create(), baseUri));
-}
+	public SubmodelServiceApi(String baseUri) {
+		this(new ApiClient(HttpClient.newBuilder(), new SubmodelSpecificJsonMapperFactory().create(), baseUri));
+		this.httpRequestBuilder = HttpRequest.newBuilder();
+	}
+
+	public SubmodelServiceApi(String baseUri, HttpRequest.Builder httpRequestBuilder) {
+		this(baseUri);
+		this.httpRequestBuilder = httpRequestBuilder;
+	}
 
 
 
@@ -189,7 +208,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 
 	private HttpRequest.Builder getSubmodelRequestBuilder(String level, String extent) throws ApiException {
 
-		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 		String localVarPath = "";
 
@@ -311,7 +330,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			throw new ApiException(400, "Missing the required parameter 'idShortPath' when calling getSubmodelElementByPath");
 		}
 
-		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 		String localVarPath = "/submodel-elements/{idShortPath}".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
@@ -436,7 +455,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			throw new ApiException(400, "Missing the required parameter 'idShortPath' when calling getSubmodelElementByPathValueOnly");
 		}
 
-		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 		String localVarPath = "/submodel-elements/{idShortPath}/$value".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
@@ -577,7 +596,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			throw new ApiException(400, "Missing the required parameter 'getSubmodelElementsValueResult' when calling patchSubmodelElementByPathValueOnly");
 		}
 
-		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 		String localVarPath = "/submodel-elements/{idShortPath}/$value".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
@@ -688,7 +707,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 	      throw new ApiException(400, "Missing the required parameter 'submodelElement' when calling postSubmodelElement");
 	    }
 
-	    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+	    HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 		String localVarPath = "/submodel-elements";
 
@@ -793,7 +812,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 				throw new ApiException(400, "Missing the required parameter 'submodelElement' when calling postSubmodelElementByPath");
 			}
 
-			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+			HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 			String localVarPath = "/submodel-elements/{idShortPath}".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
@@ -908,7 +927,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 				throw new ApiException(400, "Missing the required parameter 'submodelElement' when calling putSubmodelElementByPath");
 			}
 
-			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+			HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 			String localVarPath = "/submodel-elements/{idShortPath}".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
@@ -1019,7 +1038,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 				throw new ApiException(400, "Missing the required parameter 'idShortPath' when calling deleteSubmodelElementByPath");
 			}
 
-			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+			HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 			String localVarPath = "/submodel-elements/{idShortPath}".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
@@ -1090,7 +1109,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 
 		private HttpRequest.Builder getAllSubmodelElementsRequestBuilder(Integer limit, String cursor, String level, String extent) throws ApiException {
 
-			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+			HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 			String localVarPath = "/submodel-elements";
 
@@ -1179,7 +1198,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			if (inputStream == null)
 				throw new ApiException(400, "Missing the required parameter 'inputStream' when calling putFileByPath");
 
-			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+			HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 			String localVarPath = "/submodel-elements/{idShortPath}/attachment".replace("{idShortPath}", ApiClient.urlEncode(idShortPath));
 
@@ -1288,7 +1307,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 				throw new ApiException(400, "Missing the required parameter 'idShortPath' when calling deleteFileByPath");
 			}
 
-			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+			HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 			String localVarPath = "/submodel-elements/{idShortPath}/attachment".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
@@ -1355,7 +1374,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 				throw new ApiException(400, "Missing the required parameter 'idShortPath' when calling getFileByPath");
 			}
 
-			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+			HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 			String localVarPath = "/submodel-elements/{idShortPath}/attachment".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
@@ -1452,7 +1471,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 				throw new ApiException(400, "Missing the required parameter 'operationRequest' when calling invokeOperation");
 			}
 
-			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+			HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 			String localVarPath = "/submodel-elements/{idShortPath}/invoke".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
