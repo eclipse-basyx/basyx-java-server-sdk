@@ -4,7 +4,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "submodel-registry",
-      "submodelId": "*"
+      "submodelIds": "*"
     }
   },
   {
@@ -12,7 +12,7 @@
     "action": ["CREATE", "READ", "UPDATE", "DELETE"],
     "targetInformation": {
       "@type": "submodel-registry",
-      "submodelId": "*"
+      "submodelIds": "*"
     }
   },
   {
@@ -20,7 +20,7 @@
     "action": "READ",
     "targetInformation": {
       "@type": "submodel-registry",
-      "submodelId": "dummySubmodelId_3"
+      "submodelIds": ["dummySubmodelId_3", "specificSubmodelId-4"]
     }
   },
   {
@@ -28,7 +28,7 @@
     "action": "CREATE",
     "targetInformation": {
       "@type": "submodel-registry",
-      "submodelId": "*"
+      "submodelIds": "*"
     }
   },
   {
@@ -36,7 +36,7 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "submodel-registry",
-      "submodelId": "*"
+      "submodelIds": "*"
     }
   },
   {
@@ -44,7 +44,7 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "submodel-registry",
-      "submodelId": "dummySubmodelId_3"
+      "submodelIds": "dummySubmodelId_3"
     }
   },
   {
@@ -52,7 +52,7 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "submodel-registry",
-      "submodelId": "*"
+      "submodelIds": "*"
     }
   },
   {
@@ -60,7 +60,7 @@
     "action": "UPDATE",
     "targetInformation": {
       "@type": "submodel-registry",
-      "submodelId": "specificSubmodelId-2"
+      "submodelIds": "specificSubmodelId-2"
     }
   },
   {
@@ -68,7 +68,7 @@
     "action": "DELETE",
     "targetInformation": {
       "@type": "submodel-registry",
-      "submodelId": "*"
+      "submodelIds": "*"
     }
   },
   {
@@ -76,7 +76,7 @@
     "action": "DELETE",
     "targetInformation": {
       "@type": "submodel-registry",
-      "submodelId": "specificSubmodelId-2"
+      "submodelIds": "specificSubmodelId-2"
     }
   }
 ]

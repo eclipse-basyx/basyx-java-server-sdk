@@ -29,6 +29,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformationSubtype;
@@ -42,23 +43,23 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformationSubtype
 @TargetInformationSubtype(getValue = "submodel-registry")
 public class SubmodelRegistryTargetInformation implements TargetInformation {
 	
-	private String submodelId;
+	private List<String> submodelIds;
 
 	@JsonCreator
-	public SubmodelRegistryTargetInformation(final @JsonProperty("submodelId") String submodelId) {
-		this.submodelId = submodelId;
+	public SubmodelRegistryTargetInformation(final @JsonProperty("submodelIds") List<String> submodelIds) {
+		this.submodelIds = submodelIds;
 	}
 
 	@Override
 	public Map<String, Object> toMap() {
 		final Map<String, Object> map = new HashMap<>();
-		map.put("submodelId", submodelId);
+		map.put("submodelIds", submodelIds);
 		return map;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(submodelId);
+		return Objects.hash(submodelIds);
 	}
 
 	@Override
@@ -70,16 +71,16 @@ public class SubmodelRegistryTargetInformation implements TargetInformation {
 		if (getClass() != obj.getClass())
 			return false;
 		SubmodelRegistryTargetInformation other = (SubmodelRegistryTargetInformation) obj;
-		return Objects.equals(submodelId, other.submodelId);
+		return Objects.equals(submodelIds, other.submodelIds);
 	}
 
 	@Override
 	public String toString() {
-		return "SubmodelTargetInformation [submodelId=" + submodelId + "]";
+		return "SubmodelTargetInformation [submodelIds=" + submodelIds + "]";
 	}
 	
-	public String getSubmodelId() {
-		return submodelId;
+	public List<String> getSubmodelIds() {
+		return submodelIds;
 	}
 
 }
