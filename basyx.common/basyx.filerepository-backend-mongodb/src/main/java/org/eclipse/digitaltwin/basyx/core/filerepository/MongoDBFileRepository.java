@@ -27,11 +27,7 @@ package org.eclipse.digitaltwin.basyx.core.filerepository;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
-import org.bson.types.ObjectId;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,9 +49,7 @@ import com.mongodb.client.gridfs.model.GridFSFile;
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
 public class MongoDBFileRepository implements FileRepository {
 
-	private static final String MONGO_ID = "_id";
-	private static final String GRIDFS_ID_DELIMITER = "#";
-	private static final String TEMP_DIR_PREFIX = "basyx-temp";
+	private static final String MONGO_FILENAME_FIELD = "filename";
 
 	private GridFsTemplate gridFsTemplate;
 
@@ -74,69 +68,43 @@ public class MongoDBFileRepository implements FileRepository {
 
 	@Override
 	public String save(FileMetadata fileMetadata) throws FileHandlingException {
-		ObjectId id = gridFsTemplate.store(fileMetadata.getFileContent(), fileMetadata.getFileName(), fileMetadata.getContentType());
-
-		String updatedFileName = createFilePath(id.toString(), fileMetadata.getFileName());
-
-		fileMetadata.setFileName(updatedFileName);
-
-		return updatedFileName;
+		gridFsTemplate.store(fileMetadata.getFileContent(), fileMetadata.getFileName(), fileMetadata.getContentType());
+		return fileMetadata.getFileName();
 	}
 
 	@Override
-	public InputStream find(String fileId) throws FileDoesNotExistException {
+	public InputStream find(String fileName) throws FileDoesNotExistException {
 
-		if (!exists(fileId))
+		if (!exists(fileName))
 			throw new FileDoesNotExistException();
 
-		String mongoDBfileId = getFileId(fileId);
-
-		GridFSFile file = getFile(mongoDBfileId);
+		GridFSFile file = getFile(fileName);
 
 		return getGridFsFileAsInputStream(file);
 	}
 
 	@Override
-	public void delete(String fileId) throws FileDoesNotExistException {
+	public void delete(String fileName) throws FileDoesNotExistException {
 
-		if (!exists(fileId))
+		if (!exists(fileName))
 			throw new FileDoesNotExistException();
 
-		String mongoDBfileId = getFileId(fileId);
-
-		gridFsTemplate.delete(new Query(Criteria.where(MONGO_ID).is(mongoDBfileId)));
+		gridFsTemplate.delete(new Query(Criteria.where(MONGO_FILENAME_FIELD).is(fileName)));
 	}
 
 	@Override
-	public boolean exists(String fileId) {
+	public boolean exists(String fileName) {
 
-		String mongoDBfileId = getFileId(fileId);
-
-		if (mongoDBfileId.isBlank())
+		if (fileName.isBlank())
 			return false;
 
-		GridFSFile gridFSFile = getFile(mongoDBfileId);
+		GridFSFile gridFSFile = getFile(fileName);
 
 		return gridFSFile != null;
 	}
 
-	private String getFileId(String value) {
-
-		if (value.isBlank())
-			return "";
-
-		String fileName = Paths.get(value).getFileName().toString();
-
-		try {
-			return fileName.substring(0, fileName.indexOf(GRIDFS_ID_DELIMITER));
-		} catch (IndexOutOfBoundsException e) {
-			return "";
-		}
-
-	}
-
 	private GridFSFile getFile(String mongoDBfileId) {
-		return gridFsTemplate.findOne(new Query(Criteria.where(MONGO_ID).is(mongoDBfileId)));
+		return gridFsTemplate.findOne(new Query(Criteria.where(MONGO_FILENAME_FIELD).is(mongoDBfileId)));
 	}
 
 	private InputStream getGridFsFileAsInputStream(GridFSFile file) {
@@ -145,25 +113,6 @@ public class MongoDBFileRepository implements FileRepository {
 			return gridFsTemplate.getResource(file).getInputStream();
 		} catch (IllegalStateException | IOException e1) {
 			throw new IllegalStateException("Unable to get the file resource as input stream." + e1.getStackTrace());
-		}
-
-	}
-
-	private String createFilePath(String id, String fileName) {
-
-		Path tempDir = createTempDirectory(TEMP_DIR_PREFIX);
-
-		String temporaryDirectoryPath = tempDir.toAbsolutePath().toString();
-
-		return temporaryDirectoryPath + "/" + id + GRIDFS_ID_DELIMITER + fileName;
-	}
-
-	private Path createTempDirectory(String prefix) {
-
-		try {
-			return Files.createTempDirectory(prefix);
-		} catch (IOException e) {
-			throw new FileHandlingException("Exception occurred while creating temporary directory with prefix '" + TEMP_DIR_PREFIX + "'." + e.getMessage());
 		}
 
 	}
