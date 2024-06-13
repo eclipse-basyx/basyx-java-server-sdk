@@ -75,7 +75,7 @@ services:
       - basyx-java-server-sdk
   
   aas-registry-log-mem:
-    image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
+    image: eclipsebasyx/aas-registry-log-mem:$BASYX_VERSION
     container_name: aas-registry-log-mem
     ports:
       - "8050:8080"
@@ -86,7 +86,7 @@ services:
       - basyx-java-server-sdk
   
   sm-registry-log-mem:
-    image: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
+    image: eclipsebasyx/submodel-registry-log-mem:$BASYX_VERSION
     container_name: sm-registry-log-mem
     environment:
       SERVER_SERVLET_CONTEXT_PATH: /
@@ -97,7 +97,7 @@ services:
       - basyx-java-server-sdk
   
   secured-aas-registry-log-mem:
-    image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
+    image: eclipsebasyx/aas-registry-log-mem:$BASYX_VERSION
     container_name: secured-aas-registry-log-mem
     ports:
       - "8051:8080"
@@ -111,13 +111,13 @@ services:
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/BaSyx
       BASYX_FEATURE_AUTHORIZATION_RBAC_FILE: file:/rbac/rbac_rules.json
     volumes:
-      - ./../examples/keycloak/rules/rbac_rules-aas-registry.json:/rbac/rbac_rules.json:ro
+      - ./keycloak/rules/rbac_rules-aas-registry.json:/rbac/rbac_rules.json:ro
     restart: always
     networks:
       - basyx-java-server-sdk
   
   secured-sm-registry-log-mem:
-    image: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
+    image: eclipsebasyx/submodel-registry-log-mem:$BASYX_VERSION
     container_name: secured-sm-registry-log-mem
     environment:
       SERVER_SERVLET_CONTEXT_PATH: /
@@ -129,7 +129,7 @@ services:
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/BaSyx
       BASYX_FEATURE_AUTHORIZATION_RBAC_FILE: file:/rbac/rbac_rules.json
     volumes:
-      - ./../examples/keycloak/rules/rbac_rules-sm-registry.json:/rbac/rbac_rules.json:ro
+      - ./keycloak/rules/rbac_rules-sm-registry.json:/rbac/rbac_rules.json:ro
     ports:
       - "8061:8080"
     restart: always
@@ -138,9 +138,9 @@ services:
 
   keycloak:
       build:
-        context: ./../examples/keycloak
+        context: ./keycloak
       volumes:
-        - ./../examples/keycloak/realm:/opt/jboss/keycloak/imports
+        - ./keycloak/realm:/opt/jboss/keycloak/imports
       ports:
         - 9096:8080
       environment:
@@ -152,21 +152,8 @@ services:
   keycloak-fixed-uri:
     image: eclipsebasyx/keycloak:0.0.1
     build:
-      context: ./../examples/keycloak
-      dockerfile_inline: |
-        # syntax=docker/dockerfile:1
-        FROM maven:3-eclipse-temurin-17-alpine as build
-        WORKDIR /workspace
-        COPY ./initializer/pom.xml /workspace/pom.xml
-        COPY ./initializer/src /workspace/src
-        COPY ./realm/BaSyx-realm.json /workspace/BaSyx-realm.json
-        RUN mvn install
-    
-        FROM keycloak/keycloak:$KEYCLOAK_VERSION
-        COPY --from=build /workspace/target/org.eclipse.digitaltwin.basyx.v3.clients-keycloak-issuer-initializer.jar /opt/keycloak/providers/issuer-initializer.jar
-        COPY --from=build /workspace/BaSyx-realm.json /opt/keycloak/data/import/BaSyx-realm.json
-
-        RUN /opt/keycloak/bin/kc.sh import --file /opt/keycloak/data/import/BaSyx-realm.json
+      context: ./keycloak
+      dockerfile: Dockerfile.keycloak
     container_name: keycloak-fixed-uri
     environment:
       KC_HOSTNAME: localhost
@@ -177,7 +164,7 @@ services:
     ports:
       - 9097:8080
     volumes:
-      - ./../examples/keycloak/realm:/opt/keycloak/data/import:ro
+      - ./keycloak/realm:/opt/keycloak/data/import:ro
     networks:
       - basyx-java-server-sdk
 
