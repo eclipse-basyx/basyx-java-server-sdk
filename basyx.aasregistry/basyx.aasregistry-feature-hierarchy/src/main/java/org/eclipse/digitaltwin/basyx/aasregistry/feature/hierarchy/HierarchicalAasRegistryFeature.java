@@ -30,6 +30,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStor
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorageFeature;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
@@ -43,11 +44,13 @@ import org.springframework.stereotype.Component;
  * @author mateusmolina
  */
 @Component
-@ConditionalOnExpression("${" + HierarchicalAasRegistryFeature.FEATURENAME + ".enabled:false}")
+@ConditionalOnExpression("${" + HierarchicalAasRegistryFeature.ENABLED_PROPERTY_KEY + ":false}")
+@Order(1)
 public class HierarchicalAasRegistryFeature implements AasRegistryStorageFeature {
 	public static final String FEATURENAME = "basyx.aasregistry.feature.hierarchy";
+	public static final String ENABLED_PROPERTY_KEY = FEATURENAME + ".enabled";
 
-	@Value("${" + FEATURENAME + ".enabled:false}")
+	@Value("${" + ENABLED_PROPERTY_KEY + "}")
 	private boolean enabled;
 
 	private DelegationStrategy delegationStrategy;

@@ -42,9 +42,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class PrefixDelegationStrategy implements DelegationStrategy {
+	public static final String PREFIX_PROPERTY_KEY = HierarchicalAasRegistryFeature.FEATURENAME + ".prefix";
 	private final String prefix;
 
-	public PrefixDelegationStrategy(@Value("${" + HierarchicalAasRegistryFeature.FEATURENAME + ".prefix:registry}") String prefix) {
+	public PrefixDelegationStrategy(@Value("${" + PREFIX_PROPERTY_KEY + ":registry}") String prefix) {
 		this.prefix = prefix;
 	}
 
