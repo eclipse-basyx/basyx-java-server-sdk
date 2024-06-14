@@ -10,27 +10,26 @@
 	</parent>
 
 	<artifactId>basyx.aasregistry-feature-hierarchy-example</artifactId>
+	<name>BaSyx AAS Registry Feature Hierarchy Example</name>
+	<description>BaSyx AAS Registry Feature Hierarchy Example</description>
 	
 	<properties>
-	      <start-class>org.eclipse.digitaltwin.basyx.aasregistry.service.OpenApiGeneratorApplication</start-class>
+		<spring-cloud.version>2020.0.4</spring-cloud.version>
+		<start-class> org.eclipse.digitaltwin.basyx.aasregistry.service.OpenApiGeneratorApplication</start-class>
+		<docker.image.name>aas-registry-feature-hierarchy-example</docker.image.name>
 	</properties>
 	
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.aasregistry-service-release-log-mem</artifactId>
-			<version>${project.version}</version>
+			<version>${revision}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasregistry-feature-hierarchy</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<classifier>exec</classifier>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>
