@@ -27,14 +27,13 @@ package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
-import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetKind;
-import org.eclipse.digitaltwin.basyx.aasregistry.model.Endpoint;
-import org.eclipse.digitaltwin.basyx.aasregistry.model.ProtocolInformation;
-import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 
 /**
@@ -43,37 +42,38 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
  * @author mateusmolina
  *
  */
-class DummyDescriptorFactory {
+public class DummyDescriptorFactory {
 	static final String AASDESCRIPTOR_ID_ROOTONLY = "AASDESCRIPTOR_ID_ROOTONLY";
 	static final String SMDESCRIPTOR_ID_ROOTONLY = "SMDESCRIPTOR_ID_ROOTONLY";
 
-	static final String AASDESCRIPTOR_ID_DELEGATEDONLY = "http://localhost:8050/test/aas";
+	static String AASDESCRIPTOR_ID_DELEGATEDONLY;
 	static final String SMDESCRIPTOR_ID_DELEGATEDONLY = "SMDESCRIPTOR_ID_DELEGATEDONLY";
 
-	private final String repoBaseUrl;
+	static String REPO_BASE_URL;
 
-	DummyDescriptorFactory(String repoBaseUrl) {
-		this.repoBaseUrl = repoBaseUrl;
+	public DummyDescriptorFactory(String repoBaseUrl, String delegatedAasId) {
+		AASDESCRIPTOR_ID_DELEGATEDONLY = delegatedAasId;
+		REPO_BASE_URL = repoBaseUrl;
 	}
 
 	AssetAdministrationShellDescriptor getAasDescriptor_RootOnly() {
-		return createDummyDescriptor(repoBaseUrl, AASDESCRIPTOR_ID_ROOTONLY, buildIdShort(AASDESCRIPTOR_ID_ROOTONLY), getSmDescriptor_RootOnly());
+		return createDummyDescriptor(REPO_BASE_URL, AASDESCRIPTOR_ID_ROOTONLY, buildIdShort(AASDESCRIPTOR_ID_ROOTONLY), getSmDescriptor_RootOnly());
 	}
 
 	SubmodelDescriptor getSmDescriptor_RootOnly() {
-		return createDummySubmodelDescriptor(repoBaseUrl, SMDESCRIPTOR_ID_ROOTONLY, buildIdShort(SMDESCRIPTOR_ID_ROOTONLY));
+		return createDummySubmodelDescriptor(REPO_BASE_URL, SMDESCRIPTOR_ID_ROOTONLY, buildIdShort(SMDESCRIPTOR_ID_ROOTONLY));
 	}
 
 	AssetAdministrationShellDescriptor getAasDescriptor_DelegatedOnly() {
-		return createDummyDescriptor(repoBaseUrl, AASDESCRIPTOR_ID_DELEGATEDONLY, buildIdShort(AASDESCRIPTOR_ID_DELEGATEDONLY), getSmDescriptor_DelegatedOnly());
+		return createDummyDescriptor(REPO_BASE_URL, AASDESCRIPTOR_ID_DELEGATEDONLY, buildIdShort(AASDESCRIPTOR_ID_DELEGATEDONLY), getSmDescriptor_DelegatedOnly());
 	}
 
 	SubmodelDescriptor getSmDescriptor_DelegatedOnly() {
-		return createDummySubmodelDescriptor(repoBaseUrl, SMDESCRIPTOR_ID_DELEGATEDONLY, buildIdShort(SMDESCRIPTOR_ID_DELEGATEDONLY));
+		return createDummySubmodelDescriptor(REPO_BASE_URL, SMDESCRIPTOR_ID_DELEGATEDONLY, buildIdShort(SMDESCRIPTOR_ID_DELEGATEDONLY));
 	}
 
 	private static AssetAdministrationShellDescriptor createDummyDescriptor(String baseUrl, String shellId, String shellIdShort, SubmodelDescriptor submodelDescriptor) {
-		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor(shellId);
+		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor().id(shellId);
 		descriptor.setIdShort(shellIdShort);
 		descriptor.setAssetKind(AssetKind.TYPE);
 		descriptor.setAssetType("TestAsset");
@@ -86,9 +86,9 @@ class DummyDescriptorFactory {
 	}
 
 	private static SubmodelDescriptor createDummySubmodelDescriptor(String baseUrl, String submodelId, String submodelIdShort) {
-		SubmodelDescriptor descriptor = new SubmodelDescriptor(submodelId, new ArrayList<>());
+		SubmodelDescriptor descriptor = new SubmodelDescriptor().id(submodelId);
 		descriptor.setIdShort(submodelIdShort);
-		descriptor.setEndpoints(List.of(new Endpoint("AAS-3.0", createSmProtocolInformation(baseUrl, submodelId))));
+		descriptor.setEndpoints(List.of(new Endpoint()._interface("AAS-3.0").protocolInformation(createSmProtocolInformation(baseUrl, submodelId))));
 
 		return descriptor;
 	}
@@ -96,14 +96,14 @@ class DummyDescriptorFactory {
 	private static void setEndpointItem(String baseUrl, String shellId, AssetAdministrationShellDescriptor descriptor) {
 		ProtocolInformation protocolInformation = createProtocolInformation(baseUrl, shellId);
 
-		Endpoint endpoint = new Endpoint("AAS-3.0", protocolInformation);
+		Endpoint endpoint = new Endpoint()._interface("AAS-3.0").protocolInformation(protocolInformation);
 		descriptor.addEndpointsItem(endpoint);
 	}
 
 	private static ProtocolInformation createProtocolInformation(String baseUrl, String shellId) {
 		String href = String.format("%s/%s", baseUrl + "/shells", Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
 
-		ProtocolInformation protocolInformation = new ProtocolInformation(href);
+		ProtocolInformation protocolInformation = new ProtocolInformation().href(href);
 		protocolInformation.endpointProtocol(getProtocol(href));
 
 		return protocolInformation;
@@ -112,7 +112,7 @@ class DummyDescriptorFactory {
 	private static ProtocolInformation createSmProtocolInformation(String baseUrl, String smId) {
 		String href = String.format("%s/%s", baseUrl + "/submodels", Base64UrlEncodedIdentifier.encodeIdentifier(smId));
 
-		ProtocolInformation protocolInformation = new ProtocolInformation(href);
+		ProtocolInformation protocolInformation = new ProtocolInformation().href(href);
 		protocolInformation.endpointProtocol(getProtocol(href));
 
 		return protocolInformation;
