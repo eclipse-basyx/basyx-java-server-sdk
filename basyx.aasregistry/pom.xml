@@ -54,6 +54,8 @@
 		<module>basyx.aasregistry-service-release-kafka-mem</module>
 		<module>basyx.aasregistry-service-release-kafka-mongodb</module>
 		<module>basyx.aasregistry-feature-authorization</module>
+		<module>basyx.aasregistry-feature-hierarchy</module>
+		<module>basyx.aasregistry-feature-hierarchy-example</module>
 
 	</modules>
 
@@ -156,6 +158,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasregistry-feature-authorization</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-feature-hierarchy</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
