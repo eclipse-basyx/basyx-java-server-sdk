@@ -257,6 +257,7 @@
 							<image>
 								<name>
 									${docker.namespace}/${docker.image.name}:${docker.image.tag}</name>
+								<registry>docker.io</registry>
 								<build>
 									<contextDir>${project.basedir}</contextDir>
 									<args>
@@ -285,35 +286,12 @@
 					</configuration>
 					<executions>
 						<execution>
-							<id>build-docker</id>
-							<phase>package</phase>
-							<goals>
-								<goal>build</goal>
-							</goals>
-						</execution>
-						<execution>
 							<id>push-docker</id>
-							<phase>deploy</phase>
+							<phase>package</phase>
 							<goals>
 								<goal>build</goal>
 								<goal>push</goal>
 							</goals>
-							<configuration>
-								<images>
-									<image>
-										<build>
-											<buildx>
-												<platforms>
-													${docker.target.platforms}</platforms>
-												<attestations>
-													<provenance>
-														${docker.provenance}</provenance>
-												</attestations>
-											</buildx>
-										</build>
-									</image>
-								</images>
-							</configuration>
 						</execution>
 					</executions>
 				</plugin>
