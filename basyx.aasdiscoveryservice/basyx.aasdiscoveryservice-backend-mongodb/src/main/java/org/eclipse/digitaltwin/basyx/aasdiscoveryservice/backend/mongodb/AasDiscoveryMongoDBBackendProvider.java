@@ -30,17 +30,23 @@ import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDoc
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
 import org.springframework.data.mongodb.repository.support.MappingMongoEntityInformation;
 import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Component;
 
 /**
  * MongoDB backend provider for the AAS Discovery
  * 
  * @author zielstor, fried
  */
+
+@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
+@Component
 public class AasDiscoveryMongoDBBackendProvider implements AasDiscoveryBackendProvider {
 
 	private BasyxMongoMappingContext mappingContext;

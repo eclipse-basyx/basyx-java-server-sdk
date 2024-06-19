@@ -77,7 +77,7 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 
 	@Override
 	protected ConnectedSubmodelRepository getSubmodelRepository() {
-		return new ConnectedSubmodelRepository("http://localhost:8080");
+		return new ConnectedSubmodelRepository("http://localhost:8081");
 	}
 
 	@Override

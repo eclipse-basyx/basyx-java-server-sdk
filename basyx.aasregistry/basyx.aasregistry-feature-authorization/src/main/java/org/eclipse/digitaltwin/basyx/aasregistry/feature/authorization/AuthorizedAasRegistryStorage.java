@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -62,19 +64,19 @@ public class AuthorizedAasRegistryStorage implements AasRegistryStorage {
 
 	@Override
 	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(PaginationInfo pRequest, DescriptorFilter filter) {
-		assertHasPermission(Action.READ, AasRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD);
+		assertHasPermission(Action.READ, getIdAsList(AasRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD));
 		return decorated.getAllAasDescriptors(pRequest, filter);
 	}
 
 	@Override
 	public AssetAdministrationShellDescriptor getAasDescriptor(String aasDescriptorId) throws AasDescriptorNotFoundException {
-		assertHasPermission(Action.READ, aasDescriptorId);
+		assertHasPermission(Action.READ, getIdAsList(aasDescriptorId));
 		return decorated.getAasDescriptor(aasDescriptorId);
 	}
 
 	@Override
 	public void insertAasDescriptor(AssetAdministrationShellDescriptor descr) throws AasDescriptorAlreadyExistsException {
-		assertHasPermission(Action.CREATE, descr.getId());
+		assertHasPermission(Action.CREATE, getIdAsList(descr.getId()));
 		decorated.insertAasDescriptor(descr);
 	}
 
@@ -83,69 +85,73 @@ public class AuthorizedAasRegistryStorage implements AasRegistryStorage {
 		String newId = descriptor.getId();
 
 		if (!aasDescriptorId.equals(newId)) {
-			assertHasPermission(Action.DELETE, aasDescriptorId);
-			assertHasPermission(Action.CREATE, newId);
+			assertHasPermission(Action.DELETE, getIdAsList(aasDescriptorId));
+			assertHasPermission(Action.CREATE, getIdAsList(newId));
 		} else
-			assertHasPermission(Action.UPDATE, aasDescriptorId);
+			assertHasPermission(Action.UPDATE, getIdAsList(aasDescriptorId));
 
 		decorated.replaceAasDescriptor(aasDescriptorId, descriptor);
 	}
 
 	@Override
 	public void removeAasDescriptor(String aasDescriptorId) throws AasDescriptorNotFoundException {
-		assertHasPermission(Action.DELETE, aasDescriptorId);
+		assertHasPermission(Action.DELETE, getIdAsList(aasDescriptorId));
 		decorated.removeAasDescriptor(aasDescriptorId);
 	}
 
 	@Override
 	public CursorResult<List<SubmodelDescriptor>> getAllSubmodels(String aasDescriptorId, PaginationInfo pRequest) throws AasDescriptorNotFoundException {
-		assertHasPermission(Action.READ, aasDescriptorId);
+		assertHasPermission(Action.READ, getIdAsList(aasDescriptorId));
 		return decorated.getAllSubmodels(aasDescriptorId, pRequest);
 	}
 
 	@Override
 	public SubmodelDescriptor getSubmodel(String aasDescriptorId, String submodelId) throws AasDescriptorNotFoundException, SubmodelNotFoundException {
-		assertHasPermission(Action.READ, aasDescriptorId);
+		assertHasPermission(Action.READ, getIdAsList(aasDescriptorId));
 		return decorated.getSubmodel(aasDescriptorId, submodelId);
 	}
 
 	@Override
 	public void insertSubmodel(String aasDescriptorId, SubmodelDescriptor submodel) throws AasDescriptorNotFoundException, SubmodelAlreadyExistsException {
-		assertHasPermission(Action.UPDATE, aasDescriptorId);		
+		assertHasPermission(Action.UPDATE, getIdAsList(aasDescriptorId));
 		decorated.insertSubmodel(aasDescriptorId, submodel);
 	}
 
 	@Override
 	public void replaceSubmodel(String aasDescriptorId, String submodelId, SubmodelDescriptor submodel) throws AasDescriptorNotFoundException, SubmodelNotFoundException {
-		assertHasPermission(Action.UPDATE, aasDescriptorId);
+		assertHasPermission(Action.UPDATE, getIdAsList(aasDescriptorId));
 		decorated.replaceSubmodel(aasDescriptorId, submodelId, submodel);
 	}
 
 	@Override
 	public void removeSubmodel(String aasDescriptorId, String submodelId) throws AasDescriptorNotFoundException, SubmodelNotFoundException {
-		assertHasPermission(Action.UPDATE, aasDescriptorId);
+		assertHasPermission(Action.UPDATE, getIdAsList(aasDescriptorId));
 		decorated.removeSubmodel(aasDescriptorId, submodelId);
 	}
 
 	@Override
 	public Set<String> clear() {
-		assertHasPermission(Action.DELETE, AasRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD);
+		assertHasPermission(Action.DELETE, getIdAsList(AasRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD));
 		return decorated.clear();
 	}
 
 	@Override
 	public ShellDescriptorSearchResponse searchAasDescriptors(ShellDescriptorSearchRequest request) {
-		assertHasPermission(Action.READ, AasRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD);
+		assertHasPermission(Action.READ, getIdAsList(AasRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD));
 		return decorated.searchAasDescriptors(request);
 	}
 	
-	private void assertHasPermission(Action action, String aasId) {
-		boolean isAuthorized = permissionResolver.hasPermission(action, new AasRegistryTargetInformation(aasId));
+	private void assertHasPermission(Action action, List<String> assIds) {
+		boolean isAuthorized = permissionResolver.hasPermission(action, new AasRegistryTargetInformation(assIds));
 		throwExceptionIfInsufficientPermission(isAuthorized);
 	}
 	
 	private void throwExceptionIfInsufficientPermission(boolean isAuthorized) {
 		if (!isAuthorized)
 			throw new InsufficientPermissionException("Insufficient Permission: The current subject does not have the required permissions for this operation.");
+	}
+
+	private List<String> getIdAsList(String id) {
+		return new ArrayList<>(Arrays.asList(id));
 	}
 }

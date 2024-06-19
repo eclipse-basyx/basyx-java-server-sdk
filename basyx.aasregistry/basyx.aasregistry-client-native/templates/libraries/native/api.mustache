@@ -59,17 +59,36 @@ public class {{classname}} {
   private final Duration memberVarReadTimeout;
   private final {{#fullJavaUtil}}java.util.function.{{/fullJavaUtil}}Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
   private final {{#fullJavaUtil}}java.util.function.{{/fullJavaUtil}}Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
+  private HttpRequest.Builder httpRequestBuilder;
 
   public {{classname}}() {
     this(new ApiClient());
+    this.httpRequestBuilder = HttpRequest.newBuilder();
+  }
+  
+  public {{classname}}(HttpRequest.Builder httpRequestBuilder) {
+    this(new ApiClient());
+    this.httpRequestBuilder = httpRequestBuilder;
   }
   
   public {{classname}}(String protocol, String host, int port) {
     this(protocol + "://" + host + ":" + port);
+    this.httpRequestBuilder = HttpRequest.newBuilder();
+  }
+  
+  public {{classname}}(String protocol, String host, int port, HttpRequest.Builder httpRequestBuilder) {
+    this(protocol + "://" + host + ":" + port);
+    this.httpRequestBuilder = httpRequestBuilder;
   }
 
   public {{classname}}(String basePath) {
      this(withBaseUri(new ApiClient(), basePath));
+     this.httpRequestBuilder = HttpRequest.newBuilder();
+  }
+  
+  public {{classname}}(String basePath, HttpRequest.Builder httpRequestBuilder) {
+     this(withBaseUri(new ApiClient(), basePath));
+     this.httpRequestBuilder = httpRequestBuilder;
   }
 
   private static ApiClient withBaseUri(ApiClient client, String uri) {
@@ -361,7 +380,7 @@ public class {{classname}} {
     {{#hasPathParams}}{{#pathParams}}{{#vendorExtensions.x-utf8-base64-url-encoded-as-string}}String {{{paramName}}}AsBase64EncodedParam = {{{paramName}}} == null ? null : new String(java.util.Base64.getUrlEncoder().encode({{paramName}}.getBytes(java.nio.charset.StandardCharsets.UTF_8)), java.nio.charset.StandardCharsets.UTF_8);
     {{/vendorExtensions.x-utf8-base64-url-encoded-as-string}}{{/pathParams}}{{/hasPathParams}}
 
-    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+    HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
     {{! Switch delimiters for baseName so we can write constants like "{query}" }}
     String localVarPath = "{{{path}}}"{{#pathParams}}

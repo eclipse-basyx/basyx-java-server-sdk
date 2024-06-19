@@ -276,222 +276,222 @@ public class TestAuthorizedAasRegistry {
 	}
 
 	@Test
-	public void getSubmodelDescriptorsWithCorrectRoleAndPermission() throws IOException {
+	public void getAasDescriptorsWithCorrectRoleAndPermission() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_READER_CREDENTIAL);
 
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getSubmodelDescriptorsAccessURL(SPECIFIC_SHELL_ID), accessToken);
+		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getAasDescriptorsAccessURL(SPECIFIC_SHELL_ID), accessToken);
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void getSubmodelDescriptorsWithCorrectRoleAndSpecificAasDescriptorPermission() throws IOException {
+	public void getAasDescriptorsWithCorrectRoleAndSpecificAasDescriptorPermission() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL;
 
 		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
 
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getSubmodelDescriptorsAccessURL(SPECIFIC_SHELL_ID), accessToken);
+		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getAasDescriptorsAccessURL(SPECIFIC_SHELL_ID), accessToken);
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void getSubmodelDescriptorsWithCorrectRoleAndUnauthorizedSpecificAasDescriptor() throws IOException {
+	public void getAasDescriptorsWithCorrectRoleAndUnauthorizedSpecificAasDescriptor() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL;
 
 		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
 
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getSubmodelDescriptorsAccessURL(SPECIFIC_SHELL_ID_2), accessToken);
+		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getAasDescriptorsAccessURL(SPECIFIC_SHELL_ID_2), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void getSubmodelDescriptorsWithInsufficientPermissionRole() throws IOException {
+	public void getAasDescriptorsWithInsufficientPermissionRole() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPDATER_CREDENTIAL;
 
 		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
 
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getSubmodelDescriptorsAccessURL(SPECIFIC_SHELL_ID), accessToken);
+		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getAasDescriptorsAccessURL(SPECIFIC_SHELL_ID), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void getSubmodelDescriptorsWithNoAuthorization() throws IOException {
-		CloseableHttpResponse retrievalResponse = getElementWithNoAuthorization(getSubmodelDescriptorsAccessURL(SPECIFIC_SHELL_ID));
+	public void getAasDescriptorsWithNoAuthorization() throws IOException {
+		CloseableHttpResponse retrievalResponse = getElementWithNoAuthorization(getAasDescriptorsAccessURL(SPECIFIC_SHELL_ID));
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void getSubmodelDescriptorWithCorrectRoleAndPermission() throws IOException {
+	public void getAasDescriptorWithCorrectRoleAndPermission() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_READER_CREDENTIAL);
 
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SHELL_ID, SPECIFIC_SUBMODEL_ID), accessToken);
+		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID, SPECIFIC_SUBMODEL_ID), accessToken);
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void getSubmodelDescriptorWithCorrectRoleAndSpecificAasPermission() throws IOException {
+	public void getAasDescriptorWithCorrectRoleAndSpecificAasPermission() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL;
 
 		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
 
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SHELL_ID, SPECIFIC_SUBMODEL_ID), accessToken);
+		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID, SPECIFIC_SUBMODEL_ID), accessToken);
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void getSubmodelDescriptorWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
+	public void getAasDescriptorWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL;
 
 		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
 
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SHELL_ID_2, SPECIFIC_SUBMODEL_ID), accessToken);
+		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2, SPECIFIC_SUBMODEL_ID), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void getSubmodelDescriptorWithInsufficientPermissionRole() throws IOException {
+	public void getAasDescriptorWithInsufficientPermissionRole() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPDATER_CREDENTIAL;
 
 		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
 
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SHELL_ID, SPECIFIC_SUBMODEL_ID), accessToken);
+		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID, SPECIFIC_SUBMODEL_ID), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void getSubmodelDescriptorWithNoAuthorization() throws IOException {
-		CloseableHttpResponse retrievalResponse = getElementWithNoAuthorization(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SHELL_ID, SPECIFIC_SUBMODEL_ID));
+	public void getAasDescriptorWithNoAuthorization() throws IOException {
+		CloseableHttpResponse retrievalResponse = getElementWithNoAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID, SPECIFIC_SUBMODEL_ID));
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void addSubmodelDescriptorWithCorrectRoleAndPermission() throws IOException {
+	public void addAasDescriptorWithCorrectRoleAndPermission() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_CREDENTIAL);
 
-		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPostRequest(getSubmodelDescriptorsAccessURL(SPECIFIC_SHELL_ID), getJSONStringFromFile("authorization/SingleSubmodelDescriptor.json"), accessToken);
+		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPostRequest(getAasDescriptorsAccessURL(SPECIFIC_SHELL_ID), getJSONStringFromFile("authorization/SingleSubmodelDescriptor.json"), accessToken);
 		assertEquals(HttpStatus.CREATED.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void addSubmodelDescriptorWithCorrectRoleAndSpecificAasPermission() throws IOException {
+	public void addAasDescriptorWithCorrectRoleAndSpecificAasPermission() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_TWO_CREDENTIAL);
 
-		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPostRequest(getSubmodelDescriptorsAccessURL(SPECIFIC_SHELL_ID), getJSONStringFromFile("authorization/SingleSubmodelDescriptor.json"), accessToken);
+		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPostRequest(getAasDescriptorsAccessURL(SPECIFIC_SHELL_ID), getJSONStringFromFile("authorization/SingleSubmodelDescriptor.json"), accessToken);
 		assertEquals(HttpStatus.CREATED.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void addSubmodelDescriptorWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
+	public void addAasDescriptorWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_TWO_CREDENTIAL);
 
-		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPostRequest(getSubmodelDescriptorsAccessURL(SPECIFIC_SHELL_ID_2), getJSONStringFromFile("authorization/SingleSubmodelDescriptor.json"), accessToken);
+		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPostRequest(getAasDescriptorsAccessURL(SPECIFIC_SHELL_ID_2), getJSONStringFromFile("authorization/SingleSubmodelDescriptor.json"), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void addSubmodelDescriptorWithInsufficientPermissionRole() throws IOException {
+	public void addAasDescriptorWithInsufficientPermissionRole() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_READER_CREDENTIAL);
 
-		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPostRequest(getSubmodelDescriptorsAccessURL(SPECIFIC_SHELL_ID), getJSONStringFromFile("authorization/SingleSubmodelDescriptor.json"), accessToken);
+		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPostRequest(getAasDescriptorsAccessURL(SPECIFIC_SHELL_ID), getJSONStringFromFile("authorization/SingleSubmodelDescriptor.json"), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void addSubmodelDescriptorWithNoAuthorization() throws IOException {
-		CloseableHttpResponse retrievalResponse = updateElementWithNoAuthorizationPostRequest(getSubmodelDescriptorsAccessURL(SPECIFIC_SHELL_ID), getJSONStringFromFile("authorization/SingleSubmodelDescriptor.json"));
+	public void addAasDescriptorWithNoAuthorization() throws IOException {
+		CloseableHttpResponse retrievalResponse = updateElementWithNoAuthorizationPostRequest(getAasDescriptorsAccessURL(SPECIFIC_SHELL_ID), getJSONStringFromFile("authorization/SingleSubmodelDescriptor.json"));
 
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void removeSubmodelDescriptorWithCorrectRoleAndPermission() throws IOException {
+	public void removeAasDescriptorWithCorrectRoleAndPermission() throws IOException {
 		createAasDescriptorOnRegistryWithAuthorization(aasRegistryBaseUrl, getJSONStringFromFile(AAS_DESCRIPTOR_SIMPLE_2_JSON), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_ASSET_UPDATER_CREDENTIAL);
 
-		CloseableHttpResponse retrievalResponse = deleteElementWithAuthorization(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"), accessToken);
+		CloseableHttpResponse retrievalResponse = deleteElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"), accessToken);
 		assertEquals(HttpStatus.NO_CONTENT.value(), retrievalResponse.getCode());
 
 		deleteElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
 	@Test
-	public void removeSubmodelDescriptorWithCorrectRoleAndSpecificAasPermission() throws IOException {
+	public void removeAasDescriptorWithCorrectRoleAndSpecificAasPermission() throws IOException {
 		createAasDescriptorOnRegistryWithAuthorization(aasRegistryBaseUrl, getJSONStringFromFile(AAS_DESCRIPTOR_SIMPLE_2_JSON), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_ASSET_UPDATER_TWO_CREDENTIAL);
 
-		CloseableHttpResponse retrievalResponse = deleteElementWithAuthorization(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"), accessToken);
+		CloseableHttpResponse retrievalResponse = deleteElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"), accessToken);
 		assertEquals(HttpStatus.NO_CONTENT.value(), retrievalResponse.getCode());
 
 		deleteElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
 	@Test
-	public void removeSubmodelDescriptorWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
+	public void removeAasDescriptorWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_ASSET_UPDATER_TWO_CREDENTIAL);
 
-		CloseableHttpResponse retrievalResponse = deleteElementWithAuthorization(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SHELL_ID, "specificAasId-2-SM"), accessToken);
+		CloseableHttpResponse retrievalResponse = deleteElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID, "specificAasId-2-SM"), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void removeSubmodelDescriptorWithInsufficientPermissionRole() throws IOException {
+	public void removeAasDescriptorWithInsufficientPermissionRole() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_CREATOR_CREDENTIAL);
 
-		CloseableHttpResponse retrievalResponse = deleteElementWithAuthorization(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"), accessToken);
+		CloseableHttpResponse retrievalResponse = deleteElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void removeSubmodelDescriptorWithNoAuthorization() throws IOException {
-		CloseableHttpResponse retrievalResponse = deleteElementWithNoAuthorization(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"));
+	public void removeAasDescriptorWithNoAuthorization() throws IOException {
+		CloseableHttpResponse retrievalResponse = deleteElementWithNoAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"));
 
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void replaceSubmodelDescriptorWithCorrectRoleAndPermission() throws IOException {
+	public void replaceAasDescriptorWithCorrectRoleAndPermission() throws IOException {
 		createAasDescriptorOnRegistryWithAuthorization(aasRegistryBaseUrl, getJSONStringFromFile(AAS_DESCRIPTOR_SIMPLE_2_JSON), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_ASSET_UPDATER_CREDENTIAL);
 
-		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"), getJSONStringFromFile("authorization/SingleSubmodelDescriptor_Update.json"), accessToken);
+		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"), getJSONStringFromFile("authorization/SingleSubmodelDescriptor_Update.json"), accessToken);
 		assertEquals(HttpStatus.NO_CONTENT.value(), retrievalResponse.getCode());
 
 		deleteElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
 	@Test
-	public void replaceSubmodelDescriptorWithCorrectRoleAndSpecificAasPermission() throws IOException {
+	public void replaceAasDescriptorWithCorrectRoleAndSpecificAasPermission() throws IOException {
 		createAasDescriptorOnRegistryWithAuthorization(aasRegistryBaseUrl, getJSONStringFromFile(AAS_DESCRIPTOR_SIMPLE_2_JSON), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_ASSET_UPDATER_TWO_CREDENTIAL);
 
-		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"), getJSONStringFromFile("authorization/SingleSubmodelDescriptor_Update.json"), accessToken);
+		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"), getJSONStringFromFile("authorization/SingleSubmodelDescriptor_Update.json"), accessToken);
 		assertEquals(HttpStatus.NO_CONTENT.value(), retrievalResponse.getCode());
 
 		deleteElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
 	@Test
-	public void replaceSubmodelDescriptorWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
+	public void replaceAasDescriptorWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_ASSET_UPDATER_TWO_CREDENTIAL);
 
-		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SHELL_ID, "specificAasId-2-SM"), getJSONStringFromFile("authorization/SingleSubmodelDescriptor_Update.json"), accessToken);
+		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID, "specificAasId-2-SM"), getJSONStringFromFile("authorization/SingleSubmodelDescriptor_Update.json"), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void replaceSubmodelDescriptorWithInsufficientPermissionRole() throws IOException {
+	public void replaceAasDescriptorWithInsufficientPermissionRole() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_CREATOR_CREDENTIAL);
 
-		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"), getJSONStringFromFile("authorization/SingleSubmodelDescriptor_Update.json"), accessToken);
+		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"), getJSONStringFromFile("authorization/SingleSubmodelDescriptor_Update.json"), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
 	@Test
-	public void replaceSubmodelDescriptorWithNoAuthorization() throws IOException {
-		CloseableHttpResponse retrievalResponse = updateElementWithNoAuthorizationPutRequest(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"), getJSONStringFromFile("authorization/SingleSubmodelDescriptor_Update.json"));
+	public void replaceAasDescriptorWithNoAuthorization() throws IOException {
+		CloseableHttpResponse retrievalResponse = updateElementWithNoAuthorizationPutRequest(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"), getJSONStringFromFile("authorization/SingleSubmodelDescriptor_Update.json"));
 
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
@@ -592,12 +592,12 @@ public class TestAuthorizedAasRegistry {
 		return BASE_URL + "/search";
 	}
 
-	private String getSubmodelDescriptorsAccessURL(String shellId) {
+	private String getAasDescriptorsAccessURL(String shellId) {
 		return getSpecificAasDescriptorAccessURL(shellId) + "/submodel-descriptors";
 	}
 
-	private String getSpecificSubmodelDescriptorAccessURL(String shellId, String submodelId) {
-		return getSubmodelDescriptorsAccessURL(shellId) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
+	private String getSpecificAasDescriptorAccessURL(String shellId, String submodelId) {
+		return getAasDescriptorsAccessURL(shellId) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
 	}
 
 	private CloseableHttpResponse deleteElementWithNoAuthorization(String url) throws IOException {

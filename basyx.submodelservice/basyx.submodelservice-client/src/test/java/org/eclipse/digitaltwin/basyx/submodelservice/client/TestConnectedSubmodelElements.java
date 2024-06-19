@@ -104,7 +104,7 @@ public class TestConnectedSubmodelElements {
 	private static final String EXPECTED_STRING = "This is a test";
 	private static final String SUBMODEL_ID_SHORT = "submodelIdShort";
 	private static final String SUBMODEL_ID = "submodelId";
-	private static final String ACCESS_URL = "http://localhost:8080/submodels/";
+	private static final String ACCESS_URL = "http://localhost:8081/submodels/";
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
