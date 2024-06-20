@@ -40,7 +40,7 @@ import org.springframework.data.repository.CrudRepository;
 public class CrudSubmodelRepositoryTest {
 
 	private static final String CONFIGURED_SUBMODEL_REPO_NAME = "test-sm-repo";
-
+    
 	@Test
 	public void getConfiguredAasRepositoryName() {
 		SubmodelRepository repo = new CrudSubmodelRepository(createSubmodelProvider(), null, CONFIGURED_SUBMODEL_REPO_NAME);
@@ -55,8 +55,7 @@ public class CrudSubmodelRepositoryTest {
 			public CrudRepository<Submodel, String> getCrudRepository() {
 				return null;
 			}
-
 		};
 	}
-
 }
+
