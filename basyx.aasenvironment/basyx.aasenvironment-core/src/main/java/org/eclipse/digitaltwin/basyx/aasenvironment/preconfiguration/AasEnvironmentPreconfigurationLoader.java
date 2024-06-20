@@ -70,7 +70,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class AasEnvironmentPreconfigurationLoader {
-	
+
 	private Logger logger = LoggerFactory.getLogger(AasEnvironmentPreconfigurationLoader.class);
 
 	@Value("${basyx.environment:#{null}}")
@@ -78,37 +78,34 @@ public class AasEnvironmentPreconfigurationLoader {
 
 	private ResourceLoader resourceLoader;
 
-	@Value("${basyx.aasenvironment.authorization.preconfiguration.token-endpoint}")
+	@Value("${basyx.aasenvironment.authorization.preconfiguration.token-endpoint:#{null}}")
 	private String authenticationServerTokenEndpoint;
 
-	@Value("${basyx.aasenvironment.authorization.preconfiguration.client-id}")
+	@Value("${basyx.aasenvironment.authorization.preconfiguration.client-id:#{null}}")
 	private String clientId;
 
-	@Value("${basyx.aasenvironment.authorization.preconfiguration.client-secret}")
+	@Value("${basyx.aasenvironment.authorization.preconfiguration.client-secret:#{null}}")
 	private String clientSecret;
 
-	@Value("${basyx.aasenvironment.authorization.preconfiguration.username}")
+	@Value("${basyx.aasenvironment.authorization.preconfiguration.username:#{null}}")
 	private String username;
 
-	@Value("${basyx.aasenvironment.authorization.preconfiguration.password}")
+	@Value("${basyx.aasenvironment.authorization.preconfiguration.password:#{null}}")
 	private String password;
 
-	@Value("${basyx.aasenvironment.authorization.preconfiguration.grant-type}")
+	@Value("${basyx.aasenvironment.authorization.preconfiguration.grant-type:#{null}}")
 	private String grantType;
 
-	@Value("${basyx.aasenvironment.authorization.preconfiguration.scopes}")
+	@Value("${basyx.aasenvironment.authorization.preconfiguration.scopes:#{null}}")
 	private Collection<String> scopes;
 
-	private final AccessTokenProvider tokenProvider;
+	private AccessTokenProvider tokenProvider;
 
 	@Autowired
 	public AasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, List<String> pathsToLoad) {
 		this.resourceLoader = resourceLoader;
 		this.pathsToLoad = pathsToLoad;
-		AccessTokenProviderFactory factory = new AccessTokenProviderFactory(GrantType.valueOf(grantType),scopes);
-		factory.setClientCredentials(clientId, clientSecret);
-		factory.setPasswordCredentials(username, password);
-		this.tokenProvider = factory.create();
+
 	}
 
 	public boolean shouldLoadPreconfiguredEnvironment() {
@@ -125,33 +122,14 @@ public class AasEnvironmentPreconfigurationLoader {
 		int filesCount = files.size();
 		int currenFileIndex = 0;
 
+		setUpTokenProvider();
+
 		configureSecurityContext();
 		for (File file : files) {
 			logLoadingProcess(currenFileIndex++, filesCount, file.getName());
 			aasEnvironment.loadEnvironment(CompleteEnvironment.fromFile(file));
 		}
 		SecurityContextHolder.clearContext();
-	}
-
-	private void configureSecurityContext() throws FileNotFoundException, IOException {
-		TokenManager tokenManager = new TokenManager(authenticationServerTokenEndpoint, tokenProvider);
-		String adminToken = tokenManager.getAccessToken();
-
-		String modulus = getStringFromFile("authorization/modulus.txt");
-		String exponent = "AQAB";
-
-		RSAPublicKey rsaPublicKey = PublicKeyUtils.buildPublicKey(modulus, exponent);
-
-		Jwt jwt = JwtTokenDecoder.decodeJwt(adminToken, rsaPublicKey);
-
-		SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
-	}
-
-
-	private String getStringFromFile(String fileName) throws FileNotFoundException, IOException {
-		ClassPathResource classPathResource = new ClassPathResource(fileName);
-		InputStream in = classPathResource.getInputStream();
-		return IOUtils.toString(in, StandardCharsets.UTF_8.name());
 	}
 
 	private List<File> scanForEnvironments(List<String> pathsToLoad) throws IOException {
@@ -200,6 +178,34 @@ public class AasEnvironmentPreconfigurationLoader {
 
 	private void logLoadingProcess(int current, int overall, String filename) {
 		logger.info("Loading AAS Environment ({}/{}) from file '{}'", current, overall, filename);
+	}
+
+	private void setUpTokenProvider() {
+		AccessTokenProviderFactory factory = new AccessTokenProviderFactory(GrantType.valueOf(grantType),scopes);
+		factory.setClientCredentials(clientId, clientSecret);
+		factory.setPasswordCredentials(username, password);
+		this.tokenProvider = factory.create();
+	}
+
+	private void configureSecurityContext() throws FileNotFoundException, IOException {
+		TokenManager tokenManager = new TokenManager(authenticationServerTokenEndpoint, tokenProvider);
+		String adminToken = tokenManager.getAccessToken();
+
+		String modulus = getStringFromFile("authorization/modulus.txt");
+		String exponent = "AQAB";
+
+		RSAPublicKey rsaPublicKey = PublicKeyUtils.buildPublicKey(modulus, exponent);
+
+		Jwt jwt = JwtTokenDecoder.decodeJwt(adminToken, rsaPublicKey);
+
+		SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
+	}
+
+
+	private String getStringFromFile(String fileName) throws FileNotFoundException, IOException {
+		ClassPathResource classPathResource = new ClassPathResource(fileName);
+		InputStream in = classPathResource.getInputStream();
+		return IOUtils.toString(in, StandardCharsets.UTF_8.name());
 	}
 
 }
