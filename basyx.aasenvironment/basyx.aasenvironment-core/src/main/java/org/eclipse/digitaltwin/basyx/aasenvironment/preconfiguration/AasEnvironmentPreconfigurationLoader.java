@@ -99,6 +99,9 @@ public class AasEnvironmentPreconfigurationLoader {
 	@Value("${basyx.aasenvironment.authorization.preconfiguration.scopes:#{null}}")
 	private Collection<String> scopes;
 
+	@Value("${basyx.feature.authorization.enabled:false}")
+	private boolean authorizationEnabled;
+
 	private AccessTokenProvider tokenProvider;
 
 	@Autowired
@@ -122,9 +125,10 @@ public class AasEnvironmentPreconfigurationLoader {
 		int filesCount = files.size();
 		int currenFileIndex = 0;
 
-		setUpTokenProvider();
-
-		configureSecurityContext();
+		if(authorizationEnabled) {
+			setUpTokenProvider();
+			configureSecurityContext();
+		}
 		for (File file : files) {
 			logLoadingProcess(currenFileIndex++, filesCount, file.getName());
 			aasEnvironment.loadEnvironment(CompleteEnvironment.fromFile(file));
