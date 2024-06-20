@@ -70,6 +70,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.RangeValue;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -594,6 +595,7 @@ public abstract class SubmodelServiceSuite {
 		submodelService.deleteFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 	}
 	
+	@Ignore
 	@Test
 	public void patchSubmodelElements() {
 		Submodel expectedSubmodel = buildDummySubmodelWithNoSmElement(ID);

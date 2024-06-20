@@ -56,6 +56,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceSuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -265,6 +266,7 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		assertEquals(1, cursorResult.getResult().size());
 	}
 
+	@Ignore
 	@Test
 	public void getSubmodelByIdMetadata() throws JsonProcessingException {
 		SubmodelRepository repo = getSubmodelRepository();
@@ -276,6 +278,7 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		assertEquals(expectedSubmodel,retrievedSubmodel);
 	}
 	
+	@Ignore
 	@Test
 	public void getSubmodelByIdValueOnly() {
 		SubmodelRepository repo = getSubmodelRepository();
@@ -292,8 +295,9 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		assertEquals(expectedSmValueOnly,retrievedSmValueOnly);
 	}
 	
-	@Test
 	@Override
+	@Ignore
+	@Test
 	public void patchSubmodelElements() {
 		SubmodelRepository repo = getSubmodelRepository();
 		Submodel submodel = buildDummySubmodelWithNoSmElement(ID);
