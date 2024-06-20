@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
@@ -40,7 +41,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapperUti
  * @author damm
  *
  */
-public class SubmodelValueOnly {
+public class SubmodelValueOnly{
 
 	private String idShort;
 	private Map<String, SubmodelElementValue> submodelValuesMap;
@@ -59,6 +60,21 @@ public class SubmodelValueOnly {
 	
 	public Map<String, SubmodelElementValue> getValuesOnlyMap() {
 		return submodelValuesMap;
-	}	
+	}
+	
+	@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SubmodelValueOnly other = (SubmodelValueOnly) o;
+        return Objects.equals(this.submodelValuesMap, other.submodelValuesMap) &&
+        		Objects.equals(this.idShort, other.idShort);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.submodelValuesMap,
+        		this.idShort);
+    }
 	
 }

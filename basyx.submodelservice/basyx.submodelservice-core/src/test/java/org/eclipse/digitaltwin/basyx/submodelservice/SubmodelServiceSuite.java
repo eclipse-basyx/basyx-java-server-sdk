@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import static org.junit.Assert.assertEquals;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -52,8 +53,10 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEntity;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultFile;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
@@ -62,6 +65,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+//import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
@@ -89,7 +93,8 @@ public abstract class SubmodelServiceSuite {
 
 	private static final String DUMMY_JSON_1 = "{\"name\":\"SampleJsonFile\",\"description\":\"A JSON file for verification\",\"version\":1}";
 	private static final String DUMMY_JSON_2 = "{\"name\":\"SampleJsonFile\",\"description\":\"A JSON file for verification\",\"version\":2}";
-
+	private static final String ID = "testId";
+	
 	@Test
 	public void getSubmodel() {
 		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
@@ -588,7 +593,33 @@ public abstract class SubmodelServiceSuite {
 
 		submodelService.deleteFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 	}
-
+	
+	@Test
+	public void patchSubmodelElements() {
+		Submodel expectedSubmodel = buildDummySubmodelWithNoSmElement(ID);
+		SubmodelService submodelService = getSubmodelService(expectedSubmodel);
+		List<SubmodelElement> submodelElements = buildDummySubmodelElements();
+		
+		submodelService.patchSubmodelElements(submodelElements);
+		
+		Submodel retrievedSubmodel = submodelService.getSubmodel();
+		
+		assertEquals(expectedSubmodel.getSubmodelElements().size(),retrievedSubmodel.getSubmodelElements().size());
+		assertEquals(expectedSubmodel,retrievedSubmodel);
+		assertTrue(retrievedSubmodel.getSubmodelElements().containsAll(submodelElements));
+	}
+	
+	protected Submodel buildDummySubmodelWithNoSmElement(String id) {
+		return new DefaultSubmodel.Builder().id(id).build();
+	}
+	
+	protected List<SubmodelElement> buildDummySubmodelElements() {
+	   	Property prop = new DefaultProperty.Builder().idShort("propId").value("propValue").build();
+	   	File file = new DefaultFile.Builder().idShort("fileId").value("fileValue").build();
+	   	
+	    return Arrays.asList(prop,file);
+	}
+	
 	private void assertStoredFileContentEquals(SubmodelService submodelService, String fileIdShort, String content) throws IOException {
 		java.io.File retrievedValue = submodelService.getFileByPath(fileIdShort);
 

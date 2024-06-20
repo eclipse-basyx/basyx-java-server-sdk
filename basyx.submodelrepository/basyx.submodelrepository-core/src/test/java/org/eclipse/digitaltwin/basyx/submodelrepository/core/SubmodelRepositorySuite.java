@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.core;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -38,6 +39,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -53,7 +55,10 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceSuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * Testsuite for implementations of the SubmodelRepository interface
@@ -65,6 +70,7 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(null, null);
 	private static final String EMPTY_ID = " ";
 	private static final String NULL_ID = null;
+	private static final String ID = "testId";
 
 	protected abstract SubmodelRepository getSubmodelRepository();
 
@@ -259,6 +265,49 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		assertEquals(1, cursorResult.getResult().size());
 	}
 
+	@Test
+	public void getSubmodelByIdMetadata() throws JsonProcessingException {
+		SubmodelRepository repo = getSubmodelRepository();
+		Submodel expectedSubmodel = buildDummySubmodelWithNoSmElement(ID); 
+		repo.createSubmodel(expectedSubmodel);
+		
+		Submodel retrievedSubmodel = repo.getSubmodelByIdMetadata(ID);
+		
+		assertEquals(expectedSubmodel,retrievedSubmodel);
+	}
+	
+	@Test
+	public void getSubmodelByIdValueOnly() {
+		SubmodelRepository repo = getSubmodelRepository();
+		Submodel submodel = buildDummySubmodelWithNoSmElement(ID);
+		
+		List<SubmodelElement> submodelElements = buildDummySubmodelElements();
+		submodel.setSubmodelElements(submodelElements);
+		repo.createSubmodel(submodel);
+		
+		SubmodelValueOnly expectedSmValueOnly = new SubmodelValueOnly(submodelElements);
+		SubmodelValueOnly retrievedSmValueOnly = repo.getSubmodelByIdValueOnly(ID);
+		
+		assertNotNull(retrievedSmValueOnly);
+		assertEquals(expectedSmValueOnly,retrievedSmValueOnly);
+	}
+	
+	@Test
+	@Override
+	public void patchSubmodelElements() {
+		SubmodelRepository repo = getSubmodelRepository();
+		Submodel submodel = buildDummySubmodelWithNoSmElement(ID);
+		repo.createSubmodel(submodel);
+		
+		List<SubmodelElement> submodelElements = buildDummySubmodelElements();
+		
+		repo.patchSubmodelElements(ID,submodelElements);
+		
+		Submodel patchedSubmodel = repo.getSubmodel(ID);
+		assertEquals(submodel.getSubmodelElements().size(),patchedSubmodel.getSubmodelElements().size());
+		assertTrue(patchedSubmodel.getSubmodelElements().containsAll(submodelElements));
+	}
+	
 	// Has to be overwritten if backend does not support operations
 	@Test
 	public void invokeOperation() {
