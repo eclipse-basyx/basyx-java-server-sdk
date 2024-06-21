@@ -27,10 +27,14 @@ package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
@@ -38,9 +42,13 @@ import org.eclipse.digitaltwin.basyx.aasrepository.DummyAasFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.AasService;
+import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBFileRepository;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -65,13 +73,34 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 
 	private static GridFsTemplate gridFsTemplate = configureDefaultGridFsTemplate(mongoTemplate);
 
+	private static FileRepository fileRepository;
+	
 	@Override
 	protected AasRepository getAasRepository() {
 		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
+		fileRepository = new MongoDBFileRepository(gridFsTemplate);
 		AasBackendProvider aasBackendProvider = new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate);
-		AasRepositoryFactory aasRepositoryFactory = new SimpleAasRepositoryFactory(aasBackendProvider, new InMemoryAasServiceFactory(new MongoDBFileRepository(gridFsTemplate)));
+		AasRepositoryFactory aasRepositoryFactory = new SimpleAasRepositoryFactory(aasBackendProvider, new InMemoryAasServiceFactory(fileRepository));
 
 		return aasRepositoryFactory.create();
+	}
+
+	@Override
+	protected AasService getAasServiceWithThumbnail() throws IOException {
+		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.createForThumbnail();
+		AasService aasServiceWithThumbnail = getAasService(expected);
+
+		FileMetadata defaultThumbnail = new FileMetadata("dummyImgA.jpeg", "", createDummyImageIS_A());
+		
+		String thumbnailFilePath = fileRepository.save(defaultThumbnail);
+		
+		Resource defaultResource = new DefaultResource.Builder().path(thumbnailFilePath).contentType("").build();
+		AssetInformation defaultAasAssetInformation = aasServiceWithThumbnail.getAssetInformation();
+		defaultAasAssetInformation.setDefaultThumbnail(defaultResource);
+		
+		aasServiceWithThumbnail.setAssetInformation(defaultAasAssetInformation);
+	
+		return aasServiceWithThumbnail;
 	}
 
 	@Test
@@ -100,7 +129,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	
 	@Test
 	public void getConfiguredMongoDBAasRepositoryName() {
-		AasRepository repo = new CrudAasRepository(new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate), new InMemoryAasServiceFactory(new MongoDBFileRepository(gridFsTemplate)), CONFIGURED_AAS_REPO_NAME);
+		AasRepository repo = new CrudAasRepository(new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate), new InMemoryAasServiceFactory(fileRepository), CONFIGURED_AAS_REPO_NAME);
 		
 		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
 	}

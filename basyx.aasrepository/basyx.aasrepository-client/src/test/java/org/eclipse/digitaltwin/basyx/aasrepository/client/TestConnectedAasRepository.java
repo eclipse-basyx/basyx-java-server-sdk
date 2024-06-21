@@ -26,9 +26,14 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.client;
 
+import java.io.IOException;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.DummyAasRepositoryComponent;
+import org.eclipse.digitaltwin.basyx.aasservice.AasService;
+import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFactory;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -67,5 +72,15 @@ public class TestConnectedAasRepository extends AasRepositorySuite {
 	@Override
 	protected AasRepository getAasRepository() {
 		return new ConnectedAasRepository("http://localhost:8080");
+	}
+	
+	@Override
+	protected AasService getAasServiceWithThumbnail() throws IOException {
+		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.createForThumbnail();
+		AasService aasServiceWithThumbnail = getAasService(expected);
+	
+		aasServiceWithThumbnail.setThumbnail("dummyImgA.jpeg", "", createDummyImageIS_A());
+		
+		return aasServiceWithThumbnail;
 	}
 }

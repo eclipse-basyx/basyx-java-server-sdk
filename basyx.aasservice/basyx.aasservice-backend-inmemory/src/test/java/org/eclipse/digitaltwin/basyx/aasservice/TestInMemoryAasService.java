@@ -26,15 +26,42 @@
 
 package org.eclipse.digitaltwin.basyx.aasservice;
 
+import java.io.IOException;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 
 public class TestInMemoryAasService extends AasServiceSuite {
-
+	
+	private static FileRepository fileRepository;
+	
 	@Override
 	protected AasService getAasService(AssetAdministrationShell shell) {
-		return new InMemoryAasServiceFactory(new InMemoryFileRepository()).create(shell);
+		fileRepository = new InMemoryFileRepository();
+		return new InMemoryAasServiceFactory(fileRepository).create(shell);
 	}
 
+	@Override
+	protected AasService getAasServiceWithThumbnail() throws IOException {
+		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.createForThumbnail();
+		AasService aasServiceWithThumbnail = getAasService(expected);
+
+		FileMetadata defaultThumbnail = new FileMetadata("dummyImgA.jpeg", "", createDummyImageIS_A());
+		
+		String thumbnailFilePath = fileRepository.save(defaultThumbnail);
+		
+		Resource defaultResource = new DefaultResource.Builder().path(thumbnailFilePath).contentType("").build();
+		AssetInformation defaultAasAssetInformation = aasServiceWithThumbnail.getAssetInformation();
+		defaultAasAssetInformation.setDefaultThumbnail(defaultResource);
+		
+		aasServiceWithThumbnail.setAssetInformation(defaultAasAssetInformation);
+	
+		return aasServiceWithThumbnail;
+	}
 }
