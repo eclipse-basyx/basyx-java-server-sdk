@@ -233,7 +233,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	public void updateNonNestedSME() throws FileNotFoundException, IOException, ParseException {        
 	    String submodelJSON = getJSONValueAsString("SingleSubmodelNew.json");
 	    String element = getJSONValueAsString("PropertySubmodelElementUpdate.json");	  
-	    String idShortPathP = "MaxRotationSpeed";
+	    String idShortPath = "MaxRotationSpeed";
 
 	    CloseableHttpResponse creationResponse = BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
 	    assertSubmodelCreationReponse(submodelJSON, creationResponse);
