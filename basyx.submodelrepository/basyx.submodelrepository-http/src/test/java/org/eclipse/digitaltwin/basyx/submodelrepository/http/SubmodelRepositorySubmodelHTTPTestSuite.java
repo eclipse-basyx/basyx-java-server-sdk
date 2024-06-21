@@ -233,15 +233,15 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	public void updateNonNestedSME() throws FileNotFoundException, IOException, ParseException {        
 	    String submodelJSON = getJSONValueAsString("SingleSubmodelNew.json");
 	    String element = getJSONValueAsString("PropertySubmodelElementUpdate.json");	  
-	    String idShortPathPropertyInRootSme = "MaxRotationSpeed";
+	    String idShortPathP = "MaxRotationSpeed";
 
 	    CloseableHttpResponse creationResponse = BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
 	    assertSubmodelCreationReponse(submodelJSON, creationResponse);
 
-	    CloseableHttpResponse updatedResponse = updateElement(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID,idShortPathPropertyInRootSme), element);
+	    CloseableHttpResponse updatedResponse = updateElement(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID,idShortPath), element);
 	    assertEquals(HttpStatus.NO_CONTENT.value(), updatedResponse.getCode());
 
-	    CloseableHttpResponse fetchedResponse = BaSyxHttpTestUtils.executeGetOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID,idShortPathPropertyInRootSme));
+	    CloseableHttpResponse fetchedResponse = BaSyxHttpTestUtils.executeGetOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID,idShortPath));
 	    BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedResponse));
 	}
 	
