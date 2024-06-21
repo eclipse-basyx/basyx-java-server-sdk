@@ -58,10 +58,11 @@ public class TestInMemoryAasRepository extends AasRepositorySuite {
 	
 	private AasBackendProvider backendProvider = new AasInMemoryBackendProvider();
 
-	private static FileRepository fileRepository = new InMemoryFileRepository();
+	private static FileRepository fileRepository;
 	
 	@Override
 	protected AasRepository getAasRepository() {
+		fileRepository = new InMemoryFileRepository();
 		return new SimpleAasRepositoryFactory(backendProvider, new InMemoryAasServiceFactory(fileRepository)).create();
 	}
 

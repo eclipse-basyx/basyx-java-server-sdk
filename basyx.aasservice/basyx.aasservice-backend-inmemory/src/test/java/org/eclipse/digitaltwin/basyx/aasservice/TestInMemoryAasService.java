@@ -39,10 +39,11 @@ import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 
 public class TestInMemoryAasService extends AasServiceSuite {
 	
-	private static FileRepository fileRepository = new InMemoryFileRepository();
+	private static FileRepository fileRepository;
 	
 	@Override
 	protected AasService getAasService(AssetAdministrationShell shell) {
+		fileRepository = new InMemoryFileRepository();
 		return new InMemoryAasServiceFactory(fileRepository).create(shell);
 	}
 

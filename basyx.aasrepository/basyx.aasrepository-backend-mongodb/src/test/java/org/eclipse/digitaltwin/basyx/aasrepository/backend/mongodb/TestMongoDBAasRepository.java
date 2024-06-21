@@ -73,11 +73,12 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 
 	private static GridFsTemplate gridFsTemplate = configureDefaultGridFsTemplate(mongoTemplate);
 
-	private static FileRepository fileRepository = new MongoDBFileRepository(gridFsTemplate);
+	private static FileRepository fileRepository;
 	
 	@Override
 	protected AasRepository getAasRepository() {
 		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
+		fileRepository = new MongoDBFileRepository(gridFsTemplate);
 		AasBackendProvider aasBackendProvider = new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate);
 		AasRepositoryFactory aasRepositoryFactory = new SimpleAasRepositoryFactory(aasBackendProvider, new InMemoryAasServiceFactory(fileRepository));
 
