@@ -373,7 +373,7 @@ public abstract class SubmodelServiceSuite {
         submodelService.createSubmodelElement(property);
         
         Property expectedUpdatedProperty = SubmodelServiceHelper.createDummyProperty(idShortPath, "arbitraryValue", DataTypeDefXsd.STRING);
-        submodelService.updateSubmodelElement(idShortPathRootSME, expectedUpdatedProperty);
+        submodelService.updateSubmodelElement(idShortPath, expectedUpdatedProperty);
 
         Property actualUpdatedProperty = (Property) submodelService.getSubmodelElement(idShortPath);
         assertEquals(expectedUpdatedProperty, actualUpdatedProperty);
