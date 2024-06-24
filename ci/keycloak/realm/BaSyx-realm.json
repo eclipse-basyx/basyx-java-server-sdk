@@ -1400,7 +1400,7 @@
     "credentials" : [ ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
-    "realmRoles" : [ "basyx-reader", "basyx-deleter", "basyx-updater", "basyx-creator", "default-roles-basyx" ],
+    "realmRoles" : [ "basyx-reader", "basyx-deleter", "basyx-updater", "basyx-creator", "default-roles-basyx", "admin" ],
     "clientRoles" : {
       "workstation-1" : [ "uma_protection" ]
     },
