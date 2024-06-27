@@ -31,8 +31,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackageDescription;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.model.BaSyxPackageDescription;
 
 /**
  * Factory for creating AASX Packages for tests
@@ -71,10 +72,10 @@ public class DummyAASXFileServerFactory {
 		return packages;
 	}
 
-	public static PackageDescription createDummyPackageDescription(String packageId, List<String> shellIds) {
-		PackageDescription expectedDescription1 = new PackageDescription();
+	public static BaSyxPackageDescription createDummyPackageDescription(String packageId, List<String> shellIds) {
+		BaSyxPackageDescription expectedDescription1 = new BaSyxPackageDescription();
 		expectedDescription1.setPackageId(packageId);
-		expectedDescription1.setAasIds(shellIds);
+		expectedDescription1.setItems(shellIds);
 
 		return expectedDescription1;
 	}

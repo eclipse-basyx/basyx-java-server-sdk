@@ -26,9 +26,9 @@
 package org.eclipse.digitaltwin.basyx.aasxfileserver.model;
 
 import java.util.Objects;
-import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.springframework.validation.annotation.Validated;
 
@@ -37,35 +37,22 @@ import org.springframework.validation.annotation.Validated;
  */
 @Validated
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-06-22T10:58:56.694021713Z[GMT]")
+public class BaSyxPackageDescription implements org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription {
 
-public class PackageDescription {
-
-	private List<String> aasIds = null;
+	@JsonProperty("aasIds")
+	private List<String> items = null;
 
 	private String packageId = null;
 
-	public PackageDescription aasIds(List<String> aasIds) {
-		this.aasIds = aasIds;
-		return this;
+	public List<String> getItems() {
+		return items;
 	}
 
-	public PackageDescription addAasIdsItem(String aasIdsItem) {
-		if (this.aasIds == null) {
-			this.aasIds = new ArrayList<String>();
-		}
-		this.aasIds.add(aasIdsItem);
-		return this;
+	public void setItems(List<String> aasIds) {
+		this.items = aasIds;
 	}
 
-	public List<String> getAasIds() {
-		return aasIds;
-	}
-
-	public void setAasIds(List<String> aasIds) {
-		this.aasIds = aasIds;
-	}
-
-	public PackageDescription packageId(String packageId) {
+	public BaSyxPackageDescription packageId(String packageId) {
 		this.packageId = packageId;
 		return this;
 	}
@@ -86,13 +73,13 @@ public class PackageDescription {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		PackageDescription packageDescription = (PackageDescription) o;
-		return Objects.equals(this.aasIds, packageDescription.aasIds) && Objects.equals(this.packageId, packageDescription.packageId);
+		BaSyxPackageDescription packageDescription = (BaSyxPackageDescription) o;
+		return Objects.equals(this.items, packageDescription.items) && Objects.equals(this.packageId, packageDescription.packageId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(aasIds, packageId);
+		return Objects.hash(items, packageId);
 	}
 
 	@Override
@@ -100,7 +87,7 @@ public class PackageDescription {
 		StringBuilder sb = new StringBuilder();
 		sb.append("class PackageDescription {\n");
 
-		sb.append("  aasIds: ").append(toIndentedString(aasIds)).append("\n");
+		sb.append("  aasIds: ").append(toIndentedString(items)).append("\n");
 		sb.append("  packageId: ").append(toIndentedString(packageId)).append("\n");
 		sb.append("}");
 		return sb.toString();
@@ -115,9 +102,5 @@ public class PackageDescription {
 			return "null";
 		}
 		return o.toString().replace("\n", "\n    ");
-	}
-
-	public boolean isEmpty() {
-		return false;
 	}
 }

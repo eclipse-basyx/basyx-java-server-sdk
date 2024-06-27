@@ -29,9 +29,11 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackageDescription;
+import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 /**
  * Specifies the overall {@link AASXFileServer} API
@@ -47,7 +49,7 @@ public interface AASXFileServer {
 	 * @param shellId
 	 * @return a list of available AASX Package Descriptions at the server
 	 */
-	public Collection<PackageDescription> getAllAASXPackageIds(String shellId);
+	public CursorResult<List<PackageDescription>> getAllAASXPackageIds(String shellId, PaginationInfo pInfo);
 
 	/**
 	 * Retrieves a specific AASX package from the server

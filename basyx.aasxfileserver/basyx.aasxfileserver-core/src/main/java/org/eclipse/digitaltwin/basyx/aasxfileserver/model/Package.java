@@ -25,6 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasxfileserver.model;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 
 /**
