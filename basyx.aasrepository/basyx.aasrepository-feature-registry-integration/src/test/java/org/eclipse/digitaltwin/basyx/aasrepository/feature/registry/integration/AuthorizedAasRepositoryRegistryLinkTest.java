@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -52,6 +53,11 @@ public class AuthorizedAasRepositoryRegistryLinkTest extends AasRepositoryRegist
 		appContext = application.run(new String[] {});
 		
 		aasRepositoryRegistryLink = appContext.getBean(AasRepositoryRegistryLink.class);
+	}
+	
+	@AfterClass
+	public static void tearDown() {
+		appContext.close();
 	}
 
 	@Override
