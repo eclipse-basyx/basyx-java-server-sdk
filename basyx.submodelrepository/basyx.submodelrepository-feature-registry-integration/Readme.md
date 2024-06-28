@@ -18,7 +18,7 @@ basyx.submodelrepository.feature.registryintegration = http://localhost:8060
 basyx.externalurl = http://localhost:8081
 ```
 
-## Submodel Registry Integration with Authorized Submodel Registry
+## Submodel Repository Integration with Authorized Submodel Registry
 
 If the target Submodel Registry has authorization enabled, then the following properties needs to be configured in order to successfully integrate the Descriptor:
 

@@ -18,7 +18,7 @@ basyx.aasrepository.feature.registryintegration = http://localhost:8050
 basyx.externalurl = http://localhost:8081
 ```
 
-## AAS Registry Integration with Authorized AAS Registry
+## AAS Repository Integration with Authorized AAS Registry
 
 If the target AAS Registry has authorization enabled, then the following properties needs to be configured in order to successfully integrate the Descriptor:
 
