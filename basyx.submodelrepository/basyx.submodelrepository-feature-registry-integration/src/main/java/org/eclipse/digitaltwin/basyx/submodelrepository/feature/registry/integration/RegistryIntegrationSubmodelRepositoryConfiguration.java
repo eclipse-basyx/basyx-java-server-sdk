@@ -25,6 +25,13 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
 
+import java.util.Collection;
+
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.AccessTokenProviderFactory;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.AccessTokenProvider;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.GrantType;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.AuthorizedConnectedSubmodelRegistry;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper;
@@ -44,12 +51,47 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Configuration
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.submodelrepository.feature.registryintegration:}') && !T(org.springframework.util.StringUtils).isEmpty('${basyx.externalurl:}')")
 public class RegistryIntegrationSubmodelRepositoryConfiguration {
+	
+	@Value("${basyx.submodelrepository.feature.registryintegration:#{null}}")
+	private String registryBasePath;
+
+	@Value("${basyx.externalurl:#{null}}")
+	private String submodelRepositoryBaseURL;
+
+	@Value("${basyx.submodelrepository.feature.registryintegration.authorization.enabled:false}")
+	private boolean isAuthorizationEnabledOnRegistry;
+
+	@Value("${basyx.submodelrepository.feature.registryintegration.authorization.token-endpoint:#{null}}")
+	private String authenticationServerTokenEndpoint;
+
+	@Value("${basyx.submodelrepository.feature.registryintegration.authorization.grant-type:#{null}}")
+	private String grantType;
+
+	@Value("${basyx.submodelrepository.feature.registryintegration.authorization.client-id:#{null}}")
+	private String clientId;
+
+	@Value("${basyx.submodelrepository.feature.registryintegration.authorization.client-secret:#{null}}")
+	private String clientSecret;
+
+	@Value("${basyx.submodelrepository.feature.registryintegration.authorization.username:#{null}}")
+	private String username;
+
+	@Value("${basyx.submodelrepository.feature.registryintegration.authorization.password:#{null}}")
+	private String password;
+
+	@Value("${basyx.submodelrepository.feature.registryintegration.authorization.scopes:#{null}}")
+	private Collection<String> scopes;
 
 	@Bean
 	@ConditionalOnMissingBean
 	public SubmodelRepositoryRegistryLink getSubmodelRepositoryRegistryLink(@Value("${basyx.submodelrepository.feature.registryintegration}") String registryBasePath, @Value("${basyx.externalurl}") String submodelRepositoryBaseURL) {
 	
-		return new SubmodelRepositoryRegistryLink(new SubmodelRegistryApi(registryBasePath), submodelRepositoryBaseURL);
+		if (!isAuthorizationEnabledOnRegistry)
+			return new SubmodelRepositoryRegistryLink(new SubmodelRegistryApi(registryBasePath), submodelRepositoryBaseURL);
+
+		TokenManager tokenManager = new TokenManager(authenticationServerTokenEndpoint, createAccessTokenProvider());
+
+		return new SubmodelRepositoryRegistryLink(new AuthorizedConnectedSubmodelRegistry(registryBasePath, tokenManager), submodelRepositoryBaseURL);
 	}
 	
 	@Bean
@@ -57,6 +99,15 @@ public class RegistryIntegrationSubmodelRepositoryConfiguration {
 	public AttributeMapper getSubmodelAttributeMapper(ObjectMapper objectMapper) {
 		
 		return new AttributeMapper(objectMapper);
+	}
+	
+	private AccessTokenProvider createAccessTokenProvider() {
+
+		AccessTokenProviderFactory factory = new AccessTokenProviderFactory(GrantType.valueOf(grantType), scopes);
+		factory.setClientCredentials(clientId, clientSecret);
+		factory.setPasswordCredentials(username, password);
+
+		return factory.create();
 	}
 
 }

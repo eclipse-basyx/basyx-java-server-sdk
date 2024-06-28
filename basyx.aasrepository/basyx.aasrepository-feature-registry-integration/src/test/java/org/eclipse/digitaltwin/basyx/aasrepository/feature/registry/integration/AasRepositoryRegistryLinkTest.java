@@ -22,51 +22,56 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
-import org.junit.internal.TextListener;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
- * Application for testing the {@link RegistryIntegrationAasRepository} feature.
- * The first argument is the AAS Repository Base URL, the second argument is the AAS
- * Registry URL.
+ * Integration test for {@link RegistryIntegrationAasRepository} feature
  * 
- * @author schnicke, danish
- *
+ * @author danish
  */
-public class AasRepositoryRegistryTestLinkApplication {
+public class AasRepositoryRegistryLinkTest extends AasRepositoryRegistryLinkTestSuite {
 
-	public static void main(String[] args) throws Exception {
-		String aasRepoBaseUrl = getAasRepositoryBaseUrl(args);
-		String aasRegUrl = getAasRegistryUrl(args);
-
-		Result result = runTests(aasRepoBaseUrl, aasRegUrl);
-
-		printResults(result);
+	private static final String AAS_REPO_URL = "http://localhost:8081";
+	private static final String AAS_REGISTRY_BASE_URL = "http://localhost:8050";
+	private static ConfigurableApplicationContext appContext;
+	private static AasRepositoryRegistryLink aasRepositoryRegistryLink;
+	
+	@BeforeClass
+	public static void setUp() throws FileNotFoundException, IOException {
+		appContext = new SpringApplication(DummyAasRepositoryIntegrationComponent.class).run(new String[] {});
+		
+		aasRepositoryRegistryLink = appContext.getBean(AasRepositoryRegistryLink.class);
+	}
+	
+	@AfterClass
+	public static void tearDown() {
+		appContext.close();
 	}
 
-	private static void printResults(Result result) {
-		System.out.println("Finished. Result: Failures: " + result.getFailureCount() + ". Ignored: " + result.getIgnoreCount() + ". Tests run: " + result.getRunCount() + ". Time: " + result.getRunTime() + "ms.");
+	@Override
+	protected String getAasRepoBaseUrl() {
+		return AAS_REPO_URL;
 	}
 
-	private static Result runTests(String aasRepoBaseUrl, String aasRegUrl) {
-		AasRepositoryRegistryTestLink.aasRepoBaseUrl = aasRepoBaseUrl;
-		AasRepositoryRegistryTestLink.aasRegistryUrl = aasRegUrl;
-
-		JUnitCore junit = new JUnitCore();
-		junit.addListener(new TextListener(System.out));
-
-		return junit.run(AasRepositoryRegistryTestLink.class);
+	@Override
+	protected String getAasRegistryUrl() {
+		return AAS_REGISTRY_BASE_URL;
 	}
 
-	private static String getAasRepositoryBaseUrl(String[] args) {
-		return args[0];
-	}
-
-	private static String getAasRegistryUrl(String[] args) {
-		return args[1];
+	@Override
+	protected RegistryAndDiscoveryInterfaceApi getAasRegistryApi() {
+		
+		return aasRepositoryRegistryLink.getRegistryApi();
 	}
 
 }

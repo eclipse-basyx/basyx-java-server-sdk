@@ -163,9 +163,6 @@
 												${docker.container.waitForEndpoint}</url>
 											<time>60000</time>
 										</wait>
-										<env>
-											<SPRING_PROFILES_ACTIVE>integration</SPRING_PROFILES_ACTIVE>
-										</env>
 									</run>
 								</image>
 							</images>
