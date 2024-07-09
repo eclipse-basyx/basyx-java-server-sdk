@@ -96,7 +96,16 @@ public class DummySubmodelDescriptorFactory {
 	private static String createSubmodelRepositoryUrl(String smRepositoryBaseURL) {
 
 		try {
-			return new URL(new URL(smRepositoryBaseURL), SUBMODEL_REPOSITORY_PATH).toString();
+			URL url = new URL(smRepositoryBaseURL);
+            String path = url.getPath();
+
+            if (path.endsWith("/")) {
+                path = path.substring(0, path.length() - 1);
+            } else {
+            	path += "/";
+            }
+
+            return new URL(url.getProtocol(), url.getHost(), url.getPort(), path + SUBMODEL_REPOSITORY_PATH).toString();
 		} catch (MalformedURLException e) {
 			throw new RuntimeException("The Submodel Repository Base url is malformed.\n " + e.getMessage());
 		}

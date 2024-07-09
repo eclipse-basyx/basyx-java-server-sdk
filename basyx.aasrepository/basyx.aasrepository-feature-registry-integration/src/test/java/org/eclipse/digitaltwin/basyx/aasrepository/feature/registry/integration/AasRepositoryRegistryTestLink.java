@@ -87,6 +87,21 @@ public class AasRepositoryRegistryTestLink {
 
 		assertDescriptionDeletionAtRegistry();
 	}
+	
+	@Test
+    public void testDummyAasDescriptorFactoryUrlWithTrailingSlash() {
+        String baseURLWithSlash = aasRepoBaseUrl + "/context/";
+        String AAS_REPOSITORY_PATH_WITHOUT_SLASH = AAS_REPOSITORY_PATH.substring(1);
+
+        assertEquals(baseURLWithSlash + AAS_REPOSITORY_PATH_WITHOUT_SLASH, createAasRepositoryUrl(baseURLWithSlash));
+    }
+
+    @Test
+    public void testDummyAasDescriptorFactoryUrlWithoutTrailingSlash() {
+        String baseURLWithoutSlash = aasRepoBaseUrl + "/context";
+
+        assertEquals(baseURLWithoutSlash + "/" + AAS_REPOSITORY_PATH , createAasRepositoryUrl(baseURLWithoutSlash));
+    }
 
 	private AssetAdministrationShellDescriptor retrieveDescriptorFromRegistry() throws ApiException {
 		RegistryAndDiscoveryInterfaceApi api = new RegistryAndDiscoveryInterfaceApi(aasRegistryUrl);
@@ -129,7 +144,16 @@ public class AasRepositoryRegistryTestLink {
 	private static String createAasRepositoryUrl(String aasRepositoryBaseURL) {
 
 		try {
-			return new URL(new URL(aasRepositoryBaseURL), AAS_REPOSITORY_PATH).toString();
+			URL url = new URL(aasRepositoryBaseURL);
+            String path = url.getPath();
+
+            if (path.endsWith("/")) {
+                path = path.substring(0, path.length() - 1);
+            } else {
+            	path += "/";
+            }
+
+            return new URL(url.getProtocol(), url.getHost(), url.getPort(), path + AAS_REPOSITORY_PATH).toString();
 		} catch (MalformedURLException e) {
 			throw new RuntimeException("The AAS Repository Base url is malformed. " + e.getMessage());
 		}

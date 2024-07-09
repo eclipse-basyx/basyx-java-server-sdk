@@ -105,6 +105,21 @@ public class SubmodelRepositoryRegistryTestLink {
 		assertDescriptionDeletionAtRegistry();
 	}
 	
+	@Test
+    public void testDummyAasDescriptorFactoryUrlWithTrailingSlash() {
+        String baseURLWithSlash = submodelRepoBaseUrl + "/context/";
+        String SUBMODEL_REPOSITORY_PATH_WITHOUT_SLASH = SUBMODEL_REPOSITORY_PATH.substring(1);
+
+        assertEquals(baseURLWithSlash + SUBMODEL_REPOSITORY_PATH_WITHOUT_SLASH, createSubmodelRepositoryUrl(baseURLWithSlash));
+    }
+
+    @Test
+    public void testDummyAasDescriptorFactoryUrlWithoutTrailingSlash() {
+        String baseURLWithoutSlash = submodelRepoBaseUrl + "/context";
+
+        assertEquals(baseURLWithoutSlash + SUBMODEL_REPOSITORY_PATH , createSubmodelRepositoryUrl(baseURLWithoutSlash));
+    }
+	
 	private SubmodelDescriptor retrieveDescriptorFromRegistry() throws ApiException {
 		SubmodelRegistryApi api = new SubmodelRegistryApi(submodelRegistryUrl);
 
@@ -160,7 +175,16 @@ public class SubmodelRepositoryRegistryTestLink {
 	private static String createSubmodelRepositoryUrl(String smRepositoryBaseURL) {
 
 		try {
-			return new URL(new URL(smRepositoryBaseURL), SUBMODEL_REPOSITORY_PATH).toString();
+			URL url = new URL(smRepositoryBaseURL);
+            String path = url.getPath();
+
+            if (path.endsWith("/")) {
+                path = path.substring(0, path.length() - 1);
+            } else {
+            	path += "/";
+            }
+
+            return new URL(url.getProtocol(), url.getHost(), url.getPort(), path + SUBMODEL_REPOSITORY_PATH).toString();
 		} catch (MalformedURLException e) {
 			throw new RuntimeException("The Submodel Repository Base url is malformed.\n " + e.getMessage());
 		}

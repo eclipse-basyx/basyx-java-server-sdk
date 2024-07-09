@@ -89,7 +89,16 @@ public class DummyAasDescriptorFactory {
 	private static String createAasRepositoryUrl(String aasRepositoryBaseURL) {
 
 		try {
-			return new URL(new URL(aasRepositoryBaseURL), AAS_REPOSITORY_PATH).toString();
+			URL url = new URL(aasRepositoryBaseURL);
+            String path = url.getPath();
+
+            if (path.endsWith("/")) {
+                path = path.substring(0, path.length() - 1);
+            } else {
+            	path += "/";
+            }
+
+            return new URL(url.getProtocol(), url.getHost(), url.getPort(), path + AAS_REPOSITORY_PATH).toString();
 		} catch (MalformedURLException e) {
 			throw new RuntimeException("The AAS Repository Base url is malformed. " + e.getMessage());
 		}
