@@ -93,7 +93,7 @@ public class DummySubmodelDescriptorFactory {
 		}
 	}
 
-	private static String createSubmodelRepositoryUrl(String smRepositoryBaseURL) {
+	static String createSubmodelRepositoryUrl(String smRepositoryBaseURL) {
 
 		try {
 			URL url = new URL(smRepositoryBaseURL);

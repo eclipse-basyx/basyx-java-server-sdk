@@ -86,7 +86,7 @@ public class DummyAasDescriptorFactory {
 		}
 	}
 
-	private static String createAasRepositoryUrl(String aasRepositoryBaseURL) {
+	static String createAasRepositoryUrl(String aasRepositoryBaseURL) {
 
 		try {
 			URL url = new URL(aasRepositoryBaseURL);

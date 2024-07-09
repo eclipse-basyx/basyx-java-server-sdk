@@ -110,14 +110,14 @@ public class SubmodelRepositoryRegistryTestLink {
         String baseURLWithSlash = submodelRepoBaseUrl + "/context/";
         String SUBMODEL_REPOSITORY_PATH_WITHOUT_SLASH = SUBMODEL_REPOSITORY_PATH.substring(1);
 
-        assertEquals(baseURLWithSlash + SUBMODEL_REPOSITORY_PATH_WITHOUT_SLASH, createSubmodelRepositoryUrl(baseURLWithSlash));
+        assertEquals(baseURLWithSlash + SUBMODEL_REPOSITORY_PATH_WITHOUT_SLASH, DummySubmodelDescriptorFactory.createSubmodelRepositoryUrl(baseURLWithSlash));
     }
 
     @Test
     public void testDummyAasDescriptorFactoryUrlWithoutTrailingSlash() {
         String baseURLWithoutSlash = submodelRepoBaseUrl + "/context";
 
-        assertEquals(baseURLWithoutSlash + SUBMODEL_REPOSITORY_PATH , createSubmodelRepositoryUrl(baseURLWithoutSlash));
+        assertEquals(baseURLWithoutSlash + "/" + SUBMODEL_REPOSITORY_PATH , DummySubmodelDescriptorFactory.createSubmodelRepositoryUrl(baseURLWithoutSlash));
     }
 	
 	private SubmodelDescriptor retrieveDescriptorFromRegistry() throws ApiException {
@@ -159,7 +159,7 @@ public class SubmodelRepositoryRegistryTestLink {
 	}
 
 	private CloseableHttpResponse createSubmodelOnRepo(String submodelJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(createSubmodelRepositoryUrl(submodelRepoBaseUrl), submodelJsonContent);
+		return BaSyxHttpTestUtils.executePostOnURL(DummySubmodelDescriptorFactory.createSubmodelRepositoryUrl(submodelRepoBaseUrl), submodelJsonContent);
 	}
 
 	private CloseableHttpResponse createSubmodelElementOnRepo(String submodelElementJsonContent) throws IOException {
@@ -169,25 +169,7 @@ public class SubmodelRepositoryRegistryTestLink {
 	}
 
 	private String getSpecificSubmodelAccessURL(String submodelId) {
-		return createSubmodelRepositoryUrl(submodelRepoBaseUrl) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
-	}
-	
-	private static String createSubmodelRepositoryUrl(String smRepositoryBaseURL) {
-
-		try {
-			URL url = new URL(smRepositoryBaseURL);
-            String path = url.getPath();
-
-            if (path.endsWith("/")) {
-                path = path.substring(0, path.length() - 1);
-            } else {
-            	path += "/";
-            }
-
-            return new URL(url.getProtocol(), url.getHost(), url.getPort(), path + SUBMODEL_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The Submodel Repository Base url is malformed.\n " + e.getMessage());
-		}
+		return DummySubmodelDescriptorFactory.createSubmodelRepositoryUrl(submodelRepoBaseUrl) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
 	}
 
 }
