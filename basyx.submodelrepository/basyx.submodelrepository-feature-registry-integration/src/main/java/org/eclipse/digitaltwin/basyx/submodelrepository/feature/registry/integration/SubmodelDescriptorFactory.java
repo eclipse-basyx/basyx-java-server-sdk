@@ -190,8 +190,6 @@ public class SubmodelDescriptorFactory {
 
             if (path.endsWith("/")) {
                 path = path.substring(0, path.length() - 1);
-            } else {
-            	path += "/";
             }
 
             return new URL(url.getProtocol(), url.getHost(), url.getPort(), path + SUBMODEL_REPOSITORY_PATH).toString();

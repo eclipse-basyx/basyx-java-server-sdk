@@ -100,7 +100,7 @@ public class AasRepositoryRegistryTestLink {
     public void testDummyAasDescriptorFactoryUrlWithoutTrailingSlash() {
         String baseURLWithoutSlash = aasRepoBaseUrl + "/context";
 
-        assertEquals(baseURLWithoutSlash + "/" + AAS_REPOSITORY_PATH , DummyAasDescriptorFactory.createAasRepositoryUrl(baseURLWithoutSlash));
+        assertEquals(baseURLWithoutSlash + AAS_REPOSITORY_PATH , DummyAasDescriptorFactory.createAasRepositoryUrl(baseURLWithoutSlash));
     }
 
 	private AssetAdministrationShellDescriptor retrieveDescriptorFromRegistry() throws ApiException {

@@ -117,7 +117,7 @@ public class SubmodelRepositoryRegistryTestLink {
     public void testDummyAasDescriptorFactoryUrlWithoutTrailingSlash() {
         String baseURLWithoutSlash = submodelRepoBaseUrl + "/context";
 
-        assertEquals(baseURLWithoutSlash + "/" + SUBMODEL_REPOSITORY_PATH , DummySubmodelDescriptorFactory.createSubmodelRepositoryUrl(baseURLWithoutSlash));
+        assertEquals(baseURLWithoutSlash + SUBMODEL_REPOSITORY_PATH , DummySubmodelDescriptorFactory.createSubmodelRepositoryUrl(baseURLWithoutSlash));
     }
 	
 	private SubmodelDescriptor retrieveDescriptorFromRegistry() throws ApiException {
