@@ -34,6 +34,8 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
 import org.eclipse.digitaltwin.basyx.aasrepository.DummyAasFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.DummyAuthorizedAasRepositoryComponent;
+import org.eclipse.digitaltwin.basyx.aasservice.AasService;
+import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.client.TestAuthorizedConnectedAasService;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
@@ -103,5 +105,15 @@ public class TestAuthorizedConnectedAasRepository extends AasRepositorySuite {
 	@Override
 	protected AasRepository getAasRepository() {
 		return new AuthorizedConnectedAasRepository("http://localhost:8081", new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom"))));
+	}
+	
+	@Override
+	protected AasService getAasServiceWithThumbnail() throws IOException {
+		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.createForThumbnail();
+		AasService aasServiceWithThumbnail = getAasService(expected);
+	
+		aasServiceWithThumbnail.setThumbnail("dummyImgA.jpeg", "", createDummyImageIS_A());
+		
+		return aasServiceWithThumbnail;
 	}
 }

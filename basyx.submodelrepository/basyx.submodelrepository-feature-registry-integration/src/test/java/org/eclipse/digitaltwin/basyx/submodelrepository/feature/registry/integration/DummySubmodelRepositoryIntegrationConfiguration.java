@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
- *
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -19,19 +19,35 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
+ * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.component;
+package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
 
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.SubmodelRepositoryRegistryTestLink;
+import java.util.List;
+
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.DecoratedSubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.SubmodelRepositoryFeature;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 
 /**
- * Integration test for the Submodel Repository integration with Submodel Registry
+ * Configuration for tests
  * 
  * @author danish
  *
  */
-public class SubmodelRepositoryRegistryLinkIT extends SubmodelRepositoryRegistryTestLink {
+@Configuration
+public class DummySubmodelRepositoryIntegrationConfiguration {
+
+	@Bean
+	@ConditionalOnMissingBean
+	public static SubmodelRepository getSubmodelRepository(SubmodelRepositoryFactory submodelRepositoryFactory, List<SubmodelRepositoryFeature> features) {
+		return new DecoratedSubmodelRepositoryFactory(submodelRepositoryFactory, features).create();
+	}
 }

@@ -21,6 +21,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
  *
  */
 public class DummyAssetAdministrationShellFactory {
+	public static final String GLOBAL_ASSET_ID = "GlobalAssetID";
 	public static final String SUBMODEL_ID = "DummySubmodelID";
 
 	public static Reference submodelReference = buildDummyReference();
@@ -28,13 +29,15 @@ public class DummyAssetAdministrationShellFactory {
 	public static AssetAdministrationShell create() {
 		return new DefaultAssetAdministrationShell.Builder().id("arbitrary")
 				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
-						.globalAssetId(SUBMODEL_ID).build())
+						.globalAssetId(GLOBAL_ASSET_ID).build())
 				.build();
 	}
-
-	public static AssetAdministrationShell createWithDefaultThumbnail() {
-		return new DefaultAssetAdministrationShell.Builder().id("arbitrary")
-				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE).globalAssetId(SUBMODEL_ID).defaultThumbnail(buildDummyThumbnailResource()).build()).build();
+	
+	public static AssetAdministrationShell createForThumbnail() {
+		return new DefaultAssetAdministrationShell.Builder().id("arbitraryAasForThumbnail")
+				.assetInformation(new DefaultAssetInformation.Builder().assetKind(AssetKind.INSTANCE)
+						.globalAssetId(GLOBAL_ASSET_ID).build())
+				.build();
 	}
 
 	/**
@@ -51,10 +54,6 @@ public class DummyAssetAdministrationShellFactory {
 	private static Reference buildDummyReference() {
 		return new DefaultReference.Builder()
 				.keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(SUBMODEL_ID).build()).build();
-	}
-
-	private static Resource buildDummyThumbnailResource() {
-		return new DefaultResource.Builder().path("").contentType("").build();
 	}
 
 }
