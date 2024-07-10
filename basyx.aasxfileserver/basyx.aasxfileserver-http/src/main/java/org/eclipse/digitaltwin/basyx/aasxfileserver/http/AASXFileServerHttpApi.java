@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.springframework.core.io.Resource;
@@ -51,7 +52,7 @@ public interface AASXFileServerHttpApi {
     @RequestMapping(value = "/packages/{packageId}",
         produces = { "application/json" }, 
         method = RequestMethod.DELETE)
-    ResponseEntity<Void> deleteAASXByPackageId(@Parameter(in = ParameterIn.PATH, description = "The package Id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("packageId") String packageId
+    ResponseEntity<Void> deleteAASXByPackageId(@Parameter(in = ParameterIn.PATH, description = "The package Id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("packageId") Base64UrlEncodedIdentifier packageId
 );
 
 
@@ -73,7 +74,7 @@ public interface AASXFileServerHttpApi {
     @RequestMapping(value = "/packages/{packageId}",
         produces = { "application/asset-administration-shell-package", "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<Resource> getAASXByPackageId(@Parameter(in = ParameterIn.PATH, description = "The package Id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("packageId") String packageId
+    ResponseEntity<Resource> getAASXByPackageId(@Parameter(in = ParameterIn.PATH, description = "The package Id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("packageId") Base64UrlEncodedIdentifier packageId
 );
 
 
@@ -93,7 +94,7 @@ public interface AASXFileServerHttpApi {
     @RequestMapping(value = "/packages",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<PagedResult> getAllAASXPackageIds(@Parameter(in = ParameterIn.QUERY, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)" ,schema=@Schema()) @Valid @RequestParam(value = "aasId", required = false) String aasId
+    ResponseEntity<PagedResult> getAllAASXPackageIds(@Parameter(in = ParameterIn.QUERY, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)" ,schema=@Schema()) @Valid @RequestParam(value = "aasId", required = false) Base64UrlEncodedIdentifier aasId
 , @Min(1)@Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array" ,schema=@Schema(allowableValues={ "1" }, minimum="1"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit
 , @Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue" ,schema=@Schema()) @Valid @RequestParam(value = "cursor", required = false) Base64UrlEncodedCursor cursor
@@ -122,9 +123,9 @@ public interface AASXFileServerHttpApi {
         produces = { "application/json" },
         consumes = { "multipart/form-data" },
         method = RequestMethod.POST)
-    ResponseEntity<PackageDescription> postAASXPackage(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true,schema=@Schema()) @RequestParam(value="aasIds", required=true) List<String> aasIds
+    ResponseEntity<PackageDescription> postAASXPackage(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true,schema=@Schema()) @RequestParam(value="aasIds", required=true) List<Base64UrlEncodedIdentifier> aasIds
 , @Parameter(description = "") @Valid @RequestPart(value="file", required=true) MultipartFile file
-, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true,schema=@Schema()) @RequestParam(value="fileName", required=true)  String fileName
+, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true,schema=@Schema()) @RequestParam(value="fileName", required=true)  Base64UrlEncodedIdentifier fileName
     );
 
 
@@ -147,10 +148,10 @@ public interface AASXFileServerHttpApi {
         produces = { "application/json" }, 
         consumes = { "multipart/form-data" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<Void> putAASXByPackageId(@Parameter(in = ParameterIn.PATH, description = "The package Id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("packageId") String packageId
-, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true,schema=@Schema()) @RequestParam(value="aasIds", required=true)  List<String> aasIds
+    ResponseEntity<Void> putAASXByPackageId(@Parameter(in = ParameterIn.PATH, description = "The package Id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("packageId") Base64UrlEncodedIdentifier packageId
+, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true,schema=@Schema()) @RequestParam(value="aasIds", required=true)  List<Base64UrlEncodedIdentifier> aasIds
 , @Parameter(description = "") @Valid @RequestPart(value="file", required=true) MultipartFile file
-, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true,schema=@Schema()) @RequestParam(value="fileName", required=true)  String fileName
+, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true,schema=@Schema()) @RequestParam(value="fileName", required=true)  Base64UrlEncodedIdentifier fileName
 );
 
 }

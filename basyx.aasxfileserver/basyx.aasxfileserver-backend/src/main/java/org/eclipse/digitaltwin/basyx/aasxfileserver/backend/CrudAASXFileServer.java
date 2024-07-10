@@ -154,6 +154,9 @@ public class CrudAASXFileServer implements AASXFileServer {
 		updatePackagesBody(shellIds, file, filename, aasxPackage.getPackagesBody());
 
 		aasxPackage.getPackageDescription().setItems(shellIds);
+
+		aasxFileServerBackendProvider.getCrudRepository().delete(aasxPackage);
+		aasxFileServerBackendProvider.getCrudRepository().save(aasxPackage);
 	}
 
 	private void updatePackagesBody(List<String> shellIds, InputStream file, String filename, PackagesBody packagesBody) {

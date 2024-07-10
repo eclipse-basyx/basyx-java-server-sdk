@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.eclipse.digitaltwin.basyx</groupId>
         <artifactId>basyx.aasxfileserver</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>basyx.aasxfileserver-backend-mongodb</artifactId>
@@ -28,6 +28,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

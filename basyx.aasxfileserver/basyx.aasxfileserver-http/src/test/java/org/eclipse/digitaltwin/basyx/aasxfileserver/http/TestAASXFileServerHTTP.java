@@ -34,6 +34,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.model.BaSyxPackageDescription;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 
 import org.junit.BeforeClass;
@@ -65,16 +66,18 @@ public class TestAASXFileServerHTTP {
         File aasxFile = loadAASXFromResources("test.aasx");
 
         ArrayList<String> aasIds = new ArrayList<>();
-        aasIds.add("testAasId");
+        aasIds.add(new Base64UrlEncodedIdentifier("testAasId").getEncodedIdentifier());
 
-        HttpPost post = BaSyxHttpTestUtils.createPostRequestWithFileForFileServer(getUploadURL(),aasIds,aasxFile,"test");
+        Base64UrlEncodedIdentifier fileName = new Base64UrlEncodedIdentifier("test");
+
+        HttpPost post = BaSyxHttpTestUtils.createPostRequestWithFileForFileServer(getUploadURL(),aasIds,aasxFile,fileName.getEncodedIdentifier());
         CloseableHttpClient client = HttpClients.createDefault();
         CloseableHttpResponse response = client.execute(post);
 
         assertEquals(201,response.getCode());
         BaSyxPackageDescription packageDescription = getBaSyxPackageDescriptionFromResponse(BaSyxHttpTestUtils.getResponseAsString(response));
 
-        CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificPackageURL(packageDescription.getPackageId()));
+        CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificPackageURL(new Base64UrlEncodedIdentifier(packageDescription.getPackageId()).getEncodedIdentifier()));
         assertEquals(200,getResponse.getCode());
         InputStream responseBodyStream = getResponse.getEntity().getContent();
         // Create a temporary file
@@ -91,11 +94,11 @@ public class TestAASXFileServerHTTP {
 
         assertTrue(FileUtils.contentEquals(aasxFile, tempFile));
 
-        CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(getSpecificPackageURL(packageDescription.getPackageId()));
+        CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(getSpecificPackageURL(new Base64UrlEncodedIdentifier(packageDescription.getPackageId()).getEncodedIdentifier()));
 
         assertEquals(204,deleteResponse.getCode());
 
-        CloseableHttpResponse getResponseAfterDelete = BaSyxHttpTestUtils.executeGetOnURL(getSpecificPackageURL(packageDescription.getPackageId()));
+        CloseableHttpResponse getResponseAfterDelete = BaSyxHttpTestUtils.executeGetOnURL(getSpecificPackageURL(new Base64UrlEncodedIdentifier(packageDescription.getPackageId()).getEncodedIdentifier()));
 
         assertEquals(404,getResponseAfterDelete.getCode());
 
@@ -114,19 +117,20 @@ public class TestAASXFileServerHTTP {
     public void testUpdateAASXFile() throws IOException, ParseException {
         File aasxFile = loadAASXFromResources("test.aasx");
         ArrayList<String> aasIds = new ArrayList<>();
-        aasIds.add("testAasId");
-        HttpPost post = BaSyxHttpTestUtils.createPostRequestWithFileForFileServer(getUploadURL(),aasIds,aasxFile,"test");
+        aasIds.add(new Base64UrlEncodedIdentifier("testAasId").getEncodedIdentifier());
+        HttpPost post = BaSyxHttpTestUtils.createPostRequestWithFileForFileServer(getUploadURL(),aasIds,aasxFile, new Base64UrlEncodedIdentifier("test1").getEncodedIdentifier());
         CloseableHttpClient client = HttpClients.createDefault();
         CloseableHttpResponse response = client.execute(post);
         BaSyxPackageDescription description = getBaSyxPackageDescriptionFromResponse(BaSyxHttpTestUtils.getResponseAsString(response));
         String packageId = description.getPackageId();
+        String encodedPackageId = new Base64UrlEncodedIdentifier(packageId).getEncodedIdentifier();
 
         File updatedAASXFile = loadAASXFromResources("test2.aasx");
-        HttpPut put = BaSyxHttpTestUtils.updatePutRequestWithFileForFileServer(getUploadURL(), packageId, aasIds, updatedAASXFile, "test2");
+        HttpPut put = BaSyxHttpTestUtils.updatePutRequestWithFileForFileServer(getUploadURL(), encodedPackageId, aasIds, updatedAASXFile, new Base64UrlEncodedIdentifier("test2").getEncodedIdentifier());
         CloseableHttpResponse response2 = client.execute(put);
 
         assertEquals(204,response2.getCode());
-        CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificPackageURL(packageId));
+        CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificPackageURL(encodedPackageId));
 
         InputStream responseBodyStream = getResponse.getEntity().getContent();
         File tempFile = File.createTempFile("downloaded", ".aasx");

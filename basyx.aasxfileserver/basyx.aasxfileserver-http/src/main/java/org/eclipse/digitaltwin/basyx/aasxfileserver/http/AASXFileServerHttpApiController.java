@@ -9,6 +9,7 @@ import org.eclipse.digitaltwin.basyx.aasxfileserver.pagination.GetPackageDescrip
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
@@ -44,19 +45,19 @@ public class AASXFileServerHttpApiController implements AASXFileServerHttpApi {
     }
 
     @Override
-    public ResponseEntity<Void> deleteAASXByPackageId(String packageId) {
+    public ResponseEntity<Void> deleteAASXByPackageId(Base64UrlEncodedIdentifier packageId) {
         boolean exists = doesPackageExist(packageId);
         if(!exists){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        aasxFileServer.deleteAASXByPackageId(packageId);
+        aasxFileServer.deleteAASXByPackageId(packageId.getIdentifier());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @Override
-    public ResponseEntity<Resource> getAASXByPackageId(String packageId) {
+    public ResponseEntity<Resource> getAASXByPackageId(Base64UrlEncodedIdentifier packageId) {
         try {
-            InputStream aasxPackage = aasxFileServer.getAASXByPackageId(packageId);
+            InputStream aasxPackage = aasxFileServer.getAASXByPackageId(packageId.getIdentifier());
             InputStreamResource resource = new InputStreamResource(aasxPackage);
 
             return ResponseEntity.ok()
@@ -69,7 +70,7 @@ public class AASXFileServerHttpApiController implements AASXFileServerHttpApi {
     }
 
     @Override
-    public ResponseEntity<PagedResult> getAllAASXPackageIds(String aasId, Integer limit, Base64UrlEncodedCursor cursor) {
+    public ResponseEntity<PagedResult> getAllAASXPackageIds(Base64UrlEncodedIdentifier aasId, Integer limit, Base64UrlEncodedCursor cursor) {
 
         if (limit == null) {
             limit = 100;
@@ -82,7 +83,11 @@ public class AASXFileServerHttpApiController implements AASXFileServerHttpApi {
 
         PaginationInfo pInfo = new PaginationInfo(limit, decodedCursor);
 
-        CursorResult<List<PackageDescription>> cursorResult = aasxFileServer.getAllAASXPackageIds(aasId,pInfo);
+        if(aasId == null){
+            aasId = new Base64UrlEncodedIdentifier("");
+        }
+
+        CursorResult<List<PackageDescription>> cursorResult = aasxFileServer.getAllAASXPackageIds(aasId.getIdentifier(),pInfo);
 
         GetPackageDescriptionResult packageDescriptionResult = new GetPackageDescriptionResult();
 
@@ -94,12 +99,11 @@ public class AASXFileServerHttpApiController implements AASXFileServerHttpApi {
     }
 
     @Override
-    public ResponseEntity<PackageDescription> postAASXPackage(List<String> aasIds, MultipartFile file, String fileName) {
+    public ResponseEntity<PackageDescription> postAASXPackage(List<Base64UrlEncodedIdentifier> aasIds, MultipartFile file, Base64UrlEncodedIdentifier fileName) {
         try {
-            System.out.println(file.getContentType());
             InputStream fileStream = file.getInputStream();
 
-            PackageDescription packageDescription = aasxFileServer.createAASXPackage(aasIds, fileStream, fileName);
+            PackageDescription packageDescription = aasxFileServer.createAASXPackage(convertBase64UrlEncodedIdentifierListToStringList(aasIds), fileStream, fileName.getIdentifier());
             return new ResponseEntity<>(packageDescription, HttpStatus.CREATED);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -108,22 +112,22 @@ public class AASXFileServerHttpApiController implements AASXFileServerHttpApi {
 
 
     @Override
-    public ResponseEntity<Void> putAASXByPackageId(String packageId, List<String> aasIds, MultipartFile file, String fileName) {
+    public ResponseEntity<Void> putAASXByPackageId(Base64UrlEncodedIdentifier packageId, List<Base64UrlEncodedIdentifier> aasIds, MultipartFile file, Base64UrlEncodedIdentifier fileName) {
         boolean exists = doesPackageExist(packageId);
         if(!exists){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         try {
             InputStream fileStream = file.getInputStream();
-            aasxFileServer.updateAASXByPackageId(packageId, aasIds, fileStream, fileName);
+            aasxFileServer.updateAASXByPackageId(packageId.getIdentifier(), convertBase64UrlEncodedIdentifierListToStringList(aasIds), fileStream, fileName.getIdentifier());
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    private boolean doesPackageExist(String packageId) {
-        return aasxFileServer.getAASXByPackageId(packageId) != null;
+    private boolean doesPackageExist(Base64UrlEncodedIdentifier packageId) {
+        return aasxFileServer.getAASXByPackageId(packageId.getIdentifier()) != null;
     }
 
     private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
@@ -132,5 +136,13 @@ public class AASXFileServerHttpApiController implements AASXFileServerHttpApi {
         }
 
         return Base64UrlEncodedCursor.encodeCursor(cursorResult.getCursor());
+    }
+
+    private List<String> convertBase64UrlEncodedIdentifierListToStringList(List<Base64UrlEncodedIdentifier> aasIds){
+        List<String> aasIdsString = new ArrayList<>();
+        for(Base64UrlEncodedIdentifier aasId : aasIds){
+            aasIdsString.add(aasId.getIdentifier());
+        }
+        return aasIdsString;
     }
 }

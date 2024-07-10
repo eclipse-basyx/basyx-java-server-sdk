@@ -39,6 +39,8 @@ import org.apache.commons.io.IOUtils;
 import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.model.BaSyxPackageDescription;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.model.Package;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackagesBody;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
@@ -120,9 +122,13 @@ public abstract class AASXFileServerSuite {
 
 		AASXFileServer server = getAASXFileServer();
 
-		PackageDescription expectedPackageDescription = DummyAASXFileServerFactory.createFirstDummyAASXPackageOnServer(server);
+		PackageDescription initialPackageDescription = DummyAASXFileServerFactory.createFirstDummyAASXPackageOnServer(server);
 
-		updateAASXPackage(server, expectedPackageDescription.getPackageId(), DummyAASXFileServerFactory.SECOND_SHELL_IDS, DummyAASXFileServerFactory.SECOND_FILE, DummyAASXFileServerFactory.SECOND_FILENAME);
+		updateAASXPackage(server, initialPackageDescription.getPackageId(), DummyAASXFileServerFactory.SECOND_SHELL_IDS, DummyAASXFileServerFactory.class.getClassLoader().getResourceAsStream("TestAAS2.aasx"), DummyAASXFileServerFactory.SECOND_FILENAME);
+
+		BaSyxPackageDescription expectedPackageDescription = new BaSyxPackageDescription();
+		expectedPackageDescription.setPackageId("1");
+		expectedPackageDescription.setItems(DummyAASXFileServerFactory.SECOND_SHELL_IDS);
 
 		CursorResult<List<PackageDescription>> pagedPackageDescriptions = server.getAllAASXPackageIds("",NO_LIMIT_PAGINATION_INFO);
 		List<PackageDescription> actualPackageDescription = pagedPackageDescriptions.getResult();
@@ -136,7 +142,7 @@ public abstract class AASXFileServerSuite {
 
 		AASXFileServer server = getAASXFileServer();
 
-		updateAASXPackage(server, packageId, DummyAASXFileServerFactory.FIRST_SHELL_IDS, DummyAASXFileServerFactory.FIRST_FILE, DummyAASXFileServerFactory.FIRST_FILENAME);
+		updateAASXPackage(server, packageId, DummyAASXFileServerFactory.FIRST_SHELL_IDS, DummyAASXFileServerFactory.class.getClassLoader().getResourceAsStream("TestAAS1.aasx"), DummyAASXFileServerFactory.FIRST_FILENAME);
 	}
 
 	@Test
@@ -147,7 +153,7 @@ public abstract class AASXFileServerSuite {
 		PackageDescription packageDescription = DummyAASXFileServerFactory.createFirstDummyAASXPackageOnServer(server);
 
 		InputStream actualValue = server.getAASXByPackageId(packageDescription.getPackageId());
-		InputStream expectedValue = DummyAASXFileServerFactory.FIRST_FILE;
+		InputStream expectedValue = DummyAASXFileServerFactory.class.getClassLoader().getResourceAsStream("TestAAS1.aasx");
 
 		assertTrue(IOUtils.contentEquals(expectedValue, actualValue));
 	}
@@ -191,7 +197,7 @@ public abstract class AASXFileServerSuite {
 		assertTrue(actualPackageDescriptions.contains(expectedPackageDescription));
 
 		InputStream actualAASXFile = server.getAASXByPackageId("1");
-		InputStream expectedAASXFile = DummyAASXFileServerFactory.SECOND_FILE;
+		InputStream expectedAASXFile = DummyAASXFileServerFactory.class.getClassLoader().getResourceAsStream("TestAAS2.aasx");
 
 		assertTrue(IOUtils.contentEquals(expectedAASXFile, actualAASXFile));
 	}

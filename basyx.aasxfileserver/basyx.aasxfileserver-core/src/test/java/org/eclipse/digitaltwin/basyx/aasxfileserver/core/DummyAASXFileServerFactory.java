@@ -34,6 +34,7 @@ import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.model.BaSyxPackageDescription;
+import org.springframework.javapoet.ClassName;
 
 /**
  * Factory for creating AASX Packages for tests
@@ -44,21 +45,25 @@ import org.eclipse.digitaltwin.basyx.aasxfileserver.model.BaSyxPackageDescriptio
 public class DummyAASXFileServerFactory {
 
 	public static final List<String> FIRST_SHELL_IDS = Arrays.asList("AAS_ID_1", "AAS_ID_2");
-	public static final String FIRST_FILENAME = "test_file1.txt";
-	public static final byte[] FIRST_BYTEARRAY = { 65, 66, 67, 68, 69 };
-	public static final InputStream FIRST_FILE = new ByteArrayInputStream(FIRST_BYTEARRAY);
+	public static final String FIRST_FILENAME = "test_file1";
 
 	public static final List<String> SECOND_SHELL_IDS = Arrays.asList("AAS_ID_3", "AAS_ID_4");
-	public static final String SECOND_FILENAME = "test_file2.txt";
-	public static final byte[] SECOND_BYTEARRAY = { 75, 76, 77, 78, 79 };
-	public static final InputStream SECOND_FILE = new ByteArrayInputStream(SECOND_BYTEARRAY);
+	public static final String SECOND_FILENAME = "test_file2";
 
 	public static PackageDescription createFirstDummyAASXPackageOnServer(AASXFileServer server) {
-		return server.createAASXPackage(FIRST_SHELL_IDS, FIRST_FILE, FIRST_FILENAME);
+		InputStream resourceStream = DummyAASXFileServerFactory.class.getClassLoader().getResourceAsStream("TestAAS1.aasx");
+		if (resourceStream == null) {
+			throw new IllegalStateException("TestAAS1.aasx not found in resources");
+		}
+		return server.createAASXPackage(FIRST_SHELL_IDS, resourceStream, FIRST_FILENAME);
 	}
 
 	public static PackageDescription createSecondDummyAASXPackageOnServer(AASXFileServer server) {
-		return server.createAASXPackage(SECOND_SHELL_IDS, SECOND_FILE, SECOND_FILENAME);
+		InputStream resourceStream = DummyAASXFileServerFactory.class.getClassLoader().getResourceAsStream("TestAAS2.aasx");
+		if (resourceStream == null) {
+			throw new IllegalStateException("TestAAS2.aasx not found in resources");
+		}
+		return server.createAASXPackage(SECOND_SHELL_IDS, resourceStream, SECOND_FILENAME);
 	}
 
 	public static Collection<PackageDescription> createMultipleDummyAASXPackagesOnServer(AASXFileServer server) {
