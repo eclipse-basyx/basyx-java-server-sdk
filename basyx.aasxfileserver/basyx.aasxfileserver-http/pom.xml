@@ -14,16 +14,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.eclipse.digitaltwin.basyx</groupId>
-            <artifactId>basyx.http</artifactId>
-            <scope>test</scope>
-            <classifier>tests</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.digitaltwin.basyx</groupId>
-            <artifactId>basyx.http</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
@@ -49,23 +39,24 @@
             <artifactId>commons-io</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.eclipse.digitaltwin.basyx</groupId>
-            <artifactId>basyx.aasxfileserver-backend-inmemory</artifactId>
+            <artifactId>basyx.http</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.digitaltwin.basyx</groupId>
+            <artifactId>basyx.aasxfileserver-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.digitaltwin.basyx</groupId>
             <artifactId>basyx.aasxfileserver-backend</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>1.3.2</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>org.eclipse.digitaltwin.basyx</groupId>
-            <artifactId>basyx.aasxfileserver-core</artifactId>
+            <artifactId>basyx.http</artifactId>
+            <scope>test</scope>
+            <classifier>tests</classifier>
         </dependency>
         <dependency>
             <groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -75,13 +66,13 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.digitaltwin.basyx</groupId>
-            <artifactId>basyx.aasxfileserver-backend-inmemory</artifactId>
+            <artifactId>basyx.aasxfileserver-backend</artifactId>
             <scope>test</scope>
             <classifier>tests</classifier>
         </dependency>
         <dependency>
             <groupId>org.eclipse.digitaltwin.basyx</groupId>
-            <artifactId>basyx.aasxfileserver-backend</artifactId>
+            <artifactId>basyx.aasxfileserver-backend-inmemory</artifactId>
             <scope>test</scope>
             <classifier>tests</classifier>
         </dependency>

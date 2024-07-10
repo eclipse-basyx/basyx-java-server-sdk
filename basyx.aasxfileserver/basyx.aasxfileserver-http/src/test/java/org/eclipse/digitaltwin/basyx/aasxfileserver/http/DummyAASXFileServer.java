@@ -1,4 +1,4 @@
-package org.eclipse.digitaltwin.basyx.aasxfileserver.http; /*******************************************************************************
+/*******************************************************************************
  * Copyright (C) 2024 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -22,9 +22,8 @@ package org.eclipse.digitaltwin.basyx.aasxfileserver.http; /********************
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-
+package org.eclipse.digitaltwin.basyx.aasxfileserver.http;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
-public class DummyAASXFileServer {
-}
+public class DummyAASXFileServer { }

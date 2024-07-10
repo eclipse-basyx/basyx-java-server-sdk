@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -29,15 +29,18 @@ import java.util.Objects;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.springframework.validation.annotation.Validated;
 
 /**
  * Specifies the PackageDescription for {@link AASXFileServer}
+ *
+ * @author chaithra, zielstor, fried
  */
 @Validated
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-06-22T10:58:56.694021713Z[GMT]")
-public class BaSyxPackageDescription implements org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription {
+public class BaSyxPackageDescription implements PackageDescription {
 
 	@JsonProperty("aasIds")
 	private List<String> items = null;
