@@ -106,7 +106,7 @@ public class EndpointResolver {
 			connection.setConnectTimeout(timeout);
 			connection.setReadTimeout(timeout);
 			int responseCode = connection.getResponseCode();
-			return (200 <= responseCode && responseCode <= 399);
+			return (200 <= responseCode && responseCode <= 401);
 		} catch (Exception e) {
 			return false;
 		} finally {

@@ -73,6 +73,11 @@ public class ConnectedSubmodelService implements SubmodelService {
 		this.serviceApi = new SubmodelServiceApi(submodelServiceUrl);
 		this.submodelElementValueMapperFactory = new SubmodelElementValueMapperFactory();
 	}
+	
+	public ConnectedSubmodelService(SubmodelServiceApi submodelServiceApi) {
+		this.serviceApi = submodelServiceApi;
+		this.submodelElementValueMapperFactory = new SubmodelElementValueMapperFactory();
+	}
 
 	@Override
 	public Submodel getSubmodel() {

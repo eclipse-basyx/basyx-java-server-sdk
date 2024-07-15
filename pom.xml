@@ -257,6 +257,7 @@
 							<image>
 								<name>
 									${docker.namespace}/${docker.image.name}:${docker.image.tag}</name>
+								<registry>docker.io</registry>
 								<build>
 									<contextDir>${project.basedir}</contextDir>
 									<args>
@@ -275,8 +276,8 @@
 								</build>
 								<run>
 									<network>
-									   <mode>custom</mode>
-									   <name>basyx-java-server-sdk</name>
+										<mode>custom</mode>
+										<name>basyx-java-server-sdk</name>
 									</network>
 								</run>
 							</image>
@@ -305,10 +306,6 @@
 											<buildx>
 												<platforms>
 													${docker.target.platforms}</platforms>
-												<attestations>
-													<provenance>
-														${docker.provenance}</provenance>
-												</attestations>
 											</buildx>
 										</build>
 									</image>
@@ -488,6 +485,11 @@
 				<artifactId>basyx.submodelservice-http</artifactId>
 				<version>${revision}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-client</artifactId>
+				<version>${revision}</version>
+			</dependency>
 			<!-- basyx.submodelrepository -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -564,6 +566,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasservice-feature-mqtt</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasservice-client</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<!-- basyx.aasrepository -->
@@ -831,6 +838,12 @@
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-client</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
 			<!-- basyx.submodelrepository -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -915,6 +928,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasservice-feature-mqtt</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasservice-client</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -1217,6 +1236,27 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>docker-push</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>push-docker</id>
+								<phase>package</phase>
+								<goals>
+									<goal>build</goal>
+									<goal>push</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>

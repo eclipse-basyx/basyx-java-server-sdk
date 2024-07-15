@@ -19,7 +19,6 @@
 		<openapi.result.file>${openapi.result.folder}/${openapi.name}</openapi.result.file>
 	</properties>
 	<build>
-		<sourceDirectory>src/generated/java</sourceDirectory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
@@ -52,8 +51,10 @@
 							<goal>jsonpatch-maven-plugin</goal>
 						</goals>
 						<configuration>
-							<input>${project.basedir}/../${openapi.folder.name}/${openapi.base.name}</input>
-							<patch>${project.basedir}/../${openapi.folder.name}/${patch.base-extensions.name}</patch>
+							<input>
+								${project.basedir}/../${openapi.folder.name}/${openapi.base.name}</input>
+							<patch>
+								${project.basedir}/../${openapi.folder.name}/${patch.base-extensions.name}</patch>
 							<output>${openapi.result.file}</output>
 						</configuration>
 					</execution>
@@ -72,9 +73,12 @@
 							<library>native</library>
 							<inputSpec>${openapi.result.file}</inputSpec>
 							<output>${project.basedir}/${generated.folder}</output>
-							<apiPackage>org.eclipse.digitaltwin.basyx.aasregistry.client.api</apiPackage>
-							<invokerPackage>org.eclipse.digitaltwin.basyx.aasregistry.client</invokerPackage>
-							<modelPackage>org.eclipse.digitaltwin.basyx.aasregistry.client.model</modelPackage>
+							<apiPackage>
+								org.eclipse.digitaltwin.basyx.aasregistry.client.api</apiPackage>
+							<invokerPackage>
+								org.eclipse.digitaltwin.basyx.aasregistry.client</invokerPackage>
+							<modelPackage>
+								org.eclipse.digitaltwin.basyx.aasregistry.client.model</modelPackage>
 							<generateModels>true</generateModels>
 							<generateApis>true</generateApis>
 							<generateApiTests>false</generateApiTests>
@@ -132,6 +136,10 @@
 		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>jsr305</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.client</artifactId>
 		</dependency>
 	</dependencies>
 

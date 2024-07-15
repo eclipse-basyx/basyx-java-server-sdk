@@ -71,7 +71,7 @@ public class TestConnectedSubmodelService extends SubmodelServiceSuite {
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
 		repo.createSubmodel(submodel);
 		String base64UrlEncodedId = Base64UrlEncodedIdentifier.encodeIdentifier(submodel.getId());
-		return new ConnectedSubmodelService("http://localhost:8080/submodels/" + base64UrlEncodedId);
+		return new ConnectedSubmodelService("http://localhost:8081/submodels/" + base64UrlEncodedId);
 	}
 
 	@Override

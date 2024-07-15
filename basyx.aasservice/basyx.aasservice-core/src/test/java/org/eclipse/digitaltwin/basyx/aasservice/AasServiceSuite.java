@@ -27,6 +27,7 @@
 package org.eclipse.digitaltwin.basyx.aasservice;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.image.BufferedImage;
@@ -69,9 +70,10 @@ import org.junit.Test;
 public abstract class AasServiceSuite {
 
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
-
+	
 	protected abstract AasService getAasService(AssetAdministrationShell shell);
-
+	protected abstract AasService getAasServiceWithThumbnail() throws IOException;
+		
 	@Test
 	public void getAas() {
 		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.create();
@@ -84,7 +86,7 @@ public abstract class AasServiceSuite {
 		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.create();
 		DummyAssetAdministrationShellFactory.addDummySubmodelReference(expected);
 		AasService aasService = getAasService(expected);
-
+		
 		List<Reference> submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
 		Reference submodelReference = getFirstSubmodelReference(submodelReferences);
 		assertEquals(DummyAssetAdministrationShellFactory.submodelReference, submodelReference);
@@ -158,14 +160,12 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void updateThumbnail() throws FileNotFoundException, IOException {
-		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.createWithDefaultThumbnail();
-		AasService aasService = getAasService(shell);
+		AasService aasServiceWithThumbnail = getAasServiceWithThumbnail();
+		
+		aasServiceWithThumbnail.setThumbnail("dummyImgB.jpeg", "", createDummyImageIS_B());
 
-		aasService.setThumbnail("dummyImgA.jpeg", "", createDummyImageIS_A());
-
-		InputStream actualThumbnailIs = new FileInputStream(aasService.getThumbnail());
-
-		InputStream expectedThumbnail = createDummyImageIS_A();
+		InputStream actualThumbnailIs = new FileInputStream(aasServiceWithThumbnail.getThumbnail());
+		InputStream expectedThumbnail = createDummyImageIS_B();
 
 		assertTrue(IOUtils.contentEquals(expectedThumbnail, actualThumbnailIs));
 	}
@@ -186,12 +186,9 @@ public abstract class AasServiceSuite {
 
 	@Test
 	public void getThumbnail() throws IOException {
-		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.create();
-		AasService aasService = getAasService(shell);
-
-		aasService.setThumbnail("dummyImgA.jpeg", "", createDummyImageIS_A());
-
-		InputStream actualThumbnailIs = new FileInputStream(aasService.getThumbnail());
+		AasService aasServiceWithThumbnail = getAasServiceWithThumbnail();
+		
+		InputStream actualThumbnailIs = new FileInputStream(aasServiceWithThumbnail.getThumbnail());;
 
 		InputStream expectedThumbnail = createDummyImageIS_A();
 
@@ -206,14 +203,13 @@ public abstract class AasServiceSuite {
 		aasService.getThumbnail();
 	}
 
-	@Test(expected = FileDoesNotExistException.class)
+	@Test
 	public void deleteThumbnail() throws FileNotFoundException, IOException {
-		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.createWithDefaultThumbnail();
-		AasService aasService = getAasService(shell);
+		AasService aasServiceWithThumbnail = getAasServiceWithThumbnail();	
 		
-		aasService.deleteThumbnail();
-
-		aasService.getThumbnail();
+		aasServiceWithThumbnail.deleteThumbnail();
+		
+		assertThrows(FileDoesNotExistException.class, () -> aasServiceWithThumbnail.getThumbnail());
 	}
 
 	@Test(expected = FileDoesNotExistException.class)
@@ -258,11 +254,15 @@ public abstract class AasServiceSuite {
 	public static InputStream createDummyImageIS_A() throws IOException {
 		return createDummyImageIS(0x000000);
 	}
+	
+	private static InputStream createDummyImageIS_B() throws IOException {
+		return createDummyImageIS(0xFFFFFF);
+	}
 
 	private static InputStream createDummyImageIS(int color) throws IOException {
 		BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
 
-		image.setRGB(0, 0, 0x000000);
+		image.setRGB(0, 0, color);
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ImageIO.write(image, "jpeg", baos);
