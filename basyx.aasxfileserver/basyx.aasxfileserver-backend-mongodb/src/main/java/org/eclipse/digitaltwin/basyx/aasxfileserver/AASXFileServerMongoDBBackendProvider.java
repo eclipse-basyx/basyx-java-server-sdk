@@ -34,15 +34,14 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
-
-@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-@Component
 /**
  * Implementation of {@link AASXFileServerBackendProvider} for MongoDB Backend
  *
  * @author zielstor, fried
  *
  */
+@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
+@Component
 public class AASXFileServerMongoDBBackendProvider implements AASXFileServerBackendProvider {
 
 	private AASXFileServerMongoDBCrudRepository repository;

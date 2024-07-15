@@ -97,7 +97,7 @@ public class TestAASXFileServerHTTP {
         ArrayList<String> aasIds = getDummyAasIdList();
 
         CloseableHttpClient client = HttpClients.createDefault();
-        CloseableHttpResponse response = client.execute(post);
+        CloseableHttpResponse response = uploadFile(client,aasIds,aasxFile);
         BaSyxPackageDescription description = getBaSyxPackageDescriptionFromResponse(BaSyxHttpTestUtils.getResponseAsString(response));
         String packageId = description.getPackageId();
         String encodedPackageId = new Base64UrlEncodedIdentifier(packageId).getEncodedIdentifier();
