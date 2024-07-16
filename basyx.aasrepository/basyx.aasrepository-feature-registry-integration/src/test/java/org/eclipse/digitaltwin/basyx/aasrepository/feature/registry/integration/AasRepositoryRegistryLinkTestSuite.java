@@ -94,14 +94,14 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
         String baseURLWithSlash = getAasRepoBaseUrl() + "/context/";
         String AAS_REPOSITORY_PATH_WITHOUT_SLASH = AAS_REPOSITORY_PATH.substring(1);
 
-        assertEquals(baseURLWithSlash + AAS_REPOSITORY_PATH_WITHOUT_SLASH, DummyAasDescriptorFactory.createAasRepositoryUrl(baseURLWithSlash));
+        assertEquals(baseURLWithSlash + AAS_REPOSITORY_PATH_WITHOUT_SLASH, createAasRepositoryUrl(baseURLWithSlash));
     }
 
     @Test
     public void testDummyAasDescriptorFactoryUrlWithoutTrailingSlash() {
         String baseURLWithoutSlash = getAasRepoBaseUrl() + "/context";
 
-        assertEquals(baseURLWithoutSlash + AAS_REPOSITORY_PATH , DummyAasDescriptorFactory.createAasRepositoryUrl(baseURLWithoutSlash));
+        assertEquals(baseURLWithoutSlash + AAS_REPOSITORY_PATH , createAasRepositoryUrl(baseURLWithoutSlash));
     }
 
 	private AssetAdministrationShellDescriptor retrieveDescriptorFromRegistry() throws ApiException {
@@ -135,10 +135,26 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 	}
 
 	private CloseableHttpResponse createAasOnRepo(String aasJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(DummyAasDescriptorFactory.createAasRepositoryUrl(getAasRepoBaseUrl()), aasJsonContent);
+		return BaSyxHttpTestUtils.executePostOnURL(createAasRepositoryUrl(getAasRepoBaseUrl()), aasJsonContent);
 	}
 
 	private String getSpecificAasAccessURL(String aasId) {
-		return DummyAasDescriptorFactory.createAasRepositoryUrl(getAasRepoBaseUrl()) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
+		return createAasRepositoryUrl(getAasRepoBaseUrl()) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
+	}
+	
+	private String createAasRepositoryUrl(String aasRepositoryBaseURL) {
+
+		try {
+			URL url = new URL(aasRepositoryBaseURL);
+            String path = url.getPath();
+
+            if (path.endsWith("/")) {
+                path = path.substring(0, path.length() - 1);
+            }
+
+            return new URL(url.getProtocol(), url.getHost(), url.getPort(), path + AAS_REPOSITORY_PATH).toString();
+		} catch (MalformedURLException e) {
+			throw new RuntimeException("The AAS Repository Base url is malformed. " + e.getMessage());
+		}
 	}
 }
