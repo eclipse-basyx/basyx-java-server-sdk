@@ -31,9 +31,11 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentFactory;
 import org.eclipse.digitaltwin.basyx.aasenvironment.feature.AasEnvironmentFeature;
 import org.eclipse.digitaltwin.basyx.aasenvironment.feature.DecoratedAasEnvironmentFactory;
+import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.AasEnvironmentPreconfigurationLoader;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * Dummy configuration for testing the {@link AasEnvironment} authorization feature
