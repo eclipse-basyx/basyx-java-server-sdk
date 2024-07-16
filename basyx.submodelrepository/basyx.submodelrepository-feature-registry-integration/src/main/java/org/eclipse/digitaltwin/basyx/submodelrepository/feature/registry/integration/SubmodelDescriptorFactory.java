@@ -192,7 +192,7 @@ public class SubmodelDescriptorFactory {
                 path = path.substring(0, path.length() - 1);
             }
 
-            return new URL(url.getProtocol(), url.getHost(), url.getPort(), path + SUBMODEL_REPOSITORY_PATH).toString();
+            return new URL(url.getProtocol(), url.getHost(), url.getPort(), path + SUBMODEL_REPOSITORY_PATH).toString(); 
 		} catch (MalformedURLException e) {
 			throw new RuntimeException("The Submodel Repository Base url is malformed.\n" + e.getMessage());
 		}
