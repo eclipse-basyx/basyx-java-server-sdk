@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -46,21 +46,22 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
 /**
- * Integration test for {@link RegistryIntegrationSubmodelRepository} feature
+ * Test suite for {@link RegistryIntegrationSubmodelRepository} feature
  * 
  * @author danish
  */
-public class SubmodelRepositoryRegistryTestLink {
+public abstract class SubmodelRepositoryRegistryLinkTestSuite {
 	
 	private static final String SUBMODEL_REPOSITORY_PATH = "/submodels";
 
 	private static final String DUMMY_SUBMODEL_IDSHORT = "TechnicalData";
 	private static final String DUMMY_SUBMODEL_ID = "7A7104BDAB57E184";
+	
+	protected abstract String getSubmodelRepoBaseUrl();
+	protected abstract String getSubmodelRegistryUrl(); 
+	protected abstract SubmodelRegistryApi getSubmodelRegistryApi();
 
-	public static String submodelRepoBaseUrl = "http://localhost:8081";
-	public static String submodelRegistryUrl = "http://localhost:8060";
-
-	private static final SubmodelDescriptor DUMMY_DESCRIPTOR = DummySubmodelDescriptorFactory.createDummyDescriptor(DUMMY_SUBMODEL_ID, DUMMY_SUBMODEL_IDSHORT, submodelRepoBaseUrl, DummySubmodelDescriptorFactory.createSemanticId());
+	private final SubmodelDescriptor DUMMY_DESCRIPTOR = DummySubmodelDescriptorFactory.createDummyDescriptor(DUMMY_SUBMODEL_ID, DUMMY_SUBMODEL_IDSHORT, getSubmodelRepoBaseUrl(), DummySubmodelDescriptorFactory.createSemanticId());
 
 	@Test
 	public void createSubmodel() throws FileNotFoundException, IOException, ApiException {
@@ -84,7 +85,7 @@ public class SubmodelRepositoryRegistryTestLink {
 		CloseableHttpResponse creationResponse = createSubmodelOnRepo(submodelJsonContent);
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
 
-		CloseableHttpResponse submodelElementCreationResponse = createSubmodelElementOnRepo(submodelElementJsonContent);
+		createSubmodelElementOnRepo(submodelElementJsonContent);
 		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificSubmodelAccessURL(DUMMY_SUBMODEL_ID));
 
 		BaSyxHttpTestUtils.assertSameJSONContent(getExpectedSubmodel(), BaSyxHttpTestUtils.getResponseAsString(getResponse));
@@ -107,7 +108,7 @@ public class SubmodelRepositoryRegistryTestLink {
 	
 	@Test
     public void testDummyAasDescriptorFactoryUrlWithTrailingSlash() {
-        String baseURLWithSlash = submodelRepoBaseUrl + "/context/";
+        String baseURLWithSlash = getSubmodelRepoBaseUrl() + "/context/";
         String SUBMODEL_REPOSITORY_PATH_WITHOUT_SLASH = SUBMODEL_REPOSITORY_PATH.substring(1);
 
         assertEquals(baseURLWithSlash + SUBMODEL_REPOSITORY_PATH_WITHOUT_SLASH, DummySubmodelDescriptorFactory.createSubmodelRepositoryUrl(baseURLWithSlash));
@@ -115,13 +116,13 @@ public class SubmodelRepositoryRegistryTestLink {
 
     @Test
     public void testDummyAasDescriptorFactoryUrlWithoutTrailingSlash() {
-        String baseURLWithoutSlash = submodelRepoBaseUrl + "/context";
+        String baseURLWithoutSlash = getSubmodelRepoBaseUrl() + "/context";
 
         assertEquals(baseURLWithoutSlash + SUBMODEL_REPOSITORY_PATH , DummySubmodelDescriptorFactory.createSubmodelRepositoryUrl(baseURLWithoutSlash));
     }
 	
 	private SubmodelDescriptor retrieveDescriptorFromRegistry() throws ApiException {
-		SubmodelRegistryApi api = new SubmodelRegistryApi(submodelRegistryUrl);
+		SubmodelRegistryApi api = getSubmodelRegistryApi();
 
 		return api.getSubmodelDescriptorById(DUMMY_SUBMODEL_ID);
 	}
@@ -137,7 +138,7 @@ public class SubmodelRepositoryRegistryTestLink {
 	}
 
 	private void assertDescriptionDeletionAtRegistry() throws ApiException {
-		SubmodelRegistryApi api = new SubmodelRegistryApi(submodelRegistryUrl);
+		SubmodelRegistryApi api = getSubmodelRegistryApi();
 
 		GetSubmodelDescriptorsResult result = api.getAllSubmodelDescriptors(null, null);
 
@@ -159,7 +160,7 @@ public class SubmodelRepositoryRegistryTestLink {
 	}
 
 	private CloseableHttpResponse createSubmodelOnRepo(String submodelJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(DummySubmodelDescriptorFactory.createSubmodelRepositoryUrl(submodelRepoBaseUrl), submodelJsonContent);
+		return BaSyxHttpTestUtils.executePostOnURL(DummySubmodelDescriptorFactory.createSubmodelRepositoryUrl(getSubmodelRepoBaseUrl()), submodelJsonContent);
 	}
 
 	private CloseableHttpResponse createSubmodelElementOnRepo(String submodelElementJsonContent) throws IOException {
@@ -169,7 +170,7 @@ public class SubmodelRepositoryRegistryTestLink {
 	}
 
 	private String getSpecificSubmodelAccessURL(String submodelId) {
-		return DummySubmodelDescriptorFactory.createSubmodelRepositoryUrl(submodelRepoBaseUrl) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
+		return DummySubmodelDescriptorFactory.createSubmodelRepositoryUrl(getSubmodelRepoBaseUrl()) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
 	}
 
 }

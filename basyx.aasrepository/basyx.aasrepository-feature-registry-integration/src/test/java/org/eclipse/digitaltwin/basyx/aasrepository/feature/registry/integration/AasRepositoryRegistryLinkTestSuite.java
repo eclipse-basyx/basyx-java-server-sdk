@@ -45,21 +45,22 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
 /**
- * Integration test for {@link RegistryIntegrationAasRepository} feature
+ * Test suite for {@link RegistryIntegrationAasRepository} feature
  * 
  * @author danish
  */
-public class AasRepositoryRegistryTestLink {
+public abstract class AasRepositoryRegistryLinkTestSuite {
 
 	private static final String AAS_REPOSITORY_PATH = "/shells";
 	private static final String DUMMY_GLOBAL_ASSETID = "globalAssetId";
 	private static final String DUMMY_IDSHORT = "ExampleMotor";
 	private static final String DUMMY_AAS_ID = "customIdentifier";
 
-	public static String aasRepoBaseUrl = "http://localhost:8081";
-	public static String aasRegistryUrl = "http://localhost:8050";
+	protected abstract String getAasRepoBaseUrl();
+	protected abstract String getAasRegistryUrl(); 
+	protected abstract RegistryAndDiscoveryInterfaceApi getAasRegistryApi(); 
 
-	private static final AssetAdministrationShellDescriptor DUMMY_DESCRIPTOR = DummyAasDescriptorFactory.createDummyDescriptor(DUMMY_AAS_ID, DUMMY_IDSHORT, DUMMY_GLOBAL_ASSETID, aasRepoBaseUrl);
+	private final AssetAdministrationShellDescriptor DUMMY_DESCRIPTOR = DummyAasDescriptorFactory.createDummyDescriptor(DUMMY_AAS_ID, DUMMY_IDSHORT, DUMMY_GLOBAL_ASSETID, getAasRepoBaseUrl());
 
 	@Test
 	public void createAas() throws FileNotFoundException, IOException, ApiException {
@@ -90,7 +91,7 @@ public class AasRepositoryRegistryTestLink {
 	
 	@Test
     public void testDummyAasDescriptorFactoryUrlWithTrailingSlash() {
-        String baseURLWithSlash = aasRepoBaseUrl + "/context/";
+        String baseURLWithSlash = getAasRepoBaseUrl() + "/context/";
         String AAS_REPOSITORY_PATH_WITHOUT_SLASH = AAS_REPOSITORY_PATH.substring(1);
 
         assertEquals(baseURLWithSlash + AAS_REPOSITORY_PATH_WITHOUT_SLASH, DummyAasDescriptorFactory.createAasRepositoryUrl(baseURLWithSlash));
@@ -98,13 +99,13 @@ public class AasRepositoryRegistryTestLink {
 
     @Test
     public void testDummyAasDescriptorFactoryUrlWithoutTrailingSlash() {
-        String baseURLWithoutSlash = aasRepoBaseUrl + "/context";
+        String baseURLWithoutSlash = getAasRepoBaseUrl() + "/context";
 
         assertEquals(baseURLWithoutSlash + AAS_REPOSITORY_PATH , DummyAasDescriptorFactory.createAasRepositoryUrl(baseURLWithoutSlash));
     }
 
 	private AssetAdministrationShellDescriptor retrieveDescriptorFromRegistry() throws ApiException {
-		RegistryAndDiscoveryInterfaceApi api = new RegistryAndDiscoveryInterfaceApi(aasRegistryUrl);
+		RegistryAndDiscoveryInterfaceApi api = getAasRegistryApi();
 
 		return api.getAssetAdministrationShellDescriptorById(DUMMY_AAS_ID);
 	}
@@ -120,7 +121,7 @@ public class AasRepositoryRegistryTestLink {
 	}
 
 	private void assertDescriptionDeletionAtRegistry() throws ApiException {
-		RegistryAndDiscoveryInterfaceApi api = new RegistryAndDiscoveryInterfaceApi(aasRegistryUrl);
+		RegistryAndDiscoveryInterfaceApi api = getAasRegistryApi();
 
 		GetAssetAdministrationShellDescriptorsResult result = api.getAllAssetAdministrationShellDescriptors(null, null, null, null);
 
@@ -134,10 +135,10 @@ public class AasRepositoryRegistryTestLink {
 	}
 
 	private CloseableHttpResponse createAasOnRepo(String aasJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(DummyAasDescriptorFactory.createAasRepositoryUrl(aasRepoBaseUrl), aasJsonContent);
+		return BaSyxHttpTestUtils.executePostOnURL(DummyAasDescriptorFactory.createAasRepositoryUrl(getAasRepoBaseUrl()), aasJsonContent);
 	}
 
 	private String getSpecificAasAccessURL(String aasId) {
-		return DummyAasDescriptorFactory.createAasRepositoryUrl(aasRepoBaseUrl) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
+		return DummyAasDescriptorFactory.createAasRepositoryUrl(getAasRepoBaseUrl()) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
 	}
 }
