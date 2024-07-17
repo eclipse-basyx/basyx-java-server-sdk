@@ -52,7 +52,7 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -97,7 +97,7 @@ public class TestAuthorizedSubmodelRepository {
 	public static void setUp() throws FileNotFoundException, IOException, DeserializationException {
 		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
 
-		appContext = new SpringApplication(DummyAuthorizedSubmodelRepositoryComponent.class).run(new String[] {});
+		appContext = new SpringApplicationBuilder(DummyAuthorizedSubmodelRepositoryComponent.class).profiles("authorization").run(new String[] {});
 
 		submodelRepo = appContext.getBean(SubmodelRepository.class);
 		

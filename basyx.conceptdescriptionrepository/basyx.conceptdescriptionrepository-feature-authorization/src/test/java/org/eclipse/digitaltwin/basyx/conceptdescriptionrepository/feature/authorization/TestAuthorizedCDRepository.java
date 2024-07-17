@@ -48,7 +48,7 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -79,7 +79,7 @@ public class TestAuthorizedCDRepository {
 	public static void setUp() throws FileNotFoundException, IOException, DeserializationException {
 		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
 
-		appContext = new SpringApplication(DummyAuthorizedCDRepositoryComponent.class).run(new String[] {});
+		appContext = new SpringApplicationBuilder(DummyAuthorizedCDRepositoryComponent.class).profiles("authorization").run(new String[] {});
 
 		cdRepo = appContext.getBean(ConceptDescriptionRepository.class);
 		
