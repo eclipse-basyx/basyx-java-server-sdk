@@ -74,6 +74,9 @@ public class AuthorizedAASEnvironmentPreconfigurationLoader extends AasEnvironme
     @Value("${basyx.aasenvironment.authorization.preconfiguration.scopes:#{null}}")
     private Collection<String> scopes;
 
+    @Value("${basyx.environment:#{null}}")
+    private String basyxEnvironment;
+
     private AccessTokenProvider tokenProvider;
 
     public AuthorizedAASEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, List<String> pathsToLoad) {
@@ -82,8 +85,10 @@ public class AuthorizedAASEnvironmentPreconfigurationLoader extends AasEnvironme
 
     @Override
     public void loadPreconfiguredEnvironments(AasEnvironment aasEnvironment) throws IOException, InvalidFormatException, DeserializationException {
-        setUpTokenProvider();
-        configureSecurityContext();
+        if(isEnvironmentSet()) {
+            setUpTokenProvider();
+            configureSecurityContext();
+        }
         super.loadPreconfiguredEnvironments(aasEnvironment);
         SecurityContextHolder.clearContext();
     }
@@ -115,5 +120,9 @@ public class AuthorizedAASEnvironmentPreconfigurationLoader extends AasEnvironme
         ClassPathResource classPathResource = new ClassPathResource(fileName);
         InputStream in = classPathResource.getInputStream();
         return IOUtils.toString(in, StandardCharsets.UTF_8.name());
+    }
+
+    private boolean isEnvironmentSet() {
+        return basyxEnvironment != null;
     }
 }
