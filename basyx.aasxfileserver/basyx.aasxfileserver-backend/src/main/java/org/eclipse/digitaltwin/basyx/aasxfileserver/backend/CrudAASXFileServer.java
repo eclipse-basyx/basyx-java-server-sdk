@@ -34,8 +34,8 @@ import java.util.stream.StreamSupport;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultPackageDescription;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.model.BaSyxPackageDescription;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.model.Package;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackagesBody;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
@@ -124,7 +124,7 @@ public class CrudAASXFileServer implements AASXFileServer {
 	}
 
 	private PackageDescription createPackageDescription(List<String> shellIds, String newPackageId) {
-		BaSyxPackageDescription packageDescription = new BaSyxPackageDescription();
+		PackageDescription packageDescription = new DefaultPackageDescription();
 		packageDescription.setPackageId(newPackageId);
 		packageDescription.setItems(shellIds);
 

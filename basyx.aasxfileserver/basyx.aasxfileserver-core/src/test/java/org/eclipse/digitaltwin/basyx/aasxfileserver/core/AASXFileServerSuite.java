@@ -37,10 +37,8 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultPackageDescription;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.model.BaSyxPackageDescription;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.model.Package;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackagesBody;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
@@ -62,8 +60,8 @@ public abstract class AASXFileServerSuite {
 		AASXFileServer server = getAASXFileServer();
 		DummyAASXFileServerFactory.createMultipleDummyAASXPackagesOnServer(server);
 
-		BaSyxPackageDescription expectedDescription1 = DummyAASXFileServerFactory.createDummyPackageDescription("1", DummyAASXFileServerFactory.FIRST_SHELL_IDS);
-		BaSyxPackageDescription expectedDescription2 = DummyAASXFileServerFactory.createDummyPackageDescription("2", DummyAASXFileServerFactory.SECOND_SHELL_IDS);
+		PackageDescription expectedDescription1 = DummyAASXFileServerFactory.createDummyPackageDescription("1", DummyAASXFileServerFactory.FIRST_SHELL_IDS);
+		PackageDescription expectedDescription2 = DummyAASXFileServerFactory.createDummyPackageDescription("2", DummyAASXFileServerFactory.SECOND_SHELL_IDS);
 
 		List<PackageDescription> expectedPackageDescriptions = Arrays.asList(expectedDescription1, expectedDescription2);
 		
@@ -80,7 +78,7 @@ public abstract class AASXFileServerSuite {
 		AASXFileServer server = getAASXFileServer();
 		DummyAASXFileServerFactory.createMultipleDummyAASXPackagesOnServer(server);
 
-		BaSyxPackageDescription expectedDescription = DummyAASXFileServerFactory.createDummyPackageDescription("2", DummyAASXFileServerFactory.SECOND_SHELL_IDS);
+		PackageDescription expectedDescription = DummyAASXFileServerFactory.createDummyPackageDescription("2", DummyAASXFileServerFactory.SECOND_SHELL_IDS);
 
 		List<PackageDescription> expectedPackageDescriptions = Arrays.asList(expectedDescription);
 
@@ -95,7 +93,7 @@ public abstract class AASXFileServerSuite {
 		AASXFileServer server = getAASXFileServer();
 		PackageDescription actualPackageDescription = DummyAASXFileServerFactory.createFirstDummyAASXPackageOnServer(server);
 
-		BaSyxPackageDescription expectedPackageDescription = DummyAASXFileServerFactory.createDummyPackageDescription("1", DummyAASXFileServerFactory.FIRST_SHELL_IDS);
+		PackageDescription expectedPackageDescription = DummyAASXFileServerFactory.createDummyPackageDescription("1", DummyAASXFileServerFactory.FIRST_SHELL_IDS);
 
 		assertEquals(expectedPackageDescription, actualPackageDescription);
 	}
@@ -126,7 +124,7 @@ public abstract class AASXFileServerSuite {
 
 		updateAASXPackage(server, initialPackageDescription.getPackageId(), DummyAASXFileServerFactory.SECOND_SHELL_IDS, DummyAASXFileServerFactory.class.getClassLoader().getResourceAsStream("TestAAS2.aasx"), DummyAASXFileServerFactory.SECOND_FILENAME);
 
-		BaSyxPackageDescription expectedPackageDescription = new BaSyxPackageDescription();
+		PackageDescription expectedPackageDescription = new DefaultPackageDescription();
 		expectedPackageDescription.setPackageId("1");
 		expectedPackageDescription.setItems(DummyAASXFileServerFactory.SECOND_SHELL_IDS);
 

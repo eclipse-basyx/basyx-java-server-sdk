@@ -33,7 +33,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ParseException;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.model.BaSyxPackageDescription;
+import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 
@@ -78,7 +78,7 @@ public class TestAASXFileServerHTTP {
         CloseableHttpResponse uploadFileResponse = uploadFile(client,aasIds,aasxFile);
         assertEquals(201,uploadFileResponse.getCode());
 
-        BaSyxPackageDescription packageDescription = getBaSyxPackageDescriptionFromResponse(BaSyxHttpTestUtils.getResponseAsString(uploadFileResponse));
+        PackageDescription packageDescription = getPackageDescriptionFromResponse(BaSyxHttpTestUtils.getResponseAsString(uploadFileResponse));
         CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificPackageURL(new Base64UrlEncodedIdentifier(packageDescription.getPackageId()).getEncodedIdentifier()));
         assertEquals(200,getResponse.getCode());
 
@@ -98,7 +98,7 @@ public class TestAASXFileServerHTTP {
 
         CloseableHttpClient client = HttpClients.createDefault();
         CloseableHttpResponse response = uploadFile(client,aasIds,aasxFile);
-        BaSyxPackageDescription description = getBaSyxPackageDescriptionFromResponse(BaSyxHttpTestUtils.getResponseAsString(response));
+        PackageDescription description = getPackageDescriptionFromResponse(BaSyxHttpTestUtils.getResponseAsString(response));
         String packageId = description.getPackageId();
         String encodedPackageId = new Base64UrlEncodedIdentifier(packageId).getEncodedIdentifier();
 
@@ -125,7 +125,7 @@ public class TestAASXFileServerHTTP {
     }
 
     private static String getPackageIdFromUploadResponseBody(CloseableHttpResponse response) throws IOException, ParseException {
-        BaSyxPackageDescription description = getBaSyxPackageDescriptionFromResponse(BaSyxHttpTestUtils.getResponseAsString(response));
+        PackageDescription description = getPackageDescriptionFromResponse(BaSyxHttpTestUtils.getResponseAsString(response));
         String packageId = description.getPackageId();
         String encodedPackageId = new Base64UrlEncodedIdentifier(packageId).getEncodedIdentifier();
         return encodedPackageId;
@@ -169,19 +169,19 @@ public class TestAASXFileServerHTTP {
         assertTrue(FileUtils.contentEquals(aasxFile, tempFile));
     }
 
-    private void deletePackageAndAssertResponseCode(BaSyxPackageDescription packageDescription) throws IOException {
+    private void deletePackageAndAssertResponseCode(PackageDescription packageDescription) throws IOException {
         CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(getSpecificPackageURL(new Base64UrlEncodedIdentifier(packageDescription.getPackageId()).getEncodedIdentifier()));
         assertEquals(204,deleteResponse.getCode());
     }
 
-    private void asserPackageIsDeleted(BaSyxPackageDescription packageDescription) throws IOException {
+    private void asserPackageIsDeleted(PackageDescription packageDescription) throws IOException {
         CloseableHttpResponse getResponseAfterDelete = BaSyxHttpTestUtils.executeGetOnURL(getSpecificPackageURL(new Base64UrlEncodedIdentifier(packageDescription.getPackageId()).getEncodedIdentifier()));
         assertEquals(404,getResponseAfterDelete.getCode());
     }
 
-    private static BaSyxPackageDescription getBaSyxPackageDescriptionFromResponse(String responseBody) throws IOException {
+    private static PackageDescription getPackageDescriptionFromResponse(String responseBody) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        BaSyxPackageDescription packageDescription = mapper.readValue(responseBody, BaSyxPackageDescription.class);
+        PackageDescription packageDescription = mapper.readValue(responseBody, PackageDescription.class);
         return packageDescription;
     }
 

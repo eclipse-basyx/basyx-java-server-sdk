@@ -25,6 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultPackageDescription;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization.rbac.AasEnvironmentTargetPermissionVerifier;
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
