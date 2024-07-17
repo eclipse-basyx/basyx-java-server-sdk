@@ -36,6 +36,7 @@ import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Encoder;
  * @author rana
  */
 public class MqttSubmodelServiceTopicFactory extends AbstractMqttTopicFactory {
+	
 	private static final String SUBMODELSERVIC = "sm-service";
 	private static final String SUBMODELS = "submodels";
 	private static final String CREATED = "created";

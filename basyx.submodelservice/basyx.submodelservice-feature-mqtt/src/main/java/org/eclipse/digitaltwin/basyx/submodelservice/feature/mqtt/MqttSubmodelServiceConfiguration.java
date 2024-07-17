@@ -38,7 +38,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * MQTT configuration to allow for the automatic enablement of the feature using
+ * MQTT configuration to allow for the automatic enable of the feature using
  * the config file.
  */
 @ConditionalOnExpression("#{${" + MqttSubmodelServiceFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")

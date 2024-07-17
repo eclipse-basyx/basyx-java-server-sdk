@@ -1,5 +1,3 @@
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
-
 /*******************************************************************************
  * Copyright (C) 2024 the Eclipse BaSyx Authors
  *
@@ -24,6 +22,8 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+
+package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
 import static org.junit.Assert.assertEquals;
 import java.io.IOException;
@@ -133,6 +133,7 @@ public class TestMqttSubmodelObserver {
 	}
 
 	private static MqttTestListener configureInterceptListener(Server broker) {
+		
 		MqttTestListener testListener = new MqttTestListener();
 		broker.addInterceptHandler(testListener);
 
@@ -140,12 +141,14 @@ public class TestMqttSubmodelObserver {
 	}
 
 	private static MqttClient createAndConnectClient() throws MqttException, MqttSecurityException {
+		
 		MqttClient client = new MqttClient("tcp://localhost:1884", "testClient");
 		client.connect();
 		return client;
 	}
 
 	private static Server startBroker() throws IOException {
+		
 		Server broker = new Server();
 		IResourceLoader classpathLoader = new ClasspathResourceLoader();
 
