@@ -34,7 +34,7 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.DummyConc
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -50,7 +50,7 @@ public class TestConceptDescriptionRepositoryHTTP extends ConceptDescriptionRepo
 
 	@BeforeClass
 	public static void startConceptDescriptionRepo() throws Exception {
-		appContext = new SpringApplication(DummyConceptDescriptionRepositoryComponent.class).run(new String[] {});
+		appContext = new SpringApplicationBuilder(DummyConceptDescriptionRepositoryComponent.class).profiles("httptests").run(new String[] {});
 	}
 
 	@Override

@@ -94,7 +94,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 
@@ -109,7 +109,7 @@ public class TestConnectedSubmodelElements {
 
 	@BeforeClass
 	public static void startSubmodelService() throws Exception {
-		appContext = new SpringApplication(DummySubmodelRepositoryComponent.class).run(new String[] {});
+		appContext = new SpringApplicationBuilder(DummySubmodelRepositoryComponent.class).profiles("httptests").run(new String[] {});
 	}
 
 	@AfterClass
