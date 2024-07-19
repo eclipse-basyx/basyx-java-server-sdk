@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -26,12 +26,15 @@ package org.eclipse.digitaltwin.basyx.core.filerepository.backend;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.junit.Test;
@@ -45,17 +48,16 @@ public abstract class FileRepositoryTestSuite {
 	
 	protected abstract FileRepository getFileRepository();
 	
-	private FileMetadata createDummyFile() {
+	protected FileMetadata createDummyFile() {
 		String name = "test";
 		String contentType ="txt";
-		InputStream input = new ByteArrayInputStream("this is test data".getBytes());
+		String contentInput ="this is test data";
+		InputStream content = new ByteArrayInputStream(contentInput.getBytes());
 		
-		FileMetadata dummyFile = new FileMetadata(name, contentType, input);
-	
-		return dummyFile;
+		return new FileMetadata(name, contentType, content);
 	}
 
-	public String getSavedTestFile(FileRepository fileRepo) {
+	protected String getSavedTestFile(FileRepository fileRepo) {
 		FileMetadata testFile = createDummyFile();
 		String filePath = fileRepo.save(testFile);
 		
@@ -71,14 +73,23 @@ public abstract class FileRepositoryTestSuite {
 		assertEquals(true, fileRepo.exists(filePath));
 	}
 
+	@Test (expected = FileHandlingException.class)
+	public void saveExistingFile() {
+		FileRepository fileRepo = getFileRepository();
+		FileMetadata testFile = createDummyFile();
+		
+		String filePath = fileRepo.save(testFile);
+		filePath = fileRepo.save(testFile);
+	}
+
 	@Test
 	public void findExisting() throws IOException {
 		FileRepository fileRepo = getFileRepository();
 		String filePath = getSavedTestFile(fileRepo);
+
+		InputStream streamToCompare = new ByteArrayInputStream("this is test data".getBytes());
 		
 		InputStream actualStream = fileRepo.find(filePath);
-		
-		InputStream streamToCompare = new ByteArrayInputStream("this is test data".getBytes());
 		
 		IOUtils.contentEquals(streamToCompare, actualStream);
 	}
@@ -86,21 +97,18 @@ public abstract class FileRepositoryTestSuite {
 	@Test(expected = FileDoesNotExistException.class)
 	public void findNonExisting() {
 		FileRepository fileRepo = getFileRepository();
-		String filePath = "does not exist";
 		
-		InputStream testStream = fileRepo.find(filePath);
+		InputStream testStream = fileRepo.find("does not exist");
 	}
 	
 	@Test
 	public void deleteFile() {
 		FileRepository fileRepo = getFileRepository();
 		String filePath = getSavedTestFile(fileRepo);
-		boolean fileExistsAfterSave = fileRepo.exists(filePath);
 		
 		fileRepo.delete(filePath);
-		boolean fileDeleted = fileRepo.exists(filePath);
 			
-		assertNotEquals(fileExistsAfterSave, fileDeleted);
+		assertFalse(fileRepo.exists(filePath));
 	}
 	
 	@Test(expected = FileDoesNotExistException.class)
@@ -118,7 +126,7 @@ public abstract class FileRepositoryTestSuite {
 		
 		boolean fileExists = fileRepo.exists(filePath);
 		
-		assertEquals(true, fileExists);
+		assertTrue(fileExists);
 	}
 	
 	@Test
@@ -129,7 +137,7 @@ public abstract class FileRepositoryTestSuite {
 		
 		boolean fileNotExists = fileRepo.exists(filePath);
 		
-		assertEquals(false, fileNotExists);
+		assertFalse(fileNotExists);
 	}
 
 }
