@@ -12,7 +12,6 @@ on:
       - '.github/**'
       - 'docs/**'
       - 'examples/**'
-      - 'ci/**'
       - 'README.md'
 
 jobs:
