@@ -27,7 +27,7 @@
 			Plattform_i40-AssetAdministrationShellRegistryServiceSpecification-V3.0.1_SSP-001-resolved.yaml
 		</openapi.base.name>
 		<openapi.name>Plattform_i40-Registry-and-Discovery.yaml</openapi.name>
-		<guava.version>32.0.0-jre</guava.version>
+		<guava.version>33.2.1-jre</guava.version>
 		<maven-plugin.version>3.9.0</maven-plugin.version>
 		<maven-project.version>3.0-alpha-2</maven-project.version>
 		<mustache.compiler.version>0.9.4</mustache.compiler.version>
