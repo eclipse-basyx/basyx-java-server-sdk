@@ -49,4 +49,12 @@ We're distributing our SNAPSHOT releases via DockerHub and Maven Central. For us
 ## Getting Involved & Contributing
 If you would like to get involved with the BaSyx Community, the [BaSyx Open Hour](https://www.iese.fraunhofer.de/en/customers_industries/digitalisierung-produktion/industrie40/basyx_open_hour.html) (every first Friday of the month) is an excellent starting point.
 
-For contributing, please note the [contribution guidelines](CONTRIBUTING.md). The overall process is described in the [Eclipse wiki](https://wiki.eclipse.org/BaSyx_/_Developer_/_Contributing).
+We encourage you to contribute to BaSyx! Please check out the [Contributing to BaSyx guide](./.github/CONTRIBUTING.md) for guidelines about how to proceed.
+
+Trying to report a possible security vulnerability in BaSyx? Please check out our [security policy](https://github.com/eclipse-basyx/basyx-java-server-sdk/security/policy) for guidelines about how to proceed.
+
+Everyone interacting in BaSyx and its sub-projects' codebases, issue trackers, chat rooms, and mailing lists is expected to follow the BaSyx [code of conduct](https://github.com/eclipse-basyx/basyx-java-server-sdk?tab=coc-ov-file#readme).
+
+## License
+
+BaSyx is released under the [MIT License](https://opensource.org/licenses/MIT).
