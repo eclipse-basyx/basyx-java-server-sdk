@@ -7,6 +7,13 @@ on:
   pull_request:
     branches: [ main ]
     paths-ignore:
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/CODE_OF_CONDUCT.md'
+      - '.github/CODING_CONVENTIONS.md'
+      - '.github/CONTRIBUTING.md'
+      - '.github/dependabot.yml'
+      - '.github/pull_request_template.md'
+      - '.github/SECURITY.md'
       - 'docs/**'
       - 'examples/**'
       - 'README.md'
