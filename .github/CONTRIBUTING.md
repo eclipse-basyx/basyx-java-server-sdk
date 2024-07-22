@@ -30,7 +30,7 @@ of production automation.
 
 * Ensure the PR description clearly describes the problem and solution. Include the relevant issue number if applicable.
 
-* Before submitting, please read the [Contributing to BaSyx](https://github.com/eclipse-basyx/basyx-java-server-sdk/blob/main/.github/CODING_CONVENTIONS.md) guide to know more about coding conventions.
+* Before submitting, please read the [Contributing to BaSyx](./CODING_CONVENTIONS.md) guide to know more about coding conventions.
 
 #### **Did you fix whitespace, format code, or make a purely cosmetic patch?**
 
