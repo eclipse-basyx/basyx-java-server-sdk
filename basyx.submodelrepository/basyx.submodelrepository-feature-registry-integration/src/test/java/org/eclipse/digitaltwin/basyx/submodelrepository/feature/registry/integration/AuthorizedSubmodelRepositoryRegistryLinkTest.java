@@ -25,14 +25,24 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.AuthorizedConnectedSubmodelRegistry;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpStatus;
 
 /**
  * Integration test for Authorized Registry
@@ -59,6 +69,24 @@ public class AuthorizedSubmodelRepositoryRegistryLinkTest extends SubmodelReposi
 	@AfterClass
 	public static void tearDown() {
 		appContext.close();
+	}
+	
+	@Test
+	public void sendUnauthorizedRequest() throws IOException {
+		TokenManager mockTokenManager = Mockito.mock(TokenManager.class);
+
+		Mockito.when(mockTokenManager.getAccessToken()).thenReturn("mockedAccessToken");
+
+		SubmodelRegistryApi registryApi = new AuthorizedConnectedSubmodelRegistry(SUBMODEL_REGISTRY_BASE_URL, mockTokenManager);
+
+		SubmodelDescriptor descriptor = new SubmodelDescriptor();
+		descriptor.setIdShort("shortId");
+
+		ApiException exception = assertThrows(ApiException.class, () -> {
+			registryApi.postSubmodelDescriptor(descriptor);
+		});
+
+		assertEquals(HttpStatus.UNAUTHORIZED.value(), exception.getCode());
 	}
 	
 	@Override
