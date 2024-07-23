@@ -26,8 +26,13 @@
 package org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,10 +41,13 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment.EnvironmentType;
+import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.integration.file.RecursiveDirectoryScanner;
 import org.springframework.stereotype.Component;
@@ -50,17 +58,15 @@ import org.springframework.stereotype.Component;
  * @author fried, mateusmolina, despen, witt, jungjan, danish
  *
  */
-@Component
 public class AasEnvironmentPreconfigurationLoader {
-	
+
 	private Logger logger = LoggerFactory.getLogger(AasEnvironmentPreconfigurationLoader.class);
 
 	@Value("${basyx.environment:#{null}}")
 	private List<String> pathsToLoad;
 
 	private ResourceLoader resourceLoader;
-	
-	@Autowired
+
 	public AasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, List<String> pathsToLoad) {
 		this.resourceLoader = resourceLoader;
 		this.pathsToLoad = pathsToLoad;
@@ -133,5 +139,6 @@ public class AasEnvironmentPreconfigurationLoader {
 	private void logLoadingProcess(int current, int overall, String filename) {
 		logger.info("Loading AAS Environment ({}/{}) from file '{}'", current, overall, filename);
 	}
+
 
 }
