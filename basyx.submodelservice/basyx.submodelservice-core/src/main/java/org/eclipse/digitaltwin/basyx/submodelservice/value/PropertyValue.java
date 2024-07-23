@@ -47,4 +47,13 @@ public class PropertyValue implements SubmodelElementValue {
 	public String getValue() {
 		return value;
 	}
+	
+	@Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        
+        PropertyValue that = (PropertyValue) obj;
+        return value.equals(that.value);
+    }
 }
