@@ -27,10 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -49,12 +46,8 @@ import com.mongodb.client.MongoClients;
  */
 public class TestMongoDbCollections {
 	private static ConfigurableApplicationContext appContext;
-	private static SubmodelRepository submodelRepo;
-	private static AasRepository aasRepo;
-	private static ConceptDescriptionRepository conceptDescriptionRepo;
 
 	// MongoDB configuration
-
 	private static final String CONNECTION_URL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
 	private static final String DB_NAME = "aas-env";
 	private static final String AAS_REPO_COLLECTION = "aas-repo";
@@ -66,13 +59,11 @@ public class TestMongoDbCollections {
 	@BeforeClass
 	public static void startAASEnvironment() throws Exception {
 		appContext = new SpringApplicationBuilder(AasEnvironmentComponent.class).profiles("mongodb").run(new String[] {});
-		submodelRepo = appContext.getBean(SubmodelRepository.class);
-		aasRepo = appContext.getBean(AasRepository.class);
-		conceptDescriptionRepo = appContext.getBean(ConceptDescriptionRepository.class);
 	}
 	
 	@AfterClass
 	public static void deleteDatabase() {
+		appContext.close();
 		MongoDBUtilities.clearCollection(mongoTemplate, AAS_REPO_COLLECTION);
 		MongoDBUtilities.clearCollection(mongoTemplate, SM_REPO_COLLECTION);
 		MongoDBUtilities.clearCollection(mongoTemplate, CD_REPO_COLLECTION);
@@ -93,7 +84,7 @@ public class TestMongoDbCollections {
 		assertMongoDBCollectionExists(CD_REPO_COLLECTION);
 	}
 
-	public void assertMongoDBCollectionExists(String collectionName) {
+	private void assertMongoDBCollectionExists(String collectionName) {
 		assertTrue(mongoTemplate.collectionExists(collectionName));
 	}
 
@@ -101,5 +92,4 @@ public class TestMongoDbCollections {
 		MongoClient client = MongoClients.create(connectionUrl);
 		return new MongoTemplate(client, dbName);
 	}
-
 }
