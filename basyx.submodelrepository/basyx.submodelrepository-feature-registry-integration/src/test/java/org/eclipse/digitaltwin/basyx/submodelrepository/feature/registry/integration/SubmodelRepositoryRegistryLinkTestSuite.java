@@ -140,7 +140,7 @@ public abstract class SubmodelRepositoryRegistryLinkTestSuite {
 	}
 
 	private CloseableHttpResponse createSubmodelOnRepo(String submodelJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(DummySubmodelDescriptorFactory.createSubmodelRepositoryUrl(getSubmodelRepoBaseUrl()), submodelJsonContent);
+		return BaSyxHttpTestUtils.executePostOnURL(SubmodelDescriptorFactory.createSubmodelRepositoryUrl(getSubmodelRepoBaseUrl()), submodelJsonContent);
 	}
 
 	private CloseableHttpResponse createSubmodelElementOnRepo(String submodelElementJsonContent) throws IOException {
@@ -150,6 +150,6 @@ public abstract class SubmodelRepositoryRegistryLinkTestSuite {
 	}
 
 	private String getSpecificSubmodelAccessURL(String submodelId) {
-		return DummySubmodelDescriptorFactory.createSubmodelRepositoryUrl(getSubmodelRepoBaseUrl()) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
+		return SubmodelDescriptorFactory.createSubmodelRepositoryUrl(getSubmodelRepoBaseUrl()) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
 	}
 }

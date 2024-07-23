@@ -182,7 +182,7 @@ public class SubmodelDescriptorFactory {
 		}
 	}
 
-	private String createSubmodelRepositoryUrl(String submodelRepositoryBaseURL) {
+	public static String createSubmodelRepositoryUrl(String submodelRepositoryBaseURL) {
 
 		try {
 			URL url = new URL(submodelRepositoryBaseURL);

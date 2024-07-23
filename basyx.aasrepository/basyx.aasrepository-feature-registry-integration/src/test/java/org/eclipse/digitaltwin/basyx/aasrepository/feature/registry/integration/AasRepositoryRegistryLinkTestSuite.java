@@ -117,10 +117,10 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 	}
 
 	private CloseableHttpResponse createAasOnRepo(String aasJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(DummyAasDescriptorFactory.createAasRepositoryUrl(getAasRepoBaseUrl()), aasJsonContent);
+		return BaSyxHttpTestUtils.executePostOnURL(AasDescriptorFactory.createAasRepositoryUrl(getAasRepoBaseUrl()), aasJsonContent);
 	}
 
 	private String getSpecificAasAccessURL(String aasId) {
-		return DummyAasDescriptorFactory.createAasRepositoryUrl(getAasRepoBaseUrl()) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
+		return AasDescriptorFactory.createAasRepositoryUrl(getAasRepoBaseUrl()) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
 	}
 }
