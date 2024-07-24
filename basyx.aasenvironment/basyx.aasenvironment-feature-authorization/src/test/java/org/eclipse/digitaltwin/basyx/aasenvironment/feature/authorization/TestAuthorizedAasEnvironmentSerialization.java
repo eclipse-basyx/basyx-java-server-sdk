@@ -97,17 +97,6 @@ public class TestAuthorizedAasEnvironmentSerialization {
 		appContext.close();
 	}
 	
-	@Before
-	public void initializeRepositories() throws FileNotFoundException, IOException {
-		configureSecurityContext();
-
-		createDummyShellsOnRepository(TestAASEnvironmentSerialization.createDummyShells(), aasRepo);
-		createDummySubmodelsOnRepository(TestAASEnvironmentSerialization.createDummySubmodels(), submodelRepo);
-		createDummyConceptDescriptionsOnRepository(TestAASEnvironmentSerialization.createDummyConceptDescriptions(), conceptDescriptionRepo);
-
-		clearSecurityContext();
-	}
-	
 	@After
 	public void reset() throws FileNotFoundException, IOException {
 		configureSecurityContext();
@@ -119,7 +108,12 @@ public class TestAuthorizedAasEnvironmentSerialization {
 		assetAdministrationShells.stream().forEach(aas -> aasRepo.deleteAas(aas.getId()));
 		submodels.stream().forEach(sm -> submodelRepo.deleteSubmodel(sm.getId()));
 		conceptDescriptions.stream().forEach(cd -> conceptDescriptionRepo.deleteConceptDescription(cd.getId()));
-		
+
+
+		createDummyShellsOnRepository(TestAASEnvironmentSerialization.createDummyShells(), aasRepo);
+		createDummySubmodelsOnRepository(TestAASEnvironmentSerialization.createDummySubmodels(), submodelRepo);
+		createDummyConceptDescriptionsOnRepository(TestAASEnvironmentSerialization.createDummyConceptDescriptions(), conceptDescriptionRepo);
+
 		clearSecurityContext();
 	}
 

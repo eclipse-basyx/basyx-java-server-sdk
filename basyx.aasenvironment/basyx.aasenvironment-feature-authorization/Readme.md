@@ -11,6 +11,17 @@ basyx.feature.authorization.rbac.file = <Class path of the Rbac rules file if au
 spring.security.oauth2.resourceserver.jwt.issuer-uri= <URI of the resource server>
 ```
 
+If you want to use a preconfigured environment with authorization, you need to set the following options as well:
+```
+basyx.aasenvironment.authorization.preconfiguration.token-endpoint = <Endpoint to the KeyCloak Server>
+basyx.aasenvironment.authorization.preconfiguration.grant-type = <Grant Type>
+basyx.aasenvironment.authorization.preconfiguration.client-id = <ClientID>
+basyx.aasenvironment.authorization.preconfiguration.client-secret= <Client Secret>
+basyx.aasenvironment.authorization.preconfiguration.username = <Username>
+basyx.aasenvironment.authorization.preconfiguration.password = <Password>
+basyx.aasenvironment.authorization.preconfiguration.scopes = <Scopes>
+```
+
 Note: Only Role Based Access Control (RBAC) is supported as authorization type as of now, also Keycloak is the only Jwt token provider supported now and it is also a default provider. 
 
 To know more about the RBAC, please refer [Authorization Services Guide](https://www.keycloak.org/docs/latest/authorization_services/index.html)
@@ -24,6 +35,15 @@ basyx.feature.authorization.type = rbac
 basyx.feature.authorization.jwtBearerTokenProvider = keycloak
 basyx.feature.authorization.rbac.file = classpath:rbac_rules.json
 spring.security.oauth2.resourceserver.jwt.issuer-uri= http://localhost:9096/realms/BaSyx
+```
+
+And for preconfiguration (Grant Type would be CLIENT_CREDENTIALS in this case):
+
+```
+basyx.aasenvironment.authorization.preconfiguration.token-endpoint = http://localhost:9096/realms/BaSyx/protocol/openid-connect/token
+basyx.aasenvironment.authorization.preconfiguration.grant-type = CLIENT_CREDENTIALS
+basyx.aasenvironment.authorization.preconfiguration.client-id = workstation-1
+basyx.aasenvironment.authorization.preconfiguration.client-secret = nY0mjyECF60DGzNmQUjL81XurSl8etom
 ```
 
 ## RBAC rule configuration
