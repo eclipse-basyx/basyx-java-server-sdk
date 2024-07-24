@@ -16,14 +16,14 @@
 		<module>basyx.common</module>
 		<module>basyx.submodelservice</module>
 		<module>basyx.submodelrepository</module>
-		<!--<module>basyx.submodelregistry</module>-->
+		<module>basyx.submodelregistry</module>
 		<module>basyx.aasservice</module>
 		<module>basyx.aasrepository</module>
-		<!--<module>basyx.aasregistry</module>-->
+		<module>basyx.aasregistry</module>
 		<module>basyx.aasenvironment</module>
-		<!--<module>basyx.conceptdescriptionrepository</module>
+		<module>basyx.conceptdescriptionrepository</module>
 		<module>basyx.aasxfileserver</module>
-		<module>basyx.aasdiscoveryservice</module>-->
+		<module>basyx.aasdiscoveryservice</module>
 	</modules>
 	<name>BaSyx Parent</name>
 	<description>Parent POM for Eclipse BaSyx</description>
