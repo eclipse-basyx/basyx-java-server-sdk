@@ -25,6 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasxfileserver.http;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
@@ -34,6 +35,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultPackageDescription;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 
@@ -47,6 +49,7 @@ import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -181,7 +184,13 @@ public class TestAASXFileServerHTTP {
 
     private static PackageDescription getPackageDescriptionFromResponse(String responseBody) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        PackageDescription packageDescription = mapper.readValue(responseBody, PackageDescription.class);
+
+        Map<String, Object> map = mapper.readValue(responseBody, new TypeReference<Map<String,Object>>(){});
+
+        List<String> itemsList = (List<String>) map.get("items");
+
+        String packageId = (String) map.get("packageId");
+        PackageDescription packageDescription = new DefaultPackageDescription.Builder().packageId(packageId).items(itemsList).build();
         return packageDescription;
     }
 
@@ -190,4 +199,5 @@ public class TestAASXFileServerHTTP {
         aasIds.add(new Base64UrlEncodedIdentifier("testAasId").getEncodedIdentifier());
         return aasIds;
     }
+
 }
