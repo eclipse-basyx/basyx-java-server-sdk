@@ -51,7 +51,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
+			<artifactId>basyx.mongodbcore</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.core.</artifactId>
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
