@@ -226,14 +226,7 @@ public class SubmodelRepositoryApi {
 
 		localVarRequestBuilder.header("Accept", "application/json");
 		
-		if (tokenManager != null) {
-	    	try {
-	    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new AccessTokenRetrievalException("Unable to request access token");
-			}
-	    }
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
 		if (memberVarReadTimeout != null) {
@@ -323,14 +316,7 @@ public class SubmodelRepositoryApi {
 		localVarRequestBuilder.header("Content-Type", "application/json");
 		localVarRequestBuilder.header("Accept", "application/json");
 		
-		if (tokenManager != null) {
-	    	try {
-	    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new AccessTokenRetrievalException("Unable to request access token");
-			}
-	    }
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		try {
 			byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(submodel);
@@ -436,14 +422,7 @@ public class SubmodelRepositoryApi {
 		localVarRequestBuilder.header("Content-Type", "application/json");
 		localVarRequestBuilder.header("Accept", "application/json");
 		
-		if (tokenManager != null) {
-	    	try {
-	    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new AccessTokenRetrievalException("Unable to request access token");
-			}
-	    }
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		try {
 			byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(submodel);
@@ -538,14 +517,7 @@ public class SubmodelRepositoryApi {
 
 		localVarRequestBuilder.header("Accept", "application/json");
 		
-		if (tokenManager != null) {
-	    	try {
-	    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new AccessTokenRetrievalException("Unable to request access token");
-			}
-	    }
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		localVarRequestBuilder.method("DELETE", HttpRequest.BodyPublishers.noBody());
 		if (memberVarReadTimeout != null) {
@@ -647,14 +619,7 @@ public class SubmodelRepositoryApi {
 
 		localVarRequestBuilder.header("Accept", "application/json");
 		
-		if (tokenManager != null) {
-	    	try {
-	    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new AccessTokenRetrievalException("Unable to request access token");
-			}
-	    }
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
 		if (memberVarReadTimeout != null) {
@@ -664,5 +629,16 @@ public class SubmodelRepositoryApi {
 			memberVarInterceptor.accept(localVarRequestBuilder);
 		}
 		return localVarRequestBuilder;
+	}
+	
+	private void addAuthorizationHeaderIfAuthIsEnabled(HttpRequest.Builder localVarRequestBuilder) {
+		if (tokenManager != null) {
+	    	try {
+	    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new AccessTokenRetrievalException("Unable to request access token");
+			}
+	    }
 	}
 }

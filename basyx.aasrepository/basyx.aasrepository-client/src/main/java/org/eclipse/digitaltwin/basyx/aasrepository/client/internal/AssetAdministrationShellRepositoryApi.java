@@ -200,14 +200,7 @@ public class AssetAdministrationShellRepositoryApi {
 
     localVarRequestBuilder.header("Accept", "application/json");
     
-    if (tokenManager != null) {
-    	try {
-    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new AccessTokenRetrievalException("Unable to request access token");
-		}
-    }
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     localVarRequestBuilder.method("DELETE", HttpRequest.BodyPublishers.noBody());
     
@@ -309,14 +302,7 @@ public class AssetAdministrationShellRepositoryApi {
 
     localVarRequestBuilder.header("Accept", "application/json");
     
-    if (tokenManager != null) {
-    	try {
-    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new AccessTokenRetrievalException("Unable to request access token");
-		}
-    }
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     localVarRequestBuilder.method("DELETE", HttpRequest.BodyPublishers.noBody());
     
@@ -411,14 +397,7 @@ public class AssetAdministrationShellRepositoryApi {
 
 		localVarRequestBuilder.header("Accept", "application/json");
 		
-		if (tokenManager != null) {
-	    	try {
-	    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new AccessTokenRetrievalException("Unable to request access token");
-			}
-	    }
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
 		if (memberVarReadTimeout != null) {
@@ -508,14 +487,7 @@ public class AssetAdministrationShellRepositoryApi {
 
     localVarRequestBuilder.header("Accept", "application/json");
     
-    if (tokenManager != null) {
-    	try {
-    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new AccessTokenRetrievalException("Unable to request access token");
-		}
-    }
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
     if (memberVarReadTimeout != null) {
@@ -604,14 +576,7 @@ public class AssetAdministrationShellRepositoryApi {
 
     localVarRequestBuilder.header("Accept", "application/json");
     
-    if (tokenManager != null) {
-    	try {
-    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new AccessTokenRetrievalException("Unable to request access token");
-		}
-    }
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
     if (memberVarReadTimeout != null) {
@@ -700,14 +665,7 @@ public class AssetAdministrationShellRepositoryApi {
 
     localVarRequestBuilder.header("Accept", "application/json");
     
-    if (tokenManager != null) {
-    	try {
-    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new AccessTokenRetrievalException("Unable to request access token");
-		}
-    }
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
     if (memberVarReadTimeout != null) {
@@ -796,14 +754,7 @@ public class AssetAdministrationShellRepositoryApi {
     localVarRequestBuilder.header("Content-Type", "application/json");
     localVarRequestBuilder.header("Accept", "application/json");
     
-    if (tokenManager != null) {
-    	try {
-    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new AccessTokenRetrievalException("Unable to request access token");
-		}
-    }
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     try {
       byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(assetAdministrationShell);
@@ -905,14 +856,7 @@ public class AssetAdministrationShellRepositoryApi {
     localVarRequestBuilder.header("Content-Type", "application/json");
     localVarRequestBuilder.header("Accept", "application/json");
     
-    if (tokenManager != null) {
-    	try {
-    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new AccessTokenRetrievalException("Unable to request access token");
-		}
-    }
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     try {
       byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(reference);
@@ -1018,14 +962,7 @@ public class AssetAdministrationShellRepositoryApi {
     localVarRequestBuilder.header("Content-Type", "application/json");
     localVarRequestBuilder.header("Accept", "application/json");
     
-    if (tokenManager != null) {
-    	try {
-    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new AccessTokenRetrievalException("Unable to request access token");
-		}
-    }
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     try {
       byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(assetAdministrationShell);
@@ -1130,14 +1067,7 @@ public class AssetAdministrationShellRepositoryApi {
     localVarRequestBuilder.header("Content-Type", "application/json");
     localVarRequestBuilder.header("Accept", "application/json");
     
-    if (tokenManager != null) {
-    	try {
-    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new AccessTokenRetrievalException("Unable to request access token");
-		}
-    }
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     try {
       byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(assetInformation);
@@ -1153,4 +1083,16 @@ public class AssetAdministrationShellRepositoryApi {
     }
     return localVarRequestBuilder;
   }
+  
+  private void addAuthorizationHeaderIfAuthIsEnabled(HttpRequest.Builder localVarRequestBuilder) {
+		if (tokenManager != null) {
+	    	try {
+	    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new AccessTokenRetrievalException("Unable to request access token");
+			}
+	    }
+	}
+  
 }

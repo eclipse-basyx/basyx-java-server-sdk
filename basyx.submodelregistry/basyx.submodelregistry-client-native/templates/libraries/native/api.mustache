@@ -509,14 +509,7 @@ public class {{classname}} {
     {{/bodyParam}}
     localVarRequestBuilder.header("Accept", "{{#hasProduces}}{{#produces}}{{mediaType}}{{^-last}}, {{/-last}}{{/produces}}{{/hasProduces}}{{#hasProduces}}{{^produces}}application/json{{/produces}}{{/hasProduces}}{{^hasProduces}}application/json{{/hasProduces}}");
 
-	if (tokenManager != null) {
-    	try {
-    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new AccessTokenRetrievalException("Unable to request access token");
-		}
-    }
+	  addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
     
     {{#bodyParam}}
     {{#isString}}
@@ -624,6 +617,7 @@ public class {{classname}} {
     }
     return localVarRequestBuilder;
   }
+
   {{#vendorExtensions.x-group-parameters}}
   {{#hasParams}}
 
@@ -675,5 +669,16 @@ public class {{classname}} {
   {{/hasParams}}
   {{/vendorExtensions.x-group-parameters}}
   {{/operation}}
+
+  private void addAuthorizationHeaderIfAuthIsEnabled(HttpRequest.Builder localVarRequestBuilder) {
+    if (tokenManager != null) {
+        try {
+          localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
+      } catch (IOException e) {
+        e.printStackTrace();
+        throw new AccessTokenRetrievalException("Unable to request access token");
+      }
+      }
+  }
 }
 {{/operations}}
