@@ -7,35 +7,17 @@ import org.junit.Test;
 public class TestAasDescriptorFactory {
 
 	private static final String AAS_REPO_URL = "http://localhost:8081";
-
-	private static final String AAS_REPOSITORY_PATH_WITH_SLASH = "/shells";
-	private static final String AAS_REPOSITORY_PATH_WITHOUT_SLASH = "shells";
+	
+	private static final String AAS_REPOSITORY_PATH = "shells";
 
 	@Test
-    public void testUrlWithTrailingSlashAndPathWithoutLeadingSlash() {
-        String baseURLWithSlash = AAS_REPO_URL + "/";
-
-        assertEquals(baseURLWithSlash + AAS_REPOSITORY_PATH_WITHOUT_SLASH, AasDescriptorFactory.createAasRepositoryUrl(baseURLWithSlash));
+    public void testUrlWithTrailingSlash() {
+		assertEquals(AAS_REPO_URL + "/" + AAS_REPOSITORY_PATH, AasDescriptorFactory.createAasRepositoryUrl(AAS_REPO_URL + "/"));
     }
 	
-	@Test
-    public void testUrlWithTrailingSlashAndPathWithLeadingSlash() {
-        String baseURLWithSlash = AAS_REPO_URL + "/";
-
-        assertEquals(baseURLWithSlash + AAS_REPOSITORY_PATH_WITHOUT_SLASH, AasDescriptorFactory.createAasRepositoryUrl(baseURLWithSlash));
-    }
-
     @Test
-    public void testUrlWithoutTrailingSlashAndPathWithoutLeadingSlash() {
-        String baseURLWithoutSlash = AAS_REPO_URL;
-
-        assertEquals(baseURLWithoutSlash + AAS_REPOSITORY_PATH_WITH_SLASH , AasDescriptorFactory.createAasRepositoryUrl(baseURLWithoutSlash));
+    public void testUrlWithoutTrailingSlash() {
+        assertEquals(AAS_REPO_URL + "/" + AAS_REPOSITORY_PATH , AasDescriptorFactory.createAasRepositoryUrl(AAS_REPO_URL));
     }
     
-    @Test
-    public void testUrlWithoutTrailingSlashAndPathWithLeadingSlash() {
-        String baseURLWithoutSlash = AAS_REPO_URL;
-
-        assertEquals(baseURLWithoutSlash + AAS_REPOSITORY_PATH_WITH_SLASH , AasDescriptorFactory.createAasRepositoryUrl(baseURLWithoutSlash));
-    }
 }

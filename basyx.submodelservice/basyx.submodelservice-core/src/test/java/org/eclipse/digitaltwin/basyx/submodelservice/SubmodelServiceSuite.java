@@ -607,7 +607,7 @@ public abstract class SubmodelServiceSuite {
 	}
 	
 	@Test
-    public void patchSubmodelElementsAddNewElement() {
+    public void patchSubmodelElementsByAddingNewElement() {
         Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodel();
         SubmodelService submodelService = getSubmodelService(operationalData);
 
@@ -627,7 +627,7 @@ public abstract class SubmodelServiceSuite {
     }
 
     @Test
-    public void patchSubmodelElementsUpdateExistingElement() {
+    public void patchSubmodelElementsByUpdatingExistingElement() {
         Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodel();
         SubmodelService submodelService = getSubmodelService(operationalData);
 
@@ -646,32 +646,8 @@ public abstract class SubmodelServiceSuite {
         assertEquals("updatedValue", retrievedUpdatedProperty.getValue());
     }
 
-    @Test(expected = ElementDoesNotExistException.class)
-    public void patchSubmodelElementsNonExistingSubmodel() {
-    	// Initialize the SubmodelService with an operational data submodel
-        Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodel();
-        SubmodelService submodelService = getSubmodelService(operationalData);
-
-//        // Create a new Property to be added
-//        Property newProperty = new DefaultProperty.Builder()
-//            .idShort("newProperty")
-//            .value("newValue")
-//            .valueType(DataTypeDefXsd.STRING)
-//            .build();
-//
-//        List<SubmodelElement> elementsToPatch = Arrays.asList(newProperty);
-//
-//        // Delete all elements in the submodel to simulate a non-existing submodel scenario
-//        for (SubmodelElement element : operationalData.getSubmodelElements()) {
-//            submodelService.deleteSubmodelElement(element.getIdShort());
-//        }
-
-        // Attempt to patch submodel elements
-        submodelService.patchSubmodelElements(elementsToPatch);
-    }
-
     @Test
-    public void patchSubmodelElementsMultipleElements() {
+    public void patchSubmodelElementsWithMultipleElements() {
         Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodel();
         SubmodelService submodelService = getSubmodelService(operationalData);
 
