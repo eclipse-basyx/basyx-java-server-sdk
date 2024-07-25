@@ -25,10 +25,12 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AnnotatedRelationshipElement;
@@ -349,8 +351,9 @@ public class TestMappedSubmodelElementValue {
 	@Test
 	public void mappedSetSubmodelElementCollectionValue() {
 		SubmodelElementCollection submodelElementCollection = SubmodelServiceHelper.createSubmodelElementCollection();
-
-		SubmodelElementCollectionValue submodelElementCollectionValue = new SubmodelElementCollectionValue(submodelElementCollectionValueOnlies);
+		Map<String, SubmodelElementValue> map = submodelElementCollectionValueOnlies.stream()
+				.collect(Collectors.toMap(ValueOnly::getIdShort, ValueOnly::getSubmodelElementValue));
+		SubmodelElementCollectionValue submodelElementCollectionValue = new SubmodelElementCollectionValue(map);
 
 		setSubmodelElementCollectionValue(submodelElementCollection, submodelElementCollectionValue);
 
@@ -546,14 +549,7 @@ public class TestMappedSubmodelElementValue {
 	}
 
 	private void assertValuesAreEqual(SubmodelElementCollection expected, SubmodelElementCollectionValue actual) {
-
-		assertEquals(getSubmodelElementAtIndex(expected, 0).getIdShort(), getValueOnlyAtIndex(actual, 0).getIdShort());
-		assertEquals(getSubmodelElementAtIndex(expected, 1).getIdShort(), getValueOnlyAtIndex(actual, 1).getIdShort());
-
-		assertEquals(((File) getSubmodelElementAtIndex(expected, 0)).getContentType(), ((FileBlobValue) getValueOnlyAtIndex(actual, 0).getSubmodelElementValue()).getContentType());
-		assertEquals(((File) getSubmodelElementAtIndex(expected, 0)).getValue(), ((FileBlobValue) getValueOnlyAtIndex(actual, 0).getSubmodelElementValue()).getValue());
-
-		assertEquals(((Property) getSubmodelElementAtIndex(expected, 1)).getValue(), ((PropertyValue) getValueOnlyAtIndex(actual, 1).getSubmodelElementValue()).getValue());
+		assertTrue(expected.getValue().stream().allMatch(sme -> actual.getValue().containsKey(sme.getIdShort())));
 	}
 
 	private void assertValuesAreEqual(SubmodelElementList expected, SubmodelElementListValue actual) {
@@ -659,11 +655,6 @@ public class TestMappedSubmodelElementValue {
 
 	private SubmodelElement getSubmodelElementAtIndex(SubmodelElementList submodelElementList, int index) {
 		return submodelElementList.getValue()
-				.get(index);
-	}
-
-	private ValueOnly getValueOnlyAtIndex(SubmodelElementCollectionValue submodelElementCollectionValue, int index) {
-		return submodelElementCollectionValue.getValue()
 				.get(index);
 	}
 

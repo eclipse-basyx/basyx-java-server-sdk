@@ -27,8 +27,10 @@
 package org.eclipse.digitaltwin.basyx.serialization;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollectionValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -47,8 +49,8 @@ public class SubmodelElementCollectionValueSerializer extends JsonSerializer<Sub
 	public void serialize(SubmodelElementCollectionValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
 		gen.writeStartObject();
 
-		for (ValueOnly valueOnly : value.getValue()) {
-			gen.writeObjectField(valueOnly.getIdShort(), valueOnly.getSubmodelElementValue());
+		for (Map.Entry<String, SubmodelElementValue> valueOnly : value.getValue().entrySet()) {
+			gen.writeObjectField(valueOnly.getKey(),valueOnly.getValue());
 		}
 
 		gen.writeEndObject();

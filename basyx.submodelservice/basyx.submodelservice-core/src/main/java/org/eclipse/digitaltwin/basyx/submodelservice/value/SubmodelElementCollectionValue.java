@@ -25,6 +25,7 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
 
@@ -35,18 +36,18 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
  *
  */
 public class SubmodelElementCollectionValue implements SubmodelElementValue {
-	private List<ValueOnly> value;
+	private Map<String,SubmodelElementValue> value;
 	
 	@SuppressWarnings("unused")
 	private SubmodelElementCollectionValue() {
 		super();
 	}
 	
-	public SubmodelElementCollectionValue(List<ValueOnly> value) {
+	public SubmodelElementCollectionValue(Map<String,SubmodelElementValue> value) {
 		this.value = value;
 	}
 
-	public List<ValueOnly> getValue() {
+	public Map<String,SubmodelElementValue> getValue() {
 		return value;
 	}
 

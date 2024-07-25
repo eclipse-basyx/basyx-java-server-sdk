@@ -27,6 +27,7 @@
 package org.eclipse.digitaltwin.basyx.deserialization.factory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,12 +66,11 @@ public class SubmodelElementCollectionValueDeserializationFactory {
 	 */
 	public SubmodelElementCollectionValue create() throws JsonProcessingException {
 		Map<String, Object> map = objectMapper.readValue(node.toString(), new TypeReference<Map<String, Object>>() {});
-		List<ValueOnly> valueOnlies = new ArrayList<>();
+		Map<String,SubmodelElementValue> valueOnlies = new HashMap<>();
 
 		for (Map.Entry<String, Object> entry : map.entrySet()) {
 			SubmodelElementValue submodelElementValue = objectMapper.convertValue(entry.getValue(), SubmodelElementValue.class);
-			ValueOnly valueOnly = new ValueOnly(entry.getKey(), submodelElementValue);
-			valueOnlies.add(valueOnly);
+			valueOnlies.put(entry.getKey(), submodelElementValue);
 		}
 
 		return new SubmodelElementCollectionValue(valueOnlies);
