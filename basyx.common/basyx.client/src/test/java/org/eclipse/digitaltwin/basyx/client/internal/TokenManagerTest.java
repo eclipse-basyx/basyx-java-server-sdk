@@ -23,40 +23,45 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.client;
+package org.eclipse.digitaltwin.basyx.client.internal;
 
-import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
-import org.eclipse.digitaltwin.basyx.submodelrepository.client.internal.SubmodelRepositoryApi;
-import org.eclipse.digitaltwin.basyx.submodelservice.client.AuthorizedConnectedSubmodelService;
-import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.*;
 
 /**
- * Provides access to an Authorized Submodel Repository on a remote server
+ * Tests the behaviour of {@link TokenManager}
  * 
  * @author danish
  */
-public class AuthorizedConnectedSubmodelRepository extends ConnectedSubmodelRepository {
-	
-	private TokenManager tokenManager;
+public class TokenManagerTest {
+    
+    private TokenManager tokenManager;
 
-	public AuthorizedConnectedSubmodelRepository(String repoUrl, TokenManager tokenManager) {
-		super(repoUrl, new SubmodelRepositoryApi(repoUrl, tokenManager));
-		this.tokenManager = tokenManager;
-	}
-	
-	public TokenManager getTokenManager() {
-		return tokenManager;
-	}
-	
-	@Override
-	public ConnectedSubmodelService getConnectedSubmodelService(String submodelId) {
-		try {
-			getSubmodel(submodelId);
-			return new AuthorizedConnectedSubmodelService(getSubmodelUrl(submodelId), tokenManager);
-		} catch (ApiException e) {
-			throw mapExceptionSubmodelAccess(getSubmodelUrl(submodelId), e);
-		}
-	}
+    @Before
+    public void setUp() {
+        tokenManager = new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom")));
+    }
 
+    @Test
+    public void testGetAccessToken_RetrievesNewTokenAfterExpiry() throws IOException, InterruptedException {
+
+        String initialAccessToken = tokenManager.getAccessToken();
+        assertNotNull(initialAccessToken);
+
+        long tokenLifetime = 5000;
+        Thread.sleep(tokenLifetime + 1000);
+
+        String newAccessToken = tokenManager.getAccessToken();
+        assertNotNull(newAccessToken);
+        
+        assertNotEquals(initialAccessToken, newAccessToken);
+    }
+    
 }

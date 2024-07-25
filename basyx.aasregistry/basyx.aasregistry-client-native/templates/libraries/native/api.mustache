@@ -48,6 +48,8 @@ import java.util.function.Consumer;
 
 import java.util.concurrent.CompletableFuture;
 {{/asyncNative}}
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
+import org.eclipse.digitaltwin.basyx.core.exceptions.AccessTokenRetrievalException;
 
 {{>generatedAnnotation}}
 {{#operations}}
@@ -59,36 +61,33 @@ public class {{classname}} {
   private final Duration memberVarReadTimeout;
   private final {{#fullJavaUtil}}java.util.function.{{/fullJavaUtil}}Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
   private final {{#fullJavaUtil}}java.util.function.{{/fullJavaUtil}}Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
-  private HttpRequest.Builder httpRequestBuilder;
+  private TokenManager tokenManager;
 
   public {{classname}}() {
     this(new ApiClient());
-    this.httpRequestBuilder = HttpRequest.newBuilder();
   }
   
-  public {{classname}}(HttpRequest.Builder httpRequestBuilder) {
+  public {{classname}}(TokenManager tokenManager) {
     this(new ApiClient());
-    this.httpRequestBuilder = httpRequestBuilder;
+    this.tokenManager = tokenManager;
   }
   
   public {{classname}}(String protocol, String host, int port) {
     this(protocol + "://" + host + ":" + port);
-    this.httpRequestBuilder = HttpRequest.newBuilder();
   }
   
-  public {{classname}}(String protocol, String host, int port, HttpRequest.Builder httpRequestBuilder) {
+  public {{classname}}(String protocol, String host, int port, TokenManager tokenManager) {
     this(protocol + "://" + host + ":" + port);
-    this.httpRequestBuilder = httpRequestBuilder;
+    this.tokenManager = tokenManager;
   }
 
   public {{classname}}(String basePath) {
      this(withBaseUri(new ApiClient(), basePath));
-     this.httpRequestBuilder = HttpRequest.newBuilder();
   }
   
-  public {{classname}}(String basePath, HttpRequest.Builder httpRequestBuilder) {
+  public {{classname}}(String basePath, TokenManager tokenManager) {
      this(withBaseUri(new ApiClient(), basePath));
-     this.httpRequestBuilder = httpRequestBuilder;
+     this.tokenManager = tokenManager;
   }
 
   private static ApiClient withBaseUri(ApiClient client, String uri) {
@@ -380,7 +379,7 @@ public class {{classname}} {
     {{#hasPathParams}}{{#pathParams}}{{#vendorExtensions.x-utf8-base64-url-encoded-as-string}}String {{{paramName}}}AsBase64EncodedParam = {{{paramName}}} == null ? null : new String(java.util.Base64.getUrlEncoder().encode({{paramName}}.getBytes(java.nio.charset.StandardCharsets.UTF_8)), java.nio.charset.StandardCharsets.UTF_8);
     {{/vendorExtensions.x-utf8-base64-url-encoded-as-string}}{{/pathParams}}{{/hasPathParams}}
 
-    HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
     {{! Switch delimiters for baseName so we can write constants like "{query}" }}
     String localVarPath = "{{{path}}}"{{#pathParams}}
@@ -509,6 +508,8 @@ public class {{classname}} {
     localVarRequestBuilder.header("Content-Type", "{{#hasConsumes}}{{#consumes}}{{#-first}}{{mediaType}}{{/-first}}{{/consumes}}{{/hasConsumes}}{{#hasConsumes}}{{^consumes}}application/json{{/consumes}}{{/hasConsumes}}{{^hasConsumes}}application/json{{/hasConsumes}}");
     {{/bodyParam}}
     localVarRequestBuilder.header("Accept", "{{#hasProduces}}{{#produces}}{{mediaType}}{{^-last}}, {{/-last}}{{/produces}}{{/hasProduces}}{{#hasProduces}}{{^produces}}application/json{{/produces}}{{/hasProduces}}{{^hasProduces}}application/json{{/hasProduces}}");
+    
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     {{#bodyParam}}
     {{#isString}}
@@ -667,5 +668,16 @@ public class {{classname}} {
   {{/hasParams}}
   {{/vendorExtensions.x-group-parameters}}
   {{/operation}}
+  
+  private void addAuthorizationHeaderIfAuthIsEnabled(HttpRequest.Builder localVarRequestBuilder) {
+    if (tokenManager != null) {
+        try {
+          localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
+      } catch (IOException e) {
+        e.printStackTrace();
+        throw new AccessTokenRetrievalException("Unable to request access token");
+      }
+      }
+  }
 }
 {{/operations}}
