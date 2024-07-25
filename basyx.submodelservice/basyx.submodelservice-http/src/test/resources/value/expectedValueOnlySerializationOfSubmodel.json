@@ -21,20 +21,16 @@
 		]
 	},
 	"RotationSpeed": "4370",
-	"SubmodelElementCollection": [
-		{
-			"FileData": {
-				"contentType": "application/json",
-				"value": "testFile.json"
-			}
-		},
-		{
-			"MaxRotationSpeed": "5000"
-		}
-	],
 	"SimpleList": [
 		"4370"
 	],
+	"SubmodelElementCollection": {
+		"FileData": {
+			"contentType": "application/json",
+			"value": "testFile.json"
+		},
+		"MaxRotationSpeed": "5000"
+	},
 	"MultiLanguage": [
 		{
 			"en": "Hello"
@@ -74,11 +70,9 @@
 			}
 		]
 	},
-	"SimpleCollection": [
-		{
-			"MyFirstSubmodelElement": "4370"
-		}
-	],
+	"SimpleCollection": {
+		"MyFirstSubmodelElement": "4370"
+	},
 	"SubmodelElementList": [
 		{
 			"min": 200,

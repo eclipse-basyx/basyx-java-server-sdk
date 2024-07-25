@@ -45,13 +45,13 @@ public class SubmodelElementCollectionValueSerializer extends JsonSerializer<Sub
 
 	@Override
 	public void serialize(SubmodelElementCollectionValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		gen.writeStartArray();
+		gen.writeStartObject();
 
 		for (ValueOnly valueOnly : value.getValue()) {
-			gen.writeObject(valueOnly);
+			gen.writeObjectField(valueOnly.getIdShort(), valueOnly.getSubmodelElementValue());
 		}
 
-		gen.writeEndArray();
+		gen.writeEndObject();
 	}
 
 }

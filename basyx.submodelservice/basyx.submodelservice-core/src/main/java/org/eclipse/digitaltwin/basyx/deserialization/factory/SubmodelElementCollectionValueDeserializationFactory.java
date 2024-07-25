@@ -26,9 +26,12 @@
 
 package org.eclipse.digitaltwin.basyx.deserialization.factory;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollectionValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -61,7 +64,14 @@ public class SubmodelElementCollectionValueDeserializationFactory {
 	 * 
 	 */
 	public SubmodelElementCollectionValue create() throws JsonProcessingException {
-		List<ValueOnly> valueOnlies = objectMapper.readValue(node.toString(), new TypeReference<List<ValueOnly>>() {});
+		Map<String, Object> map = objectMapper.readValue(node.toString(), new TypeReference<Map<String, Object>>() {});
+		List<ValueOnly> valueOnlies = new ArrayList<>();
+
+		for (Map.Entry<String, Object> entry : map.entrySet()) {
+			SubmodelElementValue submodelElementValue = objectMapper.convertValue(entry.getValue(), SubmodelElementValue.class);
+			ValueOnly valueOnly = new ValueOnly(entry.getKey(), submodelElementValue);
+			valueOnlies.add(valueOnly);
+		}
 
 		return new SubmodelElementCollectionValue(valueOnlies);
 	}
