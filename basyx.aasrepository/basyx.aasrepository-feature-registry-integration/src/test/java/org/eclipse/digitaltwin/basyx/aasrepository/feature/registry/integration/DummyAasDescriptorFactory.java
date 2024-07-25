@@ -41,8 +41,6 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
  *
  */
 public class DummyAasDescriptorFactory {
-	private static final String AAS_REPOSITORY_PATH = "/shells";
-
 	public static AssetAdministrationShellDescriptor createDummyDescriptor(String aasId, String idShort, String globalAssetId, String aasRepoBaseUrl) {
 
 		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
@@ -75,7 +73,7 @@ public class DummyAasDescriptorFactory {
 	}
 
 	private static String createHref(String aasId, String aasRepoBaseUrl) {
-		return String.format("%s/%s", createAasRepositoryUrl(aasRepoBaseUrl), Base64UrlEncodedIdentifier.encodeIdentifier(aasId));
+		return String.format("%s/%s", AasDescriptorFactory.createAasRepositoryUrl(aasRepoBaseUrl), Base64UrlEncodedIdentifier.encodeIdentifier(aasId));
 	}
 
 	private static String getProtocol(String endpoint) {
@@ -85,23 +83,4 @@ public class DummyAasDescriptorFactory {
 			throw new RuntimeException();
 		}
 	}
-
-	static String createAasRepositoryUrl(String aasRepositoryBaseURL) {
-
-		try {
-			URL url = new URL(aasRepositoryBaseURL);
-            String path = url.getPath();
-
-            if (path.endsWith("/") && AAS_REPOSITORY_PATH.startsWith("/")) {
-                path = path.substring(0, path.length() - 1);
-            } else if (!path.endsWith("/") && !AAS_REPOSITORY_PATH.startsWith("/")) {
-            	path += "/";
-            }
-
-            return new URL(url.getProtocol(), url.getHost(), url.getPort(), path + AAS_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The AAS Repository Base url is malformed. " + e.getMessage());
-		}
-	}
-
 }
