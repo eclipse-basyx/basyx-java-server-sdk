@@ -45,8 +45,6 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescr
  *
  */
 public class DummySubmodelDescriptorFactory {
-	private static final String SUBMODEL_REPOSITORY_PATH = "/submodels";
-
 	public static SubmodelDescriptor createDummyDescriptor(String smId, String idShort, String smRepoBaseUrl, Reference semanticId) {
 
 		SubmodelDescriptor descriptor = new SubmodelDescriptor();
@@ -82,7 +80,7 @@ public class DummySubmodelDescriptorFactory {
 	}
 
 	private static String createHref(String smId, String smRepoBaseUrl) {
-		return String.format("%s/%s", createSubmodelRepositoryUrl(smRepoBaseUrl), Base64UrlEncodedIdentifier.encodeIdentifier(smId));
+		return String.format("%s/%s", SubmodelDescriptorFactory.createSubmodelRepositoryUrl(smRepoBaseUrl), Base64UrlEncodedIdentifier.encodeIdentifier(smId));
 	}
 
 	private static String getProtocol(String endpoint) {
@@ -90,22 +88,6 @@ public class DummySubmodelDescriptorFactory {
 			return new URL(endpoint).getProtocol();
 		} catch (MalformedURLException e) {
 			throw new RuntimeException();
-		}
-	}
-
-	static String createSubmodelRepositoryUrl(String smRepositoryBaseURL) {
-
-		try {
-			URL url = new URL(smRepositoryBaseURL);
-            String path = url.getPath();
-
-            if (path.endsWith("/")) {
-                path = path.substring(0, path.length() - 1);
-            }
-
-            return new URL(url.getProtocol(), url.getHost(), url.getPort(), path + SUBMODEL_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The Submodel Repository Base url is malformed.\n " + e.getMessage());
 		}
 	}
 }

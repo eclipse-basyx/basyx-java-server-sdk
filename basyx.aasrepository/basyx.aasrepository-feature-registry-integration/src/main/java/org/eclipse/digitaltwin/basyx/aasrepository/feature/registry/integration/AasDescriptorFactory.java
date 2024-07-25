@@ -192,14 +192,16 @@ public class AasDescriptorFactory {
 		}
 	}
 
-	private String createAasRepositoryUrl(String aasRepositoryBaseURL) {
+	public static String createAasRepositoryUrl(String aasRepositoryBaseURL) {
 
 		try {
 			URL url = new URL(aasRepositoryBaseURL);
             String path = url.getPath();
-
-            if (path.endsWith("/")) {
+            
+            if (path.endsWith("/") && AAS_REPOSITORY_PATH.startsWith("/")) {
                 path = path.substring(0, path.length() - 1);
+            } else if (!path.endsWith("/") && !AAS_REPOSITORY_PATH.startsWith("/")) {
+            	path += "/";
             }
 
             return new URL(url.getProtocol(), url.getHost(), url.getPort(), path + AAS_REPOSITORY_PATH).toString();

@@ -182,17 +182,19 @@ public class SubmodelDescriptorFactory {
 		}
 	}
 
-	private String createSubmodelRepositoryUrl(String submodelRepositoryBaseURL) {
+	public static String createSubmodelRepositoryUrl(String submodelRepositoryBaseURL) {
 
 		try {
 			URL url = new URL(submodelRepositoryBaseURL);
             String path = url.getPath();
 
-            if (path.endsWith("/")) {
+            if (path.endsWith("/") && SUBMODEL_REPOSITORY_PATH.startsWith("/")) {
                 path = path.substring(0, path.length() - 1);
+            } else if (!path.endsWith("/") && !SUBMODEL_REPOSITORY_PATH.startsWith("/")) {
+            	path += "/";
             }
 
-            return new URL(url.getProtocol(), url.getHost(), url.getPort(), path + SUBMODEL_REPOSITORY_PATH).toString(); 
+            return new URL(url.getProtocol(), url.getHost(), url.getPort(), path + SUBMODEL_REPOSITORY_PATH).toString();
 		} catch (MalformedURLException e) {
 			throw new RuntimeException("The Submodel Repository Base url is malformed.\n" + e.getMessage());
 		}
