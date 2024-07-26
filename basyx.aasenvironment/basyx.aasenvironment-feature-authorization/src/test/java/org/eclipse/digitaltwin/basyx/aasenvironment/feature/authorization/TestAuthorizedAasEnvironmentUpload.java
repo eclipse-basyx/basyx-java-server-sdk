@@ -51,9 +51,7 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -80,8 +78,8 @@ public class TestAuthorizedAasEnvironmentUpload {
 	
 	private static String healthEndpointUrl = "http://127.0.0.1:8081/actuator/health";
 
-	@Before
-	public void setUp() throws FileNotFoundException, IOException {
+	@BeforeClass
+	public static void setUp() throws FileNotFoundException, IOException {
 		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
 
 		appContext = new SpringApplication(DummyAasEnvironmentComponent.class).run(new String[] {});
@@ -91,7 +89,7 @@ public class TestAuthorizedAasEnvironmentUpload {
 		conceptDescriptionRepo = appContext.getBean(ConceptDescriptionRepository.class);
 	}
 	
-	@After
+	@Before
 	public void reset() throws FileNotFoundException, IOException {
 		
 		configureSecurityContext();
@@ -105,7 +103,10 @@ public class TestAuthorizedAasEnvironmentUpload {
 		conceptDescriptions.stream().forEach(cd -> conceptDescriptionRepo.deleteConceptDescription(cd.getId()));
 		
 		clearSecurityContext();
-		
+	}
+
+	@AfterClass
+	public static void shutDown(){
 		appContext.close();
 	}
 

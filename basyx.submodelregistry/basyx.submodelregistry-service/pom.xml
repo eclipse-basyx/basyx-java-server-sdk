@@ -16,7 +16,7 @@
 	<packaging>jar</packaging>
 
 	<properties>
-		<spring-cloud.version>2020.0.4</spring-cloud.version>
+		<spring-cloud.version>2023.0.3</spring-cloud.version>
 		<openapi.folder>${project.basedir}/${openapi.folder.name}</openapi.folder>
 		<openapi.result.file>${openapi.folder}/${openapi.name}</openapi.result.file>
 	</properties>

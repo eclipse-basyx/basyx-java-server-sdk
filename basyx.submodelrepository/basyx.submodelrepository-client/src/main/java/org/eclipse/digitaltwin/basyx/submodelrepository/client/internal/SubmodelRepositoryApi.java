@@ -44,6 +44,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiResponse;
 import org.eclipse.digitaltwin.basyx.client.internal.Pair;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
+import org.eclipse.digitaltwin.basyx.core.exceptions.AccessTokenRetrievalException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
 
@@ -62,35 +63,33 @@ public class SubmodelRepositoryApi {
 	private final Duration memberVarReadTimeout;
 	private final Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
 	private final Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
-	private HttpRequest.Builder httpRequestBuilder;
-
+	private TokenManager tokenManager;
+	
 	public SubmodelRepositoryApi() {
 		this(new ApiClient());
 	}
 	
-	public SubmodelRepositoryApi(HttpRequest.Builder httpRequestBuilder) {
-		this();
-		this.httpRequestBuilder = httpRequestBuilder;
+	public SubmodelRepositoryApi(TokenManager tokenManager) {
+		this(new ApiClient());
+		this.tokenManager = tokenManager;
 	}
 
 	public SubmodelRepositoryApi(ObjectMapper mapper, String baseUri) {
 		this(new ApiClient(HttpClient.newBuilder(), mapper, baseUri));
-		this.httpRequestBuilder = HttpRequest.newBuilder();
 	}
 	
-	public SubmodelRepositoryApi(ObjectMapper mapper, String baseUri, HttpRequest.Builder httpRequestBuilder) {
-		this(mapper, baseUri);
-		this.httpRequestBuilder = httpRequestBuilder;
+	public SubmodelRepositoryApi(ObjectMapper mapper, String baseUri, TokenManager tokenManager) {
+		this(new ApiClient(HttpClient.newBuilder(), mapper, baseUri));
+		this.tokenManager = tokenManager;
 	}
 
 	public SubmodelRepositoryApi(String baseUri) {
 		this(new ApiClient(HttpClient.newBuilder(), new JsonMapperFactory().create(new SimpleAbstractTypeResolverFactory().create()), baseUri));
-		this.httpRequestBuilder = HttpRequest.newBuilder();
 	}
 	
-	public SubmodelRepositoryApi(String baseUri, HttpRequest.Builder httpRequestBuilder) {
-		this(baseUri);
-		this.httpRequestBuilder = httpRequestBuilder;
+	public SubmodelRepositoryApi(String baseUri, TokenManager tokenManager) {
+		  this(new ApiClient(HttpClient.newBuilder(), new JsonMapperFactory().create(new SimpleAbstractTypeResolverFactory().create()), baseUri));
+		  this.tokenManager = tokenManager;
 	}
 
 	public SubmodelRepositoryApi(ApiClient apiClient) {
@@ -202,7 +201,7 @@ public class SubmodelRepositoryApi {
 			throw new ApiException(400, "Missing the required parameter 'submodelIdentifier' when calling getSubmodelById");
 		}
 
-		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 		String localVarPath = "/submodels/{submodelIdentifier}".replace("{submodelIdentifier}", ApiClient.urlEncode(submodelIdentifier.toString()));
 
@@ -226,6 +225,8 @@ public class SubmodelRepositoryApi {
 		}
 
 		localVarRequestBuilder.header("Accept", "application/json");
+		
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
 		if (memberVarReadTimeout != null) {
@@ -306,7 +307,7 @@ public class SubmodelRepositoryApi {
 			throw new ApiException(400, "Missing the required parameter 'submodel' when calling postSubmodel");
 		}
 
-		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 		String localVarPath = "/submodels";
 
@@ -314,6 +315,8 @@ public class SubmodelRepositoryApi {
 
 		localVarRequestBuilder.header("Content-Type", "application/json");
 		localVarRequestBuilder.header("Accept", "application/json");
+		
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		try {
 			byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(submodel);
@@ -410,7 +413,7 @@ public class SubmodelRepositoryApi {
 			throw new ApiException(400, "Missing the required parameter 'submodel' when calling putSubmodelById");
 		}
 
-		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 		String localVarPath = "/submodels/{submodelIdentifier}".replace("{submodelIdentifier}", ApiClient.urlEncode(submodelIdentifier.toString()));
 
@@ -418,6 +421,8 @@ public class SubmodelRepositoryApi {
 
 		localVarRequestBuilder.header("Content-Type", "application/json");
 		localVarRequestBuilder.header("Accept", "application/json");
+		
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		try {
 			byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(submodel);
@@ -504,13 +509,15 @@ public class SubmodelRepositoryApi {
 			throw new ApiException(400, "Missing the required parameter 'submodelIdentifier' when calling deleteSubmodelById");
 		}
 
-		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 		String localVarPath = "/submodels/{submodelIdentifier}".replace("{submodelIdentifier}", ApiClient.urlEncode(submodelIdentifier.toString()));
 
 		localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
 		localVarRequestBuilder.header("Accept", "application/json");
+		
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		localVarRequestBuilder.method("DELETE", HttpRequest.BodyPublishers.noBody());
 		if (memberVarReadTimeout != null) {
@@ -579,7 +586,7 @@ public class SubmodelRepositoryApi {
 
 	private HttpRequest.Builder getAllSubmodelsRequestBuilder(String semanticId, String idShort, Integer limit, String cursor, String level, String extent) throws ApiException {
 
-		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 		String localVarPath = "/submodels";
 
@@ -611,6 +618,8 @@ public class SubmodelRepositoryApi {
 		}
 
 		localVarRequestBuilder.header("Accept", "application/json");
+		
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
 		if (memberVarReadTimeout != null) {
@@ -620,5 +629,16 @@ public class SubmodelRepositoryApi {
 			memberVarInterceptor.accept(localVarRequestBuilder);
 		}
 		return localVarRequestBuilder;
+	}
+	
+	private void addAuthorizationHeaderIfAuthIsEnabled(HttpRequest.Builder localVarRequestBuilder) {
+		if (tokenManager != null) {
+	    	try {
+	    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new AccessTokenRetrievalException("Unable to request access token");
+			}
+	    }
 	}
 }
