@@ -74,7 +74,7 @@ public class TestAasEnvironmentHTTP {
 	private static final String XML_ENV_PATH = "testEnvironment.xml";
 	private static final String WRONGEXT_ENV_PATH = "testEnvironment.txt";
 	private static final String JSON_OPERATIONALDATA_ENV_PATH = "operationalDataEnvironment.json";
-	private static final String BASIC_EVENT_VALUE_ONLY = "BasicEventValueOnly.json";
+	private static final String AASENVIRONMENT_VALUE_ONLY_JSON = "AASEnvironmentValueOnly.json";
 
 	private static ConfigurableApplicationContext appContext;
 	private static SubmodelRepository submodelRepo;
@@ -114,7 +114,7 @@ public class TestAasEnvironmentHTTP {
 		response = executeGetOnURL(getOperationalDataValueOnlyURL(), JSON_MIMETYPE);
 		assertEquals(HttpStatus.OK.value(), response.getCode());
 
-		BaSyxHttpTestUtils.assertSameJSONContent(BaSyxHttpTestUtils.readJSONStringFromClasspath(BASIC_EVENT_VALUE_ONLY), BaSyxHttpTestUtils.getResponseAsString(response));
+		BaSyxHttpTestUtils.assertSameJSONContent(BaSyxHttpTestUtils.readJSONStringFromClasspath(AASENVIRONMENT_VALUE_ONLY_JSON), BaSyxHttpTestUtils.getResponseAsString(response));
 	}
 
 	@Test
