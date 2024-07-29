@@ -34,6 +34,7 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.Decora
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 /**
  * Configuration for tests
@@ -42,6 +43,7 @@ import org.springframework.context.annotation.Configuration;
  *
  */
 @Configuration
+@Profile("authorization")
 public class DummyAuthorizedCDRepositoryConfiguration {
 
 	@Bean
