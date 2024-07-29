@@ -27,10 +27,10 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.feature.authorization;
 
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RoleProvider;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.SimpleRbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
+import org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.RbacStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.feature.authorization.rbac.SubmodelRegistryTargetPermissionVerifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;

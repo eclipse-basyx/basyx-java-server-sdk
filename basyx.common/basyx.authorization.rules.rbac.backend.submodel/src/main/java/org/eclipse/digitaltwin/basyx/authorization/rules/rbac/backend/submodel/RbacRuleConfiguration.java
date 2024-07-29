@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.authorization.rbac;
+package org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.submodel;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -32,9 +32,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Configurations for {@link RbacRule}
@@ -43,29 +47,53 @@ import java.util.ArrayList;
  */
 @Configuration
 @ConditionalOnProperty("basyx.feature.authorization.enabled")
-@ConditionalOnExpression(value = "'${basyx.feature.authorization.type}' == 'rbac'")
+@ConditionalOnExpression(value = "'${basyx.feature.authorization.type}' == 'rbac' && '${basyx.feature.authorization.rules.backend}' == 'Submodel'")
 public class RbacRuleConfiguration {
 	public static final String RULES_FILE_KEY = "basyx.aasrepository.feature.authorization.rbac.file";
 	
 	@Value("${" + CommonAuthorizationProperties.RBAC_FILE_PROPERTY_KEY + ":}")
 	private String filePath;
 	
-	private ObjectMapper objectMapper;
+	@Value("${" + CommonAuthorizationProperties.RULES_BACKEND_TYPE_SUBMODEL_AUTHORIZATION_TOKEN_ENDPOINT + ":}")
+	private String tokenEndpoint;
 	
+	@Value("${" + CommonAuthorizationProperties.RULES_BACKEND_TYPE_SUBMODEL_AUTHORIZATION_GRANT_TYPE + ":}")
+	private String grantType;
+	
+	@Value("${" + CommonAuthorizationProperties.RULES_BACKEND_TYPE_SUBMODEL_AUTHORIZATION_CLIENT_ID + ":}")
+	private String clientId;
+	
+	@Value("${" + CommonAuthorizationProperties.RULES_BACKEND_TYPE_SUBMODEL_AUTHORIZATION_CLIENT_SECRET + ":}")
+	private String clientSecret;
+	
+	@Value("${" + CommonAuthorizationProperties.RULES_BACKEND_TYPE_SUBMODEL_AUTHORIZATION_USERNAME + ":}")
+	private String username;
+	
+	@Value("${" + CommonAuthorizationProperties.RULES_BACKEND_TYPE_SUBMODEL_AUTHORIZATION_PASSWORD + ":}")
+	private String password;
+	
+	@Value("${" + CommonAuthorizationProperties.RULES_BACKEND_TYPE_SUBMODEL_AUTHORIZATION_SCOPES + ":}")
+	private String scopes;
+	
+	private ObjectMapper objectMapper;
 	private ResourceLoader resourceLoader;
+	private TargetInformationAdapter targetInformationAdapter;
 
-	public RbacRuleConfiguration(ObjectMapper objectMapper, ResourceLoader resourceLoader) {
+	public RbacRuleConfiguration(ObjectMapper objectMapper, ResourceLoader resourceLoader, TargetInformationAdapter targetInformationAdapter) {
 		this.objectMapper = objectMapper;
 		this.resourceLoader = resourceLoader;
+		this.targetInformationAdapter = targetInformationAdapter;
 	}
 
 	@Bean
 	public RbacStorage createInMemoryRbacStorage() throws IOException {
 		
 		if (filePath.isBlank())
-			return new InMemoryAuthorizationRbacStorage(new ArrayList<>());
+			return new SubmodelAuthorizationRbacStorage(new ArrayList<>(), targetInformationAdapter);
 		
-		return new InMemoryAuthorizationRbacStorage(new RbacRuleInitializer(objectMapper, filePath, resourceLoader).deserialize());
+		List<RbacRule> initialRules = new RbacRuleInitializer(objectMapper, filePath, resourceLoader).deserialize();
+		
+		return new SubmodelAuthorizationRbacStorage(initialRules, targetInformationAdapter);
 	}
 
 }
