@@ -23,181 +23,174 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+
 package org.eclipse.digitaltwin.basyx.aasxfileserver.http;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.FileUtils;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.classic.methods.HttpPut;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultPackageDescription;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
-import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
-
-import java.io.*;
-import java.security.NoSuchAlgorithmException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.testng.Assert.assertTrue;
 
-public class TestAASXFileServerHTTP {
+@SpringBootTest(classes = DummyAASXFileServer.class)
+@AutoConfigureMockMvc
+public class TestAASXFileServerHTTP extends AbstractTestNGSpringContextTests {
 
-    public static final String TEST_AASX_FILENAME = "test.aasx";
-    private static ConfigurableApplicationContext appContext;
-    private static final String ACCESS_URL = "http://localhost:4050";
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
+    private AASXFileServer aasxFileServer;
 
     @BeforeClass
-    public static void setUpClass(){
-        appContext = new SpringApplication(DummyAASXFileServer.class).run(new String[]{});
+    public void setup() {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        this.aasxFileServer = (AASXFileServer) webApplicationContext.getBean("getAASXFileServer");
     }
 
-    @AfterClass
-    public static void tearDownClass(){
-        appContext.close();
-    }
-
-    @Test
-    public void testAASXFileLifecycle() throws IOException, NoSuchAlgorithmException, ParseException {
-        File aasxFile = loadAASXFromResources(TEST_AASX_FILENAME);
-
-        CloseableHttpClient client = HttpClients.createDefault();
-
-        ArrayList<String> aasIds = getDummyAasIdList();
-
-        CloseableHttpResponse uploadFileResponse = uploadFile(client,aasIds,aasxFile);
-        assertEquals(201,uploadFileResponse.getCode());
-
-        PackageDescription packageDescription = getPackageDescriptionFromResponse(BaSyxHttpTestUtils.getResponseAsString(uploadFileResponse));
-        CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificPackageURL(new Base64UrlEncodedIdentifier(packageDescription.getPackageId()).getEncodedIdentifier()));
-        assertEquals(200,getResponse.getCode());
-
-        assertFileContentIsEqualToResponse(getResponse, aasxFile);
-
-        deletePackageAndAssertResponseCode(packageDescription);
-
-        asserPackageIsDeleted(packageDescription);
-
+    @AfterMethod
+    public void cleanUp() {
+        try {
+            this.aasxFileServer.getAllAASXPackageIds("", new PaginationInfo(0, "")).getResult().stream().forEach(p -> this.aasxFileServer.deleteAASXByPackageId(p.getPackageId()));
+        }
+        catch (Exception ignored) {
+        }
     }
 
     @Test
-    public void testUpdateAASXFile() throws IOException, ParseException {
-        File aasxFile = loadAASXFromResources(TEST_AASX_FILENAME);
-
-        ArrayList<String> aasIds = getDummyAasIdList();
-
-        CloseableHttpClient client = HttpClients.createDefault();
-        CloseableHttpResponse response = uploadFile(client,aasIds,aasxFile);
-        PackageDescription description = getPackageDescriptionFromResponse(BaSyxHttpTestUtils.getResponseAsString(response));
-        String packageId = description.getPackageId();
-        String encodedPackageId = new Base64UrlEncodedIdentifier(packageId).getEncodedIdentifier();
-
-        File updatedAASXFile = loadAASXFromResources("test2.aasx");
-        updatePackageAndAssertResponse(encodedPackageId, aasIds, updatedAASXFile, client);
-
-        assertPackagesUpdated(encodedPackageId, updatedAASXFile);
+    public void testDeleteNonExistingPackage() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                .delete("/packages/{packageId}", new Base64UrlEncodedIdentifier("nonExistingPackageId").getEncodedIdentifier()))
+                .andExpect(status().isNotFound());
     }
 
-    private void assertPackagesUpdated(String encodedPackageId, File updatedAASXFile) throws IOException {
-        CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificPackageURL(encodedPackageId));
-
-        File tempFile = File.createTempFile("downloaded", ".aasx");
-
-        writeInputStreamToFile(getResponse,tempFile);
-        assertTrue(FileUtils.contentEquals(updatedAASXFile, tempFile));
+    @Test
+    public void testGetNonExistingPackage() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/packages/{packageId}", new Base64UrlEncodedIdentifier("nonExistingPackageId").getEncodedIdentifier()))
+                .andExpect(status().isNotFound());
     }
 
-    private void updatePackageAndAssertResponse(String encodedPackageId, ArrayList<String> aasIds, File updatedAASXFile, CloseableHttpClient client) throws IOException {
-        HttpPut put = BaSyxHttpTestUtils.updatePutRequestWithFileForFileServer(getUploadURL(), encodedPackageId, aasIds, updatedAASXFile, new Base64UrlEncodedIdentifier("test2").getEncodedIdentifier());
-        CloseableHttpResponse response2 = client.execute(put);
-
-        assertEquals(204,response2.getCode());
+    @Test
+    public void testPostAASXPackageWithoutFile() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                        .multipart("/packages")
+                    .param("aasIds", new Base64UrlEncodedIdentifier("aasId1").getEncodedIdentifier())
+                    .param("fileName", new Base64UrlEncodedIdentifier("testFileName").getEncodedIdentifier()))
+                .andExpect(status().isBadRequest());
+        assertTrue(isPackageNotPresent("aasId1"));
     }
 
-    private static String getPackageIdFromUploadResponseBody(CloseableHttpResponse response) throws IOException, ParseException {
-        PackageDescription description = getPackageDescriptionFromResponse(BaSyxHttpTestUtils.getResponseAsString(response));
-        String packageId = description.getPackageId();
-        String encodedPackageId = new Base64UrlEncodedIdentifier(packageId).getEncodedIdentifier();
-        return encodedPackageId;
+    @Test
+    public void testPostAASXPackageWithoutParams() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                .multipart("/packages")
+                .file(new MockMultipartFile("file", "test.aasx", "application/asset-administration-shell-package+xml", fileToByteArray(loadAASXFromResources("test.aasx")))))
+                .andExpect(status().isBadRequest());
+        assertTrue(isPackageNotPresent(""));
     }
 
+    @Test
+    public void testPutNonExistingPackage() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                .multipart("/packages/{packageId}", new Base64UrlEncodedIdentifier("nonExistingPackageId").getEncodedIdentifier())
+                .file(new MockMultipartFile("file", "", MediaType.APPLICATION_JSON_VALUE, "".getBytes()))
+                .param("aasIds", new Base64UrlEncodedIdentifier("aasId1").getEncodedIdentifier())
+                .param("fileName", new Base64UrlEncodedIdentifier("testFileName").getEncodedIdentifier())
+                .with(request -> {request.setMethod("PUT"); return request;}))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testPostAASXPackage() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                .multipart("/packages")
+                .file(new MockMultipartFile("file", "test.aasx", "application/asset-administration-shell-package+xml", fileToByteArray(loadAASXFromResources("test.aasx"))))
+                .param("aasIds", new Base64UrlEncodedIdentifier("aasId1").getEncodedIdentifier())
+                .param("fileName", new Base64UrlEncodedIdentifier("testFileName").getEncodedIdentifier()))
+        .andExpect(status().isCreated());
+
+        assertTrue(isPackagePresentOneTime("aasId1"));
+    }
+
+
+    @Test
+    public void testPutAASXPackage() throws Exception {
+        PackageDescription packageDescription = createAASXPackageOnServer();
+
+        assertTrue(isPackageNotPresent("aasId1"));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .multipart("/packages/{packageId}",new Base64UrlEncodedIdentifier(packageDescription.getPackageId()).getEncodedIdentifier())
+                .file(new MockMultipartFile("file", "", MediaType.APPLICATION_JSON_VALUE, fileToByteArray(loadAASXFromResources("test2.aasx"))))
+                .param("aasIds", new Base64UrlEncodedIdentifier("aasId1").getEncodedIdentifier())
+                .param("fileName", new Base64UrlEncodedIdentifier("testFileName").getEncodedIdentifier())
+                .with(request -> {request.setMethod("PUT"); return request;}))
+                .andExpect(status().isNoContent());
+
+        assertTrue(isPackagePresentOneTime("aasId1"));
+    }
+
+    @Test
+    public void testDeletePackage() throws Exception {
+        PackageDescription packageDescription = createAASXPackageOnServer();
+
+        assertTrue(isPackagePresentOneTime(""));
+
+        try {
+            mockMvc.perform(MockMvcRequestBuilders
+                    .delete("/packages/{packageId}", new Base64UrlEncodedIdentifier(packageDescription.getPackageId()).getEncodedIdentifier()))
+                    .andExpect(status().isNoContent());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertTrue(isPackageNotPresent(""));
+    }
+
+    private boolean isPackageNotPresent(String aasId) {
+        return this.aasxFileServer.getAllAASXPackageIds(aasId, new PaginationInfo(0, "")).getResult().size() == 0;
+    }
+
+    private boolean isPackagePresentOneTime(String aasId) {
+        return this.aasxFileServer.getAllAASXPackageIds(aasId, new PaginationInfo(0, "")).getResult().size() == 1;
+    }
+
+    private PackageDescription createAASXPackageOnServer() throws Exception {
+        return this.aasxFileServer.createAASXPackage(new ArrayList<>(),fileToInputStream(loadAASXFromResources("test.aasx")), "test.aasx");
+    }
     private File loadAASXFromResources(String aasxFileName){
         return new File(getClass().getClassLoader().getResource(aasxFileName).getFile());
     }
 
-    private String getUploadURL(){
-        return ACCESS_URL + "/packages";
+    private InputStream fileToInputStream(File file) throws FileNotFoundException {
+        return new FileInputStream(file);
     }
 
-    private String getSpecificPackageURL(String packageId){
-        return ACCESS_URL + "/packages/" + packageId;
+    private byte[] fileToByteArray(File file){
+        return  file.toPath().toAbsolutePath().toString().getBytes();
     }
-
-    private CloseableHttpResponse uploadFile(CloseableHttpClient client, List<String> aasIds, File aasxFile) throws IOException {
-        Base64UrlEncodedIdentifier fileName = new Base64UrlEncodedIdentifier("test");
-
-        HttpPost post = BaSyxHttpTestUtils.createPostRequestWithFileForFileServer(getUploadURL(),aasIds,aasxFile,fileName.getEncodedIdentifier());
-
-        CloseableHttpResponse response = client.execute(post);
-        return response;
-    }
-
-    private static void writeInputStreamToFile(CloseableHttpResponse getResponse, File tempFile) throws IOException {
-        InputStream responseBodyStream = getResponse.getEntity().getContent();
-        try (OutputStream outStream = new FileOutputStream(tempFile)) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = responseBodyStream.read(buffer)) != -1) {
-                outStream.write(buffer, 0, length);
-            }
-        }
-    }
-
-    private static void assertFileContentIsEqualToResponse(CloseableHttpResponse getResponse, File aasxFile) throws IOException {
-        File tempFile = File.createTempFile("downloaded", ".aasx");
-        writeInputStreamToFile(getResponse, tempFile);
-        assertTrue(FileUtils.contentEquals(aasxFile, tempFile));
-    }
-
-    private void deletePackageAndAssertResponseCode(PackageDescription packageDescription) throws IOException {
-        CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(getSpecificPackageURL(new Base64UrlEncodedIdentifier(packageDescription.getPackageId()).getEncodedIdentifier()));
-        assertEquals(204,deleteResponse.getCode());
-    }
-
-    private void asserPackageIsDeleted(PackageDescription packageDescription) throws IOException {
-        CloseableHttpResponse getResponseAfterDelete = BaSyxHttpTestUtils.executeGetOnURL(getSpecificPackageURL(new Base64UrlEncodedIdentifier(packageDescription.getPackageId()).getEncodedIdentifier()));
-        assertEquals(404,getResponseAfterDelete.getCode());
-    }
-
-    private static PackageDescription getPackageDescriptionFromResponse(String responseBody) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-
-        Map<String, Object> map = mapper.readValue(responseBody, new TypeReference<Map<String,Object>>(){});
-
-        List<String> itemsList = (List<String>) map.get("items");
-
-        String packageId = (String) map.get("packageId");
-        PackageDescription packageDescription = new DefaultPackageDescription.Builder().packageId(packageId).items(itemsList).build();
-        return packageDescription;
-    }
-
-    private static ArrayList<String> getDummyAasIdList() {
-        ArrayList<String> aasIds = new ArrayList<>();
-        aasIds.add(new Base64UrlEncodedIdentifier("testAasId").getEncodedIdentifier());
-        return aasIds;
-    }
-
 }

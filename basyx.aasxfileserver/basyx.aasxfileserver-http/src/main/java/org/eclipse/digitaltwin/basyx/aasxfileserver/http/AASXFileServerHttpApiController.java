@@ -25,11 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasxfileserver.http;
 
-import jakarta.validation.Valid;
 import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackageDescriptionList;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.pagination.GetPackageDescriptionResult;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
@@ -48,7 +45,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -81,17 +77,13 @@ public class AASXFileServerHttpApiController implements AASXFileServerHttpApi {
 
     @Override
     public ResponseEntity<Resource> getAASXByPackageId(Base64UrlEncodedIdentifier packageId) {
-        try {
-            InputStream aasxPackage = aasxFileServer.getAASXByPackageId(packageId.getIdentifier());
-            InputStreamResource resource = new InputStreamResource(aasxPackage);
+        InputStream aasxPackage = aasxFileServer.getAASXByPackageId(packageId.getIdentifier());
+        InputStreamResource resource = new InputStreamResource(aasxPackage);
 
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType("application/asset-administration-shell-package"))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=test.aasx")
-                    .body(resource);
-        } catch(ElementDoesNotExistException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/asset-administration-shell-package"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=test.aasx")
+                .body(resource);
     }
 
     @Override
@@ -151,8 +143,11 @@ public class AASXFileServerHttpApiController implements AASXFileServerHttpApi {
         }
     }
 
-    private boolean doesPackageExist(Base64UrlEncodedIdentifier packageId) {
-        return aasxFileServer.getAASXByPackageId(packageId.getIdentifier()) != null;
+    private boolean doesPackageExist(Base64UrlEncodedIdentifier packageId) throws ElementDoesNotExistException {
+        if (aasxFileServer.getAASXByPackageId(packageId.getIdentifier()) == null) {
+            throw new ElementDoesNotExistException("Package with id: " + packageId.getIdentifier() + " does not exist.");
+        }
+        return true;
     }
 
     private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {

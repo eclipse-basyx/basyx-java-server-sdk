@@ -42,7 +42,6 @@ import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.springframework.core.io.Resource;
 import org.eclipse.digitaltwin.aas4j.v3.model.Result;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackageDescriptionList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -100,7 +99,7 @@ public interface AASXFileServerHttpApi {
 
     @Operation(summary = "Returns a list of available AASX packages at the server", description = "", tags={ "AASX File Server API" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Requested package list", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PackageDescriptionList.class))),
+        @ApiResponse(responseCode = "200", description = "Requested package list", content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class))),
         
         @ApiResponse(responseCode = "400", description = "Bad Request, e.g. the request parameters of the format of the request body is wrong.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
         
