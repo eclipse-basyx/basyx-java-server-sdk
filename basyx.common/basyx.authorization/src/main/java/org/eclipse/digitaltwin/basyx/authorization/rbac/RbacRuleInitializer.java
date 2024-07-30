@@ -54,9 +54,12 @@ public class RbacRuleInitializer {
 	}
 
 	/**
-	 * Provides the list of {@link RbacRule} from the resource
+	 * Provides the Map of {@link RbacRule} from the resource
 	 * 
-	 * @return list of rbac rules
+	 * It auto-generates the key based on hash of combination of role, {@link Action}, and the concrete {@link TargetInformation}
+	 * class.
+	 * 
+	 * @return map of rbac rules
 	 * @throws IOException
 	 */
 	public HashMap<String, RbacRule> deserialize() throws IOException {

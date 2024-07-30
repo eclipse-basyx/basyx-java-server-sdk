@@ -28,7 +28,7 @@ package org.eclipse.digitaltwin.basyx.authorization.rbac;
 import java.util.Map;
 
 /**
- * An interface for definig storage of {@link RbacRule}
+ * An interface for defining storage of {@link RbacRule}
  * 
  * @author danish
  */
