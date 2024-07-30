@@ -48,8 +48,11 @@ public class InMemoryAuthorizationRbacStorage implements RbacStorage {
     	rbacRule.getAction().stream().map(action -> RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), action.toString(), rbacRule.getTargetInformation().getClass().getName())).filter(key -> !rbacRules.containsKey(key)).map(key -> rbacRules.put(key, rbacRule));
     }
 
-	public void removeRule(RbacRule rbacRule) {
-		rbacRule.getAction().stream().map(action -> RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), action.toString(), rbacRule.getTargetInformation().getClass().getName())).filter(key -> rbacRules.containsKey(key)).map(key -> rbacRules.remove(key));
+	public void removeRule(String key) {
+		if (!exist(key))
+			throw new RuntimeException("Rule doesn't exist in policy store");
+		
+		rbacRules.remove(key);
     }
 	
 	@Override

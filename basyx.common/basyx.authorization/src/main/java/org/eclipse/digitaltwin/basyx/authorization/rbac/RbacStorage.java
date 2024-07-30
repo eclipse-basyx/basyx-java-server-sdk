@@ -37,6 +37,6 @@ public interface RbacStorage {
     public Map<String, RbacRule> getRbacRules();
     public RbacRule getRbacRule(String key);
     public void addRule(RbacRule rbacRule);
-    public void removeRule(RbacRule rbacRule);
+    public void removeRule(String key);
     public boolean exist(String key);
 }
