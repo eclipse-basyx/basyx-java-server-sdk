@@ -42,8 +42,6 @@ import org.slf4j.LoggerFactory;
  */
 public class SimpleRbacPermissionResolver<T extends TargetInformation> implements RbacPermissionResolver<T> {
 
-	private static final String ALL_ALLOWED_WILDCARD = "*";
-
 	private Logger logger = LoggerFactory.getLogger(SimpleRbacPermissionResolver.class);
 
 	private RbacStorage rbacStorage;
@@ -84,27 +82,14 @@ public class SimpleRbacPermissionResolver<T extends TargetInformation> implement
 
 	private Stream<RbacRule> getMatchingRules(final List<String> roles, final Action action, final T targetInformation) {
 		
-		List<RbacRule> filteredRbacRulesForTargetInfo = this.rbacStorage.getRbacRules().stream().filter(rbacRule -> hasMatchingTargetInformation(targetInformation, rbacRule)).collect(Collectors.toList());
+		List<RbacRule> filteredRbacRulesForTargetInfos = roles.stream().map(role -> RbacRuleKeyGenerator.generateKey(role, action.toString(), targetInformation.getClass().getName())).filter(rbacStorage::exist).map(rbacStorage::getRbacRule).collect(Collectors.toList());
 		
-		return filteredRbacRulesForTargetInfo.parallelStream().filter(rbacRule -> checkRolesMatchRbacRule(rbacRule, roles)).filter(rbacRule -> checkActionMatchesRbacRule(rbacRule, action))
-				.filter(rbacRule -> checkRbacRuleMatchesTargetInfo(rbacRule, targetInformation));
-	}
-
-	private boolean checkRolesMatchRbacRule(final RbacRule rbacRule, final List<String> roles) {
-		return rbacRule.getRole().equals(ALL_ALLOWED_WILDCARD) || (roles != null && roles.stream().anyMatch(role -> rbacRule.getRole().equals(role)));
-	}
-
-	private boolean checkActionMatchesRbacRule(final RbacRule rbacRule, final Action action) {
-		return rbacRule.getAction().stream().anyMatch(rbacRuleAction -> rbacRuleAction.equals(action));
+		return filteredRbacRulesForTargetInfos.stream().filter(rbacRule -> checkRbacRuleMatchesTargetInfo(rbacRule, targetInformation));
 	}
 
 	private boolean checkRbacRuleMatchesTargetInfo(final RbacRule rbacRule, final T targetInformation) {
 		
 		return targetPermissionVerifier.isVerified(rbacRule, targetInformation);
 	}
-
-	private boolean hasMatchingTargetInformation(final T targetInformation, RbacRule rbacRule) {
-		
-		return targetInformation.getClass().isInstance(rbacRule.getTargetInformation());
-	}
+	
 }
