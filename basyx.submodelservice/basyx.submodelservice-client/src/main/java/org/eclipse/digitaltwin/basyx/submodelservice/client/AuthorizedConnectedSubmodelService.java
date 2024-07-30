@@ -25,9 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.client;
 
-import java.io.IOException;
-import java.net.http.HttpRequest;
-
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.internal.SubmodelServiceApi;
 
@@ -46,17 +43,7 @@ public class AuthorizedConnectedSubmodelService extends ConnectedSubmodelService
 	 * @param tokenManager
 	 */
 	public AuthorizedConnectedSubmodelService(String repoUrl, TokenManager tokenManager) {
-		super(new SubmodelServiceApi(repoUrl, getRequestBuilder(tokenManager)));
-	}
-	
-	private static HttpRequest.Builder getRequestBuilder(TokenManager tokenManager) {
-		try {
-			return HttpRequest.newBuilder()
-			        .header("Authorization", "Bearer " + tokenManager.getAccessToken());
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Unable to request access token");
-		}
+		super(new SubmodelServiceApi(repoUrl, tokenManager));
 	}
 
 }

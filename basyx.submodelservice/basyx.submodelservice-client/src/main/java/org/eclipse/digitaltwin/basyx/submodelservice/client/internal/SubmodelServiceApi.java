@@ -56,6 +56,8 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiClient;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiResponse;
 import org.eclipse.digitaltwin.basyx.client.internal.Pair;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
+import org.eclipse.digitaltwin.basyx.core.exceptions.AccessTokenRetrievalException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -73,38 +75,36 @@ public class SubmodelServiceApi {
   private final Consumer<HttpRequest.Builder> memberVarInterceptor;
   private final Duration memberVarReadTimeout;
   private final Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
-	private final Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
-	private HttpRequest.Builder httpRequestBuilder;
+  private final Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
+	
+  private TokenManager tokenManager;
 
   public SubmodelServiceApi() {
     this(new ApiClient());
-    this.httpRequestBuilder = HttpRequest.newBuilder();
   }
   
-  public SubmodelServiceApi(HttpRequest.Builder httpRequestBuilder) {
-		this();
-		this.httpRequestBuilder = httpRequestBuilder;
+  public SubmodelServiceApi(TokenManager tokenManager) {
+	    this(new ApiClient());
+	    this.tokenManager = tokenManager;
   }
 
   public SubmodelServiceApi(ObjectMapper mapper, String baseUri) {
     this(new ApiClient(HttpClient.newBuilder(), mapper, baseUri));
-    this.httpRequestBuilder = HttpRequest.newBuilder();
   }
   
-  public SubmodelServiceApi(ObjectMapper mapper, String baseUri, HttpRequest.Builder httpRequestBuilder) {
-		this(mapper, baseUri);
-		this.httpRequestBuilder = httpRequestBuilder;
+  public SubmodelServiceApi(ObjectMapper mapper, String baseUri, TokenManager tokenManager) {
+	    this(new ApiClient(HttpClient.newBuilder(), mapper, baseUri));
+	    this.tokenManager = tokenManager;
   }
 
-	public SubmodelServiceApi(String baseUri) {
+  public SubmodelServiceApi(String baseUri) {
 		this(new ApiClient(HttpClient.newBuilder(), new SubmodelSpecificJsonMapperFactory().create(), baseUri));
-		this.httpRequestBuilder = HttpRequest.newBuilder();
-	}
+  }
 
-	public SubmodelServiceApi(String baseUri, HttpRequest.Builder httpRequestBuilder) {
-		this(baseUri);
-		this.httpRequestBuilder = httpRequestBuilder;
-	}
+  public SubmodelServiceApi(String baseUri, TokenManager tokenManager) {
+	  	this(new ApiClient(HttpClient.newBuilder(), new SubmodelSpecificJsonMapperFactory().create(), baseUri));
+	  	this.tokenManager = tokenManager;
+  }
 
 
 
@@ -208,7 +208,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 
 	private HttpRequest.Builder getSubmodelRequestBuilder(String level, String extent) throws ApiException {
 
-		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 		String localVarPath = "";
 
@@ -232,6 +232,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		}
 
 		localVarRequestBuilder.header("Accept", "application/json");
+		
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
 		if (memberVarReadTimeout != null) {
@@ -330,7 +332,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			throw new ApiException(400, "Missing the required parameter 'idShortPath' when calling getSubmodelElementByPath");
 		}
 
-		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 		String localVarPath = "/submodel-elements/{idShortPath}".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
@@ -354,6 +356,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		}
 
 		localVarRequestBuilder.header("Accept", "application/json");
+		
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
 		if (memberVarReadTimeout != null) {
@@ -455,7 +459,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			throw new ApiException(400, "Missing the required parameter 'idShortPath' when calling getSubmodelElementByPathValueOnly");
 		}
 
-		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 		String localVarPath = "/submodel-elements/{idShortPath}/$value".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
@@ -479,6 +483,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		}
 
 		localVarRequestBuilder.header("Accept", "application/json");
+		
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
 		if (memberVarReadTimeout != null) {
@@ -596,7 +602,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			throw new ApiException(400, "Missing the required parameter 'getSubmodelElementsValueResult' when calling patchSubmodelElementByPathValueOnly");
 		}
 
-		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 		String localVarPath = "/submodel-elements/{idShortPath}/$value".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
@@ -623,6 +629,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 
 		localVarRequestBuilder.header("Content-Type", "application/json");
 		localVarRequestBuilder.header("Accept", "application/json");
+		
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		try {
 			byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(getSubmodelElementsValueResult);
@@ -707,7 +715,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 	      throw new ApiException(400, "Missing the required parameter 'submodelElement' when calling postSubmodelElement");
 	    }
 
-	    HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+	    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 		String localVarPath = "/submodel-elements";
 
@@ -715,6 +723,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 
 	    localVarRequestBuilder.header("Content-Type", "application/json");
 	    localVarRequestBuilder.header("Accept", "application/json");
+	    
+	    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 	    try {
 	      byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(submodelElement);
@@ -812,7 +822,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 				throw new ApiException(400, "Missing the required parameter 'submodelElement' when calling postSubmodelElementByPath");
 			}
 
-			HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 			String localVarPath = "/submodel-elements/{idShortPath}".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
@@ -820,6 +830,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 
 			localVarRequestBuilder.header("Content-Type", "application/json");
 			localVarRequestBuilder.header("Accept", "application/json");
+			
+			addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 			try {
 				byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(submodelElement);
@@ -927,7 +939,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 				throw new ApiException(400, "Missing the required parameter 'submodelElement' when calling putSubmodelElementByPath");
 			}
 
-			HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 			String localVarPath = "/submodel-elements/{idShortPath}".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
@@ -950,6 +962,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 
 			localVarRequestBuilder.header("Content-Type", "application/json");
 			localVarRequestBuilder.header("Accept", "application/json");
+			
+			addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 			try {
 				byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(submodelElement);
@@ -1038,13 +1052,15 @@ public SubmodelServiceApi(ApiClient apiClient) {
 				throw new ApiException(400, "Missing the required parameter 'idShortPath' when calling deleteSubmodelElementByPath");
 			}
 
-			HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 			String localVarPath = "/submodel-elements/{idShortPath}".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
 			localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
 			localVarRequestBuilder.header("Accept", "application/json");
+			
+			addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 			localVarRequestBuilder.method("DELETE", HttpRequest.BodyPublishers.noBody());
 			if (memberVarReadTimeout != null) {
@@ -1109,7 +1125,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 
 		private HttpRequest.Builder getAllSubmodelElementsRequestBuilder(Integer limit, String cursor, String level, String extent) throws ApiException {
 
-			HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 			String localVarPath = "/submodel-elements";
 
@@ -1137,6 +1153,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			}
 
 			localVarRequestBuilder.header("Accept", "application/json");
+			
+			addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 			localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
 			if (memberVarReadTimeout != null) {
@@ -1198,7 +1216,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			if (inputStream == null)
 				throw new ApiException(400, "Missing the required parameter 'inputStream' when calling putFileByPath");
 
-			HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 			String localVarPath = "/submodel-elements/{idShortPath}/attachment".replace("{idShortPath}", ApiClient.urlEncode(idShortPath));
 
@@ -1225,6 +1243,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			formDataPublisher = HttpRequest.BodyPublishers.ofInputStream(() -> Channels.newInputStream(pipe.source()));
 
 			localVarRequestBuilder.header("Content-Type", entity.getContentType().getValue()).method("PUT", formDataPublisher);
+			
+			addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 			if (memberVarReadTimeout != null) {
 				localVarRequestBuilder.timeout(memberVarReadTimeout);
@@ -1307,13 +1327,15 @@ public SubmodelServiceApi(ApiClient apiClient) {
 				throw new ApiException(400, "Missing the required parameter 'idShortPath' when calling deleteFileByPath");
 			}
 
-			HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 			String localVarPath = "/submodel-elements/{idShortPath}/attachment".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
 			localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
 			localVarRequestBuilder.header("Accept", "application/json");
+			
+			addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 			localVarRequestBuilder.method("DELETE", HttpRequest.BodyPublishers.noBody());
 			if (memberVarReadTimeout != null) {
@@ -1374,13 +1396,15 @@ public SubmodelServiceApi(ApiClient apiClient) {
 				throw new ApiException(400, "Missing the required parameter 'idShortPath' when calling getFileByPath");
 			}
 
-			HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 			String localVarPath = "/submodel-elements/{idShortPath}/attachment".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
 			localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
 			localVarRequestBuilder.header("Accept", "application/octet-stream, application/json");
+			
+			addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 			localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
 			if (memberVarReadTimeout != null) {
@@ -1471,7 +1495,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 				throw new ApiException(400, "Missing the required parameter 'operationRequest' when calling invokeOperation");
 			}
 
-			HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
+			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
 			String localVarPath = "/submodel-elements/{idShortPath}/invoke".replace("{idShortPath}", ApiClient.urlEncode(idShortPath.toString()));
 
@@ -1479,6 +1503,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 
 			localVarRequestBuilder.header("Content-Type", "application/json");
 			localVarRequestBuilder.header("Accept", "application/json");
+			
+			addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 			try {
 				byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(operationRequest);
@@ -1506,5 +1532,16 @@ public SubmodelServiceApi(ApiClient apiClient) {
 
 		private static String buildUniqueFilename() {
 			return UUID.randomUUID().toString();
+		}
+		
+		private void addAuthorizationHeaderIfAuthIsEnabled(HttpRequest.Builder localVarRequestBuilder) {
+			if (tokenManager != null) {
+		    	try {
+		    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
+				} catch (IOException e) {
+					e.printStackTrace();
+					throw new AccessTokenRetrievalException("Unable to request access token");
+				}
+		    }
 		}
 }
