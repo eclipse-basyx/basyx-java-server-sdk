@@ -38,7 +38,7 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -50,7 +50,7 @@ public class TestConnectedAasService extends AasServiceSuite {
 
 	@BeforeClass
 	public static void startAASRepo() throws Exception {
-		appContext = new SpringApplication(DummyAasRepositoryComponent.class).run(new String[] {});
+		appContext = new SpringApplicationBuilder(DummyAasRepositoryComponent.class).profiles("httptests").run(new String[] {});
 	}
 
 	@After

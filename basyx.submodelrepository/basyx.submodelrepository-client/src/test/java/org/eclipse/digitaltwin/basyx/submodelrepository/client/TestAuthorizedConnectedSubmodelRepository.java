@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
@@ -37,6 +38,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
@@ -77,7 +79,10 @@ public class TestAuthorizedConnectedSubmodelRepository extends SubmodelRepositor
 		TestAuthorizedConnectedSubmodelService.configureSecurityContext(TestAuthorizedConnectedSubmodelService.getTokenProvider());
 		
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
-		repo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
+		try {
+			repo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
+		} catch (Exception e) {
+		}
 		
 		SecurityContextHolder.clearContext();
 	}
@@ -138,5 +143,16 @@ public class TestAuthorizedConnectedSubmodelRepository extends SubmodelRepositor
 		java.io.File file = new java.io.File(fileValue);
 
 		return file.exists();
+	}
+
+	@Override
+	public void invokeOperation() {
+		// TODO
+	}
+
+	@Override
+	public void invokeNonOperation() {
+		// TODO
+		throw new NotInvokableException();
 	}
 }
