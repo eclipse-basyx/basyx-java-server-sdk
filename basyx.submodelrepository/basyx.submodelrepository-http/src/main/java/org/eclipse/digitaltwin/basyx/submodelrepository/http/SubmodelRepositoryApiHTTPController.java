@@ -31,11 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
-import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
-import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationResult;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
@@ -223,6 +219,10 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		try {
 			fileInputstream = file.getInputStream();
 			repository.setFileValue(submodelIdentifier.getIdentifier(), idShortPath, fileName, fileInputstream);
+			
+			File sme = (File) repository.getSubmodelElement(submodelIdentifier.getIdentifier(), idShortPath);
+			sme.setContentType(file.getContentType());
+
 			closeInputStream(fileInputstream);
 			return new ResponseEntity<Void>(HttpStatus.OK);
 		} catch (ElementDoesNotExistException e) {
