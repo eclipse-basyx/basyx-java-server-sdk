@@ -28,6 +28,9 @@ package org.eclipse.digitaltwin.basyx.submodelservice.value.mapper;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollectionValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
+
+import java.util.stream.Collectors;
 
 /**
  * Maps {@link SubmodelElementCollection} value to {@link SubmodelElementCollectionValue} 
@@ -44,7 +47,7 @@ public class SubmodelElementCollectionValueMapper implements ValueMapper<Submode
 
 	@Override
 	public SubmodelElementCollectionValue getValue() {
-		return new SubmodelElementCollectionValue(ValueMapperUtil.createValueOnlyCollection(submodelElementCollection.getValue()));
+		return new SubmodelElementCollectionValue(ValueMapperUtil.createValueOnlyCollection(submodelElementCollection.getValue()).stream().collect(Collectors.toMap(ValueOnly::getIdShort, ValueOnly::getSubmodelElementValue)));
 	}
 
 	@Override

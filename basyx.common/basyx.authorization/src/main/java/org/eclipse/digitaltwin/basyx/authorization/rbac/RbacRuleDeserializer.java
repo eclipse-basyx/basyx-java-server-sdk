@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2024 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,38 +19,42 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.DecoratedSubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.SubmodelRepositoryFeature;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-
-
 /**
- * Configuration for tests
+ * A specific deserializer for deserializing list of {@link RbacRule} into HashMap
  * 
  * @author danish
- *
  */
-@Configuration
-@Profile("authorization")
-public class DummyAuthorizedSubmodelRepositoryConfiguration {
+public class RbacRuleDeserializer extends JsonDeserializer<HashMap<String, RbacRule>> {
 
-	@Bean
-	@ConditionalOnMissingBean
-	public static SubmodelRepository getSubmodelRepository(SubmodelRepositoryFactory aasRepositoryFactory, List<SubmodelRepositoryFeature> features) {
-		return new DecoratedSubmodelRepositoryFactory(aasRepositoryFactory, features).create();
+	@Override
+	public HashMap<String, RbacRule> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+		ObjectMapper mapper = (ObjectMapper) p.getCodec();
+		List<RbacRule> rbacRules = mapper.readValue(p, new TypeReference<List<RbacRule>>() {
+		});
+		HashMap<String, RbacRule> result = new HashMap<>();
+
+		for (RbacRule rule : rbacRules) {
+			rule.getAction().stream().map(action -> RbacRuleKeyGenerator.generateKey(rule.getRole(), action.toString(), rule.getTargetInformation().getClass().getName())).forEach(key -> result.put(key, rule));
+		}
+
+		return result;
 	}
-	
+
 }
+

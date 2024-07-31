@@ -23,34 +23,45 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.client.internal;
 
-import java.util.List;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
+import org.junit.Before;
+import org.junit.Test;
 
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.DecoratedSubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.SubmodelRepositoryFeature;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import java.io.IOException;
 
+import static org.junit.Assert.*;
 
 /**
- * Configuration for tests
+ * Tests the behaviour of {@link TokenManager}
  * 
  * @author danish
- *
  */
-@Configuration
-@Profile("authorization")
-public class DummyAuthorizedSubmodelRepositoryConfiguration {
+public class TokenManagerTest {
+    
+    private TokenManager tokenManager;
 
-	@Bean
-	@ConditionalOnMissingBean
-	public static SubmodelRepository getSubmodelRepository(SubmodelRepositoryFactory aasRepositoryFactory, List<SubmodelRepositoryFeature> features) {
-		return new DecoratedSubmodelRepositoryFactory(aasRepositoryFactory, features).create();
-	}
-	
+    @Before
+    public void setUp() {
+        tokenManager = new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom")));
+    }
+
+    @Test
+    public void testGetAccessToken_RetrievesNewTokenAfterExpiry() throws IOException, InterruptedException {
+
+        String initialAccessToken = tokenManager.getAccessToken();
+        assertNotNull(initialAccessToken);
+
+        long tokenLifetime = 5000;
+        Thread.sleep(tokenLifetime + 1000);
+
+        String newAccessToken = tokenManager.getAccessToken();
+        assertNotNull(newAccessToken);
+        
+        assertNotEquals(initialAccessToken, newAccessToken);
+    }
+    
 }

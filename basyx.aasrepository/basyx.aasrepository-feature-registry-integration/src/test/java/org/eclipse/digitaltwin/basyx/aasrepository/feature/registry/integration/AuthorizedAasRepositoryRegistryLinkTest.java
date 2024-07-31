@@ -25,13 +25,23 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
+import org.eclipse.digitaltwin.basyx.aasregistry.main.client.AuthorizedConnectedAasRegistry;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpStatus;
 
 /**
  * Integration test for Authorized Registry
@@ -58,6 +68,24 @@ public class AuthorizedAasRepositoryRegistryLinkTest extends AasRepositoryRegist
 	@AfterClass
 	public static void tearDown() {
 		appContext.close();
+	}
+	
+	@Test
+	public void sendUnauthorizedRequest() throws IOException {
+		TokenManager mockTokenManager = Mockito.mock(TokenManager.class);
+
+		Mockito.when(mockTokenManager.getAccessToken()).thenReturn("mockedAccessToken");
+
+		RegistryAndDiscoveryInterfaceApi registryApi = new AuthorizedConnectedAasRegistry(AAS_REGISTRY_BASE_URL, mockTokenManager);
+
+		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
+		descriptor.setIdShort("shortId");
+
+		ApiException exception = assertThrows(ApiException.class, () -> {
+			registryApi.postAssetAdministrationShellDescriptor(descriptor);
+		});
+
+		assertEquals(HttpStatus.UNAUTHORIZED.value(), exception.getCode());
 	}
 
 	@Override

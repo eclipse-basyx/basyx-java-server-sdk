@@ -1,11 +1,7 @@
-[
-    {
-        "FileData": {
-            "contentType": "application/json",
-            "value": "testFile.json"
-        }
+{
+    "FileData": {
+        "contentType": "application/json",
+        "value": "testFile.json"
     },
-    {
-        "MaxRotationSpeed": "5000"
-    }
-]
+    "MaxRotationSpeed": "5000"
+}

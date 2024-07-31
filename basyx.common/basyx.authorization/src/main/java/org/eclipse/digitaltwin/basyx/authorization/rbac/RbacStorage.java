@@ -25,16 +25,18 @@
 
 package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
-import java.util.List;
+import java.util.Map;
 
 /**
- * An interface for definig storage of {@link RbacRule}
+ * An interface for defining storage of {@link RbacRule}
  * 
  * @author danish
  */
 public interface RbacStorage {
 	
-    public List<RbacRule> getRbacRules();
+    public Map<String, RbacRule> getRbacRules();
+    public RbacRule getRbacRule(String key);
     public void addRule(RbacRule rbacRule);
-    public void removeRule(RbacRule rbacRule);
+    public void removeRule(String key);
+    public boolean exist(String key);
 }

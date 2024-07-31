@@ -25,6 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Set;
 
@@ -37,6 +38,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 /**
  * A base configuration for Rbac based authorization
@@ -55,6 +57,10 @@ public class CommonRbacConfiguration {
 		Set<Class<?>> subtypes = reflections.getTypesAnnotatedWith(TargetInformationSubtype.class);
 		
 		subtypes.stream().map(this::createNamedType).filter(Objects::nonNull).forEach(mapper::registerSubtypes);
+		
+		SimpleModule module = new SimpleModule();
+        module.addDeserializer(HashMap.class, new RbacRuleDeserializer());
+        mapper.registerModule(module);
 
 		return mapper;
 	}

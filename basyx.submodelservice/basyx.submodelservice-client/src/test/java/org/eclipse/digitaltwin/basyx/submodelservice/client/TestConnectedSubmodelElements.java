@@ -94,7 +94,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 
@@ -109,7 +109,7 @@ public class TestConnectedSubmodelElements {
 
 	@BeforeClass
 	public static void startSubmodelService() throws Exception {
-		appContext = new SpringApplication(DummySubmodelRepositoryComponent.class).run(new String[] {});
+		appContext = new SpringApplicationBuilder(DummySubmodelRepositoryComponent.class).profiles("httptests").run(new String[] {});
 	}
 
 	@AfterClass
@@ -369,7 +369,7 @@ public class TestConnectedSubmodelElements {
 	public void setSubmodelElementCollectionValue() {
 		DefaultSubmodelElementCollection submodelElementCollection = getDefaultSubmodelElementCollection();
 		ConnectedSubmodelElementCollection connectedSubmodelElementCollection = getConnectedSubmodelElementCollection(submodelElementCollection);
-		submodelElementCollection.getValue().add(getDefaultMultiLanguageProperty());
+		submodelElementCollection.getValue().add(getDefaultMultiLanguageProperty("newMLP"));
 		SubmodelElementCollectionValueMapper valueMapper = new SubmodelElementCollectionValueMapper(submodelElementCollection);
 		connectedSubmodelElementCollection.setValue(valueMapper.getValue());
 		assertEquals(2, connectedSubmodelElementCollection.getValue().getValue().size());
@@ -443,6 +443,10 @@ public class TestConnectedSubmodelElements {
 
 	private DefaultMultiLanguageProperty getDefaultMultiLanguageProperty() {
 		return new DefaultMultiLanguageProperty.Builder().idShort(SUBMODEL_ELEMENT_ID_SHORT).value(Arrays.asList(new DefaultLangStringTextType.Builder().text(EXPECTED_STRING).language("de").build())).build();
+	}
+
+	private DefaultMultiLanguageProperty getDefaultMultiLanguageProperty(String idShort) {
+		return new DefaultMultiLanguageProperty.Builder().idShort(idShort).value(Arrays.asList(new DefaultLangStringTextType.Builder().text(EXPECTED_STRING).language("de").build())).build();
 	}
 
 	private ConnectedMultiLanguageProperty getConnectedMultiLanguageProperty(DefaultMultiLanguageProperty property) {

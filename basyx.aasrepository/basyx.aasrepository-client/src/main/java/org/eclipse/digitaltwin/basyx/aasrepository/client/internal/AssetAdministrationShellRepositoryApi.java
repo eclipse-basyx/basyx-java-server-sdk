@@ -45,6 +45,8 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiClient;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiResponse;
 import org.eclipse.digitaltwin.basyx.client.internal.Pair;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
+import org.eclipse.digitaltwin.basyx.core.exceptions.AccessTokenRetrievalException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
 
@@ -64,37 +66,35 @@ public class AssetAdministrationShellRepositoryApi {
   private final Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
 
   private final Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
-  private HttpRequest.Builder httpRequestBuilder;
-
+  private TokenManager tokenManager;
+  
   public AssetAdministrationShellRepositoryApi() {
     this(new ApiClient());
-    this.httpRequestBuilder = HttpRequest.newBuilder();
   }
   
-  public AssetAdministrationShellRepositoryApi(HttpRequest.Builder httpRequestBuilder) {
-		this();
-		this.httpRequestBuilder = httpRequestBuilder;
+  public AssetAdministrationShellRepositoryApi(TokenManager tokenManager) {
+	this(new ApiClient());
+	this.tokenManager = tokenManager;
   }
 
   public AssetAdministrationShellRepositoryApi(ObjectMapper mapper, String baseUri) {
     this(new ApiClient(HttpClient.newBuilder(), mapper, baseUri));
-    this.httpRequestBuilder = HttpRequest.newBuilder();
   }
   
-  public AssetAdministrationShellRepositoryApi(ObjectMapper mapper, String baseUri, HttpRequest.Builder httpRequestBuilder) {
-		this(mapper, baseUri);
-		this.httpRequestBuilder = httpRequestBuilder;
+  public AssetAdministrationShellRepositoryApi(ObjectMapper mapper, String baseUri, TokenManager tokenManager) {
+	this(new ApiClient(HttpClient.newBuilder(), mapper, baseUri));
+	this.tokenManager = tokenManager;
   }
   
   public AssetAdministrationShellRepositoryApi(String baseUri) {
 		this(new ApiClient(HttpClient.newBuilder(), new JsonMapperFactory().create(new SimpleAbstractTypeResolverFactory().create()), baseUri));
-		this.httpRequestBuilder = HttpRequest.newBuilder();
   }
   
-  public AssetAdministrationShellRepositoryApi(String baseUri, HttpRequest.Builder httpRequestBuilder) {
-		this(baseUri);
-		this.httpRequestBuilder = httpRequestBuilder;
+  public AssetAdministrationShellRepositoryApi(String baseUri, TokenManager tokenManager) {
+	  this(new ApiClient(HttpClient.newBuilder(), new JsonMapperFactory().create(new SimpleAbstractTypeResolverFactory().create()), baseUri));
+	  this.tokenManager = tokenManager;
   }
+
 
   public AssetAdministrationShellRepositoryApi(ApiClient apiClient) {
     memberVarHttpClient = apiClient.getHttpClient();
@@ -191,16 +191,19 @@ public class AssetAdministrationShellRepositoryApi {
       throw new ApiException(400, "Missing the required parameter 'aasIdentifier' when calling deleteAssetAdministrationShellById");
     }
 
+    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+
     String localVarPath = "/shells/{aasIdentifier}"
         .replace("{aasIdentifier}", ApiClient.urlEncode(aasIdentifier.toString()));
-    
-    HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
     localVarRequestBuilder.header("Accept", "application/json");
+    
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     localVarRequestBuilder.method("DELETE", HttpRequest.BodyPublishers.noBody());
+    
     if (memberVarReadTimeout != null) {
       localVarRequestBuilder.timeout(memberVarReadTimeout);
     }
@@ -298,8 +301,11 @@ public class AssetAdministrationShellRepositoryApi {
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
     localVarRequestBuilder.header("Accept", "application/json");
+    
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     localVarRequestBuilder.method("DELETE", HttpRequest.BodyPublishers.noBody());
+    
     if (memberVarReadTimeout != null) {
       localVarRequestBuilder.timeout(memberVarReadTimeout);
     }
@@ -362,9 +368,9 @@ public class AssetAdministrationShellRepositoryApi {
 
 	private HttpRequest.Builder getAllAssetAdministrationShellsRequestBuilder(List<String> assetIds, String idShort, Integer limit, String cursor) throws ApiException {
 
+		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+
 		String localVarPath = "/shells";
-		
-		HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
 		List<Pair> localVarQueryParams = new ArrayList<>();
 		StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
@@ -390,6 +396,8 @@ public class AssetAdministrationShellRepositoryApi {
 		}
 
 		localVarRequestBuilder.header("Accept", "application/json");
+		
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
 		if (memberVarReadTimeout != null) {
@@ -470,14 +478,16 @@ public class AssetAdministrationShellRepositoryApi {
       throw new ApiException(400, "Missing the required parameter 'aasIdentifier' when calling getAssetAdministrationShellById");
     }
 
+    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+
     String localVarPath = "/shells/{aasIdentifier}"
         .replace("{aasIdentifier}", ApiClient.urlEncode(aasIdentifier.toString()));
-    
-    HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
     localVarRequestBuilder.header("Accept", "application/json");
+    
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
     if (memberVarReadTimeout != null) {
@@ -565,6 +575,8 @@ public class AssetAdministrationShellRepositoryApi {
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
     localVarRequestBuilder.header("Accept", "application/json");
+    
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
     if (memberVarReadTimeout != null) {
@@ -652,6 +664,8 @@ public class AssetAdministrationShellRepositoryApi {
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
     localVarRequestBuilder.header("Accept", "application/json");
+    
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
     if (memberVarReadTimeout != null) {
@@ -731,14 +745,16 @@ public class AssetAdministrationShellRepositoryApi {
       throw new ApiException(400, "Missing the required parameter 'assetAdministrationShell' when calling postAssetAdministrationShell");
     }
 
+    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+
     String localVarPath = "/shells";
-    
-    HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
     localVarRequestBuilder.header("Content-Type", "application/json");
     localVarRequestBuilder.header("Accept", "application/json");
+    
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     try {
       byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(assetAdministrationShell);
@@ -839,6 +855,8 @@ public class AssetAdministrationShellRepositoryApi {
 
     localVarRequestBuilder.header("Content-Type", "application/json");
     localVarRequestBuilder.header("Accept", "application/json");
+    
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     try {
       byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(reference);
@@ -934,15 +952,17 @@ public class AssetAdministrationShellRepositoryApi {
       throw new ApiException(400, "Missing the required parameter 'assetAdministrationShell' when calling putAssetAdministrationShellById");
     }
 
+    HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+
     String localVarPath = "/shells/{aasIdentifier}"
         .replace("{aasIdentifier}", ApiClient.urlEncode(aasIdentifier.toString()));
-    
-    HttpRequest.Builder localVarRequestBuilder = this.httpRequestBuilder.copy();
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
     localVarRequestBuilder.header("Content-Type", "application/json");
     localVarRequestBuilder.header("Accept", "application/json");
+    
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     try {
       byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(assetAdministrationShell);
@@ -1046,6 +1066,8 @@ public class AssetAdministrationShellRepositoryApi {
 
     localVarRequestBuilder.header("Content-Type", "application/json");
     localVarRequestBuilder.header("Accept", "application/json");
+    
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
     try {
       byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(assetInformation);
@@ -1061,4 +1083,16 @@ public class AssetAdministrationShellRepositoryApi {
     }
     return localVarRequestBuilder;
   }
+  
+  private void addAuthorizationHeaderIfAuthIsEnabled(HttpRequest.Builder localVarRequestBuilder) {
+		if (tokenManager != null) {
+	    	try {
+	    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new AccessTokenRetrievalException("Unable to request access token");
+			}
+	    }
+	}
+  
 }

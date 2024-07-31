@@ -42,6 +42,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
@@ -86,7 +87,10 @@ public class TestAuthorizedConnectedSubmodelService extends SubmodelServiceSuite
 	@After
 	public void removeAasFromRepo() {
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
-		repo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
+		try {
+			repo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
+		} catch (Exception e) {
+		}
 	}
 
 	@AfterClass
@@ -159,6 +163,17 @@ public class TestAuthorizedConnectedSubmodelService extends SubmodelServiceSuite
 	
 	public static AccessTokenProvider getTokenProvider() {
 		return new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
+	}
+
+	@Override
+	public void invokeOperation() {
+		// TODO
+	}
+
+	@Override
+	public void invokeNonOperation() {
+		// TODO
+		throw new NotInvokableException();
 	}
 
 }

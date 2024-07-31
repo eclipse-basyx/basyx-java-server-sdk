@@ -10,17 +10,13 @@
     "new_SimpleList": [
         "new_4370"
     ],
-    "new_SubmodelElementCollection": [
-        {
-            "new_FileData": {
-                "contentType": "application/json",
-                "value": "new_testFile.json"
-            }
+    "new_SubmodelElementCollection": {
+        "new_FileData": {
+            "contentType": "application/json",
+            "value": "new_testFile.json"
         },
-        {
-            "new_MaxRotationSpeed": "new_5000"
-        }
-    ],
+        "new_MaxRotationSpeed": "new_5000"
+    },
     "new_BlobData": {
         "contentType": "application/xml",
         "value": "Test content of XML file"
@@ -62,11 +58,9 @@
             }
         ]
     },
-    "new_SimpleCollection": [
-        {
-            "new_MyFirstSubmodelElement": "new_4370"
-        }
-    ],
+    "new_SimpleCollection": {
+        "new_MyFirstSubmodelElement": "new_4370"
+    },
     "new_FileData": {
         "contentType": "application/json",
         "value": "new_testFile.json"

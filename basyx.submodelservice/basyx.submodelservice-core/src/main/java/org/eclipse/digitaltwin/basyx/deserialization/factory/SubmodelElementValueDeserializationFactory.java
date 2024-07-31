@@ -88,12 +88,12 @@ public class SubmodelElementValueDeserializationFactory {
 			return mapper.convertValue(node, RelationshipElementValue.class);
 		} else if (isTypeOfAnnotatedRelationshipElementValue(node)) {
 			return mapper.convertValue(node, AnnotatedRelationshipElementValue.class);
+		} else if (isTypeOfBasicEventValue(node)) {
+			return mapper.convertValue(node, BasicEventValue.class);
 		} else if (isTypeOfSubmodelElementListValue(node)) {
 			return new SubmodelElementListValueDeserializationFactory(mapper, node).create();
 		} else if (isTypeOfSubmodelElementCollectionValue(node)) {
 			return new SubmodelElementCollectionValueDeserializationFactory(mapper, node).create();
-		} else if (isTypeOfBasicEventValue(node)) {
-			return mapper.convertValue(node, BasicEventValue.class);
 		}
 
 		throw new SubmodelElementValueDeserializationException();
