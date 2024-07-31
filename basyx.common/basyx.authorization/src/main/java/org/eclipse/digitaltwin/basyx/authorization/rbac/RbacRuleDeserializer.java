@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,55 +25,36 @@
 
 package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
+
 import java.io.IOException;
 import java.util.HashMap;
-
-import org.eclipse.digitaltwin.basyx.core.exceptions.MissingAuthorizationConfigurationException;
-import org.springframework.core.io.ResourceLoader;
+import java.util.List;
 
 /**
- * Initializes {@link RbacRule} from the resource
+ * A specific deserializer for deserializing list of {@link RbacRule} into HashMap
  * 
  * @author danish
  */
-public class RbacRuleInitializer {
+public class RbacRuleDeserializer extends JsonDeserializer<HashMap<String, RbacRule>> {
 
-	private String rbacJsonFilePath;
-
-	private final ObjectMapper objectMapper;
-
-	private ResourceLoader resourceLoader;
-
-	public RbacRuleInitializer(ObjectMapper objectMapper, String filePath, ResourceLoader resourceLoader) {
-		this.objectMapper = objectMapper;
-		this.rbacJsonFilePath = filePath;
-		this.resourceLoader = resourceLoader;
-	}
-
-	/**
-	 * Provides the Map of {@link RbacRule} from the resource
-	 * 
-	 * It auto-generates the key based on hash of combination of role, {@link Action}, and the concrete {@link TargetInformation}
-	 * class.
-	 * 
-	 * @return map of rbac rules
-	 * @throws IOException
-	 */
-	public HashMap<String, RbacRule> deserialize() throws IOException {
-		return objectMapper.readValue(getFile(rbacJsonFilePath), new TypeReference<HashMap<String, RbacRule>>() {
+	@Override
+	public HashMap<String, RbacRule> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+		ObjectMapper mapper = (ObjectMapper) p.getCodec();
+		List<RbacRule> rbacRules = mapper.readValue(p, new TypeReference<List<RbacRule>>() {
 		});
-	}
+		HashMap<String, RbacRule> result = new HashMap<>();
 
-	private File getFile(String filePath) {
-
-		try {
-			return resourceLoader.getResource(filePath).getFile();
-		} catch (IOException e) {
-			throw new MissingAuthorizationConfigurationException(filePath);
+		for (RbacRule rule : rbacRules) {
+			rule.getAction().stream().map(action -> RbacRuleKeyGenerator.generateKey(rule.getRole(), action.toString(), rule.getTargetInformation().getClass().getName())).forEach(key -> result.put(key, rule));
 		}
 
+		return result;
 	}
+
 }
+

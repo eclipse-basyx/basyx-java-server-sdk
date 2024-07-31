@@ -76,7 +76,9 @@ The role defines which role is allowed to perform the defined actions. The role 
 The targetInformation defines coarse-grained control over the resource, you may define the submodelIds and submodelElementIdShortPaths with a wildcard (\*), it means the defined role x with action y can access any Submodel and any SubmodelElement on the repository. You can also define a specific Submodel Identifier in place of the wildcard (\*), then the role x with action y could be performed only on that particular Submodel. Similarly, you can define a specific SubmodelElement IdShort path, then you can only access the SubmodelElement corresponding to that IdShort path. It means that the whole Submodel GET request would not be possible if the IdShort path for a specific SubmodelElement is provided, because the requestor only has access for a specific SubmodelElement.
 There could be a single submodelId/submodelElementIdShortPath or multiple submodelIds/submodelElementIdShortPaths as a list (cf. basyx-sme-reader).
 
-Note: The Action are fixed as of now and limited to (CREATE, READ, UPDATE, DELETE and EXECUTE) but later user configurable mapping of these actions would be provided.
+Note: 
+* The Action are fixed as of now and limited to (CREATE, READ, UPDATE, DELETE and EXECUTE) but later user configurable mapping of these actions would be provided.
+* Each rule should be unique in combination of role + action + target information
 
 ## Action table for RBAC
 

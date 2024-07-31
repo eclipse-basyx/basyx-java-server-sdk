@@ -73,7 +73,9 @@ The role defines which role is allowed to perform the defined actions. The role 
 The targetInformation defines coarse-grained control over the resource, you may define the conceptDescriptionIds with a wildcard (\*), it means the defined role x with action y can access any Concept Description on the repository. You can also define a specific Concept Description Identifier in place of the wildcard (\*), then the role x with action y could be performed only on that particular Concept Description.
 There could be a single conceptDescriptionId or multiple conceptDescriptionIds as a list (cf. basyx-reader-two above).
 
-Note: The Action are fixed as of now and limited to (CREATE, READ, UPDATE, DELETE, and EXECUTE) but later user configurable mapping of these actions would be provided.
+Note: 
+* The Action are fixed as of now and limited to (CREATE, READ, UPDATE, DELETE, and EXECUTE) but later user configurable mapping of these actions would be provided.
+* Each rule should be unique in combination of role + action + target information
 
 ## Action table for RBAC
 

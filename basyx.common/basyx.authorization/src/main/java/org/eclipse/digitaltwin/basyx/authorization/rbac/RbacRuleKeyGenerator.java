@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,47 +25,31 @@
 
 package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
-import java.util.Map;
-
 /**
- * InMemory implementation of the {@link RbacStorage}
+ * A helper class to generate the key based on hash of combination of role, {@link Action}, and the concrete {@link TargetInformation}
+ * class.
  * 
  * @author danish
  */
-public class InMemoryAuthorizationRbacStorage implements RbacStorage {
-    private final Map<String, RbacRule> rbacRules;
-
-    public InMemoryAuthorizationRbacStorage(Map<String, RbacRule> rbacRules) {
-        this.rbacRules = rbacRules;
-    }
-
-    public Map<String, RbacRule> getRbacRules() {       
-        return rbacRules;
-    }
-
-    public void addRule(RbacRule rbacRule) {
-    	
-    	rbacRule.getAction().stream().map(action -> RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), action.toString(), rbacRule.getTargetInformation().getClass().getName())).filter(key -> !rbacRules.containsKey(key)).map(key -> rbacRules.put(key, rbacRule));
-    }
-
-	public void removeRule(String key) {
-		if (!exist(key))
-			throw new RuntimeException("Rule doesn't exist in policy store");
-		
-		rbacRules.remove(key);
-    }
+public class RbacRuleKeyGenerator {
 	
-	@Override
-	public RbacRule getRbacRule(String key) {
-		if (!exist(key))
-			throw new RuntimeException("Rule doesn't exist in policy store");
-		
-		return rbacRules.get(key);
-	}
-	
-	@Override
-	public boolean exist(String key) {
-		return rbacRules.containsKey(key);
+	/**
+	 * Generates the key based on hash of combination of role, {@link Action}, and the concrete {@link TargetInformation} 
+	 * class.
+	 * 
+	 * <p> For e.g., role = Engineer, Action = READ, TargetInformation Class = org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.AasTargetInformation.java
+	 * <br>
+	 * So the hash code of concatenation of these is: -1428731317.
+	 * 
+	 * </p>
+	 * 
+	 * @param role
+	 * @param action
+	 * @param clazz
+	 * @return
+	 */
+	public static String generateKey(String role, String action, String clazz) {
+		return String.valueOf((role + action + clazz).hashCode());
 	}
 
 }
