@@ -63,7 +63,9 @@ The role defines which role is allowed to perform the defined actions. The role 
 
 The targetInformation defines coarse-grained control over the resource, you may define the aasId with a wildcard (\*), it means the defined role x with action y can access any Asset Administration Shell Descriptors on the registry. You can also define a specific AAS Identifier in place of the wildcard (\*), then the role x with action y could be performed only on that particular AAS Descriptor.
 
-Note: The Action are fixed as of now and limited to (CREATE, READ, UPDATE, DELETE, and EXECUTE) but later user configurable mapping of these actions would be provided.
+Note: 
+* The Action are fixed as of now and limited to (CREATE, READ, UPDATE, DELETE, and EXECUTE) but later user configurable mapping of these actions would be provided.
+* Each rule should be unique in combination of role + action + target information
 
 ## Action table for RBAC
 
