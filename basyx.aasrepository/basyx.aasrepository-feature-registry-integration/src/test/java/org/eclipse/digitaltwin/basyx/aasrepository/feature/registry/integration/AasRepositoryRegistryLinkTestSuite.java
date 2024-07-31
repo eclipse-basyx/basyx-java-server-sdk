@@ -37,6 +37,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.GetAssetAdministrationShellDescriptorsResult;
+import org.eclipse.digitaltwin.basyx.core.Helper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.Test;
@@ -48,6 +49,7 @@ import org.springframework.http.HttpStatus;
  * @author danish
  */
 public abstract class AasRepositoryRegistryLinkTestSuite {
+	private static final String AAS_REPOSITORY_PATH = "shells";
 
 	private static final String DUMMY_GLOBAL_ASSETID = "globalAssetId";
 	private static final String DUMMY_IDSHORT = "ExampleMotor";
@@ -117,10 +119,10 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 	}
 
 	private CloseableHttpResponse createAasOnRepo(String aasJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(AasDescriptorFactory.createAasRepositoryUrl(getAasRepoBaseUrl()), aasJsonContent);
+		return BaSyxHttpTestUtils.executePostOnURL(Helper.createRepositoryUrl(getAasRepoBaseUrl(), AAS_REPOSITORY_PATH), aasJsonContent);
 	}
 
 	private String getSpecificAasAccessURL(String aasId) {
-		return AasDescriptorFactory.createAasRepositoryUrl(getAasRepoBaseUrl()) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
+		return Helper.createRepositoryUrl(getAasRepoBaseUrl(), AAS_REPOSITORY_PATH) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
 	}
 }

@@ -26,6 +26,8 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
@@ -39,7 +41,9 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministratio
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
+import org.eclipse.digitaltwin.basyx.core.Helper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Factory for creating the {@link AssetAdministrationShellDescriptor}
@@ -59,7 +63,7 @@ public class AasDescriptorFactory {
 	public AasDescriptorFactory(AssetAdministrationShell shell, String aasRepositoryBaseURL, AttributeMapper attributeMapper) {
 		super();
 		this.shell = shell;
-		this.aasRepositoryURL = createAasRepositoryUrl(aasRepositoryBaseURL);
+		this.aasRepositoryURL = Helper.createRepositoryUrl(aasRepositoryBaseURL, AAS_REPOSITORY_PATH);
 		this.attributeMapper = attributeMapper;
 	}
 
@@ -191,23 +195,4 @@ public class AasDescriptorFactory {
 			throw new RuntimeException();
 		}
 	}
-
-	public static String createAasRepositoryUrl(String aasRepositoryBaseURL) {
-
-		try {
-			URL url = new URL(aasRepositoryBaseURL);
-            String path = url.getPath();
-            
-            if (path.endsWith("/") && AAS_REPOSITORY_PATH.startsWith("/")) {
-                path = path.substring(0, path.length() - 1);
-            } else if (!path.endsWith("/") && !AAS_REPOSITORY_PATH.startsWith("/")) {
-            	path += "/";
-            }
-
-            return new URL(url.getProtocol(), url.getHost(), url.getPort(), path + AAS_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The AAS Repository Base url is malformed.\n" + e.getMessage());
-		}
-	}
-
 }

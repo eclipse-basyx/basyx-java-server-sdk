@@ -32,6 +32,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministratio
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
+import org.eclipse.digitaltwin.basyx.core.Helper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 
 /**
@@ -41,6 +42,8 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
  *
  */
 public class DummyAasDescriptorFactory {
+	private static final String AAS_REPOSITORY_PATH = "shells";
+	
 	public static AssetAdministrationShellDescriptor createDummyDescriptor(String aasId, String idShort, String globalAssetId, String aasRepoBaseUrl) {
 
 		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
@@ -73,7 +76,7 @@ public class DummyAasDescriptorFactory {
 	}
 
 	private static String createHref(String aasId, String aasRepoBaseUrl) {
-		return String.format("%s/%s", AasDescriptorFactory.createAasRepositoryUrl(aasRepoBaseUrl), Base64UrlEncodedIdentifier.encodeIdentifier(aasId));
+		return String.format("%s/%s", Helper.createRepositoryUrl(aasRepoBaseUrl, AAS_REPOSITORY_PATH), Base64UrlEncodedIdentifier.encodeIdentifier(aasId));
 	}
 
 	private static String getProtocol(String endpoint) {

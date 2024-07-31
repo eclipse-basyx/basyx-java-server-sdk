@@ -53,6 +53,7 @@ import org.eclipse.digitaltwin.basyx.authorization.DummyCredential;
 import org.eclipse.digitaltwin.basyx.authorization.DummyCredentialStore;
 import org.eclipse.digitaltwin.basyx.authorization.jwt.JwtTokenDecoder;
 import org.eclipse.digitaltwin.basyx.authorization.jwt.PublicKeyUtils;
+import org.eclipse.digitaltwin.basyx.core.Helper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.AfterClass;
@@ -529,10 +530,10 @@ public class TestAuthorizedAasRepository {
 		
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_READER_CREDENTIAL);
 		
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(createAasRepositoryUrl(aasRepositoryBaseUrl), SPECIFIC_SHELL_ID), accessToken);
+		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), SPECIFIC_SHELL_ID), accessToken);
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 		
-		deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(createAasRepositoryUrl(aasRepositoryBaseUrl), SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
+		deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
 	@Test
@@ -541,17 +542,17 @@ public class TestAuthorizedAasRepository {
 		
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL);
 		
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(createAasRepositoryUrl(aasRepositoryBaseUrl), SPECIFIC_SHELL_ID), accessToken);
+		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), SPECIFIC_SHELL_ID), accessToken);
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 		
-		deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(createAasRepositoryUrl(aasRepositoryBaseUrl), SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
+		deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 	
 	@Test
 	public void getThumbnailWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL);
 		
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(createAasRepositoryUrl(aasRepositoryBaseUrl), SPECIFIC_SHELL_ID_2), accessToken);
+		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), SPECIFIC_SHELL_ID_2), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 	
@@ -559,13 +560,13 @@ public class TestAuthorizedAasRepository {
 	public void getThumbnailWithInsufficientPermissionRole() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_DELETER_CREDENTIAL);
 		
-		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(createAasRepositoryUrl(aasRepositoryBaseUrl), SPECIFIC_SHELL_ID), accessToken);
+		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), SPECIFIC_SHELL_ID), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 	
 	@Test
 	public void getThumbnailWithNoAuthorization() throws IOException {
-		CloseableHttpResponse retrievalResponse = getElementWithNoAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(createAasRepositoryUrl(aasRepositoryBaseUrl), SPECIFIC_SHELL_ID));
+		CloseableHttpResponse retrievalResponse = getElementWithNoAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), SPECIFIC_SHELL_ID));
 		
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
@@ -577,7 +578,7 @@ public class TestAuthorizedAasRepository {
 		CloseableHttpResponse retrievalResponse = setThumbnailToAasWithAuthorization(SPECIFIC_SHELL_ID, accessToken);
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 		
-		deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(createAasRepositoryUrl(aasRepositoryBaseUrl), SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
+		deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
 	@Test
@@ -587,7 +588,7 @@ public class TestAuthorizedAasRepository {
 		CloseableHttpResponse retrievalResponse = setThumbnailToAasWithAuthorization(SPECIFIC_SHELL_ID, accessToken);
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 		
-		deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(createAasRepositoryUrl(aasRepositoryBaseUrl), SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
+		deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 	
 	@Test
@@ -619,10 +620,10 @@ public class TestAuthorizedAasRepository {
 		
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_ASSET_UPDATER_CREDENTIAL);
 		
-		CloseableHttpResponse retrievalResponse = deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(createAasRepositoryUrl(aasRepositoryBaseUrl), SPECIFIC_SHELL_ID), accessToken);
+		CloseableHttpResponse retrievalResponse = deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), SPECIFIC_SHELL_ID), accessToken);
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 		
-		assertElementIsNotOnServer(BaSyxHttpTestUtils.getThumbnailAccessURL(createAasRepositoryUrl(aasRepositoryBaseUrl), SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
+		assertElementIsNotOnServer(BaSyxHttpTestUtils.getThumbnailAccessURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
 	@Test
@@ -633,10 +634,10 @@ public class TestAuthorizedAasRepository {
 		
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_ASSET_UPDATER_TWO_CREDENTIAL);
 		
-		CloseableHttpResponse retrievalResponse = deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(createAasRepositoryUrl(aasRepositoryBaseUrl), SPECIFIC_SHELL_ID_2), accessToken);
+		CloseableHttpResponse retrievalResponse = deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), SPECIFIC_SHELL_ID_2), accessToken);
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 		
-		assertElementIsNotOnServer(BaSyxHttpTestUtils.getThumbnailAccessURL(createAasRepositoryUrl(aasRepositoryBaseUrl), SPECIFIC_SHELL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
+		assertElementIsNotOnServer(BaSyxHttpTestUtils.getThumbnailAccessURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), SPECIFIC_SHELL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 		deleteElementWithAuthorization(getSpecificAasAccessURL(SPECIFIC_SHELL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 	
@@ -644,7 +645,7 @@ public class TestAuthorizedAasRepository {
 	public void deleteThumbnailWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_ASSET_UPDATER_TWO_CREDENTIAL);
 		
-		CloseableHttpResponse retrievalResponse = deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(createAasRepositoryUrl(aasRepositoryBaseUrl), SPECIFIC_SHELL_ID), accessToken);
+		CloseableHttpResponse retrievalResponse = deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), SPECIFIC_SHELL_ID), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 	
@@ -652,13 +653,13 @@ public class TestAuthorizedAasRepository {
 	public void deleteThumbnailWithInsufficientPermissionRole() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_CREATOR_CREDENTIAL);
 		
-		CloseableHttpResponse retrievalResponse = deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(createAasRepositoryUrl(aasRepositoryBaseUrl), SPECIFIC_SHELL_ID), accessToken);
+		CloseableHttpResponse retrievalResponse = deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), SPECIFIC_SHELL_ID), accessToken);
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 	
 	@Test
 	public void deleteThumbnailWithNoAuthorization() throws IOException {
-		CloseableHttpResponse retrievalResponse = deleteElementWithNoAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(createAasRepositoryUrl(aasRepositoryBaseUrl), SPECIFIC_SHELL_ID));
+		CloseableHttpResponse retrievalResponse = deleteElementWithNoAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), SPECIFIC_SHELL_ID));
 		
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
@@ -716,11 +717,11 @@ public class TestAuthorizedAasRepository {
 	}
 	
 	protected CloseableHttpResponse getAllAasWithAuthorization(String accessToken) throws IOException {
-		return BaSyxHttpTestUtils.executeAuthorizedGetOnURL(createAasRepositoryUrl(aasRepositoryBaseUrl), accessToken);
+		return BaSyxHttpTestUtils.executeAuthorizedGetOnURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), accessToken);
 	}
 	
 	protected CloseableHttpResponse getAllAasNoAuthorization() throws IOException {
-		return BaSyxHttpTestUtils.executeGetOnURL(createAasRepositoryUrl(aasRepositoryBaseUrl));
+		return BaSyxHttpTestUtils.executeGetOnURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH));
 	}
 	
 	protected CloseableHttpResponse getElementWithAuthorization(String url, String accessToken) throws IOException {
@@ -732,11 +733,11 @@ public class TestAuthorizedAasRepository {
 	}
 	
 	protected String getSpecificAasAccessURL(String shellId) {
-		return createAasRepositoryUrl(createAasRepositoryUrl(aasRepositoryBaseUrl)) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(shellId);
+		return Helper.createRepositoryUrl(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), AAS_REPOSITORY_PATH) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(shellId);
 	}
 	
 	private static CloseableHttpResponse createAasOnRepositoryWithAuthorization(String aasJsonContent, String accessToken) throws IOException {
-		return BaSyxHttpTestUtils.executeAuthorizedPostOnURL(createAasRepositoryUrl(aasRepositoryBaseUrl), aasJsonContent, accessToken);
+		return BaSyxHttpTestUtils.executeAuthorizedPostOnURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), aasJsonContent, accessToken);
 	}
 	
 	private CloseableHttpResponse setThumbnailToAasWithAuthorization(String shellId, String accessToken) throws IOException {
@@ -752,7 +753,7 @@ public class TestAuthorizedAasRepository {
 	}
 	
 	private static CloseableHttpResponse createAasOnRepositoryWithNoAuthorization(String aasJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(createAasRepositoryUrl(aasRepositoryBaseUrl), aasJsonContent);
+		return BaSyxHttpTestUtils.executePostOnURL(Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH), aasJsonContent);
 	}
 	
 	private CloseableHttpResponse updateElementWithAuthorizationPutRequest(String url, String aasJsonContent, String accessToken) throws IOException {
@@ -812,15 +813,6 @@ public class TestAuthorizedAasRepository {
 	
 	private static String getThumbnailAccessURL(String aasId) {
 		Base64UrlEncodedIdentifier identifier = new Base64UrlEncodedIdentifier(aasId);
-		return createAasRepositoryUrl(aasRepositoryBaseUrl) + "/" + identifier.getEncodedIdentifier() + "/asset-information/thumbnail";
-	}
-	
-	private static String createAasRepositoryUrl(String aasRepositoryBaseURL) {
-
-		try {
-			return new URL(new URL(aasRepositoryBaseURL), AAS_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The AAS Repository Base url is malformed. " + e.getMessage());
-		}
+		return Helper.createRepositoryUrl(aasRepositoryBaseUrl, AAS_REPOSITORY_PATH) + "/" + identifier.getEncodedIdentifier() + "/asset-information/thumbnail";
 	}
 }
