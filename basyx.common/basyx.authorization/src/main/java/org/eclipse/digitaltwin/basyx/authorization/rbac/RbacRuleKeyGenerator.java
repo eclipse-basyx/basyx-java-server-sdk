@@ -38,7 +38,7 @@ public class RbacRuleKeyGenerator {
 	 * class.
 	 * 
 	 * <p> For e.g., role = Engineer, Action = READ, TargetInformation Class = org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.AasTargetInformation.java
-	 * </br>
+	 * <br>
 	 * So the hash code of concatenation of these is: -1428731317.
 	 * 
 	 * </p>
