@@ -25,9 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.aasservice.client;
 
-import java.io.IOException;
-import java.net.http.HttpRequest;
-
 import org.eclipse.digitaltwin.basyx.aasservice.client.internal.AssetAdministrationShellServiceApi;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 
@@ -46,16 +43,7 @@ public class AuthorizedConnectedAasService extends ConnectedAasService {
 	 * @param tokenManager
 	 */
 	public AuthorizedConnectedAasService(String repoUrl, TokenManager tokenManager) {
-		super(new AssetAdministrationShellServiceApi(repoUrl, getRequestBuilder(tokenManager)));
-	}
-	
-	private static HttpRequest.Builder getRequestBuilder(TokenManager tokenManager) {
-		try {
-			return HttpRequest.newBuilder()
-			        .header("Authorization", "Bearer " + tokenManager.getAccessToken());
-		} catch (IOException e) {
-			throw new RuntimeException("Unable to request access token");
-		}
+		super(new AssetAdministrationShellServiceApi(repoUrl, tokenManager));
 	}
 
 }

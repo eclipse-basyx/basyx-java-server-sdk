@@ -145,7 +145,7 @@ public class ConnectedAasManager {
 	public List<ConnectedSubmodelService> getAllSubmodels(String shellIdentifier) {
 		AssetAdministrationShell shell = getAasService(shellIdentifier).getAAS();
 		List<Reference> submodelReferences = shell.getSubmodels();
-		return submodelReferences.parallelStream()
+		return submodelReferences.stream()
 				.map(this::extractSubmodelIdentifierFromReference)
 				.map(this::getSubmodelService)
 				.collect(Collectors.toList());
