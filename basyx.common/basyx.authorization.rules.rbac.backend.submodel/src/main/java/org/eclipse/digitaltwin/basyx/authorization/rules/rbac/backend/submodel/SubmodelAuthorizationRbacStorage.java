@@ -63,8 +63,7 @@ public class SubmodelAuthorizationRbacStorage implements RbacStorage {
     	
     	ConnectedSubmodelService submodelService = submodelRepository.getConnectedSubmodelService("submodelId");
     	
-    	submodelService.get
-        rbacRules.add(rbacRule);
+    	submodelService.createSubmodelElement(rule);
     }
 
     public void removeRule(RbacRule rbacRule) {
@@ -73,5 +72,23 @@ public class SubmodelAuthorizationRbacStorage implements RbacStorage {
     
     private void initializeRbacRules(List<RbacRule> rbacRuleList, TargetInformationAdapter targetInformationAdapter) {
     	rbacRuleList.stream().forEach(rule -> addRule(rule));
+	}
+
+	@Override
+	public RbacRule getRbacRule(String key) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeRule(String key) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean exist(String key) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
