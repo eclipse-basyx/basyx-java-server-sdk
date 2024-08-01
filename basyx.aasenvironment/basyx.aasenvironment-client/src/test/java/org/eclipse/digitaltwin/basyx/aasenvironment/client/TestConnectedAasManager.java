@@ -154,17 +154,13 @@ public class TestConnectedAasManager {
 
 		InOrder inOrder = inOrder(connectedSmRepository, smRegistryApi, connectedAasRepository);
 
-		inOrder.verify(connectedSmRepository, times(1))
-				.createSubmodel(expectedSm);
-		inOrder.verify(smRegistryApi, times(1))
-				.postSubmodelDescriptor(expectedDescriptor);
-		inOrder.verify(connectedAasRepository, times(1))
-				.addSubmodelReference(eq(TestFixture.AAS_PRE1_ID), any());
+		inOrder.verify(connectedSmRepository, times(1)).createSubmodel(expectedSm);
+		inOrder.verify(smRegistryApi, times(1)).postSubmodelDescriptor(expectedDescriptor);
+		inOrder.verify(connectedAasRepository, times(1)).addSubmodelReference(eq(TestFixture.AAS_PRE1_ID), any());
 
 		assertEquals(expectedSm, getSubmodelFromRepo(TestFixture.SM_POS1_ID));
 		assertEquals(expectedDescriptor, getDescriptorFromSubmodelRegistry(TestFixture.SM_POS1_ID));
-		assertEquals(expectedRef,
-				getSubmodelRefFromAasRepository(TestFixture.AAS_PRE1_ID, TestFixture.SM_POS1_ID).get());
+		assertEquals(expectedRef, getSubmodelRefFromAasRepository(TestFixture.AAS_PRE1_ID, TestFixture.SM_POS1_ID).get());
 	}
 
 	@Test

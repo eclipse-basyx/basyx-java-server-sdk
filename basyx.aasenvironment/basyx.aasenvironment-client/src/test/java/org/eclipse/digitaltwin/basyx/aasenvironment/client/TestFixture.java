@@ -116,33 +116,19 @@ public class TestFixture {
 	}
 
 	public SubmodelDescriptor buildSmPos1Descriptor() {
-		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_POS1_ID, SM_POS1_IDSHORT, smRepositoryBasePath,
-				new AttributeMapper(ConnectedAasManagerHelper.buildObjectMapper()).mapSemanticId(buildSmPos1SemanticId()));
+		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_POS1_ID, SM_POS1_IDSHORT, smRepositoryBasePath, new AttributeMapper(ConnectedAasManagerHelper.buildObjectMapper()).mapSemanticId(buildSmPos1SemanticId()));
 	}
 
 	public Reference buildSmPos1SemanticId() {
-		return new DefaultReference.Builder()
-				.type(ReferenceTypes.EXTERNAL_REFERENCE)
-				.keys(new DefaultKey.Builder()
-						.type(KeyTypes.GLOBAL_REFERENCE)
-						.value("https://admin-shell.io/aas/3/0/CustomDataSpecification")
-						.build())
-				.build();
+		return new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE).keys(new DefaultKey.Builder().type(KeyTypes.GLOBAL_REFERENCE).value("https://admin-shell.io/aas/3/0/CustomDataSpecification").build()).build();
 	}
 
 	public Submodel buildSmPos1() {
-		return new DefaultSubmodel.Builder()
-				.id(SM_POS1_ID)
-				.idShort(SM_POS1_IDSHORT)
-				.semanticId(buildSmPos1SemanticId())
-				.build();
+		return new DefaultSubmodel.Builder().id(SM_POS1_ID).idShort(SM_POS1_IDSHORT).semanticId(buildSmPos1SemanticId()).build();
 	}
 
 	public Reference buildSmPos1Ref() {
-		return new DefaultReference.Builder().type(ReferenceTypes.MODEL_REFERENCE)
-				.referredSemanticId(buildSmPos1SemanticId())
-				.keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(SM_POS1_ID).build())
-				.build();
+		return new DefaultReference.Builder().type(ReferenceTypes.MODEL_REFERENCE).referredSemanticId(buildSmPos1SemanticId()).keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(SM_POS1_ID).build()).build();
 	}
 
 }
