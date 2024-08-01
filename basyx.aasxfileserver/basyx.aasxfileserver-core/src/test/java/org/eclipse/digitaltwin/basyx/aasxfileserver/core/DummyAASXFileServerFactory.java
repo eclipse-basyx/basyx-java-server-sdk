@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -24,40 +24,44 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasxfileserver.core;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultPackageDescription;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackageDescription;
 
 /**
  * Factory for creating AASX Packages for tests
  * 
- * @author chaithra
+ * @author chaithra, zielstor, fried
  *
  */
 public class DummyAASXFileServerFactory {
 
 	public static final List<String> FIRST_SHELL_IDS = Arrays.asList("AAS_ID_1", "AAS_ID_2");
-	public static final String FIRST_FILENAME = "test_file1.txt";
-	public static final byte[] FIRST_BYTEARRAY = { 65, 66, 67, 68, 69 };
-	public static final InputStream FIRST_FILE = new ByteArrayInputStream(FIRST_BYTEARRAY);
+	public static final String FIRST_FILENAME = "test_file1";
 
 	public static final List<String> SECOND_SHELL_IDS = Arrays.asList("AAS_ID_3", "AAS_ID_4");
-	public static final String SECOND_FILENAME = "test_file2.txt";
-	public static final byte[] SECOND_BYTEARRAY = { 75, 76, 77, 78, 79 };
-	public static final InputStream SECOND_FILE = new ByteArrayInputStream(SECOND_BYTEARRAY);
+	public static final String SECOND_FILENAME = "test_file2";
 
 	public static PackageDescription createFirstDummyAASXPackageOnServer(AASXFileServer server) {
-		return server.createAASXPackage(FIRST_SHELL_IDS, FIRST_FILE, FIRST_FILENAME);
+		InputStream resourceStream = DummyAASXFileServerFactory.class.getClassLoader().getResourceAsStream("TestAAS1.aasx");
+		if (resourceStream == null) {
+			throw new IllegalStateException("TestAAS1.aasx not found in resources");
+		}
+		return server.createAASXPackage(FIRST_SHELL_IDS, resourceStream, FIRST_FILENAME);
 	}
 
 	public static PackageDescription createSecondDummyAASXPackageOnServer(AASXFileServer server) {
-		return server.createAASXPackage(SECOND_SHELL_IDS, SECOND_FILE, SECOND_FILENAME);
+		InputStream resourceStream = DummyAASXFileServerFactory.class.getClassLoader().getResourceAsStream("TestAAS2.aasx");
+		if (resourceStream == null) {
+			throw new IllegalStateException("TestAAS2.aasx not found in resources");
+		}
+		return server.createAASXPackage(SECOND_SHELL_IDS, resourceStream, SECOND_FILENAME);
 	}
 
 	public static Collection<PackageDescription> createMultipleDummyAASXPackagesOnServer(AASXFileServer server) {
@@ -72,9 +76,9 @@ public class DummyAASXFileServerFactory {
 	}
 
 	public static PackageDescription createDummyPackageDescription(String packageId, List<String> shellIds) {
-		PackageDescription expectedDescription1 = new PackageDescription();
+		PackageDescription expectedDescription1 = new DefaultPackageDescription();
 		expectedDescription1.setPackageId(packageId);
-		expectedDescription1.setAasIds(shellIds);
+		expectedDescription1.setItems(shellIds);
 
 		return expectedDescription1;
 	}

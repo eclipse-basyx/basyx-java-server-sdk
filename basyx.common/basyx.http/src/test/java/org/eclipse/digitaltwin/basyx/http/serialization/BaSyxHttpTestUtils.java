@@ -27,10 +27,12 @@ package org.eclipse.digitaltwin.basyx.http.serialization;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
@@ -40,6 +42,7 @@ import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.entity.mime.FileBody;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.entity.mime.StringBody;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -49,6 +52,7 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.springframework.core.io.ClassPathResource;
 
@@ -389,7 +393,28 @@ public class BaSyxHttpTestUtils {
 		postRequest.setEntity(multipart);
 		return postRequest;
 	}
-	
+
+
+	public static HttpPost createPostRequestWithFileForFileServer(String url, List<String> aasIds, java.io.File file, String fileName) {
+		HttpPost postRequest = new HttpPost(url);
+
+		MultipartEntityBuilder builder = getMultipartEntityBuilderWithAASXFile(aasIds, file, fileName);
+
+		HttpEntity multipart = builder.build();
+		postRequest.setEntity(multipart);
+		return postRequest;
+	}
+
+	public static HttpPut updatePutRequestWithFileForFileServer(String url, String packageId, List<String> aasIds, java.io.File file, String fileName) {
+		HttpPut putRequest = new HttpPut(url + "/" + packageId);
+
+		MultipartEntityBuilder builder = getMultipartEntityBuilderWithAASXFile(aasIds, file, fileName);
+
+		HttpEntity multipart = builder.build();
+		putRequest.setEntity(multipart);
+		return putRequest;
+	}
+
 	public static HttpPost createAuthorizedPostRequestWithFile(String url, java.io.File file, String contentType, String accessToken) {
 		HttpPost postRequest = new HttpPost(url);
 		postRequest.setHeader("Authorization", "Bearer " + accessToken);
@@ -454,5 +479,14 @@ public class BaSyxHttpTestUtils {
 		deleteRequest.setHeader("Content-type", "application/json");
 		deleteRequest.setHeader("Authorization", "Bearer " + accessToken);
 		return deleteRequest;
+	}
+
+	private static MultipartEntityBuilder getMultipartEntityBuilderWithAASXFile(List<String> aasIds, File file, String fileName) {
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+		builder.addTextBody("aasIds", String.join(",", aasIds), ContentType.TEXT_PLAIN);
+		builder.addPart("file", new FileBody(file, ContentType.create("application/asset-administration-shell-package+xml")));
+		builder.addTextBody("fileName", fileName, ContentType.TEXT_PLAIN);
+		builder.setContentType(ContentType.MULTIPART_FORM_DATA);
+		return builder;
 	}
 }
