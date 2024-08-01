@@ -6,6 +6,7 @@
     <version>${revision}</version>
   </parent>
   <artifactId>basyx.aasxfileserver-backend</artifactId>
+	<name>BaSyx AASX File Server Backend</name>
   
   <dependencies>
 		<dependency>

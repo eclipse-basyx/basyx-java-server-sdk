@@ -8,6 +8,7 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>basyx.filerepository-backend-inmemory</artifactId>
+	<name>BaSyx File Repository Backend In-Memory</name>
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>

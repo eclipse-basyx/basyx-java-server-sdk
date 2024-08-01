@@ -8,6 +8,7 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>basyx.filerepository-backend-mongodb</artifactId>
+	<name>BaSyx File Repository Backend MongoDB</name>
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
