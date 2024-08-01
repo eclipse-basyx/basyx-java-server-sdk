@@ -29,7 +29,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 
-import org.eclipse.digitaltwin.basyx.core.Helper;
+import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Key;
@@ -83,7 +83,7 @@ public class DummySubmodelDescriptorFactory {
 	}
 
 	private static String createHref(String smId, String smRepoBaseUrl) {
-		return String.format("%s/%s", Helper.createRepositoryUrl(smRepoBaseUrl, SUBMODEL_REPOSITORY_PATH), Base64UrlEncodedIdentifier.encodeIdentifier(smId));
+		return String.format("%s/%s", RepositoryUrlHelper.createRepositoryUrl(smRepoBaseUrl, SUBMODEL_REPOSITORY_PATH), Base64UrlEncodedIdentifier.encodeIdentifier(smId));
 	}
 
 	private static String getProtocol(String endpoint) {

@@ -37,7 +37,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.GetAssetAdministrationShellDescriptorsResult;
-import org.eclipse.digitaltwin.basyx.core.Helper;
+import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.Test;
@@ -119,10 +119,10 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 	}
 
 	private CloseableHttpResponse createAasOnRepo(String aasJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(Helper.createRepositoryUrl(getAasRepoBaseUrl(), AAS_REPOSITORY_PATH), aasJsonContent);
+		return BaSyxHttpTestUtils.executePostOnURL(RepositoryUrlHelper.createRepositoryUrl(getAasRepoBaseUrl(), AAS_REPOSITORY_PATH), aasJsonContent);
 	}
 
 	private String getSpecificAasAccessURL(String aasId) {
-		return Helper.createRepositoryUrl(getAasRepoBaseUrl(), AAS_REPOSITORY_PATH) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
+		return RepositoryUrlHelper.createRepositoryUrl(getAasRepoBaseUrl(), AAS_REPOSITORY_PATH) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
 	}
 }

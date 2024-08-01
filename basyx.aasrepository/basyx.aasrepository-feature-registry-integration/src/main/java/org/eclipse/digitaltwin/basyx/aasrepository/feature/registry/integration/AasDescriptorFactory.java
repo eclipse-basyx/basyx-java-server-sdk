@@ -41,7 +41,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministratio
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
-import org.eclipse.digitaltwin.basyx.core.Helper;
+import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -63,7 +63,7 @@ public class AasDescriptorFactory {
 	public AasDescriptorFactory(AssetAdministrationShell shell, String aasRepositoryBaseURL, AttributeMapper attributeMapper) {
 		super();
 		this.shell = shell;
-		this.aasRepositoryURL = Helper.createRepositoryUrl(aasRepositoryBaseURL, AAS_REPOSITORY_PATH);
+		this.aasRepositoryURL = RepositoryUrlHelper.createRepositoryUrl(aasRepositoryBaseURL, AAS_REPOSITORY_PATH);
 		this.attributeMapper = attributeMapper;
 	}
 
