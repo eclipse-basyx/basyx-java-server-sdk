@@ -224,6 +224,8 @@ public class ConnectedAasManager {
 		}
 
 		Reference smRef = AasUtils.toReference(AasUtils.toReference(shell), submodel);
+
+		// TODO See https://github.com/eclipse-aas4j/aas4j/issues/308
 		smRef.setReferredSemanticId(submodel.getSemanticId());
 
 		aasRepository.addSubmodelReference(aasIdentifier, smRef);
