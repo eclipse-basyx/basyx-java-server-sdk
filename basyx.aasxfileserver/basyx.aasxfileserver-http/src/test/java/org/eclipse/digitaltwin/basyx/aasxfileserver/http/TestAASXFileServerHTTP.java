@@ -171,6 +171,27 @@ public class TestAASXFileServerHTTP extends AbstractTestNGSpringContextTests {
         assertTrue(isPackageNotPresent(""));
     }
 
+    @Test
+    public void testGetPackage() throws Exception {
+        PackageDescription packageDescription = createAASXPackageOnServer();
+
+        assertTrue(isPackagePresentOneTime(""));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/packages/{packageId}", new Base64UrlEncodedIdentifier(packageDescription.getPackageId()).getEncodedIdentifier()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetAllPackages() throws Exception {
+        createAASXPackageOnServer();
+        createAASXPackageOnServer();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/packages"))
+                .andExpect(status().isOk());
+    }
+
     private boolean isPackageNotPresent(String aasId) {
         return this.aasxFileServer.getAllAASXPackageIds(aasId, new PaginationInfo(0, "")).getResult().size() == 0;
     }
