@@ -26,6 +26,8 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
@@ -39,7 +41,9 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministratio
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
+import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Factory for creating the {@link AssetAdministrationShellDescriptor}
@@ -59,7 +63,7 @@ public class AasDescriptorFactory {
 	public AasDescriptorFactory(AssetAdministrationShell shell, String aasRepositoryBaseURL, AttributeMapper attributeMapper) {
 		super();
 		this.shell = shell;
-		this.aasRepositoryURL = createAasRepositoryUrl(aasRepositoryBaseURL);
+		this.aasRepositoryURL = RepositoryUrlHelper.createRepositoryUrl(aasRepositoryBaseURL, AAS_REPOSITORY_PATH);
 		this.attributeMapper = attributeMapper;
 	}
 
@@ -191,14 +195,4 @@ public class AasDescriptorFactory {
 			throw new RuntimeException();
 		}
 	}
-
-	private String createAasRepositoryUrl(String aasRepositoryBaseURL) {
-
-		try {
-			return new URL(new URL(aasRepositoryBaseURL), AAS_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The AAS Repository Base url is malformed.\n" + e.getMessage());
-		}
-	}
-
 }

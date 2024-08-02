@@ -30,12 +30,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
+import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
@@ -51,9 +50,8 @@ import org.springframework.http.HttpStatus;
  * @author danish
  */
 public abstract class SubmodelRepositoryRegistryLinkTestSuite {
+	private static final String SUBMODEL_REPOSITORY_PATH = "submodels";
 	
-	private static final String SUBMODEL_REPOSITORY_PATH = "/submodels";
-
 	private static final String DUMMY_SUBMODEL_IDSHORT = "TechnicalData";
 	private static final String DUMMY_SUBMODEL_ID = "7A7104BDAB57E184";
 	
@@ -145,7 +143,7 @@ public abstract class SubmodelRepositoryRegistryLinkTestSuite {
 	}
 
 	private CloseableHttpResponse createSubmodelOnRepo(String submodelJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(createSubmodelRepositoryUrl(getSubmodelRepoBaseUrl()), submodelJsonContent);
+		return BaSyxHttpTestUtils.executePostOnURL(RepositoryUrlHelper.createRepositoryUrl(getSubmodelRepoBaseUrl(), SUBMODEL_REPOSITORY_PATH), submodelJsonContent);
 	}
 
 	private CloseableHttpResponse createSubmodelElementOnRepo(String submodelElementJsonContent) throws IOException {
@@ -155,16 +153,6 @@ public abstract class SubmodelRepositoryRegistryLinkTestSuite {
 	}
 
 	private String getSpecificSubmodelAccessURL(String submodelId) {
-		return createSubmodelRepositoryUrl(getSubmodelRepoBaseUrl()) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
+		return RepositoryUrlHelper.createRepositoryUrl(getSubmodelRepoBaseUrl(), SUBMODEL_REPOSITORY_PATH) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
 	}
-	
-	private static String createSubmodelRepositoryUrl(String smRepositoryBaseURL) {
-
-		try {
-			return new URL(new URL(smRepositoryBaseURL), SUBMODEL_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The Submodel Repository Base url is malformed.\n " + e.getMessage());
-		}
-	}
-
 }
