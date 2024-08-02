@@ -24,7 +24,7 @@ services:
 
   # AAS Environment
   aas-env:
-    image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
+    image: eclipsebasyx/aas-environment:2.0.0-milestone-03
     container_name: aas-env
     volumes:
       - ./basyx/aas-env.properties:/application/application.properties
@@ -40,7 +40,7 @@ services:
 
   # AAS Registry
   aas-registry:
-    image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
+    image: eclipsebasyx/aas-registry-log-mem:2.0.0-milestone-03
     container_name: aas-registry
     ports:
       - 8082:8080
@@ -53,7 +53,7 @@ services:
 
   # Submodel Registry
   sm-registry:
-    image: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
+    image: eclipsebasyx/submodel-registry-log-mem:2.0.0-milestone-03
     container_name: sm-registry
     ports:
       - 8083:8080
@@ -66,7 +66,7 @@ services:
 
   # AAS Discovery
   aas-discovery:
-    image: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
+    image: eclipsebasyx/aas-discovery:2.0.0-milestone-03
     container_name: aas-discovery
     ports:
       - 8084:8081
@@ -76,7 +76,7 @@ services:
   
   # AAS Web UI
   aas-web-ui:
-    image: eclipsebasyx/aas-gui:v2-240515
+    image: eclipsebasyx/aas-gui:v2-240801
     container_name: aas-ui
     ports:
       - "3000:3000"
