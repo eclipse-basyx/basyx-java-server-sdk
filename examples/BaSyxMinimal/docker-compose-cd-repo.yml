@@ -2,7 +2,7 @@ version: "3.9"
 services:
   cd-repo:
     # get the image from dockerhub
-    image: eclipsebasyx/conceptdescription-repository:2.0.0-milestone-03
+    image: eclipsebasyx/conceptdescription-repository:2.0.0-SNAPSHOT
     # if you already build it locally, you can use your local image
     # image: basyx.conceptdescriptionrepository.component:latest
     # for manual local build `mvn clean install -DskipTests`
