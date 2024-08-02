@@ -25,7 +25,6 @@
 package org.eclipse.digitaltwin.basyx.core.filerepository.backend;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -59,16 +58,26 @@ public abstract class FileRepositoryTestSuite {
 
 	protected String getSavedTestFile(FileRepository fileRepo) {
 		FileMetadata testFile = createDummyFile();
-		String filePath = fileRepo.save(testFile);
+		String filePath =testFile.getFileName();
 		
-		return filePath;
+		if(fileRepo.exists(testFile.getFileName())) {
+			fileRepo.delete(filePath);
+		}
+		
+		return filePath = fileRepo.save(testFile);
 	}
 	
 	@Test
 	public void saveValidFile() {
 		FileRepository fileRepo = getFileRepository();
 		FileMetadata testFile = createDummyFile();
-		String filePath = fileRepo.save(testFile);
+		String filePath =testFile.getFileName();
+		
+		if(fileRepo.exists(testFile.getFileName())) {
+			fileRepo.delete(filePath);
+		}
+
+		filePath = fileRepo.save(testFile);
 		
 		assertEquals(true, fileRepo.exists(filePath));
 	}
@@ -80,6 +89,7 @@ public abstract class FileRepositoryTestSuite {
 		
 		String filePath = fileRepo.save(testFile);
 		filePath = fileRepo.save(testFile);
+		assertEquals(true, fileRepo.exists(filePath));
 	}
 
 	@Test
