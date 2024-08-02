@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
+package org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -39,7 +39,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ReferenceType
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 
 /**
- * Factory for dummy SubmodelDescriptorss
+ * Factory for dummy SubmodelDescriptors
  *
  * @author mateusmolina
  *

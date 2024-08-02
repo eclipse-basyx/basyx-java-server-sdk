@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
+package org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper;
 
 import static org.junit.Assert.assertEquals;
 
@@ -38,7 +38,6 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Extension;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringNameType;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringTextType;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Reference;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,67 +48,67 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author danish
  */
 public class TestAttributeMapper {
-	
+
 	private static AttributeMapper attributeMapper = new AttributeMapper(configureObjectMapper());
-	
+
 	@Test
 	public void mapDescriptions() {
-		List<LangStringTextType> expectedDescriptions = RegistryIntegrationTestHelper.getSubmodelRegLangStringTextTypes();
-		
-		List<LangStringTextType> actualDescriptions = attributeMapper.mapDescription(RegistryIntegrationTestHelper.getAas4jLangStringTextTypes());
-		
+		List<LangStringTextType> expectedDescriptions = AttributeMapperFixture.getSubmodelRegLangStringTextTypes();
+
+		List<LangStringTextType> actualDescriptions = attributeMapper.mapDescription(AttributeMapperFixture.getAas4jLangStringTextTypes());
+
 		assertEquals(expectedDescriptions.size(), actualDescriptions.size());
 		assertEquals(expectedDescriptions, actualDescriptions);
 	}
-	
+
 	@Test
 	public void mapDisplayNames() {
-		List<LangStringNameType> expectedDisplayNames = RegistryIntegrationTestHelper.getSubmodelRegLangStringNameTypes();
-		
-		List<LangStringNameType> actualDisplayNames = attributeMapper.mapDisplayName(RegistryIntegrationTestHelper.getAas4jLangStringNameTypes());
-		
+		List<LangStringNameType> expectedDisplayNames = AttributeMapperFixture.getSubmodelRegLangStringNameTypes();
+
+		List<LangStringNameType> actualDisplayNames = attributeMapper.mapDisplayName(AttributeMapperFixture.getAas4jLangStringNameTypes());
+
 		assertEquals(expectedDisplayNames.size(), actualDisplayNames.size());
 		assertEquals(expectedDisplayNames, actualDisplayNames);
 	}
-	
+
 	@Test
 	public void mapExtensions() {
-		List<Extension> expectedExtensions = RegistryIntegrationTestHelper.getSubmodelRegExtensions();
-		
-		List<Extension> actualExtensions = attributeMapper.mapExtensions(RegistryIntegrationTestHelper.getAas4jExtensions());
-		
+		List<Extension> expectedExtensions = AttributeMapperFixture.getSubmodelRegExtensions();
+
+		List<Extension> actualExtensions = attributeMapper.mapExtensions(AttributeMapperFixture.getAas4jExtensions());
+
 		assertEquals(expectedExtensions.size(), actualExtensions.size());
 		assertEquals(expectedExtensions, actualExtensions);
 	}
-	
+
 	@Test
 	public void mapAdministration() {
-		AdministrativeInformation expectedAdministrativeInformation = RegistryIntegrationTestHelper.getSubmodelRegAdministration();
-		
-		AdministrativeInformation actualAdministrativeInformation = attributeMapper.mapAdministration(RegistryIntegrationTestHelper.getAas4jAdministration());
-		
+		AdministrativeInformation expectedAdministrativeInformation = AttributeMapperFixture.getSubmodelRegAdministration();
+
+		AdministrativeInformation actualAdministrativeInformation = attributeMapper.mapAdministration(AttributeMapperFixture.getAas4jAdministration());
+
 		assertEquals(expectedAdministrativeInformation, actualAdministrativeInformation);
 	}
-	
+
 	@Test
 	public void mapSemanticId() {
-		Reference expectedSemanticId = RegistryIntegrationTestHelper.getSubmodelRegSemanticId();
-		
-		Reference actualSemanticId = attributeMapper.mapSemanticId(RegistryIntegrationTestHelper.getAas4jSemanticId());
-		
+		Reference expectedSemanticId = AttributeMapperFixture.getSubmodelRegSemanticId();
+
+		Reference actualSemanticId = attributeMapper.mapSemanticId(AttributeMapperFixture.getAas4jSemanticId());
+
 		assertEquals(expectedSemanticId, actualSemanticId);
 	}
-	
+
 	@Test
 	public void mapSupplementalSemanticId() {
-		List<Reference> expectedSupplementalSemanticId = RegistryIntegrationTestHelper.getSubmodelRegSupplementalSemanticIds();
-		
-		List<Reference> actualSupplementalSemanticId = attributeMapper.mapSupplementalSemanticId(RegistryIntegrationTestHelper.getAas4jSupplementalSemanticIds());
-		
+		List<Reference> expectedSupplementalSemanticId = AttributeMapperFixture.getSubmodelRegSupplementalSemanticIds();
+
+		List<Reference> actualSupplementalSemanticId = attributeMapper.mapSupplementalSemanticId(AttributeMapperFixture.getAas4jSupplementalSemanticIds());
+
 		assertEquals(expectedSupplementalSemanticId.size(), actualSupplementalSemanticId.size());
 		assertEquals(expectedSupplementalSemanticId, actualSupplementalSemanticId);
 	}
-	
+
 	private static ObjectMapper configureObjectMapper() {
 		List<SerializationExtension> extensions = Arrays.asList(new Aas4JHTTPSerializationExtension());
 

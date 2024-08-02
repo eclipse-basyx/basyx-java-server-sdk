@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
+package org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,31 +47,31 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.DataTypeDefXs
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Key;
 
 /**
- * A helper class for testing RegistryIntegration feature
+ * A fixture for TestAttributeMapper
  * 
- * @author danish
+ * @author danish, mateusmolina
  */
-public class RegistryIntegrationTestHelper {
+public class AttributeMapperFixture {
 
 	// LangStringTextType AAS4J
 	private static final LangStringTextType AAS4J_LANG_STRING_TEXT_TYPE_1 = new DefaultLangStringTextType.Builder().language("de").text("Ein Beispiel").build();
 	private static final LangStringTextType AAS4J_LANG_STRING_TEXT_TYPE_2 = new DefaultLangStringTextType.Builder().language("en").text("An Example").build();
 
 	// LangStringTextType SMRegistry
-	private static final org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringTextType SUBMODEL_REG_LANG_STRING_TEXT_TYPE_1 = new org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringTextType().language("de")
-			.text("Ein Beispiel");
-	private static final org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringTextType SUBMODEL_REG_LANG_STRING_TEXT_TYPE_2 = new org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringTextType().language("en")
-			.text("An Example");
+	private static final org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringTextType SUBMODEL_REG_LANG_STRING_TEXT_TYPE_1 = new org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringTextType()
+			.language("de").text("Ein Beispiel");
+	private static final org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringTextType SUBMODEL_REG_LANG_STRING_TEXT_TYPE_2 = new org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringTextType()
+			.language("en").text("An Example");
 
 	// LangStringNameType AAS4J
 	private static final LangStringNameType AAS4J_LANG_STRING_NAME_TYPE_1 = new DefaultLangStringNameType.Builder().language("en").text("Name type string").build();
 	private static final LangStringNameType AAS4J_LANG_STRING_NAME_TYPE_2 = new DefaultLangStringNameType.Builder().language("de").text("Namenstypzeichenfolge").build();
 
 	// LangStringNameType SMRegistry
-	private static final org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringNameType SUBMODEL_REG_LANG_STRING_NAME_TYPE_1 = new org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringNameType().language("en")
-			.text("Name type string");
-	private static final org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringNameType SUBMODEL_REG_LANG_STRING_NAME_TYPE_2 = new org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringNameType().language("de")
-			.text("Namenstypzeichenfolge");
+	private static final org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringNameType SUBMODEL_REG_LANG_STRING_NAME_TYPE_1 = new org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringNameType()
+			.language("en").text("Name type string");
+	private static final org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringNameType SUBMODEL_REG_LANG_STRING_NAME_TYPE_2 = new org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringNameType()
+			.language("de").text("Namenstypzeichenfolge");
 
 	// Administration AAS4J
 	private static final Reference AAS4J_DATASPECIFICATION = new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.BLOB).value("BlobValue").build()).type(ReferenceTypes.EXTERNAL_REFERENCE).build();
@@ -79,21 +79,23 @@ public class RegistryIntegrationTestHelper {
 
 	// Administration SMRegistry
 	private static final org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Reference SUBMODEL_REG_DATASPECIFICATION = new org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Reference()
-			.keys(Arrays.asList(new Key().type(org.eclipse.digitaltwin.basyx.submodelregistry.client.model.KeyTypes.BLOB).value("BlobValue"))).type(org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ReferenceTypes.EXTERNALREFERENCE);
+			.keys(Arrays.asList(new Key().type(org.eclipse.digitaltwin.basyx.submodelregistry.client.model.KeyTypes.BLOB).value("BlobValue")))
+			.type(org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ReferenceTypes.EXTERNALREFERENCE);
 	private static final org.eclipse.digitaltwin.basyx.submodelregistry.client.model.EmbeddedDataSpecification SUBMODEL_REG_EMBEDDED_DATA_SPECIFICATION = new org.eclipse.digitaltwin.basyx.submodelregistry.client.model.EmbeddedDataSpecification()
 			.dataSpecification(SUBMODEL_REG_DATASPECIFICATION);
-	
+
 	private static final String VERSION = "1.0.0";
 	private static final String REVISION = "3";
 	private static final String TEMPLATEID = "ID2.0";
 
 	// Extension AAS4J
-	private static final Extension AAS4J_EXTENSION = new DefaultExtension.Builder().semanticId(AAS4J_DATASPECIFICATION).name("extension").valueType(org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd.STRING).value("extensionValue").build();
+	private static final Extension AAS4J_EXTENSION = new DefaultExtension.Builder().semanticId(AAS4J_DATASPECIFICATION).name("extension").valueType(org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd.STRING).value("extensionValue")
+			.build();
 
 	// Extension SMRegistry
-	private static final org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Extension SUBMODEL_REG_EXTENSION = new org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Extension().semanticId(SUBMODEL_REG_DATASPECIFICATION).name("extension")
-			.valueType(DataTypeDefXsd.STRING).value("extensionValue");
-	
+	private static final org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Extension SUBMODEL_REG_EXTENSION = new org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Extension().semanticId(SUBMODEL_REG_DATASPECIFICATION)
+			.name("extension").valueType(DataTypeDefXsd.STRING).value("extensionValue");
+
 	public static List<LangStringTextType> getAas4jLangStringTextTypes() {
 		return Arrays.asList(AAS4J_LANG_STRING_TEXT_TYPE_1, AAS4J_LANG_STRING_TEXT_TYPE_2);
 	}
@@ -126,19 +128,19 @@ public class RegistryIntegrationTestHelper {
 	public static List<org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Extension> getSubmodelRegExtensions() {
 		return Arrays.asList(SUBMODEL_REG_EXTENSION);
 	}
-	
+
 	public static Reference getAas4jSemanticId() {
 		return AAS4J_DATASPECIFICATION;
 	}
-	
+
 	public static org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Reference getSubmodelRegSemanticId() {
 		return SUBMODEL_REG_DATASPECIFICATION;
 	}
-	
+
 	public static List<Reference> getAas4jSupplementalSemanticIds() {
 		return Arrays.asList(AAS4J_DATASPECIFICATION, AAS4J_DATASPECIFICATION);
 	}
-	
+
 	public static List<org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Reference> getSubmodelRegSupplementalSemanticIds() {
 		return Arrays.asList(SUBMODEL_REG_DATASPECIFICATION, SUBMODEL_REG_DATASPECIFICATION);
 	}

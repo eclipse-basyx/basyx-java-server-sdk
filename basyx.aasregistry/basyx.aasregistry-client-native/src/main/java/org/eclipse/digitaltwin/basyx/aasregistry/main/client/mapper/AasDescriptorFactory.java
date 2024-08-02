@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
+package org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,7 +38,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 
 /**
@@ -50,7 +49,7 @@ public class AasDescriptorFactory {
 
 	private static final String AAS_INTERFACE = "AAS-3.0";
 	private static final String AAS_REPOSITORY_PATH = "shells";
-	
+
 	private AssetAdministrationShell shell;
 	private String aasRepositoryURL;
 
