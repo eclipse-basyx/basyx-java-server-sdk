@@ -37,6 +37,7 @@
   "editUsernameAllowed" : false,
   "bruteForceProtected" : false,
   "permanentLockout" : false,
+  "maxTemporaryLockouts" : 0,
   "maxFailureWaitSeconds" : 900,
   "minimumQuickLoginWaitSeconds" : 60,
   "waitIncrementSeconds" : 60,
@@ -511,14 +512,14 @@
         "attributes" : { }
       } ],
       "basyx-client-api" : [ {
-	  "id" : "2dd4b9b1-748f-43f3-b62b-048c92ae79d1",
+        "id" : "2dd4b9b1-748f-43f3-b62b-048c92ae79d1",
         "name" : "basyx-creator",
         "description" : "",
         "composite" : false,
         "clientRole" : true,
         "containerId" : "3fb3e5e5-dbd8-4d51-b964-746c5b2181a4",
         "attributes" : { }
-      }, {	
+      }, {
         "id" : "ba077409-1b5d-4fc8-b20e-10389507fb75",
         "name" : "basyx-admin",
         "description" : "",
@@ -535,6 +536,7 @@
         "containerId" : "3fb3e5e5-dbd8-4d51-b964-746c5b2181a4",
         "attributes" : { }
       } ],
+      "basyx-web-ui" : [ ],
       "security-admin-console" : [ ],
       "admin-cli" : [ ],
       "account-console" : [ ],
@@ -621,7 +623,7 @@
         "clientRole" : true,
         "containerId" : "049e1323-6efb-4543-bc52-566cd292732a",
         "attributes" : { }
-		 } ],
+      } ],
       "basyx-demo" : [ ],
       "workstation-1" : [ {
         "id" : "914a18c6-4f14-418f-99e0-bfdcf604ac01",
@@ -629,7 +631,7 @@
         "composite" : false,
         "clientRole" : true,
         "containerId" : "96031210-9e6c-4252-a22e-e81a47e30d65",
-        "attributes" : { }		  
+        "attributes" : { }
       } ]
     }
   },
@@ -637,10 +639,10 @@
     "id" : "606a14f2-6114-4fd3-9ca6-4a53514fffb9",
     "name" : "BaSyxGroup",
     "path" : "/BaSyxGroup",
+    "subGroups" : [ ],
     "attributes" : { },
     "realmRoles" : [ "basyx-deleter", "basyx-creator", "basyx-asset-updater" ],
-    "clientRoles" : { },
-    "subGroups" : [ ]
+    "clientRoles" : { }
   } ],
   "defaultRole" : {
     "id" : "797d2956-a895-4171-ab44-2fc9dbcf7f4c",
@@ -658,7 +660,8 @@
   "otpPolicyLookAheadWindow" : 1,
   "otpPolicyPeriod" : 30,
   "otpPolicyCodeReusable" : false,
-  "otpSupportedApplications" : [ "totpAppMicrosoftAuthenticatorName", "totpAppGoogleName", "totpAppFreeOTPName" ],
+  "otpSupportedApplications" : [ "totpAppFreeOTPName", "totpAppGoogleName", "totpAppMicrosoftAuthenticatorName" ],
+  "localizationTexts" : { },
   "webAuthnPolicyRpEntityName" : "keycloak",
   "webAuthnPolicySignatureAlgorithms" : [ "ES256" ],
   "webAuthnPolicyRpId" : "",
@@ -669,6 +672,7 @@
   "webAuthnPolicyCreateTimeout" : 0,
   "webAuthnPolicyAvoidSameAuthenticatorRegister" : false,
   "webAuthnPolicyAcceptableAaguids" : [ ],
+  "webAuthnPolicyExtraOrigins" : [ ],
   "webAuthnPolicyPasswordlessRpEntityName" : "keycloak",
   "webAuthnPolicyPasswordlessSignatureAlgorithms" : [ "ES256" ],
   "webAuthnPolicyPasswordlessRpId" : "",
@@ -679,15 +683,16 @@
   "webAuthnPolicyPasswordlessCreateTimeout" : 0,
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister" : false,
   "webAuthnPolicyPasswordlessAcceptableAaguids" : [ ],
+  "webAuthnPolicyPasswordlessExtraOrigins" : [ ],
   "users" : [ {
     "id" : "856b093b-ef9f-4bd0-92ca-662f680c73cc",
-    "createdTimestamp" : 1713968958846,
     "username" : "basyx.aas.discoverer",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1713968958846,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "bc4944be-c8e2-4c91-81cc-9478a0795906",
       "type" : "password",
@@ -703,13 +708,13 @@
     "groups" : [ ]
   }, {
     "id" : "aef2b331-f694-4503-b0da-1412c77842ba",
-    "createdTimestamp" : 1702179260496,
     "username" : "basyx.asset.updater",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1702179260496,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "24db17af-1244-4cea-8af8-1047adcd0753",
       "type" : "password",
@@ -725,13 +730,13 @@
     "groups" : [ ]
   }, {
     "id" : "4fc75aa9-4745-4bec-846e-de5dbd665b7c",
-    "createdTimestamp" : 1702179349503,
     "username" : "basyx.asset.updater.2",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1702179349503,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "db64f531-b8ab-4e33-b7b9-e3ba0e3677d4",
       "type" : "password",
@@ -747,13 +752,13 @@
     "groups" : [ ]
   }, {
     "id" : "bcbd95b2-2ec4-42a6-9b1d-39dabf0454c3",
-    "createdTimestamp" : 1713969008326,
     "username" : "basyx.assetid.creator",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1713969008326,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "81b26fa2-4eda-45d7-a8be-4b6d64b3d813",
       "type" : "password",
@@ -769,13 +774,13 @@
     "groups" : [ ]
   }, {
     "id" : "2def798c-7547-42fe-8915-be493d740005",
-    "createdTimestamp" : 1713969038565,
     "username" : "basyx.assetid.deleter",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1713969038565,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "fa285b2c-9a2d-4400-a524-508b0a16f4c3",
       "type" : "password",
@@ -791,13 +796,13 @@
     "groups" : [ ]
   }, {
     "id" : "3527f121-116c-429b-bf0d-78bf4a8b5abe",
-    "createdTimestamp" : 1713968905507,
     "username" : "basyx.assetid.discoverer",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1713968905507,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "4f3427f8-9da2-4372-a54b-c1e54dc8da68",
       "type" : "password",
@@ -813,13 +818,13 @@
     "groups" : [ ]
   }, {
     "id" : "f48119f5-7dff-46af-b9db-3ee96cd52550",
-    "createdTimestamp" : 1702032555719,
     "username" : "basyx.creator",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "BaSyx",
     "lastName" : "creator",
+    "emailVerified" : false,
+    "createdTimestamp" : 1702032555719,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "393aa50c-70ed-4676-b5d0-b4c6cf930272",
       "type" : "password",
@@ -835,13 +840,13 @@
     "groups" : [ ]
   }, {
     "id" : "40858874-f6e7-48c8-9667-d585d7c27b57",
-    "createdTimestamp" : 1702032602188,
     "username" : "basyx.deleter",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "BaSyx",
     "lastName" : "Deleter",
+    "emailVerified" : false,
+    "createdTimestamp" : 1702032602188,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "ee9224dd-6277-4c3d-8d88-b595d66f25c7",
       "type" : "password",
@@ -857,13 +862,13 @@
     "groups" : [ ]
   }, {
     "id" : "fcf7ea95-875e-42ef-afe1-f9b6008cbaf9",
-    "createdTimestamp" : 1702161686852,
     "username" : "basyx.deleter.2",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1702161686852,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "1b8d0b8c-1f65-43e0-9178-785533746684",
       "type" : "password",
@@ -879,13 +884,13 @@
     "groups" : [ ]
   }, {
     "id" : "8e820205-13fa-4d61-9513-99f717c15f73",
-    "createdTimestamp" : 1705326903328,
     "username" : "basyx.executor",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1705326903328,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "3e891de4-74e6-46cb-840f-6681af0ce397",
       "type" : "password",
@@ -901,13 +906,13 @@
     "groups" : [ ]
   }, {
     "id" : "3d645000-277e-46f5-b421-85f1fdb064b5",
-    "createdTimestamp" : 1705326932748,
     "username" : "basyx.executor.2",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1705326932748,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "d21c920f-5dd0-4ce7-ad2e-737a841bb1f8",
       "type" : "password",
@@ -923,13 +928,13 @@
     "groups" : [ ]
   }, {
     "id" : "c86047c6-3ab8-4f47-86ba-b26ea80d1986",
-    "createdTimestamp" : 1705398014689,
     "username" : "basyx.file.sme.reader",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1705398014689,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "bd374dc3-4fec-4232-be91-a3f5608e373e",
       "type" : "password",
@@ -945,13 +950,13 @@
     "groups" : [ ]
   }, {
     "id" : "da7acf36-1574-4c0a-aa5b-65829a512b60",
-    "createdTimestamp" : 1705398962710,
     "username" : "basyx.file.sme.updater",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1705398962710,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "e5fda50d-9f52-4f60-a917-31a85fc275a7",
       "type" : "password",
@@ -967,13 +972,13 @@
     "groups" : [ ]
   }, {
     "id" : "abfaa545-3c2f-4ac6-9f41-7c166613ea35",
-    "createdTimestamp" : 1702032528855,
     "username" : "basyx.reader",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "BaSyx",
     "lastName" : "Reader",
+    "emailVerified" : false,
+    "createdTimestamp" : 1702032528855,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "eea587f5-439d-487d-85d0-587b226f0683",
       "type" : "password",
@@ -992,13 +997,13 @@
     "groups" : [ ]
   }, {
     "id" : "37e1ba01-3b9c-428c-b0fe-be85970bf1d9",
-    "createdTimestamp" : 1702158534562,
     "username" : "basyx.reader.2",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1702158534562,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "3237f89d-f9f0-4b70-9a08-d31d995c6948",
       "type" : "password",
@@ -1014,13 +1019,13 @@
     "groups" : [ ]
   }, {
     "id" : "2d7a7bdb-c8d3-4684-8c06-8873aabd9968",
-    "createdTimestamp" : 1707983800892,
     "username" : "basyx.reader.serialization",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1707983800892,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "c35c2724-8ae9-4193-bd25-e5245df77f4d",
       "type" : "password",
@@ -1036,13 +1041,13 @@
     "groups" : [ ]
   }, {
     "id" : "113691d0-fc03-4607-8b64-97b646bded1f",
-    "createdTimestamp" : 1707983824403,
     "username" : "basyx.reader.serialization.2",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1707983824403,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "86bd4fdc-077c-4546-b80a-f51788f15b56",
       "type" : "password",
@@ -1058,13 +1063,13 @@
     "groups" : [ ]
   }, {
     "id" : "3988486a-51eb-447b-bc87-354e5b724c76",
-    "createdTimestamp" : 1705306854299,
     "username" : "basyx.sme.reader",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1705306854299,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "d70787d1-9834-43d6-a10d-bca854847fec",
       "type" : "password",
@@ -1080,13 +1085,13 @@
     "groups" : [ ]
   }, {
     "id" : "ed921577-8b07-439e-af66-cc3579a276ec",
-    "createdTimestamp" : 1705310445991,
     "username" : "basyx.sme.reader.2",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1705310445991,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "62446675-7b7e-40e7-bf6c-b375d8542a12",
       "type" : "password",
@@ -1102,13 +1107,13 @@
     "groups" : [ ]
   }, {
     "id" : "60f02977-d033-43ed-8171-8ac44d14c62f",
-    "createdTimestamp" : 1705312271325,
     "username" : "basyx.sme.updater",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1705312271325,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "d224c0bc-7c5d-426d-8e96-9f4dfb141eab",
       "type" : "password",
@@ -1124,13 +1129,13 @@
     "groups" : [ ]
   }, {
     "id" : "9fd79b98-a230-43c8-a7ff-f88ee381c58c",
-    "createdTimestamp" : 1705315980352,
     "username" : "basyx.sme.updater.2",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1705315980352,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "eca8536c-fbf7-49dd-a370-405b00336965",
       "type" : "password",
@@ -1146,13 +1151,13 @@
     "groups" : [ ]
   }, {
     "id" : "20336dcf-0c1f-4344-b31b-f26048fc7faa",
-    "createdTimestamp" : 1705324670982,
     "username" : "basyx.sme.updater.3",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1705324670982,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "d1652462-350a-42e0-9a3e-e04cfa258237",
       "type" : "password",
@@ -1168,13 +1173,13 @@
     "groups" : [ ]
   }, {
     "id" : "44f291ad-a0de-4035-9938-a092faf810b5",
-    "createdTimestamp" : 1702032579778,
     "username" : "basyx.updater",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "BaSyx",
     "lastName" : "Updater",
+    "emailVerified" : false,
+    "createdTimestamp" : 1702032579778,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "28e62a3a-790d-477f-b139-b0ea943abfd7",
       "type" : "password",
@@ -1190,13 +1195,13 @@
     "groups" : [ ]
   }, {
     "id" : "9bf6b5c8-194f-4672-9313-9f3823cb3019",
-    "createdTimestamp" : 1702161564532,
     "username" : "basyx.updater.2",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1702161564532,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "59ef29d6-6dcf-42e6-b946-33d50335e0d1",
       "type" : "password",
@@ -1212,13 +1217,13 @@
     "groups" : [ ]
   }, {
     "id" : "cb7df854-827d-4d34-a01f-33cdf07f5cea",
-    "createdTimestamp" : 1708702290219,
     "username" : "basyx.uploader",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1708702290219,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "7df6170e-1631-434d-8380-62f750c563cf",
       "type" : "password",
@@ -1234,13 +1239,13 @@
     "groups" : [ ]
   }, {
     "id" : "3c94e1e0-caac-48c3-a31c-c9f555233a46",
-    "createdTimestamp" : 1708932762171,
     "username" : "basyx.uploader.2",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1708932762171,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "0d4049cb-293b-4f76-b82b-5ba9ee4530f2",
       "type" : "password",
@@ -1256,13 +1261,13 @@
     "groups" : [ ]
   }, {
     "id" : "c1a592bd-536f-4a3e-8193-c17d479814f3",
-    "createdTimestamp" : 1708934121191,
     "username" : "basyx.uploader.3",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1708934121191,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "7cd8fd3f-8c83-43b9-9fb7-6203e7c7376c",
       "type" : "password",
@@ -1278,13 +1283,13 @@
     "groups" : [ ]
   }, {
     "id" : "f3ec1793-3d62-41c3-ad34-b7b29ac88528",
-    "createdTimestamp" : 1702030619322,
     "username" : "bob.maintainer",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "Bob",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1702030619322,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "a45e5184-e7f3-41bc-be25-c97197852301",
       "type" : "password",
@@ -1300,13 +1305,13 @@
     "groups" : [ ]
   }, {
     "id" : "e75ac9e8-7093-4898-a203-d9839f854944",
-    "createdTimestamp" : 1702030567684,
     "username" : "jane.doe",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "Jane",
     "lastName" : "Doe",
+    "emailVerified" : false,
+    "createdTimestamp" : 1702030567684,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "d1e97a9f-42b6-43d0-a070-1216d03a64b7",
       "type" : "password",
@@ -1322,13 +1327,13 @@
     "groups" : [ ]
   }, {
     "id" : "caf7499e-4f3d-45fa-9246-99ea8f8b5c94",
-    "createdTimestamp" : 1701764678734,
     "username" : "john",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "",
     "lastName" : "",
+    "emailVerified" : false,
+    "createdTimestamp" : 1701764678734,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "136b209f-3b75-45d9-b448-e1ec93dc7ea4",
       "type" : "password",
@@ -1347,13 +1352,13 @@
     "groups" : [ ]
   }, {
     "id" : "fb833c1b-3a7d-4224-9ab1-672e7203bab5",
-    "createdTimestamp" : 1702030523698,
     "username" : "john.doe",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "John",
     "lastName" : "Doe",
+    "emailVerified" : false,
+    "createdTimestamp" : 1702030523698,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "b8b3d5cf-4fa3-46ed-8a3e-18875acecff0",
       "type" : "password",
@@ -1369,13 +1374,13 @@
     "groups" : [ ]
   }, {
     "id" : "9045c192-428a-4fff-bf7a-b9a9ac16742f",
-    "createdTimestamp" : 1702030666980,
     "username" : "paul.visitor",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
     "firstName" : "Paul",
     "lastName" : "Visitor",
+    "emailVerified" : false,
+    "createdTimestamp" : 1702030666980,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "81d4c206-c0a0-4ee6-9fcb-19f755e66150",
       "type" : "password",
@@ -1389,18 +1394,18 @@
     "realmRoles" : [ "visitor", "default-roles-basyx" ],
     "notBefore" : 0,
     "groups" : [ ]
- }, {
+  }, {
     "id" : "a19abcac-34d5-46bb-a604-b07dc234e80f",
-    "createdTimestamp" : 1715582034760,
     "username" : "service-account-workstation-1",
+    "emailVerified" : false,
+    "createdTimestamp" : 1715582034760,
     "enabled" : true,
     "totp" : false,
-    "emailVerified" : false,
     "serviceAccountClientId" : "workstation-1",
     "credentials" : [ ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
-    "realmRoles" : [ "basyx-reader", "basyx-deleter", "basyx-updater", "basyx-creator", "default-roles-basyx" ],
+    "realmRoles" : [ "basyx-reader", "basyx-deleter", "basyx-updater", "admin", "basyx-creator", "default-roles-basyx" ],
     "clientRoles" : {
       "workstation-1" : [ "uma_protection" ]
     },
@@ -1408,14 +1413,14 @@
     "groups" : [ "/BaSyxGroup" ]
   }, {
     "id" : "77957093-d593-44b4-b4e9-bc365e840cdd",
-    "createdTimestamp" : 1715539640949,
     "username" : "test.user",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : true,
     "firstName" : "Test",
     "lastName" : "User",
     "email" : "test.user@gmail.com",
+    "emailVerified" : true,
+    "createdTimestamp" : 1715539640949,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "11672ccf-38b7-421b-8d01-755e0f2197da",
       "type" : "password",
@@ -1428,7 +1433,7 @@
     "requiredActions" : [ ],
     "realmRoles" : [ "default-roles-basyx" ],
     "notBefore" : 0,
-    "groups" : [ "/BaSyxGroup" ]		
+    "groups" : [ "/BaSyxGroup" ]
   } ],
   "scopeMappings" : [ {
     "clientScope" : "offline_access",
@@ -1575,7 +1580,7 @@
     "defaultClientScopes" : [ "web-origins", "acr", "roles", "profile", "email" ],
     "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
   }, {
-	 "id" : "615f29de-5f3d-4384-8b71-7351ff2c2a32",
+    "id" : "615f29de-5f3d-4384-8b71-7351ff2c2a32",
     "clientId" : "basyx-demo",
     "name" : "",
     "description" : "",
@@ -1601,9 +1606,10 @@
     "protocol" : "openid-connect",
     "attributes" : {
       "oidc.ciba.grant.enabled" : "false",
-      "oauth2.device.authorization.grant.enabled" : "false",
       "client.secret.creation.time" : "1716897911",
       "backchannel.logout.session.required" : "true",
+      "post.logout.redirect.uris" : "+",
+      "oauth2.device.authorization.grant.enabled" : "false",
       "backchannel.logout.revoke.offline.tokens" : "false"
     },
     "authenticationFlowBindingOverrides" : { },
@@ -1611,7 +1617,44 @@
     "nodeReRegistrationTimeout" : -1,
     "defaultClientScopes" : [ "web-origins", "acr", "roles", "profile", "email" ],
     "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
-  }, {											  
+  }, {
+    "id" : "047f9c4e-3895-4562-9d8d-87cf3b1c7c05",
+    "clientId" : "basyx-web-ui",
+    "name" : "",
+    "description" : "",
+    "rootUrl" : "",
+    "adminUrl" : "",
+    "baseUrl" : "",
+    "surrogateAuthRequired" : false,
+    "enabled" : true,
+    "alwaysDisplayInConsole" : false,
+    "clientAuthenticatorType" : "client-secret",
+    "redirectUris" : [ "http://localhost:3000/*" ],
+    "webOrigins" : [ "http://localhost:3000" ],
+    "notBefore" : 0,
+    "bearerOnly" : false,
+    "consentRequired" : false,
+    "standardFlowEnabled" : true,
+    "implicitFlowEnabled" : true,
+    "directAccessGrantsEnabled" : true,
+    "serviceAccountsEnabled" : false,
+    "publicClient" : true,
+    "frontchannelLogout" : true,
+    "protocol" : "openid-connect",
+    "attributes" : {
+      "oidc.ciba.grant.enabled" : "false",
+      "backchannel.logout.session.required" : "true",
+      "post.logout.redirect.uris" : "http://localhost:3000/*",
+      "oauth2.device.authorization.grant.enabled" : "true",
+      "display.on.consent.screen" : "false",
+      "backchannel.logout.revoke.offline.tokens" : "false"
+    },
+    "authenticationFlowBindingOverrides" : { },
+    "fullScopeAllowed" : true,
+    "nodeReRegistrationTimeout" : -1,
+    "defaultClientScopes" : [ "web-origins", "acr", "roles", "profile", "email" ],
+    "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
+  }, {
     "id" : "45f21c3d-4e85-466f-984f-d7bd47392453",
     "clientId" : "broker",
     "name" : "${client_broker}",
@@ -1713,7 +1756,7 @@
     } ],
     "defaultClientScopes" : [ "web-origins", "acr", "roles", "profile", "email" ],
     "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
-	}, {
+  }, {
     "id" : "96031210-9e6c-4252-a22e-e81a47e30d65",
     "clientId" : "workstation-1",
     "name" : "Workstation 1",
@@ -1741,9 +1784,10 @@
     "protocol" : "openid-connect",
     "attributes" : {
       "oidc.ciba.grant.enabled" : "false",
-      "oauth2.device.authorization.grant.enabled" : "false",
       "client.secret.creation.time" : "1715582034",
       "backchannel.logout.session.required" : "true",
+      "post.logout.redirect.uris" : "+",
+      "oauth2.device.authorization.grant.enabled" : "false",
       "backchannel.logout.revoke.offline.tokens" : "false"
     },
     "authenticationFlowBindingOverrides" : { },
@@ -1757,6 +1801,7 @@
       "consentRequired" : false,
       "config" : {
         "user.session.note" : "clientAddress",
+        "userinfo.token.claim" : "true",
         "id.token.claim" : "true",
         "access.token.claim" : "true",
         "claim.name" : "clientAddress",
@@ -1770,6 +1815,7 @@
       "consentRequired" : false,
       "config" : {
         "user.session.note" : "clientHost",
+        "userinfo.token.claim" : "true",
         "id.token.claim" : "true",
         "access.token.claim" : "true",
         "claim.name" : "clientHost",
@@ -1783,6 +1829,7 @@
       "consentRequired" : false,
       "config" : {
         "user.session.note" : "client_id",
+        "userinfo.token.claim" : "true",
         "id.token.claim" : "true",
         "access.token.claim" : "true",
         "claim.name" : "client_id",
@@ -1790,7 +1837,15 @@
       }
     } ],
     "defaultClientScopes" : [ "web-origins", "acr", "roles", "profile", "email" ],
-    "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]									 
+    "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ],
+    "authorizationSettings" : {
+      "allowRemoteResourceManagement" : true,
+      "policyEnforcementMode" : "ENFORCING",
+      "resources" : [ ],
+      "policies" : [ ],
+      "scopes" : [ ],
+      "decisionStrategy" : "UNANIMOUS"
+    }
   } ],
   "clientScopes" : [ {
     "id" : "e0f355da-f9ff-4104-b305-043b0188747b",
@@ -2288,7 +2343,7 @@
       "subType" : "anonymous",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-sha256-pairwise-sub-mapper", "saml-role-list-mapper", "oidc-usermodel-property-mapper", "oidc-full-name-mapper", "oidc-address-mapper", "saml-user-attribute-mapper", "saml-user-property-mapper", "oidc-usermodel-attribute-mapper" ]
+        "allowed-protocol-mapper-types" : [ "saml-user-attribute-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-address-mapper", "oidc-full-name-mapper", "oidc-usermodel-property-mapper", "saml-role-list-mapper", "oidc-usermodel-attribute-mapper", "saml-user-property-mapper" ]
       }
     }, {
       "id" : "7256d195-1e91-4f63-a9c4-6bef95243a92",
@@ -2325,7 +2380,7 @@
       "subType" : "authenticated",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-sha256-pairwise-sub-mapper", "oidc-usermodel-attribute-mapper", "saml-user-property-mapper", "oidc-usermodel-property-mapper", "saml-role-list-mapper", "oidc-full-name-mapper", "oidc-address-mapper", "saml-user-attribute-mapper" ]
+        "allowed-protocol-mapper-types" : [ "saml-user-attribute-mapper", "oidc-usermodel-property-mapper", "oidc-address-mapper", "oidc-full-name-mapper", "saml-role-list-mapper", "oidc-usermodel-attribute-mapper", "saml-user-property-mapper", "oidc-sha256-pairwise-sub-mapper" ]
       }
     }, {
       "id" : "face2c9e-4d23-44e2-9a09-74e1d8448bd3",
@@ -2351,6 +2406,14 @@
         "allow-default-scopes" : [ "true" ]
       }
     } ],
+    "org.keycloak.userprofile.UserProfileProvider" : [ {
+      "id" : "2997d5f7-8adc-453d-b672-3d4f01f833ba",
+      "providerId" : "declarative-user-profile",
+      "subComponents" : { },
+      "config" : {
+        "kc.user.profile.config" : [ "{\"attributes\":[{\"name\":\"username\",\"displayName\":\"${username}\",\"validations\":{\"length\":{\"min\":3,\"max\":255},\"username-prohibited-characters\":{},\"up-username-not-idn-homograph\":{}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"email\",\"displayName\":\"${email}\",\"validations\":{\"email\":{},\"length\":{\"max\":255}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"firstName\",\"displayName\":\"${firstName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"lastName\",\"displayName\":\"${lastName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false}],\"groups\":[{\"name\":\"user-metadata\",\"displayHeader\":\"User metadata\",\"displayDescription\":\"Attributes, which refer to user metadata\"}],\"unmanagedAttributePolicy\":\"ENABLED\"}" ]
+      }
+    } ],
     "org.keycloak.keys.KeyProvider" : [ {
       "id" : "9948a63f-b171-4137-bb81-beabd0c049f0",
       "name" : "aes-generated",
@@ -2360,6 +2423,17 @@
         "kid" : [ "59f8ad80-8417-45dd-8196-c2f37ddaa309" ],
         "secret" : [ "D82qLVou0ux0UswcrMSTlw" ],
         "priority" : [ "100" ]
+      }
+    }, {
+      "id" : "f594170e-f886-4653-9d9c-a70d87f66ae5",
+      "name" : "hmac-generated-hs512",
+      "providerId" : "hmac-generated",
+      "subComponents" : { },
+      "config" : {
+        "kid" : [ "be9f743e-81d8-4db4-972b-914de6b73ad1" ],
+        "secret" : [ "LD4EsL3zKuD39yf_HXsNgFLBqiE7pmTTipK3Fg7JCm3QfmdTulIVt7o3LvXVd2Z-6fvBHIFT8DbhHpXuCMu1XY7xiB5TGJSlgs3b5kVb7Dz4xyd4QR5VajswABlcLZDF0_n2LXtpQ72nZmpGBC-DEMSavpvtbMtOb7EJvMlVUws" ],
+        "priority" : [ "100" ],
+        "algorithm" : [ "HS512" ]
       }
     }, {
       "id" : "4a3be057-744a-44c4-9211-9a98d7c6303c",
@@ -2390,8 +2464,8 @@
       "providerId" : "hmac-generated",
       "subComponents" : { },
       "config" : {
-        "kid" : [ "6c9fd13c-0afe-46e8-83a6-3fb95ba32dcf" ],
-        "secret" : [ "f9qfZHpSvHgZ2ti_iZjMfWEM3DyJtlxEpNEzunKXI7qbqnLzwbsMFI4n_vF9YpM4r6mlARVIBnffHgjAwPZvnw" ],
+        "kid" : [ "8dc274eb-ee41-475b-b397-52fffaf3b558" ],
+        "secret" : [ "DHWa3cwv5TFTPhjldSbGi44H0qb5UhRJjyE2N2HGwxRptCp4sgot3_0Z8YcTD3fFzXQvsHy5UShsaUwD0i2SaxcksllwigKdUc8kgK28DM1jN-_A98ht-kn_s5mJRqfsTFHnzQ_-Ur2DSzU1d16pNn0J-Gbhb7e6ySF5_LZQwBk" ],
         "priority" : [ "100" ],
         "algorithm" : [ "HS256" ]
       }
@@ -2768,13 +2842,6 @@
       "autheticatorFlow" : false,
       "userSetupAllowed" : false
     }, {
-      "authenticator" : "registration-profile-action",
-      "authenticatorFlow" : false,
-      "requirement" : "REQUIRED",
-      "priority" : 40,
-      "autheticatorFlow" : false,
-      "userSetupAllowed" : false
-    }, {
       "authenticator" : "registration-password-action",
       "authenticatorFlow" : false,
       "requirement" : "REQUIRED",
@@ -2919,6 +2986,14 @@
     "priority" : 80,
     "config" : { }
   }, {
+    "alias" : "delete_credential",
+    "name" : "Delete Credential",
+    "providerId" : "delete_credential",
+    "enabled" : true,
+    "defaultAction" : false,
+    "priority" : 100,
+    "config" : { }
+  }, {
     "alias" : "update_user_locale",
     "name" : "Update User Locale",
     "providerId" : "update_user_locale",
@@ -2933,6 +3008,7 @@
   "resetCredentialsFlow" : "reset credentials",
   "clientAuthenticationFlow" : "clients",
   "dockerAuthenticationFlow" : "docker auth",
+  "firstBrokerLoginFlow" : "first broker login",
   "attributes" : {
     "cibaBackchannelTokenDeliveryMode" : "poll",
     "cibaExpiresIn" : "120",
@@ -2947,7 +3023,7 @@
     "cibaInterval" : "5",
     "realmReusableOtpCode" : "false"
   },
-  "keycloakVersion" : "22.0.0",
+  "keycloakVersion" : "24.0.4",
   "userManagedAccessAllowed" : false,
   "clientProfiles" : {
     "profiles" : [ ]

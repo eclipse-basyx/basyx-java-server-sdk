@@ -12,3 +12,6 @@ See the separate [Time Series example](https://github.com/eclipse-basyx/basyx-ap
 
 ## BaSyx Operation Delegation Example
 See the separate [Operation Delegation Example](BaSyxOperationDelegation) for a comprehensive setup leveraging Operation Delegation.
+
+## BaSyx Secure Setup Example
+See the separate [Secure Setup Example](BaSyxSecured) for a comprehensive setup leveraging Keycloak.
