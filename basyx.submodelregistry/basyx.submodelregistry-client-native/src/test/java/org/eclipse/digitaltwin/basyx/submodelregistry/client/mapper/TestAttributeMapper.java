@@ -53,9 +53,9 @@ public class TestAttributeMapper {
 
 	@Test
 	public void mapDescriptions() {
-		List<LangStringTextType> expectedDescriptions = RegistryIntegrationTestHelper.getSubmodelRegLangStringTextTypes();
+		List<LangStringTextType> expectedDescriptions = AttributeMapperFixture.getSubmodelRegLangStringTextTypes();
 
-		List<LangStringTextType> actualDescriptions = attributeMapper.mapDescription(RegistryIntegrationTestHelper.getAas4jLangStringTextTypes());
+		List<LangStringTextType> actualDescriptions = attributeMapper.mapDescription(AttributeMapperFixture.getAas4jLangStringTextTypes());
 
 		assertEquals(expectedDescriptions.size(), actualDescriptions.size());
 		assertEquals(expectedDescriptions, actualDescriptions);
@@ -63,9 +63,9 @@ public class TestAttributeMapper {
 
 	@Test
 	public void mapDisplayNames() {
-		List<LangStringNameType> expectedDisplayNames = RegistryIntegrationTestHelper.getSubmodelRegLangStringNameTypes();
+		List<LangStringNameType> expectedDisplayNames = AttributeMapperFixture.getSubmodelRegLangStringNameTypes();
 
-		List<LangStringNameType> actualDisplayNames = attributeMapper.mapDisplayName(RegistryIntegrationTestHelper.getAas4jLangStringNameTypes());
+		List<LangStringNameType> actualDisplayNames = attributeMapper.mapDisplayName(AttributeMapperFixture.getAas4jLangStringNameTypes());
 
 		assertEquals(expectedDisplayNames.size(), actualDisplayNames.size());
 		assertEquals(expectedDisplayNames, actualDisplayNames);
@@ -73,9 +73,9 @@ public class TestAttributeMapper {
 
 	@Test
 	public void mapExtensions() {
-		List<Extension> expectedExtensions = RegistryIntegrationTestHelper.getSubmodelRegExtensions();
+		List<Extension> expectedExtensions = AttributeMapperFixture.getSubmodelRegExtensions();
 
-		List<Extension> actualExtensions = attributeMapper.mapExtensions(RegistryIntegrationTestHelper.getAas4jExtensions());
+		List<Extension> actualExtensions = attributeMapper.mapExtensions(AttributeMapperFixture.getAas4jExtensions());
 
 		assertEquals(expectedExtensions.size(), actualExtensions.size());
 		assertEquals(expectedExtensions, actualExtensions);
@@ -83,27 +83,27 @@ public class TestAttributeMapper {
 
 	@Test
 	public void mapAdministration() {
-		AdministrativeInformation expectedAdministrativeInformation = RegistryIntegrationTestHelper.getSubmodelRegAdministration();
+		AdministrativeInformation expectedAdministrativeInformation = AttributeMapperFixture.getSubmodelRegAdministration();
 
-		AdministrativeInformation actualAdministrativeInformation = attributeMapper.mapAdministration(RegistryIntegrationTestHelper.getAas4jAdministration());
+		AdministrativeInformation actualAdministrativeInformation = attributeMapper.mapAdministration(AttributeMapperFixture.getAas4jAdministration());
 
 		assertEquals(expectedAdministrativeInformation, actualAdministrativeInformation);
 	}
 
 	@Test
 	public void mapSemanticId() {
-		Reference expectedSemanticId = RegistryIntegrationTestHelper.getSubmodelRegSemanticId();
+		Reference expectedSemanticId = AttributeMapperFixture.getSubmodelRegSemanticId();
 
-		Reference actualSemanticId = attributeMapper.mapSemanticId(RegistryIntegrationTestHelper.getAas4jSemanticId());
+		Reference actualSemanticId = attributeMapper.mapSemanticId(AttributeMapperFixture.getAas4jSemanticId());
 
 		assertEquals(expectedSemanticId, actualSemanticId);
 	}
 
 	@Test
 	public void mapSupplementalSemanticId() {
-		List<Reference> expectedSupplementalSemanticId = RegistryIntegrationTestHelper.getSubmodelRegSupplementalSemanticIds();
+		List<Reference> expectedSupplementalSemanticId = AttributeMapperFixture.getSubmodelRegSupplementalSemanticIds();
 
-		List<Reference> actualSupplementalSemanticId = attributeMapper.mapSupplementalSemanticId(RegistryIntegrationTestHelper.getAas4jSupplementalSemanticIds());
+		List<Reference> actualSupplementalSemanticId = attributeMapper.mapSupplementalSemanticId(AttributeMapperFixture.getAas4jSupplementalSemanticIds());
 
 		assertEquals(expectedSupplementalSemanticId.size(), actualSupplementalSemanticId.size());
 		assertEquals(expectedSupplementalSemanticId, actualSupplementalSemanticId);

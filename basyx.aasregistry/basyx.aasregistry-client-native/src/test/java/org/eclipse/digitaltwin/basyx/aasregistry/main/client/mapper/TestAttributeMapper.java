@@ -53,9 +53,9 @@ public class TestAttributeMapper {
 
 	@Test
 	public void mapDescriptions() {
-		List<LangStringTextType> expectedDescriptions = RegistryIntegrationTestHelper.getAasRegLangStringTextTypes();
+		List<LangStringTextType> expectedDescriptions = AttributeMapperFixture.getAasRegLangStringTextTypes();
 
-		List<LangStringTextType> actualDescriptions = attributeMapper.mapDescription(RegistryIntegrationTestHelper.getAas4jLangStringTextTypes());
+		List<LangStringTextType> actualDescriptions = attributeMapper.mapDescription(AttributeMapperFixture.getAas4jLangStringTextTypes());
 
 		assertEquals(expectedDescriptions.size(), actualDescriptions.size());
 		assertEquals(expectedDescriptions, actualDescriptions);
@@ -63,9 +63,9 @@ public class TestAttributeMapper {
 
 	@Test
 	public void mapDisplayNames() {
-		List<LangStringNameType> expectedDisplayNames = RegistryIntegrationTestHelper.getAasRegLangStringNameTypes();
+		List<LangStringNameType> expectedDisplayNames = AttributeMapperFixture.getAasRegLangStringNameTypes();
 
-		List<LangStringNameType> actualDisplayNames = attributeMapper.mapDisplayName(RegistryIntegrationTestHelper.getAas4jLangStringNameTypes());
+		List<LangStringNameType> actualDisplayNames = attributeMapper.mapDisplayName(AttributeMapperFixture.getAas4jLangStringNameTypes());
 
 		assertEquals(expectedDisplayNames.size(), actualDisplayNames.size());
 		assertEquals(expectedDisplayNames, actualDisplayNames);
@@ -73,9 +73,9 @@ public class TestAttributeMapper {
 
 	@Test
 	public void mapExtensions() {
-		List<Extension> expectedExtensions = RegistryIntegrationTestHelper.getAasRegExtensions();
+		List<Extension> expectedExtensions = AttributeMapperFixture.getAasRegExtensions();
 
-		List<Extension> actualExtensions = attributeMapper.mapExtensions(RegistryIntegrationTestHelper.getAas4jExtensions());
+		List<Extension> actualExtensions = attributeMapper.mapExtensions(AttributeMapperFixture.getAas4jExtensions());
 
 		assertEquals(expectedExtensions.size(), actualExtensions.size());
 		assertEquals(expectedExtensions, actualExtensions);
@@ -83,18 +83,18 @@ public class TestAttributeMapper {
 
 	@Test
 	public void mapAdministration() {
-		AdministrativeInformation expectedAdministrativeInformation = RegistryIntegrationTestHelper.getAasRegAdministration();
+		AdministrativeInformation expectedAdministrativeInformation = AttributeMapperFixture.getAasRegAdministration();
 
-		AdministrativeInformation actualAdministrativeInformation = attributeMapper.mapAdministration(RegistryIntegrationTestHelper.getAas4jAdministration());
+		AdministrativeInformation actualAdministrativeInformation = attributeMapper.mapAdministration(AttributeMapperFixture.getAas4jAdministration());
 
 		assertEquals(expectedAdministrativeInformation, actualAdministrativeInformation);
 	}
 
 	@Test
 	public void mapAssetKind() {
-		AssetKind expectedAssetKind = RegistryIntegrationTestHelper.AASREG_ASSET_KIND;
+		AssetKind expectedAssetKind = AttributeMapperFixture.AASREG_ASSET_KIND;
 
-		AssetKind actualAssetKind = attributeMapper.mapAssetKind(RegistryIntegrationTestHelper.AAS4J_ASSET_KIND);
+		AssetKind actualAssetKind = attributeMapper.mapAssetKind(AttributeMapperFixture.AAS4J_ASSET_KIND);
 
 		assertEquals(expectedAssetKind, actualAssetKind);
 	}

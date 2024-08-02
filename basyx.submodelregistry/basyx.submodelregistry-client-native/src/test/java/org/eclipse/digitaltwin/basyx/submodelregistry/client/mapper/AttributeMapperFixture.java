@@ -47,11 +47,11 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.DataTypeDefXs
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Key;
 
 /**
- * A helper class for testing RegistryIntegration feature
+ * A fixture for TestAttributeMapper
  * 
- * @author danish
+ * @author danish, mateusmolina
  */
-public class RegistryIntegrationTestHelper {
+public class AttributeMapperFixture {
 
 	// LangStringTextType AAS4J
 	private static final LangStringTextType AAS4J_LANG_STRING_TEXT_TYPE_1 = new DefaultLangStringTextType.Builder().language("de").text("Ein Beispiel").build();
