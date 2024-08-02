@@ -40,9 +40,9 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.DummyAasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.DummySubmodelDescriptorFactory;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper;
 
 /**
  * Test fixture for {@link ConnectedAasManager} and related Components
