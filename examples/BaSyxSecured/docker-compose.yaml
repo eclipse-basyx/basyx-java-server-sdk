@@ -58,7 +58,8 @@ services:
       - ./basyx/rules/sm_registry_rbac_rules.json:/workspace/config/rbac_rules.json
     restart: always
     networks:
-        
+      - basyx-java-server-sdk
+      
   # AAS Discovery
   aas-discovery:
     image: eclipsebasyx/aas-discovery:2.0.0-milestone-03
