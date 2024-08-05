@@ -28,7 +28,7 @@
 		<guava.version>33.2.1-jre</guava.version>
 		<maven-plugin.version>3.6.0</maven-plugin.version>
 		<maven-project.version>3.0-alpha-2</maven-project.version>
-		<mustache.compiler.version>0.9.4</mustache.compiler.version>
+		<mustache.compiler.version>0.9.14</mustache.compiler.version>
 		<docker.image.name>${project.artifactId}</docker.image.name>
 		<openapitools.version>6.6.0</openapitools.version>
 		<openapitools.jacksonnullable.version>0.2.6</openapitools.jacksonnullable.version>
