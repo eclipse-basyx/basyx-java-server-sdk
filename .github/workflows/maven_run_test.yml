@@ -38,6 +38,20 @@ jobs:
         run: docker compose --project-directory ./ci up -d --wait
       - name: Install BaSyx
         run: mvn clean install -Ddocker.namespace=test
+      - name: Build and remove Docker images
+        run: |
+          images=(submodelrepository, aasrepository, aasenvironment,conceptdescriptionrepository,aasdiscoveryservice,aasxfileserver)
+          registryimages=(aasregistry-service-release-kafka-mem,aasregistry-service-release-kafka-mongodb,aasregistry-service-release-log-mem,aasregistry-service-release-log-mongodb,basyx.submodelregistry-service-release-log-mongodb,submodelregistry-service-release-log-mem,submodelregistry-service-release-kafka-mongodb,submodelregistry-service-release-kafka-mem)
+          for image in "${images[@]}"; do
+            mvn package -DskipTests -Ddocker.namespace=test --pl org.eclipse.digitaltwin.basyx:basyx.$image.component
+            docker rm -vf $(docker ps -aq)
+            docker rmi -f $(docker images -aq)
+          done
+          for image in "${registryimages[@]}"; do
+            mvn package -DskipTests -Ddocker.namespace=test --pl org.eclipse.digitaltwin.basyx:basyx.$image
+            docker rm -vf $(docker ps -aq)
+            docker rmi -f $(docker images -aq)
+          done
       - name: Stop environment
         if: always()
         run: docker  compose --project-directory ./ci down
