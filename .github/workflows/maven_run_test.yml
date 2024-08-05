@@ -1,6 +1,3 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
-
 name: Java CI with Maven
 
 on:
@@ -21,7 +18,6 @@ on:
       - '.gitignore'
       - 'LICENSE'
       - 'NOTICE'
-      
 
 jobs:
   build:
@@ -34,24 +30,17 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-      - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
-      - name: Install BaSyx
-        run: mvn clean install
       - name: Build and remove Docker images
         run: |
-          images=(submodelrepository, aasrepository, aasenvironment,conceptdescriptionrepository,aasdiscoveryservice,aasxfileserver)
-          registryimages=(aasregistry-service-release-kafka-mem,aasregistry-service-release-kafka-mongodb,aasregistry-service-release-log-mem,aasregistry-service-release-log-mongodb,basyx.submodelregistry-service-release-log-mongodb,submodelregistry-service-release-log-mem,submodelregistry-service-release-kafka-mongodb,submodelregistry-service-release-kafka-mem)
+          images=(submodelrepository, aasrepository, aasenvironment, conceptdescriptionrepository, aasdiscoveryservice, aasxfileserver)
+          registryimages=(aasregistry-service-release-kafka-mem, aasregistry-service-release-kafka-mongodb, aasregistry-service-release-log-mem, aasregistry-service-release-log-mongodb, basyx.submodelregistry-service-release-log-mongodb, submodelregistry-service-release-log-mem, submodelregistry-service-release-kafka-mongodb, submodelregistry-service-release-kafka-mem)
           for image in "${images[@]}"; do
-            mvn package -DskipTests -Ddocker.namespace=test --pl org.eclipse.digitaltwin.basyx:basyx.$image.component
+            mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.$image.component"
             docker rm -vf $(docker ps -aq)
             docker rmi -f $(docker images -aq)
           done
           for image in "${registryimages[@]}"; do
-            mvn package -DskipTests -Ddocker.namespace=test --pl org.eclipse.digitaltwin.basyx:basyx.$image
+            mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.$image"
             docker rm -vf $(docker ps -aq)
             docker rmi -f $(docker images -aq)
           done
-      - name: Stop environment
-        if: always()
-        run: docker  compose --project-directory ./ci down
