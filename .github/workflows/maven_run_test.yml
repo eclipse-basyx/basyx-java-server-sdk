@@ -33,48 +33,33 @@ jobs:
       - name: Build and remove Docker images
         run: |
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelservice.example"
-          docker rm -vf $(docker ps -aq)
           docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
-          docker rm -vf $(docker ps -aq)
           docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
-          docker rm -vf $(docker ps -aq)
           docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasenvironment.component"
-          docker rm -vf $(docker ps -aq)
           docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.conceptdescriptionrepository.component"
-          docker rm -vf $(docker ps -aq)
           docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
-          docker rm -vf $(docker ps -aq)
           docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasxfileserver.component"
-          docker rm -vf $(docker ps -aq)
           docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-kafka-mem.component"
-          docker rm -vf $(docker ps -aq)
           docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-kafka-mongodb.component"
-          docker rm -vf $(docker ps -aq)
           docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem.component"
-          docker rm -vf $(docker ps -aq)
           docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb.component"
-          docker rm -vf $(docker ps -aq)
           docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-kafka-mem.component"
-          docker rm -vf $(docker ps -aq)
           docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-kafka-mongodb.component"
-          docker rm -vf $(docker ps -aq)
           docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem.component"
-          docker rm -vf $(docker ps -aq)
           docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb.component"
-          docker rm -vf $(docker ps -aq)
           docker rmi -f $(docker images -aq)
 
