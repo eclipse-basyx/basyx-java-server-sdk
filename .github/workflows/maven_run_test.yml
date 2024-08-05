@@ -37,7 +37,7 @@ jobs:
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
       - name: Install BaSyx
-        run: mvn clean install -Ddocker.namespace=test
+        run: mvn clean install
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
