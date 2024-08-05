@@ -39,6 +39,7 @@ jobs:
       - name: Install BaSyx
         run: mvn clean install -Ddocker.namespace=test
       - name: Stop environment
+        if: always()
         run: docker compose --project-directory ./ci down
       - name: Build and remove Docker images
         run: |
