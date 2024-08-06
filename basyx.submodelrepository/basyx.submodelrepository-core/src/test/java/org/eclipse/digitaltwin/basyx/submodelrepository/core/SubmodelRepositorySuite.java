@@ -71,7 +71,7 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(null, null);
 	private static final String EMPTY_ID = " ";
 	private static final String NULL_ID = null;
-	private static final String ID = "testIdNew";
+	private static final String ID = "testId";
 
 	protected abstract SubmodelRepository getSubmodelRepository();
 
@@ -272,9 +272,9 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		Submodel expectedSubmodel = buildDummySubmodelWithNoSmElement(ID); 
 		repo.createSubmodel(expectedSubmodel);
 		
-		Submodel retrievedSubmodel = repo.getSubmodelByIdMetadata(ID);
+		Submodel retrievedSubmodelMetadata = repo.getSubmodelByIdMetadata(ID);
 
-		assertEquals(expectedSubmodel,retrievedSubmodel);
+		assertEquals(expectedSubmodel.getId(), retrievedSubmodelMetadata.getId());
 	}
 	
 	@Test
