@@ -271,6 +271,10 @@ public class InMemorySubmodelService implements SubmodelService {
 		String uniqueFileName = createUniqueFileName(idShortPath, fileName);
 
 		FileMetadata fileMetadata = new FileMetadata(uniqueFileName, fileSmElement.getContentType(), inputStream);
+		
+		if(fileRepository.exists(fileMetadata.getFileName())) {
+			fileRepository.delete(fileMetadata.getFileName());
+		}
 
 		String filePath = fileRepository.save(fileMetadata);
 
