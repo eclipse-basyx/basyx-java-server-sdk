@@ -87,7 +87,7 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
 		decorated.createSubmodel(submodel);
 
-		integrateSubmodelWithRegistry(submodel, submodelRepositoryRegistryLink.getSubmodelRepositoryBaseURL());
+		integrateSubmodelWithRegistry(submodel, submodelRepositoryRegistryLink.getSubmodelRepositoryBaseURLs());
 	}
 
 	@Override
@@ -167,8 +167,8 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 		decorated.deleteFileValue(submodelId, idShortPath);
 	}
 
-	private void integrateSubmodelWithRegistry(Submodel submodel, String submodelRepositoryURL) {
-		SubmodelDescriptor descriptor = new SubmodelDescriptorFactory(submodel, submodelRepositoryURL, attributeMapper).create();
+	private void integrateSubmodelWithRegistry(Submodel submodel, List<String> submodelRepositoryURLs) {
+		SubmodelDescriptor descriptor = new SubmodelDescriptorFactory(submodel, submodelRepositoryURLs, attributeMapper).create();
 
 		SubmodelRegistryApi registryApi = submodelRepositoryRegistryLink.getRegistryApi();
 

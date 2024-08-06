@@ -79,7 +79,7 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 	public void createAas(AssetAdministrationShell shell) throws CollidingIdentifierException {
 		decorated.createAas(shell);
 
-		integrateAasWithRegistry(shell, aasRepositoryRegistryLink.getAasRepositoryBaseURL());
+		integrateAasWithRegistry(shell, aasRepositoryRegistryLink.getAasRepositoryBaseURLs());
 	}
 
 	@Override
@@ -124,8 +124,8 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 		return decorated.getAssetInformation(shellId);
 	}
 
-	private void integrateAasWithRegistry(AssetAdministrationShell shell, String aasRepositoryURL) {
-		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(shell, aasRepositoryURL, attributeMapper).create();
+	private void integrateAasWithRegistry(AssetAdministrationShell shell, List<String> aasRepositoryURLs) {
+		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(shell, aasRepositoryURLs, attributeMapper).create();
 
 		RegistryAndDiscoveryInterfaceApi registryApi = aasRepositoryRegistryLink.getRegistryApi();
 

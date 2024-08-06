@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
+import java.util.List;
+
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 
@@ -36,20 +38,20 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 public class AasRepositoryRegistryLink {
 	
 	private RegistryAndDiscoveryInterfaceApi registryApi;
-	private String aasRepositoryBaseURL;
+	private List<String> aasRepositoryBaseURLs;
 	
-	public AasRepositoryRegistryLink(RegistryAndDiscoveryInterfaceApi registryApi, String aasRepositoryBaseURL) {
+	public AasRepositoryRegistryLink(RegistryAndDiscoveryInterfaceApi registryApi, List<String> aasRepositoryBaseURLs) {
 		super();
 		this.registryApi = registryApi;
-		this.aasRepositoryBaseURL = aasRepositoryBaseURL;
+		this.aasRepositoryBaseURLs = aasRepositoryBaseURLs;
 	}
 
 	public RegistryAndDiscoveryInterfaceApi getRegistryApi() {
 		return registryApi;
 	}
 
-	public String getAasRepositoryBaseURL() {
-		return aasRepositoryBaseURL;
+	public List<String> getAasRepositoryBaseURLs() {
+		return aasRepositoryBaseURLs;
 	}
 
 }
