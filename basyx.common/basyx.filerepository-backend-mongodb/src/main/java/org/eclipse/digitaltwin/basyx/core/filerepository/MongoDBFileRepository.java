@@ -68,6 +68,7 @@ public class MongoDBFileRepository implements FileRepository {
 
 	@Override
 	public String save(FileMetadata fileMetadata) throws FileHandlingException {
+		
 		if (exists(fileMetadata.getFileName()))
 			throw new FileHandlingException();
 		

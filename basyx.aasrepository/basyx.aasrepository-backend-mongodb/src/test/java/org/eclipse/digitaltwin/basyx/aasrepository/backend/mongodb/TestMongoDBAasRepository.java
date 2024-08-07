@@ -92,9 +92,8 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 
 		FileMetadata defaultThumbnail = new FileMetadata("dummyImgA.jpeg", "", createDummyImageIS_A());
 		
-		if(fileRepository.exists(defaultThumbnail.getFileName())) {
+		if(fileRepository.exists(defaultThumbnail.getFileName()))
 			fileRepository.delete(defaultThumbnail.getFileName());
-		}
 		
 		String thumbnailFilePath = fileRepository.save(defaultThumbnail);
 		

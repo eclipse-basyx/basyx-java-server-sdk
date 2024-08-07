@@ -44,40 +44,13 @@ import org.junit.Test;
  * @author witt
  */
 public abstract class FileRepositoryTestSuite {
-	
-	protected abstract FileRepository getFileRepository();
-	
-	protected FileMetadata createDummyFile() {
-		String name = "test";
-		String contentType ="txt";
-		String contentInput ="this is test data";
-		InputStream content = new ByteArrayInputStream(contentInput.getBytes());
-		
-		return new FileMetadata(name, contentType, content);
-	}
 
-	protected String getSavedTestFile(FileRepository fileRepo) {
-		FileMetadata testFile = createDummyFile();
-		String filePath =testFile.getFileName();
-		
-		if(fileRepo.exists(testFile.getFileName())) {
-			fileRepo.delete(filePath);
-		}
-		
-		return filePath = fileRepo.save(testFile);
-	}
-	
 	@Test
 	public void saveValidFile() {
 		FileRepository fileRepo = getFileRepository();
-		FileMetadata testFile = createDummyFile();
-		String filePath =testFile.getFileName();
 		
-		if(fileRepo.exists(testFile.getFileName())) {
-			fileRepo.delete(filePath);
-		}
-
-		filePath = fileRepo.save(testFile);
+		FileMetadata testFileMetadata = createDummyFile();
+		String filePath = saveTestFile(fileRepo, testFileMetadata);
 		
 		assertEquals(true, fileRepo.exists(filePath));
 	}
@@ -85,17 +58,19 @@ public abstract class FileRepositoryTestSuite {
 	@Test (expected = FileHandlingException.class)
 	public void saveExistingFile() {
 		FileRepository fileRepo = getFileRepository();
-		FileMetadata testFile = createDummyFile();
 		
-		String filePath = fileRepo.save(testFile);
-		filePath = fileRepo.save(testFile);
-		assertEquals(true, fileRepo.exists(filePath));
+		FileMetadata testFileMetadata = createDummyFile();
+		
+		String filePath = fileRepo.save(testFileMetadata);
+		filePath = fileRepo.save(testFileMetadata);
 	}
 
 	@Test
-	public void findExisting() throws IOException {
+	public void findExistingFile() throws IOException {
 		FileRepository fileRepo = getFileRepository();
-		String filePath = getSavedTestFile(fileRepo);
+		
+		FileMetadata testFileMetadata = createDummyFile();
+		String filePath = saveTestFile(fileRepo, testFileMetadata);
 
 		InputStream streamToCompare = new ByteArrayInputStream("this is test data".getBytes());
 		
@@ -105,7 +80,7 @@ public abstract class FileRepositoryTestSuite {
 	}
 	
 	@Test(expected = FileDoesNotExistException.class)
-	public void findNonExisting() {
+	public void findNonExistingFile() {
 		FileRepository fileRepo = getFileRepository();
 		
 		InputStream testStream = fileRepo.find("does not exist");
@@ -114,7 +89,9 @@ public abstract class FileRepositoryTestSuite {
 	@Test
 	public void deleteFile() {
 		FileRepository fileRepo = getFileRepository();
-		String filePath = getSavedTestFile(fileRepo);
+		
+		FileMetadata testFileMetadata = createDummyFile();
+		String filePath = saveTestFile(fileRepo, testFileMetadata);
 		
 		fileRepo.delete(filePath);
 			
@@ -124,15 +101,18 @@ public abstract class FileRepositoryTestSuite {
 	@Test(expected = FileDoesNotExistException.class)
 	public void deleteNonExistingFile() {
 		FileRepository fileRepo = getFileRepository();
+		
 		String filePath = "does not exist";
 		
 		fileRepo.delete(filePath);
 	}
 	
 	@Test
-	public void doesExists() {
+	public void fileDoesExists() {
 		FileRepository fileRepo = getFileRepository();
-		String filePath = getSavedTestFile(fileRepo);
+		
+		FileMetadata testFileMetadata = createDummyFile();
+		String filePath = saveTestFile(fileRepo, testFileMetadata);
 		
 		boolean fileExists = fileRepo.exists(filePath);
 		
@@ -140,7 +120,7 @@ public abstract class FileRepositoryTestSuite {
 	}
 	
 	@Test
-	public void doesNotExists() {
+	public void fileDoesNotExists() {
 		FileRepository fileRepo = getFileRepository();
 		
 		String filePath = "does not exist";
@@ -148,6 +128,28 @@ public abstract class FileRepositoryTestSuite {
 		boolean fileNotExists = fileRepo.exists(filePath);
 		
 		assertFalse(fileNotExists);
+	}
+	
+	protected abstract FileRepository getFileRepository();
+	
+	protected FileMetadata createDummyFile() {
+		String name = "test";
+		String contentType = "txt";
+		String contentInput ="this is test data";
+		
+		InputStream content = new ByteArrayInputStream(contentInput.getBytes());
+		
+		return new FileMetadata(name, contentType, content);
+	}
+
+	protected String saveTestFile(FileRepository fileRepo, FileMetadata testFileMetadata) {
+		String filePath = testFileMetadata.getFileName();
+		
+		if(fileRepo.exists(testFileMetadata.getFileName())) {
+			fileRepo.delete(filePath);
+		}
+		
+		return filePath = fileRepo.save(testFileMetadata);
 	}
 
 }
