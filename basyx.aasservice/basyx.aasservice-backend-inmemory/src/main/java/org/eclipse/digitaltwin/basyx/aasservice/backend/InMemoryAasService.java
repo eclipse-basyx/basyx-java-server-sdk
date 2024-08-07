@@ -209,20 +209,27 @@ public class InMemoryAasService implements AasService {
 	}
 
 	private void throwExceptionIfReferenceIsAlreadyPresent(Reference submodelReference) {
+		Optional<Key> submodelIdKey = getSubmodelTypeKey(submodelReference);
+		if(submodelIdKey.isEmpty())
+			return;
+		String submodelId = submodelIdKey.get().getValue();
+		if (isSubmodelIdAlreadyReferenced(submodelId)) {
+			throw new CollidingSubmodelReferenceException(submodelId);
+		}
+	}
+
+	private boolean isSubmodelIdAlreadyReferenced(String submodelId) {
+		return aas.getSubmodels().stream().anyMatch(ref -> ref.getKeys().stream().anyMatch(key -> key.getValue().equals(submodelId)));
+	}
+
+	private static Optional<Key> getSubmodelTypeKey(Reference submodelReference) {
 		Optional<Key> submodelIdKey = submodelReference.getKeys().stream().filter(key -> {
 			KeyTypes type = key.getType();
 			if(type == null)
 				throw new MissingKeyTypeException();
 			return type.equals(KeyTypes.SUBMODEL);
 		}).findFirst();
-		if(submodelIdKey.isPresent()){
-			String submodelId = submodelIdKey.get().getValue();
-			if (aas.getSubmodels().stream().anyMatch(ref -> ref.getKeys().stream().anyMatch(key -> key.getValue().equals(submodelId)))) {
-				System.err.println("Submodel reference with id " + submodelId + " already exists.");
-				System.err.println("Already existing is:"+ aas.getSubmodels().stream().filter(ref -> ref.getKeys().stream().anyMatch(key -> key.getValue().equals(submodelId))).findFirst().get());
-				throw new CollidingSubmodelReferenceException(submodelId);
-			}
-		}
+		return submodelIdKey;
 	}
 
 }
