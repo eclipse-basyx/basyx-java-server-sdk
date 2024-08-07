@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -42,9 +43,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.*;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
@@ -94,6 +93,8 @@ public class InMemoryAasService implements AasService {
 
 	@Override
 	public void addSubmodelReference(Reference submodelReference) {
+		throwExceptionIfReferenceIsAlreadyPresent(submodelReference);
+
 		aas.getSubmodels().add(submodelReference);
 	}
 
@@ -205,6 +206,23 @@ public class InMemoryAasService implements AasService {
 		createOutputStream(filePath, content);
 
 		return new java.io.File(filePath);
+	}
+
+	private void throwExceptionIfReferenceIsAlreadyPresent(Reference submodelReference) {
+		Optional<Key> submodelIdKey = submodelReference.getKeys().stream().filter(key -> {
+			KeyTypes type = key.getType();
+			if(type == null)
+				throw new MissingKeyTypeException();
+			return type.equals(KeyTypes.SUBMODEL);
+		}).findFirst();
+		if(submodelIdKey.isPresent()){
+			String submodelId = submodelIdKey.get().getValue();
+			if (aas.getSubmodels().stream().anyMatch(ref -> ref.getKeys().stream().anyMatch(key -> key.getValue().equals(submodelId)))) {
+				System.err.println("Submodel reference with id " + submodelId + " already exists.");
+				System.err.println("Already existing is:"+ aas.getSubmodels().stream().filter(ref -> ref.getKeys().stream().anyMatch(key -> key.getValue().equals(submodelId))).findFirst().get());
+				throw new CollidingSubmodelReferenceException(submodelId);
+			}
+		}
 	}
 
 }
