@@ -38,6 +38,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetAssetAdministrationShellsResult;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetReferencesResult;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
@@ -156,7 +157,11 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 
 	@Override
 	public ResponseEntity<Reference> postSubmodelReferenceAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Valid Reference body) {
-		aasRepository.addSubmodelReference(aasIdentifier.getIdentifier(), body);
+		try {
+			aasRepository.addSubmodelReference(aasIdentifier.getIdentifier(), body);
+		}catch(CollidingSubmodelReferenceException e){
+			return new ResponseEntity<Reference>(HttpStatus.CONFLICT);
+		}
 		return new ResponseEntity<Reference>(body, HttpStatus.CREATED);
 	}
 
