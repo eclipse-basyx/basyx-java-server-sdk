@@ -44,13 +44,14 @@ import org.junit.Test;
  * @author witt
  */
 public abstract class FileRepositoryTestSuite {
+	protected abstract FileRepository getFileRepository();
 
 	@Test
 	public void saveValidFile() {
 		FileRepository fileRepo = getFileRepository();
 		
-		FileMetadata testFileMetadata = createDummyFile();
-		String filePath = saveTestFile(fileRepo, testFileMetadata);
+		FileMetadata fileMetadata = createDummyFile();
+		String filePath = saveTestFile(fileRepo, fileMetadata);
 		
 		assertEquals(true, fileRepo.exists(filePath));
 	}
@@ -59,18 +60,18 @@ public abstract class FileRepositoryTestSuite {
 	public void saveExistingFile() {
 		FileRepository fileRepo = getFileRepository();
 		
-		FileMetadata testFileMetadata = createDummyFile();
+		FileMetadata fileMetadata = createDummyFile();
 		
-		String filePath = fileRepo.save(testFileMetadata);
-		filePath = fileRepo.save(testFileMetadata);
+		String filePath = fileRepo.save(fileMetadata);
+		filePath = fileRepo.save(fileMetadata);
 	}
 
 	@Test
 	public void findExistingFile() throws IOException {
 		FileRepository fileRepo = getFileRepository();
 		
-		FileMetadata testFileMetadata = createDummyFile();
-		String filePath = saveTestFile(fileRepo, testFileMetadata);
+		FileMetadata fileMetadata = createDummyFile();
+		String filePath = saveTestFile(fileRepo, fileMetadata);
 
 		InputStream streamToCompare = new ByteArrayInputStream("this is test data".getBytes());
 		
@@ -83,15 +84,15 @@ public abstract class FileRepositoryTestSuite {
 	public void findNonExistingFile() {
 		FileRepository fileRepo = getFileRepository();
 		
-		InputStream testStream = fileRepo.find("does not exist");
+		InputStream testInputStream = fileRepo.find("does not exist");
 	}
 	
 	@Test
 	public void deleteFile() {
 		FileRepository fileRepo = getFileRepository();
 		
-		FileMetadata testFileMetadata = createDummyFile();
-		String filePath = saveTestFile(fileRepo, testFileMetadata);
+		FileMetadata fileMetadata = createDummyFile();
+		String filePath = saveTestFile(fileRepo, fileMetadata);
 		
 		fileRepo.delete(filePath);
 			
@@ -111,8 +112,8 @@ public abstract class FileRepositoryTestSuite {
 	public void fileDoesExists() {
 		FileRepository fileRepo = getFileRepository();
 		
-		FileMetadata testFileMetadata = createDummyFile();
-		String filePath = saveTestFile(fileRepo, testFileMetadata);
+		FileMetadata fileMetadata = createDummyFile();
+		String filePath = saveTestFile(fileRepo, fileMetadata);
 		
 		boolean fileExists = fileRepo.exists(filePath);
 		
@@ -130,8 +131,6 @@ public abstract class FileRepositoryTestSuite {
 		assertFalse(fileNotExists);
 	}
 	
-	protected abstract FileRepository getFileRepository();
-	
 	protected FileMetadata createDummyFile() {
 		String name = "test";
 		String contentType = "txt";
@@ -142,14 +141,13 @@ public abstract class FileRepositoryTestSuite {
 		return new FileMetadata(name, contentType, content);
 	}
 
-	protected String saveTestFile(FileRepository fileRepo, FileMetadata testFileMetadata) {
-		String filePath = testFileMetadata.getFileName();
+	protected String saveTestFile(FileRepository fileRepo, FileMetadata fileMetadata) {
+		String filePath = fileMetadata.getFileName();
 		
-		if(fileRepo.exists(testFileMetadata.getFileName())) {
+		if(fileRepo.exists(fileMetadata.getFileName()))
 			fileRepo.delete(filePath);
-		}
 		
-		return filePath = fileRepo.save(testFileMetadata);
+		return fileRepo.save(fileMetadata);
 	}
 
 }
