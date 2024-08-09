@@ -12,5 +12,10 @@
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
 	</dependencies>
+	
 </project>

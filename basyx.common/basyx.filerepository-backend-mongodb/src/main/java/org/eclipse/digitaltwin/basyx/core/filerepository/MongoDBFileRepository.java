@@ -68,8 +68,13 @@ public class MongoDBFileRepository implements FileRepository {
 
 	@Override
 	public String save(FileMetadata fileMetadata) throws FileHandlingException {
+		
+		if (exists(fileMetadata.getFileName()))
+			throw new FileHandlingException();
+		
 		gridFsTemplate.store(fileMetadata.getFileContent(), fileMetadata.getFileName(), fileMetadata.getContentType());
-		return fileMetadata.getFileName();
+		
+		return fileMetadata.getFileName();	
 	}
 
 	@Override
