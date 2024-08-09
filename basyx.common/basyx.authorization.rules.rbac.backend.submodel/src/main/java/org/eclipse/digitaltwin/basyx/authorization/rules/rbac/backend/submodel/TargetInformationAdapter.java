@@ -6,5 +6,7 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 public interface TargetInformationAdapter {
 	
 	SubmodelElementCollection adapt(TargetInformation targetInformation);
+	
+	TargetInformation adapt(SubmodelElementCollection targetInformation);
 
 }

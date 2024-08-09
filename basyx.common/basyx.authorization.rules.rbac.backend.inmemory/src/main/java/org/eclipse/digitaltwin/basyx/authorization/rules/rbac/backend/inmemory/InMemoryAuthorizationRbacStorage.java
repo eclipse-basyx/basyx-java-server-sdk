@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.inmemory;
 import java.util.Map;
 
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleKeyGenerator;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
 
 /**
@@ -42,16 +43,22 @@ public class InMemoryAuthorizationRbacStorage implements RbacStorage {
         this.rbacRules = rbacRules;
     }
 
+    @Override
     public Map<String, RbacRule> getRbacRules() {       
         return rbacRules;
     }
 
+    @Override
     public void addRule(RbacRule rbacRule) {
     	
-    	rbacRule.getAction().stream().map(action -> RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), action.toString(), rbacRule.getTargetInformation().getClass().getName())).filter(key -> !rbacRules.containsKey(key)).map(key -> rbacRules.put(key, rbacRule));
+    	rbacRules.put(RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), rbacRule.getAction().get(0).toString(), rbacRule.getTargetInformation().getClass().getName()), rbacRule);
+    	
+//    	rbacRule.getAction().stream().map(action -> RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), action.toString(), rbacRule.getTargetInformation().getClass().getName())).filter(key -> !rbacRules.containsKey(key)).forEach(key -> rbacRules.put(key, rbacRule));
     }
 
+    @Override
 	public void removeRule(String key) {
+    	
 		if (!exist(key))
 			throw new RuntimeException("Rule doesn't exist in policy store");
 		
@@ -60,6 +67,7 @@ public class InMemoryAuthorizationRbacStorage implements RbacStorage {
 	
 	@Override
 	public RbacRule getRbacRule(String key) {
+		
 		if (!exist(key))
 			throw new RuntimeException("Rule doesn't exist in policy store");
 		

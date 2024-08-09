@@ -14,6 +14,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.AasTargetInformation;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 import org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.submodel.TargetInformationAdapter;
+import org.eclipse.digitaltwin.basyx.core.exceptions.InvalidTargetInformationException;
 
 public class AasTargetInformationAdapter implements TargetInformationAdapter {
 	
@@ -30,6 +31,21 @@ public class AasTargetInformationAdapter implements TargetInformationAdapter {
 		targetInformationSMC.setValue(Arrays.asList(aasId));
 		
 		return targetInformationSMC;
+	}
+	
+	@Override
+	public TargetInformation adapt(SubmodelElementCollection targetInformation) {
+		
+		SubmodelElement aasIdSubmodelElement = targetInformation.getValue().stream().filter(sme -> sme.getIdShort().equals("aasIds")).findAny().orElseThrow(() -> new InvalidTargetInformationException("The TargetInformation defined in the SubmodelElementCollection Rule with id: " + targetInformation.getIdShort() + " is not compatible with the " + getClass().getName()));
+		
+		if (!(aasIdSubmodelElement instanceof SubmodelElementList))
+			throw new InvalidTargetInformationException("The TargetInformation defined in the SubmodelElementCollection Rule with id: " + targetInformation.getIdShort() + " is not compatible with the " + getClass().getName());
+		
+		SubmodelElementList aasIdList = (SubmodelElementList) aasIdSubmodelElement;
+		
+		List<String> aasIds =  aasIdList.getValue().stream().map(Property.class::cast).map(Property::getValue).collect(Collectors.toList());
+		
+		return new AasTargetInformation(aasIds);
 	}
 	
 	private Property transform(String aasId) {

@@ -11,6 +11,17 @@
 	  <dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.authorization</artifactId>
+	  </dependency>
+	  <dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.authorization</artifactId>
+			<scope>test</scope>
+			<classifier>tests</classifier>
+	  </dependency>
+	  <dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
 		</dependency>
   </dependencies>
 </project>

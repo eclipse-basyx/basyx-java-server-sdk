@@ -33,11 +33,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleInitializer;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.AccessTokenProviderFactory;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.AccessTokenProvider;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.GrantType;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.AuthorizedConnectedSubmodelService;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -53,6 +60,9 @@ public class RbacRuleConfiguration {
 	
 	@Value("${" + CommonAuthorizationProperties.RBAC_FILE_PROPERTY_KEY + ":}")
 	private String filePath;
+	
+	@Value("${" + CommonAuthorizationProperties.RULES_BACKEND_TYPE_SUBMODEL_AUTHORIZATION_SUBMODEL_ENDPOINT + ":}")
+	private String submodelEndpoint;
 	
 	@Value("${" + CommonAuthorizationProperties.RULES_BACKEND_TYPE_SUBMODEL_AUTHORIZATION_TOKEN_ENDPOINT + ":}")
 	private String tokenEndpoint;
@@ -73,7 +83,7 @@ public class RbacRuleConfiguration {
 	private String password;
 	
 	@Value("${" + CommonAuthorizationProperties.RULES_BACKEND_TYPE_SUBMODEL_AUTHORIZATION_SCOPES + ":}")
-	private String scopes;
+	private List<String> scopes;
 	
 	private ObjectMapper objectMapper;
 	private ResourceLoader resourceLoader;
@@ -88,12 +98,21 @@ public class RbacRuleConfiguration {
 	@Bean
 	public RbacStorage createInMemoryRbacStorage() throws IOException {
 		
+		TokenManager tokenManager = new TokenManager(tokenEndpoint, getTokenProvider());
+		
 		if (filePath.isBlank())
-			return new SubmodelAuthorizationRbacStorage(new ArrayList<>(), targetInformationAdapter);
+			return new SubmodelAuthorizationRbacStorage(new AuthorizedConnectedSubmodelService(submodelEndpoint, tokenManager), new HashMap<>(), new RbacRuleAdapter(targetInformationAdapter));
 		
-		List<RbacRule> initialRules = new RbacRuleInitializer(objectMapper, filePath, resourceLoader).deserialize();
+		HashMap<String, RbacRule> initialRules = new RbacRuleInitializer(objectMapper, filePath, resourceLoader).deserialize();
 		
-		return new SubmodelAuthorizationRbacStorage(initialRules, targetInformationAdapter);
+		return new SubmodelAuthorizationRbacStorage(new AuthorizedConnectedSubmodelService(submodelEndpoint, tokenManager), initialRules, new RbacRuleAdapter(targetInformationAdapter));
 	}
+	
+	private AccessTokenProvider getTokenProvider() {
+        AccessTokenProviderFactory factory = new AccessTokenProviderFactory(GrantType.valueOf(grantType), scopes);
+        factory.setClientCredentials(clientId, clientSecret);
+        factory.setPasswordCredentials(username, password);
+        return factory.create();
+    }
 
 }

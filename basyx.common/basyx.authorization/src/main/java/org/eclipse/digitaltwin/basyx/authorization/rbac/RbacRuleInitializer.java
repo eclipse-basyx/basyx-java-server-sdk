@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.submodel;
+package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingAuthorizationConfigurationException;
 import org.springframework.core.io.ResourceLoader;
 

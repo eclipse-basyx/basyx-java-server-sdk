@@ -25,13 +25,16 @@
 
 package org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.submodel;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleKeyGenerator;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
-import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 
 /**
@@ -40,55 +43,55 @@ import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelSer
  * @author danish
  */
 public class SubmodelAuthorizationRbacStorage implements RbacStorage {
-    private final List<RbacRule> rbacRules;
-    private final TargetInformationAdapter targetInformationAdapter;
-    private RbacRuleAdapter ruleAdapter;
-    private ConnectedSubmodelRepository submodelRepository;
+	private RbacRuleAdapter ruleAdapter;
+	private ConnectedSubmodelService smService;
 
-    public SubmodelAuthorizationRbacStorage(ConnectedSubmodelRepository smRepo, List<RbacRule> rbacRuleList, TargetInformationAdapter targetInformationAdapter) {
-        this.rbacRules = rbacRuleList;
-        this.targetInformationAdapter = targetInformationAdapter;
-        ruleAdapter = new RbacRuleAdapter(targetInformationAdapter);
-        this.submodelRepository = submodelRepository;
-        
-        initializeRbacRules(rbacRuleList, targetInformationAdapter);
-    }
+	public SubmodelAuthorizationRbacStorage(ConnectedSubmodelService smService, HashMap<String, RbacRule> initialRules, RbacRuleAdapter ruleAdapter) {
+		this.ruleAdapter = ruleAdapter;
+		this.smService = smService;
 
-	public List<RbacRule> getRbacRules() {       
-        return rbacRules;
-    }
+		initializeRbacRules(initialRules);
+	}
 
-    public void addRule(RbacRule rbacRule) {
-    	SubmodelElementCollection rule = ruleAdapter.adapt(rbacRule);
-    	
-    	ConnectedSubmodelService submodelService = submodelRepository.getConnectedSubmodelService("submodelId");
-    	
-    	submodelService.createSubmodelElement(rule);
-    }
+	public void addRule(RbacRule rbacRule) {
 
-    public void removeRule(RbacRule rbacRule) {
-        rbacRules.remove(rbacRule);
-    }
-    
-    private void initializeRbacRules(List<RbacRule> rbacRuleList, TargetInformationAdapter targetInformationAdapter) {
-    	rbacRuleList.stream().forEach(rule -> addRule(rule));
+		List<SubmodelElementCollection> rbacRulesSMC = rbacRule.getAction().stream().map(action -> new RbacRule(rbacRule.getRole(), Arrays.asList(action), rbacRule.getTargetInformation()))
+				.map(rule -> ruleAdapter.adapt(rule, RbacRuleKeyGenerator.generateKey(rule.getRole(), rule.getAction().get(0).toString(), rule.getTargetInformation().getClass().getName()))).collect(Collectors.toList());
+
+		rbacRulesSMC.stream().forEach(rule -> smService.createSubmodelElement(rule));
 	}
 
 	@Override
 	public RbacRule getRbacRule(String key) {
-		// TODO Auto-generated method stub
-		return null;
+
+		SubmodelElementCollection ruleSMC = (SubmodelElementCollection) smService.getSubmodelElement(key);
+
+		return ruleAdapter.adapt(ruleSMC);
 	}
 
 	@Override
 	public void removeRule(String key) {
-		// TODO Auto-generated method stub
-		
+		smService.deleteSubmodelElement(key);
 	}
 
 	@Override
 	public boolean exist(String key) {
-		// TODO Auto-generated method stub
-		return false;
+
+		try {
+			smService.getSubmodelElement(key);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+
+	}
+
+	@Override
+	public Map<String, RbacRule> getRbacRules() {
+		return null;
+	}
+
+	private void initializeRbacRules(HashMap<String, RbacRule> initialRules) {
+		initialRules.values().stream().forEach(rule -> addRule(rule));
 	}
 }

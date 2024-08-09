@@ -33,6 +33,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleInitializer;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,7 +47,7 @@ import java.util.HashMap;
  */
 @Configuration
 @ConditionalOnProperty("basyx.feature.authorization.enabled")
-@ConditionalOnExpression(value = "'${basyx.feature.authorization.type}' == 'rbac' && '${basyx.feature.authorization.rules.backend}' == 'InMemory'")
+@ConditionalOnExpression(value = "'${basyx.feature.authorization.type}' == 'rbac' && ('${basyx.feature.authorization.rules.backend:InMemory}' == 'InMemory' || '${basyx.feature.authorization.rules.backend}' == '')")
 public class RbacRuleConfiguration {
 	public static final String RULES_FILE_KEY = "basyx.aasrepository.feature.authorization.rbac.file";
 	
