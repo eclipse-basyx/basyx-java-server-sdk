@@ -105,7 +105,7 @@ public abstract class FileRepositoryTestSuite {
 		
 		String filePath = "does not exist";
 		
-		fileRepo.delete(filePath);
+		fileRepo.delete(filePath); 
 	}
 	
 	@Test
@@ -149,5 +149,4 @@ public abstract class FileRepositoryTestSuite {
 		
 		return fileRepo.save(fileMetadata);
 	}
-
 }
