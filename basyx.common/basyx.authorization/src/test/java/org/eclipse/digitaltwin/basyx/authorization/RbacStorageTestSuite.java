@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
-import java.util.Map;
+import java.util.List;
 
 public abstract class RbacStorageTestSuite {
 	
@@ -32,6 +32,7 @@ public abstract class RbacStorageTestSuite {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        
         setUpRbacStorage();
     }
 
@@ -39,78 +40,71 @@ public abstract class RbacStorageTestSuite {
 
     @Test
     public void testAddRule() {
-        // Arrange
-        String key = "someKey";
-        when(rbacRule.getAction()).thenReturn(Arrays.asList(Action.READ));
-        when(rbacRule.getRole()).thenReturn("ROLE_1");
-        when(rbacRule.getTargetInformation()).thenReturn(targetInformation);
+    	
+    	configureMockRbacRule("Engineer", Arrays.asList(Action.READ), targetInformation);
         
-        // Act
+        String key = RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), rbacRule.getAction().get(0).toString(), rbacRule.getTargetInformation().getClass().getName());
+        
         rbacStorage.addRule(rbacRule);
 
-        // Assert
-        assertTrue(rbacStorage.exist(RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), rbacRule.getAction().get(0).toString(), rbacRule.getTargetInformation().getClass().getName())));
+        assertTrue(rbacStorage.exist(key));
     }
 
     @Test
     public void testGetRbacRule() {
-        // Arrange
-        String key = "someKey";
-        when(rbacRule.getAction()).thenReturn(Arrays.asList(Action.READ));
-        when(rbacRule.getRole()).thenReturn("ROLE_1");
-        when(rbacRule.getTargetInformation()).thenReturn(targetInformation);
+    	
+    	configureMockRbacRule("Engineer", Arrays.asList(Action.READ), targetInformation);
+        
+        String key = RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), rbacRule.getAction().get(0).toString(), rbacRule.getTargetInformation().getClass().getName());
 
         rbacStorage.addRule(rbacRule);
 
-        // Act
         RbacRule retrievedRule = rbacStorage.getRbacRule(key);
 
-        // Assert
         assertNotNull(retrievedRule);
         assertEquals(rbacRule, retrievedRule);
     }
 
     @Test
     public void testRemoveRule() {
-        // Arrange
-        String key = "someKey";
-        when(rbacRule.getAction()).thenReturn(Arrays.asList(Action.READ));
-        when(rbacRule.getRole()).thenReturn("ROLE_1");
-        when(rbacRule.getTargetInformation()).thenReturn(targetInformation);
+    	
+    	configureMockRbacRule("Engineer", Arrays.asList(Action.READ), targetInformation);
+        
+        String key = RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), rbacRule.getAction().get(0).toString(), rbacRule.getTargetInformation().getClass().getName());
 
         rbacStorage.addRule(rbacRule);
 
-        // Act
         rbacStorage.removeRule(key);
 
-        // Assert
         assertFalse(rbacStorage.exist(key));
     }
 
     @Test
     public void testExistWhenElementExists() {
-        // Arrange
-        String key = "someKey";
-        when(rbacRule.getAction()).thenReturn(Arrays.asList(Action.READ));
-        when(rbacRule.getRole()).thenReturn("ROLE_1");
-        when(rbacRule.getTargetInformation()).thenReturn(targetInformation);
+    	
+    	configureMockRbacRule("Engineer", Arrays.asList(Action.READ), targetInformation);
+    	
+        String key = RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), rbacRule.getAction().get(0).toString(), rbacRule.getTargetInformation().getClass().getName());
 
         rbacStorage.addRule(rbacRule);
 
-        // Act
         boolean exists = rbacStorage.exist(key);
 
-        // Assert
         assertTrue(exists);
     }
 
     @Test
     public void testExistWhenElementDoesNotExist() {
-        // Act
+    	
         boolean exists = rbacStorage.exist("nonexistentKey");
-
-        // Assert
+        
         assertFalse(exists);
     }
+    
+    public void configureMockRbacRule(String role, List<Action> actions, TargetInformation targetInformation) {
+    	when(rbacRule.getRole()).thenReturn(role);
+		when(rbacRule.getAction()).thenReturn(actions);
+        when(rbacRule.getTargetInformation()).thenReturn(targetInformation);
+	}
 
 }
