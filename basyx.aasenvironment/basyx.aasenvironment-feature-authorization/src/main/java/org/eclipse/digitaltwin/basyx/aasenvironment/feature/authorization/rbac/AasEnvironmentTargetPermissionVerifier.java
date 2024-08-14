@@ -28,8 +28,8 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization.rbac;
 import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization.AasEnvironmentTargetInformation;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
-import org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.RbacRule;
 
 /**
  * Verifies the {@link AasEnvironmentTargetInformation} against the {@link RbacRule}

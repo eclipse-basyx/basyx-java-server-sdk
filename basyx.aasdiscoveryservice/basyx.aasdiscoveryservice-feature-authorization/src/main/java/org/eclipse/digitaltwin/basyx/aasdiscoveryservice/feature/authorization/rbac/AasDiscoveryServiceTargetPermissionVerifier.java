@@ -29,8 +29,8 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.feature.authorization.AasDiscoveryServiceTargetInformation;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
-import org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.RbacRule;
 
 /**
  * Verifies the {@link AasDiscoveryServiceTargetInformation} against the

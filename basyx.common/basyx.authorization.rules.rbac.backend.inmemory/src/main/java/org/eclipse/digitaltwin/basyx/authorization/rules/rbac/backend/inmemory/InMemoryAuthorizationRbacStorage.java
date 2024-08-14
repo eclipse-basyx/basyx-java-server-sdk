@@ -51,9 +51,7 @@ public class InMemoryAuthorizationRbacStorage implements RbacStorage {
     @Override
     public void addRule(RbacRule rbacRule) {
     	
-    	rbacRules.put(RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), rbacRule.getAction().get(0).toString(), rbacRule.getTargetInformation().getClass().getName()), rbacRule);
-    	
-//    	rbacRule.getAction().stream().map(action -> RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), action.toString(), rbacRule.getTargetInformation().getClass().getName())).filter(key -> !rbacRules.containsKey(key)).forEach(key -> rbacRules.put(key, rbacRule));
+    	rbacRule.getAction().stream().map(action -> RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), action.toString(), rbacRule.getTargetInformation().getClass().getName())).filter(key -> !rbacRules.containsKey(key)).forEach(key -> rbacRules.put(key, rbacRule));
     }
 
     @Override

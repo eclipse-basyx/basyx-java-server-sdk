@@ -1,3 +1,28 @@
+/*******************************************************************************
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * SPDX-License-Identifier: MIT
+ ******************************************************************************/
+
 package org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.submodel;
 
 import static org.junit.Assert.assertEquals;
@@ -24,14 +49,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+/**
+ * Tests {@link RbacRuleAdapterTest}
+ * 
+ * @author danish
+ */
 public class RbacRuleAdapterTest {
 
     @Mock
     private TargetInformationAdapter targetInformationAdapter;
     
     @Mock
-    private TargetInformation targetInformation;
+    private static TargetInformation targetInformation;
 
     private RbacRuleAdapter rbacRuleAdapter;
 
@@ -80,7 +109,7 @@ public class RbacRuleAdapterTest {
     @Test
     public void adaptSubmodelElementCollectionToRbacRule() {
         
-    	RbacRule expectedRbacRule = createDummyRbacRule();
+    	RbacRule expectedRbacRule = createDummyRbacRule("admin", Arrays.asList(Action.READ), targetInformation);
     	
     	String rbacRuleKey = RbacRuleKeyGenerator.generateKey(expectedRbacRule.getRole(), expectedRbacRule.getAction().get(0).toString(), expectedRbacRule.getTargetInformation().getClass().getName());
 
@@ -111,14 +140,14 @@ public class RbacRuleAdapterTest {
     }
 
     
-    private SubmodelElementCollection createDummySMC(RbacRule rbacRule, String rbacRuleKey) {
+    public static SubmodelElementCollection createDummySMC(RbacRule rbacRule, String rbacRuleKey) {
     	
     	SubmodelElementCollection rule = new DefaultSubmodelElementCollection.Builder().idShort(rbacRuleKey).build();
 		
 		Property role = new DefaultProperty.Builder().idShort("role").value(rbacRule.getRole()).build();
 		SubmodelElementList action = new DefaultSubmodelElementList.Builder().idShort("action").build();
 		
-		List<SubmodelElement> actions = rbacRule.getAction().stream().map(this::transform).collect(Collectors.toList());
+		List<SubmodelElement> actions = rbacRule.getAction().stream().map(RbacRuleAdapterTest::transform).collect(Collectors.toList());
 		action.setValue(actions);
 		
 		SubmodelElementCollection targetInformation = createDummyTargetInformation();
@@ -128,15 +157,12 @@ public class RbacRuleAdapterTest {
 		return rule;
     }
     
-    private RbacRule createDummyRbacRule() {
-    	
-    	String role = "admin";
-        List<Action> actions = Arrays.asList(Action.READ);
+    public static RbacRule createDummyRbacRule(String role, List<Action> actions, TargetInformation targetInformation) {
 		
 		return new RbacRule(role, actions, targetInformation);
     }
 
-	private SubmodelElementCollection createDummyTargetInformation() {
+	private static SubmodelElementCollection createDummyTargetInformation() {
 		SubmodelElementCollection targetInformation = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation").build();
 		
 		SubmodelElementList targetInformationSML = new DefaultSubmodelElementList.Builder().idShort("aasIds").build();
@@ -150,7 +176,7 @@ public class RbacRuleAdapterTest {
 		return targetInformation;
 	}
     
-    private Property transform(Action action) {
+    private static Property transform(Action action) {
 		return new DefaultProperty.Builder().value(action.toString()).build();
 	}
 

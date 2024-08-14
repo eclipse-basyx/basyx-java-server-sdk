@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -35,6 +35,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleKeyGenerator;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 
 /**
@@ -53,10 +54,11 @@ public class SubmodelAuthorizationRbacStorage implements RbacStorage {
 		initializeRbacRules(initialRules);
 	}
 
+	@Override
 	public void addRule(RbacRule rbacRule) {
 
 		List<SubmodelElementCollection> rbacRulesSMC = rbacRule.getAction().stream().map(action -> new RbacRule(rbacRule.getRole(), Arrays.asList(action), rbacRule.getTargetInformation()))
-				.map(rule -> ruleAdapter.adapt(rule, RbacRuleKeyGenerator.generateKey(rule.getRole(), rule.getAction().get(0).toString(), rule.getTargetInformation().getClass().getName()))).collect(Collectors.toList());
+				.map(rule -> ruleAdapter.adapt(rule, createKey(rule))).collect(Collectors.toList());
 
 		rbacRulesSMC.stream().forEach(rule -> smService.createSubmodelElement(rule));
 	}
@@ -88,7 +90,13 @@ public class SubmodelAuthorizationRbacStorage implements RbacStorage {
 
 	@Override
 	public Map<String, RbacRule> getRbacRules() {
-		return null;
+		
+		return smService.getSubmodelElements(new PaginationInfo(0, "")).getResult().stream().map(SubmodelElementCollection.class::cast).map(ruleAdapter::adapt).collect(Collectors.toMap(rbacRule -> createKey(rbacRule), rbacRule -> rbacRule));
+	}
+
+	private String createKey(RbacRule rbacRule) {
+
+		return RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), rbacRule.getAction().get(0).toString(), rbacRule.getTargetInformation().getClass().getName());
 	}
 
 	private void initializeRbacRules(HashMap<String, RbacRule> initialRules) {
