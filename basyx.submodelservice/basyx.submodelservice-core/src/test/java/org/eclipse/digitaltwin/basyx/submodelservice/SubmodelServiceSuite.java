@@ -629,8 +629,7 @@ public abstract class SubmodelServiceSuite {
 	}
 	
 	protected Submodel buildDummySubmodelWithNoSmElement(String id) {
-		return new DefaultSubmodel.Builder().id(id).build();
-		
+		return new DefaultSubmodel.Builder().id(id).build();		
 	}
 	
 	protected List<SubmodelElement> buildDummySubmodelElements() {

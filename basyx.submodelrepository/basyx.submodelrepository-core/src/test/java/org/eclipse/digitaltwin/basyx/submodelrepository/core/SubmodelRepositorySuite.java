@@ -60,6 +60,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Testsuite for implementations of the SubmodelRepository interface
@@ -269,16 +270,18 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 	@Test
 	public void getSubmodelByIdMetadata() throws JsonProcessingException {
 		SubmodelRepository repo = getSubmodelRepository();
-		Submodel expectedSubmodel = buildDummySubmodelWithNoSmElement(ID); 
+		Submodel expectedSubmodel = buildDummySubmodelWithNoSmElement(ID);
+		expectedSubmodel.setSubmodelElements(null);
 		repo.createSubmodel(expectedSubmodel);
 		
 		Submodel retrievedSubmodelMetadata = repo.getSubmodelByIdMetadata(ID);
+		retrievedSubmodelMetadata.setSubmodelElements(null);
 
-		assertEquals(expectedSubmodel.getId(), retrievedSubmodelMetadata.getId());
+		assertEquals(expectedSubmodel, retrievedSubmodelMetadata);
 	}
 	
 	@Test
-	public void getSubmodelByIdValueOnly() {
+	public void getSubmodelByIdValueOnly() throws JsonProcessingException {
 		SubmodelRepository repo = getSubmodelRepository();
 		Submodel submodel = buildDummySubmodelWithNoSmElement(ID);
 
@@ -289,16 +292,18 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		SubmodelValueOnly expectedSmValueOnly = new SubmodelValueOnly(submodelElements);
 		SubmodelValueOnly retrievedSmValueOnly = repo.getSubmodelByIdValueOnly(ID);
 
-		assertSameSubmodelValueOnly(expectedSmValueOnly,retrievedSmValueOnly);
+		assertSameSubmodelValueOnly(expectedSmValueOnly, retrievedSmValueOnly);
 	}
 	
 	private void assertSameSubmodelValueOnly(SubmodelValueOnly expectedSmValueOnly,
-			SubmodelValueOnly retrievedSmValueOnly) {		
+			SubmodelValueOnly retrievedSmValueOnly) throws JsonProcessingException {				
 		assertNotNull(retrievedSmValueOnly);
 		
-		Set<String> expectedSubmodelElementsIds = expectedSmValueOnly.getValuesOnlyMap().keySet();
-		Set<String> retrievedSubmodelElementsIds = retrievedSmValueOnly.getValuesOnlyMap().keySet();
-		assertEquals(expectedSubmodelElementsIds, retrievedSubmodelElementsIds);	
+		ObjectMapper mapper = new ObjectMapper();
+		String expectedSubmodelElements = mapper.writeValueAsString(expectedSmValueOnly);
+		String retrievedSubmodelElements = mapper.writeValueAsString(retrievedSmValueOnly);
+
+		assertEquals(expectedSubmodelElements, retrievedSubmodelElements);	
 	}
 	
 	@Override
