@@ -320,6 +320,7 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		repo.patchSubmodelElements(ID,submodelElementsPatch);
 		
 		Submodel patchedSubmodel = repo.getSubmodel(ID);
+		
 		assertEquals(submodel.getSubmodelElements().size(),patchedSubmodel.getSubmodelElements().size());
 		assertEquals(submodelElementsPatch, patchedSubmodel.getSubmodelElements());
 	}
