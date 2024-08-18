@@ -605,26 +605,6 @@ public abstract class SubmodelServiceSuite {
 
 		submodelService.deleteFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 	}
-	
-	@Test
-    public void patchSubmodelElementsByAddingNewElement() {
-        Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodel();
-        SubmodelService submodelService = getSubmodelService(operationalData);
-
-        Property newProperty = new DefaultProperty.Builder()
-            .idShort("newProperty")
-            .value("newValue")
-            .valueType(DataTypeDefXsd.STRING)
-            .build();
-
-        List<SubmodelElement> elementsToPatch = Arrays.asList(newProperty);
-
-        submodelService.patchSubmodelElements(elementsToPatch);
-
-        Property retrievedNewProperty = (Property) submodelService.getSubmodelElement("newProperty");
-        
-        assertEquals("newValue", retrievedNewProperty.getValue());
-    }
 
     @Test
     public void patchSubmodelElementsByUpdatingExistingElement() {
@@ -646,34 +626,20 @@ public abstract class SubmodelServiceSuite {
         assertEquals("updatedValue", retrievedUpdatedProperty.getValue());
     }
 
-    @Test
-    public void patchSubmodelElementsWithMultipleElements() {
+    @Test(expected=ElementDoesNotExistException.class)
+    public void patchSubmodelElementsByUpdatingNonExistingElement() {
         Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodel();
         SubmodelService submodelService = getSubmodelService(operationalData);
 
-        Property newProperty = new DefaultProperty.Builder()
-            .idShort("newProperty")
-            .value("newValue")
-            .valueType(DataTypeDefXsd.STRING)
-            .build();
-
         Property updatedProperty = new DefaultProperty.Builder()
-            .idShort(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT)
+            .idShort("Non_Existant_ID")
             .value("updatedValue")
             .valueType(DataTypeDefXsd.STRING)
             .build();
 
-        List<SubmodelElement> elementsToPatch = Arrays.asList(newProperty, updatedProperty);
+        List<SubmodelElement> elementsToPatch = Arrays.asList(updatedProperty);
 
-        submodelService.patchSubmodelElements(elementsToPatch);
-
-        Property retrievedNewProperty = (Property) submodelService.getSubmodelElement("newProperty");
-
-        assertEquals("newValue", retrievedNewProperty.getValue());
-
-        Property retrievedUpdatedProperty = (Property) submodelService.getSubmodelElement(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT);
-        
-        assertEquals("updatedValue", retrievedUpdatedProperty.getValue());
+        submodelService.patchSubmodelElements(elementsToPatch);        
     }
 
 	private void assertStoredFileContentEquals(SubmodelService submodelService, String fileIdShort, String content) throws IOException {
