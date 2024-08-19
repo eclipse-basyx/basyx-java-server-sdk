@@ -23,53 +23,58 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
+
+import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
- * Integration test for {@link RegistryIntegrationSubmodelRepository} feature
+ * Integration test for {@link RegistryIntegrationAasRepository} feature
  * 
  * @author danish
  */
-public class SubmodelRepositoryRegistryLinkTest extends SubmodelRepositoryRegistryLinkTestSuite {
-	
-	private static final String SUBMODEL_REPO_URL = "http://localhost:8081";
-	private static final String SUBMODEL_REGISTRY_BASE_URL = "http://localhost:8060";
+public class MultiUrlAasRepositoryRegistryLinkTest extends AasRepositoryRegistryLinkTestSuite {
+
+	private static final String[] AAS_REPO_URLS = new String []{"http://localhost:8081","https://aas-repo.example.org","http://aas-repo:8081"};
+	private static final String AAS_REGISTRY_BASE_URL = "http://localhost:8050";
 	private static ConfigurableApplicationContext appContext;
-	private static SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink;
+	private static AasRepositoryRegistryLink aasRepositoryRegistryLink;
 	
 	@BeforeClass
 	public static void setUp() throws FileNotFoundException, IOException {
-		appContext = new SpringApplication(DummySubmodelRepositoryIntegrationComponent.class).run(new String[] {});
+		SpringApplication application = new SpringApplication(DummyAasRepositoryIntegrationComponent.class);
+		application.setAdditionalProfiles("multiurl");
 		
-		submodelRepositoryRegistryLink = appContext.getBean(SubmodelRepositoryRegistryLink.class);
+		appContext = application.run(new String[] {});
+		
+		aasRepositoryRegistryLink = appContext.getBean(AasRepositoryRegistryLink.class);
 	}
 	
 	@AfterClass
 	public static void tearDown() {
 		appContext.close();
 	}
-	
+
 	@Override
-	protected String[] getSubmodelRepoBaseUrls() {
-		return new String[] { SUBMODEL_REPO_URL };
-	}
-	@Override
-	protected String getSubmodelRegistryUrl() {
-		return SUBMODEL_REGISTRY_BASE_URL;
-	}
-	@Override
-	protected SubmodelRegistryApi getSubmodelRegistryApi() {
-		
-		return submodelRepositoryRegistryLink.getRegistryApi();
+	protected String[] getAasRepoBaseUrls() {
+		return AAS_REPO_URLS;
 	}
 
+	@Override
+	protected String getAasRegistryUrl() {
+		return AAS_REGISTRY_BASE_URL;
+	}
+
+	@Override
+	protected RegistryAndDiscoveryInterfaceApi getAasRegistryApi() {
+		
+		return aasRepositoryRegistryLink.getRegistryApi();
+	}
 
 }

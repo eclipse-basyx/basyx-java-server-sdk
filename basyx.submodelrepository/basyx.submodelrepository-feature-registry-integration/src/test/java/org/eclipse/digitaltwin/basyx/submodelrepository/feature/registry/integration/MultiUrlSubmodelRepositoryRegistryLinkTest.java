@@ -38,17 +38,18 @@ import org.springframework.context.ConfigurableApplicationContext;
  * 
  * @author danish
  */
-public class SubmodelRepositoryRegistryLinkTest extends SubmodelRepositoryRegistryLinkTestSuite {
+public class MultiUrlSubmodelRepositoryRegistryLinkTest extends SubmodelRepositoryRegistryLinkTestSuite {
 	
-	private static final String SUBMODEL_REPO_URL = "http://localhost:8081";
+	private static final String[] SUBMODEL_REPO_URLS = new String[] {"http://localhost:8081", "https://sm-repo.example.org", "http://sm-repo:8081"};
 	private static final String SUBMODEL_REGISTRY_BASE_URL = "http://localhost:8060";
 	private static ConfigurableApplicationContext appContext;
 	private static SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink;
 	
 	@BeforeClass
 	public static void setUp() throws FileNotFoundException, IOException {
-		appContext = new SpringApplication(DummySubmodelRepositoryIntegrationComponent.class).run(new String[] {});
-		
+		SpringApplication application = new SpringApplication(DummySubmodelRepositoryIntegrationComponent.class);
+		application.setAdditionalProfiles("multiurl");		
+		appContext = application.run(new String[] {});		
 		submodelRepositoryRegistryLink = appContext.getBean(SubmodelRepositoryRegistryLink.class);
 	}
 	
@@ -59,7 +60,7 @@ public class SubmodelRepositoryRegistryLinkTest extends SubmodelRepositoryRegist
 	
 	@Override
 	protected String[] getSubmodelRepoBaseUrls() {
-		return new String[] { SUBMODEL_REPO_URL };
+		return SUBMODEL_REPO_URLS;
 	}
 	@Override
 	protected String getSubmodelRegistryUrl() {
