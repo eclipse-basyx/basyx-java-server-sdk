@@ -64,15 +64,6 @@ public abstract class SubmodelRepositoryRegistryLinkTestSuite {
 	protected abstract SubmodelRegistryApi getSubmodelRegistryApi();
 
 	private final SubmodelDescriptor DUMMY_DESCRIPTOR = DummySubmodelDescriptorFactory.createDummyDescriptor(DUMMY_SUBMODEL_ID, DUMMY_SUBMODEL_IDSHORT, getSubmodelRepoBaseUrls(), DummySubmodelDescriptorFactory.createSemanticId());
-
-	@Before
-	@After
-	public void cleanupRegistry() throws FileNotFoundException, IOException, ApiException {
-		try (CloseableHttpResponse response = BaSyxHttpTestUtils
-				.executeDeleteOnURL(getSubmodelRegistryUrl() + "/submodel-descriptors")) {
-			assertEquals(HttpStatus.NO_CONTENT.value(), response.getCode());
-		}
-	}
 	
 	@Test
 	public void createSubmodel() throws FileNotFoundException, IOException, ApiException {

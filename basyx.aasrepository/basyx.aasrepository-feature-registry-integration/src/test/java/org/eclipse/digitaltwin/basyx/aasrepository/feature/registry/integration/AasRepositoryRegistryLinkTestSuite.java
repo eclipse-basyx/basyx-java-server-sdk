@@ -67,15 +67,6 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 	private final AssetAdministrationShellDescriptor DUMMY_DESCRIPTOR = DummyAasDescriptorFactory
 			.createDummyDescriptor(DUMMY_AAS_ID, DUMMY_IDSHORT, DUMMY_GLOBAL_ASSETID, getAasRepoBaseUrls());
 
-	@Before
-	@After
-	public void cleanupRegistry() throws FileNotFoundException, IOException, ApiException {
-		try (CloseableHttpResponse response = BaSyxHttpTestUtils
-				.executeDeleteOnURL(getAasRegistryUrl() + "/shell-descriptors")) {
-			assertEquals(HttpStatus.NO_CONTENT.value(), response.getCode());
-		}
-	}
-
 	@Test
 	public void createAas() throws FileNotFoundException, IOException, ApiException {
 		String aasJsonContent = getAas1JSONString();
