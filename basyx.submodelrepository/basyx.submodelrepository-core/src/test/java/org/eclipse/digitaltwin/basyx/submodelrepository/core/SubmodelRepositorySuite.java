@@ -50,6 +50,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
@@ -266,20 +267,20 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		CursorResult<List<Submodel>> cursorResult = repo.getAllSubmodels(new PaginationInfo(1, ""));
 		assertEquals(1, cursorResult.getResult().size());
 	}
-	
+
 	@Test
 	public void getSubmodelByIdMetadata() throws JsonProcessingException {
 		SubmodelRepository repo = getSubmodelRepository();
 		Submodel expectedSubmodel = buildDummySubmodelWithNoSmElement(ID);
 		expectedSubmodel.setSubmodelElements(null);
 		repo.createSubmodel(expectedSubmodel);
-		
+
 		Submodel retrievedSubmodelMetadata = repo.getSubmodelByIdMetadata(ID);
 		retrievedSubmodelMetadata.setSubmodelElements(null);
 
 		assertEquals(expectedSubmodel, retrievedSubmodelMetadata);
 	}
-	
+
 	@Test
 	public void getSubmodelByIdValueOnly() throws JsonProcessingException {
 		SubmodelRepository repo = getSubmodelRepository();
@@ -292,36 +293,29 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		SubmodelValueOnly expectedSmValueOnly = new SubmodelValueOnly(submodelElements);
 		SubmodelValueOnly retrievedSmValueOnly = repo.getSubmodelByIdValueOnly(ID);
 
-		assertSameSubmodelValueOnly(expectedSmValueOnly, retrievedSmValueOnly);
-	}
-	
-	private void assertSameSubmodelValueOnly(SubmodelValueOnly expectedSmValueOnly,
-			SubmodelValueOnly retrievedSmValueOnly) throws JsonProcessingException {				
-		assertNotNull(retrievedSmValueOnly);
-		
 		ObjectMapper mapper = new ObjectMapper();
-		String expectedSubmodelElements = mapper.writeValueAsString(expectedSmValueOnly);
-		String retrievedSubmodelElements = mapper.writeValueAsString(retrievedSmValueOnly);
+		String expectedSmValueOnlyJSONContent = mapper.writeValueAsString(expectedSmValueOnly);
+		String retrievedSmValueOnlyJSONContent = mapper.writeValueAsString(retrievedSmValueOnly);
 
-		assertEquals(expectedSubmodelElements, retrievedSubmodelElements);	
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedSmValueOnlyJSONContent, retrievedSmValueOnlyJSONContent);
 	}
-	
+
 	@Override
 	@Test
 	public void patchSubmodelElements() {
 		SubmodelRepository repo = getSubmodelRepository();
 		Submodel submodel = buildDummySubmodelWithNoSmElement(ID);
-		
+
 		List<SubmodelElement> submodelElements = buildDummySubmodelElements();
 		submodel.setSubmodelElements(submodelElements);
 		repo.createSubmodel(submodel);
-		
-		List<SubmodelElement> submodelElementsPatch = buildDummySubmodelElementsToPatch();		
-		repo.patchSubmodelElements(ID,submodelElementsPatch);
-		
+
+		List<SubmodelElement> submodelElementsPatch = buildDummySubmodelElementsToPatch();
+		repo.patchSubmodelElements(ID, submodelElementsPatch);
+
 		Submodel patchedSubmodel = repo.getSubmodel(ID);
-		
-		assertEquals(submodel.getSubmodelElements().size(),patchedSubmodel.getSubmodelElements().size());
+
+		assertEquals(submodel.getSubmodelElements().size(), patchedSubmodel.getSubmodelElements().size());
 		assertEquals(submodelElementsPatch, patchedSubmodel.getSubmodelElements());
 	}
 

@@ -92,7 +92,7 @@ public abstract class SubmodelServiceSuite {
 	private static final String DUMMY_JSON_1 = "{\"name\":\"SampleJsonFile\",\"description\":\"A JSON file for verification\",\"version\":1}";
 	private static final String DUMMY_JSON_2 = "{\"name\":\"SampleJsonFile\",\"description\":\"A JSON file for verification\",\"version\":2}";
 	private static final String ID = "testId";
-	
+
 	@Test
 	public void getSubmodel() {
 		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
@@ -366,22 +366,22 @@ public abstract class SubmodelServiceSuite {
 	}
 
 	@Test
-    public void updateNonNestedSME() {
-        Submodel technicalSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
-        SubmodelService submodelService = getSubmodelService(technicalSubmodel);
-		
+	public void updateNonNestedSME() {
+		Submodel technicalSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
+		SubmodelService submodelService = getSubmodelService(technicalSubmodel);
+
 		String idShortPath = "dummyProperty";
 
-        Property property = createDummyProperty(idShortPath);
-        submodelService.createSubmodelElement(property);
-        
-        Property expectedUpdatedProperty = SubmodelServiceHelper.createDummyProperty(idShortPath, "arbitraryValue", DataTypeDefXsd.STRING);
-        submodelService.updateSubmodelElement(idShortPath, expectedUpdatedProperty);
+		Property property = createDummyProperty(idShortPath);
+		submodelService.createSubmodelElement(property);
 
-        Property actualUpdatedProperty = (Property) submodelService.getSubmodelElement(idShortPath);
-        assertEquals(expectedUpdatedProperty, actualUpdatedProperty);
-    }	
-	
+		Property expectedUpdatedProperty = SubmodelServiceHelper.createDummyProperty(idShortPath, "arbitraryValue", DataTypeDefXsd.STRING);
+		submodelService.updateSubmodelElement(idShortPath, expectedUpdatedProperty);
+
+		Property actualUpdatedProperty = (Property) submodelService.getSubmodelElement(idShortPath);
+		assertEquals(expectedUpdatedProperty, actualUpdatedProperty);
+	}
+
 	@Test
 	public void updateNonFileSMEWithFileSME() {
 		Submodel technicalSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
@@ -608,42 +608,43 @@ public abstract class SubmodelServiceSuite {
 
 		submodelService.deleteFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 	}
-	
+
 	@Test
 	public void patchSubmodelElements() {
-		
+
 		List<SubmodelElement> submodelElements = buildDummySubmodelElements();
 		Submodel submodel = buildDummySubmodelWithSmElement(ID, submodelElements);
-		SubmodelService submodelService = getSubmodelService(submodel);	
-		
-		List<SubmodelElement> submodelElementsPatch = buildDummySubmodelElementsToPatch();		
+		SubmodelService submodelService = getSubmodelService(submodel);
+
+		List<SubmodelElement> submodelElementsPatch = buildDummySubmodelElementsToPatch();
 		submodelService.patchSubmodelElements(submodelElementsPatch);
-		
+
 		Submodel patchedSubmodel = submodelService.getSubmodel();
-		
-		assertEquals(submodel.getSubmodelElements().size(),patchedSubmodel.getSubmodelElements().size());
+
+		assertEquals(submodel.getSubmodelElements().size(), patchedSubmodel.getSubmodelElements().size());
 		assertEquals(submodelElementsPatch, patchedSubmodel.getSubmodelElements());
 	}
-	
+
 	protected Submodel buildDummySubmodelWithSmElement(String id, List<SubmodelElement> submodelElements) {
 		return new DefaultSubmodel.Builder().id(id).submodelElements(submodelElements).build();
 	}
-	
+
 	protected Submodel buildDummySubmodelWithNoSmElement(String id) {
-		return new DefaultSubmodel.Builder().id(id).build();		
+		return new DefaultSubmodel.Builder().id(id).build();
 	}
-	
+
 	protected List<SubmodelElement> buildDummySubmodelElements() {
-	   	Property prop = new DefaultProperty.Builder().idShort("propId").value("propValue").build();
-	  	File file = new DefaultFile.Builder().idShort("fileId").contentType("contentTypeValue").value("fileValue").build();
-	   	
-	    return Arrays.asList(prop, file);
+		Property prop = new DefaultProperty.Builder().idShort("propId").value("propValue").build();
+		File file = new DefaultFile.Builder().idShort("fileId").contentType("contentTypeValue").value("fileValue").build();
+
+		return Arrays.asList(prop, file);
 	}
+
 	protected List<SubmodelElement> buildDummySubmodelElementsToPatch() {
-	   	Property prop = new DefaultProperty.Builder().idShort("propId").value("propNewValue").build();
-	  	File file = new DefaultFile.Builder().idShort("fileId").contentType("contentTypeNewValue").value("fileNewValue").build();
-	   	
-	    return Arrays.asList(prop, file);
+		Property prop = new DefaultProperty.Builder().idShort("propId").value("propNewValue").build();
+		File file = new DefaultFile.Builder().idShort("fileId").contentType("contentTypeNewValue").value("fileNewValue").build();
+
+		return Arrays.asList(prop, file);
 	}
 
 	private void assertStoredFileContentEquals(SubmodelService submodelService, String fileIdShort, String content) throws IOException {
@@ -710,7 +711,6 @@ public abstract class SubmodelServiceSuite {
 	private String getExtension(String filename) {
 		return FilenameUtils.getExtension(filename);
 	}
-
 
 	private void deleteFileIfExisted(SubmodelService service, String idShort) {
 		try {
