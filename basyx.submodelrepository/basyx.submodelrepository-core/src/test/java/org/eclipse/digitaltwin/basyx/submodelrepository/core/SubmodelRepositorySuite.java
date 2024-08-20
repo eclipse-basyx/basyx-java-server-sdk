@@ -297,7 +297,7 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		String expectedSmValueOnlyJSONContent = mapper.writeValueAsString(expectedSmValueOnly);
 		String retrievedSmValueOnlyJSONContent = mapper.writeValueAsString(retrievedSmValueOnly);
 
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedSmValueOnlyJSONContent, retrievedSmValueOnlyJSONContent);
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedSmValueOnlyJSONContent, retrievedSmValueOnlyJSONContent); 
 	}
 
 	@Override
