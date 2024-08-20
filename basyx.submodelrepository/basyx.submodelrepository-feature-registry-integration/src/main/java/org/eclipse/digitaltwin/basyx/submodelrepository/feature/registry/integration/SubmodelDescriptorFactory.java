@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integr
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AdministrativeInformation;
@@ -52,14 +53,14 @@ public class SubmodelDescriptorFactory {
 	private static final String SUBMODEL_REPOSITORY_PATH = "submodels";
 
 	private Submodel submodel;
-	private String submodelRepositoryURL;
+	private List<String> submodelRepositoryURLs;
 
 	private AttributeMapper attributeMapper;
 
-	public SubmodelDescriptorFactory(Submodel submodel, String submodelRepositoryBaseURL, AttributeMapper attributeMapper) {
-		super();
+	public SubmodelDescriptorFactory(Submodel submodel, List<String> submodelRepositoryBaseURLs,
+			AttributeMapper attributeMapper) {
 		this.submodel = submodel;
-		this.submodelRepositoryURL = createSubmodelRepositoryUrl(submodelRepositoryBaseURL);
+		this.submodelRepositoryURLs = createSubmodelRepositoryUrls(submodelRepositoryBaseURLs);
 		this.attributeMapper = attributeMapper;
 	}
 
@@ -148,16 +149,19 @@ public class SubmodelDescriptorFactory {
 
 	private void setEndpointItem(String shellId, SubmodelDescriptor descriptor) {
 
-		Endpoint endpoint = new Endpoint();
-		endpoint.setInterface(SUBMODEL_INTERFACE);
-		ProtocolInformation protocolInformation = createProtocolInformation(shellId);
-		endpoint.setProtocolInformation(protocolInformation);
+		for (String eachUrl : submodelRepositoryURLs) {
+			Endpoint endpoint = new Endpoint();
+			endpoint.setInterface(SUBMODEL_INTERFACE);
+			ProtocolInformation protocolInformation = createProtocolInformation(shellId, eachUrl);
+			endpoint.setProtocolInformation(protocolInformation);
 
-		descriptor.addEndpointsItem(endpoint);
+			descriptor.addEndpointsItem(endpoint);
+		}
 	}
 
-	private ProtocolInformation createProtocolInformation(String shellId) {
-		String href = String.format("%s/%s", submodelRepositoryURL, Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
+	private ProtocolInformation createProtocolInformation(String shellId, String url) {
+		String href = String.format("%s/%s", url,
+				Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
 
 		ProtocolInformation protocolInformation = new ProtocolInformation();
 		protocolInformation.endpointProtocol(getProtocol(href));
@@ -180,6 +184,14 @@ public class SubmodelDescriptorFactory {
 		} catch (MalformedURLException e) {
 			throw new RuntimeException();
 		}
+	}
+
+	private List<String> createSubmodelRepositoryUrls(List<String> submodelRepositoryBaseURLs) {
+		List<String> toReturn = new ArrayList<>(submodelRepositoryBaseURLs.size());
+		for (String eachUrl : submodelRepositoryBaseURLs) {
+			toReturn.add(createSubmodelRepositoryUrl(eachUrl));
+		}
+		return toReturn;
 	}
 
 	private String createSubmodelRepositoryUrl(String submodelRepositoryBaseURL) {

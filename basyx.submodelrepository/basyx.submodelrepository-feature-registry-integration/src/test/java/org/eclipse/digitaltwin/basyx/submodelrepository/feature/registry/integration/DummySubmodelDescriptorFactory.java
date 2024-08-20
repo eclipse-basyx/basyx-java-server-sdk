@@ -48,14 +48,18 @@ public class DummySubmodelDescriptorFactory {
 	private static final String SUBMODEL_REPOSITORY_PATH = "/submodels";
 
 	public static SubmodelDescriptor createDummyDescriptor(String smId, String idShort, String smRepoBaseUrl, Reference semanticId) {
-
+		return createDummyDescriptor(smId, idShort, new String[] {smRepoBaseUrl}, semanticId);
+	}
+	
+	public static SubmodelDescriptor createDummyDescriptor(String smId, String idShort, String[] smRepoBaseUrls, Reference semanticId) {
 		SubmodelDescriptor descriptor = new SubmodelDescriptor();
 
 		descriptor.setId(smId);
 		descriptor.setIdShort(idShort);
 		descriptor.setSemanticId(semanticId);
-		descriptor.addEndpointsItem(createEndpointItem(smId, smRepoBaseUrl));
-
+		for (String eachUrl : smRepoBaseUrls) {
+			descriptor.addEndpointsItem(createEndpointItem(smId, eachUrl));
+		}
 		return descriptor;
 	}
 

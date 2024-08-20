@@ -43,7 +43,7 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 public class DummyAasDescriptorFactory {
 	private static final String AAS_REPOSITORY_PATH = "/shells";
 
-	public static AssetAdministrationShellDescriptor createDummyDescriptor(String aasId, String idShort, String globalAssetId, String aasRepoBaseUrl) {
+	public static AssetAdministrationShellDescriptor createDummyDescriptor(String aasId, String idShort, String globalAssetId, String... aasRepoBaseUrls) {
 
 		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
 
@@ -51,8 +51,9 @@ public class DummyAasDescriptorFactory {
 		descriptor.setIdShort(idShort);
 		descriptor.setAssetKind(AssetKind.INSTANCE);
 		descriptor.setGlobalAssetId(globalAssetId);
-		descriptor.addEndpointsItem(createEndpointItem(aasId, aasRepoBaseUrl));
-
+		for (String eachUrl : aasRepoBaseUrls) {
+			descriptor.addEndpointsItem(createEndpointItem(aasId, eachUrl));
+		}
 		return descriptor;
 	}
 

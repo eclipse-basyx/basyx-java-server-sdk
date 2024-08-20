@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
 
+import java.util.List;
+
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 
@@ -36,20 +38,20 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 public class SubmodelRepositoryRegistryLink {
 	
 	private SubmodelRegistryApi registryApi;
-	private String submodelRepositoryBaseURL;
+	private List<String> submodelRepositoryBaseURLs;
 	
-	public SubmodelRepositoryRegistryLink(SubmodelRegistryApi registryApi, String submodelRepositoryBaseURL) {
+	public SubmodelRepositoryRegistryLink(SubmodelRegistryApi registryApi, List<String> submodelRepositoryBaseURLs) {
 		super();
 		this.registryApi = registryApi;
-		this.submodelRepositoryBaseURL = submodelRepositoryBaseURL;
+		this.submodelRepositoryBaseURLs = submodelRepositoryBaseURLs;
 	}
 
 	public SubmodelRegistryApi getRegistryApi() {
 		return registryApi;
 	}
 
-	public String getSubmodelRepositoryBaseURL() {
-		return submodelRepositoryBaseURL;
+	public List<String> getSubmodelRepositoryBaseURLs() {
+		return submodelRepositoryBaseURLs;
 	}
 
 }
