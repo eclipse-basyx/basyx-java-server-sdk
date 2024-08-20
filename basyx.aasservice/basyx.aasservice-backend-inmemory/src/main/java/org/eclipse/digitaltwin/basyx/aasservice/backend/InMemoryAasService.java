@@ -159,7 +159,12 @@ public class InMemoryAasService implements AasService {
 
 	@Override
 	public void setThumbnail(String fileName, String contentType, InputStream inputStream) {
-		String filePath = fileRepository.save(new FileMetadata(fileName, contentType, inputStream));
+		FileMetadata thumbnailMetadata = new FileMetadata(fileName, contentType, inputStream);
+
+		if(fileRepository.exists(thumbnailMetadata.getFileName()))
+			fileRepository.delete(thumbnailMetadata.getFileName());
+		
+		String filePath = fileRepository.save(thumbnailMetadata);
 
 		setAssetInformation(configureAssetInformationThumbnail(getAssetInformation(), contentType, filePath));
 	}
