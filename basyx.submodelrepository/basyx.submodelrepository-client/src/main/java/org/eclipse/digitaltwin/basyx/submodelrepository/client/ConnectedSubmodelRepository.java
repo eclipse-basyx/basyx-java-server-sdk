@@ -154,6 +154,20 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 		}
 
 	}
+	
+	@Override
+	public CursorResult<List<Submodel>> getSubmodelsBySemanticId(String semanticId, PaginationInfo pInfo) {
+	    try {
+	        String encodedCursor = pInfo.getCursor() == null ? null : Base64UrlEncoder.encode(pInfo.getCursor());
+	        return repoApi.getAllSubmodels(semanticId, null, pInfo.getLimit(), encodedCursor, null, null);
+	    } catch (ApiException e) {
+	        if (e.getCode() == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+	            return new CursorResult<>("", new ArrayList<>());
+	        } else {
+	            throw e;
+	        }
+	    }
+	}
 
 	@Override
 	public void updateSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
