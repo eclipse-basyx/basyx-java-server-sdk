@@ -36,6 +36,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.client.internal.AssetAdministrationShellServiceApi;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
@@ -166,6 +167,10 @@ public class ConnectedAasService implements AasService {
 	private RuntimeException mapAasAccess(ApiException e) {
 		if (e.getCode() == HttpStatus.NOT_FOUND.value()) {
 			return new ElementDoesNotExistException();
+		}
+
+		if(e.getCode() == HttpStatus.CONFLICT.value()) {
+			return new CollidingSubmodelReferenceException();
 		}
 
 		return e;

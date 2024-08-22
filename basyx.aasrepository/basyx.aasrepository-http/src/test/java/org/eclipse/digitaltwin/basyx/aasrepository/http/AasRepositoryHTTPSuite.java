@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -207,6 +207,17 @@ public abstract class AasRepositoryHTTPSuite {
 	}
 
 	@Test
+	public void duplicateSubmodelReference() throws FileNotFoundException, IOException, ParseException {
+		createDummyAasOnServer(getAas1JSONString());
+
+		String json = getSingleSubmodelReference();
+
+		addSubmodelReferenceToDummyAas(json);
+		CloseableHttpResponse response = addSubmodelReferenceToDummyAas(json);
+		assertEquals(response.getCode(), HttpStatus.CONFLICT.value());
+	}
+
+	@Test
 	public void removeSubmodelReference() throws FileNotFoundException, IOException, ParseException {
 		createDummyAasOnServer(getAas1JSONString());
 
@@ -408,7 +419,7 @@ public abstract class AasRepositoryHTTPSuite {
 	}
 
 	private String getSpecificSubmodelReferenceUrl() {
-		Base64UrlEncodedIdentifier identifier = new Base64UrlEncodedIdentifier("http://i40.customer.com/type/1/1/testSubmodel");
+		Base64UrlEncodedIdentifier identifier = new Base64UrlEncodedIdentifier("http://i40.customer.com/type/1/1/testSubmodelNew");
 		return getSpecificAasSubmodelRefAccessURL(dummyAasId) + "/" + identifier.getEncodedIdentifier();
 	}
 
@@ -420,8 +431,8 @@ public abstract class AasRepositoryHTTPSuite {
 		return getSpecificAasAccessURL(aasID) + "/asset-information";
 	}
 
-	private void addSubmodelReferenceToDummyAas(String json) throws FileNotFoundException, IOException {
-		BaSyxHttpTestUtils.executePostOnURL(getSpecificAasSubmodelRefAccessURL(dummyAasId), json);
+	private CloseableHttpResponse addSubmodelReferenceToDummyAas(String json) throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.executePostOnURL(getSpecificAasSubmodelRefAccessURL(dummyAasId), json);
 	}
 
 	protected String getSpecificAasAccessURL(String aasId) {
@@ -473,7 +484,7 @@ public abstract class AasRepositoryHTTPSuite {
 	}
 
 	private String getSingleSubmodelReference() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelReference.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodelReference_1.json");
 	}
 	
 	private String getSMReferenceRemovalJson() throws FileNotFoundException, IOException {
