@@ -272,14 +272,28 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 	@Override
 	public ResponseEntity<OperationResult> invokeOperationSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid OperationRequest body, @Valid Boolean async) {
-		OperationVariable[] result = repository.invokeOperation(submodelIdentifier.getIdentifier(), idShortPath, body.getInputArguments().toArray(new OperationVariable[0]));
+		List<OperationVariable> inVars = new ArrayList<>();
+		inVars.addAll(body.getInputArguments());
+		inVars.addAll(body.getInoutputArguments());
 
-		return new ResponseEntity<OperationResult>(createOperationResult(result), HttpStatus.OK);
+		List<OperationVariable> result = Arrays.asList(repository.invokeOperation(submodelIdentifier.getIdentifier(), idShortPath, inVars.toArray(new OperationVariable[0])));
 
+		List<OperationVariable> outVars = new ArrayList<>(result);
+		List<OperationVariable> inoutputVars = new ArrayList<>();
+
+		if (!body.getInoutputArguments().isEmpty()) {
+			List<String> inoutputVarsIdShorts = body.getInoutputArguments().stream().map(OperationVariable::getValue).map(SubmodelElement::getIdShort).toList();
+
+			inoutputVars = result.stream().filter(opVar -> inoutputVarsIdShorts.contains(opVar.getValue().getIdShort())).toList();
+
+			outVars.removeAll(inoutputVars);
+		}
+
+		return ResponseEntity.ok(createOperationResult(outVars, inoutputVars));
 	}
 
-	private OperationResult createOperationResult(OperationVariable[] result) {
-		return new DefaultOperationResult.Builder().outputArguments(Arrays.asList(result)).build();
+	private OperationResult createOperationResult(List<OperationVariable> outputVars, List<OperationVariable> inoutputVars) {
+		return new DefaultOperationResult.Builder().outputArguments(outputVars).inoutputArguments(inoutputVars).build();
 	}
 
 	private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
