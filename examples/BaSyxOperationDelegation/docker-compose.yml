@@ -1,7 +1,7 @@
 version: '3'
 services:
   aas-env:
-    image: eclipsebasyx/aas-environment:2.0.0-milestone-02
+    image: eclipsebasyx/aas-environment:2.0.0-milestone-03
     container_name: aas-env
     volumes:
       - ./aas:/application/aas
@@ -15,7 +15,7 @@ services:
       sm-registry:
         condition: service_healthy
   aas-registry:
-    image: eclipsebasyx/aas-registry-log-mem:2.0.0-milestone-02
+    image: eclipsebasyx/aas-registry-log-mem:2.0.0-milestone-03
     container_name: aas-registry
     ports:
       - '8082:8080'
@@ -23,7 +23,7 @@ services:
       - ./basyx/aas-registry.yml:/workspace/config/application.yml
     restart: always
   sm-registry:
-    image: eclipsebasyx/submodel-registry-log-mem:2.0.0-milestone-02
+    image: eclipsebasyx/submodel-registry-log-mem:2.0.0-milestone-03
     container_name: sm-registry
     ports:
       - '8083:8080'
@@ -31,7 +31,7 @@ services:
       - ./basyx/sm-registry.yml:/workspace/config/application.yml
     restart: always
   aas-web-ui:
-    image: eclipsebasyx/aas-gui:v2-240515
+    image: eclipsebasyx/aas-gui:v2-240801
     container_name: aas-ui
     ports:
       - '3000:3000'
