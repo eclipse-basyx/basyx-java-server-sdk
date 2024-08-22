@@ -25,7 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.feature.mqtt;
 
-
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;

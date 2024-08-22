@@ -37,16 +37,17 @@ import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Encoder;
  */
 public class MqttSubmodelServiceTopicFactory extends AbstractMqttTopicFactory {
 	
-	private static final String SUBMODELSERVIC = "sm-service";
+	private static final String SUBMODEL_SERVICE = "sm-service";
 	private static final String SUBMODELS = "submodels";
 	private static final String CREATED = "created";
 	private static final String UPDATED = "updated";
 	private static final String DELETED = "deleted";
-	private static final String SUBMODELELEMENTS = "submodelElements";
+	private static final String SUBMODEL_ELEMENTS = "submodelElements";
 
 	/**
-	 * @param encoder
 	 * Used for encoding the idShort
+	 * 
+	 * @param encoder
 	 */
 	public MqttSubmodelServiceTopicFactory(Encoder encoder) {
 		super(encoder);
@@ -58,7 +59,7 @@ public class MqttSubmodelServiceTopicFactory extends AbstractMqttTopicFactory {
 	 * @param idShort
 	 */
 	public String createCreateSubmodelElementTopic(String idShort) {
-		return new StringJoiner("/", "", "").add(SUBMODELSERVIC).add(SUBMODELS).add(SUBMODELELEMENTS).add(idShort).add(CREATED).toString();
+		return new StringJoiner("/", "", "").add(SUBMODEL_SERVICE).add(SUBMODELS).add(SUBMODEL_ELEMENTS).add(idShort).add(CREATED).toString();
 	}
 
 	/**
@@ -68,7 +69,7 @@ public class MqttSubmodelServiceTopicFactory extends AbstractMqttTopicFactory {
 	 */
 	public String createUpdateSubmodelElementTopic(String idShort) {
 		
-		return new StringJoiner("/", "", "").add(SUBMODELSERVIC).add(SUBMODELS).add(SUBMODELELEMENTS).add(idShort).add(UPDATED).toString();
+		return new StringJoiner("/", "", "").add(SUBMODEL_SERVICE).add(SUBMODELS).add(SUBMODEL_ELEMENTS).add(idShort).add(UPDATED).toString();
 	}
 
 	/**
@@ -77,6 +78,6 @@ public class MqttSubmodelServiceTopicFactory extends AbstractMqttTopicFactory {
 	 * @param idShort
 	 */
 	public String createDeleteSubmodelElementTopic(String idShort) {
-		return new StringJoiner("/", "", "").add(SUBMODELSERVIC).add(SUBMODELS).add(SUBMODELELEMENTS).add(idShort).add(DELETED).toString();
+		return new StringJoiner("/", "", "").add(SUBMODEL_SERVICE).add(SUBMODELS).add(SUBMODEL_ELEMENTS).add(idShort).add(DELETED).toString();
 	}
 }
