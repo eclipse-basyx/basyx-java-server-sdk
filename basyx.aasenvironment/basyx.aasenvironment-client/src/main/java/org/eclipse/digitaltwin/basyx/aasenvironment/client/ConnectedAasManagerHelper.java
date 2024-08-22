@@ -28,10 +28,10 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
 import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AasDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.aasregistry.main.client.factory.AasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.SubmodelDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.factory.SubmodelDescriptorFactory;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;

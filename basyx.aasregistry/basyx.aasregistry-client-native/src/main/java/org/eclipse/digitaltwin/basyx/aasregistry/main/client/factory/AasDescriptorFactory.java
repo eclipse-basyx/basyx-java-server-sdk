@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper;
+package org.eclipse.digitaltwin.basyx.aasregistry.main.client.factory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -39,6 +39,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
+import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 
 /**
@@ -55,9 +56,8 @@ public class AasDescriptorFactory {
 	private List<String> aasRepositoryURLs;
 
 	private AttributeMapper attributeMapper;
-	
-	public AasDescriptorFactory(AssetAdministrationShell shell, List<String> aasRepositoryBaseURLs,
-			AttributeMapper attributeMapper) {
+
+	public AasDescriptorFactory(AssetAdministrationShell shell, List<String> aasRepositoryBaseURLs, AttributeMapper attributeMapper) {
 		this.shell = shell;
 		this.aasRepositoryURLs = createAasRepositoryUrls(aasRepositoryBaseURLs);
 		this.attributeMapper = attributeMapper;
@@ -124,8 +124,7 @@ public class AasDescriptorFactory {
 		descriptor.setExtensions(attributeMapper.mapExtensions(extensions));
 	}
 
-	private void setAdministration(AdministrativeInformation administration,
-			AssetAdministrationShellDescriptor descriptor) {
+	private void setAdministration(AdministrativeInformation administration, AssetAdministrationShellDescriptor descriptor) {
 
 		if (administration == null)
 			return;

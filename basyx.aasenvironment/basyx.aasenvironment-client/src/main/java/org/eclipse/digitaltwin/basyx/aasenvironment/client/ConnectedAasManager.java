@@ -43,12 +43,12 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.EndpointRes
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.SubmodelDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
-import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AasDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.aasregistry.main.client.factory.AasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository;
 import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
 import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.SubmodelDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.factory.SubmodelDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
