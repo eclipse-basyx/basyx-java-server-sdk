@@ -23,24 +23,25 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper;
+package org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper;
 
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AdministrativeInformation;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringNameType;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType;
 import org.eclipse.digitaltwin.basyx.http.CustomTypeCloneFactory;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.AdministrativeInformation;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Extension;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringNameType;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringTextType;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Maps the models defined in AAS4J to the SubmodelRegistry client models
+ * Maps the models defined in AAS4J to the AasRegistry client models
  * 
  * @author danish
  */
@@ -55,7 +56,8 @@ public class AttributeMapper {
 	}
 
 	/**
-	 * Maps {@link Submodel#getDescription()} from AAS4J to SubmodelRegistry client
+	 * Maps {@link AssetAdministrationShell#getDescription()} from AAS4J to
+	 * AasRegistry client
 	 * 
 	 * @param descriptions
 	 * @return the mapped descriptions
@@ -72,7 +74,8 @@ public class AttributeMapper {
 	}
 
 	/**
-	 * Maps {@link Submodel#getDisplayName()} from AAS4J to SubmodelRegistry client
+	 * Maps {@link AssetAdministrationShell#getDisplayName()} from AAS4J to
+	 * AasRegistry client
 	 * 
 	 * @param displayNames
 	 * @return the mapped displayNames
@@ -89,7 +92,8 @@ public class AttributeMapper {
 	}
 
 	/**
-	 * Maps {@link Submodel#getExtensions()} from AAS4J to SubmodelRegistry client
+	 * Maps {@link AssetAdministrationShell#getExtensions()} from AAS4J to
+	 * AasRegistry client
 	 * 
 	 * @param extensions
 	 * @return the mapped extensions
@@ -106,8 +110,8 @@ public class AttributeMapper {
 	}
 
 	/**
-	 * Maps {@link Submodel#getAdministration()} from AAS4J to SubmodelRegistry
-	 * client
+	 * Maps {@link AssetAdministrationShell#getAdministration()} from AAS4J to
+	 * AasRegistry client
 	 * 
 	 * @param administrativeInformation
 	 * @return the mapped administrativeInformation
@@ -124,38 +128,14 @@ public class AttributeMapper {
 	}
 
 	/**
-	 * Maps {@link Submodel#getSemanticId()} from AAS4J to SubmodelRegistry client
+	 * Maps {@link AssetInformation#getAssetKind()} from AAS4J to AasRegistry client
 	 * 
-	 * @param semanticId
-	 * @return the mapped semanticId
+	 * @param assetKind
+	 * @return the mapped assetKind
 	 */
-	public Reference mapSemanticId(org.eclipse.digitaltwin.aas4j.v3.model.Reference semanticId) {
-		CustomTypeCloneFactory<org.eclipse.digitaltwin.aas4j.v3.model.Reference, Reference> cloneFactory = new CustomTypeCloneFactory<>(Reference.class, mapper);
+	public AssetKind mapAssetKind(org.eclipse.digitaltwin.aas4j.v3.model.AssetKind assetKind) {
 
-		Reference mappedSemanticId = cloneFactory.create(semanticId);
-
-		if (mappedSemanticId == null)
-			logger.error("SemanticId could not be mapped due to a failure.");
-
-		return mappedSemanticId;
-	}
-
-	/**
-	 * Maps {@link Submodel#getSupplementalSemanticIds()} from AAS4J to
-	 * SubmodelRegistry client
-	 * 
-	 * @param supplementalSemanticIds
-	 * @return the mapped supplementalSemanticIds
-	 */
-	public List<Reference> mapSupplementalSemanticId(List<org.eclipse.digitaltwin.aas4j.v3.model.Reference> supplementalSemanticIds) {
-		CustomTypeCloneFactory<org.eclipse.digitaltwin.aas4j.v3.model.Reference, Reference> cloneFactory = new CustomTypeCloneFactory<>(Reference.class, mapper);
-
-		List<Reference> mappedSupplementalSemanticId = cloneFactory.create(supplementalSemanticIds);
-
-		if (mappedSupplementalSemanticId == null)
-			logger.error("SupplementalSemanticId could not be mapped due to a failure.");
-
-		return mappedSupplementalSemanticId;
+		return AssetKind.valueOf(AssetKind.class, assetKind.name());
 	}
 
 }

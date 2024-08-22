@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
+package org.eclipse.digitaltwin.basyx.submodelregistry.client.factory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -37,10 +37,10 @@ import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper;
 
 /**
  * Factory for creating the {@link SubmodelDescriptor}
@@ -57,8 +57,7 @@ public class SubmodelDescriptorFactory {
 
 	private AttributeMapper attributeMapper;
 
-	public SubmodelDescriptorFactory(Submodel submodel, List<String> submodelRepositoryBaseURLs,
-			AttributeMapper attributeMapper) {
+	public SubmodelDescriptorFactory(Submodel submodel, List<String> submodelRepositoryBaseURLs, AttributeMapper attributeMapper) {
 		this.submodel = submodel;
 		this.submodelRepositoryURLs = createSubmodelRepositoryUrls(submodelRepositoryBaseURLs);
 		this.attributeMapper = attributeMapper;
@@ -160,8 +159,7 @@ public class SubmodelDescriptorFactory {
 	}
 
 	private ProtocolInformation createProtocolInformation(String shellId, String url) {
-		String href = String.format("%s/%s", url,
-				Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
+		String href = String.format("%s/%s", url, Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
 
 		ProtocolInformation protocolInformation = new ProtocolInformation();
 		protocolInformation.endpointProtocol(getProtocol(href));

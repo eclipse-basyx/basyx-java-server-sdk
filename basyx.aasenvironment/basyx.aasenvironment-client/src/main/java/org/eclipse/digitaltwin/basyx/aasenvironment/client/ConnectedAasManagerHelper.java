@@ -28,10 +28,10 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
 import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AasDescriptorFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
+import org.eclipse.digitaltwin.basyx.aasregistry.main.client.factory.AasDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.SubmodelDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.factory.SubmodelDescriptorFactory;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -64,7 +64,7 @@ class ConnectedAasManagerHelper {
 	}
 
 	static SubmodelDescriptorFactory buildSmDescriptorFactory(String... aasRepositoryBaseUrls) {
-		org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper attributeMapperSm = new org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper(
+		org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper attributeMapperSm = new org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper(
 				objectMapper);
 		return new SubmodelDescriptorFactory(null, List.of(aasRepositoryBaseUrls), attributeMapperSm);
 	}

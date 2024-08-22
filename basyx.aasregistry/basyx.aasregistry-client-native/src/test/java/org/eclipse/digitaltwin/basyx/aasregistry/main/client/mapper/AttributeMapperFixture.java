@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
+package org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -48,11 +48,11 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Key;
 
 /**
- * A helper class for testing RegistryIntegration feature
+ * A fixture for TestAttributeMapper
  * 
- * @author danish
+ * @author danish, mateusmolina
  */
-public class RegistryIntegrationTestHelper {
+public class AttributeMapperFixture {
 
 	// LangStringTextType AAS4J
 	private static final LangStringTextType AAS4J_LANG_STRING_TEXT_TYPE_1 = new DefaultLangStringTextType.Builder().language("de").text("Ein Beispiel").build();
@@ -89,13 +89,14 @@ public class RegistryIntegrationTestHelper {
 			.keys(Arrays.asList(new Key().type(org.eclipse.digitaltwin.basyx.aasregistry.client.model.KeyTypes.BLOB).value("BlobValue"))).type(org.eclipse.digitaltwin.basyx.aasregistry.client.model.ReferenceTypes.EXTERNALREFERENCE);
 	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.EmbeddedDataSpecification AAS_REG_EMBEDDED_DATA_SPECIFICATION = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.EmbeddedDataSpecification()
 			.dataSpecification(AAS_REG_DATASPECIFICATION);
-	
+
 	private static final String VERSION = "1.0.0";
 	private static final String REVISION = "3";
 	private static final String TEMPLATE_ID = "ID2.0";
 
 	// Extension AAS4J
-	private static final Extension AAS4J_EXTENSION = new DefaultExtension.Builder().semanticId(AAS4J_DATASPECIFICATION).name("extension").valueType(org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd.STRING).value("extensionValue").build();
+	private static final Extension AAS4J_EXTENSION = new DefaultExtension.Builder().semanticId(AAS4J_DATASPECIFICATION).name("extension").valueType(org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd.STRING).value("extensionValue")
+			.build();
 
 	// Extension AasRegistry
 	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension AAS_REG_EXTENSION = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension().semanticId(AAS_REG_DATASPECIFICATION).name("extension")
