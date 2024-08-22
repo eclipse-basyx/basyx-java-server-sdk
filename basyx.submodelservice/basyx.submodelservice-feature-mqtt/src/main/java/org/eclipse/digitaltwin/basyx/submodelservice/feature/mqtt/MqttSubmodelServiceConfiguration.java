@@ -38,7 +38,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * MQTT configuration to allow for the automatic enable of the feature using the config file.
+ * MQTT configuration to allow for the automatic enable of the feature using the
+ * config file.
  * 
  * @author rana
  */

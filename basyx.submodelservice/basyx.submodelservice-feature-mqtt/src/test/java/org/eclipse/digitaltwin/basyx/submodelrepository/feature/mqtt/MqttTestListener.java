@@ -22,6 +22,7 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
 import java.nio.charset.StandardCharsets;

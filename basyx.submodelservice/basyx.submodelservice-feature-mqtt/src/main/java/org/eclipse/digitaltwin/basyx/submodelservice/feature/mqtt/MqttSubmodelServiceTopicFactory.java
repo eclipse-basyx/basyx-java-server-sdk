@@ -36,7 +36,7 @@ import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Encoder;
  * @author rana
  */
 public class MqttSubmodelServiceTopicFactory extends AbstractMqttTopicFactory {
-	
+
 	private static final String SUBMODEL_SERVICE = "sm-service";
 	private static final String SUBMODELS = "submodels";
 	private static final String CREATED = "created";
@@ -52,7 +52,7 @@ public class MqttSubmodelServiceTopicFactory extends AbstractMqttTopicFactory {
 	public MqttSubmodelServiceTopicFactory(Encoder encoder) {
 		super(encoder);
 	}
-	
+
 	/**
 	 * Creates the hierarchical topic for the create event of submodelElements
 	 * 
@@ -68,7 +68,7 @@ public class MqttSubmodelServiceTopicFactory extends AbstractMqttTopicFactory {
 	 * @param idShort
 	 */
 	public String createUpdateSubmodelElementTopic(String idShort) {
-		
+
 		return new StringJoiner("/", "", "").add(SUBMODEL_SERVICE).add(SUBMODELS).add(SUBMODEL_ELEMENTS).add(idShort).add(UPDATED).toString();
 	}
 

@@ -65,10 +65,11 @@ import io.moquette.broker.config.ResourceLoaderConfig;
 
 /**
  * Tests events for submodelElements in SM Service
+ * 
  * @author rana
  */
 public class TestMqttSubmodelObserver {
-	
+
 	private static Server mqttBroker;
 	private static MqttClient mqttClient;
 	private static MqttTestListener listener;
@@ -94,7 +95,7 @@ public class TestMqttSubmodelObserver {
 
 	@Test
 	public void createSubmodelElementEvent() throws DeserializationException {
-		
+
 		SubmodelElement submodelElement = createSubmodelElementDummy("createSubmodelElementEventId");
 		submodelService.createSubmodelElement(submodelElement);
 
@@ -104,17 +105,17 @@ public class TestMqttSubmodelObserver {
 
 	@Test
 	public void updateSubmodelElementEvent() throws DeserializationException {
-		
+
 		SubmodelElement submodelElement = createSubmodelElementDummy("updateSubmodelElementEventId");
 		submodelService.createSubmodelElement(submodelElement);
-		
+
 		SubmodelElementValue value = new PropertyValue("updatedValue");
 		submodelService.setSubmodelElementValue(submodelElement.getIdShort(), value);
-	
+
 		assertEquals(topicFactory.createUpdateSubmodelElementTopic(submodelElement.getIdShort()), listener.lastTopic);
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
 	}
-	
+
 	@Test
 	public void deleteSubmodelElementEvent() throws DeserializationException {
 
@@ -125,31 +126,30 @@ public class TestMqttSubmodelObserver {
 		assertEquals(topicFactory.createDeleteSubmodelElementTopic(submodelElement.getIdShort()), listener.lastTopic);
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
 	}
-	
+
 	@Test
 	public void createSubmodelElementWithoutValueEvent() throws DeserializationException {
-		
+
 		SubmodelElement submodelElement = createSubmodelElementDummy("noValueSubmodelElementEventId");
 		List<Qualifier> qualifierList = createNoValueQualifierList();
 		submodelElement.setQualifiers(qualifierList);
 		submodelService.createSubmodelElement(submodelElement);
-		
+
 		assertEquals(topicFactory.createCreateSubmodelElementTopic(submodelElement.getIdShort()), listener.lastTopic);
 		assertNotEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
 
 		((Property) submodelElement).setValue(null);
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
 	}
-	
+
 	private List<Qualifier> createNoValueQualifierList() {
-		
+
 		Qualifier emptyValueQualifier = new DefaultQualifier.Builder().type(SubmodelElementSerializer.EMPTYVALUEUPDATE_TYPE).value("true").build();
 		return Arrays.asList(emptyValueQualifier);
 	}
 
-
 	private static SubmodelElement deserializeSubmodelElementPayload(String payload) throws DeserializationException {
-		
+
 		return new JsonDeserializer().read(payload, SubmodelElement.class);
 	}
 
@@ -158,13 +158,13 @@ public class TestMqttSubmodelObserver {
 	}
 
 	private static SubmodelService createMqttSubmodelService(MqttClient client) {
-		
+
 		SubmodelServiceFactory repoFactory = new InMemorySubmodelServiceFactory(new InMemoryFileRepository());
 		return new MqttSubmodelServiceFactory(repoFactory, client, new MqttSubmodelServiceTopicFactory(new Base64URLEncoder())).create(DummySubmodelFactory.createSubmodelWithAllSubmodelElements());
 	}
-	
+
 	private static MqttTestListener configureInterceptListener(Server broker) {
-		
+
 		MqttTestListener testListener = new MqttTestListener();
 		broker.addInterceptHandler(testListener);
 
@@ -172,14 +172,14 @@ public class TestMqttSubmodelObserver {
 	}
 
 	private static MqttClient createAndConnectClient() throws MqttException, MqttSecurityException {
-		
+
 		MqttClient client = new MqttClient("tcp://localhost:1884", "testClient");
 		client.connect();
 		return client;
 	}
 
 	private static Server startBroker() throws IOException {
-		
+
 		Server broker = new Server();
 		IResourceLoader classpathLoader = new ClasspathResourceLoader();
 
@@ -189,4 +189,3 @@ public class TestMqttSubmodelObserver {
 		return broker;
 	}
 }
-

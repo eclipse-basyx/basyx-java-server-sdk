@@ -52,8 +52,8 @@ import org.slf4j.LoggerFactory;
  * 
  * @author rana
  */
-public class MqttSubmodelService implements SubmodelService{
-	
+public class MqttSubmodelService implements SubmodelService {
+
 	private static Logger logger = LoggerFactory.getLogger(MqttSubmodelService.class);
 	private MqttSubmodelServiceTopicFactory topicFactory;
 	private SubmodelService decorated;
@@ -64,7 +64,7 @@ public class MqttSubmodelService implements SubmodelService{
 		this.decorated = decorated;
 		this.mqttClient = mqttClient;
 	}
-	
+
 	@Override
 	public Submodel getSubmodel() {
 		return decorated.getSubmodel();
@@ -74,24 +74,24 @@ public class MqttSubmodelService implements SubmodelService{
 	public CursorResult<List<SubmodelElement>> getSubmodelElements(PaginationInfo pInfo) {
 		return decorated.getSubmodelElements(pInfo);
 	}
-	
+
 	@Override
 	public SubmodelElement getSubmodelElement(String idShortPath) throws ElementDoesNotExistException {
 		return decorated.getSubmodelElement(idShortPath);
 	}
-	
+
 	@Override
 	public SubmodelElementValue getSubmodelElementValue(String idShortPath) throws ElementDoesNotExistException {
 		return decorated.getSubmodelElementValue(idShortPath);
 	}
-	
+
 	@Override
 	public void setSubmodelElementValue(String idShortPath, SubmodelElementValue value) throws ElementDoesNotExistException {
 		decorated.setSubmodelElementValue(idShortPath, value);
 		SubmodelElement submodelElement = decorated.getSubmodelElement(idShortPath);
 		submodelElementUpdated(submodelElement, idShortPath);
 	}
-	
+
 	@Override
 	public void createSubmodelElement(SubmodelElement submodelElement) {
 		decorated.createSubmodelElement(submodelElement);
@@ -100,19 +100,17 @@ public class MqttSubmodelService implements SubmodelService{
 	}
 
 	@Override
-	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement)
-			throws ElementDoesNotExistException {
-		
+	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
+
 		decorated.createSubmodelElement(idShortPath, submodelElement);
-		
+
 		SubmodelElement smElement = decorated.getSubmodelElement(submodelElement.getIdShort());
 		submodelElementCreated(smElement, idShortPath);
 	}
 
 	@Override
-	public void updateSubmodelElement(String idShortPath, SubmodelElement submodelElement)
-			throws ElementDoesNotExistException {
-		
+	public void updateSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
+
 		decorated.updateSubmodelElement(idShortPath, submodelElement);
 		SubmodelElement smElement = decorated.getSubmodelElement(submodelElement.getIdShort());
 		submodelElementUpdated(smElement, submodelElement.getIdShort());
@@ -120,7 +118,7 @@ public class MqttSubmodelService implements SubmodelService{
 
 	@Override
 	public void deleteSubmodelElement(String idShortPath) throws ElementDoesNotExistException {
-		
+
 		SubmodelElement smElement = decorated.getSubmodelElement(idShortPath);
 		decorated.deleteSubmodelElement(idShortPath);
 		submodelElementDeleted(smElement, idShortPath);
