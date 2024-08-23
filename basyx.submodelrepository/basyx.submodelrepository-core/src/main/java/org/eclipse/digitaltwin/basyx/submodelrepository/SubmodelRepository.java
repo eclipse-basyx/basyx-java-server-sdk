@@ -272,4 +272,15 @@ public interface SubmodelRepository {
 	 * @param submodelElementList
 	 */
 	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList);
+
+	/**
+	 * Retrieves the file of a file submodelelement via its absolute path
+	 *
+	 * @param submodelId
+	 * 			  the Submodel id
+	 * @param filePath
+	 *            the path of the file
+	 * @return File InputStream
+	 */
+	public InputStream getFileByFilePath(String submodelId, String filePath);
 }

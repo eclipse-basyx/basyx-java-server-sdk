@@ -217,4 +217,9 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 		decorated.patchSubmodelElements(submodelId, submodelElementList);
 	}
 
+	@Override
+	public InputStream getFileByFilePath(String submodelId, String filePath) {
+		return decorated.getFileByFilePath(submodelId, filePath);
+	}
+
 }

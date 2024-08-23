@@ -83,7 +83,7 @@ public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 
 		try {
 			if (accept.equals(ACCEPT_AASX)) {
-				byte[] serialization = aasEnvironment.createAASXAASEnvironmentSerialization(getOriginalIds(aasIds), getOriginalIds(submodelIds), includeConceptDescriptions);
+				byte[] serialization = aasEnvironment.createAASXAASEnvironmentSerialization(getOriginalIds(aasIds), getOriginalIds(submodelIds), false);
 				return new ResponseEntity<Resource>(new ByteArrayResource(serialization), HttpStatus.OK);
 			}
 
@@ -94,8 +94,6 @@ public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 
 			String serialization = aasEnvironment.createJSONAASEnvironmentSerialization(getOriginalIds(aasIds), getOriginalIds(submodelIds), includeConceptDescriptions);
 			return new ResponseEntity<Resource>(new ByteArrayResource(serialization.getBytes()), HttpStatus.OK);
-		} catch (ElementDoesNotExistException e) {
-			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
 		} catch (SerializationException | IOException e) {
 			return new ResponseEntity<Resource>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

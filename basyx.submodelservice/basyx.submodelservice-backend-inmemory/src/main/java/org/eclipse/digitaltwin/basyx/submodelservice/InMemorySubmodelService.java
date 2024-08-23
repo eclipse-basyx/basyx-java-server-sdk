@@ -296,6 +296,11 @@ public class InMemorySubmodelService implements SubmodelService {
 		setSubmodelElementValue(idShortPath, fileValue);
 	}
 
+	@Override
+	public InputStream getFileByFilePath(String filePath) throws FileDoesNotExistException{
+		return fileRepository.find(filePath);
+	}
+
 	private void deleteAssociatedFileIfAny(String idShortPath) {
 		try {
 			deleteFileValue(idShortPath);

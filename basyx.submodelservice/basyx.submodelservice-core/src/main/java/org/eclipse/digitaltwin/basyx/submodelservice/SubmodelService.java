@@ -185,4 +185,13 @@ public interface SubmodelService {
 	 */
 	public void deleteFileValue(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException;
 
+
+	/**
+	 * Retrieves the file of a file submodelelement via its absolute path
+	 *
+	 * @param filePath
+	 *            the path of the file
+	 * @return File InputStream
+	 */
+	public InputStream getFileByFilePath(String filePath);
 }

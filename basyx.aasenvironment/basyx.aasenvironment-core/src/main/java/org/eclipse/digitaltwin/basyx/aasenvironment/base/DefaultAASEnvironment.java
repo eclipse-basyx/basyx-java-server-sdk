@@ -24,14 +24,10 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasenvironment.base;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.io.*;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
@@ -40,12 +36,8 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.aasx.InMemoryFile;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.xml.XmlSerializer;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
-import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
+import org.eclipse.digitaltwin.aas4j.v3.model.*;
+import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.ConceptDescriptionIdCollector;
@@ -60,6 +52,7 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.Identifiab
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,9 +101,42 @@ public class DefaultAASEnvironment implements AasEnvironment {
 	public byte[] createAASXAASEnvironmentSerialization(@Valid List<String> aasIds, @Valid List<String> submodelIds, @Valid boolean includeConceptDescriptions) throws SerializationException, IOException {
 		Environment aasEnvironment = createEnvironment(aasIds, submodelIds, includeConceptDescriptions);
 
+		List<InMemoryFile> relatedFiles = new ArrayList<>();
+		HashMap<String, List<File>> fileSubmodelElements = new HashMap<>();
+
+		aasEnvironment.getSubmodels().forEach(sm-> fileSubmodelElements.put(sm.getId(),getAllFileSubmodelElements(sm)));
+
+		addFilesToRelatedFiles(fileSubmodelElements, relatedFiles);
+		aasEnvironment.getAssetAdministrationShells().forEach(aas->addThumbnailToRelatedFiles(aas.getId(),aas.getAssetInformation().getDefaultThumbnail(),relatedFiles));
+
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		aasxSerializer.write(aasEnvironment, null, outputStream);
+		aasxSerializer.write(aasEnvironment, relatedFiles, outputStream);
 		return outputStream.toByteArray();
+	}
+
+	public List<File> getAllFileSubmodelElements(Submodel submodel){
+		List<File> files = new ArrayList<>();
+		submodel.getSubmodelElements().forEach(sme->files.addAll(getAllFileSubmodelElementsRec(sme,files)));
+		return files;
+	}
+
+	public List<File> getAllFileSubmodelElementsRec(SubmodelElement submodelElement, List<File> files){
+		if(submodelElement instanceof File) {
+			//Check if is not a URL
+			if(!((File) submodelElement).getValue().startsWith("http"))
+				files.add((File) submodelElement);
+		}
+		if(submodelElement instanceof SubmodelElementCollection collection) {
+            for(SubmodelElement element : collection.getValue()) {
+				getAllFileSubmodelElementsRec(element, files);
+			}
+		}
+		if(submodelElement instanceof SubmodelElementList list){
+            for(SubmodelElement element : list.getValue()) {
+				getAllFileSubmodelElementsRec(element, files);
+			}
+		}
+		return files;
 	}
 	
 	public void loadEnvironment(CompleteEnvironment completeEnvironment) {
@@ -295,4 +321,56 @@ public class DefaultAASEnvironment implements AasEnvironment {
 		}
 	}
 
+	private void addFilesToRelatedFiles(HashMap<String, List<File>> fileSubmodelElements, List<InMemoryFile> relatedFiles) {
+		for (Map.Entry<String, List<File>> entry : fileSubmodelElements.entrySet()) {
+			for(File file : entry.getValue()) {
+				try {
+					if (isFileAlreadyAdded(file.getValue()))
+						continue;
+					InputStream fileIS = submodelRepository.getFileByFilePath(entry.getKey(), file.getValue());
+					byte[] fileContent = fileIS.readAllBytes();
+					String path = getFilePathInAASX(file);
+					relatedFiles.add(new InMemoryFile(fileContent, path));
+					file.setValue(path);
+
+				} catch (IOException | NullPointerException e) {
+					logger.error("File {} does not exist in the repository", file.getValue());
+				}
+			}
+		}
+	}
+
+	private boolean isFileAlreadyAdded(String filePath){
+		return filePath.startsWith("/aasx/suppl/");
+	}
+
+	private void addThumbnailToRelatedFiles(String aasId, Resource thumbnail, List<InMemoryFile> relatedFiles) {
+		try {
+			java.io.File file = aasRepository.getThumbnail(aasId);
+			byte[] thumbnailContent = Files.readAllBytes(file.toPath());
+			String newPath = getThumbnailPathInAASX(thumbnail.getPath());
+			relatedFiles.add(new InMemoryFile(thumbnailContent, newPath));
+			thumbnail.setPath(newPath);
+		} catch (IOException | FileDoesNotExistException e) {
+			logger.error("Thumbnail file {} does not exist in the repository", thumbnail.getPath());
+		}
+    }
+
+	private static String getThumbnailPathInAASX(String path) {
+		String[] splitted = path.split("\\.");
+		String extension = splitted[splitted.length - 1];
+		splitted = splitted[splitted.length - 2].split(splitted[splitted.length - 2].contains("\\")? "\\" : "/");
+		String name = splitted[splitted.length - 1];
+		return "/"+name+"."+extension;
+	}
+
+	private static String getFilePathInAASX(File file) {
+		String[] splitted = file.getValue().split("\\.");
+		String name = splitted[splitted.length - 2];
+		String ending = splitted[splitted.length - 1];
+		splitted = name.split("/");
+		name = splitted[splitted.length - 1];
+		String path = "/aasx/files/"+name+ "." + ending;
+		return path;
+	}
 }
