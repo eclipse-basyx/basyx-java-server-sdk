@@ -76,7 +76,8 @@ public class DefaultAASEnvironment implements AasEnvironment {
 	private AASXSerializer aasxSerializer = new AASXSerializer();
 	private MetamodelCloneCreator cloneCreator = new MetamodelCloneCreator();
 	private IdentifiableAssertion checker;
-	
+	private String aasxFilePathPrefix = "/aasx/files/";
+
 	public DefaultAASEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
 		this.aasRepository = aasRepository;
 		this.submodelRepository = submodelRepository;
@@ -341,7 +342,7 @@ public class DefaultAASEnvironment implements AasEnvironment {
 	}
 
 	private boolean isFileAlreadyAdded(String filePath){
-		return filePath.startsWith("/aasx/suppl/");
+		return filePath.startsWith(aasxFilePathPrefix);
 	}
 
 	private void addThumbnailToRelatedFiles(String aasId, Resource thumbnail, List<InMemoryFile> relatedFiles) {
@@ -370,7 +371,7 @@ public class DefaultAASEnvironment implements AasEnvironment {
 		String ending = splitted[splitted.length - 1];
 		splitted = name.split("/");
 		name = splitted[splitted.length - 1];
-		String path = "/aasx/files/"+name+ "." + ending;
+		String path = aasxFilePathPrefix+name+ "." + ending;
 		return path;
 	}
 }
