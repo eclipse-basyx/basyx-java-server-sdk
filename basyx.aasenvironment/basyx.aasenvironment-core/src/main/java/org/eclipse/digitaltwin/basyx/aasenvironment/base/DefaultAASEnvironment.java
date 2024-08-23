@@ -76,7 +76,7 @@ public class DefaultAASEnvironment implements AasEnvironment {
 	private AASXSerializer aasxSerializer = new AASXSerializer();
 	private MetamodelCloneCreator cloneCreator = new MetamodelCloneCreator();
 	private IdentifiableAssertion checker;
-	private String aasxFilePathPrefix = "/aasx/files/";
+	private static String aasxFilePathPrefix = "/aasx/files/";
 
 	public DefaultAASEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
 		this.aasRepository = aasRepository;
