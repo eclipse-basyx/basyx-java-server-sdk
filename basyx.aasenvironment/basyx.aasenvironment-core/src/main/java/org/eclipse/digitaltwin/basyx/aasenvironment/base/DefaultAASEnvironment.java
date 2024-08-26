@@ -26,6 +26,8 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.base;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -322,23 +324,33 @@ public class DefaultAASEnvironment implements AasEnvironment {
 		}
 	}
 
-	private void addFilesToRelatedFiles(HashMap<String, List<File>> fileSubmodelElements, List<InMemoryFile> relatedFiles) {
-		for (Map.Entry<String, List<File>> entry : fileSubmodelElements.entrySet()) {
-			for(File file : entry.getValue()) {
-				try {
-					if (isFileAlreadyAdded(file.getValue()))
-						continue;
-					InputStream fileIS = submodelRepository.getFileByFilePath(entry.getKey(), file.getValue());
-					byte[] fileContent = fileIS.readAllBytes();
-					String path = getFilePathInAASX(file);
-					relatedFiles.add(new InMemoryFile(fileContent, path));
-					file.setValue(path);
-
-				} catch (IOException | NullPointerException e) {
-					logger.error("File {} does not exist in the repository", file.getValue());
+	private void addFilesToRelatedFiles(HashMap<String, List<File>> submodelFileSMEMap, List<InMemoryFile> relatedFiles) {
+		submodelFileSMEMap.forEach((submodelId, fileSubmodelElementList) -> fileSubmodelElementList.forEach(file -> {
+			try {
+				if (isFileAlreadyAdded(file.getValue())) {
+					return;
 				}
+				processFile(submodelId, file, relatedFiles);
+			} catch (IOException | NullPointerException e) {
+				handleFileError(file);
 			}
-		}
+		}));
+	}
+
+	private void processFile(String key, File file, List<InMemoryFile> relatedFiles) throws IOException {
+		byte[] fileContent = getFileContent(key, file);
+		String path = getFilePathInAASX(file.getValue());
+		relatedFiles.add(new InMemoryFile(fileContent, path));
+		file.setValue(path);
+	}
+
+	private void handleFileError(File file) {
+		logger.error("File {} does not exist in the repository", file.getValue());
+	}
+
+
+	private byte[] getFileContent(String submodelId, File file) throws IOException {
+		return submodelRepository.getFileByFilePath(submodelId, file.getValue()).readAllBytes();
 	}
 
 	private boolean isFileAlreadyAdded(String filePath){
@@ -347,10 +359,13 @@ public class DefaultAASEnvironment implements AasEnvironment {
 
 	private void addThumbnailToRelatedFiles(String aasId, Resource thumbnail, List<InMemoryFile> relatedFiles) {
 		try {
-			java.io.File file = aasRepository.getThumbnail(aasId);
-			byte[] thumbnailContent = Files.readAllBytes(file.toPath());
 			String newPath = getThumbnailPathInAASX(thumbnail.getPath());
-			relatedFiles.add(new InMemoryFile(thumbnailContent, newPath));
+			relatedFiles.add(
+					new InMemoryFile(
+						Files.readAllBytes(aasRepository.getThumbnail(aasId).toPath()),
+						newPath
+					)
+			);
 			thumbnail.setPath(newPath);
 		} catch (IOException | FileDoesNotExistException e) {
 			logger.error("Thumbnail file {} does not exist in the repository", thumbnail.getPath());
@@ -358,20 +373,31 @@ public class DefaultAASEnvironment implements AasEnvironment {
     }
 
 	private static String getThumbnailPathInAASX(String path) {
-		String[] splitted = path.split("\\.");
-		String extension = splitted[splitted.length - 1];
-		splitted = splitted[splitted.length - 2].split(splitted[splitted.length - 2].contains("\\")? "\\" : "/");
-		String name = splitted[splitted.length - 1];
-		return "/"+name+"."+extension;
+		try {
+            return "/" + getHashedFilePath(path) + "." + getFileExtensionFromPath(path);
+        } catch (NoSuchAlgorithmException e) {
+			logger.error("Could not hash thumbnail path {}", path);
+            throw new RuntimeException(e);
+        }
+    }
+
+	private static String getFilePathInAASX(String path) {
+		try {
+            return aasxFilePathPrefix + getHashedFilePath(path) + "." + getFileExtensionFromPath(path);
+        } catch (NoSuchAlgorithmException e) {
+			logger.error("Could not hash file path {}", path);
+            throw new RuntimeException(e);
+        }
+    }
+
+	private static String getFileExtensionFromPath(String file) {
+		String[] split = file.split("\\.");
+		return split[split.length - 1];
 	}
 
-	private static String getFilePathInAASX(File file) {
-		String[] splitted = file.getValue().split("\\.");
-		String name = splitted[splitted.length - 2];
-		String ending = splitted[splitted.length - 1];
-		splitted = name.split("/");
-		name = splitted[splitted.length - 1];
-		String path = aasxFilePathPrefix+name+ "." + ending;
-		return path;
+	private static String getHashedFilePath(String filePath) throws NoSuchAlgorithmException {
+		int hashCode = filePath.hashCode();
+
+		return Integer.toHexString(hashCode);
 	}
 }
