@@ -76,7 +76,7 @@ services:
   
   # AAS Web UI
   aas-web-ui:
-    image: eclipsebasyx/aas-gui:v2-240515
+    image: eclipsebasyx/aas-gui:v2-240801
     container_name: aas-ui
     ports:
       - "3000:3000"

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,7 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.aasxfileserver.model;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
  * Specifies the Package for {@link AASXFileServer}
@@ -35,6 +38,8 @@ import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
  */
 public class Package {
 
+	@Id
+	@Field("packageId")
 	private String packageId;
 	private PackageDescription packageDescription;
 	private PackagesBody packagesBody;

@@ -26,10 +26,12 @@
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
 
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AasDescriptorFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
+import java.util.List;
+
+import org.eclipse.digitaltwin.basyx.aasregistry.main.client.factory.AasDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.SubmodelDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.factory.SubmodelDescriptorFactory;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -55,16 +57,16 @@ class ConnectedAasManagerHelper {
 		return builder.build();
 	}
 
-	static AasDescriptorFactory buildAasDescriptorFactory(String aasRepositoryBaseUrl) {
+	static AasDescriptorFactory buildAasDescriptorFactory(String... aasRepositoryBaseUrls) {
 		AttributeMapper attributeMapper = new AttributeMapper(objectMapper);
 
-		return new AasDescriptorFactory(null, aasRepositoryBaseUrl, attributeMapper);
+		return new AasDescriptorFactory(null, List.of(aasRepositoryBaseUrls), attributeMapper);
 	}
 
-	static SubmodelDescriptorFactory buildSmDescriptorFactory(String aasRepositoryBaseUrl) {
-		org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper attributeMapperSm = new org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper(
+	static SubmodelDescriptorFactory buildSmDescriptorFactory(String... aasRepositoryBaseUrls) {
+		org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper attributeMapperSm = new org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper(
 				objectMapper);
-		return new SubmodelDescriptorFactory(null, aasRepositoryBaseUrl, attributeMapperSm);
+		return new SubmodelDescriptorFactory(null, List.of(aasRepositoryBaseUrls), attributeMapperSm);
 	}
 
 }

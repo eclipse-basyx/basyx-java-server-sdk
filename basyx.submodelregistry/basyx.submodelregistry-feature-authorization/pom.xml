@@ -10,6 +10,7 @@
 	</parent>
 
 	<artifactId>basyx.submodelregistry-feature-authorization</artifactId>
+	<name>BaSyx Submodel Registry feature-authorization</name>
 
 	<dependencies>
 		<dependency>

@@ -58,8 +58,8 @@ public class SubmodelRepositoryRegistryLinkTest extends SubmodelRepositoryRegist
 	}
 	
 	@Override
-	protected String getSubmodelRepoBaseUrl() {
-		return SUBMODEL_REPO_URL;
+	protected String[] getSubmodelRepoBaseUrls() {
+		return new String[] { SUBMODEL_REPO_URL };
 	}
 	@Override
 	protected String getSubmodelRegistryUrl() {

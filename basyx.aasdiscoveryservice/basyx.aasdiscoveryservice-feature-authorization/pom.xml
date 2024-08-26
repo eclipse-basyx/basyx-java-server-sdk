@@ -6,6 +6,7 @@
     <version>${revision}</version>
   </parent>
   <artifactId>basyx.aasdiscoveryservice-feature-authorization</artifactId>
+  <name>BaSyx AAS Discovery Service feature-authorization</name>
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>

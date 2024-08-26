@@ -10,6 +10,7 @@
 	</parent>
 
 	<artifactId>basyx.aasregistry-feature-authorization</artifactId>
+	<name>BaSyx AAS Registry feature-authorization</name>
 
 	<dependencies>
 		<dependency>
