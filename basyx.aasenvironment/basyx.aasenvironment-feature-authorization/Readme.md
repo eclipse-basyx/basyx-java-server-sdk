@@ -90,6 +90,7 @@ Note:
 * The Action are fixed as of now and limited to (CREATE, READ, UPDATE, DELETE, and EXECUTE) but later user configurable mapping of these actions would be provided.
 * For the serialization related requests there should be defined rules for accessing the AASs/Submodels/Concept Descriptions, as the serialization requires all of these elements. For e.g, a role with serialization is configured for Aas Environment target information but if there is no role for reading the AAS/Submodel/Concept Description then the request will be denied.
 * For the upload related requests there should be defined rules for reading, creating, and updating the AASs/Submodels/Concept Descriptions, as the upload requests performs creation, updation, and request operations on the AASs/Submodels/Concept Descriptions contained in the uploaded file, hence appropriate rules should be configured for the subject in consideration.
+* Each rule should be unique in combination of role + action + target information
 
 ## Action table for RBAC
 

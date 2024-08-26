@@ -29,7 +29,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.HashMap;
 
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingAuthorizationConfigurationException;
 import org.springframework.core.io.ResourceLoader;
@@ -54,23 +54,26 @@ public class RbacRuleInitializer {
 	}
 
 	/**
-	 * Provides the list of {@link RbacRule} from the resource
+	 * Provides the Map of {@link RbacRule} from the resource
 	 * 
-	 * @return list of rbac rules
+	 * It auto-generates the key based on hash of combination of role, {@link Action}, and the concrete {@link TargetInformation}
+	 * class.
+	 * 
+	 * @return map of rbac rules
 	 * @throws IOException
 	 */
-	public List<RbacRule> deserialize() throws IOException {
-		return objectMapper.readValue(getFile(rbacJsonFilePath), new TypeReference<List<RbacRule>>() {
+	public HashMap<String, RbacRule> deserialize() throws IOException {
+		return objectMapper.readValue(getFile(rbacJsonFilePath), new TypeReference<HashMap<String, RbacRule>>() {
 		});
 	}
 
 	private File getFile(String filePath) {
-		
+
 		try {
 			return resourceLoader.getResource(filePath).getFile();
-		} catch(IOException e) {
+		} catch (IOException e) {
 			throw new MissingAuthorizationConfigurationException(filePath);
 		}
-		
+
 	}
 }

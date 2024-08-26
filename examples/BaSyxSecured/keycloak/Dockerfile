@@ -1,14 +1,13 @@
-FROM quay.io/keycloak/keycloak:22.0.0
+# syntax=docker/dockerfile:1
+FROM maven:3-eclipse-temurin-17 AS build
+WORKDIR /workspace
+COPY ./initializer/pom.xml /workspace/pom.xml
+COPY ./initializer/src /workspace/src
+COPY ./realm/BaSyx-realm.json /workspace/BaSyx-realm.json
+RUN mvn install
 
-# Make the realm configuration available for import
-COPY BaSyx-realm.json /opt/keycloak_import/
+FROM keycloak/keycloak:24.0.4
+COPY --from=build /workspace/target/org.eclipse.digitaltwin.basyx.v3.clients-keycloak-issuer-initializer.jar /opt/keycloak/providers/issuer-initializer.jar
+COPY --from=build /workspace/BaSyx-realm.json /opt/keycloak/data/import/BaSyx-realm.json
 
-# Import the realm and user
-RUN /opt/keycloak/bin/kc.sh import --file /opt/keycloak_import/BaSyx-realm.json
-
-# The Keycloak server is configured to listen on port 8080
-EXPOSE 8080
-EXPOSE 8443
-
-# Import the realm on start-up
-CMD ["start-dev"]
+RUN /opt/keycloak/bin/kc.sh import --file /opt/keycloak/data/import/BaSyx-realm.json

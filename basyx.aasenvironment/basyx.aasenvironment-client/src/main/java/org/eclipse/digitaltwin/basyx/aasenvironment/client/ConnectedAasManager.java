@@ -43,14 +43,14 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.EndpointRes
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.SubmodelDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
+import org.eclipse.digitaltwin.basyx.aasregistry.main.client.factory.AasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AasDescriptorFactory;
-import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
+import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.factory.SubmodelDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.SubmodelDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 
 /**
@@ -145,7 +145,7 @@ public class ConnectedAasManager {
 	public List<ConnectedSubmodelService> getAllSubmodels(String shellIdentifier) {
 		AssetAdministrationShell shell = getAasService(shellIdentifier).getAAS();
 		List<Reference> submodelReferences = shell.getSubmodels();
-		return submodelReferences.parallelStream()
+		return submodelReferences.stream()
 				.map(this::extractSubmodelIdentifierFromReference)
 				.map(this::getSubmodelService)
 				.collect(Collectors.toList());
@@ -212,6 +212,8 @@ public class ConnectedAasManager {
 	 *            The Submodel object to create under the specified AAS.
 	 */
 	public void createSubmodelInAas(String aasIdentifier, Submodel submodel) {
+		AssetAdministrationShell shell = getAasService(aasIdentifier).getAAS();
+
 		smRepository.createSubmodel(submodel);
 		SubmodelDescriptor descriptor = smDescriptorFactory.create(submodel);
 
@@ -221,7 +223,12 @@ public class ConnectedAasManager {
 			throw new RegistryHttpRequestException(aasIdentifier, e);
 		}
 
-		aasRepository.addSubmodelReference(aasIdentifier, AasUtils.toReference(submodel));
+		Reference smRef = AasUtils.toReference(AasUtils.toReference(shell), submodel);
+
+		// TODO See https://github.com/eclipse-aas4j/aas4j/issues/308
+		smRef.setReferredSemanticId(submodel.getSemanticId());
+
+		aasRepository.addSubmodelReference(aasIdentifier, smRef);
 	}
 
 	private String extractSubmodelIdentifierFromReference(Reference submodelReference) {

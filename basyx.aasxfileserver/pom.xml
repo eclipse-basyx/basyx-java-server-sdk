@@ -15,8 +15,10 @@
 
 	<modules>
 		<module>basyx.aasxfileserver-core</module>
-		<module>basyx.aasxfileserver.component</module>
-		<module>basyx.aasxfileserver-backend-inmemory</module>
 		<module>basyx.aasxfileserver-backend</module>
+		<module>basyx.aasxfileserver-backend-inmemory</module>
+		<module>basyx.aasxfileserver-backend-mongodb</module>
+		<module>basyx.aasxfileserver-http</module>
+		<module>basyx.aasxfileserver.component</module>
 	</modules>
 </project>

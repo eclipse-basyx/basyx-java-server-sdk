@@ -56,7 +56,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -72,16 +72,12 @@ public class TestAuthorizedConnectedAasService extends AasServiceSuite {
 
 	private static final String AAS_REPO_URL = "http://localhost:8081/shells/";
 	private static ConfigurableApplicationContext appContext;
-	private static final String PROFILE = "authorization";
 	public static String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
 	public static String clientId = "basyx-client-api";
 
 	@BeforeClass
 	public static void startAASRepo() throws Exception {
-		SpringApplication application = new SpringApplication(DummyAuthorizedAasRepositoryComponent.class);
-		application.setAdditionalProfiles(PROFILE);
-		
-		appContext = application.run(new String[] {});
+		appContext = new SpringApplicationBuilder(DummyAuthorizedAasRepositoryComponent.class).profiles("authorization").run(new String[] {});
 	}
 
 	@After

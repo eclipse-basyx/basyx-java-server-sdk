@@ -27,6 +27,8 @@ package org.eclipse.digitaltwin.basyx.deserialization.util;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -90,7 +92,7 @@ public class SubmodelElementValueDeserializationUtil {
 	}
 
 	public static boolean isTypeOfSubmodelElementCollectionValue(JsonNode node) {
-		return node.isArray() && hasStructureOfSubmodelElementCollectionValue(node);
+		return node.isObject() && hasStructureOfSubmodelElementCollectionValue(node);
 	}
 	
 	public static boolean isTypeOfSubmodelElementListValue(JsonNode node) {
@@ -161,9 +163,12 @@ public class SubmodelElementValueDeserializationUtil {
 	}
 
 	private static boolean hasStructureOfSubmodelElementCollectionValue(JsonNode node) {
-		for (JsonNode element : node) {
-			if (!isValidValueOnly(element))
+		Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
+		while (fields.hasNext()) {
+			Map.Entry<String, JsonNode> field = fields.next();
+			if (!isInstanceOfSubmodelElementValue(field.getValue())) {
 				return false;
+			}
 		}
 
 		return true;

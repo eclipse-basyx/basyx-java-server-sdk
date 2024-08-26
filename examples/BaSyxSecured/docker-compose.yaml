@@ -1,0 +1,123 @@
+services:
+  # AAS Environment
+  aas-env:
+    image: eclipsebasyx/aas-environment:2.0.0-milestone-03
+    container_name: aas-env-rbac
+    volumes:
+      - ./aas:/application/aas
+      - ./basyx/aas-env.properties:/application/application.properties
+      - ./basyx/rules/aas_env_rbac_rules.json:/application/rbac_rules.json
+    ports:
+      - '8081:8081'
+    restart: always
+    depends_on:
+      aas-registry:
+        condition: service_healthy
+      sm-registry:
+        condition: service_healthy
+    networks:
+      - basyx-java-server-sdk
+
+  # AAS Registry
+  aas-registry:
+    image: eclipsebasyx/aas-registry-log-mem:2.0.0-milestone-03
+    container_name: secured-aas-registry-log-mem-rbac
+    ports:
+      - "8082:8080"
+    environment:
+      SERVER_SERVLET_CONTEXT_PATH: /
+      BASYX_CORS_ALLOWED_ORIGINS: '*'
+      BASYX_CORS_ALLOWED_METHODS: GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+      BASYX_FEATURE_AUTHORIZATION_ENABLED: true
+      BASYX_FEATURE_AUTHORIZATION_TYPE: rbac
+      BASYX_FEATURE_AUTHORIZATION_JWTBEARERTOKENPROVIDER: keycloak
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak-rbac:8080/realms/BaSyx
+      BASYX_FEATURE_AUTHORIZATION_RBAC_FILE: file:/workspace/config/rbac_rules.json
+    volumes:
+      - ./basyx/rules/aas_registry_rbac_rules.json:/workspace/config/rbac_rules.json
+    restart: always
+    networks:
+      - basyx-java-server-sdk
+
+  # Submodel Registry
+  sm-registry:
+    image: eclipsebasyx/submodel-registry-log-mem:2.0.0-milestone-03
+    container_name: secured-sm-registry-log-mem-rbac
+    environment:
+      SERVER_SERVLET_CONTEXT_PATH: /
+      BASYX_CORS_ALLOWED_ORIGINS: '*'
+      BASYX_CORS_ALLOWED_METHODS: GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+      BASYX_FEATURE_AUTHORIZATION_ENABLED: true
+      BASYX_FEATURE_AUTHORIZATION_TYPE: rbac
+      BASYX_FEATURE_AUTHORIZATION_JWTBEARERTOKENPROVIDER: keycloak
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak-rbac:8080/realms/BaSyx
+      BASYX_FEATURE_AUTHORIZATION_RBAC_FILE: file:/workspace/config/rbac_rules.json
+    ports:
+      - "8083:8080"
+    volumes:
+      - ./basyx/rules/sm_registry_rbac_rules.json:/workspace/config/rbac_rules.json
+    restart: always
+    networks:
+      - basyx-java-server-sdk
+      
+  # AAS Discovery
+  aas-discovery:
+    image: eclipsebasyx/aas-discovery:2.0.0-milestone-03
+    container_name: aas-discovery
+    volumes:
+      - ./basyx/aas-discovery.properties:/application/application.properties
+      - ./basyx/rules/aas_discovery_rbac_rules.json:/application/rbac_rules.json
+    ports:
+      - '8084:8081'
+    restart: always
+    networks:
+      - basyx-java-server-sdk
+
+  # AAS Web UI
+  aas-web-ui:
+    image: eclipsebasyx/aas-gui:v2-240801
+    container_name: aas-ui
+    extra_hosts:
+      - "keycloak:127.0.0.1"
+    ports:
+      - '3000:3000'
+    environment:
+      AAS_REGISTRY_PATH: http://localhost:8082/shell-descriptors
+      SUBMODEL_REGISTRY_PATH: http://localhost:8083/submodel-descriptors
+      AAS_REPO_PATH: http://localhost:8081/shells
+      SUBMODEL_REPO_PATH: http://localhost:8081/submodels
+      CD_REPO_PATH: http://localhost:8081/concept-descriptions
+      AAS_DISCOVERY_PATH: http://localhost:8084/lookup/shells
+      KEYCLOAK_URL: http://localhost:9097
+      KEYCLOAK_REALM: BaSyx
+      KEYCLOAK_CLIENT_ID: basyx-web-ui
+    restart: always
+    depends_on:
+      aas-env:
+        condition: service_healthy
+    networks:
+      - basyx-java-server-sdk
+
+  keycloak:
+    image: eclipsebasyx/keycloak:0.0.1
+    build:
+      context: ./keycloak
+      dockerfile: Dockerfile
+    container_name: keycloak-rbac
+    environment:
+      KC_HOSTNAME: localhost
+      KC_SPI_INITIALIZER_ISSUER_BASE_URI: http://keycloak-rbac:8080
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: keycloak-admin
+    command: ["start-dev", "--import-realm"]
+    ports:
+      - 9097:8080
+    volumes:
+      - ./keycloak/realm:/opt/keycloak/data/import
+    networks:
+      - basyx-java-server-sdk
+
+networks:
+  basyx-java-server-sdk:
+    name: basyx-java-server-sdk
+    driver: bridge

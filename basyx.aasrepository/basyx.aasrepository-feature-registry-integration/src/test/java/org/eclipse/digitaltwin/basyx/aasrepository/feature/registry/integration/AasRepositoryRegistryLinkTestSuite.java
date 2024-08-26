@@ -38,8 +38,11 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscovery
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.GetAssetAdministrationShellDescriptorsResult;
 import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
+import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.DummyAasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
@@ -55,36 +58,41 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 	private static final String DUMMY_IDSHORT = "ExampleMotor";
 	private static final String DUMMY_AAS_ID = "customIdentifier";
 
-	protected abstract String getAasRepoBaseUrl();
-	protected abstract String getAasRegistryUrl(); 
-	protected abstract RegistryAndDiscoveryInterfaceApi getAasRegistryApi(); 
+	protected abstract String[] getAasRepoBaseUrls();
 
-	private final AssetAdministrationShellDescriptor DUMMY_DESCRIPTOR = DummyAasDescriptorFactory.createDummyDescriptor(DUMMY_AAS_ID, DUMMY_IDSHORT, DUMMY_GLOBAL_ASSETID, getAasRepoBaseUrl());
+	protected abstract String getAasRegistryUrl();
+
+	protected abstract RegistryAndDiscoveryInterfaceApi getAasRegistryApi();
+
+	private final AssetAdministrationShellDescriptor DUMMY_DESCRIPTOR = DummyAasDescriptorFactory
+			.createDummyDescriptor(DUMMY_AAS_ID, DUMMY_IDSHORT, DUMMY_GLOBAL_ASSETID, getAasRepoBaseUrls());
 
 	@Test
 	public void createAas() throws FileNotFoundException, IOException, ApiException {
 		String aasJsonContent = getAas1JSONString();
 
-		CloseableHttpResponse creationResponse = createAasOnRepo(aasJsonContent);
-		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
+		try (CloseableHttpResponse creationResponse = createAasOnRepo(aasJsonContent)) {
+			assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
 
-		AssetAdministrationShellDescriptor actualDescriptor = retrieveDescriptorFromRegistry();
+			AssetAdministrationShellDescriptor actualDescriptor = retrieveDescriptorFromRegistry();
 
-		assertEquals(DUMMY_DESCRIPTOR, actualDescriptor);
+			assertEquals(DUMMY_DESCRIPTOR, actualDescriptor);
 
-		resetRepository();
+			resetRepository();
+		}
 	}
 
 	@Test
 	public void deleteAas() throws FileNotFoundException, IOException, ApiException {
 		String aasJsonContent = getAas1JSONString();
 
-		CloseableHttpResponse creationResponse = createAasOnRepo(aasJsonContent);
-		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
+		try (CloseableHttpResponse creationResponse = createAasOnRepo(aasJsonContent)) {
+			assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
+		}
 
-		CloseableHttpResponse deleteResponse = deleteAasFromRepo(DUMMY_AAS_ID);
-		assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());
-
+		try (CloseableHttpResponse deleteResponse = deleteAasFromRepo(DUMMY_AAS_ID)) {
+			assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());
+		}
 		assertDescriptionDeletionAtRegistry();
 	}
 
@@ -95,9 +103,9 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 	}
 
 	private void resetRepository() throws IOException {
-		CloseableHttpResponse deleteResponse = deleteAasFromRepo(DUMMY_AAS_ID);
-
-		assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());
+		try (CloseableHttpResponse deleteResponse = deleteAasFromRepo(DUMMY_AAS_ID)) {
+			assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());	
+		}
 	}
 
 	private CloseableHttpResponse deleteAasFromRepo(String shellId) throws IOException {
@@ -107,7 +115,8 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 	private void assertDescriptionDeletionAtRegistry() throws ApiException {
 		RegistryAndDiscoveryInterfaceApi api = getAasRegistryApi();
 
-		GetAssetAdministrationShellDescriptorsResult result = api.getAllAssetAdministrationShellDescriptors(null, null, null, null);
+		GetAssetAdministrationShellDescriptorsResult result = api.getAllAssetAdministrationShellDescriptors(null, null,
+				null, null);
 
 		List<AssetAdministrationShellDescriptor> actualDescriptors = result.getResult();
 
@@ -119,10 +128,15 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 	}
 
 	private CloseableHttpResponse createAasOnRepo(String aasJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(RepositoryUrlHelper.createRepositoryUrl(getAasRepoBaseUrl(), AAS_REPOSITORY_PATH), aasJsonContent);
+		return BaSyxHttpTestUtils.executePostOnURL(RepositoryUrlHelper.createRepositoryUrl(getFirstAasRepoBaseUrl(), AAS_REPOSITORY_PATH), aasJsonContent);
 	}
 
 	private String getSpecificAasAccessURL(String aasId) {
-		return RepositoryUrlHelper.createRepositoryUrl(getAasRepoBaseUrl(), AAS_REPOSITORY_PATH) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
+		return RepositoryUrlHelper.createRepositoryUrl(getFirstAasRepoBaseUrl(), AAS_REPOSITORY_PATH) + "/"
+				+ Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
+	}
+
+	private String getFirstAasRepoBaseUrl() {
+		return getAasRepoBaseUrls()[0];
 	}
 }

@@ -35,9 +35,11 @@ import static org.mockito.Mockito.times;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.NoValidEndpointFoundException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.AasDescriptorResolver;
@@ -73,16 +75,16 @@ import org.springframework.context.ConfigurableApplicationContext;
  *
  */
 public class TestConnectedAasManager {
-	protected final static String AAS_REPOSITORY_BASE_PATH = "http://localhost:8081";
-	protected final static String SM_REPOSITORY_BASE_PATH = "http://localhost:8081";
-	protected final static String AAS_REGISTRY_BASE_PATH = "http://localhost:8050";
-	protected final static String SM_REGISTRY_BASE_PATH = "http://localhost:8060";
+	protected static final String AAS_REPOSITORY_BASE_PATH = "http://localhost:8081";
+	protected static final String SM_REPOSITORY_BASE_PATH = "http://localhost:8081";
+	protected static final String AAS_REGISTRY_BASE_PATH = "http://localhost:8050";
+	protected static final String SM_REGISTRY_BASE_PATH = "http://localhost:8060";
 
 	protected static ConfigurableApplicationContext appContext;
 	protected static AasRepository aasRepository;
 	protected static SubmodelRepository smRepository;
 
-	protected final static TestFixture FIXTURE = new TestFixture(AAS_REPOSITORY_BASE_PATH, SM_REPOSITORY_BASE_PATH);
+	protected static final TestFixture FIXTURE = new TestFixture(AAS_REPOSITORY_BASE_PATH, SM_REPOSITORY_BASE_PATH);
 
 	protected static ConnectedAasRepository connectedAasRepository;
 	protected static ConnectedSubmodelRepository connectedSmRepository;
@@ -146,20 +148,19 @@ public class TestConnectedAasManager {
 	public void createSubmodelInAas() throws Exception {
 		Submodel expectedSm = FIXTURE.buildSmPos1();
 		SubmodelDescriptor expectedDescriptor = FIXTURE.buildSmPos1Descriptor();
+		Reference expectedRef = FIXTURE.buildSmPos1Ref();
 
 		aasManager.createSubmodelInAas(TestFixture.AAS_PRE1_ID, expectedSm);
 
 		InOrder inOrder = inOrder(connectedSmRepository, smRegistryApi, connectedAasRepository);
 
-		inOrder.verify(connectedSmRepository, times(1))
-				.createSubmodel(expectedSm);
-		inOrder.verify(smRegistryApi, times(1))
-				.postSubmodelDescriptor(expectedDescriptor);
-		inOrder.verify(connectedAasRepository, times(1))
-				.addSubmodelReference(eq(TestFixture.AAS_PRE1_ID), any());
+		inOrder.verify(connectedSmRepository, times(1)).createSubmodel(expectedSm);
+		inOrder.verify(smRegistryApi, times(1)).postSubmodelDescriptor(expectedDescriptor);
+		inOrder.verify(connectedAasRepository, times(1)).addSubmodelReference(eq(TestFixture.AAS_PRE1_ID), any());
 
 		assertEquals(expectedSm, getSubmodelFromRepo(TestFixture.SM_POS1_ID));
 		assertEquals(expectedDescriptor, getDescriptorFromSubmodelRegistry(TestFixture.SM_POS1_ID));
+		assertEquals(expectedRef, getSubmodelRefFromAasRepository(TestFixture.AAS_PRE1_ID, TestFixture.SM_POS1_ID).get());
 	}
 
 	@Test
@@ -195,7 +196,7 @@ public class TestConnectedAasManager {
 	}
 
 	@Test
-	public void getAas() throws ApiException, NoValidEndpointFoundException {
+	public void getAas() throws NoValidEndpointFoundException {
 		AssetAdministrationShell expectedAas = FIXTURE.buildAasPre1();
 
 		AssetAdministrationShell actualAas = aasManager.getAasService(TestFixture.AAS_PRE1_ID)
@@ -205,7 +206,7 @@ public class TestConnectedAasManager {
 	}
 
 	@Test
-	public void getSubmodel() throws Exception {
+	public void getSubmodel() {
 		Submodel expectedSm = FIXTURE.buildSmPre1();
 		
 		Submodel actualSm = aasManager.getSubmodelService(TestFixture.SM_PRE1_ID)
@@ -338,6 +339,16 @@ public class TestConnectedAasManager {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
+	}
+
+	private Optional<Reference> getSubmodelRefFromAasRepository(String aasId, String smId) {
+		return aasManager.getAasService(aasId)
+				.getAAS()
+				.getSubmodels()
+				.stream()
+				.filter(ref -> ref.getKeys().stream()
+						.anyMatch(key -> key.getValue().equals(smId)))
+				.findAny();
 	}
 
 }

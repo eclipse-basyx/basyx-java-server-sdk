@@ -34,7 +34,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Configurations for {@link RbacRule}
@@ -63,7 +63,7 @@ public class RbacRuleConfiguration {
 	public RbacStorage createInMemoryRbacStorage() throws IOException {
 		
 		if (filePath.isBlank())
-			return new InMemoryAuthorizationRbacStorage(new ArrayList<>());
+			return new InMemoryAuthorizationRbacStorage(new HashMap<>());
 		
 		return new InMemoryAuthorizationRbacStorage(new RbacRuleInitializer(objectMapper, filePath, resourceLoader).deserialize());
 	}

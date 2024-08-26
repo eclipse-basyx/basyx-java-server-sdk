@@ -27,15 +27,21 @@ package org.eclipse.digitaltwin.basyx.aasxfileserver.backend;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultPackageDescription;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.model.Package;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackageDescription;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackagesBody;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -65,13 +71,17 @@ public class CrudAASXFileServer implements AASXFileServer {
 	}
 
 	@Override
-	public Collection<PackageDescription> getAllAASXPackageIds(String shellId) {
-		Collection<PackageDescription> packageDescriptions = getPackages().stream().map(Package::getPackageDescription).collect(Collectors.toList());
+	public CursorResult<List<PackageDescription>> getAllAASXPackageIds(String shellId,PaginationInfo pInfo) {
+		List<PackageDescription> packageDescriptions = getPackages().stream().map(Package::getPackageDescription).collect(Collectors.toList());
 
-		if (shellId == null || shellId.isBlank())
-			return packageDescriptions;
+		if (!(shellId == null || shellId.isBlank()))
+			packageDescriptions = packageDescriptions.stream().filter(packageDesc -> containsShellId(packageDesc, shellId)).collect(Collectors.toList());
 
-		return packageDescriptions.stream().filter(packageDesc -> containsShellId(packageDesc, shellId)).collect(Collectors.toList());
+		TreeMap<String, PackageDescription> packageDescriptionMap = packageDescriptions.stream().collect(Collectors.toMap(PackageDescription::getPackageId, submodel -> submodel, (a, b) -> a, TreeMap::new));
+
+		PaginationSupport<PackageDescription> paginationSupport = new PaginationSupport<>(packageDescriptionMap, PackageDescription::getPackageId);
+
+		return paginationSupport.getPaged(pInfo);
 	}
 
 	@Override
@@ -114,9 +124,9 @@ public class CrudAASXFileServer implements AASXFileServer {
 	}
 
 	private PackageDescription createPackageDescription(List<String> shellIds, String newPackageId) {
-		PackageDescription packageDescription = new PackageDescription();
-		packageDescription.packageId(newPackageId);
-		packageDescription.aasIds(shellIds);
+		PackageDescription packageDescription = new DefaultPackageDescription();
+		packageDescription.setPackageId(newPackageId);
+		packageDescription.setItems(shellIds);
 
 		return packageDescription;
 	}
@@ -143,7 +153,10 @@ public class CrudAASXFileServer implements AASXFileServer {
 
 		updatePackagesBody(shellIds, file, filename, aasxPackage.getPackagesBody());
 
-		aasxPackage.getPackageDescription().setAasIds(shellIds);
+		aasxPackage.getPackageDescription().setItems(shellIds);
+
+		aasxFileServerBackendProvider.getCrudRepository().delete(aasxPackage);
+		aasxFileServerBackendProvider.getCrudRepository().save(aasxPackage);
 	}
 
 	private void updatePackagesBody(List<String> shellIds, InputStream file, String filename, PackagesBody packagesBody) {
@@ -159,7 +172,7 @@ public class CrudAASXFileServer implements AASXFileServer {
 	}
 
 	private boolean containsShellId(PackageDescription packageDesc, String shellId) {
-		return packageDesc.getAasIds().stream().anyMatch(aasId -> aasId.equals(shellId));
+		return packageDesc.getItems().stream().anyMatch(aasId -> aasId.equals(shellId));
 	}
 
 	private List<Package> getPackages() {
