@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.authorization.rbac;
 
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
-import org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.RbacRule;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.authorization.ConceptDescriptionTargetInformation;
 
 import java.util.List;

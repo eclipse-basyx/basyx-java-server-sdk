@@ -1,176 +1,183 @@
 version: "3.9"
 services:
-  # mongo:
-  #   image: mongo:5.0.10
-  #   # Provide mongo config
-  #   restart: always
-  #   environment:
-  #     MONGO_INITDB_ROOT_USERNAME: mongoAdmin
-  #     MONGO_INITDB_ROOT_PASSWORD: mongoPassword
-  #   # Set health checks to wait until mongo has started
-  #   healthcheck:
-  #     test: mongo
-  #     interval: 10s
-  #     start_period: 5s
-  #     retries: 5
-  #   # Maps tcp port to host
-  #   ports:
-  #     - 27017:27017
-  #   networks:
-  #     - basyx-java-server-sdk
-
-  # zookeeper:
-  #   image: confluentinc/cp-zookeeper:7.5.2
-  #   environment:
-  #     ZOOKEEPER_CLIENT_PORT: 2181
-  #     ZOOKEEPER_TICK_TIME: 2000
-  #   healthcheck:
-  #     test: nc -z localhost 2181 || exit -1
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 10
-  #     start_period: 10s
-  #   networks:
-  #     - basyx-java-server-sdk
-
-  # akhq:
-  #   image: tchiotludo/akhq:0.24.0
-  #   container_name: akhq
-  #   environment:
-  #     AKHQ_CONFIGURATION: |
-  #       akhq:
-  #         connections:
-  #           docker-kafka-server:
-  #             properties:
-  #               bootstrap.servers: "kafka:29092"
-  #   ports:
-  #     - 8086:8080
-  #   restart: always
-  #   depends_on:
-  #     - kafka
-  #   networks:
-  #     - basyx-java-server-sdk
-
-  # kafka:
-  #   image: confluentinc/cp-kafka:7.5.2
-  #   ports:
-  #     - 9092:9092
-  #   environment:
-  #     KAFKA_BROKER_ID: 1
-  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
-  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-  #     KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-  #   healthcheck:
-  #     test: nc -z localhost 9092 || exit -1
-  #     interval: 5s
-  #     timeout: 10s
-  #     retries: 10
-  #     start_period: 15s
-  #   depends_on:
-  #     zookeeper:
-  #       condition: service_healthy
-  #   networks:
-  #     - basyx-java-server-sdk
-  
-  # aas-registry-log-mem:
-  #   image: eclipsebasyx/aas-registry-log-mem:$BASYX_VERSION
-  #   container_name: aas-registry-log-mem
-  #   ports:
-  #     - "8050:8080"
-  #   environment:
-  #     SERVER_SERVLET_CONTEXT_PATH: /
-  #   restart: always
-  #   networks:
-  #     - basyx-java-server-sdk
-  
-  # sm-registry-log-mem:
-  #   image: eclipsebasyx/submodel-registry-log-mem:$BASYX_VERSION
-  #   container_name: sm-registry-log-mem
-  #   environment:
-  #     SERVER_SERVLET_CONTEXT_PATH: /
-  #   ports:
-  #     - "8060:8080"
-  #   restart: always
-  #   networks:
-  #     - basyx-java-server-sdk
-  
-  # secured-aas-registry-log-mem:
-  #   image: eclipsebasyx/aas-registry-log-mem:$BASYX_VERSION
-  #   container_name: secured-aas-registry-log-mem
-  #   ports:
-  #     - "8051:8080"
-  #   environment:
-  #     SERVER_SERVLET_CONTEXT_PATH: /
-  #     BASYX_CORS_ALLOWED_ORIGINS: '*'
-  #     BASYX_CORS_ALLOWED_METHODS: GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
-  #     BASYX_FEATURE_AUTHORIZATION_ENABLED: true
-  #     BASYX_FEATURE_AUTHORIZATION_TYPE: rbac
-  #     BASYX_FEATURE_AUTHORIZATION_JWTBEARERTOKENPROVIDER: keycloak
-  #     SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/BaSyx
-  #     BASYX_FEATURE_AUTHORIZATION_RBAC_FILE: file:/rbac/rbac_rules.json
-  #   volumes:
-  #     - ./keycloak/rules/rbac_rules-aas-registry.json:/rbac/rbac_rules.json:ro
-  #   restart: always
-  #   networks:
-  #     - basyx-java-server-sdk
-  
-  # secured-sm-registry-log-mem:
-  #   image: eclipsebasyx/submodel-registry-log-mem:$BASYX_VERSION
-  #   container_name: secured-sm-registry-log-mem
-  #   environment:
-  #     SERVER_SERVLET_CONTEXT_PATH: /
-  #     BASYX_CORS_ALLOWED_ORIGINS: '*'
-  #     BASYX_CORS_ALLOWED_METHODS: GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
-  #     BASYX_FEATURE_AUTHORIZATION_ENABLED: true
-  #     BASYX_FEATURE_AUTHORIZATION_TYPE: rbac
-  #     BASYX_FEATURE_AUTHORIZATION_JWTBEARERTOKENPROVIDER: keycloak
-  #     SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/BaSyx
-  #     BASYX_FEATURE_AUTHORIZATION_RBAC_FILE: file:/rbac/rbac_rules.json
-  #   volumes:
-  #     - ./keycloak/rules/rbac_rules-sm-registry.json:/rbac/rbac_rules.json:ro
-  #   ports:
-  #     - "8061:8080"
-  #   restart: always
-  #   networks:
-  #     - basyx-java-server-sdk
-
-  sm-repo:
-    image: eclipsebasyx/submodel-repository:2.0.0-milestone-03
-    volumes:
-      - ./basyx/sm-repo.properties:/application/application.properties
-      - ./basyx/rules/sm-repo-rbac-rules.json:/application/rbac_rules.json
+  mongo:
+    image: mongo:5.0.10
+    # Provide mongo config
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoAdmin
+      MONGO_INITDB_ROOT_PASSWORD: mongoPassword
+    # Set health checks to wait until mongo has started
+    healthcheck:
+      test: mongo
+      interval: 10s
+      start_period: 5s
+      retries: 5
+    # Maps tcp port to host
     ports:
-        - 8061:8081
+      - 27017:27017
     networks:
       - basyx-java-server-sdk
-    # depends_on:
-    #     mongo:
-    #         condition: service_healthy
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.2
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    healthcheck:
+      test: nc -z localhost 2181 || exit -1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - basyx-java-server-sdk
+
+  akhq:
+    image: tchiotludo/akhq:0.24.0
+    container_name: akhq
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            docker-kafka-server:
+              properties:
+                bootstrap.servers: "kafka:29092"
+    ports:
+      - 8086:8080
+    restart: always
+    depends_on:
+      - kafka
+    networks:
+      - basyx-java-server-sdk
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.2
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: nc -z localhost 9092 || exit -1
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 15s
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    networks:
+      - basyx-java-server-sdk
+  
+  aas-registry-log-mem:
+    image: eclipsebasyx/aas-registry-log-mem:$BASYX_VERSION
+    container_name: aas-registry-log-mem
+    ports:
+      - "8050:8080"
+    environment:
+      SERVER_SERVLET_CONTEXT_PATH: /
+    restart: always
+    networks:
+      - basyx-java-server-sdk
+  
+  sm-registry-log-mem:
+    image: eclipsebasyx/submodel-registry-log-mem:$BASYX_VERSION
+    container_name: sm-registry-log-mem
+    environment:
+      SERVER_SERVLET_CONTEXT_PATH: /
+    ports:
+      - "8060:8080"
+    restart: always
+    networks:
+      - basyx-java-server-sdk
+  
+  secured-aas-registry-log-mem:
+    image: eclipsebasyx/aas-registry-log-mem:$BASYX_VERSION
+    container_name: secured-aas-registry-log-mem
+    ports:
+      - "8051:8080"
+    environment:
+      SERVER_SERVLET_CONTEXT_PATH: /
+      BASYX_CORS_ALLOWED_ORIGINS: '*'
+      BASYX_CORS_ALLOWED_METHODS: GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+      BASYX_FEATURE_AUTHORIZATION_ENABLED: true
+      BASYX_FEATURE_AUTHORIZATION_TYPE: rbac
+      BASYX_FEATURE_AUTHORIZATION_JWTBEARERTOKENPROVIDER: keycloak
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/BaSyx
+      BASYX_FEATURE_AUTHORIZATION_RBAC_FILE: file:/rbac/rbac_rules.json
+    volumes:
+      - ./keycloak/rules/rbac_rules-aas-registry.json:/rbac/rbac_rules.json:ro
+    restart: always
+    networks:
+      - basyx-java-server-sdk
+  
+  secured-sm-registry-log-mem:
+    image: eclipsebasyx/submodel-registry-log-mem:$BASYX_VERSION
+    container_name: secured-sm-registry-log-mem
+    environment:
+      SERVER_SERVLET_CONTEXT_PATH: /
+      BASYX_CORS_ALLOWED_ORIGINS: '*'
+      BASYX_CORS_ALLOWED_METHODS: GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+      BASYX_FEATURE_AUTHORIZATION_ENABLED: true
+      BASYX_FEATURE_AUTHORIZATION_TYPE: rbac
+      BASYX_FEATURE_AUTHORIZATION_JWTBEARERTOKENPROVIDER: keycloak
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/BaSyx
+      BASYX_FEATURE_AUTHORIZATION_RBAC_FILE: file:/rbac/rbac_rules.json
+    volumes:
+      - ./keycloak/rules/rbac_rules-sm-registry.json:/rbac/rbac_rules.json:ro
+    ports:
+      - "8061:8080"
+    restart: always
+    networks:
+      - basyx-java-server-sdk
+
+  configuration-sm-repo:
+    image: eclipsebasyx/submodel-repository:$BASYX_VERSION
+    container_name: configuration-sm-repo
+    ports:
+      - "8055:8081"
+    environment:
+      SERVER_SERVLET_CONTEXT_PATH: /
+      BASYX_CORS_ALLOWED_ORIGINS: '*'
+      BASYX_CORS_ALLOWED_METHODS: GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+      BASYX_FEATURE_AUTHORIZATION_ENABLED: true
+      BASYX_FEATURE_AUTHORIZATION_TYPE: rbac
+      BASYX_FEATURE_AUTHORIZATION_JWTBEARERTOKENPROVIDER: keycloak
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/BaSyx
+      BASYX_FEATURE_AUTHORIZATION_RBAC_FILE: file:/rbac/rbac_rules.json
+    volumes:
+      - ./keycloak/rules/rbac_rules-conf-sm-repo.json:/rbac/rbac_rules.json:ro
+    restart: always
+    networks:
+      - basyx-java-server-sdk
 
   keycloak:
-    build:
-      context: ./keycloak
-    volumes:
-      - ./keycloak/realm:/opt/jboss/keycloak/imports
-    ports:
-      - 9096:8080
-    environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-    networks:
-      - basyx-java-server-sdk
+      build:
+        context: ./keycloak
+      volumes:
+        - ./keycloak/realm:/opt/jboss/keycloak/imports
+      ports:
+        - 9096:8080
+      environment:
+        - KEYCLOAK_ADMIN=admin
+        - KEYCLOAK_ADMIN_PASSWORD=admin
+      networks:
+        - basyx-java-server-sdk
 
-  keycloak2:
+  keycloak-fixed-uri:
     image: eclipsebasyx/keycloak:0.0.1
     build:
       context: ./keycloak
       dockerfile: Dockerfile.keycloak
-    container_name: keycloak2
+    container_name: keycloak-fixed-uri
     environment:
       KC_HOSTNAME: localhost
-      KC_SPI_INITIALIZER_ISSUER_BASE_URI: http://keycloak2:8080
+      KC_SPI_INITIALIZER_ISSUER_BASE_URI: http://keycloak:8080
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: keycloak-admin
     command: ["start-dev", "--import-realm"]

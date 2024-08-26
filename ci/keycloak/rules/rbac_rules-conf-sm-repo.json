@@ -31,8 +31,8 @@
     "action": "READ",
     "targetInformation": {
       "@type": "submodel",
-      "submodelIds": "specificSubmodelId",
-      "submodelElementIdShortPaths": "smc2.specificSubmodelElementIdShort"
+      "submodelIds": ["specificSubmodelId", "testSMId1", "testSMId2"],
+      "submodelElementIdShortPaths": ["testSMEIdShortPath1","smc2.specificSubmodelElementIdShort","testSMEIdShortPath2"]
     }
   },
   {
@@ -150,24 +150,6 @@
       "@type": "submodel",
       "submodelIds": "specificSubmodelId-2",
       "submodelElementIdShortPaths": "smc2.specificFileSubmodelElementIdShort"
-    }
-  },
-  {
-    "role": "basyx-reader-two",
-    "action": "READ",
-    "targetInformation": {
-      "@type": "submodel",
-      "submodelIds": "*",
-      "submodelElementIdShortPaths": "*"
-    }
-  },
-  {
-    "role": "basyx-reader-serialization",
-    "action": "READ",
-    "targetInformation": {
-      "@type": "submodel",
-      "submodelIds": "*",
-      "submodelElementIdShortPaths": "*"
     }
   }
 ]

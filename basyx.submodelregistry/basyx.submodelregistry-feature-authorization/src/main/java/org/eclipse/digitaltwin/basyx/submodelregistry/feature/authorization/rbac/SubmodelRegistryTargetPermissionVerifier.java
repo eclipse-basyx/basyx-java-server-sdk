@@ -26,8 +26,8 @@
 package org.eclipse.digitaltwin.basyx.submodelregistry.feature.authorization.rbac;
 
 import org.eclipse.digitaltwin.basyx.submodelregistry.feature.authorization.SubmodelRegistryTargetInformation;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
-import org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.RbacRule;
 
 import java.util.List;
 
