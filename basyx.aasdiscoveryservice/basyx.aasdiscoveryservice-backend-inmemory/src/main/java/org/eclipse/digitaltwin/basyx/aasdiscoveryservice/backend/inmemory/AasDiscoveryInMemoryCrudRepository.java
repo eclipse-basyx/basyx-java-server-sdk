@@ -27,99 +27,63 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.stream.StreamSupport;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocument;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.lang.NonNull;
 
 /**
  * In-memory implementation of the {@link CrudRepository} for the AAS Discovery
  * 
- * @author zielstor, fried
+ * @author zielstor, fried, mateusmolina
  */
 public class AasDiscoveryInMemoryCrudRepository implements CrudRepository<AasDiscoveryDocument, String> {
 
-	private final Map<String, Set<AssetLink>> assetLinks = new LinkedHashMap<>();
-	private final Map<String, List<SpecificAssetId>> assetIds = new LinkedHashMap<>();
+	private final ConcurrentMap<String, Set<AssetLink>> assetLinks = new ConcurrentHashMap<>();
+	private final ConcurrentMap<String, List<SpecificAssetId>> assetIds = new ConcurrentHashMap<>();
 
 	@Override
-	public <S extends AasDiscoveryDocument> S save(S entity) {
-		Set<AssetLink> assetLinks = entity.getAssetLinks();
-		List<SpecificAssetId> assetIds = entity.getSpecificAssetIds();
+	public synchronized @NonNull <S extends AasDiscoveryDocument> S save(@NonNull S entity) {
 		String shellId = entity.getShellIdentifier();
 
-		this.assetLinks.put(shellId, assetLinks);
-		this.assetIds.put(shellId, assetIds);
+		this.assetLinks.put(shellId, entity.getAssetLinks());
+		this.assetIds.put(shellId, entity.getSpecificAssetIds());
+
 		return entity;
 	}
 
 	@Override
-	public <S extends AasDiscoveryDocument> Iterable<S> saveAll(Iterable<S> entities) {
-		for (S entity : entities) {
-			this.save(entity);
-		}
+	public @NonNull <S extends AasDiscoveryDocument> Iterable<S> saveAll(@NonNull Iterable<S> entities) {
+		entities.forEach(this::save);
 		return entities;
 	}
 
 	@Override
-	public Optional<AasDiscoveryDocument> findById(String id) {
-		Set<AssetLink> assetLinks = this.assetLinks.get(id);
-		List<SpecificAssetId> assetIds = this.assetIds.get(id);
-		if (assetIds == null) {
-			assetIds = new ArrayList<>();
-		}
-
-		if (assetLinks == null) {
-			assetLinks = new HashSet<>();
-		}
-		return Optional.of(new AasDiscoveryDocument(id, assetLinks, assetIds));
+	public @NonNull Optional<AasDiscoveryDocument> findById(@NonNull String id) {
+		return Optional.ofNullable(buildAasDiscoveryDocument(id));
 	}
 
 	@Override
-	public boolean existsById(String id) {
+	public boolean existsById(@NonNull String id) {
 		return this.assetLinks.containsKey(id);
 	}
 
 	@Override
-	public Iterable<AasDiscoveryDocument> findAll() {
-		List<AasDiscoveryDocument> result = new ArrayList<>();
-		for (String shellId : this.assetLinks.keySet()) {
-			Set<AssetLink> assetLinks = this.assetLinks.get(shellId);
-			List<SpecificAssetId> assetIds = this.assetIds.get(shellId);
-			if (assetIds == null) {
-				assetIds = new ArrayList<>();
-			}
-
-			if (assetLinks == null) {
-				assetLinks = new HashSet<>();
-			}
-			result.add(new AasDiscoveryDocument(shellId, assetLinks, assetIds));
-		}
-		return result;
+	public @NonNull Iterable<AasDiscoveryDocument> findAll() {
+		return assetLinks.keySet().stream().map(this::buildAasDiscoveryDocument).toList();
 	}
 
 	@Override
-	public Iterable<AasDiscoveryDocument> findAllById(Iterable<String> ids) {
-		List<AasDiscoveryDocument> result = new ArrayList<>();
-		for (String id : ids) {
-			Set<AssetLink> assetLinks = this.assetLinks.get(id);
-			List<SpecificAssetId> assetIds = this.assetIds.get(id);
-			if (assetIds == null) {
-				assetIds = new ArrayList<>();
-			}
-
-			if (assetLinks == null) {
-				assetLinks = new HashSet<>();
-			}
-			result.add(new AasDiscoveryDocument(id, assetLinks, assetIds));
-		}
-		return result;
+	public @NonNull Iterable<AasDiscoveryDocument> findAllById(@NonNull Iterable<String> ids) {
+		return StreamSupport.stream(ids.spliterator(), false).map(this::buildAasDiscoveryDocument).toList();
 	}
 
 	@Override
@@ -128,34 +92,47 @@ public class AasDiscoveryInMemoryCrudRepository implements CrudRepository<AasDis
 	}
 
 	@Override
-	public void deleteById(String id) {
+	public synchronized void deleteById(@NonNull String id) {
 		this.assetLinks.remove(id);
 		this.assetIds.remove(id);
 	}
 
 	@Override
-	public void delete(AasDiscoveryDocument entity) {
+	public void delete(@NonNull AasDiscoveryDocument entity) {
 		this.deleteById(entity.getShellIdentifier());
 	}
 
 	@Override
-	public void deleteAllById(Iterable<? extends String> ids) {
+	public void deleteAllById(@NonNull Iterable<? extends String> ids) {
 		for (String id : ids) {
 			this.deleteById(id);
 		}
 	}
 
 	@Override
-	public void deleteAll(Iterable<? extends AasDiscoveryDocument> entities) {
+	public void deleteAll(@NonNull Iterable<? extends AasDiscoveryDocument> entities) {
 		for (AasDiscoveryDocument entity : entities) {
 			this.deleteById(entity.getShellIdentifier());
 		}
 	}
 
 	@Override
-	public void deleteAll() {
+	public synchronized void deleteAll() {
 		this.assetLinks.clear();
 		this.assetIds.clear();
+	}
+
+	private synchronized AasDiscoveryDocument buildAasDiscoveryDocument(String shellId) {
+		Set<AssetLink> assetLinksSet = assetLinks.get(shellId);
+		List<SpecificAssetId> assetIdsList = assetIds.get(shellId);
+
+		if (assetIdsList == null)
+			assetIdsList = new ArrayList<>();
+
+		if (assetLinksSet == null)
+			assetLinksSet = new HashSet<>();
+
+		return new AasDiscoveryDocument(shellId, assetLinksSet, assetIdsList);
 	}
 
 }
