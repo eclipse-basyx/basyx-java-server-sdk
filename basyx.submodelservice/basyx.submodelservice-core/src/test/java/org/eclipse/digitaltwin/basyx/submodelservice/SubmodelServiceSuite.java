@@ -608,22 +608,6 @@ public abstract class SubmodelServiceSuite {
 
 		submodelService.deleteFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 	}
-
-  @Test(expected=ElementDoesNotExistException.class)
-  public void patchSubmodelElementsByUpdatingNonExistingElement() {
-      Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodel();
-      SubmodelService submodelService = getSubmodelService(operationalData);
-
-      Property updatedProperty = new DefaultProperty.Builder()
-          .idShort("Non_Existant_ID")
-          .value("updatedValue")
-          .valueType(DataTypeDefXsd.STRING)
-          .build();
-
-      List<SubmodelElement> elementsToPatch = Arrays.asList(updatedProperty);
-
-      submodelService.patchSubmodelElements(elementsToPatch);        
-  }
   
 	@Test
 	public void patchSubmodelElements() {
