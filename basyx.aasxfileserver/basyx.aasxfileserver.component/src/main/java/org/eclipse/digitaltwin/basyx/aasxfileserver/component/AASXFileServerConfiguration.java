@@ -45,8 +45,8 @@ import org.springframework.context.annotation.Configuration;
 public class AASXFileServerConfiguration {
 
 	@Bean
-	public static AASXFileServer getAASXFileServer(AASXFileServerFactory aasRepositoryFactory, List<AASXFileServerFeature> features) {
-		return new DecoratedAASXFileServerFactory(aasRepositoryFactory, features).create();
+	public static AASXFileServer getAASXFileServer(AASXFileServerFactory aasxFileServerFactory, List<AASXFileServerFeature> features) {
+		return new DecoratedAASXFileServerFactory(aasxFileServerFactory, features).create();
 	}
 
 }

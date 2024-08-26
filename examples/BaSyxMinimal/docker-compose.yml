@@ -80,7 +80,7 @@ services:
         condition: service_healthy
       
   aas-web-ui_v2:
-    image: eclipsebasyx/aas-gui:v2-240515
+    image: eclipsebasyx/aas-gui:v2-240801
     container_name: aas-web-ui_v2
     ports:
       - "3000:3000"

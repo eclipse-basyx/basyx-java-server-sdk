@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -38,18 +38,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.IOUtils;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
-import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
@@ -99,14 +94,17 @@ public abstract class AasServiceSuite {
 
 		Submodel submodel = createDummySubmodel();
 
-		aasService.addSubmodelReference(submodel.getSemanticId());
+		Reference ref = new DefaultReference();
+		Key submodelKey = new DefaultKey.Builder().value(submodel.getId()).type(KeyTypes.SUBMODEL).build();
+		ref.setKeys(Arrays.asList(submodelKey));
+
+		aasService.addSubmodelReference(ref);
 
 		List<Reference> submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
 
 		Reference submodelReference = getFirstSubmodelReference(submodelReferences);
 
-		assertTrue(
-				submodelReference.getKeys().stream().filter(ref -> ref.getValue().equals("testKey")).findAny().isPresent());
+		assertTrue(submodelReference.getKeys().contains(submodelKey));
 	}
 
 	@Test
@@ -233,6 +231,7 @@ public abstract class AasServiceSuite {
 
 	private DefaultSubmodel createDummySubmodel() {
 		return new DefaultSubmodel.Builder()
+				.id("testId")
 				.semanticId(
 						new DefaultReference.Builder().keys(new DefaultKey.Builder().value("testKey").build()).build())
 				.build();
