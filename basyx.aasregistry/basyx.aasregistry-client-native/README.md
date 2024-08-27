@@ -13,7 +13,7 @@ To use the client in your maven projects define the following dependency:
 If you also want to use the search API we highly recommend that you also include the search path builder class:
 ```xml
 <dependency>
-		<groupId>dorg.eclipse.digitaltwin.basyx</groupId>
+		<groupId>org.eclipse.digitaltwin.basyx</groupId>
 		<artifactId>basyx.aasregistry-paths</artifactId>
 </dependency>
 ```
