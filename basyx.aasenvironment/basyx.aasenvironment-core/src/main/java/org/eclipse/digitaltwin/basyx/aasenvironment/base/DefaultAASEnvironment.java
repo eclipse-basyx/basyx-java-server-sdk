@@ -328,7 +328,7 @@ public class DefaultAASEnvironment implements AasEnvironment {
 					return;
 				}
 				processFile(submodelId, file, relatedFiles);
-			} catch (IOException | NullPointerException e) {
+			} catch (IOException | NullPointerException | FileDoesNotExistException e) {
 				handleFileError(file);
 			}
 		}));
@@ -355,19 +355,27 @@ public class DefaultAASEnvironment implements AasEnvironment {
 	}
 
 	private void addThumbnailToRelatedFiles(String aasId, Resource thumbnail, List<InMemoryFile> relatedFiles) {
-		try {
-			String newPath = getThumbnailPathInAASX(thumbnail.getPath());
-			relatedFiles.add(
-					new InMemoryFile(
-						Files.readAllBytes(aasRepository.getThumbnail(aasId).toPath()),
-						newPath
-					)
-			);
-			thumbnail.setPath(newPath);
-		} catch (IOException | FileDoesNotExistException e) {
-			logger.error("Thumbnail file {} does not exist in the repository", thumbnail.getPath());
+		if(!isThumbnailSet(thumbnail)) {
+			logger.info("No thumbnail specified for aas {}", aasId);
+		}else {
+			try {
+				String newPath = getThumbnailPathInAASX(thumbnail.getPath());
+				relatedFiles.add(
+						new InMemoryFile(
+								Files.readAllBytes(aasRepository.getThumbnail(aasId).toPath()),
+								newPath
+						)
+				);
+				thumbnail.setPath(newPath);
+			} catch (IOException | FileDoesNotExistException e) {
+				logger.error("Thumbnail file {} does not exist in the repository", thumbnail.getPath());
+			}
 		}
     }
+
+	private static boolean isThumbnailSet(Resource thumbnail) {
+		return thumbnail != null && thumbnail.getPath() != null;
+	}
 
 	private static String getThumbnailPathInAASX(String path) {
 		try {

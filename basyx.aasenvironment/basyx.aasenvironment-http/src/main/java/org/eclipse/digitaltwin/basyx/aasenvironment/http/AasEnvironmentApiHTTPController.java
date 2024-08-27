@@ -83,7 +83,7 @@ public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 
 		try {
 			if (accept.equals(ACCEPT_AASX)) {
-				byte[] serialization = aasEnvironment.createAASXAASEnvironmentSerialization(getOriginalIds(aasIds), getOriginalIds(submodelIds), false);
+				byte[] serialization = aasEnvironment.createAASXAASEnvironmentSerialization(getOriginalIds(aasIds), getOriginalIds(submodelIds), includeConceptDescriptions);
 				return new ResponseEntity<Resource>(new ByteArrayResource(serialization), HttpStatus.OK);
 			}
 
