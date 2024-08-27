@@ -246,4 +246,9 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 		getConnectedSubmodelService(submodelId).patchSubmodelElements(submodelElementList);
 	}
 
+	@Override
+	public InputStream getFileByFilePath(String submodelId, String filePath) {
+		return getConnectedSubmodelService(submodelId).getFileByFilePath(filePath);
+	}
+
 }
