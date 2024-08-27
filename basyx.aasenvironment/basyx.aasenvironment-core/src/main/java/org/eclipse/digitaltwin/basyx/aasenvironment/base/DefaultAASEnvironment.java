@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -64,7 +64,7 @@ import jakarta.validation.Valid;
 /**
  * Default implementation of {@link AasEnvironment}
  *
- * @author zhangzai, danish
+ * @author zhangzai, danish, fried
  */
 public class DefaultAASEnvironment implements AasEnvironment {
 
@@ -117,31 +117,28 @@ public class DefaultAASEnvironment implements AasEnvironment {
 		return outputStream.toByteArray();
 	}
 
-	public List<File> getAllFileSubmodelElements(Submodel submodel){
+	public List<File> getAllFileSubmodelElements(Submodel submodel) {
 		List<File> files = new ArrayList<>();
-		submodel.getSubmodelElements().forEach(sme->files.addAll(getAllFileSubmodelElementsRec(sme,files)));
+		Stack<SubmodelElement> stack = new Stack<>();
+
+		stack.addAll(submodel.getSubmodelElements());
+
+		while (!stack.isEmpty()) {
+			SubmodelElement submodelElement = stack.pop();
+
+			if (submodelElement instanceof File file) {
+                if(!isURL(file.getValue()))
+					files.add(file);
+			} else if (submodelElement instanceof SubmodelElementCollection collection) {
+				stack.addAll(collection.getValue());
+			} else if (submodelElement instanceof SubmodelElementList list) {
+				stack.addAll(list.getValue());
+			}
+		}
+
 		return files;
 	}
 
-	public List<File> getAllFileSubmodelElementsRec(SubmodelElement submodelElement, List<File> files){
-		if(submodelElement instanceof File) {
-			//Check if is not a URL
-			if(!((File) submodelElement).getValue().startsWith("http"))
-				files.add((File) submodelElement);
-		}
-		if(submodelElement instanceof SubmodelElementCollection collection) {
-            for(SubmodelElement element : collection.getValue()) {
-				getAllFileSubmodelElementsRec(element, files);
-			}
-		}
-		if(submodelElement instanceof SubmodelElementList list){
-            for(SubmodelElement element : list.getValue()) {
-				getAllFileSubmodelElementsRec(element, files);
-			}
-		}
-		return files;
-	}
-	
 	public void loadEnvironment(CompleteEnvironment completeEnvironment) {
 		Environment environment = completeEnvironment.getEnvironment();
 		List<InMemoryFile> relatedFiles = completeEnvironment.getRelatedFiles();
@@ -397,7 +394,10 @@ public class DefaultAASEnvironment implements AasEnvironment {
 
 	private static String getHashedFilePath(String filePath) throws NoSuchAlgorithmException {
 		int hashCode = filePath.hashCode();
-
 		return Integer.toHexString(hashCode);
+	}
+
+	private static boolean isURL(String path) {
+		return path.startsWith("http");
 	}
 }
