@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM maven:3-eclipse-temurin-17-alpine as build
+FROM maven:3-eclipse-temurin-17 AS build
 WORKDIR /workspace
 COPY ./initializer/pom.xml /workspace/pom.xml
 COPY ./initializer/src /workspace/src

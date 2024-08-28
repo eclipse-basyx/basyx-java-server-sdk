@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.AccessTokenProviderFactory;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
@@ -33,8 +34,8 @@ import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.AccessT
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.GrantType;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.AuthorizedConnectedSubmodelRegistry;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -55,8 +56,8 @@ public class RegistryIntegrationSubmodelRepositoryConfiguration {
 	@Value("${basyx.submodelrepository.feature.registryintegration:#{null}}")
 	private String registryBasePath;
 
-	@Value("${basyx.externalurl:#{null}}")
-	private String submodelRepositoryBaseURL;
+	@Value("#{'${basyx.externalurl}'.split(',')}")
+	private List<String> submodelRepositoryBaseURLs;
 
 	@Value("${basyx.submodelrepository.feature.registryintegration.authorization.enabled:false}")
 	private boolean isAuthorizationEnabledOnRegistry;
@@ -84,14 +85,14 @@ public class RegistryIntegrationSubmodelRepositoryConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public SubmodelRepositoryRegistryLink getSubmodelRepositoryRegistryLink(@Value("${basyx.submodelrepository.feature.registryintegration}") String registryBasePath, @Value("${basyx.externalurl}") String submodelRepositoryBaseURL) {
+	public SubmodelRepositoryRegistryLink getSubmodelRepositoryRegistryLink() {
 	
 		if (!isAuthorizationEnabledOnRegistry)
-			return new SubmodelRepositoryRegistryLink(new SubmodelRegistryApi(registryBasePath), submodelRepositoryBaseURL);
+			return new SubmodelRepositoryRegistryLink(new SubmodelRegistryApi(registryBasePath), submodelRepositoryBaseURLs);
 
 		TokenManager tokenManager = new TokenManager(authenticationServerTokenEndpoint, createAccessTokenProvider());
 
-		return new SubmodelRepositoryRegistryLink(new AuthorizedConnectedSubmodelRegistry(registryBasePath, tokenManager), submodelRepositoryBaseURL);
+		return new SubmodelRepositoryRegistryLink(new AuthorizedConnectedSubmodelRegistry(registryBasePath, tokenManager), submodelRepositoryBaseURLs);
 	}
 	
 	@Bean
