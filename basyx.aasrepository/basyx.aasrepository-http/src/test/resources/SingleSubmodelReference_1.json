@@ -1,0 +1,10 @@
+{
+	"keys": [
+		{
+			"type": "Submodel",
+			"value": "http://i40.customer.com/type/1/1/testSubmodelNew"
+		}
+	],
+	"type": "ExternalReference"
+}
+	

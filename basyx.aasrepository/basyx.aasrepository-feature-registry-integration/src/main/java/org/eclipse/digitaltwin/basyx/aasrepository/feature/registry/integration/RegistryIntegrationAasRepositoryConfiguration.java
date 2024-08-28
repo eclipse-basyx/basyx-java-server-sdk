@@ -26,11 +26,12 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.AuthorizedConnectedAasRegistry;
+import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.AccessTokenProviderFactory;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.AccessTokenProvider;
@@ -55,8 +56,8 @@ public class RegistryIntegrationAasRepositoryConfiguration {
 	@Value("${basyx.aasrepository.feature.registryintegration:#{null}}")
 	private String registryBasePath;
 
-	@Value("${basyx.externalurl:#{null}}")
-	private String aasRepositoryBaseURL;
+	@Value("#{'${basyx.externalurl}'.split(',')}")
+	private List<String> aasRepositoryBaseURLs;
 
 	@Value("${basyx.aasrepository.feature.registryintegration.authorization.enabled:false}")
 	private boolean isAuthorizationEnabledOnRegistry;
@@ -87,11 +88,11 @@ public class RegistryIntegrationAasRepositoryConfiguration {
 	public AasRepositoryRegistryLink getAasRepositoryRegistryLink() {
 		
 		if (!isAuthorizationEnabledOnRegistry)
-			return new AasRepositoryRegistryLink(new RegistryAndDiscoveryInterfaceApi(registryBasePath), aasRepositoryBaseURL);
+			return new AasRepositoryRegistryLink(new RegistryAndDiscoveryInterfaceApi(registryBasePath), aasRepositoryBaseURLs);
 
 		TokenManager tokenManager = new TokenManager(authenticationServerTokenEndpoint, createAccessTokenProvider());
 
-		return new AasRepositoryRegistryLink(new AuthorizedConnectedAasRegistry(registryBasePath, tokenManager), aasRepositoryBaseURL);
+		return new AasRepositoryRegistryLink(new AuthorizedConnectedAasRegistry(registryBasePath, tokenManager), aasRepositoryBaseURLs);
 	}
 
 	@Bean
