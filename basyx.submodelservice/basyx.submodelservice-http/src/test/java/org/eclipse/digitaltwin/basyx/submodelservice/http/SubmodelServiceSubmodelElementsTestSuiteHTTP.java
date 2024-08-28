@@ -519,6 +519,17 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 	}
 
 	@Test
+	public void invokeInOutOperation() throws IOException, ParseException {
+		String parameters = getJSONValueAsString("operation/parameters-inout.json");
+		CloseableHttpResponse response = requestOperationInvocation(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_OPERATIONINOUT_ID, parameters);
+
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+		String expectedValue = getJSONValueAsString("operation/result-inout.json");
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
+
+	}
+
+	@Test
 	public void updateFileSMEWithNonFileSME() throws FileNotFoundException, IOException, ParseException {
 		String element = getJSONValueAsString("PropertySubmodelElementUpdateWithNewIdShort.json");
 
