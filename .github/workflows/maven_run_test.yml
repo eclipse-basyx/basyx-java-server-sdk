@@ -35,7 +35,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Compile BaSyx
-        run: mvn clean compile -T1C -DskipTests
+        run: mvn clean install -T1C -DskipTests
       - name: Start Test environment
         run: docker compose --project-directory ./ci up -d --wait
       - name: Test BaSyx
