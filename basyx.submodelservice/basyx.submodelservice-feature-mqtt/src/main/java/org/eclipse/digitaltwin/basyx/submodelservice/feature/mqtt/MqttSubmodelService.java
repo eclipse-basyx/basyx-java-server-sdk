@@ -149,6 +149,11 @@ public class MqttSubmodelService implements SubmodelService {
 		decorated.deleteFileValue(idShortPath);
 	}
 
+	@Override
+	public InputStream getFileByFilePath(String filePath) throws FileDoesNotExistException{
+		return decorated.getFileByFilePath(filePath);
+	}
+
 	private void submodelElementCreated(SubmodelElement submodelElement, String idShort) {
 		sendMqttMessage(topicFactory.createCreateSubmodelElementTopic(idShort), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
 	}
