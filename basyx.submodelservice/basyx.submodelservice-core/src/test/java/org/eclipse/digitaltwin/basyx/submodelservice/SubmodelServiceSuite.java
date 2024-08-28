@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -40,6 +40,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
@@ -548,6 +549,22 @@ public abstract class SubmodelServiceSuite {
 
 		assertEquals(expectedFileExtension, getExtension(retrievedValue.getName()));
 		assertStoredFileContentEquals(submodelService, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, DUMMY_JSON_1);
+	}
+
+	@Test
+	public void getFileByFilePath() throws IOException {
+		Submodel technicalDataSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
+		SubmodelService submodelService = getSubmodelService(technicalDataSubmodel);
+
+		submodelService.setFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "jsonFile1.json", getInputStreamOfDummyFile(DUMMY_JSON_1));
+
+		String filePath = ((File)submodelService.getSubmodelElement(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT)).getValue();
+
+		InputStream retrievedValue = submodelService.getFileByFilePath(filePath);
+		InputStream expectedValue = getInputStreamOfDummyFile(DUMMY_JSON_1);
+
+		assertEquals(expectedValue.readAllBytes().length, retrievedValue.readAllBytes().length);
+
 	}
 
 	@Test(expected = FileDoesNotExistException.class)
