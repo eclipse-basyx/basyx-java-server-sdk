@@ -90,8 +90,8 @@ public class AuthorizedSubmodelRepositoryRegistryLinkTest extends SubmodelReposi
 	}
 	
 	@Override
-	protected String getSubmodelRepoBaseUrl() {
-		return SUBMODEL_REPO_URL;
+	protected String[] getSubmodelRepoBaseUrls() {
+		return new String[] { SUBMODEL_REPO_URL };
 	}
 	
 	@Override

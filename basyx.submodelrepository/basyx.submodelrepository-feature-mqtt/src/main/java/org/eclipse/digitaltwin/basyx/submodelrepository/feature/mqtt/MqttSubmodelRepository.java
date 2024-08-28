@@ -102,7 +102,7 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
-		decorated.createSubmodelElement(submodelId, smElement);
+		decorated.createSubmodelElement(submodelId, idShortPath, smElement);
 		SubmodelElement submodelElement = decorated.getSubmodelElement(submodelId, idShortPath);
 		submodelElementCreated(submodelElement, getName(), submodelId, idShortPath);
 	}

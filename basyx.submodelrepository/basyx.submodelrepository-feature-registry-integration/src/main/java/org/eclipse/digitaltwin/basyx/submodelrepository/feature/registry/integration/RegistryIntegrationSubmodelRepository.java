@@ -41,9 +41,10 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.factory.SubmodelDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.slf4j.Logger;
@@ -87,7 +88,7 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
 		decorated.createSubmodel(submodel);
 
-		integrateSubmodelWithRegistry(submodel, submodelRepositoryRegistryLink.getSubmodelRepositoryBaseURL());
+		integrateSubmodelWithRegistry(submodel, submodelRepositoryRegistryLink.getSubmodelRepositoryBaseURLs());
 	}
 
 	@Override
@@ -167,8 +168,8 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 		decorated.deleteFileValue(submodelId, idShortPath);
 	}
 
-	private void integrateSubmodelWithRegistry(Submodel submodel, String submodelRepositoryURL) {
-		SubmodelDescriptor descriptor = new SubmodelDescriptorFactory(submodel, submodelRepositoryURL, attributeMapper).create();
+	private void integrateSubmodelWithRegistry(Submodel submodel, List<String> submodelRepositoryURLs) {
+		SubmodelDescriptor descriptor = new SubmodelDescriptorFactory(submodel, submodelRepositoryURLs, attributeMapper).create();
 
 		SubmodelRegistryApi registryApi = submodelRepositoryRegistryLink.getRegistryApi();
 
