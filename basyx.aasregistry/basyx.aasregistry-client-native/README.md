@@ -5,7 +5,7 @@ This is the generated java openAPI client (based on native java with jackson par
 To use the client in your maven projects define the following dependency:
 ```xml
 <dependency>
-		<groupId>org.eclipse.digitaltwin.basyx.aasregistry</groupId>
+		<groupId>org.eclipse.digitaltwin.basyx</groupId>
 		<artifactId>basyx.aasregistry-client-native</artifactId>
 </dependency>
 ```
@@ -13,7 +13,7 @@ To use the client in your maven projects define the following dependency:
 If you also want to use the search API we highly recommend that you also include the search path builder class:
 ```xml
 <dependency>
-		<groupId>dorg.eclipse.digitaltwin.basyx.aasregistry</groupId>
+		<groupId>org.eclipse.digitaltwin.basyx</groupId>
 		<artifactId>basyx.aasregistry-paths</artifactId>
 </dependency>
 ```

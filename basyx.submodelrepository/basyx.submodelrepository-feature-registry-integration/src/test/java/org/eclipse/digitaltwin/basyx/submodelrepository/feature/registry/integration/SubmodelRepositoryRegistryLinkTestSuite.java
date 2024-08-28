@@ -40,8 +40,11 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.DummySubmodelDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.GetSubmodelDescriptorsResult;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
@@ -57,19 +60,19 @@ public abstract class SubmodelRepositoryRegistryLinkTestSuite {
 	private static final String DUMMY_SUBMODEL_IDSHORT = "TechnicalData";
 	private static final String DUMMY_SUBMODEL_ID = "7A7104BDAB57E184";
 	
-	protected abstract String getSubmodelRepoBaseUrl();
+	protected abstract String[] getSubmodelRepoBaseUrls();
 	protected abstract String getSubmodelRegistryUrl(); 
 	protected abstract SubmodelRegistryApi getSubmodelRegistryApi();
 
-	private final SubmodelDescriptor DUMMY_DESCRIPTOR = DummySubmodelDescriptorFactory.createDummyDescriptor(DUMMY_SUBMODEL_ID, DUMMY_SUBMODEL_IDSHORT, getSubmodelRepoBaseUrl(), DummySubmodelDescriptorFactory.createSemanticId());
-
+	private final SubmodelDescriptor DUMMY_DESCRIPTOR = DummySubmodelDescriptorFactory.createDummyDescriptor(DUMMY_SUBMODEL_ID, DUMMY_SUBMODEL_IDSHORT, getSubmodelRepoBaseUrls(), DummySubmodelDescriptorFactory.createSemanticId());
+	
 	@Test
 	public void createSubmodel() throws FileNotFoundException, IOException, ApiException {
 		String submodelJsonContent = getSubmodelJSONString();
 
-		CloseableHttpResponse creationResponse = createSubmodelOnRepo(submodelJsonContent);
-		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
-
+		try (CloseableHttpResponse creationResponse = createSubmodelOnRepo(submodelJsonContent)) {
+			assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
+		}
 		SubmodelDescriptor actualDescriptor = retrieveDescriptorFromRegistry();
 
 		assertEquals(DUMMY_DESCRIPTOR, actualDescriptor);
@@ -82,14 +85,14 @@ public abstract class SubmodelRepositoryRegistryLinkTestSuite {
 		String submodelJsonContent = getSubmodelJSONString();
 		String submodelElementJsonContent = getSinglePropertyJSONString();
 
-		CloseableHttpResponse creationResponse = createSubmodelOnRepo(submodelJsonContent);
-		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
+		try (CloseableHttpResponse creationResponse = createSubmodelOnRepo(submodelJsonContent)) {
+			assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
+		}
 
 		createSubmodelElementOnRepo(submodelElementJsonContent);
-		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificSubmodelAccessURL(DUMMY_SUBMODEL_ID));
-
-		BaSyxHttpTestUtils.assertSameJSONContent(getExpectedSubmodel(), BaSyxHttpTestUtils.getResponseAsString(getResponse));
-
+		try (CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificSubmodelAccessURL(DUMMY_SUBMODEL_ID))) {
+			BaSyxHttpTestUtils.assertSameJSONContent(getExpectedSubmodel(), BaSyxHttpTestUtils.getResponseAsString(getResponse));
+		}
 		resetRepository();
 	}
 
@@ -97,11 +100,13 @@ public abstract class SubmodelRepositoryRegistryLinkTestSuite {
 	public void deleteSubmodel() throws FileNotFoundException, IOException, ApiException {
 		String submodelJsonContent = getSubmodelJSONString();
 
-		CloseableHttpResponse creationResponse = createSubmodelOnRepo(submodelJsonContent);
-		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
+		try (CloseableHttpResponse creationResponse = createSubmodelOnRepo(submodelJsonContent)) {
+			assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
+		}
 
-		CloseableHttpResponse deleteResponse = deleteSubmodelFromRepo(DUMMY_SUBMODEL_ID);
-		assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());
+		try (CloseableHttpResponse deleteResponse = deleteSubmodelFromRepo(DUMMY_SUBMODEL_ID)) {
+			assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());
+		}
 
 		assertDescriptionDeletionAtRegistry();
 	}
@@ -113,9 +118,9 @@ public abstract class SubmodelRepositoryRegistryLinkTestSuite {
 	}
 
 	private void resetRepository() throws IOException {
-		CloseableHttpResponse deleteResponse = deleteSubmodelFromRepo(DUMMY_SUBMODEL_ID);
-
-		assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());
+		try (CloseableHttpResponse deleteResponse = deleteSubmodelFromRepo(DUMMY_SUBMODEL_ID)) {
+			assertEquals(HttpStatus.NO_CONTENT.value(), deleteResponse.getCode());
+		}
 	}
 
 	private CloseableHttpResponse deleteSubmodelFromRepo(String shellId) throws IOException {
@@ -145,7 +150,11 @@ public abstract class SubmodelRepositoryRegistryLinkTestSuite {
 	}
 
 	private CloseableHttpResponse createSubmodelOnRepo(String submodelJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(createSubmodelRepositoryUrl(getSubmodelRepoBaseUrl()), submodelJsonContent);
+		return BaSyxHttpTestUtils.executePostOnURL(createSubmodelRepositoryUrl(getFirstSubmodeRepoBaseUrl()), submodelJsonContent);
+	}
+	
+	private String getFirstSubmodeRepoBaseUrl() {
+		return getSubmodelRepoBaseUrls()[0];
 	}
 
 	private CloseableHttpResponse createSubmodelElementOnRepo(String submodelElementJsonContent) throws IOException {
@@ -155,7 +164,7 @@ public abstract class SubmodelRepositoryRegistryLinkTestSuite {
 	}
 
 	private String getSpecificSubmodelAccessURL(String submodelId) {
-		return createSubmodelRepositoryUrl(getSubmodelRepoBaseUrl()) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
+		return createSubmodelRepositoryUrl(getFirstSubmodeRepoBaseUrl()) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
 	}
 	
 	private static String createSubmodelRepositoryUrl(String smRepositoryBaseURL) {

@@ -34,8 +34,9 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
+import org.eclipse.digitaltwin.basyx.aasregistry.main.client.factory.AasDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.RepositoryRegistryLinkException;
@@ -79,7 +80,7 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 	public void createAas(AssetAdministrationShell shell) throws CollidingIdentifierException {
 		decorated.createAas(shell);
 
-		integrateAasWithRegistry(shell, aasRepositoryRegistryLink.getAasRepositoryBaseURL());
+		integrateAasWithRegistry(shell, aasRepositoryRegistryLink.getAasRepositoryBaseURLs());
 	}
 
 	@Override
@@ -124,8 +125,8 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 		return decorated.getAssetInformation(shellId);
 	}
 
-	private void integrateAasWithRegistry(AssetAdministrationShell shell, String aasRepositoryURL) {
-		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(shell, aasRepositoryURL, attributeMapper).create();
+	private void integrateAasWithRegistry(AssetAdministrationShell shell, List<String> aasRepositoryURLs) {
+		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(shell, aasRepositoryURLs, attributeMapper).create();
 
 		RegistryAndDiscoveryInterfaceApi registryApi = aasRepositoryRegistryLink.getRegistryApi();
 
