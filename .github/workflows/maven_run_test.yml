@@ -34,10 +34,10 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-      - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
       - name: Compile BaSyx
-        run: mvn clean compile -T1C
+        run: mvn clean compile -T1C -DskipTests
+      - name: Start Test environment
+        run: docker compose --project-directory ./ci up -d --wait
       - name: Test BaSyx
         run: mvn test
       - name: Stop environment
