@@ -350,7 +350,7 @@ jobs:
 
       - name: Test Submodel Service Docker Image
         run: |
-          docker run -d --name test_submodel_service test/submodel-service:${VERSION}
+          docker run -d --name test_submodel_service test/standalone_submodel_example:${VERSION}
 
           # Initialize variables
           max_checks=24  # 2 minutes total (120 seconds / 5 seconds per check)
