@@ -1,4 +1,4 @@
-docker-compose.ymlversion: '3.6'
+version: '3.6'
 
 networks:
   basyx-submodel:

@@ -74,8 +74,8 @@ jobs:
           docker stop test_aas_repository
           docker rm test_aas_repository
 
-      - name: Clean up Docker Image
-        run: docker rmi -f $(docker images -aq)
+      - name: Clean up
+        run: exit 0
 
   build-test-aas-environment:
     runs-on: ubuntu-latest
@@ -125,8 +125,8 @@ jobs:
           docker stop test_aas_environment
           docker rm test_aas_environment
 
-      - name: Clean up Docker Image
-        run: docker rmi -f $(docker images -aq)
+      - name: Clean up
+        run: exit 0
 
   build-test-concept-description-repository:
     runs-on: ubuntu-latest
@@ -176,8 +176,8 @@ jobs:
           docker stop test_conceptdescription_repository
           docker rm test_conceptdescription_repository
 
-      - name: Clean up Docker Image
-        run: docker rmi -f $(docker images -aq)
+      - name: Clean up
+        run: exit 0
 
   build-test-aas-discovery:
     runs-on: ubuntu-latest
@@ -227,8 +227,8 @@ jobs:
           docker stop test_aas_discovery
           docker rm test_aas_discovery
 
-      - name: Clean up Docker Image
-        run: docker rmi -f $(docker images -aq)
+      - name: Clean up
+        run: exit 0
 
   build-test-aasx-fileserver:
     runs-on: ubuntu-latest
@@ -278,8 +278,8 @@ jobs:
           docker stop test_aasxfileserver
           docker rm test_aasxfileserver
 
-      - name: Clean up Docker Image
-        run: docker rmi -f $(docker images -aq)
+      - name: Clean up
+        run: exit 0
 
   build-test-submodel-repository:
     runs-on: ubuntu-latest
@@ -329,8 +329,8 @@ jobs:
           docker stop test_submodel_repository
           docker rm test_submodel_repository
 
-      - name: Clean up Docker Image
-        run: docker rmi -f $(docker images -aq)
+      - name: Clean up
+        run: exit 0
 
   build-test-submodel-service:
     runs-on: ubuntu-latest
@@ -380,8 +380,8 @@ jobs:
           docker stop test_submodel_service
           docker rm test_submodel_service
 
-      - name: Clean up Docker Image
-        run: docker rmi -f $(docker images -aq)
+      - name: Clean up
+        run: exit 0
 
   build-test-aas-registry-kafka-mem:
     runs-on: ubuntu-latest
@@ -431,8 +431,8 @@ jobs:
           docker stop test_aas_registry_kafka_mem
           docker rm test_aas_registry_kafka_mem
 
-      - name: Clean up Docker Image
-        run: docker rmi -f $(docker images -aq)
+      - name: Clean up
+        run: exit 0
 
   build-test-aas-registry-kafka-mongodb:
     runs-on: ubuntu-latest
@@ -482,8 +482,8 @@ jobs:
           docker stop test_aas_registry_kafka_mongodb
           docker rm test_aas_registry_kafka_mongodb
 
-      - name: Clean up Docker Image
-        run: docker rmi -f $(docker images -aq)
+      - name: Clean up
+        run: exit 0
 
   build-test-aas-registry-log-mem:
     runs-on: ubuntu-latest
@@ -533,8 +533,8 @@ jobs:
           docker stop test_aas_registry_log_mem
           docker rm test_aas_registry_log_mem
 
-      - name: Clean up Docker Image
-        run: docker rmi -f $(docker images -aq)
+      - name: Clean up
+        run: exit 0
 
   build-test-aas-registry-log-mongodb:
     runs-on: ubuntu-latest
@@ -584,8 +584,8 @@ jobs:
           docker stop test_aas_registry_log_mongodb
           docker rm test_aas_registry_log_mongodb
 
-      - name: Clean up Docker Image
-        run: docker rmi -f $(docker images -aq)
+      - name: Clean up
+        run: exit 0
 
   build-test-submodel-registry-kafka-mem:
     runs-on: ubuntu-latest
@@ -635,8 +635,8 @@ jobs:
           docker stop test_submodel_registry_kafka_mem
           docker rm test_submodel_registry_kafka_mem
 
-      - name: Clean up Docker Image
-        run: docker rmi -f $(docker images -aq)
+      - name: Clean up
+        run: exit 0
 
   build-test-submodel-registry-kafka-mongodb:
     runs-on: ubuntu-latest
@@ -686,8 +686,8 @@ jobs:
           docker stop test_submodel_registry_kafka_mongodb
           docker rm test_submodel_registry_kafka_mongodb
 
-      - name: Clean up Docker Image
-        run: docker rmi -f $(docker images -aq)
+      - name: Clean up
+        run: exit 0
 
   build-test-submodel-registry-log-mem:
     runs-on: ubuntu-latest
@@ -737,8 +737,8 @@ jobs:
           docker stop test_submodel_registry_log_mem
           docker rm test_submodel_registry_log_mem
 
-      - name: Clean up Docker Image
-        run: docker rmi -f $(docker images -aq)
+      - name: Clean up
+        run: exit 0
 
   build-test-submodel-registry-log-mongodb:
     runs-on: ubuntu-latest
@@ -788,5 +788,5 @@ jobs:
           docker stop test_submodel_registry_log_mongodb
           docker rm test_submodel_registry_log_mongodb
 
-      - name: Clean up Docker Image
-        run: docker rmi -f $(docker images -aq)
+      - name: Clean up
+        run: exit 0
