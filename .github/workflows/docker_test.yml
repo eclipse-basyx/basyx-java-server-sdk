@@ -4,18 +4,44 @@
 name: Build and Start Docker Images
 
 on:
-  workflow_run:
-    workflows: [Install BaSyx]
-    types:
-      - completed
-
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/CODE_OF_CONDUCT.md'
+      - '.github/CODING_CONVENTIONS.md'
+      - '.github/CONTRIBUTING.md'
+      - '.github/dependabot.yml'
+      - '.github/pull_request_template.md'
+      - '.github/SECURITY.md'
+      - 'docs/**'
+      - 'examples/**'
+      - 'README.md'
+      - '.gitattributes'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'NOTICE'
 
 env:
   VERSION: 2.0.0-SNAPSHOT
 
 jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+      - name: Package BaSyx ( No Tests )
+        run: mvn clean package -DskipTests
 
   build-test-aas-repository:
+    needs: compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -67,6 +93,7 @@ jobs:
         run: exit 0
 
   build-test-aas-environment:
+    needs: compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -118,6 +145,7 @@ jobs:
         run: exit 0
 
   build-test-concept-description-repository:
+    needs: compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -169,6 +197,7 @@ jobs:
         run: exit 0
 
   build-test-aas-discovery:
+    needs: compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -220,6 +249,7 @@ jobs:
         run: exit 0
 
   build-test-aasx-fileserver:
+    needs: compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -271,6 +301,7 @@ jobs:
         run: exit 0
 
   build-test-submodel-repository:
+    needs: compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -322,6 +353,7 @@ jobs:
         run: exit 0
 
   build-test-submodel-service:
+    needs: compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -373,6 +405,7 @@ jobs:
         run: exit 0
 
   build-test-aas-registry-kafka-mem:
+    needs: compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -424,6 +457,7 @@ jobs:
         run: exit 0
 
   build-test-aas-registry-kafka-mongodb:
+    needs: compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -475,6 +509,7 @@ jobs:
         run: exit 0
 
   build-test-aas-registry-log-mem:
+    needs: compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -526,6 +561,7 @@ jobs:
         run: exit 0
 
   build-test-aas-registry-log-mongodb:
+    needs: compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -577,6 +613,7 @@ jobs:
         run: exit 0
 
   build-test-submodel-registry-kafka-mem:
+    needs: compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -628,6 +665,7 @@ jobs:
         run: exit 0
 
   build-test-submodel-registry-kafka-mongodb:
+    needs: compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -679,6 +717,7 @@ jobs:
         run: exit 0
 
   build-test-submodel-registry-log-mem:
+    needs: compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -730,6 +769,7 @@ jobs:
         run: exit 0
 
   build-test-submodel-registry-log-mongodb:
+    needs: compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
