@@ -51,33 +51,47 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-      - name: Build and remove Docker images
+      - name: Build Docker Images
         run: |
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelservice.example"
-          docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
-          docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
-          docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasenvironment.component"
-          docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.conceptdescriptionrepository.component"
-          docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
-          docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasxfileserver.component"
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-kafka-mem"
-          docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-kafka-mongodb"
-          docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
-          docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
-          docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-kafka-mem"
-          docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-kafka-mongodb"
-          docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
-          docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
+
+      - name: Test Docker Images
+        run: |
+          images=("basyx.submodelservice.example" "basyx.submodelrepository.component" "basyx.aasrepository.component" "basyx.aasenvironment.component" "basyx.conceptdescriptionrepository.component" "basyx.aasdiscoveryservice.component" "basyx.aasxfileserver.component" "basyx.aasregistry-service-release-kafka-mem" "basyx.aasregistry-service-release-kafka-mongodb" "basyx.aasregistry-service-release-log-mem" "basyx.aasregistry-service-release-log-mongodb" "basyx.submodelregistry-service-release-kafka-mem" "basyx.submodelregistry-service-release-kafka-mongodb" "basyx.submodelregistry-service-release-log-mem" "basyx.submodelregistry-service-release-log-mongodb")
+          
+          for image in "${images[@]}"; do
+            echo "Testing image $image"
+            docker run -d --name test_$image test/$image
+            sleep 30  # Give the container some time to start
+
+            # Check if the container is healthy (assuming the Dockerfile defines a HEALTHCHECK)
+            if [ "$(docker inspect --format='{{.State.Health.Status}}' test_$image)" == "healthy" ]; then
+              echo "$image started successfully and is healthy."
+            else
+              echo "$image failed to start or is unhealthy."
+              docker logs test_$image
+              exit 1
+            fi
+
+            # Stop and remove the container after testing
+            docker stop test_$image
+            docker rm test_$image
+          done
+
+      - name: Clean up Docker Images
+        run: |
+          docker rmi -f $(docker images -aq)
