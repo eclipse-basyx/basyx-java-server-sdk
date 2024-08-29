@@ -94,7 +94,7 @@ services:
 
   aas-registry-kafka-mongodb:
     image: test/aas-registry-kafka-mongodb:$BASYX_VERSION
-    container_name: test-aas-registry-kafka-mongodb
+    container_name: test_aas_registry_kafka_mongodb
     pull_policy: never
     ports:
       - "8020:8080"

@@ -77,7 +77,7 @@ services:
 
   submodel-registry-kafka-mem:
     image: test/submodel-registry-kafka-mem:$BASYX_VERSION
-    container_name: test-submodel-registry-kafka-mem
+    container_name: test_submodel_registry_kafka_mem
     pull_policy: never
     ports:
       - "8035:8080"

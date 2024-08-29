@@ -38,7 +38,7 @@ services:
 
   aas-registry-log-mongodb:
     image: test/aas-registry-log-mongodb:$BASYX_VERSION
-    container_name: test-aas-registry-log-mongodb
+    container_name: test_aas_registry_log_mongodb
     pull_policy: never
     ports:
       - "8050:8080"

@@ -79,7 +79,7 @@ services:
 
   aas-registry-kafka-mem:
     image: test/aas-registry-kafka-mem:$BASYX_VERSION
-    container_name: test-aas-registry-kafka-mem
+    container_name: test_aas_registry_kafka_mem
     pull_policy: never
     ports:
       - "8030:8080"
