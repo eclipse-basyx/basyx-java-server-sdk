@@ -862,7 +862,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --project-directory ./ci -f ./ci/docker-compose-ci.yml up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
@@ -882,7 +882,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --project-directory ./ci -f ./ci/docker-compose-ci.yml up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
@@ -901,7 +901,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --project-directory ./ci -f ./ci/docker-compose-ci.yml up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
@@ -921,7 +921,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --project-directory ./ci -f ./ci/docker-compose-ci.yml up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
@@ -941,7 +941,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --project-directory ./ci -f ./ci/docker-compose-ci.yml up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
@@ -960,7 +960,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --project-directory ./ci -f ./ci/docker-compose-ci.yml up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
@@ -980,7 +980,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --project-directory ./ci -f ./ci/docker-compose-registries.yml up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
@@ -1000,7 +1000,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --project-directory ./ci -f ./ci/docker-compose-registries.yml up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
@@ -1020,7 +1020,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --project-directory ./ci -f ./ci/docker-compose-ci.yml up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
