@@ -211,7 +211,7 @@ jobs:
       - name: Test Submodel Repository Docker Image
         run: |
           docker run -p 8081:8081 -d --name test_submodel_repository test/submodel-repository:${VERSION}
-          sleep 30
+          sleep 300
           if [ "$(docker inspect --format='{{.State.Health.Status}}' test_submodel_repository)" == "healthy" ]; then
             echo "Submodel Repository started successfully and is healthy."
           else
