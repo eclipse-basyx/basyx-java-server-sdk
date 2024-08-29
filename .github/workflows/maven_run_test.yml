@@ -34,13 +34,6 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-      - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
-      - name: Install BaSyx
-        run: mvn clean install
-      - name: Stop environment
-        if: always()
-        run: docker compose --project-directory ./ci down
       - name: Build and remove Docker images
         run: |
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelservice.example"
@@ -71,3 +64,10 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
           docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
+      - name: Start environment
+        run: docker compose --project-directory ./ci up -d --wait
+      - name: Install BaSyx
+        run: mvn clean install
+      - name: Stop environment
+        if: always()
+        run: docker compose --project-directory ./ci down

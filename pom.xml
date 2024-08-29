@@ -255,6 +255,40 @@
 						</execution>
 					</executions>
 				</plugin>
+
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>flatten-maven-plugin</artifactId>
+					<version>1.5.0</version>
+					<configuration>
+						<updatePomFile>true</updatePomFile>
+						<pomElements>
+							<name />
+							<description />
+							<url />
+							<developers />
+							<scm />
+						</pomElements>
+					</configuration>
+					<executions>
+						<!-- enable flattening -->
+						<execution>
+							<id>flatten</id>
+							<phase>process-resources</phase>
+							<goals>
+								<goal>flatten</goal>
+							</goals>
+						</execution>
+						<!-- ensure proper cleanup -->
+						<execution>
+							<id>flatten.clean</id>
+							<phase>clean</phase>
+							<goals>
+								<goal>clean</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -599,6 +633,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasenvironment-client</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasenvironment.benchmark</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<!-- basyx.conceptdescriptionrepository -->
@@ -1267,39 +1306,6 @@
 								<id>license-check</id>
 								<goals>
 									<goal>license-check</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>flatten-maven-plugin</artifactId>
-						<version>1.5.0</version>
-						<configuration>
-							<updatePomFile>true</updatePomFile>
-							<pomElements>
-								<name />
-								<description />
-								<url />
-								<developers />
-								<scm />
-							</pomElements>
-						</configuration>
-						<executions>
-							<!-- enable flattening -->
-							<execution>
-								<id>flatten</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>flatten</goal>
-								</goals>
-							</execution>
-							<!-- ensure proper cleanup -->
-							<execution>
-								<id>flatten.clean</id>
-								<phase>clean</phase>
-								<goals>
-									<goal>clean</goal>
 								</goals>
 							</execution>
 						</executions>
