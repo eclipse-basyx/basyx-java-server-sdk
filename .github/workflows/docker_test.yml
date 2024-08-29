@@ -883,6 +883,8 @@ jobs:
           cache: maven
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
         run: mvn clean install -f "basyx.aasrepository/pom.xml"
       - name: Stop environment
@@ -900,6 +902,8 @@ jobs:
           cache: maven
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
         run: mvn clean install -f "basyx.aasservice/pom.xml"
       - name: Stop environment
@@ -918,6 +922,8 @@ jobs:
           cache: maven
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
         run: mvn clean install -f "basyx.submodelrepository/pom.xml"
       - name: Stop environment
@@ -936,6 +942,8 @@ jobs:
           cache: maven
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
         run: mvn clean install -f "basyx.submodelservice/pom.xml"
       - name: Stop environment
@@ -953,6 +961,8 @@ jobs:
           cache: maven
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
         run: mvn clean install -f "basyx.conceptdescriptionrepository/pom.xml"
       - name: Stop environment
@@ -971,6 +981,8 @@ jobs:
           cache: maven
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
         run: mvn clean install -f "basyx.submodelregistry/pom.xml"
       - name: Stop environment
@@ -989,6 +1001,8 @@ jobs:
           cache: maven
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
         run: mvn clean install -f "basyx.aasregisty/pom.xml"
       - name: Stop environment
@@ -1007,6 +1021,8 @@ jobs:
           cache: maven
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
         run: mvn clean install -f "basyx.aasdiscoveryservice/pom.xml"
       - name: Stop environment
