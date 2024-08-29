@@ -24,191 +24,497 @@ on:
 
 
 jobs:
-  Build-BaSyx:
+  build-test-aas-repository:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-      - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
-      - name: Install BaSyx
-        run: mvn clean install -DskipTests
-      - name: Stop environment
-        if: always()
-        run: docker compose --project-directory ./ci down
-  Build-AAS-CD-Docker-Images:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'adopt'
-          cache: maven
-      - name: Build Docker Images
+
+      - name: Build AAS Repository Docker Image
         run: |
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Test AAS Repository Docker Image
+        run: |
+          docker run -d --name test_aas_repository test/aas-repository
+          sleep 30
+          if [ "$(docker inspect --format='{{.State.Health.Status}}' test_aas_repository)" == "healthy" ]; then
+            echo "AAS Repository started successfully and is healthy."
+          else
+            echo "AAS Repository failed to start or is unhealthy."
+            docker logs test_aas_repository
+            exit 1
+          fi
+          docker stop test_aas_repository
+          docker rm test_aas_repository
+
+      - name: Clean up Docker Image
+        run: docker rmi -f $(docker images -aq)
+
+  build-test-aas-environment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build AAS Environment Docker Image
+        run: |
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasenvironment.component"
+
+      - name: Test AAS Environment Docker Image
+        run: |
+          docker run -d --name test_aas_environment test/aas-environment
+          sleep 30
+          if [ "$(docker inspect --format='{{.State.Health.Status}}' test_aas_environment)" == "healthy" ]; then
+            echo "AAS Environment started successfully and is healthy."
+          else
+            echo "AAS Environment failed to start or is unhealthy."
+            docker logs test_aas_environment
+            exit 1
+          fi
+          docker stop test_aas_environment
+          docker rm test_aas_environment
+
+      - name: Clean up Docker Image
+        run: docker rmi -f $(docker images -aq)
+
+  build-test-concept-description-repository:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build Concept Description Repository Docker Image
+        run: |
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.conceptdescriptionrepository.component"
+
+      - name: Test Concept Description Repository Docker Image
+        run: |
+          docker run -d --name test_conceptdescription_repository test/conceptdescription-repository
+          sleep 30
+          if [ "$(docker inspect --format='{{.State.Health.Status}}' test_conceptdescription_repository)" == "healthy" ]; then
+            echo "Concept Description Repository started successfully and is healthy."
+          else
+            echo "Concept Description Repository failed to start or is unhealthy."
+            docker logs test_conceptdescription_repository
+            exit 1
+          fi
+          docker stop test_conceptdescription_repository
+          docker rm test_conceptdescription_repository
+
+      - name: Clean up Docker Image
+        run: docker rmi -f $(docker images -aq)
+
+  build-test-aas-discovery:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build AAS Discovery Docker Image
+        run: |
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
+      - name: Test AAS Discovery Docker Image
+        run: |
+          docker run -d --name test_aas_discovery test/aas-discovery
+          sleep 30
+          if [ "$(docker inspect --format='{{.State.Health.Status}}' test_aas_discovery)" == "healthy" ]; then
+            echo "AAS Discovery started successfully and is healthy."
+          else
+            echo "AAS Discovery failed to start or is unhealthy."
+            docker logs test_aas_discovery
+            exit 1
+          fi
+          docker stop test_aas_discovery
+          docker rm test_aas_discovery
+
+      - name: Clean up Docker Image
+        run: docker rmi -f $(docker images -aq)
+
+  build-test-aasx-fileserver:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build AASX File Server Docker Image
+        run: |
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasxfileserver.component"
 
-      - name: Test Docker Images
+      - name: Test AASX File Server Docker Image
         run: |
-          images=("test/aas-repository" "test/aas-environment" "test/conceptdescription-repository" "test/aas-discovery" "test/aasxfileserver")
-          
-          for image in "${images[@]}"; do
-            echo "Testing image $image"
-            docker run -d --name test_$image test/$image
-            sleep 30  # Give the container some time to start
+          docker run -d --name test_aasxfileserver test/aasxfileserver
+          sleep 30
+          if [ "$(docker inspect --format='{{.State.Health.Status}}' test_aasxfileserver)" == "healthy" ]; then
+            echo "AASX File Server started successfully and is healthy."
+          else
+            echo "AASX File Server failed to start or is unhealthy."
+            docker logs test_aasxfileserver
+            exit 1
+          fi
+          docker stop test_aasxfileserver
+          docker rm test_aasxfileserver
 
-            # Check if the container is healthy (assuming the Dockerfile defines a HEALTHCHECK)
-            if [ "$(docker inspect --format='{{.State.Health.Status}}' test_$image)" == "healthy" ]; then
-              echo "$image started successfully and is healthy."
-            else
-              echo "$image failed to start or is unhealthy."
-              docker logs test_$image
-              exit 1
-            fi
+      - name: Clean up Docker Image
+        run: docker rmi -f $(docker images -aq)
 
-            # Stop and remove the container after testing
-            docker stop test_$image
-            docker rm test_$image
-          done
-
-      - name: Clean up Docker Images
-        run: |
-          docker rmi -f $(docker images -aq)
-  Build-Submodel-Docker-Images:
+  build-test-submodel-repository:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-      - name: Build Docker Images
+
+      - name: Build Submodel Repository Docker Image
         run: |
-          mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelservice.example"
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
-      - name: Test Docker Images
+      - name: Test Submodel Repository Docker Image
         run: |
-          images=("test/submodel-repository" "test/submodel-service")
-          
-          for image in "${images[@]}"; do
-            echo "Testing image $image"
-            docker run -d --name test_$image test/$image
-            sleep 30  # Give the container some time to start
+          docker run -d --name test_submodel_repository test/submodel-repository
+          sleep 30
+          if [ "$(docker inspect --format='{{.State.Health.Status}}' test_submodel_repository)" == "healthy" ]; then
+            echo "Submodel Repository started successfully and is healthy."
+          else
+            echo "Submodel Repository failed to start or is unhealthy."
+            docker logs test_submodel_repository
+            exit 1
+          fi
+          docker stop test_submodel_repository
+          docker rm test_submodel_repository
 
-            # Check if the container is healthy (assuming the Dockerfile defines a HEALTHCHECK)
-            if [ "$(docker inspect --format='{{.State.Health.Status}}' test_$image)" == "healthy" ]; then
-              echo "$image started successfully and is healthy."
-            else
-              echo "$image failed to start or is unhealthy."
-              docker logs test_$image
-              exit 1
-            fi
+      - name: Clean up Docker Image
+        run: docker rmi -f $(docker images -aq)
 
-            # Stop and remove the container after testing
-            docker stop test_$image
-            docker rm test_$image
-          done
-
-      - name: Clean up Docker Images
-        run: |
-          docker rmi -f $(docker images -aq)
-  Build-AAS-Registry-Docker-Images:
+  build-test-submodel-service:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-      - name: Build Docker Images
+
+      - name: Build Submodel Service Docker Image
+        run: |
+          mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelservice.example"
+
+      - name: Test Submodel Service Docker Image
+        run: |
+          docker run -d --name test_submodel_service test/submodel-service
+          sleep 30
+          if [ "$(docker inspect --format='{{.State.Health.Status}}' test_submodel_service)" == "healthy" ]; then
+            echo "Submodel Service started successfully and is healthy."
+          else
+            echo "Submodel Service failed to start or is unhealthy."
+            docker logs test_submodel_service
+            exit 1
+          fi
+          docker stop test_submodel_service
+          docker rm test_submodel_service
+
+      - name: Clean up Docker Image
+        run: docker rmi -f $(docker images -aq)
+
+  build-test-aas-registry-kafka-mem:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build AAS Registry Kafka Mem Docker Image
         run: |
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-kafka-mem"
-          mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-kafka-mongodb"
-          mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
-          mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
 
-      - name: Test Docker Images
+      - name: Test AAS Registry Kafka Mem Docker Image
         run: |
-          images=("test/aas-registry-kafka-mem" "test/aas-registry-kafka-mongodb" "test/aas-registry-log-mem" "test/aas-registry-log-mongodb")
-          
-          for image in "${images[@]}"; do
-            echo "Testing image $image"
-            docker run -d --name test_$image test/$image
-            sleep 30  # Give the container some time to start
+          docker run -d --name test_aas_registry_kafka_mem test/aas-registry-kafka-mem
+          sleep 30
+          if [ "$(docker inspect --format='{{.State.Health.Status}}' test_aas_registry_kafka_mem)" == "healthy" ]; then
+            echo "AAS Registry Kafka Mem started successfully and is healthy."
+          else
+            echo "AAS Registry Kafka Mem failed to start or is unhealthy."
+            docker logs test_aas_registry_kafka_mem
+            exit 1
+          fi
+          docker stop test_aas_registry_kafka_mem
+          docker rm test_aas_registry_kafka_mem
 
-            # Check if the container is healthy (assuming the Dockerfile defines a HEALTHCHECK)
-            if [ "$(docker inspect --format='{{.State.Health.Status}}' test_$image)" == "healthy" ]; then
-              echo "$image started successfully and is healthy."
-            else
-              echo "$image failed to start or is unhealthy."
-              docker logs test_$image
-              exit 1
-            fi
+      - name: Clean up Docker Image
+        run: docker rmi -f $(docker images -aq)
 
-            # Stop and remove the container after testing
-            docker stop test_$image
-            docker rm test_$image
-          done
-
-      - name: Clean up Docker Images
-        run: |
-          docker rmi -f $(docker images -aq)
-  Build-Submodel-Registry-Docker-Images:
+  build-test-aas-registry-kafka-mongodb:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-      - name: Build Docker Images
+
+      - name: Build AAS Registry Kafka MongoDB Docker Image
+        run: |
+          mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-kafka-mongodb"
+
+      - name: Test AAS Registry Kafka MongoDB Docker Image
+        run: |
+          docker run -d --name test_aas_registry_kafka_mongodb test/aas-registry-kafka-mongodb
+          sleep 30
+          if [ "$(docker inspect --format='{{.State.Health.Status}}' test_aas_registry_kafka_mongodb)" == "healthy" ]; then
+            echo "AAS Registry Kafka MongoDB started successfully and is healthy."
+          else
+            echo "AAS Registry Kafka MongoDB failed to start or is unhealthy."
+            docker logs test_aas_registry_kafka_mongodb
+            exit 1
+          fi
+          docker stop test_aas_registry_kafka_mongodb
+          docker rm test_aas_registry_kafka_mongodb
+
+      - name: Clean up Docker Image
+        run: docker rmi -f $(docker images -aq)
+
+  build-test-aas-registry-log-mem:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build AAS Registry Log Mem Docker Image
+        run: |
+          mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Test AAS Registry Log Mem Docker Image
+        run: |
+          docker run -d --name test_aas_registry_log_mem test/aas-registry-log-mem
+          sleep 30
+          if [ "$(docker inspect --format='{{.State.Health.Status}}' test_aas_registry_log_mem)" == "healthy" ]; then
+            echo "AAS Registry Log Mem started successfully and is healthy."
+          else
+            echo "AAS Registry Log Mem failed to start or is unhealthy."
+            docker logs test_aas_registry_log_mem
+            exit 1
+          fi
+          docker stop test_aas_registry_log_mem
+          docker rm test_aas_registry_log_mem
+
+      - name: Clean up Docker Image
+        run: docker rmi -f $(docker images -aq)
+
+  build-test-aas-registry-log-mongodb:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build AAS Registry Log MongoDB Docker Image
+        run: |
+          mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Test AAS Registry Log MongoDB Docker Image
+        run: |
+          docker run -d --name test_aas_registry_log_mongodb test/aas-registry-log-mongodb
+          sleep 30
+          if [ "$(docker inspect --format='{{.State.Health.Status}}' test_aas_registry_log_mongodb)" == "healthy" ]; then
+            echo "AAS Registry Log MongoDB started successfully and is healthy."
+          else
+            echo "AAS Registry Log MongoDB failed to start or is unhealthy."
+            docker logs test_aas_registry_log_mongodb
+            exit 1
+          fi
+          docker stop test_aas_registry_log_mongodb
+          docker rm test_aas_registry_log_mongodb
+
+      - name: Clean up Docker Image
+        run: docker rmi -f $(docker images -aq)
+
+  build-test-submodel-registry-kafka-mem:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build Submodel Registry Kafka Mem Docker Image
         run: |
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-kafka-mem"
+
+      - name: Test Submodel Registry Kafka Mem Docker Image
+        run: |
+          docker run -d --name test_submodel_registry_kafka_mem test/submodel-registry-kafka-mem
+          sleep 30
+          if [ "$(docker inspect --format='{{.State.Health.Status}}' test_submodel_registry_kafka_mem)" == "healthy" ]; then
+            echo "Submodel Registry Kafka Mem started successfully and is healthy."
+          else
+            echo "Submodel Registry Kafka Mem failed to start or is unhealthy."
+            docker logs test_submodel_registry_kafka_mem
+            exit 1
+          fi
+          docker stop test_submodel_registry_kafka_mem
+          docker rm test_submodel_registry_kafka_mem
+
+      - name: Clean up Docker Image
+        run: docker rmi -f $(docker images -aq)
+
+  build-test-submodel-registry-kafka-mongodb:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build Submodel Registry Kafka MongoDB Docker Image
+        run: |
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-kafka-mongodb"
+
+      - name: Test Submodel Registry Kafka MongoDB Docker Image
+        run: |
+          docker run -d --name test_submodel_registry_kafka_mongodb test/submodel-registry-kafka-mongodb
+          sleep 30
+          if [ "$(docker inspect --format='{{.State.Health.Status}}' test_submodel_registry_kafka_mongodb)" == "healthy" ]; then
+            echo "Submodel Registry Kafka MongoDB started successfully and is healthy."
+          else
+            echo "Submodel Registry Kafka MongoDB failed to start or is unhealthy."
+            docker logs test_submodel_registry_kafka_mongodb
+            exit 1
+          fi
+          docker stop test_submodel_registry_kafka_mongodb
+          docker rm test_submodel_registry_kafka_mongodb
+
+      - name: Clean up Docker Image
+        run: docker rmi -f $(docker images -aq)
+
+  build-test-submodel-registry-log-mem:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build Submodel Registry Log Mem Docker Image
+        run: |
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Test Submodel Registry Log Mem Docker Image
+        run: |
+          docker run -d --name test_submodel_registry_log_mem test/submodel-registry-log-mem
+          sleep 30
+          if [ "$(docker inspect --format='{{.State.Health.Status}}' test_submodel_registry_log_mem)" == "healthy" ]; then
+            echo "Submodel Registry Log Mem started successfully and is healthy."
+          else
+            echo "Submodel Registry Log Mem failed to start or is unhealthy."
+            docker logs test_submodel_registry_log_mem
+            exit 1
+          fi
+          docker stop test_submodel_registry_log_mem
+          docker rm test_submodel_registry_log_mem
+
+      - name: Clean up Docker Image
+        run: docker rmi -f $(docker images -aq)
+
+  build-test-submodel-registry-log-mongodb:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build Submodel Registry Log MongoDB Docker Image
+        run: |
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
-      - name: Test Docker Images
+      - name: Test Submodel Registry Log MongoDB Docker Image
         run: |
-          images=("test/submodel-registry-kafka-mem" "test/submodel-registry-kafka-mongodb" "test/submodel-registry-log-mem" "test/submodel-registry-log-mongodb")
-          
-          for image in "${images[@]}"; do
-            echo "Testing image $image"
-            docker run -d --name test_$image test/$image
-            sleep 30  # Give the container some time to start
+          docker run -d --name test_submodel_registry_log_mongodb test/submodel-registry-log-mongodb
+          sleep 30
+          if [ "$(docker inspect --format='{{.State.Health.Status}}' test_submodel_registry_log_mongodb)" == "healthy" ]; then
+            echo "Submodel Registry Log MongoDB started successfully and is healthy."
+          else
+            echo "Submodel Registry Log MongoDB failed to start or is unhealthy."
+            docker logs test_submodel_registry_log_mongodb
+            exit 1
+          fi
+          docker stop test_submodel_registry_log_mongodb
+          docker rm test_submodel_registry_log_mongodb
 
-            # Check if the container is healthy (assuming the Dockerfile defines a HEALTHCHECK)
-            if [ "$(docker inspect --format='{{.State.Health.Status}}' test_$image)" == "healthy" ]; then
-              echo "$image started successfully and is healthy."
-            else
-              echo "$image failed to start or is unhealthy."
-              docker logs test_$image
-              exit 1
-            fi
-
-            # Stop and remove the container after testing
-            docker stop test_$image
-            docker rm test_$image
-          done
-
-      - name: Clean up Docker Images
-        run: |
-          docker rmi -f $(docker images -aq)
+      - name: Clean up Docker Image
+        run: docker rmi -f $(docker images -aq)
