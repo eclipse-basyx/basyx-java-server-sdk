@@ -61,7 +61,7 @@ jobs:
 
       - name: Test Docker Images
         run: |
-          images=("basyx.aasrepository.component" "basyx.aasenvironment.component" "basyx.conceptdescriptionrepository.component" "basyx.aasdiscoveryservice.component" "basyx.aasxfileserver.component")
+          images=("test/aas-repository" "test/aas-environment" "test/conceptdescription-repository" "test/aas-discovery" "test/aasxfileserver")
           
           for image in "${images[@]}"; do
             echo "Testing image $image"
@@ -102,7 +102,7 @@ jobs:
 
       - name: Test Docker Images
         run: |
-          images=("basyx.submodelservice.example" "basyx.submodelrepository.component")
+          images=("test/submodel-repository" "test/submodel-service")
           
           for image in "${images[@]}"; do
             echo "Testing image $image"
@@ -145,7 +145,7 @@ jobs:
 
       - name: Test Docker Images
         run: |
-          images=("basyx.aasregistry-service-release-kafka-mem" "basyx.aasregistry-service-release-kafka-mongodb" "basyx.aasregistry-service-release-log-mem" "basyx.aasregistry-service-release-log-mongodb")
+          images=("test/aas-registry-kafka-mem" "test/aas-registry-kafka-mongodb" "test/aas-registry-log-mem" "test/aas-registry-log-mongodb")
           
           for image in "${images[@]}"; do
             echo "Testing image $image"
@@ -188,7 +188,7 @@ jobs:
 
       - name: Test Docker Images
         run: |
-          images=("basyx.submodelregistry-service-release-kafka-mem" "basyx.submodelregistry-service-release-kafka-mongodb" "basyx.submodelregistry-service-release-log-mem" "basyx.submodelregistry-service-release-log-mongodb")
+          images=("test/submodel-registry-kafka-mem" "test/submodel-registry-kafka-mongodb" "test/submodel-registry-log-mem" "test/submodel-registry-log-mongodb")
           
           for image in "${images[@]}"; do
             echo "Testing image $image"
