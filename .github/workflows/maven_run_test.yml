@@ -36,8 +36,6 @@ jobs:
           cache: maven
       - name: Build and remove Docker images
         run: |
-          mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelservice.example"
-          docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
           docker rmi -f $(docker images -aq)
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
