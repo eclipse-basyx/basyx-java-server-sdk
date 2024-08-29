@@ -26,22 +26,8 @@ env:
   VERSION: 2.0.0-SNAPSHOT
 
 jobs:
-  compile:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'adopt'
-          cache: maven
-      - name: Package BaSyx ( No Tests )
-        run: mvn clean package -DskipTests -T1C
-
   build-test-aas-repository:
-    needs: compile
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -52,7 +38,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-
+      - name: Build BaSyx
+        run: |
+          mvn clean install -DskipTests
       - name: Build AAS Repository Docker Image
         run: |
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
@@ -93,7 +81,7 @@ jobs:
         run: exit 0
 
   build-test-aas-environment:
-    needs: compile
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -104,6 +92,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+      - name: Build BaSyx
+        run: |
+          mvn clean install -DskipTests
 
       - name: Build AAS Environment Docker Image
         run: |
@@ -145,7 +136,7 @@ jobs:
         run: exit 0
 
   build-test-concept-description-repository:
-    needs: compile
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -156,6 +147,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+      - name: Build BaSyx
+        run: |
+          mvn clean install -DskipTests
 
       - name: Build Concept Description Repository Docker Image
         run: |
@@ -197,7 +191,7 @@ jobs:
         run: exit 0
 
   build-test-aas-discovery:
-    needs: compile
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -208,6 +202,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+      - name: Build BaSyx
+        run: |
+          mvn clean install -DskipTests
 
       - name: Build AAS Discovery Docker Image
         run: |
@@ -249,7 +246,7 @@ jobs:
         run: exit 0
 
   build-test-aasx-fileserver:
-    needs: compile
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -260,6 +257,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+      - name: Build BaSyx
+        run: |
+          mvn clean install -DskipTests
 
       - name: Build AASX File Server Docker Image
         run: |
@@ -301,7 +301,7 @@ jobs:
         run: exit 0
 
   build-test-submodel-repository:
-    needs: compile
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -312,6 +312,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+      - name: Build BaSyx
+        run: |
+          mvn clean install -DskipTests
 
       - name: Build Submodel Repository Docker Image
         run: |
@@ -353,7 +356,7 @@ jobs:
         run: exit 0
 
   build-test-submodel-service:
-    needs: compile
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -364,6 +367,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+      - name: Build BaSyx
+        run: |
+          mvn clean install -DskipTests
 
       - name: Build Submodel Service Docker Image
         run: |
@@ -405,7 +411,7 @@ jobs:
         run: exit 0
 
   build-test-aas-registry-kafka-mem:
-    needs: compile
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -416,6 +422,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+      - name: Build BaSyx
+        run: |
+          mvn clean install -DskipTests
 
       - name: Build AAS Registry Kafka Mem Docker Image
         run: |
@@ -457,7 +466,7 @@ jobs:
         run: exit 0
 
   build-test-aas-registry-kafka-mongodb:
-    needs: compile
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -468,6 +477,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+      - name: Build BaSyx
+        run: |
+          mvn clean install -DskipTests
 
       - name: Build AAS Registry Kafka MongoDB Docker Image
         run: |
@@ -509,7 +521,7 @@ jobs:
         run: exit 0
 
   build-test-aas-registry-log-mem:
-    needs: compile
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -520,6 +532,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+      - name: Build BaSyx
+        run: |
+          mvn clean install -DskipTests
 
       - name: Build AAS Registry Log Mem Docker Image
         run: |
@@ -561,7 +576,7 @@ jobs:
         run: exit 0
 
   build-test-aas-registry-log-mongodb:
-    needs: compile
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -572,6 +587,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+      - name: Build BaSyx
+        run: |
+          mvn clean install -DskipTests
 
       - name: Build AAS Registry Log MongoDB Docker Image
         run: |
@@ -613,7 +631,7 @@ jobs:
         run: exit 0
 
   build-test-submodel-registry-kafka-mem:
-    needs: compile
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -624,6 +642,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+      - name: Build BaSyx
+        run: |
+          mvn clean install -DskipTests
 
       - name: Build Submodel Registry Kafka Mem Docker Image
         run: |
@@ -665,7 +686,7 @@ jobs:
         run: exit 0
 
   build-test-submodel-registry-kafka-mongodb:
-    needs: compile
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -676,6 +697,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+      - name: Build BaSyx
+        run: |
+          mvn clean install -DskipTests
 
       - name: Build Submodel Registry Kafka MongoDB Docker Image
         run: |
@@ -717,7 +741,7 @@ jobs:
         run: exit 0
 
   build-test-submodel-registry-log-mem:
-    needs: compile
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -728,6 +752,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+      - name: Build BaSyx
+        run: |
+          mvn clean install -DskipTests
 
       - name: Build Submodel Registry Log Mem Docker Image
         run: |
@@ -769,7 +796,7 @@ jobs:
         run: exit 0
 
   build-test-submodel-registry-log-mongodb:
-    needs: compile
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -780,6 +807,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+      - name: Build BaSyx
+        run: |
+          mvn clean install -DskipTests
 
       - name: Build Submodel Registry Log MongoDB Docker Image
         run: |
