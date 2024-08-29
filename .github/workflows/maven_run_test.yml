@@ -401,7 +401,7 @@ jobs:
 
       - name: Test AAS Registry Kafka Mem Docker Image
         run: |
-          docker compose --project-directory ./ci -f test-aas-registry-kafka-mem.yml up -d
+          docker compose --project-directory ./ci -f ./ci/test-aas-registry-kafka-mem.yml up -d
 
           # Initialize variables
           max_checks=24  # 2 minutes total (120 seconds / 5 seconds per check)
@@ -452,7 +452,7 @@ jobs:
 
       - name: Test AAS Registry Kafka MongoDB Docker Image
         run: |
-          docker compose --project-directory ./ci -f test-aas-registry-kafka-mongodb.yml up -d
+          docker compose --project-directory ./ci -f ./ci/test-aas-registry-kafka-mongodb.yml up -d
 
           # Initialize variables
           max_checks=24  # 2 minutes total (120 seconds / 5 seconds per check)
@@ -554,7 +554,7 @@ jobs:
 
       - name: Test AAS Registry Log MongoDB Docker Image
         run: |
-          docker compose --project-directory ./ci -f test-aas-registry-log-mongodb.yml up -d
+          docker compose --project-directory ./ci -f ./ci/test-aas-registry-log-mongodb.yml up -d
 
           # Initialize variables
           max_checks=24  # 2 minutes total (120 seconds / 5 seconds per check)
@@ -605,7 +605,7 @@ jobs:
 
       - name: Test Submodel Registry Kafka Mem Docker Image
         run: |
-          docker compose --project-directory ./ci -f test-submodel-registry-kafka-mem.yml up -d
+          docker compose --project-directory ./ci -f ./ci/test-submodel-registry-kafka-mem.yml up -d
 
           # Initialize variables
           max_checks=24  # 2 minutes total (120 seconds / 5 seconds per check)
@@ -656,7 +656,7 @@ jobs:
 
       - name: Test Submodel Registry Kafka MongoDB Docker Image
         run: |
-          docker compose --project-directory ./ci -f test-submodel-registry-kafka-mongodb.yml up -d
+          docker compose --project-directory ./ci -f ./ci/test-submodel-registry-kafka-mongodb.yml up -d
 
           # Initialize variables
           max_checks=24  # 2 minutes total (120 seconds / 5 seconds per check)
@@ -758,7 +758,7 @@ jobs:
 
       - name: Test Submodel Registry Log MongoDB Docker Image
         run: |
-          docker compose --project-directory ./ci -f test-submodel-registry-log-mongodb.yml up -d
+          docker compose --project-directory ./ci -f ./ci/test-submodel-registry-log-mongodb.yml up -d
 
           # Initialize variables
           max_checks=24  # 2 minutes total (120 seconds / 5 seconds per check)
