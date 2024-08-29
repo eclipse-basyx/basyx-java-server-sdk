@@ -863,6 +863,8 @@ jobs:
           cache: maven
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
         run: mvn clean install -f "basyx.aasenvironment/pom.xml"
       - name: Stop environment
