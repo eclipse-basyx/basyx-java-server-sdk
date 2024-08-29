@@ -149,7 +149,7 @@ jobs:
           cache: maven
       - name: Build BaSyx
         run: |
-          mvn clean install -DskipTests
+          mvn clean install -DskipTests -T1C
 
       - name: Build Concept Description Repository Docker Image
         run: |
