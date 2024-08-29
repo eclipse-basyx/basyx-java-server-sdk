@@ -24,6 +24,7 @@ on:
 
 env:
   VERSION: 2.0.0-SNAPSHOT
+  MVN_ARGS_BUILD_BASYX_NO_TESTS: -DskipTests
 
 jobs:
   build-test-aas-repository:
@@ -40,7 +41,7 @@ jobs:
           cache: maven
       - name: Build BaSyx
         run: |
-          mvn clean install -DskipTests
+          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Build AAS Repository Docker Image
         run: |
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
@@ -94,7 +95,7 @@ jobs:
           cache: maven
       - name: Build BaSyx
         run: |
-          mvn clean install -DskipTests
+          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
 
       - name: Build AAS Environment Docker Image
         run: |
@@ -149,7 +150,7 @@ jobs:
           cache: maven
       - name: Build BaSyx
         run: |
-          mvn clean install -DskipTests -T1C
+          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
 
       - name: Build Concept Description Repository Docker Image
         run: |
@@ -204,7 +205,7 @@ jobs:
           cache: maven
       - name: Build BaSyx
         run: |
-          mvn clean install -DskipTests
+          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
 
       - name: Build AAS Discovery Docker Image
         run: |
@@ -259,7 +260,7 @@ jobs:
           cache: maven
       - name: Build BaSyx
         run: |
-          mvn clean install -DskipTests
+          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
 
       - name: Build AASX File Server Docker Image
         run: |
@@ -314,7 +315,7 @@ jobs:
           cache: maven
       - name: Build BaSyx
         run: |
-          mvn clean install -DskipTests
+          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
 
       - name: Build Submodel Repository Docker Image
         run: |
@@ -369,7 +370,7 @@ jobs:
           cache: maven
       - name: Build BaSyx
         run: |
-          mvn clean install -DskipTests
+          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
 
       - name: Build Submodel Service Docker Image
         run: |
@@ -424,7 +425,7 @@ jobs:
           cache: maven
       - name: Build BaSyx
         run: |
-          mvn clean install -DskipTests
+          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
 
       - name: Build AAS Registry Kafka Mem Docker Image
         run: |
@@ -479,7 +480,7 @@ jobs:
           cache: maven
       - name: Build BaSyx
         run: |
-          mvn clean install -DskipTests
+          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
 
       - name: Build AAS Registry Kafka MongoDB Docker Image
         run: |
@@ -534,7 +535,7 @@ jobs:
           cache: maven
       - name: Build BaSyx
         run: |
-          mvn clean install -DskipTests
+          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
 
       - name: Build AAS Registry Log Mem Docker Image
         run: |
@@ -589,7 +590,7 @@ jobs:
           cache: maven
       - name: Build BaSyx
         run: |
-          mvn clean install -DskipTests
+          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
 
       - name: Build AAS Registry Log MongoDB Docker Image
         run: |
@@ -644,7 +645,7 @@ jobs:
           cache: maven
       - name: Build BaSyx
         run: |
-          mvn clean install -DskipTests
+          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
 
       - name: Build Submodel Registry Kafka Mem Docker Image
         run: |
@@ -699,7 +700,7 @@ jobs:
           cache: maven
       - name: Build BaSyx
         run: |
-          mvn clean install -DskipTests
+          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
 
       - name: Build Submodel Registry Kafka MongoDB Docker Image
         run: |
@@ -754,7 +755,7 @@ jobs:
           cache: maven
       - name: Build BaSyx
         run: |
-          mvn clean install -DskipTests
+          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
 
       - name: Build Submodel Registry Log Mem Docker Image
         run: |
@@ -809,7 +810,7 @@ jobs:
           cache: maven
       - name: Build BaSyx
         run: |
-          mvn clean install -DskipTests
+          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
 
       - name: Build Submodel Registry Log MongoDB Docker Image
         run: |
@@ -849,3 +850,163 @@ jobs:
 
       - name: Clean up
         run: exit 0
+  test-basyx-aasenvironment:
+    runs-on: ubuntu-latest
+    name: Test BaSyx AAS Environment
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+      - name: Start environment
+        run: docker compose --project-directory ./ci up -d --wait
+      - name: Install BaSyx
+        run: mvn clean install -f "basyx.aasenvironment/pom.xml"
+      - name: Stop environment
+        if: always()
+        run: docker compose --project-directory ./ci down
+  test-basyx-aasrepository:
+    runs-on: ubuntu-latest
+    name: Test BaSyx AAS Repository
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+      - name: Start environment
+        run: docker compose --project-directory ./ci up -d --wait
+      - name: Install BaSyx
+        run: mvn clean install -f "basyx.aasrepository/pom.xml"
+      - name: Stop environment
+        if: always()
+        run: docker compose --project-directory ./ci down
+  test-basyx-aasservice:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+      - name: Start environment
+        run: docker compose --project-directory ./ci up -d --wait
+      - name: Install BaSyx
+        run: mvn clean install -f "basyx.aasservice/pom.xml"
+      - name: Stop environment
+        if: always()
+        run: docker compose --project-directory ./ci down
+  test-basyx-submodelrepository:
+    runs-on: ubuntu-latest
+    name: Test BaSyx Submodel Repository
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+      - name: Start environment
+        run: docker compose --project-directory ./ci up -d --wait
+      - name: Install BaSyx
+        run: mvn clean install -f "basyx.submodelrepository/pom.xml"
+      - name: Stop environment
+        if: always()
+        run: docker compose --project-directory ./ci down
+  test-basyx-submodelservice:
+    runs-on: ubuntu-latest
+    name: Test BaSyx Submodel Service
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+      - name: Start environment
+        run: docker compose --project-directory ./ci up -d --wait
+      - name: Install BaSyx
+        run: mvn clean install -f "basyx.submodelservice/pom.xml"
+      - name: Stop environment
+        if: always()
+        run: docker compose --project-directory ./ci down
+  test-basyx-conceptdescriptionrepository:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+      - name: Start environment
+        run: docker compose --project-directory ./ci up -d --wait
+      - name: Install BaSyx
+        run: mvn clean install -f "basyx.conceptdescriptionrepository/pom.xml"
+      - name: Stop environment
+        if: always()
+        run: docker compose --project-directory ./ci down
+  test-basyx-submodelregistry:
+    runs-on: ubuntu-latest
+    name: Test BaSyx Submodel Registry
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+      - name: Start environment
+        run: docker compose --project-directory ./ci up -d --wait
+      - name: Install BaSyx
+        run: mvn clean install -f "basyx.submodelregistry/pom.xml"
+      - name: Stop environment
+        if: always()
+        run: docker compose --project-directory ./ci down
+  test-basyx-aasregisty:
+    runs-on: ubuntu-latest
+    name: Test BaSyx AAS Registry
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+      - name: Start environment
+        run: docker compose --project-directory ./ci up -d --wait
+      - name: Install BaSyx
+        run: mvn clean install -f "basyx.aasregisty/pom.xml"
+      - name: Stop environment
+        if: always()
+        run: docker compose --project-directory ./ci down
+  test-basyx-aasdiscoveryservice:
+    runs-on: ubuntu-latest
+    name: Test BaSyx AAS Discovery Service
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+      - name: Start environment
+        run: docker compose --project-directory ./ci up -d --wait
+      - name: Install BaSyx
+        run: mvn clean install -f "basyx.aasdiscoveryservice/pom.xml"
+      - name: Stop environment
+        if: always()
+        run: docker compose --project-directory ./ci down
