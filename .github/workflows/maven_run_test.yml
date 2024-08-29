@@ -22,6 +22,8 @@ on:
       - 'LICENSE'
       - 'NOTICE'
 
+env:
+  VERSION: 2.0.0-SNAPSHOT
 
 jobs:
   build-test-aas-repository:
@@ -42,7 +44,7 @@ jobs:
 
       - name: Test AAS Repository Docker Image
         run: |
-          docker run -d --name test_aas_repository test/aas-repository
+          docker run -d --name test_aas_repository test/aas-repository:${VERSION}
           sleep 30
           if [ "$(docker inspect --format='{{.State.Health.Status}}' test_aas_repository)" == "healthy" ]; then
             echo "AAS Repository started successfully and is healthy."
@@ -75,7 +77,7 @@ jobs:
 
       - name: Test AAS Environment Docker Image
         run: |
-          docker run -d --name test_aas_environment test/aas-environment
+          docker run -d --name test_aas_environment test/aas-environment:${VERSION}
           sleep 30
           if [ "$(docker inspect --format='{{.State.Health.Status}}' test_aas_environment)" == "healthy" ]; then
             echo "AAS Environment started successfully and is healthy."
@@ -108,7 +110,7 @@ jobs:
 
       - name: Test Concept Description Repository Docker Image
         run: |
-          docker run -d --name test_conceptdescription_repository test/conceptdescription-repository
+          docker run -d --name test_conceptdescription_repository test/conceptdescription-repository:${VERSION}
           sleep 30
           if [ "$(docker inspect --format='{{.State.Health.Status}}' test_conceptdescription_repository)" == "healthy" ]; then
             echo "Concept Description Repository started successfully and is healthy."
@@ -141,7 +143,7 @@ jobs:
 
       - name: Test AAS Discovery Docker Image
         run: |
-          docker run -d --name test_aas_discovery test/aas-discovery
+          docker run -d --name test_aas_discovery test/aas-discovery:${VERSION}
           sleep 30
           if [ "$(docker inspect --format='{{.State.Health.Status}}' test_aas_discovery)" == "healthy" ]; then
             echo "AAS Discovery started successfully and is healthy."
@@ -174,7 +176,7 @@ jobs:
 
       - name: Test AASX File Server Docker Image
         run: |
-          docker run -d --name test_aasxfileserver test/aasxfileserver
+          docker run -d --name test_aasxfileserver test/aasxfileserver:${VERSION}
           sleep 30
           if [ "$(docker inspect --format='{{.State.Health.Status}}' test_aasxfileserver)" == "healthy" ]; then
             echo "AASX File Server started successfully and is healthy."
@@ -207,7 +209,7 @@ jobs:
 
       - name: Test Submodel Repository Docker Image
         run: |
-          docker run -d --name test_submodel_repository test/submodel-repository
+          docker run -d --name test_submodel_repository test/submodel-repository:${VERSION}
           sleep 30
           if [ "$(docker inspect --format='{{.State.Health.Status}}' test_submodel_repository)" == "healthy" ]; then
             echo "Submodel Repository started successfully and is healthy."
@@ -240,7 +242,7 @@ jobs:
 
       - name: Test Submodel Service Docker Image
         run: |
-          docker run -d --name test_submodel_service test/submodel-service
+          docker run -d --name test_submodel_service test/submodel-service:${VERSION}
           sleep 30
           if [ "$(docker inspect --format='{{.State.Health.Status}}' test_submodel_service)" == "healthy" ]; then
             echo "Submodel Service started successfully and is healthy."
@@ -273,7 +275,7 @@ jobs:
 
       - name: Test AAS Registry Kafka Mem Docker Image
         run: |
-          docker run -d --name test_aas_registry_kafka_mem test/aas-registry-kafka-mem
+          docker run -d --name test_aas_registry_kafka_mem test/aas-registry-kafka-mem:${VERSION}
           sleep 30
           if [ "$(docker inspect --format='{{.State.Health.Status}}' test_aas_registry_kafka_mem)" == "healthy" ]; then
             echo "AAS Registry Kafka Mem started successfully and is healthy."
@@ -306,7 +308,7 @@ jobs:
 
       - name: Test AAS Registry Kafka MongoDB Docker Image
         run: |
-          docker run -d --name test_aas_registry_kafka_mongodb test/aas-registry-kafka-mongodb
+          docker run -d --name test_aas_registry_kafka_mongodb test/aas-registry-kafka-mongodb:${VERSION}
           sleep 30
           if [ "$(docker inspect --format='{{.State.Health.Status}}' test_aas_registry_kafka_mongodb)" == "healthy" ]; then
             echo "AAS Registry Kafka MongoDB started successfully and is healthy."
@@ -339,7 +341,7 @@ jobs:
 
       - name: Test AAS Registry Log Mem Docker Image
         run: |
-          docker run -d --name test_aas_registry_log_mem test/aas-registry-log-mem
+          docker run -d --name test_aas_registry_log_mem test/aas-registry-log-mem:${VERSION}
           sleep 30
           if [ "$(docker inspect --format='{{.State.Health.Status}}' test_aas_registry_log_mem)" == "healthy" ]; then
             echo "AAS Registry Log Mem started successfully and is healthy."
@@ -372,7 +374,7 @@ jobs:
 
       - name: Test AAS Registry Log MongoDB Docker Image
         run: |
-          docker run -d --name test_aas_registry_log_mongodb test/aas-registry-log-mongodb
+          docker run -d --name test_aas_registry_log_mongodb test/aas-registry-log-mongodb:${VERSION}
           sleep 30
           if [ "$(docker inspect --format='{{.State.Health.Status}}' test_aas_registry_log_mongodb)" == "healthy" ]; then
             echo "AAS Registry Log MongoDB started successfully and is healthy."
@@ -405,7 +407,7 @@ jobs:
 
       - name: Test Submodel Registry Kafka Mem Docker Image
         run: |
-          docker run -d --name test_submodel_registry_kafka_mem test/submodel-registry-kafka-mem
+          docker run -d --name test_submodel_registry_kafka_mem test/submodel-registry-kafka-mem:${VERSION}
           sleep 30
           if [ "$(docker inspect --format='{{.State.Health.Status}}' test_submodel_registry_kafka_mem)" == "healthy" ]; then
             echo "Submodel Registry Kafka Mem started successfully and is healthy."
@@ -438,7 +440,7 @@ jobs:
 
       - name: Test Submodel Registry Kafka MongoDB Docker Image
         run: |
-          docker run -d --name test_submodel_registry_kafka_mongodb test/submodel-registry-kafka-mongodb
+          docker run -d --name test_submodel_registry_kafka_mongodb test/submodel-registry-kafka-mongodb:${VERSION}
           sleep 30
           if [ "$(docker inspect --format='{{.State.Health.Status}}' test_submodel_registry_kafka_mongodb)" == "healthy" ]; then
             echo "Submodel Registry Kafka MongoDB started successfully and is healthy."
@@ -471,7 +473,7 @@ jobs:
 
       - name: Test Submodel Registry Log Mem Docker Image
         run: |
-          docker run -d --name test_submodel_registry_log_mem test/submodel-registry-log-mem
+          docker run -d --name test_submodel_registry_log_mem test/submodel-registry-log-mem:${VERSION}
           sleep 30
           if [ "$(docker inspect --format='{{.State.Health.Status}}' test_submodel_registry_log_mem)" == "healthy" ]; then
             echo "Submodel Registry Log Mem started successfully and is healthy."
@@ -504,7 +506,7 @@ jobs:
 
       - name: Test Submodel Registry Log MongoDB Docker Image
         run: |
-          docker run -d --name test_submodel_registry_log_mongodb test/submodel-registry-log-mongodb
+          docker run -d --name test_submodel_registry_log_mongodb test/submodel-registry-log-mongodb:${VERSION}
           sleep 30
           if [ "$(docker inspect --format='{{.State.Health.Status}}' test_submodel_registry_log_mongodb)" == "healthy" ]; then
             echo "Submodel Registry Log MongoDB started successfully and is healthy."
