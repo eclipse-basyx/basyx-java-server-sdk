@@ -94,7 +94,7 @@ services:
 
   submodel-registry-kafka-mongodb:
     image: test/submodel-registry-kafka-mongodb:$BASYX_VERSION
-    container_name: submodel-registry-kafka-mongodb
+    container_name: test-submodel-registry-kafka-mongodb
     pull_policy: never
     ports:
       - "8024:8080"

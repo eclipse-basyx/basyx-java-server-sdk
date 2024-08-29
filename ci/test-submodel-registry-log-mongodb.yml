@@ -94,7 +94,7 @@ services:
 
   submodel-registry-log-mongodb:
     image: test/submodel-registry-log-mongodb:$BASYX_VERSION
-    container_name: submodel-registry-log-mongodb
+    container_name: test-submodel-registry-log-mongodb
     pull_policy: never
     ports:
       - "8053:8080"
