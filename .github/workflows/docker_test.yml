@@ -1,60 +1,21 @@
 # This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
 
-name: Java CI with Maven
+name: Build and Start Docker Images
 
 on:
-  pull_request:
-    branches: [ main ]
-    paths-ignore:
-      - '.github/ISSUE_TEMPLATE/**'
-      - '.github/CODE_OF_CONDUCT.md'
-      - '.github/CODING_CONVENTIONS.md'
-      - '.github/CONTRIBUTING.md'
-      - '.github/dependabot.yml'
-      - '.github/pull_request_template.md'
-      - '.github/SECURITY.md'
-      - 'docs/**'
-      - 'examples/**'
-      - 'README.md'
-      - '.gitattributes'
-      - '.gitignore'
-      - 'LICENSE'
-      - 'NOTICE'
+  workflow_run:
+    workflows: ["Install BaSyx"]
+    types:
+      - completed
+
 
 env:
   VERSION: 2.0.0-SNAPSHOT
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'adopt'
-          cache: maven
-
-      - name: Build with Maven
-        run: mvn package -DskipTests -T1C
-      - name: Check if previous workflows were successful
-        id: check_success
-        run: |
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
-            echo "One or more of the required workflows failed."
-            echo "::set-output name=success::false"
-            exit 1
-          fi
-          echo "::set-output name=success::true"
-          
   build-test-aas-repository:
-    needs: check_previous_success
-    if: needs.check_previous_success.outputs.success == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -101,20 +62,11 @@ jobs:
           # Stop and remove the container after testing
           docker stop test_aas_repository
           docker rm test_aas_repository
-      - name: Check if previous workflows were successful
-        id: check_success
-        run: |
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
-            echo "One or more of the required workflows failed."
-            echo "::set-output name=success::false"
-            exit 1
-          fi
-          echo "::set-output name=success::true"
+
+      - name: Clean up
+        run: exit 0
 
   build-test-aas-environment:
-    needs: check_previous_success
-    if: needs.check_previous_success.outputs.success == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -161,20 +113,11 @@ jobs:
           # Stop and remove the container after testing
           docker stop test_aas_environment
           docker rm test_aas_environment
-      - name: Check if previous workflows were successful
-        id: check_success
-        run: |
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
-            echo "One or more of the required workflows failed."
-            echo "::set-output name=success::false"
-            exit 1
-          fi
-          echo "::set-output name=success::true"
+
+      - name: Clean up
+        run: exit 0
 
   build-test-concept-description-repository:
-    needs: check_previous_success
-    if: needs.check_previous_success.outputs.success == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -221,20 +164,11 @@ jobs:
           # Stop and remove the container after testing
           docker stop test_conceptdescription_repository
           docker rm test_conceptdescription_repository
-      - name: Check if previous workflows were successful
-        id: check_success
-        run: |
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
-            echo "One or more of the required workflows failed."
-            echo "::set-output name=success::false"
-            exit 1
-          fi
-          echo "::set-output name=success::true"
+
+      - name: Clean up
+        run: exit 0
 
   build-test-aas-discovery:
-    needs: check_previous_success
-    if: needs.check_previous_success.outputs.success == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -281,20 +215,11 @@ jobs:
           # Stop and remove the container after testing
           docker stop test_aas_discovery
           docker rm test_aas_discovery
-      - name: Check if previous workflows were successful
-        id: check_success
-        run: |
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
-            echo "One or more of the required workflows failed."
-            echo "::set-output name=success::false"
-            exit 1
-          fi
-          echo "::set-output name=success::true"
+
+      - name: Clean up
+        run: exit 0
 
   build-test-aasx-fileserver:
-    needs: check_previous_success
-    if: needs.check_previous_success.outputs.success == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -341,20 +266,11 @@ jobs:
           # Stop and remove the container after testing
           docker stop test_aasxfileserver
           docker rm test_aasxfileserver
-      - name: Check if previous workflows were successful
-        id: check_success
-        run: |
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
-            echo "One or more of the required workflows failed."
-            echo "::set-output name=success::false"
-            exit 1
-          fi
-          echo "::set-output name=success::true"
+
+      - name: Clean up
+        run: exit 0
 
   build-test-submodel-repository:
-    needs: check_previous_success
-    if: needs.check_previous_success.outputs.success == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -401,20 +317,11 @@ jobs:
           # Stop and remove the container after testing
           docker stop test_submodel_repository
           docker rm test_submodel_repository
-      - name: Check if previous workflows were successful
-        id: check_success
-        run: |
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
-            echo "One or more of the required workflows failed."
-            echo "::set-output name=success::false"
-            exit 1
-          fi
-          echo "::set-output name=success::true"
+
+      - name: Clean up
+        run: exit 0
 
   build-test-submodel-service:
-    needs: check_previous_success
-    if: needs.check_previous_success.outputs.success == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -461,20 +368,11 @@ jobs:
           # Stop and remove the container after testing
           docker stop test_submodel_service
           docker rm test_submodel_service
-      - name: Check if previous workflows were successful
-        id: check_success
-        run: |
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
-            echo "One or more of the required workflows failed."
-            echo "::set-output name=success::false"
-            exit 1
-          fi
-          echo "::set-output name=success::true"
+
+      - name: Clean up
+        run: exit 0
 
   build-test-aas-registry-kafka-mem:
-    needs: check_previous_success
-    if: needs.check_previous_success.outputs.success == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -521,20 +419,11 @@ jobs:
           # Stop and remove the container after testing
           docker stop test_aas_registry_kafka_mem
           docker rm test_aas_registry_kafka_mem
-      - name: Check if previous workflows were successful
-        id: check_success
-        run: |
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
-            echo "One or more of the required workflows failed."
-            echo "::set-output name=success::false"
-            exit 1
-          fi
-          echo "::set-output name=success::true"
+
+      - name: Clean up
+        run: exit 0
 
   build-test-aas-registry-kafka-mongodb:
-    needs: check_previous_success
-    if: needs.check_previous_success.outputs.success == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -581,20 +470,11 @@ jobs:
           # Stop and remove the container after testing
           docker stop test_aas_registry_kafka_mongodb
           docker rm test_aas_registry_kafka_mongodb
-      - name: Check if previous workflows were successful
-        id: check_success
-        run: |
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
-            echo "One or more of the required workflows failed."
-            echo "::set-output name=success::false"
-            exit 1
-          fi
-          echo "::set-output name=success::true"
+
+      - name: Clean up
+        run: exit 0
 
   build-test-aas-registry-log-mem:
-    needs: check_previous_success
-    if: needs.check_previous_success.outputs.success == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -641,20 +521,11 @@ jobs:
           # Stop and remove the container after testing
           docker stop test_aas_registry_log_mem
           docker rm test_aas_registry_log_mem
-      - name: Check if previous workflows were successful
-        id: check_success
-        run: |
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
-            echo "One or more of the required workflows failed."
-            echo "::set-output name=success::false"
-            exit 1
-          fi
-          echo "::set-output name=success::true"
+
+      - name: Clean up
+        run: exit 0
 
   build-test-aas-registry-log-mongodb:
-    needs: check_previous_success
-    if: needs.check_previous_success.outputs.success == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -701,20 +572,11 @@ jobs:
           # Stop and remove the container after testing
           docker stop test_aas_registry_log_mongodb
           docker rm test_aas_registry_log_mongodb
-      - name: Check if previous workflows were successful
-        id: check_success
-        run: |
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
-            echo "One or more of the required workflows failed."
-            echo "::set-output name=success::false"
-            exit 1
-          fi
-          echo "::set-output name=success::true"
+
+      - name: Clean up
+        run: exit 0
 
   build-test-submodel-registry-kafka-mem:
-    needs: check_previous_success
-    if: needs.check_previous_success.outputs.success == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -761,20 +623,11 @@ jobs:
           # Stop and remove the container after testing
           docker stop test_submodel_registry_kafka_mem
           docker rm test_submodel_registry_kafka_mem
-      - name: Check if previous workflows were successful
-        id: check_success
-        run: |
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
-            echo "One or more of the required workflows failed."
-            echo "::set-output name=success::false"
-            exit 1
-          fi
-          echo "::set-output name=success::true"
+
+      - name: Clean up
+        run: exit 0
 
   build-test-submodel-registry-kafka-mongodb:
-    needs: check_previous_success
-    if: needs.check_previous_success.outputs.success == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -821,20 +674,11 @@ jobs:
           # Stop and remove the container after testing
           docker stop test_submodel_registry_kafka_mongodb
           docker rm test_submodel_registry_kafka_mongodb
-      - name: Check if previous workflows were successful
-        id: check_success
-        run: |
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
-            echo "One or more of the required workflows failed."
-            echo "::set-output name=success::false"
-            exit 1
-          fi
-          echo "::set-output name=success::true"
+
+      - name: Clean up
+        run: exit 0
 
   build-test-submodel-registry-log-mem:
-    needs: check_previous_success
-    if: needs.check_previous_success.outputs.success == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -881,20 +725,11 @@ jobs:
           # Stop and remove the container after testing
           docker stop test_submodel_registry_log_mem
           docker rm test_submodel_registry_log_mem
-      - name: Check if previous workflows were successful
-        id: check_success
-        run: |
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
-            echo "One or more of the required workflows failed."
-            echo "::set-output name=success::false"
-            exit 1
-          fi
-          echo "::set-output name=success::true"
+
+      - name: Clean up
+        run: exit 0
 
   build-test-submodel-registry-log-mongodb:
-    needs: check_previous_success
-    if: needs.check_previous_success.outputs.success == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -941,13 +776,6 @@ jobs:
           # Stop and remove the container after testing
           docker stop test_submodel_registry_log_mongodb
           docker rm test_submodel_registry_log_mongodb
-      - name: Check if previous workflows were successful
-        id: check_success
-        run: |
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
-            echo "One or more of the required workflows failed."
-            echo "::set-output name=success::false"
-            exit 1
-          fi
-          echo "::set-output name=success::true"
+
+      - name: Clean up
+        run: exit 0
