@@ -211,14 +211,32 @@ jobs:
       - name: Test Submodel Repository Docker Image
         run: |
           docker run -p 8081:8081 -d --name test_submodel_repository test/submodel-repository:${VERSION}
-          sleep 300
-          if [ "$(docker inspect --format='{{.State.Health.Status}}' test_submodel_repository)" == "healthy" ]; then
-            echo "Submodel Repository started successfully and is healthy."
-          else
-            echo "Submodel Repository failed to start or is unhealthy."
+      
+          # Initialize variables
+          max_checks=24  # 2 minutes total (120 seconds / 5 seconds per check)
+          sleep_interval=5  # Interval in seconds between checks
+          check_count=0
+      
+          # Loop to check health status
+          while [ $check_count -lt $max_checks ]; do
+            if [ "$(docker inspect --format='{{.State.Health.Status}}' test_submodel_repository)" == "healthy" ]; then
+              echo "Submodel Repository started successfully and is healthy."
+              break
+              else
+              echo "Waiting for Submodel Repository to become healthy..."
+              check_count=$((check_count + 1))
+              sleep $sleep_interval
+            fi
+          done
+      
+          # If the container is still not healthy after the loop
+          if [ $check_count -eq $max_checks ]; then
+            echo "Submodel Repository failed to start or is unhealthy after 2 minutes."
             docker logs test_submodel_repository
             exit 1
           fi
+      
+          # Stop and remove the container after testing
           docker stop test_submodel_repository
           docker rm test_submodel_repository
 
