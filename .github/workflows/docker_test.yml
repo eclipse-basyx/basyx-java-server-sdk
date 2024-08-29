@@ -5,7 +5,7 @@ name: Build and Start Docker Images
 
 on:
   workflow_run:
-    workflows: ["Install BaSyx"]
+    workflows: [Install BaSyx]
     types:
       - completed
 
