@@ -38,7 +38,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Package BaSyx ( No Tests )
-        run: mvn install -DskipTests -T1C
+        run: mvn package -DskipTests -T1C
 
   build-test-aas-repository:
     needs: compile
