@@ -176,6 +176,7 @@ jobs:
 
       - name: Test AASX File Server Docker Image
         run: |
+          docker images -aq
           docker run -d --name test_aasxfileserver test/aasxfileserver:${VERSION}
           sleep 30
           if [ "$(docker inspect --format='{{.State.Health.Status}}' test_aasxfileserver)" == "healthy" ]; then
