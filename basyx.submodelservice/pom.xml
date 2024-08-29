@@ -18,6 +18,7 @@
 		<module>basyx.submodelservice-core</module>
 		<module>basyx.submodelservice-http</module>
 		<module>basyx.submodelservice-backend-inmemory</module>
+		<module>basyx.submodelservice-feature-mqtt</module>
 		<module>basyx.submodelservice.example</module>
 		<module>basyx.submodelservice-client</module>
 	</modules>

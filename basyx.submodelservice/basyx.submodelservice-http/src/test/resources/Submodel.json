@@ -393,6 +393,28 @@
             ]
         },
 		{
+			"modelType": "Operation",
+			"idShort": "sum",
+			"inputVariables": [
+				{
+					"value": {
+						"modelType": "Property",
+						"valueType": "xs:int",
+						"idShort": "input"
+					}
+				}
+			],
+			"inoutputVariables": [
+				{
+					"value": {
+						"modelType": "Property",
+						"valueType": "xs:int",
+						"idShort": "stack"
+					}
+				}
+			]
+		},
+		{
 			"modelType": "Property",
 			"value": "4370",
 			"valueType": "xs:integer",
