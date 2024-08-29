@@ -988,7 +988,7 @@ jobs:
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
-  test-basyx-aasregisty:
+  test-basyx-aasregistry:
     runs-on: ubuntu-latest
     name: Test BaSyx AAS Registry
     steps:
@@ -1004,7 +1004,7 @@ jobs:
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
-        run: mvn clean install -f "basyx.aasregisty/pom.xml"
+        run: mvn clean install -f "basyx.aasregistry/pom.xml"
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
