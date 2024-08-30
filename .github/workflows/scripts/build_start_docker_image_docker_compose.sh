@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Check if the correct number of arguments are provided
-if [ "$#" -ne 3 ]; then
+if [ "$#" -ne 1 ]; then
   echo "Usage: $0 <path_to_docker_compose_file>"
   exit 1
 fi
