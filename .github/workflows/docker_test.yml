@@ -29,7 +29,7 @@ env:
 jobs:
   build-test-aas-repository:
     runs-on: ubuntu-latest
-    name: Build and Start Docker Image for AAS Repository
+    name: AAS Repository - Build and Start Docker Image
     steps:
       - uses: actions/checkout@v4
 
@@ -54,7 +54,7 @@ jobs:
 
   build-test-aas-environment:
     runs-on: ubuntu-latest
-    name: Build and Start Docker Image for AAS Environment
+    name: AAS Environment - Build and Start Docker Image
     steps:
       - uses: actions/checkout@v4
 
@@ -80,7 +80,7 @@ jobs:
 
   build-test-concept-description-repository:
     runs-on: ubuntu-latest
-    name: Build and Start Docker Image for Concept Description Repository
+    name: Concept Description Repository - Build and Start Docker Image
     steps:
       - uses: actions/checkout@v4
 
@@ -106,7 +106,7 @@ jobs:
 
   build-test-aas-discovery:
     runs-on: ubuntu-latest
-    name: Build and Start Docker Image for AAS Discovery
+    name: AAS Discovery - Build and Start Docker Image
     steps:
       - uses: actions/checkout@v4
 
@@ -132,7 +132,7 @@ jobs:
 
   build-test-aasx-fileserver:
     runs-on: ubuntu-latest
-    name: Build and Start Docker Image for AASX File Server
+    name: AASX File Server - Build and Start Docker Image
     steps:
       - uses: actions/checkout@v4
 
@@ -158,7 +158,7 @@ jobs:
 
   build-test-submodel-repository:
     runs-on: ubuntu-latest
-    name: Build and Start Docker Image for Submodel Repository
+    name: Submodel Repository - Build and Start Docker Image
     steps:
       - uses: actions/checkout@v4
 
@@ -184,7 +184,7 @@ jobs:
 
   build-test-submodel-service:
     runs-on: ubuntu-latest
-    name: Build and Start Docker Image for Submodel Service
+    name: Submodel Service - Build and Start Docker Image
     steps:
       - uses: actions/checkout@v4
 
@@ -210,7 +210,7 @@ jobs:
 
   build-test-aas-registry-kafka-mem:
     runs-on: ubuntu-latest
-    name: Build and Start Docker Image for AAS Registry Kafka Mem
+    name: AAS Registry Kafka Mem - Build and Start Docker Image
     steps:
       - uses: actions/checkout@v4
 
@@ -236,7 +236,7 @@ jobs:
 
   build-test-aas-registry-kafka-mongodb:
     runs-on: ubuntu-latest
-    name: Build and Start Docker Image for AAS Registry Kafka MongoDB
+    name: AAS Registry Kafka MongoDB - Build and Start Docker Image
     steps:
       - uses: actions/checkout@v4
 
@@ -262,7 +262,7 @@ jobs:
 
   build-test-aas-registry-log-mem:
     runs-on: ubuntu-latest
-    name: Build and Start Docker Image for AAS Registry Log Mem
+    name: AAS Registry Log Mem - Build and Start Docker Image
     steps:
       - uses: actions/checkout@v4
 
@@ -288,7 +288,7 @@ jobs:
 
   build-test-aas-registry-log-mongodb:
     runs-on: ubuntu-latest
-    name: Build and Start Docker Image for AAS Registry Log MongoDB
+    name: AAS Registry Log MongoDB - Build and Start Docker Image
     steps:
       - uses: actions/checkout@v4
 
@@ -314,7 +314,7 @@ jobs:
 
   build-test-submodel-registry-kafka-mem:
     runs-on: ubuntu-latest
-    name: Build and Start Docker Image for Submodel Registry Kafka Mem
+    name: Submodel Registry Kafka Mem - Build and Start Docker Image
     steps:
       - uses: actions/checkout@v4
 
@@ -340,7 +340,7 @@ jobs:
 
   build-test-submodel-registry-kafka-mongodb:
     runs-on: ubuntu-latest
-    name: Build and Start Docker Image for Submodel Registry Kafka MongoDB
+    name: Submodel Registry Kafka MongoDB - Build and Start Docker Image
     steps:
       - uses: actions/checkout@v4
 
@@ -366,7 +366,7 @@ jobs:
 
   build-test-submodel-registry-log-mem:
     runs-on: ubuntu-latest
-    name: Build and Start Docker Image for Submodel Registry Log Mem
+    name: Submodel Registry Log Mem - Build and Start Docker Image
     steps:
       - uses: actions/checkout@v4
 
@@ -392,7 +392,7 @@ jobs:
 
   build-test-submodel-registry-log-mongodb:
     runs-on: ubuntu-latest
-    name: Build and Start Docker Image for Submodel Registry Log MongoDB
+    name: Submodel Registry Log MongoDB - Build and Start Docker Image
     steps:
       - uses: actions/checkout@v4
 

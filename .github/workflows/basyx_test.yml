@@ -25,7 +25,7 @@ env:
 jobs:
   test-basyx-aasenvironment:
     runs-on: ubuntu-latest
-    name: Test BaSyx AAS Environment
+    name: AAS Environment Test
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -45,7 +45,7 @@ jobs:
         run: docker compose --project-directory ./ci down
   test-basyx-aasrepository:
     runs-on: ubuntu-latest
-    name: Test BaSyx AAS Repository
+    name: AAS Repository Test
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -65,7 +65,7 @@ jobs:
         run: docker compose --project-directory ./ci down
   test-basyx-aasservice:
     runs-on: ubuntu-latest
-    name: Test BaSyx AAS Service
+    name: AAS Service Test
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -85,7 +85,7 @@ jobs:
         run: docker compose --project-directory ./ci down
   test-basyx-submodelrepository:
     runs-on: ubuntu-latest
-    name: Test BaSyx Submodel Repository
+    name: Submodel Repository Test
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -105,7 +105,7 @@ jobs:
         run: docker compose --project-directory ./ci down
   test-basyx-submodelservice:
     runs-on: ubuntu-latest
-    name: Test BaSyx Submodel Service
+    name: Submodel Service Test
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -125,7 +125,7 @@ jobs:
         run: docker compose --project-directory ./ci down
   test-basyx-conceptdescriptionrepository:
     runs-on: ubuntu-latest
-    name: Test BaSyx Concept Description Repository
+    name: Concept Description Repository Test
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -145,7 +145,7 @@ jobs:
         run: docker compose --project-directory ./ci down
   test-basyx-submodelregistry:
     runs-on: ubuntu-latest
-    name: Test BaSyx Submodel Registry
+    name: Submodel Registry Test
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -165,7 +165,7 @@ jobs:
         run: docker compose --project-directory ./ci down
   test-basyx-aasregistry:
     runs-on: ubuntu-latest
-    name: Test BaSyx AAS Registry
+    name: AAS Registry Test
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -185,7 +185,7 @@ jobs:
         run: docker compose --project-directory ./ci down
   test-basyx-aasdiscoveryservice:
     runs-on: ubuntu-latest
-    name: Test BaSyx AAS Discovery Service
+    name: AAS Discovery Service Test
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
