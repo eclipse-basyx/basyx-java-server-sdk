@@ -6,4 +6,5 @@ COPY ${JAR_FILE} basyxExecutable.jar
 COPY src/main/resources/application.properties application.properties
 ARG PORT=8081
 EXPOSE ${PORT}
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 --start-period=15s CMD curl --fail http://localhost:${SERVER_PORT}/actuator/health || exit 1
 ENTRYPOINT ["java","-jar","basyxExecutable.jar"]
