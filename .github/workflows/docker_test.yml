@@ -183,7 +183,6 @@ jobs:
         run: exit 0
 
   build-test-submodel-service:
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -209,7 +208,6 @@ jobs:
         run: exit 0
 
   build-test-aas-registry-kafka-mem:
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -229,13 +227,12 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-kafka-mem"
 
       - name: Test AAS Registry Kafka Mem Docker Image
-        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/aas-registry-kafka-mem ${VERSION} test_aas_registry_kafka_mem
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/test-aas-registry-kafka-mem.yml
 
       - name: Clean up
         run: exit 0
 
   build-test-aas-registry-kafka-mongodb:
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -255,13 +252,12 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-kafka-mongodb"
 
       - name: Test AAS Registry Kafka MongoDB Docker Image
-        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/aas-registry-kafka-mongodb ${VERSION} test_aas_registry_kafka_mongodb
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/test-aas-registry-kafka-mongodb.yml
 
       - name: Clean up
         run: exit 0
 
   build-test-aas-registry-log-mem:
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -307,7 +303,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
 
       - name: Test AAS Registry Log MongoDB Docker Image
-        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/aas-registry-log-mongodb ${VERSION} test_aas_registry_log_mongodb
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/test-aas-registry-log-mongodb.yml
 
       - name: Clean up
         run: exit 0
@@ -333,7 +329,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-kafka-mem"
 
       - name: Test Submodel Registry Kafka Mem Docker Image
-        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/submodel-registry-kafka-mem ${VERSION} test_submodel_registry_kafka_mem
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/test-submodel-registry-kafka-mem.yml
 
       - name: Clean up
         run: exit 0
@@ -359,7 +355,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-kafka-mongodb"
 
       - name: Test Submodel Registry Kafka MongoDB Docker Image
-        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/submodel-registry-kafka-mongodb ${VERSION} test_submodel_registry_kafka_mongodb
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/test-submodel-registry-kafka-mongodb.yml
 
       - name: Clean up
         run: exit 0
@@ -411,36 +407,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Test Submodel Registry Log MongoDB Docker Image
-        run: |
-          docker compose --project-directory ./ci -f ./ci/test-submodel-registry-log-mongodb.yml up -d
-
-          # Initialize variables
-          max_checks=24  # 2 minutes total (120 seconds / 5 seconds per check)
-          sleep_interval=5  # Interval in seconds between checks
-          check_count=0
-
-          # Loop to check health status
-          while [ $check_count -lt $max_checks ]; do
-            if [ "$(docker inspect --format='{{.State.Health.Status}}' test_submodel_registry_log_mongodb)" == "healthy" ]; then
-              echo "Submodel Registry Log MongoDB started successfully and is healthy."
-              break
-            else
-              echo "Waiting for Submodel Registry Log MongoDB to become healthy..."
-              check_count=$((check_count + 1))
-              sleep $sleep_interval
-            fi
-          done
-
-          # If the container is still not healthy after the loop
-          if [ $check_count -eq $max_checks ]; then
-            echo "Submodel Registry Log MongoDB failed to start or is unhealthy after 2 minutes."
-            docker logs test_submodel_registry_log_mongodb
-            exit 1
-          fi
-
-          # Stop and remove the container after testing
-          docker stop test_submodel_registry_log_mongodb
-          docker rm test_submodel_registry_log_mongodb
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/test-submodel-registry-log-mongodb.yml
 
       - name: Clean up
         run: exit 0
@@ -456,7 +423,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci -f ./ci/docker-compose-ci.yml up -d --wait
+        run: docker compose --project-directory ./ci up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
@@ -476,7 +443,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci -f ./ci/docker-compose-ci.yml up -d --wait
+        run: docker compose --project-directory ./ci up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
@@ -495,7 +462,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci -f ./ci/docker-compose-ci.yml up -d --wait
+        run: docker compose --project-directory ./ci up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
@@ -515,7 +482,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci -f ./ci/docker-compose-ci.yml up -d --wait
+        run: docker compose --project-directory ./ci up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
@@ -535,7 +502,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci -f ./ci/docker-compose-ci.yml up -d --wait
+        run: docker compose --project-directory ./ci up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
@@ -554,7 +521,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci -f ./ci/docker-compose-ci.yml up -d --wait
+        run: docker compose --project-directory ./ci up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
@@ -574,7 +541,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci -f ./ci/docker-compose-registries.yml up -d --wait
+        run: docker compose --project-directory ./ci up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
@@ -594,7 +561,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci -f ./ci/docker-compose-registries.yml up -d --wait
+        run: docker compose --project-directory ./ci up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
@@ -614,7 +581,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Start environment
-        run: docker compose --project-directory ./ci -f ./ci/docker-compose-ci.yml up -d --wait
+        run: docker compose --project-directory ./ci up -d --wait
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
       - name: Install BaSyx
