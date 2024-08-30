@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Check if the correct number of arguments are provided
-if [ "$#" -ne 1 ]; then
-  echo "Usage: $0 <path_to_docker_compose_file>"
+if [ "$#" -ne 2 ]; then
+  echo "Usage: $0 <path_to_docker_compose_file> <container_name>"
   exit 1
 fi
 
@@ -16,11 +16,11 @@ check_count=0
 
 # Loop to check health status
 while [ $check_count -lt $max_checks ]; do
-  if [ "$(docker inspect --format='{{.State.Health.Status}}' $(docker ps -q))" == "healthy" ]; then
-    echo "Compose started successfully and is healthy."
+  if [ "$(docker inspect --format='{{.State.Health.Status}}' $2)" == "healthy" ]; then
+    echo "$2 started successfully and is healthy."
     break
   else
-    echo "Waiting for Compose to become healthy..."
+    echo "Waiting for $2 to become healthy..."
     check_count=$((check_count + 1))
     sleep $sleep_interval
   fi
@@ -28,11 +28,10 @@ done
 
 # If the container is still not healthy after the loop
 if [ $check_count -eq $max_checks ]; then
-  echo "Compose failed to start or is unhealthy after 2 minutes."
-  docker logs $(docker ps -q)
+  echo "$2 failed to start or is unhealthy after 2 minutes."
+  docker logs $2
   exit 1
 fi
-
 # Stop and remove all container
 docker compose -f $1 down
 
