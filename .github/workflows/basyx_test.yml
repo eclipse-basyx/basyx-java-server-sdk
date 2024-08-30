@@ -65,6 +65,7 @@ jobs:
         run: docker compose --project-directory ./ci down
   test-basyx-aasservice:
     runs-on: ubuntu-latest
+    name: Test BaSyx AAS Service
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -124,6 +125,7 @@ jobs:
         run: docker compose --project-directory ./ci down
   test-basyx-conceptdescriptionrepository:
     runs-on: ubuntu-latest
+    name: Test BaSyx Concept Description Repository
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17

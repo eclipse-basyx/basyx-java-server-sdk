@@ -28,8 +28,8 @@ env:
 
 jobs:
   build-test-aas-repository:
-
     runs-on: ubuntu-latest
+    name: Build and Start Docker Image for AAS Repository
     steps:
       - uses: actions/checkout@v4
 
@@ -53,8 +53,8 @@ jobs:
         run: exit 0
 
   build-test-aas-environment:
-
     runs-on: ubuntu-latest
+    name: Build and Start Docker Image for AAS Environment
     steps:
       - uses: actions/checkout@v4
 
@@ -79,8 +79,8 @@ jobs:
         run: exit 0
 
   build-test-concept-description-repository:
-
     runs-on: ubuntu-latest
+    name: Build and Start Docker Image for Concept Description Repository
     steps:
       - uses: actions/checkout@v4
 
@@ -105,8 +105,8 @@ jobs:
         run: exit 0
 
   build-test-aas-discovery:
-
     runs-on: ubuntu-latest
+    name: Build and Start Docker Image for AAS Discovery
     steps:
       - uses: actions/checkout@v4
 
@@ -131,8 +131,8 @@ jobs:
         run: exit 0
 
   build-test-aasx-fileserver:
-
     runs-on: ubuntu-latest
+    name: Build and Start Docker Image for AASX File Server
     steps:
       - uses: actions/checkout@v4
 
@@ -157,8 +157,8 @@ jobs:
         run: exit 0
 
   build-test-submodel-repository:
-
     runs-on: ubuntu-latest
+    name: Build and Start Docker Image for Submodel Repository
     steps:
       - uses: actions/checkout@v4
 
@@ -184,6 +184,7 @@ jobs:
 
   build-test-submodel-service:
     runs-on: ubuntu-latest
+    name: Build and Start Docker Image for Submodel Service
     steps:
       - uses: actions/checkout@v4
 
@@ -209,6 +210,7 @@ jobs:
 
   build-test-aas-registry-kafka-mem:
     runs-on: ubuntu-latest
+    name: Build and Start Docker Image for AAS Registry Kafka Mem
     steps:
       - uses: actions/checkout@v4
 
@@ -234,6 +236,7 @@ jobs:
 
   build-test-aas-registry-kafka-mongodb:
     runs-on: ubuntu-latest
+    name: Build and Start Docker Image for AAS Registry Kafka MongoDB
     steps:
       - uses: actions/checkout@v4
 
@@ -259,6 +262,7 @@ jobs:
 
   build-test-aas-registry-log-mem:
     runs-on: ubuntu-latest
+    name: Build and Start Docker Image for AAS Registry Log Mem
     steps:
       - uses: actions/checkout@v4
 
@@ -283,8 +287,8 @@ jobs:
         run: exit 0
 
   build-test-aas-registry-log-mongodb:
-
     runs-on: ubuntu-latest
+    name: Build and Start Docker Image for AAS Registry Log MongoDB
     steps:
       - uses: actions/checkout@v4
 
@@ -309,8 +313,8 @@ jobs:
         run: exit 0
 
   build-test-submodel-registry-kafka-mem:
-
     runs-on: ubuntu-latest
+    name: Build and Start Docker Image for Submodel Registry Kafka Mem
     steps:
       - uses: actions/checkout@v4
 
@@ -335,8 +339,8 @@ jobs:
         run: exit 0
 
   build-test-submodel-registry-kafka-mongodb:
-
     runs-on: ubuntu-latest
+    name: Build and Start Docker Image for Submodel Registry Kafka MongoDB
     steps:
       - uses: actions/checkout@v4
 
@@ -361,8 +365,8 @@ jobs:
         run: exit 0
 
   build-test-submodel-registry-log-mem:
-
     runs-on: ubuntu-latest
+    name: Build and Start Docker Image for Submodel Registry Log Mem
     steps:
       - uses: actions/checkout@v4
 
@@ -387,8 +391,8 @@ jobs:
         run: exit 0
 
   build-test-submodel-registry-log-mongodb:
-
     runs-on: ubuntu-latest
+    name: Build and Start Docker Image for Submodel Registry Log MongoDB
     steps:
       - uses: actions/checkout@v4
 
