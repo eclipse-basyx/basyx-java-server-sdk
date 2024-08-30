@@ -203,7 +203,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelservice.example"
 
       - name: Test Submodel Service Docker Image
-        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/submodel-service ${VERSION} test_submodel_service
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/standalone_submodel_example ${VERSION} test_submodel_service
 
       - name: Clean up
         run: exit 0
