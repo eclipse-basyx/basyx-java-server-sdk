@@ -47,7 +47,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
 
       - name: Test AAS Repository Docker Image
-        run: ./.github/workflows/scripts/build_start_docker_image.sh test/aas-repository ${VERSION} test_aas_repository
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/aas-repository ${VERSION} test_aas_repository
 
       - name: Clean up
         run: exit 0
@@ -73,7 +73,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasenvironment.component"
 
       - name: Test AAS Environment Docker Image
-        run: ./.github/workflows/scripts/build_start_docker_image.sh test/aas-environment ${VERSION} test_aas_environment
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/aas-environment ${VERSION} test_aas_environment
 
       - name: Clean up
         run: exit 0
@@ -99,7 +99,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.conceptdescriptionrepository.component"
 
       - name: Test Concept Description Repository Docker Image
-        run: ./.github/workflows/scripts/build_start_docker_image.sh test/conceptdescription-repository ${VERSION} test_conceptdescription_repository
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/conceptdescription-repository ${VERSION} test_conceptdescription_repository
 
       - name: Clean up
         run: exit 0
@@ -125,7 +125,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
 
       - name: Test AAS Discovery Docker Image
-        run: ./.github/workflows/scripts/build_start_docker_image.sh test/aas-discovery ${VERSION} test_aas_discovery
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/aas-discovery ${VERSION} test_aas_discovery
 
       - name: Clean up
         run: exit 0
@@ -151,7 +151,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasxfileserver.component"
 
       - name: Test AASX File Server Docker Image
-        run: ./.github/workflows/scripts/build_start_docker_image.sh test/aasxfileserver ${VERSION} test_aasxfileserver
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/aasxfileserver ${VERSION} test_aasxfileserver
 
       - name: Clean up
         run: exit 0
@@ -177,7 +177,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
       - name: Test Submodel Repository Docker Image
-        run: ./.github/workflows/scripts/build_start_docker_image.sh test/submodel-repository ${VERSION} test_submodel_repository
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/submodel-repository ${VERSION} test_submodel_repository
 
       - name: Clean up
         run: exit 0
@@ -203,7 +203,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelservice.example"
 
       - name: Test Submodel Service Docker Image
-        run: ./.github/workflows/scripts/build_start_docker_image.sh test/submodel-service ${VERSION} test_submodel_service
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/submodel-service ${VERSION} test_submodel_service
 
       - name: Clean up
         run: exit 0
@@ -229,7 +229,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-kafka-mem"
 
       - name: Test AAS Registry Kafka Mem Docker Image
-        run: ./.github/workflows/scripts/build_start_docker_image.sh test/aas-registry-kafka-mem ${VERSION} test_aas_registry_kafka_mem
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/aas-registry-kafka-mem ${VERSION} test_aas_registry_kafka_mem
 
       - name: Clean up
         run: exit 0
@@ -255,7 +255,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-kafka-mongodb"
 
       - name: Test AAS Registry Kafka MongoDB Docker Image
-        run: ./.github/workflows/scripts/build_start_docker_image.sh test/aas-registry-kafka-mongodb ${VERSION} test_aas_registry_kafka_mongodb
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/aas-registry-kafka-mongodb ${VERSION} test_aas_registry_kafka_mongodb
 
       - name: Clean up
         run: exit 0
@@ -281,7 +281,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
 
       - name: Test AAS Registry Log Mem Docker Image
-        run: ./.github/workflows/scripts/build_start_docker_image.sh test/aas-registry-log-mem ${VERSION} test_aas_registry_log_mem
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/aas-registry-log-mem ${VERSION} test_aas_registry_log_mem
 
       - name: Clean up
         run: exit 0
@@ -307,7 +307,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
 
       - name: Test AAS Registry Log MongoDB Docker Image
-        run: ./.github/workflows/scripts/build_start_docker_image.sh test/aas-registry-log-mongodb ${VERSION} test_aas_registry_log_mongodb
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/aas-registry-log-mongodb ${VERSION} test_aas_registry_log_mongodb
 
       - name: Clean up
         run: exit 0
@@ -333,7 +333,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-kafka-mem"
 
       - name: Test Submodel Registry Kafka Mem Docker Image
-        run: ./.github/workflows/scripts/build_start_docker_image.sh test/submodel-registry-kafka-mem ${VERSION} test_submodel_registry_kafka_mem
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/submodel-registry-kafka-mem ${VERSION} test_submodel_registry_kafka_mem
 
       - name: Clean up
         run: exit 0
@@ -359,7 +359,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-kafka-mongodb"
 
       - name: Test Submodel Registry Kafka MongoDB Docker Image
-        run: ./.github/workflows/scripts/build_start_docker_image.sh test/submodel-registry-kafka-mongodb ${VERSION} test_submodel_registry_kafka_mongodb
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/submodel-registry-kafka-mongodb ${VERSION} test_submodel_registry_kafka_mongodb
 
       - name: Clean up
         run: exit 0
@@ -385,7 +385,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
 
       - name: Test Submodel Registry Log Mem Docker Image
-        run: ./.github/workflows/scripts/build_start_docker_image.sh test/submodel-registry-log-mem ${VERSION} test_submodel_registry_log_mem
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/submodel-registry-log-mem ${VERSION} test_submodel_registry_log_mem
 
       - name: Clean up
         run: exit 0
