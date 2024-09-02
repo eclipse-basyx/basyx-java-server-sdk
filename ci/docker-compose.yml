@@ -18,6 +18,7 @@ services:
       - 27017:27017
     networks:
       - basyx-java-server-sdk
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.2
     environment:
@@ -31,6 +32,7 @@ services:
       start_period: 10s
     networks:
       - basyx-java-server-sdk
+
   akhq:
     image: tchiotludo/akhq:0.24.0
     container_name: akhq
@@ -48,6 +50,7 @@ services:
       - kafka
     networks:
       - basyx-java-server-sdk
+
   kafka:
     image: confluentinc/cp-kafka:7.5.2
     ports:
@@ -70,6 +73,7 @@ services:
         condition: service_healthy
     networks:
       - basyx-java-server-sdk
+  
   aas-registry-log-mem:
     image: eclipsebasyx/aas-registry-log-mem:$BASYX_VERSION
     container_name: aas-registry-log-mem
@@ -80,6 +84,7 @@ services:
     restart: always
     networks:
       - basyx-java-server-sdk
+  
   sm-registry-log-mem:
     image: eclipsebasyx/submodel-registry-log-mem:$BASYX_VERSION
     container_name: sm-registry-log-mem
@@ -90,6 +95,7 @@ services:
     restart: always
     networks:
       - basyx-java-server-sdk
+  
   secured-aas-registry-log-mem:
     image: eclipsebasyx/aas-registry-log-mem:$BASYX_VERSION
     container_name: secured-aas-registry-log-mem
@@ -109,6 +115,7 @@ services:
     restart: always
     networks:
       - basyx-java-server-sdk
+  
   secured-sm-registry-log-mem:
     image: eclipsebasyx/submodel-registry-log-mem:$BASYX_VERSION
     container_name: secured-sm-registry-log-mem
@@ -128,18 +135,20 @@ services:
     restart: always
     networks:
       - basyx-java-server-sdk
+
   keycloak:
-    build:
-      context: ./keycloak
-    volumes:
-      - ./keycloak/realm:/opt/jboss/keycloak/imports
-    ports:
-      - 9096:8080
-    environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-    networks:
-      - basyx-java-server-sdk
+      build:
+        context: ./keycloak
+      volumes:
+        - ./keycloak/realm:/opt/jboss/keycloak/imports
+      ports:
+        - 9096:8080
+      environment:
+        - KEYCLOAK_ADMIN=admin
+        - KEYCLOAK_ADMIN_PASSWORD=admin
+      networks:
+        - basyx-java-server-sdk
+
   keycloak-fixed-uri:
     image: eclipsebasyx/keycloak:0.0.1
     build:
@@ -158,6 +167,7 @@ services:
       - ./keycloak/realm:/opt/keycloak/data/import:ro
     networks:
       - basyx-java-server-sdk
+
 networks:
   basyx-java-server-sdk:
     name: basyx-java-server-sdk
