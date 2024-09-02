@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -44,7 +44,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 /**
  * Specifies the overall SubmodelRepository API
  * 
- * @author schnicke, danish, kammognie
+ * @author schnicke, danish, kammognie, fried
  *
  */
 public interface SubmodelRepository {
@@ -272,4 +272,15 @@ public interface SubmodelRepository {
 	 * @param submodelElementList
 	 */
 	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList);
+
+	/**
+	 * Retrieves the file of a file submodelelement via its absolute path
+	 *
+	 * @param submodelId
+	 * 			  the Submodel id
+	 * @param filePath
+	 *            the path of the file
+	 * @return File InputStream
+	 */
+	public InputStream getFileByFilePath(String submodelId, String filePath);
 }

@@ -155,4 +155,9 @@ public class TestAuthorizedConnectedSubmodelRepository extends SubmodelRepositor
 		// TODO
 		throw new NotInvokableException();
 	}
+
+	@Override
+	public void getFileByFilePath(){
+		// Not Implemented for Client so Override Test
+	}
 }

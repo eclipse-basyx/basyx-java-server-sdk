@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelservice.http;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -236,15 +237,29 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 	public ResponseEntity<OperationResult> invokeOperation(
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Operation request object", required = true, schema = @Schema()) @Valid @RequestBody OperationRequest body) {
-		OperationVariable[] result = service.invokeOperation(idShortPath, body.getInputArguments().toArray(new OperationVariable[0]));
+		List<OperationVariable> inVars = new ArrayList<>();
+		inVars.addAll(body.getInputArguments());
+		inVars.addAll(body.getInoutputArguments());
 
-		return new ResponseEntity<OperationResult>(createOperationResult(result), HttpStatus.OK);
+		List<OperationVariable> result = Arrays.asList(service.invokeOperation(idShortPath, inVars.toArray(new OperationVariable[0])));
 
+		List<OperationVariable> outVars = new ArrayList<>(result);
+		List<OperationVariable> inoutputVars = new ArrayList<>();
+
+		if (!body.getInoutputArguments().isEmpty()) {
+			List<String> inoutputVarsIdShorts = body.getInoutputArguments().stream().map(OperationVariable::getValue).map(SubmodelElement::getIdShort).toList();
+
+			inoutputVars = result.stream().filter(opVar -> inoutputVarsIdShorts.contains(opVar.getValue().getIdShort())).toList();
+
+			outVars.removeAll(inoutputVars);
+		}
+
+		return ResponseEntity.ok(createOperationResult(outVars, inoutputVars));
 	}
 
-	private OperationResult createOperationResult(OperationVariable[] result) {
+	private OperationResult createOperationResult(List<OperationVariable> outputVars, List<OperationVariable> inoutputVars) {
 		return new DefaultOperationResult.Builder()
-				.outputArguments(Arrays.asList(result))
+				.outputArguments(outputVars).inoutputArguments(inoutputVars)
 				.build();
 	}
 

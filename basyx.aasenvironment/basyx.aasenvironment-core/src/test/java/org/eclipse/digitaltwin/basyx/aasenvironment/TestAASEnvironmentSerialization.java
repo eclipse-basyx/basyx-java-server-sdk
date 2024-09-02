@@ -25,9 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +36,7 @@ import java.util.stream.Collectors;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.aasx.AASXDeserializer;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.aasx.InMemoryFile;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
@@ -71,6 +69,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
+
+import static org.junit.Assert.*;
 
 public class TestAASEnvironmentSerialization {
 
@@ -186,9 +186,14 @@ public class TestAASEnvironmentSerialization {
 	public static void checkAASX(InputStream inputStream, boolean areAASsIncluded, boolean areSubmodelsIncluded, boolean includeConceptDescription) throws IOException, InvalidFormatException, DeserializationException {
 		AASXDeserializer aasxDeserializer = new AASXDeserializer(inputStream);
 		Environment environment = aasxDeserializer.read();
-
 		checkAASEnvironment(environment, areAASsIncluded, areSubmodelsIncluded, includeConceptDescription);
 		inputStream.close();
+	}
+
+	public static void checkAASXFiles(InputStream inputStream) throws IOException, InvalidFormatException, DeserializationException {
+		AASXDeserializer aasxDeserializer = new AASXDeserializer(inputStream);
+		List<InMemoryFile> files = aasxDeserializer.getRelatedFiles();
+		assertEquals(2,files.size());
 	}
 
 	public static Collection<ConceptDescription> createDummyConceptDescriptions() {

@@ -438,6 +438,28 @@
                     }
                 }
             ]
+		},
+		{
+			"modelType": "Operation",
+			"idShort": "sum",
+			"inputVariables": [
+				{
+					"value": {
+						"modelType": "Property",
+						"valueType": "xs:int",
+						"idShort": "input"
+					}
+				}
+			],
+			"inoutputVariables": [
+				{
+					"value": {
+						"modelType": "Property",
+						"valueType": "xs:int",
+						"idShort": "stack"
+					}
+				}
+			]
         }
 	]
 }
