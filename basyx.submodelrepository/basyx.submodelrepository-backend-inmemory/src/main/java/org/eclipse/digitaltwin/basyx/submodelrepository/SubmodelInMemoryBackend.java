@@ -25,15 +25,16 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.lang.NonNull;
 
 /**
  * InMemory implementation for the Submodel backend
@@ -43,40 +44,39 @@ import org.springframework.data.repository.CrudRepository;
  */
 public class SubmodelInMemoryBackend implements CrudRepository<Submodel, String> {
 
-	private Map<String, Submodel> inMemoryStore = new LinkedHashMap<>();
+	private final ConcurrentMap<String, Submodel> inMemoryStore = new ConcurrentHashMap<>();
 	
 	@Override
-	public <S extends Submodel> S save(S entity) {
+	public @NonNull <S extends Submodel> S save(@NonNull S entity) {
 		inMemoryStore.put(entity.getId(), entity);
 		
 		return entity;
 	}
 
 	@Override
-	public <S extends Submodel> Iterable<S> saveAll(Iterable<S> entities) {
-		for (S entity : entities)
-			inMemoryStore.put(entity.getId(), entity);
+	public @NonNull <S extends Submodel> Iterable<S> saveAll(@NonNull Iterable<S> entities) {
+		entities.forEach(this::save);
 
 		return entities;
 	}
 
 	@Override
-	public Optional<Submodel> findById(String id) {
+	public @NonNull Optional<Submodel> findById(String id) {
 		return Optional.ofNullable(inMemoryStore.get(id));
 	}
 
 	@Override
-	public boolean existsById(String id) {
+	public boolean existsById(@NonNull String id) {
 		return inMemoryStore.containsKey(id);
 	}
 
 	@Override
-	public Iterable<Submodel> findAll() {
+	public @NonNull Iterable<Submodel> findAll() {
 		return inMemoryStore.values();
 	}
 
 	@Override
-	public Iterable<Submodel> findAllById(Iterable<String> ids) {
+	public @NonNull Iterable<Submodel> findAllById(@NonNull Iterable<String> ids) {
 		return StreamSupport.stream(ids.spliterator(), false).map(inMemoryStore::get).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
@@ -86,23 +86,23 @@ public class SubmodelInMemoryBackend implements CrudRepository<Submodel, String>
 	}
 
 	@Override
-	public void deleteById(String id) {
+	public void deleteById(@NonNull String id) {
 		inMemoryStore.remove(id);
 	}
 
 	@Override
-	public void delete(Submodel entity) {
+	public void delete(@NonNull Submodel entity) {
 		inMemoryStore.remove(entity.getId());
 	}
 
 	@Override
-	public void deleteAllById(Iterable<? extends String> ids) {
+	public void deleteAllById(@NonNull Iterable<? extends String> ids) {
 		for (String id : ids)
 			inMemoryStore.remove(id);
 	}
 
 	@Override
-	public void deleteAll(Iterable<? extends Submodel> entities) {
+	public void deleteAll(@NonNull Iterable<? extends Submodel> entities) {
 		for (Submodel entity : entities)
 			inMemoryStore.remove(entity.getId());
 	}

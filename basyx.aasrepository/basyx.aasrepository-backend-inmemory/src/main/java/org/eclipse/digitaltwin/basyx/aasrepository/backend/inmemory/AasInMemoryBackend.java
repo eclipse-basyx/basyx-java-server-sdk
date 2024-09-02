@@ -25,15 +25,16 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.lang.NonNull;
 
 /**
  * InMemory implementation for the AAS backend
@@ -43,40 +44,39 @@ import org.springframework.data.repository.CrudRepository;
  */
 public class AasInMemoryBackend implements CrudRepository<AssetAdministrationShell, String> {
 
-	private Map<String, AssetAdministrationShell> inMemoryStore = new LinkedHashMap<>();
+	private final ConcurrentMap<String, AssetAdministrationShell> inMemoryStore = new ConcurrentHashMap<>();
 
 	@Override
-	public <S extends AssetAdministrationShell> S save(S entity) {
+	public @NonNull <S extends AssetAdministrationShell> S save(@NonNull S entity) {
 		inMemoryStore.put(entity.getId(), entity);
 		
 		return entity;
 	}
 
 	@Override
-	public <S extends AssetAdministrationShell> Iterable<S> saveAll(Iterable<S> entities) {
-		for (S entity : entities)
-			inMemoryStore.put(entity.getId(), entity);
+	public @NonNull <S extends AssetAdministrationShell> Iterable<S> saveAll(@NonNull Iterable<S> entities) {
+		entities.forEach(this::save);
 
 		return entities;
 	}
 
 	@Override
-	public Optional<AssetAdministrationShell> findById(String id) {
+	public @NonNull Optional<AssetAdministrationShell> findById(@NonNull String id) {
 		return Optional.ofNullable(inMemoryStore.get(id));
 	}
 
 	@Override
-	public boolean existsById(String id) {
+	public boolean existsById(@NonNull String id) {
 		return inMemoryStore.containsKey(id);
 	}
 
 	@Override
-	public Iterable<AssetAdministrationShell> findAll() {
+	public @NonNull Iterable<AssetAdministrationShell> findAll() {
 		return inMemoryStore.values();
 	}
 
 	@Override
-	public Iterable<AssetAdministrationShell> findAllById(Iterable<String> ids) {
+	public @NonNull Iterable<AssetAdministrationShell> findAllById(@NonNull Iterable<String> ids) {
 		return StreamSupport.stream(ids.spliterator(), false).map(inMemoryStore::get).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
@@ -86,23 +86,23 @@ public class AasInMemoryBackend implements CrudRepository<AssetAdministrationShe
 	}
 
 	@Override
-	public void deleteById(String id) {
+	public void deleteById(@NonNull String id) {
 		inMemoryStore.remove(id);
 	}
 
 	@Override
-	public void delete(AssetAdministrationShell entity) {
+	public void delete(@NonNull AssetAdministrationShell entity) {
 		inMemoryStore.remove(entity.getId());
 	}
 
 	@Override
-	public void deleteAllById(Iterable<? extends String> ids) {
+	public void deleteAllById(@NonNull Iterable<? extends String> ids) {
 		for (String id : ids)
 			inMemoryStore.remove(id);
 	}
 
 	@Override
-	public void deleteAll(Iterable<? extends AssetAdministrationShell> entities) {
+	public void deleteAll(@NonNull Iterable<? extends AssetAdministrationShell> entities) {
 		for (AssetAdministrationShell entity : entities)
 			inMemoryStore.remove(entity.getId());
 	}

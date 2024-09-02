@@ -176,4 +176,10 @@ public class TestAuthorizedConnectedSubmodelService extends SubmodelServiceSuite
 		throw new NotInvokableException();
 	}
 
+
+	@Override
+	public void getFileByFilePath(){
+		// Not Implemented for Client so Override Test
+	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -244,6 +244,11 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 	@Override
 	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
 		getConnectedSubmodelService(submodelId).patchSubmodelElements(submodelElementList);
+	}
+
+	@Override
+	public InputStream getFileByFilePath(String submodelId, String filePath) {
+		return getConnectedSubmodelService(submodelId).getFileByFilePath(filePath);
 	}
 
 }

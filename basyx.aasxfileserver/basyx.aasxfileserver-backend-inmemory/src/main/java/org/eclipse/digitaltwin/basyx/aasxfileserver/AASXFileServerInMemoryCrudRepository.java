@@ -25,53 +25,55 @@
 
 package org.eclipse.digitaltwin.basyx.aasxfileserver;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.eclipse.digitaltwin.basyx.aasxfileserver.model.Package;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.lang.NonNull;
 
 public class AASXFileServerInMemoryCrudRepository implements CrudRepository<Package, String> {
 
-	private Map<String, Package> packageMap = new LinkedHashMap<>();
+	private final ConcurrentMap<String, Package> packageMap = new ConcurrentHashMap<>();
 
 	@Override
-	public <S extends Package> S save(S entity) {
+	public @NonNull <S extends Package> S save(@NonNull S entity) {
 		packageMap.put(entity.getPackageId(), entity);
+		
 		return entity;
 	}
 
 	@Override
-	public <S extends Package> Iterable<S> saveAll(Iterable<S> entities) {
-		for (Package entity : entities) {
-			save(entity);
-		}
+	public @NonNull <S extends Package> Iterable<S> saveAll(@NonNull Iterable<S> entities) {
+		entities.forEach(this::save);
+
 		return entities;
 	}
 
 	@Override
-	public Optional<Package> findById(String id) {
+	public @NonNull Optional<Package> findById(@NonNull String id) {
 		return Optional.ofNullable(packageMap.get(id));
 	}
 
 	@Override
-	public boolean existsById(String id) {
+	public boolean existsById(@NonNull String id) {
 		return packageMap.containsKey(id);
 	}
 
 	@Override
-	public Iterable<Package> findAll() {
+	public @NonNull Iterable<Package> findAll() {
 		return packageMap.values();
 	}
 
 	@Override
-	public Iterable<Package> findAllById(Iterable<String> ids) {
+	public @NonNull Iterable<Package> findAllById(@NonNull Iterable<String> ids) {
 		List<String> idList = StreamSupport.stream(ids.spliterator(), false).collect(Collectors.toList());
-		return packageMap.entrySet().stream().filter(entry -> idList.contains(entry.getKey())).map(entry -> entry.getValue()).collect(Collectors.toList());
+		return packageMap.entrySet().stream().filter(entry -> idList.contains(entry.getKey())).map(Entry::getValue).collect(Collectors.toList());
 	}
 
 	@Override
@@ -80,23 +82,23 @@ public class AASXFileServerInMemoryCrudRepository implements CrudRepository<Pack
 	}
 
 	@Override
-	public void deleteById(String id) {
+	public void deleteById(@NonNull String id) {
 		packageMap.remove(id);
 	}
 
 	@Override
-	public void delete(Package entity) {
+	public void delete(@NonNull Package entity) {
 		packageMap.remove(entity.getPackageId());
 	}
 
 	@Override
-	public void deleteAllById(Iterable<? extends String> ids) {
+	public void deleteAllById(@NonNull Iterable<? extends String> ids) {
 		List<String> idList = StreamSupport.stream(ids.spliterator(), false).collect(Collectors.toList());
 		packageMap.keySet().removeAll(idList);
 	}
 
 	@Override
-	public void deleteAll(Iterable<? extends Package> entities) {
+	public void deleteAll(@NonNull Iterable<? extends Package> entities) {
 		List<String> idList = StreamSupport.stream(entities.spliterator(), false).map(Package::getPackageId).collect(Collectors.toList());
 		packageMap.keySet().removeAll(idList);
 	}

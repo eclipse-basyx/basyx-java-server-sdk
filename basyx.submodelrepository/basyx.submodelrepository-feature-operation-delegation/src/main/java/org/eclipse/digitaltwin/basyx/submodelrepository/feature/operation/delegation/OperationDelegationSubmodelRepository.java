@@ -173,5 +173,10 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
 		decorated.patchSubmodelElements(submodelId, submodelElementList);
 	}
-	
+
+	@Override
+	public InputStream getFileByFilePath(String submodelId, String filePath) {
+		return decorated.getFileByFilePath(submodelId, filePath);
+	}
+
 }

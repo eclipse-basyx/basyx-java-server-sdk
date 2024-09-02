@@ -1,0 +1,22 @@
+{
+	"inputArguments": [
+		{
+			"value": {
+				"modelType": "Property",
+				"valueType": "xs:int",
+				"value": "5",
+				"idShort": "input"
+			}
+		}
+	],
+	"inoutputArguments": [
+		{
+			"value": {
+				"modelType": "Property",
+				"valueType": "xs:int",
+				"idShort": "stack",
+				"value": "3"
+			}
+		}
+	]
+}
