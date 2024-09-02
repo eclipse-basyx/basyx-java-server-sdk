@@ -43,6 +43,26 @@ jobs:
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
+  test-basyx-aasxfileserver:
+    runs-on: ubuntu-latest
+    name: AASX FileServer Test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+      - name: Start environment
+        run: docker compose --project-directory ./ci up -d --wait
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test AAS Environment
+        run: mvn test -f "basyx.aasxfileserver/pom.xml"
+      - name: Stop environment
+        if: always()
+        run: docker compose --project-directory ./ci down
   test-basyx-aasenvironment:
     runs-on: ubuntu-latest
     name: AAS Environment Test
