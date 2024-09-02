@@ -425,7 +425,7 @@ public class TestAuthorizedSubmodelRepository {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_CREDENTIAL;
 
 		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
-
+		
 		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getSpecificSubmodelElementValueAccessURL(SPECIFIC_SUBMODEL_ID, SUBMODEL_ELEMENT_IDSHORT_PATH), accessToken);
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
@@ -1218,7 +1218,7 @@ public class TestAuthorizedSubmodelRepository {
 	}
 
 	private String getSpecificSubmodelAccessURL(String submodelId) {
-		return RepositoryUrlHelper.createRepositoryUrl(RepositoryUrlHelper.createRepositoryUrl(submodelRepositoryBaseUrl, SUBMODEL_REPOSITORY_PATH), SUBMODEL_REPOSITORY_PATH) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
+		return RepositoryUrlHelper.createRepositoryUrl(submodelRepositoryBaseUrl, SUBMODEL_REPOSITORY_PATH) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
 	}
 
 	private String getSpecificSubmodelValueOnlyAccessURL(String submodelId) {
@@ -1230,7 +1230,7 @@ public class TestAuthorizedSubmodelRepository {
 	}
 
 	private String getSpecificSubmodelElementAccessURL(String submodelId, String submodelElementIdShortPath) {
-		return RepositoryUrlHelper.createRepositoryUrl(RepositoryUrlHelper.createRepositoryUrl(submodelRepositoryBaseUrl, SUBMODEL_REPOSITORY_PATH), SUBMODEL_REPOSITORY_PATH) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId) + "/submodel-elements/" + submodelElementIdShortPath;
+		return RepositoryUrlHelper.createRepositoryUrl(submodelRepositoryBaseUrl, SUBMODEL_REPOSITORY_PATH) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId) + "/submodel-elements/" + submodelElementIdShortPath;
 	}
 
 	private String getSpecificSubmodelElementValueAccessURL(String submodelId, String submodelElementIdShortPath) {
@@ -1258,7 +1258,7 @@ public class TestAuthorizedSubmodelRepository {
 	}
 
 	protected String getAllSubmodelElementsAccessURL(String submodelId) {
-		return RepositoryUrlHelper.createRepositoryUrl(RepositoryUrlHelper.createRepositoryUrl(submodelRepositoryBaseUrl, SUBMODEL_REPOSITORY_PATH), SUBMODEL_REPOSITORY_PATH) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId) + "/submodel-elements";
+		return RepositoryUrlHelper.createRepositoryUrl(submodelRepositoryBaseUrl, SUBMODEL_REPOSITORY_PATH) + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId) + "/submodel-elements";
 	}
 
 	private static CloseableHttpResponse createElementOnRepositoryWithAuthorization(String url, String submodelJsonContent, String accessToken) throws IOException {
