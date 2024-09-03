@@ -25,58 +25,58 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.lang.NonNull;
 
 /**
  * InMemory implementation for the {@link ConceptDescription} backend
  * 
- * @author danish
+ * @author danish, mateusmolina
  * 
  */
 public class ConceptDescriptionInMemoryBackend implements CrudRepository<ConceptDescription, String> {
 
-	private Map<String, ConceptDescription> inMemoryStore = new LinkedHashMap<>();
+	private final ConcurrentMap<String, ConceptDescription> inMemoryStore = new ConcurrentHashMap<>();
 
 	@Override
-	public <S extends ConceptDescription> S save(S entity) {
+	public @NonNull <S extends ConceptDescription> S save(@NonNull S entity) {
 		inMemoryStore.put(entity.getId(), entity);
 		
 		return entity;
 	}
 
 	@Override
-	public <S extends ConceptDescription> Iterable<S> saveAll(Iterable<S> entities) {
-		for (S entity : entities)
-			inMemoryStore.put(entity.getId(), entity);
+	public @NonNull <S extends ConceptDescription> Iterable<S> saveAll(@NonNull Iterable<S> entities) {
+		entities.forEach(this::save);
 
 		return entities;
 	}
 
 	@Override
-	public Optional<ConceptDescription> findById(String id) {
+	public @NonNull Optional<ConceptDescription> findById(@NonNull String id) {
 		return Optional.ofNullable(inMemoryStore.get(id));
 	}
 
 	@Override
-	public boolean existsById(String id) {
+	public boolean existsById(@NonNull String id) {
 		return inMemoryStore.containsKey(id);
 	}
 
 	@Override
-	public Iterable<ConceptDescription> findAll() {
+	public @NonNull Iterable<ConceptDescription> findAll() {
 		return inMemoryStore.values();
 	}
 
 	@Override
-	public Iterable<ConceptDescription> findAllById(Iterable<String> ids) {
+	public @NonNull Iterable<ConceptDescription> findAllById(@NonNull Iterable<String> ids) {
 		return StreamSupport.stream(ids.spliterator(), false).map(inMemoryStore::get).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
@@ -86,23 +86,23 @@ public class ConceptDescriptionInMemoryBackend implements CrudRepository<Concept
 	}
 
 	@Override
-	public void deleteById(String id) {
+	public void deleteById(@NonNull String id) {
 		inMemoryStore.remove(id);
 	}
 
 	@Override
-	public void delete(ConceptDescription entity) {
+	public void delete(@NonNull ConceptDescription entity) {
 		inMemoryStore.remove(entity.getId());
 	}
 
 	@Override
-	public void deleteAllById(Iterable<? extends String> ids) {
+	public void deleteAllById(@NonNull Iterable<? extends String> ids) {
 		for (String id : ids)
 			inMemoryStore.remove(id);
 	}
 
 	@Override
-	public void deleteAll(Iterable<? extends ConceptDescription> entities) {
+	public void deleteAll(@NonNull Iterable<? extends ConceptDescription> entities) {
 		for (ConceptDescription entity : entities)
 			inMemoryStore.remove(entity.getId());
 	}

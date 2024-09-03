@@ -173,6 +173,7 @@ public class SubmodelServiceHelper {
 	public static final String SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_LIST_CATEGORY = "PARAMETER";
 
 	public static final String SUBMODEL_TECHNICAL_DATA_OPERATION_ID = "square";
+	public static final String SUBMODEL_TECHNICAL_DATA_OPERATIONINOUT_ID = "sum";
 
 	public static SubmodelElement getDummySubmodelElement(Submodel technicalData, String idShort) {
 		return technicalData.getSubmodelElements()
@@ -333,7 +334,7 @@ public class SubmodelServiceHelper {
 				Lists.newArrayList(createPropertySubmodelElement(), createRangeSubmodelElement(), createMultiLanguagePropertySubmodelElement(), createFileSubmodelElement(), createEntitySubmodelElement(),
 						createReferenceElementSubmodelElement(),
 						createRelationshipElementSubmodelElement(), createAnnotatedRelationshipElementSubmodelElement(), createBlobSubmodelElement(), createSubmodelElementCollection(), createSubmodelElementList(),
-						createInvokableOperation()));
+						createInvokableOperation(), createInvokableInOutOperation()));
 		return list;
 	}
 	
@@ -370,6 +371,11 @@ public class SubmodelServiceHelper {
 				.invokable(SubmodelServiceHelper::square).build();
 	}
 
+	private static Operation createInvokableInOutOperation() {
+		return new InvokableOperation.Builder().idShort(SUBMODEL_TECHNICAL_DATA_OPERATIONINOUT_ID).inputVariables(createIntOperationVariable("input")).inoutputVariables(createIntOperationVariable("stack"))
+				.invokable(SubmodelServiceHelper::sum).build();
+	}
+
 	private static Operation createOperation() {
 		return new DefaultOperation.Builder().idShort(SUBMODEL_TECHNICAL_DATA_OPERATION_ID).inputVariables(createIntOperationVariable("input")).outputVariables(createIntOperationVariable("result"))
 				.build();
@@ -383,6 +389,16 @@ public class SubmodelServiceHelper {
 		in.setValue(squared.toString());
 		in.setIdShort("result");
 		return new OperationVariable[] { createOperationVariable(in) };
+	}
+
+	private static OperationVariable[] sum(OperationVariable[] inputs) {
+		Property in = (Property) inputs[0].getValue();
+		Property stack = (Property) inputs[1].getValue();
+		Integer inVal = Integer.valueOf(in.getValue());
+		Integer stackVal = Integer.valueOf(stack.getValue());
+		Integer sumResult = inVal + stackVal;
+		stack.setValue(sumResult.toString());
+		return new OperationVariable[] { createOperationVariable(stack) };
 	}
 
 	private static DefaultOperationVariable createIntOperationVariable(String idShort) {

@@ -332,4 +332,11 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 		submodelBackend.save(submodel);
 	}
 
+	@Override
+	public InputStream getFileByFilePath(String submodelId, String filePath) {
+		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
+
+		return submodelService.getFileByFilePath(filePath);
+	}
+
 }

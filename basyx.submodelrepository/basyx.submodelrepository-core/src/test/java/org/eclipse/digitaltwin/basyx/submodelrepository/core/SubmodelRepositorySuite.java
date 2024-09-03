@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.core;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -33,11 +34,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -53,7 +56,11 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceSuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Testsuite for implementations of the SubmodelRepository interface
@@ -65,6 +72,7 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(null, null);
 	private static final String EMPTY_ID = " ";
 	private static final String NULL_ID = null;
+	private static final String ID = "testId";
 
 	protected abstract SubmodelRepository getSubmodelRepository();
 
@@ -257,6 +265,57 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
 		CursorResult<List<Submodel>> cursorResult = repo.getAllSubmodels(new PaginationInfo(1, ""));
 		assertEquals(1, cursorResult.getResult().size());
+	}
+
+	@Test
+	public void getSubmodelByIdMetadata() throws JsonProcessingException {
+		SubmodelRepository repo = getSubmodelRepository();
+		Submodel expectedSubmodel = buildDummySubmodelWithNoSmElement(ID);
+		expectedSubmodel.setSubmodelElements(null);
+		repo.createSubmodel(expectedSubmodel);
+
+		Submodel retrievedSubmodelMetadata = repo.getSubmodelByIdMetadata(ID);
+		retrievedSubmodelMetadata.setSubmodelElements(null);
+
+		assertEquals(expectedSubmodel, retrievedSubmodelMetadata);
+	}
+
+	@Test
+	public void getSubmodelByIdValueOnly() throws JsonProcessingException {
+		SubmodelRepository repo = getSubmodelRepository();
+		Submodel submodel = buildDummySubmodelWithNoSmElement(ID);
+
+		List<SubmodelElement> submodelElements = buildDummySubmodelElements();
+		submodel.setSubmodelElements(submodelElements);
+		repo.createSubmodel(submodel);
+
+		SubmodelValueOnly expectedSmValueOnly = new SubmodelValueOnly(submodelElements);
+		SubmodelValueOnly retrievedSmValueOnly = repo.getSubmodelByIdValueOnly(ID);
+
+		ObjectMapper mapper = new ObjectMapper();
+		String expectedSmValueOnlyJSONContent = mapper.writeValueAsString(expectedSmValueOnly);
+		String retrievedSmValueOnlyJSONContent = mapper.writeValueAsString(retrievedSmValueOnly);
+
+		assertEquals(expectedSmValueOnlyJSONContent, retrievedSmValueOnlyJSONContent);
+	}
+
+	@Override
+	@Test
+	public void patchSubmodelElements() {
+		SubmodelRepository repo = getSubmodelRepository();
+		Submodel submodel = buildDummySubmodelWithNoSmElement(ID);
+
+		List<SubmodelElement> submodelElements = buildDummySubmodelElements();
+		submodel.setSubmodelElements(submodelElements);
+		repo.createSubmodel(submodel);
+
+		List<SubmodelElement> submodelElementsPatch = buildDummySubmodelElementsToPatch();
+		repo.patchSubmodelElements(ID, submodelElementsPatch);
+
+		Submodel patchedSubmodel = repo.getSubmodel(ID);
+
+		assertEquals(submodel.getSubmodelElements().size(), patchedSubmodel.getSubmodelElements().size());
+		assertEquals(submodelElementsPatch, patchedSubmodel.getSubmodelElements());
 	}
 
 	// Has to be overwritten if backend does not support operations

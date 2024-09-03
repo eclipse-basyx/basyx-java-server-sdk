@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -24,14 +24,12 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasenvironment.base;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.io.*;
+import java.nio.file.Files;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
@@ -40,12 +38,8 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.aasx.InMemoryFile;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.xml.XmlSerializer;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
-import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
+import org.eclipse.digitaltwin.aas4j.v3.model.*;
+import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.ConceptDescriptionIdCollector;
@@ -60,6 +54,7 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.Identifiab
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +64,7 @@ import jakarta.validation.Valid;
 /**
  * Default implementation of {@link AasEnvironment}
  *
- * @author zhangzai, danish
+ * @author zhangzai, danish, fried
  */
 public class DefaultAASEnvironment implements AasEnvironment {
 
@@ -83,7 +78,8 @@ public class DefaultAASEnvironment implements AasEnvironment {
 	private AASXSerializer aasxSerializer = new AASXSerializer();
 	private MetamodelCloneCreator cloneCreator = new MetamodelCloneCreator();
 	private IdentifiableAssertion checker;
-	
+	private static String aasxFilePathPrefix = "/aasx/files/";
+
 	public DefaultAASEnvironment(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
 		this.aasRepository = aasRepository;
 		this.submodelRepository = submodelRepository;
@@ -108,11 +104,41 @@ public class DefaultAASEnvironment implements AasEnvironment {
 	public byte[] createAASXAASEnvironmentSerialization(@Valid List<String> aasIds, @Valid List<String> submodelIds, @Valid boolean includeConceptDescriptions) throws SerializationException, IOException {
 		Environment aasEnvironment = createEnvironment(aasIds, submodelIds, includeConceptDescriptions);
 
+		List<InMemoryFile> relatedFiles = new ArrayList<>();
+		HashMap<String, List<File>> fileSubmodelElements = new HashMap<>();
+
+		aasEnvironment.getSubmodels().forEach(sm-> fileSubmodelElements.put(sm.getId(),getAllFileSubmodelElements(sm)));
+
+		addFilesToRelatedFiles(fileSubmodelElements, relatedFiles);
+		aasEnvironment.getAssetAdministrationShells().forEach(aas->addThumbnailToRelatedFiles(aas.getId(),aas.getAssetInformation().getDefaultThumbnail(),relatedFiles));
+
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		aasxSerializer.write(aasEnvironment, null, outputStream);
+		aasxSerializer.write(aasEnvironment, relatedFiles, outputStream);
 		return outputStream.toByteArray();
 	}
-	
+
+	public List<File> getAllFileSubmodelElements(Submodel submodel) {
+		List<File> files = new ArrayList<>();
+		Stack<SubmodelElement> stack = new Stack<>();
+
+		stack.addAll(submodel.getSubmodelElements());
+
+		while (!stack.isEmpty()) {
+			SubmodelElement submodelElement = stack.pop();
+
+			if (submodelElement instanceof File file) {
+                if(!isURL(file.getValue()))
+					files.add(file);
+			} else if (submodelElement instanceof SubmodelElementCollection collection) {
+				stack.addAll(collection.getValue());
+			} else if (submodelElement instanceof SubmodelElementList list) {
+				stack.addAll(list.getValue());
+			}
+		}
+
+		return files;
+	}
+
 	public void loadEnvironment(CompleteEnvironment completeEnvironment) {
 		Environment environment = completeEnvironment.getEnvironment();
 		List<InMemoryFile> relatedFiles = completeEnvironment.getRelatedFiles();
@@ -295,4 +321,91 @@ public class DefaultAASEnvironment implements AasEnvironment {
 		}
 	}
 
+	private void addFilesToRelatedFiles(HashMap<String, List<File>> submodelFileSMEMap, List<InMemoryFile> relatedFiles) {
+		submodelFileSMEMap.forEach((submodelId, fileSubmodelElementList) -> fileSubmodelElementList.forEach(file -> {
+			try {
+				if (isFileAlreadyAdded(file.getValue())) {
+					return;
+				}
+				processFile(submodelId, file, relatedFiles);
+			} catch (IOException | NullPointerException | FileDoesNotExistException e) {
+				handleFileError(file);
+			}
+		}));
+	}
+
+	private void processFile(String key, File file, List<InMemoryFile> relatedFiles) throws IOException {
+		byte[] fileContent = getFileContent(key, file);
+		String path = getFilePathInAASX(file.getValue());
+		relatedFiles.add(new InMemoryFile(fileContent, path));
+		file.setValue(path);
+	}
+
+	private void handleFileError(File file) {
+		logger.error("File {} does not exist in the repository", file.getValue());
+	}
+
+
+	private byte[] getFileContent(String submodelId, File file) throws IOException {
+		return submodelRepository.getFileByFilePath(submodelId, file.getValue()).readAllBytes();
+	}
+
+	private boolean isFileAlreadyAdded(String filePath){
+		return filePath.startsWith(aasxFilePathPrefix);
+	}
+
+	private void addThumbnailToRelatedFiles(String aasId, Resource thumbnail, List<InMemoryFile> relatedFiles) {
+		if(!isThumbnailSet(thumbnail)) {
+			logger.info("No thumbnail specified for aas {}", aasId);
+		}else {
+			try {
+				String newPath = getThumbnailPathInAASX(thumbnail.getPath());
+				relatedFiles.add(
+						new InMemoryFile(
+								Files.readAllBytes(aasRepository.getThumbnail(aasId).toPath()),
+								newPath
+						)
+				);
+				thumbnail.setPath(newPath);
+			} catch (IOException | FileDoesNotExistException e) {
+				logger.error("Thumbnail file {} does not exist in the repository", thumbnail.getPath());
+			}
+		}
+    }
+
+	private static boolean isThumbnailSet(Resource thumbnail) {
+		return thumbnail != null && thumbnail.getPath() != null;
+	}
+
+	private static String getThumbnailPathInAASX(String path) {
+		try {
+            return "/" + getHashedFilePath(path) + "." + getFileExtensionFromPath(path);
+        } catch (NoSuchAlgorithmException e) {
+			logger.error("Could not hash thumbnail path {}", path);
+            throw new RuntimeException(e);
+        }
+    }
+
+	private static String getFilePathInAASX(String path) {
+		try {
+            return aasxFilePathPrefix + getHashedFilePath(path) + "." + getFileExtensionFromPath(path);
+        } catch (NoSuchAlgorithmException e) {
+			logger.error("Could not hash file path {}", path);
+            throw new RuntimeException(e);
+        }
+    }
+
+	private static String getFileExtensionFromPath(String file) {
+		String[] split = file.split("\\.");
+		return split[split.length - 1];
+	}
+
+	private static String getHashedFilePath(String filePath) throws NoSuchAlgorithmException {
+		int hashCode = filePath.hashCode();
+		return Integer.toHexString(hashCode);
+	}
+
+	private static boolean isURL(String path) {
+		return path.startsWith("http");
+	}
 }

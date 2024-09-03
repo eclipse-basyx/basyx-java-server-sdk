@@ -102,7 +102,7 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
-		decorated.createSubmodelElement(submodelId, smElement);
+		decorated.createSubmodelElement(submodelId, idShortPath, smElement);
 		SubmodelElement submodelElement = decorated.getSubmodelElement(submodelId, idShortPath);
 		submodelElementCreated(submodelElement, getName(), submodelId, idShortPath);
 	}
@@ -215,6 +215,11 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
 		// TODO: Eventing
 		decorated.patchSubmodelElements(submodelId, submodelElementList);
+	}
+
+	@Override
+	public InputStream getFileByFilePath(String submodelId, String filePath) {
+		return decorated.getFileByFilePath(submodelId, filePath);
 	}
 
 }
