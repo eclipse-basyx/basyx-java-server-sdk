@@ -336,7 +336,7 @@ public abstract class AasRepositoryHTTPSuite {
 		createDummyAasOnServer(getAas1JSONString());
 		CloseableHttpResponse getThumbnailResponse = uploadThumbnail(dummyAasId);
 
-		assertEquals(HttpStatus.OK.value(), getThumbnailResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), getThumbnailResponse.getCode());
 
 		getThumbnailResponse.close();
 	}
