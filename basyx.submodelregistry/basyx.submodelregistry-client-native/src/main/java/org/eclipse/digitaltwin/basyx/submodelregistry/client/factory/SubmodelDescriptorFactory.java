@@ -36,7 +36,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.LangStringNameType;
 import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
+import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper; 
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
