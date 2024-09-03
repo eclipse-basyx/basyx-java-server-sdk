@@ -57,14 +57,12 @@ public interface SubmodelRepository {
 	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo);
 	
 	/**
-	 * Retrieves all Submodels filtered by a Semantic ID
+	 * Retrieves all Submodels from the repository
 	 * 
-	 * @param semanticId The semantic ID to filter the submodels
-	 * @param pInfo Pagination information (optional)
-	 * @return A list of submodels filtered by semantic ID
+	 * @return a list of all found Submodels
 	 */
-	public CursorResult<List<Submodel>> getSubmodelsBySemanticId(String semanticId, PaginationInfo pInfo);
-
+	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo);
+	
 	/**
 	 * Retrieves the Submodel with the specific id
 	 * 
