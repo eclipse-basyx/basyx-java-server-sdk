@@ -14,7 +14,7 @@ public class RepositoryUrlHelper {
 
 			URI finalUri = UriComponentsBuilder.newInstance().scheme(baseUri.getScheme()).host(baseUri.getHost())
 					.port(baseUri.getPort()).pathSegment(baseUri.getPath().replaceAll("^/|/$", "").split("/"))
-					.pathSegment(additionalPath.replaceAll("^/|/$", "").split("/")).build().toUri();
+					.pathSegment((additionalPath != null ? additionalPath : "").replaceAll("^/|/$", "").split("/")).build().toUri();
 
 			return finalUri.toURL().toString();
 		} catch (URISyntaxException | MalformedURLException e) {
