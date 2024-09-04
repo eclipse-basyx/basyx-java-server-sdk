@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 /**
  * SubmodelService factory returning an MongoDB backend SubmodelService
  * 
- * @author zhangzai
+ * @author zhangzai, mateusmolina
  *
  */
 @ConditionalOnExpression("'${basyx.submodelservice.backend}'.equals('MongoDB') or '${basyx.backend}'.equals('MongoDB')")

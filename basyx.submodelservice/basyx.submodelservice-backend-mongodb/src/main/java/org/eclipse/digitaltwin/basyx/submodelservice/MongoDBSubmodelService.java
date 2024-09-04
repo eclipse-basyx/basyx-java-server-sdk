@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -45,7 +45,7 @@ import org.springframework.data.repository.CrudRepository;
 /**
  * Implements the SubmodelService as MongoDB variant
  * 
- * @author zhangzai
+ * @author zhangzai, mateusmolina
  * 
  */
 public class MongoDBSubmodelService implements SubmodelService {
