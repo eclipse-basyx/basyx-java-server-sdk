@@ -58,8 +58,6 @@ public class TestMongoDBSubmodelService extends SubmodelServiceSuite {
 		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
 	}
 
-
-
 	@Override
 	protected SubmodelService getSubmodelService(Submodel submodel) {
 		BasyxMongoMappingContext mappingContext = new BasyxMongoMappingContext();
