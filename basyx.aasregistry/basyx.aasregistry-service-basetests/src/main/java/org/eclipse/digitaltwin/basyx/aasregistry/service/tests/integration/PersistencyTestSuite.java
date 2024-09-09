@@ -45,7 +45,7 @@ import static org.junit.Assert.assertEquals;
  * 
  * @author mateusmolina, danish
  */
-@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class PersistencyTestSuite {
 	protected static final String DESC_ID = "TestDescriptor";
 

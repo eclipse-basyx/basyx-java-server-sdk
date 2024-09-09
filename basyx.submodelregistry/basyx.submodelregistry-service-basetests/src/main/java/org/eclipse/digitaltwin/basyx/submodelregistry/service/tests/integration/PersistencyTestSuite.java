@@ -40,7 +40,7 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
  * 
  * @author mateusmolina
  */
-@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class PersistencyTestSuite {
 
 	protected static final String DESC_ID = "TestDescriptor";

@@ -59,7 +59,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { BasyxSubmodelRegistryApiDelegate.class, SubmodelDescriptorsApiController.class, SubmodelDescriptorsApiController.class, InMemorySubmodelStorageConfiguration.class })
-@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @TestPropertySource(properties = { "registry.type=inMemory" })
 public class BasyxRegistryApiDelegateTest {
 

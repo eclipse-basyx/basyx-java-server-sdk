@@ -54,7 +54,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(DescriptionApiController.class)
-@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @TestPropertySource(properties = { "description.profiles=https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-001,https://admin-shell.io/aas/API/3/0/SubmodelRegistryServiceSpecification/SSP-001" })
 public class DescriptionProfilesTest {
 
