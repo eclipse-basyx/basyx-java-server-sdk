@@ -20,7 +20,7 @@ on:
       - 'NOTICE'
 
 env:
-  MVN_ARGS_BUILD_BASYX: -DskipTests -T1C
+  MVN_ARGS_BUILD_BASYX: -DskipTests
 
 jobs:
   test-basyx-common:
