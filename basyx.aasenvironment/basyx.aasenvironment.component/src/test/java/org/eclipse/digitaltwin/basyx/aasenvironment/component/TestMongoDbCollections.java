@@ -48,13 +48,8 @@ public class TestMongoDbCollections {
 	private static ConfigurableApplicationContext appContext;
 
 	// MongoDB configuration
-	private static final String CONNECTION_URL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-	private static final String DB_NAME = "aas-env";
-	private static final String AAS_REPO_COLLECTION = "aas-repo";
-	private static final String SM_REPO_COLLECTION = "submodel-repo";
-	private static final String CD_REPO_COLLECTION = "cd-repo";
 
-	private static final MongoTemplate mongoTemplate = buildMongoTemplate(CONNECTION_URL, DB_NAME);
+	private static final MongoTemplate mongoTemplate = MongoDbCollectionsTestConfig.buildMongoTemplate();
 
 	@BeforeClass
 	public static void startAASEnvironment() throws Exception {
@@ -64,32 +59,28 @@ public class TestMongoDbCollections {
 	@AfterClass
 	public static void deleteDatabase() {
 		appContext.close();
-		MongoDBUtilities.clearCollection(mongoTemplate, AAS_REPO_COLLECTION);
-		MongoDBUtilities.clearCollection(mongoTemplate, SM_REPO_COLLECTION);
-		MongoDBUtilities.clearCollection(mongoTemplate, CD_REPO_COLLECTION);
+		MongoDBUtilities.clearCollection(mongoTemplate, MongoDbCollectionsTestConfig.AAS_REPO_COLLECTION);
+		MongoDBUtilities.clearCollection(mongoTemplate, MongoDbCollectionsTestConfig.SM_REPO_COLLECTION);
+		MongoDBUtilities.clearCollection(mongoTemplate, MongoDbCollectionsTestConfig.CD_REPO_COLLECTION);
 	}
 
 	@Test
 	public void aasRepoCollectionIsCorrectlyDefined() {
-		assertMongoDBCollectionExists(AAS_REPO_COLLECTION);
+		assertMongoDBCollectionExists(MongoDbCollectionsTestConfig.AAS_REPO_COLLECTION);
 	}
 
 	@Test
 	public void smRepoCollectionIsCorrectlyDefined() {
-		assertMongoDBCollectionExists(SM_REPO_COLLECTION);
+		assertMongoDBCollectionExists(MongoDbCollectionsTestConfig.SM_REPO_COLLECTION);
 	}
 
 	@Test
 	public void cdRepoCollectionIsCorrectlyDefined() {
-		assertMongoDBCollectionExists(CD_REPO_COLLECTION);
+		assertMongoDBCollectionExists(MongoDbCollectionsTestConfig.CD_REPO_COLLECTION);
 	}
 
 	private void assertMongoDBCollectionExists(String collectionName) {
 		assertTrue(mongoTemplate.collectionExists(collectionName));
 	}
 
-	private static MongoTemplate buildMongoTemplate(String connectionUrl, String dbName) {
-		MongoClient client = MongoClients.create(connectionUrl);
-		return new MongoTemplate(client, dbName);
-	}
 }
