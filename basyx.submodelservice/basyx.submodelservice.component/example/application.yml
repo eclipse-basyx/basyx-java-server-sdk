@@ -1,0 +1,14 @@
+basyx:
+  submodel:
+    file: submodel.json
+  operation:
+    java:
+      sourcesPath: sources
+      classesPath: classes
+      additionalClasspath: 
+      - jars/HelloWorld.jar
+    invokation:
+      mappings:
+        SquareOperation: SquareOperation
+        "BasicOperations.AddOperation": basic.ops.AddOperation
+        BasicOperations.HelloOperation: HelloOperation

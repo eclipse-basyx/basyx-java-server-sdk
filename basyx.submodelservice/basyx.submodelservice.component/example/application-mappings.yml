@@ -1,0 +1,7 @@
+basyx:
+  operation:
+    invokation:
+      mappings:
+        SquareOperation: SquareOperation
+        BasicOperations.AddOperation: basic.ops.AddOperation
+        BasicOperations.HelloOperation: HelloOperation

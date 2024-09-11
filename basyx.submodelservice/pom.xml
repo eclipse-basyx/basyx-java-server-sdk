@@ -20,6 +20,7 @@
 		<module>basyx.submodelservice-backend-inmemory</module>
 		<module>basyx.submodelservice-feature-mqtt</module>
 		<module>basyx.submodelservice.example</module>
+		<module>basyx.submodelservice.component</module>
 		<module>basyx.submodelservice-client</module>
 	</modules>
 

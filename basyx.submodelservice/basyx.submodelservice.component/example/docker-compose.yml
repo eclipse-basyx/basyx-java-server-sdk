@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  submodel-service:
+    image: eclipsebasyx/submodel-service:test
+    build:
+      context: ..
+    container_name: submodel-service
+    environment:
+      BASYX_SUBMODEL_FILE: submodel.json
+      BASYX_OPERATION_JAVA_SOURCESPATH: sources
+      BASYX_OPERATION_JAVA_CLASSESPATH: classes
+      BASYX_OPERATION_JAVA_ADDITIONALCLASSPATH: jars/HelloWorld.jar
+      # we should use properties or yml files for operation mappings
+      # Environment variables could not be parsed properly
+      # dots of the idShortPath are not handled properly by spring and also the lower-case conversion of spring is problematic
+      # so either we use config file for mappings or define everything in a .properties or .yml file
+      SPRING_PROFILES_ACTIVE: mappings
+    ports:
+    - 8111:8081
+    volumes:
+    - ./submodel.json:/application/submodel.json:ro
+    - ./sources/:/application/sources/:ro
+    - ./jars/:/application/jars/:ro
+    - ./application-mappings.yml:/application/config/application-mappings.yml/:ro

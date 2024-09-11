@@ -1,0 +1,13 @@
+basyx:
+  submodel:
+    file: example/submodel.json
+  operation:
+    java:
+      sourcesPath: example/sources
+      classesPath: target/integration-test/classes
+      additionalClasspath: 
+      - example/jars/HelloWorld.jar
+    invokation:
+      mappings:
+        SquareOperation: SquareOperation
+        "BasicOperations.AddOperation": basic.ops.AddOperation

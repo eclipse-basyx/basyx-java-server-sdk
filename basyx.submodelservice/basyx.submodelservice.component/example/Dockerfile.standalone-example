@@ -1,0 +1,5 @@
+FROM eclipsebasyx/submodel-service:0.2.0-SNAPSHOT
+COPY sources/ /application/sources
+COPY jars/ /application/jars
+COPY submodel.json /application/submodel.json
+COPY application.yml /application/config/application.yml

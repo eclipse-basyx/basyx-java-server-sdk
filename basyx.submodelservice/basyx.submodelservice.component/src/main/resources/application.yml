@@ -1,0 +1,12 @@
+basyx:
+  backend: InMemory
+  submodel:
+    file: 
+  operation:
+    java:
+      sourcesPath:
+      classesPath:
+      additionalClasspath: []
+    invokation:
+      defaultMapping: org.eclipse.digitaltwin.basyx.submodelservice.component.java.DefaultInvokableOperation
+      mappings: {}
