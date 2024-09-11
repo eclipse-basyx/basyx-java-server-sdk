@@ -351,6 +351,7 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 
         SubmodelValueOnly valueOnly = repo.getSubmodelByIdValueOnly(submodelId);
 
+        assertEquals(expectedValueOnly.getIdShort(), valueOnly.getIdShort());
         assertEquals(expectedValueOnly.getValuesOnlyMap(), valueOnly.getValuesOnlyMap());
     }
     

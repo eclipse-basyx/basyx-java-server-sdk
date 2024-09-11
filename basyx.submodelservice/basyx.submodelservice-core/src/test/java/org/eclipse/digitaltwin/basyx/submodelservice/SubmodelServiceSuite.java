@@ -625,7 +625,7 @@ public abstract class SubmodelServiceSuite {
 
 		submodelService.deleteFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 	}
-  
+
 	@Test
 	public void patchSubmodelElements() {
 		List<SubmodelElement> submodelElements = buildDummySubmodelElements();
