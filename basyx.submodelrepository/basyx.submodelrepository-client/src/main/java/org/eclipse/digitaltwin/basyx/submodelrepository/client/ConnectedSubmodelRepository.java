@@ -210,11 +210,7 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 		try {
 			return repoApi.getSubmodelById(submodelId, null, null);
 		} catch (ApiException e) {
-			if (e.getCode() == HttpStatus.NOT_FOUND.value()) {
-	            throw new ElementDoesNotExistException(submodelId);
-	        } else {
-	            throw e;
-	        }
+			throw mapExceptionSubmodelAccess(submodelId, e);
 		}
 	}
 
