@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,49 +23,25 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.authorization.rbac;
+package org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.inmemory;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.digitaltwin.basyx.authorization.RbacStorageTestSuite;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
+
 /**
- * InMemory implementation of the {@link RbacStorage}
+ * Tests {@link InMemoryAuthorizationRbacStorage}
  * 
  * @author danish
  */
-public class InMemoryAuthorizationRbacStorage implements RbacStorage {
-    private final Map<String, RbacRule> rbacRules;
+public class InMemoryRbacStorageTest extends RbacStorageTestSuite {
 
-    public InMemoryAuthorizationRbacStorage(Map<String, RbacRule> rbacRules) {
-        this.rbacRules = rbacRules;
+    @Override
+    protected void setUpRbacStorage() {
+        Map<String, RbacRule> initialRules = new HashMap<>();
+        rbacStorage = new InMemoryAuthorizationRbacStorage(initialRules);
     }
-
-    public Map<String, RbacRule> getRbacRules() {       
-        return rbacRules;
-    }
-
-    public void addRule(RbacRule rbacRule) {
-    	
-    	rbacRule.getAction().stream().map(action -> RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), action.toString(), rbacRule.getTargetInformation().getClass().getName())).filter(key -> !rbacRules.containsKey(key)).map(key -> rbacRules.put(key, rbacRule));
-    }
-
-	public void removeRule(String key) {
-		if (!exist(key))
-			throw new RuntimeException("Rule doesn't exist in policy store");
-		
-		rbacRules.remove(key);
-    }
-	
-	@Override
-	public RbacRule getRbacRule(String key) {
-		if (!exist(key))
-			throw new RuntimeException("Rule doesn't exist in policy store");
-		
-		return rbacRules.get(key);
-	}
-	
-	@Override
-	public boolean exist(String key) {
-		return rbacRules.containsKey(key);
-	}
-
+    
 }
