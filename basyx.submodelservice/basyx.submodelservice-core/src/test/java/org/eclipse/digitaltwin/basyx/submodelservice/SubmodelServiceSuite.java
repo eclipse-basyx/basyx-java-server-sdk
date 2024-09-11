@@ -628,7 +628,7 @@ public abstract class SubmodelServiceSuite {
 
 	@Test
 	public void patchSubmodelElements() {
-		
+
 		List<SubmodelElement> submodelElements = buildDummySubmodelElements();
 		Submodel submodel = buildDummySubmodelWithSmElement(ID, submodelElements);
 		SubmodelService submodelService = getSubmodelService(submodel);
