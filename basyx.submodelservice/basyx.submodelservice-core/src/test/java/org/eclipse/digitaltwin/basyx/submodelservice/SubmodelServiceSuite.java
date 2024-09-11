@@ -638,7 +638,7 @@ public abstract class SubmodelServiceSuite {
 		Submodel patchedSubmodel = submodelService.getSubmodel();
 
 		assertEquals(submodel.getSubmodelElements().size(), patchedSubmodel.getSubmodelElements().size());
-		assertEquals(submodelElementsPatch, patchedSubmodel.getSubmodelElements()); 
+		assertEquals(submodelElementsPatch, patchedSubmodel.getSubmodelElements());
 	}
 
 	protected Submodel buildDummySubmodelWithSmElement(String id, List<SubmodelElement> submodelElements) {
