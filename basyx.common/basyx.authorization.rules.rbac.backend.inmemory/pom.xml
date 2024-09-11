@@ -6,6 +6,8 @@
     <version>${revision}</version>
   </parent>
   <artifactId>basyx.authorization.rules.rbac.backend.inmemory</artifactId>
+  <name>BaSyx RBAC InMemory Backend</name>
+  <description>BaSyx RBAC InMemory Backend</description>
   
   <dependencies>
 	  <dependency>
