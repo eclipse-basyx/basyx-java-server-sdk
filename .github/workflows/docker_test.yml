@@ -23,7 +23,7 @@ on:
       - 'NOTICE'
 
 env:
-  VERSION: 2.0.0-SNAPSHOT
+  VERSION: 2.0.0-milestone-04
   MVN_ARGS_BUILD_BASYX_NO_TESTS: -DskipTests
 
 jobs:
@@ -229,7 +229,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-kafka-mem"
 
       - name: Test AAS Registry Kafka Mem Docker Image
-        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/test-aas-registry-kafka-mem.yml test_aas_registry_kafka_mem
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/workflows/test-aas-registry-kafka-mem.yml test_aas_registry_kafka_mem
 
       - name: Clean up
         run: exit 0
@@ -255,7 +255,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-kafka-mongodb"
 
       - name: Test AAS Registry Kafka MongoDB Docker Image
-        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/test-aas-registry-kafka-mongodb.yml test_aas_registry_kafka_mongodb
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/workflows/test-aas-registry-kafka-mongodb.yml test_aas_registry_kafka_mongodb
 
       - name: Clean up
         run: exit 0
@@ -307,7 +307,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
 
       - name: Test AAS Registry Log MongoDB Docker Image
-        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/test-aas-registry-log-mongodb.yml test_aas_registry_log_mongodb
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/workflows/test-aas-registry-log-mongodb.yml test_aas_registry_log_mongodb
 
       - name: Clean up
         run: exit 0
@@ -333,7 +333,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-kafka-mem"
 
       - name: Test Submodel Registry Kafka Mem Docker Image
-        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/test-submodel-registry-kafka-mem.yml test_submodel_registry_kafka_mem
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/workflows/test-submodel-registry-kafka-mem.yml test_submodel_registry_kafka_mem
 
       - name: Clean up
         run: exit 0
@@ -359,7 +359,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-kafka-mongodb"
 
       - name: Test Submodel Registry Kafka MongoDB Docker Image
-        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/test-submodel-registry-kafka-mongodb.yml test_submodel_registry_kafka_mongodb
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/workflows/test-submodel-registry-kafka-mongodb.yml test_submodel_registry_kafka_mongodb
 
       - name: Clean up
         run: exit 0
@@ -411,7 +411,7 @@ jobs:
           mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Test Submodel Registry Log MongoDB Docker Image
-        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/test-submodel-registry-log-mongodb.yml test_submodel_registry_log_mongodb
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/workflows/test-submodel-registry-log-mongodb.yml test_submodel_registry_log_mongodb
 
       - name: Clean up
         run: exit 0
