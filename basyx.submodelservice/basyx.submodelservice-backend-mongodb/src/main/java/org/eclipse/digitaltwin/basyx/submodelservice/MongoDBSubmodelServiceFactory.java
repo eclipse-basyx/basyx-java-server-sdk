@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,30 +23,36 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelservice.example;
+
+package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.stereotype.Component;
 
 /**
- * Provides the spring bean configuration for the {@link SubmodelService}
- * utilizing all found features for the respective services
+ * SubmodelService factory returning an MongoDB backend SubmodelService
  * 
- * @author fried
+ * @author zhangzai, mateusmolina
  *
  */
-@Configuration
-public class ExampleSubmodelConfiguration {
-	@Bean
-	public SubmodelService getSubmodelService(Submodel submodel, SubmodelServiceFactory submodelServiceFactory) {
-		return submodelServiceFactory.create(submodel);
+@ConditionalOnExpression("'${basyx.submodelservice.backend}'.equals('MongoDB') or '${basyx.backend}'.equals('MongoDB')")
+@Component
+public class MongoDBSubmodelServiceFactory implements SubmodelServiceFactory {
+
+	private final FileRepository fileRepository;
+	private final SingleSubmodelMongoDBBackendProvider mongoDBBackendProvider;
+
+	public MongoDBSubmodelServiceFactory(FileRepository fileRepository, SingleSubmodelMongoDBBackendProvider mongoDBBackendProvider) {
+		this.fileRepository = fileRepository;
+		this.mongoDBBackendProvider = mongoDBBackendProvider;
 	}
 
-	@Bean
-	public static Submodel getSubmodel() {
-		return new ExampleSubmodelFactory().create();
+	@Override
+	public SubmodelService create(Submodel submodel) {
+		return new MongoDBSubmodelService(submodel, fileRepository, mongoDBBackendProvider.getCrudRepository());
 	}
+
+
 }
