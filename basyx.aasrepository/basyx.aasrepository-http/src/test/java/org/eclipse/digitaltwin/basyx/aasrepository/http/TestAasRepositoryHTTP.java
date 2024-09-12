@@ -38,7 +38,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * {@link AasRepository} HTTP/REST API
  * 
  * @author schnicke, danish
- *
+ * 
  */
 public class TestAasRepositoryHTTP extends AasRepositoryHTTPSuite {
 	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
