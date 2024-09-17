@@ -26,12 +26,14 @@
 package org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.rbac.AasRegistryTargetPermissionVerifier;
+import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.rbac.backend.submodel.AasRegistryTargetInformationAdapter;
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RoleProvider;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.SimpleRbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
+import org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.submodel.TargetInformationAdapter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,6 +55,12 @@ public class AuthorizedAasRegistryConfiguration {
 	@Bean
 	public RbacPermissionResolver<AasRegistryTargetInformation> getAasPermissionResolver(RbacStorage rbacStorage, RoleProvider roleProvider, TargetPermissionVerifier<AasRegistryTargetInformation> targetPermissionVerifier) {
 		return new SimpleRbacPermissionResolver<>(rbacStorage, roleProvider, targetPermissionVerifier);
+	}
+	
+	@Bean
+	public TargetInformationAdapter getAasRegistryTargetInformationAdapter() {
+
+		return new AasRegistryTargetInformationAdapter();
 	}
 
 }

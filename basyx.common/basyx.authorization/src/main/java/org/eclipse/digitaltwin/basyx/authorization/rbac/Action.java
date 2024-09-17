@@ -36,5 +36,14 @@ public enum Action {
     CREATE,
     UPDATE,
     EXECUTE,
-    DELETE
+    DELETE;
+    
+    public static Action fromString(String action) {
+        try {
+            return Action.valueOf(action.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            // Handle the case where the string does not match any enum constant
+            return null; // Or throw an exception, or use a default value
+        }
+    }
 }

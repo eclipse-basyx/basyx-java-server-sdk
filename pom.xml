@@ -94,20 +94,6 @@
 
 	<build>
 		<plugins>
-				<plugin>
-					<groupId>org.eclipse.dash</groupId>
-					<artifactId>license-tool-plugin</artifactId>
-					<version>1.1.1-SNAPSHOT</version>
-					<executions>
-						<execution>
-							<id>license-check</id>
-							<goals>
-								<goal>license-check</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-			
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>flatten-maven-plugin</artifactId>
@@ -173,18 +159,6 @@
 						<id>attach-sources</id>
 						<goals>
 							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -377,7 +351,7 @@
 			<dependency>
 				<groupId>org.yaml</groupId>
 				<artifactId>snakeyaml</artifactId>
-				<version>2.2</version>
+				<version>2.3</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springdoc</groupId>
@@ -421,7 +395,7 @@
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
-				<version>2.13.0</version>
+				<version>2.16.1</version>
 			</dependency>
 			<!-- basyx.common -->
 			<dependency>
@@ -451,6 +425,16 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.authorization.rules.rbac.backend.inmemory</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.authorization.rules.rbac.backend.submodel</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.filerepository-backend</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -473,6 +457,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelservice-backend-inmemory</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-backend-mongodb</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -814,6 +803,18 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.filerepository-backend-inmemory</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.authorization.rules.rbac.backend.inmemory</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.authorization.rules.rbac.backend.submodel</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -1277,6 +1278,31 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
 					</plugin>
+					<plugin>
+						<groupId>org.eclipse.dash</groupId>
+						<artifactId>license-tool-plugin</artifactId>
+						<version>1.1.1-SNAPSHOT</version>
+						<executions>
+							<execution>
+								<id>license-check</id>
+								<goals>
+									<goal>license-check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -1294,6 +1320,31 @@
 								<goals>
 									<goal>build</goal>
 									<goal>push</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.dash</groupId>
+						<artifactId>license-tool-plugin</artifactId>
+						<version>1.1.1-SNAPSHOT</version>
+						<executions>
+							<execution>
+								<id>license-check</id>
+								<goals>
+									<goal>license-check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
 								</goals>
 							</execution>
 						</executions>

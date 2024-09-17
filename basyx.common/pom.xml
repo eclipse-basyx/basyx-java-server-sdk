@@ -23,5 +23,7 @@
 		<module>basyx.filerepository-backend</module>
 		<module>basyx.filerepository-backend-inmemory</module>
 		<module>basyx.filerepository-backend-mongodb</module>
+		<module>basyx.authorization.rules.rbac.backend.inmemory</module>
+		<module>basyx.authorization.rules.rbac.backend.submodel</module>
 	</modules>
 </project>
