@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.backend;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -41,6 +42,7 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
@@ -50,6 +52,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
@@ -58,6 +61,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.http.HttpStatus;
 
 /**
  * Default Implementation for the {@link SubmodelRepository} based on Spring
@@ -114,6 +118,22 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 		List<Submodel> submodels = StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
 
 		TreeMap<String, Submodel> submodelMap = submodels.stream().collect(Collectors.toMap(Submodel::getId, submodel -> submodel, (a, b) -> a, TreeMap::new));
+
+		PaginationSupport<Submodel> paginationSupport = new PaginationSupport<>(submodelMap, Submodel::getId);
+
+		return paginationSupport.getPaged(pInfo);
+	}
+
+	@Override
+	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo) {
+		Iterable<Submodel> iterable = submodelBackend.findAll();
+		List<Submodel> submodels = StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
+
+	    List<Submodel> filteredSubmodels = submodels.stream()
+	            .filter(submodel -> submodel.getSemanticId() != null && submodel.getSemanticId().equals(semanticId))
+	            .collect(Collectors.toList());
+		
+		TreeMap<String, Submodel> submodelMap = filteredSubmodels.stream().collect(Collectors.toMap(Submodel::getId, submodel -> submodel, (a, b) -> a, TreeMap::new));
 
 		PaginationSupport<Submodel> paginationSupport = new PaginationSupport<>(submodelMap, Submodel::getId);
 

@@ -115,7 +115,12 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 		PaginationInfo pInfo = new PaginationInfo(limit, decodedCursor);
 
-		CursorResult<List<Submodel>> cursorResult = repository.getAllSubmodels(pInfo);
+	    CursorResult<List<Submodel>> cursorResult;
+	    if (semanticId != null) {
+	        cursorResult = repository.getAllSubmodels(semanticId.getIdentifier(), pInfo);
+	    } else {
+	        cursorResult = repository.getAllSubmodels(pInfo);
+	    }
 
 		GetSubmodelsResult paginatedSubmodel = new GetSubmodelsResult();
 
