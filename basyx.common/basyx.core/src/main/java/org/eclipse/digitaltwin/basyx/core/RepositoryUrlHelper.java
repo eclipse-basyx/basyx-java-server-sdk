@@ -29,7 +29,7 @@ public class RepositoryUrlHelper {
 
             return finalUri.toURL().toString();
 		} catch (URISyntaxException | MalformedURLException e) {
-			throw new RuntimeException("The Base URL or additional path is malformed.\n" + e.getMessage(), e);
+			throw new RuntimeException("The Base URL or additional path is malformed.\n" + e.getMessage(), e); 
 		}
 	}
 
