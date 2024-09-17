@@ -363,9 +363,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 		
 		uploadFileToSubmodelElement(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT);
 		
-		String url = createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT);
-		
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(url);
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT));
 		assertEquals(HttpStatus.OK.value(), response.getCode());
 
 	    Header contentDispositionHeader = response.getFirstHeader("Content-Disposition");
