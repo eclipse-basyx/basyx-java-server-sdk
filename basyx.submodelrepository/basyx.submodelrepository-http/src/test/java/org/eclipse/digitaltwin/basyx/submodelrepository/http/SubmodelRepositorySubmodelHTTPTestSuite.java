@@ -384,6 +384,21 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
 	
+	@Test
+	public void getSubmodelByIdValueOnly() throws IOException, ParseException {
+	    String submodelIdentifier = Base64UrlEncodedIdentifier.encodeIdentifier(DummySubmodelFactory.createTechnicalDataSubmodel().getId());
+	    String url = getURL() + "/" + submodelIdentifier + "/$value";
+	    
+	    String expectedSubmodelJSON = getJSONValueAsString("SingleSubmodelValueOnly.json");
+	    
+	    CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(url);
+	    assertEquals(HttpStatus.OK.value(), response.getCode());
+	    
+	    String actualSubmodelJSON = BaSyxHttpTestUtils.getResponseAsString(response);
+	    
+	    BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelJSON, actualSubmodelJSON);
+	}
+	
 	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException {
 		return BaSyxHttpTestUtils.removeCursorFromJSON(response);
 	}
