@@ -210,7 +210,7 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 		try {
 			return repoApi.getSubmodelById(submodelId, null, null);
 		} catch (ApiException e) {
-			throw mapExceptionSubmodelAccess(submodelId, e);
+			throw mapExceptionSubmodelAccess(submodelId, e); 
 		}
 	}
 
