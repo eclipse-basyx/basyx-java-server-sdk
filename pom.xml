@@ -71,7 +71,7 @@
 		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<revision>2.0.0-milestone-04</revision>
+		<revision>2.0.0-SNAPSHOT</revision>
 		<docker.provenance />
 		<docker.namespace>eclipsebasyx</docker.namespace>
 		<docker.image.name>NOT_DEFINED_IN_MODULE</docker.image.name>
@@ -395,7 +395,7 @@
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
-				<version>2.13.0</version>
+				<version>2.16.1</version>
 			</dependency>
 			<!-- basyx.common -->
 			<dependency>
@@ -457,6 +457,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelservice-backend-inmemory</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-backend-mongodb</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
