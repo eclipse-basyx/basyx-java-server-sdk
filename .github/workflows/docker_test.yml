@@ -4,7 +4,8 @@
 name: Build and Start Docker Images
 
 on:
-  workflow_dispatch:
+  push: 
+      branches: [ temp-feature/filter-dyn-rbac ]
   pull_request:
     branches: [ main ]
     paths-ignore:
