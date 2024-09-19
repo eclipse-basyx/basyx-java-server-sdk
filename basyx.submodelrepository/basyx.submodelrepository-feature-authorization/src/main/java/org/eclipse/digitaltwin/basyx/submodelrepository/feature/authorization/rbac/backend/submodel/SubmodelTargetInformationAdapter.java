@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.rbac.backend.submodel;
+package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.rbac.backend.submodel;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,10 +36,10 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.AasRegistryTargetInformation;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 import org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.submodel.TargetInformationAdapter;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InvalidTargetInformationException;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.SubmodelTargetInformation;
 
 /**
  * An implementation of the {@link TargetInformationAdapter} to adapt with Aas
@@ -47,7 +47,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.InvalidTargetInformationExc
  * 
  * @author danish
  */
-public class AasRegistryTargetInformationAdapter implements TargetInformationAdapter {
+public class SubmodelTargetInformationAdapter implements TargetInformationAdapter {
 
 	@Override
 	public SubmodelElementCollection adapt(TargetInformation targetInformation) {
@@ -55,52 +55,67 @@ public class AasRegistryTargetInformationAdapter implements TargetInformationAda
 		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder()
 				.idShort("targetInformation").build();
 
-		SubmodelElementList aasId = new DefaultSubmodelElementList.Builder().idShort("aasIds").build();
-		Property typeProperty = new DefaultProperty.Builder().idShort("@type").value("aas-registry").build();
+		SubmodelElementList submodelId = new DefaultSubmodelElementList.Builder().idShort("submodelIds").build();
+		SubmodelElementList submodelElementId = new DefaultSubmodelElementList.Builder()
+				.idShort("submodelElementIdShortPaths").build();
+		Property typeProperty = new DefaultProperty.Builder().idShort("@type").value("submodel").build();
 
-		List<SubmodelElement> aasIds = ((AasRegistryTargetInformation) targetInformation).getAasIds().stream()
+		List<SubmodelElement> submodelIds = ((SubmodelTargetInformation) targetInformation).getSubmodelIds().stream()
 				.map(this::transform).collect(Collectors.toList());
-		aasId.setValue(aasIds);
+		List<SubmodelElement> submodelElementIds = ((SubmodelTargetInformation) targetInformation)
+				.getSubmodelElementIdShortPaths().stream().map(this::transform).collect(Collectors.toList());
+		submodelId.setValue(submodelIds);
+		submodelElementId.setValue(submodelElementIds);
 
-		targetInformationSMC.setValue(Arrays.asList(aasId, typeProperty));
+		targetInformationSMC.setValue(Arrays.asList(submodelId, submodelElementId, typeProperty));
 
 		return targetInformationSMC;
 	}
 
 	@Override
 	public TargetInformation adapt(SubmodelElementCollection targetInformation) {
-		
-		String targetInformationType = getTargetInformationType(targetInformation);
-		
-		if (!targetInformationType.equals("aas-registry"))
-			throw new InvalidTargetInformationException(
-					"The TargetInformation @type: " + targetInformationType + " is not compatible with "
-							+ getClass().getName() + ".");
 
-		SubmodelElement aasIdSubmodelElement = targetInformation.getValue().stream()
-				.filter(sme -> sme.getIdShort().equals("aasIds")).findAny()
+		String targetInformationType = getTargetInformationType(targetInformation);
+
+		if (!targetInformationType.equals("submodel"))
+			throw new InvalidTargetInformationException("The TargetInformation @type: " + targetInformationType
+					+ " is not compatible with " + getClass().getName() + ".");
+
+		SubmodelElement submodelIdSubmodelElement = targetInformation.getValue().stream()
+				.filter(sme -> sme.getIdShort().equals("submodelIds")).findAny()
 				.orElseThrow(() -> new InvalidTargetInformationException(
 						"The TargetInformation defined in the SubmodelElementCollection Rule with id: "
 								+ targetInformation.getIdShort() + " is not compatible with the "
 								+ getClass().getName()));
 
-		if (!(aasIdSubmodelElement instanceof SubmodelElementList))
+		SubmodelElement smeIdSubmodelElement = targetInformation.getValue().stream()
+				.filter(sme -> sme.getIdShort().equals("submodelElementIdShortPaths")).findAny()
+				.orElseThrow(() -> new InvalidTargetInformationException(
+						"The TargetInformation defined in the SubmodelElementCollection Rule with id: "
+								+ targetInformation.getIdShort() + " is not compatible with the "
+								+ getClass().getName()));
+
+		if (!(submodelIdSubmodelElement instanceof SubmodelElementList)
+				|| !(smeIdSubmodelElement instanceof SubmodelElementList))
 			throw new InvalidTargetInformationException(
 					"The TargetInformation defined in the SubmodelElementCollection Rule with id: "
 							+ targetInformation.getIdShort() + " is not compatible with the " + getClass().getName());
 
-		SubmodelElementList aasIdList = (SubmodelElementList) aasIdSubmodelElement;
+		SubmodelElementList submodelIdList = (SubmodelElementList) submodelIdSubmodelElement;
+		SubmodelElementList smeIdList = (SubmodelElementList) smeIdSubmodelElement;
 
-		List<String> aasIds = aasIdList.getValue().stream().map(Property.class::cast).map(Property::getValue)
+		List<String> submodelIds = submodelIdList.getValue().stream().map(Property.class::cast).map(Property::getValue)
+				.collect(Collectors.toList());
+		List<String> smeIds = smeIdList.getValue().stream().map(Property.class::cast).map(Property::getValue)
 				.collect(Collectors.toList());
 
-		return new AasRegistryTargetInformation(aasIds);
+		return new SubmodelTargetInformation(submodelIds, smeIds);
 	}
 
 	private Property transform(String aasId) {
 		return new DefaultProperty.Builder().value(aasId).build();
 	}
-
+	
 	private String getTargetInformationType(SubmodelElementCollection targetInformation) {
 
 		Property typeProperty = (Property) targetInformation.getValue().stream()

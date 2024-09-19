@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasregistry.regression.feature.authorization;
+package org.eclipse.digitaltwin.basyx.submodelregistry.regression.feature.authorization;
 
 import static org.junit.Assert.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
@@ -41,30 +41,30 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.AasRegistryTargetInformation;
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.rbac.backend.submodel.AasRegistryTargetInformationAdapter;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InvalidTargetInformationException;
+import org.eclipse.digitaltwin.basyx.submodelregistry.feature.authorization.SubmodelRegistryTargetInformation;
+import org.eclipse.digitaltwin.basyx.submodelregistry.feature.authorization.rbac.backend.submodel.SubmodelRegistryTargetInformationAdapter;
 
 /**
  * Tests {@link AasRegistryTargetInformationAdapter}
  * 
  * @author danish
  */
-public class AasRegistryTargetInformationAdapterTest {
+public class SubmodelRegistryTargetInformationAdapterTest {
 
-	private AasRegistryTargetInformationAdapter aasRegistryTargetInformationAdapter;
+	private SubmodelRegistryTargetInformationAdapter aasRegistryTargetInformationAdapter;
 
 	@Before
 	public void setUp() {
-		aasRegistryTargetInformationAdapter = new AasRegistryTargetInformationAdapter();
+		aasRegistryTargetInformationAdapter = new SubmodelRegistryTargetInformationAdapter();
 	}
 
 	@Test
 	public void testAdaptTargetInformationToSubmodelElementCollection() {
 
 		List<String> aasIds = Arrays.asList("aasId1", "aasId2");
-		TargetInformation targetInformation = new AasRegistryTargetInformation(aasIds);
+		TargetInformation targetInformation = new SubmodelRegistryTargetInformation(aasIds);
 
 		SubmodelElementCollection result = aasRegistryTargetInformationAdapter.adapt(targetInformation);
 
@@ -74,7 +74,7 @@ public class AasRegistryTargetInformationAdapterTest {
 		assertEquals(2, elements.size());
 
 		SubmodelElementList aasIdList = (SubmodelElementList) elements.get(0);
-		assertEquals("aasIds", aasIdList.getIdShort());
+		assertEquals("submodelIds", aasIdList.getIdShort());
 		
 		Property typeProperty = (Property) elements.get(1);
 		assertEquals("@type", typeProperty.getIdShort());
@@ -83,33 +83,33 @@ public class AasRegistryTargetInformationAdapterTest {
 		assertEquals(aasIds, actualAasIds);
 		
 		String actualType = typeProperty.getValue();
-        assertTrue(actualType.equals("aas-registry")); 
+        assertTrue(actualType.equals("submodel-registry")); 
 	}
 
 	@Test
 	public void testAdaptSubmodelElementCollectionToTargetInformation() {
 
 		List<String> expectedAasIds = Arrays.asList("aasId1", "aasId2");
-		String type = "aas-registry";
+		String type = "submodel-registry";
 		
 		List<SubmodelElement> aasIdProperties = expectedAasIds.stream().map(aasId -> new DefaultProperty.Builder().value(aasId).build()).collect(Collectors.toList());
 
-		SubmodelElementList aasIdList = new DefaultSubmodelElementList.Builder().idShort("aasIds").value(aasIdProperties).build();
+		SubmodelElementList aasIdList = new DefaultSubmodelElementList.Builder().idShort("submodelIds").value(aasIdProperties).build();
 		SubmodelElement typeProperty = createTypeProperty(type);
 		
 		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation").value(Arrays.asList(aasIdList, typeProperty)).build();
 
 		TargetInformation result = aasRegistryTargetInformationAdapter.adapt(targetInformationSMC);
 
-		assertTrue(result instanceof AasRegistryTargetInformation);
-		assertEquals(expectedAasIds, ((AasRegistryTargetInformation) result).getAasIds());
+		assertTrue(result instanceof SubmodelRegistryTargetInformation);
+		assertEquals(expectedAasIds, ((SubmodelRegistryTargetInformation) result).getSubmodelIds());
 	}
 	
     @Test
     public void testAdaptTargetInformationWithEmptyAasIds() {
     	
         List<String> aasIds = Collections.emptyList();
-        TargetInformation targetInformation = new AasRegistryTargetInformation(aasIds);
+        TargetInformation targetInformation = new SubmodelRegistryTargetInformation(aasIds);
 
         SubmodelElementCollection result = aasRegistryTargetInformationAdapter.adapt(targetInformation);
 
@@ -119,7 +119,7 @@ public class AasRegistryTargetInformationAdapterTest {
         assertEquals(2, elements.size());
 
         SubmodelElementList aasIdList = (SubmodelElementList) elements.get(0);
-        assertEquals("aasIds", aasIdList.getIdShort());
+        assertEquals("submodelIds", aasIdList.getIdShort());
         
         Property typeProperty = (Property) elements.get(1);
 		assertEquals("@type", typeProperty.getIdShort());
@@ -132,7 +132,7 @@ public class AasRegistryTargetInformationAdapterTest {
         assertTrue(actualAasIds.isEmpty());
         
         String actualType = typeProperty.getValue();
-        assertTrue(actualType.equals("aas-registry")); 
+        assertTrue(actualType.equals("submodel-registry")); 
     }
     
     @Test(expected = InvalidTargetInformationException.class)
@@ -158,5 +158,6 @@ public class AasRegistryTargetInformationAdapterTest {
     private SubmodelElement createTypeProperty(String type) {
 		return new DefaultProperty.Builder().idShort("@type").value(type).build();
 	}
+
 
 }
