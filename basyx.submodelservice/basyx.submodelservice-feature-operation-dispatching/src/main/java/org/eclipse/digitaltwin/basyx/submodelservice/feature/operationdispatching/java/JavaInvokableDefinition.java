@@ -23,21 +23,50 @@
  * SPDX-License-Identifier: MIT
  * 
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.java;
 
-package org.eclipse.digitaltwin.basyx.submodelservice.component;
+import java.nio.file.Path;
+import java.util.List;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.OperationDispatchingSubmodelServiceFeature;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Gerhard Sonnenberg DFKI GmbH
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
-public class GenericSubmodelComponent {
+@Component("aa")
+@ConfigurationProperties(prefix = OperationDispatchingSubmodelServiceFeature.FEATURENAME +".java")
+@ConditionalOnProperty(name = OperationDispatchingSubmodelServiceFeature.FEATURENAME +".enabled", havingValue = "true")
+public class JavaInvokableDefinition {
+
+	private Path sources;
+	private Path classes;
+	private List<Path> additionalClasspath = List.of();
 	
-	public static void main(String[] args) {
-		 SpringApplication.run(GenericSubmodelComponent.class, args);
-	}	
+	public Path getSources() {
+		return sources;
+	}
+
+	public void setSources(Path sources) {
+		this.sources = sources;
+	}
+
+	public Path getClasses() {
+		return classes;
+	}
+
+	public void setClasses(Path classes) {
+		this.classes = classes;
+	}
+
+	public List<Path> getAdditionalClasspath() {
+		return additionalClasspath;
+	}
+
+	public void setAdditionalClasspath(List<Path> additionalClasspath) {
+		this.additionalClasspath = additionalClasspath;
+	}
+
 }

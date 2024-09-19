@@ -23,41 +23,39 @@
  * SPDX-License-Identifier: MIT
  * 
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.component;
 
-import java.util.List;
+package org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.feature.DecoratedSubmodelServiceFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.feature.SubmodelServiceFeature;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.execution.OperationExecutor;
+import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.execution.OperationExecutorProvider;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * @author Gerhard Sonnenberg DFKI GmbH
  */
-@Configuration
-public class GenericSubmodelConfiguration {
+public class OperationDispatcherSubmodelService extends AbstractSubmodelServiceDecorator {
 
-	@Bean
-	public Submodel getSubmodel(@Value("${" + GenericSubmodelFactory.BASYX_SUBMODELSERVICE_SUBMODEL_FILE + "}") String filePath) {
-		return new GenericSubmodelFactory(filePath).create();
+	private final OperationExecutorProvider provider;
+	
+	public OperationDispatcherSubmodelService(SubmodelService decorated, OperationExecutorProvider provider) {
+		super(decorated);
+		this.provider = provider;
 	}
-
-	@Primary
-	@Bean
-	public SubmodelServiceFactory getSubmodelServiceFactory(SubmodelServiceFactory aasServiceFactory,
-			List<SubmodelServiceFeature> features) {
-		return new DecoratedSubmodelServiceFactory(aasServiceFactory, features);
+	
+	@Override
+	public OperationVariable[] invokeOperation(String idShortPath, OperationVariable[] input)
+			throws ElementDoesNotExistException {
+		SubmodelElement elem = getSubmodelElement(idShortPath);
+		if (!(elem instanceof Operation)) {
+			throw new ResponseStatusException(HttpStatusCode.valueOf(404));
+		} 
+		OperationExecutor executor = provider.getOperationExecutor(idShortPath);
+		return executor.invoke(idShortPath, (Operation)elem, input);
 	}
-
-	@Bean
-	public SubmodelService getSubmodelService(SubmodelServiceFactory factory, Submodel submodel) {
-		return factory.create(submodel);
-	}
-
 }

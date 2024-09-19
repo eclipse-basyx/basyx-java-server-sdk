@@ -27,7 +27,8 @@ package org.eclipse.digitaltwin.basyx.submodelservice.component;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
-import org.eclipse.digitaltwin.basyx.submodelservice.component.util.TestOperationValues;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.operationdispatching.java.TestOperationValues;
+import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.OperationDispatchingSubmodelServiceFeature;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +47,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, properties = {
-		"basyx.operation.invokation.defaultMapping=org.eclipse.digitaltwin.basyx.submodelservice.component.ops.MockDefaultOperation",
-		"basyx.submodel.file=example/submodel.json" })
+		OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".enabled=true",
+		OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".defaultMapping=org.eclipse.digitaltwin.basyx.submodelrepository.feature.operationdispatching.java.ops.MockDefaultOperation",
+		"basyx.submodelservice.submodel.file=example/submodel.json" })
 @AutoConfigureMockMvc
 public class DefaultOperationTest {
 
@@ -56,7 +58,7 @@ public class DefaultOperationTest {
 
 	@Autowired
 	private ObjectMapper objectMapper;
-
+		
 	@Test
 	public void testDefaultOperationInvoked() throws Exception {
 		OperationRequest request = TestOperationValues.requestForString("toBeIgored");

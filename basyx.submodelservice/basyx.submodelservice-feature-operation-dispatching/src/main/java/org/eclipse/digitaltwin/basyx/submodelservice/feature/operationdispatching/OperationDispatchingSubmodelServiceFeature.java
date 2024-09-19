@@ -23,41 +23,56 @@
  * SPDX-License-Identifier: MIT
  * 
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.component;
+package org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching;
 
-import java.util.List;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.feature.DecoratedSubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.SubmodelServiceFeature;
+import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.execution.OperationExecutorProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Gerhard Sonnenberg DFKI GmbH
  */
-@Configuration
-public class GenericSubmodelConfiguration {
+@ConditionalOnProperty(name = OperationDispatchingSubmodelServiceFeature.FEATURENAME +".enabled", havingValue = "true", matchIfMissing = false)
+@Component
+public class OperationDispatchingSubmodelServiceFeature implements SubmodelServiceFeature {
 
-	@Bean
-	public Submodel getSubmodel(@Value("${" + GenericSubmodelFactory.BASYX_SUBMODELSERVICE_SUBMODEL_FILE + "}") String filePath) {
-		return new GenericSubmodelFactory(filePath).create();
+	public final static String FEATURENAME = "basyx.submodelservice.feature.operation.dispatcher";
+
+	@Value("${" + FEATURENAME + ".enabled:false}")
+	private boolean enabled;
+	
+	private OperationExecutorProvider provider;
+
+	@Autowired
+	public OperationDispatchingSubmodelServiceFeature(OperationExecutorProvider provider) {
+		this.provider = provider;
 	}
 
-	@Primary
-	@Bean
-	public SubmodelServiceFactory getSubmodelServiceFactory(SubmodelServiceFactory aasServiceFactory,
-			List<SubmodelServiceFeature> features) {
-		return new DecoratedSubmodelServiceFactory(aasServiceFactory, features);
+	@Override
+	public SubmodelServiceFactory decorate(SubmodelServiceFactory component) {
+		return new OperationDispatchingServiceFactory(component, provider);
 	}
 
-	@Bean
-	public SubmodelService getSubmodelService(SubmodelServiceFactory factory, Submodel submodel) {
-		return factory.create(submodel);
+	@Override
+	public void initialize() {
 	}
 
+	@Override
+	public void cleanUp() {
+
+	}
+
+	@Override
+	public String getName() {
+		return "SubmodelService reflection based operation dispatcher";
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
 }

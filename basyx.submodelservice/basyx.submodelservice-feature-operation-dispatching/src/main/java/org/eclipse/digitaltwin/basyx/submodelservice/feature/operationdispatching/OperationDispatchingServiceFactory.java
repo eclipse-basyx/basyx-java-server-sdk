@@ -23,21 +23,28 @@
  * SPDX-License-Identifier: MIT
  * 
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching;
 
-package org.eclipse.digitaltwin.basyx.submodelservice.component;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.execution.OperationExecutorProvider;
 
 /**
  * @author Gerhard Sonnenberg DFKI GmbH
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
-public class GenericSubmodelComponent {
-	
-	public static void main(String[] args) {
-		 SpringApplication.run(GenericSubmodelComponent.class, args);
-	}	
+public class OperationDispatchingServiceFactory implements SubmodelServiceFactory {
+
+	private final SubmodelServiceFactory decorated;
+	private final OperationExecutorProvider executorProvider;
+
+	public OperationDispatchingServiceFactory(SubmodelServiceFactory decorated, OperationExecutorProvider executorProvider) {
+		this.decorated = decorated;
+		this.executorProvider = executorProvider;
+	}
+
+	@Override
+	public SubmodelService create(Submodel submodel) {
+		return new OperationDispatcherSubmodelService(decorated.create(submodel), executorProvider);
+	}
 }

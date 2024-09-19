@@ -23,21 +23,39 @@
  * SPDX-License-Identifier: MIT
  * 
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching;
 
-package org.eclipse.digitaltwin.basyx.submodelservice.component;
+import java.util.Collections;
+import java.util.Map;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
-
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 /**
  * @author Gerhard Sonnenberg DFKI GmbH
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
-public class GenericSubmodelComponent {
+@Component
+@ConfigurationProperties(prefix = OperationDispatchingSubmodelServiceFeature.FEATURENAME)
+@ConditionalOnProperty(name = OperationDispatchingSubmodelServiceFeature.FEATURENAME +".enabled", havingValue = "true")
+public class OperationDispatcherMapping {
+
+	private String defaultMapping;
 	
-	public static void main(String[] args) {
-		 SpringApplication.run(GenericSubmodelComponent.class, args);
-	}	
+	private Map<String, String> mappings = Collections.emptyMap();
+	
+	public void setDefaultMapping(String defaultMapping) {
+		this.defaultMapping = defaultMapping;
+	}
+	
+	public String getDefaultMapping() {
+		return defaultMapping;
+	}
+	
+	public void setMappings(Map<String, String> mappings) {
+		this.mappings = mappings;
+	}
+	
+	public Map<String, String> getMappings() {
+		return mappings;
+	}
 }

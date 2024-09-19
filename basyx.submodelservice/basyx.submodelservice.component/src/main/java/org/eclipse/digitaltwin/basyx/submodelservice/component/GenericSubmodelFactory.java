@@ -33,39 +33,35 @@ import java.io.IOException;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
-import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
-import org.eclipse.digitaltwin.basyx.InvokableOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 /**
  * @author gerhard sonnenberg (DFKI GmbH)
  */
-@Component
-public class GenericSubmodelFactory  {
-	
+public class GenericSubmodelFactory {
+
+	public static final String BASYX_SUBMODELSERVICE_SUBMODEL_FILE = "basyx.submodelservice.submodel.file";
+
 	private final String filePath;
-	
-	@Autowired
-	public GenericSubmodelFactory(@Value("${basyx.submodel.file}") String filePath) {
+
+	public GenericSubmodelFactory(String filePath) {
 		this.filePath = filePath;
 		if (StringUtils.isEmpty(filePath)) {
-			throw new IllegalStateException("Application property 'basyx.submodel.file' not set.");
+			throw new IllegalStateException(
+					"Application property '" + BASYX_SUBMODELSERVICE_SUBMODEL_FILE + "' not set.");
 		}
-	} 
-	
+	}
+
 	public Submodel create() {
 		return loadSubmodel();
 	}
-	
+
 	public Submodel loadSubmodel() {
 		File submodelFile = new File(filePath);
-		try ( FileInputStream fIn = new FileInputStream(submodelFile); BufferedInputStream bIn = new BufferedInputStream(fIn)) {
+		try (FileInputStream fIn = new FileInputStream(submodelFile);
+				BufferedInputStream bIn = new BufferedInputStream(fIn)) {
 			JsonDeserializer deserializer = new JsonDeserializer();
-			deserializer.useImplementation(Operation.class, InvokableOperation.class);
 			return deserializer.read(bIn, DefaultSubmodel.class);
 		} catch (IOException | DeserializationException e) {
 			throw new IllegalStateException("Could not load submodel: " + submodelFile.getAbsolutePath(), e);

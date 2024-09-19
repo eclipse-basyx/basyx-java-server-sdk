@@ -23,21 +23,26 @@
  * SPDX-License-Identifier: MIT
  * 
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.submodelrepository.feature.operationdispatching.java;
 
-package org.eclipse.digitaltwin.basyx.submodelservice.component;
+import java.util.List;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.feature.DecoratedSubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.feature.SubmodelServiceFeature;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 
+@org.springframework.boot.test.context.TestConfiguration
 /**
  * @author Gerhard Sonnenberg DFKI GmbH
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
-public class GenericSubmodelComponent {
+public class SubmodelServiceFactoryTestConfiguration {
 	
-	public static void main(String[] args) {
-		 SpringApplication.run(GenericSubmodelComponent.class, args);
+	@Primary
+	@Bean
+	public SubmodelServiceFactory getSubmodelServiceFactory(SubmodelServiceFactory aasServiceFactory, List<SubmodelServiceFeature> features) {
+		return new DecoratedSubmodelServiceFactory(aasServiceFactory, features);
 	}	
+	
 }

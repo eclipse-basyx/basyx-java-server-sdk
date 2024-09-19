@@ -23,21 +23,18 @@
  * SPDX-License-Identifier: MIT
  * 
  ******************************************************************************/
-
 package org.eclipse.digitaltwin.basyx.submodelservice.component;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * @author Gerhard Sonnenberg DFKI GmbH
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
-public class GenericSubmodelComponent {
-	
-	public static void main(String[] args) {
-		 SpringApplication.run(GenericSubmodelComponent.class, args);
-	}	
+@RunWith(SpringRunner.class)
+@ActiveProfiles("integrationMongo")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class MongoDBSubmodelServiceIntegrationTest extends AbstractSubmodelServiceIntegrationTest {
 }

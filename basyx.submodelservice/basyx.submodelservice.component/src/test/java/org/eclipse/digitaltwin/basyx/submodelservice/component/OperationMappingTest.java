@@ -29,8 +29,9 @@ package org.eclipse.digitaltwin.basyx.submodelservice.component;
  */
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
-import org.eclipse.digitaltwin.basyx.submodelservice.component.ops.MockOneArgMappingOperation;
-import org.eclipse.digitaltwin.basyx.submodelservice.component.util.TestOperationValues;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.operationdispatching.java.TestOperationValues;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.operationdispatching.java.ops.MockOneArgMappingOperation;
+import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.OperationDispatchingSubmodelServiceFeature;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +47,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, properties = {
-		"basyx.operation.invokation.mappings[BasicOperations.AddOperation]=org.eclipse.digitaltwin.basyx.submodelservice.component.ops.MockMappingOperation",
-		"basyx.operation.invokation.mappings.SquareOperation=org.eclipse.digitaltwin.basyx.submodelservice.component.ops.MockOneArgMappingOperation",
-		"basyx.submodel.file=example/submodel.json" })
+		OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".enabled=true",
+		OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".mappings[BasicOperations.AddOperation]=org.eclipse.digitaltwin.basyx.submodelrepository.feature.operationdispatching.java.ops.MockMappingOperation",
+		OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".mappings.SquareOperation=org.eclipse.digitaltwin.basyx.submodelrepository.feature.operationdispatching.java.ops.MockOneArgMappingOperation",
+		"basyx.submodelservice.submodel.file=example/submodel.json" })
 @AutoConfigureMockMvc
 public class OperationMappingTest {
 

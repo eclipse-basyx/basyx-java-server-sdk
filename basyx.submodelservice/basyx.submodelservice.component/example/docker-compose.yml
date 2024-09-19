@@ -6,10 +6,9 @@ services:
       context: ..
     container_name: submodel-service
     environment:
-      BASYX_SUBMODEL_FILE: submodel.json
-      BASYX_OPERATION_JAVA_SOURCESPATH: sources
-      BASYX_OPERATION_JAVA_CLASSESPATH: classes
-      BASYX_OPERATION_JAVA_ADDITIONALCLASSPATH: jars/HelloWorld.jar
+      BASYX_SUBMODELSERVICE_SUBMODEL_FILE: submodel.json
+      BASYX_SUBMODELSERVICE_FEATURE_OPERATION_DISPATCHER_JAVA_SOURCES: sources
+      BASYX_SUBMODELSERVICE_FEATURE_OPERATION_DISPATCHER_JAVA_ADDITIONALCLASSPATH: jars/HelloWorld.jar
       # we should use properties or yml files for operation mappings
       # Environment variables could not be parsed properly
       # dots of the idShortPath are not handled properly by spring and also the lower-case conversion of spring is problematic

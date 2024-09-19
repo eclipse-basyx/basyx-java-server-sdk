@@ -23,21 +23,20 @@
  * SPDX-License-Identifier: MIT
  * 
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.submodelrepository.feature.operationdispatching.java.ops;
 
-package org.eclipse.digitaltwin.basyx.submodelservice.component;
+import java.util.Arrays;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
+import org.eclipse.digitaltwin.basyx.submodelrepository.feature.operationdispatching.java.TestOperationValues;
 
 /**
  * @author Gerhard Sonnenberg DFKI GmbH
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
-public class GenericSubmodelComponent {
-	
-	public static void main(String[] args) {
-		 SpringApplication.run(GenericSubmodelComponent.class, args);
-	}	
+public class MockMappingOperation {
+
+	public OperationVariable[] invoke(String path, Operation op, OperationVariable[] in) {		
+		return Arrays.stream(path.split("\\.")).map(TestOperationValues::toStringProperty).map(TestOperationValues::toOperationVariable).toArray(OperationVariable[]::new);
+	}
 }

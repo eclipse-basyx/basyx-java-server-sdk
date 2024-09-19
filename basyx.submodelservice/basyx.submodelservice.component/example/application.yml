@@ -1,14 +1,18 @@
 basyx:
-  submodel:
-    file: submodel.json
-  operation:
-    java:
-      sourcesPath: sources
-      classesPath: classes
-      additionalClasspath: 
-      - jars/HelloWorld.jar
-    invokation:
-      mappings:
-        SquareOperation: SquareOperation
-        "BasicOperations.AddOperation": basic.ops.AddOperation
-        BasicOperations.HelloOperation: HelloOperation
+  backend: InMemory
+  submodelservice:
+    submodel:
+      file: submodel.json
+    feature:
+      operation:
+        dispatcher:
+          enabled: true
+          mappings: 
+            SquareOperation: SquareOperation
+            "BasicOperations.AddOperation": basic.ops.AddOperation
+            BasicOperations.HelloOperation: HelloOperation
+          java:
+            sources: sources
+            classes: classes
+            additionalClasspath: 
+            - jars/HelloWorld.jar

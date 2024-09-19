@@ -1,4 +1,6 @@
 FROM amazoncorretto:17
+RUN mkdir -p /application/classes
+RUN chmod -R a+rwx /application/classes
 USER nobody
 WORKDIR /application
 ARG JAR_FILE=target/*-exec.jar

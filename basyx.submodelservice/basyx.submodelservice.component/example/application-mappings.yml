@@ -1,7 +1,9 @@
 basyx:
-  operation:
-    invokation:
-      mappings:
-        SquareOperation: SquareOperation
-        BasicOperations.AddOperation: basic.ops.AddOperation
-        BasicOperations.HelloOperation: HelloOperation
+  submodelservice: 
+    feature:
+      operation:
+        dispatcher:
+          mappings:
+            SquareOperation: SquareOperation
+            BasicOperations.AddOperation: basic.ops.AddOperation
+            BasicOperations.HelloOperation: HelloOperation

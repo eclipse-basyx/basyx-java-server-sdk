@@ -12,21 +12,29 @@ The [example folder](./example/) contains sample settings. For assigning `idShor
 
 When running the container, the execution folder is /application. 
 
+If you want to use a different folder for your classes (Property `basyx.submodelservice.feature.operation.dispatcher.java.classes` ) than `/application/classes`, you need to mount that folder to in the Docker container. This ensures that the classes can be accessed and executed correctly.
+
+If you choose to use a different folder and do not mount it to /application/classes, you need to run the container as root. This is less secure and not recommended for production environments.
+
+For the sake of simplicity and security, it is recommended to use /application/classes as the default folder, as it is configured with the necessary permissions and is the default setting.
+
+
 **Performance Note**: The startup time of the service can be significantly reduced if the sources are already compiled and placed as JAR files or class files in the /application directory. Pre-compiling your code before building the Docker image can improve performance and reduce initialization time.
 
 ### System Properties
 
 Below are the individual properties used when starting the application. Except for `basyx.submodel.file`, all properties are optional.
 
-| Property                                              | Example                  | Explanation                                                                                                                       |
-|-------------------------------------------------------|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| `basyx.submodel.file`                                | `submodel.json`          | Path to the file describing the Submodel.                                                                                        |
-| `basyx.operation.java.sourcesPath`                   | `sources`                | Source directory where the Java classes to be compiled are located. These classes can be specified to be loaded at runtime to perform operations. |
-| `basyx.operation.java.classesPath`                   | `classes`                | Target directory for compilation. Used in the classpath when loading classes.                                                     |
-| `basyx.operation.java.additionalClasspath`           | `jars/HelloWorld.jar,jars/` | Comma-separated list of additional libraries used during source compilation and loading of executable classes.                    |
-| `basyx.operation.invokation.mappings[SquareOperation]` | `org.example.SquareOp`   | Example of a mapping assignment. The `idShortPath` of an operation is assigned to the class `org.example.SquareOp`.               |
-| `basyx.operation.invokation.mappings[BasicOperations.AddOperation]` | `org.basic.AddOperation` | Another example of mapping an operation to a Java class.                                                                          |
-| `basyx.operation.invokation.defaultMapping`           | `org.example.MyOperation` | Specifies the operation to be called if no mapping is found.                                                                      |
+| Property                                                                                    | Example                              | Explanation                                                                                                                 |
+|---------------------------------------------------------------------------------------------|--------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `basyx.submodelservice.submodel.file`                                                       | `mySubmodel.json`                    | Path to the file describing the Submodel.                                                                                   |
+| `basyx.submodelservice.feature.operation.dispatcher.enabled`                                | `true`                               | Determines whether the feature is enabled or not.                                                                           |
+| `basyx.submodelservice.feature.operation.dispatcher.mappings[SquareOperation]`              | `org.example.SquareOp`               | Maps the `idShortPath` of an operation to the class `org.example.SquareOp`.                                                 |
+| `basyx.submodelservice.feature.operation.dispatcher.mappings[BasicOperations.AddOperation]` | `org.basic.AddOperation`             | Another example of mapping an operation to a Java class.                                                                    |
+| `basyx.submodelservice.feature.operation.dispatcher.defaultMapping`                         | `org.example.MyOperation`            | Specifies the default operation to be called if no specific mapping is found.                                               |
+| `basyx.submodelservice.feature.operation.dispatcher.java.sources`                           | `src`                                | Directory containing the Java source files to be compiled. These classes can be dynamically loaded and executed at runtime. |
+| `basyx.submodelservice.feature.operation.dispatcher.java.classes`                           | `classes`                     | Directory for storing compiled classes. This is used in the classpath when loading classes.                                 |
+| `basyx.submodelservice.feature.operation.dispatcher.java.additionalClasspath`               | `jars/HelloWorld.jar,jars/test.jar`  | Comma-separated list of additional libraries used during source compilation and class loading.                              |
 
 The example project contains an [application.yml](./example/application.yml) that demonstrates how configuration can be specified clearly using YAML.
 
