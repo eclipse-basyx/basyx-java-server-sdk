@@ -70,7 +70,7 @@
 		</dependency> 
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.submodelrepository-client</artifactId>
+			<artifactId>basyx.submodelservice-client</artifactId>
 		</dependency> 
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
