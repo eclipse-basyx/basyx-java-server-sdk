@@ -14,6 +14,57 @@
 	<name>BaSyx Submodelrepository feature-authorization</name>
 	<description>BaSyx Submodelrepository feature-authorization</description>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>install</phase>  <!-- When to run the plugin
+						(during packaging) -->
+						<goals>
+							<goal>shade</goal>  <!-- The goal of the plugin -->
+						</goals>
+						<configuration>
+							<relocations>
+								<relocation>
+									<!-- The original package to relocate -->
+									<pattern>basyx.submodelrepository-client</pattern>
+									<!-- The new namespace where relocated
+									classes will live -->
+									<shadedPattern>basyx.submodelrepository-shaded-client</shadedPattern>
+								</relocation>
+								<relocation>
+									<!-- The original package to relocate -->
+									<pattern>basyx.submodelrepository-core</pattern>
+									<!-- The new namespace where relocated
+									classes will live -->
+									<shadedPattern>basyx.submodelrepository-shaded-core</shadedPattern>
+								</relocation>
+								<relocation>
+									<!-- The original package to relocate -->
+									<pattern>basyx.submodelservice-core</pattern>
+									<!-- The new namespace where relocated
+									classes will live -->
+									<shadedPattern>basyx.submodelservice-shaded-core</shadedPattern>
+								</relocation>
+								<relocation>
+									<!-- The original package to relocate -->
+									<pattern>basyx.submodelservice-client</pattern>
+									<!-- The new namespace where relocated
+									classes will live -->
+									<shadedPattern>basyx.submodelservice-shaded-client</shadedPattern>
+								</relocation>
+							</relocations>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -67,7 +118,7 @@
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.authorization.rules.rbac.backend.submodel</artifactId>
-		</dependency>  
+		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
 			<artifactId>httpclient5</artifactId>
