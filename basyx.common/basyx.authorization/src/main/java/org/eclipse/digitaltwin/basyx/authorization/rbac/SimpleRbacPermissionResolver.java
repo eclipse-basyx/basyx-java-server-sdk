@@ -79,6 +79,15 @@ public class SimpleRbacPermissionResolver<T extends TargetInformation> implement
 		
 		return matchingRule.isPresent();
 	}
+	
+	public List<TargetInformation> getMatchingTargetInformationInRules(final Action action, final T targetInformation) {
+		
+		List<String> roles = roleAuthenticator.getRoles();
+		
+		List<RbacRule> filteredRbacRulesForTargetInfos = roles.stream().map(role -> RbacRuleKeyGenerator.generateKey(role, action.toString(), targetInformation.getClass().getName())).filter(rbacStorage::exist).map(rbacStorage::getRbacRule).collect(Collectors.toList());
+		
+		return filteredRbacRulesForTargetInfos.stream().map(rbacRule -> rbacRule.getTargetInformation()).collect(Collectors.toList());
+	}
 
 	private Stream<RbacRule> getMatchingRules(final List<String> roles, final Action action, final T targetInformation) {
 		
