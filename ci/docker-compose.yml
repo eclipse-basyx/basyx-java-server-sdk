@@ -108,7 +108,7 @@ services:
       BASYX_FEATURE_AUTHORIZATION_ENABLED: true
       BASYX_FEATURE_AUTHORIZATION_TYPE: rbac
       BASYX_FEATURE_AUTHORIZATION_JWTBEARERTOKENPROVIDER: keycloak
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/BaSyx
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak-fixed:8080/realms/BaSyx
       BASYX_FEATURE_AUTHORIZATION_RBAC_FILE: file:/rbac/rbac_rules.json
     volumes:
       - ./keycloak/rules/rbac_rules-aas-registry.json:/rbac/rbac_rules.json:ro
@@ -126,7 +126,7 @@ services:
       BASYX_FEATURE_AUTHORIZATION_ENABLED: true
       BASYX_FEATURE_AUTHORIZATION_TYPE: rbac
       BASYX_FEATURE_AUTHORIZATION_JWTBEARERTOKENPROVIDER: keycloak
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/BaSyx
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak-fixed:8080/realms/BaSyx
       BASYX_FEATURE_AUTHORIZATION_RBAC_FILE: file:/rbac/rbac_rules.json
     volumes:
       - ./keycloak/rules/rbac_rules-sm-registry.json:/rbac/rbac_rules.json:ro
