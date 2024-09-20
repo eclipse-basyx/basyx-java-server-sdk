@@ -33,9 +33,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.AasRegistryTargetInformation;
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.rbac.AasRegistryTargetPermissionVerifier;
-import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.Action;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
