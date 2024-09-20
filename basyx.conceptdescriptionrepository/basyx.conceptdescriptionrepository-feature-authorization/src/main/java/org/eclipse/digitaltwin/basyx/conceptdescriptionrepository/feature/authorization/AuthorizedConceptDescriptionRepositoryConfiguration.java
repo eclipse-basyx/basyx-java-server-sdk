@@ -59,7 +59,7 @@ public class AuthorizedConceptDescriptionRepositoryConfiguration {
 	}
 	
 	@Bean
-	public TargetInformationAdapter getAasRegistryTargetInformationAdapter() {
+	public TargetInformationAdapter getCDTargetInformationAdapter() {
 
 		return new CDTargetInformationAdapter();
 	}
