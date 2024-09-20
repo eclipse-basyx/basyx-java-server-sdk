@@ -49,6 +49,7 @@ public class CommonSecurityConfiguration {
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/actuator/health/**").permitAll()
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+						.requestMatchers("/swagger-ui/index.html").permitAll()
 						.anyRequest().authenticated()
 				)
 				.oauth2ResourceServer(oauth2 -> oauth2
