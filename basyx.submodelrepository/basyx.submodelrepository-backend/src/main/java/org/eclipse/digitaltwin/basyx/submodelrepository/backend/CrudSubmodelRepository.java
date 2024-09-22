@@ -40,6 +40,7 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
@@ -128,11 +129,16 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo) {
 		Iterable<Submodel> iterable = submodelBackend.findAll();
 		List<Submodel> submodels = StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
-
-	    List<Submodel> filteredSubmodels = submodels.stream()
-	            .filter(submodel -> submodel.getSemanticId() != null && submodel.getSemanticId().equals(semanticId))
-	            .collect(Collectors.toList());
 		
+	    List<Submodel> filteredSubmodels = submodels.stream()
+	    		.filter((submodel) -> {
+	    			return submodel.getSemanticId() != null && 
+	    				submodel.getSemanticId().getKeys().stream().filter((key) -> {
+	    					return key.getValue().equals(semanticId);
+	    				}).findAny().isPresent();
+	    		})
+	    		.collect(Collectors.toList());
+	    
 		TreeMap<String, Submodel> submodelMap = filteredSubmodels.stream().collect(Collectors.toMap(Submodel::getId, submodel -> submodel, (a, b) -> a, TreeMap::new));
 
 		PaginationSupport<Submodel> paginationSupport = new PaginationSupport<>(submodelMap, Submodel::getId);

@@ -110,6 +110,19 @@ public class DummySubmodelFactory {
 	public static Collection<Submodel> getSubmodels() {
 		return Lists.newArrayList(createTechnicalDataSubmodel(), createOperationalDataSubmodel(), createSimpleDataSubmodel());
 	}
+	
+	public static Collection<Submodel> getSubmodelsBySemanticid(String semanticId) {
+		Collection<Submodel> submodels = Lists.newArrayList(createTechnicalDataSubmodel(), createOperationalDataSubmodel(), createSimpleDataSubmodel());
+		
+		return submodels.stream()
+	    		.filter((submodel) -> {
+	    			return submodel.getSemanticId() != null && 
+	    				submodel.getSemanticId().getKeys().stream().filter((key) -> {
+	    					return key.getValue().equals(semanticId);
+	    				}).findAny().isPresent();
+	    		})
+	    		.collect(Collectors.toList());
+	}
 
 	public static Submodel createSubmodelWithAllSubmodelElements() {
 		List<SubmodelElement> submodelElements = getAllSubmodelElementsList();

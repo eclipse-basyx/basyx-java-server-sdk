@@ -95,6 +95,18 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 		
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelsJSON,getJSONWithoutCursorInfo(submodelsJSON));
 	}
+	
+	@Test
+	public void getAllSubmodelsBySemanticIDPreconfigured() throws IOException, ParseException {	
+		String semanticId = Base64UrlEncodedIdentifier.encodeIdentifier(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID);
+		String url = getURL() + "?semanticId=" + semanticId;
+		
+		String submodelsJSON = BaSyxSubmodelHttpTestUtils.requestAllSubmodels(url);
+		
+		String expectedSubmodelsJSON = getJSONValueAsString("MultipleSubmodelsWithSameSemanticId.json");
+		
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelsJSON,getJSONWithoutCursorInfo(submodelsJSON));
+	}
 
 	@Test
 	public void getSpecificSubmodel() throws ParseException, IOException {
