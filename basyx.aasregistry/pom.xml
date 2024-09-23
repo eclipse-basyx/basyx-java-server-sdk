@@ -20,7 +20,7 @@
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<generated.folder>src/generated</generated.folder>
-		<swagger.codegen.version>3.0.42</swagger.codegen.version>
+		<swagger.codegen.version>3.0.62</swagger.codegen.version>
 		<spring.fox.version>3.0.0</spring.fox.version>
 		<openapi.folder.name>open-api</openapi.folder.name>
 		<openapi.base.name>
