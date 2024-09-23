@@ -81,7 +81,7 @@ public class TestConnectedSubmodelService extends SubmodelServiceSuite {
 		return file.exists();
 	}
 
-	@Override
+//	@Override
 	public void getFileByFilePath(){
 		// Not Implemented for Client so Override Test
 	}
