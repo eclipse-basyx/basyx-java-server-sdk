@@ -121,7 +121,7 @@ public class DummySubmodelFactory {
 	    					return key.getValue().equals(semanticId);
 	    				}).findAny().isPresent();
 	    		})
-	    		.collect(Collectors.toList());
+	    		.collect(Collectors.toList()); 
 	}
 
 	public static Submodel createSubmodelWithAllSubmodelElements() {
