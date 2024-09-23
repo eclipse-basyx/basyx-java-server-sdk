@@ -155,10 +155,11 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 
 	}
 
-	public CursorResult<List<Submodel>> getAllSubmodels(Base64UrlEncodedIdentifier semanticId, PaginationInfo pInfo) {
+	@Override
+	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo) {
 		try {
 	        String encodedCursor = pInfo.getCursor() == null ? null : Base64UrlEncoder.encode(pInfo.getCursor());
-	        return repoApi.getAllSubmodels(semanticId.getIdentifier(), null, pInfo.getLimit(), encodedCursor, null, null);
+	        return repoApi.getAllSubmodels(semanticId, null, pInfo.getLimit(), encodedCursor, null, null);
 	    } catch (ApiException e) {
 	        if (e.getCode() == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
 	            return new CursorResult<>("", new ArrayList<>());
@@ -259,7 +260,7 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 		getConnectedSubmodelService(submodelId).patchSubmodelElements(submodelElementList);
 	}
 
-//	@Override
+	@Override
 	public InputStream getFileByFilePath(String submodelId, String filePath) {
 		return getConnectedSubmodelService(submodelId).getFileByFilePath(filePath);
 	}

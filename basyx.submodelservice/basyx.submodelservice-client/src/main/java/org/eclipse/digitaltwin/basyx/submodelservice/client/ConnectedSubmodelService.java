@@ -206,7 +206,7 @@ public class ConnectedSubmodelService implements SubmodelService {
 	 *            the path of the file
 	 * @return NotImplementedException
 	 */
-//	@Override
+	@Override
 	public InputStream getFileByFilePath(String filePath) {
 		throw new NotImplementedException("This Method is not implemented in the Client");
 	}

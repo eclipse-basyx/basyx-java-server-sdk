@@ -102,7 +102,7 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 		return file.exists();
 	}
 
-//	@Override
+	@Override
 	public void getFileByFilePath(){
 		// Not Implemented for Client so Override Test
 	}
