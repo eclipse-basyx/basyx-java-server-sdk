@@ -127,7 +127,7 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo) {
-		Iterable<Submodel> iterable = submodelBackend.findAll();
+		Iterable<Submodel> iterable = submodelBackend.findAll(); 
 		List<Submodel> submodels = StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
 
 	    List<Submodel> filteredSubmodels = submodels.stream()
