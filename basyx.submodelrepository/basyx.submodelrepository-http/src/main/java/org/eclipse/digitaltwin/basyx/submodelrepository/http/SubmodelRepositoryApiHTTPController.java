@@ -118,7 +118,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 	    CursorResult<List<Submodel>> cursorResult;
 	    if (semanticId != null) {
-	        cursorResult = repository.getAllSubmodels(semanticId.getEncodedIdentifier(), pInfo);
+	        cursorResult = repository.getAllSubmodels(semanticId.getIdentifier(), pInfo);
 	    } else {
 	        cursorResult = repository.getAllSubmodels(pInfo);
 	    }

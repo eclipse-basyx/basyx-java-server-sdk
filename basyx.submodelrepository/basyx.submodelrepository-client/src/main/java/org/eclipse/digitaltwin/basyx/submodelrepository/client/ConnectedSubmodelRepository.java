@@ -159,7 +159,9 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo) {
 		try {
 	        String encodedCursor = pInfo.getCursor() == null ? null : Base64UrlEncoder.encode(pInfo.getCursor());
-	        return repoApi.getAllSubmodels(semanticId, null, pInfo.getLimit(), encodedCursor, null, null);
+	        String encodedSemanticId = Base64UrlEncoder.encode(semanticId);
+	        System.out.println("ENCODED SEMANTIC ID: " + encodedSemanticId);
+	        return repoApi.getAllSubmodels(encodedSemanticId, null, pInfo.getLimit(), encodedCursor, null, null);
 	    } catch (ApiException e) {
 	        if (e.getCode() == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
 	            return new CursorResult<>("", new ArrayList<>());

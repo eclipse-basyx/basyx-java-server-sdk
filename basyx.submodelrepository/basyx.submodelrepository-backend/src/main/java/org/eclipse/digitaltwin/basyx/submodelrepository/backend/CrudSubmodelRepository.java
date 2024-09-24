@@ -130,13 +130,11 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 		Iterable<Submodel> iterable = submodelBackend.findAll();
 		List<Submodel> submodels = StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
 
-		String decodedSemanticId = Base64UrlEncoder.decode(semanticId);
-		
 	    List<Submodel> filteredSubmodels = submodels.stream()
 	    		.filter((submodel) -> {
 	    			return submodel.getSemanticId() != null && 
 	    				submodel.getSemanticId().getKeys().stream().filter((key) -> {
-	    					return key.getValue().equals(decodedSemanticId);
+	    					return key.getValue().equals(semanticId);
 	    				}).findAny().isPresent();
 	    		})
 	    		.collect(Collectors.toList());
