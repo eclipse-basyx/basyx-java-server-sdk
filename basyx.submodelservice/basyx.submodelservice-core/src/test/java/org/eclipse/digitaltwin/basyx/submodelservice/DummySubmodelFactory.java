@@ -118,7 +118,7 @@ public class DummySubmodelFactory {
 	    		.filter((submodel) -> {
 	    			return submodel.getSemanticId() != null && 
 	    				submodel.getSemanticId().getKeys().stream().filter((key) -> {
-	    					return key.getValue().equals(semanticId);
+	    					return key.getValue().equals(semanticId); 
 	    				}).findAny().isPresent();
 	    		})
 	    		.collect(Collectors.toList());
