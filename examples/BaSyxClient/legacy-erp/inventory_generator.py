@@ -4,7 +4,7 @@ import random
 import time
 from datetime import datetime, timedelta
 
-export_path = os.getenv("ERP_INTERNAL_EXPORT_PATH", "./data")  # Default interval is 60 seconds if not defined
+export_path = os.getenv("ERP_INTERNAL_EXPORT_PATH", "../ingest")  # Default interval is 60 seconds if not defined
 gen_interval = int(os.getenv("ERP_GEN_INTERVAL", 5))  # Default interval is 60 seconds if not defined
 
 if not os.path.exists(export_path):
@@ -17,6 +17,7 @@ motor_data = []
 STATUS_IN_STOCK = "In Stock"
 STATUS_UNDER_MAINTENANCE = "Under Maintenance"
 STATUS_SOLD = "Sold"
+TIMESTAMP_FMT = "%Y-%m-%dT%H:%M:%S"
 
 def do_with_chance(action, probability, *args):
     if random.random() < probability:
@@ -29,11 +30,11 @@ def create_motor():
         "MotorID": motor_id,
         "MotorType": random.choice(["AC Motor", "DC Motor"]),
         "Manufacturer": random.choice(manufacturers),
-        "PurchaseDate": datetime.now().strftime("%Y-%m-%d"),
+        "PurchaseDate": datetime.now().strftime(TIMESTAMP_FMT),
         "Location": f"Aisle {random.randint(1, 10)}",
         "LastMaintenance": "N/A",
-        "MaintenanceSchedule": (datetime.now() + timedelta(days=random.randint(90, 180))).strftime("%Y-%m-%d"),
-        "WarrantyPeriod": (datetime.now() + timedelta(days=365*random.randint(2, 5))).strftime("%Y-%m-%d"),
+        "MaintenanceSchedule": (datetime.now() + timedelta(days=random.randint(90, 180))).strftime(TIMESTAMP_FMT),
+        "WarrantyPeriod": (datetime.now() + timedelta(days=365*random.randint(2, 5))).strftime(TIMESTAMP_FMT),
         "Status": STATUS_IN_STOCK,
         "DateSold": ""
     }
@@ -46,15 +47,15 @@ def receive_new_motor():
 
 def sell_motor(motor):
     motor["Location"] = "N/A"
-    motor["DateSold"] = datetime.now().strftime("%Y-%m-%d")
+    motor["DateSold"] = datetime.now().strftime(TIMESTAMP_FMT)
     motor["Status"] = STATUS_SOLD
     print(f"Motor sold: {motor['MotorID']}")
 
 def send_motor_to_maintenance(motor):
     motor["Status"] = "Under Maintenance"
-    motor["LastMaintenance"] = datetime.now().strftime("%Y-%m-%d")
+    motor["LastMaintenance"] = datetime.now().strftime(TIMESTAMP_FMT)
     next_maintenance = datetime.now() + timedelta(days=180)
-    motor["MaintenanceSchedule"] = next_maintenance.strftime("%Y-%m-%d")
+    motor["MaintenanceSchedule"] = next_maintenance.strftime(TIMESTAMP_FMT)
     print(f"Motor {motor['MotorID']} is now under maintenance")
 
 def remove_motor_from_maintenance(motor):

@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
@@ -15,19 +14,32 @@ import java.util.List;
 import org.eclipse.digitaltwin.basyx.examples.basyxclient.model.MotorEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.opencsv.bean.CsvToBeanBuilder;
 
 @Component
-public class DirectoryWatcher {
+public class DirectoryWatcher implements CommandLineRunner {
 
-    private Logger logger = LoggerFactory.getLogger(DirectoryWatcher.class);
-    private List<EntryProcessor> entryProcessors;
+    private final Logger logger = LoggerFactory.getLogger(DirectoryWatcher.class);
 
-    private final Path dirToWatch = Paths.get("/ingest");
+    private final List<EntryProcessor> entryProcessors;
 
-    public void watchDirectory() throws IOException, InterruptedException {
+    private final Path dirToWatch;
+
+    public DirectoryWatcher(List<EntryProcessor> entryProcessors, @Value("${erp.internal.watchpath:/ingest}") Path dirToWatch) {
+        this.entryProcessors = entryProcessors;
+        this.dirToWatch = dirToWatch;
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        watchDirectory(dirToWatch);
+    }
+
+    public void watchDirectory(Path dirToWatch) throws IOException, InterruptedException {
         WatchService watchService = FileSystems.getDefault().newWatchService();
         dirToWatch.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
 
@@ -67,6 +79,7 @@ public class DirectoryWatcher {
     private void processAllEntries(List<MotorEntry> entries) {
         for (MotorEntry entry : entries) {
             for (EntryProcessor entryProcessor : entryProcessors) {
+                logger.info("Applying processor: {} on entry {}", entryProcessor.getClass().getSimpleName(), entry.getMotorId());
                 entryProcessor.process(entry);
             }
         }

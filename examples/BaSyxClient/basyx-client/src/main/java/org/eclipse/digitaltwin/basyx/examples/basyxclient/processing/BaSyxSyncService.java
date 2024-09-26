@@ -15,8 +15,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class BaSyxSyncService implements EntryProcessor {
 
-    private Logger logger = LoggerFactory.getLogger(BaSyxSyncService.class);
-    private ConnectedAasManager connectedAasManager;
+    private final Logger logger = LoggerFactory.getLogger(BaSyxSyncService.class);
+
+    private final ConnectedAasManager connectedAasManager;
+
+    public BaSyxSyncService(ConnectedAasManager connectedAasManager) {
+        this.connectedAasManager = connectedAasManager;
+    }
 
     @Override
     public void process(MotorEntry entry) {
@@ -31,7 +36,7 @@ public class BaSyxSyncService implements EntryProcessor {
     }
 
     public AasService pushEntryAasAndSubmodels(MotorEntry entry) {
-        logger.info("Pushing entry: {}", entry.motorId());
+        logger.info("Pushing entry: {}", entry.getMotorId());
 
         AssetAdministrationShell aas = MotorAasBuilder.fromEntry(entry);
         connectedAasManager.createAas(aas);
@@ -51,7 +56,7 @@ public class BaSyxSyncService implements EntryProcessor {
     }
 
     public void updateSubmodelsBasedOnEntry(MotorEntry motorEntry) {
-        logger.info("Updating submodels for entry: {}", motorEntry.motorId());
+        logger.info("Updating submodels for entry: {}", motorEntry.getMotorId());
 
         List<Submodel> toUpdateSms = MotorAasBuilder.buildSubmodelsFromEntry(motorEntry);
         toUpdateSms.forEach(sm -> {

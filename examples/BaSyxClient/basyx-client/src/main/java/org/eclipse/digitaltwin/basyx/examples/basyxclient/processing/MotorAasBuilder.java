@@ -17,12 +17,15 @@ import org.eclipse.digitaltwin.basyx.examples.basyxclient.model.MotorEntry;
 public final class MotorAasBuilder {
     public static final String ID_PREFIX = "http://example.com/motors/";
 
+    private MotorAasBuilder() {
+    }
+
     public static AssetAdministrationShell fromEntry(MotorEntry entry) {
-        return new DefaultAssetAdministrationShell.Builder().id(buildIdFromEntry(entry)).idShort(entry.motorId()).build();
+        return new DefaultAssetAdministrationShell.Builder().id(buildIdFromEntry(entry)).idShort(entry.getMotorId()).build();
     }
 
     public static String buildIdFromEntry(MotorEntry entry) {
-        return ID_PREFIX + entry.motorId();
+        return ID_PREFIX + entry.getMotorId();
     }
 
     public static List<Submodel> buildSubmodelsFromEntry(MotorEntry entry) {
@@ -32,8 +35,8 @@ public final class MotorAasBuilder {
     private static Submodel buildMaintenanceDataSmFromEntry(MotorEntry entry) {
         String smId = buildIdFromEntry(entry) + "/maintenanceData";
 
-        List<SubmodelElement> seList = List.of(buildProperty("MaintenanceSchedule", entry.maintenanceSchedule().toString()), buildProperty("LastMaintenance", entry.lastMaintenance().toString()),
-                buildProperty("WarrantyPeriod", entry.warrantyPeriod().toString()));
+        List<SubmodelElement> seList = List.of(buildProperty("MaintenanceSchedule", toStringOrEmptyIfNull(entry.getMaintenanceSchedule())), buildProperty("LastMaintenance", toStringOrEmptyIfNull(entry.getLastMaintenance())),
+                buildProperty("WarrantyPeriod", toStringOrEmptyIfNull(entry.getWarrantyPeriod())));
 
         return new DefaultSubmodel.Builder().id(smId).idShort("MaintenanceData").submodelElements(seList).build();
     }
@@ -43,7 +46,8 @@ public final class MotorAasBuilder {
         DefaultKey key = new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION).value("https://admin-shell.io/zvei/nameplate/2/0/Nameplate").build();
         DefaultReference ref = new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE).keys(key).build();
 
-        List<SubmodelElement> seList = List.of(buildProperty("ManufacturerName", entry.manufacturer()), buildProperty("DateOfManufacture", entry.purchaseDate().toString()), buildProperty("SerialNumber", entry.motorId()));
+        List<SubmodelElement> seList = List.of(buildProperty("ManufacturerName", entry.getManufacturer()), buildProperty("DateOfManufacture", toStringOrEmptyIfNull(entry.getPurchaseDate())),
+                buildProperty("SerialNumber", entry.getMotorId()));
 
         return new DefaultSubmodel.Builder().id(smId).idShort("Nameplate").semanticId(ref).submodelElements(seList).build();
     }
@@ -52,4 +56,7 @@ public final class MotorAasBuilder {
         return new DefaultProperty.Builder().idShort(idShort).value(value).build();
     }
 
+    private static String toStringOrEmptyIfNull(Object o) {
+        return o == null ? "" : o.toString();
+    }
 }
