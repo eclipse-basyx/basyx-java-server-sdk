@@ -1,0 +1,60 @@
+version: '3'
+services:
+  aas-env:
+    image: eclipsebasyx/aas-environment:2.0.0-milestone-04
+    container_name: aas-env
+    volumes:
+      - ./config/aas-env.properties:/application/application.properties
+    ports:
+      - '8081:8081'
+    depends_on:
+      aas-registry:
+        condition: service_healthy
+      sm-registry:
+        condition: service_healthy
+
+  aas-registry:
+    image: eclipsebasyx/aas-registry-log-mem:2.0.0-milestone-04
+    container_name: aas-registry
+    ports:
+      - '8082:8080'
+    volumes:
+      - ./config/aas-registry.yml:/workspace/config/application.yml
+
+  sm-registry:
+    image: eclipsebasyx/submodel-registry-log-mem:2.0.0-milestone-04
+    container_name: sm-registry
+    ports:
+      - '8083:8080'
+    volumes:
+      - ./config/sm-registry.yml:/workspace/config/application.yml
+
+  aas-web-ui:
+    image: eclipsebasyx/aas-gui:v2-240913
+    container_name: aas-ui
+    ports:
+      - '3000:3000'
+    environment:
+      AAS_REGISTRY_PATH: http://localhost:8082/shell-descriptors
+      SUBMODEL_REGISTRY_PATH: http://localhost:8083/submodel-descriptors
+      AAS_REPO_PATH: http://localhost:8081/shells
+      SUBMODEL_REPO_PATH: http://localhost:8081/submodels
+      CD_REPO_PATH: http://localhost:8081/concept-descriptions
+    depends_on:
+      aas-env:
+        condition: service_healthy
+
+  basyx-client:
+    build:
+      context: ./basyx-client
+      dockerfile: Dockerfile
+    container_name: basyx-client
+    volumes:
+      - ./config/basyx-client.properties:/app/application.properties
+      - ./ingest:/ingest
+    ports:
+      - '8087:8087'
+    network_mode: host
+    depends_on:
+      aas-env:
+        condition: service_healthy
