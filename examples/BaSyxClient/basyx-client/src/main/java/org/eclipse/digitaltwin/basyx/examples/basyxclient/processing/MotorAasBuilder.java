@@ -12,6 +12,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
 import org.eclipse.digitaltwin.basyx.examples.basyxclient.model.MotorEntry;
 
 public final class MotorAasBuilder {
@@ -29,7 +30,7 @@ public final class MotorAasBuilder {
     }
 
     public static List<Submodel> buildSubmodelsFromEntry(MotorEntry entry) {
-        return List.of(buildNameplateSmFromEntry(entry), buildMaintenanceDataSmFromEntry(entry));
+        return List.of(buildNameplateSmFromEntry(entry), buildMaintenanceDataSmFromEntry(entry), buildStatusSmFromEntry(entry));
     }
 
     private static Submodel buildMaintenanceDataSmFromEntry(MotorEntry entry) {
@@ -41,13 +42,23 @@ public final class MotorAasBuilder {
         return new DefaultSubmodel.Builder().id(smId).idShort("MaintenanceData").submodelElements(seList).build();
     }
 
+    private static Submodel buildStatusSmFromEntry(MotorEntry entry) {
+        String smId = buildIdFromEntry(entry) + "/status";
+
+        List<SubmodelElement> seList = List.of(buildProperty("Status", entry.getStatus()), buildProperty("DateSold", toStringOrEmptyIfNull(entry.getDateSold())));
+
+        return new DefaultSubmodel.Builder().id(smId).idShort("Status").submodelElements(seList).build();
+    }
+
     private static Submodel buildNameplateSmFromEntry(MotorEntry entry) {
         String smId = buildIdFromEntry(entry) + "/nameplate";
         DefaultKey key = new DefaultKey.Builder().type(KeyTypes.CONCEPT_DESCRIPTION).value("https://admin-shell.io/zvei/nameplate/2/0/Nameplate").build();
         DefaultReference ref = new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE).keys(key).build();
 
+        SubmodelElement assetSpecificProperties = new DefaultSubmodelElementCollection.Builder().idShort("AssetSpecificProperties").value(buildProperty("MotorType", entry.getMotorType())).build();
+
         List<SubmodelElement> seList = List.of(buildProperty("ManufacturerName", entry.getManufacturer()), buildProperty("DateOfManufacture", toStringOrEmptyIfNull(entry.getPurchaseDate())),
-                buildProperty("SerialNumber", entry.getMotorId()));
+                buildProperty("SerialNumber", entry.getMotorId()), assetSpecificProperties);
 
         return new DefaultSubmodel.Builder().id(smId).idShort("Nameplate").semanticId(ref).submodelElements(seList).build();
     }
