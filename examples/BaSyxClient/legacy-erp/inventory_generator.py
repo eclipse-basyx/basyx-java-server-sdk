@@ -4,7 +4,7 @@ import random
 import time
 from datetime import datetime, timedelta
 
-export_path = os.getenv("ERP_INTERNAL_EXPORT_PATH", "../ingest") 
+export_path = os.getenv("ERP_INTERNAL_EXPORT_PATH", "/export") 
 gen_interval = int(os.getenv("ERP_GEN_INTERVAL", 10))
 max_number_of_motors = int(os.getenv("ERP_MAX_NUMBER_OF_MOTORS", 30))
 

@@ -58,3 +58,14 @@ services:
     depends_on:
       aas-env:
         condition: service_healthy
+
+  legacy-erp:
+    build:
+      context: ./legacy-erp
+      dockerfile: Dockerfile
+    env_file: ./config/erp.env
+    volumes:
+      - ./ingest:/export
+    depends_on:
+      basyx-client:
+        condition: service_started
