@@ -4,8 +4,9 @@ import random
 import time
 from datetime import datetime, timedelta
 
-export_path = os.getenv("ERP_INTERNAL_EXPORT_PATH", "../ingest")  # Default interval is 60 seconds if not defined
-gen_interval = int(os.getenv("ERP_GEN_INTERVAL", 5))  # Default interval is 60 seconds if not defined
+export_path = os.getenv("ERP_INTERNAL_EXPORT_PATH", "../ingest") 
+gen_interval = int(os.getenv("ERP_GEN_INTERVAL", 10))
+max_number_of_motors = int(os.getenv("ERP_MAX_NUMBER_OF_MOTORS", 30))
 
 if not os.path.exists(export_path):
     os.makedirs(export_path)
@@ -31,7 +32,7 @@ def create_motor():
         "MotorType": random.choice(["AC Motor", "DC Motor"]),
         "Manufacturer": random.choice(manufacturers),
         "PurchaseDate": datetime.now().strftime(TIMESTAMP_FMT),
-        "Location": f"Aisle {random.randint(1, 10)}",
+        "Location": f"Aisle_{random.randint(1, 10)}",
         "LastMaintenance": "N/A",
         "MaintenanceSchedule": (datetime.now() + timedelta(days=random.randint(90, 180))).strftime(TIMESTAMP_FMT),
         "WarrantyPeriod": (datetime.now() + timedelta(days=365*random.randint(2, 5))).strftime(TIMESTAMP_FMT),
@@ -95,7 +96,8 @@ def start_generating():
             manage_motor_lifecycle(motor)
 
         # Occasionally receive new motors
-        do_with_chance(receive_new_motor, 0.5)
+        if(len(motor_data) < max_number_of_motors):
+            do_with_chance(receive_new_motor, 0.5)
 
         generate_inventory_csv()
         
