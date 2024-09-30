@@ -1,4 +1,4 @@
-FROM amazoncorretto:17
+FROM eclipse-temurin:17
 USER nobody
 WORKDIR /application
 ARG JAR_FILE=target/*-exec.jar
