@@ -36,6 +36,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.GetAssetAdministrationShellDescriptorsResult;
 import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.DummyAasDescriptorFactory;
@@ -77,7 +78,11 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 			AssetAdministrationShellDescriptor actualDescriptor = retrieveDescriptorFromRegistry();
 
 			assertEquals(DUMMY_DESCRIPTOR, actualDescriptor);
-
+			
+			Endpoint firstEndpoint = actualDescriptor.getEndpoints().get(0);
+			String firstEndpointUrl = firstEndpoint.getProtocolInformation().getHref();
+			assertTrue("Endpoint address should start with externalUrl", firstEndpointUrl.startsWith(getFirstAasRepoBaseUrl()));
+			
 			resetRepository();
 		}
 	}

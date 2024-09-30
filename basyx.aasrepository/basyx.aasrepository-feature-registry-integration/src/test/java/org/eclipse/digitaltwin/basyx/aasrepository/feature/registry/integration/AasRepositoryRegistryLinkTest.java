@@ -48,6 +48,7 @@ public class AasRepositoryRegistryLinkTest extends AasRepositoryRegistryLinkTest
 	
 	@BeforeClass
 	public static void setUp() throws FileNotFoundException, IOException {
+		System.setProperty("basyx.externalurl", AAS_REPO_URL);
 		appContext = new SpringApplication(DummyAasRepositoryIntegrationComponent.class).run(new String[] {});
 		
 		aasRepositoryRegistryLink = appContext.getBean(AasRepositoryRegistryLink.class);
@@ -55,6 +56,7 @@ public class AasRepositoryRegistryLinkTest extends AasRepositoryRegistryLinkTest
 	
 	@AfterClass
 	public static void tearDown() {
+		System.clearProperty("basyx.externalurl");
 		appContext.close();
 	}
 
