@@ -239,6 +239,118 @@ public class SubmodelRepositoryApi {
 	}
 
 	/**
+	 * Returns the metadata attributes of a specific Submodel
+	 * 
+	 * @param submodelIdentifier
+	 *            The Submodel’s unique id (UTF8-BASE64-URL-encoded) (required)
+	 * @param level
+	 *            Determines the structural depth of the respective resource content
+	 *            (optional, default to deep)
+	 * @return SubmodelMetadata
+	 * @throws ApiException
+	 *             if fails to make API call
+	 */
+	public Submodel getSubmodelByIdMetadata(String submodelIdentifier, String level) throws ApiException {
+
+		ApiResponse<Submodel> localVarResponse = getSubmodelByIdMetadataWithHttpInfo(submodelIdentifier, level);
+		return localVarResponse.getData();
+	}
+
+	/**
+	 * Returns the metadata attributes of a specific Submodel
+	 * 
+	 * @param submodelIdentifier
+	 *            The Submodel’s unique id (UTF8-BASE64-URL-encoded) (required)
+	 * @param level
+	 *            Determines the structural depth of the respective resource content
+	 *            (optional, default to deep)
+	 * @return ApiResponse&lt;SubmodelMetadata&gt;
+	 * @throws ApiException
+	 *             if fails to make API call
+	 */
+	public ApiResponse<Submodel> getSubmodelByIdMetadataWithHttpInfo(String submodelIdentifier, String level) throws ApiException {
+		String submodelIdentifierAsBytes = ApiClient.base64UrlEncode(submodelIdentifier);
+		return getSubmodelByIdMetadataWithHttpInfoNoUrlEncoding(submodelIdentifierAsBytes, level);
+
+	}
+
+	/**
+	 * Returns the metadata attributes of a specific Submodel
+	 * 
+	 * @param submodelIdentifier
+	 *            The Submodel’s unique id (UTF8-BASE64-URL-encoded) (required)
+	 * @param level
+	 *            Determines the structural depth of the respective resource content
+	 *            (optional, default to deep)
+	 * @return ApiResponse&lt;SubmodelMetadata&gt;
+	 * @throws ApiException
+	 *             if fails to make API call
+	 */
+	public ApiResponse<Submodel> getSubmodelByIdMetadataWithHttpInfoNoUrlEncoding(String submodelIdentifier, String level) throws ApiException {
+		HttpRequest.Builder localVarRequestBuilder = getSubmodelByIdMetadataRequestBuilder(submodelIdentifier, level);
+		try {
+			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
+			if (memberVarResponseInterceptor != null) {
+				memberVarResponseInterceptor.accept(localVarResponse);
+			}
+			try {
+				if (localVarResponse.statusCode() / 100 != 2) {
+					throw getApiException("getSubmodelByIdMetadata", localVarResponse);
+				}
+				return new ApiResponse<Submodel>(localVarResponse.statusCode(), localVarResponse.headers().map(),
+						localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<Submodel>() {
+						}) // closes the InputStream
+				);
+			} finally {
+			}
+		} catch (IOException e) {
+			throw new ApiException(e);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new ApiException(e);
+		}
+	}
+
+	private HttpRequest.Builder getSubmodelByIdMetadataRequestBuilder(String submodelIdentifier, String level) throws ApiException {
+		// verify the required parameter 'submodelIdentifier' is set
+		if (submodelIdentifier == null) {
+			throw new ApiException(400, "Missing the required parameter 'submodelIdentifier' when calling getSubmodelByIdMetadata");
+		}
+
+		HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
+
+		String localVarPath = "/submodels/{submodelIdentifier}/$metadata".replace("{submodelIdentifier}", ApiClient.urlEncode(submodelIdentifier.toString()));
+
+		List<Pair> localVarQueryParams = new ArrayList<>();
+		StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+		String localVarQueryParameterBaseName;
+		localVarQueryParameterBaseName = "level";
+		localVarQueryParams.addAll(ApiClient.parameterToPairs("level", level));
+
+		if (!localVarQueryParams.isEmpty() || localVarQueryStringJoiner.length() != 0) {
+			StringJoiner queryJoiner = new StringJoiner("&");
+			localVarQueryParams.forEach(p -> queryJoiner.add(p.getName() + '=' + p.getValue()));
+			if (localVarQueryStringJoiner.length() != 0) {
+				queryJoiner.add(localVarQueryStringJoiner.toString());
+			}
+			localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath + '?' + queryJoiner.toString()));
+		} else {
+			localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
+		}
+
+		localVarRequestBuilder.header("Accept", "application/json");
+
+		localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
+		if (memberVarReadTimeout != null) {
+			localVarRequestBuilder.timeout(memberVarReadTimeout);
+		}
+		if (memberVarInterceptor != null) {
+			memberVarInterceptor.accept(localVarRequestBuilder);
+		}
+		return localVarRequestBuilder;
+	}	
+	
+	/**
 	 * Creates a new Submodel
 	 * 
 	 * @param submodel

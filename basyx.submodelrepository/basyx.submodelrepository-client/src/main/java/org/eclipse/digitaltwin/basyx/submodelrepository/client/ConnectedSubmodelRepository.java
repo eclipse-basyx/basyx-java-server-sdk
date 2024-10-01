@@ -208,7 +208,7 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 	@Override
 	public Submodel getSubmodelByIdMetadata(String submodelId) throws ElementDoesNotExistException {
 		try {
-			return repoApi.getSubmodelById(submodelId, null, null);
+			return repoApi.getSubmodelByIdMetadata(submodelId, null);
 		} catch (ApiException e) {
 			throw mapExceptionSubmodelAccess(submodelId, e); 
 		}
