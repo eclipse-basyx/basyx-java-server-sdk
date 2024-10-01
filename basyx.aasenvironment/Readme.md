@@ -10,7 +10,7 @@ Eclipse BaSyx provides the AAS Environment as off-the-shelf component:
 It aggregates the AAS Repository, Submodel Repository and ConceptDescription Repository into a single component. For its features and configuration, see the documentation of the respective components.
 
 In addition, it supports the following endpoint defined in DotAAS Part 2 V3 - Serialization Interface:
-- GenerateSerializationByIds
+- GenerateSerializationByIds. For more information about this endpoint please refer to [Swagger API](https://app.swaggerhub.com/apis/Plattform_i40/Entire-API-Collection/V3.0.1#/Serialization%20API/GenerateSerializationByIds)
 
 The Aggregated API endpoint documentation is available at:
 
@@ -40,10 +40,19 @@ For examples, see [application.properties](./basyx.aasenvironment.component/src/
 
 ## AAS Environment Upload Endpoint
 
-AAS environments (e.g. XML, JSON, AASX) can be uploaded by a multipart/form-data POST on the `/upload` endpoint. Please note that the following MIME types are expected for the respective file uploads:
+AAS environments (e.g. XML, JSON, AASX) can be uploaded by a multipart/form-data POST on the `/upload` endpoint. Please note that the following MIME types as **Accept Header** are expected for the respective file uploads:
 * AASX: application/asset-administration-shell-package
 * JSON: application/json
 * XML: application/xml
+
+Below is an example curl request:
+
+```
+curl --location 'http://localhost:8081/upload' \
+--header 'Accept: application/asset-administration-shell-package' \
+--form 'file=@"Sample.aasx"'
+
+```
     
 The upload follows the same rules as the preconfiguration in terms of handling existing AAS, submodels and concept descriptions. In order for the file to be recognized correctly, please make sure that its MIME type is properly configured.
 

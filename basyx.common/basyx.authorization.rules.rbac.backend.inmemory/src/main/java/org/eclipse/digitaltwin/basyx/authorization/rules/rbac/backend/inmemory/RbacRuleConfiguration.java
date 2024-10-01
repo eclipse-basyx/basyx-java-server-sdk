@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.authorization.rbac;
+package org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.inmemory;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -32,6 +32,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleInitializer;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.HashMap;
@@ -43,7 +47,7 @@ import java.util.HashMap;
  */
 @Configuration
 @ConditionalOnProperty("basyx.feature.authorization.enabled")
-@ConditionalOnExpression(value = "'${basyx.feature.authorization.type}' == 'rbac'")
+@ConditionalOnExpression(value = "'${basyx.feature.authorization.type}' == 'rbac' && ('${basyx.feature.authorization.rules.backend:InMemory}' == 'InMemory' || '${basyx.feature.authorization.rules.backend}' == '')")
 public class RbacRuleConfiguration {
 	public static final String RULES_FILE_KEY = "basyx.aasrepository.feature.authorization.rbac.file";
 	

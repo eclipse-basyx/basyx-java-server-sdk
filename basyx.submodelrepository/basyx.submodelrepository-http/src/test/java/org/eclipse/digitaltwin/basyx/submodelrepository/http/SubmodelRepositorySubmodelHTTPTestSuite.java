@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -42,6 +43,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.ProtocolException;
@@ -355,6 +357,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	@Test
 	public void getFile() throws FileNotFoundException, IOException, ParseException {
 		String fileName = DummySubmodelFactory.FILE_NAME;
+		String expectedFileName = Base64UrlEncodedIdentifier.encodeIdentifier(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST) + "-" + DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT + "-" + fileName;
 		
 		byte[] expectedFile = readBytesFromClasspath(fileName);
 		
@@ -362,6 +365,14 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 		
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT));
 		assertEquals(HttpStatus.OK.value(), response.getCode());
+
+	    Header contentDispositionHeader = response.getFirstHeader("Content-Disposition");
+	    assertNotNull(contentDispositionHeader);
+
+	    String contentDisposition = contentDispositionHeader.getValue();
+	    String actualFileName = extractFileNameFromContentDisposition(contentDisposition);
+
+	    assertEquals(expectedFileName, actualFileName);
 
         byte[] actualFile = EntityUtils.toByteArray(response.getEntity());
         
@@ -397,6 +408,16 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	    String actualSubmodelJSON = BaSyxHttpTestUtils.getResponseAsString(response);
 	    
 	    BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelJSON, actualSubmodelJSON);
+	}
+
+	private String extractFileNameFromContentDisposition(String contentDisposition) {
+	    for (String part : contentDisposition.split(";")) {
+	        part = part.trim();
+	        if (part.startsWith("filename")) {
+	            return part.split("=")[1].replace("\"", "").trim();
+	        }
+	    }
+	    return null;
 	}
 	
 	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException {
