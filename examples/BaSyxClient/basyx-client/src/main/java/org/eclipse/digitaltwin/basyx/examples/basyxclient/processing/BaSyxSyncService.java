@@ -49,8 +49,8 @@ public class BaSyxSyncService implements EntryProcessor {
     }
 
     @Override
-    public void process(MotorEntry entry) {
-        syncWithBaSyx(entry);
+    public void process(List<MotorEntry> entries) {
+        entries.forEach(this::syncWithBaSyx);
     }
 
     public void syncWithBaSyx(MotorEntry motorEntry) {
@@ -81,7 +81,7 @@ public class BaSyxSyncService implements EntryProcessor {
     }
 
     public void updateSubmodelsBasedOnEntry(MotorEntry motorEntry) {
-        logger.info("Updating submodels for entry: {}", motorEntry.getMotorId());
+        logger.debug("Updating submodels for entry: {}", motorEntry.getMotorId());
 
         List<Submodel> toUpdateSms = MotorAasBuilder.buildSubmodelsFromEntry(motorEntry);
         toUpdateSms.forEach(sm -> {

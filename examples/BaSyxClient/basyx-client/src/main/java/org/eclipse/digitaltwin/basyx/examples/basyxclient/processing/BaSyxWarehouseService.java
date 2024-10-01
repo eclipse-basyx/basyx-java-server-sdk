@@ -63,20 +63,19 @@ public class BaSyxWarehouseService implements EntryProcessor {
     }
 
     @Override
-    public void process(MotorEntry entry) {
-        pushWarehouseToBaSyx();
+    public void process(List<MotorEntry> entries) {
+        if (!isWarehouldAlreadyPushed(WAREHOUSE_NUM)) {
+            logger.info("No Warehouse found yet. Pushing a new warehouse to BaSyx...");
+            pushWarehouseToBaSyx();
+        }
 
         if (overviewSubmodelService == null)
             return;
 
-        updateEntryAisle(entry);
+        entries.forEach(this::updateEntryAisle);
     }
 
     public void pushWarehouseToBaSyx() {
-        if (isWarehouldAlreadyPushed(WAREHOUSE_NUM))
-            return;
-
-        logger.info("No Warehouse found yet. Pushing a new warehouse to BaSyx...");
 
         AssetAdministrationShell warehouseAas = WarehouseAasBuilder.build(WAREHOUSE_NUM);
         connectedAasManager.createAas(warehouseAas);
@@ -92,7 +91,6 @@ public class BaSyxWarehouseService implements EntryProcessor {
         String motorId = MotorAasBuilder.buildIdFromEntry(entry);
 
         if (!isInWarehouse(actualAisleIdShort)) {
-            logger.info("Motor {} is not in the warehouse anymore. Attempting removal...", motorId);
             removeMotorFromWarehouseIfPresent(motorId);
             return;
         }

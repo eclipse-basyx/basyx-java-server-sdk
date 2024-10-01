@@ -84,9 +84,10 @@ public class DirectoryWatcher implements CommandLineRunner {
                     logger.info("New file detected: {}", newFilePath);
 
                     try {
-                        processAllEntries(parseCsvFile(newFilePath));
+                        List<MotorEntry> entries = parseCsvFile(newFilePath);
+                        processAllEntries(entries);
                     } catch (Exception e) {
-                        logger.error("Error processing file: {}", newFilePath, e);
+                        logger.error("Error parsing file: {}", newFilePath, e);
                     }
                 }
             }
@@ -102,10 +103,12 @@ public class DirectoryWatcher implements CommandLineRunner {
     }
 
     private void processAllEntries(List<MotorEntry> entries) {
-        for (MotorEntry entry : entries) {
-            for (EntryProcessor entryProcessor : entryProcessors) {
-                logger.info("Applying processor: {} on entry {}", entryProcessor.getClass().getSimpleName(), entry.getMotorId());
-                entryProcessor.process(entry);
+        for (EntryProcessor entryProcessor : entryProcessors) {
+            try {
+                logger.info("Applying processor: {}", entryProcessor.getClass().getSimpleName());
+                entryProcessor.process(entries);
+            } catch (Exception e) {
+                logger.error("Processor {} failed", entryProcessor.getClass().getSimpleName(), e);
             }
         }
     }

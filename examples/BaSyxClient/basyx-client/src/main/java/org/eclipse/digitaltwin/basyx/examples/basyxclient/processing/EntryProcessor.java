@@ -25,8 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.examples.basyxclient.processing;
 
-import org.eclipse.digitaltwin.basyx.examples.basyxclient.model.MotorEntry;
+import java.util.List;
 
+import org.eclipse.digitaltwin.basyx.examples.basyxclient.model.MotorEntry;
 public interface EntryProcessor {
-    void process(MotorEntry entry);
+    void process(List<MotorEntry> entries);
 }
