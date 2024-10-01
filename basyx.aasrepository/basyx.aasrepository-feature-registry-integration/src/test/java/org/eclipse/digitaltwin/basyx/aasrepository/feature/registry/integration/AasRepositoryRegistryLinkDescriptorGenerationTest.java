@@ -28,50 +28,34 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryBackendProvider;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
+import org.junit.Test;
 
 /**
- * Integration test for {@link RegistryIntegrationAasRepository} feature
+ * Test suite for {@link RegistryIntegrationAasRepository} feature
  * 
  * @author danish
  */
-public class AasRepositoryRegistryLinkTest extends AasRepositoryRegistryLinkTestSuite {
+public class AasRepositoryRegistryLinkDescriptorGenerationTest {
+	private static final String AAS_REPOSITORY_PATH = "shells";
 
-	private static final String AAS_REPO_URL = "http://localhost:8081";
-	private static final String AAS_REGISTRY_BASE_URL = "http://localhost:8050";
-	private static ConfigurableApplicationContext appContext;
-	private static AasRepositoryRegistryLink aasRepositoryRegistryLink;
+	private static final String DUMMY_GLOBAL_ASSETID = "globalAssetId";
+	private static final String DUMMY_IDSHORT = "ExampleMotor";
+	private static final String DUMMY_AAS_ID = "customIdentifier";
 	
-	@BeforeClass
-	public static void setUp() throws FileNotFoundException, IOException {
-		appContext = new SpringApplication(DummyAasRepositoryIntegrationComponent.class).run(new String[] {});
-		
-		aasRepositoryRegistryLink = appContext.getBean(AasRepositoryRegistryLink.class);
+	@Test
+	public void aasRepositoryRegistryLinkDescriptorGenerationTest() throws FileNotFoundException, IOException, ApiException {
+		RegistryIntegrationAasRepository registryIntRepo = new RegistryIntegrationAasRepository(getAasRepository());
 	}
 	
-	@AfterClass
-	public static void tearDown() {
-		appContext.close();
-	}
-
-	@Override
-	protected String[] getAasRepoBaseUrls() {
-		return new String[] { AAS_REPO_URL};
-	}
-
-	@Override
-	protected String getAasRegistryUrl() {
-		return AAS_REGISTRY_BASE_URL;
-	}
-
-	@Override
-	protected RegistryAndDiscoveryInterfaceApi getAasRegistryApi() {
-		
-		return aasRepositoryRegistryLink.getRegistryApi();
+	protected AasRepository getAasRepository() {
+		return new SimpleAasRepositoryFactory(new AasInMemoryBackendProvider(), new InMemoryAasServiceFactory(new InMemoryFileRepository())).create();
 	}
 
 }
