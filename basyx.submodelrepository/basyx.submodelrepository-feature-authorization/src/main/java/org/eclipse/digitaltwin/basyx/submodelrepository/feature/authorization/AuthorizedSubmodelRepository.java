@@ -72,6 +72,15 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 		return decorated.getAllSubmodels(pInfo);
 	}
+	
+	@Override
+	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo) {
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(getIdAsList(ALL_ALLOWED_WILDCARD), getIdAsList(ALL_ALLOWED_WILDCARD)));
+
+		throwExceptionIfInsufficientPermission(isAuthorized);
+
+		return decorated.getAllSubmodels(semanticId, pInfo);
+	}
 
 	@Override
 	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException {

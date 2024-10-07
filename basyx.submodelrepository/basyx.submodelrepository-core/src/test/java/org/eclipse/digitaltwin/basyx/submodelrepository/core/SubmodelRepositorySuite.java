@@ -26,7 +26,6 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.core;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -34,7 +33,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
@@ -50,6 +48,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
@@ -91,9 +90,19 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 
 		assertSubmodelsAreContained(expectedSubmodels, submodels);
 	}
+	
+	@Test
+	public void getAllSubmodelsBySemanticIDPreconfigured() {	
+		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodelsBySemanticid(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID);
+		
+		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
+		Collection<Submodel> submodels = repo.getAllSubmodels(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID, NO_LIMIT_PAGINATION_INFO).getResult();
+
+		assertSubmodelsAreContained(expectedSubmodels, submodels);
+	}
 
 	private void assertSubmodelsAreContained(Collection<Submodel> expectedSubmodels, Collection<Submodel> submodels) {
-		assertEquals(3, submodels.size());
+		assertEquals(expectedSubmodels.size(), submodels.size());
 		assertTrue(submodels.containsAll(expectedSubmodels));
 	}
 

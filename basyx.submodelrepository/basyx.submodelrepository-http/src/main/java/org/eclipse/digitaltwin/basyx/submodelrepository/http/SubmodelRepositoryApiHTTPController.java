@@ -44,6 +44,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifierSize;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
@@ -116,7 +117,12 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 		PaginationInfo pInfo = new PaginationInfo(limit, decodedCursor);
 
-		CursorResult<List<Submodel>> cursorResult = repository.getAllSubmodels(pInfo);
+	    CursorResult<List<Submodel>> cursorResult;
+	    if (semanticId != null) {
+	        cursorResult = repository.getAllSubmodels(semanticId.getIdentifier(), pInfo);
+	    } else {
+	        cursorResult = repository.getAllSubmodels(pInfo);
+	    }
 
 		GetSubmodelsResult paginatedSubmodel = new GetSubmodelsResult();
 
