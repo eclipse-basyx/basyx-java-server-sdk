@@ -27,7 +27,7 @@ The **BaSyx Client** serves as an adapter application that interfaces between th
 
 - **Ingest Inventory Data:** The BaSyx Client monitors the CSV exports from the ERP. When a new CSV file is generated, the client reads and parses the inventory data.
 - **Create and Register Motors:** The client creates and registers the **AASs** and **submodels** in the **BaSyx infrastructure**
-- **Update Motors:** The client updates the Motors' **submodels** in the **BaSyx infrastructure**, reflecting the currentn status of the motors (in stock, under maintenance, sold).
+- **Update Motors:** The client updates the Motors' **submodels** in the **BaSyx infrastructure**, reflecting their current status (in stock, under maintenance, sold).
 - **Update Warehouse:** The client updates the Warehouse **AAS** with the motors currently stored in it.
 - **Lifecycle Management:** Motors marked as "Sold" remain in the system but are no longer updated or maintained. Their status is reflected in the AAS submodels.
 
