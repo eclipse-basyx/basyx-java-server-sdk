@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.eclipse.digitaltwin.basyx</groupId>
+        <artifactId>basyx.parent</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>basyx.gateway</artifactId>
+    <name>BaSyx Gateway</name>
+    <description>Component handling Registry Integration for distributed systems</description>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>basyx.gateway-http</module>
+        <module>basyx.gateway-core</module>
+        <module>basyx.gateway.component</module>
+    </modules>
+</project>
