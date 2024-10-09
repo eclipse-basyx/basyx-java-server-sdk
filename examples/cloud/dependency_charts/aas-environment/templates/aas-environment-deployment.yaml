@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "aas-environment.fullname" . }}
+  labels:
+    {{- include "aas-environment.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "aas-environment.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "aas-environment.selectorLabels" . | nindent 8 }}
+    spec:
+      volumes:
+        {{- if .Values.startup.enabled }}
+        - name: startup
+          emptyDir: {}
+        {{- end }}
+        - name: {{ template "aas-environment.fullname" $ }}-config
+          configMap:
+            name: {{ template "aas-environment.fullname" $ }}-config
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.startup.enabled }}
+      initContainers:
+      - name: pull-startup-files
+        image: alpine/git
+        imagePullPolicy: IfNotPresent
+        args:
+          - clone
+          - --single-branch
+          - --depth=1
+          - {{ .Values.startup.repo }} # Repository containing latest version of code
+          - /repo
+        volumeMounts:
+          - name: startup
+            mountPath: /repo
+      {{- end }}
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ .Values.image.name }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.service.port }}
+          protocol: TCP
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        volumeMounts:
+        - mountPath: /application/application.properties
+          name: {{ template "aas-environment.fullname" $ }}-config
+          subPath: application.properties
+        {{- if .Values.startup.enabled }}
+        - mountPath: /application/aas
+          name: startup
+        {{ end -}}
