@@ -76,10 +76,10 @@ public class KeycloakRoleProvider implements RoleProvider {
 		if (jwt.hasClaim(CLAIM_RESOURCE_ACCESS))
 			resourceAccess = jwt.getClaim(CLAIM_RESOURCE_ACCESS);
 
-		return getRolesFromRealmAccess(realmAccess, resourceAccess);
+		return extractRolesFromClaims(realmAccess, resourceAccess);
 	}
 
-	private List<String> getRolesFromRealmAccess(Map<String, Collection<String>> realmAccess, Map<String, Collection<String>> resourceAccess) {
+	private List<String> extractRolesFromClaims(Map<String, Collection<String>> realmAccess, Map<String, Collection<String>> resourceAccess) {
 		if (realmAccess.isEmpty() && resourceAccess.isEmpty())
 			return new ArrayList<>();
 		
