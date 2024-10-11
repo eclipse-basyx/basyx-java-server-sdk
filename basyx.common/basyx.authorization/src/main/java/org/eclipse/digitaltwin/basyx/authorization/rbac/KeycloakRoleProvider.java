@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,7 @@ import org.springframework.stereotype.Service;
 public class KeycloakRoleProvider implements RoleProvider {
 
 	private static final String CLAIM_REALM_ACCESS = "realm_access";
+	private static final String CLAIM_RESOURCE_ACCESS = "resource_access";
 
 	private static final String CLAIM_ROLES = "roles";
 
@@ -65,21 +67,44 @@ public class KeycloakRoleProvider implements RoleProvider {
 
 		validateJwt(jwt);
 		
-		Map<String, Collection<String>> realmAccess = jwt.getClaim(CLAIM_REALM_ACCESS);
+		Map<String, Collection<String>> realmAccess = new HashMap<>();
+		Map<String, Collection<String>> resourceAccess = new HashMap<>();
+		
+		if (jwt.hasClaim(CLAIM_REALM_ACCESS))
+			realmAccess = jwt.getClaim(CLAIM_REALM_ACCESS);
+		
+		if (jwt.hasClaim(CLAIM_RESOURCE_ACCESS))
+			resourceAccess = jwt.getClaim(CLAIM_RESOURCE_ACCESS);
 
-		return getRolesFromRealmAccess(realmAccess);
+		return extractRolesFromClaims(realmAccess, resourceAccess);
 	}
 
-	private List<String> getRolesFromRealmAccess(Map<String, Collection<String>> realmAccess) {
-		if (realmAccess == null || realmAccess.isEmpty())
+	private List<String> extractRolesFromClaims(Map<String, Collection<String>> realmAccess, Map<String, Collection<String>> resourceAccess) {
+		if (realmAccess.isEmpty() && resourceAccess.isEmpty())
 			return new ArrayList<>();
 		
-		Collection<String> roles = realmAccess.get(CLAIM_ROLES);
-			
-		if (roles == null || roles.isEmpty())
-			return new ArrayList<>(); 
+		Collection<String> realmRoles = realmAccess.get(CLAIM_ROLES);
+		Collection<String> resourceRoles = resourceAccess.get(CLAIM_ROLES);
+		
+		if ((realmRoles == null || realmRoles.isEmpty()) && (resourceRoles == null || resourceRoles.isEmpty()))
+			return new ArrayList<>();
+		
+		return mergeRoles(realmRoles, resourceRoles);		
+	}
 
-		return new ArrayList<>(roles);
+	private List<String> mergeRoles(Collection<String> realmRoles, Collection<String> resourceRoles) {
+		
+		if (realmRoles == null || realmRoles.isEmpty())
+			return new ArrayList<>(resourceRoles);
+		
+		if (resourceRoles == null || resourceRoles.isEmpty())
+			return new ArrayList<>(realmRoles);
+		
+		List<String> rolesUnion = new ArrayList<>(realmRoles);
+		
+		resourceRoles.stream().filter(resourceRole -> !rolesUnion.contains(resourceRole)).forEach(rolesUnion::add);
+
+		return rolesUnion;
 	}
 
 	private void validateJwt(Jwt jwt) {
