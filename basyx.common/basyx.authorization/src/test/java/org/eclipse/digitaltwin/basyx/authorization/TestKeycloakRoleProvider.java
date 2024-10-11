@@ -121,16 +121,16 @@ public class TestKeycloakRoleProvider {
 	}
 
 	@Test
-    public void getRoles_whenNoRolesPresent() {
-    	when(jwt.hasClaim("realm_access")).thenReturn(true);
-        when(jwt.hasClaim("resource_access")).thenReturn(true);
-        when(jwt.getClaim("realm_access")).thenReturn(Collections.emptyMap());
-        when(jwt.getClaim("resource_access")).thenReturn(Collections.emptyMap());
-        
-        List<String> roles = keycloakRoleProvider.getRoles();
-
-        assertTrue(roles.isEmpty());
-    }
+	public void getRoles_whenNoRolesPresent() {
+		when(jwt.hasClaim("realm_access")).thenReturn(true);
+	    when(jwt.hasClaim("resource_access")).thenReturn(true);
+	    when(jwt.getClaim("realm_access")).thenReturn(Collections.emptyMap());
+	    when(jwt.getClaim("resource_access")).thenReturn(Collections.emptyMap());
+	    
+	    List<String> roles = keycloakRoleProvider.getRoles();
+	
+	    assertTrue(roles.isEmpty());
+	}
 
 	@Test(expected = NullSubjectException.class)
 	public void getRoles_whenJwtIsNull() {
@@ -177,13 +177,13 @@ public class TestKeycloakRoleProvider {
 	}
 
 	@Test
-    public void getRoles_whenClaimNotPresent() {
-    	
-        when(jwt.hasClaim("realm_access")).thenReturn(false);
-        when(jwt.hasClaim("resource_access")).thenReturn(false);
-        
-        List<String> roles = keycloakRoleProvider.getRoles();
-
-        assertTrue(roles.isEmpty());
-    }
+	public void getRoles_whenClaimNotPresent() {
+		
+	    when(jwt.hasClaim("realm_access")).thenReturn(false);
+	    when(jwt.hasClaim("resource_access")).thenReturn(false);
+	    
+	    List<String> roles = keycloakRoleProvider.getRoles();
+	
+	    assertTrue(roles.isEmpty());
+	}
 }
