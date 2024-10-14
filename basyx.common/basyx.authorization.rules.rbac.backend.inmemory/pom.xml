@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.eclipse.digitaltwin.basyx</groupId>
+    <artifactId>basyx.common</artifactId>
+    <version>${revision}</version>
+  </parent>
+  <artifactId>basyx.authorization.rules.rbac.backend.inmemory</artifactId>
+  <name>BaSyx RBAC InMemory Backend</name>
+  <description>BaSyx RBAC InMemory Backend</description>
+  
+  <dependencies>
+	  <dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.authorization</artifactId>
+	  </dependency>
+	  <dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.authorization</artifactId>
+			<scope>test</scope>
+			<classifier>tests</classifier>
+	  </dependency>
+	  <dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+  </dependencies>
+</project>

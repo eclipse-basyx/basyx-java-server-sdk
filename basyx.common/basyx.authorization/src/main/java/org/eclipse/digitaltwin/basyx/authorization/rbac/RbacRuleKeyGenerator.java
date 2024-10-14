@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
+import java.util.Base64;
+
 /**
  * A helper class to generate the key based on hash of combination of role, {@link Action}, and the concrete {@link TargetInformation}
  * class.
@@ -49,7 +51,9 @@ public class RbacRuleKeyGenerator {
 	 * @return
 	 */
 	public static String generateKey(String role, String action, String clazz) {
-		return String.valueOf((role + action + clazz).hashCode());
+		 String combinedString = String.valueOf(role + action + clazz);
+		 
+		return Base64.getEncoder().encodeToString(combinedString.getBytes());
 	}
 
 }

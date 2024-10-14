@@ -1,8 +1,8 @@
-FROM amazoncorretto:17 as builder
+FROM eclipse-temurin:17 as builder
 COPY maven/${project.build.finalName}.jar ./
 RUN java -Djarmode=layertools -jar ${project.build.finalName}.jar extract
 
-FROM amazoncorretto:17
+FROM eclipse-temurin:17
 RUN mkdir /workspace
 WORKDIR /workspace
 COPY --from=builder dependencies/ ./

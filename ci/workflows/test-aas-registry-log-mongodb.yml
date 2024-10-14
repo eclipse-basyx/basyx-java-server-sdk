@@ -1,0 +1,51 @@
+version: '3.6'
+
+networks:
+  basyx:
+    internal: false
+  mongo:
+    internal: false
+
+volumes:
+  mongodb-data-5.0.10:
+    driver: local
+  aas-config:
+
+services:
+  portainer:
+    image: portainer/portainer-ce:2.0.1
+    container_name: portainer
+    restart: always
+    ports:
+      - "9090:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - basyx
+
+  mongodb:
+    image: mongo:5.0.10
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb-data-5.0.10:/data/db
+    networks:
+      - basyx
+
+  aas-registry-log-mongodb:
+    image: test/aas-registry-log-mongodb:$BASYX_VERSION
+    container_name: test_aas_registry_log_mongodb
+    pull_policy: never
+    ports:
+      - "8050:8080"
+    depends_on:
+      - mongodb
+    restart: always
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://admin:admin@mongodb:27017
+    networks:
+      - basyx

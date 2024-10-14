@@ -575,7 +575,7 @@ public class TestAuthorizedAasRepository {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_CREDENTIAL);
 		
 		CloseableHttpResponse retrievalResponse = setThumbnailToAasWithAuthorization(SPECIFIC_SHELL_ID, accessToken);
-		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), retrievalResponse.getCode());
 		
 		deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(aasRepositoryBaseUrl, SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
@@ -585,7 +585,7 @@ public class TestAuthorizedAasRepository {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_TWO_CREDENTIAL);
 		
 		CloseableHttpResponse retrievalResponse = setThumbnailToAasWithAuthorization(SPECIFIC_SHELL_ID, accessToken);
-		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), retrievalResponse.getCode());
 		
 		deleteElementWithAuthorization(BaSyxHttpTestUtils.getThumbnailAccessURL(aasRepositoryBaseUrl, SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}

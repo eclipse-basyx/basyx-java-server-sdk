@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -50,10 +51,15 @@ public class RbacRuleDeserializer extends JsonDeserializer<HashMap<String, RbacR
 		HashMap<String, RbacRule> result = new HashMap<>();
 
 		for (RbacRule rule : rbacRules) {
-			rule.getAction().stream().map(action -> RbacRuleKeyGenerator.generateKey(rule.getRole(), action.toString(), rule.getTargetInformation().getClass().getName())).forEach(key -> result.put(key, rule));
+			rule.getAction().stream().map(action -> new RbacRule(rule.getRole(), Arrays.asList(action), rule.getTargetInformation())).forEach(rbacRule ->  result.put(createKey(rbacRule), rbacRule));
 		}
 
 		return result;
+	}
+	
+	private String createKey(RbacRule rbacRule) {
+
+		return RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), rbacRule.getAction().get(0).toString(), rbacRule.getTargetInformation().getClass().getName());
 	}
 
 }

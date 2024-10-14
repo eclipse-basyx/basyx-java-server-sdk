@@ -204,7 +204,7 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 			fileInputstream = file.getInputStream();
 			aasRepository.setThumbnail(aasIdentifier.getIdentifier(), fileName, file.getContentType(), fileInputstream);
 			closeInputStream(fileInputstream);
-			return new ResponseEntity<Void>(HttpStatus.OK);
+			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 		} catch (IOException e) {
 			closeInputStream(fileInputstream);
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
