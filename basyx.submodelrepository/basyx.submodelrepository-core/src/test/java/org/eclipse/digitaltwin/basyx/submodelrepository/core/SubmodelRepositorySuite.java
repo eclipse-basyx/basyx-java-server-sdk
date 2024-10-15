@@ -288,6 +288,8 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		List<SubmodelElement> submodelElements = buildDummySubmodelElements();
 		submodel.setSubmodelElements(submodelElements);
 		repo.createSubmodel(submodel);
+		
+//		SubmodelValueOnly testSubmodelElements = new SubmodelValueOnly(repo.getSubmodelElements(ID, new PaginationInfo(0, null)).getResult());
 
 		SubmodelValueOnly expectedSmValueOnly = new SubmodelValueOnly(submodelElements);
 		SubmodelValueOnly retrievedSmValueOnly = repo.getSubmodelByIdValueOnly(ID);
