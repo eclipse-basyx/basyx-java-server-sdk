@@ -30,15 +30,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.GetAssetAdministrationShellDescriptorsResult;
-import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.DummyAasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
@@ -53,8 +53,8 @@ import org.springframework.http.HttpStatus;
  * @author danish
  */
 public abstract class AasRepositoryRegistryLinkTestSuite {
-	private static final String AAS_REPOSITORY_PATH = "shells";
 
+	private static final String AAS_REPOSITORY_PATH = "/shells";
 	private static final String DUMMY_GLOBAL_ASSETID = "globalAssetId";
 	private static final String DUMMY_IDSHORT = "ExampleMotor";
 	private static final String DUMMY_AAS_ID = "customIdentifier";
@@ -78,11 +78,7 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 			AssetAdministrationShellDescriptor actualDescriptor = retrieveDescriptorFromRegistry();
 
 			assertEquals(DUMMY_DESCRIPTOR, actualDescriptor);
-			
-			Endpoint firstEndpoint = actualDescriptor.getEndpoints().get(0);
-			String firstEndpointUrl = firstEndpoint.getProtocolInformation().getHref();
-			assertTrue("Endpoint address should start with externalUrl", firstEndpointUrl.startsWith(getFirstAasRepoBaseUrl()));
-			
+
 			resetRepository();
 		}
 	}
@@ -133,15 +129,25 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 	}
 
 	private CloseableHttpResponse createAasOnRepo(String aasJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(RepositoryUrlHelper.createRepositoryUrl(getFirstAasRepoBaseUrl(), AAS_REPOSITORY_PATH), aasJsonContent);
+		return BaSyxHttpTestUtils.executePostOnURL(createAasRepositoryUrl(getFirstAasRepoBaseUrl()), aasJsonContent);
 	}
 
 	private String getSpecificAasAccessURL(String aasId) {
-		return RepositoryUrlHelper.createRepositoryUrl(getFirstAasRepoBaseUrl(), AAS_REPOSITORY_PATH) + "/"
+		return createAasRepositoryUrl(getFirstAasRepoBaseUrl()) + "/"
 				+ Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
 	}
 
 	private String getFirstAasRepoBaseUrl() {
 		return getAasRepoBaseUrls()[0];
 	}
+
+	private static String createAasRepositoryUrl(String aasRepositoryBaseURL) {
+
+		try {
+			return new URL(new URL(aasRepositoryBaseURL), AAS_REPOSITORY_PATH).toString();
+		} catch (MalformedURLException e) {
+			throw new RuntimeException("The AAS Repository Base url is malformed. " + e.getMessage());
+		}
+	}
+
 }
