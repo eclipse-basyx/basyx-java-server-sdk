@@ -24,7 +24,13 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.common.mongocore;
 
+import java.util.List;
+
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 /**
@@ -33,6 +39,8 @@ import org.springframework.data.mongodb.core.query.Query;
  *
  */
 public class MongoDBUtilities {
+	
+	private static final String ID = "_id";
 
 	/**
 	 * Removes all documents from the specified collection.
@@ -42,5 +50,14 @@ public class MongoDBUtilities {
 	 */
 	public static void clearCollection(MongoTemplate template, String collection) {
 		template.remove(new Query(), collection);
+	}
+	
+	public static void applyPagination(PaginationInfo pRequest, List<AggregationOperation> allAggregations) {
+		
+		if (pRequest.getCursor() != null)
+			allAggregations.add(Aggregation.match(Criteria.where(ID).gt(pRequest.getCursor())));
+		
+		if (pRequest.getLimit() != null)
+			allAggregations.add(Aggregation.limit(pRequest.getLimit()));
 	}
 }
