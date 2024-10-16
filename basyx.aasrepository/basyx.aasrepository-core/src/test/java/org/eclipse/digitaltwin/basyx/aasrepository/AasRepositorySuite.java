@@ -51,7 +51,6 @@ import org.junit.Test;
  *
  */
 public abstract class AasRepositorySuite extends AasServiceSuite {
-	private final PaginationInfo noLimitPaginationInfo = new PaginationInfo(0, "");
 	private static final String AAS_EMPTY_ID = " ";
 	private static final String AAS_NULL_ID = null;
 
@@ -132,7 +131,7 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getSubmodelReferencesOfNonExistingAas() {
 		AasRepository aasRepo = getAasRepository();
-		aasRepo.getSubmodelReferences("doesNotMatter", noLimitPaginationInfo).getResult();
+		aasRepo.getSubmodelReferences("doesNotMatter", PaginationInfo.NO_LIMIT).getResult();
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)

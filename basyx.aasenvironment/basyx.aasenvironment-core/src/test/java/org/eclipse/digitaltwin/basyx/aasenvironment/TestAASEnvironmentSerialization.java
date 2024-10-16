@@ -74,7 +74,6 @@ import static org.junit.Assert.*;
 
 public class TestAASEnvironmentSerialization {
 
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, "");
 	public static final String AAS_TECHNICAL_DATA_ID = "shell001";
 	public static final String AAS_OPERATIONAL_DATA_ID = "shell002";
 	public static final String SUBMODEL_TECHNICAL_DATA_ID = "7A7104BDAB57E184";
@@ -266,9 +265,9 @@ public class TestAASEnvironmentSerialization {
 	}
 
 	private void validateRepositoriesState() {
-		assertTrue(aasRepository.getAllAas(NO_LIMIT_PAGINATION_INFO).getResult().containsAll(createDummyShells()));
-		assertTrue(submodelRepository.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult().containsAll(createDummySubmodels()));
-		assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO).getResult().containsAll(createDummyConceptDescriptions()));
+		assertTrue(aasRepository.getAllAas(PaginationInfo.NO_LIMIT).getResult().containsAll(createDummyShells()));
+		assertTrue(submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().containsAll(createDummySubmodels()));
+		assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().containsAll(createDummyConceptDescriptions()));
 	}
 
 }

@@ -70,7 +70,6 @@ import jakarta.validation.constraints.Min;
 @RestController
 public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi {
 
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private SubmodelService service;
 
 	@Autowired
@@ -177,7 +176,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" }, defaultValue = "withoutBlobValue")) @Valid @RequestParam(value = "extent", required = false, defaultValue = "withoutBlobValue") String extent) {
 
-		SubmodelValueOnly result = new SubmodelValueOnly(service.getSubmodelElements(NO_LIMIT_PAGINATION_INFO).getResult());
+		SubmodelValueOnly result = new SubmodelValueOnly(service.getSubmodelElements(PaginationInfo.NO_LIMIT).getResult());
 
 		return new ResponseEntity<SubmodelValueOnly>(result, HttpStatus.OK);
 	}

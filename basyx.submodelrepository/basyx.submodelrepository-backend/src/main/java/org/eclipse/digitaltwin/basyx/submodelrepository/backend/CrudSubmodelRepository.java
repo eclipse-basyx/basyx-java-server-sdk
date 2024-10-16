@@ -69,7 +69,6 @@ import org.springframework.data.repository.CrudRepository;
 public class CrudSubmodelRepository implements SubmodelRepository {
 
 	private Logger logger = LoggerFactory.getLogger(CrudSubmodelRepository.class);
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private CrudRepository<Submodel, String> submodelBackend;
 
 	private SubmodelServiceFactory submodelServiceFactory;
@@ -222,7 +221,7 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) throws ElementDoesNotExistException {
-		return new SubmodelValueOnly(getSubmodelElements(submodelId, NO_LIMIT_PAGINATION_INFO).getResult());
+		return new SubmodelValueOnly(getSubmodelElements(submodelId, PaginationInfo.NO_LIMIT).getResult());
 	}
 
 	@Override

@@ -42,7 +42,6 @@ import org.springframework.context.ConfigurableApplicationContext;
  *
  */
 public class TestSubmodelRepositorySubmodelHTTP extends SubmodelRepositorySubmodelHTTPTestSuite {
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
@@ -53,7 +52,7 @@ public class TestSubmodelRepositorySubmodelHTTP extends SubmodelRepositorySubmod
 	@Override
 	public void resetRepository() {
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
-		repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
+		repo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
 	}
 
 	@Override
