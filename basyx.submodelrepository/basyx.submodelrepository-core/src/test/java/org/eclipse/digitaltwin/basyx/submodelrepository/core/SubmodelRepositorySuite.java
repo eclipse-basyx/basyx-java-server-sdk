@@ -69,7 +69,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(null, null);
 	private static final String EMPTY_ID = " ";
 	private static final String NULL_ID = null;
 	private static final String ID = "testId";
@@ -87,7 +86,7 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodels();
 
 		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
-		Collection<Submodel> submodels = repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult();
+		Collection<Submodel> submodels = repo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult();
 
 		assertSubmodelsAreContained(expectedSubmodels, submodels);
 	}
@@ -100,7 +99,7 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 	@Test
 	public void getAllSubmodelsEmpty() {
 		SubmodelRepository repo = getSubmodelRepository();
-		Collection<Submodel> submodels = repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult();
+		Collection<Submodel> submodels = repo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult();
 
 		assertIsEmpty(submodels);
 	}
@@ -214,7 +213,7 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getSubmodelElementsOfNonExistingSubmodel() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		repo.getSubmodelElements("notExisting", NO_LIMIT_PAGINATION_INFO).getResult();
+		repo.getSubmodelElements("notExisting", PaginationInfo.NO_LIMIT).getResult();
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
