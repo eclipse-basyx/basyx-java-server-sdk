@@ -75,7 +75,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class TestOperationDelegationFeature {
 
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static SubmodelRepository submodelRepository;
 	private static HTTPMockServer httpMockServer = new HTTPMockServer(2020);
 	private static WebClient webClient;
@@ -104,7 +103,7 @@ public class TestOperationDelegationFeature {
 		if (submodelRepository == null)
 			return;
 
-		submodelRepository.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult().stream().forEach(sm -> submodelRepository.deleteSubmodel(sm.getId()));
+		submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().stream().forEach(sm -> submodelRepository.deleteSubmodel(sm.getId()));
 	}
 
 	@Test

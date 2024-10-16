@@ -61,8 +61,6 @@ public abstract class ConceptDescriptionRepositorySuite {
 
 	protected abstract ConceptDescriptionRepository getConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions);
 
-	private final PaginationInfo noLimitPaginationInfo = new PaginationInfo(0, "");
-	
 	private static final String EMPTY_ID = " ";
 	private static final String NULL_ID = null;
 	
@@ -71,7 +69,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 		Collection<ConceptDescription> expectedConceptDescriptions = DummyConceptDescriptionFactory.getConceptDescriptions();
 
 		ConceptDescriptionRepository repo = getConceptDescriptionRepository(expectedConceptDescriptions);
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptions(noLimitPaginationInfo)
+		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptions(PaginationInfo.NO_LIMIT)
 				.getResult();
 
 		assertEquals(4, actualConceptDescriptions.size());
@@ -84,7 +82,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 		Collection<ConceptDescription> expectedDescriptions = Arrays.asList(DummyConceptDescriptionFactory.createBasicConceptDescription());
 
 		ConceptDescriptionRepository repo = getConceptDescriptionRepository(allConceptDescriptions);
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIdShort("BasicConceptDescription", noLimitPaginationInfo)
+		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIdShort("BasicConceptDescription", PaginationInfo.NO_LIMIT)
 				.getResult();
 
 		assertEquals(1, actualConceptDescriptions.size());
@@ -103,7 +101,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 		Collection<ConceptDescription> expectedDescriptions = Arrays.asList(DummyConceptDescriptionFactory.createConceptDescription(), DummyConceptDescriptionFactory.createBasicConceptDescriptionWithDataSpecification());
 
 		ConceptDescriptionRepository repo = getConceptDescriptionRepository(allConceptDescriptions);
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIsCaseOf(reference, noLimitPaginationInfo)
+		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByIsCaseOf(reference, PaginationInfo.NO_LIMIT)
 				.getResult();
 
 		assertEquals(2, actualConceptDescriptions.size());
@@ -122,7 +120,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 		Collection<ConceptDescription> expectedDescriptions = Arrays.asList(DummyConceptDescriptionFactory.createBasicConceptDescriptionWithDataSpecification());
 
 		ConceptDescriptionRepository repo = getConceptDescriptionRepository(allConceptDescriptions);
-		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByDataSpecificationReference(reference, noLimitPaginationInfo)
+		Collection<ConceptDescription> actualConceptDescriptions = repo.getAllConceptDescriptionsByDataSpecificationReference(reference, PaginationInfo.NO_LIMIT)
 				.getResult();
 
 		assertEquals(1, actualConceptDescriptions.size());
@@ -132,7 +130,7 @@ public abstract class ConceptDescriptionRepositorySuite {
 	@Test
 	public void getAllConceptDescriptionsEmpty() {
 		ConceptDescriptionRepository repo = getConceptDescriptionRepository();
-		Collection<ConceptDescription> conceptDescriptions = repo.getAllConceptDescriptions(noLimitPaginationInfo)
+		Collection<ConceptDescription> conceptDescriptions = repo.getAllConceptDescriptions(PaginationInfo.NO_LIMIT)
 				.getResult();
 
 		assertIsEmpty(conceptDescriptions);
