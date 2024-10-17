@@ -1,0 +1,20 @@
+[
+    {
+        "uniqueId": "TemperatureAAS",
+        "submodelEndpoint": "http://host.docker.internal:8081/submodels/YjdlNTA2NzgtZGY3Mi00ODAxLWI3YzAtNzI2NTNkMmU0NzI0",
+        "idShortPath": "TemperatureValue",
+        "api": "DotAAS-V3"
+    },
+    {
+        "uniqueId": "HumidityAAS",
+        "submodelEndpoint": "http://host.docker.internal:8081/submodels/YjdlNTA2NzgtZGY3Mi00ODAxLWI3YzAtNzI2NTNkMmU0NzI0",
+        "idShortPath": "HumidityValue",
+        "api": "DotAAS-V3"
+    },
+    {
+        "uniqueId": "AirQualityAAS",
+        "submodelEndpoint": "http://host.docker.internal:8081/submodels/YjdlNTA2NzgtZGY3Mi00ODAxLWI3YzAtNzI2NTNkMmU0NzI0",
+        "idShortPath": "AirQualityValue",
+        "api": "DotAAS-V3"
+    }
+]
