@@ -26,22 +26,17 @@ package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
-import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
@@ -50,9 +45,6 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -83,12 +75,7 @@ public class CrudAasRepository implements AasRepository {
 
 	@Override
 	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
-		List<AggregationOperation> allAggregations = new LinkedList<AggregationOperation>();
-		
-		MongoDBUtilities.applyPagination(pInfo, allAggregations);
-		
-		AggregationResults<AssetAdministrationShell> results = template.aggregate(Aggregation.newAggregation(allAggregations), AssetAdministrationShellDescriptor.class, AssetAdministrationShellDescriptor.class);
-		
+
 		Iterable<AssetAdministrationShell> iterable = aasBackend.findAll();
 		List<AssetAdministrationShell> allAas = StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
 
