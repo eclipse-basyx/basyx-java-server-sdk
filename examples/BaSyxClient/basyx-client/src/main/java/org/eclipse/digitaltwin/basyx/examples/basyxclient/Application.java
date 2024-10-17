@@ -25,16 +25,12 @@
 
 package org.eclipse.digitaltwin.basyx.examples.basyxclient;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
-
-@SpringBootApplication(exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
+import java.nio.file.Path;
 public class Application {
 
+	static final Path DIR_TO_WATCH = Path.of("/ingest");
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		new Thread(DirectoryWatcherFactory.build(DIR_TO_WATCH)).start();
 	}
 
 }

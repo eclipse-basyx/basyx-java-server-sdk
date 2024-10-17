@@ -25,8 +25,5 @@
 
 package org.eclipse.digitaltwin.basyx.examples.basyxclient.configuration;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
-@ConfigurationProperties(prefix = "basyx")
 public record BasyxSettings(String aasRepositoryBaseUrl, String submodelRepositoryBaseUrl, String aasRegistryBaseUrl, String submodelRegistryBaseUrl) {
 }
