@@ -24,7 +24,7 @@ To see updates in real-time, active the `Auto-Sync` feature in the AAS Web UI (s
 ### BaSyx Databridge
 
 The configuration for the BaSyx Databridge can be found in the `databridge` folder. There you can find the `routes.config` file, which defines the routes from the assets data source to the AAS data sink.
-The data source is configuration can be found in the `mqttconsumer.json` file, and the data sink configuration can be found in the `aasserver.json` file.
+The data source configuration can be found in the `mqttconsumer.json` file, and the data sink configuration can be found in the `aasserver.json` file.
 There are also data transformers defined for extracting the data from the MQTT message.
 For more details on how to configure the BaSyx Databridge, please refer to the [BaSyx Databridge documentation](https://wiki.basyx.org/en/latest/content/user_documentation/basyx_components/databridge/index.html).
 
