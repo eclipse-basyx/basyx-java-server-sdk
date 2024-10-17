@@ -16,7 +16,7 @@ docker-compose up -d
 
 ## View the working Example
 
-To see the woking example, open the [BaSyx AAS Web UI](http://localhost:3000) and navigate to the `SensorExampleAAS`. You can see the data coming from the MQTT client in the `SensorData` submodel.
+To see the working example, open the [BaSyx AAS Web UI](http://localhost:3000) and navigate to the `SensorExampleAAS`. You can see the data coming from the MQTT client in the `SensorData` submodel.
 To see updates in real-time, active the `Auto-Sync` feature in the AAS Web UI (see top right corner of the UI).
 
 ## Where to find the configuration
