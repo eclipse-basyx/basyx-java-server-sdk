@@ -35,9 +35,7 @@ import org.eclipse.digitaltwin.basyx.examples.basyxclient.model.MotorEntry;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
-@Service
 public class BaSyxSyncService implements EntryProcessor {
 
     private final Logger logger = LoggerFactory.getLogger(BaSyxSyncService.class);

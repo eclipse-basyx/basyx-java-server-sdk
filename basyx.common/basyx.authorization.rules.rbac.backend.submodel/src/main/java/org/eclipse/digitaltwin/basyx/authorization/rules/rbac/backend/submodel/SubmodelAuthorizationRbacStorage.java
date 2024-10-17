@@ -91,7 +91,7 @@ public class SubmodelAuthorizationRbacStorage implements RbacStorage {
 	@Override
 	public Map<String, RbacRule> getRbacRules() {
 		
-		return smService.getSubmodelElements(new PaginationInfo(0, "")).getResult().stream().map(SubmodelElementCollection.class::cast).map(ruleAdapter::adapt).collect(Collectors.toMap(rbacRule -> createKey(rbacRule), rbacRule -> rbacRule));
+		return smService.getSubmodelElements(PaginationInfo.NO_LIMIT).getResult().stream().map(SubmodelElementCollection.class::cast).map(ruleAdapter::adapt).collect(Collectors.toMap(rbacRule -> createKey(rbacRule), rbacRule -> rbacRule));
 	}
 
 	private String createKey(RbacRule rbacRule) {

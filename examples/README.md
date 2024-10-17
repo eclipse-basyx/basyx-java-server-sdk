@@ -15,3 +15,6 @@ See the separate [Operation Delegation Example](BaSyxOperationDelegation) for a 
 
 ## BaSyx Secure Setup Example
 See the separate [Secure Setup Example](BaSyxSecured) for a comprehensive setup leveraging Keycloak.
+
+## BaSyx Client Example
+See the separate [Client Example](BaSyxClient) for a comprehensive setup leveraging the BaSyx Java Client library.

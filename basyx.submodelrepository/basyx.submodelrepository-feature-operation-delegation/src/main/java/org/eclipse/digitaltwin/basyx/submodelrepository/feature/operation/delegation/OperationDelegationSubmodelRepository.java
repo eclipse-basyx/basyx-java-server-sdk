@@ -65,6 +65,11 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
 		return decorated.getAllSubmodels(pInfo);
 	}
+	
+	@Override
+	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo) {
+		return decorated.getAllSubmodels(semanticId, pInfo);
+	}
 
 	@Override
 	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException {
