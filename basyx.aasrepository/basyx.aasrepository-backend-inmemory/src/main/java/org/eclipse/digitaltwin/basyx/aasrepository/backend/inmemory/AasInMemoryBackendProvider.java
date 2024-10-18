@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
+import org.eclipse.digitaltwin.basyx.common.backend.inmemory.core.InMemoryCrudRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
@@ -35,7 +36,7 @@ import org.springframework.stereotype.Component;
  * 
  * InMemory backend provider for the AAS
  * 
- * @author mateusmolina
+ * @author mateusmolina, danish
  */
 @ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
 @Component
@@ -43,7 +44,7 @@ public class AasInMemoryBackendProvider implements AasBackendProvider {
 
 	@Override
 	public CrudRepository<AssetAdministrationShell, String> getCrudRepository() {
-		return new AasInMemoryBackend();
+		return new InMemoryCrudRepository<AssetAdministrationShell>(AssetAdministrationShell::getId);
 	}
 
 }
