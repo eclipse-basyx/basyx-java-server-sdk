@@ -32,6 +32,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministratio
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
+import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 
 /**
@@ -76,7 +77,7 @@ public class DummyAasDescriptorFactory {
 	}
 
 	private static String createHref(String aasId, String aasRepoBaseUrl) {
-		return String.format("%s/%s", createAasRepositoryUrl(aasRepoBaseUrl), Base64UrlEncodedIdentifier.encodeIdentifier(aasId));
+		return String.format("%s/%s", RepositoryUrlHelper.createRepositoryUrl(aasRepoBaseUrl, AAS_REPOSITORY_PATH), Base64UrlEncodedIdentifier.encodeIdentifier(aasId));
 	}
 
 	private static String getProtocol(String endpoint) {
@@ -86,14 +87,4 @@ public class DummyAasDescriptorFactory {
 			throw new RuntimeException();
 		}
 	}
-
-	private static String createAasRepositoryUrl(String aasRepositoryBaseURL) {
-
-		try {
-			return new URL(new URL(aasRepositoryBaseURL), AAS_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The AAS Repository Base url is malformed. " + e.getMessage());
-		}
-	}
-
 }

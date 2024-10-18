@@ -40,6 +40,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministratio
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AttributeMapper;
+import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 
 /**
@@ -196,7 +197,7 @@ public class AasDescriptorFactory {
 	private List<String> createAasRepositoryUrls(List<String> aasRepositoryBaseURLs) {
 		List<String> toReturn = new ArrayList<>(aasRepositoryBaseURLs.size());
 		for (String eachUrl : aasRepositoryBaseURLs) {
-			toReturn.add(createAasRepositoryUrl(eachUrl));
+			toReturn.add(RepositoryUrlHelper.createRepositoryUrl(eachUrl, AAS_REPOSITORY_PATH));
 		}
 		return toReturn;
 	}
@@ -209,5 +210,4 @@ public class AasDescriptorFactory {
 			throw new RuntimeException("The AAS Repository Base url is malformed.\n" + e.getMessage());
 		}
 	}
-
 }
