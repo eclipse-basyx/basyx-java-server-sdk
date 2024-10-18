@@ -4,6 +4,21 @@
 	"id": "AasNumber3Identifier",
 	"assetInformation": {
 		"assetKind": "Instance",
-		"globalAssetId": "AasNumber3AssetId"
+		"globalAssetId": "AasNumber3AssetId",
+		"specificAssetIds": [
+			{
+				"name": "dummy-asset4",
+				"value": "dummy-asset4-value",
+				"externalSubjectId": {
+					"keys": [
+						{
+							"type": "GlobalReference",
+							"value": "https://example.org/ExternalSubject"
+						}
+					],
+					"type": "ExternalReference"
+				}
+			}
+		]
 	}
 }

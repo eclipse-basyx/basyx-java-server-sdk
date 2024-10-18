@@ -25,7 +25,7 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
-import org.springframework.data.repository.CrudRepository;
+import org.eclipse.digitaltwin.basyx.core.BaSyxCrudRepository;
 
 /**
  * Backend provider for the {@link ConceptDescription}
@@ -34,6 +34,6 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface ConceptDescriptionBackendProvider {
 	
-	public CrudRepository<ConceptDescription, String> getCrudRepository();
+	public BaSyxCrudRepository<ConceptDescription> getCrudRepository();
 	
 }

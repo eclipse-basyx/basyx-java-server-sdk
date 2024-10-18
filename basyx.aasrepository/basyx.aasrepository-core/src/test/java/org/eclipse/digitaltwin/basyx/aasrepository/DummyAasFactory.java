@@ -26,6 +26,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,12 +35,15 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 
 public class DummyAasFactory {
+	public static final String DUMMY_ID_SHORT = "dummyIdShort";
 	public static final String AASWITHSUBMODELREF_ID = "aas1/s";
 	public static final String AASWITHASSETINFORMATION_ID = "aas2";
 
@@ -47,6 +51,67 @@ public class DummyAasFactory {
 
 	public static List<AssetAdministrationShell> createShells() {
 		return Arrays.asList(createAasWithSubmodelReference(), createAasWithAssetInformation());
+	}
+	
+	public static List<AssetAdministrationShell> createShellsForFiltering() {
+		List<AssetAdministrationShell> shellsWithSameIdShort = createShellsWithSameIdShort();
+		List<AssetAdministrationShell> shellsWithSpecificAssetIds = createShellsWithSpecificAssetIds();
+		List<AssetAdministrationShell> shells = createShells();
+		
+		List<AssetAdministrationShell> allShells = new ArrayList<AssetAdministrationShell>();
+		allShells.addAll(shellsWithSameIdShort);
+		allShells.addAll(shellsWithSpecificAssetIds);
+		allShells.addAll(shells);
+		
+		return allShells;
+	}
+	
+	public static List<AssetAdministrationShell> createShellsWithSameIdShort() {		
+		return Arrays.asList(createShell("aasId1", DUMMY_ID_SHORT, null), getShellWithIdShortAndSpecificAssetId());
+	}
+
+	public static AssetAdministrationShell getShellWithIdShortAndSpecificAssetId() {
+		List<SpecificAssetId> specificAssetIds = getSpecificAssetIdsForFiltering();
+		
+		return createShell("aasId2", DUMMY_ID_SHORT, specificAssetIds);
+	}
+	
+	public static List<AssetAdministrationShell> createShellsWithSpecificAssetIds() {
+		
+		List<SpecificAssetId> specificAssetIds = getSpecificAssetIdsForFiltering();
+		
+		return Arrays.asList(createShell("aasId3", "idShort1", specificAssetIds), createShell("aasId4", "idShort2", specificAssetIds));
+	}
+	
+	public static List<AssetAdministrationShell> getAllShellsWithSpecificAssetIds() {
+		
+		List<AssetAdministrationShell> allShells = new ArrayList<AssetAdministrationShell>();
+		allShells.addAll(createShellsWithSpecificAssetIds());
+		allShells.add(getShellWithIdShortAndSpecificAssetId());
+		
+		return allShells;
+	}
+	
+	public static List<SpecificAssetId> getSpecificAssetIdsForFiltering() {
+		return Arrays.asList(createSpecificAssetId("specificAssetId1_name", "specificAssetId1_value"), createSpecificAssetId("specificAssetId2_name", "specificAssetId2_value"));
+	}
+	
+	private static SpecificAssetId createSpecificAssetId(String name, String value) {
+		return new DefaultSpecificAssetId.Builder().name(name).value(value).build();
+	}
+
+	private static AssetAdministrationShell createShell(String id, String idShort, List<SpecificAssetId> specificAssetIds) {
+		DefaultAssetAdministrationShell.Builder builder = new DefaultAssetAdministrationShell.Builder()
+				.id(id).idShort(idShort);
+		
+		if (specificAssetIds != null) {
+			AssetInformation assetInformation = createDummyAssetInformation();
+			assetInformation.setSpecificAssetIds(specificAssetIds);
+			builder.assetInformation(assetInformation);
+		}
+		
+		return builder.build();
+		
 	}
 
 	public static AssetAdministrationShell createAasWithSubmodelReference() {

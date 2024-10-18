@@ -29,12 +29,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasFilter;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetAssetAdministrationShellsResult;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetReferencesResult;
@@ -56,6 +58,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -67,10 +72,12 @@ import jakarta.validation.constraints.Min;
 public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 
 	private final AasRepository aasRepository;
-
+	private final ObjectMapper objectMapper;
+	
 	@Autowired
-	public AasRepositoryApiHTTPController(AasRepository aasRepository) {
+	public AasRepositoryApiHTTPController(AasRepository aasRepository, ObjectMapper objectMapper) {
 		this.aasRepository = aasRepository;
+		this.objectMapper = objectMapper;
 	}
 
 	@Override
@@ -108,7 +115,7 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 	}
 
 	@Override
-	public ResponseEntity<PagedResult> getAllAssetAdministrationShells(@Valid List<SpecificAssetId> assetIds, @Valid String idShort, @Min(0) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor) {
+	public ResponseEntity<PagedResult> getAllAssetAdministrationShells(@Valid List<Base64UrlEncodedIdentifier> assetIds, @Valid String idShort, @Min(0) @Valid Integer limit, @Valid Base64UrlEncodedCursor cursor) {
 		if (limit == null) {
 			limit = 100;
 		}
@@ -117,9 +124,21 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 		if (cursor != null) {
 			decodedCursor = cursor.getDecodedCursor();
 		}
+		
+		List<SpecificAssetId> decodedAssetLinks;
+		try {
+			decodedAssetLinks = getDecodedAssetLinks(assetIds);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+		
+		AasFilter aasFilter = new AasFilter();
+		
+		if (assetIds != null && !assetIds.isEmpty())
+			aasFilter.setSpecificAssetIds(decodedAssetLinks);
 
 		PaginationInfo paginationInfo = new PaginationInfo(limit, decodedCursor);
-		CursorResult<List<AssetAdministrationShell>> paginatedAAS = aasRepository.getAllAas(paginationInfo);
+		CursorResult<List<AssetAdministrationShell>> paginatedAAS = aasRepository.getAllAas(paginationInfo, aasFilter);
 
 		GetAssetAdministrationShellsResult result = new GetAssetAdministrationShellsResult();
 
@@ -221,4 +240,21 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 			e.printStackTrace();
 		}
 	}
+	
+	private List<SpecificAssetId> getDecodedAssetLinks(List<Base64UrlEncodedIdentifier> assetIds) throws JsonProcessingException {
+		List<SpecificAssetId> result = new ArrayList<>();
+
+		if (assetIds == null)
+			return result;
+
+		for (Base64UrlEncodedIdentifier base64UrlEncodedIdentifier : assetIds) {
+
+			var decodedString = base64UrlEncodedIdentifier.getIdentifier();
+				result.add(objectMapper.readValue(decodedString, SpecificAssetId.class));
+
+		}
+		
+		return result;
+	}
+
 }
