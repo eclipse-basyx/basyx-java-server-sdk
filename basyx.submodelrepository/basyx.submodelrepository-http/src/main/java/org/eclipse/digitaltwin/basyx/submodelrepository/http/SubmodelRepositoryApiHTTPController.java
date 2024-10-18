@@ -182,7 +182,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	@Override
 	public ResponseEntity<SubmodelElement> postSubmodelElementSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, @Valid SubmodelElement body) {
 		repository.createSubmodelElement(submodelIdentifier.getIdentifier(), body);
-		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
+		return new ResponseEntity<SubmodelElement>(body, HttpStatus.CREATED);
 	}
 
 	@Override
