@@ -78,8 +78,6 @@ import org.junit.Test;
  *
  */
 public abstract class SubmodelServiceSuite {
-	protected static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(null, null);
-
 	protected abstract SubmodelService getSubmodelService(Submodel submodel);
 
 	/**
@@ -107,7 +105,7 @@ public abstract class SubmodelServiceSuite {
 		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
 		SubmodelService smService = getSubmodelService(technicalData);
 
-		assertTrue(technicalData.getSubmodelElements().containsAll(smService.getSubmodelElements(NO_LIMIT_PAGINATION_INFO).getResult()));
+		assertTrue(technicalData.getSubmodelElements().containsAll(smService.getSubmodelElements(PaginationInfo.NO_LIMIT).getResult()));
 	}
 
 	@Test
