@@ -95,7 +95,7 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodelsBySemanticid(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID);
 		
 		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
-		Collection<Submodel> submodels = repo.getAllSubmodels(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID, NO_LIMIT_PAGINATION_INFO).getResult();
+		Collection<Submodel> submodels = repo.getAllSubmodels(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID, PaginationInfo.NO_LIMIT).getResult();
 
 		assertSubmodelsAreContained(expectedSubmodels, submodels);
 	}
@@ -282,6 +282,8 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		expectedSubmodel.setSubmodelElements(null);
 		repo.createSubmodel(expectedSubmodel);
 
+		Submodel testSubmodel = repo.getSubmodel(ID);
+		
 		Submodel retrievedSubmodelMetadata = repo.getSubmodelByIdMetadata(ID);
 		retrievedSubmodelMetadata.setSubmodelElements(null);
 
@@ -296,8 +298,6 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		List<SubmodelElement> submodelElements = buildDummySubmodelElements();
 		submodel.setSubmodelElements(submodelElements);
 		repo.createSubmodel(submodel);
-		
-//		SubmodelValueOnly testSubmodelElements = new SubmodelValueOnly(repo.getSubmodelElements(ID, new PaginationInfo(0, null)).getResult());
 
 		SubmodelValueOnly expectedSmValueOnly = new SubmodelValueOnly(submodelElements);
 		SubmodelValueOnly retrievedSmValueOnly = repo.getSubmodelByIdValueOnly(ID);

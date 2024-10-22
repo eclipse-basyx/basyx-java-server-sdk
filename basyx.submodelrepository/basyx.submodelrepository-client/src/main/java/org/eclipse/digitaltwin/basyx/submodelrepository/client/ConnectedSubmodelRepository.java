@@ -217,7 +217,7 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) throws ElementDoesNotExistException {
-		return new SubmodelValueOnly(getSubmodelByIdMetadata(submodelId).getSubmodelElements());
+		return new SubmodelValueOnly(getSubmodel(submodelId).getSubmodelElements());
 	}
 
 	@Override
