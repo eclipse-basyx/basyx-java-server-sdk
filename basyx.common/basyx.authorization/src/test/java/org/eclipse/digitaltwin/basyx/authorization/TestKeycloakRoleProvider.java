@@ -43,7 +43,6 @@ import java.util.*;
  * Tests the behaviour of {@link KeycloakRoleProvider}
  * 
  * @author danish
- * 
  */
 public class TestKeycloakRoleProvider {
 
