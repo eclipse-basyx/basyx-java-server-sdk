@@ -31,6 +31,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
@@ -164,9 +168,8 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 			"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level) {
 
 		Submodel submodel = service.getSubmodel();
-		submodel.setSubmodelElements(null);
 
-		return new ResponseEntity<Submodel>(submodel, HttpStatus.OK);
+		return new ResponseEntity<Submodel>(getSubmodelDeepCopy(submodel), HttpStatus.OK);
 	}
 
 	@Override
@@ -321,4 +324,20 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		}
 	}
 
+	private Submodel getSubmodelDeepCopy(Submodel submodel) {
+
+		try {
+			String submodelAsJSON = new JsonSerializer().write(submodel);
+
+			Submodel submodelDeepCopy = new JsonDeserializer().read(submodelAsJSON, Submodel.class);
+
+			submodelDeepCopy.setSubmodelElements(null);
+
+			return submodelDeepCopy;
+		} catch (DeserializationException e) {
+			throw new RuntimeException("Unable to deserialize the Submodel", e);
+		} catch (SerializationException e) {
+			throw new RuntimeException("Unable to serialize the Submodel", e);
+		}
+	}
 }
