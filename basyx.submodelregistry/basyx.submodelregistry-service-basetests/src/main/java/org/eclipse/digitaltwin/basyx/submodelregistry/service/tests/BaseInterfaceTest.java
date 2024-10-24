@@ -107,7 +107,7 @@ public abstract class BaseInterfaceTest {
 	}
 
 	protected List<SubmodelDescriptor> getAllSubmodels() {
-		return storage.getAllSubmodelDescriptors(new PaginationInfo(null, null)).getResult();
+		return storage.getAllSubmodelDescriptors(PaginationInfo.NO_LIMIT).getResult();
 	}
 
 	protected CursorResult<List<SubmodelDescriptor>> getAllSubmodelsWithPagination(int limit, String cursor) {

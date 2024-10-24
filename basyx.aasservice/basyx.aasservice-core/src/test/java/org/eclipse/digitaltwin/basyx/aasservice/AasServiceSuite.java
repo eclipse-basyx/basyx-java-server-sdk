@@ -64,8 +64,6 @@ import org.junit.Test;
  */
 public abstract class AasServiceSuite {
 
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
-	
 	protected abstract AasService getAasService(AssetAdministrationShell shell);
 	protected abstract AasService getAasServiceWithThumbnail() throws IOException;
 		
@@ -82,7 +80,7 @@ public abstract class AasServiceSuite {
 		DummyAssetAdministrationShellFactory.addDummySubmodelReference(expected);
 		AasService aasService = getAasService(expected);
 		
-		List<Reference> submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
+		List<Reference> submodelReferences = aasService.getSubmodelReferences(PaginationInfo.NO_LIMIT).getResult();
 		Reference submodelReference = getFirstSubmodelReference(submodelReferences);
 		assertEquals(DummyAssetAdministrationShellFactory.submodelReference, submodelReference);
 	}
@@ -100,7 +98,7 @@ public abstract class AasServiceSuite {
 
 		aasService.addSubmodelReference(ref);
 
-		List<Reference> submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
+		List<Reference> submodelReferences = aasService.getSubmodelReferences(PaginationInfo.NO_LIMIT).getResult();
 
 		Reference submodelReference = getFirstSubmodelReference(submodelReferences);
 
@@ -113,9 +111,9 @@ public abstract class AasServiceSuite {
 		DummyAssetAdministrationShellFactory.addDummySubmodelReference(expected);
 		AasService aasService = getAasService(expected);
 
-		List<Reference> submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
+		List<Reference> submodelReferences = aasService.getSubmodelReferences(PaginationInfo.NO_LIMIT).getResult();
 		aasService.removeSubmodelReference(DummyAssetAdministrationShellFactory.SUBMODEL_ID);
-		submodelReferences = aasService.getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
+		submodelReferences = aasService.getSubmodelReferences(PaginationInfo.NO_LIMIT).getResult();
 		assertEquals(0, submodelReferences.size());
 	}
 

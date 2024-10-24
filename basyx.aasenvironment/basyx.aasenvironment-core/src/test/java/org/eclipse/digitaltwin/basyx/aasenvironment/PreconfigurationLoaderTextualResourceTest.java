@@ -31,6 +31,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.AasEnvironmentPreconfigurationLoader;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -52,9 +53,9 @@ public class PreconfigurationLoaderTextualResourceTest extends AasEnvironmentLoa
 	@Test
 	public void testWithEmptyResource_NoElementsAreDeployed() throws InvalidFormatException, IOException, DeserializationException {
 		loadRepositories(List.of());
-		Assert.assertTrue(aasRepository.getAllAas(ALL).getResult().isEmpty());
-		Assert.assertTrue(submodelRepository.getAllSubmodels(ALL).getResult().isEmpty());
-		Assert.assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(ALL).getResult().isEmpty());
+		Assert.assertTrue(aasRepository.getAllAas(PaginationInfo.NO_LIMIT).getResult().isEmpty());
+		Assert.assertTrue(submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().isEmpty());
+		Assert.assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().isEmpty());
 
 		Mockito.verify(aasRepository, Mockito.never()).createAas(Mockito.any());
 		Mockito.verify(aasRepository, Mockito.never()).updateAas(Mockito.anyString(), Mockito.any());

@@ -26,7 +26,6 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.core;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -34,7 +33,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
@@ -69,7 +67,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(null, null);
 	private static final String EMPTY_ID = " ";
 	private static final String NULL_ID = null;
 	private static final String ID = "testId";
@@ -87,20 +84,30 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodels();
 
 		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
-		Collection<Submodel> submodels = repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult();
+		Collection<Submodel> submodels = repo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult();
+
+		assertSubmodelsAreContained(expectedSubmodels, submodels);
+	}
+	
+	@Test
+	public void getAllSubmodelsBySemanticIDPreconfigured() {	
+		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodelsBySemanticid(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID);
+		
+		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
+		Collection<Submodel> submodels = repo.getAllSubmodels(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID, PaginationInfo.NO_LIMIT).getResult();
 
 		assertSubmodelsAreContained(expectedSubmodels, submodels);
 	}
 
 	private void assertSubmodelsAreContained(Collection<Submodel> expectedSubmodels, Collection<Submodel> submodels) {
-		assertEquals(3, submodels.size());
+		assertEquals(expectedSubmodels.size(), submodels.size());
 		assertTrue(submodels.containsAll(expectedSubmodels));
 	}
 
 	@Test
 	public void getAllSubmodelsEmpty() {
 		SubmodelRepository repo = getSubmodelRepository();
-		Collection<Submodel> submodels = repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult();
+		Collection<Submodel> submodels = repo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult();
 
 		assertIsEmpty(submodels);
 	}
@@ -214,7 +221,7 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getSubmodelElementsOfNonExistingSubmodel() {
 		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		repo.getSubmodelElements("notExisting", NO_LIMIT_PAGINATION_INFO).getResult();
+		repo.getSubmodelElements("notExisting", PaginationInfo.NO_LIMIT).getResult();
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)

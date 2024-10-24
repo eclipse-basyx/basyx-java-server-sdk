@@ -53,7 +53,6 @@ import org.junit.Test;
 public abstract class AASXFileServerSuite {
 
 	protected abstract AASXFileServer getAASXFileServer();
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0,"");
 	@Test
 	public void getAllAASXPackageIds() {
 
@@ -65,7 +64,7 @@ public abstract class AASXFileServerSuite {
 
 		List<PackageDescription> expectedPackageDescriptions = Arrays.asList(expectedDescription1, expectedDescription2);
 		
-		CursorResult<List<PackageDescription>> pagedPackageDescriptions = server.getAllAASXPackageIds("",NO_LIMIT_PAGINATION_INFO);
+		CursorResult<List<PackageDescription>> pagedPackageDescriptions = server.getAllAASXPackageIds("", PaginationInfo.NO_LIMIT);
 
 		List<PackageDescription> actualPackageDescriptions = pagedPackageDescriptions.getResult();
 
@@ -82,7 +81,7 @@ public abstract class AASXFileServerSuite {
 
 		List<PackageDescription> expectedPackageDescriptions = Arrays.asList(expectedDescription);
 
-		CursorResult<List<PackageDescription>> pagedPackageDescriptions = server.getAllAASXPackageIds("AAS_ID_3",NO_LIMIT_PAGINATION_INFO);
+		CursorResult<List<PackageDescription>> pagedPackageDescriptions = server.getAllAASXPackageIds("AAS_ID_3", PaginationInfo.NO_LIMIT);
 		List<PackageDescription> actualPackageDescriptions = pagedPackageDescriptions.getResult();
 		assertGetAllAASXPackageIds(expectedPackageDescriptions, actualPackageDescriptions);
 	}
@@ -103,7 +102,7 @@ public abstract class AASXFileServerSuite {
 		String shellId = "testShellId";
 
 		AASXFileServer server = getAASXFileServer();
-		CursorResult<List<PackageDescription>> pagedPackageDescriptions = server.getAllAASXPackageIds(shellId,NO_LIMIT_PAGINATION_INFO);
+		CursorResult<List<PackageDescription>> pagedPackageDescriptions = server.getAllAASXPackageIds(shellId, PaginationInfo.NO_LIMIT);
 		List<PackageDescription> packageDescriptions = pagedPackageDescriptions.getResult();
 		assertTrue(packageDescriptions.isEmpty());
 	}
@@ -128,7 +127,7 @@ public abstract class AASXFileServerSuite {
 		expectedPackageDescription.setPackageId("1");
 		expectedPackageDescription.setItems(DummyAASXFileServerFactory.SECOND_SHELL_IDS);
 
-		CursorResult<List<PackageDescription>> pagedPackageDescriptions = server.getAllAASXPackageIds("",NO_LIMIT_PAGINATION_INFO);
+		CursorResult<List<PackageDescription>> pagedPackageDescriptions = server.getAllAASXPackageIds("", PaginationInfo.NO_LIMIT);
 		List<PackageDescription> actualPackageDescription = pagedPackageDescriptions.getResult();
 		assertUpdatedAASXPackageId(expectedPackageDescription, actualPackageDescription, server);
 	}

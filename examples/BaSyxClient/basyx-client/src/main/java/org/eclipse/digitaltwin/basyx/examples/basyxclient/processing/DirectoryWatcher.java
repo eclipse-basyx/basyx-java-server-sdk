@@ -39,14 +39,10 @@ import java.util.List;
 import org.eclipse.digitaltwin.basyx.examples.basyxclient.model.MotorEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 
 import com.opencsv.bean.CsvToBeanBuilder;
 
-@Component
-public class DirectoryWatcher implements CommandLineRunner {
+public class DirectoryWatcher implements Runnable {
 
     private final Logger logger = LoggerFactory.getLogger(DirectoryWatcher.class);
 
@@ -54,14 +50,19 @@ public class DirectoryWatcher implements CommandLineRunner {
 
     private final Path dirToWatch;
 
-    public DirectoryWatcher(List<EntryProcessor> entryProcessors, @Value("${erp.internal.watchpath:/ingest}") Path dirToWatch) {
+    public DirectoryWatcher(List<EntryProcessor> entryProcessors, Path dirToWatch) {
         this.entryProcessors = entryProcessors;
         this.dirToWatch = dirToWatch;
     }
 
     @Override
-    public void run(String... args) throws Exception {
-        watchDirectory(dirToWatch);
+    public void run() {
+        try {
+            watchDirectory(dirToWatch);
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error watching directory", e);
+            Thread.currentThread().interrupt();
+        }
     }
 
     public void watchDirectory(Path dirToWatch) throws IOException, InterruptedException {
@@ -112,5 +113,6 @@ public class DirectoryWatcher implements CommandLineRunner {
             }
         }
     }
+
 
 }
