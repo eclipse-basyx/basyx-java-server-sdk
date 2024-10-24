@@ -42,7 +42,6 @@ import java.util.*;
 /**
  * Tests the behaviour of {@link KeycloakRoleProvider}
  * 
- * @author danish
  */
 public class TestKeycloakRoleProvider {
 
@@ -70,9 +69,13 @@ public class TestKeycloakRoleProvider {
         Map<String, Collection<String>> realmAccess = new HashMap<>();
         realmAccess.put("roles", Arrays.asList("ROLE_USER", "ROLE_ADMIN"));
 
-        Map<String, Collection<String>> resourceAccess = new HashMap<>();
-        resourceAccess.put("client1", Arrays.asList("ROLE_SUPERUSER", "ROLE_ADMIN"));
-        resourceAccess.put("client2", Arrays.asList("ROLE_SUPPORT"));
+        Map<String, Map<String, Collection<String>>> resourceAccess = new HashMap<>();
+        resourceAccess.put("client1", new HashMap<>() {{
+            put("roles", Arrays.asList("ROLE_SUPERUSER", "ROLE_ADMIN"));
+        }});
+        resourceAccess.put("client2", new HashMap<>() {{
+            put("roles", Arrays.asList("ROLE_SUPPORT"));
+        }});
 
         when(jwt.hasClaim("realm_access")).thenReturn(true);
         when(jwt.hasClaim("resource_access")).thenReturn(true);
@@ -107,8 +110,10 @@ public class TestKeycloakRoleProvider {
 
     @Test
     public void getRoles_whenOnlyResourceRolesPresent() {
-        Map<String, Collection<String>> resourceAccess = new HashMap<>();
-        resourceAccess.put("client1", Arrays.asList("ROLE_SUPERUSER", "ROLE_SUPPORT"));
+        Map<String, Map<String, Collection<String>>> resourceAccess = new HashMap<>();
+        resourceAccess.put("client1", new HashMap<>() {{
+            put("roles", Arrays.asList("ROLE_SUPERUSER", "ROLE_SUPPORT"));
+        }});
 
         when(jwt.hasClaim("realm_access")).thenReturn(true);
         when(jwt.hasClaim("resource_access")).thenReturn(true);
@@ -146,8 +151,10 @@ public class TestKeycloakRoleProvider {
 
     @Test
     public void getRoles_whenRealmAccessNotPresentButResourceAccessPresent() {
-        Map<String, Collection<String>> resourceAccess = new HashMap<>();
-        resourceAccess.put("client1", Arrays.asList("ROLE_SUPPORT", "ROLE_USER"));
+        Map<String, Map<String, Collection<String>>> resourceAccess = new HashMap<>();
+        resourceAccess.put("client1", new HashMap<>() {{
+            put("roles", Arrays.asList("ROLE_SUPPORT", "ROLE_USER"));
+        }});
 
         when(jwt.hasClaim("realm_access")).thenReturn(false);
         when(jwt.hasClaim("resource_access")).thenReturn(true);
@@ -186,3 +193,4 @@ public class TestKeycloakRoleProvider {
         assertTrue(roles.isEmpty());
     }
 }
+
