@@ -69,7 +69,7 @@ public class KeycloakRoleProvider implements RoleProvider {
 		validateJwt(jwt);
 		
 		Map<String, Collection<String>> realmAccess = new HashMap<>();
-		Map<String, Collection<String>> resourceAccess = new HashMap<>();
+		Map<String, Map<String, Collection<String>>> resourceAccess = new HashMap<>();
 		
 		if (jwt.hasClaim(CLAIM_REALM_ACCESS))
 			realmAccess = jwt.getClaim(CLAIM_REALM_ACCESS);
@@ -80,7 +80,7 @@ public class KeycloakRoleProvider implements RoleProvider {
 		return extractRolesFromClaims(realmAccess, resourceAccess);
 	}
 
-	private List<String> extractRolesFromClaims(Map<String, Collection<String>> realmAccess, Map<String, Collection<String>> resourceAccess) {
+	private List<String> extractRolesFromClaims(Map<String, Collection<String>> realmAccess, Map<String, Map<String, Collection<String>>> resourceAccess) {
 		if (realmAccess.isEmpty() && resourceAccess.isEmpty())
 			return new ArrayList<>();
 		
@@ -91,8 +91,9 @@ public class KeycloakRoleProvider implements RoleProvider {
         if (realmRoles != null && !realmRoles.isEmpty())
             roles.addAll(realmRoles);
         
-        for (Map.Entry<String, Collection<String>> entry : resourceAccess.entrySet()) {
-            Collection<String> clientRoles = entry.getValue();
+        for (Map.Entry<String, Map<String, Collection<String>>> entry : resourceAccess.entrySet()) {
+            Map<String, Collection<String>> clientRolesMap = entry.getValue();
+            Collection<String> clientRoles = clientRolesMap.get(CLAIM_ROLES); 
             
             if (clientRoles != null)
                 roles.addAll(clientRoles);
