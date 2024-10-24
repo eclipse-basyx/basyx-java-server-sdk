@@ -151,6 +151,16 @@ public class TestAuthorizedAasRepository {
 	}
 	
 	@Test
+	public void getAasWithOnlyResourceRole() throws IOException {
+		DummyCredential dummyCredential = DummyCredentialStore.USER_CREDENTIAL;
+		
+		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
+		
+		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getSpecificAasAccessURL(SPECIFIC_SHELL_ID), accessToken);
+		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+	}
+	
+	@Test
 	public void getAasWithCorrectRoleAndSpecificAasPermission() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL;
 		

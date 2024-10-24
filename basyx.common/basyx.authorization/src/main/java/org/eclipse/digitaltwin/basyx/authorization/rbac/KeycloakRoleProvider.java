@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.authorization.SubjectInformation;
@@ -83,28 +84,21 @@ public class KeycloakRoleProvider implements RoleProvider {
 		if (realmAccess.isEmpty() && resourceAccess.isEmpty())
 			return new ArrayList<>();
 		
+		List<String> roles = new ArrayList<>();
+		
 		Collection<String> realmRoles = realmAccess.get(CLAIM_ROLES);
-		Collection<String> resourceRoles = resourceAccess.get(CLAIM_ROLES);
 		
-		if ((realmRoles == null || realmRoles.isEmpty()) && (resourceRoles == null || resourceRoles.isEmpty()))
-			return new ArrayList<>();
-		
-		return mergeRoles(realmRoles, resourceRoles);		
-	}
-
-	private List<String> mergeRoles(Collection<String> realmRoles, Collection<String> resourceRoles) {
-		
-		if (realmRoles == null || realmRoles.isEmpty())
-			return new ArrayList<>(resourceRoles);
-		
-		if (resourceRoles == null || resourceRoles.isEmpty())
-			return new ArrayList<>(realmRoles);
-		
-		List<String> rolesUnion = new ArrayList<>(realmRoles);
-		
-		resourceRoles.stream().filter(resourceRole -> !rolesUnion.contains(resourceRole)).forEach(rolesUnion::add);
-
-		return rolesUnion;
+        if (realmRoles != null && !realmRoles.isEmpty())
+            roles.addAll(realmRoles);
+        
+        for (Map.Entry<String, Collection<String>> entry : resourceAccess.entrySet()) {
+            Collection<String> clientRoles = entry.getValue();
+            
+            if (clientRoles != null)
+                roles.addAll(clientRoles);
+        }
+        
+       return roles.stream().distinct().collect(Collectors.toList());
 	}
 
 	private void validateJwt(Jwt jwt) {

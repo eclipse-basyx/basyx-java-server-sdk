@@ -16,6 +16,14 @@
     }
   },
   {
+    "role": "basyx-user",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "aas",
+      "aasIds": "specificAasId"
+    }
+  },
+  {
     "role": "basyx-reader-two",
     "action": "READ",
     "targetInformation": {

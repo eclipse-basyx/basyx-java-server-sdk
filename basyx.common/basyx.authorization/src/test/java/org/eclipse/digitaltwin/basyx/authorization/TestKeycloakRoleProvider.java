@@ -46,144 +46,143 @@ import java.util.*;
  */
 public class TestKeycloakRoleProvider {
 
-	@Mock
-	private SubjectInformationProvider<Object> subjectInformationProvider;
+    @Mock
+    private SubjectInformationProvider<Object> subjectInformationProvider;
 
-	@Mock
-	private Jwt jwt;
+    @Mock
+    private Jwt jwt;
 
-	@InjectMocks
-	private KeycloakRoleProvider keycloakRoleProvider;
+    @InjectMocks
+    private KeycloakRoleProvider keycloakRoleProvider;
 
-	@Before
-	public void setUp() {
-		MockitoAnnotations.openMocks(this);
+    @Before
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
 
-		@SuppressWarnings("unchecked")
-		SubjectInformation<Object> subjectInfo = mock(SubjectInformation.class);
-		when(subjectInfo.get()).thenReturn(jwt);
-		when(subjectInformationProvider.get()).thenReturn(subjectInfo);
-	}
+        @SuppressWarnings("unchecked")
+        SubjectInformation<Object> subjectInfo = mock(SubjectInformation.class);
+        when(subjectInfo.get()).thenReturn(jwt);
+        when(subjectInformationProvider.get()).thenReturn(subjectInfo);
+    }
 
-	@Test
-	public void getRoles_whenBothRealmAndResourceRolesPresent() {
-		Map<String, Collection<String>> realmAccess = new HashMap<>();
-		realmAccess.put("roles", Arrays.asList("ROLE_USER", "ROLE_ADMIN"));
+    @Test
+    public void getRoles_whenBothRealmAndResourceRolesPresent() {
+        Map<String, Collection<String>> realmAccess = new HashMap<>();
+        realmAccess.put("roles", Arrays.asList("ROLE_USER", "ROLE_ADMIN"));
 
-		Map<String, Collection<String>> resourceAccess = new HashMap<>();
-		resourceAccess.put("roles", Arrays.asList("ROLE_SUPERUSER", "ROLE_ADMIN"));
+        Map<String, Collection<String>> resourceAccess = new HashMap<>();
+        resourceAccess.put("client1", Arrays.asList("ROLE_SUPERUSER", "ROLE_ADMIN"));
+        resourceAccess.put("client2", Arrays.asList("ROLE_SUPPORT"));
 
-		when(jwt.hasClaim("realm_access")).thenReturn(true);
-		when(jwt.hasClaim("resource_access")).thenReturn(true);
-		when(jwt.getClaim("realm_access")).thenReturn(realmAccess);
-		when(jwt.getClaim("resource_access")).thenReturn(resourceAccess);
+        when(jwt.hasClaim("realm_access")).thenReturn(true);
+        when(jwt.hasClaim("resource_access")).thenReturn(true);
+        when(jwt.getClaim("realm_access")).thenReturn(realmAccess);
+        when(jwt.getClaim("resource_access")).thenReturn(resourceAccess);
 
-		List<String> roles = keycloakRoleProvider.getRoles();
+        List<String> roles = keycloakRoleProvider.getRoles();
 
-		assertEquals(3, roles.size());
-		assertTrue(roles.contains("ROLE_USER"));
-		assertTrue(roles.contains("ROLE_ADMIN"));
-		assertTrue(roles.contains("ROLE_SUPERUSER"));
-	}
+        assertEquals(4, roles.size());
+        assertTrue(roles.contains("ROLE_USER"));
+        assertTrue(roles.contains("ROLE_ADMIN"));
+        assertTrue(roles.contains("ROLE_SUPERUSER"));
+        assertTrue(roles.contains("ROLE_SUPPORT"));
+    }
 
-	@Test
-	public void getRoles_whenOnlyRealmRolesPresent() {
-		Map<String, Collection<String>> realmAccess = new HashMap<>();
-		realmAccess.put("roles", Arrays.asList("ROLE_USER", "ROLE_ADMIN"));
+    @Test
+    public void getRoles_whenOnlyRealmRolesPresent() {
+        Map<String, Collection<String>> realmAccess = new HashMap<>();
+        realmAccess.put("roles", Arrays.asList("ROLE_USER", "ROLE_ADMIN"));
 
-		when(jwt.hasClaim("realm_access")).thenReturn(true);
-		when(jwt.hasClaim("resource_access")).thenReturn(true);
-		when(jwt.getClaim("realm_access")).thenReturn(realmAccess);
-		when(jwt.getClaim("resource_access")).thenReturn(Collections.emptyMap());
+        when(jwt.hasClaim("realm_access")).thenReturn(true);
+        when(jwt.hasClaim("resource_access")).thenReturn(true);
+        when(jwt.getClaim("realm_access")).thenReturn(realmAccess);
+        when(jwt.getClaim("resource_access")).thenReturn(Collections.emptyMap());
 
-		List<String> roles = keycloakRoleProvider.getRoles();
+        List<String> roles = keycloakRoleProvider.getRoles();
 
-		assertEquals(2, roles.size());
-		assertTrue(roles.contains("ROLE_USER"));
-		assertTrue(roles.contains("ROLE_ADMIN"));
-	}
+        assertEquals(2, roles.size());
+        assertTrue(roles.contains("ROLE_USER"));
+        assertTrue(roles.contains("ROLE_ADMIN"));
+    }
 
-	@Test
-	public void getRoles_whenOnlyResourceRolesPresent() {
-		Map<String, Collection<String>> resourceAccess = new HashMap<>();
-		resourceAccess.put("roles", Arrays.asList("ROLE_SUPERUSER", "ROLE_SUPPORT"));
+    @Test
+    public void getRoles_whenOnlyResourceRolesPresent() {
+        Map<String, Collection<String>> resourceAccess = new HashMap<>();
+        resourceAccess.put("client1", Arrays.asList("ROLE_SUPERUSER", "ROLE_SUPPORT"));
 
-		when(jwt.hasClaim("realm_access")).thenReturn(true);
-		when(jwt.hasClaim("resource_access")).thenReturn(true);
-		when(jwt.getClaim("realm_access")).thenReturn(Collections.emptyMap());
-		when(jwt.getClaim("resource_access")).thenReturn(resourceAccess);
+        when(jwt.hasClaim("realm_access")).thenReturn(true);
+        when(jwt.hasClaim("resource_access")).thenReturn(true);
+        when(jwt.getClaim("realm_access")).thenReturn(Collections.emptyMap());
+        when(jwt.getClaim("resource_access")).thenReturn(resourceAccess);
 
-		List<String> roles = keycloakRoleProvider.getRoles();
+        List<String> roles = keycloakRoleProvider.getRoles();
 
-		assertEquals(2, roles.size());
-		assertTrue(roles.contains("ROLE_SUPERUSER"));
-		assertTrue(roles.contains("ROLE_SUPPORT"));
-	}
+        assertEquals(2, roles.size());
+        assertTrue(roles.contains("ROLE_SUPERUSER"));
+        assertTrue(roles.contains("ROLE_SUPPORT"));
+    }
 
-	@Test
-	public void getRoles_whenNoRolesPresent() {
-		when(jwt.hasClaim("realm_access")).thenReturn(true);
-	    when(jwt.hasClaim("resource_access")).thenReturn(true);
-	    when(jwt.getClaim("realm_access")).thenReturn(Collections.emptyMap());
-	    when(jwt.getClaim("resource_access")).thenReturn(Collections.emptyMap());
-	    
-	    List<String> roles = keycloakRoleProvider.getRoles();
-	
-	    assertTrue(roles.isEmpty());
-	}
+    @Test
+    public void getRoles_whenNoRolesPresent() {
+        when(jwt.hasClaim("realm_access")).thenReturn(true);
+        when(jwt.hasClaim("resource_access")).thenReturn(true);
+        when(jwt.getClaim("realm_access")).thenReturn(Collections.emptyMap());
+        when(jwt.getClaim("resource_access")).thenReturn(Collections.emptyMap());
 
-	@Test(expected = NullSubjectException.class)
-	public void getRoles_whenJwtIsNull() {
+        List<String> roles = keycloakRoleProvider.getRoles();
 
-		@SuppressWarnings("unchecked")
-		SubjectInformation<Object> subjectInfo = mock(SubjectInformation.class);
-		when(subjectInfo.get()).thenReturn(null);
-		when(subjectInformationProvider.get()).thenReturn(subjectInfo);
+        assertTrue(roles.isEmpty());
+    }
 
-		keycloakRoleProvider.getRoles();
-	}
+    @Test(expected = NullSubjectException.class)
+    public void getRoles_whenJwtIsNull() {
+        @SuppressWarnings("unchecked")
+        SubjectInformation<Object> subjectInfo = mock(SubjectInformation.class);
+        when(subjectInfo.get()).thenReturn(null);
+        when(subjectInformationProvider.get()).thenReturn(subjectInfo);
 
-	@Test
-	public void getRoles_whenRealmAccessNotPresentButResourceAccessPresent() {
-		Map<String, Collection<String>> resourceAccess = new HashMap<>();
-		resourceAccess.put("roles", Arrays.asList("ROLE_SUPPORT", "ROLE_USER"));
+        keycloakRoleProvider.getRoles();
+    }
 
-		when(jwt.hasClaim("realm_access")).thenReturn(false);
+    @Test
+    public void getRoles_whenRealmAccessNotPresentButResourceAccessPresent() {
+        Map<String, Collection<String>> resourceAccess = new HashMap<>();
+        resourceAccess.put("client1", Arrays.asList("ROLE_SUPPORT", "ROLE_USER"));
 
-		when(jwt.hasClaim("resource_access")).thenReturn(true);
-		when(jwt.getClaim("resource_access")).thenReturn(resourceAccess);
+        when(jwt.hasClaim("realm_access")).thenReturn(false);
+        when(jwt.hasClaim("resource_access")).thenReturn(true);
+        when(jwt.getClaim("resource_access")).thenReturn(resourceAccess);
 
-		List<String> roles = keycloakRoleProvider.getRoles();
+        List<String> roles = keycloakRoleProvider.getRoles();
 
-		assertEquals(2, roles.size());
-		assertTrue(roles.contains("ROLE_SUPPORT"));
-		assertTrue(roles.contains("ROLE_USER"));
-	}
+        assertEquals(2, roles.size());
+        assertTrue(roles.contains("ROLE_SUPPORT"));
+        assertTrue(roles.contains("ROLE_USER"));
+    }
 
-	@Test
-	public void getRoles_whenResourceAccessNotPresentButRealmAccessPresent() {
-		Map<String, Collection<String>> realmAccess = new HashMap<>();
-		realmAccess.put("roles", Arrays.asList("ROLE_USER", "ROLE_ADMIN"));
-		when(jwt.hasClaim("resource_access")).thenReturn(false);
+    @Test
+    public void getRoles_whenResourceAccessNotPresentButRealmAccessPresent() {
+        Map<String, Collection<String>> realmAccess = new HashMap<>();
+        realmAccess.put("roles", Arrays.asList("ROLE_USER", "ROLE_ADMIN"));
 
-		when(jwt.hasClaim("realm_access")).thenReturn(true);
-		when(jwt.getClaim("realm_access")).thenReturn(realmAccess);
+        when(jwt.hasClaim("resource_access")).thenReturn(false);
+        when(jwt.hasClaim("realm_access")).thenReturn(true);
+        when(jwt.getClaim("realm_access")).thenReturn(realmAccess);
 
-		List<String> roles = keycloakRoleProvider.getRoles();
+        List<String> roles = keycloakRoleProvider.getRoles();
 
-		assertEquals(2, roles.size());
-		assertTrue(roles.contains("ROLE_USER"));
-		assertTrue(roles.contains("ROLE_ADMIN"));
-	}
+        assertEquals(2, roles.size());
+        assertTrue(roles.contains("ROLE_USER"));
+        assertTrue(roles.contains("ROLE_ADMIN"));
+    }
 
-	@Test
-	public void getRoles_whenClaimNotPresent() {
-		
-	    when(jwt.hasClaim("realm_access")).thenReturn(false);
-	    when(jwt.hasClaim("resource_access")).thenReturn(false);
-	    
-	    List<String> roles = keycloakRoleProvider.getRoles();
-	
-	    assertTrue(roles.isEmpty());
-	}
+    @Test
+    public void getRoles_whenClaimNotPresent() {
+        when(jwt.hasClaim("realm_access")).thenReturn(false);
+        when(jwt.hasClaim("resource_access")).thenReturn(false);
+
+        List<String> roles = keycloakRoleProvider.getRoles();
+
+        assertTrue(roles.isEmpty());
+    }
 }
