@@ -35,10 +35,6 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -54,6 +50,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
+import org.eclipse.digitaltwin.basyx.serialization.SubmodelDeepCopyUtil;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
@@ -255,7 +252,7 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 		Submodel submodel = getSubmodel(submodelId);
 
-		return getSubmodelDeepCopy(submodel);
+		return SubmodelDeepCopyUtil.deepCopy(submodel);
 	}
 
 	@Override
@@ -301,23 +298,6 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	private void throwIfMissingId(Collection<Submodel> submodels) {
 		submodels.stream().map(Submodel::getId).forEach(this::throwIfSubmodelIdEmptyOrNull);
-	}
-
-	private Submodel getSubmodelDeepCopy(Submodel submodel) {
-
-		try {
-			String submodelAsJSON = new JsonSerializer().write(submodel);
-
-			Submodel submodelDeepCopy = new JsonDeserializer().read(submodelAsJSON, Submodel.class);
-
-			submodelDeepCopy.setSubmodelElements(null);
-
-			return submodelDeepCopy;
-		} catch (DeserializationException e) {
-			throw new RuntimeException("Unable to deserialize the Submodel", e);
-		} catch (SerializationException e) {
-			throw new RuntimeException("Unable to serialize the Submodel", e);
-		}
 	}
 
 	private SubmodelService getSubmodelServiceOrThrow(String submodelId) {

@@ -31,10 +31,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
@@ -50,6 +46,7 @@ import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.eclipse.digitaltwin.basyx.pagination.GetSubmodelElementsResult;
+import org.eclipse.digitaltwin.basyx.serialization.SubmodelDeepCopyUtil;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
@@ -169,7 +166,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 
 		Submodel submodel = service.getSubmodel();
 
-		return new ResponseEntity<Submodel>(getSubmodelDeepCopy(submodel), HttpStatus.OK);
+		return new ResponseEntity<>(SubmodelDeepCopyUtil.deepCopy(submodel), HttpStatus.OK);
 	}
 
 	@Override
@@ -321,23 +318,6 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 			fileInputstream.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-	}
-
-	private Submodel getSubmodelDeepCopy(Submodel submodel) {
-
-		try {
-			String submodelAsJSON = new JsonSerializer().write(submodel);
-
-			Submodel submodelDeepCopy = new JsonDeserializer().read(submodelAsJSON, Submodel.class);
-
-			submodelDeepCopy.setSubmodelElements(null);
-
-			return submodelDeepCopy;
-		} catch (DeserializationException e) {
-			throw new RuntimeException("Unable to deserialize the Submodel", e);
-		} catch (SerializationException e) {
-			throw new RuntimeException("Unable to serialize the Submodel", e);
 		}
 	}
 }
