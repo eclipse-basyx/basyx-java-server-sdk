@@ -36,7 +36,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver
 
 /**
  * Resolves an AasDescriptor into a {@link ConnectedAasService}
- *
+ * 
  * @author mateusmolina, danish
  *
  */
