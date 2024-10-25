@@ -27,6 +27,8 @@ package org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
@@ -43,7 +45,7 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 public class DummyAasDescriptorFactory {
 	private static final String AAS_REPOSITORY_PATH = "/shells";
 
-	public static AssetAdministrationShellDescriptor createDummyDescriptor(String aasId, String idShort, String globalAssetId, String... aasRepoBaseUrls) {
+	public static AssetAdministrationShellDescriptor createDummyDescriptor(String aasId, String idShort, String globalAssetId, List<Endpoint> endpoints) {
 
 		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
 
@@ -51,15 +53,24 @@ public class DummyAasDescriptorFactory {
 		descriptor.setIdShort(idShort);
 		descriptor.setAssetKind(AssetKind.INSTANCE);
 		descriptor.setGlobalAssetId(globalAssetId);
-		for (String eachUrl : aasRepoBaseUrls) {
-			descriptor.addEndpointsItem(createEndpointItem(aasId, eachUrl));
-		}
+		descriptor.setEndpoints(endpoints);
+
 		return descriptor;
 	}
 
-	private static Endpoint createEndpointItem(String aasId, String aasRepoBaseUrl) {
+	public static AssetAdministrationShellDescriptor createDummyDescriptor(String aasId, String idShort, String globalAssetId, String... aasRepoBaseUrls) {
+		LinkedList<Endpoint> endpoints = new LinkedList<>();
+
+		for (String eachUrl : aasRepoBaseUrls) {
+			endpoints.add(createEndpoint(aasId, eachUrl, "AAS-3.0"));
+		}
+
+		return createDummyDescriptor(aasId, idShort, globalAssetId, endpoints);
+	}
+
+	public static Endpoint createEndpoint(String aasId, String aasRepoBaseUrl, String endpointInterface) {
 		Endpoint endpoint = new Endpoint();
-		endpoint.setInterface("AAS-3.0");
+		endpoint.setInterface(endpointInterface);
 		endpoint.setProtocolInformation(createProtocolInformation(aasId, aasRepoBaseUrl));
 
 		return endpoint;

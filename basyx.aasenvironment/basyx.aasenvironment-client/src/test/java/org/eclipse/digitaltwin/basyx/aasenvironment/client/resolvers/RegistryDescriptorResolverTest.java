@@ -31,7 +31,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.DummyAasEnvironmentComponent;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.TestFixture;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.junit.AfterClass;
@@ -52,10 +51,10 @@ public class RegistryDescriptorResolverTest {
 	private static AasRepository aasRepository;
 	private static SubmodelRepository smRepository;
 
-	private final static String AAS_REPOSITORY_BASE_PATH = "http://localhost:8081";
-	private final static String SM_REPOSITORY_BASE_PATH = "http://localhost:8081";
+	private static final String AAS_REPOSITORY_BASE_PATH = "http://localhost:8081";
+	private static final String SM_REPOSITORY_BASE_PATH = "http://localhost:8081";
 
-	private final static TestFixture FIXTURE = new TestFixture(AAS_REPOSITORY_BASE_PATH, SM_REPOSITORY_BASE_PATH);
+	private static final TestFixture FIXTURE = new TestFixture(AAS_REPOSITORY_BASE_PATH, SM_REPOSITORY_BASE_PATH);
 
 	@BeforeClass
 	public static void initApplication() {
@@ -65,6 +64,8 @@ public class RegistryDescriptorResolverTest {
 		smRepository = appContext.getBean(SubmodelRepository.class);
 		aasRepository.createAas(FIXTURE.buildAasPre1());
 		smRepository.createSubmodel(FIXTURE.buildSmPre1());
+		aasRepository.createAas(FIXTURE.buildAasPos1());
+		smRepository.createSubmodel(FIXTURE.buildSmPos1());
 	}
 	
 	@AfterClass
@@ -73,7 +74,7 @@ public class RegistryDescriptorResolverTest {
 	}
 
 	@Test
-	public void resolveAasDescriptor() throws ApiException {
+	public void resolveAasDescriptor() {
 		AasDescriptorResolver resolver = new AasDescriptorResolver(new EndpointResolver());
 		
 		AssetAdministrationShell expectedAas = FIXTURE.buildAasPre1();
@@ -84,7 +85,18 @@ public class RegistryDescriptorResolverTest {
 	}
 
 	@Test
-	public void resolveSmDescriptor() throws ApiException {
+	public void resolveAasDescriptor_withMultipleInterfaces() {
+		AasDescriptorResolver resolver = new AasDescriptorResolver(new EndpointResolver());
+
+		AssetAdministrationShell expectedAas = FIXTURE.buildAasPre1();
+
+		AssetAdministrationShell actualAas = resolver.resolveDescriptor(FIXTURE.buildAasPre1Descriptor_withMultipleInterfaces()).getAAS();
+
+		assertEquals(expectedAas, actualAas);
+	}
+
+	@Test
+	public void resolveSmDescriptor() {
 		SubmodelDescriptorResolver resolver = new SubmodelDescriptorResolver(new EndpointResolver());
 
 		Submodel expectedSm = FIXTURE.buildSmPre1();
@@ -94,4 +106,14 @@ public class RegistryDescriptorResolverTest {
 		assertEquals(expectedSm, actualSm);
 	}
 
+	@Test
+	public void resolveSmDescriptor_withMultipleInterfaces() {
+		SubmodelDescriptorResolver resolver = new SubmodelDescriptorResolver(new EndpointResolver());
+
+		Submodel expectedSm = FIXTURE.buildSmPre1();
+
+		Submodel actualSm = resolver.resolveDescriptor(FIXTURE.buildSmPre1Descriptor_withMultipleInterfaces()).getSubmodel();
+
+		assertEquals(expectedSm, actualSm);
+	}
 }
