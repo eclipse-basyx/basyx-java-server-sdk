@@ -985,9 +985,6 @@
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
     "realmRoles" : [ "basyx-reader", "default-roles-basyx" ],
-    "clientRoles" : {
-      "basyx-client-api" : [ "basyx-user" ]
-    },
     "notBefore" : 0,
     "groups" : [ ]
   }, {
