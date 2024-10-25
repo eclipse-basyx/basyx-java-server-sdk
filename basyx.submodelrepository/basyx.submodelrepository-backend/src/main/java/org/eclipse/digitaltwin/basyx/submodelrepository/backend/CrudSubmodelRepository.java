@@ -50,7 +50,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
-import org.eclipse.digitaltwin.basyx.serialization.SubmodelDeepCopyUtil;
+import org.eclipse.digitaltwin.basyx.serialization.SubmodelMetadataUtil;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
@@ -252,7 +252,7 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 		Submodel submodel = getSubmodel(submodelId);
 
-		return SubmodelDeepCopyUtil.deepCopy(submodel);
+		return SubmodelMetadataUtil.extractMetadata(submodel);
 	}
 
 	@Override

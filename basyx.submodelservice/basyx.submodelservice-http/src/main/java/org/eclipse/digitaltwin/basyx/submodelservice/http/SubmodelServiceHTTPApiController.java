@@ -46,7 +46,7 @@ import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.eclipse.digitaltwin.basyx.pagination.GetSubmodelElementsResult;
-import org.eclipse.digitaltwin.basyx.serialization.SubmodelDeepCopyUtil;
+import org.eclipse.digitaltwin.basyx.serialization.SubmodelMetadataUtil;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
@@ -166,7 +166,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 
 		Submodel submodel = service.getSubmodel();
 
-		return new ResponseEntity<>(SubmodelDeepCopyUtil.deepCopy(submodel), HttpStatus.OK);
+		return new ResponseEntity<>(SubmodelMetadataUtil.extractMetadata(submodel), HttpStatus.OK);
 	}
 
 	@Override

@@ -7,34 +7,42 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FailedToDeepCopyException;
 
-public final class SubmodelDeepCopyUtil {
+public final class SubmodelMetadataUtil {
 
-    private SubmodelDeepCopyUtil() {
+    private SubmodelMetadataUtil() {
+    }
+
+    /**
+     * Returns a new submodel that only contains the metadata of the given submodel.
+     *
+     * @param submodel
+     * @return A new submodel with the metadata of the given submodel.
+     */
+    public static Submodel extractMetadata(Submodel submodel) {
+        Submodel submodelDeepCopy = deepCopy(submodel);
+
+        submodelDeepCopy.setSubmodelElements(null);
+
+        return submodelDeepCopy;
     }
 
     /**
      * Deep copy a submodel.
      * 
      * @param submodel
-     *            The submodel that should be copied.
      * @return A deep copy of the submodel.
      * 
      * @throws FailedToDeepCopyException
-     *             If the submodel can not be copied.
+     * 
      */
     public static Submodel deepCopy(Submodel submodel) {
         try {
             String submodelAsJSON = new JsonSerializer().write(submodel);
 
-            Submodel submodelDeepCopy = new JsonDeserializer().read(submodelAsJSON, Submodel.class);
-
-            submodelDeepCopy.setSubmodelElements(null);
-
-            return submodelDeepCopy;
+            return new JsonDeserializer().read(submodelAsJSON, Submodel.class);
 
         } catch (DeserializationException | SerializationException e) {
             throw new FailedToDeepCopyException(submodel.getId(), e);
         }
     }
-
 }
