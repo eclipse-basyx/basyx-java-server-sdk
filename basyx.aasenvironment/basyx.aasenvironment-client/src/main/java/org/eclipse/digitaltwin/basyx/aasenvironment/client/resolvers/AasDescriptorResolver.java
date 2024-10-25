@@ -30,6 +30,7 @@ import java.util.Optional;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
 import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver;
 
@@ -40,6 +41,8 @@ import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver
  *
  */
 public class AasDescriptorResolver implements DescriptorResolver<AssetAdministrationShellDescriptor, ConnectedAasService> {
+
+	static final String SPEC_INTERFACE = "AAS-3.0";
 
 	private final EndpointResolver endpointResolver;
 
@@ -66,16 +69,7 @@ public class AasDescriptorResolver implements DescriptorResolver<AssetAdministra
 
 	public static Optional<URI> parseEndpoint(Endpoint endpoint) {
 		try {
-			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation()
-					.getHref() == null)
-				return Optional.empty();
-
-			String baseHref = endpoint.getProtocolInformation()
-					.getHref();
-			// TODO not working: String queryString = "?" + endpoint.toUrlQueryString();
-			String queryString = "";
-			URI uri = new URI(baseHref + queryString);
-			return Optional.of(uri);
+			return Optional.ofNullable(endpoint).filter(ep -> ep.getInterface().equals(SPEC_INTERFACE)).map(Endpoint::getProtocolInformation).map(ProtocolInformation::getHref).map(URI::create);
 		} catch (Exception e) {
 			return Optional.empty();
 		}
