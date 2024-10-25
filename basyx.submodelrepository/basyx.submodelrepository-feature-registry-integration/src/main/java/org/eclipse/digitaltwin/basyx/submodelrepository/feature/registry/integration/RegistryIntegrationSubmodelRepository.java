@@ -91,9 +91,9 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 
 	@Override
 	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
-		decorated.createSubmodel(submodel);
-
 		integrateSubmodelWithRegistry(submodel, submodelRepositoryRegistryLink.getSubmodelRepositoryBaseURLs());
+
+		decorated.createSubmodel(submodel);
 	}
 
 	@Override
