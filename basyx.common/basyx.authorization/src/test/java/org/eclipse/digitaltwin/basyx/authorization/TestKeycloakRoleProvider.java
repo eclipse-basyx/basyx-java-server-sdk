@@ -71,12 +71,8 @@ public class TestKeycloakRoleProvider {
         realmAccess.put("roles", Arrays.asList("ROLE_USER", "ROLE_ADMIN"));
 
         Map<String, Map<String, Collection<String>>> resourceAccess = new HashMap<>();
-        resourceAccess.put("client1", new HashMap<>() {{
-            put("roles", Arrays.asList("ROLE_SUPERUSER", "ROLE_ADMIN"));
-        }});
-        resourceAccess.put("client2", new HashMap<>() {{
-            put("roles", Arrays.asList("ROLE_SUPPORT"));
-        }});
+        resourceAccess.put("client1", new HashMap<>(Collections.singletonMap("roles", Arrays.asList("ROLE_SUPERUSER", "ROLE_ADMIN"))));
+        resourceAccess.put("client2", new HashMap<>(Collections.singletonMap("roles", Arrays.asList("ROLE_SUPPORT"))));
 
         when(jwt.hasClaim("realm_access")).thenReturn(true);
         when(jwt.hasClaim("resource_access")).thenReturn(true);
@@ -112,9 +108,7 @@ public class TestKeycloakRoleProvider {
 	@Test
     public void getRoles_whenOnlyResourceRolesPresent() {
         Map<String, Map<String, Collection<String>>> resourceAccess = new HashMap<>();
-        resourceAccess.put("client1", new HashMap<>() {{
-            put("roles", Arrays.asList("ROLE_SUPERUSER", "ROLE_SUPPORT"));
-        }});
+        resourceAccess.put("client1", new HashMap<>(Collections.singletonMap("roles", Arrays.asList("ROLE_SUPERUSER", "ROLE_SUPPORT"))));
 
         when(jwt.hasClaim("realm_access")).thenReturn(true);
         when(jwt.hasClaim("resource_access")).thenReturn(true);
@@ -153,9 +147,7 @@ public class TestKeycloakRoleProvider {
 	@Test
     public void getRoles_whenRealmAccessNotPresentButResourceAccessPresent() {
         Map<String, Map<String, Collection<String>>> resourceAccess = new HashMap<>();
-        resourceAccess.put("client1", new HashMap<>() {{
-            put("roles", Arrays.asList("ROLE_SUPPORT", "ROLE_USER"));
-        }});
+        resourceAccess.put("client1", new HashMap<>(Collections.singletonMap("roles", Arrays.asList("ROLE_SUPPORT", "ROLE_USER"))));
 
         when(jwt.hasClaim("realm_access")).thenReturn(false);
         when(jwt.hasClaim("resource_access")).thenReturn(true);
