@@ -161,6 +161,16 @@ public class TestAuthorizedAasRepository {
 	}
 	
 	@Test
+	public void getAasWithBothRealmAndResourceRole() throws IOException {
+		DummyCredential dummyCredential = DummyCredentialStore.VISITOR_CREDENTIAL;
+		
+		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
+		
+		CloseableHttpResponse retrievalResponse = getElementWithAuthorization(getSpecificAasAccessURL(SPECIFIC_SHELL_ID), accessToken);
+		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+	}
+	
+	@Test
 	public void getAasWithCorrectRoleAndSpecificAasPermission() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL;
 		
@@ -199,6 +209,16 @@ public class TestAuthorizedAasRepository {
 	@Test
 	public void createAasWithCorrectRoleAndPermission() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_CREATOR_CREDENTIAL);
+		
+		CloseableHttpResponse retrievalResponse = createAasOnRepositoryWithAuthorization(getAasJSONString(AAS_SIMPLE_2_JSON), accessToken);
+		assertEquals(HttpStatus.CREATED.value(), retrievalResponse.getCode());
+		
+		deleteElementWithAuthorization(getSpecificAasAccessURL(SPECIFIC_SHELL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
+	}
+	
+	@Test
+	public void createAasWithBothRealmAndResourceRole() throws IOException {
+		String accessToken = getAccessToken(DummyCredentialStore.VISITOR_CREDENTIAL);
 		
 		CloseableHttpResponse retrievalResponse = createAasOnRepositoryWithAuthorization(getAasJSONString(AAS_SIMPLE_2_JSON), accessToken);
 		assertEquals(HttpStatus.CREATED.value(), retrievalResponse.getCode());

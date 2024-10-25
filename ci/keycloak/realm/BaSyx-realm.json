@@ -53,14 +53,6 @@
       "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
       "attributes" : { }
     }, {
-      "id" : "784a37d9-37df-4f01-9748-5b6215496d6e",
-      "name" : "client1-admin",
-      "description" : "",
-      "composite" : false,
-      "clientRole" : false,
-      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
-      "attributes" : { }
-    }, {
       "id" : "9b70ce9b-1b39-4f5a-893d-9f8956cf5dad",
       "name" : "basyx-reader-serialization-two",
       "description" : "",
@@ -666,7 +658,7 @@
   "otpPolicyLookAheadWindow" : 1,
   "otpPolicyPeriod" : 30,
   "otpPolicyCodeReusable" : false,
-  "otpSupportedApplications" : [ "totpAppGoogleName", "totpAppFreeOTPName", "totpAppMicrosoftAuthenticatorName" ],
+  "otpSupportedApplications" : [ "totpAppMicrosoftAuthenticatorName", "totpAppGoogleName", "totpAppFreeOTPName" ],
   "webAuthnPolicyRpEntityName" : "keycloak",
   "webAuthnPolicySignatureAlgorithms" : [ "ES256" ],
   "webAuthnPolicyRpId" : "",
@@ -1307,24 +1299,6 @@
     "notBefore" : 0,
     "groups" : [ ]
   }, {
-    "id" : "00d5c956-aeec-415a-9c91-07297eb3c76e",
-    "createdTimestamp" : 1728034148186,
-    "username" : "client1",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
-    "firstName" : "",
-    "lastName" : "",
-    "credentials" : [ ],
-    "disableableCredentialTypes" : [ ],
-    "requiredActions" : [ ],
-    "realmRoles" : [ "default-roles-basyx" ],
-    "clientRoles" : {
-      "realm-management" : [ "view-authorization", "manage-events", "view-clients", "create-client", "manage-realm", "manage-identity-providers", "manage-users", "view-events", "manage-authorization", "manage-clients" ]
-    },
-    "notBefore" : 0,
-    "groups" : [ ]
-  }, {
     "id" : "e75ac9e8-7093-4898-a203-d9839f854944",
     "createdTimestamp" : 1702030567684,
     "username" : "jane.doe",
@@ -1344,9 +1318,6 @@
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
     "realmRoles" : [ "user", "default-roles-basyx" ],
-    "clientRoles" : {
-      "basyx-client-api" : [ "basyx-user" ]
-    },
     "notBefore" : 0,
     "groups" : [ ]
   }, {
@@ -1416,6 +1387,9 @@
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
     "realmRoles" : [ "visitor", "default-roles-basyx" ],
+    "clientRoles" : {
+      "basyx-client-api" : [ "basyx-user" ]
+    },
     "notBefore" : 0,
     "groups" : [ ]
   }, {
@@ -1429,10 +1403,8 @@
     "credentials" : [ ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
-    "realmRoles" : [ "basyx-reader", "admin", "basyx-deleter", "basyx-updater", "basyx-creator", "default-roles-basyx" ],
+    "realmRoles" : [ "basyx-reader", "basyx-deleter", "basyx-updater", "admin", "basyx-creator", "default-roles-basyx" ],
     "clientRoles" : {
-      "realm-management" : [ "manage-realm", "query-users", "manage-users", "view-users" ],
-      "account" : [ "manage-account", "manage-consent" ],
       "workstation-1" : [ "uma_protection" ]
     },
     "notBefore" : 0,

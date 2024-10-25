@@ -46,16 +46,16 @@ import java.util.*;
  */
 public class TestKeycloakRoleProvider {
 
-    @Mock
+	@Mock
     private SubjectInformationProvider<Object> subjectInformationProvider;
 
-    @Mock
+	@Mock
     private Jwt jwt;
 
-    @InjectMocks
+	@InjectMocks
     private KeycloakRoleProvider keycloakRoleProvider;
 
-    @Before
+	@Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
@@ -65,7 +65,7 @@ public class TestKeycloakRoleProvider {
         when(subjectInformationProvider.get()).thenReturn(subjectInfo);
     }
 
-    @Test
+	@Test
     public void getRoles_whenBothRealmAndResourceRolesPresent() {
         Map<String, Collection<String>> realmAccess = new HashMap<>();
         realmAccess.put("roles", Arrays.asList("ROLE_USER", "ROLE_ADMIN"));
@@ -92,7 +92,7 @@ public class TestKeycloakRoleProvider {
         assertTrue(roles.contains("ROLE_SUPPORT"));
     }
 
-    @Test
+	@Test
     public void getRoles_whenOnlyRealmRolesPresent() {
         Map<String, Collection<String>> realmAccess = new HashMap<>();
         realmAccess.put("roles", Arrays.asList("ROLE_USER", "ROLE_ADMIN"));
@@ -109,7 +109,7 @@ public class TestKeycloakRoleProvider {
         assertTrue(roles.contains("ROLE_ADMIN"));
     }
 
-    @Test
+	@Test
     public void getRoles_whenOnlyResourceRolesPresent() {
         Map<String, Map<String, Collection<String>>> resourceAccess = new HashMap<>();
         resourceAccess.put("client1", new HashMap<>() {{
@@ -128,7 +128,7 @@ public class TestKeycloakRoleProvider {
         assertTrue(roles.contains("ROLE_SUPPORT"));
     }
 
-    @Test
+	@Test
     public void getRoles_whenNoRolesPresent() {
         when(jwt.hasClaim("realm_access")).thenReturn(true);
         when(jwt.hasClaim("resource_access")).thenReturn(true);
@@ -140,7 +140,7 @@ public class TestKeycloakRoleProvider {
         assertTrue(roles.isEmpty());
     }
 
-    @Test(expected = NullSubjectException.class)
+	@Test(expected = NullSubjectException.class)
     public void getRoles_whenJwtIsNull() {
         @SuppressWarnings("unchecked")
         SubjectInformation<Object> subjectInfo = mock(SubjectInformation.class);
@@ -150,7 +150,7 @@ public class TestKeycloakRoleProvider {
         keycloakRoleProvider.getRoles();
     }
 
-    @Test
+	@Test
     public void getRoles_whenRealmAccessNotPresentButResourceAccessPresent() {
         Map<String, Map<String, Collection<String>>> resourceAccess = new HashMap<>();
         resourceAccess.put("client1", new HashMap<>() {{
@@ -168,7 +168,7 @@ public class TestKeycloakRoleProvider {
         assertTrue(roles.contains("ROLE_USER"));
     }
 
-    @Test
+	@Test
     public void getRoles_whenResourceAccessNotPresentButRealmAccessPresent() {
         Map<String, Collection<String>> realmAccess = new HashMap<>();
         realmAccess.put("roles", Arrays.asList("ROLE_USER", "ROLE_ADMIN"));
@@ -184,7 +184,7 @@ public class TestKeycloakRoleProvider {
         assertTrue(roles.contains("ROLE_ADMIN"));
     }
 
-    @Test
+	@Test
     public void getRoles_whenClaimNotPresent() {
         when(jwt.hasClaim("realm_access")).thenReturn(false);
         when(jwt.hasClaim("resource_access")).thenReturn(false);
