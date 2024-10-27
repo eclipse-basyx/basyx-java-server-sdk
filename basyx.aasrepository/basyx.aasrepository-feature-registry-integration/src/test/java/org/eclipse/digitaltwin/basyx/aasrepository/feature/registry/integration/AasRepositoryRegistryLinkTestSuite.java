@@ -130,6 +130,7 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 	}
 
 	private CloseableHttpResponse createAasOnRepo(String aasJsonContent) throws IOException {
+		String url = RepositoryUrlHelper.createRepositoryUrl(getFirstAasRepoBaseUrl(), AAS_REPOSITORY_PATH);
 		return BaSyxHttpTestUtils.executePostOnURL(RepositoryUrlHelper.createRepositoryUrl(getFirstAasRepoBaseUrl(), AAS_REPOSITORY_PATH), aasJsonContent);
 	}
 
