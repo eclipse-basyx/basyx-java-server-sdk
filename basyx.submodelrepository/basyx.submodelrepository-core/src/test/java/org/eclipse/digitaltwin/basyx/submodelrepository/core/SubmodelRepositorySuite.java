@@ -281,8 +281,6 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		Submodel expectedSubmodel = buildDummySubmodelWithNoSmElement(ID);
 		expectedSubmodel.setSubmodelElements(null);
 		repo.createSubmodel(expectedSubmodel);
-
-		Submodel testSubmodel = repo.getSubmodel(ID);
 		
 		Submodel retrievedSubmodelMetadata = repo.getSubmodelByIdMetadata(ID);
 		retrievedSubmodelMetadata.setSubmodelElements(null);
