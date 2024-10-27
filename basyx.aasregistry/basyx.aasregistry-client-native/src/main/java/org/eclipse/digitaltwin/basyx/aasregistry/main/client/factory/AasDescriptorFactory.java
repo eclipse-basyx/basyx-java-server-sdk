@@ -201,13 +201,4 @@ public class AasDescriptorFactory {
 		}
 		return toReturn;
 	}
-
-	private String createAasRepositoryUrl(String aasRepositoryBaseURL) {
-
-		try {
-			return new URL(new URL(aasRepositoryBaseURL), AAS_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The AAS Repository Base url is malformed.\n" + e.getMessage());
-		}
-	}
 }

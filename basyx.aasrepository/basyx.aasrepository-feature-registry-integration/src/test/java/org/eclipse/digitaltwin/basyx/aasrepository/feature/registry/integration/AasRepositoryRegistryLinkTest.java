@@ -41,7 +41,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public class AasRepositoryRegistryLinkTest extends AasRepositoryRegistryLinkTestSuite {
 
-	private static final String AAS_REPO_URL = "http://localhost:8081";
+	private static final String AAS_REPO_URL = "http://localhost:8081/context";
 	private static final String AAS_REGISTRY_BASE_URL = "http://localhost:8050";
 	private static ConfigurableApplicationContext appContext;
 	private static AasRepositoryRegistryLink aasRepositoryRegistryLink;
@@ -60,7 +60,13 @@ public class AasRepositoryRegistryLinkTest extends AasRepositoryRegistryLinkTest
 
 	@Override
 	protected String[] getAasRepoBaseUrls() {
-		return new String[] { AAS_REPO_URL};
+		String url = AAS_REPO_URL;
+		int slashCount = url.length() - url.replace("/", "").length();
+		if (!url.endsWith("/") && slashCount >= 3) {
+			url += "/";
+		}
+		
+		return new String[] { url };
 	}
 
 	@Override
