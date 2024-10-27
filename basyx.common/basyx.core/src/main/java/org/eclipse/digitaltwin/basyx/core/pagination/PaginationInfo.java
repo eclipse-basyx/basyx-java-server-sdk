@@ -27,7 +27,7 @@
 package org.eclipse.digitaltwin.basyx.core.pagination;
 
 public class PaginationInfo {
-	public static final PaginationInfo NO_LIMIT = new PaginationInfo(0, null);
+	public static final PaginationInfo NO_LIMIT = new PaginationInfo(null, null);
 	
 	private Integer limit;
 	private String cursor;

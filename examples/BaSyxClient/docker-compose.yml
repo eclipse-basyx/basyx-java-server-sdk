@@ -49,11 +49,9 @@ services:
       context: ./basyx-client
       dockerfile: Dockerfile
     container_name: basyx-client
+    env_file: ./config/basyx-client.env
     volumes:
-      - ./config/basyx-client.properties:/app/application.properties
       - ./ingest:/ingest
-    ports:
-      - '8087:8087'
     network_mode: host
     depends_on:
       aas-env:
