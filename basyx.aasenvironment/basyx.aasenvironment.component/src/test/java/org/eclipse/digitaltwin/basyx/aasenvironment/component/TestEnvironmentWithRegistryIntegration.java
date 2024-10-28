@@ -36,8 +36,11 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment.EnvironmentType;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AasRepositoryRegistryLink;
+import org.eclipse.digitaltwin.basyx.core.exceptions.RepositoryRegistryLinkException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.SubmodelRepositoryRegistryLink;
@@ -57,7 +60,7 @@ import org.springframework.core.io.ClassPathResource;
  */
 public class TestEnvironmentWithRegistryIntegration {
 
-    static final String FAULTY_AAS_PATH = "faulty_aas_reginteg.aasx";
+    static final String ENV_PATH = "testEnvironment.json";
 
     static ConfigurableApplicationContext appContext;
 
@@ -92,12 +95,21 @@ public class TestEnvironmentWithRegistryIntegration {
     }
 
     @Test
-    public void whenUploadDescriptorToRegistryFails_thenNoAasOrSmAreAddedToRepository() throws InvalidFormatException, DeserializationException, IOException {
-        CompleteEnvironment completeEnvironment = CompleteEnvironment.fromInputStream(getIsFromClasspath(FAULTY_AAS_PATH), EnvironmentType.AASX);
+    public void whenUploadDescriptorToRegistryFails_thenNoAasOrSmAreAddedToRepository() throws InvalidFormatException, DeserializationException, IOException, ApiException {
+        // simulate descriptor already being in registry
+        aasRepositoryRegistryLink.getRegistryApi().postAssetAdministrationShellDescriptor(buildTestAasDescriptor());
 
-        assertThrows(IllegalArgumentException.class, () -> aasEnvironment.loadEnvironment(completeEnvironment));
+        CompleteEnvironment completeEnvironment = CompleteEnvironment.fromInputStream(getIsFromClasspath(ENV_PATH), EnvironmentType.JSON);
+
+        assertThrows(RepositoryRegistryLinkException.class, () -> aasEnvironment.loadEnvironment(completeEnvironment));
 
         assertRepositoriesAreEmpty();
+    }
+
+    private static AssetAdministrationShellDescriptor buildTestAasDescriptor() {
+        AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
+        descriptor.setId("https://acplt.test/Test_AssetAdministrationShell");
+        return descriptor;
     }
 
     private static InputStream getIsFromClasspath(String fileName) throws IOException {
