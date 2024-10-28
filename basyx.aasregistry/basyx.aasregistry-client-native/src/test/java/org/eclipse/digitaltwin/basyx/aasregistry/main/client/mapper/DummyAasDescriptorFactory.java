@@ -68,17 +68,21 @@ public class DummyAasDescriptorFactory {
 		return createDummyDescriptor(aasId, idShort, globalAssetId, endpoints);
 	}
 
-	public static Endpoint createEndpoint(String aasId, String aasRepoBaseUrl, String endpointInterface) {
+	public static Endpoint createEndpoint(String endpointUrl, String endpointInterface) {
 		Endpoint endpoint = new Endpoint();
 		endpoint.setInterface(endpointInterface);
-		endpoint.setProtocolInformation(createProtocolInformation(aasId, aasRepoBaseUrl));
+		endpoint.setProtocolInformation(createProtocolInformation(endpointUrl));
 
 		return endpoint;
 	}
 
-	private static ProtocolInformation createProtocolInformation(String aasId, String aasRepoBaseUrl) {
+	public static Endpoint createEndpoint(String aasId, String aasRepoBaseUrl, String endpointInterface) {
 		String href = createHref(aasId, aasRepoBaseUrl);
 
+		return createEndpoint(href, endpointInterface);
+	}
+
+	private static ProtocolInformation createProtocolInformation(String href) {
 		ProtocolInformation protocolInformation = new ProtocolInformation();
 		protocolInformation.setHref(href);
 		protocolInformation.endpointProtocol(getProtocol(href));

@@ -73,17 +73,21 @@ public class DummySubmodelDescriptorFactory {
 		return new Reference().keys(Arrays.asList(new Key().type(KeyTypes.GLOBALREFERENCE).value("0173-1#01-AFZ615#016"))).type(ReferenceTypes.EXTERNALREFERENCE);
 	}
 
-	public static Endpoint createEndpoint(String smId, String smRepoBaseUrl, String endpointInterface) {
+	public static Endpoint createEndpoint(String endpointUrl, String endpointInterface) {
 		Endpoint endpoint = new Endpoint();
 		endpoint.setInterface(endpointInterface);
-		endpoint.setProtocolInformation(createProtocolInformation(smId, smRepoBaseUrl));
+		endpoint.setProtocolInformation(createProtocolInformation(endpointUrl));
 
 		return endpoint;
 	}
 
-	private static ProtocolInformation createProtocolInformation(String smId, String smRepoBaseUrl) {
+	public static Endpoint createEndpoint(String smId, String smRepoBaseUrl, String endpointInterface) {
 		String href = createHref(smId, smRepoBaseUrl);
 
+		return createEndpoint(href, endpointInterface);
+	}
+
+	private static ProtocolInformation createProtocolInformation(String href) {
 		ProtocolInformation protocolInformation = new ProtocolInformation();
 		protocolInformation.setHref(href);
 		protocolInformation.endpointProtocol(getProtocol(href));

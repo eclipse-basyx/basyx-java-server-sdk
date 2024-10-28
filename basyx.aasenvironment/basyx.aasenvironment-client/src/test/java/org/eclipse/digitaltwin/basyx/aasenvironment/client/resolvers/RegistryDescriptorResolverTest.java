@@ -64,8 +64,6 @@ public class RegistryDescriptorResolverTest {
 		smRepository = appContext.getBean(SubmodelRepository.class);
 		aasRepository.createAas(FIXTURE.buildAasPre1());
 		smRepository.createSubmodel(FIXTURE.buildSmPre1());
-		aasRepository.createAas(FIXTURE.buildAasPos1());
-		smRepository.createSubmodel(FIXTURE.buildSmPos1());
 	}
 	
 	@AfterClass

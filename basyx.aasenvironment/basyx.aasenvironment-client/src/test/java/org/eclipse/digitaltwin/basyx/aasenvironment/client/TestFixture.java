@@ -97,7 +97,7 @@ public class TestFixture {
 	public AssetAdministrationShellDescriptor buildAasPre1Descriptor_withMultipleInterfaces() {
 		LinkedList<Endpoint> endpoints = new LinkedList<>();
 
-		endpoints.add(DummyAasDescriptorFactory.createEndpoint(AAS_POS1_ID, aasRepositoryBasePath, "OTHER-3.0"));
+		endpoints.add(DummyAasDescriptorFactory.createEndpoint(aasRepositoryBasePath, "AAS-REPOSITORY-3.0"));
 		endpoints.add(DummyAasDescriptorFactory.createEndpoint(AAS_PRE1_ID, aasRepositoryBasePath, "AAS-3.0"));
 
 		return DummyAasDescriptorFactory.createDummyDescriptor(AAS_PRE1_ID, AAS_PRE1_IDSHORT, AAS_PRE1_GLOBALASSETID, endpoints);
@@ -118,7 +118,7 @@ public class TestFixture {
 	public SubmodelDescriptor buildSmPre1Descriptor_withMultipleInterfaces() {
 		LinkedList<org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint> endpoints = new LinkedList<>();
 
-		endpoints.add(DummySubmodelDescriptorFactory.createEndpoint(SM_POS1_ID, smRepositoryBasePath, "OTHER-3.0"));
+		endpoints.add(DummySubmodelDescriptorFactory.createEndpoint(smRepositoryBasePath, "SUBMODEL-REPOSITORY-3.0"));
 		endpoints.add(DummySubmodelDescriptorFactory.createEndpoint(SM_PRE1_ID, smRepositoryBasePath, "SUBMODEL-3.0"));
 
 		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_PRE1_ID, SM_PRE1_IDSHORT, null, endpoints);
