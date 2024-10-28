@@ -60,7 +60,7 @@ public final class SubmodelMetadataUtil {
      * @throws FailedToDeepCopyException
      * 
      */
-    public static Submodel deepCopy(Submodel submodel) {
+    private static Submodel deepCopy(Submodel submodel) {
         try {
             String submodelAsJSON = new JsonSerializer().write(submodel);
 
