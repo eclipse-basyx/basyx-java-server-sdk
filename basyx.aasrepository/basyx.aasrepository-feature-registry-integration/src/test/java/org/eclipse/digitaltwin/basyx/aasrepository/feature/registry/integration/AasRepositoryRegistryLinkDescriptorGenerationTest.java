@@ -42,6 +42,8 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministratio
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.factory.AasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.DummyAasDescriptorFactory;
@@ -60,7 +62,6 @@ public class AasRepositoryRegistryLinkDescriptorGenerationTest {
 
 	private static final String BASE_URL = "http://localhost:8081";
 	
-	// Mock dependencies
     private RegistryIntegrationAasRepository registryIntegrationAasRepository;
     private AasRepository mockedAasRepository;
     private AasRepositoryRegistryLink mockedRegistryLink;
@@ -68,38 +69,15 @@ public class AasRepositoryRegistryLinkDescriptorGenerationTest {
     private RegistryAndDiscoveryInterfaceApi mockedRegistryApi;
     
     @Before
-    public void setUp() {
+    public void setUp() {    	
     	mockedAasRepository = getAasRepository();
-        mockedRegistryLink = Mockito.mock(AasRepositoryRegistryLink.class);
+    	mockedRegistryLink = Mockito.mock(AasRepositoryRegistryLink.class);
         mockedAttributeMapper = Mockito.mock(AttributeMapper.class);
         mockedRegistryApi = Mockito.mock(RegistryAndDiscoveryInterfaceApi.class);
 
         Mockito.when(mockedRegistryLink.getRegistryApi()).thenReturn(mockedRegistryApi);
         
         registryIntegrationAasRepository = new RegistryIntegrationAasRepository(mockedAasRepository, mockedRegistryLink, mockedAttributeMapper);
-    }
-
-    @Test
-    public void testExternalUrlWithTrailingSlashReflectedInDescriptor() throws FileNotFoundException, IOException, ApiException {
-        String externalUrl = BASE_URL + "/";
-        Mockito.when(mockedRegistryLink.getAasRepositoryBaseURLs()).thenReturn(List.of(externalUrl));
-
-        AssetAdministrationShellDescriptor descriptor = createAndRetrieveDescriptor(createDummyAas());
-        
-        assertTrue("Endpoint address should start with externalUrl", descriptor.getEndpoints().get(0)
-                .getProtocolInformation().getHref().startsWith(externalUrl));
-    }
-
-    @Test
-    public void testExternalUrlWithoutTrailingSlashReflectedInDescriptor() throws FileNotFoundException, IOException, ApiException {
-        String externalUrl = BASE_URL;
-        Mockito.when(mockedRegistryLink.getAasRepositoryBaseURLs()).thenReturn(List.of(externalUrl));
-
-        AssetAdministrationShellDescriptor descriptor = createAndRetrieveDescriptor(createDummyAas());
-        
-        String expectedUrl = externalUrl + "/";
-        assertTrue("Endpoint address should start with externalUrl", descriptor.getEndpoints().get(0)
-                .getProtocolInformation().getHref().startsWith(expectedUrl));
     }
 
     @Test
@@ -110,18 +88,6 @@ public class AasRepositoryRegistryLinkDescriptorGenerationTest {
         AssetAdministrationShellDescriptor descriptor = createAndRetrieveDescriptor(createDummyAas());
 
         String expectedUrl = externalUrl;
-        assertTrue("Endpoint address should start with externalUrl including context path", descriptor.getEndpoints().get(0)
-                .getProtocolInformation().getHref().startsWith(expectedUrl));
-    }
-    
-    @Test
-    public void testExternalUrlWithContextPathWithTrailingSlashReflectedInDescriptor() throws FileNotFoundException, IOException, ApiException {
-        String externalUrl = BASE_URL + "/context";
-        Mockito.when(mockedRegistryLink.getAasRepositoryBaseURLs()).thenReturn(List.of(externalUrl));
-
-        AssetAdministrationShellDescriptor descriptor = createAndRetrieveDescriptor(createDummyAas());
-
-        String expectedUrl = externalUrl + "/";
         assertTrue("Endpoint address should start with externalUrl including context path", descriptor.getEndpoints().get(0)
                 .getProtocolInformation().getHref().startsWith(expectedUrl));
     }

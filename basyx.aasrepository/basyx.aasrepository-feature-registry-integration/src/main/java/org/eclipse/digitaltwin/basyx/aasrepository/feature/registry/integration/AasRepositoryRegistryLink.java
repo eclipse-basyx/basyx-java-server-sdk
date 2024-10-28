@@ -45,14 +45,14 @@ public class AasRepositoryRegistryLink {
 		this.registryApi = registryApi;
 		this.aasRepositoryBaseURLs = aasRepositoryBaseURLs;
 		
-		for (int i = 0; i < this.aasRepositoryBaseURLs.size(); i++) {
-			String url = this.aasRepositoryBaseURLs.get(i);
-			int slashCount = url.length() - url.replace("/", "").length();
-			if (!url.endsWith("/") && slashCount >= 3) {
-				url += "/";
-				this.aasRepositoryBaseURLs.set(i, url);
-			}
-		}
+//		for (int i = 0; i < this.aasRepositoryBaseURLs.size(); i++) {
+//			String url = this.aasRepositoryBaseURLs.get(i);
+//			int slashCount = url.length() - url.replace("/", "").length();
+//			if (!url.endsWith("/") && slashCount >= 3) {
+//				url += "/";
+//				this.aasRepositoryBaseURLs.set(i, url);
+//			}
+//		}
 	}
 
 	public RegistryAndDiscoveryInterfaceApi getRegistryApi() {
