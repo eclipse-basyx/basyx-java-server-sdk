@@ -83,13 +83,8 @@ public class AasRepositoryRegistryLinkDescriptorGenerationTest {
 
     @Test
     public void testExternalUrlWithContextPathWithoutTrailingSlash() throws FileNotFoundException, IOException, ApiException {
-        String externalUrl = BASE_URL + "/context/";
+        String externalUrl = BASE_URL + "/context";
 		
-//        int slashCount = externalUrl.length() - externalUrl.replace("/", "").length();
-//		if (!externalUrl.endsWith("/") && slashCount >= 3) {
-//			externalUrl += "/";
-//		}
-        
         Mockito.when(mockedRegistryLink.getAasRepositoryBaseURLs()).thenReturn(List.of(externalUrl));
         
         AssetAdministrationShellDescriptor descriptor = createAndRetrieveDescriptor(createDummyAas());
