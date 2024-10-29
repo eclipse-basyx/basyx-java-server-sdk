@@ -61,10 +61,6 @@ public class AasRepositoryRegistryLinkTest extends AasRepositoryRegistryLinkTest
 	@Override
 	protected String[] getAasRepoBaseUrls() {
 		String url = AAS_REPO_URL;
-//		int slashCount = url.length() - url.replace("/", "").length();
-//		if (!url.endsWith("/") && slashCount >= 3) {
-//			url += "/";
-//		}
 		
 		return new String[] { url };
 	}

@@ -74,7 +74,7 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 		String aasJsonContent = getAas1JSONString();
 
 		try (CloseableHttpResponse creationResponse = createAasOnRepo(aasJsonContent)) {
-//			assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
+			assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
 
 			AssetAdministrationShellDescriptor actualDescriptor = retrieveDescriptorFromRegistry();
 
