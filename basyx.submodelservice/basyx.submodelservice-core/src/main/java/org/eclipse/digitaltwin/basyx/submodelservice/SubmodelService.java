@@ -90,7 +90,6 @@ public interface SubmodelService {
 
 	/**
 	 * Creates a Submodel Element
-	 * @return 
 	 * 
 	 */
 	public SubmodelElement createSubmodelElement(SubmodelElement submodelElement);
@@ -102,7 +101,7 @@ public interface SubmodelService {
 	 *            the SubmodelElement IdShortPath
 	 * @param submodelElement
 	 *            the submodel element to be created
-	 * @return 
+	 * @return the SubmodelElement
 	 * @throws ElementDoesNotExistException
 	 *             If the submodel element defined in the path does not exist
 	 */
@@ -113,6 +112,7 @@ public interface SubmodelService {
 	 * 
 	 * @param idShortPath
 	 * @param submodelElement
+	 * @return the SubmodelElement
 	 * @throws ElementDoesNotExistException
 	 *             If the submodel element defined in the path does not exist
 	 */

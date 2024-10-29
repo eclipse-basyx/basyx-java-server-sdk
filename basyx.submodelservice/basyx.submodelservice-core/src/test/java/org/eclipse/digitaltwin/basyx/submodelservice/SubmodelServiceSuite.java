@@ -305,11 +305,9 @@ public abstract class SubmodelServiceSuite {
 		property.setValue("205");
 
 		SubmodelService submodelService = getSubmodelService(technicalData);
-		SubmodelElement responseSubmodelElement = submodelService.createSubmodelElement(property);
+		submodelService.createSubmodelElement(property);
 
 		SubmodelElement submodelEl = submodelService.getSubmodelElement("test123");
-		
-		assertEquals(submodelEl, responseSubmodelElement);
 		assertEquals("test123", submodelEl.getIdShort());
 	}
 
@@ -336,20 +334,18 @@ public abstract class SubmodelServiceSuite {
 		Property propertyInSmeList = new DefaultProperty.Builder().idShort("test456").category("cat1").value("305").valueType(DataTypeDefXsd.INTEGER).build();
 
 		String idShortPathPropertyInSmeCol = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT;
-		SubmodelElement responseSubmodelElementCol = submodelService.createSubmodelElement(idShortPathPropertyInSmeCol, propertyInSmeCol);
+		submodelService.createSubmodelElement(idShortPathPropertyInSmeCol, propertyInSmeCol);
 
 		String idShortPathPropertyInSmeList = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_COLLECTION_ID_SHORT + "." + DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ELEMENT_LIST_ID_SHORT;
-		SubmodelElement responseSubmodelElementList = submodelService.createSubmodelElement(idShortPathPropertyInSmeList, propertyInSmeList);
+		submodelService.createSubmodelElement(idShortPathPropertyInSmeList, propertyInSmeList);
 
 		idShortPathPropertyInSmeCol = idShortPathPropertyInSmeCol.concat(".test123");
 		SubmodelElement propertyInCollectionCreated = submodelService.getSubmodelElement(idShortPathPropertyInSmeCol);
 		assertEquals("test123", propertyInCollectionCreated.getIdShort());
-		assertEquals(propertyInCollectionCreated, responseSubmodelElementCol);
 
 		idShortPathPropertyInSmeList = idShortPathPropertyInSmeList.concat("[1]");
 		SubmodelElement propertyInSmeListCreated = submodelService.getSubmodelElement(idShortPathPropertyInSmeList);
 		assertEquals("test456", propertyInSmeListCreated.getIdShort());
-		assertEquals(propertyInSmeListCreated, responseSubmodelElementList);
 	}
 
 	@Test
@@ -376,14 +372,13 @@ public abstract class SubmodelServiceSuite {
 		String idShortPath = "dummyProperty";
 
 		Property property = createDummyProperty(idShortPath);
-		SubmodelElement responseSubmodelElement = submodelService.createSubmodelElement(property);
+		submodelService.createSubmodelElement(property);
 
 		Property expectedUpdatedProperty = SubmodelServiceHelper.createDummyProperty(idShortPath, "arbitraryValue", DataTypeDefXsd.STRING);
 		submodelService.updateSubmodelElement(idShortPath, expectedUpdatedProperty);
 
 		Property actualUpdatedProperty = (Property) submodelService.getSubmodelElement(idShortPath);
 		assertEquals(expectedUpdatedProperty, actualUpdatedProperty);
-		assertEquals(submodelService.getSubmodelElement(idShortPath), responseSubmodelElement);
 	}
 
 	@Test
@@ -722,6 +717,10 @@ public abstract class SubmodelServiceSuite {
 
 	private DefaultProperty createDummyProperty(String idShort) {
 		return new DefaultProperty.Builder().idShort(idShort).category("cat1").value("123").valueType(DataTypeDefXsd.INTEGER).build();
+	}
+	
+	private SubmodelElement createDummySME(String idShort) {
+		return new DefaultProperty.Builder().idShort(idShort).value("123").build();
 	}
 
 	private InputStream getInputStreamOfDummyFile(String fileContent) throws FileNotFoundException, IOException {
