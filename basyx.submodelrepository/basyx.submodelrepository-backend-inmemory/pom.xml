@@ -25,7 +25,7 @@
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.submodelservice-core</artifactId>
 		</dependency>
-		<dependency>
+			<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.backend.inmemory.core</artifactId>
 		</dependency>
