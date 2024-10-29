@@ -95,7 +95,7 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		Collection<Submodel> expectedSubmodels = DummySubmodelFactory.getSubmodelsBySemanticid(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID);
 		
 		SubmodelRepository repo = getSubmodelRepository(expectedSubmodels);
-		Collection<Submodel> submodels = repo.getAllSubmodels(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID, NO_LIMIT_PAGINATION_INFO).getResult();
+		Collection<Submodel> submodels = repo.getAllSubmodels(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID, PaginationInfo.NO_LIMIT).getResult();
 
 		assertSubmodelsAreContained(expectedSubmodels, submodels);
 	}
