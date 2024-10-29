@@ -127,8 +127,9 @@ public class TestMqttSubmodelObserver {
 		Submodel submodel = createSubmodelDummy("createSubmodelForElementEventId");
 		submodelRepository.createSubmodel(submodel);
 		SubmodelElement submodelElement = createSubmodelElementDummy("createSubmodelElementEventId");
-		submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
+		SubmodelElement responseSubmodelElement = submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
 
+		assertEquals(responseSubmodelElement, submodelElement);
 		assertEquals(topicFactory.createCreateSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()), listener.lastTopic);
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
 	}
@@ -138,10 +139,11 @@ public class TestMqttSubmodelObserver {
 		Submodel submodel = createSubmodelDummy("updateSubmodelForElementEventId");
 		submodelRepository.createSubmodel(submodel);
 		SubmodelElement submodelElement = createSubmodelElementDummy("updateSubmodelElementEventId");
-		submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
+		SubmodelElement responseSubmodelElement = submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
 		SubmodelElementValue value = new PropertyValue("updatedValue");
 		submodelRepository.setSubmodelElementValue(submodel.getId(), submodelElement.getIdShort(), value);
 
+		assertEquals(responseSubmodelElement, submodelElement);
 		assertEquals(topicFactory.createUpdateSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()), listener.lastTopic);
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
 	}
@@ -151,9 +153,10 @@ public class TestMqttSubmodelObserver {
 		Submodel submodel = createSubmodelDummy("deleteSubmodelForElementEventId");
 		submodelRepository.createSubmodel(submodel);
 		SubmodelElement submodelElement = createSubmodelElementDummy("deleteSubmodelElementEventId");
-		submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
+		SubmodelElement responseSubmodelElement = submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
 		submodelRepository.deleteSubmodelElement(submodel.getId(), submodelElement.getIdShort());
 
+		assertEquals(responseSubmodelElement, submodelElement);
 		assertEquals(topicFactory.createDeleteSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()), listener.lastTopic);
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
 	}
@@ -165,8 +168,9 @@ public class TestMqttSubmodelObserver {
 		SubmodelElement submodelElement = createSubmodelElementDummy("noValueSubmodelElementEventId");
 		List<Qualifier> qualifierList = createNoValueQualifierList();
 		submodelElement.setQualifiers(qualifierList);
-		submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
+		SubmodelElement responseSubmodelElement = submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
 
+		assertEquals(responseSubmodelElement, submodelElement);
 		assertEquals(topicFactory.createCreateSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()), listener.lastTopic);
 		assertNotEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
 
