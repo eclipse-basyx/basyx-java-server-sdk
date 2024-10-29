@@ -23,30 +23,15 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
+package org.eclipse.digitaltwin.basyx.core.exceptions;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryBackendProvider;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocument;
-import org.eclipse.digitaltwin.basyx.common.backend.inmemory.core.InMemoryCrudRepository;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Component;
+public class FailedToDeepCopyException extends RuntimeException {
 
-/**
- * 
- * InMemory backend provider for the AAS Discovery
- * 
- * @author zielstor, fried
- */
-@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
-@Component
-public class AasDiscoveryInMemoryBackendProvider implements AasDiscoveryBackendProvider {
+    public FailedToDeepCopyException(String objId, Throwable e) {
+        super(getMessage(objId), e);
+    }
 
-	private CrudRepository<AasDiscoveryDocument, String> repository = new InMemoryCrudRepository<AasDiscoveryDocument>(AasDiscoveryDocument::getShellIdentifier);
-
-	@Override
-	public CrudRepository<AasDiscoveryDocument, String> getCrudRepository() {
-		return repository;
-	}
-
+    private static String getMessage(String objId) {
+        return "Failed to deep copy object with id " + objId;
+    }
 }

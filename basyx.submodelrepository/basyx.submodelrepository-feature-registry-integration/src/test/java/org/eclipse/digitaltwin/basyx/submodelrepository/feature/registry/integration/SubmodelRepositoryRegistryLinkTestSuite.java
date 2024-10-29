@@ -62,7 +62,7 @@ public abstract class SubmodelRepositoryRegistryLinkTestSuite {
 	protected abstract String getSubmodelRegistryUrl(); 
 	protected abstract SubmodelRegistryApi getSubmodelRegistryApi();
 
-	private final SubmodelDescriptor DUMMY_DESCRIPTOR = DummySubmodelDescriptorFactory.createDummyDescriptor(DUMMY_SUBMODEL_ID, DUMMY_SUBMODEL_IDSHORT, getSubmodelRepoBaseUrls(), DummySubmodelDescriptorFactory.createSemanticId());
+	private final SubmodelDescriptor DUMMY_DESCRIPTOR = DummySubmodelDescriptorFactory.createDummyDescriptor(DUMMY_SUBMODEL_ID, DUMMY_SUBMODEL_IDSHORT, DummySubmodelDescriptorFactory.createSemanticId(), getSubmodelRepoBaseUrls());
 	
 	@Test
 	public void createSubmodel() throws FileNotFoundException, IOException, ApiException {
