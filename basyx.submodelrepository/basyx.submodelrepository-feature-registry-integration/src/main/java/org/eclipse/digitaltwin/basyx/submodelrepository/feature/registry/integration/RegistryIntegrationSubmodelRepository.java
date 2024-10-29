@@ -91,9 +91,19 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 
 	@Override
 	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
+		SubmodelDescriptor descriptor = new SubmodelDescriptorFactory(submodel, submodelRepositoryRegistryLink.getSubmodelRepositoryBaseURLs(), attributeMapper).create();
+
 		decorated.createSubmodel(submodel);
 
-		integrateSubmodelWithRegistry(submodel, submodelRepositoryRegistryLink.getSubmodelRepositoryBaseURLs());
+		boolean registrationSuccessful = false;
+
+		try {
+			registerSubmodel(descriptor);
+			registrationSuccessful = true;
+		} finally {
+			if (!registrationSuccessful)
+				decorated.deleteSubmodel(submodel.getId());
+		}
 	}
 
 	@Override
@@ -173,17 +183,15 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 		decorated.deleteFileValue(submodelId, idShortPath);
 	}
 
-	private void integrateSubmodelWithRegistry(Submodel submodel, List<String> submodelRepositoryURLs) {
-		SubmodelDescriptor descriptor = new SubmodelDescriptorFactory(submodel, submodelRepositoryURLs, attributeMapper).create();
-
+	private void registerSubmodel(SubmodelDescriptor descriptor) {
 		SubmodelRegistryApi registryApi = submodelRepositoryRegistryLink.getRegistryApi();
 
 		try {
 			registryApi.postSubmodelDescriptor(descriptor);
 
-			logger.info("Submodel '{}' has been automatically linked with the Registry", submodel.getId());
+			logger.info("Submodel '{}' has been automatically linked with the Registry", descriptor.getId());
 		} catch (ApiException e) {
-			throw new RepositoryRegistryLinkException(submodel.getId(), e);
+			throw new RepositoryRegistryLinkException(descriptor.getId(), e);
 		}
 	}
 

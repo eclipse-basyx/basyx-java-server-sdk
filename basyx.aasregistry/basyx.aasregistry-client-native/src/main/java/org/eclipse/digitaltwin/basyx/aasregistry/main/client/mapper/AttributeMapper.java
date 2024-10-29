@@ -134,8 +134,16 @@ public class AttributeMapper {
 	 * @return the mapped assetKind
 	 */
 	public AssetKind mapAssetKind(org.eclipse.digitaltwin.aas4j.v3.model.AssetKind assetKind) {
-
-		return AssetKind.valueOf(AssetKind.class, assetKind.name());
+		switch (assetKind) {
+		case INSTANCE:
+			return AssetKind.INSTANCE;
+		case NOT_APPLICABLE:
+			return AssetKind.NOTAPPLICABLE;
+		case TYPE:
+			return AssetKind.TYPE;
+		default:
+			throw new IllegalArgumentException("Unknown AssetKind: " + assetKind);
+		}
 	}
 
 }
