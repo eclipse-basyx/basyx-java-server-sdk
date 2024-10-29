@@ -93,19 +93,21 @@ public class MqttSubmodelService implements SubmodelService {
 	}
 
 	@Override
-	public void createSubmodelElement(SubmodelElement submodelElement) {
+	public SubmodelElement createSubmodelElement(SubmodelElement submodelElement) {
 		decorated.createSubmodelElement(submodelElement);
 		SubmodelElement smElement = decorated.getSubmodelElement(submodelElement.getIdShort());
 		submodelElementCreated(submodelElement, smElement.getIdShort());
+		return smElement;
 	}
 
 	@Override
-	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
+	public SubmodelElement createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
 
 		decorated.createSubmodelElement(idShortPath, submodelElement);
 
 		SubmodelElement smElement = decorated.getSubmodelElement(submodelElement.getIdShort());
 		submodelElementCreated(smElement, idShortPath);
+		return smElement;
 	}
 
 	@Override

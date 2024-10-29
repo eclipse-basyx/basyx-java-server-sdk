@@ -103,19 +103,21 @@ public class MongoDBSubmodelService implements SubmodelService {
 	}
 
 	@Override
-	public void createSubmodelElement(SubmodelElement submodelElement) {
+	public SubmodelElement createSubmodelElement(SubmodelElement submodelElement) {
 		InMemorySubmodelService inMemorySubmodelService = getInMemorySubmodelService();
 		inMemorySubmodelService.createSubmodelElement(submodelElement);
 		Submodel submodel = inMemorySubmodelService.getSubmodel();
 		crudRepository.save(submodel);
+		return submodelElement;
 	}
 
 	@Override
-	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
+	public SubmodelElement createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
 		InMemorySubmodelService inMemorySubmodelService = getInMemorySubmodelService();
 		inMemorySubmodelService.createSubmodelElement(idShortPath, submodelElement);
 		Submodel submodel = inMemorySubmodelService.getSubmodel();
 		crudRepository.save(submodel);
+		return submodelElement;
 
 	}
 

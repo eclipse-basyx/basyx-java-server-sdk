@@ -86,14 +86,14 @@ public class SubmodelRepositorySubmodelServiceWrapper implements SubmodelService
 	}
 
 	@Override
-	public void createSubmodelElement(SubmodelElement submodelElement) {
-		repoApi.createSubmodelElement(submodelId, submodelElement);
+	public SubmodelElement createSubmodelElement(SubmodelElement submodelElement) {
+		return repoApi.createSubmodelElement(submodelId, submodelElement);
 	}
 
 	@Override
-	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement)
+	public SubmodelElement createSubmodelElement(String idShortPath, SubmodelElement submodelElement)
 			throws ElementDoesNotExistException {
-		repoApi.createSubmodelElement(submodelId, idShortPath, submodelElement);
+		return repoApi.createSubmodelElement(submodelId, idShortPath, submodelElement);
 		
 	}
 

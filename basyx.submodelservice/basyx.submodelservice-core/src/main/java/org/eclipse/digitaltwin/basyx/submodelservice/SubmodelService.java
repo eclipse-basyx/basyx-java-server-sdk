@@ -90,9 +90,10 @@ public interface SubmodelService {
 
 	/**
 	 * Creates a Submodel Element
+	 * @return 
 	 * 
 	 */
-	public void createSubmodelElement(SubmodelElement submodelElement);
+	public SubmodelElement createSubmodelElement(SubmodelElement submodelElement);
 
 	/**
 	 * Create a nested submodel element
@@ -101,10 +102,11 @@ public interface SubmodelService {
 	 *            the SubmodelElement IdShortPath
 	 * @param submodelElement
 	 *            the submodel element to be created
+	 * @return 
 	 * @throws ElementDoesNotExistException
 	 *             If the submodel element defined in the path does not exist
 	 */
-	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException;
+	public SubmodelElement createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException;
 	
 	/**
 	 * Updates a submodel element
