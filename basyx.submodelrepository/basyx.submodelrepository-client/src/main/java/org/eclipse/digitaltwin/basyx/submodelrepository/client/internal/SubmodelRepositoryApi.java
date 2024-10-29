@@ -339,6 +339,8 @@ public class SubmodelRepositoryApi {
 		}
 
 		localVarRequestBuilder.header("Accept", "application/json");
+		
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
 		if (memberVarReadTimeout != null) {
@@ -348,7 +350,7 @@ public class SubmodelRepositoryApi {
 			memberVarInterceptor.accept(localVarRequestBuilder);
 		}
 		return localVarRequestBuilder;
-	}	
+	}
 	
 	/**
 	 * Creates a new Submodel

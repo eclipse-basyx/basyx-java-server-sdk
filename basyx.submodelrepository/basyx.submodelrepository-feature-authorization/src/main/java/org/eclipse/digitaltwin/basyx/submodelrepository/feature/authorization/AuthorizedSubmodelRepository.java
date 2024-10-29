@@ -210,11 +210,12 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public Submodel getSubmodelByIdMetadata(String submodelId) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(ALL_ALLOWED_WILDCARD)));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(getIdAsList(ALL_ALLOWED_WILDCARD), getIdAsList(ALL_ALLOWED_WILDCARD)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
 		return decorated.getSubmodelByIdMetadata(submodelId);
+		
 	}
 
 	@Override
