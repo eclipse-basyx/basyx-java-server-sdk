@@ -215,7 +215,6 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
 		return decorated.getSubmodelByIdMetadata(submodelId);
-		
 	}
 
 	@Override
