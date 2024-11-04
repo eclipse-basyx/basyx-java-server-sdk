@@ -27,6 +27,8 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -43,11 +45,14 @@ import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.mockito.Mockito;
 
 /**
  * Test suite for {@link RegistryIntegrationAasRepository} feature
  */
+@RunWith(Parameterized.class)
 public class AasRepositoryRegistryLinkDescriptorGenerationTest {	
 	private static final String DUMMY_IDSHORT = "ExampleMotor";
 	private static final String DUMMY_AAS_ID = "customIdentifier";
@@ -72,20 +77,29 @@ public class AasRepositoryRegistryLinkDescriptorGenerationTest {
         registryIntegrationAasRepository = new RegistryIntegrationAasRepository(mockedAasRepository, mockedRegistryLink, mockedAttributeMapper);
     }
 
-    @Test
-    public void testExternalUrlWithContextPathWithoutTrailingSlash() {
-        String externalUrl = BASE_URL + "/context";
-		
-        Mockito.when(mockedRegistryLink.getAasRepositoryBaseURLs()).thenReturn(List.of(externalUrl));
-        
-        AssetAdministrationShellDescriptor descriptor = createAndRetrieveDescriptor(createDummyAas());
+    @Parameterized.Parameter(0)
+    public String externalUrl;
 
-        String expectedUrl = BASE_URL + "/context/shells/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_AAS_ID);
+    @Parameterized.Parameter(1)
+    public String expectedUrl;
+
+    @Parameterized.Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] { { BASE_URL + "/context", BASE_URL + "/context/shells/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_AAS_ID) },
+                { BASE_URL, BASE_URL + "/shells/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_AAS_ID) }, { BASE_URL + "/", BASE_URL + "/shells/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_AAS_ID) },
+                { BASE_URL + "/context/", BASE_URL + "/context/shells/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_AAS_ID) } });
+    }
+
+    @Test
+    public void testExternalUrl() {
+        Mockito.when(mockedRegistryLink.getAasRepositoryBaseURLs()).thenReturn(List.of(externalUrl));
+
+        AssetAdministrationShellDescriptor descriptor = createAndRetrieveDescriptor(createDummyAas());
         String actualUrl = descriptor.getEndpoints().get(0).getProtocolInformation().getHref();
-        
+
         assertEquals(expectedUrl, actualUrl);
     }
-    
+
     private AssetAdministrationShellDescriptor createAndRetrieveDescriptor(AssetAdministrationShell shell) {
         registryIntegrationAasRepository.createAas(shell);
 

@@ -27,6 +27,8 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integr
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -44,11 +46,14 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRe
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.mockito.Mockito;
 
 /**
  * Test suite for {@link RegistryIntegrationAasRepository} feature
  */
+@RunWith(Parameterized.class)
 public class SubmodelRepositoryRegistryLinkDescriptorGenerationTest {	
 	private static final String DUMMY_SUBMODEL_IDSHORT = "TechnicalData";
 	private static final String DUMMY_SUBMODEL_ID = "7A7104BDAB57E184";
@@ -73,20 +78,29 @@ public class SubmodelRepositoryRegistryLinkDescriptorGenerationTest {
         registryIntegrationSubmodelRepository = new RegistryIntegrationSubmodelRepository(mockedSubmodelRepository, mockedRegistryLink, mockedAttributeMapper);
     }
 
-    @Test
-    public void testExternalUrlWithContextPathWithoutTrailingSlash() throws ApiException {
-        String externalUrl = BASE_URL + "/context";
-		
-        Mockito.when(mockedRegistryLink.getSubmodelRepositoryBaseURLs()).thenReturn(List.of(externalUrl));
-        
-        SubmodelDescriptor descriptor = createAndRetrieveDescriptor(createDummySubmodel());
+    @Parameterized.Parameter(0)
+    public String externalUrl;
 
-        String expectedUrl = BASE_URL + "/context/submodels/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_SUBMODEL_ID);
+    @Parameterized.Parameter(1)
+    public String expectedUrl;
+
+    @Parameterized.Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] { { BASE_URL + "/context", BASE_URL + "/context/submodels/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_SUBMODEL_ID) },
+                { BASE_URL, BASE_URL + "/submodels/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_SUBMODEL_ID) }, { BASE_URL + "/", BASE_URL + "/submodels/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_SUBMODEL_ID) },
+                { BASE_URL + "/context/", BASE_URL + "/context/submodels/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_SUBMODEL_ID) } });
+    }
+
+    @Test
+    public void testExternalUrl() throws ApiException {
+        Mockito.when(mockedRegistryLink.getSubmodelRepositoryBaseURLs()).thenReturn(List.of(externalUrl));
+
+        SubmodelDescriptor descriptor = createAndRetrieveDescriptor(createDummySubmodel());
         String actualUrl = descriptor.getEndpoints().get(0).getProtocolInformation().getHref();
-        
+
         assertEquals(expectedUrl, actualUrl);
     }
-    
+
     private SubmodelDescriptor createAndRetrieveDescriptor(Submodel submodel) throws ApiException {
         registryIntegrationSubmodelRepository.createSubmodel(submodel);
 
