@@ -25,6 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
 
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver;
 import java.net.URI;
 import java.util.Optional;
@@ -40,6 +41,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelSer
  *
  */
 public class SubmodelDescriptorResolver implements DescriptorResolver<SubmodelDescriptor, ConnectedSubmodelService> {
+
+	static final String SPEC_INTERFACE = "SUBMODEL-3.0";
 
 	private final EndpointResolver endpointResolver;
 
@@ -67,16 +70,7 @@ public class SubmodelDescriptorResolver implements DescriptorResolver<SubmodelDe
 
 	public static Optional<URI> parseEndpoint(Endpoint endpoint) {
 		try {
-			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation()
-					.getHref() == null)
-				return Optional.empty();
-
-			String baseHref = endpoint.getProtocolInformation()
-					.getHref();
-			// TODO not working: String queryString = "?" + endpoint.toUrlQueryString();
-			String queryString = "";
-			URI uri = new URI(baseHref + queryString);
-			return Optional.of(uri);
+			return Optional.ofNullable(endpoint).filter(ep -> ep.getInterface().equals(SPEC_INTERFACE)).map(Endpoint::getProtocolInformation).map(ProtocolInformation::getHref).map(URI::create);
 		} catch (Exception e) {
 			return Optional.empty();
 		}
