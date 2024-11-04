@@ -60,7 +60,7 @@ public class AasRepositoryRegistryLinkTest extends AasRepositoryRegistryLinkTest
 
 	@Override
 	protected String[] getAasRepoBaseUrls() {
-		return new String[] { AAS_REPO_URL };
+		return new String[] { AAS_REPO_URL};
 	}
 
 	@Override
