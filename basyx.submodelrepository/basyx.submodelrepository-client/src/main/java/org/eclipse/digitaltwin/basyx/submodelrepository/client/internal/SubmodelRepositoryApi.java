@@ -301,10 +301,10 @@ public class SubmodelRepositoryApi {
 				Submodel deserializedSubmodel = localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<Submodel>() {
 				});
 
-				if (deserializedSubmodel != null && deserializedSubmodel.getSubmodelElements() == null)
-					deserializedSubmodel.setSubmodelElements(Collections.emptyList());
+				if (deserializedSubmodel != null && deserializedSubmodel.getSubmodelElements() != null && deserializedSubmodel.getSubmodelElements().isEmpty())
+					deserializedSubmodel.setSubmodelElements(null);
 
-				return new ApiResponse<Submodel>(localVarResponse.statusCode(), localVarResponse.headers().map(), deserializedSubmodel);
+				return new ApiResponse<>(localVarResponse.statusCode(), localVarResponse.headers().map(), deserializedSubmodel);
 			} finally {
 			}
 		} catch (IOException e) {
