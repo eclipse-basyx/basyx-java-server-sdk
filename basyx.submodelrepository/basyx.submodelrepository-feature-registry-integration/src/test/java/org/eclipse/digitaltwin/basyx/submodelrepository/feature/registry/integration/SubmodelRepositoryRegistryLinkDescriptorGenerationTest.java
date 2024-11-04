@@ -27,8 +27,6 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integr
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -76,7 +74,7 @@ public class SubmodelRepositoryRegistryLinkDescriptorGenerationTest {
     }
 
     @Test
-    public void testExternalUrlWithContextPathWithoutTrailingSlash() throws FileNotFoundException, IOException, ApiException {
+    public void testExternalUrlWithContextPathWithoutTrailingSlash() throws ApiException {
         String externalUrl = BASE_URL + "/context";
 		
         Mockito.when(mockedRegistryLink.getSubmodelRepositoryBaseURLs()).thenReturn(List.of(externalUrl));
@@ -90,16 +88,13 @@ public class SubmodelRepositoryRegistryLinkDescriptorGenerationTest {
     }
     
     private SubmodelDescriptor createAndRetrieveDescriptor(Submodel submodel) throws ApiException {
-        // Simulate the process of creating an AAS in the repository
         registryIntegrationSubmodelRepository.createSubmodel(submodel);
 
-        // Simulate retrieving the descriptor from the registry after creation 
         SubmodelDescriptorFactory descriptorFactory = new SubmodelDescriptorFactory(submodel, mockedRegistryLink.getSubmodelRepositoryBaseURLs(), mockedAttributeMapper);
         return descriptorFactory.create();
     }
     
     private Submodel createDummySubmodel() {
-        // You can create a mock or a real AAS object
         return new DefaultSubmodel.Builder().id(DUMMY_SUBMODEL_ID).idShort(DUMMY_SUBMODEL_IDSHORT).build();
     }
     

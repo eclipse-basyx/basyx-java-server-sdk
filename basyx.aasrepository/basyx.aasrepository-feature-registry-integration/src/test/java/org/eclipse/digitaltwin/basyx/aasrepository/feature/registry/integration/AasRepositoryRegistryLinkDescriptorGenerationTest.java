@@ -26,33 +26,24 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.factory.AasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AttributeMapper;
-import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.DummyAasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test suite for {@link RegistryIntegrationAasRepository} feature
@@ -82,7 +73,7 @@ public class AasRepositoryRegistryLinkDescriptorGenerationTest {
     }
 
     @Test
-    public void testExternalUrlWithContextPathWithoutTrailingSlash() throws FileNotFoundException, IOException, ApiException {
+    public void testExternalUrlWithContextPathWithoutTrailingSlash() {
         String externalUrl = BASE_URL + "/context";
 		
         Mockito.when(mockedRegistryLink.getAasRepositoryBaseURLs()).thenReturn(List.of(externalUrl));
@@ -95,17 +86,14 @@ public class AasRepositoryRegistryLinkDescriptorGenerationTest {
         assertEquals(expectedUrl, actualUrl);
     }
     
-    private AssetAdministrationShellDescriptor createAndRetrieveDescriptor(AssetAdministrationShell shell) throws ApiException {
-        // Simulate the process of creating an AAS in the repository
+    private AssetAdministrationShellDescriptor createAndRetrieveDescriptor(AssetAdministrationShell shell) {
         registryIntegrationAasRepository.createAas(shell);
 
-        // Simulate retrieving the descriptor from the registry after creation
         AasDescriptorFactory descriptorFactory = new AasDescriptorFactory(shell, mockedRegistryLink.getAasRepositoryBaseURLs(), mockedAttributeMapper);
         return descriptorFactory.create();
     }
     
     private AssetAdministrationShell createDummyAas() {
-        // You can create a mock or a real AAS object
         return new DefaultAssetAdministrationShell.Builder()
                 .id(DUMMY_AAS_ID)
                 .idShort(DUMMY_IDSHORT)
