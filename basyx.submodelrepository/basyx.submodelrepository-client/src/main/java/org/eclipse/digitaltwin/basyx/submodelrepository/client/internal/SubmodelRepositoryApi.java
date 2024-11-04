@@ -32,6 +32,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
@@ -297,10 +298,13 @@ public class SubmodelRepositoryApi {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("getSubmodelByIdMetadata", localVarResponse);
 				}
-				return new ApiResponse<Submodel>(localVarResponse.statusCode(), localVarResponse.headers().map(),
-						localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<Submodel>() {
-						}) // closes the InputStream
-				);
+				Submodel deserializedSubmodel = localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<Submodel>() {
+				});
+
+				if (deserializedSubmodel != null && deserializedSubmodel.getSubmodelElements() == null)
+					deserializedSubmodel.setSubmodelElements(Collections.emptyList());
+
+				return new ApiResponse<Submodel>(localVarResponse.statusCode(), localVarResponse.headers().map(), deserializedSubmodel);
 			} finally {
 			}
 		} catch (IOException e) {
