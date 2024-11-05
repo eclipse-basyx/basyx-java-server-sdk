@@ -48,6 +48,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.serialization.SubmodelMetadataUtil;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
@@ -280,7 +281,7 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		Submodel expectedSubmodel = buildDummySubmodelWithNoSmElement(ID);
 		expectedSubmodel.setSubmodelElements(null);
 		repo.createSubmodel(expectedSubmodel);
-
+		
 		Submodel retrievedSubmodelMetadata = repo.getSubmodelByIdMetadata(ID);
 		retrievedSubmodelMetadata.setSubmodelElements(null);
 
@@ -347,6 +348,44 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 
 		submodelRepo.invokeOperation(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT, new OperationVariable[0]);
 	}
+	
+	@Test
+    public void getSubmodelByIdValueOnlyExistingSubmodel() {
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+
+        String submodelId = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID;
+        Submodel expectedSubmodel = DummySubmodelFactory.createOperationalDataSubmodel();
+        SubmodelValueOnly expectedValueOnly = new SubmodelValueOnly(expectedSubmodel.getSubmodelElements());
+
+        SubmodelValueOnly valueOnly = repo.getSubmodelByIdValueOnly(submodelId);
+
+        assertEquals(expectedValueOnly.getIdShort(), valueOnly.getIdShort());
+        assertEquals(expectedValueOnly.getValuesOnlyMap(), valueOnly.getValuesOnlyMap());
+    }
+    
+    @Test(expected = ElementDoesNotExistException.class)
+    public void getSubmodelByIdValueOnlyNonExistingSubmodel() {
+        SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+        repo.getSubmodelByIdValueOnly("nonExistingSubmodelId");
+    }
+    
+    @Test
+    public void getSubmodelByIdMetadataExistingSubmodel() {
+        SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+
+		Submodel expectedMetadata = SubmodelMetadataUtil.extractMetadata(DummySubmodelFactory.createOperationalDataSubmodel());
+        String submodelId = expectedMetadata.getId();
+
+        Submodel metadata = repo.getSubmodelByIdMetadata(submodelId);
+
+        assertEquals(expectedMetadata, metadata);
+    }
+
+    @Test(expected = ElementDoesNotExistException.class)
+    public void getSubmodelByIdMetadataNonExistingSubmodel() {
+        SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+        repo.getSubmodelByIdMetadata("nonExistingSubmodelId");
+    }
 
 	private Submodel buildDummySubmodel(String id) {
 		return new DefaultSubmodel.Builder().id(id).submodelElements(new DefaultProperty.Builder().idShort("prop").value("testValue").valueType(DataTypeDefXsd.STRING).build()).build();
