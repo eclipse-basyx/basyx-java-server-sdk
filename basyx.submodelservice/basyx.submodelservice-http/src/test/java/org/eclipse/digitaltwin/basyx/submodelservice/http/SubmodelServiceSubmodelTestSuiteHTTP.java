@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.http;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -32,6 +34,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.Test;
+import org.springframework.http.HttpStatus;
 
 /**
  * Base testsuite for all Submodel Service HTTP tests related to the Submodel
@@ -61,6 +64,19 @@ public abstract class SubmodelServiceSubmodelTestSuiteHTTP {
 		String expected = getJSONValueAsString("SubmodelMetadata.json");
 
 		BaSyxHttpTestUtils.assertSameJSONContent(expected, submodelMetadata);
+	}
+
+	@Test
+	public void getSubmodelMetadata_preservesSubmodel() throws IOException, ParseException {
+
+		String submodelBefore = BaSyxHttpTestUtils.getResponseAsString(BaSyxHttpTestUtils.executeGetOnURL(getURL()));
+
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(getSubmodelMetadataURL());
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+
+		String submodelAfter = BaSyxHttpTestUtils.getResponseAsString(BaSyxHttpTestUtils.executeGetOnURL(getURL()));
+
+		BaSyxHttpTestUtils.assertSameJSONContent(submodelBefore, submodelAfter);
 	}
 
 	private String getSubmodelMetadataURL() {

@@ -1,0 +1,117 @@
+{
+  "SubmodelElementList": [
+    {
+      "min": 200,
+      "max": 300
+    },
+    "5000"
+  ],
+  "EntityData": {
+    "statements": [
+      {
+        "MaxRotationSpeed": "5000"
+      },
+      {
+        "RotationSpeedRange": {
+          "min": 200,
+          "max": 300
+        }
+      }
+    ],
+    "entityType": "CoManagedEntity",
+    "globalAssetId": "globalAssetID",
+    "specificAssetIds": [
+      {
+        "specificAssetIdName": "specificValue"
+      }
+    ]
+  },
+  "RelationshipElement": {
+    "first": {
+      "type": "ModelReference",
+      "keys": [
+        {
+          "type": "DataElement",
+          "value": "DataElement"
+        }
+      ]
+    },
+    "second": {
+      "type": "ExternalReference",
+      "keys": [
+        {
+          "type": "BasicEventElement",
+          "value": "BasicEventElement"
+        }
+      ]
+    }
+  },
+  "ReferenceElement": {
+    "type": "ModelReference",
+    "keys": [
+      {
+        "type": "DataElement",
+        "value": "DataElement"
+      }
+    ]
+  },
+  "BlobData": {
+    "contentType": "application/xml",
+    "value": "Test content of XML file"
+  },
+  "SubmodelElementCollection": {
+    "MaxRotationSpeed": "5000",
+    "FileData": {
+      "contentType": "application/json",
+      "value": "testFile.json"
+    }
+  },
+  "MultiLanguage": [
+    {
+      "en": "Hello"
+    },
+    {
+      "de": "Hallo"
+    }
+  ],
+  "AnnotatedRelationshipElement": {
+    "first": {
+      "type": "ModelReference",
+      "keys": [
+        {
+          "type": "DataElement",
+          "value": "DataElement"
+        }
+      ]
+    },
+    "second": {
+      "type": "ExternalReference",
+      "keys": [
+        {
+          "type": "BasicEventElement",
+          "value": "BasicEventElement"
+        }
+      ]
+    },
+    "annotation": [
+      {
+        "MaxRotationSpeed": "5000"
+      },
+      {
+        "RotationSpeedRange": {
+          "min": 200,
+          "max": 300
+        }
+      }
+    ]
+  },
+  "MaxRotationSpeed": "5000",
+  "RotationSpeedRange": {
+    "min": 200,
+    "max": 300
+  },
+  "FileData": {
+    "contentType": "application/json",
+    "value": "testFile.json"
+  }
+}

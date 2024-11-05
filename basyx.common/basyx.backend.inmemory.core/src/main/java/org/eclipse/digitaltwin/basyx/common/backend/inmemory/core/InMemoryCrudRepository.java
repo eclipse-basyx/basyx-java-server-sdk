@@ -138,7 +138,6 @@ public class InMemoryCrudRepository<T> implements BaSyxCrudRepository<T> {
 	@Override
 	public void delete(@NonNull T entity) {
 		String id = idGetter.apply(entity);
-
 		inMemoryStore.remove(id);
 	}
 
@@ -150,7 +149,6 @@ public class InMemoryCrudRepository<T> implements BaSyxCrudRepository<T> {
 
 	@Override
 	public void deleteAll(@NonNull Iterable<? extends T> entities) {
-
 		for (T entity : entities)
 			inMemoryStore.remove(idGetter.apply(entity));
 	}
