@@ -1,8 +1,6 @@
 name: Build and Test BaSyx
 
 on:
-  push:
-    branches: [ feature/filter-at-backend ]
   pull_request:
     branches: [ main ]
     paths-ignore:

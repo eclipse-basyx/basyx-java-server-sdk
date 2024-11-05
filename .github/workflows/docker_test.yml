@@ -4,8 +4,6 @@
 name: Build and Start Docker Images
 
 on:
-  push:
-      branches: [ feature/filter-at-backend ]
   pull_request:
     branches: [ main ]
     paths-ignore:
