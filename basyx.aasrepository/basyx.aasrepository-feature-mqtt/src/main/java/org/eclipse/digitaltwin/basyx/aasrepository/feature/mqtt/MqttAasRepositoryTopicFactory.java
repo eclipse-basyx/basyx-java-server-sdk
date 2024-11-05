@@ -37,6 +37,7 @@ import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Encoder;
 public class MqttAasRepositoryTopicFactory extends AbstractMqttTopicFactory {
 	private static final String AASREPOSITORY = "aas-repository";
 	private static final String SHELLS = "shells";
+	private static final String SUBMODELS = "submodels";
 	private static final String CREATED = "created";
 	private static final String UPDATED = "updated";
 	private static final String DELETED = "deleted";
@@ -90,6 +91,42 @@ public class MqttAasRepositoryTopicFactory extends AbstractMqttTopicFactory {
 				.add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
+				.add(DELETED)
+				.toString();
+	}
+	
+	/**
+	 * Creates the hierarchical topic for the submodel reference create event
+	 * 
+	 * @param repoId
+	 * @param referenceId
+	 * @return
+	 */
+	public String createCreateAASSubmodelReferenceTopic(String repoId, String referenceId) {
+		return new StringJoiner("/", "", "")
+				.add(AASREPOSITORY)
+				.add(repoId)
+				.add(SHELLS)
+				.add(SUBMODELS)
+				.add(referenceId)
+				.add(CREATED)
+				.toString();
+	}
+	
+	/**
+	 * Creates the hierarchical topic for the submodel reference delete event
+	 * 
+	 * @param repoId
+	 * @param referenceId
+	 * @return
+	 */
+	public String createDeleteAASSubmodelReferenceTopic(String repoId, String referenceId) {
+		return new StringJoiner("/", "", "")
+				.add(AASREPOSITORY)
+				.add(repoId)
+				.add(SHELLS)
+				.add(SUBMODELS)
+				.add(referenceId)
 				.add(DELETED)
 				.toString();
 	}
