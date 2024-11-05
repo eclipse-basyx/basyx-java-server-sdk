@@ -61,7 +61,7 @@ public class AasMongoDBBackendProvider implements AasBackendProvider {
 		this.mappingContext = mappingContext;
 		this.template = template;
 
-//		configureIndices(this.template);
+		configureIndices(this.template);
 
 		mappingContext.addEntityMapping(AssetAdministrationShell.class, collectionName);
 	}
