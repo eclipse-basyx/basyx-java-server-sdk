@@ -95,8 +95,6 @@ public class TestMqttV2AASAggregatorObserver {
 	public void createAasEvent() throws DeserializationException {
 		AssetAdministrationShell shell = createAasDummy("createAasEventId");
 		aasRepository.createAas(shell);
-
-		String lastTopic = listener.lastTopic;
 		
 		assertEquals(topicFactory.createCreateAASTopic(aasRepository.getName()), listener.lastTopic);
 		assertEquals(shell, deserializePayload(listener.lastPayload));
