@@ -62,7 +62,7 @@ public class AasEnvironmentPreconfigurationLoader {
 
 	private Logger logger = LoggerFactory.getLogger(AasEnvironmentPreconfigurationLoader.class);
 
-	@Value("${basyx.environment:#{null}}")
+	
 	private List<String> pathsToLoad;
 
 	private ResourceLoader resourceLoader;
