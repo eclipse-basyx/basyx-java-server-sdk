@@ -55,8 +55,6 @@ public abstract class AasDiscoveryServiceSuite {
 
 	protected abstract AasDiscoveryService getAasDiscoveryService();
 
-	private final PaginationInfo noLimitPaginationInfo = new PaginationInfo(0, "");
-
 	@Test
 	public void getAllAssetAdministrationShellIdsByAssetLink() {
 		AasDiscoveryService discoveryService = getAasDiscoveryService();
@@ -74,7 +72,7 @@ public abstract class AasDiscoveryServiceSuite {
 				new AssetLink("DummyAssetName2",  "DummyAsset_2_Value")
 		));
 
-		List<String> actualResult = discoveryService.getAllAssetAdministrationShellIdsByAssetLink(noLimitPaginationInfo, assetIds)
+		List<String> actualResult = discoveryService.getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo.NO_LIMIT, assetIds)
 				.getResult();
 
 		assertEquals(expectedResult.size(), actualResult.size());

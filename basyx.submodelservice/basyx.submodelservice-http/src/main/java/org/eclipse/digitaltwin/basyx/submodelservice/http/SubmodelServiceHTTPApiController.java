@@ -46,6 +46,7 @@ import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.eclipse.digitaltwin.basyx.pagination.GetSubmodelElementsResult;
+import org.eclipse.digitaltwin.basyx.serialization.SubmodelMetadataUtil;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
@@ -70,7 +71,6 @@ import jakarta.validation.constraints.Min;
 @RestController
 public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi {
 
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private SubmodelService service;
 
 	@Autowired
@@ -165,9 +165,8 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 			"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level) {
 
 		Submodel submodel = service.getSubmodel();
-		submodel.setSubmodelElements(null);
 
-		return new ResponseEntity<Submodel>(submodel, HttpStatus.OK);
+		return new ResponseEntity<>(SubmodelMetadataUtil.extractMetadata(submodel), HttpStatus.OK);
 	}
 
 	@Override
@@ -177,7 +176,7 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 			@Parameter(in = ParameterIn.QUERY, description = "Determines to which extent the resource is being serialized", schema = @Schema(allowableValues = { "withBlobValue",
 					"withoutBlobValue" }, defaultValue = "withoutBlobValue")) @Valid @RequestParam(value = "extent", required = false, defaultValue = "withoutBlobValue") String extent) {
 
-		SubmodelValueOnly result = new SubmodelValueOnly(service.getSubmodelElements(NO_LIMIT_PAGINATION_INFO).getResult());
+		SubmodelValueOnly result = new SubmodelValueOnly(service.getSubmodelElements(PaginationInfo.NO_LIMIT).getResult());
 
 		return new ResponseEntity<SubmodelValueOnly>(result, HttpStatus.OK);
 	}
@@ -321,5 +320,4 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 			e.printStackTrace();
 		}
 	}
-
 }

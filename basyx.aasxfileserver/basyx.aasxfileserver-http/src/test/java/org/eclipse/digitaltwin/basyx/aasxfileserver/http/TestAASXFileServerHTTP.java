@@ -74,7 +74,7 @@ public class TestAASXFileServerHTTP extends AbstractTestNGSpringContextTests {
     @AfterMethod
     public void cleanUp() {
         try {
-            this.aasxFileServer.getAllAASXPackageIds("", new PaginationInfo(0, "")).getResult().stream().forEach(p -> this.aasxFileServer.deleteAASXByPackageId(p.getPackageId()));
+            this.aasxFileServer.getAllAASXPackageIds("", PaginationInfo.NO_LIMIT).getResult().stream().forEach(p -> this.aasxFileServer.deleteAASXByPackageId(p.getPackageId()));
         }
         catch (Exception ignored) {
         }
@@ -193,11 +193,11 @@ public class TestAASXFileServerHTTP extends AbstractTestNGSpringContextTests {
     }
 
     private boolean isPackageNotPresent(String aasId) {
-        return this.aasxFileServer.getAllAASXPackageIds(aasId, new PaginationInfo(0, "")).getResult().size() == 0;
+        return this.aasxFileServer.getAllAASXPackageIds(aasId, PaginationInfo.NO_LIMIT).getResult().size() == 0;
     }
 
     private boolean isPackagePresentOneTime(String aasId) {
-        return this.aasxFileServer.getAllAASXPackageIds(aasId, new PaginationInfo(0, "")).getResult().size() == 1;
+        return this.aasxFileServer.getAllAASXPackageIds(aasId, PaginationInfo.NO_LIMIT).getResult().size() == 1;
     }
 
     private PackageDescription createAASXPackageOnServer() throws Exception {

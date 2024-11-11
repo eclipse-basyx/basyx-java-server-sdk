@@ -1,0 +1,22 @@
+[
+    {
+        "datasource": "EnvironmentalSensorMQTT",
+        "transformers": [
+            "TemperatureTransformer",
+            "HumidityTransformer",
+            "AirQualityTransformer"
+        ],
+        "datasinks": [
+            "TemperatureAAS",
+            "HumidityAAS",
+            "AirQualityAAS"
+        ],
+        "datasinkMappingConfiguration":
+		{
+			"TemperatureAAS": ["TemperatureTransformer"],
+			"HumidityAAS": ["HumidityTransformer"],
+			"AirQualityAAS": ["AirQualityTransformer"]
+		},
+        "trigger": "event"
+    }
+]

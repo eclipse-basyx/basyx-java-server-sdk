@@ -38,6 +38,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 
@@ -55,7 +56,14 @@ public interface SubmodelRepository {
 	 * @return a list of all found Submodels
 	 */
 	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo);
-
+	
+	/**
+	 * Retrieves all Submodels from the repository filtered by the Semantic ID
+	 * 
+	 * @return a list of all found Submodels with common Semantic ID
+	 */
+	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo);
+	
 	/**
 	 * Retrieves the Submodel with the specific id
 	 * 

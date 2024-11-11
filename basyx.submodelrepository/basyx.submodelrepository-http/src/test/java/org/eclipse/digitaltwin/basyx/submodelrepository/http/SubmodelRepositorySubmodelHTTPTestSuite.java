@@ -97,6 +97,18 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 		
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelsJSON,getJSONWithoutCursorInfo(submodelsJSON));
 	}
+	
+	@Test
+	public void getAllSubmodelsBySemanticIDPreconfigured() throws IOException, ParseException {	
+		String semanticId = Base64UrlEncodedIdentifier.encodeIdentifier(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID);
+		String url = getURL() + "?semanticId=" + semanticId;
+		
+		String submodelsJSON = BaSyxSubmodelHttpTestUtils.requestAllSubmodels(url);
+		
+		String expectedSubmodelsJSON = getJSONValueAsString("MultipleSubmodelsWithSameSemanticId.json");
+		
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelsJSON,getJSONWithoutCursorInfo(submodelsJSON));
+	}
 
 	@Test
 	public void getSpecificSubmodel() throws ParseException, IOException {
@@ -395,6 +407,21 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
 	
+	@Test
+	public void getSubmodelByIdValueOnly() throws IOException, ParseException {
+	    String submodelIdentifier = Base64UrlEncodedIdentifier.encodeIdentifier(DummySubmodelFactory.createTechnicalDataSubmodel().getId());
+	    String url = getURL() + "/" + submodelIdentifier + "/$value";
+	    
+	    String expectedSubmodelJSON = getJSONValueAsString("SingleSubmodelValueOnly.json");
+	    
+	    CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(url);
+	    assertEquals(HttpStatus.OK.value(), response.getCode());
+	    
+	    String actualSubmodelJSON = BaSyxHttpTestUtils.getResponseAsString(response);
+	    
+	    BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelJSON, actualSubmodelJSON);
+	}
+
 	private String extractFileNameFromContentDisposition(String contentDisposition) {
 	    for (String part : contentDisposition.split(";")) {
 	        part = part.trim();
