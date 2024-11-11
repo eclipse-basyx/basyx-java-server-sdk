@@ -180,4 +180,9 @@ public class KafkaSubmodelRepository implements SubmodelRepository {
 	public InputStream getFileByFilePath(String submodelId, String filePath) {
 		return decorated.getFileByFilePath(submodelId, filePath);
 	}
+
+	@Override
+	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo) {
+		return decorated.getAllSubmodels(semanticId, pInfo);
+	}
 }
