@@ -1,7 +1,5 @@
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
-
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -24,10 +22,12 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
 
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -94,7 +94,7 @@ public class TestMqttV2AASAggregatorObserver {
 	public void createAasEvent() throws DeserializationException {
 		AssetAdministrationShell shell = createAasDummy("createAasEventId");
 		aasRepository.createAas(shell);
-
+		
 		assertEquals(topicFactory.createCreateAASTopic(aasRepository.getName()), listener.lastTopic);
 		assertEquals(shell, deserializePayload(listener.lastPayload));
 	}
@@ -121,6 +121,29 @@ public class TestMqttV2AASAggregatorObserver {
 		assertEquals(topicFactory.createDeleteAASTopic(aasRepository.getName()), listener.lastTopic);
 		assertEquals(shell, deserializePayload(listener.lastPayload));
 	}
+	
+	@Test
+	public void addSubmodelReferenceEvent() throws DeserializationException {
+		AssetAdministrationShell shell = createAasDummy("createAasSubmodelRefEventId");
+		aasRepository.createAas(shell);
+		
+		Reference submodelReference = DummyAasFactory.createDummyReference(DummyAasFactory.DUMMY_SUBMODEL_ID);
+		aasRepository.addSubmodelReference(shell.getId(), submodelReference);
+		
+		assertEquals(topicFactory.createCreateAASSubmodelReferenceTopic(aasRepository.getName(), DummyAasFactory.DUMMY_SUBMODEL_ID), listener.lastTopic);
+		assertEquals(shell, deserializePayload(listener.lastPayload));
+	}	
+	
+	@Test
+	public void removeSubmodelReferenceEvent() throws DeserializationException {
+		AssetAdministrationShell shell = createAasWithSubmodelReference("removeAasSubmodelRefEventId");
+		aasRepository.createAas(shell);
+		
+		aasRepository.removeSubmodelReference(shell.getId(), DummyAasFactory.DUMMY_SUBMODEL_ID);
+		
+		assertEquals(topicFactory.createDeleteAASSubmodelReferenceTopic(aasRepository.getName(), DummyAasFactory.DUMMY_SUBMODEL_ID), listener.lastTopic);
+		assertEquals(shell, deserializePayload(listener.lastPayload));
+	}	
 
 	private AssetAdministrationShell deserializePayload(String payload) throws DeserializationException {
 		return new JsonDeserializer().read(payload, AssetAdministrationShell.class);
@@ -133,6 +156,16 @@ public class TestMqttV2AASAggregatorObserver {
 
 	private AssetAdministrationShell createAasDummy(String aasId) {
 		return new DefaultAssetAdministrationShell.Builder().id(aasId)
+				.build();
+	}
+	
+	private AssetAdministrationShell createAasWithSubmodelReference(String aasId) {
+		Reference submodelReference = DummyAasFactory.createDummyReference(DummyAasFactory.DUMMY_SUBMODEL_ID);
+		
+		List<Reference> submodelReferences = new ArrayList<Reference>();
+		submodelReferences.add(submodelReference);
+		
+		return new DefaultAssetAdministrationShell.Builder().id(aasId).submodels(submodelReferences)
 				.build();
 	}
 
