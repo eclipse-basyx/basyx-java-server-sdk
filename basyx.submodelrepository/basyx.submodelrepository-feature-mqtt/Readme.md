@@ -10,4 +10,9 @@ This feature provides hierarchical MQTT eventing for a multitude of events:
 | SubmodelElement Updated | sm-repository/$repoId/submodels/$submodelIdBase64URLEncoded/submodelElements/$idShortPath/updated | Updated SubmodelElement JSON  |
 | SubmodelElement Deleted | sm-repository/$repoId/submodels/$submodelIdBase64URLEncoded/submodelElements/$idShortPath/deleted | Deleted SubmodelElement JSON  |
 
+| SubmodelElements Patched | sm-repository/$repoId/submodels/$submodelIdBase64URLEncoded/submodelElements/patched | Patched SubmodelElement JSON  |
+
+| FileValue Deleted | sm-repository/$repoId/submodels/$submodelIdBase64URLEncoded/submodelElements/$idShortPath/deleted | Deleted SubmodelElement JSON  |
+| FileValue Uploaded | sm-repository/$repoId/submodels/$submodelIdBase64URLEncoded/submodelElements/$idShortPath/deleted | Deleted SubmodelElement JSON  |
+
 Per default, the SubmodelElement topic payloads include the SubmodelElement's value. If this is not desired, the SubmodelElement can be annotated with a Qualifier of type *emptyValueUpdateEvent* and value *true* 

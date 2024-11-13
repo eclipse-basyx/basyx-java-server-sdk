@@ -1,5 +1,6 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
@@ -127,6 +128,13 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
+	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
+		decorated.patchSubmodelElements(submodelId, submodelElementList);
+		List<SubmodelElement> patchedSubmodelElements = decorated.getSubmodelElements(submodelId, PaginationInfo.NO_LIMIT).getResult();
+		submodelElementsPatched(patchedSubmodelElements, getName(), submodelId);
+	}
+
+	@Override
 	public String getName() {
 		return decorated.getName();
 	}
@@ -139,6 +147,35 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	@Override
 	public Submodel getSubmodelByIdMetadata(String submodelId) {
 		return decorated.getSubmodelByIdMetadata(submodelId);
+	}
+
+	@Override
+	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
+		return decorated.invokeOperation(submodelId, idShortPath, input);
+	}
+
+	@Override
+	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) {
+		return decorated.getFileByPathSubmodel(submodelId, idShortPath);
+	}
+
+	@Override
+	public void deleteFileValue(String identifier, String idShortPath) {
+		SubmodelElement submodelElement = decorated.getSubmodelElement(identifier, idShortPath);	
+		decorated.deleteFileValue(identifier, idShortPath);
+		fileValueDeleted(submodelElement, getName(), identifier, idShortPath);
+	}
+
+	@Override
+	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream){
+		SubmodelElement submodelElement = decorated.getSubmodelElement(submodelId, idShortPath);
+		decorated.setFileValue(submodelId, idShortPath, fileName, inputStream);
+		fileValueUpdated(submodelElement, getName(), submodelId, idShortPath, fileName);
+	}
+
+	@Override
+	public InputStream getFileByFilePath(String submodelId, String filePath) {
+		return decorated.getFileByFilePath(submodelId, filePath);
 	}
 
 	private void submodelCreated(Submodel submodel, String repoId) {
@@ -163,6 +200,18 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 
 	private void submodelElementDeleted(SubmodelElement submodelElement, String repoId, String submodelId, String submodelElementId) {
 		sendMqttMessage(topicFactory.createDeleteSubmodelElementTopic(repoId, submodelId, submodelElementId), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
+	}
+	
+	private void submodelElementsPatched(List<SubmodelElement> submodelElements, String repoId, String submodelId) {
+		sendMqttMessage(topicFactory.createPatchSubmodelElementsTopic(repoId, submodelId), SubmodelElementSerializer.serializeSubmodelElements(submodelElements));
+	}
+	
+	private void fileValueDeleted(SubmodelElement submodelElement, String repoId, String submodelId, String submodelElementId) {
+		sendMqttMessage(topicFactory.createDeleteFileValueTopic(repoId, submodelId, submodelElementId), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
+	}
+	
+	private void fileValueUpdated(SubmodelElement submodelElement, String repoId, String submodelId, String submodelElementId, String fileName) {
+		sendMqttMessage(topicFactory.createUpdateFileValueTopic(repoId, submodelId, submodelElementId, fileName), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
 	}
 
 	/**
@@ -192,39 +241,6 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 		} else {
 			return new MqttMessage(payload.getBytes());
 		}
-	}
-
-	@Override
-	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
-		return decorated.invokeOperation(submodelId, idShortPath, input);
-	}
-
-	@Override
-	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) {
-		return decorated.getFileByPathSubmodel(submodelId, idShortPath);
-	}
-
-	@Override
-	public void deleteFileValue(String identifier, String idShortPath) {
-		// TODO: Eventing
-		decorated.deleteFileValue(identifier, idShortPath);
-	}
-
-	@Override
-	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream){
-		// TODO: Eventing
-		decorated.setFileValue(submodelId, idShortPath, fileName, inputStream);
-	}
-
-	@Override
-	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
-		// TODO: Eventing
-		decorated.patchSubmodelElements(submodelId, submodelElementList);
-	}
-
-	@Override
-	public InputStream getFileByFilePath(String submodelId, String filePath) {
-		return decorated.getFileByFilePath(submodelId, filePath);
 	}
 
 }

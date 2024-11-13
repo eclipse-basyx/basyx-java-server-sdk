@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.common.mqttcore.serializer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
@@ -68,6 +70,34 @@ public class SubmodelElementSerializer {
 			}
 
 			return new JsonSerializer().write(localElement);
+		} catch (SerializationException | DeserializationException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
+	 * Serializer to create a JSON String for the given submodel elements.
+	 * 
+	 * @param submodelElement
+	 * @return serialized list of submodelElements as JSON String
+	 */
+	public static String serializeSubmodelElements(List<SubmodelElement> submodelElements) {
+		try {
+			List<String> updatedSubmodelElements = new ArrayList<String>();
+			
+			for(int i = 0; i < submodelElements.size(); i++) {
+				SubmodelElement elem = submodelElements.get(i);
+				SubmodelElement localElement;
+				if (shouldSendEmptyValueEvent(elem)) {
+					localElement = getSubmodelElementWithoutValue(elem);
+				} else {
+					localElement = elem;
+				}
+				
+				updatedSubmodelElements.add(new JsonSerializer().write(localElement));
+			}
+			
+			return new JsonSerializer().write(updatedSubmodelElements);
 		} catch (SerializationException | DeserializationException e) {
 			throw new RuntimeException(e);
 		}
