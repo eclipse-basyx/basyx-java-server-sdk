@@ -25,7 +25,6 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka;
 
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
@@ -41,10 +40,7 @@ import org.springframework.context.annotation.Profile;
 @Profile("test-submodel")
 public class SubmodelServiceTestComponent {
 	
-	@Bean
-	public JsonDeserializer deserializer() {
-		return new JsonDeserializer();
-	}
+
 	
 	@Bean
 	public Submodel submodel() {

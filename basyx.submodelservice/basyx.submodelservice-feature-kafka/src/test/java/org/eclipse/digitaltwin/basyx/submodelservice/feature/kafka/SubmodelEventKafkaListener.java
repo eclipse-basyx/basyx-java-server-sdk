@@ -49,12 +49,11 @@ public class SubmodelEventKafkaListener implements ConsumerSeekAware {
 	public static final String TOPIC_NAME = "submodel-events";
 	
 	private final LinkedBlockingDeque<SubmodelEvent> evt = new LinkedBlockingDeque<SubmodelEvent>();
-	private final JsonDeserializer deserializer;
+	private final JsonDeserializer deserializer = new JsonDeserializer();
 	private final CountDownLatch latch = new CountDownLatch(1);
 	private final long startupTime;
 
-	public SubmodelEventKafkaListener(JsonDeserializer deserializer) {
-		this.deserializer = deserializer;
+	public SubmodelEventKafkaListener() {
 		startupTime = System.currentTimeMillis();
 	}
 
