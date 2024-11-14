@@ -65,6 +65,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @ComponentScan(basePackages = { "org.eclipse.digitaltwin.basyx"})
 @RunWith(SpringRunner.class)
 @TestPropertySource(properties = {
+		"basyx.environment=",
 		"basyx.feature.kafka.enabled=true",
 		"spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092"
 })

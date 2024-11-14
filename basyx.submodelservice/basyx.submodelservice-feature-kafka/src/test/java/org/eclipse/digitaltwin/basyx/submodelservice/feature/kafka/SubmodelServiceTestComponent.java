@@ -31,12 +31,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 
 /**
  * @author geso02 (Sonnenberg DFKI GmbH)
  */
 @SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class,
 		MongoDataAutoConfiguration.class })
+@Profile("test-submodel")
 public class SubmodelServiceTestComponent {
 	
 	@Bean
