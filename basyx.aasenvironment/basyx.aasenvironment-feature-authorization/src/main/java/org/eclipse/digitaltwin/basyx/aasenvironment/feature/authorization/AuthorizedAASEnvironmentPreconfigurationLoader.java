@@ -74,7 +74,6 @@ public class AuthorizedAASEnvironmentPreconfigurationLoader extends AasEnvironme
     @Value("${basyx.aasenvironment.authorization.preconfiguration.scopes:#{null}}")
     private Collection<String> scopes;
 
-    @Value("${basyx.environment:#{null}}")
     private String basyxEnvironment;
 
     private AccessTokenProvider tokenProvider;

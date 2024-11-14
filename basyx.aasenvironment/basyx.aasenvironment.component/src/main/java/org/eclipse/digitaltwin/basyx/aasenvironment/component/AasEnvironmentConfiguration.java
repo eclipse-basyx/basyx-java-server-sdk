@@ -55,7 +55,9 @@ public class AasEnvironmentConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public static AasEnvironmentPreconfigurationLoader getAasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, @Value("${basyx.environment:#{null}}") List<String> pathsToLoad) {
+	public static AasEnvironmentPreconfigurationLoader getAasEnvironmentPreconfigurationLoader(
+			ResourceLoader resourceLoader,
+			@Value(AasEnvironmentPreconfigurationLoader.PATHS_TO_LOAD_EXPR) List<String> pathsToLoad) {
 		return new AasEnvironmentPreconfigurationLoader(resourceLoader, pathsToLoad);
 	}
 

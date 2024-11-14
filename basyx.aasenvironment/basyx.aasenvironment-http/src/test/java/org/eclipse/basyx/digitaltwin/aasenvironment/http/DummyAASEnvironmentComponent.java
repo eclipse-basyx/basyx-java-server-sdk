@@ -44,6 +44,7 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ResourceLoader;
@@ -63,7 +64,8 @@ public class DummyAASEnvironmentComponent {
 	}
 
 	@Bean
-	public AasEnvironmentPreconfigurationLoader createAasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, List<String> pathsToLoad) {
+	public AasEnvironmentPreconfigurationLoader createAasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, 
+			@Value(AasEnvironmentPreconfigurationLoader.PATHS_TO_LOAD_EXPR) List<String> pathsToLoad) {
 		return new AasEnvironmentPreconfigurationLoader(resourceLoader, pathsToLoad);
 	}
 

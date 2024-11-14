@@ -59,6 +59,8 @@ import org.springframework.stereotype.Component;
  *
  */
 public class AasEnvironmentPreconfigurationLoader {
+	
+	public static final String PATHS_TO_LOAD_EXPR = "${basyx.environment:#{null}}";
 
 	private Logger logger = LoggerFactory.getLogger(AasEnvironmentPreconfigurationLoader.class);
 
