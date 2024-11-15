@@ -36,6 +36,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.LangStringNameType;
 import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper; 
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
@@ -187,18 +188,8 @@ public class SubmodelDescriptorFactory {
 	private List<String> createSubmodelRepositoryUrls(List<String> submodelRepositoryBaseURLs) {
 		List<String> toReturn = new ArrayList<>(submodelRepositoryBaseURLs.size());
 		for (String eachUrl : submodelRepositoryBaseURLs) {
-			toReturn.add(createSubmodelRepositoryUrl(eachUrl));
+			toReturn.add(RepositoryUrlHelper.createRepositoryUrl(eachUrl, SUBMODEL_REPOSITORY_PATH));
 		}
 		return toReturn;
 	}
-
-	private String createSubmodelRepositoryUrl(String submodelRepositoryBaseURL) {
-
-		try {
-			return new URL(new URL(submodelRepositoryBaseURL), SUBMODEL_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The Submodel Repository Base url is malformed.\n" + e.getMessage());
-		}
-	}
-
 }

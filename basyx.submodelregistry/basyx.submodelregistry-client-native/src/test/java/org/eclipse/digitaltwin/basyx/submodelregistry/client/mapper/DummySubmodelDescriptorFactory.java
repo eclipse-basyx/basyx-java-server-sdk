@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Key;
@@ -96,7 +97,7 @@ public class DummySubmodelDescriptorFactory {
 	}
 
 	private static String createHref(String smId, String smRepoBaseUrl) {
-		return String.format("%s/%s", createSubmodelRepositoryUrl(smRepoBaseUrl), Base64UrlEncodedIdentifier.encodeIdentifier(smId));
+		return String.format("%s/%s", RepositoryUrlHelper.createRepositoryUrl(smRepoBaseUrl, SUBMODEL_REPOSITORY_PATH), Base64UrlEncodedIdentifier.encodeIdentifier(smId));
 	}
 
 	private static String getProtocol(String endpoint) {
@@ -104,15 +105,6 @@ public class DummySubmodelDescriptorFactory {
 			return new URL(endpoint).getProtocol();
 		} catch (MalformedURLException e) {
 			throw new RuntimeException();
-		}
-	}
-
-	private static String createSubmodelRepositoryUrl(String smRepositoryBaseURL) {
-
-		try {
-			return new URL(new URL(smRepositoryBaseURL), SUBMODEL_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The Submodel Repository Base url is malformed.\n " + e.getMessage());
 		}
 	}
 }
