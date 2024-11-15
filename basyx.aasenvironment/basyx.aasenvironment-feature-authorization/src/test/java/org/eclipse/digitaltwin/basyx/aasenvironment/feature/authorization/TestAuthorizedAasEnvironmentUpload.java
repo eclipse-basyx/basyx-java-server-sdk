@@ -82,12 +82,8 @@ public class TestAuthorizedAasEnvironmentUpload {
 	@BeforeClass
 	public static void setUp() throws FileNotFoundException, IOException {
 		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
-        Map<String, Object> properties = new HashMap<>();
-        // just reset the basyx.environment to empty string here
-        properties.put("spring.config.location", "classpath:/application-auth.properties");
-        SpringApplication app = new SpringApplication(DummyAasEnvironmentComponent.class);
-        app.setDefaultProperties(properties);
-		appContext = app.run(new String[] {});		
+		
+        appContext = new SpringApplication(DummyAasEnvironmentComponent.class).run(new String[] {});
 		submodelRepo = appContext.getBean(SubmodelRepository.class);
 		aasRepo = appContext.getBean(AasRepository.class);
 		conceptDescriptionRepo = appContext.getBean(ConceptDescriptionRepository.class);
