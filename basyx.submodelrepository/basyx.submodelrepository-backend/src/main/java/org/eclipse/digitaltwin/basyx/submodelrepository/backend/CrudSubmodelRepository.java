@@ -200,20 +200,20 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 	public SubmodelElement createSubmodelElement(String submodelId, SubmodelElement smElement) {
 		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
 
-		submodelService.createSubmodelElement(smElement);
+		SubmodelElement createdSME = submodelService.createSubmodelElement(smElement);
 
 		updateSubmodel(submodelId, submodelService.getSubmodel());
-		return smElement;
+		return createdSME;
 	}
 
 	@Override
 	public SubmodelElement createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
 		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
 
-		submodelService.createSubmodelElement(idShortPath, smElement);
+		SubmodelElement createdSME = submodelService.createSubmodelElement(idShortPath, smElement);
 
 		updateSubmodel(submodelId, submodelService.getSubmodel());
-		return smElement;
+		return createdSME;
 	}
 
 	@Override
