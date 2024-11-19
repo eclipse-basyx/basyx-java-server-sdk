@@ -24,6 +24,7 @@
 		<module>basyx.conceptdescriptionrepository</module>
 		<module>basyx.aasxfileserver</module>
 		<module>basyx.aasdiscoveryservice</module>
+		<module>basyx.digitaltwinregistry</module>
 	</modules>
 	<name>BaSyx Parent</name>
 	<description>Parent POM for Eclipse BaSyx</description>
@@ -776,6 +777,47 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelregistry-client-native</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-service</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-service-basemodel</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-service-inmemory-storage</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-service-mongodb-storage</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-service</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<!-- basyx.digitaltwinregistry -->
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.digitaltwinregistry</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<!--<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.digitaltwinregistry-http</artifactId>
+				<version>${revision}</version>
+			</dependency>-->
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.digitaltwinregistry-component</artifactId>
 				<version>${revision}</version>
 			</dependency>
 
