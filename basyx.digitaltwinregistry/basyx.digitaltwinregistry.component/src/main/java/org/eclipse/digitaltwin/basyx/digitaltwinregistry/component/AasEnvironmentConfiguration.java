@@ -25,6 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.digitaltwinregistry.component;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -67,24 +68,31 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  *
  */
 @Configuration
-public class AasEnvironmentConfiguration  {
-	
+public class AasEnvironmentConfiguration {
+
 //	@Bean
-//    public BeanFactoryPostProcessor dynamicRegistrar() {
-//        return beanFactory -> {
-//            Reflections reflections = new Reflections("org.eclipse.digitaltwin.basyx");
-//            Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(Component.class);
-//            Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(Service.class);
-//            Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(Repository.class);
-//            Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(Controller.class);
-//            Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(RestController.class);
-//            Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(ControllerAdvice.class);
-//            Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(Configuration.class);
-//            for (Class<?> clazz : annotatedClasses) {
-//                beanFactory.registerSingleton(clazz.getSimpleName(), BeanUtils.instantiateClass(clazz));
-//            }
-//        };
-//    }
+//	public BeanFactoryPostProcessor dynamicRegistrar() {
+//		return beanFactory -> {
+//			Reflections reflections = new Reflections("org.eclipse.digitaltwin.basyx");
+//			Set<Class<?>> component = reflections.getTypesAnnotatedWith(Component.class);
+//			Set<Class<?>> service = reflections.getTypesAnnotatedWith(Service.class);
+//			Set<Class<?>> repo = reflections.getTypesAnnotatedWith(Repository.class);
+//			Set<Class<?>> controller = reflections.getTypesAnnotatedWith(Controller.class);
+//			Set<Class<?>> restController = reflections.getTypesAnnotatedWith(RestController.class);
+//			Set<Class<?>> controllerAdvice = reflections.getTypesAnnotatedWith(ControllerAdvice.class);
+//			Set<Class<?>> config = reflections.getTypesAnnotatedWith(Configuration.class);
+//
+//			List<Set<Class<?>>> list = Arrays.asList(component, service, repo, controller, restController, controllerAdvice, config);
+//
+//			System.out.println("All classes");
+//			for (Set<Class<?>> set : list) {
+//				for (Class<?> clazz : set) {
+////					beanFactory.registerSingleton(clazz.getSimpleName(), BeanUtils.instantiateClass(clazz));
+//					System.out.println(clazz.getName());
+//				}
+//			}
+//		};
+//	}
 
 	@Bean
 	public LocationBuilder locationBuilder() {
@@ -97,7 +105,7 @@ public class AasEnvironmentConfiguration  {
 		builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 		return new MappingJackson2HttpMessageConverter(builder.build());
 	}
-	
+
 	@Bean
 	public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder(List<SerializationExtension> serializationExtensions) {
 		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL);
@@ -105,7 +113,7 @@ public class AasEnvironmentConfiguration  {
 		for (SerializationExtension serializationExtension : serializationExtensions) {
 			serializationExtension.extend(builder);
 		}
-		
+
 		return builder;
 	}
 
