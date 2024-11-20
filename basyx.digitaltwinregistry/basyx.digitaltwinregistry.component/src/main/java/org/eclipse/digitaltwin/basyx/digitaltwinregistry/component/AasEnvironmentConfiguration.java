@@ -25,30 +25,30 @@
 
 package org.eclipse.digitaltwin.basyx.digitaltwinregistry.component;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.CrudAasDiscovery;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory.AasDiscoveryInMemoryBackendProvider;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.LookupApiController;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.api.BasyxDescriptionApiDelegate;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.api.BasyxRegistryApiDelegate;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.api.BasyxSearchApiDelegate;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.api.DescriptionApiDelegate;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetKind;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.LocationBuilder;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.api.SearchApiDelegate;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.api.ShellDescriptorsApi;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.api.ShellDescriptorsApiController;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.api.ShellDescriptorsApiDelegate;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventLogSink;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventSink;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.memory.InMemoryAasRegistryStorage;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.RestConfiguration.StringToEnumConverter;
+import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
+import org.eclipse.digitaltwin.basyx.http.CorsPathPatternProvider;
+import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 /**
  * Configuration for aas environment for dependency injection
@@ -56,70 +56,114 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author zhangzai, mateusmolina
  *
  */
-//@Configuration
-public class AasEnvironmentConfiguration {
-	
+@Configuration
+public class AasEnvironmentConfiguration  {
+
 	@Bean
-	@Primary
-	public static RegistryEventSink getAasEnvironment() {
-		return new RegistryEventLogSink();
+	public LocationBuilder locationBuilder() {
+		return new DefaultLocationBuilder();
 	}
 
-//	@Bean
-//	@Primary
-//	public static RegistryEventSink getAasEnvironment() {
-//		return new RegistryEventLogSink();
-//	}
-//	
-//	@Bean
-//	@Primary
-//	public static DescriptionApiDelegate getDescriptionApiDelegate() {
-//		return new BasyxDescriptionApiDelegate();
-//	}
-//	
-//	@Bean
-//	@Primary
-//	public static SearchApiDelegate getSearchApiDelegate(AasRegistryStorage storage, RegistryEventSink eventSink) {
-//		return new BasyxSearchApiDelegate(storage, eventSink);
-//	}
-//	
-//	@Bean
-////	@Primary
-//	@ConditionalOnMissingBean
-//	@ConditionalOnProperty()
-//	public static AasRegistryStorage getAasRegistryStorage() {
-//		return new InMemoryAasRegistryStorage();
-//	}
-//	
-//	@Bean
-//	@Primary
-//	public static LocationBuilder getLocationBuilder() {
-//		return new DefaultLocationBuilder();
-//	}
-//	
-//	@Bean
-//	@Primary
-//	public static ShellDescriptorsApiDelegate getShellDescriptorsApiDelegate(AasRegistryStorage storage, RegistryEventSink eventSink, LocationBuilder builder) {
-//		return new BasyxRegistryApiDelegate(storage, eventSink, builder);
-//	}
-//	
-//	@Bean
-//	@Primary
-//	public static ShellDescriptorsApi getShellDescriptorsApi(ShellDescriptorsApiDelegate shellDescriptorsApiDelegate) {
-//		return new ShellDescriptorsApiController(shellDescriptorsApiDelegate);
-//	}
-//	
-//	@Bean
-//	@Primary
-//	public static LookupApiController getLookupApiController(AasDiscoveryService aasDiscoveryService, ObjectMapper mapper) {
-//		return new LookupApiController(aasDiscoveryService, mapper);
-//	}
-//	
-//	@Bean
-////	@Primary
-//	@ConditionalOnMissingBean
-//	public static AasDiscoveryService getAasDiscoveryService() {
-//		return new CrudAasDiscovery(new AasDiscoveryInMemoryBackendProvider());
-//	}
+	@Bean
+	public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter(Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder) {
+		Jackson2ObjectMapperBuilder builder = jackson2ObjectMapperBuilder.serializationInclusion(JsonInclude.Include.NON_NULL);
+		builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+		return new MappingJackson2HttpMessageConverter(builder.build());
+	}
+	
+	@Bean
+	public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder(List<SerializationExtension> serializationExtensions) {
+		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL);
+
+		for (SerializationExtension serializationExtension : serializationExtensions) {
+			serializationExtension.extend(builder);
+		}
+		
+		return builder;
+	}
+
+	@Bean
+	public CorsPathPatternProvider getAasRegistryServiceCorsUrlProvider() {
+		return new CorsPathPatternProvider("/shell-descriptors/**");
+	}
+
+	@Bean
+	public SerializationExtension getExtension() {
+		return new Aas4JHTTPSerializationExtension();
+	}
+
+	public void addFormatters(FormatterRegistry registry) {
+		registry.addConverter(new StringToEnumConverter());
+	}
+
+	public static class StringToEnumConverter implements Converter<String, AssetKind> {
+		@Override
+		public AssetKind convert(String source) {
+			return AssetKind.fromValue(source);
+		}
+	}
+
+	// @Bean
+	// @Primary
+	// public static RegistryEventSink getAasEnvironment() {
+	// return new RegistryEventLogSink();
+	// }
+	//
+	// @Bean
+	// @Primary
+	// public static DescriptionApiDelegate getDescriptionApiDelegate() {
+	// return new BasyxDescriptionApiDelegate();
+	// }
+	//
+	// @Bean
+	// @Primary
+	// public static SearchApiDelegate getSearchApiDelegate(AasRegistryStorage
+	// storage, RegistryEventSink eventSink) {
+	// return new BasyxSearchApiDelegate(storage, eventSink);
+	// }
+	//
+	// @Bean
+	//// @Primary
+	// @ConditionalOnMissingBean
+	// @ConditionalOnProperty()
+	// public static AasRegistryStorage getAasRegistryStorage() {
+	// return new InMemoryAasRegistryStorage();
+	// }
+	//
+	// @Bean
+	// @Primary
+	// public static LocationBuilder getLocationBuilder() {
+	// return new DefaultLocationBuilder();
+	// }
+	//
+	// @Bean
+	// @Primary
+	// public static ShellDescriptorsApiDelegate
+	// getShellDescriptorsApiDelegate(AasRegistryStorage storage, RegistryEventSink
+	// eventSink, LocationBuilder builder) {
+	// return new BasyxRegistryApiDelegate(storage, eventSink, builder);
+	// }
+	//
+	// @Bean
+	// @Primary
+	// public static ShellDescriptorsApi
+	// getShellDescriptorsApi(ShellDescriptorsApiDelegate
+	// shellDescriptorsApiDelegate) {
+	// return new ShellDescriptorsApiController(shellDescriptorsApiDelegate);
+	// }
+	//
+	// @Bean
+	// @Primary
+	// public static LookupApiController getLookupApiController(AasDiscoveryService
+	// aasDiscoveryService, ObjectMapper mapper) {
+	// return new LookupApiController(aasDiscoveryService, mapper);
+	// }
+	//
+	// @Bean
+	//// @Primary
+	// @ConditionalOnMissingBean
+	// public static AasDiscoveryService getAasDiscoveryService() {
+	// return new CrudAasDiscovery(new AasDiscoveryInMemoryBackendProvider());
+	// }
 
 }

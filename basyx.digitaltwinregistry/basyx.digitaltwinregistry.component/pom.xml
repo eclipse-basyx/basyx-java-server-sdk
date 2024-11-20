@@ -88,7 +88,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-		<!--<dependency>
+		<dependency>
 			<groupId>org.eclipse.digitaltwin.aas4j</groupId>
 			<artifactId>aas4j-dataformat-xml</artifactId>
 		</dependency>
@@ -103,7 +103,7 @@
 		<dependency>
 			<groupId>org.xmlunit</groupId>
 			<artifactId>xmlunit-matchers</artifactId>
-		</dependency>-->
+		</dependency>
 		<!--<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
 			<artifactId>httpclient5</artifactId>
