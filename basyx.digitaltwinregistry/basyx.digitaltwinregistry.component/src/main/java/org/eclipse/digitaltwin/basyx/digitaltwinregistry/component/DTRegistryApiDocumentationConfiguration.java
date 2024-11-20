@@ -25,15 +25,12 @@
 
 package org.eclipse.digitaltwin.basyx.digitaltwinregistry.component;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.http.documentation.RepositoryApiDocumentationConfiguration;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-
 import io.swagger.v3.oas.models.info.Info;
 
 /**
- * API documentation configuration for {@link AasDiscoveryService}
+ * API documentation configuration for DigitalTwin Registry
  * 
  * @author danish
  *

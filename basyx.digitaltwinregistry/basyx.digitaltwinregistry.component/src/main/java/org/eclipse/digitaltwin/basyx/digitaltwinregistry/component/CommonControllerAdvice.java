@@ -5,7 +5,6 @@ import java.time.OffsetDateTime;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.Message;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.Result;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.Message.MessageTypeEnum;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.BasyxControllerAdvice;
 import org.eclipse.digitaltwin.basyx.core.exceptions.AssetLinkDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;

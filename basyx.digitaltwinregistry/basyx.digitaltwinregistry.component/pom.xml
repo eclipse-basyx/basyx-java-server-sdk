@@ -10,8 +10,8 @@
 	</parent>
 
 	<artifactId>basyx.digitaltwinregistry.component</artifactId>
-	<name>BaSyx AAS Environment Component</name>
-	<description>BaSyx AAS Environment Component</description>
+	<name>BaSyx Digital Twin Registry Component</name>
+	<description>BaSyx Digital Twin Registry Component</description>
 
 	<properties>
 		<docker.image.name>basyx-dt-registry</docker.image.name>
