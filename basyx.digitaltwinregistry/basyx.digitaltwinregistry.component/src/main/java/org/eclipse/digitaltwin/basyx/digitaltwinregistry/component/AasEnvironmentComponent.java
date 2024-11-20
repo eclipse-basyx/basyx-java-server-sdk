@@ -26,14 +26,6 @@
 package org.eclipse.digitaltwin.basyx.digitaltwinregistry.component;
 
 import java.util.Arrays;
-
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.component.AasDiscoveryServiceComponent;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.LookupApiController;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.OpenApiGeneratorApplication;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.api.DescriptionApiController;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.api.ShellDescriptorsApi;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.api.ShellDescriptorsApiController;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -44,7 +36,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.FullyQualifiedAnnotationBeanNameGenerator;
 
 /**
  * Creates and starts the AasEnvironment off-shelf-component.
@@ -52,25 +44,35 @@ import org.springframework.context.annotation.Import;
  * @author schnicke
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class, SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class,
-		OAuth2ResourceServerAutoConfiguration.class })
-@ComponentScan(excludeFilters = { @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.http.description.DescriptionController.class),
+@SpringBootApplication(nameGenerator = FullyQualifiedAnnotationBeanNameGenerator.class, scanBasePackages = { "org.eclipse.digitaltwin.basyx", "org.eclipse.digitaltwin.basyx.aasregistry.service.storage" }, exclude = {
+		MongoAutoConfiguration.class, MongoDataAutoConfiguration.class, SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class, OAuth2ResourceServerAutoConfiguration.class })
+@ComponentScan(basePackages = { "org.eclipse.digitaltwin.basyx.authorization", "org.eclipse.digitaltwin.basyx.authorization.rbac", "org.eclipse.digitaltwin.basyx.aasregistry.feature", "org.eclipse.digitaltwin.basyx.aasregistry.service",
+		"org.eclipse.digitaltwin.basyx.aasregistry.service.api", "org.eclipse.digitaltwin.basyx.aasregistry.service.configuration", "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.component", "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core", "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.feature", "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend", "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http", "org.eclipse.digitaltwin.basyx.digitaltwinregistry.component" },
 
-		@ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.eclipse.digitaltwin.basyx.http.description.DescriptionController"),
-		
-		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasregistry.service.api.SearchApiController.class),
+		excludeFilters = { @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.http.description.DescriptionController.class),
 
-		@ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.eclipse.digitaltwin.basyx.aasregistry.service.api.SearchApiController"),
+				// @ComponentScan.Filter(type = FilterType.REGEX, pattern =
+				// "org.eclipse.digitaltwin.basyx.http.description.DescriptionController"),
 
-})
-//@Import({ OpenApiGeneratorApplication.class, AasDiscoveryServiceComponent.class })
+				@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasregistry.service.api.SearchApiController.class),
+				@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasregistry.service.OpenApiGeneratorApplication.class),
+				@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasdiscoveryservice.component.AasDiscoveryServiceComponent.class),
+				@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.documentation.AasDiscoveryServiceApiDocumentationConfiguration.class),
+				@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.SpringDocConfiguration.class),
+
+		// @ComponentScan.Filter(type = FilterType.REGEX, pattern =
+		// "org.eclipse.digitaltwin.basyx.aasregistry.service.api.SearchApiController"),
+
+		})
+// @Import({ OpenApiGeneratorApplication.class,
+// AasDiscoveryServiceComponent.class })
 public class AasEnvironmentComponent {
-	
-	@Autowired
-    private ShellDescriptorsApi descriptionApiController; // Only inject one
-	@Autowired
-	private LookupApiController lookupApiController; // Only inject one
-	
+
+	// @Autowired
+	// private ShellDescriptorsApi descriptionApiController; // Only inject one
+	// @Autowired
+	// private LookupApiController lookupApiController; // Only inject one
+
 	public static void main(String[] args) {
 		ConfigurableApplicationContext applicationContext = SpringApplication.run(AasEnvironmentComponent.class, args);
 

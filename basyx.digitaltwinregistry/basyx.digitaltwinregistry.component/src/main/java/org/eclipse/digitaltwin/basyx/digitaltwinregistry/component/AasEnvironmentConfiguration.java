@@ -42,6 +42,8 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventLog
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventSink;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.memory.InMemoryAasRegistryStorage;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -54,61 +56,70 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author zhangzai, mateusmolina
  *
  */
-@Configuration
+//@Configuration
 public class AasEnvironmentConfiguration {
-
+	
 	@Bean
 	@Primary
 	public static RegistryEventSink getAasEnvironment() {
 		return new RegistryEventLogSink();
 	}
-	
-	@Bean
-	@Primary
-	public static DescriptionApiDelegate getDescriptionApiDelegate() {
-		return new BasyxDescriptionApiDelegate();
-	}
-	
-	@Bean
-	@Primary
-	public static SearchApiDelegate getSearchApiDelegate(AasRegistryStorage storage, RegistryEventSink eventSink) {
-		return new BasyxSearchApiDelegate(storage, eventSink);
-	}
-	
-	@Bean
-	@Primary
-	public static AasRegistryStorage getAasRegistryStorage() {
-		return new InMemoryAasRegistryStorage();
-	}
-	
-	@Bean
-	@Primary
-	public static LocationBuilder getLocationBuilder() {
-		return new DefaultLocationBuilder();
-	}
-	
-	@Bean
-	@Primary
-	public static ShellDescriptorsApiDelegate getShellDescriptorsApiDelegate(AasRegistryStorage storage, RegistryEventSink eventSink, LocationBuilder builder) {
-		return new BasyxRegistryApiDelegate(storage, eventSink, builder);
-	}
-	
-	@Bean
-	@Primary
-	public static ShellDescriptorsApi getShellDescriptorsApi(ShellDescriptorsApiDelegate shellDescriptorsApiDelegate) {
-		return new ShellDescriptorsApiController(shellDescriptorsApiDelegate);
-	}
-	
-	@Bean
-	@Primary
-	public static LookupApiController getLookupApiController(AasDiscoveryService aasDiscoveryService, ObjectMapper mapper) {
-		return new LookupApiController(aasDiscoveryService, mapper);
-	}
-	
-	@Bean
-	@Primary
-	public static AasDiscoveryService getAasDiscoveryService() {
-		return new CrudAasDiscovery(new AasDiscoveryInMemoryBackendProvider());
-	}
+
+//	@Bean
+//	@Primary
+//	public static RegistryEventSink getAasEnvironment() {
+//		return new RegistryEventLogSink();
+//	}
+//	
+//	@Bean
+//	@Primary
+//	public static DescriptionApiDelegate getDescriptionApiDelegate() {
+//		return new BasyxDescriptionApiDelegate();
+//	}
+//	
+//	@Bean
+//	@Primary
+//	public static SearchApiDelegate getSearchApiDelegate(AasRegistryStorage storage, RegistryEventSink eventSink) {
+//		return new BasyxSearchApiDelegate(storage, eventSink);
+//	}
+//	
+//	@Bean
+////	@Primary
+//	@ConditionalOnMissingBean
+//	@ConditionalOnProperty()
+//	public static AasRegistryStorage getAasRegistryStorage() {
+//		return new InMemoryAasRegistryStorage();
+//	}
+//	
+//	@Bean
+//	@Primary
+//	public static LocationBuilder getLocationBuilder() {
+//		return new DefaultLocationBuilder();
+//	}
+//	
+//	@Bean
+//	@Primary
+//	public static ShellDescriptorsApiDelegate getShellDescriptorsApiDelegate(AasRegistryStorage storage, RegistryEventSink eventSink, LocationBuilder builder) {
+//		return new BasyxRegistryApiDelegate(storage, eventSink, builder);
+//	}
+//	
+//	@Bean
+//	@Primary
+//	public static ShellDescriptorsApi getShellDescriptorsApi(ShellDescriptorsApiDelegate shellDescriptorsApiDelegate) {
+//		return new ShellDescriptorsApiController(shellDescriptorsApiDelegate);
+//	}
+//	
+//	@Bean
+//	@Primary
+//	public static LookupApiController getLookupApiController(AasDiscoveryService aasDiscoveryService, ObjectMapper mapper) {
+//		return new LookupApiController(aasDiscoveryService, mapper);
+//	}
+//	
+//	@Bean
+////	@Primary
+//	@ConditionalOnMissingBean
+//	public static AasDiscoveryService getAasDiscoveryService() {
+//		return new CrudAasDiscovery(new AasDiscoveryInMemoryBackendProvider());
+//	}
 
 }
