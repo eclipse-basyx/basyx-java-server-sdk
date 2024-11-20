@@ -51,7 +51,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootApplication(nameGenerator = FullyQualifiedAnnotationBeanNameGenerator.class, scanBasePackages = { "org.eclipse.digitaltwin.basyx", "org.eclipse.digitaltwin.basyx.aasregistry.service.storage" }, exclude = {
 		MongoAutoConfiguration.class, MongoDataAutoConfiguration.class, SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class, OAuth2ResourceServerAutoConfiguration.class })
 @ComponentScan(basePackages = { "org.eclipse.digitaltwin.basyx.authorization", "org.eclipse.digitaltwin.basyx.authorization.rbac", "org.eclipse.digitaltwin.basyx.aasregistry.feature", "org.eclipse.digitaltwin.basyx.aasregistry.service",
-		"org.eclipse.digitaltwin.basyx.aasregistry.service.api", "org.eclipse.digitaltwin.basyx.aasregistry.service.configuration", "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.component", "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core", "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.feature", "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend", "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http", "org.eclipse.digitaltwin.basyx.digitaltwinregistry.component", "org.eclipse.digitaltwin.aas4j.v3.model" },
+		"org.eclipse.digitaltwin.basyx.aasregistry.service.api", "org.eclipse.digitaltwin.basyx.aasregistry.service.configuration", "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.component", "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core", "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.feature", "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend", "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http", "org.eclipse.digitaltwin.basyx.digitaltwinregistry.component", "org.eclipse.digitaltwin.aas4j.v3.model", "org.eclipse.digitaltwin.basyx.http" },
+
+//includeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.digitaltwinregistry.component.CommonControllerAdvice.class),
+////		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasregistry.service.errors.BasyxControllerAdvice.class)
+//		
+//},
 
 		excludeFilters = { 
 				
@@ -63,7 +68,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 				@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.documentation.AasDiscoveryServiceApiDocumentationConfiguration.class),
 				@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.SpringDocConfiguration.class),
 				@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = RestConfiguration.class),
-				@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = BaSyxHTTPConfiguration.class)
+				@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = BaSyxHTTPConfiguration.class),
+				@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasregistry.service.errors.BasyxControllerAdvice.class),
+				@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.http.BaSyxExceptionHandler.class)
 
 
 		})

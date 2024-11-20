@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.digitaltwinregistry.component;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetKind;
@@ -36,6 +37,9 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.RestConfi
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
 import org.eclipse.digitaltwin.basyx.http.CorsPathPatternProvider;
 import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
+import org.reflections.Reflections;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,6 +47,12 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -58,6 +68,23 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  */
 @Configuration
 public class AasEnvironmentConfiguration  {
+	
+//	@Bean
+//    public BeanFactoryPostProcessor dynamicRegistrar() {
+//        return beanFactory -> {
+//            Reflections reflections = new Reflections("org.eclipse.digitaltwin.basyx");
+//            Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(Component.class);
+//            Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(Service.class);
+//            Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(Repository.class);
+//            Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(Controller.class);
+//            Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(RestController.class);
+//            Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(ControllerAdvice.class);
+//            Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(Configuration.class);
+//            for (Class<?> clazz : annotatedClasses) {
+//                beanFactory.registerSingleton(clazz.getSimpleName(), BeanUtils.instantiateClass(clazz));
+//            }
+//        };
+//    }
 
 	@Bean
 	public LocationBuilder locationBuilder() {
