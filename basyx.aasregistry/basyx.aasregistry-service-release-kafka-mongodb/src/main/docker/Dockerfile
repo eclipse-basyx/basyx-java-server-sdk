@@ -1,6 +1,7 @@
 FROM eclipse-temurin:17 as builder
 ARG HTTP_PROXY
-ARG HTTPS_PROXYCOPY maven/${project.build.finalName}.jar ./
+ARG HTTPS_PROXY
+COPY maven/${project.build.finalName}.jar ./
 RUN java -Djarmode=layertools -jar ${project.build.finalName}.jar extract
 
 FROM eclipse-temurin:17
