@@ -97,34 +97,37 @@ public class TestMqttSubmodelObserver {
 	public void createSubmodelElementEvent() throws DeserializationException {
 
 		SubmodelElement submodelElement = createSubmodelElementDummy("createSubmodelElementEventId");
-		submodelService.createSubmodelElement(submodelElement);
+		SubmodelElement responseSubmodelElement = submodelService.createSubmodelElement(submodelElement);
 
 		assertEquals(topicFactory.createCreateSubmodelElementTopic(submodelElement.getIdShort()), listener.lastTopic);
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
+		assertEquals(submodelElement, responseSubmodelElement);
 	}
 
 	@Test
 	public void updateSubmodelElementEvent() throws DeserializationException {
 
 		SubmodelElement submodelElement = createSubmodelElementDummy("updateSubmodelElementEventId");
-		submodelService.createSubmodelElement(submodelElement);
+		SubmodelElement responseSubmodelElement = submodelService.createSubmodelElement(submodelElement);
 
 		SubmodelElementValue value = new PropertyValue("updatedValue");
 		submodelService.setSubmodelElementValue(submodelElement.getIdShort(), value);
 
 		assertEquals(topicFactory.createUpdateSubmodelElementTopic(submodelElement.getIdShort()), listener.lastTopic);
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
+		assertEquals(submodelElement, responseSubmodelElement);
 	}
 
 	@Test
 	public void deleteSubmodelElementEvent() throws DeserializationException {
 
 		SubmodelElement submodelElement = createSubmodelElementDummy("deleteSubmodelElementEventId");
-		submodelService.createSubmodelElement(submodelElement);
+		SubmodelElement responseSubmodelElement = submodelService.createSubmodelElement(submodelElement);
 		submodelService.deleteSubmodelElement(submodelElement.getIdShort());
 
 		assertEquals(topicFactory.createDeleteSubmodelElementTopic(submodelElement.getIdShort()), listener.lastTopic);
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
+		assertEquals(submodelElement, responseSubmodelElement);
 	}
 
 	@Test
@@ -133,13 +136,14 @@ public class TestMqttSubmodelObserver {
 		SubmodelElement submodelElement = createSubmodelElementDummy("noValueSubmodelElementEventId");
 		List<Qualifier> qualifierList = createNoValueQualifierList();
 		submodelElement.setQualifiers(qualifierList);
-		submodelService.createSubmodelElement(submodelElement);
+		SubmodelElement responseSubmodelElement = submodelService.createSubmodelElement(submodelElement);
 
 		assertEquals(topicFactory.createCreateSubmodelElementTopic(submodelElement.getIdShort()), listener.lastTopic);
 		assertNotEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
 
 		((Property) submodelElement).setValue(null);
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
+		assertEquals(submodelElement, responseSubmodelElement);
 	}
 
 	private List<Qualifier> createNoValueQualifierList() {

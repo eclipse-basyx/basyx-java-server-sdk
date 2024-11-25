@@ -123,12 +123,13 @@ public class InMemorySubmodelService implements SubmodelService {
 	}
 
 	@Override
-	public void createSubmodelElement(SubmodelElement submodelElement) throws CollidingIdentifierException {
+	public SubmodelElement createSubmodelElement(SubmodelElement submodelElement) throws CollidingIdentifierException {
 		throwIfSubmodelElementExists(submodelElement.getIdShort());
 
 		List<SubmodelElement> smElements = submodel.getSubmodelElements();
 		smElements.add(submodelElement);
 		submodel.setSubmodelElements(smElements);
+		return submodelElement;
 	}
 
 	private void throwIfSubmodelElementExists(String submodelElementId) {
@@ -141,7 +142,7 @@ public class InMemorySubmodelService implements SubmodelService {
 	}
 
 	@Override
-	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException, CollidingIdentifierException {
+	public SubmodelElement createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException, CollidingIdentifierException {
 		throwIfSubmodelElementExists(getFullIdShortPath(idShortPath, submodelElement.getIdShort()));
 
 		SubmodelElement parentSme = parser.getSubmodelElementFromIdShortPath(idShortPath);
@@ -150,15 +151,14 @@ public class InMemorySubmodelService implements SubmodelService {
 			List<SubmodelElement> submodelElements = list.getValue();
 			submodelElements.add(submodelElement);
 			list.setValue(submodelElements);
-			return;
 		}
 		if (parentSme instanceof SubmodelElementCollection) {
 			SubmodelElementCollection collection = (SubmodelElementCollection) parentSme;
 			List<SubmodelElement> submodelElements = collection.getValue();
 			submodelElements.add(submodelElement);
 			collection.setValue(submodelElements);
-			return;
 		}
+		return submodelElement;
 	}
 
 	@Override

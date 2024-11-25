@@ -164,7 +164,7 @@ public interface SubmodelRepository {
 	 * @param smElement
 	 *            the SubmodelElement
 	 */
-	public void createSubmodelElement(String submodelId, SubmodelElement smElement);
+	public SubmodelElement createSubmodelElement(String submodelId, SubmodelElement smElement);
 
 	/**
 	 * Creates a nested SubmodelElement
@@ -176,7 +176,7 @@ public interface SubmodelRepository {
 	 * @param smElement
 	 *            the SubmodelElement
 	 */
-	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException;
+	public SubmodelElement createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException;
 
 	/**
 	 * Deletes a SubmodelElement
