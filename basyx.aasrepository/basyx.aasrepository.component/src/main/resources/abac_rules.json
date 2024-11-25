@@ -1,0 +1,80 @@
+[
+	{
+		"AllRules": [
+			{
+				"ATTRIBUTES": [
+					{
+						"CLAIM": "realm_access.roles"
+					}
+				],
+				"RIGHTS": [
+					"READ"
+				],
+				"ACCESS": "ALLOW",
+				"OBJECTS": [
+					{
+						"IDENTIFIABLE": "aas"
+					}
+				],
+				"FORMULA": {
+					"$and": [
+						{
+							"$eq": [
+								"$aas.idShort",
+								"AAS_123"
+							]
+						},
+						{
+							"$eq": [
+								"realm_access.roles",
+								"admin"
+							]
+						}
+					]
+				}
+			}
+		]
+	},
+	{
+		"AllRules": [
+			{
+				"ATTRIBUTES": [
+					{
+						"CLAIM": "realm_access.roles"
+					}
+				],
+				"RIGHTS": [
+					"CREATE"
+				],
+				"ACCESS": "ALLOW",
+				"OBJECTS": [
+					{
+						"IDENTIFIABLE": "aas"
+					}
+				],
+				"FORMULA": {
+					"$and": [
+						{
+							"$eq": [
+								"$aas.idShort",
+								"Dummy"
+							]
+						},
+						{
+							"$eq": [
+								"$aas.id",
+								"AAS_123"
+							]
+						},
+						{
+							"$eq": [
+								"realm_access.roles",
+								"admin"
+							]
+						}
+					]
+				}
+			}
+		]
+	}
+]

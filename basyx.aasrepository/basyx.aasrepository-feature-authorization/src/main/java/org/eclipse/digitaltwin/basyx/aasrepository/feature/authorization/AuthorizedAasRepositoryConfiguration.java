@@ -44,7 +44,7 @@ import org.springframework.context.annotation.Configuration;
  * @author danish
  */
 @Configuration
-@ConditionalOnExpression("#{${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false}}")
+@ConditionalOnExpression(value = "${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false} and ('${" + CommonAuthorizationProperties.TYPE_PROPERTY_KEY + "}'.equals('rbac') or '${" + CommonAuthorizationProperties.TYPE_PROPERTY_KEY + "}'.isEmpty())")
 public class AuthorizedAasRepositoryConfiguration {
 	
 	@Bean

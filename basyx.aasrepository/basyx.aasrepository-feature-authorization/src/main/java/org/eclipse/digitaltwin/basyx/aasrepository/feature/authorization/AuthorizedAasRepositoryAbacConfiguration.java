@@ -25,59 +25,36 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.rbac.AasTargetPermissionVerifier;
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
+import org.eclipse.digitaltwin.basyx.authorization.SubjectInformationProvider;
 import org.eclipse.digitaltwin.basyx.authorization.abac.AbacPermissionResolver;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.eclipse.digitaltwin.basyx.authorization.abac.AbacStorage;
+import org.eclipse.digitaltwin.basyx.authorization.abac.SimpleAbacPermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RoleProvider;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * Feature for authorized {@link AasRepository}
+ * Configuration for authorized {@link AuthorizedAasRepository}
  * 
  * @author danish
  */
-@Component
-@ConditionalOnExpression("#{${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false}}")
-@Order(0)
-public class AuthorizedAasRepositoryFeature implements AasRepositoryFeature {
+@Configuration
+@ConditionalOnExpression(value = "${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false} and ('${" + CommonAuthorizationProperties.TYPE_PROPERTY_KEY + "}'.equals('abac') or '${" + CommonAuthorizationProperties.TYPE_PROPERTY_KEY + "}'.isEmpty())")
+public class AuthorizedAasRepositoryAbacConfiguration {
 	
-	@Value("${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":}")
-	private boolean enabled;
+	@Bean
+	public TargetPermissionVerifier<AasTargetInformation> getAasTargetPermissionVerifier() {
+		return new AasTargetPermissionVerifier();
+	}
 	
-	private AbacPermissionResolver permissionResolver;
+	@Bean
+	public AbacPermissionResolver getAasPermissionResolver(AbacStorage abacStorage, RoleProvider roleProvider, SubjectInformationProvider<Object> subjectInformationProvider) {
 
-	@Autowired
-	public AuthorizedAasRepositoryFeature(AbacPermissionResolver permissionResolver) {
-		this.permissionResolver = permissionResolver;
+		return new SimpleAbacPermissionResolver(abacStorage, roleProvider, subjectInformationProvider);
 	}
 
-	@Override
-	public AasRepositoryFactory decorate(AasRepositoryFactory aasRepositoryFactory) {
-		return new AuthorizedAasRepositoryFactory(aasRepositoryFactory, permissionResolver);
-	}
-
-	@Override
-	public void initialize() {
-	}
-
-	@Override
-	public void cleanUp() {
-
-	}
-
-	@Override
-	public String getName() {
-		return "AasRepository Authorization";
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
 }

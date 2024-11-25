@@ -40,6 +40,7 @@ public class CommonAuthorizationProperties {
 	public static final String ENABLED_PROPERTY_KEY = PROPERTIES_PREFIX + ".enabled";
 	public static final String TYPE_PROPERTY_KEY = PROPERTIES_PREFIX + ".type";
 	public static final String RBAC_FILE_PROPERTY_KEY = PROPERTIES_PREFIX + ".rbac.file";
+	public static final String ABAC_FILE_PROPERTY_KEY = PROPERTIES_PREFIX + ".abac.file";
 	public static final String JWT_BEARER_TOKEN_PROVIDER_PROPERTY_KEY = PROPERTIES_PREFIX + ".jwtBearerTokenProvider";
 	public static final String RULES_BACKEND_TYPE = PROPERTIES_PREFIX + ".rules.backend";
 	public static final String RULES_BACKEND_TYPE_SUBMODEL_AUTHORIZATION = RULES_BACKEND_TYPE + ".submodel.authorization";

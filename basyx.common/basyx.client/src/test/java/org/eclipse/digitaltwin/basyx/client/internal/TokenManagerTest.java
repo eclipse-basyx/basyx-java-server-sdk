@@ -55,8 +55,8 @@ public class TokenManagerTest {
         String initialAccessToken = tokenManager.getAccessToken();
         assertNotNull(initialAccessToken);
 
-        long tokenLifetime = 5000;
-        Thread.sleep(tokenLifetime + 1000);
+        long tokenLifetime = 300000;
+        Thread.sleep(tokenLifetime + 60000);
 
         String newAccessToken = tokenManager.getAccessToken();
         assertNotNull(newAccessToken);
