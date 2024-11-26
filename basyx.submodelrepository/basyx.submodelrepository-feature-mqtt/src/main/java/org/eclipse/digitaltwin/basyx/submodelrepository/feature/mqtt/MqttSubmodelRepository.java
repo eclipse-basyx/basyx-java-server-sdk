@@ -168,8 +168,8 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream){
-		SubmodelElement submodelElement = decorated.getSubmodelElement(submodelId, idShortPath);
 		decorated.setFileValue(submodelId, idShortPath, fileName, inputStream);
+		SubmodelElement submodelElement = decorated.getSubmodelElement(submodelId, idShortPath);
 		fileValueUpdated(submodelElement, getName(), submodelId, idShortPath, fileName);
 	}
 

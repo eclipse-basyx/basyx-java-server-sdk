@@ -83,7 +83,8 @@ public class SubmodelElementSerializer {
 	 */
 	public static String serializeSubmodelElements(List<SubmodelElement> submodelElements) {
 		try {
-			List<String> updatedSubmodelElements = new ArrayList<String>();
+//			List<String> updatedSubmodelElements = new ArrayList<>();
+			List<SubmodelElement> updatedSubmodelElements = new ArrayList<>();
 			
 			for(int i = 0; i < submodelElements.size(); i++) {
 				SubmodelElement elem = submodelElements.get(i);
@@ -94,10 +95,11 @@ public class SubmodelElementSerializer {
 					localElement = elem;
 				}
 				
-				updatedSubmodelElements.add(new JsonSerializer().write(localElement));
+//				updatedSubmodelElements.add(new JsonSerializer().write(localElement));
+				updatedSubmodelElements.add(localElement);
 			}
 			
-			return new JsonSerializer().write(updatedSubmodelElements);
+			return new JsonSerializer().writeList(submodelElements);
 		} catch (SerializationException | DeserializationException e) {
 			throw new RuntimeException(e);
 		}

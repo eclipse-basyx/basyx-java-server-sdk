@@ -28,7 +28,10 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,18 +43,21 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Qualifier;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultFile;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultQualifier;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Base64URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelElementSerializer;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -60,6 +66,9 @@ import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import io.moquette.broker.Server;
 import io.moquette.broker.config.ClasspathResourceLoader;
@@ -77,7 +86,13 @@ public class TestMqttSubmodelObserver {
 	private static MqttSubmodelRepositoryTopicFactory topicFactory = new MqttSubmodelRepositoryTopicFactory(new Base64URLEncoder());
 
 	private static SubmodelRepository submodelRepository;
+	
+	private static JsonDeserializer deserializer = new JsonDeserializer();
 
+	private static final String FILE_SUBMODEL_ELEMENT_NAME = "testFile.txt";
+	private static final String FILE_SUBMODEL_ELEMENT_CONTENT = "This is a text file.";
+	private static String SAVED_FILE_PATH = "";
+	
 	@BeforeClass
 	public static void setUpClass() throws MqttException, IOException {
 		mqttBroker = startBroker();
@@ -138,10 +153,10 @@ public class TestMqttSubmodelObserver {
 
 	@Test
 	public void updateSubmodelElementEvent() throws DeserializationException {
-		Submodel submodel = createSubmodelDummy("updateSubmodelForElementEventId");
+		Submodel submodel = createSubmodelDummyWithSubmodelElement("updateSubmodelForElementEventId", "updateSubmodelElementEventId");
 		submodelRepository.createSubmodel(submodel);
-		SubmodelElement submodelElement = createSubmodelElementDummy("updateSubmodelElementEventId");
-		submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
+		SubmodelElement submodelElement = submodel.getSubmodelElements().get(0);
+		
 		SubmodelElementValue value = new PropertyValue("updatedValue");
 		submodelRepository.setSubmodelElementValue(submodel.getId(), submodelElement.getIdShort(), value);
 
@@ -151,10 +166,11 @@ public class TestMqttSubmodelObserver {
 
 	@Test
 	public void deleteSubmodelElementEvent() throws DeserializationException {
-		Submodel submodel = createSubmodelDummy("deleteSubmodelForElementEventId");
+		Submodel submodel = createSubmodelDummyWithSubmodelElement("deleteSubmodelForElementEventId", "deleteSubmodelElementEventId");
 		submodelRepository.createSubmodel(submodel);
-		SubmodelElement submodelElement = createSubmodelElementDummy("deleteSubmodelElementEventId");
-		submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
+		
+		SubmodelElement submodelElement = submodel.getSubmodelElements().get(0);
+		
 		submodelRepository.deleteSubmodelElement(submodel.getId(), submodelElement.getIdShort());
 
 		assertEquals(topicFactory.createDeleteSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()), listener.lastTopic);
@@ -179,15 +195,11 @@ public class TestMqttSubmodelObserver {
 	}
 
 	@Test
-	public void patchSubmodelElementsEvent() throws DeserializationException {
-		Submodel submodel = createSubmodelDummy("patchSubmodelForElementEventId");
+	public void patchSubmodelElementsEvent() throws DeserializationException, JsonMappingException, JsonProcessingException {
+		Submodel submodel = createSubmodelDummyWithSubmodelElements("patchSubmodelForElementEventId");
 		submodelRepository.createSubmodel(submodel);
 		
-		List<SubmodelElement> submodelElements = createSubmodelElementsListDummy(2);
-		
-		submodelElements.forEach(submodelElement -> {
-			submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
-		});
+		List<SubmodelElement> submodelElements = submodel.getSubmodelElements();
 		
 		for (int i = 0; i < submodelElements.size(); i++) {
 			SubmodelElement submodelElement = submodelElements.get(i);
@@ -201,13 +213,24 @@ public class TestMqttSubmodelObserver {
 	}
 	
 	@Test
-	public void deleteFileValueEvent() throws DeserializationException {
-		Submodel submodel = createSubmodelDummy("deleteSubmodelFileValueEventId");
+	public void setFileValueEvent() throws DeserializationException, IOException {
+		Submodel submodel = createSubmodelDummyWithFileSubmodelElement("setSubmodelFileValueEventId", "setFileValueSubmodelElementEventId");
 		submodelRepository.createSubmodel(submodel);
-		SubmodelElement submodelElement = createSubmodelElementDummy("deleteFileValueSubmodelElementEventId");
-		submodelRepository.createSubmodelElement(submodel.getId(), submodelElement); 
+	
+		File submodelElement = (File) submodel.getSubmodelElements().get(0); 
 		
+		submodelRepository.setFileValue(submodel.getId(), submodelElement.getIdShort(), FILE_SUBMODEL_ELEMENT_NAME, getInputStreamOfDummyFile(FILE_SUBMODEL_ELEMENT_CONTENT));
 		
+		assertEquals(topicFactory.createUpdateFileValueTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort(), FILE_SUBMODEL_ELEMENT_NAME), listener.lastTopic);
+		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
+	}
+	
+	@Test
+	public void deleteFileValueEvent() throws DeserializationException, IOException {
+		Submodel submodel = createSubmodelDummyWithFileSubmodelElement("deleteSubmodelFileValueEventId", "deleteFileValueSubmodelElementEventId");
+		submodelRepository.createSubmodel(submodel);
+	
+		File submodelElement = (File) submodel.getSubmodelElements().get(0);
 		
 		submodelRepository.deleteFileValue(submodel.getId(), submodelElement.getIdShort());
 
@@ -227,24 +250,49 @@ public class TestMqttSubmodelObserver {
 	private SubmodelElement deserializeSubmodelElementPayload(String payload) throws DeserializationException {
 		return new JsonDeserializer().read(payload, SubmodelElement.class);
 	}
-	
-	private List<SubmodelElement> deserializeSubmodelElementsListPayload(String payload) throws DeserializationException {
-		List<SubmodelElement> deserializedSubmodelElements = new ArrayList<SubmodelElement>();
-		List<String> deserializedStringList = new JsonDeserializer().read(payload, List.class);
-		
-		for (int i = 0; i < deserializedStringList.size(); i++) {
-			deserializedSubmodelElements.add(new JsonDeserializer().read(deserializedStringList.get(i), SubmodelElement.class));
-		}
-		
-		return deserializedSubmodelElements;
+	 
+	private List<SubmodelElement> deserializeSubmodelElementsListPayload(String payload) throws DeserializationException, JsonMappingException, JsonProcessingException {			
+		return deserializer.readList(payload, SubmodelElement.class);
 	}
 
 	private Submodel createSubmodelDummy(String submodelId) {
 		return new DefaultSubmodel.Builder().id(submodelId).build();
 	}
+	
+	private Submodel createSubmodelDummyWithSubmodelElement(String submodelId, String submodelElementId) {
+		List<SubmodelElement> submodelElements = new ArrayList<>();
+		
+		submodelElements.add(createSubmodelElementDummy(submodelElementId));
+		
+		return new DefaultSubmodel.Builder().id(submodelId).submodelElements(submodelElements).build();
+	}
+	
+	private Submodel createSubmodelDummyWithFileSubmodelElement(String submodelId, String submodelElementId) {
+		List<SubmodelElement> submodelElements = new ArrayList<>();
+		
+		submodelElements.add(createFileSubmodelElement(submodelElementId));
+		
+		return new DefaultSubmodel.Builder().id(submodelId).submodelElements(submodelElements).build();
+	}
+	
+	private Submodel createSubmodelDummyWithSubmodelElements(String submodelId) {
+		List<SubmodelElement> submodelElements = createSubmodelElementsListDummy(2);
+		
+		return new DefaultSubmodel.Builder().id(submodelId).submodelElements(submodelElements).build();
+	}
 
 	private SubmodelElement createSubmodelElementDummy(String submodelElementId) {
+		Property defaultProp = new DefaultProperty.Builder().idShort(submodelElementId).value("defaultValue").build();
+		
 		return new DefaultProperty.Builder().idShort(submodelElementId).value("defaultValue").build();
+	}
+	
+	public File createFileSubmodelElement(String submodelElementId) {
+		return new DefaultFile.Builder().idShort(submodelElementId).value(SAVED_FILE_PATH).contentType("text/plain").build();
+	}
+	
+	private static InputStream getInputStreamOfDummyFile(String fileContent) throws FileNotFoundException, IOException {
+		return new ByteArrayInputStream(fileContent.getBytes());
 	}
 	
 	private List<SubmodelElement> createSubmodelElementsListDummy(int count) {
@@ -257,8 +305,12 @@ public class TestMqttSubmodelObserver {
 		return submodelElements;
 	}
 
-	private static SubmodelRepository createMqttSubmodelRepository(MqttClient client) {
-		SubmodelRepositoryFactory repoFactory = new SimpleSubmodelRepositoryFactory(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository()));
+	private static SubmodelRepository createMqttSubmodelRepository(MqttClient client) throws FileHandlingException, FileNotFoundException, IOException {
+		FileRepository fileRepository = new InMemoryFileRepository();
+		
+		SAVED_FILE_PATH = fileRepository.save(new FileMetadata(FILE_SUBMODEL_ELEMENT_NAME, "", getInputStreamOfDummyFile(FILE_SUBMODEL_ELEMENT_CONTENT)));
+		
+		SubmodelRepositoryFactory repoFactory = new SimpleSubmodelRepositoryFactory(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory(fileRepository));
 
 		return new MqttSubmodelRepositoryFactory(repoFactory, client, new MqttSubmodelRepositoryTopicFactory(new Base64URLEncoder())).create();
 	}
