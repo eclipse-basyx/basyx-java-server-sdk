@@ -25,7 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.digitaltwinregistry.component.documentation;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.digitaltwinregistry.component.DigitalTwinRegistryComponent;
 import org.eclipse.digitaltwin.basyx.http.documentation.RepositoryApiDocumentationConfiguration;
 import org.springframework.context.annotation.Configuration;

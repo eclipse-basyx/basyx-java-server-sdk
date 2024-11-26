@@ -1,0 +1,55 @@
+---
+events:
+  sink: log
+description:
+  profiles: https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-001
+springdoc:
+  api-docs:
+    path: /api-docs
+springfox:
+  documentation:
+    enabled: true
+  #  open-api.v3.path: /api-docs
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics"
+logging:
+  level:
+    root: INFO
+server:
+  shutdown: graceful
+  port: 8080
+  error:
+    whitelabel:
+      enabled: false
+spring:
+  application:
+    name: Basyx Aas Registry
+  jackson:
+    date-format: org.eclipse.digitaltwin.basyx.aasregistry.service.RFC3339DateFormat
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9096/realms/BaSyx
+  profiles:
+    active: logEvents,inMemoryStorage
+
+registry:
+  type: inMemory
+
+basyx:
+  cors:
+    allowed-origins: "*"
+    allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
+  feature:
+    authorization:
+      enabled: false
+      type: rbac
+      jwtBearerTokenProvider: keycloak
+      rbac:
+        file: classpath:rbac_rules.json

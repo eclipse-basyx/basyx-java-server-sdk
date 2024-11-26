@@ -24,23 +24,6 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>${generated.folder}/java</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
 				<configuration>
 					<filesets>
@@ -60,61 +43,6 @@
 						</fileset>
 					</filesets>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>de.dfki.cos.basys.common</groupId>
-				<artifactId>jsonpatch-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>jsonpatch-maven-plugin</goal>
-						</goals>
-						<configuration>
-							<input>${project.basedir}/../${openapi.folder.name}/${openapi.base.name}</input>
-							<patch>${project.basedir}/../${openapi.folder.name}/${patch.base-extensions.name}</patch>
-							<output>${openapi.result.file}</output>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.openapitools</groupId>
-				<artifactId>openapi-generator-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<generateModels>false</generateModels>
-							<generateSupportingFiles>true</generateSupportingFiles>
-
-							<inputSpec>${openapi.result.file}</inputSpec>
-							<generatorName>spring</generatorName>
-							<library>spring-boot</library>
-							<output>${project.basedir}/${generated.folder}</output>
-
-							<templateDirectory>${project.basedir}/templates</templateDirectory>
-							<!-- See https://openapi-generator.tech/docs/generators/spring -->
-							<configOptions>
-								<java8>true</java8>
-								<dateLibrary>java8</dateLibrary>
-								<sourceFolder>java</sourceFolder>
-								<serializableModel>true</serializableModel>
-								<oas3>true</oas3>
-								<useSpringController>true</useSpringController>
-								<configPackage>org.eclipse.digitaltwin.basyx.aasregistry.service.configuration</configPackage>
-								<apiPackage>org.eclipse.digitaltwin.basyx.aasregistry.service.api</apiPackage>
-								<invokerPackage>org.eclipse.digitaltwin.basyx.aasregistry.service</invokerPackage>
-								<modelPackage>org.eclipse.digitaltwin.basyx.aasregistry.model</modelPackage>
-								<delegatePattern>true</delegatePattern>
-								<documentationProvider>springdoc</documentationProvider>
-								<useSpringBoot3>true</useSpringBoot3>
-							</configOptions>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
