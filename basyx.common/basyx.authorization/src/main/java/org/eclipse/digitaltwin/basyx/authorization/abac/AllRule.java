@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -60,8 +61,9 @@ public class AllRule {
      * (Required)
      * 
      */
+    @JsonDeserialize(using = LogicalComponentDeserializer.class)
     @JsonProperty("FORMULA")
-    private LogicalExpression formula;
+    private LogicalComponent formula;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -151,7 +153,7 @@ public class AllRule {
      * 
      */
     @JsonProperty("FORMULA")
-    public LogicalExpression getFormula() {
+    public LogicalComponent getFormula() {
         return formula;
     }
 
@@ -161,7 +163,7 @@ public class AllRule {
      * 
      */
     @JsonProperty("FORMULA")
-    public void setFormula(LogicalExpression formula) {
+    public void setFormula(LogicalComponent formula) {
         this.formula = formula;
     }
 

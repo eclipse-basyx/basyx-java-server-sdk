@@ -36,9 +36,11 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.authorization.abac.AbacPermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.abac.LogicalComponent;
 import org.eclipse.digitaltwin.basyx.authorization.abac.LogicalExpression__1;
 import org.eclipse.digitaltwin.basyx.authorization.abac.QueriesJsonSchema;
 import org.eclipse.digitaltwin.basyx.authorization.abac.RightsEnum;
+import org.eclipse.digitaltwin.basyx.authorization.abac.SimpleExpression;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionException;
@@ -67,23 +69,23 @@ public class AuthorizedAasRepository implements AasRepository {
 		// Create an instance of QueriesJsonSchema
         QueriesJsonSchema aasJsonSchema = new QueriesJsonSchema();
 
-        // Create a LogicalExpression__1 object to represent the query parameter
-        LogicalExpression__1 logicalExpression = new LogicalExpression__1();
-
-        // Example: Adding an equality condition to check if aas.idShort equals "AAS_123"
-        List<Object> eqConditionIdShort = new ArrayList<>();
-        eqConditionIdShort.add("$aas.idShort"); // Attribute to check
-        eqConditionIdShort.add("AAS_123");      // Value to match
-        logicalExpression.set$eq(eqConditionIdShort);
-
-        // Example: Adding an equality condition to check if aas.id equals "ID_456"
-        List<Object> eqConditionId = new ArrayList<>();
-        eqConditionId.add("$aas.id"); // Attribute to check
-        eqConditionId.add("ID_456");  // Value to match
-        logicalExpression.set$eq(eqConditionId);
-
-        // Set the query parameter to the QueriesJsonSchema object
-        aasJsonSchema.setQueryParameter(logicalExpression);
+//        // Create a LogicalExpression__1 object to represent the query parameter
+//        LogicalExpression__1 logicalExpression = new LogicalExpression__1();
+//
+//        // Example: Adding an equality condition to check if aas.idShort equals "AAS_123"
+//        List<Object> eqConditionIdShort = new ArrayList<>();
+//        eqConditionIdShort.add("$aas.idShort"); // Attribute to check
+//        eqConditionIdShort.add("AAS_123");      // Value to match
+//        logicalExpression.set$eq(eqConditionIdShort);
+//
+//        // Example: Adding an equality condition to check if aas.id equals "ID_456"
+//        List<Object> eqConditionId = new ArrayList<>();
+//        eqConditionId.add("$aas.id"); // Attribute to check
+//        eqConditionId.add("ID_456");  // Value to match
+//        logicalExpression.set$eq(eqConditionId);
+//
+//        // Set the query parameter to the QueriesJsonSchema object
+//        aasJsonSchema.setQueryParameter(logicalExpression);
 		
 		boolean isAuthorized = permissionResolver.hasPermission(aasJsonSchema);
 		
@@ -98,24 +100,24 @@ public class AuthorizedAasRepository implements AasRepository {
 		// Create an instance of QueriesJsonSchema
         QueriesJsonSchema aasJsonSchema = new QueriesJsonSchema();
 
-        // Create a LogicalExpression__1 object to represent the query parameter
-        LogicalExpression__1 logicalExpression = new LogicalExpression__1();
-
-        // Example: Adding an equality condition to check if aas.idShort equals "AAS_123"
-        List<Object> eqConditionIdShort = new ArrayList<>();
-        eqConditionIdShort.add("$aas.idShort"); // Attribute to check
-        eqConditionIdShort.add("AAS_123");      // Value to match
-        logicalExpression.set$eq(eqConditionIdShort);
-
-        // Example: Adding an equality condition to check if aas.id equals "ID_456"
-        List<Object> eqConditionId = new ArrayList<>();
-        eqConditionId.add("$aas.id"); // Attribute to check
-        eqConditionId.add(shellId);  // Value to match
-        logicalExpression.set$eq(eqConditionId);
-        
-        aasJsonSchema.setRights(Arrays.asList(RightsEnum.READ));
-        aasJsonSchema.setQueryParameter(logicalExpression);
-        
+//        // Create a LogicalExpression__1 object to represent the query parameter
+//        LogicalExpression__1 logicalExpression = new LogicalExpression__1();
+//
+//        // Example: Adding an equality condition to check if aas.idShort equals "AAS_123"
+//        List<Object> eqConditionIdShort = new ArrayList<>();
+//        eqConditionIdShort.add("$aas.idShort"); // Attribute to check
+//        eqConditionIdShort.add("AAS_123");      // Value to match
+//        logicalExpression.set$eq(eqConditionIdShort);
+//
+//        // Example: Adding an equality condition to check if aas.id equals "ID_456"
+//        List<Object> eqConditionId = new ArrayList<>();
+//        eqConditionId.add("$aas.id"); // Attribute to check
+//        eqConditionId.add(shellId);  // Value to match
+//        logicalExpression.set$eq(eqConditionId);
+//        
+//        aasJsonSchema.setRights(Arrays.asList(RightsEnum.READ));
+//        aasJsonSchema.setQueryParameter(logicalExpression);
+//        
 		boolean isAuthorized = permissionResolver.hasPermission(aasJsonSchema);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
@@ -131,18 +133,26 @@ public class AuthorizedAasRepository implements AasRepository {
 
         // Create a LogicalExpression__1 object to represent the query parameter
         LogicalExpression__1 logicalExpression = new LogicalExpression__1();
+        
+        LogicalComponent simpleEqualExpression = new SimpleExpression();
+        ((SimpleExpression) simpleEqualExpression).set$eq(Arrays.asList("$aas.idShort", shell.getIdShort()));
+        
+        LogicalComponent simpleEqualExpression2 = new SimpleExpression();
+        ((SimpleExpression) simpleEqualExpression2).set$eq(Arrays.asList("$aas.id", shell.getId()));
 
         // Example: Adding an equality condition to check if aas.idShort equals "AAS_123"
-        List<Object> eqConditionIdShort = new ArrayList<>();
-        eqConditionIdShort.add("$aas.idShort"); // Attribute to check
-        eqConditionIdShort.add(shell.getIdShort());      // Value to match
-        logicalExpression.set$eq(eqConditionIdShort);
+//        List<LogicalExpression__1> eqConditionIdShort = new ArrayList<>();
+//        eqConditionIdShort.add("$aas.idShort"); // Attribute to check
+//        eqConditionIdShort.add(shell.getIdShort());      // Value to match
+//        logicalExpression.set$eq(eqConditionIdShort);
 
         // Example: Adding an equality condition to check if aas.id equals "ID_456"
-        List<Object> eqConditionId = new ArrayList<>();
-        eqConditionId.add("$aas.id"); // Attribute to check
-        eqConditionId.add(shell.getId());  // Value to match
-        logicalExpression.set$eq(eqConditionId);
+//        List<LogicalExpression__1> eqConditionId = new ArrayList<>();
+//        eqConditionId.add("$aas.id"); // Attribute to check
+//        eqConditionId.add(shell.getId());  // Value to match
+//        logicalExpression.set$eq(eqConditionId);
+        
+        logicalExpression.set$or(Arrays.asList(simpleEqualExpression, simpleEqualExpression2));
         
         aasJsonSchema.setRights(Arrays.asList(RightsEnum.CREATE));
         aasJsonSchema.setQueryParameter(logicalExpression);

@@ -25,7 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.component;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
@@ -35,10 +38,18 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.feature.AasServiceFeature;
 import org.eclipse.digitaltwin.basyx.aasservice.feature.DecoratedAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleDeserializer;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformationSubtype;
+import org.reflections.Reflections;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 /**
  * Provides the spring bean configuration for the {@link AasRepository} and
@@ -60,4 +71,14 @@ public class AasRepositoryConfiguration {
 	public static AasServiceFactory getAasService(AasServiceFactory aasServiceFactory, List<AasServiceFeature> features) {
 		return new DecoratedAasServiceFactory(aasServiceFactory, features);
 	}
+	
+//	@Bean
+//	public ObjectMapper getAasMapper(Jackson2ObjectMapperBuilder builder) {
+//		ObjectMapper mapper = builder.build();
+//
+//		mapper.findAndRegisterModules(); // Ensure all modules are loaded
+//		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//
+//		return mapper;
+//	}
 }

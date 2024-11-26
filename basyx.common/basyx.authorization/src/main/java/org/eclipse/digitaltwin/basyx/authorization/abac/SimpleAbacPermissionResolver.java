@@ -26,7 +26,7 @@
 package org.eclipse.digitaltwin.basyx.authorization.abac;
 
 import java.util.List;
-
+import java.util.ArrayList;
 import org.eclipse.digitaltwin.basyx.authorization.SubjectInformation;
 import org.eclipse.digitaltwin.basyx.authorization.SubjectInformationProvider;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RoleProvider;
@@ -35,106 +35,111 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.jwt.Jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.JsonNode;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.ArrayList;
-
 /**
  * An abstract permission resolver for {@link TargetInformation}
  * 
  * @param <T>
  * 
- * @author danish
  */
 public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 
-	private Logger logger = LoggerFactory.getLogger(SimpleAbacPermissionResolver.class);
+    private Logger logger = LoggerFactory.getLogger(SimpleAbacPermissionResolver.class);
 
-	private AbacStorage abacStorage;
-	private RoleProvider roleAuthenticator;
-	private SubjectInformationProvider<Object> subjectInformationProvider;
+    private AbacStorage abacStorage;
+    private RoleProvider roleAuthenticator;
+    private SubjectInformationProvider<Object> subjectInformationProvider;
 
-	public SimpleAbacPermissionResolver(AbacStorage abacStorage, RoleProvider roleAuthenticator, SubjectInformationProvider<Object> subjectInformationProvider) {
-		super();
-		this.abacStorage = abacStorage;
-		this.roleAuthenticator = roleAuthenticator;
-		this.subjectInformationProvider = subjectInformationProvider;
-	}
+    public SimpleAbacPermissionResolver(AbacStorage abacStorage, RoleProvider roleAuthenticator,
+            SubjectInformationProvider<Object> subjectInformationProvider) {
+        super();
+        this.abacStorage = abacStorage;
+        this.roleAuthenticator = roleAuthenticator;
+        this.subjectInformationProvider = subjectInformationProvider;
+    }
 
-	public AbacStorage getAbacStorage() {
-		return abacStorage;
-	}
+    public AbacStorage getAbacStorage() {
+        return abacStorage;
+    }
 
-	public RoleProvider getRoleProvider() {
-		return roleAuthenticator;
-	}
+    public RoleProvider getRoleProvider() {
+        return roleAuthenticator;
+    }
 
-	// Function that accepts a QueriesJsonSchema object and JWT token, and returns whether any rule satisfies it
+    // Function that checks if a query satisfies any rule
     public boolean hasPermission(QueriesJsonSchema querySchema) {
-        // Step 1: Extract the logical expression from QueriesJsonSchema
-        LogicalExpression__1 queryParameter = querySchema.getQueryParameter();
+        LogicalComponent queryParameter = querySchema.getQueryParameter(); // LogicalComponent type
         if (queryParameter == null) {
             throw new IllegalArgumentException("Invalid query: missing 'queryParameter'");
         }
 
-        // Step 2: Get All Available Access Rules
         List<AllRule> allRules = abacStorage.getAbacRules();
-
-        // Step 3: Parse JWT token to extract claims
         SubjectInformation<Object> subjectInfo = getSubjectInformation();
+        Jwt jwt = (Jwt) subjectInfo.get();
 
-		Jwt jwt = (Jwt) subjectInfo.get();
-
-        // Step 4: Check if any Rule Satisfies the Query
         for (AllRule rule : allRules) {
-            if (isRuleMatchingQuery(rule, queryParameter) && areAttributesMatching(rule, jwt) && areRightsMatching(rule.getRights(), querySchema.getRights()) && isAccessAllowed(rule) && areObjectsMatching(rule)) {
-                return true; // Query is satisfied by this rule
+            if (isRuleMatchingQuery(rule, queryParameter) 
+//            		&&
+//                areAttributesMatching(rule, jwt) &&
+//                areRightsMatching(rule.getRights(), querySchema.getRights()) &&
+//                isAccessAllowed(rule) &&
+//                areObjectsMatching(rule)
+                
+            		) {
+                return true;
             }
         }
-
-        // If no rule satisfies the query
         return false;
     }
 
-    // Helper function to parse JWT token and extract claims
-    private Jwt parseJwtToken(String jwtToken) {
-        // Use Spring Security's Jwt class to parse the JWT token
-        return Jwt.withTokenValue(jwtToken).build();
-    }
+    // Recursive method to evaluate logical and simple expressions
+    private boolean isRuleMatchingQuery(AllRule rule, LogicalComponent queryComponent) {
+        if (queryComponent instanceof LogicalExpression__1) {
+            LogicalExpression__1 logicalExpression = (LogicalExpression__1) queryComponent;
 
-    // Helper function to check if a rule matches the query
-    private boolean isRuleMatchingQuery(AllRule rule, LogicalExpression__1 queryParameter) {
-        // Step 4.1: Evaluate the logical expression (AND, OR, NOT, etc.)
-        if (queryParameter.get$and() != null && !queryParameter.get$and().isEmpty()) {
-            for (Object condition : queryParameter.get$and()) {
-                if (!isRuleMatchingQuery(rule, (LogicalExpression__1) condition)) {
-                    return false; // One of the AND conditions is not satisfied
+            // Handle $and
+            if (logicalExpression.get$and() != null && !logicalExpression.get$and().isEmpty()) {
+                for (LogicalComponent condition : logicalExpression.get$and()) {
+                    if (!isRuleMatchingQuery(rule, condition)) {
+                        return false; // One of the AND conditions is not satisfied
+                    }
                 }
+                return true;
             }
-            return true;
-        } else if (queryParameter.get$or() != null && !queryParameter.get$or().isEmpty()) {
-            for (Object condition : queryParameter.get$or()) {
-                if (isRuleMatchingQuery(rule, (LogicalExpression__1) condition)) {
-                    return true; // One of the OR conditions is satisfied
+
+            // Handle $or
+            if (logicalExpression.get$or() != null && !logicalExpression.get$or().isEmpty()) {
+                for (LogicalComponent condition : logicalExpression.get$or()) {
+                    if (isRuleMatchingQuery(rule, condition)) {
+                        return true; // One of the OR conditions is satisfied
+                    }
                 }
+                return false;
             }
-            return false;
-        } else if (queryParameter.get$not() != null) {
-            return !isRuleMatchingQuery(rule, (LogicalExpression__1) queryParameter.get$not());
-        } else if (queryParameter.get$eq() != null) {
-            return evaluateEquality(rule, queryParameter.get$eq());
-        } else if (queryParameter.get$gt() != null) {
-            return evaluateGreaterThan(rule, queryParameter.get$gt());
+
+            // Handle $not
+            if (logicalExpression.get$not() != null) {
+                return !isRuleMatchingQuery(rule, logicalExpression.get$not());
+            }
+        } else if (queryComponent instanceof SimpleExpression) {
+            return evaluateSimpleExpression(rule, (SimpleExpression) queryComponent);
         }
-        // Add more conditions as needed ($lt, $contains, etc.)
 
         return false; // If no condition matched
     }
 
-    // Helper function to evaluate equality
+    // Evaluate simple expressions (e.g., $eq, $gt)
+    private boolean evaluateSimpleExpression(AllRule rule, SimpleExpression simpleExpression) {
+        if (simpleExpression.get$eq() != null) {
+            return evaluateEquality(rule, simpleExpression.get$eq());
+        }
+        if (simpleExpression.get$gt() != null) {
+            return evaluateGreaterThan(rule, simpleExpression.get$gt());
+        }
+        // Add other evaluations ($lt, $contains, etc.)
+        return false;
+    }
+
+ // Evaluate $eq condition by checking if the rule's formula satisfies the query formula
     private boolean evaluateEquality(AllRule rule, Object eqCondition) {
         if (!(eqCondition instanceof List) || ((List<?>) eqCondition).size() != 2) {
             throw new IllegalArgumentException("Invalid $eq condition: must have exactly two elements");
@@ -144,13 +149,75 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
         String left = conditions.get(0).toString();
         String right = conditions.get(1).toString();
 
-        // Here we assume that the rule has a method to get the attribute value by its name
-        String ruleValue = getAttributeValueFromRule(rule, left);
+        LogicalComponent ruleFormula = rule.getFormula();
+        if (ruleFormula == null) {
+            return false; // Base case: If the rule has no formula, return false
+        }
 
-        return ruleValue != null && ruleValue.equals(right);
+        // Create a SimpleExpression to represent the query condition
+        SimpleExpression queryExpression = new SimpleExpression();
+        queryExpression.set$eq(List.of(left, right));
+
+        // Check if the rule's formula matches the query condition
+        return matchFormula(ruleFormula, queryExpression);
     }
 
-    // Helper function to evaluate greater than
+    
+    private boolean matchFormula(LogicalComponent ruleFormula, LogicalComponent queryFormula) {
+        // Base case: If both are simple expressions, compare directly
+        if (ruleFormula instanceof SimpleExpression && queryFormula instanceof SimpleExpression) {
+            return compareSimpleExpressions((SimpleExpression) ruleFormula, (SimpleExpression) queryFormula);
+        }
+
+        // Recursive case: If the rule is a logical expression, evaluate its conditions
+        if (ruleFormula instanceof LogicalExpression__1) {
+            LogicalExpression__1 logicalRule = (LogicalExpression__1) ruleFormula;
+
+            if (logicalRule.get$and() != null && !logicalRule.get$and().isEmpty()) {
+                // Check if the query formula satisfies all AND conditions
+                for (LogicalComponent condition : logicalRule.get$and()) {
+                    if (!matchFormula(condition, queryFormula)) {
+                        return false; // One AND condition fails
+                    }
+                }
+                return true; // All AND conditions pass
+            }
+
+            if (logicalRule.get$or() != null && !logicalRule.get$or().isEmpty()) {
+                // Check if the query formula satisfies at least one OR condition
+                for (LogicalComponent condition : logicalRule.get$or()) {
+                    if (matchFormula(condition, queryFormula)) {
+                        return true; // At least one OR condition matches
+                    }
+                }
+                return false; // No OR condition matches
+            }
+
+            if (logicalRule.get$not() != null) {
+                // Negate the match result for NOT condition
+                return !matchFormula(logicalRule.get$not(), queryFormula);
+            }
+        }
+
+        // Default: If no match criteria met, return false
+        return false;
+    }
+    
+    private boolean compareSimpleExpressions(SimpleExpression ruleExpr, SimpleExpression queryExpr) {
+        // Compare $eq conditions
+        if (ruleExpr.get$eq() != null && queryExpr.get$eq() != null) {
+            List<?> ruleEq = (List<?>) ruleExpr.get$eq();
+            List<?> queryEq = (List<?>) queryExpr.get$eq();
+            return ruleEq.equals(queryEq); // Compare the $eq lists
+        }
+
+        // Add comparisons for other types like $gt, $lt if needed
+        return false;
+    }
+
+
+
+    // Evaluate $gt condition
     private boolean evaluateGreaterThan(AllRule rule, Object gtCondition) {
         if (!(gtCondition instanceof List) || ((List<?>) gtCondition).size() != 2) {
             throw new IllegalArgumentException("Invalid $gt condition: must have exactly two elements");
@@ -163,7 +230,7 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
         return left > right;
     }
 
-    // Helper function to get numeric value from rule or constant
+    // Helper function to extract numeric values
     private double getNumericValue(AllRule rule, Object node) {
         if (node instanceof Number) {
             return ((Number) node).doubleValue();
@@ -177,75 +244,52 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
         throw new IllegalArgumentException("Invalid numeric value in condition");
     }
 
-    // Helper method to get attribute value from rule
+    // Retrieve attribute value from rule
     private String getAttributeValueFromRule(AllRule rule, String attributeName) {
         for (AttributeItem attribute : rule.getAttributes()) {
             if (attribute.getClaim() != null && attribute.getClaim().equals(attributeName)) {
                 return attribute.getClaim();
             }
-            // Implement similar logic for GLOBAL and REFERENCE if needed
         }
         return null;
     }
 
-    // Helper function to evaluate ATTRIBUTES of the rule against JWT claims
+    // Check if rule attributes match JWT claims
     private boolean areAttributesMatching(AllRule rule, Jwt jwt) {
         for (AttributeItem attribute : rule.getAttributes()) {
             if (attribute.getClaim() != null) {
                 String claimValue = jwt.getClaim(attribute.getClaim());
                 if (claimValue == null || !claimValue.equals(attribute.getClaim())) {
-                    return false; // Claim does not match
+                    return false;
                 }
             }
-            // Implement similar logic for GLOBAL and REFERENCE if needed
         }
-        return true; // All attributes match
-    }
-
-    // Helper function to evaluate RIGHTS of the rule against JWT claims
-    private boolean areRightsMatching(List<RightsEnum> requiredRights, List<RightsEnum> queryRights) {
-        
-        return requiredRights.containsAll(queryRights);
-    }
-
-    // Helper function to evaluate ACCESS of the rule
-    private boolean isAccessAllowed(AllRule rule) {
-        // Check if the access is set to ALLOW
-        return rule.getAccess() == AllRule.Access.ALLOW;
-    }
-
-    // Helper function to evaluate OBJECTS of the rule
-    private boolean areObjectsMatching(AllRule rule) {
-        // Implement logic to evaluate if objects in the rule match the requested objects
-        // For simplicity, we assume all objects match for now
         return true;
     }
 
-    // Function to create an instance of QueriesJsonSchema with query parameters matching an AAS
-    public static QueriesJsonSchema createSampleQuery() {
-        QueriesJsonSchema querySchema = new QueriesJsonSchema();
-        LogicalExpression__1 logicalExpression = new LogicalExpression__1();
+    // Check if required rights match
+    private boolean areRightsMatching(List<RightsEnum> requiredRights, List<RightsEnum> queryRights) {
+        return requiredRights.containsAll(queryRights);
+    }
 
-        // Example: Create an equality condition to match a specific AAS ID
-        List<Object> eqCondition = new ArrayList<>();
-        eqCondition.add("$aas.idShort"); // Assuming "$aas.idShort" represents an attribute of the AAS
-        eqCondition.add("AAS_123"); // Value to match
+    // Check if access is allowed
+    private boolean isAccessAllowed(AllRule rule) {
+        return rule.getAccess() == AllRule.Access.ALLOW;
+    }
 
-        // Set the equality condition in the logical expression
-        logicalExpression.set$eq(eqCondition);
+    // Evaluate object matching (stub for now)
+    private boolean areObjectsMatching(AllRule rule) {
+        return true; // Assume all objects match for now
+    }
 
-        // Set the logical expression in the query schema
-        querySchema.setQueryParameter(logicalExpression);
-
-        return querySchema;
-    }	
-    
+    // Get subject information
     private SubjectInformation<Object> getSubjectInformation() {
-		SubjectInformation<Object> subjectInfo = subjectInformationProvider.get();
+        SubjectInformation<Object> subjectInfo = subjectInformationProvider.get();
 
-		if (subjectInfo == null)
-			throw new NullSubjectException("Subject information is null.");
-		
-		return subjectInfo;
-	}
+        if (subjectInfo == null)
+            throw new NullSubjectException("Subject information is null.");
+
+        return subjectInfo;
+    }
 }
+

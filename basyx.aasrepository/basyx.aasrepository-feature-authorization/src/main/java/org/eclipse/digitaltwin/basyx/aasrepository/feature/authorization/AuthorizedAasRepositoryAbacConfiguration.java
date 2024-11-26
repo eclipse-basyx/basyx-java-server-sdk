@@ -37,6 +37,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Configuration for authorized {@link AuthorizedAasRepository}
  * 
@@ -56,5 +59,6 @@ public class AuthorizedAasRepositoryAbacConfiguration {
 
 		return new SimpleAbacPermissionResolver(abacStorage, roleProvider, subjectInformationProvider);
 	}
+	
 
 }

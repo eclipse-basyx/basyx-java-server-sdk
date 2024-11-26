@@ -8,42 +8,6 @@
 					}
 				],
 				"RIGHTS": [
-					"READ"
-				],
-				"ACCESS": "ALLOW",
-				"OBJECTS": [
-					{
-						"IDENTIFIABLE": "aas"
-					}
-				],
-				"FORMULA": {
-					"$and": [
-						{
-							"$eq": [
-								"$aas.idShort",
-								"AAS_123"
-							]
-						},
-						{
-							"$eq": [
-								"realm_access.roles",
-								"admin"
-							]
-						}
-					]
-				}
-			}
-		]
-	},
-	{
-		"AllRules": [
-			{
-				"ATTRIBUTES": [
-					{
-						"CLAIM": "realm_access.roles"
-					}
-				],
-				"RIGHTS": [
 					"CREATE"
 				],
 				"ACCESS": "ALLOW",
@@ -53,23 +17,20 @@
 					}
 				],
 				"FORMULA": {
-					"$and": [
+					"type": "logicalExpression",
+					"$or": [
 						{
+							"type": "simpleExpression",
 							"$eq": [
 								"$aas.idShort",
 								"Dummy"
 							]
 						},
 						{
+							"type": "simpleExpression",
 							"$eq": [
 								"$aas.id",
 								"AAS_123"
-							]
-						},
-						{
-							"$eq": [
-								"realm_access.roles",
-								"admin"
 							]
 						}
 					]
