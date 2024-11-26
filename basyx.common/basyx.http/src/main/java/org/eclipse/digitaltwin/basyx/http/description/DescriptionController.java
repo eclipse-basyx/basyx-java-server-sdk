@@ -34,7 +34,7 @@ public class DescriptionController {
     }
   }
 
-  @Operation(operationId = "getDescription",
+  @Operation(operationId = "getDescriptions",
       summary = "Returns the self-describing information of a network resource (ServiceDescription)",
       tags = {"Registry and Discovery Interface"}, responses = {
       @ApiResponse(responseCode = "200", description = "Requested Description", content = {
@@ -43,8 +43,8 @@ public class DescriptionController {
           content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))}),
       @ApiResponse(responseCode = "default", description = "Default error handling for unmentioned status codes",
           content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))})})
-  @RequestMapping(method = RequestMethod.GET, value = "/description", produces = {"application/json"})
-  public ResponseEntity<ServiceDescription> getDescription() {
+  @RequestMapping(method = RequestMethod.GET, value = "/descriptions", produces = {"application/json"})
+  public ResponseEntity<ServiceDescription> getDescriptions() {
     ServiceDescription serviceDescription = new ServiceDescription();
     serviceDescription.profiles(new ArrayList<>(profiles));
     return new ResponseEntity<>(serviceDescription, HttpStatus.OK);
