@@ -1,7 +1,9 @@
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -12,11 +14,14 @@ import java.util.concurrent.Future;
 import java.util.stream.IntStream;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Key;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodelRepository;
@@ -85,12 +90,14 @@ public class TestConnectedAasManagerMultithreading {
             executorService.shutdown();
         }
 
-        createdSubmodelIds.forEach(TestConnectedAasManagerMultithreading::assertSubmodelExists);
+        createdSubmodelIds.forEach(submodelId -> assertSubmodelWasCreatedAndRegistered(shell.getId(), submodelId));
     }
 
-    static void assertSubmodelExists(String submodelId) {
+    static void assertSubmodelWasCreatedAndRegistered(String shellId, String submodelId) {
         assertEquals(submodelId, aasManager.getSubmodelService(submodelId).getSubmodel().getId());
+        assertTrue(connectedAasRepository.getSubmodelReferences(shellId, PaginationInfo.NO_LIMIT).getResult().stream().map(Reference::getKeys).flatMap(Collection::stream).map(Key::getValue).anyMatch(submodelId::equals));
     }
+
 
     private static void cleanUpRegistries() {
         try {
