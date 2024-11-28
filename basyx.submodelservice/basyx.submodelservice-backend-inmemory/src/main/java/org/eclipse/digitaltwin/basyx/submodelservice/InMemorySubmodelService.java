@@ -271,6 +271,9 @@ public class InMemorySubmodelService implements SubmodelService {
 		String uniqueFileName = createUniqueFileName(idShortPath, fileName);
 
 		FileMetadata fileMetadata = new FileMetadata(uniqueFileName, fileSmElement.getContentType(), inputStream);
+		
+		if(fileRepository.exists(fileMetadata.getFileName()))
+			fileRepository.delete(fileMetadata.getFileName());
 
 		String filePath = fileRepository.save(fileMetadata);
 
@@ -294,6 +297,11 @@ public class InMemorySubmodelService implements SubmodelService {
 		FileBlobValue fileValue = new FileBlobValue(" ", " ");
 
 		setSubmodelElementValue(idShortPath, fileValue);
+	}
+
+	@Override
+	public InputStream getFileByFilePath(String filePath) throws FileDoesNotExistException{
+		return fileRepository.find(filePath);
 	}
 
 	private void deleteAssociatedFileIfAny(String idShortPath) {

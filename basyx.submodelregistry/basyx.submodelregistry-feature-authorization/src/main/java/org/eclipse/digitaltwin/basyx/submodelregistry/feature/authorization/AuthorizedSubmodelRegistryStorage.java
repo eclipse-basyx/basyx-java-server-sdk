@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelregistry.feature.authorization;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.Action;
@@ -55,19 +57,19 @@ public class AuthorizedSubmodelRegistryStorage implements SubmodelRegistryStorag
 
 	@Override
 	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest) {
-		assertHasPermission(Action.READ, SubmodelRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD);
+		assertHasPermission(Action.READ, getIdAsList(SubmodelRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD));
 		return decorated.getAllSubmodelDescriptors(pRequest);
 	}
 
 	@Override
 	public SubmodelDescriptor getSubmodelDescriptor(String submodelId) throws SubmodelNotFoundException {
-		assertHasPermission(Action.READ, submodelId);
+		assertHasPermission(Action.READ, getIdAsList(submodelId));
 		return decorated.getSubmodelDescriptor(submodelId);
 	}
 
 	@Override
 	public void removeSubmodelDescriptor(String submodelId) throws SubmodelNotFoundException {
-		assertHasPermission(Action.DELETE, submodelId);
+		assertHasPermission(Action.DELETE, getIdAsList(submodelId));
 		decorated.removeSubmodelDescriptor(submodelId);
 	}
 
@@ -75,34 +77,38 @@ public class AuthorizedSubmodelRegistryStorage implements SubmodelRegistryStorag
 		String newId = descriptor.getId();
 
 		if (!submodelId.equals(newId)) {
-			assertHasPermission(Action.DELETE, submodelId);
-			assertHasPermission(Action.CREATE, newId);
+			assertHasPermission(Action.DELETE, getIdAsList(submodelId));
+			assertHasPermission(Action.CREATE, getIdAsList(newId));
 		}
 		else
-			assertHasPermission(Action.UPDATE, submodelId);
+			assertHasPermission(Action.UPDATE, getIdAsList(submodelId));
 
 		decorated.replaceSubmodelDescriptor(submodelId, descriptor);
 	}
 
 	@Override
 	public void insertSubmodelDescriptor(SubmodelDescriptor descriptor) throws SubmodelAlreadyExistsException {
-		assertHasPermission(Action.CREATE, descriptor.getId());
+		assertHasPermission(Action.CREATE, getIdAsList(descriptor.getId()));
 		decorated.insertSubmodelDescriptor(descriptor);
 	}
 
 	@Override
 	public Set<String> clear() {
-		assertHasPermission(Action.DELETE, SubmodelRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD);
+		assertHasPermission(Action.DELETE, getIdAsList(SubmodelRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD));
 		return decorated.clear();
 	}
 	
-	private void assertHasPermission(Action action, String submodelId) {
-		boolean isAuthorized = permissionResolver.hasPermission(action, new SubmodelRegistryTargetInformation(submodelId));
+	private void assertHasPermission(Action action, List<String> submodelIds) {
+		boolean isAuthorized = permissionResolver.hasPermission(action, new SubmodelRegistryTargetInformation(submodelIds));
 		throwExceptionIfInsufficientPermission(isAuthorized);
 	}
 	
 	private void throwExceptionIfInsufficientPermission(boolean isAuthorized) {
 		if (!isAuthorized)
 			throw new InsufficientPermissionException("Insufficient Permission: The current subject does not have the required permissions for this operation.");
+	}
+
+	private List<String> getIdAsList(String id) {
+		return new ArrayList<>(Arrays.asList(id));
 	}
 }

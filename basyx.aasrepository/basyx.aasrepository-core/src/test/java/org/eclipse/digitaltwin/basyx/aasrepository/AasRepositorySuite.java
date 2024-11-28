@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -39,10 +39,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceSuite;
-import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.*;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Test;
@@ -54,7 +51,6 @@ import org.junit.Test;
  *
  */
 public abstract class AasRepositorySuite extends AasServiceSuite {
-	private final PaginationInfo noLimitPaginationInfo = new PaginationInfo(0, "");
 	private static final String AAS_EMPTY_ID = " ";
 	private static final String AAS_NULL_ID = null;
 
@@ -135,7 +131,7 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 	@Test(expected = ElementDoesNotExistException.class)
 	public void getSubmodelReferencesOfNonExistingAas() {
 		AasRepository aasRepo = getAasRepository();
-		aasRepo.getSubmodelReferences("doesNotMatter", noLimitPaginationInfo).getResult();
+		aasRepo.getSubmodelReferences("doesNotMatter", PaginationInfo.NO_LIMIT).getResult();
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)
@@ -143,6 +139,14 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 		AasRepository aasRepo = getAasRepository();
 		Reference reference = DummyAasFactory.createDummyReference(DummyAasFactory.DUMMY_SUBMODEL_ID);
 		aasRepo.addSubmodelReference("doesNotMatter", reference);
+	}
+
+	@Test(expected = CollidingSubmodelReferenceException.class)
+	public void duplicateSubmodelReference() {
+		AssetAdministrationShell aas = DummyAasFactory.createAasWithSubmodelReference();
+		AasRepository aasRepo = getAasRepository(Collections.singleton(aas));
+		Reference reference = DummyAasFactory.createDummyReference(DummyAasFactory.DUMMY_SUBMODEL_ID);
+		aasRepo.addSubmodelReference(aas.getId(), reference);
 	}
 
 	@Test(expected = ElementDoesNotExistException.class)

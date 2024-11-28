@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -74,7 +74,7 @@ public class TestAasEnvironmentHTTP {
 	private static final String XML_ENV_PATH = "testEnvironment.xml";
 	private static final String WRONGEXT_ENV_PATH = "testEnvironment.txt";
 	private static final String JSON_OPERATIONALDATA_ENV_PATH = "operationalDataEnvironment.json";
-	private static final String BASIC_EVENT_VALUE_ONLY = "BasicEventValueOnly.json";
+	private static final String AASENVIRONMENT_VALUE_ONLY_JSON = "AASEnvironmentValueOnly.json";
 
 	private static ConfigurableApplicationContext appContext;
 	private static SubmodelRepository submodelRepo;
@@ -114,7 +114,7 @@ public class TestAasEnvironmentHTTP {
 		response = executeGetOnURL(getOperationalDataValueOnlyURL(), JSON_MIMETYPE);
 		assertEquals(HttpStatus.OK.value(), response.getCode());
 
-		BaSyxHttpTestUtils.assertSameJSONContent(BaSyxHttpTestUtils.readJSONStringFromClasspath(BASIC_EVENT_VALUE_ONLY), BaSyxHttpTestUtils.getResponseAsString(response));
+		BaSyxHttpTestUtils.assertSameJSONContent(BaSyxHttpTestUtils.readJSONStringFromClasspath(AASENVIRONMENT_VALUE_ONLY_JSON), BaSyxHttpTestUtils.getResponseAsString(response));
 	}
 
 	@Test
@@ -138,6 +138,14 @@ public class TestAasEnvironmentHTTP {
 		assertEquals(HttpStatus.OK.value(), response.getCode());
 
 		TestAASEnvironmentSerialization.checkAASX(response.getEntity().getContent(), aasIdsIncluded, submodelIdsIncluded, includeConceptDescription);
+	}
+
+	@Test
+	public void testAASEnvironmentSertializationWithAASXAndFiles() throws IOException, ParseException, DeserializationException, InvalidFormatException {
+		CloseableHttpResponse response = executeGetOnURL(createSerializationURLForFiles(), AASX_MIMETYPE);
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+
+		TestAASEnvironmentSerialization.checkAASXFiles(response.getEntity().getContent());
 	}
 
 	@Test
@@ -250,6 +258,11 @@ public class TestAasEnvironmentHTTP {
 	public static String createSerializationURL(boolean includeConceptDescription) {
 		return getSerializationURL(createIdCollection(DummyAASEnvironmentComponent.AAS_TECHNICAL_DATA_ID, DummyAASEnvironmentComponent.AAS_OPERATIONAL_DATA_ID),
 				createIdCollection(DummyAASEnvironmentComponent.SUBMODEL_OPERATIONAL_DATA_ID, DummyAASEnvironmentComponent.SUBMODEL_TECHNICAL_DATA_ID), includeConceptDescription);
+	}
+
+	public static String createSerializationURLForFiles() {
+		return getSerializationURL(createIdCollection("https://example.com/ids/AssetAdministrationShell/3982_3381_6308_9332"),
+				createIdCollection("https://example.com/ids/Submodel/3293_1019_6578_9120"), false);
 	}
 
 	public static CloseableHttpResponse executeGetOnURL(String url, String header) throws IOException {

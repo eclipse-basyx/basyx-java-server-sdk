@@ -25,17 +25,20 @@
 
 package org.eclipse.digitaltwin.basyx.aasservice.client;
 
+import java.io.IOException;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.DummyAasRepositoryComponent;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceSuite;
+import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFactory;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -47,7 +50,7 @@ public class TestConnectedAasService extends AasServiceSuite {
 
 	@BeforeClass
 	public static void startAASRepo() throws Exception {
-		appContext = new SpringApplication(DummyAasRepositoryComponent.class).run(new String[] {});
+		appContext = new SpringApplicationBuilder(DummyAasRepositoryComponent.class).profiles("httptests").run(new String[] {});
 	}
 
 	@After
@@ -68,5 +71,15 @@ public class TestConnectedAasService extends AasServiceSuite {
 		String base64UrlEncodedId = Base64UrlEncodedIdentifier.encodeIdentifier(shell.getId());
 		return new ConnectedAasService("http://localhost:8080/shells/" + base64UrlEncodedId);
 
+	}
+
+	@Override
+	protected AasService getAasServiceWithThumbnail() throws IOException {
+		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.createForThumbnail();
+		AasService aasServiceWithThumbnail = getAasService(expected);
+	
+		aasServiceWithThumbnail.setThumbnail("dummyImgA.jpeg", "", createDummyImageIS_A());
+		
+		return aasServiceWithThumbnail;
 	}
 }

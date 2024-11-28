@@ -1,0 +1,92 @@
+version: '3.6'
+
+networks:
+  basyx:
+    internal: false
+
+volumes:
+  zookeeper-data:
+    driver: local
+  zookeeper-log:
+    driver: local
+  kafka-data:
+    driver: local
+  aas-config:
+
+services:
+  portainer:
+    image: portainer/portainer-ce:2.0.1
+    container_name: portainer
+    restart: always
+    ports:
+      - "9090:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - basyx
+
+  zookeeper:
+    image: zookeeper:3.6
+    container_name: zookeeper
+    restart: always
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-log:/var/lib/zookeeper/log
+    networks:
+      - basyx
+
+  kafka:
+    image: confluentinc/cp-kafka:6.2.1
+    container_name: kafka
+    volumes:
+      - kafka-data:/var/lib/kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    links:
+      - zookeeper
+    restart: always
+    networks:
+      - basyx
+
+  akhq:
+    image: tchiotludo/akhq:0.24.0
+    container_name: akhq
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            docker-kafka-server:
+              properties:
+                bootstrap.servers: "kafka:29092"
+    ports:
+      - 8086:8080
+    restart: always
+    depends_on:
+      - kafka
+    networks:
+      - basyx
+
+
+
+  aas-registry-kafka-mem:
+    image: test/aas-registry-kafka-mem:$BASYX_VERSION
+    container_name: test_aas_registry_kafka_mem
+    pull_policy: never
+    ports:
+      - "8030:8080"
+    depends_on:
+      - kafka
+    restart: always
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
+    networks:
+      - basyx

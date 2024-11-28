@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
+import java.util.LinkedList;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
@@ -38,10 +40,12 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.DummyAasDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
+import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.DummyAasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.DummySubmodelDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.DummySubmodelDescriptorFactory;
 
 /**
  * Test fixture for {@link ConnectedAasManager} and related Components
@@ -68,6 +72,7 @@ public class TestFixture {
 	public static final String SM_POS1_ID = "smPos1";
 	public static final String SM_POS1_ID_ENCODED = Base64UrlEncoder.encode(SM_POS1_ID);
 	public static final String SM_POS1_IDSHORT = "smPos1IdShort";
+	public static final String SM_POS1_SEMANTICID = "smPos1SemanticId";
 
 	private final String aasRepositoryBasePath;
 	private final String smRepositoryBasePath;
@@ -89,6 +94,15 @@ public class TestFixture {
 		return DummyAasDescriptorFactory.createDummyDescriptor(AAS_PRE1_ID, AAS_PRE1_IDSHORT, AAS_PRE1_GLOBALASSETID, aasRepositoryBasePath);
 	}
 
+	public AssetAdministrationShellDescriptor buildAasPre1Descriptor_withMultipleInterfaces() {
+		LinkedList<Endpoint> endpoints = new LinkedList<>();
+
+		endpoints.add(DummyAasDescriptorFactory.createEndpoint(aasRepositoryBasePath, "AAS-REPOSITORY-3.0"));
+		endpoints.add(DummyAasDescriptorFactory.createEndpoint(AAS_PRE1_ID, aasRepositoryBasePath, "AAS-3.0"));
+
+		return DummyAasDescriptorFactory.createDummyDescriptor(AAS_PRE1_ID, AAS_PRE1_IDSHORT, AAS_PRE1_GLOBALASSETID, endpoints);
+	}
+
 	public Reference buildSmPre1Ref() {
 		return new DefaultReference.Builder().type(ReferenceTypes.MODEL_REFERENCE).keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(SM_PRE1_ID).build()).build();
 	}
@@ -98,7 +112,16 @@ public class TestFixture {
 	}
 
 	public SubmodelDescriptor buildSmPre1Descriptor() {
-		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_PRE1_ID, SM_PRE1_IDSHORT, smRepositoryBasePath, null);
+		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_PRE1_ID, SM_PRE1_IDSHORT, null, smRepositoryBasePath);
+	}
+
+	public SubmodelDescriptor buildSmPre1Descriptor_withMultipleInterfaces() {
+		LinkedList<org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint> endpoints = new LinkedList<>();
+
+		endpoints.add(DummySubmodelDescriptorFactory.createEndpoint(smRepositoryBasePath, "SUBMODEL-REPOSITORY-3.0"));
+		endpoints.add(DummySubmodelDescriptorFactory.createEndpoint(SM_PRE1_ID, smRepositoryBasePath, "SUBMODEL-3.0"));
+
+		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_PRE1_ID, SM_PRE1_IDSHORT, null, endpoints);
 	}
 
 	public AssetAdministrationShell buildAasPos1() {
@@ -114,11 +137,19 @@ public class TestFixture {
 	}
 
 	public SubmodelDescriptor buildSmPos1Descriptor() {
-		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_POS1_ID, SM_POS1_IDSHORT, smRepositoryBasePath, null);
+		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_POS1_ID, SM_POS1_IDSHORT, new AttributeMapper(ConnectedAasManagerHelper.buildObjectMapper()).mapSemanticId(buildSmPos1SemanticId()), smRepositoryBasePath);
+	}
+
+	public Reference buildSmPos1SemanticId() {
+		return new DefaultReference.Builder().type(ReferenceTypes.EXTERNAL_REFERENCE).keys(new DefaultKey.Builder().type(KeyTypes.GLOBAL_REFERENCE).value("https://admin-shell.io/aas/3/0/CustomDataSpecification").build()).build();
 	}
 
 	public Submodel buildSmPos1() {
-		return new DefaultSubmodel.Builder().id(SM_POS1_ID).idShort(SM_POS1_IDSHORT).build();
+		return new DefaultSubmodel.Builder().id(SM_POS1_ID).idShort(SM_POS1_IDSHORT).semanticId(buildSmPos1SemanticId()).build();
+	}
+
+	public Reference buildSmPos1Ref() {
+		return new DefaultReference.Builder().type(ReferenceTypes.MODEL_REFERENCE).referredSemanticId(buildSmPos1SemanticId()).keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(SM_POS1_ID).build()).build();
 	}
 
 }

@@ -1,11 +1,7 @@
-[
-    {
-        "FileData": {
-            "contentType": "application/txt",
-            "value": "someRandomTestFile.txt"
-        }
+{
+    "FileData": {
+        "contentType": "application/txt",
+        "value": "someRandomTestFile.txt"
     },
-    {
-        "MaxRotationSpeed": "4200"
-    }
-]
+    "MaxRotationSpeed": "4200"
+}

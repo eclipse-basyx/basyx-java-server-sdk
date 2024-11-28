@@ -51,6 +51,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.mongodbcore</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
 			<classifier>tests</classifier>
 			<scope>test</scope>
@@ -82,6 +87,10 @@
 			<artifactId>basyx.http</artifactId>
 			<classifier>tests</classifier>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.mongodbcore</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

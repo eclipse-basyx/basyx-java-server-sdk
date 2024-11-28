@@ -30,7 +30,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -38,21 +38,20 @@ import org.springframework.context.ConfigurableApplicationContext;
  * {@link AasRepository} HTTP/REST API
  * 
  * @author schnicke, danish
- *
+ * 
  */
 public class TestAasRepositoryHTTP extends AasRepositoryHTTPSuite {
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
 	public static void startAasRepo() throws Exception {
-		appContext = new SpringApplication(DummyAasRepositoryComponent.class).run(new String[] {});
+		appContext = new SpringApplicationBuilder(DummyAasRepositoryComponent.class).profiles("httptests").run(new String[] {});
 	}
 
 	@Override
 	public void resetRepository() {
 		AasRepository repo = appContext.getBean(AasRepository.class);
-		repo.getAllAas(NO_LIMIT_PAGINATION_INFO)
+		repo.getAllAas(PaginationInfo.NO_LIMIT)
 				.getResult()
 				.stream()
 				.map(a -> a.getId())

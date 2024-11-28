@@ -51,9 +51,7 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -69,7 +67,6 @@ import org.springframework.util.ResourceUtils;
  */
 public class TestAuthorizedAasEnvironmentUpload {
 
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
 	private static String clientId = "basyx-client-api";
 	private static AccessTokenProvider tokenProvider;
@@ -80,8 +77,8 @@ public class TestAuthorizedAasEnvironmentUpload {
 	
 	private static String healthEndpointUrl = "http://127.0.0.1:8081/actuator/health";
 
-	@Before
-	public void setUp() throws FileNotFoundException, IOException {
+	@BeforeClass
+	public static void setUp() throws FileNotFoundException, IOException {
 		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
 
 		appContext = new SpringApplication(DummyAasEnvironmentComponent.class).run(new String[] {});
@@ -91,21 +88,24 @@ public class TestAuthorizedAasEnvironmentUpload {
 		conceptDescriptionRepo = appContext.getBean(ConceptDescriptionRepository.class);
 	}
 	
-	@After
+	@Before
 	public void reset() throws FileNotFoundException, IOException {
 		
 		configureSecurityContext();
 		
-		Collection<AssetAdministrationShell> assetAdministrationShells = aasRepo.getAllAas(NO_LIMIT_PAGINATION_INFO).getResult();
-		Collection<Submodel> submodels = submodelRepo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult();
-		Collection<ConceptDescription> conceptDescriptions = conceptDescriptionRepo.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO).getResult();
+		Collection<AssetAdministrationShell> assetAdministrationShells = aasRepo.getAllAas(PaginationInfo.NO_LIMIT).getResult();
+		Collection<Submodel> submodels = submodelRepo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult();
+		Collection<ConceptDescription> conceptDescriptions = conceptDescriptionRepo.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult();
 		
 		assetAdministrationShells.stream().forEach(aas -> aasRepo.deleteAas(aas.getId()));
 		submodels.stream().forEach(sm -> submodelRepo.deleteSubmodel(sm.getId()));
 		conceptDescriptions.stream().forEach(cd -> conceptDescriptionRepo.deleteConceptDescription(cd.getId()));
 		
 		clearSecurityContext();
-		
+	}
+
+	@AfterClass
+	public static void shutDown(){
 		appContext.close();
 	}
 

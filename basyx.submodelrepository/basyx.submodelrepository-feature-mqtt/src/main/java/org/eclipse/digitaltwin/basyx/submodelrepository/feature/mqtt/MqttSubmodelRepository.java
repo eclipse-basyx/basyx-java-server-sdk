@@ -45,6 +45,11 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
 		return decorated.getAllSubmodels(pInfo);
 	}
+	
+	@Override
+	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo) {
+		return decorated.getAllSubmodels(semanticId, pInfo);
+	}
 
 	@Override
 	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException {
@@ -102,14 +107,16 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
-		decorated.createSubmodelElement(submodelId, smElement);
+		decorated.createSubmodelElement(submodelId, idShortPath, smElement);
 		SubmodelElement submodelElement = decorated.getSubmodelElement(submodelId, idShortPath);
 		submodelElementCreated(submodelElement, getName(), submodelId, idShortPath);
 	}
 	
 	@Override
-	public void updateSubmodelElement(String submodelIdentifier, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
-		decorated.updateSubmodelElement(submodelIdentifier, idShortPath, submodelElement);
+	public void updateSubmodelElement(String submodelIdentifier, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
+		decorated.updateSubmodelElement(submodelIdentifier, idShortPath, smElement);
+		SubmodelElement submodelElement = decorated.getSubmodelElement(submodelIdentifier, idShortPath);
+		submodelElementUpdated(submodelElement, getName(), submodelIdentifier, idShortPath);
 	}
 
 	@Override
@@ -213,6 +220,11 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
 		// TODO: Eventing
 		decorated.patchSubmodelElements(submodelId, submodelElementList);
+	}
+
+	@Override
+	public InputStream getFileByFilePath(String submodelId, String filePath) {
+		return decorated.getFileByFilePath(submodelId, filePath);
 	}
 
 }

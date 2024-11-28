@@ -51,7 +51,7 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public abstract class BaseInterfaceTest {
 
 	protected static final String SM_ID_5 = "sm5";
@@ -107,7 +107,7 @@ public abstract class BaseInterfaceTest {
 	}
 
 	protected List<SubmodelDescriptor> getAllSubmodels() {
-		return storage.getAllSubmodelDescriptors(new PaginationInfo(null, null)).getResult();
+		return storage.getAllSubmodelDescriptors(PaginationInfo.NO_LIMIT).getResult();
 	}
 
 	protected CursorResult<List<SubmodelDescriptor>> getAllSubmodelsWithPagination(int limit, String cursor) {

@@ -134,4 +134,9 @@ public class SubmodelRepositorySubmodelServiceWrapper implements SubmodelService
 		repoApi.deleteFileValue(submodelId, idShortPath);
 	}
 
+	@Override
+	public InputStream getFileByFilePath(String filePath) {
+		return repoApi.getFileByFilePath(submodelId, filePath);
+	}
+
 }

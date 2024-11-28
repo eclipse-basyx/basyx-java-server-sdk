@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -70,6 +70,15 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 	public ConnectedSubmodelRepository(String submodelRepoUrl) {
 		this.repoApi = new SubmodelRepositoryApi(submodelRepoUrl);
 		this.submodelRepoUrl = submodelRepoUrl;
+	}
+	
+	public ConnectedSubmodelRepository(String submodelRepoUrl, SubmodelRepositoryApi submodelRepositoryApi) {
+		this.submodelRepoUrl = submodelRepoUrl;
+		this.repoApi = submodelRepositoryApi;
+	}
+	
+	public String getBaseUrl() {
+		return submodelRepoUrl;
 	}
 
 	/**
@@ -147,6 +156,21 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
+	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo) {
+		try {
+	        String encodedCursor = pInfo.getCursor() == null ? null : Base64UrlEncoder.encode(pInfo.getCursor());
+	        String encodedSemanticId = Base64UrlEncoder.encode(semanticId);
+	        return repoApi.getAllSubmodels(encodedSemanticId, null, pInfo.getLimit(), encodedCursor, null, null);
+	    } catch (ApiException e) {
+	        if (e.getCode() == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+	            return new CursorResult<>("", new ArrayList<>());
+	        } else {
+	            throw e;
+	        }
+	    }
+	}
+
+	@Override
 	public void updateSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
 		getConnectedSubmodelService(submodelId).updateSubmodelElement(idShortPath, submodelElement);
 	}
@@ -193,12 +217,16 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) throws ElementDoesNotExistException {
-		return new SubmodelValueOnly(getSubmodelByIdMetadata(submodelId).getSubmodelElements());
+		return new SubmodelValueOnly(getSubmodel(submodelId).getSubmodelElements());
 	}
 
 	@Override
 	public Submodel getSubmodelByIdMetadata(String submodelId) throws ElementDoesNotExistException {
-		return repoApi.getSubmodelById(submodelId, null, null);
+		try {
+			return repoApi.getSubmodelByIdMetadata(submodelId, null);
+		} catch (ApiException e) {
+			throw mapExceptionSubmodelAccess(submodelId, e); 
+		}
 	}
 
 	@Override
@@ -216,11 +244,11 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 		getConnectedSubmodelService(submodelId).deleteFileValue(idShortPath);
 	}
 
-	private String getSubmodelUrl(String submodelId) {
+	protected String getSubmodelUrl(String submodelId) {
 		return submodelRepoUrl + "/submodels/" + Base64UrlEncodedIdentifier.encodeIdentifier(submodelId);
 	}
 	
-	private RuntimeException mapExceptionSubmodelAccess(String submodelId, ApiException e) {
+	protected RuntimeException mapExceptionSubmodelAccess(String submodelId, ApiException e) {
 		if (e.getCode() == HttpStatus.NOT_FOUND.value()) {
 			return new ElementDoesNotExistException(submodelId);
 		} else if (e.getCode() == HttpStatus.CONFLICT.value()) {
@@ -235,6 +263,11 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 	@Override
 	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
 		getConnectedSubmodelService(submodelId).patchSubmodelElements(submodelElementList);
+	}
+
+	@Override
+	public InputStream getFileByFilePath(String submodelId, String filePath) {
+		return getConnectedSubmodelService(submodelId).getFileByFilePath(filePath);
 	}
 
 }

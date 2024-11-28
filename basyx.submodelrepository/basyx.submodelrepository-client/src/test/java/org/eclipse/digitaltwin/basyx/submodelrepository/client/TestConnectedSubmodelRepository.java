@@ -38,7 +38,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -51,17 +51,16 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 	private static ConfigurableApplicationContext appContext;
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 
 	@BeforeClass
 	public static void startAASRepo() throws Exception {
-		appContext = new SpringApplication(DummySubmodelRepositoryComponent.class).run(new String[] {});
+		appContext = new SpringApplicationBuilder(DummySubmodelRepositoryComponent.class).profiles("httptests").run(new String[] {});
 	}
 
 	@After
 	public void removeSubmodelFromRepo() {
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
-		repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
+		repo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
 	}
 
 	@AfterClass
@@ -77,7 +76,7 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 
 	@Override
 	protected ConnectedSubmodelRepository getSubmodelRepository() {
-		return new ConnectedSubmodelRepository("http://localhost:8080");
+		return new ConnectedSubmodelRepository("http://localhost:8081");
 	}
 
 	@Override
@@ -100,5 +99,10 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 		java.io.File file = new java.io.File(fileValue);
 
 		return file.exists();
+	}
+
+	@Override
+	public void getFileByFilePath(){
+		// Not Implemented for Client so Override Test
 	}
 }

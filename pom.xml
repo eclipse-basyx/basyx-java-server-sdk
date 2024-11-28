@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.4</version>
+		<version>3.3.5</version>
 		<relativePath />
 	</parent>
 	<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -76,7 +76,7 @@
 		<docker.namespace>eclipsebasyx</docker.namespace>
 		<docker.image.name>NOT_DEFINED_IN_MODULE</docker.image.name>
 		<docker.image.tag>${revision}</docker.image.tag>
-		<docker.target.platforms>linux/amd64, linux/arm64</docker.target.platforms>
+		<docker.target.platforms>linux/amd64, linux/arm64, linux/arm/v7</docker.target.platforms>
 		<docker.host.port>8081</docker.host.port>
 		<docker.container.port>8081</docker.container.port>
 		<aas4j-version>1.0.2</aas4j-version>
@@ -94,24 +94,10 @@
 
 	<build>
 		<plugins>
-				<plugin>
-					<groupId>org.eclipse.dash</groupId>
-					<artifactId>license-tool-plugin</artifactId>
-					<version>1.1.1-SNAPSHOT</version>
-					<executions>
-						<execution>
-							<id>license-check</id>
-							<goals>
-								<goal>license-check</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-			
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>flatten-maven-plugin</artifactId>
-				<version>1.5.0</version>
+				<version>1.6.0</version>
 				<configuration>
 					<updatePomFile>true</updatePomFile>
 					<pomElements>
@@ -177,18 +163,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -196,7 +170,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>3.1.2</version>
+					<version>3.5.2</version>
 					<executions>
 						<execution>
 							<id>integration-test</id>
@@ -217,7 +191,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
-					<version>3.1.0</version>
+					<version>3.2.7</version>
 					<executions>
 						<execution>
 							<id>sign-artifacts</id>
@@ -239,7 +213,7 @@
 				<plugin>
 					<groupId>org.sonatype.plugins</groupId>
 					<artifactId>nexus-staging-maven-plugin</artifactId>
-					<version>1.6.13</version>
+					<version>1.7.0</version>
 					<extensions>true</extensions>
 					<configuration>
 						<serverId>ossrh</serverId>
@@ -251,12 +225,13 @@
 				<plugin>
 					<groupId>io.fabric8</groupId>
 					<artifactId>docker-maven-plugin</artifactId>
-					<version>0.40.1</version>
+					<version>0.45.1</version>
 					<configuration>
 						<images>
 							<image>
 								<name>
 									${docker.namespace}/${docker.image.name}:${docker.image.tag}</name>
+								<registry>docker.io</registry>
 								<build>
 									<contextDir>${project.basedir}</contextDir>
 									<args>
@@ -275,8 +250,8 @@
 								</build>
 								<run>
 									<network>
-									   <mode>custom</mode>
-									   <name>basyx-java-server-sdk</name>
+										<mode>custom</mode>
+										<name>basyx-java-server-sdk</name>
 									</network>
 								</run>
 							</image>
@@ -305,10 +280,6 @@
 											<buildx>
 												<platforms>
 													${docker.target.platforms}</platforms>
-												<attestations>
-													<provenance>
-														${docker.provenance}</provenance>
-												</attestations>
 											</buildx>
 										</build>
 									</image>
@@ -380,12 +351,12 @@
 			<dependency>
 				<groupId>org.yaml</groupId>
 				<artifactId>snakeyaml</artifactId>
-				<version>2.2</version>
+				<version>2.3</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springdoc</groupId>
 				<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-				<version>2.2.0</version>
+				<version>2.6.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.paho</groupId>
@@ -406,7 +377,7 @@
 			<dependency>
 				<groupId>org.apache.tika</groupId>
 				<artifactId>tika-core</artifactId>
-				<version>2.8.0</version>
+				<version>3.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.reflections</groupId>
@@ -424,7 +395,7 @@
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
-				<version>2.13.0</version>
+				<version>2.17.0</version>
 			</dependency>
 			<!-- basyx.common -->
 			<dependency>
@@ -454,6 +425,16 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.authorization.rules.rbac.backend.inmemory</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.authorization.rules.rbac.backend.submodel</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.filerepository-backend</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -465,6 +446,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.filerepository-backend-mongodb</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.backend.inmemory.core</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<!-- basyx.submodelservice -->
@@ -480,12 +466,22 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-backend-mongodb</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelservice.component</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelservice-http</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-client</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<!-- basyx.submodelrepository -->
@@ -564,6 +560,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasservice-feature-mqtt</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasservice-client</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<!-- basyx.aasrepository -->
@@ -743,7 +744,17 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasxfileserver-http</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasxfileserver-backend-inmemory</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasxfileserver-backend-mongodb</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -800,6 +811,18 @@
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.authorization.rules.rbac.backend.inmemory</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.authorization.rules.rbac.backend.submodel</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
 			<!-- basyx.submodelservice -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -828,6 +851,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelservice-http</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-client</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -915,6 +944,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasservice-feature-mqtt</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasservice-client</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -1079,7 +1114,19 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-client-native</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelregistry-feature-authorization</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelregistry-client-native</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -1147,7 +1194,25 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasxfileserver-http</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasxfileserver-backend-inmemory</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasxfileserver-backend-mongodb</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasxfileserver-backend</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -1223,6 +1288,77 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.dash</groupId>
+						<artifactId>license-tool-plugin</artifactId>
+						<version>1.1.1-SNAPSHOT</version>
+						<executions>
+							<execution>
+								<id>license-check</id>
+								<goals>
+									<goal>license-check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>docker-push</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>push-docker</id>
+								<phase>package</phase>
+								<goals>
+									<goal>build</goal>
+									<goal>push</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.dash</groupId>
+						<artifactId>license-tool-plugin</artifactId>
+						<version>1.1.1-SNAPSHOT</version>
+						<executions>
+							<execution>
+								<id>license-check</id>
+								<goals>
+									<goal>license-check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>

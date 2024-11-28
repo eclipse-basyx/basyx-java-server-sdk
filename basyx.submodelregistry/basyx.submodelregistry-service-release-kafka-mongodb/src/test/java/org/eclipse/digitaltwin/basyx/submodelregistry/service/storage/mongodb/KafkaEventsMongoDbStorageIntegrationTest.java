@@ -64,7 +64,7 @@ public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTes
 	
 	@KafkaListener(topics = "submodel-registry", batch = "false", groupId = "kafka-test", autoStartup = "true" )
 	@Component
-	private static class RegistrationEventKafkaListener implements ConsumerSeekAware {
+	public static class RegistrationEventKafkaListener implements ConsumerSeekAware {
 				
 		private final EventQueue queue;
 		private final CountDownLatch latch = new CountDownLatch(1);
@@ -80,6 +80,10 @@ public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTes
 		@KafkaHandler
 		public void receiveMessage(String content) {
 			queue.offer(content);
+		}
+		
+		public EventQueue getQueue() {
+			return this.queue;
 		}
 
 		@Override

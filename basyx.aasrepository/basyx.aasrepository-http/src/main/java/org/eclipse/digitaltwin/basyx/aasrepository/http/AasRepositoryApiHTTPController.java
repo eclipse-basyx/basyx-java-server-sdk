@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -38,6 +38,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetAssetAdministrationShellsResult;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetReferencesResult;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
@@ -156,7 +157,11 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 
 	@Override
 	public ResponseEntity<Reference> postSubmodelReferenceAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Valid Reference body) {
-		aasRepository.addSubmodelReference(aasIdentifier.getIdentifier(), body);
+		try {
+			aasRepository.addSubmodelReference(aasIdentifier.getIdentifier(), body);
+		}catch(CollidingSubmodelReferenceException e){
+			return new ResponseEntity<Reference>(HttpStatus.CONFLICT);
+		}
 		return new ResponseEntity<Reference>(body, HttpStatus.CREATED);
 	}
 
@@ -199,7 +204,7 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 			fileInputstream = file.getInputStream();
 			aasRepository.setThumbnail(aasIdentifier.getIdentifier(), fileName, file.getContentType(), fileInputstream);
 			closeInputStream(fileInputstream);
-			return new ResponseEntity<Void>(HttpStatus.OK);
+			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 		} catch (IOException e) {
 			closeInputStream(fileInputstream);
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -27,11 +27,17 @@ package org.eclipse.digitaltwin.basyx.aasxfileserver;
 
 import org.eclipse.digitaltwin.basyx.aasxfileserver.backend.AASXFileServerBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.model.Package;
+import org.eclipse.digitaltwin.basyx.common.backend.inmemory.core.InMemoryCrudRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Component;
 
+
+@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
+@Component
 public class AASXFileServerInMemoryBackendProvider implements AASXFileServerBackendProvider {
 
-	private AASXFileServerInMemoryCrudRepository repository = new AASXFileServerInMemoryCrudRepository();
+	private CrudRepository<Package, String> repository = new InMemoryCrudRepository<Package>(Package::getPackageId);
 
 	@Override
 	public CrudRepository<Package, String> getCrudRepository() {

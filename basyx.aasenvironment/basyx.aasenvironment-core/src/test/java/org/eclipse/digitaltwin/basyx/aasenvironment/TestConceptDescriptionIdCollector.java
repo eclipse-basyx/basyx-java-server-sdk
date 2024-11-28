@@ -38,7 +38,7 @@ public class TestConceptDescriptionIdCollector {
 	public void getAllConceptDescriptionIdsWithDefaultSetup() {
 		defaultSetup();
 		
-		Set<String> expectedCDIDs = Sets.newHashSet("0173-1#02-BAA120#008", "http://customer.com/cd/1/1/18EBD56F6B43D895");
+		Set<String> expectedCDIDs = Sets.newHashSet("0173-1#02-BAA120#008", "http://customer.com/cd/1/1/18EBD56F6B43D895","0173-1#01-AFZ615#016");
 		
 		ConceptDescriptionIdCollector cdIdCollector = new ConceptDescriptionIdCollector(environment);
 		
@@ -49,7 +49,7 @@ public class TestConceptDescriptionIdCollector {
 	public void getAllConceptDescriptionIdsWithCustomtSetup() {
 		customSetup();
 		
-		Set<String> expectedCDIDs = Sets.newHashSet("dummyProperty1CDId", "dummySMC1CDId", "dummyProperty3CDId");
+		Set<String> expectedCDIDs = Sets.newHashSet("dummyProperty1CDId", "dummySMC1CDId", "dummyProperty3CDId","dummyProperty2CapabilityId","dummyNoCDSemanticPropertyBlobId");
 		
 		ConceptDescriptionIdCollector cdIdCollector = new ConceptDescriptionIdCollector(environment);
 		

@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
@@ -71,6 +72,11 @@ public class ConnectedSubmodelService implements SubmodelService {
 	 */
 	public ConnectedSubmodelService(String submodelServiceUrl) {
 		this.serviceApi = new SubmodelServiceApi(submodelServiceUrl);
+		this.submodelElementValueMapperFactory = new SubmodelElementValueMapperFactory();
+	}
+	
+	public ConnectedSubmodelService(SubmodelServiceApi submodelServiceApi) {
+		this.serviceApi = submodelServiceApi;
 		this.submodelElementValueMapperFactory = new SubmodelElementValueMapperFactory();
 	}
 
@@ -189,6 +195,20 @@ public class ConnectedSubmodelService implements SubmodelService {
 		} catch (ApiException e) {
 			throw mapExceptionFileAccess(idShortPath, e);
 		}
+	}
+
+	/**
+	 * NOTE: This method is not implemented in the client
+	 *
+	 * @throws NotImplementedException Method not Implemented
+	 *
+	 * @param filePath
+	 *            the path of the file
+	 * @return NotImplementedException
+	 */
+	@Override
+	public InputStream getFileByFilePath(String filePath) {
+		throw new NotImplementedException("This Method is not implemented in the Client");
 	}
 
 	private RuntimeException mapExceptionFileAccess(String idShortPath, ApiException e) {

@@ -56,6 +56,8 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiClient;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiResponse;
 import org.eclipse.digitaltwin.basyx.client.internal.Pair;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
+import org.eclipse.digitaltwin.basyx.core.exceptions.AccessTokenRetrievalException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -73,19 +75,36 @@ public class SubmodelServiceApi {
   private final Consumer<HttpRequest.Builder> memberVarInterceptor;
   private final Duration memberVarReadTimeout;
   private final Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
-	private final Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
+  private final Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
+	
+  private TokenManager tokenManager;
 
   public SubmodelServiceApi() {
     this(new ApiClient());
-}
+  }
+  
+  public SubmodelServiceApi(TokenManager tokenManager) {
+	    this(new ApiClient());
+	    this.tokenManager = tokenManager;
+  }
 
   public SubmodelServiceApi(ObjectMapper mapper, String baseUri) {
     this(new ApiClient(HttpClient.newBuilder(), mapper, baseUri));
-}
+  }
+  
+  public SubmodelServiceApi(ObjectMapper mapper, String baseUri, TokenManager tokenManager) {
+	    this(new ApiClient(HttpClient.newBuilder(), mapper, baseUri));
+	    this.tokenManager = tokenManager;
+  }
 
-public SubmodelServiceApi(String baseUri) {
-	this(new ApiClient(HttpClient.newBuilder(), new SubmodelSpecificJsonMapperFactory().create(), baseUri));
-}
+  public SubmodelServiceApi(String baseUri) {
+		this(new ApiClient(HttpClient.newBuilder(), new SubmodelSpecificJsonMapperFactory().create(), baseUri));
+  }
+
+  public SubmodelServiceApi(String baseUri, TokenManager tokenManager) {
+	  	this(new ApiClient(HttpClient.newBuilder(), new SubmodelSpecificJsonMapperFactory().create(), baseUri));
+	  	this.tokenManager = tokenManager;
+  }
 
 
 
@@ -213,6 +232,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		}
 
 		localVarRequestBuilder.header("Accept", "application/json");
+		
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
 		if (memberVarReadTimeout != null) {
@@ -335,6 +356,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		}
 
 		localVarRequestBuilder.header("Accept", "application/json");
+		
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
 		if (memberVarReadTimeout != null) {
@@ -460,6 +483,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		}
 
 		localVarRequestBuilder.header("Accept", "application/json");
+		
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
 		if (memberVarReadTimeout != null) {
@@ -604,6 +629,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 
 		localVarRequestBuilder.header("Content-Type", "application/json");
 		localVarRequestBuilder.header("Accept", "application/json");
+		
+		addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 		try {
 			byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(getSubmodelElementsValueResult);
@@ -696,6 +723,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 
 	    localVarRequestBuilder.header("Content-Type", "application/json");
 	    localVarRequestBuilder.header("Accept", "application/json");
+	    
+	    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 	    try {
 	      byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(submodelElement);
@@ -801,6 +830,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 
 			localVarRequestBuilder.header("Content-Type", "application/json");
 			localVarRequestBuilder.header("Accept", "application/json");
+			
+			addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 			try {
 				byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(submodelElement);
@@ -931,6 +962,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 
 			localVarRequestBuilder.header("Content-Type", "application/json");
 			localVarRequestBuilder.header("Accept", "application/json");
+			
+			addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 			try {
 				byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(submodelElement);
@@ -1026,6 +1059,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
 			localVarRequestBuilder.header("Accept", "application/json");
+			
+			addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 			localVarRequestBuilder.method("DELETE", HttpRequest.BodyPublishers.noBody());
 			if (memberVarReadTimeout != null) {
@@ -1118,6 +1153,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			}
 
 			localVarRequestBuilder.header("Accept", "application/json");
+			
+			addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 			localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
 			if (memberVarReadTimeout != null) {
@@ -1206,6 +1243,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			formDataPublisher = HttpRequest.BodyPublishers.ofInputStream(() -> Channels.newInputStream(pipe.source()));
 
 			localVarRequestBuilder.header("Content-Type", entity.getContentType().getValue()).method("PUT", formDataPublisher);
+			
+			addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 			if (memberVarReadTimeout != null) {
 				localVarRequestBuilder.timeout(memberVarReadTimeout);
@@ -1295,6 +1334,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
 			localVarRequestBuilder.header("Accept", "application/json");
+			
+			addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 			localVarRequestBuilder.method("DELETE", HttpRequest.BodyPublishers.noBody());
 			if (memberVarReadTimeout != null) {
@@ -1362,6 +1403,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
 
 			localVarRequestBuilder.header("Accept", "application/octet-stream, application/json");
+			
+			addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 			localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
 			if (memberVarReadTimeout != null) {
@@ -1460,6 +1503,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 
 			localVarRequestBuilder.header("Content-Type", "application/json");
 			localVarRequestBuilder.header("Accept", "application/json");
+			
+			addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
 
 			try {
 				byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(operationRequest);
@@ -1487,5 +1532,16 @@ public SubmodelServiceApi(ApiClient apiClient) {
 
 		private static String buildUniqueFilename() {
 			return UUID.randomUUID().toString();
+		}
+		
+		private void addAuthorizationHeaderIfAuthIsEnabled(HttpRequest.Builder localVarRequestBuilder) {
+			if (tokenManager != null) {
+		    	try {
+		    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
+				} catch (IOException e) {
+					e.printStackTrace();
+					throw new AccessTokenRetrievalException("Unable to request access token");
+				}
+		    }
 		}
 }

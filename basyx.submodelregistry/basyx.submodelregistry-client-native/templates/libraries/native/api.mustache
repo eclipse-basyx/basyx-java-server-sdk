@@ -48,6 +48,8 @@ import java.util.function.Consumer;
 
 import java.util.concurrent.CompletableFuture;
 {{/asyncNative}}
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
+import org.eclipse.digitaltwin.basyx.core.exceptions.AccessTokenRetrievalException;
 
 {{>generatedAnnotation}}
 {{#operations}}
@@ -59,17 +61,33 @@ public class {{classname}} {
   private final Duration memberVarReadTimeout;
   private final {{#fullJavaUtil}}java.util.function.{{/fullJavaUtil}}Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
   private final {{#fullJavaUtil}}java.util.function.{{/fullJavaUtil}}Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
-
+  private TokenManager tokenManager;
+  
   public {{classname}}() {
     this(new ApiClient());
+  }
+  
+  public {{classname}}(TokenManager tokenManager) {
+    this(new ApiClient());
+    this.tokenManager = tokenManager;
   }
   
   public {{classname}}(String protocol, String host, int port) {
     this(protocol + "://" + host + ":" + port);
   }
+  
+  public {{classname}}(String protocol, String host, int port, TokenManager tokenManager) {
+    this(protocol + "://" + host + ":" + port);
+    this.tokenManager = tokenManager;
+  }
 
   public {{classname}}(String basePath) {
      this(withBaseUri(new ApiClient(), basePath));
+  }
+  
+  public {{classname}}(String basePath, TokenManager tokenManager) {
+     this(withBaseUri(new ApiClient(), basePath));
+     this.tokenManager = tokenManager;
   }
 
   private static ApiClient withBaseUri(ApiClient client, String uri) {
@@ -491,6 +509,8 @@ public class {{classname}} {
     {{/bodyParam}}
     localVarRequestBuilder.header("Accept", "{{#hasProduces}}{{#produces}}{{mediaType}}{{^-last}}, {{/-last}}{{/produces}}{{/hasProduces}}{{#hasProduces}}{{^produces}}application/json{{/produces}}{{/hasProduces}}{{^hasProduces}}application/json{{/hasProduces}}");
 
+	  addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
+    
     {{#bodyParam}}
     {{#isString}}
     localVarRequestBuilder.method("{{httpMethod}}", HttpRequest.BodyPublishers.ofString({{paramName}}));
@@ -597,6 +617,7 @@ public class {{classname}} {
     }
     return localVarRequestBuilder;
   }
+
   {{#vendorExtensions.x-group-parameters}}
   {{#hasParams}}
 
@@ -648,5 +669,16 @@ public class {{classname}} {
   {{/hasParams}}
   {{/vendorExtensions.x-group-parameters}}
   {{/operation}}
+
+  private void addAuthorizationHeaderIfAuthIsEnabled(HttpRequest.Builder localVarRequestBuilder) {
+    if (tokenManager != null) {
+        try {
+          localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
+      } catch (IOException e) {
+        e.printStackTrace();
+        throw new AccessTokenRetrievalException("Unable to request access token");
+      }
+      }
+  }
 }
 {{/operations}}

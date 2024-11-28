@@ -11,6 +11,17 @@ basyx.feature.authorization.rbac.file = <Class path of the Rbac rules file if au
 spring.security.oauth2.resourceserver.jwt.issuer-uri= <URI of the resource server>
 ```
 
+If you want to use a preconfigured environment with authorization, you need to set the following options as well:
+```
+basyx.aasenvironment.authorization.preconfiguration.token-endpoint = <Endpoint to the KeyCloak Server>
+basyx.aasenvironment.authorization.preconfiguration.grant-type = <Grant Type>
+basyx.aasenvironment.authorization.preconfiguration.client-id = <ClientID>
+basyx.aasenvironment.authorization.preconfiguration.client-secret= <Client Secret>
+basyx.aasenvironment.authorization.preconfiguration.username = <Username>
+basyx.aasenvironment.authorization.preconfiguration.password = <Password>
+basyx.aasenvironment.authorization.preconfiguration.scopes = <Scopes>
+```
+
 Note: Only Role Based Access Control (RBAC) is supported as authorization type as of now, also Keycloak is the only Jwt token provider supported now and it is also a default provider. 
 
 To know more about the RBAC, please refer [Authorization Services Guide](https://www.keycloak.org/docs/latest/authorization_services/index.html)
@@ -24,6 +35,15 @@ basyx.feature.authorization.type = rbac
 basyx.feature.authorization.jwtBearerTokenProvider = keycloak
 basyx.feature.authorization.rbac.file = classpath:rbac_rules.json
 spring.security.oauth2.resourceserver.jwt.issuer-uri= http://localhost:9096/realms/BaSyx
+```
+
+And for preconfiguration (Grant Type would be CLIENT_CREDENTIALS in this case):
+
+```
+basyx.aasenvironment.authorization.preconfiguration.token-endpoint = http://localhost:9096/realms/BaSyx/protocol/openid-connect/token
+basyx.aasenvironment.authorization.preconfiguration.grant-type = CLIENT_CREDENTIALS
+basyx.aasenvironment.authorization.preconfiguration.client-id = workstation-1
+basyx.aasenvironment.authorization.preconfiguration.client-secret = nY0mjyECF60DGzNmQUjL81XurSl8etom
 ```
 
 ## RBAC rule configuration
@@ -70,6 +90,7 @@ Note:
 * The Action are fixed as of now and limited to (CREATE, READ, UPDATE, DELETE, and EXECUTE) but later user configurable mapping of these actions would be provided.
 * For the serialization related requests there should be defined rules for accessing the AASs/Submodels/Concept Descriptions, as the serialization requires all of these elements. For e.g, a role with serialization is configured for Aas Environment target information but if there is no role for reading the AAS/Submodel/Concept Description then the request will be denied.
 * For the upload related requests there should be defined rules for reading, creating, and updating the AASs/Submodels/Concept Descriptions, as the upload requests performs creation, updation, and request operations on the AASs/Submodels/Concept Descriptions contained in the uploaded file, hence appropriate rules should be configured for the subject in consideration.
+* Each rule should be unique in combination of role + action + target information
 
 ## Action table for RBAC
 

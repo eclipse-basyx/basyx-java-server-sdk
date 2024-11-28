@@ -34,8 +34,9 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
+import org.eclipse.digitaltwin.basyx.aasregistry.main.client.factory.AasDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.RepositoryRegistryLinkException;
@@ -77,9 +78,19 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 
 	@Override
 	public void createAas(AssetAdministrationShell shell) throws CollidingIdentifierException {
+		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(shell, aasRepositoryRegistryLink.getAasRepositoryBaseURLs(), attributeMapper).create();
+
 		decorated.createAas(shell);
 
-		integrateAasWithRegistry(shell, aasRepositoryRegistryLink.getAasRepositoryBaseURL());
+		boolean registrationSuccessful = false;
+
+		try {
+			registerAas(descriptor);
+			registrationSuccessful = true;
+		} finally {
+			if (!registrationSuccessful)
+				decorated.deleteAas(shell.getId());
+		}
 	}
 
 	@Override
@@ -124,17 +135,15 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 		return decorated.getAssetInformation(shellId);
 	}
 
-	private void integrateAasWithRegistry(AssetAdministrationShell shell, String aasRepositoryURL) {
-		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(shell, aasRepositoryURL, attributeMapper).create();
-
+	private void registerAas(AssetAdministrationShellDescriptor descriptor) {
 		RegistryAndDiscoveryInterfaceApi registryApi = aasRepositoryRegistryLink.getRegistryApi();
 
 		try {
 			registryApi.postAssetAdministrationShellDescriptor(descriptor);
 
-			logger.info("Shell '{}' has been automatically linked with the Registry", shell.getId());
+			logger.info("Shell '{}' has been automatically linked with the Registry", descriptor.getId());
 		} catch (ApiException e) {
-			throw new RepositoryRegistryLinkException(shell.getId(), e);
+			throw new RepositoryRegistryLinkException(descriptor.getId(), e);
 		}
 	}
 

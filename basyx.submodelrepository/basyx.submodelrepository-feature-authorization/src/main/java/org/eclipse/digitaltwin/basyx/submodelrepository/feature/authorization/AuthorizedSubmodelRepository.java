@@ -72,6 +72,15 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 		return decorated.getAllSubmodels(pInfo);
 	}
+	
+	@Override
+	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo) {
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(getIdAsList(ALL_ALLOWED_WILDCARD), getIdAsList(ALL_ALLOWED_WILDCARD)));
+
+		throwExceptionIfInsufficientPermission(isAuthorized);
+
+		return decorated.getAllSubmodels(semanticId, pInfo);
+	}
 
 	@Override
 	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException {
@@ -243,7 +252,12 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 		decorated.patchSubmodelElements(submodelId, submodelElementList);
 	}
-	
+
+	@Override
+	public InputStream getFileByFilePath(String submodelId, String filePath) {
+		return decorated.getFileByFilePath(submodelId, filePath);
+	}
+
 	private List<String> getIdAsList(String id) {
 		return new ArrayList<>(Arrays.asList(id));
 	}

@@ -26,14 +26,13 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.http.SubmodelServiceSubmodelElementsTestSuiteHTTP;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -44,12 +43,11 @@ import org.springframework.context.ConfigurableApplicationContext;
  *
  */
 public class TestSubmodelRepositorySubmodelElementsHTTP extends SubmodelServiceSubmodelElementsTestSuiteHTTP {
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
 	public static void startAASRepo() throws Exception {
-		appContext = new SpringApplication(DummySubmodelRepositoryComponent.class).run(new String[] {});
+		appContext = new SpringApplicationBuilder(DummySubmodelRepositoryComponent.class).profiles("httptests").run(new String[] {});
 	}
 
 	@Before
@@ -61,7 +59,7 @@ public class TestSubmodelRepositorySubmodelElementsHTTP extends SubmodelServiceS
 	@After
 	public void removeSubmodelFromRepo() {
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
-		repo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
+		repo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
 	}
 
 	@AfterClass

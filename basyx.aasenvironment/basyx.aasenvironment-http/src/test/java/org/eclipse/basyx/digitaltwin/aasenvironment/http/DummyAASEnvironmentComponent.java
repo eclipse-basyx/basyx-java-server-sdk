@@ -27,6 +27,7 @@ package org.eclipse.basyx.digitaltwin.aasenvironment.http;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
@@ -37,6 +38,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironment;
+import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.AasEnvironmentPreconfigurationLoader;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -44,6 +46,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.ResourceLoader;
 
 @SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
 public class DummyAASEnvironmentComponent {
@@ -57,6 +60,11 @@ public class DummyAASEnvironmentComponent {
 	public AasEnvironment createAasEnvironmentSerialization(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {
 		initRepositories(aasRepository, submodelRepository, conceptDescriptionRepository);
 		return new DefaultAASEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository);
+	}
+
+	@Bean
+	public AasEnvironmentPreconfigurationLoader createAasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, List<String> pathsToLoad) {
+		return new AasEnvironmentPreconfigurationLoader(resourceLoader, pathsToLoad);
 	}
 
 	public void initRepositories(AasRepository aasRepository, SubmodelRepository submodelRepository, ConceptDescriptionRepository conceptDescriptionRepository) {

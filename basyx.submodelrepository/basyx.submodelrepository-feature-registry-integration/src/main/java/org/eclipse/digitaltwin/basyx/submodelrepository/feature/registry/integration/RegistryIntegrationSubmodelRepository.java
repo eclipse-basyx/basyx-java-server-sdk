@@ -41,9 +41,10 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.factory.SubmodelDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.slf4j.Logger;
@@ -72,6 +73,11 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo paginationInfo) {
 		return decorated.getAllSubmodels(paginationInfo);
 	}
+	
+	@Override
+	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo paginationInfo) {
+		return decorated.getAllSubmodels(semanticId, paginationInfo);
+	} 
 
 	@Override
 	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException {
@@ -85,9 +91,19 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 
 	@Override
 	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
+		SubmodelDescriptor descriptor = new SubmodelDescriptorFactory(submodel, submodelRepositoryRegistryLink.getSubmodelRepositoryBaseURLs(), attributeMapper).create();
+
 		decorated.createSubmodel(submodel);
 
-		integrateSubmodelWithRegistry(submodel, submodelRepositoryRegistryLink.getSubmodelRepositoryBaseURL());
+		boolean registrationSuccessful = false;
+
+		try {
+			registerSubmodel(descriptor);
+			registrationSuccessful = true;
+		} finally {
+			if (!registrationSuccessful)
+				decorated.deleteSubmodel(submodel.getId());
+		}
 	}
 
 	@Override
@@ -124,7 +140,7 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 
 	@Override
 	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
-		decorated.createSubmodelElement(submodelId, submodelElement);
+		decorated.createSubmodelElement(submodelId, idShortPath, submodelElement);
 	}
 	
 	@Override
@@ -167,17 +183,15 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 		decorated.deleteFileValue(submodelId, idShortPath);
 	}
 
-	private void integrateSubmodelWithRegistry(Submodel submodel, String submodelRepositoryURL) {
-		SubmodelDescriptor descriptor = new SubmodelDescriptorFactory(submodel, submodelRepositoryURL, attributeMapper).create();
-
+	private void registerSubmodel(SubmodelDescriptor descriptor) {
 		SubmodelRegistryApi registryApi = submodelRepositoryRegistryLink.getRegistryApi();
 
 		try {
 			registryApi.postSubmodelDescriptor(descriptor);
 
-			logger.info("Submodel '{}' has been automatically linked with the Registry", submodel.getId());
+			logger.info("Submodel '{}' has been automatically linked with the Registry", descriptor.getId());
 		} catch (ApiException e) {
-			throw new RepositoryRegistryLinkException(submodel.getId(), e);
+			throw new RepositoryRegistryLinkException(descriptor.getId(), e);
 		}
 	}
 
@@ -212,6 +226,11 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 	@Override
 	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
 		decorated.patchSubmodelElements(submodelId, submodelElementList);
+	}
+
+	@Override
+	public InputStream getFileByFilePath(String submodelId, String filePath) {
+		return decorated.getFileByFilePath(submodelId, filePath);
 	}
 
 }

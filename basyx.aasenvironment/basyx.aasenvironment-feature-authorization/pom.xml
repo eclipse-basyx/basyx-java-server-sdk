@@ -37,6 +37,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.authorization</artifactId>
 		</dependency>
 		<dependency>
@@ -74,5 +78,9 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.authorization.rules.rbac.backend.inmemory</artifactId>
+		</dependency> 
 	</dependencies>
 </project>

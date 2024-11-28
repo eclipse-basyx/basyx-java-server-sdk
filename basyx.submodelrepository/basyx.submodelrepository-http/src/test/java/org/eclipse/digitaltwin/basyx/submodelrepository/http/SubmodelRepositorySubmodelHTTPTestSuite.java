@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -42,6 +43,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.ProtocolException;
@@ -92,6 +94,18 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	public void getAllSubmodelsPreconfigured() throws IOException, ParseException {
 		String submodelsJSON = BaSyxSubmodelHttpTestUtils.requestAllSubmodels(getURL());
 		String expectedSubmodelsJSON = getJSONValueAsString("MultipleSubmodels.json");
+		
+		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelsJSON,getJSONWithoutCursorInfo(submodelsJSON));
+	}
+	
+	@Test
+	public void getAllSubmodelsBySemanticIDPreconfigured() throws IOException, ParseException {	
+		String semanticId = Base64UrlEncodedIdentifier.encodeIdentifier(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_SEMANTIC_ID);
+		String url = getURL() + "?semanticId=" + semanticId;
+		
+		String submodelsJSON = BaSyxSubmodelHttpTestUtils.requestAllSubmodels(url);
+		
+		String expectedSubmodelsJSON = getJSONValueAsString("MultipleSubmodelsWithSameSemanticId.json");
 		
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelsJSON,getJSONWithoutCursorInfo(submodelsJSON));
 	}
@@ -230,6 +244,22 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	}
 
 	@Test
+	public void updateNonNestedSME() throws FileNotFoundException, IOException, ParseException {        
+	    String submodelJSON = getJSONValueAsString("SingleSubmodelNew.json");
+	    String element = getJSONValueAsString("PropertySubmodelElementUpdate.json");	  
+	    String idShortPath = "MaxRotationSpeed";
+
+	    CloseableHttpResponse creationResponse = BaSyxSubmodelHttpTestUtils.createSubmodel(getURL(), submodelJSON);
+	    assertSubmodelCreationReponse(submodelJSON, creationResponse);
+
+	    CloseableHttpResponse updatedResponse = updateElement(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID,idShortPath), element);
+	    assertEquals(HttpStatus.NO_CONTENT.value(), updatedResponse.getCode());
+
+	    CloseableHttpResponse fetchedResponse = BaSyxHttpTestUtils.executeGetOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID,idShortPath));
+	    BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedResponse));
+	}
+	
+	@Test
 	public void updateNonFileSMEWithFileSME() throws FileNotFoundException, IOException, ParseException {
 		String element = getJSONValueAsString("FileSubmodelElementUpdate.json");
 		
@@ -339,6 +369,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	@Test
 	public void getFile() throws FileNotFoundException, IOException, ParseException {
 		String fileName = DummySubmodelFactory.FILE_NAME;
+		String expectedFileName = Base64UrlEncodedIdentifier.encodeIdentifier(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST) + "-" + DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT + "-" + fileName;
 		
 		byte[] expectedFile = readBytesFromClasspath(fileName);
 		
@@ -346,6 +377,14 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 		
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT));
 		assertEquals(HttpStatus.OK.value(), response.getCode());
+
+	    Header contentDispositionHeader = response.getFirstHeader("Content-Disposition");
+	    assertNotNull(contentDispositionHeader);
+
+	    String contentDisposition = contentDispositionHeader.getValue();
+	    String actualFileName = extractFileNameFromContentDisposition(contentDisposition);
+
+	    assertEquals(expectedFileName, actualFileName);
 
         byte[] actualFile = EntityUtils.toByteArray(response.getEntity());
         
@@ -366,6 +405,31 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, "ElementNotExist"));
 		
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
+	}
+	
+	@Test
+	public void getSubmodelByIdValueOnly() throws IOException, ParseException {
+	    String submodelIdentifier = Base64UrlEncodedIdentifier.encodeIdentifier(DummySubmodelFactory.createTechnicalDataSubmodel().getId());
+	    String url = getURL() + "/" + submodelIdentifier + "/$value";
+	    
+	    String expectedSubmodelJSON = getJSONValueAsString("SingleSubmodelValueOnly.json");
+	    
+	    CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(url);
+	    assertEquals(HttpStatus.OK.value(), response.getCode());
+	    
+	    String actualSubmodelJSON = BaSyxHttpTestUtils.getResponseAsString(response);
+	    
+	    BaSyxHttpTestUtils.assertSameJSONContent(expectedSubmodelJSON, actualSubmodelJSON);
+	}
+
+	private String extractFileNameFromContentDisposition(String contentDisposition) {
+	    for (String part : contentDisposition.split(";")) {
+	        part = part.trim();
+	        if (part.startsWith("filename")) {
+	            return part.split("=")[1].replace("\"", "").trim();
+	        }
+	    }
+	    return null;
 	}
 	
 	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException {

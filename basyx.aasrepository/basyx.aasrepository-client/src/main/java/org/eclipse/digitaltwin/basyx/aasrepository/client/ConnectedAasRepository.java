@@ -66,6 +66,15 @@ public class ConnectedAasRepository implements AasRepository {
 		this.aasRepoUrl = repoUrl;
 		this.repoApi = new AssetAdministrationShellRepositoryApi(repoUrl);
 	}
+	
+	public ConnectedAasRepository(String repoUrl, AssetAdministrationShellRepositoryApi assetAdministrationShellRepositoryApi) {
+		this.aasRepoUrl = repoUrl;
+		this.repoApi = assetAdministrationShellRepositoryApi;
+	}
+	
+	public String getBaseUrl() {
+		return aasRepoUrl;
+	}
 
 	@Override
 	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
@@ -165,7 +174,7 @@ public class ConnectedAasRepository implements AasRepository {
 		getConnectedAasService(aasId).deleteThumbnail();
 	}
 
-	private String getAasUrl(String aasId) {
+	protected String getAasUrl(String aasId) {
 		return aasRepoUrl + "/shells/" + Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
 	}
 
@@ -177,7 +186,7 @@ public class ConnectedAasRepository implements AasRepository {
 		return mapExceptionAasAccess(aasId, e);
 	}
 
-	private RuntimeException mapExceptionAasAccess(String aasId, ApiException e) {
+	protected RuntimeException mapExceptionAasAccess(String aasId, ApiException e) {
 		if (e.getCode() == HttpStatus.NOT_FOUND.value()) {
 			return new ElementDoesNotExistException(aasId);
 		} else if (e.getCode() == HttpStatus.CONFLICT.value()) {

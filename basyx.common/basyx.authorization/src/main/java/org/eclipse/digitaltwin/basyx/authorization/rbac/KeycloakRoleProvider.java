@@ -27,8 +27,10 @@ package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.authorization.SubjectInformation;
@@ -48,6 +50,7 @@ import org.springframework.stereotype.Service;
 public class KeycloakRoleProvider implements RoleProvider {
 
 	private static final String CLAIM_REALM_ACCESS = "realm_access";
+	private static final String CLAIM_RESOURCE_ACCESS = "resource_access";
 
 	private static final String CLAIM_ROLES = "roles";
 
@@ -65,21 +68,38 @@ public class KeycloakRoleProvider implements RoleProvider {
 
 		validateJwt(jwt);
 		
-		Map<String, Collection<String>> realmAccess = jwt.getClaim(CLAIM_REALM_ACCESS);
+		Map<String, Collection<String>> realmAccess = new HashMap<>();
+		Map<String, Map<String, Collection<String>>> resourceAccess = new HashMap<>();
+		
+		if (jwt.hasClaim(CLAIM_REALM_ACCESS))
+			realmAccess = jwt.getClaim(CLAIM_REALM_ACCESS);
+		
+		if (jwt.hasClaim(CLAIM_RESOURCE_ACCESS))
+			resourceAccess = jwt.getClaim(CLAIM_RESOURCE_ACCESS);
 
-		return getRolesFromRealmAccess(realmAccess);
+		return extractRolesFromClaims(realmAccess, resourceAccess);
 	}
 
-	private List<String> getRolesFromRealmAccess(Map<String, Collection<String>> realmAccess) {
-		if (realmAccess == null || realmAccess.isEmpty())
+	private List<String> extractRolesFromClaims(Map<String, Collection<String>> realmAccess, Map<String, Map<String, Collection<String>>> resourceAccess) {
+		if (realmAccess.isEmpty() && resourceAccess.isEmpty())
 			return new ArrayList<>();
 		
-		Collection<String> roles = realmAccess.get(CLAIM_ROLES);
-			
-		if (roles == null || roles.isEmpty())
-			return new ArrayList<>(); 
-
-		return new ArrayList<>(roles);
+		List<String> roles = new ArrayList<>();
+		
+		Collection<String> realmRoles = realmAccess.get(CLAIM_ROLES);
+		
+        if (realmRoles != null && !realmRoles.isEmpty())
+            roles.addAll(realmRoles);
+        
+        for (Map.Entry<String, Map<String, Collection<String>>> entry : resourceAccess.entrySet()) {
+            Map<String, Collection<String>> clientRolesMap = entry.getValue();
+            Collection<String> clientRoles = clientRolesMap.get(CLAIM_ROLES); 
+            
+            if (clientRoles != null)
+                roles.addAll(clientRoles);
+        }
+        
+       return roles.stream().distinct().collect(Collectors.toList());
 	}
 
 	private void validateJwt(Jwt jwt) {

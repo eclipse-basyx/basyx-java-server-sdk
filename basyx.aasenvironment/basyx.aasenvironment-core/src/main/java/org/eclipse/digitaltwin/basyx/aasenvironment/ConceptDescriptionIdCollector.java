@@ -290,11 +290,7 @@ public class ConceptDescriptionIdCollector implements AssetAdministrationShellEl
 	}
 
 	private Set<String> getConceptDescriptionIds(List<Key> keys) {
-		return keys.stream().filter(this::isKeyOfTypeCD).map(Key::getValue).collect(Collectors.toSet());
-	}
-
-	private boolean isKeyOfTypeCD(Key key) {
-		return key.getType().equals(KeyTypes.CONCEPT_DESCRIPTION);
+		return keys.stream().map(Key::getValue).collect(Collectors.toSet());
 	}
 
 }

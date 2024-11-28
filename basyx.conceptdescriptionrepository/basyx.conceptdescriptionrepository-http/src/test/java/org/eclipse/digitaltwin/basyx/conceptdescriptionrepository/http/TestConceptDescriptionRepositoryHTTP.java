@@ -34,7 +34,7 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.DummyConc
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -45,12 +45,11 @@ import org.springframework.context.ConfigurableApplicationContext;
  *
  */
 public class TestConceptDescriptionRepositoryHTTP extends ConceptDescriptionRepositoryHTTPSuite {
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
 	public static void startConceptDescriptionRepo() throws Exception {
-		appContext = new SpringApplication(DummyConceptDescriptionRepositoryComponent.class).run(new String[] {});
+		appContext = new SpringApplicationBuilder(DummyConceptDescriptionRepositoryComponent.class).profiles("httptests").run(new String[] {});
 	}
 
 	@Override
@@ -61,7 +60,7 @@ public class TestConceptDescriptionRepositoryHTTP extends ConceptDescriptionRepo
 	}
 
 	private void resetRepoToDefaultConceptDescriptions(ConceptDescriptionRepository repo, Collection<ConceptDescription> conceptDescriptions) {
-		repo.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO)
+		repo.getAllConceptDescriptions(PaginationInfo.NO_LIMIT)
 				.getResult()
 				.stream()
 				.map(s -> s.getId())

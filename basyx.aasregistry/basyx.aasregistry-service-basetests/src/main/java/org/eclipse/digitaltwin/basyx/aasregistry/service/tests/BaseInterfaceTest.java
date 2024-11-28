@@ -54,7 +54,7 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public abstract class BaseInterfaceTest {
 
 	protected static final String IDENTIFICATION_2_3 = "identification_2.3";
@@ -134,12 +134,12 @@ public abstract class BaseInterfaceTest {
 	}
 
 	protected List<AssetAdministrationShellDescriptor> getAllAasDescriptors() {
-		return storage.getAllAasDescriptors(new PaginationInfo(null, null), new DescriptorFilter(null, null)).getResult();
+		return storage.getAllAasDescriptors(PaginationInfo.NO_LIMIT, new DescriptorFilter(null, null)).getResult();
 	}
 	
 
 	protected List<AssetAdministrationShellDescriptor> getAllAasDescriptorsFiltered(AssetKind kind, String type) {
-		return storage.getAllAasDescriptors(new PaginationInfo(null, null), new DescriptorFilter(kind, type)).getResult();
+		return storage.getAllAasDescriptors(PaginationInfo.NO_LIMIT, new DescriptorFilter(kind, type)).getResult();
 	}
 	
 	protected CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptorsWithPagination(int limit, String cursor) {
@@ -147,7 +147,7 @@ public abstract class BaseInterfaceTest {
 	}
 	
 	protected List<SubmodelDescriptor> getAllSubmodels(String id) {
-		return storage.getAllSubmodels(id, new PaginationInfo(null, null)).getResult();
+		return storage.getAllSubmodels(id, PaginationInfo.NO_LIMIT).getResult();
 	}
 	
 	protected CursorResult<List<SubmodelDescriptor>> getAllSubmodelsWithPagination(String aasId, int limit, String cursor) {

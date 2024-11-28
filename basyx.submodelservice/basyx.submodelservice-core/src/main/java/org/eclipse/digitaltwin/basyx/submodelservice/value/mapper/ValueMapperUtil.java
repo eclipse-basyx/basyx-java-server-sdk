@@ -145,6 +145,10 @@ public class ValueMapperUtil {
 	public static void setValueOfSubmodelElementWithValueOnly(Collection<SubmodelElement> submodelElements, List<ValueOnly> valueOnlies) {
 		submodelElements.stream().forEach(submodelElement -> setValue(submodelElement, ValueMapperUtil.getSubmodelElementValue(submodelElement, valueOnlies)));
 	}
+
+	public static void setValueOfSubmodelElementWithValueOnly(Collection<SubmodelElement> submodelElements, Map<String,SubmodelElementValue> valueOnlies) {
+		submodelElements.stream().forEach(submodelElement -> setValue(submodelElement, valueOnlies.get(submodelElement.getIdShort())));
+	}
 	
 	/**
 	 * Updates the value of {@link SubmodelElement} with its corresponding {@link SubmodelElementValue}

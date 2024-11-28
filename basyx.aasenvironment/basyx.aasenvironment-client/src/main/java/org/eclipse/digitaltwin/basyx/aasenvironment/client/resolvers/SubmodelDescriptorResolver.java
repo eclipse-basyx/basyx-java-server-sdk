@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
 
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ProtocolInformation;
+import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver;
 import java.net.URI;
 import java.util.Optional;
 
@@ -33,12 +35,14 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescr
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 
 /**
- * Resolves a SubmodelDescriptor into a Submodel
+ * Resolves a SubmodelDescriptor into a {@link ConnectedSubmodelService}
  *
- * @author mateusmolina
+ * @author mateusmolina, danish
  *
  */
-public class SubmodelDescriptorResolver {
+public class SubmodelDescriptorResolver implements DescriptorResolver<SubmodelDescriptor, ConnectedSubmodelService> {
+
+	static final String SPEC_INTERFACE = "SUBMODEL-3.0";
 
 	private final EndpointResolver endpointResolver;
 
@@ -58,24 +62,15 @@ public class SubmodelDescriptorResolver {
 	 *            the Submodel Descriptor to be resolved
 	 * @return the Connected submodelserver
 	 */
-	public ConnectedSubmodelService resolveSubmodelDescriptor(SubmodelDescriptor smDescriptor) {
+	public ConnectedSubmodelService resolveDescriptor(SubmodelDescriptor smDescriptor) {
 		String endpoint = endpointResolver.resolveFirst(smDescriptor.getEndpoints(), SubmodelDescriptorResolver::parseEndpoint);
 
 		return new ConnectedSubmodelService(endpoint);
 	}
 
-	private static Optional<URI> parseEndpoint(Endpoint endpoint) {
+	public static Optional<URI> parseEndpoint(Endpoint endpoint) {
 		try {
-			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation()
-					.getHref() == null)
-				return Optional.empty();
-
-			String baseHref = endpoint.getProtocolInformation()
-					.getHref();
-			// TODO not working: String queryString = "?" + endpoint.toUrlQueryString();
-			String queryString = "";
-			URI uri = new URI(baseHref + queryString);
-			return Optional.of(uri);
+			return Optional.ofNullable(endpoint).filter(ep -> ep.getInterface().equals(SPEC_INTERFACE)).map(Endpoint::getProtocolInformation).map(ProtocolInformation::getHref).map(URI::create);
 		} catch (Exception e) {
 			return Optional.empty();
 		}

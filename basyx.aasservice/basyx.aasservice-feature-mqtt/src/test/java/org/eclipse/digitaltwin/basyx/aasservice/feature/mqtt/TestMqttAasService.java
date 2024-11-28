@@ -36,7 +36,9 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
@@ -48,6 +50,8 @@ import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFac
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
 import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
@@ -79,7 +83,9 @@ public class TestMqttAasService extends AasServiceSuite {
 	private static AasServiceFactory mqttAasServiceFactory;
 
 	private static ObjectMapper objectMapper;
-
+	
+	private static FileRepository fileRepository;
+	
 	@BeforeClass
 	public static void setUpClass() throws MqttException, IOException {
 		objectMapper = configureObjectMapper();
@@ -101,9 +107,28 @@ public class TestMqttAasService extends AasServiceSuite {
 	protected AasService getAasService(AssetAdministrationShell shell) {
 		return mqttAasServiceFactory.create(shell);
 	}
+	
+	@Override
+	protected AasService getAasServiceWithThumbnail() throws IOException {
+		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.createForThumbnail();
+		AasService aasServiceWithThumbnail = getAasService(expected);
 
+		FileMetadata defaultThumbnail = new FileMetadata("dummyImgA.jpeg", "", createDummyImageIS_A());
+		
+		String thumbnailFilePath = fileRepository.save(defaultThumbnail);
+		
+		Resource defaultResource = new DefaultResource.Builder().path(thumbnailFilePath).contentType("").build();
+		AssetInformation defaultAasAssetInformation = aasServiceWithThumbnail.getAssetInformation();
+		defaultAasAssetInformation.setDefaultThumbnail(defaultResource);
+		
+		aasServiceWithThumbnail.setAssetInformation(defaultAasAssetInformation);
+	
+		return aasServiceWithThumbnail;
+	}
+	
 	private static AasServiceFactory createMqttAasServiceFactory(MqttClient client) {
-		AasServiceFactory serviceFactory = new InMemoryAasServiceFactory(new InMemoryFileRepository());
+		fileRepository = new InMemoryFileRepository();
+		AasServiceFactory serviceFactory = new InMemoryAasServiceFactory(fileRepository);
 		MqttAasServiceFeature mqttFeature = new MqttAasServiceFeature(client, aasRepository, objectMapper);
 		
 		return mqttFeature.decorate(serviceFactory);

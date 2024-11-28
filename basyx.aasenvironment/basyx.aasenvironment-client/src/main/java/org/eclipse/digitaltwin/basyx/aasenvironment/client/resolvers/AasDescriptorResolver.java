@@ -30,15 +30,19 @@ import java.util.Optional;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
+import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver;
 
 /**
- * Resolves an AasDescriptor into an AssetAdministrationShell
- *
- * @author mateusmolina
+ * Resolves an AasDescriptor into a {@link ConnectedAasService}
+ * 
+ * @author mateusmolina, danish
  *
  */
-public class AasDescriptorResolver {
+public class AasDescriptorResolver implements DescriptorResolver<AssetAdministrationShellDescriptor, ConnectedAasService> {
+
+	static final String SPEC_INTERFACE = "AAS-3.0";
 
 	private final EndpointResolver endpointResolver;
 
@@ -50,31 +54,22 @@ public class AasDescriptorResolver {
 	public AasDescriptorResolver(EndpointResolver endpointResolver) {
 		this.endpointResolver = endpointResolver;
 	}
-
+	
 	/**
 	 * Resolves an AASDescriptor to a ConnectedAasService
 	 * 
 	 * @param aasDescriptor
 	 * @return
 	 */
-	public ConnectedAasService resolveAasDescriptor(AssetAdministrationShellDescriptor aasDescriptor) {
+	public ConnectedAasService resolveDescriptor(AssetAdministrationShellDescriptor aasDescriptor) {
 		String endpoint = endpointResolver.resolveFirst(aasDescriptor.getEndpoints(), AasDescriptorResolver::parseEndpoint);
 
 		return new ConnectedAasService(endpoint);
 	}
 
-	private static Optional<URI> parseEndpoint(Endpoint endpoint) {
+	public static Optional<URI> parseEndpoint(Endpoint endpoint) {
 		try {
-			if (endpoint == null || endpoint.getProtocolInformation() == null || endpoint.getProtocolInformation()
-					.getHref() == null)
-				return Optional.empty();
-
-			String baseHref = endpoint.getProtocolInformation()
-					.getHref();
-			// TODO not working: String queryString = "?" + endpoint.toUrlQueryString();
-			String queryString = "";
-			URI uri = new URI(baseHref + queryString);
-			return Optional.of(uri);
+			return Optional.ofNullable(endpoint).filter(ep -> ep.getInterface().equals(SPEC_INTERFACE)).map(Endpoint::getProtocolInformation).map(ProtocolInformation::getHref).map(URI::create);
 		} catch (Exception e) {
 			return Optional.empty();
 		}

@@ -35,16 +35,24 @@ import static org.mockito.Mockito.times;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.NoValidEndpointFoundException;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.AasDescriptorResolver;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.DescriptorResolverManager;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.EndpointResolver;
+import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.SubmodelDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository;
+import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
+import org.eclipse.digitaltwin.basyx.client.internal.resolver.DescriptorResolver;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
@@ -67,23 +75,23 @@ import org.springframework.context.ConfigurableApplicationContext;
  *
  */
 public class TestConnectedAasManager {
-	private final static String AAS_REPOSITORY_BASE_PATH = "http://localhost:8081";
-	private final static String SM_REPOSITORY_BASE_PATH = "http://localhost:8081";
-	private final static String AAS_REGISTRY_BASE_PATH = "http://localhost:8050";
-	private final static String SM_REGISTRY_BASE_PATH = "http://localhost:8060";
+	protected static final String AAS_REPOSITORY_BASE_PATH = "http://localhost:8081";
+	protected static final String SM_REPOSITORY_BASE_PATH = "http://localhost:8081";
+	protected static final String AAS_REGISTRY_BASE_PATH = "http://localhost:8050";
+	protected static final String SM_REGISTRY_BASE_PATH = "http://localhost:8060";
 
-	private static ConfigurableApplicationContext appContext;
-	private static AasRepository aasRepository;
-	private static SubmodelRepository smRepository;
+	protected static ConfigurableApplicationContext appContext;
+	protected static AasRepository aasRepository;
+	protected static SubmodelRepository smRepository;
 
-	private final static TestFixture FIXTURE = new TestFixture(AAS_REPOSITORY_BASE_PATH, SM_REPOSITORY_BASE_PATH);
+	protected static final TestFixture FIXTURE = new TestFixture(AAS_REPOSITORY_BASE_PATH, SM_REPOSITORY_BASE_PATH);
 
-	private static ConnectedAasRepository connectedAasRepository;
-	private static ConnectedSubmodelRepository connectedSmRepository;
-	private static RegistryAndDiscoveryInterfaceApi aasRegistryApi;
-	private static SubmodelRegistryApi smRegistryApi;
+	protected static ConnectedAasRepository connectedAasRepository;
+	protected static ConnectedSubmodelRepository connectedSmRepository;
+	protected static RegistryAndDiscoveryInterfaceApi aasRegistryApi;
+	protected static SubmodelRegistryApi smRegistryApi;
 
-	private ConnectedAasManager aasManager;
+	protected ConnectedAasManager aasManager;
 
 	@BeforeClass
 	public static void initApplication() {
@@ -100,12 +108,12 @@ public class TestConnectedAasManager {
 
 	@Before
 	public void setupRepositories() {
-		connectedAasRepository = spy(new ConnectedAasRepository(AAS_REPOSITORY_BASE_PATH));
-		connectedSmRepository = spy(new ConnectedSubmodelRepository(SM_REPOSITORY_BASE_PATH));
-		aasRegistryApi = spy(new RegistryAndDiscoveryInterfaceApi(AAS_REGISTRY_BASE_PATH));
-		smRegistryApi = spy(new SubmodelRegistryApi(SM_REGISTRY_BASE_PATH));
-
-		aasManager = new ConnectedAasManager(aasRegistryApi, connectedAasRepository, AAS_REPOSITORY_BASE_PATH, smRegistryApi, connectedSmRepository, SM_REPOSITORY_BASE_PATH);
+		connectedAasRepository = getConnectedAasRepo();
+		connectedSmRepository = getConnectedSubmodelRepo();
+		aasRegistryApi = getConnectedAasRegistry();
+		smRegistryApi = getConnectedSubmodelRegistry();
+		
+		aasManager = getConnectedAasManager();
 
 		cleanUpRegistries();
 		populateRepositories();
@@ -132,28 +140,27 @@ public class TestConnectedAasManager {
 		inOrder.verify(aasRegistryApi, times(1))
 				.postAssetAdministrationShellDescriptor(expectedDescriptor);
 
-		assertEquals(expectedAas, aasRepository.getAas(TestFixture.AAS_POS1_ID));
-		assertEquals(expectedDescriptor, new RegistryAndDiscoveryInterfaceApi(AAS_REGISTRY_BASE_PATH).getAssetAdministrationShellDescriptorById(TestFixture.AAS_POS1_ID));
+		assertEquals(expectedAas, getAasFromRepo(TestFixture.AAS_POS1_ID));
+		assertEquals(expectedDescriptor, getDescriptorFromAasRegistry(TestFixture.AAS_POS1_ID));
 	}
 
 	@Test
 	public void createSubmodelInAas() throws Exception {
 		Submodel expectedSm = FIXTURE.buildSmPos1();
 		SubmodelDescriptor expectedDescriptor = FIXTURE.buildSmPos1Descriptor();
+		Reference expectedRef = FIXTURE.buildSmPos1Ref();
 
 		aasManager.createSubmodelInAas(TestFixture.AAS_PRE1_ID, expectedSm);
 
 		InOrder inOrder = inOrder(connectedSmRepository, smRegistryApi, connectedAasRepository);
 
-		inOrder.verify(connectedSmRepository, times(1))
-				.createSubmodel(expectedSm);
-		inOrder.verify(smRegistryApi, times(1))
-				.postSubmodelDescriptor(expectedDescriptor);
-		inOrder.verify(connectedAasRepository, times(1))
-				.addSubmodelReference(eq(TestFixture.AAS_PRE1_ID), any());
+		inOrder.verify(connectedSmRepository, times(1)).createSubmodel(expectedSm);
+		inOrder.verify(smRegistryApi, times(1)).postSubmodelDescriptor(expectedDescriptor);
+		inOrder.verify(connectedAasRepository, times(1)).addSubmodelReference(eq(TestFixture.AAS_PRE1_ID), any());
 
-		assertEquals(expectedSm, smRepository.getSubmodel(TestFixture.SM_POS1_ID));
-		assertEquals(expectedDescriptor, new SubmodelRegistryApi(SM_REGISTRY_BASE_PATH).getSubmodelDescriptorById(TestFixture.SM_POS1_ID));
+		assertEquals(expectedSm, getSubmodelFromRepo(TestFixture.SM_POS1_ID));
+		assertEquals(expectedDescriptor, getDescriptorFromSubmodelRegistry(TestFixture.SM_POS1_ID));
+		assertEquals(expectedRef, getSubmodelRefFromAasRepository(TestFixture.AAS_PRE1_ID, TestFixture.SM_POS1_ID).get());
 	}
 
 	@Test
@@ -167,8 +174,8 @@ public class TestConnectedAasManager {
 		inOrder.verify(connectedAasRepository, times(1))
 				.deleteAas(TestFixture.AAS_PRE1_ID);
 
-		assertThrows(ElementDoesNotExistException.class, () -> aasRepository.getAas(TestFixture.AAS_PRE1_ID));
-		assertThrows(Exception.class, () -> new RegistryAndDiscoveryInterfaceApi(AAS_REGISTRY_BASE_PATH).getAssetAdministrationShellDescriptorById(TestFixture.AAS_PRE1_ID));
+		assertThrows(ElementDoesNotExistException.class, () -> getAasFromRepo(TestFixture.AAS_PRE1_ID));
+		assertThrows(Exception.class, () -> getDescriptorFromAasRegistry(TestFixture.AAS_PRE1_ID));
 	}
 
 	@Test
@@ -184,28 +191,77 @@ public class TestConnectedAasManager {
 		inOrder.verify(connectedSmRepository, times(1))
 				.deleteSubmodel(TestFixture.SM_PRE1_ID);
 
-		assertThrows(ElementDoesNotExistException.class, () -> smRepository.getSubmodel(TestFixture.SM_PRE1_ID));
-		assertThrows(Exception.class, () -> new SubmodelRegistryApi(SM_REGISTRY_BASE_PATH).getSubmodelDescriptorById(TestFixture.SM_PRE1_ID));
+		assertThrows(ElementDoesNotExistException.class, () -> getSubmodelFromRepo(TestFixture.SM_PRE1_ID));
+		assertThrows(Exception.class, () -> getDescriptorFromSubmodelRegistry(TestFixture.SM_PRE1_ID));
 	}
 
 	@Test
-	public void getAas() throws ApiException, NoValidEndpointFoundException {
+	public void getAas() throws NoValidEndpointFoundException {
 		AssetAdministrationShell expectedAas = FIXTURE.buildAasPre1();
 
-		AssetAdministrationShell actualAas = aasManager.getAas(TestFixture.AAS_PRE1_ID)
+		AssetAdministrationShell actualAas = aasManager.getAasService(TestFixture.AAS_PRE1_ID)
 				.getAAS();
 
 		assertEquals(expectedAas, actualAas);
 	}
 
 	@Test
-	public void getSubmodel() throws Exception {
+	public void getSubmodel() {
 		Submodel expectedSm = FIXTURE.buildSmPre1();
-
-		Submodel actualSm = aasManager.getSubmodel(TestFixture.SM_PRE1_ID)
+		
+		Submodel actualSm = aasManager.getSubmodelService(TestFixture.SM_PRE1_ID)
 				.getSubmodel();
 
 		assertEquals(expectedSm, actualSm);
+	}
+
+	protected Submodel getSubmodelFromManager(String submodelId) {
+		return aasManager.getSubmodelService(submodelId).getSubmodel();
+	}
+	
+	protected AssetAdministrationShellDescriptor getDescriptorFromAasRegistry(String shellId) throws ApiException {
+		return new RegistryAndDiscoveryInterfaceApi(AAS_REGISTRY_BASE_PATH).getAssetAdministrationShellDescriptorById(shellId);
+	}
+
+	protected AssetAdministrationShell getAasFromRepo(String shellId) {
+		return aasRepository.getAas(shellId);
+	}
+	
+	protected SubmodelDescriptor getDescriptorFromSubmodelRegistry(String submodelId) throws org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException {
+		return new SubmodelRegistryApi(SM_REGISTRY_BASE_PATH).getSubmodelDescriptorById(submodelId);
+	}
+
+	protected Submodel getSubmodelFromRepo(String submodelId) {
+		return smRepository.getSubmodel(TestFixture.SM_POS1_ID);
+	}
+	
+	protected AssetAdministrationShell getAasFromManager(String shellId) {
+		return aasManager.getAasService(shellId).getAAS();
+	}
+	
+	protected ConnectedAasManager getConnectedAasManager() {
+		DescriptorResolver<AssetAdministrationShellDescriptor, ConnectedAasService> aasDescriptorResolver = new AasDescriptorResolver(new EndpointResolver());
+		DescriptorResolver<SubmodelDescriptor, ConnectedSubmodelService> smDescriptorResolver = new SubmodelDescriptorResolver(new EndpointResolver());
+		
+		DescriptorResolverManager descriptorResolverManager = new DescriptorResolverManager(aasDescriptorResolver, smDescriptorResolver);
+		
+		return new ConnectedAasManager(aasRegistryApi, connectedAasRepository, smRegistryApi, connectedSmRepository, descriptorResolverManager);
+	}
+
+	protected SubmodelRegistryApi getConnectedSubmodelRegistry() {
+		return spy(new SubmodelRegistryApi(SM_REGISTRY_BASE_PATH));
+	}
+
+	protected RegistryAndDiscoveryInterfaceApi getConnectedAasRegistry() {
+		return spy(new RegistryAndDiscoveryInterfaceApi(AAS_REGISTRY_BASE_PATH));
+	}
+
+	protected ConnectedSubmodelRepository getConnectedSubmodelRepo() {
+		return spy(new ConnectedSubmodelRepository(SM_REPOSITORY_BASE_PATH));
+	}
+
+	protected ConnectedAasRepository getConnectedAasRepo() {
+		return spy(new ConnectedAasRepository(AAS_REPOSITORY_BASE_PATH));
 	}
 
 	@Test
@@ -223,7 +279,7 @@ public class TestConnectedAasManager {
 
 	}
 
-	private void populateRegistries() {
+	protected void populateRegistries() {
 		try {
 			new RegistryAndDiscoveryInterfaceApi(AAS_REGISTRY_BASE_PATH).postAssetAdministrationShellDescriptor(FIXTURE.buildAasPre1Descriptor());
 		} catch (Exception e) {
@@ -236,7 +292,7 @@ public class TestConnectedAasManager {
 		}
 	}
 
-	private void cleanUpRegistries() {
+	protected void cleanUpRegistries() {
 		try {
 			new RegistryAndDiscoveryInterfaceApi(AAS_REGISTRY_BASE_PATH).deleteAllShellDescriptors();
 		} catch (Exception e) {
@@ -249,7 +305,7 @@ public class TestConnectedAasManager {
 		}
 	}
 
-	private void populateRepositories() {
+	protected void populateRepositories() {
 		try {
 			aasRepository.createAas(FIXTURE.buildAasPre1());
 		} catch (Exception e) {
@@ -262,7 +318,7 @@ public class TestConnectedAasManager {
 		}
 	}
 
-	private void cleanUpRepositories() {
+	protected void cleanUpRepositories() {
 		try {
 			aasRepository.deleteAas(TestFixture.AAS_PRE1_ID);
 		} catch (Exception e) {
@@ -283,6 +339,16 @@ public class TestConnectedAasManager {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
+	}
+
+	private Optional<Reference> getSubmodelRefFromAasRepository(String aasId, String smId) {
+		return aasManager.getAasService(aasId)
+				.getAAS()
+				.getSubmodels()
+				.stream()
+				.filter(ref -> ref.getKeys().stream()
+						.anyMatch(key -> key.getValue().equals(smId)))
+				.findAny();
 	}
 
 }

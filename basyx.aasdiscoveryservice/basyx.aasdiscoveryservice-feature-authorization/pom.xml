@@ -6,6 +6,7 @@
     <version>${revision}</version>
   </parent>
   <artifactId>basyx.aasdiscoveryservice-feature-authorization</artifactId>
+  <name>BaSyx AAS Discovery Service feature-authorization</name>
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -59,5 +60,9 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.authorization.rules.rbac.backend.inmemory</artifactId>
+		</dependency> 
 	</dependencies>
 </project>

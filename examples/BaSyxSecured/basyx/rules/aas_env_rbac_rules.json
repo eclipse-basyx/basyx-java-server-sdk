@@ -1,0 +1,403 @@
+[
+  {
+    "role": "basyx-reader",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "aas",
+      "aasIds": "*"
+    }
+  },
+  {
+    "role": "admin",
+    "action": ["CREATE", "READ", "UPDATE", "DELETE"],
+    "targetInformation": {
+      "@type": "aas",
+      "aasIds": "*"
+    }
+  },
+  {
+    "role": "basyx-reader-two",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "aas",
+      "aasIds": "specificAasId"
+    }
+  },
+  {
+    "role": "basyx-creator",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "aas",
+      "aasIds": "*"
+    }
+  },
+  {
+    "role": "basyx-updater",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "aas",
+      "aasIds": "*"
+    }
+  },
+  {
+    "role": "basyx-updater-two",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "aas",
+      "aasIds": "specificAasId"
+    }
+  },
+  {
+    "role": "basyx-asset-updater",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "aas",
+      "aasIds": "*"
+    }
+  },
+  {
+    "role": "basyx-asset-updater-two",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "aas",
+      "aasIds": "specificAasId-2"
+    }
+  },
+  {
+    "role": "basyx-deleter",
+    "action": "DELETE",
+    "targetInformation": {
+      "@type": "aas",
+      "aasIds": "*"
+    }
+  },
+  {
+    "role": "basyx-deleter-two",
+    "action": "DELETE",
+    "targetInformation": {
+      "@type": "aas",
+      "aasIds": "specificAasId-2"
+    }
+  },
+  {
+    "role": "basyx-reader",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
+    }
+  },
+  {
+    "role": "admin",
+    "action": ["CREATE", "READ", "UPDATE", "DELETE", "EXECUTE"],
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
+    }
+  },
+  {
+    "role": "basyx-reader-two",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "specificSubmodelId",
+      "submodelElementIdShortPaths": "*"
+    }
+  },
+  {
+    "role": "basyx-sme-reader",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "specificSubmodelId",
+      "submodelElementIdShortPaths": "smc2.specificSubmodelElementIdShort"
+    }
+  },
+  {
+    "role": "basyx-sme-reader-two",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "specificSubmodelId",
+      "submodelElementIdShortPaths": "smc2.specificFileSubmodelElementIdShort"
+    }
+  },
+  {
+    "role": "basyx-creator",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
+    }
+  },
+  {
+    "role": "basyx-updater",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
+    }
+  },
+  {
+    "role": "basyx-updater-two",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "specificSubmodelId",
+      "submodelElementIdShortPaths": "*"
+    }
+  },
+  {
+    "role": "basyx-sme-updater",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "specificSubmodelId",
+      "submodelElementIdShortPaths": "smc2.specificFileSubmodelElementIdShort"
+    }
+  },
+  {
+    "role": "basyx-sme-updater-two",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "specificSubmodelId",
+      "submodelElementIdShortPaths": "smc2"
+    }
+  },
+  {
+    "role": "basyx-sme-updater-three",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "specificSubmodelId-2",
+      "submodelElementIdShortPaths": "smc1.specificSubmodelElementIdShort-2"
+    }
+  },
+  {
+    "role": "basyx-file-sme-updater",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "specificSubmodelId-2",
+      "submodelElementIdShortPaths": "smc2.specificFileSubmodelElementIdShort"
+    }
+  },
+  {
+    "role": "basyx-deleter",
+    "action": "DELETE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
+    }
+  },
+  {
+    "role": "basyx-deleter-two",
+    "action": "DELETE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "specificSubmodelId-2",
+      "submodelElementIdShortPaths": "*"
+    }
+  },
+  {
+    "role": "basyx-executor",
+    "action": "EXECUTE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
+    }
+  },
+  {
+    "role": "basyx-executor-two",
+    "action": "EXECUTE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "specificSubmodelId",
+      "submodelElementIdShortPaths": "square"
+    }
+  },
+  {
+    "role": "basyx-file-sme-reader",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "specificSubmodelId-2",
+      "submodelElementIdShortPaths": "smc2.specificFileSubmodelElementIdShort"
+    }
+  },
+  {
+    "role": "basyx-reader",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": "*"
+    }
+  },
+  {
+    "role": "admin",
+    "action": ["CREATE", "READ", "UPDATE", "DELETE"],
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": "*"
+    }
+  },
+  {
+    "role": "basyx-reader-two",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": "specificConceptDescriptionId"
+    }
+  },
+  {
+    "role": "basyx-creator",
+    "action": "CREATE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": "*"
+    }
+  },
+  {
+    "role": "basyx-updater",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": "*"
+    }
+  },
+  {
+    "role": "basyx-updater-two",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": "specificConceptDescriptionId"
+    }
+  },
+  {
+    "role": "basyx-deleter",
+    "action": "DELETE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": "*"
+    }
+  },
+  {
+    "role": "basyx-deleter-two",
+    "action": "DELETE",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": "specificConceptDescriptionId-2"
+    }
+  },
+  {
+    "role": "admin",
+    "action": ["CREATE", "READ", "UPDATE", "DELETE"],
+    "targetInformation": {
+      "@type": "aas-environment",
+      "aasIds": "*",
+      "submodelIds": "*"
+    }
+  },
+  {
+    "role": "basyx-reader",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "aas-environment",
+      "aasIds": "*",
+      "submodelIds": "*"
+    }
+  },
+  {
+    "role": "basyx-reader-two",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "aas-environment",
+      "aasIds": "*",
+      "submodelIds": "*"
+    }
+  },
+  {
+    "role": "basyx-reader-two",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "aas",
+      "aasIds": "*"
+    }
+  },
+  {
+    "role": "basyx-reader-two",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
+    }
+  },
+  {
+    "role": "basyx-reader-two",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": "*"
+    }
+  },
+  {
+    "role": "basyx-updater",
+    "action": "UPDATE",
+    "targetInformation": {
+      "@type": "aas-environment",
+      "aasIds": "*",
+      "submodelIds": "*"
+    }
+  },
+  {
+    "role": "basyx-reader-serialization",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "aas-environment",
+      "aasIds": ["shell001", "shell002"],
+      "submodelIds": ["7A7104BDAB57E184", "AC69B1CB44F07935"]
+    }
+  },
+  {
+    "role": "basyx-reader-serialization",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "aas",
+      "aasIds": "*"
+    }
+  },
+  {
+    "role": "basyx-reader-serialization",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
+    }
+  },
+  {
+    "role": "basyx-reader-serialization",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "concept-description",
+      "conceptDescriptionIds": "*"
+    }
+  },
+  {
+    "role": "basyx-reader-serialization-two",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "aas-environment",
+      "aasIds": ["shell001", "shell002"],
+      "submodelIds": ["7A7104BDAB57E184"]
+    }
+  }
+]

@@ -1,0 +1,12 @@
+{
+	"inoutputArguments": [
+		{
+			"value": {
+				"modelType": "Property",
+				"valueType": "xs:int",
+				"idShort": "stack",
+				"value": "8"
+			}
+		}
+	]
+}
