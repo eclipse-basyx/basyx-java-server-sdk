@@ -60,13 +60,13 @@ class ConnectedAasManagerHelper {
 	static AasDescriptorFactory buildAasDescriptorFactory(String... aasRepositoryBaseUrls) {
 		AttributeMapper attributeMapper = new AttributeMapper(objectMapper);
 
-		return new AasDescriptorFactory(null, List.of(aasRepositoryBaseUrls), attributeMapper);
+		return new AasDescriptorFactory(List.of(aasRepositoryBaseUrls), attributeMapper);
 	}
 
 	static SubmodelDescriptorFactory buildSmDescriptorFactory(String... aasRepositoryBaseUrls) {
 		org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper attributeMapperSm = new org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper(
 				objectMapper);
-		return new SubmodelDescriptorFactory(null, List.of(aasRepositoryBaseUrls), attributeMapperSm);
+		return new SubmodelDescriptorFactory(List.of(aasRepositoryBaseUrls), attributeMapperSm);
 	}
 
 }
