@@ -67,3 +67,7 @@ If the AAS Environment file (XML, JSON, or AASX) size exceeds the below mentione
 
 ## Configure Favicon
 To configure the favicon, add the favicon.ico to [basyx-java-server-sdk\basyx.common\basyx.http\src\main\resources\static](../basyx.common/basyx.http/src/main/resources/static/).
+
+## Testcases from eclipse-tractusx-digital-twin-registry
+The test classes `AssetAdministrationShellApiSecurityTest` and `AssetAdministrationShellApiTest` are copied from the repository [eclipse-tractusx-digitaltwinr-registry](https://github.com/eclipse-tractusx/sldt-digital-twin-registry) and run against the basyx-digital-twin-registry.
+The goal is to identify the differences between both digital-twin registries and merge their behaviors.

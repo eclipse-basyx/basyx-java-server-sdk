@@ -51,6 +51,15 @@ public abstract class AbstractAssetAdministrationShellApi {
       return payload.get( "identification" ).textValue();
    }
 
+   protected String getExternalSubjectIdWildcardPrefix(){
+      return "PUBLIC_READABLE";
+   }
+
+   protected void removedAllShells() {
+      aasRegistryStorage.clear();
+   }
+
+
    protected void performSubmodelCreateRequest( String payload, String shellIdentifier ) throws Exception {
       mvc.perform(
                   MockMvcRequestBuilders

@@ -1067,10 +1067,6 @@ public class AssetAdministrationShellApiTest extends AbstractAssetAdministration
             .andExpect( jsonPath( "$.messages[0].text", is( "An AssetAdministrationShell for the given IdShort already exists." ) ) );
    }
 
-   private void removedAllShells() {
-      aasRegistryStorage.clear();
-   }
-
    @Test
    @DisplayName( "Test Creating a new Asset Administration Shell Descriptor with unique  IdShort in shell level and duplicate IdShort in submodelDescriptor level" )
    public void test_Creating_a_new_Asset_Administration_Shell_Descriptor_with_unique_IdShort_in_shell_level_and_duplicate_submodelDescriptor_level()
