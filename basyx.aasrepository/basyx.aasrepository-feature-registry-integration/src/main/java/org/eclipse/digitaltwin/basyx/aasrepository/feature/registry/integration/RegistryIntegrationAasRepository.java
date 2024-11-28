@@ -78,7 +78,7 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 
 	@Override
 	public void createAas(AssetAdministrationShell shell) throws CollidingIdentifierException {
-		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(shell, aasRepositoryRegistryLink.getAasRepositoryBaseURLs(), attributeMapper).create();
+		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(aasRepositoryRegistryLink.getAasRepositoryBaseURLs(), attributeMapper).create(shell);
 
 		decorated.createAas(shell);
 
