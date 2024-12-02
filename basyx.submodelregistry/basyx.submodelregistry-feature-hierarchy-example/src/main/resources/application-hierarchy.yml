@@ -1,0 +1,10 @@
+---
+basyx:
+  cors:
+    allowed-origins: "*"
+    allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
+  submodelregistry:
+    feature:
+      hierarchy:
+        enabled: true
+        

@@ -52,6 +52,7 @@
 		<module>basyx.submodelregistry-service-release-kafka-mongodb</module>
 		<module>basyx.submodelregistry-feature-authorization</module>
 		<module>basyx.submodelregistry-feature-hierarchy</module>
+		<module>basyx.submodelregistry-feature-hierarchy-example</module>
 	</modules>
 
 	<developers>
