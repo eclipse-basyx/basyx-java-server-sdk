@@ -25,7 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelregistry.feature.hierarchy;
 
-import org.eclipse.digitaltwin.basyx.submodelregistry.feature.hierarchy.delegation.DelegationStrategy;
+import org.eclipse.digitaltwin.basyx.common.hierarchy.CommonHierarchyProperties;
+import org.eclipse.digitaltwin.basyx.common.hierarchy.delegation.DelegationStrategy;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorageFeature;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,13 +45,10 @@ import org.springframework.stereotype.Component;
  * @author mateusmolina
  */
 @Component
-@ConditionalOnExpression("${" + HierarchicalSubmodelRegistryFeature.ENABLED_PROPERTY_KEY + ":false}")
+@ConditionalOnExpression("${" + CommonHierarchyProperties.HIERARCHY_FEATURE_ENABLED + ":false}")
 @Order(1)
 public class HierarchicalSubmodelRegistryFeature implements SubmodelRegistryStorageFeature {
-	public static final String FEATURENAME = "basyx.submodelregistry.feature.hierarchy";
-	public static final String ENABLED_PROPERTY_KEY = FEATURENAME + ".enabled";
-
-	@Value("${" + ENABLED_PROPERTY_KEY + "}")
+	@Value("${" + CommonHierarchyProperties.HIERARCHY_FEATURE_ENABLED + "}")
 	private boolean enabled;
 
 	private DelegationStrategy delegationStrategy;

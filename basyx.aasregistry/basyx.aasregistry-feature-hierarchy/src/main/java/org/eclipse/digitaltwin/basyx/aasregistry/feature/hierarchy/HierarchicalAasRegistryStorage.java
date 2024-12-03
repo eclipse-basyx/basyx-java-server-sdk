@@ -30,7 +30,6 @@ import java.util.Set;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy.delegation.DelegationStrategy;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchRequest;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorSearchResponse;
@@ -41,6 +40,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelAlreadyE
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
+import org.eclipse.digitaltwin.basyx.common.hierarchy.delegation.DelegationStrategy;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 

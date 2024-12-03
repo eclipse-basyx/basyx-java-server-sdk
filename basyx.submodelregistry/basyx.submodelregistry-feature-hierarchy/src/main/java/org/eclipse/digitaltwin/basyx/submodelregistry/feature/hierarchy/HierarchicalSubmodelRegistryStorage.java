@@ -28,11 +28,11 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.feature.hierarchy;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.digitaltwin.basyx.common.hierarchy.delegation.DelegationStrategy;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
-import org.eclipse.digitaltwin.basyx.submodelregistry.feature.hierarchy.delegation.DelegationStrategy;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNotFoundException;

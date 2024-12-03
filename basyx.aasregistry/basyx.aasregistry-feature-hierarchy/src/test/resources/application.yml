@@ -41,8 +41,7 @@ basyx:
   cors:
     allowed-origins: "*"
     allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
-  aasregistry:
-    feature:
-      hierarchy:
-        enabled: true
-        prefix: 
+  feature:
+    hierarchy:
+      enabled: true
+      prefix: 
