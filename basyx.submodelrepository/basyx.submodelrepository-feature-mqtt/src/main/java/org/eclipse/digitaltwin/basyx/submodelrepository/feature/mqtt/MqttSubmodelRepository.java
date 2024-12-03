@@ -155,8 +155,7 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	@Override
 	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
 		decorated.patchSubmodelElements(submodelId, submodelElementList);
-		List<SubmodelElement> patchedSubmodelElements = decorated.getSubmodelElements(submodelId, PaginationInfo.NO_LIMIT).getResult();
-		submodelElementsPatched(patchedSubmodelElements, getName(), submodelId);
+		submodelElementsPatched(submodelElementList, getName(), submodelId);
 	}
 
 	@Override
