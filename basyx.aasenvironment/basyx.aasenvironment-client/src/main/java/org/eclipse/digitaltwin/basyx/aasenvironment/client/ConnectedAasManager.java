@@ -88,12 +88,12 @@ public class ConnectedAasManager {
 				new ConnectedSubmodelRepository(submodelBaseRepositoryUrl), new SerializationApi(aasRepositoryBaseUrl), getResolver());
 	}
 	
-	ConnectedAasManager(RegistryAndDiscoveryInterfaceApi aasRegistryApi, ConnectedAasRepository aasRepository, SubmodelRegistryApi smRegistryApi, ConnectedSubmodelRepository smRepository, SerializationApi aasSerializationApi, DescriptorResolverManager resolver) {
+	ConnectedAasManager(RegistryAndDiscoveryInterfaceApi aasRegistryApi, ConnectedAasRepository aasRepository, SubmodelRegistryApi smRegistryApi, ConnectedSubmodelRepository smRepository, SerializationApi serializationApi, DescriptorResolverManager resolver) {
 		this.aasRepository = aasRepository;
 		this.aasRegistryApi = aasRegistryApi;
 		this.smRepository = smRepository;
 		this.smRegistryApi = smRegistryApi;
-		this.serializationApi = aasSerializationApi;
+		this.serializationApi = serializationApi;
 		this.aasDescriptorResolver = resolver.getAasDescriptorResolver();
 		this.aasDescriptorFactory = ConnectedAasManagerHelper.buildAasDescriptorFactory(aasRepository.getBaseUrl());
 		this.smDescriptorResolver = resolver.getSubmodelDescriptorResolver();
@@ -233,6 +233,14 @@ public class ConnectedAasManager {
 
 		aasRepository.addSubmodelReference(aasIdentifier, smRef);
 	}
+	
+	public java.io.File generateSerializationByIds(String format, List<String> aasIds, List<String> submodelIds, Boolean includeConceptDescriptions) {
+        try {
+            return serializationApi.generateSerializationByIds(format, aasIds, submodelIds, includeConceptDescriptions);
+        } catch (ApiException e) {
+            throw new RuntimeException("Failed to generate serialization: " + e.getMessage(), e);
+        }
+    }
 
 	private String extractSubmodelIdentifierFromReference(Reference submodelReference) {
 		assertIsSubmodelReference(submodelReference);
