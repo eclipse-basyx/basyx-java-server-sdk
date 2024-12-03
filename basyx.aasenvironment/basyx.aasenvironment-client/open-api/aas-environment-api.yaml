@@ -1,0 +1,85 @@
+openapi: "3.0.3"
+info:
+  title: AAS Environment API
+  description: API for managing serialization and AAS environments.
+  version: 1.0.0
+paths:
+  /serialization:
+    get:
+      summary: Generate serialization by IDs
+      description: Returns an appropriate serialization based on the specified format.
+      operationId: generateSerializationByIds
+      parameters:
+        - name: aasIds
+          in: query
+          description: The unique IDs of the Asset Administration Shells to be contained in the serialization.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: submodelIds
+          in: query
+          description: The unique IDs of the Submodels to be contained in the serialization.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: includeConceptDescriptions
+          in: query
+          description: Include concept descriptions.
+          required: false
+          schema:
+            type: boolean
+            default: true
+        - name: serializationFormat
+          in: query
+          description: Denotes the format in which the requested content shall be delivered.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
+              - application/xml
+              - application/asset-administration-shell-package+xml
+      responses:
+        '200':
+          description: Requested serialization.
+          content:
+            application/asset-administration-shell-package+xml:
+              schema:
+                type: string
+                format: binary
+            application/json:
+              schema:
+                type: string
+            application/xml:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/SHEHRIYARSHARIQ_1/TestAPI/1.0.0
