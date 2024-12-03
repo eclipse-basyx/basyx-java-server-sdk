@@ -10,6 +10,7 @@
 	</parent>
 
 	<artifactId>basyx.submodelregistry-feature-hierarchy</artifactId>
+	<name>BaSyx Submodel Registry feature-hierarchy</name>
 
 	<dependencies>
 		<dependency>

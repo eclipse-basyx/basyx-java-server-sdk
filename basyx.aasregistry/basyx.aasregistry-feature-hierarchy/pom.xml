@@ -10,6 +10,7 @@
 	</parent>
 
 	<artifactId>basyx.aasregistry-feature-hierarchy</artifactId>
+	<name>BaSyx AAS Registry feature-hierarchy</name>
 
 	<dependencies>
 		<dependency>
