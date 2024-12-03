@@ -43,33 +43,43 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
  *
  */
 public class DummyDescriptorFactory {
-	static final String AASDESCRIPTOR_ID_ROOTONLY = "AASDESCRIPTOR_ID_ROOTONLY";
-	static final String SMDESCRIPTOR_ID_ROOTONLY = "SMDESCRIPTOR_ID_ROOTONLY";
+	static final String ROOT_ONLY_AASDESCRIPTOR_ID = "AASDESCRIPTOR_ID_ROOTONLY";
+	static final String ROOT_ONLY_SMDESCRIPTOR_ID = "SMDESCRIPTOR_ID_ROOTONLY";
+	static final String DELEGATED_ONLY_SMDESCRIPTOR_ID = "SMDESCRIPTOR_ID_DELEGATEDONLY";
 
-	static String AASDESCRIPTOR_ID_DELEGATEDONLY;
-	static final String SMDESCRIPTOR_ID_DELEGATEDONLY = "SMDESCRIPTOR_ID_DELEGATEDONLY";
+	private static final String AAS_INTERFACE = "AAS-3.0";
+	private static final String SM_INTERFACE = "SUBMODEL-3.0";
 
-	static String REPO_BASE_URL;
+	private final String delegatedOnlyAasDescriptorId;
+	private final String repoBaseUrl;
 
 	public DummyDescriptorFactory(String repoBaseUrl, String delegatedAasId) {
-		AASDESCRIPTOR_ID_DELEGATEDONLY = delegatedAasId;
-		REPO_BASE_URL = repoBaseUrl;
+		this.delegatedOnlyAasDescriptorId = delegatedAasId;
+		this.repoBaseUrl = repoBaseUrl;
 	}
 
 	AssetAdministrationShellDescriptor getAasDescriptor_RootOnly() {
-		return createDummyDescriptor(REPO_BASE_URL, AASDESCRIPTOR_ID_ROOTONLY, buildIdShort(AASDESCRIPTOR_ID_ROOTONLY), getSmDescriptor_RootOnly());
+		return createDummyDescriptor(repoBaseUrl, ROOT_ONLY_AASDESCRIPTOR_ID, buildIdShort(ROOT_ONLY_AASDESCRIPTOR_ID), getSmDescriptor_RootOnly());
 	}
 
 	SubmodelDescriptor getSmDescriptor_RootOnly() {
-		return createDummySubmodelDescriptor(REPO_BASE_URL, SMDESCRIPTOR_ID_ROOTONLY, buildIdShort(SMDESCRIPTOR_ID_ROOTONLY));
+		return createDummySubmodelDescriptor(repoBaseUrl, ROOT_ONLY_SMDESCRIPTOR_ID, buildIdShort(ROOT_ONLY_SMDESCRIPTOR_ID));
 	}
 
 	AssetAdministrationShellDescriptor getAasDescriptor_DelegatedOnly() {
-		return createDummyDescriptor(REPO_BASE_URL, AASDESCRIPTOR_ID_DELEGATEDONLY, buildIdShort(AASDESCRIPTOR_ID_DELEGATEDONLY), getSmDescriptor_DelegatedOnly());
+		return createDummyDescriptor(repoBaseUrl, delegatedOnlyAasDescriptorId, buildIdShort(delegatedOnlyAasDescriptorId), getSmDescriptor_DelegatedOnly());
 	}
 
 	SubmodelDescriptor getSmDescriptor_DelegatedOnly() {
-		return createDummySubmodelDescriptor(REPO_BASE_URL, SMDESCRIPTOR_ID_DELEGATEDONLY, buildIdShort(SMDESCRIPTOR_ID_DELEGATEDONLY));
+		return createDummySubmodelDescriptor(repoBaseUrl, DELEGATED_ONLY_SMDESCRIPTOR_ID, buildIdShort(DELEGATED_ONLY_SMDESCRIPTOR_ID));
+	}
+
+	String getDelegatedOnlyAasDescriptorId() {
+		return delegatedOnlyAasDescriptorId;
+	}
+
+	String getRepoBaseUrl() {
+		return repoBaseUrl;
 	}
 
 	private static AssetAdministrationShellDescriptor createDummyDescriptor(String baseUrl, String shellId, String shellIdShort, SubmodelDescriptor submodelDescriptor) {
@@ -88,7 +98,7 @@ public class DummyDescriptorFactory {
 	private static SubmodelDescriptor createDummySubmodelDescriptor(String baseUrl, String submodelId, String submodelIdShort) {
 		SubmodelDescriptor descriptor = new SubmodelDescriptor().id(submodelId);
 		descriptor.setIdShort(submodelIdShort);
-		descriptor.setEndpoints(List.of(new Endpoint()._interface("AAS-3.0").protocolInformation(createSmProtocolInformation(baseUrl, submodelId))));
+		descriptor.setEndpoints(List.of(new Endpoint()._interface(SM_INTERFACE).protocolInformation(createSmProtocolInformation(baseUrl, submodelId))));
 
 		return descriptor;
 	}
@@ -96,7 +106,7 @@ public class DummyDescriptorFactory {
 	private static void setEndpointItem(String baseUrl, String shellId, AssetAdministrationShellDescriptor descriptor) {
 		ProtocolInformation protocolInformation = createProtocolInformation(baseUrl, shellId);
 
-		Endpoint endpoint = new Endpoint()._interface("AAS-3.0").protocolInformation(protocolInformation);
+		Endpoint endpoint = new Endpoint()._interface(AAS_INTERFACE).protocolInformation(protocolInformation);
 		descriptor.addEndpointsItem(endpoint);
 	}
 

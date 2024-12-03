@@ -47,6 +47,7 @@ public class LocalhostHierarchicalAasRegistryTest extends HierarchicalAasRegistr
 
 	private static final RegistryAndDiscoveryInterfaceApi rootRegistryApi = new RegistryAndDiscoveryInterfaceApi(ROOT_REGISTRY_URL);
 	private static final RegistryAndDiscoveryInterfaceApi delegatedRegistryApi = new RegistryAndDiscoveryInterfaceApi(DELEGATED_REGISTRY_URL);
+	private static final DummyDescriptorFactory factory = new DummyDescriptorFactory(REPO_BASE_URL, DELEGATED_AASID);
 
 	private static ConfigurableApplicationContext appContext;
 
@@ -72,7 +73,7 @@ public class LocalhostHierarchicalAasRegistryTest extends HierarchicalAasRegistr
 
 	@Override
 	protected DummyDescriptorFactory getDescriptorFactory() {
-		return new DummyDescriptorFactory(REPO_BASE_URL, DELEGATED_AASID);
+		return factory;
 	}
 
 }
