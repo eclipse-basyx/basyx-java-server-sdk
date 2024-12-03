@@ -35,7 +35,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  */
 @SpringBootApplication(scanBasePackages = { "org.eclipse.digitaltwin.basyx.submodelregistry.feature.hierarchy", "org.eclipse.digitaltwin.basyx.submodelregistry.service.api", "org.eclipse.digitaltwin.basyx.submodelregistry.service.events",
-		"org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration", "org.eclipse.digitaltwin.basyx.submodelregistry.service.errors" })
+		"org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration", "org.eclipse.digitaltwin.basyx.submodelregistry.service.errors", "org.eclipse.digitaltwin.basyx.common.hierarchy" })
 public class DummySubmodelRegistryComponent {
 	public static void main(String[] args) {
 		SpringApplication.run(DummySubmodelRegistryComponent.class, args);

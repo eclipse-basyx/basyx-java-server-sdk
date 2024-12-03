@@ -35,7 +35,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  */
 @SpringBootApplication(scanBasePackages = { "org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy", "org.eclipse.digitaltwin.basyx.aasregistry.service.api", "org.eclipse.digitaltwin.basyx.aasregistry.service.events",
-		"org.eclipse.digitaltwin.basyx.aasregistry.service.configuration", "org.eclipse.digitaltwin.basyx.aasregistry.service.errors" })
+		"org.eclipse.digitaltwin.basyx.aasregistry.service.configuration", "org.eclipse.digitaltwin.basyx.aasregistry.service.errors", "org.eclipse.digitaltwin.basyx.common.hierarchy" })
 public class DummyAasRegistryComponent {
 	public static void main(String[] args) {
 		SpringApplication.run(DummyAasRegistryComponent.class, args);
