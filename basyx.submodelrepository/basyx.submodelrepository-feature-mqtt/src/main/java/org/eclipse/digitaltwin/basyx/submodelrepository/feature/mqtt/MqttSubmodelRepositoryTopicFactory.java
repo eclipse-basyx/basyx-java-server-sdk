@@ -43,7 +43,7 @@ public class MqttSubmodelRepositoryTopicFactory extends AbstractMqttTopicFactory
 	private static final String DELETED = "deleted";
 	private static final String PATCHED = "patched";
 	private static final String SUBMODELELEMENTS = "submodelElements";
-	private static final String FILEVALUE = "fileValue";
+	private static final String ATTACHMENT = "attachment";
 
 	/**
 	 * @param encoder
@@ -124,7 +124,7 @@ public class MqttSubmodelRepositoryTopicFactory extends AbstractMqttTopicFactory
 	 * 
 	 */
 	public String createDeleteFileValueTopic(String repoId, String submodelId, String submodelElementId) {
-		return new StringJoiner("/", "", "").add(SUBMODELREPOSITORY).add(repoId).add(SUBMODELS).add(encodeId(submodelId)).add(SUBMODELELEMENTS).add(submodelElementId).add(FILEVALUE).add(DELETED).toString();
+		return new StringJoiner("/", "", "").add(SUBMODELREPOSITORY).add(repoId).add(SUBMODELS).add(encodeId(submodelId)).add(SUBMODELELEMENTS).add(submodelElementId).add(ATTACHMENT).add(DELETED).toString();
 	}
 	
 	/**
@@ -133,7 +133,7 @@ public class MqttSubmodelRepositoryTopicFactory extends AbstractMqttTopicFactory
 	 * @param repoId
 	 * 
 	 */
-	public String createUpdateFileValueTopic(String repoId, String submodelId, String submodelElementId, String fileName) {
-		return new StringJoiner("/", "", "").add(SUBMODELREPOSITORY).add(repoId).add(SUBMODELS).add(encodeId(submodelId)).add(SUBMODELELEMENTS).add(submodelElementId).add(FILEVALUE).add(fileName).add(UPDATED).toString();
+	public String createUpdateFileValueTopic(String repoId, String submodelId, String submodelElementId) {
+		return new StringJoiner("/", "", "").add(SUBMODELREPOSITORY).add(repoId).add(SUBMODELS).add(encodeId(submodelId)).add(SUBMODELELEMENTS).add(submodelElementId).add(ATTACHMENT).add(UPDATED).toString();
 	}
 }

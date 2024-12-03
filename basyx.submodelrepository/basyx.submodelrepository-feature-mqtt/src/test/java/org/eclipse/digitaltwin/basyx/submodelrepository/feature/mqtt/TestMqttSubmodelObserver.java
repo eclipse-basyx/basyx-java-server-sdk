@@ -221,7 +221,7 @@ public class TestMqttSubmodelObserver {
 		
 		submodelRepository.setFileValue(submodel.getId(), submodelElement.getIdShort(), FILE_SUBMODEL_ELEMENT_NAME, getInputStreamOfDummyFile(FILE_SUBMODEL_ELEMENT_CONTENT));
 		
-		assertEquals(topicFactory.createUpdateFileValueTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort(), FILE_SUBMODEL_ELEMENT_NAME), listener.lastTopic);
+		assertEquals(topicFactory.createUpdateFileValueTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()), listener.lastTopic);
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
 	}
 	

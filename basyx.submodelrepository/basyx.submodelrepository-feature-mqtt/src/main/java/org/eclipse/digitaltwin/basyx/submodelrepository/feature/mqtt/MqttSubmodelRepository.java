@@ -170,7 +170,7 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream){
 		decorated.setFileValue(submodelId, idShortPath, fileName, inputStream);
 		SubmodelElement submodelElement = decorated.getSubmodelElement(submodelId, idShortPath);
-		fileValueUpdated(submodelElement, getName(), submodelId, idShortPath, fileName);
+		fileValueUpdated(submodelElement, getName(), submodelId, idShortPath);
 	}
 
 	@Override
@@ -210,8 +210,8 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 		sendMqttMessage(topicFactory.createDeleteFileValueTopic(repoId, submodelId, submodelElementId), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
 	}
 	
-	private void fileValueUpdated(SubmodelElement submodelElement, String repoId, String submodelId, String submodelElementId, String fileName) {
-		sendMqttMessage(topicFactory.createUpdateFileValueTopic(repoId, submodelId, submodelElementId, fileName), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
+	private void fileValueUpdated(SubmodelElement submodelElement, String repoId, String submodelId, String submodelElementId) {
+		sendMqttMessage(topicFactory.createUpdateFileValueTopic(repoId, submodelId, submodelElementId), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
 	}
 
 	/**
