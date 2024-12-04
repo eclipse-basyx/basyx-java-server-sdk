@@ -30,7 +30,7 @@ import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
-import org.eclipse.digitaltwin.basyx.common.backend.ThreadSafeAccess;
+import org.eclipse.digitaltwin.basyx.common.backend.InstanceScopedThreadSafeAccess;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
@@ -42,7 +42,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 public class ThreadSafeAasDiscovery implements AasDiscoveryService {
 
     private final AasDiscoveryService decoratedAasDiscovery;
-    private final ThreadSafeAccess access = new ThreadSafeAccess();
+    private final InstanceScopedThreadSafeAccess access = new InstanceScopedThreadSafeAccess();
 
     public ThreadSafeAasDiscovery(AasDiscoveryService decoratedAasDiscovery) {
         this.decoratedAasDiscovery = decoratedAasDiscovery;
@@ -50,22 +50,22 @@ public class ThreadSafeAasDiscovery implements AasDiscoveryService {
 
     @Override
     public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo, List<AssetLink> assetIds) {
-        return access.read(() -> decoratedAasDiscovery.getAllAssetAdministrationShellIdsByAssetLink(pInfo, assetIds));
+        return decoratedAasDiscovery.getAllAssetAdministrationShellIdsByAssetLink(pInfo, assetIds);
     }
 
     @Override
     public List<SpecificAssetId> getAllAssetLinksById(String shellIdentifier) {
-        return access.read(() -> decoratedAasDiscovery.getAllAssetLinksById(shellIdentifier));
+        return access.read(() -> decoratedAasDiscovery.getAllAssetLinksById(shellIdentifier), shellIdentifier);
     }
 
     @Override
     public List<SpecificAssetId> createAllAssetLinksById(String shellIdentifier, List<SpecificAssetId> assetIds) {
-        return access.write(() -> decoratedAasDiscovery.createAllAssetLinksById(shellIdentifier, assetIds));
+        return access.write(() -> decoratedAasDiscovery.createAllAssetLinksById(shellIdentifier, assetIds), shellIdentifier);
     }
 
     @Override
     public void deleteAllAssetLinksById(String shellIdentifier) {
-        access.write(() -> decoratedAasDiscovery.deleteAllAssetLinksById(shellIdentifier));
+        access.write(() -> decoratedAasDiscovery.deleteAllAssetLinksById(shellIdentifier), shellIdentifier);
     }
 
     @Override

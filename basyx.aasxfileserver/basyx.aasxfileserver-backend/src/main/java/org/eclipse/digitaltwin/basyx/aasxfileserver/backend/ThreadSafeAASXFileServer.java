@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
-import org.eclipse.digitaltwin.basyx.common.backend.ThreadSafeAccess;
+import org.eclipse.digitaltwin.basyx.common.backend.InstanceScopedThreadSafeAccess;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
@@ -44,7 +44,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 public class ThreadSafeAASXFileServer implements AASXFileServer {
 
     private final AASXFileServer decoratedAasxFileServer;
-    private final ThreadSafeAccess access = new ThreadSafeAccess();
+    private final InstanceScopedThreadSafeAccess access = new InstanceScopedThreadSafeAccess();
 
     public ThreadSafeAASXFileServer(AASXFileServer aasxFileServer) {
         this.decoratedAasxFileServer = aasxFileServer;
@@ -52,27 +52,27 @@ public class ThreadSafeAASXFileServer implements AASXFileServer {
 
     @Override
     public CursorResult<List<PackageDescription>> getAllAASXPackageIds(String shellId, PaginationInfo pInfo) {
-        return access.read(() -> decoratedAasxFileServer.getAllAASXPackageIds(shellId, pInfo));
+        return decoratedAasxFileServer.getAllAASXPackageIds(shellId, pInfo);
     }
 
     @Override
     public InputStream getAASXByPackageId(String packageId) throws ElementDoesNotExistException {
-        return access.read(() -> decoratedAasxFileServer.getAASXByPackageId(packageId));
+        return access.read(() -> decoratedAasxFileServer.getAASXByPackageId(packageId), packageId);
     }
 
     @Override
     public void updateAASXByPackageId(String packageId, List<String> shellIds, InputStream file, String filename) throws ElementDoesNotExistException {
-        access.write(() -> decoratedAasxFileServer.updateAASXByPackageId(packageId, shellIds, file, filename));
+        access.write(() -> decoratedAasxFileServer.updateAASXByPackageId(packageId, shellIds, file, filename), packageId);
     }
 
     @Override
     public PackageDescription createAASXPackage(List<String> shellIds, InputStream file, String filename) {
-        return access.write(() -> decoratedAasxFileServer.createAASXPackage(shellIds, file, filename));
+        return decoratedAasxFileServer.createAASXPackage(shellIds, file, filename);
     }
 
     @Override
     public void deleteAASXByPackageId(String packageId) throws ElementDoesNotExistException {
-        access.write(() -> decoratedAasxFileServer.deleteAASXByPackageId(packageId));
+        access.write(() -> decoratedAasxFileServer.deleteAASXByPackageId(packageId), packageId);
     }
 
     @Override

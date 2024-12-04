@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.basyx.common.backend.InstanceScopedThreadSafeAccess;
 import org.eclipse.digitaltwin.basyx.common.backend.ThreadSafeAccess;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -44,7 +45,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
  */
 public class ThreadSafeConceptDescriptionRepository implements ConceptDescriptionRepository {
 
-    private final ThreadSafeAccess access = new ThreadSafeAccess();
+    private final InstanceScopedThreadSafeAccess access = new InstanceScopedThreadSafeAccess();
     private final ConceptDescriptionRepository decoratedRepository;
 
     public ThreadSafeConceptDescriptionRepository(ConceptDescriptionRepository decoratedRepository) {
@@ -53,42 +54,42 @@ public class ThreadSafeConceptDescriptionRepository implements ConceptDescriptio
 
     @Override
     public CursorResult<List<ConceptDescription>> getAllConceptDescriptions(PaginationInfo pInfo) {
-        return access.read(() -> decoratedRepository.getAllConceptDescriptions(pInfo));
+        return decoratedRepository.getAllConceptDescriptions(pInfo);
     }
 
     @Override
     public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIdShort(String idShort, PaginationInfo pInfo) {
-        return access.read(() -> decoratedRepository.getAllConceptDescriptionsByIdShort(idShort, pInfo));
+        return decoratedRepository.getAllConceptDescriptionsByIdShort(idShort, pInfo);
     }
 
     @Override
     public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIsCaseOf(Reference isCaseOf, PaginationInfo pInfo) {
-        return access.read(() -> decoratedRepository.getAllConceptDescriptionsByIsCaseOf(isCaseOf, pInfo));
+        return decoratedRepository.getAllConceptDescriptionsByIsCaseOf(isCaseOf, pInfo);
     }
 
     @Override
     public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByDataSpecificationReference(Reference dataSpecificationReference, PaginationInfo pInfo) {
-        return access.read(() -> decoratedRepository.getAllConceptDescriptionsByDataSpecificationReference(dataSpecificationReference, pInfo));
+        return decoratedRepository.getAllConceptDescriptionsByDataSpecificationReference(dataSpecificationReference, pInfo);
     }
 
     @Override
     public ConceptDescription getConceptDescription(String conceptDescriptionId) throws ElementDoesNotExistException {
-        return access.read(() -> decoratedRepository.getConceptDescription(conceptDescriptionId));
+        return access.read(() -> decoratedRepository.getConceptDescription(conceptDescriptionId), conceptDescriptionId);
     }
 
     @Override
     public void updateConceptDescription(String conceptDescriptionId, ConceptDescription conceptDescription) throws ElementDoesNotExistException {
-        access.write(() -> decoratedRepository.updateConceptDescription(conceptDescriptionId, conceptDescription));
+        access.write(() -> decoratedRepository.updateConceptDescription(conceptDescriptionId, conceptDescription), conceptDescriptionId);
     }
 
     @Override
     public void createConceptDescription(ConceptDescription conceptDescription) throws CollidingIdentifierException, MissingIdentifierException {
-        access.write(() -> decoratedRepository.createConceptDescription(conceptDescription));
+        decoratedRepository.createConceptDescription(conceptDescription);
     }
 
     @Override
     public void deleteConceptDescription(String conceptDescriptionId) throws ElementDoesNotExistException {
-        access.write(() -> decoratedRepository.deleteConceptDescription(conceptDescriptionId));
+        access.write(() -> decoratedRepository.deleteConceptDescription(conceptDescriptionId), conceptDescriptionId);
     }
 
     @Override

@@ -33,7 +33,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.common.backend.ThreadSafeAccess;
+import org.eclipse.digitaltwin.basyx.common.backend.InstanceScopedThreadSafeAccess;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
@@ -48,7 +48,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 public class ThreadSafeAasRepository implements AasRepository {
 
     private final AasRepository decoratedAasRepository;
-    private final ThreadSafeAccess access = new ThreadSafeAccess();
+    private final InstanceScopedThreadSafeAccess access = new InstanceScopedThreadSafeAccess();
 
     public ThreadSafeAasRepository(AasRepository decoratedRepository) {
         this.decoratedAasRepository = decoratedRepository;
@@ -56,67 +56,67 @@ public class ThreadSafeAasRepository implements AasRepository {
 
     @Override
     public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
-        return access.read(() -> decoratedAasRepository.getAllAas(pInfo));
+        return decoratedAasRepository.getAllAas(pInfo);
     }
 
     @Override
     public AssetAdministrationShell getAas(String aasId) throws ElementDoesNotExistException {
-        return access.read(() -> decoratedAasRepository.getAas(aasId));
+        return access.read(() -> decoratedAasRepository.getAas(aasId), aasId);
     }
 
     @Override
     public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException, MissingIdentifierException {
-        access.write(() -> decoratedAasRepository.createAas(aas));
+        decoratedAasRepository.createAas(aas);
     }
 
     @Override
     public void deleteAas(String aasId) {
-        access.write(() -> decoratedAasRepository.deleteAas(aasId));
+        access.write(() -> decoratedAasRepository.deleteAas(aasId), aasId);
     }
 
     @Override
     public void updateAas(String aasId, AssetAdministrationShell aas) {
-        access.write(() -> decoratedAasRepository.updateAas(aasId, aas));
+        access.write(() -> decoratedAasRepository.updateAas(aasId, aas), aasId);
     }
 
     @Override
     public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo) {
-        return access.read(() -> decoratedAasRepository.getSubmodelReferences(aasId, pInfo));
+        return access.read(() -> decoratedAasRepository.getSubmodelReferences(aasId, pInfo), aasId);
     }
 
     @Override
     public void addSubmodelReference(String aasId, Reference submodelReference) {
-        access.write(() -> decoratedAasRepository.addSubmodelReference(aasId, submodelReference));
+        access.write(() -> decoratedAasRepository.addSubmodelReference(aasId, submodelReference), aasId);
     }
 
     @Override
     public void removeSubmodelReference(String aasId, String submodelId) {
-        access.write(() -> decoratedAasRepository.removeSubmodelReference(aasId, submodelId));
+        access.write(() -> decoratedAasRepository.removeSubmodelReference(aasId, submodelId), aasId);
     }
 
     @Override
     public void setAssetInformation(String aasId, AssetInformation aasInfo) throws ElementDoesNotExistException {
-        access.write(() -> decoratedAasRepository.setAssetInformation(aasId, aasInfo));
+        access.write(() -> decoratedAasRepository.setAssetInformation(aasId, aasInfo), aasId);
     }
 
     @Override
     public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException {
-        return access.read(() -> decoratedAasRepository.getAssetInformation(aasId));
+        return access.read(() -> decoratedAasRepository.getAssetInformation(aasId), aasId);
     }
 
     @Override
     public File getThumbnail(String aasId) {
-        return access.read(() -> decoratedAasRepository.getThumbnail(aasId));
+        return access.read(() -> decoratedAasRepository.getThumbnail(aasId), aasId);
     }
 
     @Override
     public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
-        access.write(() -> decoratedAasRepository.setThumbnail(aasId, fileName, contentType, inputStream));
+        access.write(() -> decoratedAasRepository.setThumbnail(aasId, fileName, contentType, inputStream), aasId);
     }
 
     @Override
     public void deleteThumbnail(String aasId) {
-        access.write(() -> decoratedAasRepository.deleteThumbnail(aasId));
+        access.write(() -> decoratedAasRepository.deleteThumbnail(aasId), aasId);
     }
 
     @Override
