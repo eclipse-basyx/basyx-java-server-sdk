@@ -56,67 +56,67 @@ public class ThreadSafeAasRepository implements AasRepository {
 
     @Override
     public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
-        return access.read(decoratedAasRepository::getAllAas, pInfo);
+        return access.read(() -> decoratedAasRepository.getAllAas(pInfo));
     }
 
     @Override
     public AssetAdministrationShell getAas(String aasId) throws ElementDoesNotExistException {
-        return access.read(decoratedAasRepository::getAas, aasId);
+        return access.read(() -> decoratedAasRepository.getAas(aasId));
     }
 
     @Override
     public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException, MissingIdentifierException {
-        access.write(decoratedAasRepository::createAas, aas);
+        access.write(() -> decoratedAasRepository.createAas(aas));
     }
 
     @Override
     public void deleteAas(String aasId) {
-        access.write(decoratedAasRepository::deleteAas, aasId);
+        access.write(() -> decoratedAasRepository.deleteAas(aasId));
     }
 
     @Override
     public void updateAas(String aasId, AssetAdministrationShell aas) {
-        access.write(decoratedAasRepository::updateAas, aasId, aas);
+        access.write(() -> decoratedAasRepository.updateAas(aasId, aas));
     }
 
     @Override
     public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo) {
-        return access.read(decoratedAasRepository::getSubmodelReferences, aasId, pInfo);
+        return access.read(() -> decoratedAasRepository.getSubmodelReferences(aasId, pInfo));
     }
 
     @Override
     public void addSubmodelReference(String aasId, Reference submodelReference) {
-        access.write(decoratedAasRepository::addSubmodelReference, aasId, submodelReference);
+        access.write(() -> decoratedAasRepository.addSubmodelReference(aasId, submodelReference));
     }
 
     @Override
     public void removeSubmodelReference(String aasId, String submodelId) {
-        access.write(decoratedAasRepository::removeSubmodelReference, aasId, submodelId);
+        access.write(() -> decoratedAasRepository.removeSubmodelReference(aasId, submodelId));
     }
 
     @Override
     public void setAssetInformation(String aasId, AssetInformation aasInfo) throws ElementDoesNotExistException {
-        access.write(decoratedAasRepository::setAssetInformation, aasId, aasInfo);
+        access.write(() -> decoratedAasRepository.setAssetInformation(aasId, aasInfo));
     }
 
     @Override
     public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException {
-        return access.read(decoratedAasRepository::getAssetInformation, aasId);
+        return access.read(() -> decoratedAasRepository.getAssetInformation(aasId));
     }
 
     @Override
     public File getThumbnail(String aasId) {
-        return access.read(decoratedAasRepository::getThumbnail, aasId);
+        return access.read(() -> decoratedAasRepository.getThumbnail(aasId));
     }
 
     @Override
     public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
-        access.write(decoratedAasRepository::setThumbnail, aasId, fileName, contentType, inputStream);
+        access.write(() -> decoratedAasRepository.setThumbnail(aasId, fileName, contentType, inputStream));
     }
 
     @Override
     public void deleteThumbnail(String aasId) {
-        access.write(decoratedAasRepository::deleteThumbnail, aasId);
+        access.write(() -> decoratedAasRepository.deleteThumbnail(aasId));
     }
 
     @Override

@@ -46,7 +46,7 @@ public class ThreadSafeSubmodelRegistryStorageDecorator implements SubmodelRegis
 	
 	@Override
 	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest) {
-		return access.read(storage::getAllSubmodelDescriptors, pRequest);
+		return access.read(() -> storage.getAllSubmodelDescriptors(pRequest));
 	}
 	
 	@Override
@@ -56,22 +56,22 @@ public class ThreadSafeSubmodelRegistryStorageDecorator implements SubmodelRegis
 	
 	@Override
 	public SubmodelDescriptor getSubmodelDescriptor( String submodelId) throws SubmodelNotFoundException {
-		return access.read(storage::getSubmodelDescriptor, submodelId);
+		return access.read(() -> storage.getSubmodelDescriptor(submodelId));
 	}
 	
 	@Override
 	public void insertSubmodelDescriptor(SubmodelDescriptor descr) throws SubmodelAlreadyExistsException {
-		access.write(storage::insertSubmodelDescriptor, descr);
+		access.write(() -> storage.insertSubmodelDescriptor(descr));
 	}
 	
 	@Override
 	public void removeSubmodelDescriptor(String submodelId) throws SubmodelNotFoundException {
-		access.write(storage::removeSubmodelDescriptor, submodelId);
+		access.write(() -> storage.removeSubmodelDescriptor(submodelId));
 	}
 	
 	@Override
 	public void replaceSubmodelDescriptor(String submodelId, SubmodelDescriptor descr) throws SubmodelNotFoundException {
-		access.write(storage::replaceSubmodelDescriptor, submodelId, descr);
+		access.write(() -> storage.replaceSubmodelDescriptor(submodelId, descr));
 	}
 		
 }

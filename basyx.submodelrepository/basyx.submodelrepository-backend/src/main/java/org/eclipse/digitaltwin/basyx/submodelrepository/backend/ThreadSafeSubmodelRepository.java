@@ -60,112 +60,112 @@ public class ThreadSafeSubmodelRepository implements SubmodelRepository {
 
     @Override
     public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
-        return access.read(decoratedRepository::getAllSubmodels, pInfo);
+        return access.read(() -> decoratedRepository.getAllSubmodels(pInfo));
     }
 
     @Override
     public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo) {
-        return access.read(decoratedRepository::getAllSubmodels, semanticId, pInfo);
+        return access.read(() -> decoratedRepository.getAllSubmodels(semanticId, pInfo));
     }
 
     @Override
     public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException {
-        return access.read(decoratedRepository::getSubmodel, submodelId);
+        return access.read(() -> decoratedRepository.getSubmodel(submodelId));
     }
 
     @Override
     public void updateSubmodel(String submodelId, Submodel submodel) throws ElementDoesNotExistException {
-        access.write(decoratedRepository::updateSubmodel, submodelId, submodel);
+        access.write(() -> decoratedRepository.updateSubmodel(submodelId, submodel));
     }
 
     @Override
     public void createSubmodel(Submodel submodel) throws CollidingIdentifierException, MissingIdentifierException {
-        access.write(decoratedRepository::createSubmodel, submodel);
+        access.write(() -> decoratedRepository.createSubmodel(submodel));
     }
 
     @Override
     public void updateSubmodelElement(String submodelIdentifier, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
-        access.write(decoratedRepository::updateSubmodelElement, submodelIdentifier, idShortPath, submodelElement);
+        access.write(() -> decoratedRepository.updateSubmodelElement(submodelIdentifier, idShortPath, submodelElement));
     }
 
     @Override
     public void deleteSubmodel(String submodelId) throws ElementDoesNotExistException {
-        access.write(decoratedRepository::deleteSubmodel, submodelId);
+        access.write(() -> decoratedRepository.deleteSubmodel(submodelId));
     }
 
     @Override
     public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo) throws ElementDoesNotExistException {
-        return access.read(decoratedRepository::getSubmodelElements, submodelId, pInfo);
+        return access.read(() -> decoratedRepository.getSubmodelElements(submodelId, pInfo));
     }
 
     @Override
     public SubmodelElement getSubmodelElement(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
-        return access.read(decoratedRepository::getSubmodelElement, submodelId, smeIdShort);
+        return access.read(() -> decoratedRepository.getSubmodelElement(submodelId, smeIdShort));
     }
 
     @Override
     public SubmodelElementValue getSubmodelElementValue(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
-        return access.read(decoratedRepository::getSubmodelElementValue, submodelId, smeIdShort);
+        return access.read(() -> decoratedRepository.getSubmodelElementValue(submodelId, smeIdShort));
     }
 
     @Override
     public void setSubmodelElementValue(String submodelId, String smeIdShort, SubmodelElementValue value) throws ElementDoesNotExistException {
-        access.write(decoratedRepository::setSubmodelElementValue, submodelId, smeIdShort, value);
+        access.write(() -> decoratedRepository.setSubmodelElementValue(submodelId, smeIdShort, value));
     }
 
     @Override
     public void createSubmodelElement(String submodelId, SubmodelElement smElement) {
-        access.write(decoratedRepository::createSubmodelElement, submodelId, smElement);
+        access.write(() -> decoratedRepository.createSubmodelElement(submodelId, smElement));
     }
 
     @Override
     public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
-        access.write(decoratedRepository::createSubmodelElement, submodelId, idShortPath, smElement);
+        access.write(() -> decoratedRepository.createSubmodelElement(submodelId, idShortPath, smElement));
     }
 
     @Override
     public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
-        access.write(decoratedRepository::deleteSubmodelElement, submodelId, idShortPath);
+        access.write(() -> decoratedRepository.deleteSubmodelElement(submodelId, idShortPath));
     }
 
     @Override
     public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
-        return access.read(decoratedRepository::invokeOperation, submodelId, idShortPath, input);
+        return decoratedRepository.invokeOperation(submodelId, idShortPath, input);
     }
 
     @Override
     public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) throws ElementDoesNotExistException {
-        return access.read(decoratedRepository::getSubmodelByIdValueOnly, submodelId);
+        return access.read(() -> decoratedRepository.getSubmodelByIdValueOnly(submodelId));
     }
 
     @Override
     public Submodel getSubmodelByIdMetadata(String submodelId) throws ElementDoesNotExistException {
-        return access.read(decoratedRepository::getSubmodelByIdMetadata, submodelId);
+        return access.read(() -> decoratedRepository.getSubmodelByIdMetadata(submodelId));
     }
 
     @Override
     public File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-        return access.read(decoratedRepository::getFileByPathSubmodel, submodelId, idShortPath);
+        return access.read(() -> decoratedRepository.getFileByPathSubmodel(submodelId, idShortPath));
     }
 
     @Override
     public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
-        access.write(decoratedRepository::setFileValue, submodelId, idShortPath, fileName, inputStream);
+        access.write(() -> decoratedRepository.setFileValue(submodelId, idShortPath, fileName, inputStream));
     }
 
     @Override
     public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-        access.write(decoratedRepository::deleteFileValue, submodelId, idShortPath);
+        access.write(() -> decoratedRepository.deleteFileValue(submodelId, idShortPath));
     }
 
     @Override
     public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
-        access.write(decoratedRepository::patchSubmodelElements, submodelId, submodelElementList);
+        access.write(() -> decoratedRepository.patchSubmodelElements(submodelId, submodelElementList));
     }
 
     @Override
     public InputStream getFileByFilePath(String submodelId, String filePath) {
-        return access.read(decoratedRepository::getFileByFilePath, submodelId, filePath);
+        return access.read(() -> decoratedRepository.getFileByFilePath(submodelId, filePath));
     }
 
     @Override

@@ -50,22 +50,22 @@ public class ThreadSafeAasDiscovery implements AasDiscoveryService {
 
     @Override
     public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo, List<AssetLink> assetIds) {
-        return access.read(decoratedAasDiscovery::getAllAssetAdministrationShellIdsByAssetLink, pInfo, assetIds);
+        return access.read(() -> decoratedAasDiscovery.getAllAssetAdministrationShellIdsByAssetLink(pInfo, assetIds));
     }
 
     @Override
     public List<SpecificAssetId> getAllAssetLinksById(String shellIdentifier) {
-        return access.read(decoratedAasDiscovery::getAllAssetLinksById, shellIdentifier);
+        return access.read(() -> decoratedAasDiscovery.getAllAssetLinksById(shellIdentifier));
     }
 
     @Override
     public List<SpecificAssetId> createAllAssetLinksById(String shellIdentifier, List<SpecificAssetId> assetIds) {
-        return access.write(decoratedAasDiscovery::createAllAssetLinksById, shellIdentifier, assetIds);
+        return access.write(() -> decoratedAasDiscovery.createAllAssetLinksById(shellIdentifier, assetIds));
     }
 
     @Override
     public void deleteAllAssetLinksById(String shellIdentifier) {
-        access.write(decoratedAasDiscovery::deleteAllAssetLinksById, shellIdentifier);
+        access.write(() -> decoratedAasDiscovery.deleteAllAssetLinksById(shellIdentifier));
     }
 
     @Override

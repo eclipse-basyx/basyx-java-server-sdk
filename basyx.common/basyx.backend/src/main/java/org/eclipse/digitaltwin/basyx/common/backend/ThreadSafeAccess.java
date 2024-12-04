@@ -26,63 +26,33 @@ package org.eclipse.digitaltwin.basyx.common.backend;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
  * Utility class for thread-safe access
  * 
- * @author Gerhard Sonnenberg DFKI GmbH
+ * @author Gerhard Sonnenberg DFKI GmbH, mateusmolina
  */
 public class ThreadSafeAccess {
-
 	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-	private final ReadLock readLock = lock.readLock();
-	private final WriteLock writeLock = lock.writeLock();
+	private final Lock readLock = lock.readLock();
+	private final Lock writeLock = lock.writeLock();
 
 	public <T> T write(Supplier<T> supplier) {
 		return runWithLock(supplier, writeLock);
 	}
 
-	public <A> void write(Consumer<A> consumer, A arg1) {
-		runWithLock(consumer, arg1, readLock);
+	public void write(Runnable action) {
+		runWithLock(action, writeLock);
 	}
 
-	public <A, B> void write(BiConsumer<A, B> consumer, A arg1, B arg2) {
-		runWithLock(consumer, arg1, arg2, writeLock);
+	public <T> T read(Supplier<T> supplier) {
+		return runWithLock(supplier, readLock);
 	}
 
-	public <A, B, T> T write(BiFunction<A, B, T> function, A arg1, B arg2) {
-		return runWithLock(function, arg1, arg2, writeLock);
+	public void read(Runnable action) {
+		runWithLock(action, readLock);
 	}
-	public <A, B, C> void write(TriConsumer<A, B, C> consumer, A arg1, B arg2, C arg3) {
-		runWithLock(consumer, arg1, arg2, arg3, writeLock);
-	}
-
-	public <A, B, C, T> T write(TriFunction<A, B, C, T> function, A arg1, B arg2, C arg3) {
-		return runWithLock(function, arg1, arg2, arg3, writeLock);
-	}
-	public <A, B, C, D> void write(TetraConsumer<A, B, C, D> consumer, A arg1, B arg2, C arg3, D arg4) {
-		runWithLock(consumer, arg1, arg2, arg3, arg4, writeLock);
-	}
-
-	public <A, T> T read(Function<A, T> func, A arg1) {
-		return runWithLock(func, arg1, readLock);
-	}
-
-	public <A, B, T> T read(BiFunction<A, B, T> func, A arg1, B arg2) {
-		return runWithLock(func, arg1, arg2, readLock);
-	}
-
-	public <A, B, C, T> T read(TriFunction<A, B, C, T> func, A arg1, B arg2, C arg3) {
-		return runWithLock(func, arg1, arg2, arg3, readLock);
-	}
-
 	private <T> T runWithLock(Supplier<T> supplier, Lock lock) {
 		try {
 			lock.lock();
@@ -92,83 +62,12 @@ public class ThreadSafeAccess {
 		}
 	}
 
-	private <A> void runWithLock(Consumer<A> consumer, A arg1, Lock lock) {
+	private void runWithLock(Runnable action, Lock lock) {
 		try {
 			lock.lock();
-			consumer.accept(arg1);
+			action.run();
 		} finally {
 			lock.unlock();
 		}
-	}
-
-	private <T, A> T runWithLock(Function<A, T> func, A arg1, Lock lock) {
-		try {
-			lock.lock();
-			return func.apply(arg1);
-		} finally {
-			lock.unlock();
-		}
-	}
-
-	private <A, B, T> T runWithLock(BiFunction<A, B, T> func, A arg1, B arg2, Lock lock) {
-		try {
-			lock.lock();
-			return func.apply(arg1, arg2);
-		} finally {
-			lock.unlock();
-		}
-	}
-
-	private <A, B, C, T> T runWithLock(TriFunction<A, B, C, T> func, A arg1, B arg2, C arg3, Lock lock) {
-		try {
-			lock.lock();
-			return func.apply(arg1, arg2, arg3);
-		} finally {
-			lock.unlock();
-		}
-	}
-
-	private <A, B> void runWithLock(BiConsumer<A, B> consumer, A arg1, B arg2, Lock lock) {
-		try {
-			lock.lock();
-			consumer.accept(arg1, arg2);
-		} finally {
-			lock.unlock();
-		}
-	}
-
-	private <A, B, C> void runWithLock(TriConsumer<A, B, C> consumer, A arg1, B arg2, C arg3, Lock lock) {
-		try {
-			lock.lock();
-			consumer.accept(arg1, arg2, arg3);
-		} finally {
-			lock.unlock();
-		}
-	}
-
-	private <A, B, C, D> void runWithLock(TetraConsumer<A, B, C, D> consumer, A arg1, B arg2, C arg3, D arg4, Lock lock) {
-		try {
-			lock.lock();
-			consumer.accept(arg1, arg2, arg3, arg4);
-		} finally {
-			lock.unlock();
-		}
-	}
-
-	@FunctionalInterface
-	public static interface TriConsumer<S, T, U> {
-
-		void accept(S s, T t, U u);
-
-	}
-
-	@FunctionalInterface
-	public static interface TetraConsumer<S, T, U, V> {
-		void accept(S s, T t, U u, V v);
-	}
-
-	@FunctionalInterface
-	public static interface TriFunction<S, T, U, R> {
-		R apply(S s, T t, U u);
 	}
 }

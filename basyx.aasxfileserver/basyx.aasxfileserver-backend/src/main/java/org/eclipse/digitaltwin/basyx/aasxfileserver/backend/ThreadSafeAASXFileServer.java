@@ -43,41 +43,41 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
  */
 public class ThreadSafeAASXFileServer implements AASXFileServer {
 
-    private final AASXFileServer decoreatedAasxFileServer;
+    private final AASXFileServer decoratedAasxFileServer;
     private final ThreadSafeAccess access = new ThreadSafeAccess();
 
     public ThreadSafeAASXFileServer(AASXFileServer aasxFileServer) {
-        this.decoreatedAasxFileServer = aasxFileServer;
+        this.decoratedAasxFileServer = aasxFileServer;
     }
 
     @Override
     public CursorResult<List<PackageDescription>> getAllAASXPackageIds(String shellId, PaginationInfo pInfo) {
-        return access.read(decoreatedAasxFileServer::getAllAASXPackageIds, shellId, pInfo);
+        return access.read(() -> decoratedAasxFileServer.getAllAASXPackageIds(shellId, pInfo));
     }
 
     @Override
     public InputStream getAASXByPackageId(String packageId) throws ElementDoesNotExistException {
-        return access.read(decoreatedAasxFileServer::getAASXByPackageId, packageId);
+        return access.read(() -> decoratedAasxFileServer.getAASXByPackageId(packageId));
     }
 
     @Override
     public void updateAASXByPackageId(String packageId, List<String> shellIds, InputStream file, String filename) throws ElementDoesNotExistException {
-        access.write(decoreatedAasxFileServer::updateAASXByPackageId, packageId, shellIds, file, filename);
+        access.write(() -> decoratedAasxFileServer.updateAASXByPackageId(packageId, shellIds, file, filename));
     }
 
     @Override
     public PackageDescription createAASXPackage(List<String> shellIds, InputStream file, String filename) {
-        return access.write(decoreatedAasxFileServer::createAASXPackage, shellIds, file, filename);
+        return access.write(() -> decoratedAasxFileServer.createAASXPackage(shellIds, file, filename));
     }
 
     @Override
     public void deleteAASXByPackageId(String packageId) throws ElementDoesNotExistException {
-        access.write(decoreatedAasxFileServer::deleteAASXByPackageId, packageId);
+        access.write(() -> decoratedAasxFileServer.deleteAASXByPackageId(packageId));
     }
 
     @Override
     public String getName() {
-        return decoreatedAasxFileServer.getName();
+        return decoratedAasxFileServer.getName();
     }
 
 }

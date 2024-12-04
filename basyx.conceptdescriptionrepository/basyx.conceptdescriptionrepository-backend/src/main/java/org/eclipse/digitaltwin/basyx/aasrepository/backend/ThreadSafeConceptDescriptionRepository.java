@@ -53,42 +53,42 @@ public class ThreadSafeConceptDescriptionRepository implements ConceptDescriptio
 
     @Override
     public CursorResult<List<ConceptDescription>> getAllConceptDescriptions(PaginationInfo pInfo) {
-        return access.read(decoratedRepository::getAllConceptDescriptions, pInfo);
+        return access.read(() -> decoratedRepository.getAllConceptDescriptions(pInfo));
     }
 
     @Override
     public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIdShort(String idShort, PaginationInfo pInfo) {
-        return access.read(decoratedRepository::getAllConceptDescriptionsByIdShort, idShort, pInfo);
+        return access.read(() -> decoratedRepository.getAllConceptDescriptionsByIdShort(idShort, pInfo));
     }
 
     @Override
     public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByIsCaseOf(Reference isCaseOf, PaginationInfo pInfo) {
-        return access.read(decoratedRepository::getAllConceptDescriptionsByIsCaseOf, isCaseOf, pInfo);
+        return access.read(() -> decoratedRepository.getAllConceptDescriptionsByIsCaseOf(isCaseOf, pInfo));
     }
 
     @Override
     public CursorResult<List<ConceptDescription>> getAllConceptDescriptionsByDataSpecificationReference(Reference dataSpecificationReference, PaginationInfo pInfo) {
-        return access.read(decoratedRepository::getAllConceptDescriptionsByDataSpecificationReference, dataSpecificationReference, pInfo);
+        return access.read(() -> decoratedRepository.getAllConceptDescriptionsByDataSpecificationReference(dataSpecificationReference, pInfo));
     }
 
     @Override
     public ConceptDescription getConceptDescription(String conceptDescriptionId) throws ElementDoesNotExistException {
-        return access.read(decoratedRepository::getConceptDescription, conceptDescriptionId);
+        return access.read(() -> decoratedRepository.getConceptDescription(conceptDescriptionId));
     }
 
     @Override
     public void updateConceptDescription(String conceptDescriptionId, ConceptDescription conceptDescription) throws ElementDoesNotExistException {
-        access.write(decoratedRepository::updateConceptDescription, conceptDescriptionId, conceptDescription);
+        access.write(() -> decoratedRepository.updateConceptDescription(conceptDescriptionId, conceptDescription));
     }
 
     @Override
     public void createConceptDescription(ConceptDescription conceptDescription) throws CollidingIdentifierException, MissingIdentifierException {
-        access.write(decoratedRepository::createConceptDescription, conceptDescription);
+        access.write(() -> decoratedRepository.createConceptDescription(conceptDescription));
     }
 
     @Override
     public void deleteConceptDescription(String conceptDescriptionId) throws ElementDoesNotExistException {
-        access.write(decoratedRepository::deleteConceptDescription, conceptDescriptionId);
+        access.write(() -> decoratedRepository.deleteConceptDescription(conceptDescriptionId));
     }
 
     @Override
