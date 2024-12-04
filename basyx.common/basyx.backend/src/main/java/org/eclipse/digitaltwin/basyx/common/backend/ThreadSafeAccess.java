@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 DFKI GmbH (https://www.dfki.de/en/web)
+ * Copyright (C) 2024 DFKI GmbH (https://www.dfki.de/en/web)
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,7 +22,7 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasregistry.service.storage.memory;
+package org.eclipse.digitaltwin.basyx.common.backend;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -34,7 +34,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-class ThreadSafeAccess {
+/**
+ * Utility class for thread-safe access
+ * 
+ * @author Gerhard Sonnenberg DFKI GmbH
+ */
+public class ThreadSafeAccess {
 
 	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 	private final ReadLock readLock = lock.readLock();

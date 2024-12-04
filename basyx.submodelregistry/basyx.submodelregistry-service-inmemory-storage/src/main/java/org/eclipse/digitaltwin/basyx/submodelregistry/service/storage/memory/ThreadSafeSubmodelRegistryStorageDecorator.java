@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.memory;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.digitaltwin.basyx.common.backend.ThreadSafeAccess;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
