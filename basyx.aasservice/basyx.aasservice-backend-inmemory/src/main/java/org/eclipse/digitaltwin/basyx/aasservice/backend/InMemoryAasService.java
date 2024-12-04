@@ -90,31 +90,27 @@ public class InMemoryAasService implements AasService {
 		return paginatedSubmodelReference;
 	}
 
-
 	@Override
 	public void addSubmodelReference(Reference submodelReference) {
+		throwExceptionIfReferenceIsAlreadyPresent(submodelReference);
+
 		List<Reference> submodelsRefs = aas.getSubmodels();
-		synchronized (submodelsRefs) {
-			throwExceptionIfReferenceIsAlreadyPresent(submodelReference);
-			submodelsRefs.add(submodelReference);
-		}
+		submodelsRefs.add(submodelReference);
 	}
 
 	@Override
 	public void removeSubmodelReference(String submodelId) {
 		List<Reference> submodelsRefs = aas.getSubmodels();
-		synchronized (submodelsRefs) {
-			submodelsRefs.remove(getSubmodelReferenceById(submodelId));
-		}
+		submodelsRefs.remove(getSubmodelReferenceById(submodelId));
 	}
 
 	@Override
 	public void setAssetInformation(AssetInformation aasInfo) {
-		aas.setAssetInformation(aasInfo);		
+		aas.setAssetInformation(aasInfo);
 	}
-	
+
 	@Override
-	public AssetInformation getAssetInformation() {		
+	public AssetInformation getAssetInformation() {
 		return aas.getAssetInformation();
 	}
 
@@ -130,10 +126,8 @@ public class InMemoryAasService implements AasService {
 		return specificSubmodelReference;
 	}
 
-	private TreeMap<String, Reference> convertToTreeMap(List<Reference> submodelReferences,
-			Function<Reference, String> idResolver) {
-		return submodelReferences.stream().collect(Collectors
-				.toMap(reference -> idResolver.apply(reference), ref -> ref, (ref1, ref2) -> ref1, TreeMap::new));
+	private TreeMap<String, Reference> convertToTreeMap(List<Reference> submodelReferences, Function<Reference, String> idResolver) {
+		return submodelReferences.stream().collect(Collectors.toMap(reference -> idResolver.apply(reference), ref -> ref, (ref1, ref2) -> ref1, TreeMap::new));
 	}
 
 	private Function<Reference, String> extractSubmodelID() {
@@ -165,9 +159,9 @@ public class InMemoryAasService implements AasService {
 	public void setThumbnail(String fileName, String contentType, InputStream inputStream) {
 		FileMetadata thumbnailMetadata = new FileMetadata(fileName, contentType, inputStream);
 
-		if(fileRepository.exists(thumbnailMetadata.getFileName()))
+		if (fileRepository.exists(thumbnailMetadata.getFileName()))
 			fileRepository.delete(thumbnailMetadata.getFileName());
-		
+
 		String filePath = fileRepository.save(thumbnailMetadata);
 
 		setAssetInformation(configureAssetInformationThumbnail(getAssetInformation(), contentType, filePath));
@@ -218,7 +212,7 @@ public class InMemoryAasService implements AasService {
 
 	private void throwExceptionIfReferenceIsAlreadyPresent(Reference submodelReference) {
 		Optional<Key> submodelIdKey = getSubmodelTypeKey(submodelReference);
-		if(submodelIdKey.isEmpty())
+		if (submodelIdKey.isEmpty())
 			return;
 		String submodelId = submodelIdKey.get().getValue();
 		if (isSubmodelIdAlreadyReferenced(submodelId)) {
@@ -233,7 +227,7 @@ public class InMemoryAasService implements AasService {
 	private static Optional<Key> getSubmodelTypeKey(Reference submodelReference) {
 		Optional<Key> submodelIdKey = submodelReference.getKeys().stream().filter(key -> {
 			KeyTypes type = key.getType();
-			if(type == null)
+			if (type == null)
 				throw new MissingKeyTypeException();
 			return type.equals(KeyTypes.SUBMODEL);
 		}).findFirst();
