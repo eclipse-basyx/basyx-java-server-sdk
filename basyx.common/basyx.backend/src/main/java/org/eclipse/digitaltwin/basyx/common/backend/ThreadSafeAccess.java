@@ -61,6 +61,10 @@ public class ThreadSafeAccess {
 		runWithLock(consumer, arg1, arg2, arg3, writeLock);
 	}
 
+	public <A, B, C, D> void write(TetraConsumer<A, B, C, D> consumer, A arg1, B arg2, C arg3, D arg4) {
+		runWithLock(consumer, arg1, arg2, arg3, arg4, writeLock);
+	}
+
 	public <A, T> T read(Function<A, T> func, A arg1) {
 		return runWithLock(func, arg1, readLock);
 	}
@@ -123,10 +127,24 @@ public class ThreadSafeAccess {
 		}
 	}
 
+	private <A, B, C, D> void runWithLock(TetraConsumer<A, B, C, D> consumer, A arg1, B arg2, C arg3, D arg4, Lock lock) {
+		try {
+			lock.lock();
+			consumer.accept(arg1, arg2, arg3, arg4);
+		} finally {
+			lock.unlock();
+		}
+	}
+
 	@FunctionalInterface
 	public static interface TriConsumer<S, T, U> {
 
 		void accept(S s, T t, U u);
 
+	}
+
+	@FunctionalInterface
+	public static interface TetraConsumer<S, T, U, V> {
+		void accept(S s, T t, U u, V v);
 	}
 }
