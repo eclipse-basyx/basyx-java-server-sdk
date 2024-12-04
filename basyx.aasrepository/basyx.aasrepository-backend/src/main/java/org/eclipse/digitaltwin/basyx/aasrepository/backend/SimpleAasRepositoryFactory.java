@@ -64,7 +64,7 @@ public class SimpleAasRepositoryFactory implements AasRepositoryFactory {
 
 	@Override
 	public AasRepository create() {
-		return new CrudAasRepository(aasBackendProvider, aasServiceFactory, aasRepositoryName);
+		return new ThreadSafeAasRepository(new CrudAasRepository(aasBackendProvider, aasServiceFactory, aasRepositoryName));
 	}
 
 }
