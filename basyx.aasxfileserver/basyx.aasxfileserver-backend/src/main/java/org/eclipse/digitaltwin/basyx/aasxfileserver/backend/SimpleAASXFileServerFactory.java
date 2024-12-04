@@ -74,7 +74,7 @@ public class SimpleAASXFileServerFactory implements AASXFileServerFactory {
 
 	@Override
 	public AASXFileServer create() {
-		return new CrudAASXFileServer(aasxFileServerBackendProvider, aasxFileServerName);
+		return new ThreadSafeAASXFileServer(new CrudAASXFileServer(aasxFileServerBackendProvider, aasxFileServerName));
 	}
 
 }

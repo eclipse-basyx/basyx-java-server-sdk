@@ -80,9 +80,9 @@ public class SimpleConceptDescriptionRepositoryFactory implements ConceptDescrip
 	public ConceptDescriptionRepository create() {
 		
 		if (conceptDescriptions == null)
-			return new CrudConceptDescriptionRepository(conceptDescriptionBackend, conceptDescriptionRepositoryName);
+			return new ThreadSafeConceptDescriptionRepository(new CrudConceptDescriptionRepository(conceptDescriptionBackend, conceptDescriptionRepositoryName));
 
-		return new CrudConceptDescriptionRepository(conceptDescriptionBackend, conceptDescriptions, conceptDescriptionRepositoryName);
+		return new ThreadSafeConceptDescriptionRepository(new CrudConceptDescriptionRepository(conceptDescriptionBackend, conceptDescriptions, conceptDescriptionRepositoryName));
 	}
 
 }

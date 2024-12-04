@@ -84,9 +84,9 @@ public class SimpleSubmodelRepositoryFactory implements SubmodelRepositoryFactor
 	public SubmodelRepository create() {
 
 		if (submodels == null)
-			return new CrudSubmodelRepository(submodelBackendProvider, submodelServiceFactory, submodelRepositoryName);
+			return new ThreadSafeSubmodelRepository(new CrudSubmodelRepository(submodelBackendProvider, submodelServiceFactory, submodelRepositoryName));
 
-		return new CrudSubmodelRepository(submodelBackendProvider, submodelServiceFactory, submodels, submodelRepositoryName);
+		return new ThreadSafeSubmodelRepository(new CrudSubmodelRepository(submodelBackendProvider, submodelServiceFactory, submodels, submodelRepositoryName));
 	}
 
 }
