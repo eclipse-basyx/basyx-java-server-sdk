@@ -26,47 +26,45 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
+import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.data.mongodb.repository.support.MappingMongoEntityInformation;
-import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Component;
 
 /**
+ * Provides a InMemoryAasServiceFactory for usage in the MongoDB Aas Repository
+ * backend.<br>
+ * <br>
+ * This is needed to ensure that the AasServiceFeatures are processed correctly
+ * when utilizing MongoDb
  * 
- * MongoDB Backend Provider for the AAS
- * 
- * @author mateusmolina, despen
+ * @author schnicke
+ *
  */
+@Configuration
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-@Component
-public class AasMongoDBBackendProvider implements AasBackendProvider {
-	
-	private BasyxMongoMappingContext mappingContext;
-	
-	private MongoTemplate template;
-	
-	@Autowired
-	public AasMongoDBBackendProvider(BasyxMongoMappingContext mappingContext, @Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName, MongoTemplate template) {
-		super();
-		this.mappingContext = mappingContext;
-		this.template = template;
-		
-		mappingContext.addEntityMapping(AssetAdministrationShell.class, collectionName);
+@EnableMongoRepositories
+public class MongoDBAasBackendConfiguration {
+	@Bean
+	public AasServiceFactory getAasServiceFactory(FileRepository fileRepository) {
+		return new InMemoryAasServiceFactory(fileRepository);
 	}
 
-	@Override
-	public CrudRepository<AssetAdministrationShell, String> getCrudRepository() {
+	@Bean
+	public MappingMongoEntityInformation<AssetAdministrationShell, String> getMappingMongoEntityInformation(BasyxMongoMappingContext mappingContext, @Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName) {
+		mappingContext.addEntityMapping(AssetAdministrationShell.class, collectionName);
+
 		@SuppressWarnings("unchecked")
 		MongoPersistentEntity<AssetAdministrationShell> entity = (MongoPersistentEntity<AssetAdministrationShell>) mappingContext.getPersistentEntity(AssetAdministrationShell.class);
-		
-		return new SimpleMongoRepository<>(new MappingMongoEntityInformation<>(entity), template);
+
+		return new MappingMongoEntityInformation<>(entity);
 	}
 
 }

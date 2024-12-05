@@ -46,6 +46,9 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Default Implementation for the {@link AasRepository} based on Spring
@@ -54,22 +57,18 @@ import org.springframework.data.repository.CrudRepository;
  * @author mateusmolina, despen, zhangzai, kammognie
  *
  */
+@Service
 public class CrudAasRepository implements AasRepository {
 
-	private CrudRepository<AssetAdministrationShell, String> aasBackend;
+	private final AasBackend aasBackend;
 
-	private AasServiceFactory aasServiceFactory;
+	private final AasServiceFactory aasServiceFactory;
 
-	private String aasRepositoryName = null;
+	private final String aasRepositoryName;
 
-	public CrudAasRepository(AasBackendProvider aasBackendProvider, AasServiceFactory aasServiceFactory) {
-		this.aasBackend = aasBackendProvider.getCrudRepository();
+	public CrudAasRepository(AasBackend aasBackend, AasServiceFactory aasServiceFactory, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
+		this.aasBackend = aasBackend;
 		this.aasServiceFactory = aasServiceFactory;
-	}
-
-	public CrudAasRepository(AasBackendProvider aasBackendProvider, AasServiceFactory aasServiceFactory, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
-		this(aasBackendProvider, aasServiceFactory);
-
 		this.aasRepositoryName = aasRepositoryName;
 	}
 
@@ -77,7 +76,7 @@ public class CrudAasRepository implements AasRepository {
 	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
 
 		Iterable<AssetAdministrationShell> iterable = aasBackend.findAll();
-		List<AssetAdministrationShell> allAas = StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
+		List<AssetAdministrationShell> allAas = StreamSupport.stream(iterable.spliterator(), false).toList();
 
 		TreeMap<String, AssetAdministrationShell> aasMap = allAas.stream().collect(Collectors.toMap(AssetAdministrationShell::getId, aas -> aas, (a, b) -> a, TreeMap::new));
 
@@ -92,15 +91,17 @@ public class CrudAasRepository implements AasRepository {
 	}
 
 	@Override
+	@Transactional
 	public void createAas(AssetAdministrationShell aas) throws CollidingIdentifierException, MissingIdentifierException {
 		throwIfAasIdEmptyOrNull(aas.getId());
-		
+
 		throwIfAasExists(aas);
 
 		aasBackend.save(aas);
 	}
 
 	@Override
+	@Transactional
 	public void deleteAas(String aasId) {
 		throwIfAasDoesNotExist(aasId);
 
@@ -108,6 +109,7 @@ public class CrudAasRepository implements AasRepository {
 	}
 
 	@Override
+	@Transactional
 	public void updateAas(String aasId, AssetAdministrationShell aas) {
 		throwIfAasDoesNotExist(aasId);
 
@@ -122,37 +124,40 @@ public class CrudAasRepository implements AasRepository {
 	}
 
 	@Override
+	@Transactional
 	public void addSubmodelReference(String aasId, Reference submodelReference) {
 		AasService aasService = getAasServiceOrThrow(aasId);
 
 		aasService.addSubmodelReference(submodelReference);
 
-		updateAas(aasId, aasService.getAAS());
+		aasBackend.save(aasService.getAAS());
 	}
 
 	@Override
+	@Transactional
 	public void removeSubmodelReference(String aasId, String submodelId) {
 		AasService aasService = getAasServiceOrThrow(aasId);
 
 		aasService.removeSubmodelReference(submodelId);
 
-		updateAas(aasId, aasService.getAAS());
+		aasBackend.save(aasService.getAAS());
 	}
 
 	@Override
+	@Transactional
 	public void setAssetInformation(String aasId, AssetInformation aasInfo) throws ElementDoesNotExistException {
 		AasService aasService = getAasServiceOrThrow(aasId);
 
 		aasService.setAssetInformation(aasInfo);
 
-		updateAas(aasId, aasService.getAAS());
+		aasBackend.save(aasService.getAAS());
 	}
 
 	@Override
+	@Transactional
 	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException {
 		return getAasServiceOrThrow(aasId).getAssetInformation();
 	}
-
 
 	@Override
 	public String getName() {
@@ -165,21 +170,23 @@ public class CrudAasRepository implements AasRepository {
 	}
 
 	@Override
+	@Transactional
 	public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
 		AasService aasService = getAasServiceOrThrow(aasId);
 
 		aasService.setThumbnail(fileName, contentType, inputStream);
 
-		updateAas(aasId, aasService.getAAS());
+		aasBackend.save(aasService.getAAS());
 	}
 
 	@Override
+	@Transactional
 	public void deleteThumbnail(String aasId) {
 		AasService aasService = getAasServiceOrThrow(aasId);
 
 		aasService.deleteThumbnail();
 
-		updateAas(aasId, aasService.getAAS());
+		aasBackend.save(aasService.getAAS());
 	}
 
 	private AasService getAasServiceOrThrow(String aasId) {
@@ -200,9 +207,9 @@ public class CrudAasRepository implements AasRepository {
 		if (aasBackend.existsById(aasId))
 			throw new CollidingIdentifierException(aasId);
 	}
-	
+
 	private void throwIfAasIdEmptyOrNull(String aasId) {
-		if(aasId == null || aasId.isBlank())
+		if (aasId == null || aasId.isBlank())
 			throw new MissingIdentifierException(aasId);
 	}
 

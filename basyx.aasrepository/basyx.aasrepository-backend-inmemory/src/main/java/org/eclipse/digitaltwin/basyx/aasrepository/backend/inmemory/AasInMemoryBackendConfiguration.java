@@ -22,16 +22,29 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasrepository.backend;
+
+package org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.springframework.data.repository.CrudRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackend;
+import org.eclipse.digitaltwin.basyx.common.backend.inmemory.core.InMemoryCrudRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * Backend provider for the AAS
  * 
- * @author mateusmolina, despen
+ * InMemory backend provider for the AAS
+ * 
+ * @author mateusmolina, danish
  */
-public interface AasBackendProvider {
-	public CrudRepository<AssetAdministrationShell, String> getCrudRepository();
+@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
+@Configuration
+public class AasInMemoryBackendConfiguration {
+
+	@Bean
+	public AasBackend getAasBackend() {
+		return (AasBackend) new InMemoryCrudRepository<>(AssetAdministrationShell::getId);
+	}
+
 }

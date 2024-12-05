@@ -56,7 +56,7 @@ import org.junit.Test;
 public class TestInMemoryAasRepository extends AasRepositorySuite {
 	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
 	
-	private AasBackendProvider backendProvider = new AasInMemoryBackendProvider();
+	private AasBackendProvider backendProvider = new AasInMemoryBackendConfiguration();
 
 	private static FileRepository fileRepository;
 	
