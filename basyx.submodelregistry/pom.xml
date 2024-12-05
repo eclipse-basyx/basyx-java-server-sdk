@@ -16,6 +16,7 @@
 
 	<properties>
 		<lombok.maven-plugin.version>1.18.20.0</lombok.maven-plugin.version>
+		<lombok.maven-plugin.lombok.version>1.18.30</lombok.maven-plugin.lombok.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<generated.folder>src/generated</generated.folder>
@@ -71,6 +72,13 @@
 					<groupId>org.projectlombok</groupId>
 					<artifactId>lombok-maven-plugin</artifactId>
 					<version>${lombok.maven-plugin.version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.maven-plugin.lombok.version}</version>
+						</dependency>
+					</dependencies>
 				</plugin>
 				<plugin>
 					<groupId>io.swagger.codegen.v3</groupId>
@@ -222,6 +230,13 @@
 					<plugin>
 						<groupId>org.projectlombok</groupId>
 						<artifactId>lombok-maven-plugin</artifactId>
+						<dependencies>
+							<dependency>
+								<groupId>org.projectlombok</groupId>
+								<artifactId>lombok</artifactId>
+								<version>${lombok.maven-plugin.lombok.version}</version>
+							</dependency>
+						</dependencies>
 						<executions>
 							<execution>
 								<phase>generate-sources</phase>
