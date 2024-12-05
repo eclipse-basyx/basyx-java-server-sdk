@@ -27,13 +27,10 @@ package org.eclipse.digitaltwin.basyx.authorization.abac;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
-
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingAuthorizationConfigurationException;
 import org.springframework.core.io.ResourceLoader;
 
@@ -66,28 +63,20 @@ public class AbacRuleInitializer {
 	 * @throws IOException
 	 */
 	public List<AllRule> deserialize() throws IOException {
-//		 SimpleModule module = new SimpleModule();
-//	        module.addDeserializer(LogicalComponent.class, new LogicalComponentDeserializer());
-//
-//	        // Register the module with the ObjectMapper
-//	        objectMapper.registerModule(module);
-	        
-	        
-//		List<AllRulesWrapper> allRulesWrappers = objectMapper.readValue(getFile(rbacJsonFilePath), new TypeReference<List<AllRulesWrapper>>() {
-//		});
 		
 		 // Deserialize into List<AllRulesWrapper>
-        List<AllRulesWrapper> wrapperList = objectMapper.readValue(
-        		getFile(rbacJsonFilePath),
-            objectMapper.getTypeFactory().constructCollectionType(List.class, AllRulesWrapper.class)
-        );
+//        List<AllRulesWrapper> wrapperList = objectMapper.readValue(
+//        		getFile(rbacJsonFilePath),
+//            objectMapper.getTypeFactory().constructCollectionType(List.class, AllRulesWrapper.class)
+//        );
 
         // Flatten the "AllRules" into a single list
-        List<AllRule> flattenedRules = wrapperList.stream()
-                                                  .flatMap(wrapper -> wrapper.getAllRules().stream())
-                                                  .collect(Collectors.toList());
+//        List<AllRule> flattenedRules = wrapperList.stream()
+//                                                  .flatMap(wrapper -> wrapper.getAllRules().stream())
+//                                                  .collect(Collectors.toList());
 		
-		return flattenedRules;
+		return objectMapper.readValue(getFile(rbacJsonFilePath), new TypeReference<List<AllRule>>() {
+		});
 	}
 
 	private File getFile(String filePath) {

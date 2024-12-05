@@ -28,6 +28,30 @@ public class ObjectItem {
     @JsonProperty("DESCRIPTOR")
     private String descriptor;
 
+    /**
+     * No args constructor for use in serialization
+     * 
+     */
+    public ObjectItem() {
+    }
+
+    /**
+     * 
+     * @param fragment
+     * @param route
+     * @param referable
+     * @param identifiable
+     * @param descriptor
+     */
+    public ObjectItem(String route, String identifiable, String referable, String fragment, String descriptor) {
+        super();
+        this.route = route;
+        this.identifiable = identifiable;
+        this.referable = referable;
+        this.fragment = fragment;
+        this.descriptor = descriptor;
+    }
+
     @JsonProperty("ROUTE")
     public String getRoute() {
         return route;

@@ -15,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -61,11 +60,34 @@ public class AllRule {
      * (Required)
      * 
      */
-    @JsonDeserialize(using = LogicalComponentDeserializer.class)
     @JsonProperty("FORMULA")
-    private LogicalComponent formula;
+    private LogicalExpression formula;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+
+    /**
+     * No args constructor for use in serialization
+     * 
+     */
+    public AllRule() {
+    }
+
+    /**
+     * 
+     * @param access
+     * @param rights
+     * @param objects
+     * @param formula
+     * @param attributes
+     */
+    public AllRule(List<AttributeItem> attributes, List<RightsEnum> rights, AllRule.Access access, List<ObjectItem> objects, LogicalExpression formula) {
+        super();
+        this.attributes = attributes;
+        this.rights = rights;
+        this.access = access;
+        this.objects = objects;
+        this.formula = formula;
+    }
 
     /**
      * 
@@ -153,7 +175,7 @@ public class AllRule {
      * 
      */
     @JsonProperty("FORMULA")
-    public LogicalComponent getFormula() {
+    public LogicalExpression getFormula() {
         return formula;
     }
 
@@ -163,7 +185,7 @@ public class AllRule {
      * 
      */
     @JsonProperty("FORMULA")
-    public void setFormula(LogicalComponent formula) {
+    public void setFormula(LogicalExpression formula) {
         this.formula = formula;
     }
 

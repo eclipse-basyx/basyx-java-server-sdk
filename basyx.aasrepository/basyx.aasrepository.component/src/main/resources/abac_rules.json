@@ -1,41 +1,50 @@
 [
 	{
-		"AllRules": [
+		"ATTRIBUTES": [
 			{
-				"ATTRIBUTES": [
-					{
-						"CLAIM": "realm_access.roles"
-					}
-				],
-				"RIGHTS": [
-					"CREATE"
-				],
-				"ACCESS": "ALLOW",
-				"OBJECTS": [
-					{
-						"IDENTIFIABLE": "aas"
-					}
-				],
-				"FORMULA": {
-					"type": "logicalExpression",
-					"$or": [
+				"CLAIM": "ROLE_ADMIN"
+			},
+			{
+				"GLOBAL": "LOCALNOW"
+			}
+		],
+		"RIGHTS": [
+			"READ",
+			"UPDATE",
+			"CREATE"
+		],
+		"ACCESS": "ALLOW",
+		"OBJECTS": [
+			{
+				"IDENTIFIABLE": "AAS"
+			},
+			{
+				"ROUTE": "/assets/asset-56789"
+			}
+		],
+		"FORMULA": {
+			"$and": [
+				{
+					"$eq": [
 						{
-							"type": "simpleExpression",
-							"$eq": [
-								"$aas.idShort",
-								"Dummy"
-							]
+							"strVal": "USER_REGION"
 						},
 						{
-							"type": "simpleExpression",
-							"$eq": [
-								"$aas.id",
-								"AAS_123"
-							]
+							"strVal": "US"
+						}
+					]
+				},
+				{
+					"$contains": [
+						{
+							"strVal": "USER_PERMISSIONS"
+						},
+						{
+							"strVal": "ALLOW_ACCESS"
 						}
 					]
 				}
-			}
-		]
+			]
+		}
 	}
 ]

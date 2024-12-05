@@ -33,6 +33,6 @@ package org.eclipse.digitaltwin.basyx.authorization.abac;
 public interface AbacPermissionResolver {
 
 //	public boolean hasPermission(QueriesJsonSchema querySchema);
-	public boolean hasPermission(QueriesJsonSchema querySchema);
+	public boolean hasPermission(QueryJsonSchema querySchema);
 	
 }
