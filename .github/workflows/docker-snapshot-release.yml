@@ -38,6 +38,22 @@ jobs:
           path: basyx.aasdiscoveryservice/basyx.aasdiscoveryservice.component
         - name: aasxfileserver
           path: basyx.aasxfileserver/basyx.aasxfileserver.component
+        - name: aas-registry-kafka-mem
+          path: basyx.aasregistry/basyx.aasregistry-service-kafka-mem/src/main/docker
+        - name: aas-registry-kafka-mongodb
+          path: basyx.aasregistry/basyx.aasregistry-service-kafka-mongodb/src/main/docker
+        - name: aas-registry-log-mem
+          path: basyx.aasregistry/basyx.aasregistry-service-log-mem/src/main/docker
+        - name: aas-registry-log-mongodb
+          path: basyx.aasregistry/basyx.aasregistry-service-log-mongodb/src/main/docker
+        - name: submodel-registry-kafka-mem
+          path: basyx.submodelregistry/basyx.submodelregistry-service-kafka-mem/src/main/docker
+        - name: submodel-registry-kafka-mongodb
+          path: basyx.submodelregistry/basyx.submodelregistry-service-kafka-mongodb/src/main/docker
+        - name: submodel-registry-log-mem
+          path: basyx.submodelregistry/basyx.submodelregistry-service-log-mem/src/main/docker
+        - name: submodel-registry-log-mongodb
+          path: basyx.submodelregistry/basyx.submodelregistry-service-log-mongodb/src/main/docker
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
