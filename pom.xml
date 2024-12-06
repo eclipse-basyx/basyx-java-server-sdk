@@ -425,6 +425,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.hierarchy</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.authorization.rules.rbac.backend.inmemory</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -1108,6 +1113,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-feature-hierarchy</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasregistry-client-native</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
@@ -1115,6 +1126,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelregistry-feature-authorization</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelregistry-feature-hierarchy</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
