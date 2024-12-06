@@ -83,6 +83,9 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Build all modules first
+        run: mvn clean install -DskipTests
+
       # Build the project
       # For registry modules, we activate the dockerbuild profile and specify the module with --pl
       - name: Build BaSyx
@@ -92,9 +95,9 @@ jobs:
             module_root=$(dirname "$(dirname "$(dirname "${{ matrix.path }}")")")
             artifact_id=$(basename "$module_root")
             # Run with dockerbuild profile and namespace
-            mvn clean install -DskipTests -Pdockerbuild "-Ddocker.namespace=${{ env.DOCKER_NAMESPACE }}" --pl "org.eclipse.digitaltwin.basyx:${artifact_id}" -am
+            mvn clean install -DskipTests -Pdockerbuild "-Ddocker.namespace=${{ env.DOCKER_NAMESPACE }}" --pl "org.eclipse.digitaltwin.basyx:${artifact_id}"
           else
-            mvn clean install -DskipTests
+            echo "Non-registry module - already built in the previous step."
           fi
 
       - name: Prepare Registry JAR for Docker
