@@ -83,18 +83,28 @@ jobs:
       - name: Install BaSyx
         run: mvn clean install -DskipTests
 
-      - name: Determine FINAL_NAME for registry
+      - name: Prepare Registry JAR for Docker
         if: contains(matrix.name, 'registry')
         run: |
-          JAR_FILE=$(ls "${{ matrix.path }}/maven/"*.jar | head -n 1)
+          # module_root goes two directories up from src/main/docker
+          module_root=$(dirname "$(dirname "${{ matrix.path }}")")
+          
+          # Find the JAR in the module's target directory
+          JAR_FILE=$(ls "$module_root/target/"*.jar | head -n 1)
           if [ -z "$JAR_FILE" ]; then
-            echo "No JAR found in ${ { matrix.path } }/maven. Check build outputs."
+            echo "No JAR found in $module_root/target. Check your build."
             exit 1
           fi
+
+          # Create the maven directory inside the Docker context and copy the JAR there
+          mkdir -p "${{ matrix.path }}/maven"
+          cp "$JAR_FILE" "${{ matrix.path }}/maven/"
+
+          # Extract the final name without .jar extension
           FINAL_NAME=$(basename "$JAR_FILE" .jar)
           echo "FINAL_ARGS=FINAL_NAME=${FINAL_NAME}" >> $GITHUB_ENV
 
-      - name: Determine FINAL_NAME for non-registry (no-op)
+      - name: No-Op for Non-Registry Modules
         if: "!contains(matrix.name, 'registry')"
         run: echo "FINAL_ARGS=" >> $GITHUB_ENV
 
