@@ -54,6 +54,7 @@ jobs:
           path: basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem/src/main/docker
         - name: submodel-registry-log-mongodb
           path: basyx.submodelregistry/basyx.submodelregistry-service-release-log-mongodb/src/main/docker
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -82,6 +83,15 @@ jobs:
       - name: Install BaSyx
         run: mvn clean install -DskipTests
 
+      - name: Determine FINAL_NAME for registry
+        run: |
+          if [[ "${{ matrix.name }}" == *"registry"* ]]; then
+            FINAL_NAME=$(mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout)
+            echo "FINAL_ARGS=FINAL_NAME=${FINAL_NAME}" >> $GITHUB_ENV
+          else
+            echo "FINAL_ARGS=" >> $GITHUB_ENV
+          fi
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
@@ -91,6 +101,7 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: |
             aaronzi/${{ matrix.name }}:2.0.0-SNAPSHOT
+          build-args: ${{ env.FINAL_ARGS }}
 
       - name: Verify Docker Image
         run: |

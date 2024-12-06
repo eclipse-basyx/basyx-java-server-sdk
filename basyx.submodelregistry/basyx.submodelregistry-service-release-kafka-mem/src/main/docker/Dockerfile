@@ -1,6 +1,7 @@
 FROM eclipse-temurin:17 as builder
-COPY maven/${project.build.finalName}.jar ./
-RUN java -Djarmode=layertools -jar ${project.build.finalName}.jar extract
+ARG FINAL_NAME
+COPY maven/${FINAL_NAME}.jar ./
+RUN java -Djarmode=layertools -jar ${FINAL_NAME}.jar extract
 
 FROM eclipse-temurin:17
 RUN mkdir /workspace
