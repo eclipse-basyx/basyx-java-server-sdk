@@ -86,8 +86,8 @@ jobs:
       - name: Prepare Registry JAR for Docker
         if: contains(matrix.name, 'registry')
         run: |
-          # module_root goes two directories up from src/main/docker
-          module_root=$(dirname "$(dirname "${{ matrix.path }}")")
+          # Go three levels up from src/main/docker to get the module root
+          module_root=$(dirname "$(dirname "$(dirname "${{ matrix.path }}")")")
           
           # Find the JAR in the module's target directory
           JAR_FILE=$(ls "$module_root/target/"*.jar | head -n 1)
