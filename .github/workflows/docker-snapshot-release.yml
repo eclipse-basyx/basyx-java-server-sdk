@@ -77,11 +77,11 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: |
-            eclipsebasyx/${{ matrix.name }}:2.0.0-SNAPSHOT
+            aaronzi/${{ matrix.name }}:2.0.0-SNAPSHOT
           build-args: |
             PORT=8081
             JAR_FILE=${{ env.JAR_FILE }}
 
       - name: Verify Docker Image
         run: |
-          docker pull eclipsebasyx/${{ matrix.name }}:2.0.0-SNAPSHOT
+          docker pull aaronzi/${{ matrix.name }}:2.0.0-SNAPSHOT
