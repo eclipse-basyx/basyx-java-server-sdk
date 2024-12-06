@@ -80,8 +80,19 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Install BaSyx
-        run: mvn clean install -DskipTests
+      # Build the project
+      # For registry modules, we activate the dockerbuild profile and specify the module with --pl
+      - name: Build BaSyx
+        run: |
+          if [[ "${{ matrix.name }}" == *"registry"* ]]; then
+            # Derive the module's artifactId from the path
+            module_root=$(dirname "$(dirname "$(dirname "${{ matrix.path }}")")")
+            artifact_id=$(basename "$module_root")
+            # Run with dockerbuild profile and namespace
+            mvn clean install -DskipTests -Pdockerbuild "-Ddocker.namespace=aaronzi" --pl "org.eclipse.digitaltwin.basyx:${artifact_id}"
+          else
+            mvn clean install -DskipTests
+          fi
 
       - name: Prepare Registry JAR for Docker
         if: contains(matrix.name, 'registry')
@@ -89,10 +100,10 @@ jobs:
           # Go three levels up from src/main/docker to get the module root
           module_root=$(dirname "$(dirname "$(dirname "${{ matrix.path }}")")")
           
-          # Find the JAR in the module's target directory
-          JAR_FILE=$(ls "$module_root/target/"*.jar | head -n 1)
+          # Find the large JAR after repackage (enabled by dockerbuild profile)
+          JAR_FILE=$(ls "$module_root/target/"*.jar | grep -v original | head -n 1)
           if [ -z "$JAR_FILE" ]; then
-            echo "No JAR found in $module_root/target. Check your build."
+            echo "No repackaged JAR found in $module_root/target. Check your build."
             exit 1
           fi
 
