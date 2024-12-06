@@ -84,15 +84,19 @@ jobs:
         run: mvn clean install -DskipTests
 
       - name: Determine FINAL_NAME for registry
+        if: contains(matrix.name, 'registry')
         run: |
-          if [[ "${{ matrix.name }}" == *"registry"* ]]; then
-            module_root=$(dirname "$(dirname "${{ matrix.path }}")")
-            cd "$module_root"
-            FINAL_NAME=$(mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout)
-            echo "FINAL_ARGS=FINAL_NAME=${FINAL_NAME}" >> $GITHUB_ENV
-          else
-            echo "FINAL_ARGS=" >> $GITHUB_ENV
+          JAR_FILE=$(ls "${{ matrix.path }}/maven/"*.jar | head -n 1)
+          if [ -z "$JAR_FILE" ]; then
+            echo "No JAR found in ${ { matrix.path } }/maven. Check build outputs."
+            exit 1
           fi
+          FINAL_NAME=$(basename "$JAR_FILE" .jar)
+          echo "FINAL_ARGS=FINAL_NAME=${FINAL_NAME}" >> $GITHUB_ENV
+
+      - name: Determine FINAL_NAME for non-registry (no-op)
+        if: "!contains(matrix.name, 'registry')"
+        run: echo "FINAL_ARGS=" >> $GITHUB_ENV
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
