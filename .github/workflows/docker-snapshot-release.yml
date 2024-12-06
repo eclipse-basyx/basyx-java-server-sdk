@@ -92,7 +92,7 @@ jobs:
             module_root=$(dirname "$(dirname "$(dirname "${{ matrix.path }}")")")
             artifact_id=$(basename "$module_root")
             # Run with dockerbuild profile and namespace
-            mvn clean install -DskipTests -Pdockerbuild "-Ddocker.namespace=${{ env.DOCKER_NAMESPACE }}" --pl "org.eclipse.digitaltwin.basyx:${artifact_id}"
+            mvn clean install -DskipTests -Pdockerbuild "-Ddocker.namespace=${{ env.DOCKER_NAMESPACE }}" --pl "org.eclipse.digitaltwin.basyx:${artifact_id}" -am
           else
             mvn clean install -DskipTests
           fi
