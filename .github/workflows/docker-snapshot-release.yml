@@ -86,6 +86,8 @@ jobs:
       - name: Determine FINAL_NAME for registry
         run: |
           if [[ "${{ matrix.name }}" == *"registry"* ]]; then
+            module_root=$(dirname "$(dirname "${{ matrix.path }}")")
+            cd "$module_root"
             FINAL_NAME=$(mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout)
             echo "FINAL_ARGS=FINAL_NAME=${FINAL_NAME}" >> $GITHUB_ENV
           else
