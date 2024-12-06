@@ -24,6 +24,7 @@
 		<module>basyx.conceptdescriptionrepository</module>
 		<module>basyx.aasxfileserver</module>
 		<module>basyx.aasdiscoveryservice</module>
+		<module>basyx.gateway</module>
 	</modules>
 	<name>BaSyx Parent</name>
 	<description>Parent POM for Eclipse BaSyx</description>
@@ -778,6 +779,22 @@
 				<artifactId>basyx.submodelregistry-client-native</artifactId>
 				<version>${revision}</version>
 			</dependency>
+			<!-- basyx.gateway -->
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.gateway-http</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.gateway.component</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.gateway-core</artifactId>
+				<version>${revision}</version>
+			</dependency>
 
 			<!-- tests -->
 			<!-- basyx.common -->
@@ -1213,6 +1230,25 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasxfileserver.component</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<!-- basyx.gateway -->
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.gateway-http</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.gateway.component</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.gateway-core</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>

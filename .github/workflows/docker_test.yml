@@ -415,3 +415,29 @@ jobs:
 
       - name: Clean up
         run: exit 0
+
+  build-test-gateway:
+    runs-on: ubuntu-latest
+    name: Gateway - Build and Start Docker Image
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+      - name: Build BaSyx
+        run: |
+          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
+
+      - name: Build Gateway Docker Image
+        run: |
+          mvn package -DskipTests -Ddocker.namespace=test --pl "org.eclipse.digitaltwin.basyx:basyx.gateway.component"
+
+      - name: Test Gateway Docker Image
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && ./.github/workflows/scripts/build_start_docker_image.sh test/basyx-gateway ${VERSION} test_basyx_gateway
+
+      - name: Clean up
+        run: exit 0
