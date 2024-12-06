@@ -72,8 +72,8 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ${{ matrix.path }}/Dockerfile
+          context: ${{ matrix.path }}
+          file: Dockerfile
           push: true
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: |
