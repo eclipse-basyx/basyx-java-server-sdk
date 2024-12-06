@@ -23,18 +23,30 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.backend;
+package org.eclipse.digitaltwin.basyx.core.pagination;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.core.BaSyxCrudRepository;
+import java.util.List;
+import java.util.function.Function;
 
 /**
- * Backend provider for the {@link Submodel}
+ * An utility class for Pagination
  * 
- * @author mateusmolina, despen, danish
+ * @author danish
  */
-public interface SubmodelBackendProvider {
+public class PaginationUtilities {
 	
-	public BaSyxCrudRepository<Submodel> getCrudRepository();
-	
+	public static String resolveCursor(PaginationInfo pRequest, List<String> data) {
+	    return resolveCursor(pRequest, data, Function.identity());
+	}
+
+	public static <T> String resolveCursor(PaginationInfo pRequest, List<T> data, Function<T, String> idResolver) {
+
+		if (data.isEmpty() || !pRequest.isPaged())
+			return null;
+
+		T last = data.get(data.size() - 1);
+
+		return idResolver.apply(last);
+	}
+
 }

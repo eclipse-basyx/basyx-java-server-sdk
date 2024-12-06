@@ -41,6 +41,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.TestAASEnvironmentSerialization;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasFilter;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.authorization.AccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.authorization.DummyCredential;
@@ -100,7 +101,7 @@ public class TestAuthorizedAasEnvironmentSerialization {
 	public void reset() throws FileNotFoundException, IOException {
 		configureSecurityContext();
 		
-		Collection<AssetAdministrationShell> assetAdministrationShells = aasRepo.getAllAas(PaginationInfo.NO_LIMIT).getResult();
+		Collection<AssetAdministrationShell> assetAdministrationShells = aasRepo.getAllAas(PaginationInfo.NO_LIMIT, new AasFilter()).getResult();
 		Collection<Submodel> submodels = submodelRepo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult();
 		Collection<ConceptDescription> conceptDescriptions = conceptDescriptionRepo.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult();
 		

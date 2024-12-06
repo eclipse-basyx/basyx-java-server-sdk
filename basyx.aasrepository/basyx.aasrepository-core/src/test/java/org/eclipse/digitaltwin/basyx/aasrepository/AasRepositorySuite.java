@@ -25,6 +25,7 @@
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ import org.junit.Test;
 /**
  * Testsuite for implementations of the AasRepository interface
  * 
- * @author schnicke, kammognie, mateusmolina, despen
+ * @author schnicke, kammognie, mateusmolina, despen, danish
  *
  */
 public abstract class AasRepositorySuite extends AasServiceSuite {
@@ -72,8 +73,90 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 		List<AssetAdministrationShell> expected = DummyAasFactory.createShells();
 		AasRepository aasRepo = getAasRepository(expected);
 		PaginationInfo pInfo = new PaginationInfo(2, null);
-		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(pInfo).getResult();
+		AasFilter aasFilter = new AasFilter();
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(pInfo, aasFilter).getResult();
 		assertEquals(expected, coll);
+	}
+	
+	@Test
+	public void retrieveAllAasWithNoFiltering() throws Exception {
+		List<AssetAdministrationShell> expected = DummyAasFactory.createShellsForFiltering();
+		AasRepository aasRepo = getAasRepository(expected);
+		PaginationInfo pInfo = PaginationInfo.NO_LIMIT;
+		AasFilter aasFilter = new AasFilter();
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(pInfo, aasFilter).getResult();
+		
+		assertTrue(expected.containsAll(coll));
+		assertTrue(coll.containsAll(expected));
+	}
+	
+	@Test
+	public void retrieveAllAasWithIdShortFiltering() throws Exception {
+		List<AssetAdministrationShell> allShells = DummyAasFactory.createShellsForFiltering();
+		AasRepository aasRepo = getAasRepository(allShells);
+		
+		List<AssetAdministrationShell> expectedShells = DummyAasFactory.createShellsWithSameIdShort();
+		
+		PaginationInfo pInfo = PaginationInfo.NO_LIMIT;
+		AasFilter aasFilter = new AasFilter();
+		aasFilter.setIdShort(DummyAasFactory.DUMMY_ID_SHORT);
+		
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(pInfo, aasFilter).getResult();
+		
+		assertTrue(expectedShells.containsAll(coll));
+		assertTrue(coll.containsAll(expectedShells));
+	}
+	
+	@Test
+	public void retrieveAllAasWithSpecificAssetIdFiltering() throws Exception {
+		List<AssetAdministrationShell> allShells = DummyAasFactory.createShellsForFiltering();
+		AasRepository aasRepo = getAasRepository(allShells);
+		
+		List<AssetAdministrationShell> expectedShells = DummyAasFactory.getAllShellsWithSpecificAssetIds();
+		
+		PaginationInfo pInfo = PaginationInfo.NO_LIMIT;
+		AasFilter aasFilter = new AasFilter();
+		aasFilter.setSpecificAssetIds(DummyAasFactory.getSpecificAssetIdsForFiltering());
+		
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(pInfo, aasFilter).getResult();
+		
+		assertTrue(expectedShells.containsAll(coll));
+		assertTrue(coll.containsAll(expectedShells));
+	}
+	
+	@Test
+	public void retrieveAllAasWithSpecificAssetIdAndIdShortFiltering() throws Exception {
+		List<AssetAdministrationShell> allShells = DummyAasFactory.createShellsForFiltering();
+		AasRepository aasRepo = getAasRepository(allShells);
+		
+		List<AssetAdministrationShell> expectedShells = Arrays.asList(DummyAasFactory.getShellWithIdShortAndSpecificAssetId());
+		
+		PaginationInfo pInfo = PaginationInfo.NO_LIMIT;
+		AasFilter aasFilter = new AasFilter();
+		aasFilter.setIdShort(DummyAasFactory.DUMMY_ID_SHORT);
+		aasFilter.setSpecificAssetIds(DummyAasFactory.getSpecificAssetIdsForFiltering());
+		
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(pInfo, aasFilter).getResult();
+		
+		assertTrue(expectedShells.containsAll(coll));
+		assertTrue(coll.containsAll(expectedShells));
+	}
+	
+	@Test
+	public void retrieveAllAasWithIdFiltering() throws Exception {
+		List<AssetAdministrationShell> allShells = DummyAasFactory.createShellsForFiltering();
+		AasRepository aasRepo = getAasRepository(allShells);
+		
+		List<AssetAdministrationShell> expectedShells = DummyAasFactory.createShells();
+		
+		PaginationInfo pInfo = PaginationInfo.NO_LIMIT;
+		AasFilter aasFilter = new AasFilter();
+		aasFilter.setIds(Arrays.asList(DummyAasFactory.AASWITHASSETINFORMATION_ID, DummyAasFactory.AASWITHSUBMODELREF_ID));
+		
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(pInfo, aasFilter).getResult();
+		
+		assertTrue(expectedShells.containsAll(coll));
+		assertTrue(coll.containsAll(expectedShells));
 	}
 
 	@Test
@@ -222,7 +305,7 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 		List<AssetAdministrationShell> expected = DummyAasFactory.createShells();
 		AasRepository aasRepo = getAasRepository(expected);
 
-		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null));
+		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null), new AasFilter());
 		List<AssetAdministrationShell> resultList = result.getResult();
 		assertEquals(1, resultList.size());
 		assertEquals(DummyAasFactory.AASWITHSUBMODELREF_ID, resultList.stream().findFirst().get().getId());
@@ -234,11 +317,11 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 		AasRepository aasRepo = getAasRepository(expected);
 		List<AssetAdministrationShell> retrieved = new ArrayList<>();
 
-		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null));
+		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null), new AasFilter());
 		retrieved.addAll(result.getResult());
 
 		String cursor = result.getCursor();
-		result = aasRepo.getAllAas(new PaginationInfo(1, cursor));
+		result = aasRepo.getAllAas(new PaginationInfo(1, cursor), new AasFilter());
 		retrieved.addAll(result.getResult());
 
 		assertEquals(expected, retrieved);
