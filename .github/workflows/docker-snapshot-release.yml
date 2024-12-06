@@ -100,10 +100,10 @@ jobs:
           # Go three levels up from src/main/docker to get the module root
           module_root=$(dirname "$(dirname "$(dirname "${{ matrix.path }}")")")
           
-          # Find the large JAR after repackage (enabled by dockerbuild profile)
-          JAR_FILE=$(ls "$module_root/target/"*.jar | grep -v original | head -n 1)
+          # Find the repackaged JAR in the new location
+          JAR_FILE=$(ls "$module_root/target/docker/aaronzi/build/maven/"*.jar | head -n 1)
           if [ -z "$JAR_FILE" ]; then
-            echo "No repackaged JAR found in $module_root/target. Check your build."
+            echo "No repackaged JAR found in $module_root/target/docker/aaronzi/build/maven/. Check your build."
             exit 1
           fi
 
