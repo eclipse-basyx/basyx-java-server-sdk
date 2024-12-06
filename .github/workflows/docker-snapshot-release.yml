@@ -20,6 +20,9 @@ on:
       - 'LICENSE'
       - 'NOTICE'
 
+env:
+  DOCKER_NAMESPACE: eclipsebasyx
+
 jobs:
   build-and-push-prerelease:
     runs-on: ubuntu-latest
@@ -89,7 +92,7 @@ jobs:
             module_root=$(dirname "$(dirname "$(dirname "${{ matrix.path }}")")")
             artifact_id=$(basename "$module_root")
             # Run with dockerbuild profile and namespace
-            mvn clean install -DskipTests -Pdockerbuild "-Ddocker.namespace=aaronzi" --pl "org.eclipse.digitaltwin.basyx:${artifact_id}"
+            mvn clean install -DskipTests -Pdockerbuild "-Ddocker.namespace=${{ env.DOCKER_NAMESPACE }}" --pl "org.eclipse.digitaltwin.basyx:${artifact_id}"
           else
             mvn clean install -DskipTests
           fi
@@ -101,9 +104,9 @@ jobs:
           module_root=$(dirname "$(dirname "$(dirname "${{ matrix.path }}")")")
 
           # Adjust the path to where the dockerbuild profile places the JAR
-          JAR_FILE=$(ls "$module_root/target/docker/aaronzi/${{ matrix.name }}/2.0.0-SNAPSHOT/build/maven/"*.jar | head -n 1)
+          JAR_FILE=$(ls "$module_root/target/docker/${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}/2.0.0-SNAPSHOT/build/maven/"*.jar | head -n 1)
           if [ -z "$JAR_FILE" ]; then
-            echo "No repackaged JAR found in $module_root/target/docker/aaronzi/${{ matrix.name }}/2.0.0-SNAPSHOT/build/maven. Check your build."
+            echo "No repackaged JAR found in $module_root/target/docker/${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}/2.0.0-SNAPSHOT/build/maven. Check your build."
             exit 1
           fi
 
@@ -127,9 +130,9 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: |
-            aaronzi/${{ matrix.name }}:2.0.0-SNAPSHOT
+            ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:2.0.0-SNAPSHOT
           build-args: ${{ env.FINAL_ARGS }}
 
       - name: Verify Docker Image
         run: |
-          docker pull aaronzi/${{ matrix.name }}:2.0.0-SNAPSHOT
+          docker pull ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:2.0.0-SNAPSHOT
