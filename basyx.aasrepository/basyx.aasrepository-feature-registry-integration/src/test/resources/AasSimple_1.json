@@ -5,5 +5,10 @@
 	"assetInformation": {
 		"assetKind": "Instance",
 		"globalAssetId": "globalAssetId"
+	},
+	"administration": {
+		"version": "0",
+		"revision": "9",
+		"templateId": "testTemplateId"
 	}
 }

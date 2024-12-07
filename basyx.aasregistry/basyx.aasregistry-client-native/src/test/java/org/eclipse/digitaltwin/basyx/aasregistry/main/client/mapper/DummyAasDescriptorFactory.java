@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AdministrativeInformation;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
@@ -55,6 +56,7 @@ public class DummyAasDescriptorFactory {
 		descriptor.setAssetKind(AssetKind.INSTANCE);
 		descriptor.setGlobalAssetId(globalAssetId);
 		descriptor.setEndpoints(endpoints);
+		descriptor.setAdministration(buildAdministrationInformation());
 
 		return descriptor;
 	}
@@ -102,4 +104,13 @@ public class DummyAasDescriptorFactory {
 			throw new RuntimeException();
 		}
 	}
+
+	private static AdministrativeInformation buildAdministrationInformation() {
+		AdministrativeInformation administrativeInformation = new AdministrativeInformation();
+		administrativeInformation.setVersion("0");
+		administrativeInformation.setRevision("9");
+		administrativeInformation.setTemplateId("testTemplateId");
+		return administrativeInformation;
+	}
+
 }
