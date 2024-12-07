@@ -73,8 +73,6 @@ public class InMemorySubmodelService implements SubmodelService {
 
 	private final FileRepository fileRepository;
 
-	private final Object submodelLock = new Object();
-
 	/**
 	 * Creates the InMemory SubmodelService containing the passed Submodel
 	 * 
@@ -117,22 +115,18 @@ public class InMemorySubmodelService implements SubmodelService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setSubmodelElementValue(String idShort, SubmodelElementValue value) throws ElementDoesNotExistException {
-		synchronized (submodelLock) {
-			SubmodelElementValueMapperFactory submodelElementValueFactory = new SubmodelElementValueMapperFactory();
+		SubmodelElementValueMapperFactory submodelElementValueFactory = new SubmodelElementValueMapperFactory();
 
-			ValueMapper<SubmodelElementValue> valueMapper = submodelElementValueFactory.create(getSubmodelElement(idShort));
+		ValueMapper<SubmodelElementValue> valueMapper = submodelElementValueFactory.create(getSubmodelElement(idShort));
 
-			valueMapper.setValue(value);
-		}
+		valueMapper.setValue(value);
 	}
 
 	@Override
 	public void createSubmodelElement(SubmodelElement submodelElement) throws CollidingIdentifierException {
-		synchronized (submodelLock) {
-			List<SubmodelElement> smElements = submodel.getSubmodelElements();
-			throwIfSubmodelElementExists(submodelElement.getIdShort());
-			smElements.add(submodelElement);
-		}
+		List<SubmodelElement> smElements = submodel.getSubmodelElements();
+		throwIfSubmodelElementExists(submodelElement.getIdShort());
+		smElements.add(submodelElement);
 	}
 
 	private void throwIfSubmodelElementExists(String submodelElementId) {
@@ -146,51 +140,45 @@ public class InMemorySubmodelService implements SubmodelService {
 
 	@Override
 	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException, CollidingIdentifierException {
-		synchronized (submodelLock) {
-			throwIfSubmodelElementExists(getFullIdShortPath(idShortPath, submodelElement.getIdShort()));
-			
-			SubmodelElement parentSme = parser.getSubmodelElementFromIdShortPath(idShortPath);
-			if (parentSme instanceof SubmodelElementList) {
-				SubmodelElementList list = (SubmodelElementList) parentSme;
-				List<SubmodelElement> submodelElements = list.getValue();
-				submodelElements.add(submodelElement);
-				list.setValue(submodelElements);
-				return;
-			}
-			if (parentSme instanceof SubmodelElementCollection) {
-				SubmodelElementCollection collection = (SubmodelElementCollection) parentSme;
-				List<SubmodelElement> submodelElements = collection.getValue();
-				submodelElements.add(submodelElement);
-				collection.setValue(submodelElements);
-			}
+		throwIfSubmodelElementExists(getFullIdShortPath(idShortPath, submodelElement.getIdShort()));
+
+		SubmodelElement parentSme = parser.getSubmodelElementFromIdShortPath(idShortPath);
+		if (parentSme instanceof SubmodelElementList) {
+			SubmodelElementList list = (SubmodelElementList) parentSme;
+			List<SubmodelElement> submodelElements = list.getValue();
+			submodelElements.add(submodelElement);
+			list.setValue(submodelElements);
+			return;
+		}
+		if (parentSme instanceof SubmodelElementCollection) {
+			SubmodelElementCollection collection = (SubmodelElementCollection) parentSme;
+			List<SubmodelElement> submodelElements = collection.getValue();
+			submodelElements.add(submodelElement);
+			collection.setValue(submodelElements);
 		}
 	}
 
 	@Override
 	public void updateSubmodelElement(String idShortPath, SubmodelElement submodelElement) {
-		synchronized (submodelLock) {
-			deleteSubmodelElement(idShortPath);
+		deleteSubmodelElement(idShortPath);
 
-			String idShortPathParentSME = parser.getIdShortPathOfParentElement(idShortPath);
-			if (idShortPath.equals(idShortPathParentSME)) {
-				createSubmodelElement(submodelElement);
-				return;
-			}
-			createSubmodelElement(idShortPathParentSME, submodelElement);
+		String idShortPathParentSME = parser.getIdShortPathOfParentElement(idShortPath);
+		if (idShortPath.equals(idShortPathParentSME)) {
+			createSubmodelElement(submodelElement);
+			return;
 		}
+		createSubmodelElement(idShortPathParentSME, submodelElement);
 	}
 
 	@Override
 	public void deleteSubmodelElement(String idShortPath) throws ElementDoesNotExistException {
-		synchronized (submodelLock) {
-			deleteAssociatedFileIfAny(idShortPath);
+		deleteAssociatedFileIfAny(idShortPath);
 
-			if (!helper.isNestedIdShortPath(idShortPath)) {
-				deleteFlatSubmodelElement(idShortPath);
-				return;
-			}
-			deleteNestedSubmodelElement(idShortPath);
+		if (!helper.isNestedIdShortPath(idShortPath)) {
+			deleteFlatSubmodelElement(idShortPath);
+			return;
 		}
+		deleteNestedSubmodelElement(idShortPath);
 	}
 
 	private void deleteNestedSubmodelElement(String idShortPath) {
@@ -268,52 +256,48 @@ public class InMemorySubmodelService implements SubmodelService {
 
 	@Override
 	public void setFileValue(String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
-		synchronized (submodelLock) {
-			SubmodelElement submodelElement = getSubmodelElement(idShortPath);
+		SubmodelElement submodelElement = getSubmodelElement(idShortPath);
 
-			throwIfSmElementIsNotAFile(submodelElement);
+		throwIfSmElementIsNotAFile(submodelElement);
 
-			File fileSmElement = (File) submodelElement;
+		File fileSmElement = (File) submodelElement;
 
-			if (fileRepository.exists(fileSmElement.getValue()))
-				fileRepository.delete(fileSmElement.getValue());
+		if (fileRepository.exists(fileSmElement.getValue()))
+			fileRepository.delete(fileSmElement.getValue());
 
-			String uniqueFileName = createUniqueFileName(idShortPath, fileName);
+		String uniqueFileName = createUniqueFileName(idShortPath, fileName);
 
-			FileMetadata fileMetadata = new FileMetadata(uniqueFileName, fileSmElement.getContentType(), inputStream);
+		FileMetadata fileMetadata = new FileMetadata(uniqueFileName, fileSmElement.getContentType(), inputStream);
 
-			if (fileRepository.exists(fileMetadata.getFileName()))
-				fileRepository.delete(fileMetadata.getFileName());
+		if (fileRepository.exists(fileMetadata.getFileName()))
+			fileRepository.delete(fileMetadata.getFileName());
 
-			String filePath = fileRepository.save(fileMetadata);
+		String filePath = fileRepository.save(fileMetadata);
 
-			FileBlobValue fileValue = new FileBlobValue(fileSmElement.getContentType(), filePath);
+		FileBlobValue fileValue = new FileBlobValue(fileSmElement.getContentType(), filePath);
 
-			setSubmodelElementValue(idShortPath, fileValue);
-		}
+		setSubmodelElementValue(idShortPath, fileValue);
 
 	}
 
 	@Override
 	public void deleteFileValue(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		synchronized (submodelLock) {
-			SubmodelElement submodelElement = getSubmodelElement(idShortPath);
+		SubmodelElement submodelElement = getSubmodelElement(idShortPath);
 
-			throwIfSmElementIsNotAFile(submodelElement);
+		throwIfSmElementIsNotAFile(submodelElement);
 
-			File fileSubmodelElement = (File) submodelElement;
-			String filePath = fileSubmodelElement.getValue();
+		File fileSubmodelElement = (File) submodelElement;
+		String filePath = fileSubmodelElement.getValue();
 
-			fileRepository.delete(filePath);
+		fileRepository.delete(filePath);
 
-			FileBlobValue fileValue = new FileBlobValue(" ", " ");
+		FileBlobValue fileValue = new FileBlobValue(" ", " ");
 
-			setSubmodelElementValue(idShortPath, fileValue);
-		}
+		setSubmodelElementValue(idShortPath, fileValue);
 	}
 
 	@Override
-	public InputStream getFileByFilePath(String filePath) throws FileDoesNotExistException{
+	public InputStream getFileByFilePath(String filePath) throws FileDoesNotExistException {
 		return fileRepository.find(filePath);
 	}
 
