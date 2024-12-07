@@ -103,8 +103,8 @@ public class AasRepositoryRegistryLinkDescriptorGenerationTest {
     private AssetAdministrationShellDescriptor createAndRetrieveDescriptor(AssetAdministrationShell shell) {
         registryIntegrationAasRepository.createAas(shell);
 
-        AasDescriptorFactory descriptorFactory = new AasDescriptorFactory(shell, mockedRegistryLink.getAasRepositoryBaseURLs(), mockedAttributeMapper);
-        return descriptorFactory.create();
+        AasDescriptorFactory descriptorFactory = new AasDescriptorFactory(mockedRegistryLink.getAasRepositoryBaseURLs(), mockedAttributeMapper);
+        return descriptorFactory.create(shell);
     }
     
     private AssetAdministrationShell createDummyAas() {
