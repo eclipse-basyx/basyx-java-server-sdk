@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -26,8 +26,6 @@
 
 package org.eclipse.digitaltwin.basyx.operation;
 
-import java.util.function.Function;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.builder.OperationBuilder;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperation;
@@ -38,8 +36,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperation;
  * @author schnicke
  *
  */
-public class InvokableOperation extends DefaultOperation {
-	private Function<OperationVariable[], OperationVariable[]> invokable;
+public class InvokableOperation extends DefaultOperation implements Invokable {
+	private Invokable invokable;
 	
 	/**
 	 * Invokes the operation with the passed arguments
@@ -47,8 +45,9 @@ public class InvokableOperation extends DefaultOperation {
 	 * @param arguments
 	 * @return
 	 */
+	@Override
 	public OperationVariable[] invoke(OperationVariable[] arguments) {
-		return invokable.apply(arguments);
+		return invokable.invoke(arguments);
 	}
 
 	/**
@@ -56,7 +55,7 @@ public class InvokableOperation extends DefaultOperation {
 	 * 
 	 * @param invokable
 	 */
-	public void setInvokable(Function<OperationVariable[], OperationVariable[]> invokable) {
+	public void setInvokable(Invokable invokable) {
 		this.invokable = invokable;
 	}
 
@@ -72,7 +71,7 @@ public class InvokableOperation extends DefaultOperation {
 			return new InvokableOperation();
 		}
 
-		public Builder invokable(Function<OperationVariable[], OperationVariable[]> invokable) {
+		public Builder invokable(Invokable invokable) {
 			getBuildingInstance().setInvokable(invokable);
 			return getSelf();
 		}
