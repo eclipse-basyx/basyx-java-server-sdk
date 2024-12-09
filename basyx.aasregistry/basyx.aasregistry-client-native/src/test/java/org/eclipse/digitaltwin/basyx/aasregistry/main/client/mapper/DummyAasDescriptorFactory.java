@@ -47,7 +47,7 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 public class DummyAasDescriptorFactory {
 	private static final String AAS_REPOSITORY_PATH = "/shells";
 
-	public static AssetAdministrationShellDescriptor createDummyDescriptor(String aasId, String idShort, String globalAssetId, List<Endpoint> endpoints) {
+	public static AssetAdministrationShellDescriptor createDummyDescriptor(String aasId, String idShort, String globalAssetId, AdministrativeInformation administrativeInformation, List<Endpoint> endpoints) {
 
 		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
 
@@ -56,19 +56,27 @@ public class DummyAasDescriptorFactory {
 		descriptor.setAssetKind(AssetKind.INSTANCE);
 		descriptor.setGlobalAssetId(globalAssetId);
 		descriptor.setEndpoints(endpoints);
-		descriptor.setAdministration(buildAdministrationInformation());
+		descriptor.setAdministration(administrativeInformation);
 
 		return descriptor;
 	}
 
-	public static AssetAdministrationShellDescriptor createDummyDescriptor(String aasId, String idShort, String globalAssetId, String... aasRepoBaseUrls) {
+	public static AssetAdministrationShellDescriptor createDummyDescriptor(String aasId, String idShort, String globalAssetId, AdministrativeInformation administrativeInformation, String... aasRepoBaseUrls) {
 		LinkedList<Endpoint> endpoints = new LinkedList<>();
 
 		for (String eachUrl : aasRepoBaseUrls) {
 			endpoints.add(createEndpoint(aasId, eachUrl, "AAS-3.0"));
 		}
 
-		return createDummyDescriptor(aasId, idShort, globalAssetId, endpoints);
+		return createDummyDescriptor(aasId, idShort, globalAssetId, administrativeInformation, endpoints);
+	}
+
+	public static AdministrativeInformation buildAdministrationInformation(String version, String revision, String templateId) {
+		AdministrativeInformation administrativeInformation = new AdministrativeInformation();
+		administrativeInformation.setVersion(version);
+		administrativeInformation.setRevision(revision);
+		administrativeInformation.setTemplateId(templateId);
+		return administrativeInformation;
 	}
 
 	public static Endpoint createEndpoint(String endpointUrl, String endpointInterface) {
@@ -84,6 +92,7 @@ public class DummyAasDescriptorFactory {
 
 		return createEndpoint(href, endpointInterface);
 	}
+
 
 	private static ProtocolInformation createProtocolInformation(String href) {
 		ProtocolInformation protocolInformation = new ProtocolInformation();
@@ -105,12 +114,5 @@ public class DummyAasDescriptorFactory {
 		}
 	}
 
-	private static AdministrativeInformation buildAdministrationInformation() {
-		AdministrativeInformation administrativeInformation = new AdministrativeInformation();
-		administrativeInformation.setVersion("0");
-		administrativeInformation.setRevision("9");
-		administrativeInformation.setTemplateId("testTemplateId");
-		return administrativeInformation;
-	}
 
 }
