@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+
+  submodel-registry-root:
+    image: submodel-registry-test/submodel-registry-feature-hierarchy-example:2.0.0-SNAPSHOT
+    container_name: submodel-registry-root
+    ports:
+      - "8051:8080"
+    environment:
+      SERVER_SERVLET_CONTEXT_PATH: /
+    networks:
+      - basyx-submodelregistry-feature-hierarchy-example
+      
+  registry.delegated-submodel-registry:
+    image: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: registry.delegated-submodel-registry
+    ports:
+      - "8052:8080"
+    environment:
+      SERVER_SERVLET_CONTEXT_PATH: /
+    volumes:
+      - ./submodel-registry-delegated.yml:/workspace/config/application.yml
+    networks:
+      - basyx-submodelregistry-feature-hierarchy-example
+
+networks:
+  basyx-submodelregistry-feature-hierarchy-example:
+    name: basyx-submodelregistry-feature-hierarchy-example
+    driver: bridge
