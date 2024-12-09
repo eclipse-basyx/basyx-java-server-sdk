@@ -1,5 +1,6 @@
 FROM quay.io/keycloak/keycloak:22.0.0
-
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
 # Make the realm configuration available for import
 COPY /realm/BaSyx-realm.json /opt/keycloak_import/
 

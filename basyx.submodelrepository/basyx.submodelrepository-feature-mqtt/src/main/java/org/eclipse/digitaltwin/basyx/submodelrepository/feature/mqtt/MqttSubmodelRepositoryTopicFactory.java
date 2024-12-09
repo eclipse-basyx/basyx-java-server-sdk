@@ -41,7 +41,9 @@ public class MqttSubmodelRepositoryTopicFactory extends AbstractMqttTopicFactory
 	private static final String CREATED = "created";
 	private static final String UPDATED = "updated";
 	private static final String DELETED = "deleted";
+	private static final String PATCHED = "patched";
 	private static final String SUBMODELELEMENTS = "submodelElements";
+	private static final String ATTACHMENT = "attachment";
 
 	/**
 	 * @param encoder
@@ -103,5 +105,35 @@ public class MqttSubmodelRepositoryTopicFactory extends AbstractMqttTopicFactory
 	 */
 	public String createDeleteSubmodelElementTopic(String repoId, String submodelId, String submodelElementId) {
 		return new StringJoiner("/", "", "").add(SUBMODELREPOSITORY).add(repoId).add(SUBMODELS).add(encodeId(submodelId)).add(SUBMODELELEMENTS).add(submodelElementId).add(DELETED).toString();
+	}
+	
+	/**
+	 * Creates the hierarchical topic for the patch event of submodelElements
+	 * 
+	 * @param repoId
+	 * @param submodelId
+	 */
+	public String createPatchSubmodelElementsTopic(String repoId, String submodelId) {
+		return new StringJoiner("/", "", "").add(SUBMODELREPOSITORY).add(repoId).add(SUBMODELS).add(encodeId(submodelId)).add(SUBMODELELEMENTS).add(PATCHED).toString();
+	}
+	
+	/**
+	 * Creates the hierarchical topic for the delete event of a file of a file element
+	 * 
+	 * @param repoId
+	 * 
+	 */
+	public String createDeleteFileValueTopic(String repoId, String submodelId, String submodelElementId) {
+		return new StringJoiner("/", "", "").add(SUBMODELREPOSITORY).add(repoId).add(SUBMODELS).add(encodeId(submodelId)).add(SUBMODELELEMENTS).add(submodelElementId).add(ATTACHMENT).add(DELETED).toString();
+	}
+	
+	/**
+	 * Creates the hierarchical topic for the update event of a file of a file element
+	 * 
+	 * @param repoId
+	 * 
+	 */
+	public String createUpdateFileValueTopic(String repoId, String submodelId, String submodelElementId) {
+		return new StringJoiner("/", "", "").add(SUBMODELREPOSITORY).add(repoId).add(SUBMODELS).add(encodeId(submodelId)).add(SUBMODELELEMENTS).add(submodelElementId).add(ATTACHMENT).add(UPDATED).toString();
 	}
 }

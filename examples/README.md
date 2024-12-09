@@ -4,6 +4,10 @@ This folder contains example configurations and docker compose files for setting
 ## Standalone Submodel
 For definining standalone submodels, see [Submodel Service](../basyx.submodelservice)
 
+## Time Series Data Submodel Example
+An example showcasing the integration of time series data leveraging the plugin in the AAS Web UI.
+See [Time Series Data Example](https://github.com/eclipse-basyx/basyx-aas-web-ui/tree/main/examples/TimeSeriesData) in the repository of the AAS Web UI.
+
 ## BaSyx with NGINX
 See the separate [NGINX example](BaSyxNGINX) for a comprehensive setup leveraging NGINX.
 
