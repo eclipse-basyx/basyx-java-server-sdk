@@ -24,7 +24,7 @@
  ******************************************************************************/
 
 
-package org.eclipse.digitaltwin.basyx;
+package org.eclipse.digitaltwin.basyx.operation;
 
 import java.util.function.Function;
 
