@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.security.interfaces.RSAPublicKey;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasFilter;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.DummyAasFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.DummyAuthorizedAasRepositoryComponent;
@@ -83,7 +84,7 @@ public class TestAuthorizedConnectedAasService extends AasServiceSuite {
 	@After
 	public void removeAasFromRepo() {
 		AasRepository repo = appContext.getBean(AasRepository.class);
-		repo.getAllAas(PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteAas);
+		repo.getAllAas(PaginationInfo.NO_LIMIT, new AasFilter()).getResult().stream().map(s -> s.getId()).forEach(repo::deleteAas);
 	}
 
 	@AfterClass
