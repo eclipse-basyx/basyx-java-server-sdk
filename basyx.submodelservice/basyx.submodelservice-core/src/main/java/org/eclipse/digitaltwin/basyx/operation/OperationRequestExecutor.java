@@ -70,9 +70,4 @@ public class OperationRequestExecutor {
         return new DefaultOperationResult.Builder().success(true).outputArguments(outputVars).inoutputArguments(inoutputVars).build();
     }
 
-    @FunctionalInterface
-    public interface Invokable {
-        OperationVariable[] invoke(OperationVariable[] arguments);
-    }
-
 }

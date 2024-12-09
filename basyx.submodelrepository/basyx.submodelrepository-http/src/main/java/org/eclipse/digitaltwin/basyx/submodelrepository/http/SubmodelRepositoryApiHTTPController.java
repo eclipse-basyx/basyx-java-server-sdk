@@ -49,7 +49,7 @@ import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.eclipse.digitaltwin.basyx.operation.OperationRequestExecutor;
-import org.eclipse.digitaltwin.basyx.operation.OperationRequestExecutor.Invokable;
+import org.eclipse.digitaltwin.basyx.operation.Invokable;
 import org.eclipse.digitaltwin.basyx.pagination.GetSubmodelElementsResult;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination.GetSubmodelsResult;
