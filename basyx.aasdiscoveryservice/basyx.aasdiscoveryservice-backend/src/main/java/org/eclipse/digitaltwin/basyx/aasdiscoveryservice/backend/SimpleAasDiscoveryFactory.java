@@ -74,7 +74,7 @@ public class SimpleAasDiscoveryFactory implements AasDiscoveryServiceFactory {
 
 	@Override
 	public AasDiscoveryService create() {
-		return new CrudAasDiscovery(aasBackendProvider, aasDiscoveryName);
+		return new ThreadSafeAasDiscovery(new CrudAasDiscovery(aasBackendProvider, aasDiscoveryName));
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 DFKI GmbH (https://www.dfki.de/en/web)
+ * Copyright (C) 2024 DFKI GmbH (https://www.dfki.de/en/web)
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,39 +22,37 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.memory;
+package org.eclipse.digitaltwin.basyx.common.backend;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
-class ThreadSafeAccess {
-
+/**
+ * Utility class for thread-safe access
+ * 
+ * @author Gerhard Sonnenberg DFKI GmbH, mateusmolina
+ */
+public class ThreadSafeAccess {
 	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-	private final ReadLock readLock = lock.readLock();
-	private final WriteLock writeLock = lock.writeLock();
+	private final Lock readLock = lock.readLock();
+	private final Lock writeLock = lock.writeLock();
 
-	public <A> void write(Consumer<A> consumer, A arg1) {
-		runWithLock(consumer, arg1, readLock);
-	}
-
-	public <A, B> void write(BiConsumer<A, B> consumer, A arg1, B arg2) {
-		runWithLock(consumer, arg1, arg2, writeLock);
-	}
-
-	public <A, T> T read(Function<A, T> func, A arg1) {
-		return runWithLock(func, arg1, readLock);
-	}
-	
 	public <T> T write(Supplier<T> supplier) {
 		return runWithLock(supplier, writeLock);
 	}
 
+	public void write(Runnable action) {
+		runWithLock(action, writeLock);
+	}
+
+	public <T> T read(Supplier<T> supplier) {
+		return runWithLock(supplier, readLock);
+	}
+
+	public void read(Runnable action) {
+		runWithLock(action, readLock);
+	}
 	private <T> T runWithLock(Supplier<T> supplier, Lock lock) {
 		try {
 			lock.lock();
@@ -64,28 +62,10 @@ class ThreadSafeAccess {
 		}
 	}
 
-	private <A> void runWithLock(Consumer<A> consumer, A arg1, Lock lock) {
+	private void runWithLock(Runnable action, Lock lock) {
 		try {
 			lock.lock();
-			consumer.accept(arg1);
-		} finally {
-			lock.unlock();
-		}
-	}
-
-	private <T, A> T runWithLock(Function<A, T> func, A arg1, Lock lock) {
-		try {
-			lock.lock();
-			return func.apply(arg1);
-		} finally {
-			lock.unlock();
-		}
-	}
-	
-	private <A, B> void runWithLock(BiConsumer<A, B> consumer, A arg1, B arg2, Lock lock) {
-		try {
-			lock.lock();
-			consumer.accept(arg1, arg2);
+			action.run();
 		} finally {
 			lock.unlock();
 		}
