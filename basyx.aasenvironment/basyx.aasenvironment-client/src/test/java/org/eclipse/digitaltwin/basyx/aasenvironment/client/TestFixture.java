@@ -112,7 +112,7 @@ public class TestFixture {
 	}
 
 	public SubmodelDescriptor buildSmPre1Descriptor() {
-		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_PRE1_ID, SM_PRE1_IDSHORT, null, smRepositoryBasePath);
+		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_PRE1_ID, SM_PRE1_IDSHORT, null, null, smRepositoryBasePath);
 	}
 
 	public SubmodelDescriptor buildSmPre1Descriptor_withMultipleInterfaces() {
@@ -121,7 +121,7 @@ public class TestFixture {
 		endpoints.add(DummySubmodelDescriptorFactory.createEndpoint(smRepositoryBasePath, "SUBMODEL-REPOSITORY-3.0"));
 		endpoints.add(DummySubmodelDescriptorFactory.createEndpoint(SM_PRE1_ID, smRepositoryBasePath, "SUBMODEL-3.0"));
 
-		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_PRE1_ID, SM_PRE1_IDSHORT, null, endpoints);
+		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_PRE1_ID, SM_PRE1_IDSHORT, null, null, endpoints);
 	}
 
 	public AssetAdministrationShell buildAasPos1() {
@@ -137,7 +137,7 @@ public class TestFixture {
 	}
 
 	public SubmodelDescriptor buildSmPos1Descriptor() {
-		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_POS1_ID, SM_POS1_IDSHORT, new AttributeMapper(ConnectedAasManagerHelper.buildObjectMapper()).mapSemanticId(buildSmPos1SemanticId()), smRepositoryBasePath);
+		return DummySubmodelDescriptorFactory.createDummyDescriptor(SM_POS1_ID, SM_POS1_IDSHORT, new AttributeMapper(ConnectedAasManagerHelper.buildObjectMapper()).mapSemanticId(buildSmPos1SemanticId()), null, smRepositoryBasePath);
 	}
 
 	public Reference buildSmPos1SemanticId() {

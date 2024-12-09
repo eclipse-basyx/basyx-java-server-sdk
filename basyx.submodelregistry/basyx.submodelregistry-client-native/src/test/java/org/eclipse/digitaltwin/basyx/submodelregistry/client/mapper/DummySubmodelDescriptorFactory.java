@@ -33,6 +33,7 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.AdministrativeInformation;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Key;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.KeyTypes;
@@ -50,24 +51,25 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescr
 public class DummySubmodelDescriptorFactory {
 	private static final String SUBMODEL_REPOSITORY_PATH = "/submodels";
 
-	public static SubmodelDescriptor createDummyDescriptor(String smId, String idShort, Reference semanticId, List<Endpoint> endpoints) {
+	public static SubmodelDescriptor createDummyDescriptor(String smId, String idShort, Reference semanticId, AdministrativeInformation administrativeInformation, List<Endpoint> endpoints) {
 		SubmodelDescriptor descriptor = new SubmodelDescriptor();
 
 		descriptor.setId(smId);
 		descriptor.setIdShort(idShort);
 		descriptor.setSemanticId(semanticId);
 		descriptor.setEndpoints(endpoints);
+		descriptor.administration(administrativeInformation);
 
 		return descriptor;
 	}
 
-	public static SubmodelDescriptor createDummyDescriptor(String smId, String idShort, Reference semanticId, String... smRepoBaseUrls) {
+	public static SubmodelDescriptor createDummyDescriptor(String smId, String idShort, Reference semanticId, AdministrativeInformation administrativeInformation, String... smRepoBaseUrls) {
 		LinkedList<Endpoint> endpoints = new LinkedList<>();
 		for (String eachUrl : smRepoBaseUrls) {
 			endpoints.add(createEndpoint(smId, eachUrl, "SUBMODEL-3.0"));
 		}
 
-		return createDummyDescriptor(smId, idShort, semanticId, endpoints);
+		return createDummyDescriptor(smId, idShort, semanticId, administrativeInformation, endpoints);
 	}
 
 	public static Reference createSemanticId() {
@@ -86,6 +88,10 @@ public class DummySubmodelDescriptorFactory {
 		String href = createHref(smId, smRepoBaseUrl);
 
 		return createEndpoint(href, endpointInterface);
+	}
+
+	public static AdministrativeInformation buildAdministrationInformation(String version, String revision, String templateId) {
+		return new AdministrativeInformation().version(version).revision(revision).templateId(templateId);
 	}
 
 	private static ProtocolInformation createProtocolInformation(String href) {
