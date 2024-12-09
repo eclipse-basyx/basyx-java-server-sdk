@@ -19,6 +19,7 @@
 		<module>basyx.submodelrepository-backend</module>
 		<module>basyx.submodelrepository-backend-inmemory</module>
 		<module>basyx.submodelrepository-feature-mqtt</module>
+		<module>basyx.submodelrepository-feature-kafka</module>
 		<module>basyx.submodelrepository-feature-registry-integration</module>
 		<module>basyx.submodelrepository-feature-authorization</module>
 		<module>basyx.submodelrepository-feature-operation-delegation</module>

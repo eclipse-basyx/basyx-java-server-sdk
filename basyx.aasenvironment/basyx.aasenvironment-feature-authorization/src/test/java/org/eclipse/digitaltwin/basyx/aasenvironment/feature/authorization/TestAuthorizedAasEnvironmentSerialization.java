@@ -31,6 +31,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.Header;
@@ -53,7 +55,6 @@ import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
@@ -84,8 +85,7 @@ public class TestAuthorizedAasEnvironmentSerialization {
 	public static void setUp() throws FileNotFoundException, IOException {
 		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
 
-		appContext = new SpringApplication(DummyAasEnvironmentComponent.class).run(new String[] {});
-		
+        appContext = new SpringApplication(DummyAasEnvironmentComponent.class).run(new String[] {});
 		submodelRepo = appContext.getBean(SubmodelRepository.class);
 		aasRepo = appContext.getBean(AasRepository.class);
 		conceptDescriptionRepo = appContext.getBean(ConceptDescriptionRepository.class);
