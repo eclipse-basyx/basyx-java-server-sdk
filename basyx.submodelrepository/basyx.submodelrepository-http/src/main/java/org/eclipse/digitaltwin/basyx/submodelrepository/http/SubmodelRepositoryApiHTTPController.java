@@ -285,6 +285,10 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 	@Override
 	public ResponseEntity<OperationResult> invokeOperationSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid OperationRequest body, @Valid Boolean async) {
+
+		// TODO: #566 Add async operation execution support to
+		// SubmodelRepositoryController
+
 		Invokable invokable = inArgs -> repository.invokeOperation(submodelIdentifier.getIdentifier(), idShortPath, inArgs);
 		return ResponseEntity.ok(OperationRequestExecutor.executeOperationRequestSynchronously(invokable, body));
 	}
