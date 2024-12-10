@@ -31,8 +31,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 /**
- * Simple AAS repository factory that creates a {@link CrudAasRepository} with a
- * backend provider and a service factory
+ * Simple AAS repository factory that provides the {@link CrudAasRepository}
+ * component
  * 
  * @author mateusmolina
  * 

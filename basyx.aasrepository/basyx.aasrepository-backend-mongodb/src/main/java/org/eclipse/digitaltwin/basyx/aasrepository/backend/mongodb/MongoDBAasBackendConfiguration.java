@@ -26,10 +26,7 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
@@ -39,31 +36,22 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import org.springframework.data.mongodb.repository.support.MappingMongoEntityInformation;
 
 /**
- * Provides a InMemoryAasServiceFactory for usage in the MongoDB Aas Repository
- * backend.<br>
- * <br>
- * This is needed to ensure that the AasServiceFeatures are processed correctly
- * when utilizing MongoDb
  * 
- * @author schnicke
+ * Provides the MongoDB configuration for the {@link AasRepository}
+ * 
+ * @author schnicke, mateusmolina
  *
  */
 @Configuration
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-@EnableMongoRepositories
+@EnableMongoRepositories(basePackages = "org.eclipse.digitaltwin.basyx.aasrepository.backend")
 public class MongoDBAasBackendConfiguration {
 	@Bean
-	public AasServiceFactory getAasServiceFactory(FileRepository fileRepository) {
-		return new InMemoryAasServiceFactory(fileRepository);
-	}
-
-	@Bean
-	public MappingMongoEntityInformation<AssetAdministrationShell, String> getMappingMongoEntityInformation(BasyxMongoMappingContext mappingContext, @Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName) {
+	MappingMongoEntityInformation<AssetAdministrationShell, String> getMappingMongoEntityInformation(BasyxMongoMappingContext mappingContext, @Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName) {
 		mappingContext.addEntityMapping(AssetAdministrationShell.class, collectionName);
 
 		@SuppressWarnings("unchecked")
 		MongoPersistentEntity<AssetAdministrationShell> entity = (MongoPersistentEntity<AssetAdministrationShell>) mappingContext.getPersistentEntity(AssetAdministrationShell.class);
-
 		return new MappingMongoEntityInformation<>(entity);
 	}
 
