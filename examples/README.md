@@ -1,6 +1,9 @@
 # BaSyx V2 Examples
 This folder contains example configurations and docker compose files for setting up the BaSyx V2 infrastructure.
 
+## Minimal Example
+See the separate [Minimal example](BaSyxMinimal) for a minimal infrastructure setup example. 
+
 ## Standalone Submodel
 For definining standalone submodels, see [Submodel Service](../basyx.submodelservice)
 
