@@ -23,28 +23,36 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory;
+package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
-import org.eclipse.digitaltwin.basyx.common.backend.inmemory.core.InMemoryCrudRepository;
+import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.data.mongodb.repository.support.MappingMongoEntityInformation;
 
 /**
  * 
- * InMemory backend provider for the AAS
+ * Provides the MongoDB configuration for the {@link AasRepository}
  * 
- * @author mateusmolina, danish
+ * @author schnicke, mateusmolina
+ *
  */
-@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
-@Component
-public class AasInMemoryBackendProvider implements AasBackendProvider {
+@Configuration
+@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
+@EnableMongoRepositories(basePackages = "org.eclipse.digitaltwin.basyx.aasrepository.backend")
+public class MongoDBAasBackendConfiguration {
+	@Bean
+	MappingMongoEntityInformation<AssetAdministrationShell, String> getMappingMongoEntityInformation(BasyxMongoMappingContext mappingContext, @Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName) {
+		mappingContext.addEntityMapping(AssetAdministrationShell.class, collectionName);
 
-	@Override
-	public CrudRepository<AssetAdministrationShell, String> getCrudRepository() {
-		return new InMemoryCrudRepository<AssetAdministrationShell>(AssetAdministrationShell::getId);
+		@SuppressWarnings("unchecked")
+		MongoPersistentEntity<AssetAdministrationShell> entity = (MongoPersistentEntity<AssetAdministrationShell>) mappingContext.getPersistentEntity(AssetAdministrationShell.class);
+		return new MappingMongoEntityInformation<>(entity);
 	}
 
 }
