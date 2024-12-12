@@ -28,15 +28,14 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocument;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
+import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBCrudRepository;
+import org.eclipse.digitaltwin.basyx.core.BaSyxCrudRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
 import org.springframework.data.mongodb.repository.support.MappingMongoEntityInformation;
-import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
 /**
@@ -65,11 +64,12 @@ public class AasDiscoveryMongoDBBackendProvider implements AasDiscoveryBackendPr
 	}
 
 	@Override
-	public CrudRepository<AasDiscoveryDocument, String> getCrudRepository() {
+	public BaSyxCrudRepository<AasDiscoveryDocument> getCrudRepository() {
 		@SuppressWarnings("unchecked")
 		MongoPersistentEntity<AasDiscoveryDocument> entity = (MongoPersistentEntity<AasDiscoveryDocument>) mappingContext
 				.getPersistentEntity(AasDiscoveryDocument.class);
-		return new SimpleMongoRepository<>(new MappingMongoEntityInformation<>(entity), template);
+		
+		return new MongoDBCrudRepository<AasDiscoveryDocument>(new MappingMongoEntityInformation<>(entity), template, AasDiscoveryDocument.class);
 	}
 
 

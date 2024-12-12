@@ -51,6 +51,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironment;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasFilter;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleConceptDescriptionRepositoryFactory;
@@ -265,7 +266,7 @@ public class TestAASEnvironmentSerialization {
 	}
 
 	private void validateRepositoriesState() {
-		assertTrue(aasRepository.getAllAas(PaginationInfo.NO_LIMIT).getResult().containsAll(createDummyShells()));
+		assertTrue(aasRepository.getAllAas(PaginationInfo.NO_LIMIT, new AasFilter()).getResult().containsAll(createDummyShells()));
 		assertTrue(submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().containsAll(createDummySubmodels()));
 		assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().containsAll(createDummyConceptDescriptions()));
 	}
