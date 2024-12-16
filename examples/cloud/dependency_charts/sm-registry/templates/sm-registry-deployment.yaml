@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "sm-registry.fullname" . }}
+  labels:
+    {{- include "sm-registry.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "sm-registry.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "sm-registry.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.name }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{- if .Values.kafka.connectionString }}
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: {{ .Values.kafka.connectionString }}
+            {{- end }}
+            {{- if .Values.mongodb.connectionString }}
+            - name: SPRING_DATA_MONGODB_URI
+              value: {{ .Values.mongodb.connectionString }}
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /workspace/config/application.yaml
+              name: {{ template "sm-registry.fullname" $ }}-config
+              subPath: application.yaml
+      volumes:
+        - name: {{ template "sm-registry.fullname" $ }}-config
+          configMap:
+            name: {{ template "sm-registry.fullname" $ }}-config
