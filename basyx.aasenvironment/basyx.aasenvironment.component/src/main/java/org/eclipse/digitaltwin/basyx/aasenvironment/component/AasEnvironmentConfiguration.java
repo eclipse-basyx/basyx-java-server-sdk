@@ -32,6 +32,7 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentFactory;
 import org.eclipse.digitaltwin.basyx.aasenvironment.feature.AasEnvironmentFeature;
 import org.eclipse.digitaltwin.basyx.aasenvironment.feature.DecoratedAasEnvironmentFactory;
 import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.AasEnvironmentPreconfigurationLoader;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,7 +55,9 @@ public class AasEnvironmentConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public static AasEnvironmentPreconfigurationLoader getAasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, List<String> pathsToLoad) {
+	public static AasEnvironmentPreconfigurationLoader getAasEnvironmentPreconfigurationLoader(
+			ResourceLoader resourceLoader,
+			@Value(AasEnvironmentPreconfigurationLoader.PATHS_TO_LOAD_EXPR) List<String> pathsToLoad) {
 		return new AasEnvironmentPreconfigurationLoader(resourceLoader, pathsToLoad);
 	}
 
