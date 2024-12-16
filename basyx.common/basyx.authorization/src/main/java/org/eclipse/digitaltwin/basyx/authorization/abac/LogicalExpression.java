@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "$and",
+    "$match",
     "$or",
     "$not",
     "$eq",
@@ -30,6 +31,8 @@ public class LogicalExpression {
 
     @JsonProperty("$and")
     private List<LogicalExpression> $and = new ArrayList<LogicalExpression>();
+    @JsonProperty("$match")
+    private List<LogicalExpression> $match = new ArrayList<LogicalExpression>();
     @JsonProperty("$or")
     private List<LogicalExpression> $or = new ArrayList<LogicalExpression>();
     @JsonProperty("$not")
@@ -78,12 +81,14 @@ public class LogicalExpression {
      * @param $eq
      * @param $gt
      * @param $ne
+     * @param $match
      * @param $not
      * @param $le
      */
-    public LogicalExpression(List<LogicalExpression> $and, List<LogicalExpression> $or, LogicalExpression $not, List<Value> $eq, List<Value> $ne, List<Value> $gt, List<Value> $ge, List<Value> $lt, List<Value> $le, List<StringValue> $contains, List<StringValue> $startsWith, List<StringValue> $endsWith, List<StringValue> $regex, Boolean $boolean) {
+    public LogicalExpression(List<LogicalExpression> $and, List<LogicalExpression> $match, List<LogicalExpression> $or, LogicalExpression $not, List<Value> $eq, List<Value> $ne, List<Value> $gt, List<Value> $ge, List<Value> $lt, List<Value> $le, List<StringValue> $contains, List<StringValue> $startsWith, List<StringValue> $endsWith, List<StringValue> $regex, Boolean $boolean) {
         super();
         this.$and = $and;
+        this.$match = $match;
         this.$or = $or;
         this.$not = $not;
         this.$eq = $eq;
@@ -107,6 +112,16 @@ public class LogicalExpression {
     @JsonProperty("$and")
     public void set$and(List<LogicalExpression> $and) {
         this.$and = $and;
+    }
+
+    @JsonProperty("$match")
+    public List<LogicalExpression> get$match() {
+        return $match;
+    }
+
+    @JsonProperty("$match")
+    public void set$match(List<LogicalExpression> $match) {
+        this.$match = $match;
     }
 
     @JsonProperty("$or")
@@ -247,6 +262,10 @@ public class LogicalExpression {
         sb.append('=');
         sb.append(((this.$and == null)?"<null>":this.$and));
         sb.append(',');
+        sb.append("$match");
+        sb.append('=');
+        sb.append(((this.$match == null)?"<null>":this.$match));
+        sb.append(',');
         sb.append("$or");
         sb.append('=');
         sb.append(((this.$or == null)?"<null>":this.$or));
@@ -322,6 +341,7 @@ public class LogicalExpression {
         result = ((result* 31)+((this.$eq == null)? 0 :this.$eq.hashCode()));
         result = ((result* 31)+((this.$gt == null)? 0 :this.$gt.hashCode()));
         result = ((result* 31)+((this.$ne == null)? 0 :this.$ne.hashCode()));
+        result = ((result* 31)+((this.$match == null)? 0 :this.$match.hashCode()));
         result = ((result* 31)+((this.$not == null)? 0 :this.$not.hashCode()));
         result = ((result* 31)+((this.$le == null)? 0 :this.$le.hashCode()));
         return result;
@@ -336,7 +356,7 @@ public class LogicalExpression {
             return false;
         }
         LogicalExpression rhs = ((LogicalExpression) other);
-        return (((((((((((((((this.$boolean == rhs.$boolean)||((this.$boolean!= null)&&this.$boolean.equals(rhs.$boolean)))&&((this.$and == rhs.$and)||((this.$and!= null)&&this.$and.equals(rhs.$and))))&&((this.$ge == rhs.$ge)||((this.$ge!= null)&&this.$ge.equals(rhs.$ge))))&&((this.$endsWith == rhs.$endsWith)||((this.$endsWith!= null)&&this.$endsWith.equals(rhs.$endsWith))))&&((this.$or == rhs.$or)||((this.$or!= null)&&this.$or.equals(rhs.$or))))&&((this.$regex == rhs.$regex)||((this.$regex!= null)&&this.$regex.equals(rhs.$regex))))&&((this.$startsWith == rhs.$startsWith)||((this.$startsWith!= null)&&this.$startsWith.equals(rhs.$startsWith))))&&((this.$lt == rhs.$lt)||((this.$lt!= null)&&this.$lt.equals(rhs.$lt))))&&((this.$contains == rhs.$contains)||((this.$contains!= null)&&this.$contains.equals(rhs.$contains))))&&((this.$eq == rhs.$eq)||((this.$eq!= null)&&this.$eq.equals(rhs.$eq))))&&((this.$gt == rhs.$gt)||((this.$gt!= null)&&this.$gt.equals(rhs.$gt))))&&((this.$ne == rhs.$ne)||((this.$ne!= null)&&this.$ne.equals(rhs.$ne))))&&((this.$not == rhs.$not)||((this.$not!= null)&&this.$not.equals(rhs.$not))))&&((this.$le == rhs.$le)||((this.$le!= null)&&this.$le.equals(rhs.$le))));
+        return ((((((((((((((((this.$boolean == rhs.$boolean)||((this.$boolean!= null)&&this.$boolean.equals(rhs.$boolean)))&&((this.$and == rhs.$and)||((this.$and!= null)&&this.$and.equals(rhs.$and))))&&((this.$ge == rhs.$ge)||((this.$ge!= null)&&this.$ge.equals(rhs.$ge))))&&((this.$endsWith == rhs.$endsWith)||((this.$endsWith!= null)&&this.$endsWith.equals(rhs.$endsWith))))&&((this.$or == rhs.$or)||((this.$or!= null)&&this.$or.equals(rhs.$or))))&&((this.$regex == rhs.$regex)||((this.$regex!= null)&&this.$regex.equals(rhs.$regex))))&&((this.$startsWith == rhs.$startsWith)||((this.$startsWith!= null)&&this.$startsWith.equals(rhs.$startsWith))))&&((this.$lt == rhs.$lt)||((this.$lt!= null)&&this.$lt.equals(rhs.$lt))))&&((this.$contains == rhs.$contains)||((this.$contains!= null)&&this.$contains.equals(rhs.$contains))))&&((this.$eq == rhs.$eq)||((this.$eq!= null)&&this.$eq.equals(rhs.$eq))))&&((this.$gt == rhs.$gt)||((this.$gt!= null)&&this.$gt.equals(rhs.$gt))))&&((this.$ne == rhs.$ne)||((this.$ne!= null)&&this.$ne.equals(rhs.$ne))))&&((this.$match == rhs.$match)||((this.$match!= null)&&this.$match.equals(rhs.$match))))&&((this.$not == rhs.$not)||((this.$not!= null)&&this.$not.equals(rhs.$not))))&&((this.$le == rhs.$le)||((this.$le!= null)&&this.$le.equals(rhs.$le))));
     }
 
 }

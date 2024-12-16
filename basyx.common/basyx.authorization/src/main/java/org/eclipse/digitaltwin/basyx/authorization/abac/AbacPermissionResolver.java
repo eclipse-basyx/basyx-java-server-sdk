@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.authorization.abac;
 
+import java.util.Map;
+
 /**
  * An interface for resolving Rbac permissions
  * 
@@ -33,6 +35,6 @@ package org.eclipse.digitaltwin.basyx.authorization.abac;
 public interface AbacPermissionResolver {
 
 //	public boolean hasPermission(QueriesJsonSchema querySchema);
-	public boolean hasPermission(QueryJsonSchema querySchema);
+	public boolean hasPermission(RightsEnum rightsEnum, ObjectItem objectItem, Map<String, Value> attributesMap);
 	
 }

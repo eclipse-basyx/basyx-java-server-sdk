@@ -1,14 +1,7 @@
 package org.eclipse.digitaltwin.basyx.authorization.abac;
 
 import java.util.List;
-import java.util.Map;
-
-import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleKeyGenerator;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.stereotype.Component;
 
 /**
  * InMemory implementation of the {@link RbacStorage}
@@ -16,19 +9,19 @@ import org.springframework.stereotype.Component;
  * @author danish
  */
 public class InMemoryAbacStorage implements AbacStorage {
-    private final List<AllRule> abacRules;
+    private final List<AllAccessPermissionRule> abacRules;
 
-    public InMemoryAbacStorage(List<AllRule> abacRules) {
+    public InMemoryAbacStorage(List<AllAccessPermissionRule> abacRules) {
         this.abacRules = abacRules;
     }
 
     @Override
-    public List<AllRule> getAbacRules() {       
+    public List<AllAccessPermissionRule> getAbacRules() {       
         return abacRules;
     }
 
 	@Override
-	public void addRule(AllRule abacRule) {
+	public void addRule(AllAccessPermissionRule abacRule) {
 		abacRules.add(abacRule);
 		
 	}

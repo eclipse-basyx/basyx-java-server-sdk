@@ -36,12 +36,12 @@ import org.springframework.stereotype.Component;
  * @author schnicke, danish
  *
  */
-@Component
+//@Component
 public class AbacRuleSerializationExtension implements SerializationExtension {
 
 	@Override
 	public void extend(Jackson2ObjectMapperBuilder builder) {
-		builder.deserializerByType(LogicalComponent.class, new AbacRuleDeserializer());
+//		builder.deserializerByType(LogicalComponent.class, new AbacRuleDeserializer());
 	}
 
 }

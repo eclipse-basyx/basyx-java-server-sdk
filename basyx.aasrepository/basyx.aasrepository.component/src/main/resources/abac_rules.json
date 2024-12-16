@@ -2,45 +2,59 @@
 	{
 		"ATTRIBUTES": [
 			{
-				"CLAIM": "ROLE_ADMIN"
+				"CLAIM": "email"
 			},
 			{
-				"GLOBAL": "LOCALNOW"
+				"CLAIM": "realm_access.roles"
 			}
 		],
 		"RIGHTS": [
 			"READ",
-			"UPDATE",
-			"CREATE"
+			"UPDATE"
 		],
 		"ACCESS": "ALLOW",
 		"OBJECTS": [
 			{
-				"IDENTIFIABLE": "AAS"
-			},
-			{
-				"ROUTE": "/assets/asset-56789"
+				"IDENTIFIABLE": "(AAS)DummyAASID"
 			}
 		],
 		"FORMULA": {
 			"$and": [
 				{
-					"$eq": [
+					"$or": [
 						{
-							"strVal": "USER_REGION"
+							"$eq": [
+								{
+									"strModel": "$aas#id"
+								},
+								{
+									"strVal": "DummyAASID"
+								}
+							]
 						},
 						{
-							"strVal": "US"
+							"$eq": [
+								{
+									"attribute": {
+										"CLAIM": "email"
+									}
+								},
+								{
+									"strVal": "reader@gmail.com"
+								}
+							]
 						}
 					]
 				},
 				{
-					"$contains": [
+					"$eq": [
 						{
-							"strVal": "USER_PERMISSIONS"
+							"attribute": {
+								"CLAIM": "realm_access.roles"
+							}
 						},
 						{
-							"strVal": "ALLOW_ACCESS"
+							"strVal": "basyx-reader"
 						}
 					]
 				}

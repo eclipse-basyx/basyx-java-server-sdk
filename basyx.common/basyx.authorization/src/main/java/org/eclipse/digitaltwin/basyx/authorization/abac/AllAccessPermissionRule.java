@@ -22,10 +22,11 @@ import com.fasterxml.jackson.annotation.JsonValue;
     "RIGHTS",
     "ACCESS",
     "OBJECTS",
-    "FORMULA"
+    "FORMULA",
+    "FILTER"
 })
 @Generated("jsonschema2pojo")
-public class AllRule {
+public class AllAccessPermissionRule {
 
     /**
      * 
@@ -47,7 +48,7 @@ public class AllRule {
      * 
      */
     @JsonProperty("ACCESS")
-    private AllRule.Access access;
+    private AllAccessPermissionRule.Access access;
     /**
      * 
      * (Required)
@@ -62,6 +63,8 @@ public class AllRule {
      */
     @JsonProperty("FORMULA")
     private LogicalExpression formula;
+    @JsonProperty("FILTER")
+    private LogicalExpression filter;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -69,24 +72,26 @@ public class AllRule {
      * No args constructor for use in serialization
      * 
      */
-    public AllRule() {
+    public AllAccessPermissionRule() {
     }
 
     /**
      * 
+     * @param filter
      * @param access
      * @param rights
      * @param objects
      * @param formula
      * @param attributes
      */
-    public AllRule(List<AttributeItem> attributes, List<RightsEnum> rights, AllRule.Access access, List<ObjectItem> objects, LogicalExpression formula) {
+    public AllAccessPermissionRule(List<AttributeItem> attributes, List<RightsEnum> rights, AllAccessPermissionRule.Access access, List<ObjectItem> objects, LogicalExpression formula, LogicalExpression filter) {
         super();
         this.attributes = attributes;
         this.rights = rights;
         this.access = access;
         this.objects = objects;
         this.formula = formula;
+        this.filter = filter;
     }
 
     /**
@@ -135,7 +140,7 @@ public class AllRule {
      * 
      */
     @JsonProperty("ACCESS")
-    public AllRule.Access getAccess() {
+    public AllAccessPermissionRule.Access getAccess() {
         return access;
     }
 
@@ -145,7 +150,7 @@ public class AllRule {
      * 
      */
     @JsonProperty("ACCESS")
-    public void setAccess(AllRule.Access access) {
+    public void setAccess(AllAccessPermissionRule.Access access) {
         this.access = access;
     }
 
@@ -189,6 +194,16 @@ public class AllRule {
         this.formula = formula;
     }
 
+    @JsonProperty("FILTER")
+    public LogicalExpression getFilter() {
+        return filter;
+    }
+
+    @JsonProperty("FILTER")
+    public void setFilter(LogicalExpression filter) {
+        this.filter = filter;
+    }
+
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
@@ -202,7 +217,7 @@ public class AllRule {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(AllRule.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append(AllAccessPermissionRule.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("attributes");
         sb.append('=');
         sb.append(((this.attributes == null)?"<null>":this.attributes));
@@ -223,6 +238,10 @@ public class AllRule {
         sb.append('=');
         sb.append(((this.formula == null)?"<null>":this.formula));
         sb.append(',');
+        sb.append("filter");
+        sb.append('=');
+        sb.append(((this.filter == null)?"<null>":this.filter));
+        sb.append(',');
         sb.append("additionalProperties");
         sb.append('=');
         sb.append(((this.additionalProperties == null)?"<null>":this.additionalProperties));
@@ -238,6 +257,7 @@ public class AllRule {
     @Override
     public int hashCode() {
         int result = 1;
+        result = ((result* 31)+((this.filter == null)? 0 :this.filter.hashCode()));
         result = ((result* 31)+((this.access == null)? 0 :this.access.hashCode()));
         result = ((result* 31)+((this.rights == null)? 0 :this.rights.hashCode()));
         result = ((result* 31)+((this.objects == null)? 0 :this.objects.hashCode()));
@@ -252,11 +272,11 @@ public class AllRule {
         if (other == this) {
             return true;
         }
-        if ((other instanceof AllRule) == false) {
+        if ((other instanceof AllAccessPermissionRule) == false) {
             return false;
         }
-        AllRule rhs = ((AllRule) other);
-        return (((((((this.access == rhs.access)||((this.access!= null)&&this.access.equals(rhs.access)))&&((this.rights == rhs.rights)||((this.rights!= null)&&this.rights.equals(rhs.rights))))&&((this.objects == rhs.objects)||((this.objects!= null)&&this.objects.equals(rhs.objects))))&&((this.formula == rhs.formula)||((this.formula!= null)&&this.formula.equals(rhs.formula))))&&((this.attributes == rhs.attributes)||((this.attributes!= null)&&this.attributes.equals(rhs.attributes))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))));
+        AllAccessPermissionRule rhs = ((AllAccessPermissionRule) other);
+        return ((((((((this.filter == rhs.filter)||((this.filter!= null)&&this.filter.equals(rhs.filter)))&&((this.access == rhs.access)||((this.access!= null)&&this.access.equals(rhs.access))))&&((this.rights == rhs.rights)||((this.rights!= null)&&this.rights.equals(rhs.rights))))&&((this.objects == rhs.objects)||((this.objects!= null)&&this.objects.equals(rhs.objects))))&&((this.formula == rhs.formula)||((this.formula!= null)&&this.formula.equals(rhs.formula))))&&((this.attributes == rhs.attributes)||((this.attributes!= null)&&this.attributes.equals(rhs.attributes))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))));
     }
 
     @Generated("jsonschema2pojo")
@@ -265,10 +285,10 @@ public class AllRule {
         ALLOW("ALLOW"),
         DISABLED("DISABLED");
         private final String value;
-        private final static Map<String, AllRule.Access> CONSTANTS = new HashMap<String, AllRule.Access>();
+        private final static Map<String, AllAccessPermissionRule.Access> CONSTANTS = new HashMap<String, AllAccessPermissionRule.Access>();
 
         static {
-            for (AllRule.Access c: values()) {
+            for (AllAccessPermissionRule.Access c: values()) {
                 CONSTANTS.put(c.value, c);
             }
         }
@@ -288,8 +308,8 @@ public class AllRule {
         }
 
         @JsonCreator
-        public static AllRule.Access fromValue(String value) {
-            AllRule.Access constant = CONSTANTS.get(value);
+        public static AllAccessPermissionRule.Access fromValue(String value) {
+            AllAccessPermissionRule.Access constant = CONSTANTS.get(value);
             if (constant == null) {
                 throw new IllegalArgumentException(value);
             } else {

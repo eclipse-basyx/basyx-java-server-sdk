@@ -29,15 +29,19 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.authorization.abac.AbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.abac.LogicalExpression;
-import org.eclipse.digitaltwin.basyx.authorization.abac.QueryJsonSchema;
+import org.eclipse.digitaltwin.basyx.authorization.abac.ObjectItem;
+import org.eclipse.digitaltwin.basyx.authorization.abac.RightsEnum;
 import org.eclipse.digitaltwin.basyx.authorization.abac.StringValue;
 import org.eclipse.digitaltwin.basyx.authorization.abac.Value;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -86,7 +90,7 @@ public class AuthorizedAasRepository implements AasRepository {
 //        // Set the query parameter to the QueriesJsonSchema object
 //        aasJsonSchema.setQueryParameter(logicalExpression);
 		
-		boolean isAuthorized = permissionResolver.hasPermission(new QueryJsonSchema());
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -96,28 +100,26 @@ public class AuthorizedAasRepository implements AasRepository {
 	@Override
 	public AssetAdministrationShell getAas(String shellId) throws ElementDoesNotExistException {
 		
-		// Create an instance of QueriesJsonSchema
-//        QueriesJsonSchema aasJsonSchema = new QueriesJsonSchema();
-
-//        // Create a LogicalExpression__1 object to represent the query parameter
-//        LogicalExpression__1 logicalExpression = new LogicalExpression__1();
-//
-//        // Example: Adding an equality condition to check if aas.idShort equals "AAS_123"
-//        List<Object> eqConditionIdShort = new ArrayList<>();
-//        eqConditionIdShort.add("$aas.idShort"); // Attribute to check
-//        eqConditionIdShort.add("AAS_123");      // Value to match
-//        logicalExpression.set$eq(eqConditionIdShort);
-//
-//        // Example: Adding an equality condition to check if aas.id equals "ID_456"
-//        List<Object> eqConditionId = new ArrayList<>();
-//        eqConditionId.add("$aas.id"); // Attribute to check
-//        eqConditionId.add(shellId);  // Value to match
-//        logicalExpression.set$eq(eqConditionId);
-//        
-//        aasJsonSchema.setRights(Arrays.asList(RightsEnum.READ));
-//        aasJsonSchema.setQueryParameter(logicalExpression);
-//        
-		boolean isAuthorized = permissionResolver.hasPermission(new QueryJsonSchema());
+		Map<String, Value> attributesMap = new HashMap<String, Value>();
+		
+		AssetAdministrationShell shell = decorated.getAas(shellId);
+		
+		attributesMap.put("$aas#id", new Value(null, shellId, null, null, null, null, null, null));
+		
+		AssetInformation assetInformation = shell.getAssetInformation();
+		
+		if (assetInformation != null) {
+			String assetKind = assetInformation.getAssetKind().toString();
+			String assetType = assetInformation.getAssetType();
+			String globalAssetId = assetInformation.getGlobalAssetId();
+			
+			attributesMap.put("$aas.assetInformation#assetKind", new Value(assetKind, null, null, null, null, null, null, null));
+			attributesMap.put("$aas.assetInformation#assetType", new Value(assetType, null, null, null, null, null, null, null));
+			attributesMap.put("$aas.assetInformation#globalAssetId", new Value(globalAssetId, null, null, null, null, null, null, null));
+			
+		}
+   
+		boolean isAuthorized = permissionResolver.hasPermission(RightsEnum.READ, new ObjectItem(null, "(AAS)" + shellId, null, null, null), attributesMap);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -156,43 +158,43 @@ public class AuthorizedAasRepository implements AasRepository {
 //        aasJsonSchema.setRights(Arrays.asList(RightsEnum.CREATE));
 //        aasJsonSchema.setQueryParameter(logicalExpression);
 		
-		Value value1 = new Value();
-		value1.setStrVal("USER_REGION");
-		
-		Value value2 = new Value();
-		value2.setStrVal("US");
-		
-		Value value3 = new Value();
-		value3.setStrVal("USER_PERMISSIONS");
-		
-		Value value4 = new Value();
-		value4.setStrVal("ALLOW_ACCESS");
-		
-		StringValue stringValue1 = new StringValue();
-		stringValue1.setStrVal("USER_PERMISSIONS");
-		
-		StringValue stringValue2 = new StringValue();
-		stringValue2.setStrVal("ALLOW_ACCESS");
-		
-		LogicalExpression query1 = new LogicalExpression();
-		query1.set$eq(List.of(value1, value2));
-		
-		LogicalExpression query2 = new LogicalExpression();
-		query2.set$contains(List.of(stringValue1, stringValue2));
-		
-		LogicalExpression mainQuery = new LogicalExpression();
-		mainQuery.set$and(List.of(query1, query2));
-		
-		boolean isAuthorized = permissionResolver.hasPermission(new QueryJsonSchema(null, mainQuery, null));
-		
-		throwExceptionIfInsufficientPermission(isAuthorized);
+//		Value value1 = new Value();
+//		value1.setStrVal("USER_REGION");
+//		
+//		Value value2 = new Value();
+//		value2.setStrVal("US");
+//		
+//		Value value3 = new Value();
+//		value3.setStrVal("USER_PERMISSIONS");
+//		
+//		Value value4 = new Value();
+//		value4.setStrVal("ALLOW_ACCESS");
+//		
+//		StringValue stringValue1 = new StringValue();
+//		stringValue1.setStrVal("USER_PERMISSIONS");
+//		
+//		StringValue stringValue2 = new StringValue();
+//		stringValue2.setStrVal("ALLOW_ACCESS");
+//		
+//		LogicalExpression query1 = new LogicalExpression();
+//		query1.set$eq(List.of(value1, value2));
+//		
+//		LogicalExpression query2 = new LogicalExpression();
+//		query2.set$contains(List.of(stringValue1, stringValue2));
+//		
+//		LogicalExpression mainQuery = new LogicalExpression();
+//		mainQuery.set$and(List.of(query1, query2));
+//		
+//		boolean isAuthorized = permissionResolver.hasPermission(new QueryJsonSchema(null, mainQuery, null));
+//		
+//		throwExceptionIfInsufficientPermission(isAuthorized);
 		
 		decorated.createAas(shell);
 	}
 
 	@Override
 	public void updateAas(String shellId, AssetAdministrationShell shell) {
-		boolean isAuthorized = permissionResolver.hasPermission(new QueryJsonSchema());
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -201,7 +203,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public void deleteAas(String shellId) {
-		boolean isAuthorized = permissionResolver.hasPermission(new QueryJsonSchema());
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -210,7 +212,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public CursorResult<List<Reference>> getSubmodelReferences(String shellId, PaginationInfo paginationInfo) {
-		boolean isAuthorized = permissionResolver.hasPermission(new QueryJsonSchema());
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -219,7 +221,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public void addSubmodelReference(String shellId, Reference submodelReference) {
-		boolean isAuthorized = permissionResolver.hasPermission(new QueryJsonSchema());
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -228,7 +230,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public void removeSubmodelReference(String shellId, String submodelId) {
-		boolean isAuthorized = permissionResolver.hasPermission(new QueryJsonSchema());
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -237,7 +239,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public void setAssetInformation(String shellId, AssetInformation shellInfo) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(new QueryJsonSchema());
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -246,7 +248,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public AssetInformation getAssetInformation(String shellId) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(new QueryJsonSchema());
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -255,7 +257,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public File getThumbnail(String shellId) {
-		boolean isAuthorized = permissionResolver.hasPermission(new QueryJsonSchema());
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -264,7 +266,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public void setThumbnail(String shellId, String fileName, String contentType, InputStream inputStream) {
-		boolean isAuthorized = permissionResolver.hasPermission(new QueryJsonSchema());
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -273,7 +275,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public void deleteThumbnail(String shellId) {
-		boolean isAuthorized = permissionResolver.hasPermission(new QueryJsonSchema());
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		

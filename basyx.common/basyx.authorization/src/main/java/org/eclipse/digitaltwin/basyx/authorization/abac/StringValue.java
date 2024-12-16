@@ -10,7 +10,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
     "strModel",
     "strVal",
-    "numVal"
+    "castToString",
+    "attribute"
 })
 @Generated("jsonschema2pojo")
 public class StringValue {
@@ -19,8 +20,10 @@ public class StringValue {
     private String strModel;
     @JsonProperty("strVal")
     private String strVal;
-    @JsonProperty("numVal")
-    private Double numVal;
+    @JsonProperty("castToString")
+    private CastValues castToString;
+    @JsonProperty("attribute")
+    private AttributeItem attribute;
 
     /**
      * No args constructor for use in serialization
@@ -31,15 +34,17 @@ public class StringValue {
 
     /**
      * 
-     * @param numVal
+     * @param castToString
      * @param strVal
      * @param strModel
+     * @param attribute
      */
-    public StringValue(String strModel, String strVal, Double numVal) {
+    public StringValue(String strModel, String strVal, CastValues castToString, AttributeItem attribute) {
         super();
         this.strModel = strModel;
         this.strVal = strVal;
-        this.numVal = numVal;
+        this.castToString = castToString;
+        this.attribute = attribute;
     }
 
     @JsonProperty("strModel")
@@ -62,14 +67,24 @@ public class StringValue {
         this.strVal = strVal;
     }
 
-    @JsonProperty("numVal")
-    public Double getNumVal() {
-        return numVal;
+    @JsonProperty("castToString")
+    public CastValues getCastToString() {
+        return castToString;
     }
 
-    @JsonProperty("numVal")
-    public void setNumVal(Double numVal) {
-        this.numVal = numVal;
+    @JsonProperty("castToString")
+    public void setCastToString(CastValues castToString) {
+        this.castToString = castToString;
+    }
+
+    @JsonProperty("attribute")
+    public AttributeItem getAttribute() {
+        return attribute;
+    }
+
+    @JsonProperty("attribute")
+    public void setAttribute(AttributeItem attribute) {
+        this.attribute = attribute;
     }
 
     @Override
@@ -84,9 +99,13 @@ public class StringValue {
         sb.append('=');
         sb.append(((this.strVal == null)?"<null>":this.strVal));
         sb.append(',');
-        sb.append("numVal");
+        sb.append("castToString");
         sb.append('=');
-        sb.append(((this.numVal == null)?"<null>":this.numVal));
+        sb.append(((this.castToString == null)?"<null>":this.castToString));
+        sb.append(',');
+        sb.append("attribute");
+        sb.append('=');
+        sb.append(((this.attribute == null)?"<null>":this.attribute));
         sb.append(',');
         if (sb.charAt((sb.length()- 1)) == ',') {
             sb.setCharAt((sb.length()- 1), ']');
@@ -99,8 +118,9 @@ public class StringValue {
     @Override
     public int hashCode() {
         int result = 1;
+        result = ((result* 31)+((this.castToString == null)? 0 :this.castToString.hashCode()));
         result = ((result* 31)+((this.strModel == null)? 0 :this.strModel.hashCode()));
-        result = ((result* 31)+((this.numVal == null)? 0 :this.numVal.hashCode()));
+        result = ((result* 31)+((this.attribute == null)? 0 :this.attribute.hashCode()));
         result = ((result* 31)+((this.strVal == null)? 0 :this.strVal.hashCode()));
         return result;
     }
@@ -114,7 +134,7 @@ public class StringValue {
             return false;
         }
         StringValue rhs = ((StringValue) other);
-        return ((((this.strModel == rhs.strModel)||((this.strModel!= null)&&this.strModel.equals(rhs.strModel)))&&((this.numVal == rhs.numVal)||((this.numVal!= null)&&this.numVal.equals(rhs.numVal))))&&((this.strVal == rhs.strVal)||((this.strVal!= null)&&this.strVal.equals(rhs.strVal))));
+        return (((((this.castToString == rhs.castToString)||((this.castToString!= null)&&this.castToString.equals(rhs.castToString)))&&((this.strModel == rhs.strModel)||((this.strModel!= null)&&this.strModel.equals(rhs.strModel))))&&((this.attribute == rhs.attribute)||((this.attribute!= null)&&this.attribute.equals(rhs.attribute))))&&((this.strVal == rhs.strVal)||((this.strVal!= null)&&this.strVal.equals(rhs.strVal))));
     }
 
 }

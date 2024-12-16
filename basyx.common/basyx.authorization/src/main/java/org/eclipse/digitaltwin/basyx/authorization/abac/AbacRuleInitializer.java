@@ -62,7 +62,7 @@ public class AbacRuleInitializer {
 	 * @return map of rbac rules
 	 * @throws IOException
 	 */
-	public List<AllRule> deserialize() throws IOException {
+	public List<AllAccessPermissionRule> deserialize() throws IOException {
 		
 		 // Deserialize into List<AllRulesWrapper>
 //        List<AllRulesWrapper> wrapperList = objectMapper.readValue(
@@ -75,7 +75,7 @@ public class AbacRuleInitializer {
 //                                                  .flatMap(wrapper -> wrapper.getAllRules().stream())
 //                                                  .collect(Collectors.toList());
 		
-		return objectMapper.readValue(getFile(rbacJsonFilePath), new TypeReference<List<AllRule>>() {
+		return objectMapper.readValue(getFile(rbacJsonFilePath), new TypeReference<List<AllAccessPermissionRule>>() {
 		});
 	}
 
