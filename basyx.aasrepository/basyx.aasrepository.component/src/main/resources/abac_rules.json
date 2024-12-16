@@ -6,6 +6,9 @@
 			},
 			{
 				"CLAIM": "realm_access.roles"
+			},
+			{
+				"GLOBAL": "UTCNOW"
 			}
 		],
 		"RIGHTS": [
@@ -47,14 +50,30 @@
 					]
 				},
 				{
-					"$eq": [
+					"$and": [
 						{
-							"attribute": {
-								"CLAIM": "realm_access.roles"
-							}
+							"$eq": [
+								{
+									"attribute": {
+										"CLAIM": "realm_access.roles"
+									}
+								},
+								{
+									"strVal": "basyx-reader"
+								}
+							]
 						},
 						{
-							"strVal": "basyx-reader"
+							"$ge": [
+								{
+									"attribute": {
+										"GLOBAL": "UTCNOW"
+									}
+								},
+								{
+									"timeVal": "22:00"
+								}
+							]
 						}
 					]
 				}

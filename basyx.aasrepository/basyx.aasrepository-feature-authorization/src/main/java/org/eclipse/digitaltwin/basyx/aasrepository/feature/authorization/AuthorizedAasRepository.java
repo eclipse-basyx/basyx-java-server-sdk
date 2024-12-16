@@ -69,26 +69,6 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
-		// Create an instance of QueriesJsonSchema
-//        QueriesJsonSchema aasJsonSchema = new QueriesJsonSchema();
-
-//        // Create a LogicalExpression__1 object to represent the query parameter
-//        LogicalExpression__1 logicalExpression = new LogicalExpression__1();
-//
-//        // Example: Adding an equality condition to check if aas.idShort equals "AAS_123"
-//        List<Object> eqConditionIdShort = new ArrayList<>();
-//        eqConditionIdShort.add("$aas.idShort"); // Attribute to check
-//        eqConditionIdShort.add("AAS_123");      // Value to match
-//        logicalExpression.set$eq(eqConditionIdShort);
-//
-//        // Example: Adding an equality condition to check if aas.id equals "ID_456"
-//        List<Object> eqConditionId = new ArrayList<>();
-//        eqConditionId.add("$aas.id"); // Attribute to check
-//        eqConditionId.add("ID_456");  // Value to match
-//        logicalExpression.set$eq(eqConditionId);
-//
-//        // Set the query parameter to the QueriesJsonSchema object
-//        aasJsonSchema.setQueryParameter(logicalExpression);
 		
 		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
@@ -128,62 +108,6 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public void createAas(AssetAdministrationShell shell) throws CollidingIdentifierException {
-		
-		// Create an instance of QueriesJsonSchema
-//        QueriesJsonSchema aasJsonSchema = new QueriesJsonSchema();
-
-        // Create a LogicalExpression__1 object to represent the query parameter
-//        LogicalExpression__1 logicalExpression = new LogicalExpression__1();
-//        
-//        LogicalComponent simpleEqualExpression = new SimpleExpression();
-//        ((SimpleExpression) simpleEqualExpression).set$eq(Arrays.asList("$aas.idShort", shell.getIdShort()));
-//        
-//        LogicalComponent simpleEqualExpression2 = new SimpleExpression();
-//        ((SimpleExpression) simpleEqualExpression2).set$eq(Arrays.asList("$aas.id", shell.getId()));
-
-        // Example: Adding an equality condition to check if aas.idShort equals "AAS_123"
-//        List<LogicalExpression__1> eqConditionIdShort = new ArrayList<>();
-//        eqConditionIdShort.add("$aas.idShort"); // Attribute to check
-//        eqConditionIdShort.add(shell.getIdShort());      // Value to match
-//        logicalExpression.set$eq(eqConditionIdShort);
-
-        // Example: Adding an equality condition to check if aas.id equals "ID_456"
-//        List<LogicalExpression__1> eqConditionId = new ArrayList<>();
-//        eqConditionId.add("$aas.id"); // Attribute to check
-//        eqConditionId.add(shell.getId());  // Value to match
-//        logicalExpression.set$eq(eqConditionId);
-        
-//        logicalExpression.set$or(Arrays.asList(simpleEqualExpression, simpleEqualExpression2));
-        
-//        aasJsonSchema.setRights(Arrays.asList(RightsEnum.CREATE));
-//        aasJsonSchema.setQueryParameter(logicalExpression);
-		
-//		Value value1 = new Value();
-//		value1.setStrVal("USER_REGION");
-//		
-//		Value value2 = new Value();
-//		value2.setStrVal("US");
-//		
-//		Value value3 = new Value();
-//		value3.setStrVal("USER_PERMISSIONS");
-//		
-//		Value value4 = new Value();
-//		value4.setStrVal("ALLOW_ACCESS");
-//		
-//		StringValue stringValue1 = new StringValue();
-//		stringValue1.setStrVal("USER_PERMISSIONS");
-//		
-//		StringValue stringValue2 = new StringValue();
-//		stringValue2.setStrVal("ALLOW_ACCESS");
-//		
-//		LogicalExpression query1 = new LogicalExpression();
-//		query1.set$eq(List.of(value1, value2));
-//		
-//		LogicalExpression query2 = new LogicalExpression();
-//		query2.set$contains(List.of(stringValue1, stringValue2));
-//		
-//		LogicalExpression mainQuery = new LogicalExpression();
-//		mainQuery.set$and(List.of(query1, query2));
 //		
 //		boolean isAuthorized = permissionResolver.hasPermission(new QueryJsonSchema(null, mainQuery, null));
 //		

@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 
 	private Logger logger = LoggerFactory.getLogger(SimpleAbacPermissionResolver.class);
+	
+	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
 	private AbacStorage abacStorage;
 	private RoleProvider roleAuthenticator;
@@ -161,19 +164,20 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 		
 		for (Global global : globals) {
 			if (global == Global.UTCNOW) {
-				ZonedDateTime utcNow = ZonedDateTime.now(ZoneId.of("UTC"));
+//				ZonedDateTime utcNow = ZonedDateTime.now(ZoneId.of("UTC"));
 				
-				Value value =  new Value();
-				value.setTimeVal(utcNow.toString());
+				LocalTime utcNow = ZonedDateTime.now(ZoneId.of("UTC")).toLocalTime();
 				
-				attributeItemsMap.put("GLOBAL#UTCNOW", value);
+//				Value value =  new Value();
+//				value.setTimeVal(utcNow.toString());
+				
+				attributeItemsMap.put("GLOBAL#UTCNOW", utcNow);
 			} else if (global == Global.LOCALNOW) {
-				LocalDateTime localNow = LocalDateTime.now();
+//				LocalDateTime localNow = LocalDateTime.now();
 				
-				Value value =  new Value();
-				value.setTimeVal(localNow.toString());
+				LocalTime localNow = LocalTime.now();
 				
-				attributeItemsMap.put("GLOBAL#LOCALNOW", value);
+				attributeItemsMap.put("GLOBAL#LOCALNOW", localNow);
 			}
 		}
 		
@@ -197,27 +201,27 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 			return !evaluateFormula(formula.get$not(), attributesMap, attributeItemsMap);
 		}
 
-		if (formula.get$eq() != null) {
+		if (formula.get$eq() != null && !formula.get$eq().isEmpty()) {
 			return evaluateEquality(formula.get$eq(), attributesMap, attributeItemsMap);
 		}
 		
-		if (formula.get$ne() != null) {
+		if (formula.get$ne() != null && !formula.get$ne().isEmpty()) {
 			return evaluateInequality(formula.get$ne(), attributesMap, attributeItemsMap);
 		}
 		
-		if (formula.get$le() != null) {
+		if (formula.get$le() != null && !formula.get$le().isEmpty()) {
 			return evaluateLessOrEqual(formula.get$le(), attributesMap, attributeItemsMap);
 		}
 		
-		if (formula.get$lt() != null) {
+		if (formula.get$lt() != null && !formula.get$lt().isEmpty()) {
 			return evaluateLessThan(formula.get$lt(), attributesMap, attributeItemsMap);
 		}
 		
-		if (formula.get$ge() != null) {
+		if (formula.get$ge() != null && !formula.get$ge().isEmpty()) {
 			return evaluateGreaterOrEqual(formula.get$ge(), attributesMap, attributeItemsMap);
 		}
 		
-		if (formula.get$gt() != null) {
+		if (formula.get$gt() != null && !formula.get$gt().isEmpty()) {
 			return evaluateGreaterThan(formula.get$gt(), attributesMap, attributeItemsMap);
 		}
 		// Add more cases for other operators ($gt, $lt, etc.)
@@ -297,14 +301,17 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	        System.out.println("The Global enum is set to LOCALNOW");
 
 	        if (attributeItemsMap.containsKey("GLOBAL#LOCALNOW")) {
-	            String objectAttributeGlobalValue = ((Value) attributeItemsMap.get("GLOBAL#LOCALNOW")).getTimeVal();
+	            LocalTime objectAttributeGlobalValue = (LocalTime) attributeItemsMap.get("GLOBAL#LOCALNOW");
 
 	            if (operands.get(1).getStrVal() != null) {
 	                String ruleAttributeGlobalValue = operands.get(1).getStrVal();
 	                return ruleAttributeGlobalValue.equals(objectAttributeGlobalValue);
 	            } else if (operands.get(1).getTimeVal() != null) {
 	                String ruleAttributeGlobalValue = operands.get(1).getTimeVal();
-	                return ruleAttributeGlobalValue.equals(objectAttributeGlobalValue);
+	                
+	                LocalTime ruleTime = LocalTime.parse(ruleAttributeGlobalValue, FORMATTER);
+	                
+	                return !ruleTime.isBefore(objectAttributeGlobalValue) && !ruleTime.isAfter(objectAttributeGlobalValue);
 	            } else {
 	                return false;
 	            }
@@ -315,14 +322,17 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	        System.out.println("The Global enum is set to UTCNOW");
 
 	        if (attributeItemsMap.containsKey("GLOBAL#UTCNOW")) {
-	            String objectAttributeGlobalValue = ((Value) attributeItemsMap.get("GLOBAL#LOCALNOW")).getTimeVal();
+	            LocalTime objectAttributeGlobalValue = (LocalTime) attributeItemsMap.get("GLOBAL#UTCNOW");
 
 	            if (operands.get(1).getStrVal() != null) {
 	                String ruleAttributeGlobalValue = operands.get(1).getStrVal();
 	                return ruleAttributeGlobalValue.equals(objectAttributeGlobalValue);
 	            } else if (operands.get(1).getTimeVal() != null) {
 	                String ruleAttributeGlobalValue = operands.get(1).getTimeVal();
-	                return ruleAttributeGlobalValue.equals(objectAttributeGlobalValue);
+	                
+	                LocalTime ruleTime = LocalTime.parse(ruleAttributeGlobalValue, FORMATTER);
+	                
+	                return !ruleTime.isBefore(objectAttributeGlobalValue) && !ruleTime.isAfter(objectAttributeGlobalValue);
 	            } else {
 	                return false;
 	            }
@@ -440,28 +450,6 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	    return 0;
 	}
 	
-//	private static int evaluateClaimComparison(List<Value> operands, Map<String, Object> attributeItemsMap) {
-//	    String ruleClaimItem = operands.get(0).getAttribute().getClaim();
-//	    if (attributeItemsMap.containsKey("CLAIM#" + ruleClaimItem)) {
-//	        String objectAttributeClaimValue = attributeItemsMap.get("CLAIM#" + ruleClaimItem).getStrVal();
-//	        String ruleAttributeClaimValue = operands.get(1).getStrVal();
-//
-//	        if (ruleAttributeClaimValue != null) {
-//	            return ruleAttributeClaimValue.compareTo(objectAttributeClaimValue);
-//	        } else if (operands.get(1).getTimeVal() != null) {
-//	            String ruleTimeValueString = operands.get(1).getTimeVal();
-//	            String objectTimeValueString = attributeItemsMap.get("CLAIM#" + ruleClaimItem).getTimeVal();
-//	            
-//	            LocalTime ruleTimeValueTime = LocalTime.parse(ruleTimeValueString);
-//	            LocalTime objectTimeValueTime = LocalTime.parse(objectTimeValueString);
-//	            
-//	            return ruleTimeValueTime.compareTo(objectTimeValueTime);
-//	        }
-//	    }
-//	    
-//	    return 0;
-//	}
-	
 	private static int evaluateClaimComparison(List<Value> operands, Map<String, Object> attributeItemsMap) {
 	    String ruleClaimItem = operands.get(0).getAttribute().getClaim();
 	    if (attributeItemsMap.containsKey("CLAIM#" + ruleClaimItem)) {
@@ -481,29 +469,6 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	    }
 	    return 0;
 	}
-
-//	private static int evaluateGlobalComparison(List<Value> operands, Map<String, Value> attributesMap) {
-//	    Global ruleGlobalItem = operands.get(0).getAttribute().getGlobal();
-//	    String globalKey = "GLOBAL#" + ruleGlobalItem;
-//	    if (attributesMap.containsKey(globalKey)) {
-//	        String objectAttributeGlobalValue = attributesMap.get(globalKey).getStrVal();
-//	        String ruleAttributeGlobalValue = operands.get(1).getStrVal();
-//
-//	        if (ruleAttributeGlobalValue != null) {
-//	            return ruleAttributeGlobalValue.compareTo(objectAttributeGlobalValue);
-//	        } else if (operands.get(1).getTimeVal() != null) {
-//	        	String ruleTimeValueString = operands.get(1).getTimeVal();
-//	            String objectTimeValueString = attributesMap.get(globalKey).getTimeVal();
-//	            
-//	            LocalTime ruleTimeValueTime = LocalTime.parse(ruleTimeValueString);
-//	            LocalTime objectTimeValueTime = LocalTime.parse(objectTimeValueString);
-//	            
-//	            return ruleTimeValueTime.compareTo(objectTimeValueTime);
-//	        }
-//	    }
-//	    
-//	    return 0;
-//	}
 	
 	private static int evaluateGlobalComparison(List<Value> operands, Map<String, Object> attributeItemsMap) {
 	    Global ruleGlobalItem = operands.get(0).getAttribute().getGlobal();
@@ -512,18 +477,20 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	        System.out.println("The Global enum is set to LOCALNOW");
 
 	        if (attributeItemsMap.containsKey("GLOBAL#LOCALNOW")) {
-	            String objectAttributeGlobalValue = ((Value) attributeItemsMap.get("GLOBAL#LOCALNOW")).getTimeVal();
+	            LocalTime objectAttributeGlobalValue = (LocalTime) attributeItemsMap.get("GLOBAL#LOCALNOW");
 
 	            if (operands.get(1).getStrVal() != null) {
 	                String ruleAttributeGlobalValue = operands.get(1).getStrVal();
-	                return ruleAttributeGlobalValue.compareTo(objectAttributeGlobalValue);
+	                
+	                LocalTime ruleTime = LocalTime.parse(ruleAttributeGlobalValue, FORMATTER);
+	                
+	                return ruleTime.compareTo(objectAttributeGlobalValue);
 	            } else if (operands.get(1).getTimeVal() != null) {
 	            	String ruleTimeValueString = operands.get(1).getTimeVal();
 		            
-		            LocalTime ruleTimeValueTime = LocalTime.parse(ruleTimeValueString);
-		            LocalTime objectTimeValueTime = LocalTime.parse(objectAttributeGlobalValue);
+	            	LocalTime ruleTime = LocalTime.parse(ruleTimeValueString, FORMATTER);
 		            
-		            return ruleTimeValueTime.compareTo(objectTimeValueTime);
+		            return objectAttributeGlobalValue.compareTo(ruleTime);
 	            } else {
 	                return 0;
 	            }
@@ -534,18 +501,20 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	        System.out.println("The Global enum is set to UTCNOW");
 
 	        if (attributeItemsMap.containsKey("GLOBAL#UTCNOW")) {
-	            String objectAttributeGlobalValue = ((Value) attributeItemsMap.get("GLOBAL#UTCNOW")).getTimeVal();
+	            LocalTime objectAttributeGlobalValue = (LocalTime) attributeItemsMap.get("GLOBAL#UTCNOW");
 
 	            if (operands.get(1).getStrVal() != null) {
 	                String ruleAttributeGlobalValue = operands.get(1).getStrVal();
-	                return ruleAttributeGlobalValue.compareTo(objectAttributeGlobalValue);
+	                
+	                LocalTime ruleTime = LocalTime.parse(ruleAttributeGlobalValue, FORMATTER);
+	                
+	                return ruleTime.compareTo(objectAttributeGlobalValue);
 	            } else if (operands.get(1).getTimeVal() != null) {
 	            	String ruleTimeValueString = operands.get(1).getTimeVal();
 		            
-		            LocalTime ruleTimeValueTime = LocalTime.parse(ruleTimeValueString);
-		            LocalTime objectTimeValueTime = LocalTime.parse(objectAttributeGlobalValue);
+	            	LocalTime ruleTime = LocalTime.parse(ruleTimeValueString, FORMATTER);
 		            
-		            return ruleTimeValueTime.compareTo(objectTimeValueTime);
+		            return objectAttributeGlobalValue.compareTo(ruleTime);
 	            } else {
 	                return 0;
 	            }
