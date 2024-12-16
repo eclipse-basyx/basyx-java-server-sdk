@@ -28,9 +28,9 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.backend;
 import static org.junit.Assert.assertEquals;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.core.BaSyxCrudRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.junit.Test;
-import org.springframework.data.repository.CrudRepository;
 
 /**
  * Tests {@link CrudSubmodelRepository}
@@ -52,7 +52,7 @@ public class CrudSubmodelRepositoryTest {
 		
 		return new SubmodelBackendProvider() {
 			@Override
-			public CrudRepository<Submodel, String> getCrudRepository() {
+			public BaSyxCrudRepository<Submodel> getCrudRepository() {
 				return null;
 			}
 

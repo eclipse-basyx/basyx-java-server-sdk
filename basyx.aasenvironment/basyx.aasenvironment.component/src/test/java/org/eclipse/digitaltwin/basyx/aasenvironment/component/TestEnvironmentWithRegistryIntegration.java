@@ -38,6 +38,7 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEn
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment.EnvironmentType;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasFilter;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AasRepositoryRegistryLink;
 import org.eclipse.digitaltwin.basyx.core.exceptions.RepositoryRegistryLinkException;
@@ -117,7 +118,7 @@ public class TestEnvironmentWithRegistryIntegration {
     }
 
     private static void assertRepositoriesAreEmpty() {
-        assertTrue(aasRepository.getAllAas(PaginationInfo.NO_LIMIT).getResult().isEmpty());
+        assertTrue(aasRepository.getAllAas(PaginationInfo.NO_LIMIT, new AasFilter()).getResult().isEmpty());
         assertTrue(smRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().isEmpty());
     }
 
