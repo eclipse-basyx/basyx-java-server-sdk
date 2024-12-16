@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.eclipse.digitaltwin.basyx</groupId>
+		<artifactId>basyx.submodelregistry</artifactId>
+		<version>${revision}</version>
+	</parent>
+
+	<artifactId>basyx.submodelregistry-feature-hierarchy-example</artifactId>
+	<name>BaSyx Submodel Registry Feature Hierarchy Example</name>
+	<description>BaSyx Submodel Registry Feature Hierarchy Example</description>
+
+	<properties>
+		<spring-cloud.version>2020.0.4</spring-cloud.version>
+		<start-class>
+			org.eclipse.digitaltwin.basyx.submodelregistry.service.OpenApiGeneratorApplication</start-class>
+		<docker.image.name>submodel-registry-feature-hierarchy-example</docker.image.name>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelregistry-service-release-log-mem</artifactId>
+			<version>${revision}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelregistry-feature-hierarchy</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>
