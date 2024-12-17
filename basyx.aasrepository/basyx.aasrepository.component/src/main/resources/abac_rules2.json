@@ -1,0 +1,119 @@
+{
+  "AllAccessPermissionRules": {
+    "DEFACLS": [
+      {
+        "name": "acl1",
+        "acl": {
+          "ATTRIBUTES": [
+            {
+              "CLAIM": "email"
+            }
+          ],
+          "RIGHTS": [
+            "READ",
+            "UPDATE"
+          ],
+          "ACCESS": "ALLOW"
+        }
+      }
+    ],
+    "DEFOBJECTS": [
+      {
+        "name": "acl1",
+        "objects": [
+          {
+            "REFERABLE": "(Submodel)https://s1.com, (Property)p1"
+          },
+          {
+            "REFERABLE": "(Submodel)https://s1.com, (Property)p2"
+          }
+        ]
+      }
+    ],
+    "DEFFORMULAS": [
+      {
+        "name": "allowSubjectGroup1",
+        "formula": {
+          "$and": [
+            {
+              "$eq": [
+                {
+                  "attribute": {
+                    "GLOBAL": "UTCNOW"
+                  }
+                },
+                {
+                  "timeVal": "15:00"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                {
+                  "attribute": {
+                    "CLAIM": "email"
+                  }
+                },
+                {
+                  "strVal": "user1@company1.com"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                {
+                  "attribute": {
+                    "CLAIM": "email"
+                  }
+                },
+                {
+                  "strVal": "user2@company2.com"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "rules": [
+      {
+        "ACL": {
+          "USEATTRIBUTES": "a1",
+          "RIGHTS": [
+            "READ"
+          ],
+          "ACCESS": "ALLOW"
+        },
+        "OBJECTS": [
+          {
+            "ROUTE": "*"
+          }
+        ],
+        "FORMULA": {
+          "$or": [
+            {
+              "$eq": [
+                {
+                  "strModel": "$sm#semanticId"
+                },
+                {
+                  "strVal": "SemanticID-Nameplate"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                {
+                  "strModel": "$sm#semanticId"
+                },
+                {
+                  "strVal": "SemanticID-TechnicalData"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
