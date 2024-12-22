@@ -89,7 +89,6 @@ services:
       SUBMODEL_REPO_PATH: "http://localhost/aas-env/submodels"
       CD_REPO_PATH: "http://localhost/aas-env/concept-descriptions"
       BASE_PATH: "/aas-ui" # without trailing slash
-      LOGO_PATH: "Logo/HTW.svg"
     restart: always
     depends_on:
       aas-env:
