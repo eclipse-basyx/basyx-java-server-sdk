@@ -54,7 +54,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 public class MqttAasService implements AasService {
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static Logger logger = LoggerFactory.getLogger(MqttAasService.class);
 	private MqttAasServiceTopicFactory topicFactory;
 
@@ -154,7 +153,7 @@ public class MqttAasService implements AasService {
 	}
 
 	private Reference extractSubmodelReferenceById(String submodelId) {
-		List<Reference> submodelsReferences = getSubmodelReferences(NO_LIMIT_PAGINATION_INFO).getResult();
+		List<Reference> submodelsReferences = getSubmodelReferences(PaginationInfo.NO_LIMIT).getResult();
 
 		return submodelsReferences.stream()
 				.filter(reference -> containsSubmodelId(reference, submodelId))

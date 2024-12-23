@@ -45,7 +45,6 @@ import org.springframework.context.ConfigurableApplicationContext;
  *
  */
 public class TestConceptDescriptionRepositoryHTTP extends ConceptDescriptionRepositoryHTTPSuite {
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
@@ -61,7 +60,7 @@ public class TestConceptDescriptionRepositoryHTTP extends ConceptDescriptionRepo
 	}
 
 	private void resetRepoToDefaultConceptDescriptions(ConceptDescriptionRepository repo, Collection<ConceptDescription> conceptDescriptions) {
-		repo.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO)
+		repo.getAllConceptDescriptions(PaginationInfo.NO_LIMIT)
 				.getResult()
 				.stream()
 				.map(s -> s.getId())

@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.backend;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -34,13 +35,11 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
@@ -50,6 +49,8 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
+import org.eclipse.digitaltwin.basyx.serialization.SubmodelMetadataUtil;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
@@ -58,6 +59,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.http.HttpStatus;
 
 /**
  * Default Implementation for the {@link SubmodelRepository} based on Spring
@@ -69,7 +71,6 @@ import org.springframework.data.repository.CrudRepository;
 public class CrudSubmodelRepository implements SubmodelRepository {
 
 	private Logger logger = LoggerFactory.getLogger(CrudSubmodelRepository.class);
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private CrudRepository<Submodel, String> submodelBackend;
 
 	private SubmodelServiceFactory submodelServiceFactory;
@@ -114,6 +115,27 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 		List<Submodel> submodels = StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
 
 		TreeMap<String, Submodel> submodelMap = submodels.stream().collect(Collectors.toMap(Submodel::getId, submodel -> submodel, (a, b) -> a, TreeMap::new));
+
+		PaginationSupport<Submodel> paginationSupport = new PaginationSupport<>(submodelMap, Submodel::getId);
+
+		return paginationSupport.getPaged(pInfo);
+	}
+
+	@Override
+	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo) {
+		Iterable<Submodel> iterable = submodelBackend.findAll(); 
+		List<Submodel> submodels = StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
+
+	    List<Submodel> filteredSubmodels = submodels.stream()
+	    		.filter((submodel) -> {
+	    			return submodel.getSemanticId() != null && 
+	    				submodel.getSemanticId().getKeys().stream().filter((key) -> {
+	    					return key.getValue().equals(semanticId);
+	    				}).findAny().isPresent();
+	    		})
+	    		.collect(Collectors.toList());
+	    
+		TreeMap<String, Submodel> submodelMap = filteredSubmodels.stream().collect(Collectors.toMap(Submodel::getId, submodel -> submodel, (a, b) -> a, TreeMap::new));
 
 		PaginationSupport<Submodel> paginationSupport = new PaginationSupport<>(submodelMap, Submodel::getId);
 
@@ -222,7 +244,7 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) throws ElementDoesNotExistException {
-		return new SubmodelValueOnly(getSubmodelElements(submodelId, NO_LIMIT_PAGINATION_INFO).getResult());
+		return new SubmodelValueOnly(getSubmodelElements(submodelId, PaginationInfo.NO_LIMIT).getResult());
 	}
 
 	@Override
@@ -230,7 +252,7 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 		Submodel submodel = getSubmodel(submodelId);
 
-		return getSubmodelDeepCopy(submodel);
+		return SubmodelMetadataUtil.extractMetadata(submodel);
 	}
 
 	@Override
@@ -276,23 +298,6 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	private void throwIfMissingId(Collection<Submodel> submodels) {
 		submodels.stream().map(Submodel::getId).forEach(this::throwIfSubmodelIdEmptyOrNull);
-	}
-
-	private Submodel getSubmodelDeepCopy(Submodel submodel) {
-
-		try {
-			String submodelAsJSON = new JsonSerializer().write(submodel);
-
-			Submodel submodelDeepCopy = new JsonDeserializer().read(submodelAsJSON, Submodel.class);
-
-			submodelDeepCopy.setSubmodelElements(null);
-
-			return submodelDeepCopy;
-		} catch (DeserializationException e) {
-			throw new RuntimeException("Unable to deserialize the Submodel", e);
-		} catch (SerializationException e) {
-			throw new RuntimeException("Unable to serialize the Submodel", e);
-		}
 	}
 
 	private SubmodelService getSubmodelServiceOrThrow(String submodelId) {

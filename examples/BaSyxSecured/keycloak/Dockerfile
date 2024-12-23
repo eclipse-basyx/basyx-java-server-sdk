@@ -1,5 +1,7 @@
 # syntax=docker/dockerfile:1
 FROM maven:3-eclipse-temurin-17 AS build
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
 WORKDIR /workspace
 COPY ./initializer/pom.xml /workspace/pom.xml
 COPY ./initializer/src /workspace/src

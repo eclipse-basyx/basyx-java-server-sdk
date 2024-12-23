@@ -40,6 +40,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministratio
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AttributeMapper;
+import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 
 /**
@@ -52,15 +53,12 @@ public class AasDescriptorFactory {
 	private static final String AAS_INTERFACE = "AAS-3.0";
 	private static final String AAS_REPOSITORY_PATH = "shells";
 
-	private AssetAdministrationShell shell;
-	private List<String> aasRepositoryURLs;
+	private final List<String> aasRepositoryURLs;
+	private static AttributeMapper attributeMapper;
 
-	private AttributeMapper attributeMapper;
-
-	public AasDescriptorFactory(AssetAdministrationShell shell, List<String> aasRepositoryBaseURLs, AttributeMapper attributeMapper) {
-		this.shell = shell;
+	public AasDescriptorFactory(List<String> aasRepositoryBaseURLs, AttributeMapper attributeMapper) {
 		this.aasRepositoryURLs = createAasRepositoryUrls(aasRepositoryBaseURLs);
-		this.attributeMapper = attributeMapper;
+		AasDescriptorFactory.attributeMapper = attributeMapper;
 	}
 
 	/**
@@ -68,7 +66,7 @@ public class AasDescriptorFactory {
 	 * 
 	 * @return the created AssetAdministrationShellDescriptor
 	 */
-	public AssetAdministrationShellDescriptor create() {
+	public AssetAdministrationShellDescriptor create(AssetAdministrationShell shell) {
 
 		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
 
@@ -76,7 +74,7 @@ public class AasDescriptorFactory {
 
 		setIdShort(shell.getIdShort(), descriptor);
 
-		setEndpointItem(shell.getId(), descriptor);
+		setEndpointItem(shell.getId(), descriptor, aasRepositoryURLs);
 
 		setDescription(shell.getDescription(), descriptor);
 
@@ -95,12 +93,7 @@ public class AasDescriptorFactory {
 		return descriptor;
 	}
 
-	public AssetAdministrationShellDescriptor create(AssetAdministrationShell shell) {
-		this.shell = shell;
-		return create();
-	}
-
-	private void setDescription(List<LangStringTextType> descriptions, AssetAdministrationShellDescriptor descriptor) {
+	private static void setDescription(List<LangStringTextType> descriptions, AssetAdministrationShellDescriptor descriptor) {
 
 		if (descriptions == null || descriptions.isEmpty())
 			return;
@@ -108,7 +101,7 @@ public class AasDescriptorFactory {
 		descriptor.setDescription(attributeMapper.mapDescription(descriptions));
 	}
 
-	private void setDisplayName(List<LangStringNameType> displayNames, AssetAdministrationShellDescriptor descriptor) {
+	private static void setDisplayName(List<LangStringNameType> displayNames, AssetAdministrationShellDescriptor descriptor) {
 
 		if (displayNames == null || displayNames.isEmpty())
 			return;
@@ -116,7 +109,7 @@ public class AasDescriptorFactory {
 		descriptor.setDisplayName(attributeMapper.mapDisplayName(displayNames));
 	}
 
-	private void setExtensions(List<Extension> extensions, AssetAdministrationShellDescriptor descriptor) {
+	private static void setExtensions(List<Extension> extensions, AssetAdministrationShellDescriptor descriptor) {
 
 		if (extensions == null || extensions.isEmpty())
 			return;
@@ -124,7 +117,7 @@ public class AasDescriptorFactory {
 		descriptor.setExtensions(attributeMapper.mapExtensions(extensions));
 	}
 
-	private void setAdministration(AdministrativeInformation administration, AssetAdministrationShellDescriptor descriptor) {
+	private static void setAdministration(AdministrativeInformation administration, AssetAdministrationShellDescriptor descriptor) {
 
 		if (administration == null)
 			return;
@@ -132,7 +125,7 @@ public class AasDescriptorFactory {
 		descriptor.setAdministration(attributeMapper.mapAdministration(administration));
 	}
 
-	private void setAssetKind(AssetInformation assetInformation, AssetAdministrationShellDescriptor descriptor) {
+	private static void setAssetKind(AssetInformation assetInformation, AssetAdministrationShellDescriptor descriptor) {
 
 		if (assetInformation == null || assetInformation.getAssetKind() == null)
 			return;
@@ -140,7 +133,7 @@ public class AasDescriptorFactory {
 		descriptor.setAssetKind(attributeMapper.mapAssetKind(assetInformation.getAssetKind()));
 	}
 
-	private void setAssetType(AssetInformation assetInformation, AssetAdministrationShellDescriptor descriptor) {
+	private static void setAssetType(AssetInformation assetInformation, AssetAdministrationShellDescriptor descriptor) {
 
 		if (assetInformation == null || assetInformation.getAssetType() == null)
 			return;
@@ -148,7 +141,7 @@ public class AasDescriptorFactory {
 		descriptor.setAssetType(assetInformation.getAssetType());
 	}
 
-	private void setGlobalAssetId(AssetInformation assetInformation, AssetAdministrationShellDescriptor descriptor) {
+	private static void setGlobalAssetId(AssetInformation assetInformation, AssetAdministrationShellDescriptor descriptor) {
 
 		if (assetInformation == null || assetInformation.getGlobalAssetId() == null)
 			return;
@@ -156,7 +149,7 @@ public class AasDescriptorFactory {
 		descriptor.setGlobalAssetId(assetInformation.getGlobalAssetId());
 	}
 
-	private void setEndpointItem(String shellId, AssetAdministrationShellDescriptor descriptor) {
+	private static void setEndpointItem(String shellId, AssetAdministrationShellDescriptor descriptor, List<String> aasRepositoryURLs) {
 		for (String eachUrl : aasRepositoryURLs) {
 			Endpoint endpoint = new Endpoint();
 			endpoint.setInterface(AAS_INTERFACE);
@@ -167,7 +160,7 @@ public class AasDescriptorFactory {
 		}
 	}
 
-	private ProtocolInformation createProtocolInformation(String shellId, String url) {
+	private static ProtocolInformation createProtocolInformation(String shellId, String url) {
 		String href = String.format("%s/%s", url, Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
 
 		ProtocolInformation protocolInformation = new ProtocolInformation();
@@ -177,15 +170,15 @@ public class AasDescriptorFactory {
 		return protocolInformation;
 	}
 
-	private void setIdShort(String idShort, AssetAdministrationShellDescriptor descriptor) {
+	private static void setIdShort(String idShort, AssetAdministrationShellDescriptor descriptor) {
 		descriptor.setIdShort(idShort);
 	}
 
-	private void setId(String shellId, AssetAdministrationShellDescriptor descriptor) {
+	private static void setId(String shellId, AssetAdministrationShellDescriptor descriptor) {
 		descriptor.setId(shellId);
 	}
 
-	private String getProtocol(String endpoint) {
+	private static String getProtocol(String endpoint) {
 		try {
 			return new URL(endpoint).getProtocol();
 		} catch (MalformedURLException e) {
@@ -193,21 +186,11 @@ public class AasDescriptorFactory {
 		}
 	}
 
-	private List<String> createAasRepositoryUrls(List<String> aasRepositoryBaseURLs) {
+	private static List<String> createAasRepositoryUrls(List<String> aasRepositoryBaseURLs) {
 		List<String> toReturn = new ArrayList<>(aasRepositoryBaseURLs.size());
 		for (String eachUrl : aasRepositoryBaseURLs) {
-			toReturn.add(createAasRepositoryUrl(eachUrl));
+			toReturn.add(RepositoryUrlHelper.createRepositoryUrl(eachUrl, AAS_REPOSITORY_PATH));
 		}
 		return toReturn;
 	}
-
-	private String createAasRepositoryUrl(String aasRepositoryBaseURL) {
-
-		try {
-			return new URL(new URL(aasRepositoryBaseURL), AAS_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The AAS Repository Base url is malformed.\n" + e.getMessage());
-		}
-	}
-
 }

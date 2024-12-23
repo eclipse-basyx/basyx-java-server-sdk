@@ -66,7 +66,6 @@ import static org.junit.Assert.assertEquals;
 public class TestAuthorizedAasRegistry {
 
 	private static final String AAS_REGISTRY_PATH = "shell-descriptors";
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static final String AAS_DESCRIPTOR_SIMPLE_2_JSON = "authorization/AasDescriptorSimple_2.json";
 	private static final String AAS_DESCRIPTOR_SIMPLE_1_JSON = "authorization/AasDescriptorSimple_1.json";
 	private static final String SPECIFIC_SHELL_ID_2 = "specificAasId-2";
@@ -108,7 +107,7 @@ public class TestAuthorizedAasRegistry {
 	public void reset() throws FileNotFoundException, IOException {
 		configureSecurityContext();
 
-		Collection<AssetAdministrationShellDescriptor> descriptors = storage.getAllAasDescriptors(NO_LIMIT_PAGINATION_INFO, new DescriptorFilter(AssetKind.TYPE, "TestAsset")).getResult();
+		Collection<AssetAdministrationShellDescriptor> descriptors = storage.getAllAasDescriptors(PaginationInfo.NO_LIMIT, new DescriptorFilter(AssetKind.TYPE, "TestAsset")).getResult();
 
 		descriptors.forEach(descriptor -> storage.removeAasDescriptor(descriptor.getId()));
 

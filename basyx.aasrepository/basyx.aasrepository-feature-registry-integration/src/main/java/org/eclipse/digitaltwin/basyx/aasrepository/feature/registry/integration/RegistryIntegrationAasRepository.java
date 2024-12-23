@@ -78,9 +78,19 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 
 	@Override
 	public void createAas(AssetAdministrationShell shell) throws CollidingIdentifierException {
+		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(aasRepositoryRegistryLink.getAasRepositoryBaseURLs(), attributeMapper).create(shell);
+
 		decorated.createAas(shell);
 
-		integrateAasWithRegistry(shell, aasRepositoryRegistryLink.getAasRepositoryBaseURLs());
+		boolean registrationSuccessful = false;
+
+		try {
+			registerAas(descriptor);
+			registrationSuccessful = true;
+		} finally {
+			if (!registrationSuccessful)
+				decorated.deleteAas(shell.getId());
+		}
 	}
 
 	@Override
@@ -125,17 +135,15 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 		return decorated.getAssetInformation(shellId);
 	}
 
-	private void integrateAasWithRegistry(AssetAdministrationShell shell, List<String> aasRepositoryURLs) {
-		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(shell, aasRepositoryURLs, attributeMapper).create();
-
+	private void registerAas(AssetAdministrationShellDescriptor descriptor) {
 		RegistryAndDiscoveryInterfaceApi registryApi = aasRepositoryRegistryLink.getRegistryApi();
 
 		try {
 			registryApi.postAssetAdministrationShellDescriptor(descriptor);
 
-			logger.info("Shell '{}' has been automatically linked with the Registry", shell.getId());
+			logger.info("Shell '{}' has been automatically linked with the Registry", descriptor.getId());
 		} catch (ApiException e) {
-			throw new RepositoryRegistryLinkException(shell.getId(), e);
+			throw new RepositoryRegistryLinkException(descriptor.getId(), e);
 		}
 	}
 
