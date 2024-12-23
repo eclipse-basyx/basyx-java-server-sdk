@@ -3,6 +3,11 @@
     "id": "7A7104BDAB57E184",
     "idShort": "TechnicalData",
     "kind": "Instance",
+    "administration": {
+        "version": "0",
+        "revision": "9",
+        "templateId": "testTemplateId"
+    },
     "submodelElements": [
         {
             "modelType": "Property",

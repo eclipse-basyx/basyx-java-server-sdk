@@ -30,7 +30,7 @@ services:
       - ./config/sm-registry.yml:/workspace/config/application.yml
 
   aas-web-ui:
-    image: eclipsebasyx/aas-gui:v2-240913
+    image: eclipsebasyx/aas-gui:SNAPSHOT
     container_name: aas-ui
     ports:
       - '3000:3000'

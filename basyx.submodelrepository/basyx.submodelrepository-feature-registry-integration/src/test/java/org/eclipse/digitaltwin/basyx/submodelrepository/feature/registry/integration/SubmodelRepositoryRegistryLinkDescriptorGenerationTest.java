@@ -104,8 +104,8 @@ public class SubmodelRepositoryRegistryLinkDescriptorGenerationTest {
     private SubmodelDescriptor createAndRetrieveDescriptor(Submodel submodel) throws ApiException {
         registryIntegrationSubmodelRepository.createSubmodel(submodel);
 
-        SubmodelDescriptorFactory descriptorFactory = new SubmodelDescriptorFactory(submodel, mockedRegistryLink.getSubmodelRepositoryBaseURLs(), mockedAttributeMapper);
-        return descriptorFactory.create();
+        SubmodelDescriptorFactory descriptorFactory = new SubmodelDescriptorFactory(mockedRegistryLink.getSubmodelRepositoryBaseURLs(), mockedAttributeMapper);
+        return descriptorFactory.create(submodel);
     }
     
     private Submodel createDummySubmodel() {
