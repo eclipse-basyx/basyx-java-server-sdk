@@ -63,7 +63,29 @@
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.authorization.rules.rbac.backend.inmemory</artifactId>
-		</dependency> 
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.authorization.rules.rbac.backend.submodel</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.eclipse.digitaltwin.basyx</groupId>
+					<artifactId>basyx.submodelrepository-client</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.digitaltwin.basyx</groupId>
+					<artifactId>basyx.submodelrepository-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.digitaltwin.basyx</groupId>
+					<artifactId>basyx.submodelservice-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.digitaltwin.basyx</groupId>
+					<artifactId>basyx.submodelservice-client</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
 			<artifactId>httpclient5</artifactId>
