@@ -30,9 +30,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
@@ -40,13 +37,11 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.Action;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 
 /**
  * Decorator for authorized {@link AasRepository}
@@ -69,27 +64,9 @@ public class AuthorizedAasRepository implements AasRepository {
 	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasTargetInformation(getIdAsList("*")));
 		
-		if (isAuthorized)
-			return decorated.getAllAas(pInfo);
+		throwExceptionIfInsufficientPermission(isAuthorized);
 		
-		List<TargetInformation> targetInformations = permissionResolver.getMatchingTargetInformationInRules(Action.READ, new AasTargetInformation(getIdAsList("*")));
-		
-		List<String> allIds = targetInformations.stream().map(AasTargetInformation.class::cast)
-				.map(AasTargetInformation::getAasIds).flatMap(List::stream).collect(Collectors.toList());
-		
-		List<AssetAdministrationShell> aasDescriptors = allIds.stream().map(id -> {
-			try {
-				return getAas(id);
-			} catch (Exception e) {
-				return null;
-			}
-		}).filter(Objects::nonNull).collect(Collectors.toList());
-		
-		TreeMap<String, AssetAdministrationShell> aasMap = aasDescriptors.stream().collect(Collectors.toMap(AssetAdministrationShell::getId, aas -> aas, (a, b) -> a, TreeMap::new));
-
-		PaginationSupport<AssetAdministrationShell> paginationSupport = new PaginationSupport<>(aasMap, AssetAdministrationShell::getId);
-
-		return paginationSupport.getPaged(pInfo);
+		return decorated.getAllAas(pInfo);
 	}
 
 	@Override

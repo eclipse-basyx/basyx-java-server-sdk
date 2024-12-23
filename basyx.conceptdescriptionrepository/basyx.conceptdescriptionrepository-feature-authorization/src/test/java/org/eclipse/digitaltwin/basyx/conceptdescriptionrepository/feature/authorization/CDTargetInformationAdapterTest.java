@@ -46,7 +46,7 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.author
 import org.eclipse.digitaltwin.basyx.core.exceptions.InvalidTargetInformationException;
 
 /**
- * Tests {@link AasRegistryTargetInformationAdapter}
+ * Tests {@link CDTargetInformationAdapter}
  * 
  * @author danish
  */
@@ -72,14 +72,14 @@ public class CDTargetInformationAdapterTest {
 		List<SubmodelElement> elements = result.getValue();
 		assertEquals(2, elements.size());
 
-		SubmodelElementList aasIdList = (SubmodelElementList) elements.get(0);
-		assertEquals("conceptDescriptionIds", aasIdList.getIdShort());
+		SubmodelElementList cdIdList = (SubmodelElementList) elements.get(0);
+		assertEquals("conceptDescriptionIds", cdIdList.getIdShort());
 		
 		Property typeProperty = (Property) elements.get(1);
 		assertEquals("@type", typeProperty.getIdShort());
 
-		List<String> actualAasIds = aasIdList.getValue().stream().map(Property.class::cast).map(Property::getValue).map(String::valueOf).collect(Collectors.toList());
-		assertEquals(conceptDescriptiornIds, actualAasIds);
+		List<String> actualCDIds = cdIdList.getValue().stream().map(Property.class::cast).map(Property::getValue).map(String::valueOf).collect(Collectors.toList());
+		assertEquals(conceptDescriptiornIds, actualCDIds);
 		
 		String actualType = typeProperty.getValue();
         assertTrue(actualType.equals("concept-description")); 
@@ -91,12 +91,12 @@ public class CDTargetInformationAdapterTest {
 		List<String> expectedCDIds = Arrays.asList("cdId1", "cdId2");
 		String type = "concept-description";
 		
-		List<SubmodelElement> aasIdProperties = expectedCDIds.stream().map(aasId -> new DefaultProperty.Builder().value(aasId).build()).collect(Collectors.toList());
+		List<SubmodelElement> cdIdProperties = expectedCDIds.stream().map(aasId -> new DefaultProperty.Builder().value(aasId).build()).collect(Collectors.toList());
 
-		SubmodelElementList aasIdList = new DefaultSubmodelElementList.Builder().idShort("conceptDescriptionIds").value(aasIdProperties).build();
+		SubmodelElementList cdIdList = new DefaultSubmodelElementList.Builder().idShort("conceptDescriptionIds").value(cdIdProperties).build();
 		SubmodelElement typeProperty = createTypeProperty(type);
 		
-		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation").value(Arrays.asList(aasIdList, typeProperty)).build();
+		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation").value(Arrays.asList(cdIdList, typeProperty)).build();
 
 		TargetInformation result = cdTargetInformationAdapter.adapt(targetInformationSMC);
 
@@ -105,7 +105,7 @@ public class CDTargetInformationAdapterTest {
 	}
 	
     @Test
-    public void testAdaptTargetInformationWithEmptyAasIds() {
+    public void testAdaptTargetInformationWithEmptyCDIds() {
     	
         List<String> cdIds = Collections.emptyList();
         TargetInformation targetInformation = new ConceptDescriptionTargetInformation(cdIds);
@@ -117,18 +117,18 @@ public class CDTargetInformationAdapterTest {
         List<SubmodelElement> elements = result.getValue();
         assertEquals(2, elements.size());
 
-        SubmodelElementList aasIdList = (SubmodelElementList) elements.get(0);
-        assertEquals("conceptDescriptionIds", aasIdList.getIdShort());
+        SubmodelElementList cdIdList = (SubmodelElementList) elements.get(0);
+        assertEquals("conceptDescriptionIds", cdIdList.getIdShort());
         
         Property typeProperty = (Property) elements.get(1);
 		assertEquals("@type", typeProperty.getIdShort());
 
-        List<String> actualAasIds = aasIdList.getValue().stream()
+        List<String> actualCDIds = cdIdList.getValue().stream()
                 .map(Property.class::cast)
                 .map(Property::getValue)
                 .map(String::valueOf)
                 .collect(Collectors.toList());
-        assertTrue(actualAasIds.isEmpty());
+        assertTrue(actualCDIds.isEmpty());
         
         String actualType = typeProperty.getValue();
         assertTrue(actualType.equals("concept-description")); 

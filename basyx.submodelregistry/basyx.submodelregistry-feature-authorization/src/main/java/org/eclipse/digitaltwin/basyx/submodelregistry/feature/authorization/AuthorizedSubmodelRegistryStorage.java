@@ -28,18 +28,12 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.feature.authorization;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
 import org.eclipse.digitaltwin.basyx.authorization.rbac.Action;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.eclipse.digitaltwin.basyx.submodelregistry.feature.authorization.rbac.SubmodelRegistryTargetPermissionVerifier;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
@@ -63,30 +57,8 @@ public class AuthorizedSubmodelRegistryStorage implements SubmodelRegistryStorag
 
 	@Override
 	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(PaginationInfo pRequest) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelRegistryTargetInformation(getIdAsList(SubmodelRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD)));
-		throwExceptionIfInsufficientPermission(isAuthorized);
-
-		if (isAuthorized)
-			return decorated.getAllSubmodelDescriptors(pRequest);
-		
-		List<TargetInformation> targetInformations = permissionResolver.getMatchingTargetInformationInRules(Action.READ, new SubmodelRegistryTargetInformation(getIdAsList(SubmodelRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD)));
-		
-		List<String> allIds = targetInformations.stream().map(SubmodelRegistryTargetInformation.class::cast)
-				.map(SubmodelRegistryTargetInformation::getSubmodelIds).flatMap(List::stream).collect(Collectors.toList());
-		
-		List<SubmodelDescriptor> aasDescriptors = allIds.stream().map(id -> {
-			try {
-				return getSubmodelDescriptor(id);
-			} catch (Exception e) {
-				return null;
-			}
-		}).filter(Objects::nonNull).collect(Collectors.toList());
-		
-		TreeMap<String, SubmodelDescriptor> aasMap = aasDescriptors.stream().collect(Collectors.toMap(SubmodelDescriptor::getId, aas -> aas, (a, b) -> a, TreeMap::new));
-
-		PaginationSupport<SubmodelDescriptor> paginationSupport = new PaginationSupport<>(aasMap, SubmodelDescriptor::getId);
-
-		return paginationSupport.getPaged(pRequest);
+		assertHasPermission(Action.READ, getIdAsList(SubmodelRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD));
+		return decorated.getAllSubmodelDescriptors(pRequest);
 	}
 
 	@Override

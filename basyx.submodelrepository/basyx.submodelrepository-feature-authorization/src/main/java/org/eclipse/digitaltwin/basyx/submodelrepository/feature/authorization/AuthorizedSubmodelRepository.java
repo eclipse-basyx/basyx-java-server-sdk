@@ -30,16 +30,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.Action;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
@@ -47,7 +43,6 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
@@ -73,27 +68,9 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(getIdAsList(ALL_ALLOWED_WILDCARD), getIdAsList(ALL_ALLOWED_WILDCARD)));
 
-		if (isAuthorized)
-			return decorated.getAllSubmodels(pInfo);
-		
-		List<TargetInformation> targetInformations = permissionResolver.getMatchingTargetInformationInRules(Action.READ, new SubmodelTargetInformation(getIdAsList(ALL_ALLOWED_WILDCARD), getIdAsList(ALL_ALLOWED_WILDCARD)));
-		
-		List<String> allIds = targetInformations.stream().map(SubmodelTargetInformation.class::cast)
-				.map(SubmodelTargetInformation::getSubmodelIds).flatMap(List::stream).collect(Collectors.toList());
-		
-		List<Submodel> submodels = allIds.stream().map(id -> {
-			try {
-				return getSubmodel(id);
-			} catch (Exception e) {
-				return null;
-			}
-		}).filter(Objects::nonNull).collect(Collectors.toList());
-		
-		TreeMap<String, Submodel> aasMap = submodels.stream().collect(Collectors.toMap(Submodel::getId, aas -> aas, (a, b) -> a, TreeMap::new));
+		throwExceptionIfInsufficientPermission(isAuthorized);
 
-		PaginationSupport<Submodel> paginationSupport = new PaginationSupport<>(aasMap, Submodel::getId);
-
-		return paginationSupport.getPaged(pInfo);
+		return decorated.getAllSubmodels(pInfo);
 	}
 	
 	@Override
@@ -145,29 +122,9 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo) throws ElementDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(ALL_ALLOWED_WILDCARD)));
 
-		if (isAuthorized)
-			return decorated.getSubmodelElements(submodelId, pInfo);
-		
-		getSubmodel(submodelId);
-		
-		List<TargetInformation> targetInformations = permissionResolver.getMatchingTargetInformationInRules(Action.READ, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(ALL_ALLOWED_WILDCARD)));
-		
-		List<String> allIds = targetInformations.stream().map(SubmodelTargetInformation.class::cast)
-				.map(SubmodelTargetInformation::getSubmodelElementIdShortPaths).flatMap(List::stream).collect(Collectors.toList());
-		
-		List<SubmodelElement> smes = allIds.stream().map(id -> {
-			try {
-				return getSubmodelElement(submodelId, id);
-			} catch (Exception e) {
-				return null;
-			}
-		}).filter(Objects::nonNull).collect(Collectors.toList());
-		
-		TreeMap<String, SubmodelElement> aasMap = smes.stream().collect(Collectors.toMap(SubmodelElement::getIdShort, aas -> aas, (a, b) -> a, TreeMap::new));
+		throwExceptionIfInsufficientPermission(isAuthorized);
 
-		PaginationSupport<SubmodelElement> paginationSupport = new PaginationSupport<>(aasMap, SubmodelElement::getIdShort);
-
-		return paginationSupport.getPaged(pInfo);
+		return decorated.getSubmodelElements(submodelId, pInfo);
 	}
 
 	@Override

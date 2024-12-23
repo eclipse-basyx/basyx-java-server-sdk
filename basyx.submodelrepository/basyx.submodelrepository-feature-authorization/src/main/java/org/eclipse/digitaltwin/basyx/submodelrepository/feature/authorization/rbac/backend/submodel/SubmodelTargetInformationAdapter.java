@@ -42,7 +42,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.InvalidTargetInformationExc
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.SubmodelTargetInformation;
 
 /**
- * An implementation of the {@link TargetInformationAdapter} to adapt with Aas
+ * An implementation of the {@link TargetInformationAdapter} to adapt with Submodel
  * {@link TargetInformation}
  * 
  * @author danish
@@ -52,18 +52,14 @@ public class SubmodelTargetInformationAdapter implements TargetInformationAdapte
 	@Override
 	public SubmodelElementCollection adapt(TargetInformation targetInformation) {
 
-		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder()
-				.idShort("targetInformation").build();
+		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation").build();
 
 		SubmodelElementList submodelId = new DefaultSubmodelElementList.Builder().idShort("submodelIds").build();
-		SubmodelElementList submodelElementId = new DefaultSubmodelElementList.Builder()
-				.idShort("submodelElementIdShortPaths").build();
+		SubmodelElementList submodelElementId = new DefaultSubmodelElementList.Builder().idShort("submodelElementIdShortPaths").build();
 		Property typeProperty = new DefaultProperty.Builder().idShort("@type").value("submodel").build();
 
-		List<SubmodelElement> submodelIds = ((SubmodelTargetInformation) targetInformation).getSubmodelIds().stream()
-				.map(this::transform).collect(Collectors.toList());
-		List<SubmodelElement> submodelElementIds = ((SubmodelTargetInformation) targetInformation)
-				.getSubmodelElementIdShortPaths().stream().map(this::transform).collect(Collectors.toList());
+		List<SubmodelElement> submodelIds = ((SubmodelTargetInformation) targetInformation).getSubmodelIds().stream().map(this::transform).collect(Collectors.toList());
+		List<SubmodelElement> submodelElementIds = ((SubmodelTargetInformation) targetInformation).getSubmodelElementIdShortPaths().stream().map(this::transform).collect(Collectors.toList());
 		submodelId.setValue(submodelIds);
 		submodelElementId.setValue(submodelElementIds);
 
@@ -78,51 +74,34 @@ public class SubmodelTargetInformationAdapter implements TargetInformationAdapte
 		String targetInformationType = getTargetInformationType(targetInformation);
 
 		if (!targetInformationType.equals("submodel"))
-			throw new InvalidTargetInformationException("The TargetInformation @type: " + targetInformationType
-					+ " is not compatible with " + getClass().getName() + ".");
+			throw new InvalidTargetInformationException("The TargetInformation @type: " + targetInformationType + " is not compatible with " + getClass().getName() + ".");
 
-		SubmodelElement submodelIdSubmodelElement = targetInformation.getValue().stream()
-				.filter(sme -> sme.getIdShort().equals("submodelIds")).findAny()
-				.orElseThrow(() -> new InvalidTargetInformationException(
-						"The TargetInformation defined in the SubmodelElementCollection Rule with id: "
-								+ targetInformation.getIdShort() + " is not compatible with the "
-								+ getClass().getName()));
+		SubmodelElement submodelIdSubmodelElement = targetInformation.getValue().stream().filter(sme -> sme.getIdShort().equals("submodelIds")).findAny().orElseThrow(
+				() -> new InvalidTargetInformationException("The TargetInformation defined in the SubmodelElementCollection Rule with id: " + targetInformation.getIdShort() + " is not compatible with the " + getClass().getName()));
 
-		SubmodelElement smeIdSubmodelElement = targetInformation.getValue().stream()
-				.filter(sme -> sme.getIdShort().equals("submodelElementIdShortPaths")).findAny()
-				.orElseThrow(() -> new InvalidTargetInformationException(
-						"The TargetInformation defined in the SubmodelElementCollection Rule with id: "
-								+ targetInformation.getIdShort() + " is not compatible with the "
-								+ getClass().getName()));
+		SubmodelElement smeIdSubmodelElement = targetInformation.getValue().stream().filter(sme -> sme.getIdShort().equals("submodelElementIdShortPaths")).findAny().orElseThrow(
+				() -> new InvalidTargetInformationException("The TargetInformation defined in the SubmodelElementCollection Rule with id: " + targetInformation.getIdShort() + " is not compatible with the " + getClass().getName()));
 
-		if (!(submodelIdSubmodelElement instanceof SubmodelElementList)
-				|| !(smeIdSubmodelElement instanceof SubmodelElementList))
-			throw new InvalidTargetInformationException(
-					"The TargetInformation defined in the SubmodelElementCollection Rule with id: "
-							+ targetInformation.getIdShort() + " is not compatible with the " + getClass().getName());
+		if (!(submodelIdSubmodelElement instanceof SubmodelElementList) || !(smeIdSubmodelElement instanceof SubmodelElementList))
+			throw new InvalidTargetInformationException("The TargetInformation defined in the SubmodelElementCollection Rule with id: " + targetInformation.getIdShort() + " is not compatible with the " + getClass().getName());
 
 		SubmodelElementList submodelIdList = (SubmodelElementList) submodelIdSubmodelElement;
 		SubmodelElementList smeIdList = (SubmodelElementList) smeIdSubmodelElement;
 
-		List<String> submodelIds = submodelIdList.getValue().stream().map(Property.class::cast).map(Property::getValue)
-				.collect(Collectors.toList());
-		List<String> smeIds = smeIdList.getValue().stream().map(Property.class::cast).map(Property::getValue)
-				.collect(Collectors.toList());
+		List<String> submodelIds = submodelIdList.getValue().stream().map(Property.class::cast).map(Property::getValue).collect(Collectors.toList());
+		List<String> smeIds = smeIdList.getValue().stream().map(Property.class::cast).map(Property::getValue).collect(Collectors.toList());
 
 		return new SubmodelTargetInformation(submodelIds, smeIds);
 	}
 
-	private Property transform(String aasId) {
-		return new DefaultProperty.Builder().value(aasId).build();
+	private Property transform(String submodelId) {
+		return new DefaultProperty.Builder().value(submodelId).build();
 	}
-	
+
 	private String getTargetInformationType(SubmodelElementCollection targetInformation) {
 
-		Property typeProperty = (Property) targetInformation.getValue().stream()
-				.filter(sme -> sme.getIdShort().equals("@type")).findAny()
-				.orElseThrow(() -> new InvalidTargetInformationException(
-						"The TargetInformation defined in the SubmodelElementCollection Rule with id: "
-								+ targetInformation.getIdShort() + " does not have @type definition"));
+		Property typeProperty = (Property) targetInformation.getValue().stream().filter(sme -> sme.getIdShort().equals("@type")).findAny()
+				.orElseThrow(() -> new InvalidTargetInformationException("The TargetInformation defined in the SubmodelElementCollection Rule with id: " + targetInformation.getIdShort() + " does not have @type definition"));
 
 		return typeProperty.getValue();
 	}

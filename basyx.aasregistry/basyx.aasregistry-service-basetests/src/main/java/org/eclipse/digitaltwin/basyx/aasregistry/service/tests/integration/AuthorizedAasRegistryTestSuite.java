@@ -134,7 +134,7 @@ public abstract class AuthorizedAasRegistryTestSuite {
         String accessToken = getAccessTokenProvider().getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
 
         CloseableHttpResponse retrievalResponse = getAllElementsWithAuthorization(aasRegistryBaseUrl, accessToken);
-        assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+        assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
     }
 
     @Test

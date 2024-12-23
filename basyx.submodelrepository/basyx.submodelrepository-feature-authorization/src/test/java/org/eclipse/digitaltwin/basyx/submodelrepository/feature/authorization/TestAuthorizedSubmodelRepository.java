@@ -132,7 +132,7 @@ public class TestAuthorizedSubmodelRepository {
 		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
 
 		CloseableHttpResponse retrievalResponse = getAllSubmodelsWithAuthorization(accessToken);
-		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
 	@Test

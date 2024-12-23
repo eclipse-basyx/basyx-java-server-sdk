@@ -46,7 +46,7 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InvalidTargetInformationException;
 
 /**
- * Tests {@link AasRegistryTargetInformationAdapter}
+ * Tests {@link AasEnvironmentTargetInformationAdapter}
  * 
  * @author danish
  */

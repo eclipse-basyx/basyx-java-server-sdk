@@ -52,14 +52,12 @@ public class AasRegistryTargetInformationAdapter implements TargetInformationAda
 	@Override
 	public SubmodelElementCollection adapt(TargetInformation targetInformation) {
 
-		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder()
-				.idShort("targetInformation").build();
+		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation").build();
 
 		SubmodelElementList aasId = new DefaultSubmodelElementList.Builder().idShort("aasIds").build();
 		Property typeProperty = new DefaultProperty.Builder().idShort("@type").value("aas-registry").build();
 
-		List<SubmodelElement> aasIds = ((AasRegistryTargetInformation) targetInformation).getAasIds().stream()
-				.map(this::transform).collect(Collectors.toList());
+		List<SubmodelElement> aasIds = ((AasRegistryTargetInformation) targetInformation).getAasIds().stream().map(this::transform).collect(Collectors.toList());
 		aasId.setValue(aasIds);
 
 		targetInformationSMC.setValue(Arrays.asList(aasId, typeProperty));
@@ -69,30 +67,21 @@ public class AasRegistryTargetInformationAdapter implements TargetInformationAda
 
 	@Override
 	public TargetInformation adapt(SubmodelElementCollection targetInformation) {
-		
-		String targetInformationType = getTargetInformationType(targetInformation);
-		
-		if (!targetInformationType.equals("aas-registry"))
-			throw new InvalidTargetInformationException(
-					"The TargetInformation @type: " + targetInformationType + " is not compatible with "
-							+ getClass().getName() + ".");
 
-		SubmodelElement aasIdSubmodelElement = targetInformation.getValue().stream()
-				.filter(sme -> sme.getIdShort().equals("aasIds")).findAny()
-				.orElseThrow(() -> new InvalidTargetInformationException(
-						"The TargetInformation defined in the SubmodelElementCollection Rule with id: "
-								+ targetInformation.getIdShort() + " is not compatible with the "
-								+ getClass().getName()));
+		String targetInformationType = getTargetInformationType(targetInformation);
+
+		if (!targetInformationType.equals("aas-registry"))
+			throw new InvalidTargetInformationException("The TargetInformation @type: " + targetInformationType + " is not compatible with " + getClass().getName() + ".");
+
+		SubmodelElement aasIdSubmodelElement = targetInformation.getValue().stream().filter(sme -> sme.getIdShort().equals("aasIds")).findAny().orElseThrow(
+				() -> new InvalidTargetInformationException("The TargetInformation defined in the SubmodelElementCollection Rule with id: " + targetInformation.getIdShort() + " is not compatible with the " + getClass().getName()));
 
 		if (!(aasIdSubmodelElement instanceof SubmodelElementList))
-			throw new InvalidTargetInformationException(
-					"The TargetInformation defined in the SubmodelElementCollection Rule with id: "
-							+ targetInformation.getIdShort() + " is not compatible with the " + getClass().getName());
+			throw new InvalidTargetInformationException("The TargetInformation defined in the SubmodelElementCollection Rule with id: " + targetInformation.getIdShort() + " is not compatible with the " + getClass().getName());
 
 		SubmodelElementList aasIdList = (SubmodelElementList) aasIdSubmodelElement;
 
-		List<String> aasIds = aasIdList.getValue().stream().map(Property.class::cast).map(Property::getValue)
-				.collect(Collectors.toList());
+		List<String> aasIds = aasIdList.getValue().stream().map(Property.class::cast).map(Property::getValue).collect(Collectors.toList());
 
 		return new AasRegistryTargetInformation(aasIds);
 	}
@@ -103,11 +92,8 @@ public class AasRegistryTargetInformationAdapter implements TargetInformationAda
 
 	private String getTargetInformationType(SubmodelElementCollection targetInformation) {
 
-		Property typeProperty = (Property) targetInformation.getValue().stream()
-				.filter(sme -> sme.getIdShort().equals("@type")).findAny()
-				.orElseThrow(() -> new InvalidTargetInformationException(
-						"The TargetInformation defined in the SubmodelElementCollection Rule with id: "
-								+ targetInformation.getIdShort() + " does not have @type definition"));
+		Property typeProperty = (Property) targetInformation.getValue().stream().filter(sme -> sme.getIdShort().equals("@type")).findAny()
+				.orElseThrow(() -> new InvalidTargetInformationException("The TargetInformation defined in the SubmodelElementCollection Rule with id: " + targetInformation.getIdShort() + " does not have @type definition"));
 
 		return typeProperty.getValue();
 	}

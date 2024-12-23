@@ -46,7 +46,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.InvalidTargetInformationExc
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.rbac.backend.submodel.SubmodelTargetInformationAdapter;
 
 /**
- * Tests {@link AasRegistryTargetInformationAdapter}
+ * Tests {@link SubmodelTargetInformationAdapter}
  * 
  * @author danish
  */
@@ -64,7 +64,7 @@ public class SubmodelTargetInformationAdapterTest {
 
 		List<String> submodelIds = Arrays.asList("aasId1", "aasId2");
 		List<String> smeIds = Arrays.asList("sme1.sme2", "sme4.sme5.sme6", "sme7");
-		
+
 		TargetInformation targetInformation = new SubmodelTargetInformation(submodelIds, smeIds);
 
 		SubmodelElementCollection result = submodelTargetInformationAdapter.adapt(targetInformation);
@@ -76,10 +76,10 @@ public class SubmodelTargetInformationAdapterTest {
 
 		SubmodelElementList submodelIdList = (SubmodelElementList) elements.get(0);
 		assertEquals("submodelIds", submodelIdList.getIdShort());
-		
+
 		SubmodelElementList smeIdList = (SubmodelElementList) elements.get(1);
 		assertEquals("submodelElementIdShortPaths", smeIdList.getIdShort());
-		
+
 		Property typeProperty = (Property) elements.get(2);
 		assertEquals("@type", typeProperty.getIdShort());
 
@@ -87,9 +87,9 @@ public class SubmodelTargetInformationAdapterTest {
 		List<String> actualSmeIds = smeIdList.getValue().stream().map(Property.class::cast).map(Property::getValue).map(String::valueOf).collect(Collectors.toList());
 		assertEquals(submodelIds, actualSubmodelIds);
 		assertEquals(smeIds, actualSmeIds);
-		
+
 		String actualType = typeProperty.getValue();
-        assertTrue(actualType.equals("submodel")); 
+		assertTrue(actualType.equals("submodel"));
 	}
 
 	@Test
@@ -98,7 +98,7 @@ public class SubmodelTargetInformationAdapterTest {
 		List<String> expectedSubmodelIds = Arrays.asList("aasId1", "aasId2");
 		List<String> expectedSmeIds = Arrays.asList("sme1.sme2", "sme4.sme5.sme6", "sme7");
 		String type = "submodel";
-		
+
 		List<SubmodelElement> submodelIdProperties = expectedSubmodelIds.stream().map(submodelId -> new DefaultProperty.Builder().value(submodelId).build()).collect(Collectors.toList());
 		List<SubmodelElement> smeIdProperties = expectedSmeIds.stream().map(smeId -> new DefaultProperty.Builder().value(smeId).build()).collect(Collectors.toList());
 
@@ -114,72 +114,60 @@ public class SubmodelTargetInformationAdapterTest {
 		assertEquals(expectedSubmodelIds, ((SubmodelTargetInformation) result).getSubmodelIds());
 		assertEquals(expectedSmeIds, ((SubmodelTargetInformation) result).getSubmodelElementIdShortPaths());
 	}
-	
-    @Test
-    public void testAdaptTargetInformationWithEmptyAasIds() {
-    	
-        List<String> submodelIds = Collections.emptyList();
-        List<String> smeIds = Collections.emptyList();
-        
-        TargetInformation targetInformation = new SubmodelTargetInformation(submodelIds, smeIds);
 
-        SubmodelElementCollection result = submodelTargetInformationAdapter.adapt(targetInformation);
+	@Test
+	public void testAdaptTargetInformationWithEmptySubmodelIds() {
 
-        assertEquals("targetInformation", result.getIdShort());
+		List<String> submodelIds = Collections.emptyList();
+		List<String> smeIds = Collections.emptyList();
 
-        List<SubmodelElement> elements = result.getValue();
-        assertEquals(3, elements.size());
+		TargetInformation targetInformation = new SubmodelTargetInformation(submodelIds, smeIds);
 
-        SubmodelElementList submodelIdList = (SubmodelElementList) elements.get(0);
-        assertEquals("submodelIds", submodelIdList.getIdShort());
-        
-        SubmodelElementList smeIdList = (SubmodelElementList) elements.get(1);
-        assertEquals("submodelElementIdShortPaths", smeIdList.getIdShort());
-        
-        Property typeProperty = (Property) elements.get(2);
+		SubmodelElementCollection result = submodelTargetInformationAdapter.adapt(targetInformation);
+
+		assertEquals("targetInformation", result.getIdShort());
+
+		List<SubmodelElement> elements = result.getValue();
+		assertEquals(3, elements.size());
+
+		SubmodelElementList submodelIdList = (SubmodelElementList) elements.get(0);
+		assertEquals("submodelIds", submodelIdList.getIdShort());
+
+		SubmodelElementList smeIdList = (SubmodelElementList) elements.get(1);
+		assertEquals("submodelElementIdShortPaths", smeIdList.getIdShort());
+
+		Property typeProperty = (Property) elements.get(2);
 		assertEquals("@type", typeProperty.getIdShort());
 
-        List<String> actualSubmodelIds = submodelIdList.getValue().stream()
-                .map(Property.class::cast)
-                .map(Property::getValue)
-                .map(String::valueOf)
-                .collect(Collectors.toList());
-        assertTrue(actualSubmodelIds.isEmpty());
-        
-        List<String> actualSmeIds = smeIdList.getValue().stream()
-                .map(Property.class::cast)
-                .map(Property::getValue)
-                .map(String::valueOf)
-                .collect(Collectors.toList());
-        assertTrue(actualSmeIds.isEmpty());
-        
-        String actualType = typeProperty.getValue();
-        assertTrue(actualType.equals("submodel"));
-    }
-    
-    @Test(expected = InvalidTargetInformationException.class)
-    public void testAdaptSubmodelElementCollectionWithInvalidStructure() {
-    	
-        SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation")
-                .value(Collections.singletonList(new DefaultProperty.Builder().idShort("invalidElement").value("value").build()))
-                .build();
+		List<String> actualSubmodelIds = submodelIdList.getValue().stream().map(Property.class::cast).map(Property::getValue).map(String::valueOf).collect(Collectors.toList());
+		assertTrue(actualSubmodelIds.isEmpty());
 
-        submodelTargetInformationAdapter.adapt(targetInformationSMC);
-    }
-    
-    @Test(expected = InvalidTargetInformationException.class)
-    public void testAdaptSubmodelElementCollectionWithoutSubmodelIds() {
-    	
-        SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation")
-                .value(Collections.emptyList())
-                .build();
+		List<String> actualSmeIds = smeIdList.getValue().stream().map(Property.class::cast).map(Property::getValue).map(String::valueOf).collect(Collectors.toList());
+		assertTrue(actualSmeIds.isEmpty());
 
-        submodelTargetInformationAdapter.adapt(targetInformationSMC);
-    }
-    
-    private SubmodelElement createTypeProperty(String type) {
-		return new DefaultProperty.Builder().idShort("@type").value(type).build();
+		String actualType = typeProperty.getValue();
+		assertTrue(actualType.equals("submodel"));
 	}
 
+	@Test(expected = InvalidTargetInformationException.class)
+	public void testAdaptSubmodelElementCollectionWithInvalidStructure() {
+
+		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation")
+				.value(Collections.singletonList(new DefaultProperty.Builder().idShort("invalidElement").value("value").build())).build();
+
+		submodelTargetInformationAdapter.adapt(targetInformationSMC);
+	}
+
+	@Test(expected = InvalidTargetInformationException.class)
+	public void testAdaptSubmodelElementCollectionWithoutSubmodelIds() {
+
+		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation").value(Collections.emptyList()).build();
+
+		submodelTargetInformationAdapter.adapt(targetInformationSMC);
+	}
+
+	private SubmodelElement createTypeProperty(String type) {
+		return new DefaultProperty.Builder().idShort("@type").value(type).build();
+	}
 
 }
