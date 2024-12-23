@@ -66,7 +66,6 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestAuthorizedSubmodelRegistry {
 
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static final String SUBMODEL_DESCRIPTOR_SIMPLE_2_JSON = "authorization/SubmodelDescriptorSimple_2.json";
 	private static final String SUBMODEL_DESCRIPTOR_SIMPLE_1_JSON = "authorization/SubmodelDescriptorSimple_1.json";
 	private static final String SPECIFIC_SUBMODEL_ID_2 = "specificSubmodelId-2";
@@ -107,7 +106,7 @@ public class TestAuthorizedSubmodelRegistry {
 	public void reset() throws IOException {
 		configureSecurityContext();
 
-		Collection<SubmodelDescriptor> descriptors = storage.getAllSubmodelDescriptors(NO_LIMIT_PAGINATION_INFO).getResult();
+		Collection<SubmodelDescriptor> descriptors = storage.getAllSubmodelDescriptors(PaginationInfo.NO_LIMIT).getResult();
 
 		descriptors.forEach(descriptor -> storage.removeSubmodelDescriptor(descriptor.getId()));
 

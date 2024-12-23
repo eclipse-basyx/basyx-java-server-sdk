@@ -28,8 +28,12 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.AdministrativeInformation;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Key;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.KeyTypes;
@@ -47,37 +51,50 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescr
 public class DummySubmodelDescriptorFactory {
 	private static final String SUBMODEL_REPOSITORY_PATH = "/submodels";
 
-	public static SubmodelDescriptor createDummyDescriptor(String smId, String idShort, String smRepoBaseUrl, Reference semanticId) {
-		return createDummyDescriptor(smId, idShort, new String[] {smRepoBaseUrl}, semanticId);
-	}
-	
-	public static SubmodelDescriptor createDummyDescriptor(String smId, String idShort, String[] smRepoBaseUrls, Reference semanticId) {
+	public static SubmodelDescriptor createDummyDescriptor(String smId, String idShort, Reference semanticId, AdministrativeInformation administrativeInformation, List<Endpoint> endpoints) {
 		SubmodelDescriptor descriptor = new SubmodelDescriptor();
 
 		descriptor.setId(smId);
 		descriptor.setIdShort(idShort);
 		descriptor.setSemanticId(semanticId);
-		for (String eachUrl : smRepoBaseUrls) {
-			descriptor.addEndpointsItem(createEndpointItem(smId, eachUrl));
-		}
+		descriptor.setEndpoints(endpoints);
+		descriptor.administration(administrativeInformation);
+
 		return descriptor;
+	}
+
+	public static SubmodelDescriptor createDummyDescriptor(String smId, String idShort, Reference semanticId, AdministrativeInformation administrativeInformation, String... smRepoBaseUrls) {
+		LinkedList<Endpoint> endpoints = new LinkedList<>();
+		for (String eachUrl : smRepoBaseUrls) {
+			endpoints.add(createEndpoint(smId, eachUrl, "SUBMODEL-3.0"));
+		}
+
+		return createDummyDescriptor(smId, idShort, semanticId, administrativeInformation, endpoints);
 	}
 
 	public static Reference createSemanticId() {
 		return new Reference().keys(Arrays.asList(new Key().type(KeyTypes.GLOBALREFERENCE).value("0173-1#01-AFZ615#016"))).type(ReferenceTypes.EXTERNALREFERENCE);
 	}
 
-	private static Endpoint createEndpointItem(String smId, String smRepoBaseUrl) {
+	public static Endpoint createEndpoint(String endpointUrl, String endpointInterface) {
 		Endpoint endpoint = new Endpoint();
-		endpoint.setInterface("SUBMODEL-3.0");
-		endpoint.setProtocolInformation(createProtocolInformation(smId, smRepoBaseUrl));
+		endpoint.setInterface(endpointInterface);
+		endpoint.setProtocolInformation(createProtocolInformation(endpointUrl));
 
 		return endpoint;
 	}
 
-	private static ProtocolInformation createProtocolInformation(String smId, String smRepoBaseUrl) {
+	public static Endpoint createEndpoint(String smId, String smRepoBaseUrl, String endpointInterface) {
 		String href = createHref(smId, smRepoBaseUrl);
 
+		return createEndpoint(href, endpointInterface);
+	}
+
+	public static AdministrativeInformation buildAdministrationInformation(String version, String revision, String templateId) {
+		return new AdministrativeInformation().version(version).revision(revision).templateId(templateId);
+	}
+
+	private static ProtocolInformation createProtocolInformation(String href) {
 		ProtocolInformation protocolInformation = new ProtocolInformation();
 		protocolInformation.setHref(href);
 		protocolInformation.endpointProtocol(getProtocol(href));
@@ -86,7 +103,7 @@ public class DummySubmodelDescriptorFactory {
 	}
 
 	private static String createHref(String smId, String smRepoBaseUrl) {
-		return String.format("%s/%s", createSubmodelRepositoryUrl(smRepoBaseUrl), Base64UrlEncodedIdentifier.encodeIdentifier(smId));
+		return String.format("%s/%s", RepositoryUrlHelper.createRepositoryUrl(smRepoBaseUrl, SUBMODEL_REPOSITORY_PATH), Base64UrlEncodedIdentifier.encodeIdentifier(smId));
 	}
 
 	private static String getProtocol(String endpoint) {
@@ -94,15 +111,6 @@ public class DummySubmodelDescriptorFactory {
 			return new URL(endpoint).getProtocol();
 		} catch (MalformedURLException e) {
 			throw new RuntimeException();
-		}
-	}
-
-	private static String createSubmodelRepositoryUrl(String smRepositoryBaseURL) {
-
-		try {
-			return new URL(new URL(smRepositoryBaseURL), SUBMODEL_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The Submodel Repository Base url is malformed.\n " + e.getMessage());
 		}
 	}
 }

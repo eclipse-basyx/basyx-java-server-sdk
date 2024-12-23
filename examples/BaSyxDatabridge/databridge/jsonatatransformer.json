@@ -1,0 +1,20 @@
+[
+	{
+		"uniqueId": "TemperatureTransformer",
+		"queryPath": "TemperatureTransformer.jsonata",
+		"inputType": "JsonString",
+		"outputType": "JsonString"
+	},
+	{
+		"uniqueId": "HumidityTransformer",
+		"queryPath": "HumidityTransformer.jsonata",
+		"inputType": "JsonString",
+		"outputType": "JsonString"
+	},
+    {
+        "uniqueId": "AirQualityTransformer",
+        "queryPath": "AirQualityTransformer.jsonata",
+        "inputType": "JsonString",
+        "outputType": "JsonString"
+    }
+]

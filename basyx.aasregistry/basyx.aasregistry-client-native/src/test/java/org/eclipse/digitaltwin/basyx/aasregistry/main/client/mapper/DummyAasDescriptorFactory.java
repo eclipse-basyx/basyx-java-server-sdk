@@ -27,11 +27,15 @@ package org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AdministrativeInformation;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
+import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 
 /**
@@ -43,7 +47,7 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 public class DummyAasDescriptorFactory {
 	private static final String AAS_REPOSITORY_PATH = "/shells";
 
-	public static AssetAdministrationShellDescriptor createDummyDescriptor(String aasId, String idShort, String globalAssetId, String... aasRepoBaseUrls) {
+	public static AssetAdministrationShellDescriptor createDummyDescriptor(String aasId, String idShort, String globalAssetId, AdministrativeInformation administrativeInformation, List<Endpoint> endpoints) {
 
 		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
 
@@ -51,23 +55,46 @@ public class DummyAasDescriptorFactory {
 		descriptor.setIdShort(idShort);
 		descriptor.setAssetKind(AssetKind.INSTANCE);
 		descriptor.setGlobalAssetId(globalAssetId);
-		for (String eachUrl : aasRepoBaseUrls) {
-			descriptor.addEndpointsItem(createEndpointItem(aasId, eachUrl));
-		}
+		descriptor.setEndpoints(endpoints);
+		descriptor.setAdministration(administrativeInformation);
+
 		return descriptor;
 	}
 
-	private static Endpoint createEndpointItem(String aasId, String aasRepoBaseUrl) {
+	public static AssetAdministrationShellDescriptor createDummyDescriptor(String aasId, String idShort, String globalAssetId, AdministrativeInformation administrativeInformation, String... aasRepoBaseUrls) {
+		LinkedList<Endpoint> endpoints = new LinkedList<>();
+
+		for (String eachUrl : aasRepoBaseUrls) {
+			endpoints.add(createEndpoint(aasId, eachUrl, "AAS-3.0"));
+		}
+
+		return createDummyDescriptor(aasId, idShort, globalAssetId, administrativeInformation, endpoints);
+	}
+
+	public static AdministrativeInformation buildAdministrationInformation(String version, String revision, String templateId) {
+		AdministrativeInformation administrativeInformation = new AdministrativeInformation();
+		administrativeInformation.setVersion(version);
+		administrativeInformation.setRevision(revision);
+		administrativeInformation.setTemplateId(templateId);
+		return administrativeInformation;
+	}
+
+	public static Endpoint createEndpoint(String endpointUrl, String endpointInterface) {
 		Endpoint endpoint = new Endpoint();
-		endpoint.setInterface("AAS-3.0");
-		endpoint.setProtocolInformation(createProtocolInformation(aasId, aasRepoBaseUrl));
+		endpoint.setInterface(endpointInterface);
+		endpoint.setProtocolInformation(createProtocolInformation(endpointUrl));
 
 		return endpoint;
 	}
 
-	private static ProtocolInformation createProtocolInformation(String aasId, String aasRepoBaseUrl) {
+	public static Endpoint createEndpoint(String aasId, String aasRepoBaseUrl, String endpointInterface) {
 		String href = createHref(aasId, aasRepoBaseUrl);
 
+		return createEndpoint(href, endpointInterface);
+	}
+
+
+	private static ProtocolInformation createProtocolInformation(String href) {
 		ProtocolInformation protocolInformation = new ProtocolInformation();
 		protocolInformation.setHref(href);
 		protocolInformation.endpointProtocol(getProtocol(href));
@@ -76,7 +103,7 @@ public class DummyAasDescriptorFactory {
 	}
 
 	private static String createHref(String aasId, String aasRepoBaseUrl) {
-		return String.format("%s/%s", createAasRepositoryUrl(aasRepoBaseUrl), Base64UrlEncodedIdentifier.encodeIdentifier(aasId));
+		return String.format("%s/%s", RepositoryUrlHelper.createRepositoryUrl(aasRepoBaseUrl, AAS_REPOSITORY_PATH), Base64UrlEncodedIdentifier.encodeIdentifier(aasId));
 	}
 
 	private static String getProtocol(String endpoint) {
@@ -87,13 +114,5 @@ public class DummyAasDescriptorFactory {
 		}
 	}
 
-	private static String createAasRepositoryUrl(String aasRepositoryBaseURL) {
-
-		try {
-			return new URL(new URL(aasRepositoryBaseURL), AAS_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The AAS Repository Base url is malformed. " + e.getMessage());
-		}
-	}
 
 }

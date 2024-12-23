@@ -93,16 +93,19 @@ public class InMemoryAasService implements AasService {
 
 	@Override
 	public void addSubmodelReference(Reference submodelReference) {
-		throwExceptionIfReferenceIsAlreadyPresent(submodelReference);
-
-		aas.getSubmodels().add(submodelReference);
+		List<Reference> submodelsRefs = aas.getSubmodels();
+		synchronized (submodelsRefs) {
+			throwExceptionIfReferenceIsAlreadyPresent(submodelReference);
+			submodelsRefs.add(submodelReference);
+		}
 	}
 
 	@Override
 	public void removeSubmodelReference(String submodelId) {
-		Reference specificSubmodelReference = getSubmodelReferenceById(submodelId);
-
-		aas.getSubmodels().remove(specificSubmodelReference);
+		List<Reference> submodelsRefs = aas.getSubmodels();
+		synchronized (submodelsRefs) {
+			submodelsRefs.remove(getSubmodelReferenceById(submodelId));
+		}
 	}
 
 	@Override

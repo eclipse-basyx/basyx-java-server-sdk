@@ -36,6 +36,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.LangStringNameType;
 import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper; 
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
@@ -52,15 +53,12 @@ public class SubmodelDescriptorFactory {
 	private static final String SUBMODEL_INTERFACE = "SUBMODEL-3.0";
 	private static final String SUBMODEL_REPOSITORY_PATH = "submodels";
 
-	private Submodel submodel;
-	private List<String> submodelRepositoryURLs;
+	private final List<String> submodelRepositoryURLs;
+	private static AttributeMapper attributeMapper;
 
-	private AttributeMapper attributeMapper;
-
-	public SubmodelDescriptorFactory(Submodel submodel, List<String> submodelRepositoryBaseURLs, AttributeMapper attributeMapper) {
-		this.submodel = submodel;
+	public SubmodelDescriptorFactory(List<String> submodelRepositoryBaseURLs, AttributeMapper attributeMapper) {
 		this.submodelRepositoryURLs = createSubmodelRepositoryUrls(submodelRepositoryBaseURLs);
-		this.attributeMapper = attributeMapper;
+		SubmodelDescriptorFactory.attributeMapper = attributeMapper;
 	}
 
 	/**
@@ -68,7 +66,7 @@ public class SubmodelDescriptorFactory {
 	 * 
 	 * @return the created {@link SubmodelDescriptor}
 	 */
-	public SubmodelDescriptor create() {
+	public SubmodelDescriptor create(Submodel submodel) {
 
 		SubmodelDescriptor descriptor = new SubmodelDescriptor();
 
@@ -76,7 +74,7 @@ public class SubmodelDescriptorFactory {
 
 		setIdShort(submodel.getIdShort(), descriptor);
 
-		setEndpointItem(submodel.getId(), descriptor);
+		setEndpointItem(submodel.getId(), descriptor, submodelRepositoryURLs);
 
 		setDescription(submodel.getDescription(), descriptor);
 
@@ -93,12 +91,7 @@ public class SubmodelDescriptorFactory {
 		return descriptor;
 	}
 
-	public SubmodelDescriptor create(Submodel submodel) {
-		this.submodel = submodel;
-		return create();
-	}
-
-	private void setDescription(List<LangStringTextType> descriptions, SubmodelDescriptor descriptor) {
+	private static void setDescription(List<LangStringTextType> descriptions, SubmodelDescriptor descriptor) {
 
 		if (descriptions == null || descriptions.isEmpty())
 			return;
@@ -106,7 +99,7 @@ public class SubmodelDescriptorFactory {
 		descriptor.setDescription(attributeMapper.mapDescription(descriptions));
 	}
 
-	private void setDisplayName(List<LangStringNameType> displayNames, SubmodelDescriptor descriptor) {
+	private static void setDisplayName(List<LangStringNameType> displayNames, SubmodelDescriptor descriptor) {
 
 		if (displayNames == null || displayNames.isEmpty())
 			return;
@@ -114,7 +107,7 @@ public class SubmodelDescriptorFactory {
 		descriptor.setDisplayName(attributeMapper.mapDisplayName(displayNames));
 	}
 
-	private void setExtensions(List<Extension> extensions, SubmodelDescriptor descriptor) {
+	private static void setExtensions(List<Extension> extensions, SubmodelDescriptor descriptor) {
 
 		if (extensions == null || extensions.isEmpty())
 			return;
@@ -122,7 +115,7 @@ public class SubmodelDescriptorFactory {
 		descriptor.setExtensions(attributeMapper.mapExtensions(extensions));
 	}
 
-	private void setAdministration(AdministrativeInformation administration, SubmodelDescriptor descriptor) {
+	private static void setAdministration(AdministrativeInformation administration, SubmodelDescriptor descriptor) {
 
 		if (administration == null)
 			return;
@@ -130,7 +123,7 @@ public class SubmodelDescriptorFactory {
 		descriptor.setAdministration(attributeMapper.mapAdministration(administration));
 	}
 
-	private void setSemanticId(Reference reference, SubmodelDescriptor descriptor) {
+	private static void setSemanticId(Reference reference, SubmodelDescriptor descriptor) {
 
 		if (reference == null)
 			return;
@@ -138,7 +131,7 @@ public class SubmodelDescriptorFactory {
 		descriptor.setSemanticId(attributeMapper.mapSemanticId(reference));
 	}
 
-	private void setSupplementalSemanticId(List<Reference> supplementalSemanticIds, SubmodelDescriptor descriptor) {
+	private static void setSupplementalSemanticId(List<Reference> supplementalSemanticIds, SubmodelDescriptor descriptor) {
 
 		if (supplementalSemanticIds == null || supplementalSemanticIds.isEmpty())
 			return;
@@ -146,7 +139,7 @@ public class SubmodelDescriptorFactory {
 		descriptor.setSupplementalSemanticId(attributeMapper.mapSupplementalSemanticId(supplementalSemanticIds));
 	}
 
-	private void setEndpointItem(String shellId, SubmodelDescriptor descriptor) {
+	private static void setEndpointItem(String shellId, SubmodelDescriptor descriptor, List<String> submodelRepositoryURLs) {
 
 		for (String eachUrl : submodelRepositoryURLs) {
 			Endpoint endpoint = new Endpoint();
@@ -158,7 +151,7 @@ public class SubmodelDescriptorFactory {
 		}
 	}
 
-	private ProtocolInformation createProtocolInformation(String shellId, String url) {
+	private static ProtocolInformation createProtocolInformation(String shellId, String url) {
 		String href = String.format("%s/%s", url, Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
 
 		ProtocolInformation protocolInformation = new ProtocolInformation();
@@ -168,15 +161,15 @@ public class SubmodelDescriptorFactory {
 		return protocolInformation;
 	}
 
-	private void setIdShort(String idShort, SubmodelDescriptor descriptor) {
+	private static void setIdShort(String idShort, SubmodelDescriptor descriptor) {
 		descriptor.setIdShort(idShort);
 	}
 
-	private void setId(String shellId, SubmodelDescriptor descriptor) {
+	private static void setId(String shellId, SubmodelDescriptor descriptor) {
 		descriptor.setId(shellId);
 	}
 
-	private String getProtocol(String endpoint) {
+	private static String getProtocol(String endpoint) {
 		try {
 			return new URL(endpoint).getProtocol();
 		} catch (MalformedURLException e) {
@@ -184,21 +177,11 @@ public class SubmodelDescriptorFactory {
 		}
 	}
 
-	private List<String> createSubmodelRepositoryUrls(List<String> submodelRepositoryBaseURLs) {
+	private static List<String> createSubmodelRepositoryUrls(List<String> submodelRepositoryBaseURLs) {
 		List<String> toReturn = new ArrayList<>(submodelRepositoryBaseURLs.size());
 		for (String eachUrl : submodelRepositoryBaseURLs) {
-			toReturn.add(createSubmodelRepositoryUrl(eachUrl));
+			toReturn.add(RepositoryUrlHelper.createRepositoryUrl(eachUrl, SUBMODEL_REPOSITORY_PATH));
 		}
 		return toReturn;
 	}
-
-	private String createSubmodelRepositoryUrl(String submodelRepositoryBaseURL) {
-
-		try {
-			return new URL(new URL(submodelRepositoryBaseURL), SUBMODEL_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The Submodel Repository Base url is malformed.\n" + e.getMessage());
-		}
-	}
-
 }
