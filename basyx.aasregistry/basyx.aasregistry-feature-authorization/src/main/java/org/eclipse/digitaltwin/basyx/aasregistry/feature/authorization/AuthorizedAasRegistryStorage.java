@@ -28,7 +28,10 @@ package org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.rbac.AasRegistryTargetPermissionVerifier;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
@@ -43,9 +46,11 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStor
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.Action;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 
 /**
  * Decorator for authorized {@link AasRegistryStorage}
@@ -64,8 +69,29 @@ public class AuthorizedAasRegistryStorage implements AasRegistryStorage {
 
 	@Override
 	public CursorResult<List<AssetAdministrationShellDescriptor>> getAllAasDescriptors(PaginationInfo pRequest, DescriptorFilter filter) {
-		assertHasPermission(Action.READ, getIdAsList(AasRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD));
-		return decorated.getAllAasDescriptors(pRequest, filter);
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasRegistryTargetInformation(getIdAsList(AasRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD)));
+
+		if (isAuthorized)
+			return decorated.getAllAasDescriptors(pRequest, filter);
+		
+		List<TargetInformation> targetInformations = permissionResolver.getMatchingTargetInformationInRules(Action.READ, new AasRegistryTargetInformation(getIdAsList(AasRegistryTargetPermissionVerifier.ALL_ALLOWED_WILDCARD)));
+		
+		List<String> allIds = targetInformations.stream().map(AasRegistryTargetInformation.class::cast)
+				.map(AasRegistryTargetInformation::getAasIds).flatMap(List::stream).collect(Collectors.toList());
+		
+		List<AssetAdministrationShellDescriptor> aasDescriptors = allIds.stream().map(id -> {
+			try {
+				return getAasDescriptor(id);
+			} catch (Exception e) {
+				return null;
+			}
+		}).filter(Objects::nonNull).collect(Collectors.toList());
+		
+		TreeMap<String, AssetAdministrationShellDescriptor> aasMap = aasDescriptors.stream().collect(Collectors.toMap(AssetAdministrationShellDescriptor::getId, aas -> aas, (a, b) -> a, TreeMap::new));
+
+		PaginationSupport<AssetAdministrationShellDescriptor> paginationSupport = new PaginationSupport<>(aasMap, AssetAdministrationShellDescriptor::getId);
+
+		return paginationSupport.getPaged(pRequest);
 	}
 
 	@Override
