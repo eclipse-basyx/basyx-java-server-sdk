@@ -38,9 +38,6 @@ import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudConceptDescriptio
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleConceptDescriptionRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionMongoDBBackendProvider;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.ConceptDescriptionRepositorySuite;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;

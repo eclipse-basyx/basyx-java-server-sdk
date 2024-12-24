@@ -37,6 +37,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.internal.AssetAdministrationShellRepositoryApi;
 import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
+import org.eclipse.digitaltwin.basyx.core.Filter;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
@@ -77,7 +78,7 @@ public class ConnectedAasRepository implements AasRepository {
 	}
 
 	@Override
-	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
+	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo, Filter filter) {
 		String encodedCursor = pInfo.getCursor() == null ? null : Base64UrlEncoder.encode(pInfo.getCursor());
 		return repoApi.getAllAssetAdministrationShells(null, null, pInfo.getLimit(), encodedCursor);
 	}

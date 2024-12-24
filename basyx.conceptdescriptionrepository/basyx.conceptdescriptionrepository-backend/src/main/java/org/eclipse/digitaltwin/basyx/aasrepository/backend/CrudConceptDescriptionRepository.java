@@ -38,6 +38,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.EmbeddedDataSpecification;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
+import org.eclipse.digitaltwin.basyx.core.BaSyxCrudRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
@@ -56,7 +57,7 @@ import org.springframework.data.repository.CrudRepository;
  */
 public class CrudConceptDescriptionRepository implements ConceptDescriptionRepository {
 
-	private CrudRepository<ConceptDescription, String> conceptDescriptionBackend;
+	private BaSyxCrudRepository<ConceptDescription> conceptDescriptionBackend;
 	private String conceptDescriptionRepositoryName = null;
 
 	public CrudConceptDescriptionRepository(ConceptDescriptionBackendProvider conceptDescriptionBackendProvider) {

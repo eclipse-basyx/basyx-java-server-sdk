@@ -1,10 +1,10 @@
 {
 	"modelType": "AssetAdministrationShell",
-	"idShort": "DummyAas",
-	"id": "dummyAasIdentifier",
+	"idShort": "ExampleMotor",
+	"id": "dummyAasIdentifier4",
 	"assetInformation": {
 		"assetKind": "Instance",
-		"globalAssetId": "dummyAasAssetId",
+		"globalAssetId": "globalAssetId",
 		"specificAssetIds": [
 			{
 				"name": "dummy-asset1",
