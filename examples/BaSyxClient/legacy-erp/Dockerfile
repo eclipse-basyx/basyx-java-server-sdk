@@ -1,5 +1,6 @@
 FROM python:3.10-slim
-
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
 WORKDIR /app
 
 COPY . /app
