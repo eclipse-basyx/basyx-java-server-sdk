@@ -79,6 +79,7 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 	@Test
 	public void getAasByIdentifier() throws CollidingIdentifierException, ElementDoesNotExistException {
 		AssetAdministrationShell expected = DummyAasFactory.createAasWithSubmodelReference();
+		String id = expected.getId();
 		AasRepository aasRepo = getAasRepository(Collections.singleton(expected));
 		AssetAdministrationShell retrieved = aasRepo.getAas(expected.getId());
 		assertEquals(expected, retrieved);

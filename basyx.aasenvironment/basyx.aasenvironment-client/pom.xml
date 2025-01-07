@@ -13,70 +13,6 @@
 	<description>BaSyx AAS Environment Client</description>
 
 	<artifactId>basyx.aasenvironment-client</artifactId>
-	
-	<properties>
-        <openapitools.version>6.6.0</openapitools.version>
-        <openapi.folder.name>open-api</openapi.folder.name>
-        <openapi.name>aas-environment-api.yaml</openapi.name>
-		<openapi.result.folder>${project.basedir}/${openapi.folder.name}</openapi.result.folder>
-		<openapi.result.file>${openapi.result.folder}/${openapi.name}</openapi.result.file>
-		
-		<maven.compiler.source>${java.version}</maven.compiler.source>
-		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<generated.folder>src/generated</generated.folder>
-		<swagger.codegen.version>3.0.64</swagger.codegen.version>
-		<openapi.base.name>aas-environment-api-resolved.yaml</openapi.base.name>
-		<maven-plugin.version>3.6.0</maven-plugin.version>
-		<maven-project.version>3.0-alpha-2</maven-project.version>
-		<docker.image.name>${project.artifactId}</docker.image.name>
-		<openapitools.version>6.6.0</openapitools.version>
-		<openapitools.jacksonnullable.version>0.2.6</openapitools.jacksonnullable.version>
-		<jsr305.version>3.0.2</jsr305.version>
-		<jsonpatch.plugin.version>0.5.1</jsonpatch.plugin.version>
-    </properties>
-
-	<build>
-        <plugins>
-            <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>${openapitools.version}</version>
-                <executions>                    
-					
-                    <execution>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<generatorName>java</generatorName>
-							<library>native</library>
-							<inputSpec>${openapi.result.file}</inputSpec>
-							<output>${project.basedir}/${generated.folder}</output>
-							<apiPackage>org.eclipse.digitaltwin.basyx.aasenvironment.client.api</apiPackage>
-							<invokerPackage>org.eclipse.digitaltwin.basyx.aasenvironment.client</invokerPackage>
-							<modelPackage>org.eclipse.digitaltwin.basyx.aasenvironment.client.model</modelPackage>
-							<generateModels>true</generateModels>
-							<generateApis>true</generateApis>
-							<generateApiTests>false</generateApiTests>
-							<generateModelDocumentation>false</generateModelDocumentation>
-							<generateApiDocumentation>false</generateApiDocumentation>
-							<generateSupportingFiles>true</generateSupportingFiles>
-							<templateDirectory>${project.basedir}/templates</templateDirectory>
-							<supportingFilesToGenerate>
-								AbstractOpenApiSchema.java,ServerConfiguration.java,ServerVariable.java,Configuration.java,JSON.java,ApiException.java,ApiResponse.java,ApiClient.java,Pair.java,RFC3339DateFormat.java
-							</supportingFilesToGenerate>
-							<configOptions>
-								<java8>true</java8>
-								<dateLibrary>java8</dateLibrary>
-								<sourceFolder>java</sourceFolder>
-								<useJakartaEe>true</useJakartaEe>
-							</configOptions>
-						</configuration>
-					</execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
 	<dependencies>
 		<dependency>
@@ -164,14 +100,10 @@
 			<classifier>tests</classifier>
 		</dependency>
 		<dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>openapi-generator</artifactId>
-            <version>${openapitools.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>jackson-databind-nullable</artifactId>
-            <version>0.2.6</version>
-        </dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelservice-core</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>

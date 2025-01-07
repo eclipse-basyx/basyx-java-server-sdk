@@ -26,9 +26,7 @@
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
@@ -43,7 +41,6 @@ import java.util.stream.Collectors;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.api.SerializationApi;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.NoValidEndpointFoundException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.AasDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.DescriptorResolverManager;
@@ -93,7 +90,6 @@ public class TestConnectedAasManager {
 	protected static ConnectedSubmodelRepository connectedSmRepository;
 	protected static RegistryAndDiscoveryInterfaceApi aasRegistryApi;
 	protected static SubmodelRegistryApi smRegistryApi;
-	protected static SerializationApi serializationApi;
 
 	protected ConnectedAasManager aasManager;
 
@@ -116,7 +112,6 @@ public class TestConnectedAasManager {
 		connectedSmRepository = getConnectedSubmodelRepo();
 		aasRegistryApi = getConnectedAasRegistry();
 		smRegistryApi = getConnectedSubmodelRegistry();
-		serializationApi = getConnectedSerializationApi();
 		
 		aasManager = getConnectedAasManager();
 
@@ -219,13 +214,6 @@ public class TestConnectedAasManager {
 
 		assertEquals(expectedSm, actualSm);
 	}
-	
-	@Test
-	public void testGenerateSerializationByIds() {
-	    java.io.File result = aasManager.generateSerializationByIds("application/json", List.of("aas1"), null, true);
-	    assertNotNull(result);
-	    assertTrue(result.exists());
-	}
 
 	protected Submodel getSubmodelFromManager(String submodelId) {
 		return aasManager.getSubmodelService(submodelId).getSubmodel();
@@ -257,7 +245,7 @@ public class TestConnectedAasManager {
 		
 		DescriptorResolverManager descriptorResolverManager = new DescriptorResolverManager(aasDescriptorResolver, smDescriptorResolver);
 		
-		return new ConnectedAasManager(aasRegistryApi, connectedAasRepository, smRegistryApi, connectedSmRepository, serializationApi, descriptorResolverManager);
+		return new ConnectedAasManager(aasRegistryApi, connectedAasRepository, smRegistryApi, connectedSmRepository, descriptorResolverManager);
 	}
 
 	protected SubmodelRegistryApi getConnectedSubmodelRegistry() {
@@ -276,10 +264,6 @@ public class TestConnectedAasManager {
 		return spy(new ConnectedAasRepository(AAS_REPOSITORY_BASE_PATH));
 	}
 	
-	protected SerializationApi getConnectedSerializationApi() {
-		return spy(new SerializationApi(AAS_REPOSITORY_BASE_PATH));
-	}
-
 	@Test
 	public void getAllSubmodels() {
 		Submodel otherExpectedSubmodel = FIXTURE.buildSmPos1();

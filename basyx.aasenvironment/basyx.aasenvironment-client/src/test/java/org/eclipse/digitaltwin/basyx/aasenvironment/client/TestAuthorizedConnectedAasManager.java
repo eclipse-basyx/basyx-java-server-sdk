@@ -26,11 +26,11 @@
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
 import static org.mockito.Mockito.spy;
+
 import java.io.IOException;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.api.SerializationApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
@@ -71,7 +71,6 @@ public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
 	private static AuthorizedConnectedSubmodelRepository connectedSmRepository;
 	private static AuthorizedConnectedAasRegistry aasRegistryApi;
 	private static AuthorizedConnectedSubmodelRegistry smRegistryApi;
-	private static SerializationApi serializationApi; 
 
 	private AuthorizedConnectedAasManager aasManager;
 	
@@ -89,7 +88,7 @@ public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
 	@Override
 	protected ConnectedAasManager getConnectedAasManager() {
 		
-		aasManager = new AuthorizedConnectedAasManager(aasRegistryApi, connectedAasRepository, smRegistryApi, connectedSmRepository, serializationApi);
+		aasManager = new AuthorizedConnectedAasManager(aasRegistryApi, connectedAasRepository, smRegistryApi, connectedSmRepository);
 		
 		return aasManager;
 	}
@@ -124,10 +123,6 @@ public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
 		connectedAasRepository = spy(new AuthorizedConnectedAasRepository(AAS_REPOSITORY_BASE_PATH, TOKEN_MANAGER));
 		
 		return connectedAasRepository;
-	}
-	
-	protected SerializationApi getConnectedSerializationApi() {
-		return spy(new SerializationApi(AAS_REPOSITORY_BASE_PATH, TOKEN_MANAGER));
 	}
 	
 	@Override

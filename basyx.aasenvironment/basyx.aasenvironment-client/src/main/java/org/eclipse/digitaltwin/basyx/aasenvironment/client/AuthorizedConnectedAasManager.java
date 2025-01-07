@@ -26,7 +26,6 @@
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.EndpointResolver;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.api.SerializationApi;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.DescriptorResolverManager;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.authorization.AuthorizedAasDescriptorResolver;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.authorization.AuthorizedSubmodelDescriptorResolver;
@@ -49,8 +48,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelSer
  */
 public class AuthorizedConnectedAasManager extends ConnectedAasManager {
 
-	public AuthorizedConnectedAasManager(AuthorizedConnectedAasRegistry authorizedAasRegistryApi, AuthorizedConnectedAasRepository authorizedAasRepository, AuthorizedConnectedSubmodelRegistry authorizedSubmodelRegistryApi, AuthorizedConnectedSubmodelRepository authorizedSubmodelRepository, SerializationApi authorizedSerializationApi) {
-		super(authorizedAasRegistryApi, authorizedAasRepository, authorizedSubmodelRegistryApi, authorizedSubmodelRepository, authorizedSerializationApi, getAuthorizedResolver(authorizedAasRepository.getTokenManager(), authorizedSubmodelRepository.getTokenManager()));
+	public AuthorizedConnectedAasManager(AuthorizedConnectedAasRegistry authorizedAasRegistryApi, AuthorizedConnectedAasRepository authorizedAasRepository, AuthorizedConnectedSubmodelRegistry authorizedSubmodelRegistryApi, AuthorizedConnectedSubmodelRepository authorizedSubmodelRepository) {
+		super(authorizedAasRegistryApi, authorizedAasRepository, authorizedSubmodelRegistryApi, authorizedSubmodelRepository, getAuthorizedResolver(authorizedAasRepository.getTokenManager(), authorizedSubmodelRepository.getTokenManager()));
 	}
 	
 	private static DescriptorResolverManager getAuthorizedResolver(TokenManager authorizedAasRepoTokenManager, TokenManager authorizedSubmodelRepoTokenManager) {

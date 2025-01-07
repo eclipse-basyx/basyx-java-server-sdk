@@ -35,7 +35,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.api.SerializationApi;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.NoValidEndpointFoundException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.exceptions.RegistryHttpRequestException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers.AasDescriptorResolver;
@@ -67,7 +66,6 @@ public class ConnectedAasManager {
 
 	private final RegistryAndDiscoveryInterfaceApi aasRegistryApi;
 	private final SubmodelRegistryApi smRegistryApi;
-	private final SerializationApi serializationApi;
 
 	private final DescriptorResolver<AssetAdministrationShellDescriptor, ConnectedAasService> aasDescriptorResolver;
 	private final AasDescriptorFactory aasDescriptorFactory;
@@ -85,15 +83,14 @@ public class ConnectedAasManager {
 	 */
 	public ConnectedAasManager(String aasRegistryBaseUrl, String aasRepositoryBaseUrl, String submodelRegistryBaseUrl, String submodelBaseRepositoryUrl) {
 		this(new RegistryAndDiscoveryInterfaceApi(aasRegistryBaseUrl), new ConnectedAasRepository(aasRepositoryBaseUrl), new SubmodelRegistryApi(submodelRegistryBaseUrl),
-				new ConnectedSubmodelRepository(submodelBaseRepositoryUrl), new SerializationApi(aasRepositoryBaseUrl), getResolver());
+				new ConnectedSubmodelRepository(submodelBaseRepositoryUrl), getResolver());
 	}
 	
-	ConnectedAasManager(RegistryAndDiscoveryInterfaceApi aasRegistryApi, ConnectedAasRepository aasRepository, SubmodelRegistryApi smRegistryApi, ConnectedSubmodelRepository smRepository, SerializationApi serializationApi, DescriptorResolverManager resolver) {
+	ConnectedAasManager(RegistryAndDiscoveryInterfaceApi aasRegistryApi, ConnectedAasRepository aasRepository, SubmodelRegistryApi smRegistryApi, ConnectedSubmodelRepository smRepository, DescriptorResolverManager resolver) {
 		this.aasRepository = aasRepository;
 		this.aasRegistryApi = aasRegistryApi;
 		this.smRepository = smRepository;
 		this.smRegistryApi = smRegistryApi;
-		this.serializationApi = serializationApi;
 		this.aasDescriptorResolver = resolver.getAasDescriptorResolver();
 		this.aasDescriptorFactory = ConnectedAasManagerHelper.buildAasDescriptorFactory(aasRepository.getBaseUrl());
 		this.smDescriptorResolver = resolver.getSubmodelDescriptorResolver();
@@ -234,14 +231,6 @@ public class ConnectedAasManager {
 		aasRepository.addSubmodelReference(aasIdentifier, smRef);
 	}
 	
-	public java.io.File generateSerializationByIds(String format, List<String> aasIds, List<String> submodelIds, Boolean includeConceptDescriptions) {
-        try {
-            return serializationApi.generateSerializationByIds(format, aasIds, submodelIds, includeConceptDescriptions);
-        } catch (ApiException e) {
-            throw new RuntimeException("Failed to generate serialization: " + e.getMessage(), e);
-        }
-    }
-
 	private String extractSubmodelIdentifierFromReference(Reference submodelReference) {
 		assertIsSubmodelReference(submodelReference);
 		Key submodelKey = extractSubmodelKeyFromReference(submodelReference);
