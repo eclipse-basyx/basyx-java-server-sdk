@@ -80,25 +80,32 @@ public class TokenManager {
 	 * @throws IOException
 	 *             if an error occurs while retrieving the token
 	 */
-	public synchronized String getAccessToken() throws IOException {
-		long currentTimeMillis = System.currentTimeMillis();
+	public String getAccessToken() throws IOException {
+		long currentTimeNano = System.nanoTime();
 
-		if (accessToken != null && currentTimeMillis < accessTokenExpiryTime) {
+		if (accessToken != null && currentTimeNano < accessTokenExpiryTime) {
 			return accessToken;
 		}
 
-		if (refreshToken != null && currentTimeMillis < refreshTokenExpiryTime) {
+		synchronized (this) {
+			if (accessToken != null && currentTimeNano < accessTokenExpiryTime) {
+				return accessToken;
+			}
+
+			if (refreshToken != null && currentTimeNano < refreshTokenExpiryTime) {
+				try {
+					return updateTokens(accessTokenProvider.getAccessTokenResponse(tokenEndpoint, refreshToken), currentTimeNano);
+				} catch (IOException e) {
+					throw new AccessTokenRetrievalException("Error occurred while retrieving access token: " + e.getMessage());
+				}
+			}
+
 			try {
-				return updateTokens(accessTokenProvider.getAccessTokenResponse(tokenEndpoint, refreshToken), currentTimeMillis);
+				return updateTokens(accessTokenProvider.getAccessTokenResponse(tokenEndpoint), currentTimeNano);
 			} catch (IOException e) {
 				throw new AccessTokenRetrievalException("Error occurred while retrieving access token: " + e.getMessage());
 			}
-		}
 
-		try {
-			return updateTokens(accessTokenProvider.getAccessTokenResponse(tokenEndpoint), currentTimeMillis);
-		} catch (IOException e) {
-			throw new AccessTokenRetrievalException("Error occurred while retrieving access token: " + e.getMessage());
 		}
 	}
 
@@ -107,22 +114,22 @@ public class TokenManager {
 	 * 
 	 * @param accessTokenResponse
 	 *            the response containing the new tokens
-	 * @param currentTimeMillis
-	 *            the current timestamp in milliseconds for consistency
+	 * @param currentTimeNano
+	 *            the current timestamp in nanoseconds for consistency
 	 * @return the new access token
 	 * @throws IOException
 	 *             if an error occurs while processing the response
 	 */
-	private String updateTokens(AccessTokenResponse accessTokenResponse, long currentTimeMillis) throws IOException {
+	private String updateTokens(AccessTokenResponse accessTokenResponse, long currentTimeNano) throws IOException {
 		AccessToken accessTokenObj = accessTokenResponse.getTokens().getAccessToken();
 		accessToken = accessTokenObj.getValue();
-		accessTokenExpiryTime = calculateExpiryTime(accessTokenObj, currentTimeMillis);
+		accessTokenExpiryTime = calculateExpiryTime(accessTokenObj, currentTimeNano);
 
 		RefreshToken refreshTokenObj = accessTokenResponse.getTokens().getRefreshToken();
 
 		if (refreshTokenObj != null) {
 			refreshToken = refreshTokenObj.getValue();
-			refreshTokenExpiryTime = calculateRefreshExpiryTime(refreshTokenObj, accessTokenResponse, currentTimeMillis);
+			refreshTokenExpiryTime = calculateRefreshExpiryTime(refreshTokenObj, accessTokenResponse, currentTimeNano);
 		}
 
 		return accessToken;
@@ -133,10 +140,10 @@ public class TokenManager {
 	 * First checks the 'exp' field in the JWT, falling back to 'expires_in'.
 	 * 
 	 * @param tokenObj the AccessToken or RefreshToken object
-	 * @param currentTimeMillis the current timestamp in milliseconds
+	 * @param currentTimeNano the current timestamp in nanoseconds
 	 * @return the calculated expiry time in epoch millis
 	 */
-	private long calculateExpiryTime(AccessToken tokenObj, long currentTimeMillis) {
+	private long calculateExpiryTime(AccessToken tokenObj, long currentTimeNano) {
 		String tokenValue = tokenObj.getValue();
 		try {
 			JWT jwt = JWTParser.parse(tokenValue);
@@ -150,7 +157,7 @@ public class TokenManager {
 			LOGGER.error("Unable to find 'exp' claim inside Access Token! Falling back to the alternative, the 'expires_in' field");
 		}
 		
-		return currentTimeMillis + convertToMilliseconds(tokenObj.getLifetime());
+		return currentTimeNano + convertToNanoseconds(tokenObj.getLifetime());
 	}
 
 	/**
@@ -159,10 +166,10 @@ public class TokenManager {
 	 * 
 	 * @param refreshTokenObj the RefreshToken object
 	 * @param accessTokenResponse the response containing the refresh token
-	 * @param currentTimeMillis the current timestamp in milliseconds
-	 * @return the calculated expiry time in epoch millis
+	 * @param currentTimeNano the current timestamp in nanoseconds
+	 * @return the calculated expiry time in epoch nanoseconds
 	 */
-	private long calculateRefreshExpiryTime(RefreshToken refreshTokenObj, AccessTokenResponse accessTokenResponse, long currentTimeMillis) {
+	private long calculateRefreshExpiryTime(RefreshToken refreshTokenObj, AccessTokenResponse accessTokenResponse, long currentTimeNano) {
 		String tokenValue = refreshTokenObj.getValue();
 		try {
 			JWT jwt = JWTParser.parse(tokenValue);
@@ -183,10 +190,10 @@ public class TokenManager {
 			return 0;
 		}
 
-		return currentTimeMillis + convertToMilliseconds(refreshExpiresInSeconds.longValue());
+		return currentTimeNano + convertToNanoseconds(refreshExpiresInSeconds.longValue());
 	}
 
-	private long convertToMilliseconds(long seconds) {
-		return seconds * 1000L;
+	private long convertToNanoseconds(long seconds) {
+		return seconds * 1_000_000_000L;
 	}
 }
