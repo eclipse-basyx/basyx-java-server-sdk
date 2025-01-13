@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -42,7 +42,7 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.author
 import org.eclipse.digitaltwin.basyx.core.exceptions.InvalidTargetInformationException;
 
 /**
- * An implementation of the {@link TargetInformationAdapter} to adapt with Aas
+ * An implementation of the {@link TargetInformationAdapter} to adapt with Concept-Description
  * {@link TargetInformation}
  * 
  * @author danish
@@ -55,14 +55,14 @@ public class CDTargetInformationAdapter implements TargetInformationAdapter {
 		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder()
 				.idShort("targetInformation").build();
 
-		SubmodelElementList aasId = new DefaultSubmodelElementList.Builder().idShort("conceptDescriptionIds").build();
+		SubmodelElementList cdId = new DefaultSubmodelElementList.Builder().idShort("conceptDescriptionIds").build();
 		Property typeProperty = new DefaultProperty.Builder().idShort("@type").value("concept-description").build();
 
-		List<SubmodelElement> aasIds = ((ConceptDescriptionTargetInformation) targetInformation)
+		List<SubmodelElement> cdIds = ((ConceptDescriptionTargetInformation) targetInformation)
 				.getConceptDescriptionIds().stream().map(this::transform).collect(Collectors.toList());
-		aasId.setValue(aasIds);
+		cdId.setValue(cdIds);
 
-		targetInformationSMC.setValue(Arrays.asList(aasId, typeProperty));
+		targetInformationSMC.setValue(Arrays.asList(cdId, typeProperty));
 
 		return targetInformationSMC;
 	}
@@ -76,28 +76,28 @@ public class CDTargetInformationAdapter implements TargetInformationAdapter {
 			throw new InvalidTargetInformationException("The TargetInformation @type: " + targetInformationType
 					+ " is not compatible with " + getClass().getName() + ".");
 
-		SubmodelElement aasIdSubmodelElement = targetInformation.getValue().stream()
+		SubmodelElement cdIdSubmodelElement = targetInformation.getValue().stream()
 				.filter(sme -> sme.getIdShort().equals("conceptDescriptionIds")).findAny()
 				.orElseThrow(() -> new InvalidTargetInformationException(
 						"The TargetInformation defined in the SubmodelElementCollection Rule with id: "
 								+ targetInformation.getIdShort() + " is not compatible with the "
 								+ getClass().getName()));
 
-		if (!(aasIdSubmodelElement instanceof SubmodelElementList))
+		if (!(cdIdSubmodelElement instanceof SubmodelElementList))
 			throw new InvalidTargetInformationException(
 					"The TargetInformation defined in the SubmodelElementCollection Rule with id: "
 							+ targetInformation.getIdShort() + " is not compatible with the " + getClass().getName());
 
-		SubmodelElementList aasIdList = (SubmodelElementList) aasIdSubmodelElement;
+		SubmodelElementList cdIdList = (SubmodelElementList) cdIdSubmodelElement;
 
-		List<String> aasIds = aasIdList.getValue().stream().map(Property.class::cast).map(Property::getValue)
+		List<String> cdIds = cdIdList.getValue().stream().map(Property.class::cast).map(Property::getValue)
 				.collect(Collectors.toList());
 
-		return new ConceptDescriptionTargetInformation(aasIds);
+		return new ConceptDescriptionTargetInformation(cdIds);
 	}
 
-	private Property transform(String aasId) {
-		return new DefaultProperty.Builder().value(aasId).build();
+	private Property transform(String cdId) {
+		return new DefaultProperty.Builder().value(cdId).build();
 	}
 	
 	private String getTargetInformationType(SubmodelElementCollection targetInformation) {
