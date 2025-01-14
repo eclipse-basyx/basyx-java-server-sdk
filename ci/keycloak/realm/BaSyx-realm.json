@@ -8,7 +8,7 @@
   "accessTokenLifespan" : 300,
   "accessTokenLifespanForImplicitFlow" : 900,
   "ssoSessionIdleTimeout" : 1800,
-  "ssoSessionMaxLifespan" : 36000,
+  "ssoSessionMaxLifespan" : 900,
   "ssoSessionIdleTimeoutRememberMe" : 0,
   "ssoSessionMaxLifespanRememberMe" : 0,
   "offlineSessionIdleTimeout" : 2592000,
@@ -71,6 +71,14 @@
     }, {
       "id" : "52e7db01-dd27-4589-a530-ec8491bd2026",
       "name" : "basyx-assetid-deleter",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
+      "attributes" : { }
+    }, {
+      "id" : "54605a65-8657-44cd-8617-fe2aba9105e0",
+      "name" : "abc",
       "description" : "",
       "composite" : false,
       "clientRole" : false,
@@ -519,6 +527,14 @@
         "containerId" : "3fb3e5e5-dbd8-4d51-b964-746c5b2181a4",
         "attributes" : { }
       }, {
+        "id" : "69f62119-30a1-46cc-b193-b738bae2a4b9",
+        "name" : "testClientBasyx",
+        "description" : "",
+        "composite" : false,
+        "clientRole" : true,
+        "containerId" : "3fb3e5e5-dbd8-4d51-b964-746c5b2181a4",
+        "attributes" : { }
+      }, {
         "id" : "ba077409-1b5d-4fc8-b20e-10389507fb75",
         "name" : "basyx-admin",
         "description" : "",
@@ -536,6 +552,14 @@
         "attributes" : { }
       } ],
       "security-admin-console" : [ ],
+      "max-sso" : [ {
+        "id" : "86c919f8-6fd5-4754-9e15-3e113fe2149b",
+        "name" : "uma_protection",
+        "composite" : false,
+        "clientRole" : true,
+        "containerId" : "b31375f6-1cac-4ba2-a430-6d7e5f9378be",
+        "attributes" : { }
+      } ],
       "admin-cli" : [ ],
       "account-console" : [ ],
       "broker" : [ {
@@ -624,6 +648,22 @@
       } ],
       "basyx-demo" : [ ],
       "workstation-1" : [ {
+        "id" : "ba2b0055-c6c2-4b50-8f3a-947003e7349c",
+        "name" : "testClientWorkstation",
+        "description" : "",
+        "composite" : false,
+        "clientRole" : true,
+        "containerId" : "96031210-9e6c-4252-a22e-e81a47e30d65",
+        "attributes" : { }
+      }, {
+        "id" : "dc42731e-3922-4ff0-8084-1c52c20540aa",
+        "name" : "abc",
+        "description" : "",
+        "composite" : false,
+        "clientRole" : true,
+        "containerId" : "96031210-9e6c-4252-a22e-e81a47e30d65",
+        "attributes" : { }
+      }, {
         "id" : "914a18c6-4f14-418f-99e0-bfdcf604ac01",
         "name" : "uma_protection",
         "composite" : false,
@@ -658,7 +698,7 @@
   "otpPolicyLookAheadWindow" : 1,
   "otpPolicyPeriod" : 30,
   "otpPolicyCodeReusable" : false,
-  "otpSupportedApplications" : [ "totpAppMicrosoftAuthenticatorName", "totpAppGoogleName", "totpAppFreeOTPName" ],
+  "otpSupportedApplications" : [ "totpAppFreeOTPName", "totpAppMicrosoftAuthenticatorName", "totpAppGoogleName" ],
   "webAuthnPolicyRpEntityName" : "keycloak",
   "webAuthnPolicySignatureAlgorithms" : [ "ES256" ],
   "webAuthnPolicyRpId" : "",
@@ -974,6 +1014,7 @@
     "emailVerified" : false,
     "firstName" : "BaSyx",
     "lastName" : "Reader",
+    "email" : "reader@gmail.com",
     "credentials" : [ {
       "id" : "eea587f5-439d-487d-85d0-587b226f0683",
       "type" : "password",
@@ -1296,6 +1337,32 @@
     "notBefore" : 0,
     "groups" : [ ]
   }, {
+    "id" : "c78e370d-4d23-4cb5-854b-9cd966c5fee5",
+    "createdTimestamp" : 1730127167820,
+    "username" : "danish",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "56cb59b8-89e1-4423-98f0-dd38a7761366",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1730127228934,
+      "secretData" : "{\"value\":\"QLQm9eKS9KXF59tim8Im8HnwtpVhrcbe/1+eoY0nVpU=\",\"salt\":\"IzDs16xxmy8wmQIzBNoOHw==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-basyx" ],
+    "clientRoles" : {
+      "basyx-client-api" : [ "basyx-user" ],
+      "workstation-1" : [ "testClientWorkstation" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
     "id" : "e75ac9e8-7093-4898-a203-d9839f854944",
     "createdTimestamp" : 1702030567684,
     "username" : "jane.doe",
@@ -1386,6 +1453,23 @@
     "realmRoles" : [ "visitor", "default-roles-basyx" ],
     "clientRoles" : {
       "basyx-client-api" : [ "basyx-user" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "97616c9d-e423-458b-92d0-a7d5832b1d07",
+    "createdTimestamp" : 1734780525772,
+    "username" : "service-account-max-sso",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "serviceAccountClientId" : "max-sso",
+    "credentials" : [ ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "admin", "default-roles-basyx" ],
+    "clientRoles" : {
+      "max-sso" : [ "uma_protection" ]
     },
     "notBefore" : 0,
     "groups" : [ ]
@@ -1640,6 +1724,133 @@
     "nodeReRegistrationTimeout" : 0,
     "defaultClientScopes" : [ "web-origins", "acr", "roles", "profile", "email" ],
     "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
+  }, {
+    "id" : "b31375f6-1cac-4ba2-a430-6d7e5f9378be",
+    "clientId" : "max-sso",
+    "name" : "maximum sso time",
+    "description" : "This client is created for testing the SSO Max, and also to test the re request the token after expiry. It reduces the access and refresh token expiry time so that it can be tested in the CI.",
+    "rootUrl" : "",
+    "adminUrl" : "",
+    "baseUrl" : "",
+    "surrogateAuthRequired" : false,
+    "enabled" : true,
+    "alwaysDisplayInConsole" : false,
+    "clientAuthenticatorType" : "client-secret",
+    "secret" : "8ccc227xJflxGgtFkwwssHRZUh99nAAc",
+    "redirectUris" : [ "/*" ],
+    "webOrigins" : [ "/*" ],
+    "notBefore" : 0,
+    "bearerOnly" : false,
+    "consentRequired" : false,
+    "standardFlowEnabled" : true,
+    "implicitFlowEnabled" : false,
+    "directAccessGrantsEnabled" : true,
+    "serviceAccountsEnabled" : true,
+    "authorizationServicesEnabled" : true,
+    "publicClient" : false,
+    "frontchannelLogout" : true,
+    "protocol" : "openid-connect",
+    "attributes" : {
+      "access.token.lifespan" : "1",
+      "client.secret.creation.time" : "1734780525",
+      "post.logout.redirect.uris" : "+",
+      "oauth2.device.authorization.grant.enabled" : "false",
+      "backchannel.logout.revoke.offline.tokens" : "false",
+      "use.refresh.tokens" : "true",
+      "oidc.ciba.grant.enabled" : "false",
+      "backchannel.logout.session.required" : "true",
+      "client_credentials.use_refresh_token" : "false",
+      "tls.client.certificate.bound.access.tokens" : "false",
+      "require.pushed.authorization.requests" : "false",
+      "acr.loa.map" : "{}",
+      "display.on.consent.screen" : "false",
+      "client.session.max.lifespan" : "3",
+      "token.response.type.bearer.lower-case" : "false"
+    },
+    "authenticationFlowBindingOverrides" : { },
+    "fullScopeAllowed" : true,
+    "nodeReRegistrationTimeout" : -1,
+    "protocolMappers" : [ {
+      "id" : "c66dfa3b-0c44-42b0-9398-e975125bbbdd",
+      "name" : "Client ID",
+      "protocol" : "openid-connect",
+      "protocolMapper" : "oidc-usersessionmodel-note-mapper",
+      "consentRequired" : false,
+      "config" : {
+        "user.session.note" : "client_id",
+        "userinfo.token.claim" : "true",
+        "id.token.claim" : "true",
+        "access.token.claim" : "true",
+        "claim.name" : "client_id",
+        "jsonType.label" : "String"
+      }
+    }, {
+      "id" : "13ed6cb4-050f-462d-a9fc-c4f6e35f98bd",
+      "name" : "Client IP Address",
+      "protocol" : "openid-connect",
+      "protocolMapper" : "oidc-usersessionmodel-note-mapper",
+      "consentRequired" : false,
+      "config" : {
+        "user.session.note" : "clientAddress",
+        "userinfo.token.claim" : "true",
+        "id.token.claim" : "true",
+        "access.token.claim" : "true",
+        "claim.name" : "clientAddress",
+        "jsonType.label" : "String"
+      }
+    }, {
+      "id" : "b9a2b983-7fb4-47c9-a84f-a3d6ae59bf52",
+      "name" : "Client Host",
+      "protocol" : "openid-connect",
+      "protocolMapper" : "oidc-usersessionmodel-note-mapper",
+      "consentRequired" : false,
+      "config" : {
+        "user.session.note" : "clientHost",
+        "userinfo.token.claim" : "true",
+        "id.token.claim" : "true",
+        "access.token.claim" : "true",
+        "claim.name" : "clientHost",
+        "jsonType.label" : "String"
+      }
+    } ],
+    "defaultClientScopes" : [ "web-origins", "acr", "roles", "profile", "email" ],
+    "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ],
+    "authorizationSettings" : {
+      "allowRemoteResourceManagement" : true,
+      "policyEnforcementMode" : "ENFORCING",
+      "resources" : [ {
+        "name" : "Default Resource",
+        "type" : "urn:max-sso:resources:default",
+        "ownerManagedAccess" : false,
+        "attributes" : { },
+        "_id" : "11f1c8cd-b49f-4e65-bae4-3f8936c6b0a0",
+        "uris" : [ "/*" ]
+      } ],
+      "policies" : [ {
+        "id" : "08447d18-a1bd-480b-9fed-083d533de959",
+        "name" : "Default Policy",
+        "description" : "A policy that grants access only for users within this realm",
+        "type" : "regex",
+        "logic" : "POSITIVE",
+        "decisionStrategy" : "AFFIRMATIVE",
+        "config" : {
+          "code" : "// by default, grants any permission associated with this policy\n$evaluation.grant();\n"
+        }
+      }, {
+        "id" : "021a6c73-b705-4020-8966-c3bd5492576f",
+        "name" : "Default Permission",
+        "description" : "A permission that applies to the default resource type",
+        "type" : "resource",
+        "logic" : "POSITIVE",
+        "decisionStrategy" : "UNANIMOUS",
+        "config" : {
+          "defaultResourceType" : "urn:max-sso:resources:default",
+          "applyPolicies" : "[\"Default Policy\"]"
+        }
+      } ],
+      "scopes" : [ ],
+      "decisionStrategy" : "UNANIMOUS"
+    }
   }, {
     "id" : "205e3c12-0af6-4d19-8eb4-d660d854ee43",
     "clientId" : "realm-management",
@@ -2301,7 +2512,7 @@
       "subType" : "anonymous",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-sha256-pairwise-sub-mapper", "saml-user-attribute-mapper", "oidc-usermodel-property-mapper", "saml-role-list-mapper", "oidc-full-name-mapper", "oidc-address-mapper", "saml-user-property-mapper", "oidc-usermodel-attribute-mapper" ]
+        "allowed-protocol-mapper-types" : [ "saml-user-attribute-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-user-property-mapper", "saml-role-list-mapper", "oidc-usermodel-attribute-mapper", "oidc-address-mapper", "oidc-full-name-mapper", "oidc-usermodel-property-mapper" ]
       }
     }, {
       "id" : "7256d195-1e91-4f63-a9c4-6bef95243a92",
@@ -2338,7 +2549,7 @@
       "subType" : "authenticated",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "saml-user-property-mapper", "oidc-usermodel-attribute-mapper", "saml-role-list-mapper", "oidc-address-mapper", "saml-user-attribute-mapper", "oidc-usermodel-property-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-full-name-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-address-mapper", "oidc-usermodel-property-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-user-attribute-mapper", "saml-user-property-mapper", "saml-role-list-mapper", "oidc-usermodel-attribute-mapper", "oidc-full-name-mapper" ]
       }
     }, {
       "id" : "face2c9e-4d23-44e2-9a09-74e1d8448bd3",
@@ -2363,6 +2574,12 @@
       "config" : {
         "allow-default-scopes" : [ "true" ]
       }
+    } ],
+    "org.keycloak.userprofile.UserProfileProvider" : [ {
+      "id" : "752a2450-ddf3-4566-9704-a5179390baea",
+      "providerId" : "declarative-user-profile",
+      "subComponents" : { },
+      "config" : { }
     } ],
     "org.keycloak.keys.KeyProvider" : [ {
       "id" : "9948a63f-b171-4137-bb81-beabd0c049f0",
