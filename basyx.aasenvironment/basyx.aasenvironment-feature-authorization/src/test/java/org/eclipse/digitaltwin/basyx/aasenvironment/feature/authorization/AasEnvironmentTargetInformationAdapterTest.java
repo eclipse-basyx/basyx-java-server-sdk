@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasregistry.regression.feature.authorization;
+package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization;
 
 import static org.junit.Assert.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
@@ -41,88 +41,103 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.AasRegistryTargetInformation;
-import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.rbac.backend.submodel.AasRegistryTargetInformationAdapter;
+import org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization.rbac.backend.submodel.AasEnvironmentTargetInformationAdapter;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InvalidTargetInformationException;
 
 /**
- * Tests {@link AasRegistryTargetInformationAdapter}
+ * Tests {@link AasEnvironmentTargetInformationAdapter}
  * 
  * @author danish
  */
-public class AasRegistryTargetInformationAdapterTest {
+public class AasEnvironmentTargetInformationAdapterTest {
 
-	private AasRegistryTargetInformationAdapter aasRegistryTargetInformationAdapter;
+	private AasEnvironmentTargetInformationAdapter aasEnvironmentTargetInformationAdapter;
 
 	@Before
 	public void setUp() {
-		aasRegistryTargetInformationAdapter = new AasRegistryTargetInformationAdapter();
+		aasEnvironmentTargetInformationAdapter = new AasEnvironmentTargetInformationAdapter();
 	}
 
 	@Test
 	public void testAdaptTargetInformationToSubmodelElementCollection() {
 
 		List<String> aasIds = Arrays.asList("aasId1", "aasId2");
-		TargetInformation targetInformation = new AasRegistryTargetInformation(aasIds);
+		List<String> submodelIds = Arrays.asList("smId1", "smId2");
+		TargetInformation targetInformation = new AasEnvironmentTargetInformation(aasIds, submodelIds);
 
-		SubmodelElementCollection result = aasRegistryTargetInformationAdapter.adapt(targetInformation);
+		SubmodelElementCollection result = aasEnvironmentTargetInformationAdapter.adapt(targetInformation);
 
 		assertEquals("targetInformation", result.getIdShort());
 
 		List<SubmodelElement> elements = result.getValue();
-		assertEquals(2, elements.size());
+		assertEquals(3, elements.size());
 
 		SubmodelElementList aasIdList = (SubmodelElementList) elements.get(0);
 		assertEquals("aasIds", aasIdList.getIdShort());
 		
-		Property typeProperty = (Property) elements.get(1);
+		SubmodelElementList submodelIdList = (SubmodelElementList) elements.get(1);
+		assertEquals("submodelIds", submodelIdList.getIdShort());
+		
+		Property typeProperty = (Property) elements.get(2);
 		assertEquals("@type", typeProperty.getIdShort());
 
 		List<String> actualAasIds = aasIdList.getValue().stream().map(Property.class::cast).map(Property::getValue).map(String::valueOf).collect(Collectors.toList());
 		assertEquals(aasIds, actualAasIds);
 		
+		List<String> actualSubmodelIds = submodelIdList.getValue().stream().map(Property.class::cast).map(Property::getValue).map(String::valueOf).collect(Collectors.toList());
+		assertEquals(submodelIds, actualSubmodelIds);
+		
 		String actualType = typeProperty.getValue();
-        assertTrue(actualType.equals("aas-registry")); 
+        assertTrue(actualType.equals("aas-environment")); 
 	}
 
 	@Test
 	public void testAdaptSubmodelElementCollectionToTargetInformation() {
 
 		List<String> expectedAasIds = Arrays.asList("aasId1", "aasId2");
-		String type = "aas-registry";
+		List<String> expectedSubmodelIds = Arrays.asList("smId1", "smId2");
+		String type = "aas-environment";
 		
 		List<SubmodelElement> aasIdProperties = expectedAasIds.stream().map(aasId -> new DefaultProperty.Builder().value(aasId).build()).collect(Collectors.toList());
+		List<SubmodelElement> submodelIdProperties = expectedSubmodelIds.stream().map(submodelId -> new DefaultProperty.Builder().value(submodelId).build()).collect(Collectors.toList());
 
 		SubmodelElementList aasIdList = new DefaultSubmodelElementList.Builder().idShort("aasIds").value(aasIdProperties).build();
+		SubmodelElementList submodelIdList = new DefaultSubmodelElementList.Builder().idShort("submodelIds").value(submodelIdProperties).build();
 		SubmodelElement typeProperty = createTypeProperty(type);
+
+		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation").value(Arrays.asList(aasIdList, submodelIdList, typeProperty)).build();
 		
-		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation").value(Arrays.asList(aasIdList, typeProperty)).build();
+		TargetInformation result = aasEnvironmentTargetInformationAdapter.adapt(targetInformationSMC);
 
-		TargetInformation result = aasRegistryTargetInformationAdapter.adapt(targetInformationSMC);
-
-		assertTrue(result instanceof AasRegistryTargetInformation);
-		assertEquals(expectedAasIds, ((AasRegistryTargetInformation) result).getAasIds());
+		assertTrue(result instanceof AasEnvironmentTargetInformation);
+		assertEquals(expectedAasIds, ((AasEnvironmentTargetInformation) result).getAasIds());
+		assertEquals(expectedSubmodelIds, ((AasEnvironmentTargetInformation) result).getSubmodelIds());
 	}
-	
-    @Test
+
+	@Test
     public void testAdaptTargetInformationWithEmptyAasIds() {
     	
         List<String> aasIds = Collections.emptyList();
-        TargetInformation targetInformation = new AasRegistryTargetInformation(aasIds);
+        List<String> submodelIds = Collections.emptyList();
+        
+        TargetInformation targetInformation = new AasEnvironmentTargetInformation(aasIds, submodelIds);
 
-        SubmodelElementCollection result = aasRegistryTargetInformationAdapter.adapt(targetInformation);
+        SubmodelElementCollection result = aasEnvironmentTargetInformationAdapter.adapt(targetInformation);
 
         assertEquals("targetInformation", result.getIdShort());
 
         List<SubmodelElement> elements = result.getValue();
-        assertEquals(2, elements.size());
+        assertEquals(3, elements.size());
 
         SubmodelElementList aasIdList = (SubmodelElementList) elements.get(0);
         assertEquals("aasIds", aasIdList.getIdShort());
         
-        Property typeProperty = (Property) elements.get(1);
-		assertEquals("@type", typeProperty.getIdShort());
+        SubmodelElementList submodelIdList = (SubmodelElementList) elements.get(1);
+        assertEquals("submodelIds", submodelIdList.getIdShort());
+        
+        Property typeProperty = (Property) elements.get(2);
+        assertEquals("@type", typeProperty.getIdShort());
 
         List<String> actualAasIds = aasIdList.getValue().stream()
                 .map(Property.class::cast)
@@ -131,8 +146,15 @@ public class AasRegistryTargetInformationAdapterTest {
                 .collect(Collectors.toList());
         assertTrue(actualAasIds.isEmpty());
         
+        List<String> actualSubmodelIds = submodelIdList.getValue().stream()
+        		.map(Property.class::cast)
+        		.map(Property::getValue)
+        		.map(String::valueOf)
+        		.collect(Collectors.toList());
+        assertTrue(actualSubmodelIds.isEmpty());
+        
         String actualType = typeProperty.getValue();
-        assertTrue(actualType.equals("aas-registry")); 
+        assertTrue(actualType.equals("aas-environment"));
     }
     
     @Test(expected = InvalidTargetInformationException.class)
@@ -142,7 +164,7 @@ public class AasRegistryTargetInformationAdapterTest {
                 .value(Collections.singletonList(new DefaultProperty.Builder().idShort("invalidElement").value("value").build()))
                 .build();
 
-        aasRegistryTargetInformationAdapter.adapt(targetInformationSMC);
+        aasEnvironmentTargetInformationAdapter.adapt(targetInformationSMC);
     }
     
     @Test(expected = InvalidTargetInformationException.class)
@@ -152,7 +174,7 @@ public class AasRegistryTargetInformationAdapterTest {
                 .value(Collections.emptyList())
                 .build();
 
-        aasRegistryTargetInformationAdapter.adapt(targetInformationSMC);
+        aasEnvironmentTargetInformationAdapter.adapt(targetInformationSMC);
     }
     
     private SubmodelElement createTypeProperty(String type) {

@@ -56,7 +56,7 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20240303</version>
+			<version>20250107</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.nimbusds/oauth2-oidc-sdk -->
