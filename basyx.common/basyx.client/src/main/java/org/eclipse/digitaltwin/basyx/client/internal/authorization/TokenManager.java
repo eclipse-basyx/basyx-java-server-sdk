@@ -86,6 +86,9 @@ public class TokenManager {
 	 */
 	public String getAccessToken() throws IOException {
 		Instant currentTime = Instant.now();
+		
+		if (accessToken != null && currentTime.isBefore(accessTokenExpiryTime))
+			return accessToken;
 
 		synchronized (this) {
 			if (accessToken != null && currentTime.isBefore(accessTokenExpiryTime))
