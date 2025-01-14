@@ -55,8 +55,8 @@ public class TokenManagerTest {
         String initialAccessToken = tokenManager.getAccessToken();
         assertNotNull(initialAccessToken);
 
-        long tokenLifetime = 5000;
-        Thread.sleep(tokenLifetime + 1000);
+        long tokenLifetime = 1000;
+        Thread.sleep(tokenLifetime + 5);
 
         String newAccessToken = tokenManager.getAccessToken();
         assertNotNull(newAccessToken);
@@ -65,17 +65,31 @@ public class TokenManagerTest {
     }
     
     @Test
-    public void retrieveNewAccessTokenWhenNotExpired() throws IOException, InterruptedException {        
+    public void provideSameAccessTokenWhenNotExpired() throws IOException, InterruptedException {        
         String initialAccessToken = tokenManager.getAccessToken();
         assertNotNull(initialAccessToken);
 
-        long tokenLifetime = 2000;
-        Thread.sleep(tokenLifetime + 1000);
+        long tokenLifetime = 400;
+        Thread.sleep(tokenLifetime);
 
         String newAccessToken = tokenManager.getAccessToken();
         assertNotNull(newAccessToken);
         
         assertEquals(initialAccessToken, newAccessToken);
+    }
+    
+    @Test
+    public void retrieveNewAccessTokenUsingRefreshTokenWhenAccessTokenIsExpired() throws IOException, InterruptedException {
+    	String initialAccessToken = tokenManager.getAccessToken();
+        assertNotNull(initialAccessToken);
+
+        long tokenLifetime = 1000;
+        Thread.sleep(tokenLifetime + 15);
+
+        String newAccessToken = tokenManager.getAccessToken();
+        assertNotNull(newAccessToken);
+        
+        assertNotEquals(initialAccessToken, newAccessToken);
     }
 
     @Test
@@ -83,8 +97,8 @@ public class TokenManagerTest {
     	String initialAccessToken = tokenManager.getAccessToken();
         assertNotNull(initialAccessToken);
 
-        long tokenLifetime = 10000;
-        Thread.sleep(tokenLifetime + 1000);
+        long tokenLifetime = 3000;
+        Thread.sleep(tokenLifetime + 5);
 
         String newAccessToken = tokenManager.getAccessToken();
         assertNotNull(newAccessToken);
@@ -98,7 +112,7 @@ public class TokenManagerTest {
     	String initialAccessToken = tokenManager.getAccessToken();
         assertNotNull(initialAccessToken);
         
-        long timeLimit = 12000;
+        long timeLimit = 4000;
         String intermediateAccessToken = null;
         
         while (timeLimit > 0) {
