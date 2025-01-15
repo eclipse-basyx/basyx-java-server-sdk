@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -33,6 +33,7 @@ import java.util.List;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AdministrativeInformation;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringNameType;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
@@ -45,7 +46,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Unit tests for {@link AttributeMapper}
  * 
- * @author danish
+ * @author danish, zielstor
  */
 public class TestAttributeMapper {
 
@@ -97,6 +98,16 @@ public class TestAttributeMapper {
 		AssetKind actualAssetKind = attributeMapper.mapAssetKind(AttributeMapperFixture.AAS4J_ASSET_KIND);
 
 		assertEquals(expectedAssetKind, actualAssetKind);
+	}
+
+	@Test
+	public void mapSpecificAssetIds() {
+		List<SpecificAssetId> expectedSpecificAssetIds = AttributeMapperFixture.getAasRegSpecificAssetIds();
+
+		List<SpecificAssetId> actualSpecificAssetIds = attributeMapper.mapSpecificAssetIds(AttributeMapperFixture.getAas4jSpecificAssetIds());
+
+		assertEquals(expectedSpecificAssetIds.size(), actualSpecificAssetIds.size());
+		assertEquals(expectedSpecificAssetIds, actualSpecificAssetIds);
 	}
 
 	private static ObjectMapper configureObjectMapper() {

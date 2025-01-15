@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -26,12 +26,14 @@
 package org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AdministrativeInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.EmbeddedDataSpecification;
 import org.eclipse.digitaltwin.aas4j.v3.model.Extension;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.LangStringNameType;
 import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
@@ -40,6 +42,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAdministrativeInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEmbeddedDataSpecification;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultExtension;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringNameType;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
@@ -50,7 +53,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Key;
 /**
  * A fixture for TestAttributeMapper
  * 
- * @author danish, mateusmolina
+ * @author danish, mateusmolina, zielstor
  */
 public class AttributeMapperFixture {
 
@@ -102,6 +105,37 @@ public class AttributeMapperFixture {
 	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension AAS_REG_EXTENSION = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension().semanticId(AAS_REG_DATASPECIFICATION).name("extension")
 			.valueType(DataTypeDefXsd.STRING).value("extensionValue");
 
+	// ExternalSubjectId AAS4J
+	private static final Reference AAS4J_EXTERNAL_SUBJECT_ID = new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.BLOB).value("BlobValue").build()).type(ReferenceTypes.EXTERNAL_REFERENCE).build();
+
+	// ExternalSubjectId AasRegistry
+	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference AAS_REG_EXTERNAL_SUBJECT_ID = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference()
+			.keys(Arrays.asList(new Key().type(org.eclipse.digitaltwin.basyx.aasregistry.client.model.KeyTypes.BLOB).value("BlobValue"))).type(org.eclipse.digitaltwin.basyx.aasregistry.client.model.ReferenceTypes.EXTERNALREFERENCE);
+
+	// SemanticId AAS4J
+	private static final Reference AAS4J_SEMANTIC_ID = new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.BLOB).value("BlobValue").build()).type(ReferenceTypes.EXTERNAL_REFERENCE).build();
+
+	// SemanticId AasRegistry
+	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference AAS_REG_SEMANTIC_ID = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference()
+			.keys(Arrays.asList(new Key().type(org.eclipse.digitaltwin.basyx.aasregistry.client.model.KeyTypes.BLOB).value("BlobValue"))).type(org.eclipse.digitaltwin.basyx.aasregistry.client.model.ReferenceTypes.EXTERNALREFERENCE);
+
+	// SpecificAssetIds AAS4J
+	private static final SpecificAssetId AAS4J_SPECIFIC_ASSET_ID = new DefaultSpecificAssetId.Builder()
+			.name("specificAssetId")
+			.value("specificAssetIdValue")
+			.externalSubjectId(AAS4J_EXTERNAL_SUBJECT_ID)
+			.semanticId(AAS4J_SEMANTIC_ID)
+			.supplementalSemanticIds(Collections.singletonList(AAS4J_SEMANTIC_ID))
+			.build();
+
+	// SpecificAssetIds AasRegistry
+	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId AAS_REG_SPECIFIC_ASSET_ID = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId()
+			.name("specificAssetId")
+			.value("specificAssetIdValue")
+			.externalSubjectId(AAS_REG_EXTERNAL_SUBJECT_ID)
+			.semanticId(AAS_REG_SEMANTIC_ID)
+			.supplementalSemanticIds(Collections.singletonList(AAS_REG_SEMANTIC_ID));
+
 	public static List<LangStringTextType> getAas4jLangStringTextTypes() {
 		return Arrays.asList(AAS4J_LANG_STRING_TEXT_TYPE_1, AAS_LANG_STRING_TEXT_TYPE_2);
 	}
@@ -133,6 +167,14 @@ public class AttributeMapperFixture {
 
 	public static List<org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension> getAasRegExtensions() {
 		return Arrays.asList(AAS_REG_EXTENSION);
+	}
+
+	public static List<SpecificAssetId> getAas4jSpecificAssetIds() {
+		return Arrays.asList(AAS4J_SPECIFIC_ASSET_ID);
+	}
+
+	public static List<org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId> getAasRegSpecificAssetIds() {
+		return Arrays.asList(AAS_REG_SPECIFIC_ASSET_ID);
 	}
 
 }

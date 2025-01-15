@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -46,7 +46,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Maps the models defined in AAS4J to the AasRegistry client models
  * 
- * @author danish
+ * @author danish, zielstor
  */
 public class AttributeMapper {
 
