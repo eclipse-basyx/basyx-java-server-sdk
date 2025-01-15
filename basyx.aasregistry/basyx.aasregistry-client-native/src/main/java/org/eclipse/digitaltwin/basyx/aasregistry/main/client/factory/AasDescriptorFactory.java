@@ -33,6 +33,7 @@ import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.AdministrativeInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.aas4j.v3.model.Extension;
 import org.eclipse.digitaltwin.aas4j.v3.model.LangStringNameType;
 import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
@@ -156,9 +157,7 @@ public class AasDescriptorFactory {
 		if (assetInformation == null || assetInformation.getSpecificAssetIds() == null)
 			return;
 
-		List<org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId> mappedSpecificAssetIds =
-				attributeMapper.mapSpecificAssetIds(assetInformation.getSpecificAssetIds());
-		descriptor.setSpecificAssetIds(mappedSpecificAssetIds);
+		descriptor.setSpecificAssetIds(attributeMapper.mapSpecificAssetIds(assetInformation.getSpecificAssetIds()));
 	}
 
 	private static void setEndpointItem(String shellId, AssetAdministrationShellDescriptor descriptor, List<String> aasRepositoryURLs) {
