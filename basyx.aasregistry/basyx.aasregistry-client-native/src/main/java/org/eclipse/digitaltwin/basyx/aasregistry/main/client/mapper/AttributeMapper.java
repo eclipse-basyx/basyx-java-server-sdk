@@ -25,12 +25,14 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AdministrativeInformation;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringNameType;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType;
@@ -144,6 +146,63 @@ public class AttributeMapper {
 		default:
 			throw new IllegalArgumentException("Unknown AssetKind: " + assetKind);
 		}
+	}
+
+	/**
+	 * Maps {@link AssetInformation#getSpecificAssetIds()} from AAS4J to AasRegistry client
+	 *
+	 * @param specificAssetIds
+	 * @return the mapped specificAssetIds
+	 */
+	public List<SpecificAssetId> mapSpecificAssetIds(
+			List<org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId> specificAssetIds) {
+		List<org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId> mappedSpecificAssetIds = new ArrayList<>();
+		for (org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId specificAssetId : specificAssetIds) {
+			org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId mappedSpecificAssetId =
+					new org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId();
+			mappedSpecificAssetId.setName(specificAssetId.getName());
+			mappedSpecificAssetId.setValue(specificAssetId.getValue());
+			mappedSpecificAssetId.setExternalSubjectId(mapReference(specificAssetId.getExternalSubjectId()));
+			mappedSpecificAssetId.setSemanticId(mapReference(specificAssetId.getSemanticId()));
+			mappedSpecificAssetId.setSupplementalSemanticIds(mapReferences(specificAssetId.getSupplementalSemanticIds()));
+			mappedSpecificAssetIds.add(mappedSpecificAssetId);
+		}
+		return mappedSpecificAssetIds;
+	}
+
+	/**
+	 * Maps {@link org.eclipse.digitaltwin.aas4j.v3.model.Reference} from AAS4J to AasRegistry client
+	 *
+	 * @param reference
+	 * @return the mapped reference
+	 */
+	private org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference mapReference(
+			org.eclipse.digitaltwin.aas4j.v3.model.Reference reference) {
+		if (reference == null) {
+			return null;
+		}
+		org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference mappedReference =
+				new org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference();
+		// Map fields from reference to mappedReference
+		return mappedReference;
+	}
+
+	/**
+	 * Maps {@link org.eclipse.digitaltwin.aas4j.v3.model.Reference} from AAS4J to AasRegistry client
+	 *
+	 * @param references
+	 * @return the mapped references
+	 */
+	private List<org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference> mapReferences(
+			List<org.eclipse.digitaltwin.aas4j.v3.model.Reference> references) {
+		if (references == null) {
+			return null;
+		}
+		List<org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference> mappedReferences = new ArrayList<>();
+		for (org.eclipse.digitaltwin.aas4j.v3.model.Reference reference : references) {
+			mappedReferences.add(mapReference(reference));
+		}
+		return mappedReferences;
 	}
 
 }

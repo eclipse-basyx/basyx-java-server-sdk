@@ -90,6 +90,8 @@ public class AasDescriptorFactory {
 
 		setGlobalAssetId(shell.getAssetInformation(), descriptor);
 
+		setSpecificAssetIds(shell.getAssetInformation(), descriptor);
+
 		return descriptor;
 	}
 
@@ -147,6 +149,16 @@ public class AasDescriptorFactory {
 			return;
 
 		descriptor.setGlobalAssetId(assetInformation.getGlobalAssetId());
+	}
+
+	private static void setSpecificAssetIds(AssetInformation assetInformation, AssetAdministrationShellDescriptor descriptor) {
+
+		if (assetInformation == null || assetInformation.getSpecificAssetIds() == null)
+			return;
+
+		List<org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId> mappedSpecificAssetIds =
+				attributeMapper.mapSpecificAssetIds(assetInformation.getSpecificAssetIds());
+		descriptor.setSpecificAssetIds(mappedSpecificAssetIds);
 	}
 
 	private static void setEndpointItem(String shellId, AssetAdministrationShellDescriptor descriptor, List<String> aasRepositoryURLs) {
