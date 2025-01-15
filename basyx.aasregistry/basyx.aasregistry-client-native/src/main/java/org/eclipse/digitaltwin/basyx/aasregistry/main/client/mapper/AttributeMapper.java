@@ -156,6 +156,9 @@ public class AttributeMapper {
 	 * @return the mapped specificAssetIds
 	 */
 	public List<SpecificAssetId> mapSpecificAssetIds(List<org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId> specificAssetIds) {
+		if (specificAssetIds == null) {
+			return null;
+		}
 		List<org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId> mappedSpecificAssetIds = new ArrayList<>();
 		for (org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId specificAssetId : specificAssetIds) {
 			org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId mappedSpecificAssetId =
