@@ -191,7 +191,7 @@ public class AttributeMapper {
 	}
 
 	/**
-	 * Maps {@link org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId#getSemanticId()} from AAS4J to SubmodelRegistry client
+	 * Maps {@link org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId#getSemanticId()} from AAS4J to AasRegistry client
 	 *
 	 * @param semanticId
 	 * @return the mapped semanticId
@@ -209,7 +209,7 @@ public class AttributeMapper {
 
 	/**
 	 * Maps {@link org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId#getSupplementalSemanticIds()} from AAS4J to
-	 * SubmodelRegistry client
+	 * AasRegistry client
 	 *
 	 * @param supplementalSemanticIds
 	 * @return the mapped supplementalSemanticIds
