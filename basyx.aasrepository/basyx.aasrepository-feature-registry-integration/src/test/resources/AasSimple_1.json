@@ -4,7 +4,42 @@
 	"id": "customIdentifier",
 	"assetInformation": {
 		"assetKind": "Instance",
-		"globalAssetId": "globalAssetId"
+		"globalAssetId": "globalAssetId",
+		"specificAssetIds": [
+			{
+				"semanticId": {
+					"type": "ExternalReference",
+					"keys": [
+						{
+							"type": "Blob",
+							"value": "BlobValue"
+						}
+					]
+				},
+				"supplementalSemanticIds": [
+					{
+						"type": "ExternalReference",
+						"keys": [
+							{
+								"type": "Blob",
+								"value": "BlobValue"
+							}
+						]
+					}
+				],
+				"externalSubjectId": {
+					"type": "ExternalReference",
+					"keys": [
+						{
+							"type": "Blob",
+							"value": "BlobValue"
+						}
+					]
+				},
+				"name": "name",
+				"value": "value"
+			}
+		]
 	},
 	"administration": {
 		"version": "0",
