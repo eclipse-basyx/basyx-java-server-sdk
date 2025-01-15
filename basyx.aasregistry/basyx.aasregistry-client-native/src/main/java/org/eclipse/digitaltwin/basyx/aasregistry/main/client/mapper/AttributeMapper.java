@@ -30,10 +30,12 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AdministrativeInformation;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringNameType;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.LangStringTextType;
 import org.eclipse.digitaltwin.basyx.http.CustomTypeCloneFactory;
@@ -154,55 +156,71 @@ public class AttributeMapper {
 	 * @param specificAssetIds
 	 * @return the mapped specificAssetIds
 	 */
-	public List<SpecificAssetId> mapSpecificAssetIds(
-			List<org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId> specificAssetIds) {
+	public List<SpecificAssetId> mapSpecificAssetIds(List<org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId> specificAssetIds) {
 		List<org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId> mappedSpecificAssetIds = new ArrayList<>();
 		for (org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId specificAssetId : specificAssetIds) {
 			org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId mappedSpecificAssetId =
 					new org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId();
 			mappedSpecificAssetId.setName(specificAssetId.getName());
 			mappedSpecificAssetId.setValue(specificAssetId.getValue());
-			mappedSpecificAssetId.setExternalSubjectId(mapReference(specificAssetId.getExternalSubjectId()));
-			mappedSpecificAssetId.setSemanticId(mapReference(specificAssetId.getSemanticId()));
-			mappedSpecificAssetId.setSupplementalSemanticIds(mapReferences(specificAssetId.getSupplementalSemanticIds()));
+			mappedSpecificAssetId.setExternalSubjectId(mapExternalSubjectId(specificAssetId.getExternalSubjectId()));
+			mappedSpecificAssetId.setSemanticId(mapSemanticId(specificAssetId.getSemanticId()));
+			mappedSpecificAssetId.setSupplementalSemanticIds(mapSupplementalSemanticId(specificAssetId.getSupplementalSemanticIds()));
 			mappedSpecificAssetIds.add(mappedSpecificAssetId);
 		}
 		return mappedSpecificAssetIds;
 	}
 
 	/**
-	 * Maps {@link org.eclipse.digitaltwin.aas4j.v3.model.Reference} from AAS4J to AasRegistry client
+	 * Maps {@link org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId#getExternalSubjectId()} from AAS4J to AasRegistry client
 	 *
-	 * @param reference
-	 * @return the mapped reference
+	 * @param externalSubjectId
+	 * @return the mapped externalSubjectId
 	 */
-	private org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference mapReference(
-			org.eclipse.digitaltwin.aas4j.v3.model.Reference reference) {
-		if (reference == null) {
-			return null;
-		}
-		org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference mappedReference =
-				new org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference();
-		// Map fields from reference to mappedReference
-		return mappedReference;
+	private Reference mapExternalSubjectId(org.eclipse.digitaltwin.aas4j.v3.model.Reference externalSubjectId) {
+		CustomTypeCloneFactory<org.eclipse.digitaltwin.aas4j.v3.model.Reference, Reference> cloneFactory = new CustomTypeCloneFactory<>(Reference.class, mapper);
+
+		Reference mappedExternalSubjectId = cloneFactory.create(externalSubjectId);
+
+		if (mappedExternalSubjectId == null)
+			logger.error("ExternalSubjectId could not be mapped due to a failure.");
+
+		return mappedExternalSubjectId;
 	}
 
 	/**
-	 * Maps {@link org.eclipse.digitaltwin.aas4j.v3.model.Reference} from AAS4J to AasRegistry client
+	 * Maps {@link org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId#getSemanticId()} from AAS4J to SubmodelRegistry client
 	 *
-	 * @param references
-	 * @return the mapped references
+	 * @param semanticId
+	 * @return the mapped semanticId
 	 */
-	private List<org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference> mapReferences(
-			List<org.eclipse.digitaltwin.aas4j.v3.model.Reference> references) {
-		if (references == null) {
-			return null;
-		}
-		List<org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference> mappedReferences = new ArrayList<>();
-		for (org.eclipse.digitaltwin.aas4j.v3.model.Reference reference : references) {
-			mappedReferences.add(mapReference(reference));
-		}
-		return mappedReferences;
+	public Reference mapSemanticId(org.eclipse.digitaltwin.aas4j.v3.model.Reference semanticId) {
+		CustomTypeCloneFactory<org.eclipse.digitaltwin.aas4j.v3.model.Reference, Reference> cloneFactory = new CustomTypeCloneFactory<>(Reference.class, mapper);
+
+		Reference mappedSemanticId = cloneFactory.create(semanticId);
+
+		if (mappedSemanticId == null)
+			logger.error("SemanticId could not be mapped due to a failure.");
+
+		return mappedSemanticId;
+	}
+
+	/**
+	 * Maps {@link org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId#getSupplementalSemanticIds()} from AAS4J to
+	 * SubmodelRegistry client
+	 *
+	 * @param supplementalSemanticIds
+	 * @return the mapped supplementalSemanticIds
+	 */
+	private List<Reference> mapSupplementalSemanticId(List<org.eclipse.digitaltwin.aas4j.v3.model.Reference> supplementalSemanticIds) {
+		CustomTypeCloneFactory<org.eclipse.digitaltwin.aas4j.v3.model.Reference, Reference> cloneFactory = new CustomTypeCloneFactory<>(Reference.class, mapper);
+
+		List<Reference> mappedSupplementalSemanticId = cloneFactory.create(supplementalSemanticIds);
+
+		if (mappedSupplementalSemanticId == null)
+			logger.error("SupplementalSemanticId could not be mapped due to a failure.");
+
+		return mappedSupplementalSemanticId;
 	}
 
 }
