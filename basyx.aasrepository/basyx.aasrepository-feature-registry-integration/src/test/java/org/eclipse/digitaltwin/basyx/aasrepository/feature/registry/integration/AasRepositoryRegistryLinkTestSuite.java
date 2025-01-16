@@ -67,7 +67,7 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 	protected abstract RegistryAndDiscoveryInterfaceApi getAasRegistryApi();
 
 	private final AssetAdministrationShellDescriptor DUMMY_DESCRIPTOR = DummyAasDescriptorFactory
-			.createDummyDescriptor(DUMMY_AAS_ID, DUMMY_IDSHORT, DUMMY_GLOBAL_ASSETID, DummyAasDescriptorFactory.buildAdministrationInformation("0", "9", "testTemplateId"), getAasRepoBaseUrls());
+			.createDummyDescriptor(DUMMY_AAS_ID, DUMMY_IDSHORT, DUMMY_GLOBAL_ASSETID, DummyAasDescriptorFactory.buildSpecificAssetIds(), DummyAasDescriptorFactory.buildAdministrationInformation("0", "9", "testTemplateId"), getAasRepoBaseUrls());
 
 	@Test
 	public void createAas() throws FileNotFoundException, IOException, ApiException {
