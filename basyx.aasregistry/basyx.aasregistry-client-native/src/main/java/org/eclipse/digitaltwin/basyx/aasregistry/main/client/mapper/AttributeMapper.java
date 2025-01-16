@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2025 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
@@ -156,21 +157,27 @@ public class AttributeMapper {
 	 * @return the mapped specificAssetIds
 	 */
 	public List<SpecificAssetId> mapSpecificAssetIds(List<org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId> specificAssetIds) {
-		if (specificAssetIds == null || specificAssetIds.isEmpty()) {
-			return null;
-		}
-		List<org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId> mappedSpecificAssetIds = new ArrayList<>();
-		for (org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId specificAssetId : specificAssetIds) {
-			org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId mappedSpecificAssetId =
-					new org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId();
-			mappedSpecificAssetId.setName(specificAssetId.getName());
-			mappedSpecificAssetId.setValue(specificAssetId.getValue());
-			mappedSpecificAssetId.setExternalSubjectId(mapExternalSubjectId(specificAssetId.getExternalSubjectId()));
-			mappedSpecificAssetId.setSemanticId(mapSemanticId(specificAssetId.getSemanticId()));
-			mappedSpecificAssetId.setSupplementalSemanticIds(mapSupplementalSemanticId(specificAssetId.getSupplementalSemanticIds()));
-			mappedSpecificAssetIds.add(mappedSpecificAssetId);
-		}
-		return mappedSpecificAssetIds;
+		if (specificAssetIds == null || specificAssetIds.isEmpty()) return null;
+
+		return specificAssetIds.stream().map(this::mapSpecificAssetId).collect(Collectors.toList());
+	}
+
+	/**
+	 * Maps {@link org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId} from AAS4J to AasRegistry client
+	 *
+	 * @param specificAssetId
+	 * @return the mapped specificAssetId
+	 */
+	private SpecificAssetId mapSpecificAssetId(org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId specificAssetId) {
+		SpecificAssetId mappedSpecificAssetId = new SpecificAssetId();
+
+		mappedSpecificAssetId.setName(specificAssetId.getName());
+		mappedSpecificAssetId.setValue(specificAssetId.getValue());
+		mappedSpecificAssetId.setExternalSubjectId(mapExternalSubjectId(specificAssetId.getExternalSubjectId()));
+		mappedSpecificAssetId.setSemanticId(mapSemanticId(specificAssetId.getSemanticId()));
+		mappedSpecificAssetId.setSupplementalSemanticIds(mapSupplementalSemanticId(specificAssetId.getSupplementalSemanticIds()));
+
+		return mappedSpecificAssetId;
 	}
 
 	/**
