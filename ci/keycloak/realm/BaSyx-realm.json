@@ -1751,7 +1751,7 @@
     "frontchannelLogout" : true,
     "protocol" : "openid-connect",
     "attributes" : {
-      "access.token.lifespan" : "1",
+      "access.token.lifespan" : "2",
       "client.secret.creation.time" : "1734780525",
       "post.logout.redirect.uris" : "+",
       "oauth2.device.authorization.grant.enabled" : "false",
@@ -1764,7 +1764,7 @@
       "require.pushed.authorization.requests" : "false",
       "acr.loa.map" : "{}",
       "display.on.consent.screen" : "false",
-      "client.session.max.lifespan" : "3",
+      "client.session.max.lifespan" : "4",
       "token.response.type.bearer.lower-case" : "false"
     },
     "authenticationFlowBindingOverrides" : { },
