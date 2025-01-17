@@ -46,7 +46,7 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 /**
  * Factory for creating the {@link AssetAdministrationShellDescriptor}
  * 
- * @author danish
+ * @author danish, zielstor
  */
 public class AasDescriptorFactory {
 
@@ -89,6 +89,8 @@ public class AasDescriptorFactory {
 		setAssetType(shell.getAssetInformation(), descriptor);
 
 		setGlobalAssetId(shell.getAssetInformation(), descriptor);
+
+		setSpecificAssetIds(shell.getAssetInformation(), descriptor);
 
 		return descriptor;
 	}
@@ -147,6 +149,14 @@ public class AasDescriptorFactory {
 			return;
 
 		descriptor.setGlobalAssetId(assetInformation.getGlobalAssetId());
+	}
+
+	private static void setSpecificAssetIds(AssetInformation assetInformation, AssetAdministrationShellDescriptor descriptor) {
+
+		if (assetInformation == null || assetInformation.getSpecificAssetIds() == null)
+			return;
+
+		descriptor.setSpecificAssetIds(attributeMapper.mapSpecificAssetIds(assetInformation.getSpecificAssetIds()));
 	}
 
 	private static void setEndpointItem(String shellId, AssetAdministrationShellDescriptor descriptor, List<String> aasRepositoryURLs) {
