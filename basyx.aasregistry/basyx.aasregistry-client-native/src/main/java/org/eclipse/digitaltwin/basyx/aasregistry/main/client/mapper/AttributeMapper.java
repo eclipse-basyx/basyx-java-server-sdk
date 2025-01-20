@@ -175,7 +175,13 @@ public class AttributeMapper {
 		mappedSpecificAssetId.setValue(specificAssetId.getValue());
 		mappedSpecificAssetId.setExternalSubjectId(mapExternalSubjectId(specificAssetId.getExternalSubjectId()));
 		mappedSpecificAssetId.setSemanticId(mapSemanticId(specificAssetId.getSemanticId()));
-		mappedSpecificAssetId.setSupplementalSemanticIds(mapSupplementalSemanticId(specificAssetId.getSupplementalSemanticIds()));
+
+		List<Reference> supplementalSemanticIds = mapSupplementalSemanticId(specificAssetId.getSupplementalSemanticIds());
+		if (supplementalSemanticIds != null && !supplementalSemanticIds.isEmpty()) {
+			mappedSpecificAssetId.setSupplementalSemanticIds(supplementalSemanticIds);
+		} else {
+			mappedSpecificAssetId.setSupplementalSemanticIds(null);
+		}
 
 		return mappedSpecificAssetId;
 	}
