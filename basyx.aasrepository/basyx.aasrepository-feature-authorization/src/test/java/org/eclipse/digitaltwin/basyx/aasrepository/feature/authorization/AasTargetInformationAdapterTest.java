@@ -70,24 +70,33 @@ public class AasTargetInformationAdapterTest {
 		assertEquals("targetInformation", result.getIdShort());
 
 		List<SubmodelElement> elements = result.getValue();
-		assertEquals(1, elements.size());
+		assertEquals(2, elements.size());
 
 		SubmodelElementList aasIdList = (SubmodelElementList) elements.get(0);
 		assertEquals("aasIds", aasIdList.getIdShort());
+		
+		Property typeProperty = (Property) elements.get(1);
+		assertEquals("@type", typeProperty.getIdShort());
 
 		List<String> actualAasIds = aasIdList.getValue().stream().map(Property.class::cast).map(Property::getValue).map(String::valueOf).collect(Collectors.toList());
 		assertEquals(aasIds, actualAasIds);
+		
+		String actualType = typeProperty.getValue();
+        assertTrue(actualType.equals("aas"));
 	}
 
 	@Test
 	public void testAdaptSubmodelElementCollectionToTargetInformation() {
 
 		List<String> expectedAasIds = Arrays.asList("aasId1", "aasId2");
+		String type = "aas";
+		
 		List<SubmodelElement> aasIdProperties = expectedAasIds.stream().map(aasId -> new DefaultProperty.Builder().value(aasId).build()).collect(Collectors.toList());
 
 		SubmodelElementList aasIdList = new DefaultSubmodelElementList.Builder().idShort("aasIds").value(aasIdProperties).build();
+		SubmodelElement typeProperty = createTypeProperty(type);
 
-		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation").value(Collections.singletonList(aasIdList)).build();
+		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation").value(Arrays.asList(aasIdList, typeProperty)).build();
 
 		TargetInformation result = aasTargetInformationAdapter.adapt(targetInformationSMC);
 
@@ -106,10 +115,13 @@ public class AasTargetInformationAdapterTest {
         assertEquals("targetInformation", result.getIdShort());
 
         List<SubmodelElement> elements = result.getValue();
-        assertEquals(1, elements.size());
+        assertEquals(2, elements.size());
 
         SubmodelElementList aasIdList = (SubmodelElementList) elements.get(0);
         assertEquals("aasIds", aasIdList.getIdShort());
+        
+        Property typeProperty = (Property) elements.get(1);
+		assertEquals("@type", typeProperty.getIdShort());
 
         List<String> actualAasIds = aasIdList.getValue().stream()
                 .map(Property.class::cast)
@@ -117,6 +129,9 @@ public class AasTargetInformationAdapterTest {
                 .map(String::valueOf)
                 .collect(Collectors.toList());
         assertTrue(actualAasIds.isEmpty());
+        
+        String actualType = typeProperty.getValue();
+        assertTrue(actualType.equals("aas")); 
     }
     
     @Test(expected = InvalidTargetInformationException.class)
@@ -138,5 +153,9 @@ public class AasTargetInformationAdapterTest {
 
         aasTargetInformationAdapter.adapt(targetInformationSMC);
     }
+    
+    private SubmodelElement createTypeProperty(String type) {
+		return new DefaultProperty.Builder().idShort("@type").value(type).build();
+	}
 
 }

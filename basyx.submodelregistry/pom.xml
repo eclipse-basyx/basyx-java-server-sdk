@@ -16,7 +16,7 @@
 
 	<properties>
 		<lombok.maven-plugin.version>1.18.20.0</lombok.maven-plugin.version>
-		<lombok.maven-plugin.lombok.version>1.18.30</lombok.maven-plugin.lombok.version>
+		<lombok.maven-plugin.lombok.version>1.18.36</lombok.maven-plugin.lombok.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<generated.folder>src/generated</generated.folder>

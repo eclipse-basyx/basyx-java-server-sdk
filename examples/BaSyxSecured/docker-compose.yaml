@@ -1,7 +1,7 @@
 services:
   # AAS Environment
   aas-env:
-    image: eclipsebasyx/aas-environment:2.0.0-milestone-03
+    image: eclipsebasyx/aas-environment:$BASYX_VERSION
     container_name: aas-env-rbac
     volumes:
       - ./aas:/application/aas
@@ -20,7 +20,7 @@ services:
 
   # AAS Registry
   aas-registry:
-    image: eclipsebasyx/aas-registry-log-mem:2.0.0-milestone-03
+    image: eclipsebasyx/aas-registry-log-mem:$BASYX_VERSION
     container_name: secured-aas-registry-log-mem-rbac
     ports:
       - "8082:8080"
@@ -41,7 +41,7 @@ services:
 
   # Submodel Registry
   sm-registry:
-    image: eclipsebasyx/submodel-registry-log-mem:2.0.0-milestone-03
+    image: eclipsebasyx/submodel-registry-log-mem:$BASYX_VERSION
     container_name: secured-sm-registry-log-mem-rbac
     environment:
       SERVER_SERVLET_CONTEXT_PATH: /
@@ -62,7 +62,7 @@ services:
       
   # AAS Discovery
   aas-discovery:
-    image: eclipsebasyx/aas-discovery:2.0.0-milestone-03
+    image: eclipsebasyx/aas-discovery:$BASYX_VERSION
     container_name: aas-discovery
     volumes:
       - ./basyx/aas-discovery.properties:/application/application.properties
@@ -75,8 +75,8 @@ services:
 
   # AAS Web UI
   aas-web-ui:
-    image: eclipsebasyx/aas-gui:SNAPSHOT
-    container_name: aas-ui
+    image: eclipsebasyx/aas-gui:$AAS_WEBUI_VERSION
+    container_name: aas-web-gui
     extra_hosts:
       - "keycloak:127.0.0.1"
     ports:
