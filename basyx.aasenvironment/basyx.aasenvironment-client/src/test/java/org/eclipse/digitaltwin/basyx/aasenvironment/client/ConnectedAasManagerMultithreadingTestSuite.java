@@ -74,8 +74,9 @@ public abstract class ConnectedAasManagerMultithreadingTestSuite {
     }
 
     void assertSubmodelWasCreatedAndRegistered(String shellId, String submodelId) {
-        assertEquals(submodelId, getConnectedAasManager().getSubmodelService(submodelId).getSubmodel().getId());
-        assertTrue(getAasRepository().getSubmodelReferences(shellId, PaginationInfo.NO_LIMIT).getResult().stream().map(Reference::getKeys).flatMap(Collection::stream).map(Key::getValue).anyMatch(submodelId::equals));
+        assertEquals("No submodel with id " + submodelId + " found by the client", submodelId, getConnectedAasManager().getSubmodelService(submodelId).getSubmodel().getId());
+        assertTrue("SubmodelRef " + submodelId + " not found in shell " + shellId,
+                getAasRepository().getSubmodelReferences(shellId, PaginationInfo.NO_LIMIT).getResult().stream().map(Reference::getKeys).flatMap(Collection::stream).map(Key::getValue).anyMatch(submodelId::equals));
     }
 
     private AssetAdministrationShell createShell() {
