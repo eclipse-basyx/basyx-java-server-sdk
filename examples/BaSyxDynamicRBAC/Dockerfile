@@ -1,5 +1,5 @@
 # Use Ubuntu as the base image
-FROM ubuntu:20.04 as installer
+FROM ubuntu:20.04 AS installer
 
 # Switch to root user to install dependencies (default user is root in Ubuntu)
 USER root

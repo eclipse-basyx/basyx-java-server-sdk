@@ -1,16 +1,15 @@
 # BaSyx Dynamic RBAC Management
 
-* BaSyx supports dynamic management of RBAC rules using Submodel.
-* The administrator of the system controls the Policy inside the Submodel.
-* Rules can be added or deleted while the system is running.
+* BaSyx supports dynamic management of RBAC rules using a security Submodel.
+* The administrator of the system controls the policy/access rules inside the Submodel.
+* Rules can be added or deleted during the system's runtime.
 
 <img width="60%" alt="image" src="images/DynamicRBACMgmt.png">
 
 ## Prerequisites
-1. Laptop.
-2. REST API Client (e.g., [Postman](https://www.postman.com/downloads/))
-3. Import the [Postman Collection](DynamicRBAC.postman_collection.json)
-4. Docker
+1. REST API Client (e.g., [Postman](https://www.postman.com/downloads/))
+2. Import the [Postman Collection](DynamicRBAC.postman_collection.json)
+3. Docker
 
 To start the secure setup execute the following command
 
