@@ -36,7 +36,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Key;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasServiceBackend;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasServiceOperations;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -55,18 +55,18 @@ import org.springframework.data.mongodb.repository.support.MappingMongoEntityInf
 import com.mongodb.client.result.UpdateResult;
 
 /**
- * MongoDB implementation of the {@link AasServiceBackend}
+ * MongoDB implementation of the {@link AasServiceOperations}
  * 
  * @author mateusmolina
  */
-public class MongoDBAasServiceBackend implements AasServiceBackend {
+public class MongoDBAasServiceOperations implements AasServiceOperations {
 
     private static final String SMREF_KEY = "submodels";
 
     private final MongoOperations mongoOperations;
     private final String collectionName;
 
-    public MongoDBAasServiceBackend(MongoOperations mongoOperations, MappingMongoEntityInformation<AssetAdministrationShell, String> mappingMongoEntityInformation) {
+    public MongoDBAasServiceOperations(MongoOperations mongoOperations, MappingMongoEntityInformation<AssetAdministrationShell, String> mappingMongoEntityInformation) {
         this.mongoOperations = mongoOperations;
 
         collectionName = mappingMongoEntityInformation.getCollectionName();

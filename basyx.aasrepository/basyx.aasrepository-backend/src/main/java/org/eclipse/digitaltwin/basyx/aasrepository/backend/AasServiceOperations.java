@@ -42,7 +42,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
  * @author mateusmolina
  *
  */
-public interface AasServiceBackend {
+public interface AasServiceOperations {
 
 	/**
 	 * Retrieves all Submodel References
