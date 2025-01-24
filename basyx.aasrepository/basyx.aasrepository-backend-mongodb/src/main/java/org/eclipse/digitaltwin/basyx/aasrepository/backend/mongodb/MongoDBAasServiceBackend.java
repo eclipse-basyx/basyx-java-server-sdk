@@ -59,19 +59,20 @@ import com.mongodb.client.result.UpdateResult;
  * 
  * @author mateusmolina
  */
-public class AasServiceBackendImpl implements AasServiceBackend {
+public class MongoDBAasServiceBackend implements AasServiceBackend {
 
     private static final String SMREF_KEY = "submodels";
 
     private final MongoOperations mongoOperations;
     private final String collectionName;
 
-    public AasServiceBackendImpl(MongoOperations mongoOperations, MappingMongoEntityInformation<AssetAdministrationShell, String> mappingMongoEntityInformation) {
+    public MongoDBAasServiceBackend(MongoOperations mongoOperations, MappingMongoEntityInformation<AssetAdministrationShell, String> mappingMongoEntityInformation) {
         this.mongoOperations = mongoOperations;
 
         collectionName = mappingMongoEntityInformation.getCollectionName();
 
     }
+
     @Override
     public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo) {
         Integer limit = pInfo.getLimit();
@@ -142,7 +143,6 @@ public class AasServiceBackendImpl implements AasServiceBackend {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getAssetInformation'");
     }
-
 
     @Override
     public File getThumbnail(String aasId) {
