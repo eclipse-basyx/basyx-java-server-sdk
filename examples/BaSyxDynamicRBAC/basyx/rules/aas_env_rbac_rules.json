@@ -1,13 +1,5 @@
 [
   {
-    "role": "basyx-reader",
-    "action": "READ",
-    "targetInformation": {
-      "@type": "aas",
-      "aasIds": "*"
-    }
-  },
-  {
     "role": "admin",
     "action": ["CREATE", "READ", "UPDATE", "DELETE"],
     "targetInformation": {
