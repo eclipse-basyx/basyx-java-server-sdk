@@ -41,7 +41,6 @@
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.aasservice-backend-inmemory</artifactId>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>
