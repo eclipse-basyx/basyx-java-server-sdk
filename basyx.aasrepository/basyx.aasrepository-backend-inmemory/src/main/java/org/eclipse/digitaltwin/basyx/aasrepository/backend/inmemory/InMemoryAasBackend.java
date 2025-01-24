@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackend;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.common.backend.inmemory.core.InMemoryCrudRepository;
@@ -42,12 +42,12 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 /**
- * InMemory implementation of the {@link AasBackend} based on the
+ * InMemory implementation of the {@link AasRepositoryBackend} based on the
  * {@link AasService}
  * 
  * @author mateusmolina
  */
-public class InMemoryAasBackend extends InMemoryCrudRepository<AssetAdministrationShell> implements AasBackend {
+public class InMemoryAasBackend extends InMemoryCrudRepository<AssetAdministrationShell> implements AasRepositoryBackend {
 
     private final AasServiceFactory aasServiceFactory;
 

@@ -56,11 +56,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class CrudAasRepository implements AasRepository {
 
-	private final AasBackend aasBackend;
+	private final AasRepositoryBackend aasBackend;
 
 	private final String aasRepositoryName;
 
-	public CrudAasRepository(AasBackend aasBackend, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
+	public CrudAasRepository(AasRepositoryBackend aasBackend, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
 		this.aasBackend = aasBackend;
 		this.aasRepositoryName = aasRepositoryName;
 	}

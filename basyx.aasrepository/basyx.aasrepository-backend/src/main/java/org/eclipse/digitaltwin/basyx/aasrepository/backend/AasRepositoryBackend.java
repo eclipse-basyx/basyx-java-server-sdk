@@ -5,6 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AasBackend extends CrudRepository<AssetAdministrationShell, String>, AasServiceOperations {
+public interface AasRepositoryBackend extends CrudRepository<AssetAdministrationShell, String>, AasServiceOperations {
 
 }

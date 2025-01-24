@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackend;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +42,7 @@ import org.springframework.context.annotation.Configuration;
 public class AasInMemoryBackendConfiguration {
 
 	@Bean
-	AasBackend getAasBackend(AasServiceFactory aasServiceFactory) {
+	AasRepositoryBackend getAasBackend(AasServiceFactory aasServiceFactory) {
 		return new InMemoryAasBackend(aasServiceFactory);
 	}
 }
