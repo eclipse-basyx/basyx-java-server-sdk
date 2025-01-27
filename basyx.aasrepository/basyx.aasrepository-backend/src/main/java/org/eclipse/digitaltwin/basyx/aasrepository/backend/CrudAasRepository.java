@@ -44,7 +44,6 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Service;
 
 /**
  * Default Implementation for the {@link AasRepository} based on Spring
@@ -53,7 +52,6 @@ import org.springframework.stereotype.Service;
  * @author mateusmolina, despen, zhangzai, kammognie
  *
  */
-@Service
 public class CrudAasRepository implements AasRepository {
 
 	private final AasRepositoryBackend aasBackend;

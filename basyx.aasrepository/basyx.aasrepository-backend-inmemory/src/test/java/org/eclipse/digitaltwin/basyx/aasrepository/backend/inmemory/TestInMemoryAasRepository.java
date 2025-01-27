@@ -60,8 +60,7 @@ public class TestInMemoryAasRepository extends AasRepositorySuite {
 	@Override
 	protected AasRepository getAasRepository() {
 		fileRepository = new InMemoryFileRepository();
-		CrudAasRepository repository = new CrudAasRepository(InMemoryAasRepositoryBackend.buildDefault(), "aas-repo");
-		return new CrudAasRepositoryFactory(repository).create();
+		return new CrudAasRepositoryFactory(InMemoryAasRepositoryBackend.buildDefault(), "aas-repo").create();
 	}
 
 	@Override

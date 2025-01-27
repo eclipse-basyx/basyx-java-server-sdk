@@ -25,13 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -43,8 +40,6 @@ import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.DummyAasDesc
 import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 

@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
@@ -41,10 +42,10 @@ import org.springframework.stereotype.Component;
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
 public class CrudAasRepositoryFactory implements AasRepositoryFactory {
 
-	private CrudAasRepository crudAasRepository;
+	private final CrudAasRepository crudAasRepository;
 
-	public CrudAasRepositoryFactory(CrudAasRepository crudAasRepository) {
-		this.crudAasRepository = crudAasRepository;
+	public CrudAasRepositoryFactory(AasRepositoryBackend aasRepositoryBackend, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
+		this.crudAasRepository = new CrudAasRepository(aasRepositoryBackend, aasRepositoryName);
 	}
 
 	@Override

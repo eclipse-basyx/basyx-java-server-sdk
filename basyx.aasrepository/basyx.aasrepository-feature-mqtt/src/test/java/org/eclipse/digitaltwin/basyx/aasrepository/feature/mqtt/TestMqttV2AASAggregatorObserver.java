@@ -39,7 +39,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShe
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.DummyAasFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Base64URLEncoder;
@@ -169,7 +168,7 @@ public class TestMqttV2AASAggregatorObserver {
 	}
 
 	private static AasRepository createMqttAasRepository(MqttClient client) {
-		AasRepositoryFactory repoFactory = new CrudAasRepositoryFactory(new CrudAasRepository(InMemoryAasRepositoryBackend.buildDefault(), "aas-repo"));
+		AasRepositoryFactory repoFactory = new CrudAasRepositoryFactory(InMemoryAasRepositoryBackend.buildDefault(), "aas-repo");
 
 		return new MqttAasRepositoryFactory(repoFactory, client, new MqttAasRepositoryTopicFactory(new URLEncoder())).create();
 	}
