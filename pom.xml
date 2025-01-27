@@ -79,7 +79,7 @@
 		<docker.target.platforms>linux/amd64, linux/arm64, linux/arm/v7</docker.target.platforms>
 		<docker.host.port>8081</docker.host.port>
 		<docker.container.port>8081</docker.container.port>
-		<aas4j-version>1.0.3</aas4j-version>
+		<aas4j-version>1.0.4</aas4j-version>
 	</properties>
 
 	<pluginRepositories>
