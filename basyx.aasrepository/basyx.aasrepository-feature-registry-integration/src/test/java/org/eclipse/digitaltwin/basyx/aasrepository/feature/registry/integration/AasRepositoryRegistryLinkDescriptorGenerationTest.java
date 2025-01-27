@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,10 +38,9 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministratio
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.factory.AasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryBackendConfiguration;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
-import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasBackend;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.junit.Before;
 import org.junit.Test;
@@ -115,7 +114,7 @@ public class AasRepositoryRegistryLinkDescriptorGenerationTest {
     }
     
 	protected AasRepository getAasRepository() {
-        return new SimpleAasRepositoryFactory(new AasInMemoryBackendConfiguration(), new InMemoryAasServiceFactory(new InMemoryFileRepository())).create();
+        return new SimpleAasRepositoryFactory(new CrudAasRepository(InMemoryAasBackend.buildDefault(), "aas-repo")).create();
 	}
 
 }

@@ -25,12 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.http.testconfig;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryBackendConfiguration;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
-import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasRepositoryBackend;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasBackend;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -39,16 +35,16 @@ import org.springframework.context.annotation.Profile;
 /**
  * Configuration for tests
  * 
- * @author danish, kammognie
+ * @author danish, kammognie, mateusmolina
  *
  */
 @Configuration
 @Profile("httptests")
 public class DummyAasRepositoryConfig {
 
-	@Bean
-    @ConditionalOnMissingBean
-    public AasRepository createAasRepository() {
-      return new SimpleAasRepositoryFactory(new AasInMemoryBackendConfiguration(), new InMemoryAasServiceFactory(new InMemoryFileRepository())).create();
-    }
+  @Bean
+  AasRepositoryBackend createAasRepositoryBackend() {
+    return InMemoryAasBackend.buildDefault();
+  }
+
 }

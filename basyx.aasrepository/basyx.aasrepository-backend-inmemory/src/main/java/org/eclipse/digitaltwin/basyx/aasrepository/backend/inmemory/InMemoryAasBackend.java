@@ -36,8 +36,10 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.common.backend.inmemory.core.InMemoryCrudRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
@@ -54,6 +56,10 @@ public class InMemoryAasBackend extends InMemoryCrudRepository<AssetAdministrati
     public InMemoryAasBackend(AasServiceFactory aasServiceFactory) {
         super(aas -> aas.getId());
         this.aasServiceFactory = aasServiceFactory;
+    }
+
+    public static InMemoryAasBackend buildDefault() {
+        return new InMemoryAasBackend(new InMemoryAasServiceFactory(new InMemoryFileRepository()));
     }
 
     @Override

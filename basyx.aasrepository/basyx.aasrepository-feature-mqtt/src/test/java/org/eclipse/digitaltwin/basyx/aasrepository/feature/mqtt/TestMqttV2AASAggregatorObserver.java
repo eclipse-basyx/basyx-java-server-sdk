@@ -24,7 +24,7 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,13 +39,12 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShe
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.DummyAasFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryBackendConfiguration;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasBackend;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Base64URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener;
-import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
@@ -170,7 +169,7 @@ public class TestMqttV2AASAggregatorObserver {
 	}
 
 	private static AasRepository createMqttAasRepository(MqttClient client) {
-		AasRepositoryFactory repoFactory = new SimpleAasRepositoryFactory(new AasInMemoryBackendConfiguration(), new InMemoryAasServiceFactory(new InMemoryFileRepository()));
+		AasRepositoryFactory repoFactory = new SimpleAasRepositoryFactory(new CrudAasRepository(InMemoryAasBackend.buildDefault(), "aas-repo"));
 
 		return new MqttAasRepositoryFactory(repoFactory, client, new MqttAasRepositoryTopicFactory(new URLEncoder())).create();
 	}
