@@ -26,7 +26,7 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.http.testconfig;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasRepositoryBackend;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasBackend;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasRepositoryBackend;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -44,7 +44,7 @@ public class DummyAasRepositoryConfig {
 
   @Bean
   AasRepositoryBackend createAasRepositoryBackend() {
-    return InMemoryAasBackend.buildDefault();
+    return InMemoryAasRepositoryBackend.buildDefault();
   }
 
 }

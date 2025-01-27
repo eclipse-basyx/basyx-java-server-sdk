@@ -40,7 +40,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AttributeMap
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasBackend;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.junit.Before;
 import org.junit.Test;
@@ -114,7 +114,7 @@ public class AasRepositoryRegistryLinkDescriptorGenerationTest {
     }
     
 	protected AasRepository getAasRepository() {
-        return new SimpleAasRepositoryFactory(new CrudAasRepository(InMemoryAasBackend.buildDefault(), "aas-repo")).create();
+        return new SimpleAasRepositoryFactory(new CrudAasRepository(InMemoryAasRepositoryBackend.buildDefault(), "aas-repo")).create();
 	}
 
 }

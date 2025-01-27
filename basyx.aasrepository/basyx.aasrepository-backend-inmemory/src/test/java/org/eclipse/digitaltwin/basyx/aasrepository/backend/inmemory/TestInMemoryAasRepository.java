@@ -60,7 +60,7 @@ public class TestInMemoryAasRepository extends AasRepositorySuite {
 	@Override
 	protected AasRepository getAasRepository() {
 		fileRepository = new InMemoryFileRepository();
-		CrudAasRepository repository = new CrudAasRepository(InMemoryAasBackend.buildDefault(), "aas-repo");
+		CrudAasRepository repository = new CrudAasRepository(InMemoryAasRepositoryBackend.buildDefault(), "aas-repo");
 		return new SimpleAasRepositoryFactory(repository).create();
 	}
 
@@ -86,7 +86,7 @@ public class TestInMemoryAasRepository extends AasRepositorySuite {
 	@Test
 	public void getConfiguredInMemoryAasRepositoryName() {
 		fileRepository = new InMemoryFileRepository();
-		InMemoryAasBackend backend = new InMemoryAasBackend(new InMemoryAasServiceFactory(fileRepository));
+		InMemoryAasRepositoryBackend backend = new InMemoryAasRepositoryBackend(new InMemoryAasServiceFactory(fileRepository));
 		AasRepository repo = new CrudAasRepository(backend, CONFIGURED_AAS_REPO_NAME);
 		
 		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());

@@ -49,17 +49,17 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
  * 
  * @author mateusmolina
  */
-public class InMemoryAasBackend extends InMemoryCrudRepository<AssetAdministrationShell> implements AasRepositoryBackend {
+public class InMemoryAasRepositoryBackend extends InMemoryCrudRepository<AssetAdministrationShell> implements AasRepositoryBackend {
 
     private final AasServiceFactory aasServiceFactory;
 
-    public InMemoryAasBackend(AasServiceFactory aasServiceFactory) {
+    public InMemoryAasRepositoryBackend(AasServiceFactory aasServiceFactory) {
         super(aas -> aas.getId());
         this.aasServiceFactory = aasServiceFactory;
     }
 
-    public static InMemoryAasBackend buildDefault() {
-        return new InMemoryAasBackend(new InMemoryAasServiceFactory(new InMemoryFileRepository()));
+    public static InMemoryAasRepositoryBackend buildDefault() {
+        return new InMemoryAasRepositoryBackend(new InMemoryAasServiceFactory(new InMemoryFileRepository()));
     }
 
     @Override

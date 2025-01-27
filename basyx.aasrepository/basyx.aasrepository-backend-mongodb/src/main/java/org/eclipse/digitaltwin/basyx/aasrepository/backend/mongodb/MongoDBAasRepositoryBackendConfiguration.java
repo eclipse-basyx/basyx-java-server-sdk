@@ -49,7 +49,7 @@ import org.springframework.data.mongodb.repository.support.MappingMongoEntityInf
 @Configuration
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
 @EnableMongoRepositories(basePackages = "org.eclipse.digitaltwin.basyx.aasrepository.backend")
-public class MongoDBAasBackendConfiguration {
+public class MongoDBAasRepositoryBackendConfiguration {
 	@Bean
 	MappingMongoEntityInformation<AssetAdministrationShell, String> getMappingMongoEntityInformation(BasyxMongoMappingContext mappingContext, @Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName) {
 		mappingContext.addEntityMapping(AssetAdministrationShell.class, collectionName);

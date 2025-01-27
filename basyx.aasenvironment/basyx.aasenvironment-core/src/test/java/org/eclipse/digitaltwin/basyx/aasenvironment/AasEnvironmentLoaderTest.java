@@ -36,7 +36,7 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEn
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasBackend;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -76,7 +76,7 @@ public class AasEnvironmentLoaderTest {
 	@Before
 	public void setUp() {
 		submodelRepository = Mockito.spy(new CrudSubmodelRepository(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())));
-		aasRepository = Mockito.spy(new CrudAasRepository(InMemoryAasBackend.buildDefault(), "aas-repo"));
+		aasRepository = Mockito.spy(new CrudAasRepository(InMemoryAasRepositoryBackend.buildDefault(), "aas-repo"));
 		conceptDescriptionRepository = Mockito.spy(new CrudConceptDescriptionRepository(new ConceptDescriptionInMemoryBackendProvider()));
 	}
 

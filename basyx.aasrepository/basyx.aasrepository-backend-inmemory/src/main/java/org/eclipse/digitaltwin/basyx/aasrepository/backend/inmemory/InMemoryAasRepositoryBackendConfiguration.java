@@ -39,10 +39,10 @@ import org.springframework.context.annotation.Configuration;
  */
 @ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
 @Configuration
-public class AasInMemoryBackendConfiguration {
+public class InMemoryAasRepositoryBackendConfiguration {
 
 	@Bean
 	AasRepositoryBackend getAasBackend(AasServiceFactory aasServiceFactory) {
-		return new InMemoryAasBackend(aasServiceFactory);
+		return new InMemoryAasRepositoryBackend(aasServiceFactory);
 	}
 }
