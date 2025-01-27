@@ -39,11 +39,11 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
-public class SimpleAasRepositoryFactory implements AasRepositoryFactory {
+public class CrudAasRepositoryFactory implements AasRepositoryFactory {
 
 	private CrudAasRepository crudAasRepository;
 
-	public SimpleAasRepositoryFactory(CrudAasRepository crudAasRepository) {
+	public CrudAasRepositoryFactory(CrudAasRepository crudAasRepository) {
 		this.crudAasRepository = crudAasRepository;
 	}
 

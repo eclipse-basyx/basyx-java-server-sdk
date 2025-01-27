@@ -28,7 +28,7 @@ package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBFileRepository;
@@ -50,7 +50,7 @@ public class DummyAasRepositoryConfig {
 
 	@Bean
 	public AasRepository createAasRepository(MongoTemplate template) {
-		return new SimpleAasRepositoryFactory(new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, template), new InMemoryAasServiceFactory(new MongoDBFileRepository(configureDefaultGridFsTemplate(template)))).create();
+		return new CrudAasRepositoryFactory(new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, template), new InMemoryAasServiceFactory(new MongoDBFileRepository(configureDefaultGridFsTemplate(template)))).create();
 	}
 
 	@Bean

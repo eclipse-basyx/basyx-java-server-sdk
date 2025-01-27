@@ -41,7 +41,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
 import org.eclipse.digitaltwin.basyx.aasrepository.DummyAasFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
@@ -80,7 +80,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
 		fileRepository = new MongoDBFileRepository(gridFsTemplate);
 		AasBackendProvider aasBackendProvider = new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate);
-		AasRepositoryFactory aasRepositoryFactory = new SimpleAasRepositoryFactory(aasBackendProvider, new InMemoryAasServiceFactory(fileRepository));
+		AasRepositoryFactory aasRepositoryFactory = new CrudAasRepositoryFactory(aasBackendProvider, new InMemoryAasServiceFactory(fileRepository));
 
 		return aasRepositoryFactory.create();
 	}

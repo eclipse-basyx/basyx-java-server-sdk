@@ -37,7 +37,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
@@ -61,7 +61,7 @@ public class TestInMemoryAasRepository extends AasRepositorySuite {
 	protected AasRepository getAasRepository() {
 		fileRepository = new InMemoryFileRepository();
 		CrudAasRepository repository = new CrudAasRepository(InMemoryAasRepositoryBackend.buildDefault(), "aas-repo");
-		return new SimpleAasRepositoryFactory(repository).create();
+		return new CrudAasRepositoryFactory(repository).create();
 	}
 
 	@Override
