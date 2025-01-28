@@ -30,6 +30,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
@@ -37,11 +40,15 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.Action;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Decorator for authorized {@link AasRepository}
@@ -51,6 +58,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
  */
 public class AuthorizedAasRepository implements AasRepository {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizedAasRepository.class);
 	private AasRepository decorated;
 	private RbacPermissionResolver<AasTargetInformation> permissionResolver;
 	
@@ -64,9 +72,31 @@ public class AuthorizedAasRepository implements AasRepository {
 	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasTargetInformation(getIdAsList("*")));
 		
-		throwExceptionIfInsufficientPermission(isAuthorized);
+		if (isAuthorized)
+			return decorated.getAllAas(pInfo);
 		
-		return decorated.getAllAas(pInfo);
+		List<TargetInformation> targetInformations = permissionResolver.getMatchingTargetInformationInRules(Action.READ, new AasTargetInformation(getIdAsList("*")));
+		
+		List<String> allIds = targetInformations.stream().map(AasTargetInformation.class::cast)
+				.map(AasTargetInformation::getAasIds).flatMap(List::stream).collect(Collectors.toList());
+		
+		List<AssetAdministrationShell> shells = allIds.stream().map(id -> {
+			try {
+				return getAas(id);
+			} catch (ElementDoesNotExistException e) {
+				LOGGER.error("AAS: '{}' not found, Error: {}", id, e.getMessage());
+				return null;
+			} catch (Exception e) {
+				LOGGER.error("Exception occurred while retrieving the AAS: {}, Error: {}", id, e.getMessage());
+				return null;
+			}
+		}).filter(Objects::nonNull).collect(Collectors.toList());
+		
+		TreeMap<String, AssetAdministrationShell> aasMap = shells.stream().collect(Collectors.toMap(AssetAdministrationShell::getId, aas -> aas, (a, b) -> a, TreeMap::new));
+
+		PaginationSupport<AssetAdministrationShell> paginationSupport = new PaginationSupport<>(aasMap, AssetAdministrationShell::getId);
+
+		return paginationSupport.getPaged(pInfo);
 	}
 
 	@Override
