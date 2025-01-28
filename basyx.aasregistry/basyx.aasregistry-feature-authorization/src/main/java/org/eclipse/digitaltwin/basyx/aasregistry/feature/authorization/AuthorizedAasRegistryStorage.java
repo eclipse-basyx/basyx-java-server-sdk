@@ -51,6 +51,8 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionExcep
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Decorator for authorized {@link AasRegistryStorage}
@@ -59,6 +61,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
  */
 public class AuthorizedAasRegistryStorage implements AasRegistryStorage {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizedAasRegistryStorage.class);
 	private AasRegistryStorage decorated;
 	private RbacPermissionResolver<AasRegistryTargetInformation> permissionResolver;
 	
@@ -82,7 +85,11 @@ public class AuthorizedAasRegistryStorage implements AasRegistryStorage {
 		List<AssetAdministrationShellDescriptor> aasDescriptors = allIds.stream().map(id -> {
 			try {
 				return getAasDescriptor(id);
+			} catch (AasDescriptorNotFoundException e) {
+				LOGGER.error("AAS Descriptor: '{}' not found, Error: {}", id, e.getMessage());
+				return null;
 			} catch (Exception e) {
+				LOGGER.error("Exception occurred while retrieving the AAS Descriptor: {}, Error: {}", id, e.getMessage());
 				return null;
 			}
 		}).filter(Objects::nonNull).collect(Collectors.toList());

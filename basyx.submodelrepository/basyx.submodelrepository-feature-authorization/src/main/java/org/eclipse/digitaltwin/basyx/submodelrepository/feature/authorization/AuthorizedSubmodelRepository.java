@@ -51,6 +51,8 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Decorator for authorized {@link SubmodelRepository}
@@ -60,6 +62,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
  */
 public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizedSubmodelRepository.class);
 	private static final String ALL_ALLOWED_WILDCARD = "*";
 	private SubmodelRepository decorated;
 	private RbacPermissionResolver<SubmodelTargetInformation> permissionResolver;
@@ -84,7 +87,11 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 		List<Submodel> submodels = allIds.stream().map(id -> {
 			try {
 				return getSubmodel(id);
+			} catch (ElementDoesNotExistException e) {
+				LOGGER.error("Submodel: '{}' not found, Error: {}", id, e.getMessage());
+				return null;
 			} catch (Exception e) {
+				LOGGER.error("Exception occurred while retrieving the Submodel: {}, Error: {}", id, e.getMessage());
 				return null;
 			}
 		}).filter(Objects::nonNull).collect(Collectors.toList());

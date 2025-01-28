@@ -45,6 +45,8 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNotFoundException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Decorator for authorized {@link SubmodelRegistryStorage}
@@ -53,6 +55,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRe
  */
 public class AuthorizedSubmodelRegistryStorage implements SubmodelRegistryStorage {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizedSubmodelRegistryStorage.class);
 	private SubmodelRegistryStorage decorated;
 	private RbacPermissionResolver<SubmodelRegistryTargetInformation> permissionResolver;
 	
@@ -77,7 +80,11 @@ public class AuthorizedSubmodelRegistryStorage implements SubmodelRegistryStorag
 		List<SubmodelDescriptor> aasDescriptors = allIds.stream().map(id -> {
 			try {
 				return getSubmodelDescriptor(id);
+			} catch (SubmodelNotFoundException e) {
+				LOGGER.error("Submodel Descriptor: '{}' not found, Error: {}", id, e.getMessage());
+				return null;
 			} catch (Exception e) {
+				LOGGER.error("Exception occurred while retrieving the Submodel Descriptor: {}, Error: {}", id, e.getMessage());
 				return null;
 			}
 		}).filter(Objects::nonNull).collect(Collectors.toList());

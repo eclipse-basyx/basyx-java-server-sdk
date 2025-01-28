@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -84,7 +85,8 @@ public class SimpleRbacPermissionResolver<T extends TargetInformation> implement
 		
 		List<String> roles = roleAuthenticator.getRoles();
 		
-		List<RbacRule> filteredRbacRulesForTargetInfos = roles.stream().map(role -> RbacRuleKeyGenerator.generateKey(role, action.toString(), targetInformation.getClass().getName())).filter(rbacStorage::exist).map(rbacStorage::getRbacRule).collect(Collectors.toList());
+		List<RbacRule> filteredRbacRulesForTargetInfos = roles.stream().map(role -> generateKey(role, action.toString(), targetInformation.getClass().getName())).filter(Objects::nonNull).filter(this::exist).map(this::getRbacRule)
+				.filter(Objects::nonNull).collect(Collectors.toList());
 		
 		return filteredRbacRulesForTargetInfos.stream().map(rbacRule -> rbacRule.getTargetInformation()).collect(Collectors.toList());
 	}
@@ -99,6 +101,33 @@ public class SimpleRbacPermissionResolver<T extends TargetInformation> implement
 	private boolean checkRbacRuleMatchesTargetInfo(final RbacRule rbacRule, final T targetInformation) {
 		
 		return targetPermissionVerifier.isVerified(rbacRule, targetInformation);
+	}
+	
+	private String generateKey(String role, String action, String targetClassName) {
+		try {
+			return RbacRuleKeyGenerator.generateKey(role, action, targetClassName);
+		} catch (Exception e) {
+			logger.error("Error generating Rbac Rule Key for role: '{}' Action: '{}' and Target Information Class: '{}'", role, action, targetClassName, e);
+			return null;
+		}
+	}
+
+	private boolean exist(String key) {
+		try {
+			return rbacStorage.exist(key);
+		} catch (Exception e) {
+			logger.error("Error checking existence of Rbac Rule for key: {}", key, e);
+			return false;
+		}
+	}
+
+	private RbacRule getRbacRule(String key) {
+		try {
+			return rbacStorage.getRbacRule(key);
+		} catch (Exception e) {
+			logger.error("Error retrieving the Rbac Rule for key: {}", key, e);
+			return null;
+		}
 	}
 	
 }

@@ -45,6 +45,8 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Decorator for authorized {@link ConceptDescriptionRepository}
@@ -54,6 +56,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
  */
 public class AuthorizedConceptDescriptionRepository implements ConceptDescriptionRepository {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizedConceptDescriptionRepository.class);
 	private ConceptDescriptionRepository decorated;
 	private RbacPermissionResolver<ConceptDescriptionTargetInformation> permissionResolver;
 	
@@ -77,7 +80,11 @@ public class AuthorizedConceptDescriptionRepository implements ConceptDescriptio
 		List<ConceptDescription> conceptDesc = allIds.stream().map(id -> {
 			try {
 				return getConceptDescription(id);
+			} catch (ElementDoesNotExistException e) {
+				LOGGER.error("Concept Description: '{}' not found, Error: {}", id, e.getMessage());
+				return null;
 			} catch (Exception e) {
+				LOGGER.error("Exception occurred while retrieving the Concept Description: {}, Error: {}", id, e.getMessage());
 				return null;
 			}
 		}).filter(Objects::nonNull).collect(Collectors.toList());
