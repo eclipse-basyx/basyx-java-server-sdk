@@ -16,11 +16,11 @@
 
 	<properties>
 		<lombok.maven-plugin.version>1.18.20.0</lombok.maven-plugin.version>
-		<lombok.maven-plugin.lombok.version>1.18.30</lombok.maven-plugin.lombok.version>
+		<lombok.maven-plugin.lombok.version>1.18.36</lombok.maven-plugin.lombok.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<generated.folder>src/generated</generated.folder>
-		<swagger.codegen.version>3.0.64</swagger.codegen.version>
+		<swagger.codegen.version>3.0.66</swagger.codegen.version>
 		<spring.fox.version>3.0.0</spring.fox.version>
 		<openapi.folder.name>open-api</openapi.folder.name>
 		<openapi.base.name>

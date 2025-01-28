@@ -85,9 +85,9 @@ services:
     ports:
       - "3000:3000"
     environment:
-      AAS_REGISTRY_PATH: "http://localhost:8082"
-      SUBMODEL_REGISTRY_PATH: "http://localhost:8083"
-      AAS_DISCOVERY_PATH: "http://localhost:8084"
+      AAS_REGISTRY_PATH: "http://localhost:8082/shell-descriptors"
+      SUBMODEL_REGISTRY_PATH: "http://localhost:8083/submodel-descriptors"
+      AAS_DISCOVERY_PATH: "http://localhost:8084/lookup/shells"
       AAS_REPO_PATH: "http://localhost:8081/shells"
       SUBMODEL_REPO_PATH: "http://localhost:8081/submodels"
       CD_REPO_PATH: "http://localhost:8081/concept-descriptions"

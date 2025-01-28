@@ -1,0 +1,10 @@
+[
+  {
+    "role": "admin",
+    "action": ["CREATE", "READ", "UPDATE", "DELETE"],
+    "targetInformation": {
+      "@type": "aas-registry",
+      "aasIds": "*"
+    }
+  }
+]
