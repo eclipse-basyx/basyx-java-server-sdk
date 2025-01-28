@@ -160,6 +160,18 @@ public abstract class AasRepositoryHTTPSuite {
 		
 		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedAasJSONString(), getJSONWithoutCursorInfo(actualJsonFromServer));
 	}
+	
+	@Test
+	public void getAllFilteredAas() throws IOException, ParseException {
+		createMultipleAasOnServer();
+		
+		CloseableHttpResponse retrievalResponse = requestAllShellIds();
+		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+		
+		String actualJsonFromServer = BaSyxHttpTestUtils.getResponseAsString(retrievalResponse);
+		
+		BaSyxHttpTestUtils.assertSameJSONContent(getFilteredAasJSONString(), getJSONWithoutCursorInfo(actualJsonFromServer));
+	}
 
 	@Test
 	public void deleteAas() throws IOException {
@@ -388,6 +400,10 @@ public abstract class AasRepositoryHTTPSuite {
 
 		assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
 	}
+	
+	protected CloseableHttpResponse requestAllShellIds() throws IOException, ParseException {
+		return BaSyxHttpTestUtils.executeGetOnURL(getURL() + "?assetIds=ewoJCSJuYW1lIjogImR1bW15LWFzc2V0MSIsCgkJInZhbHVlIjogImR1bW15LWFzc2V0MS12YWx1ZSIKfQ==,ewoJCSJuYW1lIjogImR1bW15LWFzc2V0MiIsCgkJInZhbHVlIjogImR1bW15LWFzc2V0Mi12YWx1ZSIKfQ==");
+	}
 
 	private String getPaginatedAas1JSONString() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("PaginatedAasSimple_1.json");
@@ -405,6 +421,7 @@ public abstract class AasRepositoryHTTPSuite {
 		createAasOnServer(getAas1JSONString());
 		createAasOnServer(getAas2JSONString());
 		createAasOnServer(getAas3JSONString());
+		createAasOnServer(getAas4JSONString());
 	}
 
 	private String createDummyAasOnServer(String aasJsonContent) throws FileNotFoundException, IOException {
@@ -467,6 +484,10 @@ public abstract class AasRepositoryHTTPSuite {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AasSimple_3.json");
 	}
 	
+	private String getAas4JSONString() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AasSimple_4.json");
+	}
+	
 	private String getAasWithNullIdJSONString() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AasSimpleWithNullId.json");
 	}
@@ -477,6 +498,10 @@ public abstract class AasRepositoryHTTPSuite {
 
 	private String getPaginatedAasJSONString() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AllPaginatedAas.json");
+	}
+	
+	private String getFilteredAasJSONString() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("AllFilteredAAS.json");
 	}
 	
 	private String getAas2JSONString() throws FileNotFoundException, IOException {

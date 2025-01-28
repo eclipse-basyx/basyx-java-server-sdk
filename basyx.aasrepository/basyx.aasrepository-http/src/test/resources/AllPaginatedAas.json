@@ -1,11 +1,27 @@
 {
-	"paging_metadata": {},
+	"paging_metadata": {
+	},
 	"result": [
 		{
 			"modelType": "AssetAdministrationShell",
 			"assetInformation": {
 				"assetKind": "Instance",
-				"globalAssetId": "AasNumber3AssetId"
+				"globalAssetId": "AasNumber3AssetId",
+				"specificAssetIds": [
+					{
+						"name": "dummy-asset4",
+						"value": "dummy-asset4-value",
+						"externalSubjectId": {
+							"keys": [
+								{
+									"type": "GlobalReference",
+									"value": "https://example.org/ExternalSubject"
+								}
+							],
+							"type": "ExternalReference"
+						}
+					}
+				]
 			},
 			"id": "AasNumber3Identifier",
 			"idShort": "AasNumber3"
@@ -14,7 +30,22 @@
 			"modelType": "AssetAdministrationShell",
 			"assetInformation": {
 				"assetKind": "Instance",
-				"globalAssetId": "globalAssetId"
+				"globalAssetId": "globalAssetId",
+				"specificAssetIds": [
+					{
+						"name": "dummy-asset3",
+						"value": "dummy-asset3-value",
+						"externalSubjectId": {
+							"keys": [
+								{
+									"type": "GlobalReference",
+									"value": "https://example.org/ExternalSubject"
+								}
+							],
+							"type": "ExternalReference"
+						}
+					}
+				]
 			},
 			"id": "customIdentifier",
 			"idShort": "ExampleMotor"
@@ -23,10 +54,75 @@
 			"modelType": "AssetAdministrationShell",
 			"assetInformation": {
 				"assetKind": "Instance",
-				"globalAssetId": "dummyAasAssetId"
+				"globalAssetId": "dummyAasAssetId",
+				"specificAssetIds": [
+					{
+						"name": "dummy-asset1",
+						"value": "dummy-asset1-value",
+						"externalSubjectId": {
+							"keys": [
+								{
+									"type": "GlobalReference",
+									"value": "https://example.org/ExternalSubject"
+								}
+							],
+							"type": "ExternalReference"
+						}
+					},
+					{
+						"name": "dummy-asset2",
+						"value": "dummy-asset2-value",
+						"externalSubjectId": {
+							"keys": [
+								{
+									"type": "GlobalReference",
+									"value": "https://example.org/ExternalSubject"
+								}
+							],
+							"type": "ExternalReference"
+						}
+					}
+				]
 			},
 			"id": "dummyAasIdentifier",
 			"idShort": "DummyAas"
+		},
+		{
+			"modelType": "AssetAdministrationShell",
+			"idShort": "ExampleMotor",
+			"id": "dummyAasIdentifier4",
+			"assetInformation": {
+				"assetKind": "Instance",
+				"globalAssetId": "globalAssetId",
+				"specificAssetIds": [
+					{
+						"name": "dummy-asset1",
+						"value": "dummy-asset1-value",
+						"externalSubjectId": {
+							"keys": [
+								{
+									"type": "GlobalReference",
+									"value": "https://example.org/ExternalSubject"
+								}
+							],
+							"type": "ExternalReference"
+						}
+					},
+					{
+						"name": "dummy-asset2",
+						"value": "dummy-asset2-value",
+						"externalSubjectId": {
+							"keys": [
+								{
+									"type": "GlobalReference",
+									"value": "https://example.org/ExternalSubject"
+								}
+							],
+							"type": "ExternalReference"
+						}
+					}
+				]
+			}
 		}
 	]
 }

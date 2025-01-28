@@ -28,45 +28,62 @@ package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
+import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBCrudRepository;
+import org.eclipse.digitaltwin.basyx.core.BaSyxCrudRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.Index;
+import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
 import org.springframework.data.mongodb.repository.support.MappingMongoEntityInformation;
-import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
 /**
  * 
  * MongoDB Backend Provider for the AAS
  * 
- * @author mateusmolina, despen
+ * @author mateusmolina, despen, danish
  */
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
 @Component
 public class AasMongoDBBackendProvider implements AasBackendProvider {
-	
+
 	private BasyxMongoMappingContext mappingContext;
-	
+
 	private MongoTemplate template;
-	
+
 	@Autowired
 	public AasMongoDBBackendProvider(BasyxMongoMappingContext mappingContext, @Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName, MongoTemplate template) {
 		super();
 		this.mappingContext = mappingContext;
 		this.template = template;
-		
+
+		configureIndices(this.template);
+
 		mappingContext.addEntityMapping(AssetAdministrationShell.class, collectionName);
 	}
 
 	@Override
-	public CrudRepository<AssetAdministrationShell, String> getCrudRepository() {
+	public BaSyxCrudRepository<AssetAdministrationShell> getCrudRepository() {
 		@SuppressWarnings("unchecked")
 		MongoPersistentEntity<AssetAdministrationShell> entity = (MongoPersistentEntity<AssetAdministrationShell>) mappingContext.getPersistentEntity(AssetAdministrationShell.class);
-		
-		return new SimpleMongoRepository<>(new MappingMongoEntityInformation<>(entity), template);
+
+		return new MongoDBCrudRepository<AssetAdministrationShell>(new MappingMongoEntityInformation<>(entity), template, AssetAdministrationShell.class, new AasMongoDBFilterResolution());
+	}
+	
+	private void configureIndices(MongoTemplate template) {
+		IndexOperations ops = template.indexOps(AssetAdministrationShell.class);
+
+		ops.ensureIndex(new Index(AasMongoDBFilterResolution.ASSET_KIND, Direction.ASC));
+		ops.ensureIndex(new Index(AasMongoDBFilterResolution.ASSET_TYPE, Direction.ASC));
+		ops.ensureIndex(new Index(AasMongoDBFilterResolution.IDENTIFIER, Direction.ASC));
+
+		ops.ensureIndex(new Index(AasMongoDBFilterResolution.ID_SHORT, Direction.ASC));
+
+		ops.ensureIndex(new Index().on(AasMongoDBFilterResolution.SPECIFIC_ASSET_ID_NAME, Direction.ASC).on(AasMongoDBFilterResolution.SPECIFIC_ASSET_ID_VALUE, Direction.ASC));
 	}
 
 }

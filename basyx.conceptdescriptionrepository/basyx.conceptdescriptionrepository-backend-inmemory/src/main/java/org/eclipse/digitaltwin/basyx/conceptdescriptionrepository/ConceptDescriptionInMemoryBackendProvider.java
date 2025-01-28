@@ -28,8 +28,8 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.ConceptDescriptionBackendProvider;
 import org.eclipse.digitaltwin.basyx.common.backend.inmemory.core.InMemoryCrudRepository;
+import org.eclipse.digitaltwin.basyx.core.BaSyxCrudRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,7 +42,7 @@ import org.springframework.stereotype.Component;
 public class ConceptDescriptionInMemoryBackendProvider implements ConceptDescriptionBackendProvider {
 
 	@Override
-	public CrudRepository<ConceptDescription, String> getCrudRepository() {
+	public BaSyxCrudRepository<ConceptDescription> getCrudRepository() {
 		return new InMemoryCrudRepository<ConceptDescription>(ConceptDescription::getId);
 	}
 

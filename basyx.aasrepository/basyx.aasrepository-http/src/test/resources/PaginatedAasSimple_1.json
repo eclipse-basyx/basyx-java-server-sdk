@@ -1,11 +1,27 @@
 {
-	"paging_metadata": {},
+	"paging_metadata": {
+	},
 	"result": [
 		{
 			"modelType": "AssetAdministrationShell",
 			"assetInformation": {
 				"assetKind": "Instance",
-				"globalAssetId": "globalAssetId"
+				"globalAssetId": "globalAssetId",
+				"specificAssetIds": [
+					{
+						"name": "dummy-asset3",
+						"value": "dummy-asset3-value",
+						"externalSubjectId": {
+							"keys": [
+								{
+									"type": "GlobalReference",
+									"value": "https://example.org/ExternalSubject"
+								}
+							],
+							"type": "ExternalReference"
+						}
+					}
+				]
 			},
 			"id": "customIdentifier",
 			"idShort": "ExampleMotor"

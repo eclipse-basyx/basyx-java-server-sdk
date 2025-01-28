@@ -24,7 +24,7 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
 
-import org.springframework.data.repository.CrudRepository;
+import org.eclipse.digitaltwin.basyx.core.BaSyxCrudRepository;
 
 /**
  * Backend provider for the AAS Discovery
@@ -38,5 +38,5 @@ public interface AasDiscoveryBackendProvider {
 	 * 
 	 * @return The CRUD repository
 	 */
-	public CrudRepository<AasDiscoveryDocument, String> getCrudRepository();
+	public BaSyxCrudRepository<AasDiscoveryDocument> getCrudRepository();
 }

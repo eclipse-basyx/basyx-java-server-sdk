@@ -37,6 +37,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministratio
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.factory.AasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.core.Filter;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.RepositoryRegistryLinkException;
@@ -67,8 +68,8 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 	}
 
 	@Override
-	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
-		return decorated.getAllAas(pInfo);
+	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo, Filter filter) {
+		return decorated.getAllAas(pInfo, filter);
 	}
 
 	@Override

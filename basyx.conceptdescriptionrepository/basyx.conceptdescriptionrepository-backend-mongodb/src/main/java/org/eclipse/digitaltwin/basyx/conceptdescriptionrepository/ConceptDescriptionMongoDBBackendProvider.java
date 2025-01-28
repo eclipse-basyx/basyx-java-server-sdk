@@ -28,14 +28,14 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.ConceptDescriptionBackendProvider;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
+import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBCrudRepository;
+import org.eclipse.digitaltwin.basyx.core.BaSyxCrudRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
 import org.springframework.data.mongodb.repository.support.MappingMongoEntityInformation;
-import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
 /**
@@ -61,11 +61,11 @@ public class ConceptDescriptionMongoDBBackendProvider implements ConceptDescript
 	}
 
 	@Override
-	public CrudRepository<ConceptDescription, String> getCrudRepository() {
+	public BaSyxCrudRepository<ConceptDescription> getCrudRepository() {
 		@SuppressWarnings("unchecked")
 		MongoPersistentEntity<ConceptDescription> entity = (MongoPersistentEntity<ConceptDescription>) mappingContext.getPersistentEntity(ConceptDescription.class);
 		
-		return new SimpleMongoRepository<>(new MappingMongoEntityInformation<>(entity), template);
+		return new MongoDBCrudRepository<ConceptDescription>(new MappingMongoEntityInformation<>(entity), template, ConceptDescription.class);
 	}
 
 }

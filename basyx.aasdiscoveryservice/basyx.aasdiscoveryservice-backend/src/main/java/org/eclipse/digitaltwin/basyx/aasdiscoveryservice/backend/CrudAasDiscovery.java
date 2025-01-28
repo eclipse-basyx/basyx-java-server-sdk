@@ -32,18 +32,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
+import org.eclipse.digitaltwin.basyx.core.BaSyxCrudRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.AssetLinkDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationUtilities;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.CrudRepository;
 
@@ -56,7 +56,7 @@ import org.springframework.data.repository.CrudRepository;
  */
 public class CrudAasDiscovery implements AasDiscoveryService {
 
-	private AasDiscoveryBackendProvider provider;
+	private BaSyxCrudRepository<AasDiscoveryDocument> aasDiscoveryBackend;
 	private String aasDiscoveryServiceName;
 
 	/**
@@ -66,7 +66,7 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	 *            The backend provider
 	 */
 	public CrudAasDiscovery(AasDiscoveryBackendProvider provider) {
-		this.provider = provider;
+		this.aasDiscoveryBackend = provider.getCrudRepository();
 	}
 
 	/**
@@ -95,9 +95,11 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	 */
 	@Override
 	public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo, List<AssetLink> assetIds) {
-		Set<String> shellIds = getShellIdsWithAssetLinks(assetIds);
+		List<String> shellIds = getShellIdsWithAssetLinks(assetIds, pInfo);
 
-		return paginateList(pInfo, new ArrayList<>(shellIds));
+		String cursor = PaginationUtilities.resolveCursor(pInfo, shellIds);
+		
+		return new CursorResult<>(cursor, shellIds);
 	}
 
 	/**
@@ -110,11 +112,12 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	 */
 	@Override
 	public List<SpecificAssetId> getAllAssetLinksById(String shellIdentifier) {
-		Map<String, List<SpecificAssetId>> assetIds = getAssetIds();
 
-		throwIfSpecificAssetIdLinkDoesNotExist(assetIds, shellIdentifier);
-
-		return assetIds.get(shellIdentifier);
+		throwIfSpecificAssetIdLinkDoesNotExist(shellIdentifier);
+		
+		AasDiscoveryDocument aasDiscoveryDocuments = aasDiscoveryBackend.findById(shellIdentifier).orElseThrow(() -> new AssetLinkDoesNotExistException(shellIdentifier));
+		
+		return aasDiscoveryDocuments.getSpecificAssetIds();
 	}
 
 	/**
@@ -129,19 +132,13 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	 * @return a list of asset identifiers
 	 */
 	@Override
-	public List<SpecificAssetId> createAllAssetLinksById(String shellIdentifier,
-			List<SpecificAssetId> specificAssetIds) {
+	public List<SpecificAssetId> createAllAssetLinksById(String shellIdentifier, List<SpecificAssetId> specificAssetIds) {
 
-		Map<String, Set<AssetLink>> assetLinks = getAssetLinks();
+		throwIfAssetLinkExists(shellIdentifier);
 
-		synchronized (assetLinks) {
-			throwIfAssetLinkExists(assetLinks, shellIdentifier);
-
-			List<AssetLink> shellAssetLinks = deriveAssetLinksFromSpecificAssetIds(specificAssetIds);
-			AasDiscoveryDocument aasDiscoveryDocument = new AasDiscoveryDocument(shellIdentifier,
-					new HashSet<>(shellAssetLinks), specificAssetIds);
-			provider.getCrudRepository().save(aasDiscoveryDocument);
-		}
+		List<AssetLink> shellAssetLinks = deriveAssetLinksFromSpecificAssetIds(specificAssetIds);
+		AasDiscoveryDocument aasDiscoveryDocument = new AasDiscoveryDocument(shellIdentifier, new HashSet<>(shellAssetLinks), specificAssetIds);
+		aasDiscoveryBackend.save(aasDiscoveryDocument);
 
 		return specificAssetIds;
 	}
@@ -155,12 +152,10 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	 */
 	@Override
 	public void deleteAllAssetLinksById(String shellIdentifier) {
-		Map<String, Set<AssetLink>> assetLinks = getAssetLinks();
-		synchronized (assetLinks) {
-			throwIfAssetLinkDoesNotExist(assetLinks, shellIdentifier);
+		
+		throwIfAssetLinkDoesNotExist(shellIdentifier);
 
-			provider.getCrudRepository().deleteById(shellIdentifier);
-		}
+		aasDiscoveryBackend.deleteById(shellIdentifier);
 	}
 
 	@Override
@@ -168,33 +163,25 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 		return aasDiscoveryServiceName == null ? AasDiscoveryService.super.getName() : aasDiscoveryServiceName;
 	}
 
-	private void throwIfAssetLinkExists(Map<String, Set<AssetLink>> assetLinks, String shellIdentifier) {
-		if (assetLinks.containsKey(shellIdentifier))
+	private void throwIfAssetLinkExists(String shellIdentifier) {
+		if (aasDiscoveryBackend.existsById(shellIdentifier))
 			throw new CollidingAssetLinkException(shellIdentifier);
 	}
 
-	private void throwIfAssetLinkDoesNotExist(Map<String, Set<AssetLink>> assetLinks, String shellIdentifier) {
-		if (!assetLinks.containsKey(shellIdentifier))
+	private void throwIfAssetLinkDoesNotExist(String shellIdentifier) {
+		
+		if (!aasDiscoveryBackend.existsById(shellIdentifier))
 			throw new AssetLinkDoesNotExistException(shellIdentifier);
+		
 	}
 
-	private void throwIfSpecificAssetIdLinkDoesNotExist(Map<String, List<SpecificAssetId>> assetIds,
+	private void throwIfSpecificAssetIdLinkDoesNotExist(
 			String shellIdentifier) {
-		if (!assetIds.containsKey(shellIdentifier))
+		if (!aasDiscoveryBackend.existsById(shellIdentifier))
 			throw new AssetLinkDoesNotExistException(shellIdentifier);
 	}
 
-	private Map<String, List<SpecificAssetId>> getAssetIds() {
-		Iterable<AasDiscoveryDocument> aasDiscoveryDocuments = provider.getCrudRepository().findAll();
-		List<AasDiscoveryDocument> aasDiscoveryDocumentList = StreamSupport
-				.stream(aasDiscoveryDocuments.spliterator(), false).collect(Collectors.toList());
-		Map<String, List<SpecificAssetId>> assetIds = aasDiscoveryDocumentList.stream().collect(
-				Collectors.toMap(AasDiscoveryDocument::getShellIdentifier, AasDiscoveryDocument::getSpecificAssetIds));
-		return assetIds;
-	}
-
-	private Map<String, Set<AssetLink>> getAssetLinks() {
-		Iterable<AasDiscoveryDocument> aasDiscoveryDocuments = provider.getCrudRepository().findAll();
+	private Map<String, Set<AssetLink>> getAssetLinks(Iterable<AasDiscoveryDocument> aasDiscoveryDocuments) {
 		List<AasDiscoveryDocument> aasDiscoveryDocumentList = StreamSupport
 				.stream(aasDiscoveryDocuments.spliterator(), false).collect(Collectors.toList());
 		Map<String, Set<AssetLink>> assetLinks = aasDiscoveryDocumentList.stream()
@@ -203,18 +190,16 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 		return assetLinks;
 	}
 
-	private Set<String> getShellIdsWithAssetLinks(List<AssetLink> requestedLinks) {
-		Map<String, Set<AssetLink>> assetLinks = getAssetLinks();
-		return assetLinks.entrySet().stream().filter(entry -> entry.getValue().containsAll(requestedLinks))
+	private List<String> getShellIdsWithAssetLinks(List<AssetLink> requestedLinks, PaginationInfo pInfo) {
+		
+		Iterable<AasDiscoveryDocument> aasDiscoveryDocuments = aasDiscoveryBackend.findAll(pInfo, null);
+		
+		Map<String, Set<AssetLink>> assetLinks = getAssetLinks(aasDiscoveryDocuments);
+		
+		Set<String> assetLinksSet = assetLinks.entrySet().stream().filter(entry -> entry.getValue().containsAll(requestedLinks))
 				.map(Map.Entry::getKey).collect(Collectors.toSet());
+		
+		return new ArrayList<>(assetLinksSet);
 	}
 
-	private CursorResult<List<String>> paginateList(PaginationInfo pInfo, List<String> shellIdentifiers) {
-		TreeMap<String, String> shellIdentifierMap = shellIdentifiers.stream()
-				.collect(Collectors.toMap(Function.identity(), Function.identity(), (a, b) -> a, TreeMap::new));
-
-		PaginationSupport<String> paginationSupport = new PaginationSupport<>(shellIdentifierMap, Function.identity());
-
-		return paginationSupport.getPaged(pInfo);
-	}
 }

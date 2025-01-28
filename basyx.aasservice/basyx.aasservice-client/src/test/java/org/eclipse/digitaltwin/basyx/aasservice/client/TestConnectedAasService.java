@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.aasservice.client;
 import java.io.IOException;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasFilter;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.DummyAasRepositoryComponent;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
@@ -56,7 +57,7 @@ public class TestConnectedAasService extends AasServiceSuite {
 	@After
 	public void removeAasFromRepo() {
 		AasRepository repo = appContext.getBean(AasRepository.class);
-		repo.getAllAas(PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteAas);
+		repo.getAllAas(PaginationInfo.NO_LIMIT, new AasFilter()).getResult().stream().map(s -> s.getId()).forEach(repo::deleteAas);
 	}
 
 	@AfterClass
