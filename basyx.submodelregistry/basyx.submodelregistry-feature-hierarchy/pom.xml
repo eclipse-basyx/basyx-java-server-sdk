@@ -1,0 +1,38 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.eclipse.digitaltwin.basyx</groupId>
+		<artifactId>basyx.submodelregistry</artifactId>
+		<version>${revision}</version>
+	</parent>
+
+	<artifactId>basyx.submodelregistry-feature-hierarchy</artifactId>
+	<name>BaSyx Submodel Registry feature-hierarchy</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.hierarchy</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelregistry-service</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelregistry-service-basemodel</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelregistry-client-native</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelregistry-service-inmemory-storage</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>
