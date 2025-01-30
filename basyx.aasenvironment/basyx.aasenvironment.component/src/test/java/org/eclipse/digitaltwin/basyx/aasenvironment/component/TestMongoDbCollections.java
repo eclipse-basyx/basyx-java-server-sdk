@@ -25,44 +25,27 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
-
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * TestMongoDbCollections
+ * Tests if MongoDB collections are correctly defined.
  *
  * @author mateusmolina
  *
  */
+@SpringBootTest(properties = "spring.profiles.active=mongodb")
+@RunWith(SpringRunner.class)
 public class TestMongoDbCollections {
-	private static ConfigurableApplicationContext appContext;
 
-	// MongoDB configuration
-
-	private static final MongoTemplate mongoTemplate = MongoDbCollectionsTestConfig.buildMongoTemplate();
-
-	@BeforeClass
-	public static void startAASEnvironment() throws Exception {
-		appContext = new SpringApplicationBuilder(AasEnvironmentComponent.class).profiles("mongodb").run(new String[] {});
-	}
-	
-	@AfterClass
-	public static void deleteDatabase() {
-		appContext.close();
-		MongoDBUtilities.clearCollection(mongoTemplate, MongoDbCollectionsTestConfig.AAS_REPO_COLLECTION);
-		MongoDBUtilities.clearCollection(mongoTemplate, MongoDbCollectionsTestConfig.SM_REPO_COLLECTION);
-		MongoDBUtilities.clearCollection(mongoTemplate, MongoDbCollectionsTestConfig.CD_REPO_COLLECTION);
-	}
+	@Autowired
+	private MongoTemplate mongoTemplate;
 
 	@Test
 	public void aasRepoCollectionIsCorrectlyDefined() {

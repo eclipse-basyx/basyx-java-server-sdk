@@ -1,12 +1,13 @@
 package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-@Configuration
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+
+@TestConfiguration
 public class MongoDbCollectionsTestConfig {
     protected static final String CONNECTION_URL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
     protected static final String DB_NAME = "aas-env";
@@ -15,7 +16,7 @@ public class MongoDbCollectionsTestConfig {
     protected static final String CD_REPO_COLLECTION = "cd-repo";
 
     @Bean
-    public static MongoTemplate buildMongoTemplate() {
+    MongoTemplate buildMongoTemplate() {
         MongoClient client = MongoClients.create(CONNECTION_URL);
         return new MongoTemplate(client, DB_NAME);
     }
