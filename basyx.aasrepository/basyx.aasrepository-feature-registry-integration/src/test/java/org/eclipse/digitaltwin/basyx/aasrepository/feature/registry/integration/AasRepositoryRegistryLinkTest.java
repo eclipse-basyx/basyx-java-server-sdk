@@ -31,7 +31,7 @@ import java.io.IOException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -48,7 +48,7 @@ public class AasRepositoryRegistryLinkTest extends AasRepositoryRegistryLinkTest
 	
 	@BeforeClass
 	public static void setUp() throws FileNotFoundException, IOException {
-		appContext = new SpringApplication(DummyAasRepositoryIntegrationComponent.class).run(new String[] {});
+		appContext = new SpringApplicationBuilder(DummyAasRepositoryIntegrationComponent.class).profiles("regintegration").run(new String[] {});
 		
 		aasRepositoryRegistryLink = appContext.getBean(AasRepositoryRegistryLink.class);
 	}

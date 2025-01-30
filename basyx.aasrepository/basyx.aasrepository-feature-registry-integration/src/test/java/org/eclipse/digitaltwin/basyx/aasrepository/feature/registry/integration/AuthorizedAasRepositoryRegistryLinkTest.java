@@ -58,7 +58,7 @@ public class AuthorizedAasRepositoryRegistryLinkTest extends AasRepositoryRegist
 	@BeforeClass
 	public static void setUp() throws FileNotFoundException, IOException {
 		SpringApplication application = new SpringApplication(DummyAasRepositoryIntegrationComponent.class);
-		application.setAdditionalProfiles("authregistry");
+		application.setAdditionalProfiles("authregistry", "regintegration");
 		
 		appContext = application.run(new String[] {});
 		

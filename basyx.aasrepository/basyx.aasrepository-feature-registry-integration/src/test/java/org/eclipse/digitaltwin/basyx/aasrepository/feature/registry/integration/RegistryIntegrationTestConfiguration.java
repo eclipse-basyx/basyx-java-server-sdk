@@ -8,8 +8,10 @@ import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.DecoratedAasRepositoryFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
+@Profile("regintegration")
 public class RegistryIntegrationTestConfiguration {
     @Bean
     AasRepository getAasRepository(AasRepositoryFactory aasRepositoryFactory, List<AasRepositoryFeature> features) {

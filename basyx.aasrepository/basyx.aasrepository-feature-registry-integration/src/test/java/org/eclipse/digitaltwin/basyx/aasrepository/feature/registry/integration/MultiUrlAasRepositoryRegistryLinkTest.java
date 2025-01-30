@@ -49,7 +49,7 @@ public class MultiUrlAasRepositoryRegistryLinkTest extends AasRepositoryRegistry
 	@BeforeClass
 	public static void setUp() throws FileNotFoundException, IOException {
 		SpringApplication application = new SpringApplication(DummyAasRepositoryIntegrationComponent.class);
-		application.setAdditionalProfiles("multiurl");
+		application.setAdditionalProfiles("multiurl", "regintegration");
 		
 		appContext = application.run(new String[] {});
 		
