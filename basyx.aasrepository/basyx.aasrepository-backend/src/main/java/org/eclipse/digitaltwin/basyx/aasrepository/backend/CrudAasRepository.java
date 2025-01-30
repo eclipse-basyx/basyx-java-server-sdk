@@ -108,26 +108,31 @@ public class CrudAasRepository implements AasRepository {
 
 	@Override
 	public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo) {
+		throwIfAasDoesNotExist(aasId);
 		return aasBackend.getSubmodelReferences(aasId, pInfo);
 	}
 
 	@Override
 	public void addSubmodelReference(String aasId, Reference submodelReference) {
+		throwIfAasDoesNotExist(aasId);
 		aasBackend.addSubmodelReference(aasId, submodelReference);
 	}
 
 	@Override
 	public void removeSubmodelReference(String aasId, String submodelId) {
+		throwIfAasDoesNotExist(aasId);
 		aasBackend.removeSubmodelReference(aasId, submodelId);
 	}
 
 	@Override
 	public void setAssetInformation(String aasId, AssetInformation aasInfo) throws ElementDoesNotExistException {
+		throwIfAasDoesNotExist(aasId);
 		aasBackend.setAssetInformation(aasId, aasInfo);
 	}
 
 	@Override
 	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException {
+		throwIfAasDoesNotExist(aasId);
 		return aasBackend.getAssetInformation(aasId);
 	}
 

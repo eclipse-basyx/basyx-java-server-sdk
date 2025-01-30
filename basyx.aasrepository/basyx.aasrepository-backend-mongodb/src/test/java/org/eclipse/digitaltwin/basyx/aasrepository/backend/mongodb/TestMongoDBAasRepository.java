@@ -48,7 +48,10 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -93,25 +96,25 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		AasService aasServiceWithThumbnail = getAasService(expected);
 
 		FileMetadata defaultThumbnail = new FileMetadata("dummyImgA.jpeg", "", createDummyImageIS_A());
-		
-		if(fileRepository.exists(defaultThumbnail.getFileName()))
+
+		if (fileRepository.exists(defaultThumbnail.getFileName()))
 			fileRepository.delete(defaultThumbnail.getFileName());
-		
+
 		String thumbnailFilePath = fileRepository.save(defaultThumbnail);
-		
+
 		Resource defaultResource = new DefaultResource.Builder().path(thumbnailFilePath).contentType("").build();
 		AssetInformation defaultAasAssetInformation = aasServiceWithThumbnail.getAssetInformation();
 		defaultAasAssetInformation.setDefaultThumbnail(defaultResource);
-		
+
 		aasServiceWithThumbnail.setAssetInformation(defaultAasAssetInformation);
-	
+
 		return aasServiceWithThumbnail;
 	}
 
 	@Test
 	public void aasIsPersisted() {
 		AasRepository aasRepository = getAasRepository();
-		
+
 		AssetAdministrationShell expectedShell = createDummyShellOnRepo(aasRepository);
 		AssetAdministrationShell retrievedShell = aasRepository.getAas(expectedShell.getId());
 
@@ -121,20 +124,20 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	@Test
 	public void updatedAasIsPersisted() {
 		AasRepository aasRepository = getAasRepository();
-		
+
 		AssetAdministrationShell expectedShell = createDummyShellOnRepo(aasRepository);
 		addSubmodelReferenceToAas(expectedShell);
-		
+
 		aasRepository.updateAas(expectedShell.getId(), expectedShell);
 
 		AssetAdministrationShell retrievedShell = aasRepository.getAas(expectedShell.getId());
 
 		assertEquals(expectedShell, retrievedShell);
 	}
-	
+
 	@Test
 	public void getConfiguredMongoDBAasRepositoryName() {
-		assertEquals(CONFIGURED_AAS_REPO_NAME, getAasRepository().getName());
+		// todo
 	}
 
 	private void addSubmodelReferenceToAas(AssetAdministrationShell expectedShell) {

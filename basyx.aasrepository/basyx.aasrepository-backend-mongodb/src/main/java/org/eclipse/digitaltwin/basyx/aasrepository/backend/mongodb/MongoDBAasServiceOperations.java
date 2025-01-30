@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
@@ -43,6 +44,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasServiceOperations;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
@@ -128,12 +131,15 @@ public class MongoDBAasServiceOperations implements AasServiceOperations {
 
     @Override
     public void addSubmodelReference(String aasId, Reference submodelReference) {
+        String newKeyValue = submodelReference.getKeys().get(0).getValue();
 
-        Query query = new Query(Criteria.where("_id").is(aasId));
+        Query query = new Query(new Criteria().andOperator(Criteria.where("_id").is(aasId), Criteria.where(SMREF_KEY).not().elemMatch(Criteria.where("keys.0.value").is(newKeyValue))));
 
         Update update = new Update().push(SMREF_KEY, submodelReference);
-
         UpdateResult result = mongoOperations.updateFirst(query, update, collectionName);
+
+        if (result.getMatchedCount() == 0)
+            throw new CollidingSubmodelReferenceException(newKeyValue);
     }
 
     @Override
@@ -143,6 +149,9 @@ public class MongoDBAasServiceOperations implements AasServiceOperations {
         Update update = new Update().pull(SMREF_KEY, Query.query(Criteria.where("keys.value").is(submodelId)).getQueryObject());
 
         UpdateResult result = mongoOperations.updateFirst(query, update, collectionName);
+
+        if (result.getModifiedCount() == 0)
+            throw new ElementDoesNotExistException(submodelId);
     }
 
     @Override
@@ -151,7 +160,7 @@ public class MongoDBAasServiceOperations implements AasServiceOperations {
 
         Update update = new Update().set(ASSETINFORMATION_KEY, aasInfo);
 
-        UpdateResult result = mongoOperations.updateFirst(query, update, collectionName);
+        mongoOperations.updateFirst(query, update, collectionName);
     }
 
     @Override
