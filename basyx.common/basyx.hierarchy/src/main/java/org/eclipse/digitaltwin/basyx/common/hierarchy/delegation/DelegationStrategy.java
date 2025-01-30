@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -28,7 +28,7 @@ package org.eclipse.digitaltwin.basyx.common.hierarchy.delegation;
 import java.util.Optional;
 
 /**
- * DelegationStrategy
+ * Interface for delegation strategies used by the hierarchical feature 
  *
  * @author mateusmolina
  *
