@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -39,23 +39,19 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
 import org.eclipse.digitaltwin.basyx.aasrepository.DummyAasFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFactory;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
-import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBFileRepository;
+import org.junit.After;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
-
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Integration Test for MongoDBAasRepository
@@ -65,24 +61,30 @@ import com.mongodb.client.MongoClients;
  * @author schnicke, danish, kammognie, mateusmolina, despen
  *
  */
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@SpringBootTest
+@RunWith(SpringRunner.class)
 public class TestMongoDBAasRepository extends AasRepositorySuite {
 	private static final String COLLECTION = "testAasCollection";
 	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
-	
-	private static MongoTemplate mongoTemplate = createMongoTemplate();
 
-	private static GridFsTemplate gridFsTemplate = configureDefaultGridFsTemplate(mongoTemplate);
+	@Autowired
+	private FileRepository fileRepository;
 
-	private static FileRepository fileRepository;
-	
+	@Autowired
+	private AasRepositoryFactory aasRepositoryFactory;
+
+	@Autowired
+	private MongoTemplate mongoTemplate;
+
 	@Override
 	protected AasRepository getAasRepository() {
-		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
-		fileRepository = new MongoDBFileRepository(gridFsTemplate);
-		AasBackendProvider aasBackendProvider = new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate);
-		AasRepositoryFactory aasRepositoryFactory = new CrudAasRepositoryFactory(aasBackendProvider, new InMemoryAasServiceFactory(fileRepository));
-
 		return aasRepositoryFactory.create();
+	}
+
+	@After
+	public void cleanup() {
+		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
 	}
 
 	@Override
@@ -132,9 +134,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 	
 	@Test
 	public void getConfiguredMongoDBAasRepositoryName() {
-		AasRepository repo = new CrudAasRepository(new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, mongoTemplate), new InMemoryAasServiceFactory(fileRepository), CONFIGURED_AAS_REPO_NAME);
-		
-		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
+		assertEquals(CONFIGURED_AAS_REPO_NAME, getAasRepository().getName());
 	}
 
 	private void addSubmodelReferenceToAas(AssetAdministrationShell expectedShell) {
@@ -146,17 +146,5 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 
 		aasRepository.createAas(expectedShell);
 		return expectedShell;
-	}
-	
-	private static MongoTemplate createMongoTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-		
-		MongoClient client = MongoClients.create(connectionURL);
-		
-		return new MongoTemplate(client, "BaSyxTestDb");
-	}
-
-	private static GridFsTemplate configureDefaultGridFsTemplate(MongoTemplate mongoTemplate) {
-		return new GridFsTemplate(mongoTemplate.getMongoDatabaseFactory(), mongoTemplate.getConverter());
 	}
 }

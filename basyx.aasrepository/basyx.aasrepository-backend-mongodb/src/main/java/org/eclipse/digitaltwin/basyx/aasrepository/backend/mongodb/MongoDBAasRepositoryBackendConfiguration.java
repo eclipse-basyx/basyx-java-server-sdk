@@ -29,6 +29,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasServiceOperations;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -61,7 +62,7 @@ public class MongoDBAasRepositoryBackendConfiguration {
 
 	@Bean
 	@Qualifier("backend")
-	AasServiceOperations getAasServiceOperations(MongoOperations template, MappingMongoEntityInformation<AssetAdministrationShell, String> entityInformation) {
-		return new MongoDBAasServiceOperations(template, entityInformation);
+	AasServiceOperations getAasServiceOperations(MongoOperations template, FileRepository fileRepository, MappingMongoEntityInformation<AssetAdministrationShell, String> entityInformation) {
+		return new MongoDBAasServiceOperations(template, fileRepository, entityInformation);
 	}
 }

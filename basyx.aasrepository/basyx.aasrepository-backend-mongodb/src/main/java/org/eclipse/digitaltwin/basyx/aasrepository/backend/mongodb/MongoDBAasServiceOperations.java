@@ -26,7 +26,10 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,8 +38,15 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Key;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasServiceOperations;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -62,12 +72,15 @@ import com.mongodb.client.result.UpdateResult;
 public class MongoDBAasServiceOperations implements AasServiceOperations {
 
     private static final String SMREF_KEY = "submodels";
+    private static final String ASSETINFORMATION_KEY = "assetInformation";
 
     private final MongoOperations mongoOperations;
     private final String collectionName;
+    private final FileRepository fileRepository;
 
-    public MongoDBAasServiceOperations(MongoOperations mongoOperations, MappingMongoEntityInformation<AssetAdministrationShell, String> mappingMongoEntityInformation) {
+    public MongoDBAasServiceOperations(MongoOperations mongoOperations, FileRepository fileRepository, MappingMongoEntityInformation<AssetAdministrationShell, String> mappingMongoEntityInformation) {
         this.mongoOperations = mongoOperations;
+        this.fileRepository = fileRepository;
 
         collectionName = mappingMongoEntityInformation.getCollectionName();
 
@@ -134,32 +147,58 @@ public class MongoDBAasServiceOperations implements AasServiceOperations {
 
     @Override
     public void setAssetInformation(String aasId, AssetInformation aasInfo) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setAssetInformation'");
+        Query query = new Query(Criteria.where("_id").is(aasId));
+
+        Update update = new Update().set(ASSETINFORMATION_KEY, aasInfo);
+
+        UpdateResult result = mongoOperations.updateFirst(query, update, collectionName);
     }
 
     @Override
     public AssetInformation getAssetInformation(String aasId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAssetInformation'");
-    }
+        Aggregation aggregation = Aggregation.newAggregation(Aggregation.match(Criteria.where("_id").is(aasId)), Aggregation.replaceRoot().withValueOf("$" + ASSETINFORMATION_KEY));
 
+        AggregationResults<DefaultAssetInformation> results = mongoOperations.aggregate(aggregation, collectionName, DefaultAssetInformation.class // Use concrete type
+        );
+
+        return results.getUniqueMappedResult();
+    }
+    
     @Override
     public File getThumbnail(String aasId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getThumbnail'");
+        Resource resource = getAssetInformation(aasId).getDefaultThumbnail();
+
+        try {
+            return getResourceContent(resource);
+        } catch (NullPointerException e) {
+            throw new FileDoesNotExistException();
+        } catch (IOException e) {
+            throw new FileHandlingException("Exception occurred while creating file from the InputStream." + e.getMessage());
+        }
     }
 
     @Override
     public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setThumbnail'");
+        FileMetadata thumbnailMetadata = new FileMetadata(fileName, contentType, inputStream);
+
+        if (fileRepository.exists(thumbnailMetadata.getFileName()))
+            fileRepository.delete(thumbnailMetadata.getFileName());
+
+        String filePath = fileRepository.save(thumbnailMetadata);
+
+        setAssetInformation(aasId, configureAssetInformationThumbnail(getAssetInformation(aasId), contentType, filePath));
     }
 
     @Override
     public void deleteThumbnail(String aasId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteThumbnail'");
+        try {
+            String thumbnailPath = getAssetInformation(aasId).getDefaultThumbnail().getPath();
+            fileRepository.delete(thumbnailPath);
+        } catch (NullPointerException e) {
+            throw new FileDoesNotExistException();
+        } finally {
+            setAssetInformation(aasId, configureAssetInformationThumbnail(getAssetInformation(aasId), "", ""));
+        }
     }
 
     private static String extractSubmodelId(Reference reference) {
@@ -172,6 +211,36 @@ public class MongoDBAasServiceOperations implements AasServiceOperations {
         }
 
         return "";
+    }
+
+    private static AssetInformation configureAssetInformationThumbnail(AssetInformation assetInformation, String contentType, String filePath) {
+        Resource resource = new DefaultResource();
+        resource.setContentType(contentType);
+        resource.setPath(filePath);
+        assetInformation.setDefaultThumbnail(resource);
+        return assetInformation;
+    }
+
+    private File getResourceContent(Resource resource) throws IOException {
+        String filePath = resource.getPath();
+
+        InputStream fileIs = fileRepository.find(filePath);
+        byte[] content = fileIs.readAllBytes();
+        fileIs.close();
+
+        createOutputStream(filePath, content);
+
+        return new java.io.File(filePath);
+    }
+
+    private void createOutputStream(String filePath, byte[] content) throws IOException {
+
+        try (OutputStream outputStream = new FileOutputStream(filePath)) {
+            outputStream.write(content);
+        } catch (IOException e) {
+            throw new FileHandlingException("Exception occurred while creating OutputStream from byte[]." + e.getMessage());
+        }
+
     }
 
 }
