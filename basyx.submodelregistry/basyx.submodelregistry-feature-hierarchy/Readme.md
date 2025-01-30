@@ -4,6 +4,8 @@ The Hierarchical SubmodelRegistry Feature enhances the availability of data acro
 
 This feature allows the creation of a hierarchical structure of registries, where a registry can delegate retrieval requests to another registry when a given descriptor is not found in its storage.
 
+Retrieving all the stored SubmodelDescriptors with delegation is not currently supported.
+
 ## Configuration
 
 ### Enabling the Feature
