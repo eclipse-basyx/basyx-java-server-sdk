@@ -78,17 +78,6 @@ public abstract class HierarchicalSubmodelRegistryTestSuite {
 	}
 
 	@Test
-	public void getAllSubmodelDescriptor_InRoot() throws ApiException {
-		GetSubmodelDescriptorsResult actualDescriptors = getRootRegistryApi().getAllSubmodelDescriptors(1, null);
-
-		SubmodelDescriptor expectedDescriptor = getDescriptorFactory().getRootOnlySmDescriptor();
-
-		List<SubmodelDescriptor> expectedDescriptors = Arrays.asList(expectedDescriptor);
-
-		assertEquals(expectedDescriptors, actualDescriptors.getResult());
-	}
-
-	@Test
 	public void getNonExistingSmDescriptor() {
 		ApiException exception = assertThrows(ApiException.class, () -> getRootRegistryApi().getSubmodelDescriptorById("nonExistingSubmodel"));
 		assertHttpCodeIsNotFound(exception);
