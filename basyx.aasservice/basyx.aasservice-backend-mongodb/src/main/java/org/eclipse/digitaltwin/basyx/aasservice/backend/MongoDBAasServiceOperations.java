@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
+package org.eclipse.digitaltwin.basyx.aasservice.backend;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -85,7 +85,6 @@ public class MongoDBAasServiceOperations implements AasServiceOperations {
         this.fileRepository = fileRepository;
 
         collectionName = mappingMongoEntityInformation.getCollectionName();
-
     }
 
     @Override
@@ -171,7 +170,7 @@ public class MongoDBAasServiceOperations implements AasServiceOperations {
 
         return results.getUniqueMappedResult();
     }
-    
+
     @Override
     public File getThumbnail(String aasId) {
         Resource resource = getAssetInformation(aasId).getDefaultThumbnail();
