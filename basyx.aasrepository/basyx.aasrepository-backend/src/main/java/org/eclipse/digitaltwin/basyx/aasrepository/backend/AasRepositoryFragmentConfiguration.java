@@ -29,6 +29,7 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasServiceOperations;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.repository.core.support.RepositoryComposition.RepositoryFragments;
 import org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport;
@@ -42,6 +43,7 @@ import org.springframework.lang.NonNull;
  * @author mateusmolina
  */
 @Configuration
+@ConditionalOnBean(name="aasServiceOperations")
 public class AasRepositoryFragmentConfiguration implements BeanPostProcessor {
 
     private final AasServiceOperations aasServiceOperations;
@@ -52,9 +54,6 @@ public class AasRepositoryFragmentConfiguration implements BeanPostProcessor {
 
     @Override
     public Object postProcessBeforeInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
-        if (aasServiceOperations == null)
-            return bean;
-
         if (!(bean instanceof RepositoryFactoryBeanSupport<?, ?, ?> beanfactory))
             return bean;
 
