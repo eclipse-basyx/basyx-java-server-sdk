@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,7 +22,7 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasrepository.backend;
+package org.eclipse.digitaltwin.basyx.aasservice;
 
 import java.io.File;
 import java.io.InputStream;
@@ -34,10 +34,8 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 /**
- * AASService Backend Fragment
- * 
- * #TODO this could be moved to the AASService package and reused there and
- * underlying AasService Implementation
+ * This interface provides the operations for managing AASs, which are
+ * implemented according to the requirements of the specific backend
  * 
  * @author mateusmolina
  *
