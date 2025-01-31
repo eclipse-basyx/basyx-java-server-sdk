@@ -46,7 +46,7 @@ public class AasRepositoryFragmentConfiguration implements BeanPostProcessor {
 
     private final AasServiceOperations aasServiceOperations;
 
-    public AasRepositoryFragmentConfiguration(@Qualifier("backend") AasServiceOperations aasServiceOperations) {
+    public AasRepositoryFragmentConfiguration(@Qualifier("aasServiceOperations") AasServiceOperations aasServiceOperations) {
         this.aasServiceOperations = aasServiceOperations;
     }
 

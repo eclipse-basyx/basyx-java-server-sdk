@@ -61,8 +61,7 @@ public class MongoDBAasRepositoryBackendConfiguration {
 	}
 
 	@Bean
-	@Qualifier("backend")
-	AasServiceOperations getAasServiceOperations(MongoOperations template, FileRepository fileRepository, MappingMongoEntityInformation<AssetAdministrationShell, String> entityInformation) {
+	AasServiceOperations aasServiceOperations(MongoOperations template, FileRepository fileRepository, MappingMongoEntityInformation<AssetAdministrationShell, String> entityInformation) {
 		return new MongoDBAasServiceOperations(template, fileRepository, entityInformation);
 	}
 }
