@@ -60,6 +60,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.repository.support.MappingMongoEntityInformation;
+import org.springframework.lang.NonNull;
 
 import com.mongodb.client.result.UpdateResult;
 
@@ -84,106 +85,123 @@ public class MongoDBAasServiceOperations implements AasServiceOperations {
         collectionName = mappingMongoEntityInformation.getCollectionName();
     }
 
+
     @Override
-    public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo) {
-        Integer limit = pInfo.getLimit();
-        String cursor = pInfo.getCursor();
-
+    public CursorResult<List<Reference>> getSubmodelReferences(@NonNull String aasId, @NonNull PaginationInfo pInfo) throws ElementDoesNotExistException {
         MatchOperation matchAasId = Aggregation.match(Criteria.where("_id").is(aasId));
-
         UnwindOperation unwindSubmodels = Aggregation.unwind(SMREF_KEY);
-
         ProjectionOperation projectReference = Aggregation.project().and("submodels.keys").as("keys").and("submodels.type").as("type");
 
-        Aggregation aggregation;
-        List<AggregationOperation> aggregationOps = new ArrayList<>();
-        aggregationOps.add(matchAasId);
-        aggregationOps.add(unwindSubmodels);
-        aggregationOps.add(projectReference);
+        List<AggregationOperation> ops = new ArrayList<>();
+        ops.add(matchAasId);
+        ops.add(unwindSubmodels);
+        ops.add(projectReference);
 
+        String cursor = pInfo.getCursor();
         if (cursor != null && !cursor.isEmpty()) {
-            MatchOperation matchCursor = Aggregation.match(Criteria.where("keys.value").gt(cursor));
-            aggregationOps.add(matchCursor);
+            ops.add(Aggregation.match(Criteria.where("keys.value").gt(cursor)));
+        }
+        if (pInfo.getLimit() != null && pInfo.getLimit() > 0) {
+            ops.add(new LimitOperation(pInfo.getLimit()));
         }
 
-        if (limit != null && limit > 0) {
-            LimitOperation limitOperation = Aggregation.limit(limit);
-            aggregationOps.add(limitOperation);
-        }
-
-        aggregation = Aggregation.newAggregation(aggregationOps);
+        Aggregation aggregation = Aggregation.newAggregation(ops);
         AggregationResults<DefaultReference> results = mongoOperations.aggregate(aggregation, collectionName, DefaultReference.class);
-        List<DefaultReference> submodelReferences = results.getMappedResults();
+        List<DefaultReference> refs = results.getMappedResults();
+
+        if (refs.isEmpty() && !existsAas(aasId))
+            throw new ElementDoesNotExistException(aasId);
 
         String nextCursor = null;
-        if (!submodelReferences.isEmpty()) {
-            Reference lastReference = submodelReferences.get(submodelReferences.size() - 1);
-            nextCursor = extractSubmodelId(lastReference);
+        if (!refs.isEmpty()) {
+            Reference last = refs.get(refs.size() - 1);
+            nextCursor = extractSubmodelId(last);
         }
 
-        return new CursorResult<>(nextCursor, new ArrayList<>(submodelReferences));
+        return new CursorResult<>(nextCursor, new ArrayList<>(refs));
     }
 
     @Override
-    public void addSubmodelReference(String aasId, Reference submodelReference) {
+    public void addSubmodelReference(@NonNull String aasId, @NonNull Reference submodelReference) throws ElementDoesNotExistException, CollidingSubmodelReferenceException {
         String newKeyValue = submodelReference.getKeys().get(0).getValue();
-
         Query query = new Query(new Criteria().andOperator(Criteria.where("_id").is(aasId), Criteria.where(SMREF_KEY).not().elemMatch(Criteria.where("keys.0.value").is(newKeyValue))));
-
         Update update = new Update().push(SMREF_KEY, submodelReference);
         UpdateResult result = mongoOperations.updateFirst(query, update, collectionName);
 
-        if (result.getMatchedCount() == 0)
-            throw new CollidingSubmodelReferenceException(newKeyValue);
+        if (result.getMatchedCount() != 0)
+            return;
+
+        if (!existsAas(aasId))
+            throw new ElementDoesNotExistException(aasId);
+
+        throw new CollidingSubmodelReferenceException(newKeyValue);
     }
 
     @Override
-    public void removeSubmodelReference(String aasId, String submodelId) {
+    public void removeSubmodelReference(@NonNull String aasId, @NonNull String submodelId) throws ElementDoesNotExistException {
         Query query = new Query(Criteria.where("_id").is(aasId));
-
         Update update = new Update().pull(SMREF_KEY, Query.query(Criteria.where("keys.value").is(submodelId)).getQueryObject());
-
         UpdateResult result = mongoOperations.updateFirst(query, update, collectionName);
 
-        if (result.getModifiedCount() == 0)
-            throw new ElementDoesNotExistException(submodelId);
+        if (result.getModifiedCount() != 0)
+            return;
+
+        if (!existsAas(aasId))
+            throw new ElementDoesNotExistException(aasId);
+
+        throw new ElementDoesNotExistException(submodelId);
     }
 
     @Override
-    public void setAssetInformation(String aasId, AssetInformation aasInfo) {
+    public void setAssetInformation(@NonNull String aasId, @NonNull AssetInformation aasInfo) {
         Query query = new Query(Criteria.where("_id").is(aasId));
 
         Update update = new Update().set(ASSETINFORMATION_KEY, aasInfo);
 
-        mongoOperations.updateFirst(query, update, collectionName);
+        UpdateResult result = mongoOperations.updateFirst(query, update, collectionName);
+
+        // Second check for the case where the update was not performed because the
+        // aasInfo is the
+        // same as the existing one
+        if (result.getModifiedCount() == 0 && !existsAas(aasId))
+            throw new ElementDoesNotExistException(aasId);
     }
 
     @Override
-    public AssetInformation getAssetInformation(String aasId) {
+    public AssetInformation getAssetInformation(@NonNull String aasId) {
         Aggregation aggregation = Aggregation.newAggregation(Aggregation.match(Criteria.where("_id").is(aasId)), Aggregation.replaceRoot().withValueOf("$" + ASSETINFORMATION_KEY));
 
         AggregationResults<DefaultAssetInformation> results = mongoOperations.aggregate(aggregation, collectionName, DefaultAssetInformation.class // Use concrete type
         );
 
-        return results.getUniqueMappedResult();
+        DefaultAssetInformation aasInfo = results.getUniqueMappedResult();
+
+        if (aasInfo == null)
+            throw new ElementDoesNotExistException(aasId);
+
+        return aasInfo;
     }
 
     @Override
-    public File getThumbnail(String aasId) {
+    public File getThumbnail(@NonNull String aasId) {
         return FileRepositoryHelper.fetchAndStoreFileLocally(fileRepository, getThumbnailResourcePathOrThrow(getAssetInformation(aasId)));
     }
 
     @Override
-    public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
+    public void setThumbnail(@NonNull String aasId, @NonNull String fileName, @NonNull String contentType, @NonNull InputStream inputStream) {
         String filePath = FileRepositoryHelper.saveOrOverwriteFile(fileRepository, fileName, contentType, inputStream);
         setAssetInformation(aasId, configureAssetInformationThumbnail(getAssetInformation(aasId), contentType, filePath));
     }
 
     @Override
-    public void deleteThumbnail(String aasId) {
+    public void deleteThumbnail(@NonNull String aasId) {
         AssetInformation assetInformation = getAssetInformation(aasId);
         FileRepositoryHelper.removeFileIfExists(fileRepository, getThumbnailResourcePathOrThrow(assetInformation));
         setAssetInformation(aasId, configureAssetInformationThumbnail(assetInformation, "", ""));
+    }
+
+    private boolean existsAas(String aasId) {
+        return mongoOperations.exists(new Query(Criteria.where("_id").is(aasId)), AssetAdministrationShell.class, collectionName);
     }
 
     private String getThumbnailResourcePathOrThrow(AssetInformation assetInformation) {

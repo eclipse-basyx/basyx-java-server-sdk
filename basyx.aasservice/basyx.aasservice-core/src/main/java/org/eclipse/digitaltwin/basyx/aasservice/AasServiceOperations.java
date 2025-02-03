@@ -28,14 +28,18 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.springframework.lang.NonNull;
 
 /**
- * This interface provides the operations for managing AASs, which are
- * implemented according to the requirements of the specific backend
+ * This interface provides backend-level operations for managing
+ * {@link AssetAdministrationShell}s
  * 
  * @author mateusmolina
  *
@@ -43,56 +47,120 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 public interface AasServiceOperations {
 
 	/**
-	 * Retrieves all Submodel References
-	 * 
-	 * @return A List containing all Submodel References
+	 * Retrieves all Submodel References for the given AAS.
+	 *
+	 * @param aasId
+	 *            the identifier of the Asset Administration Shell; must not be
+	 *            {@code null}
+	 * @param pInfo
+	 *            the pagination information; must not be {@code null}
+	 * @return a {@code CursorResult} containing a list of Submodel References
+	 * @throws ElementDoesNotExistException
+	 *             if the Asset Administration Shell with the specified
+	 *             {@code aasId} does not exist
 	 */
-	public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo);
+	CursorResult<List<Reference>> getSubmodelReferences(@NonNull String aasId, @NonNull PaginationInfo pInfo) throws ElementDoesNotExistException;
 
 	/**
-	 * Adds a Submodel Reference
+	 * Adds a Submodel Reference to the specified AAS.
+	 *
+	 * @param aasId
+	 *            the identifier of the Asset Administration Shell; must not be
+	 *            {@code null}
+	 * @param submodelReference
+	 *            the reference to be added; must not be {@code null}
+	 * @throws ElementDoesNotExistException
+	 *             if the Asset Administration Shell with the specified
+	 *             {@code aasId} does not exist
+	 * @throws CollidingSubmodelReferenceException
+	 *             if the provided submodel reference conflicts with an existing
+	 *             reference
 	 */
-	public void addSubmodelReference(String aasId, Reference submodelReference);
+	void addSubmodelReference(@NonNull String aasId, @NonNull Reference submodelReference) throws ElementDoesNotExistException, CollidingSubmodelReferenceException;
 
 	/**
-	 * Removes a Submodel Reference
+	 * Removes a Submodel Reference from the specified AAS.
+	 *
+	 * @param aasId
+	 *            the identifier of the Asset Administration Shell; must not be
+	 *            {@code null}
+	 * @param submodelId
+	 *            the identifier of the submodel to remove; must not be {@code null}
+	 * @throws ElementDoesNotExistException
+	 *             if the Asset Administration Shell with the specified
+	 *             {@code aasId} does not exist
 	 */
-	public void removeSubmodelReference(String aasId, String submodelId);
+	void removeSubmodelReference(@NonNull String aasId, @NonNull String submodelId) throws ElementDoesNotExistException;
 
 	/**
-	 * Sets the asset-information of the AAS contained in the server
+	 * Sets the asset information of the specified AAS.
+	 *
+	 * @param aasId
+	 *            the identifier of the Asset Administration Shell; must not be
+	 *            {@code null}
+	 * @param assetInformation
+	 *            the asset information to be set; must not be {@code null}
+	 * @throws ElementDoesNotExistException
+	 *             if the Asset Administration Shell with the specified
+	 *             {@code aasId} does not exist
 	 */
-	public void setAssetInformation(String aasId, AssetInformation aasInfo);
+	void setAssetInformation(@NonNull String aasId, @NonNull AssetInformation assetInformation) throws ElementDoesNotExistException;
 
 	/**
-	 * Retrieves the asset-information of the AAS contained in the server
-	 * 
-	 * @return the Asset-Information of the AAS
+	 * Retrieves the asset information of the specified AAS.
+	 *
+	 * @param aasId
+	 *            the identifier of the Asset Administration Shell; must not be
+	 *            {@code null}
+	 * @return the asset information of the AAS, or {@code null} if not found
+	 * @throws ElementDoesNotExistException
+	 *             if the Asset Administration Shell with the specified
+	 *             {@code aasId} does not exist
 	 */
-	public AssetInformation getAssetInformation(String aasId);
+	AssetInformation getAssetInformation(@NonNull String aasId) throws ElementDoesNotExistException;
 
 	/**
-	 * Get Thumbnail of the specific aas
-	 * 
-	 * @return the file of the thumbnail
+	 * Retrieves the thumbnail for the specified AAS.
+	 *
+	 * @param aasId
+	 *            the identifier of the Asset Administration Shell; must not be
+	 *            {@code null}
+	 * @return the file of the thumbnail, or {@code null} if no thumbnail exists
+	 * @throws ElementDoesNotExistException
+	 *             if the Asset Administration Shell with the specified
+	 *             {@code aasId} does not exist
 	 */
-	public File getThumbnail(String aasId);
+	File getThumbnail(@NonNull String aasId) throws ElementDoesNotExistException;
 
 	/**
-	 * Set Thumbnail of the AAS
-	 * 
+	 * Sets the thumbnail for the specified AAS.
+	 *
+	 * @param aasId
+	 *            the identifier of the Asset Administration Shell; must not be
+	 *            {@code null}
 	 * @param fileName
-	 *            name of the thumbnail file with extension
+	 *            the name of the thumbnail file (including extension); must not be
+	 *            {@code null}
 	 * @param contentType
-	 *            content type of the file
+	 *            the MIME type of the file; must not be {@code null}
 	 * @param inputStream
-	 *            inputstream of the thumbnail file
+	 *            the input stream containing the thumbnail data; must not be
+	 *            {@code null}
+	 * @throws ElementDoesNotExistException
+	 *             if the Asset Administration Shell with the specified
+	 *             {@code aasId} does not exist
 	 */
-	public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream);
+	void setThumbnail(@NonNull String aasId, @NonNull String fileName, @NonNull String contentType, @NonNull InputStream inputStream) throws ElementDoesNotExistException;
 
 	/**
-	 * Delete the thumbnail file of the AAS
-	 * 
+	 * Deletes the thumbnail of the specified AAS.
+	 *
+	 * @param aasId
+	 *            the identifier of the Asset Administration Shell; must not be
+	 *            {@code null}
+	 * @throws ElementDoesNotExistException
+	 *             if the Asset Administration Shell with the specified
+	 *             {@code aasId} does not exist
 	 */
-	public void deleteThumbnail(String aasId);
+	void deleteThumbnail(@NonNull String aasId) throws ElementDoesNotExistException;
 }
