@@ -59,7 +59,6 @@ import org.springframework.data.mongodb.core.aggregation.UnwindOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.data.mongodb.repository.support.MappingMongoEntityInformation;
 import org.springframework.lang.NonNull;
 
 import com.mongodb.client.result.UpdateResult;
@@ -78,11 +77,10 @@ public class MongoDBAasServiceOperations implements AasServiceOperations {
     private final String collectionName;
     private final FileRepository fileRepository;
 
-    public MongoDBAasServiceOperations(MongoOperations mongoOperations, FileRepository fileRepository, MappingMongoEntityInformation<AssetAdministrationShell, String> mappingMongoEntityInformation) {
+    public MongoDBAasServiceOperations(MongoOperations mongoOperations, FileRepository fileRepository) {
         this.mongoOperations = mongoOperations;
         this.fileRepository = fileRepository;
-
-        collectionName = mappingMongoEntityInformation.getCollectionName();
+        collectionName = mongoOperations.getCollectionName(AssetAdministrationShell.class);
     }
 
 

@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
@@ -52,7 +53,7 @@ import org.springframework.data.mongodb.repository.support.MappingMongoEntityInf
 @EnableMongoRepositories(basePackages = "org.eclipse.digitaltwin.basyx.aasrepository.backend")
 public class MongoDBAasRepositoryBackendConfiguration {
 	@Bean
-	MappingMongoEntityInformation<AssetAdministrationShell, String> getMappingMongoEntityInformation(BasyxMongoMappingContext mappingContext, @Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName) {
+	MappingMongoEntityInformation<AssetAdministrationShell, String> mappingMongoEntityInformation(BasyxMongoMappingContext mappingContext, @Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName) {
 		mappingContext.addEntityMapping(AssetAdministrationShell.class, collectionName);
 
 		@SuppressWarnings("unchecked")
@@ -61,7 +62,8 @@ public class MongoDBAasRepositoryBackendConfiguration {
 	}
 
 	@Bean
-	AasServiceOperations aasServiceOperations(MongoOperations template, FileRepository fileRepository, MappingMongoEntityInformation<AssetAdministrationShell, String> entityInformation) {
-		return new MongoDBAasServiceOperations(template, fileRepository, entityInformation);
+	@DependsOn("mappingMongoEntityInformation")
+	AasServiceOperations aasServiceOperations(MongoOperations template, FileRepository fileRepository) {
+		return new MongoDBAasServiceOperations(template, fileRepository);
 	}
 }
