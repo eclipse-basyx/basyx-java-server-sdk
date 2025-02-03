@@ -40,6 +40,9 @@ import org.springframework.lang.NonNull;
  * Configures the Spring Data repository fragments for the
  * {@link AasRepositoryBackend}
  * 
+ * Requires a bean with the name "aasServiceOperations". It is composed with the
+ * {@link AasRepositoryBackend} as a {@link RepositoryFragment}
+ * 
  * @author mateusmolina
  */
 @Configuration
