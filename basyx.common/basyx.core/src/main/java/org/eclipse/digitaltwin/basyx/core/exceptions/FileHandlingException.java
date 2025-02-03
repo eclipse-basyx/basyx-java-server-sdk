@@ -42,6 +42,10 @@ public class FileHandlingException extends RuntimeException {
 		super(getMessage(fileName));
 	}
 
+	public FileHandlingException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
 	private static String getMessage(String fileName) {
 		return "Exception occurred while handling the file: " + fileName;
 	}

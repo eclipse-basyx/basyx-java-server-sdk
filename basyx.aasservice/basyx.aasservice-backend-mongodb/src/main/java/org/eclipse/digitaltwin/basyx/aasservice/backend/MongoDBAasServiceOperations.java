@@ -26,12 +26,10 @@
 package org.eclipse.digitaltwin.basyx.aasservice.backend;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
@@ -46,9 +44,8 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasServiceOperations;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepositoryHelper;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -173,39 +170,31 @@ public class MongoDBAasServiceOperations implements AasServiceOperations {
 
     @Override
     public File getThumbnail(String aasId) {
-        Resource resource = getAssetInformation(aasId).getDefaultThumbnail();
-
-        try {
-            return getResourceContent(resource);
-        } catch (NullPointerException e) {
-            throw new FileDoesNotExistException();
-        } catch (IOException e) {
-            throw new FileHandlingException("Exception occurred while creating file from the InputStream." + e.getMessage());
-        }
+        return FileRepositoryHelper.fetchAndStoreFileLocally(fileRepository, getThumbnailResourcePathOrThrow(getAssetInformation(aasId)));
     }
 
     @Override
     public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
-        FileMetadata thumbnailMetadata = new FileMetadata(fileName, contentType, inputStream);
-
-        if (fileRepository.exists(thumbnailMetadata.getFileName()))
-            fileRepository.delete(thumbnailMetadata.getFileName());
-
-        String filePath = fileRepository.save(thumbnailMetadata);
-
+        String filePath = FileRepositoryHelper.saveOrOverwriteFile(fileRepository, fileName, contentType, inputStream);
         setAssetInformation(aasId, configureAssetInformationThumbnail(getAssetInformation(aasId), contentType, filePath));
     }
 
     @Override
     public void deleteThumbnail(String aasId) {
-        try {
-            String thumbnailPath = getAssetInformation(aasId).getDefaultThumbnail().getPath();
-            fileRepository.delete(thumbnailPath);
-        } catch (NullPointerException e) {
-            throw new FileDoesNotExistException();
-        } finally {
-            setAssetInformation(aasId, configureAssetInformationThumbnail(getAssetInformation(aasId), "", ""));
-        }
+        AssetInformation assetInformation = getAssetInformation(aasId);
+        FileRepositoryHelper.removeFileIfExists(fileRepository, getThumbnailResourcePathOrThrow(assetInformation));
+        setAssetInformation(aasId, configureAssetInformationThumbnail(assetInformation, "", ""));
+    }
+
+    private String getThumbnailResourcePathOrThrow(AssetInformation assetInformation) {
+        return Optional.ofNullable(assetInformation).map(AssetInformation::getDefaultThumbnail).map(Resource::getPath).orElseThrow(FileDoesNotExistException::new);
+    }
+    private static AssetInformation configureAssetInformationThumbnail(AssetInformation assetInformation, String contentType, String filePath) {
+        Resource resource = new DefaultResource();
+        resource.setContentType(contentType);
+        resource.setPath(filePath);
+        assetInformation.setDefaultThumbnail(resource);
+        return assetInformation;
     }
 
     private static String extractSubmodelId(Reference reference) {
@@ -219,35 +208,4 @@ public class MongoDBAasServiceOperations implements AasServiceOperations {
 
         return "";
     }
-
-    private static AssetInformation configureAssetInformationThumbnail(AssetInformation assetInformation, String contentType, String filePath) {
-        Resource resource = new DefaultResource();
-        resource.setContentType(contentType);
-        resource.setPath(filePath);
-        assetInformation.setDefaultThumbnail(resource);
-        return assetInformation;
-    }
-
-    private File getResourceContent(Resource resource) throws IOException {
-        String filePath = resource.getPath();
-
-        InputStream fileIs = fileRepository.find(filePath);
-        byte[] content = fileIs.readAllBytes();
-        fileIs.close();
-
-        createOutputStream(filePath, content);
-
-        return new java.io.File(filePath);
-    }
-
-    private void createOutputStream(String filePath, byte[] content) throws IOException {
-
-        try (OutputStream outputStream = new FileOutputStream(filePath)) {
-            outputStream.write(content);
-        } catch (IOException e) {
-            throw new FileHandlingException("Exception occurred while creating OutputStream from byte[]." + e.getMessage());
-        }
-
-    }
-
 }

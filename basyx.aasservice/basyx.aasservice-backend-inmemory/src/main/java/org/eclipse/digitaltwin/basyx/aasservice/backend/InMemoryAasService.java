@@ -25,10 +25,7 @@
 package org.eclipse.digitaltwin.basyx.aasservice.backend;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -43,9 +40,12 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
-import org.eclipse.digitaltwin.basyx.core.exceptions.*;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.MissingKeyTypeException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepositoryHelper;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -150,50 +150,24 @@ public class InMemoryAasService implements AasService {
 
 	@Override
 	public File getThumbnail() {
-		Resource resource = getAssetInformation().getDefaultThumbnail();
-
-		try {
-			return getResourceContent(resource);
-		} catch (NullPointerException e) {
-			throw new FileDoesNotExistException();
-		} catch (IOException e) {
-			throw new FileHandlingException("Exception occurred while creating file from the InputStream." + e.getMessage());
-		}
+		return FileRepositoryHelper.fetchAndStoreFileLocally(fileRepository, getThumbnailResourcePathOrThrow(getAssetInformation()));
 	}
 
 	@Override
 	public void setThumbnail(String fileName, String contentType, InputStream inputStream) {
-		FileMetadata thumbnailMetadata = new FileMetadata(fileName, contentType, inputStream);
-
-		if(fileRepository.exists(thumbnailMetadata.getFileName()))
-			fileRepository.delete(thumbnailMetadata.getFileName());
-		
-		String filePath = fileRepository.save(thumbnailMetadata);
-
+		String filePath = FileRepositoryHelper.saveOrOverwriteFile(fileRepository, fileName, contentType, inputStream);
 		setAssetInformation(configureAssetInformationThumbnail(getAssetInformation(), contentType, filePath));
 	}
 
 	@Override
 	public void deleteThumbnail() {
-		try {
-			String thumbnailPath = getAssetInformation().getDefaultThumbnail().getPath();
-			fileRepository.delete(thumbnailPath);
-		} catch (NullPointerException e) {
-			throw new FileDoesNotExistException();
-		} finally {
-			setAssetInformation(configureAssetInformationThumbnail(getAssetInformation(), "", ""));
-		}
-
+		AssetInformation assetInformation = getAssetInformation();
+		FileRepositoryHelper.removeFileIfExists(fileRepository, getThumbnailResourcePathOrThrow(assetInformation));
+		setAssetInformation(configureAssetInformationThumbnail(assetInformation, "", ""));
 	}
 
-	private void createOutputStream(String filePath, byte[] content) throws IOException {
-
-		try (OutputStream outputStream = new FileOutputStream(filePath)) {
-			outputStream.write(content);
-		} catch (IOException e) {
-			throw new FileHandlingException("Exception occurred while creating OutputStream from byte[]." + e.getMessage());
-		}
-
+	private String getThumbnailResourcePathOrThrow(AssetInformation assetInformation) {
+		return Optional.ofNullable(assetInformation).map(AssetInformation::getDefaultThumbnail).map(Resource::getPath).orElseThrow(FileDoesNotExistException::new);
 	}
 
 	private static AssetInformation configureAssetInformationThumbnail(AssetInformation assetInformation, String contentType, String filePath) {
@@ -202,18 +176,6 @@ public class InMemoryAasService implements AasService {
 		resource.setPath(filePath);
 		assetInformation.setDefaultThumbnail(resource);
 		return assetInformation;
-	}
-
-	private File getResourceContent(Resource resource) throws IOException {
-		String filePath = resource.getPath();
-
-		InputStream fileIs = fileRepository.find(filePath);
-		byte[] content = fileIs.readAllBytes();
-		fileIs.close();
-
-		createOutputStream(filePath, content);
-
-		return new java.io.File(filePath);
 	}
 
 	private void throwExceptionIfReferenceIsAlreadyPresent(Reference submodelReference) {
