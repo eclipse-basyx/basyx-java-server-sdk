@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,31 +23,23 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
-package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
+import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.DecoratedAasRepositoryFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
-/**
- * Provides a InMemoryAasServiceFactory for usage in the MongoDB Aas Repository
- * backend.<br>
- * <br>
- * This is needed to ensure that the AasServiceFeatures are processed correctly
- * when utilizing MongoDb
- * 
- * @author schnicke
- *
- */
 @Configuration
-@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-public class AasMongoDBRepositoryConfiguration {
-	@Bean
-	public AasServiceFactory getAasServiceFactory(FileRepository fileRepository) {
-		return new InMemoryAasServiceFactory(fileRepository);
-	}
+@Profile("regintegration")
+public class RegistryIntegrationTestConfiguration {
+    @Bean
+    AasRepository getAasRepository(AasRepositoryFactory aasRepositoryFactory, List<AasRepositoryFeature> features) {
+        return new DecoratedAasRepositoryFactory(aasRepositoryFactory, features).create();
+    }
 }

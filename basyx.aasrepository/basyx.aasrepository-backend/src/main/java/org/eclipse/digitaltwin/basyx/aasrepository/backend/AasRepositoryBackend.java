@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,31 +23,19 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
+package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
-import java.util.List;
-
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.DecoratedAasRepositoryFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.basyx.aasservice.AasServiceOperations;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 /**
- * Configuration for tests
+ * Backend interface for the {@link AssetAdministrationShell}  
  * 
- * @author danish
- *
+ * @author mateusmolina
  */
-@Configuration
-public class DummyAasRepositoryIntegrationConfiguration {
+@Repository
+public interface AasRepositoryBackend extends CrudRepository<AssetAdministrationShell, String>, AasServiceOperations {
 
-	@Bean
-	@ConditionalOnMissingBean
-	public static AasRepository getAasRepository(AasRepositoryFactory aasRepositoryFactory, List<AasRepositoryFeature> features) {
-		return new DecoratedAasRepositoryFactory(aasRepositoryFactory, features).create();
-	}
 }

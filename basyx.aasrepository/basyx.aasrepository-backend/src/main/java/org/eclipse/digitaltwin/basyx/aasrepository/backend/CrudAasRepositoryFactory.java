@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,28 +23,34 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory;
+package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
-import org.eclipse.digitaltwin.basyx.common.backend.inmemory.core.InMemoryCrudRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
 /**
+ * Simple AAS repository factory that provides the {@link CrudAasRepository}
+ * component
  * 
- * InMemory backend provider for the AAS
+ * @author mateusmolina
  * 
- * @author mateusmolina, danish
  */
-@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
 @Component
-public class AasInMemoryBackendProvider implements AasBackendProvider {
+@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
+public class CrudAasRepositoryFactory implements AasRepositoryFactory {
+
+	private final CrudAasRepository crudAasRepository;
+
+	public CrudAasRepositoryFactory(AasRepositoryBackend aasRepositoryBackend, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
+		this.crudAasRepository = new CrudAasRepository(aasRepositoryBackend, aasRepositoryName);
+	}
 
 	@Override
-	public CrudRepository<AssetAdministrationShell, String> getCrudRepository() {
-		return new InMemoryCrudRepository<AssetAdministrationShell>(AssetAdministrationShell::getId);
+	public AasRepository create() {
+		return crudAasRepository;
 	}
 
 }

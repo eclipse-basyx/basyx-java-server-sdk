@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -24,6 +24,8 @@
  ******************************************************************************/
 
 package org.eclipse.digitaltwin.basyx.aasenvironment;
+
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -52,10 +54,9 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironment;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleConceptDescriptionRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryBackendProvider;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
@@ -69,8 +70,6 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
-
-import static org.junit.Assert.*;
 
 public class TestAASEnvironmentSerialization {
 
@@ -88,7 +87,7 @@ public class TestAASEnvironmentSerialization {
 	@Before
 	public void setup() {
 		submodelRepository = new SimpleSubmodelRepositoryFactory(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())).create();
-		aasRepository = new SimpleAasRepositoryFactory(new AasInMemoryBackendProvider(), new InMemoryAasServiceFactory(new InMemoryFileRepository())).create();
+		aasRepository = new CrudAasRepositoryFactory(InMemoryAasRepositoryBackend.buildDefault(), "aas-repo").create();
 		conceptDescriptionRepository = new SimpleConceptDescriptionRepositoryFactory(new ConceptDescriptionInMemoryBackendProvider(), createDummyConceptDescriptions(), "cdRepo").create();
 
 		for (Submodel submodel : createDummySubmodels()) {
