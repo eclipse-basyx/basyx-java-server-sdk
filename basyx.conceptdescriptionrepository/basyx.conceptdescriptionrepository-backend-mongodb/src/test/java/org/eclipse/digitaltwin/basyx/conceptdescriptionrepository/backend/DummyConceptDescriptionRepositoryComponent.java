@@ -22,27 +22,22 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
-import static org.junit.Assert.assertEquals;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.junit.Test;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Tests {@link CrudConceptDescriptionRepository}
+ * Spring application configured for tests.
  * 
- * @author mateusmolina, despen, danish
+ * @author mateusmolina, danish
+ *
  */
-public class CrudConceptDescriptionRepositoryTest {
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
+public class DummyConceptDescriptionRepositoryComponent {
 
-	private static final String CONFIGURED_CD_REPO_NAME = "test-cd-repo";
-
-	@Test
-	public void getConfiguredAasRepositoryName() {
-		ConceptDescriptionRepository repo = new CrudConceptDescriptionRepository(() -> null, CONFIGURED_CD_REPO_NAME);
-
-		assertEquals(CONFIGURED_CD_REPO_NAME, repo.getName());
+	public static void main(String[] args) {
+		SpringApplication.run(DummyConceptDescriptionRepositoryComponent.class, args);
 	}
-
 }

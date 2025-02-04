@@ -22,28 +22,27 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
+import static org.junit.Assert.*;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.ConceptDescriptionBackendProvider;
-import org.eclipse.digitaltwin.basyx.common.backend.inmemory.core.InMemoryCrudRepository;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Component;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
+import org.junit.Test;
 
 /**
- * InMemory backend provider for the {@link ConceptDescription}
+ * Tests {@link CrudConceptDescriptionRepository}
  * 
- * @author danish
+ * @author mateusmolina, despen, danish
  */
-@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
-@Component
-public class ConceptDescriptionInMemoryBackendProvider implements ConceptDescriptionBackendProvider {
+public class CrudConceptDescriptionRepositoryTest {
 
-	@Override
-	public CrudRepository<ConceptDescription, String> getCrudRepository() {
-		return new InMemoryCrudRepository<ConceptDescription>(ConceptDescription::getId);
+	private static final String CONFIGURED_CD_REPO_NAME = "test-cd-repo";
+
+	@Test
+	public void getConfiguredAasRepositoryName() {
+		ConceptDescriptionRepository repo = new CrudConceptDescriptionRepository(() -> null, CONFIGURED_CD_REPO_NAME);
+
+		assertEquals(CONFIGURED_CD_REPO_NAME, repo.getName());
 	}
 
 }
