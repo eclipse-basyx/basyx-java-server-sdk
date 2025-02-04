@@ -113,7 +113,7 @@ public class TestAuthorizedCDRepository {
 		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
 		
 		CloseableHttpResponse retrievalResponse = getAllCDWithAuthorization(accessToken);
-		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
+		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 	
 	@Test

@@ -1,0 +1,16 @@
+{
+    "modelType": "Submodel",
+    "id": "SecuritySubmodel",
+    "idShort": "TechnicalData",
+    "kind":"Instance",
+    "submodelElements": [],
+    "semanticId": {
+        "keys": [
+            {
+                "type": "GlobalReference",
+                "value": "0173-1#01-AFZ615#016"
+            }
+        ],
+        "type": "ExternalReference"
+    }
+}
