@@ -23,9 +23,10 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.ConceptDescriptionRepositoryPersistencyTestSuite;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -34,7 +35,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**
- * Test persistency for {@link ConceptDescriptionRepository} with MongoDB storage backend
+ * Test persistency for {@link ConceptDescriptionRepository} with MongoDB
+ * storage backend
  * 
  * @author mateusmolina, danish
  */

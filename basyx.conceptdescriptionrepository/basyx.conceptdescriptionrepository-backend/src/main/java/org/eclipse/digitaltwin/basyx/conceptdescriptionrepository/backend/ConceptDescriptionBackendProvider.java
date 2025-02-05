@@ -22,7 +22,7 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasrepository.backend;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.springframework.data.repository.CrudRepository;
@@ -33,7 +33,7 @@ import org.springframework.data.repository.CrudRepository;
  * @author mateusmolina, despen, danish
  */
 public interface ConceptDescriptionBackendProvider {
-	
+
 	public CrudRepository<ConceptDescription, String> getCrudRepository();
-	
+
 }

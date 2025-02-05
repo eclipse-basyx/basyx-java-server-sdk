@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.backend;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
 import java.util.Collection;
 
@@ -36,8 +36,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 /**
- * Simple Concept Description repository factory that creates a {@link CrudConceptDescriptionRepository} with
- * a backend provider
+ * Simple Concept Description repository factory that creates a
+ * {@link CrudConceptDescriptionRepository} with a backend provider
  * 
  * @author mateusmolina, danish
  * 
@@ -54,7 +54,7 @@ public class SimpleConceptDescriptionRepositoryFactory implements ConceptDescrip
 	public SimpleConceptDescriptionRepositoryFactory(ConceptDescriptionBackendProvider conceptDescriptionBackend) {
 		this.conceptDescriptionBackend = conceptDescriptionBackend;
 	}
-	
+
 	@Autowired(required = false)
 	public SimpleConceptDescriptionRepositoryFactory(ConceptDescriptionBackendProvider conceptDescriptionBackendProvider, @Value("${basyx.cdrepo.name:cd-repo}") String conceptDescriptionRepositoryName) {
 		this(conceptDescriptionBackendProvider);
@@ -65,12 +65,13 @@ public class SimpleConceptDescriptionRepositoryFactory implements ConceptDescrip
 	@Autowired(required = false)
 	public SimpleConceptDescriptionRepositoryFactory(ConceptDescriptionBackendProvider conceptDescriptionBackendProvider, Collection<ConceptDescription> conceptDescriptions) {
 		this(conceptDescriptionBackendProvider);
-		
+
 		this.conceptDescriptions = conceptDescriptions;
 	}
-	
+
 	@Autowired(required = false)
-	public SimpleConceptDescriptionRepositoryFactory(ConceptDescriptionBackendProvider conceptDescriptionBackendProvider, Collection<ConceptDescription> conceptDescriptions, @Value("${basyx.cdrepo.name:cd-repo}") String conceptDescriptionRepositoryName) {
+	public SimpleConceptDescriptionRepositoryFactory(ConceptDescriptionBackendProvider conceptDescriptionBackendProvider, Collection<ConceptDescription> conceptDescriptions,
+			@Value("${basyx.cdrepo.name:cd-repo}") String conceptDescriptionRepositoryName) {
 		this(conceptDescriptionBackendProvider, conceptDescriptions);
 
 		this.conceptDescriptionRepositoryName = conceptDescriptionRepositoryName;
@@ -78,7 +79,7 @@ public class SimpleConceptDescriptionRepositoryFactory implements ConceptDescrip
 
 	@Override
 	public ConceptDescriptionRepository create() {
-		
+
 		if (conceptDescriptions == null)
 			return new CrudConceptDescriptionRepository(conceptDescriptionBackend, conceptDescriptionRepositoryName);
 

@@ -23,9 +23,9 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,17 +33,14 @@ import java.util.Collection;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.ConceptDescriptionBackendProvider;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleConceptDescriptionRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionMongoDBBackendProvider;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.ConceptDescriptionRepositorySuite;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
@@ -62,10 +59,10 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 		MongoTemplate template = createTemplate();
 
 		MongoDBUtilities.clearCollection(template, COLLECTION);
-		
+
 		ConceptDescriptionBackendProvider cdBackendProvider = new ConceptDescriptionMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, template);
 		ConceptDescriptionRepositoryFactory cdRepositoryFactory = new SimpleConceptDescriptionRepositoryFactory(cdBackendProvider);
-		
+
 		return cdRepositoryFactory.create();
 	}
 
@@ -74,10 +71,10 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 		MongoTemplate template = createTemplate();
 
 		MongoDBUtilities.clearCollection(template, COLLECTION);
-		
+
 		ConceptDescriptionBackendProvider cdBackendProvider = new ConceptDescriptionMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, template);
 		ConceptDescriptionRepositoryFactory cdRepositoryFactory = new SimpleConceptDescriptionRepositoryFactory(cdBackendProvider, conceptDescriptions);
-		
+
 		return cdRepositoryFactory.create();
 	}
 

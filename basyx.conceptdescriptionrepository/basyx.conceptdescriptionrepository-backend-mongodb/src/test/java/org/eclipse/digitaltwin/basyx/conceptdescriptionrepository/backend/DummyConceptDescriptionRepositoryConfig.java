@@ -23,21 +23,40 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.MongoTemplate;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 
 /**
- * Spring application configured for tests.
+ * Configuration for tests
  * 
  * @author mateusmolina, danish
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
-public class DummyConceptDescriptionRepositoryComponent {
+@Configuration
+public class DummyConceptDescriptionRepositoryConfig {
+	public final static String COLLECTION = "cdRepositoryPersistencyTestCollection";
+	public final static String DB = "BaSyxTestDb";
 
-	public static void main(String[] args) {
-		SpringApplication.run(DummyConceptDescriptionRepositoryComponent.class, args);
+	@Bean
+	public ConceptDescriptionRepository createConceptDescriptionRepository(MongoTemplate template) {
+		return new SimpleConceptDescriptionRepositoryFactory(new ConceptDescriptionMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, template)).create();
 	}
+
+	@Bean
+	public MongoTemplate createCDMongoTemplate() {
+		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
+
+		MongoClient client = MongoClients.create(connectionURL);
+
+		return new MongoTemplate(client, DB);
+	}
+
 }

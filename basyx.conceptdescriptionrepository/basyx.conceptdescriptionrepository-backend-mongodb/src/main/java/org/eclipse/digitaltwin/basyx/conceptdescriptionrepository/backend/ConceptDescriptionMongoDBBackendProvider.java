@@ -23,10 +23,9 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.ConceptDescriptionBackendProvider;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,16 +46,16 @@ import org.springframework.stereotype.Component;
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
 @Component
 public class ConceptDescriptionMongoDBBackendProvider implements ConceptDescriptionBackendProvider {
-	
+
 	private BasyxMongoMappingContext mappingContext;
 	private MongoTemplate template;
-	
+
 	@Autowired
 	public ConceptDescriptionMongoDBBackendProvider(BasyxMongoMappingContext mappingContext, @Value("${basyx.cdrepository.mongodb.collectionName:cd-repo}") String collectionName, MongoTemplate template) {
 		super();
 		this.mappingContext = mappingContext;
 		this.template = template;
-		
+
 		mappingContext.addEntityMapping(ConceptDescription.class, collectionName);
 	}
 
@@ -64,7 +63,7 @@ public class ConceptDescriptionMongoDBBackendProvider implements ConceptDescript
 	public CrudRepository<ConceptDescription, String> getCrudRepository() {
 		@SuppressWarnings("unchecked")
 		MongoPersistentEntity<ConceptDescription> entity = (MongoPersistentEntity<ConceptDescription>) mappingContext.getPersistentEntity(ConceptDescription.class);
-		
+
 		return new SimpleMongoRepository<>(new MappingMongoEntityInformation<>(entity), template);
 	}
 

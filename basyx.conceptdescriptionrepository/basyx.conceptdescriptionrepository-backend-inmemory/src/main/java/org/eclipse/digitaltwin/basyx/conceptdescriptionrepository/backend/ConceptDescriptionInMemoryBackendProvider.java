@@ -23,39 +23,26 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleConceptDescriptionRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
+import org.eclipse.digitaltwin.basyx.common.backend.inmemory.core.InMemoryCrudRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Component;
 
 /**
- * Configuration for tests
+ * InMemory backend provider for the {@link ConceptDescription}
  * 
- * @author mateusmolina, danish
- *
+ * @author danish
  */
-@Configuration
-public class DummyConceptDescriptionRepositoryConfig {
-	public final static String COLLECTION = "cdRepositoryPersistencyTestCollection";
-	public final static String DB = "BaSyxTestDb";
+@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
+@Component
+public class ConceptDescriptionInMemoryBackendProvider implements ConceptDescriptionBackendProvider {
 
-	@Bean
-	public ConceptDescriptionRepository createConceptDescriptionRepository(MongoTemplate template) {
-		return new SimpleConceptDescriptionRepositoryFactory(new ConceptDescriptionMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, template)).create();
-	}
-
-	@Bean
-	public MongoTemplate createCDMongoTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-
-		MongoClient client = MongoClients.create(connectionURL);
-
-		return new MongoTemplate(client, DB);
+	@Override
+	public CrudRepository<ConceptDescription, String> getCrudRepository() {
+		return new InMemoryCrudRepository<ConceptDescription>(ConceptDescription::getId);
 	}
 
 }
