@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,16 +22,27 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.springframework.data.repository.CrudRepository;
+package org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory;
+
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasRepositoryBackend;
+import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * Backend provider for the AAS
  * 
- * @author mateusmolina, despen
+ * InMemory backend provider for the AAS
+ * 
+ * @author mateusmolina, danish
  */
-public interface AasBackendProvider {
-	public CrudRepository<AssetAdministrationShell, String> getCrudRepository();
+@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
+@Configuration
+public class InMemoryAasRepositoryBackendConfiguration {
+
+	@Bean
+	AasRepositoryBackend getAasBackend(AasServiceFactory aasServiceFactory) {
+		return new InMemoryAasRepositoryBackend(aasServiceFactory);
+	}
 }

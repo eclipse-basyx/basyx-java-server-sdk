@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -31,7 +31,7 @@ import java.io.IOException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -48,7 +48,7 @@ public class AasRepositoryRegistryLinkTest extends AasRepositoryRegistryLinkTest
 	
 	@BeforeClass
 	public static void setUp() throws FileNotFoundException, IOException {
-		appContext = new SpringApplication(DummyAasRepositoryIntegrationComponent.class).run(new String[] {});
+		appContext = new SpringApplicationBuilder(DummyAasRepositoryIntegrationComponent.class).profiles("regintegration").run(new String[] {});
 		
 		aasRepositoryRegistryLink = appContext.getBean(AasRepositoryRegistryLink.class);
 	}

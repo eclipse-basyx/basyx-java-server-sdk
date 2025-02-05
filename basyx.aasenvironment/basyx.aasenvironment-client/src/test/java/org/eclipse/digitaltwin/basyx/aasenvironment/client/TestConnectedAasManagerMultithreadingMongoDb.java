@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,60 +25,33 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.stream.IntStream;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.Key;
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository;
-import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodelRepository;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-public class TestConnectedAasManagerMultithreading {
+public class TestConnectedAasManagerMultithreadingMongoDb extends ConnectedAasManagerMultithreadingTestSuite {
     static final String AAS_REPOSITORY_BASE_PATH = "http://localhost:8081";
     static final String SM_REPOSITORY_BASE_PATH = "http://localhost:8081";
     static final String AAS_REGISTRY_BASE_PATH = "http://localhost:8050";
     static final String SM_REGISTRY_BASE_PATH = "http://localhost:8060";
-    static final int N_THREADS = 20;
 
-    static ConfigurableApplicationContext appContext;
-    static AasRepository aasRepository;
-    static SubmodelRepository smRepository;
-
+    static ConnectedAasManager aasManager;
     static ConnectedAasRepository connectedAasRepository;
     static ConnectedSubmodelRepository connectedSmRepository;
     static RegistryAndDiscoveryInterfaceApi aasRegistryApi;
     static SubmodelRegistryApi smRegistryApi;
-
-    static ConnectedAasManager aasManager;
+    static ConfigurableApplicationContext appContext;
 
     @BeforeClass
     public static void setupRepositories() {
-        appContext = new SpringApplication(DummyAasEnvironmentComponent.class).run(new String[] {});
-
+        appContext = new SpringApplicationBuilder(DummyAasEnvironmentComponent.class).profiles("mongodb").run(new String[] {});
         connectedAasRepository = new ConnectedAasRepository(AAS_REPOSITORY_BASE_PATH);
         connectedSmRepository = new ConnectedSubmodelRepository(SM_REPOSITORY_BASE_PATH);
         aasRegistryApi = new RegistryAndDiscoveryInterfaceApi(AAS_REGISTRY_BASE_PATH);
@@ -98,32 +71,6 @@ public class TestConnectedAasManagerMultithreading {
         appContext.close();
     }
 
-    @Test
-    public void testParallelSubmodelCreation() throws ExecutionException, InterruptedException {
-        AssetAdministrationShell shell = createShell();
-
-        ExecutorService executorService = Executors.newFixedThreadPool(N_THREADS);
-        ConcurrentLinkedDeque<String> createdSubmodelIds = new ConcurrentLinkedDeque<>();
-
-        List<Future<Boolean>> futures = IntStream.range(0, N_THREADS).mapToObj(i -> executorService.submit(() -> createdSubmodelIds.add(createSubmodel(shell.getId(), i)))).toList();
-
-        try {
-            for (int i = 0; i < N_THREADS; i++) {
-                futures.get(i).get();
-            }
-        } finally {
-            executorService.shutdown();
-        }
-
-        createdSubmodelIds.forEach(submodelId -> assertSubmodelWasCreatedAndRegistered(shell.getId(), submodelId));
-    }
-
-    static void assertSubmodelWasCreatedAndRegistered(String shellId, String submodelId) {
-        assertEquals(submodelId, aasManager.getSubmodelService(submodelId).getSubmodel().getId());
-        assertTrue(connectedAasRepository.getSubmodelReferences(shellId, PaginationInfo.NO_LIMIT).getResult().stream().map(Reference::getKeys).flatMap(Collection::stream).map(Key::getValue).anyMatch(submodelId::equals));
-    }
-
-
     private static void cleanUpRegistries() {
         try {
             aasRegistryApi.deleteAllShellDescriptors();
@@ -137,22 +84,13 @@ public class TestConnectedAasManagerMultithreading {
         }
     }
 
-    private static AssetAdministrationShell createShell() {
-        String id = UUID.randomUUID().toString();
-        DefaultAssetAdministrationShell shell = new DefaultAssetAdministrationShell.Builder().id(id).build();
-        aasManager.createAas(shell);
-        return aasManager.getAasService(id).getAAS();
+    @Override
+    public AasRepository getAasRepository() {
+        return connectedAasRepository;
     }
 
-    private static String createSubmodel(String aasId, int threadId) {
-        try {
-            String id = aasId + "-thread" + threadId;
-            DefaultSubmodel submodel = new DefaultSubmodel.Builder().id(id).build();
-            aasManager.createSubmodelInAas(aasId, submodel);
-            return id;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed at thread " + threadId, e);
-        }
+    @Override
+    public ConnectedAasManager getConnectedAasManager() {
+        return aasManager;
     }
-
 }
