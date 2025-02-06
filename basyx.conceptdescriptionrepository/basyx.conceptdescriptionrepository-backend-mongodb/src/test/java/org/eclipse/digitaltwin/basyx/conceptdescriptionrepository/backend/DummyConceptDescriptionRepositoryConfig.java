@@ -25,10 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
-import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import com.mongodb.client.MongoClient;
@@ -40,18 +38,13 @@ import com.mongodb.client.MongoClients;
  * @author mateusmolina, danish
  *
  */
-@Configuration
+@TestConfiguration
 public class DummyConceptDescriptionRepositoryConfig {
-	public final static String COLLECTION = "cdRepositoryPersistencyTestCollection";
-	public final static String DB = "BaSyxTestDb";
+	public static final String COLLECTION = "cdRepositoryPersistencyTestCollection";
+	public static final String DB = "BaSyxTestDb";
 
 	@Bean
-	public ConceptDescriptionRepository createConceptDescriptionRepository(MongoTemplate template) {
-		return new SimpleConceptDescriptionRepositoryFactory(new ConceptDescriptionMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, template)).create();
-	}
-
-	@Bean
-	public MongoTemplate createCDMongoTemplate() {
+	MongoTemplate createCDMongoTemplate() {
 		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
 
 		MongoClient client = MongoClients.create(connectionURL);
