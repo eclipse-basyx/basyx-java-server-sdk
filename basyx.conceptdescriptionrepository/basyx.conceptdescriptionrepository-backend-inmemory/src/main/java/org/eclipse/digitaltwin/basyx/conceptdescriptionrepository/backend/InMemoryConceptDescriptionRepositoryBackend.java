@@ -28,21 +28,20 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.common.backend.inmemory.core.InMemoryCrudRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
 /**
- * InMemory backend provider for the {@link ConceptDescription}
+ * InMemory backend for the {@link ConceptDescription} based on
+ * {@link InMemoryCrudRepository}
  * 
- * @author danish
+ * @author danish, mateusmolina
  */
 @ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
 @Component
-public class ConceptDescriptionInMemoryBackendProvider implements ConceptDescriptionBackendProvider {
+public class InMemoryConceptDescriptionRepositoryBackend extends InMemoryCrudRepository<ConceptDescription> implements ConceptDescriptionRepositoryBackend {
 
-	@Override
-	public CrudRepository<ConceptDescription, String> getCrudRepository() {
-		return new InMemoryCrudRepository<ConceptDescription>(ConceptDescription::getId);
+	public InMemoryConceptDescriptionRepositoryBackend() {
+		super(ConceptDescription::getId);
 	}
 
 }

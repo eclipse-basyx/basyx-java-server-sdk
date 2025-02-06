@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
@@ -36,54 +37,46 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 /**
- * Simple Concept Description repository factory that creates a
- * {@link CrudConceptDescriptionRepository} with a backend provider
+ * {@link CrudConceptDescriptionRepository} factory using a
+ * {@link ConceptDescriptionRepositoryBackend}
  * 
  * @author mateusmolina, danish
  * 
  */
 @Component
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
-public class SimpleConceptDescriptionRepositoryFactory implements ConceptDescriptionRepositoryFactory {
+public class CrudConceptDescriptionRepositoryFactory implements ConceptDescriptionRepositoryFactory {
 
-	private ConceptDescriptionBackendProvider conceptDescriptionBackend;
-	private String conceptDescriptionRepositoryName = null;
-	private Collection<ConceptDescription> conceptDescriptions;
+	private final ConceptDescriptionRepositoryBackend backend;
+	private final String repositoryName;
 
-	@Autowired(required = false)
-	public SimpleConceptDescriptionRepositoryFactory(ConceptDescriptionBackendProvider conceptDescriptionBackend) {
-		this.conceptDescriptionBackend = conceptDescriptionBackend;
+	private Optional<Collection<ConceptDescription>> remoteCollection = Optional.empty();
+
+	@Autowired
+	public CrudConceptDescriptionRepositoryFactory(ConceptDescriptionRepositoryBackend backend, @Value("${basyx.cdrepo.name:cd-repo}") String conceptDescriptionRepositoryName) {
+		this.backend = backend;
+		this.repositoryName = conceptDescriptionRepositoryName;
 	}
 
-	@Autowired(required = false)
-	public SimpleConceptDescriptionRepositoryFactory(ConceptDescriptionBackendProvider conceptDescriptionBackendProvider, @Value("${basyx.cdrepo.name:cd-repo}") String conceptDescriptionRepositoryName) {
-		this(conceptDescriptionBackendProvider);
-
-		this.conceptDescriptionRepositoryName = conceptDescriptionRepositoryName;
+	public CrudConceptDescriptionRepositoryFactory(ConceptDescriptionRepositoryBackend backend) {
+		this(backend, "cd-repo");
 	}
 
-	@Autowired(required = false)
-	public SimpleConceptDescriptionRepositoryFactory(ConceptDescriptionBackendProvider conceptDescriptionBackendProvider, Collection<ConceptDescription> conceptDescriptions) {
-		this(conceptDescriptionBackendProvider);
-
-		this.conceptDescriptions = conceptDescriptions;
-	}
-
-	@Autowired(required = false)
-	public SimpleConceptDescriptionRepositoryFactory(ConceptDescriptionBackendProvider conceptDescriptionBackendProvider, Collection<ConceptDescription> conceptDescriptions,
-			@Value("${basyx.cdrepo.name:cd-repo}") String conceptDescriptionRepositoryName) {
-		this(conceptDescriptionBackendProvider, conceptDescriptions);
-
-		this.conceptDescriptionRepositoryName = conceptDescriptionRepositoryName;
+	public CrudConceptDescriptionRepositoryFactory withRemoteCollection(Collection<ConceptDescription> conceptDescriptions) {
+		this.remoteCollection = Optional.of(conceptDescriptions);
+		return this;
 	}
 
 	@Override
 	public ConceptDescriptionRepository create() {
+		CrudConceptDescriptionRepository repo;
 
-		if (conceptDescriptions == null)
-			return new CrudConceptDescriptionRepository(conceptDescriptionBackend, conceptDescriptionRepositoryName);
+		if (remoteCollection.isPresent())
+			repo = new CrudConceptDescriptionRepository(backend, repositoryName, remoteCollection.get());
+		else
+			repo = new CrudConceptDescriptionRepository(backend, repositoryName);
 
-		return new CrudConceptDescriptionRepository(conceptDescriptionBackend, conceptDescriptions, conceptDescriptionRepositoryName);
+		return repo;
 	}
 
 }

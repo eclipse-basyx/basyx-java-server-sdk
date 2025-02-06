@@ -42,7 +42,6 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -58,7 +57,7 @@ public class CrudAasRepository implements AasRepository {
 
 	private final String aasRepositoryName;
 
-	public CrudAasRepository(AasRepositoryBackend aasBackend, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
+	public CrudAasRepository(AasRepositoryBackend aasBackend, String aasRepositoryName) {
 		this.aasBackend = aasBackend;
 		this.aasRepositoryName = aasRepositoryName;
 	}

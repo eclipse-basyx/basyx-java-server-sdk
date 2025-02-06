@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,18 +22,19 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 /**
- * Backend provider for the {@link ConceptDescription}
+ * Backend interface for the {@link ConceptDescription}
  * 
- * @author mateusmolina, despen, danish
+ * @author mateusmolina
  */
-public interface ConceptDescriptionBackendProvider {
-
-	public CrudRepository<ConceptDescription, String> getCrudRepository();
+@Repository
+public interface ConceptDescriptionRepositoryBackend extends CrudRepository<ConceptDescription, String> {
 
 }

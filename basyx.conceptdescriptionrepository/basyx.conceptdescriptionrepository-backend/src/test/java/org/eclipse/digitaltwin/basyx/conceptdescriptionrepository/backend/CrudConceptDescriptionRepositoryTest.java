@@ -40,7 +40,7 @@ public class CrudConceptDescriptionRepositoryTest {
 
 	@Test
 	public void getConfiguredAasRepositoryName() {
-		ConceptDescriptionRepository repo = new CrudConceptDescriptionRepository(() -> null, CONFIGURED_CD_REPO_NAME);
+		ConceptDescriptionRepository repo = new CrudConceptDescriptionRepository(null, CONFIGURED_CD_REPO_NAME);
 
 		assertEquals(CONFIGURED_CD_REPO_NAME, repo.getName());
 	}

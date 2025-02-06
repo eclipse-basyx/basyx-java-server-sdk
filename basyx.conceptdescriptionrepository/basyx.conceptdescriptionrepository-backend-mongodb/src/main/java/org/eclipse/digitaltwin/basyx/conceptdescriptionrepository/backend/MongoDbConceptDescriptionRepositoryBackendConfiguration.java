@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -27,44 +27,34 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.data.mongodb.repository.support.MappingMongoEntityInformation;
-import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Component;
 
 /**
+ * Configuration for the MongoDB concept description repository backend
  * 
- * MongoDB Backend Provider for the {@link ConceptDescription}
- * 
- * @author mateusmolina, despen, danish
+ * @author mateusmolina
  */
+@Configuration
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-@Component
-public class ConceptDescriptionMongoDBBackendProvider implements ConceptDescriptionBackendProvider {
+@EnableMongoRepositories(basePackages = "org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend")
+public class MongoDbConceptDescriptionRepositoryBackendConfiguration {
 
-	private BasyxMongoMappingContext mappingContext;
-	private MongoTemplate template;
+    static final String REPO_FIELD = "basyx.cdrepository.mongodb.collectionName";
+    static final String REPO_FIELD_DEFAULT = "cd-repo";
 
-	@Autowired
-	public ConceptDescriptionMongoDBBackendProvider(BasyxMongoMappingContext mappingContext, @Value("${basyx.cdrepository.mongodb.collectionName:cd-repo}") String collectionName, MongoTemplate template) {
-		super();
-		this.mappingContext = mappingContext;
-		this.template = template;
+    @Bean
+    MappingMongoEntityInformation<ConceptDescription, String> mappingMongoEntityInformation(BasyxMongoMappingContext mappingContext, @Value("${" + REPO_FIELD + ":" + REPO_FIELD_DEFAULT + "}") String collectionName) {
+        mappingContext.addEntityMapping(ConceptDescription.class, collectionName);
 
-		mappingContext.addEntityMapping(ConceptDescription.class, collectionName);
-	}
+        @SuppressWarnings("unchecked")
+        MongoPersistentEntity<ConceptDescription> entity = (MongoPersistentEntity<ConceptDescription>) mappingContext.getPersistentEntity(ConceptDescription.class);
 
-	@Override
-	public CrudRepository<ConceptDescription, String> getCrudRepository() {
-		@SuppressWarnings("unchecked")
-		MongoPersistentEntity<ConceptDescription> entity = (MongoPersistentEntity<ConceptDescription>) mappingContext.getPersistentEntity(ConceptDescription.class);
-
-		return new SimpleMongoRepository<>(new MappingMongoEntityInformation<>(entity), template);
-	}
-
+        return new MappingMongoEntityInformation<>(entity);
+    }
 }

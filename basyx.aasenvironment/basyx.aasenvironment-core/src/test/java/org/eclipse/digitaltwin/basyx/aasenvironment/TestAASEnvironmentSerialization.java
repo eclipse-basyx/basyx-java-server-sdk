@@ -57,8 +57,8 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend.ConceptDescriptionInMemoryBackendProvider;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend.SimpleConceptDescriptionRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend.CrudConceptDescriptionRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend.InMemoryConceptDescriptionRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelInMemoryBackendProvider;
@@ -88,7 +88,7 @@ public class TestAASEnvironmentSerialization {
 	public void setup() {
 		submodelRepository = new SimpleSubmodelRepositoryFactory(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())).create();
 		aasRepository = new CrudAasRepositoryFactory(InMemoryAasRepositoryBackend.buildDefault(), "aas-repo").create();
-		conceptDescriptionRepository = new SimpleConceptDescriptionRepositoryFactory(new ConceptDescriptionInMemoryBackendProvider(), createDummyConceptDescriptions(), "cdRepo").create();
+		conceptDescriptionRepository = new CrudConceptDescriptionRepositoryFactory(new InMemoryConceptDescriptionRepositoryBackend()).withRemoteCollection(createDummyConceptDescriptions()).create();
 
 		for (Submodel submodel : createDummySubmodels()) {
 			submodelRepository.createSubmodel(submodel);
