@@ -59,9 +59,9 @@ jobs:
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
       - name: Test AASX FileServer
-        run: mvn test -f "basyx.aasxfileserver/pom.xml"
+        run: mvn test -f "basyx.aasxfileserver/pom.xml" -DskipITs
       - name: Test AASX FileServer IT
-        run: mvn clean verify --pl "basyx.aasxfileserver.component" -Ddocker.namespace=test -DskipSurefire=true
+        run: mvn verify -f "basyx.aasxfileserver/basyx.aasxfileserver.component" -Ddocker.namespace=test -DskipSurefire=true
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
@@ -81,9 +81,9 @@ jobs:
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
       - name: Test AAS Environment
-        run: mvn test -f "basyx.aasenvironment/pom.xml"
+        run: mvn test -f "basyx.aasenvironment/pom.xml" -DskipITs
       - name: Test AAS Environment IT
-        run: mvn clean verify --pl "basyx.aasenvironment.component" -Ddocker.namespace=test -DskipSurefire=true
+        run: mvn verify -f "basyx.aasenvironment/basyx.aasenvironment.component" -Ddocker.namespace=test -DskipSurefire=true
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
@@ -103,9 +103,9 @@ jobs:
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
       - name: Test AAS Repository
-        run: mvn test -f "basyx.aasrepository/pom.xml"
+        run: mvn test -f "basyx.aasrepository/pom.xml" -DskipITs
       - name: Test AAS Repository IT
-        run: mvn clean verify --pl "basyx.aasrepository.component" -Ddocker.namespace=test -DskipSurefire=true
+        run: mvn verify -f "basyx.aasrepository/basyx.aasrepository.component" -Ddocker.namespace=test -DskipSurefire=true
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
@@ -145,9 +145,9 @@ jobs:
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
       - name: Test Submodel Repository
-        run: mvn test -f "basyx.submodelrepository/pom.xml"
+        run: mvn test -f "basyx.submodelrepository/pom.xml" -DskipITs
       - name: Test Submodel Repository IT
-        run: mvn clean verify --pl "basyx.submodelrepository.component" -Ddocker.namespace=test -DskipSurefire=true
+        run: mvn verify -f "basyx.submodelrepository/basyx.submodelrepository.component" -Ddocker.namespace=test -DskipSurefire=true
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
@@ -187,9 +187,9 @@ jobs:
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
       - name: Test Concept Description Repository
-        run: mvn test -f "basyx.conceptdescriptionrepository/pom.xml"
+        run: mvn test -f "basyx.conceptdescriptionrepository/pom.xml" -DskipITs
       - name: Test Concept Description Repository IT
-        run: mvn clean verify --pl "basyx.conceptdescriptionrepository.component" -Ddocker.namespace=test -DskipSurefire=true
+        run: mvn verify -f "basyx.conceptdescriptionrepository/basyx.conceptdescriptionrepository.component" -Ddocker.namespace=test -DskipSurefire=true
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
@@ -209,9 +209,9 @@ jobs:
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
       - name: Test Submodel Registry
-        run: mvn test -f "basyx.submodelregistry/pom.xml"
+        run: mvn test -f "basyx.submodelregistry/pom.xml" -DskipITs
       - name: Test Submodel Registry IT
-        run: mvn clean verify --pl "basyx.submodelregistry" -Ddocker.namespace=test -DskipSurefire=true
+        run: mvn verify -f "basyx.submodelregistry/basyx.submodelregistry.component" -Ddocker.namespace=test -DskipSurefire=true
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
@@ -231,9 +231,9 @@ jobs:
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
       - name: Test AAS Registry
-        run: mvn test -f "basyx.aasregistry/pom.xml"
+        run: mvn test -f "basyx.aasregistry/pom.xml" -DskipITs
       - name: Test AAS Registry IT
-        run: mvn clean verify --pl "basyx.aasregistry" -Ddocker.namespace=test -DskipSurefire=true
+        run: mvn verify -f "basyx.aasregistry" -Ddocker.namespace=test -DskipSurefire=true
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
@@ -253,9 +253,9 @@ jobs:
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
       - name: Test AAS Discovery Service
-        run: mvn test -f "basyx.aasdiscoveryservice/pom.xml"
+        run: mvn test -f "basyx.aasdiscoveryservice/pom.xml" -DskipITs
       - name: Test AAS Discovery Service IT
-        run: mvn clean verify --pl "basyx.aasdiscoveryservice.component" -Ddocker.namespace=test -DskipSurefire=true
+        run: mvn verify -f "basyx.aasdiscoveryservice/basyx.aasdiscoveryservice.component" -Ddocker.namespace=test -DskipSurefire=true
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
