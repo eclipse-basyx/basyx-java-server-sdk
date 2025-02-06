@@ -211,7 +211,7 @@ jobs:
       - name: Test Submodel Registry
         run: mvn test -f "basyx.submodelregistry/pom.xml" -DskipITs
       - name: Test Submodel Registry IT
-        run: mvn verify -f "basyx.submodelregistry/basyx.submodelregistry.component" -Ddocker.namespace=test -DskipSurefire=true
+        run: mvn verify -f "basyx.submodelregistry" -Ddocker.namespace=test -DskipSurefire=true
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
