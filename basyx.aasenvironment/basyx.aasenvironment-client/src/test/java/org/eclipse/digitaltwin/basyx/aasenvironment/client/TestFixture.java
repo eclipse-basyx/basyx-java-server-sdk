@@ -91,7 +91,7 @@ public class TestFixture {
 	}
 
 	public AssetAdministrationShellDescriptor buildAasPre1Descriptor() {
-		return DummyAasDescriptorFactory.createDummyDescriptor(AAS_PRE1_ID, AAS_PRE1_IDSHORT, AAS_PRE1_GLOBALASSETID, null, aasRepositoryBasePath);
+		return DummyAasDescriptorFactory.createDummyDescriptor(AAS_PRE1_ID, AAS_PRE1_IDSHORT, AAS_PRE1_GLOBALASSETID, null, null, aasRepositoryBasePath);
 	}
 
 	public AssetAdministrationShellDescriptor buildAasPre1Descriptor_withMultipleInterfaces() {
@@ -100,7 +100,7 @@ public class TestFixture {
 		endpoints.add(DummyAasDescriptorFactory.createEndpoint(aasRepositoryBasePath, "AAS-REPOSITORY-3.0"));
 		endpoints.add(DummyAasDescriptorFactory.createEndpoint(AAS_PRE1_ID, aasRepositoryBasePath, "AAS-3.0"));
 
-		return DummyAasDescriptorFactory.createDummyDescriptor(AAS_PRE1_ID, AAS_PRE1_IDSHORT, AAS_PRE1_GLOBALASSETID, null, endpoints);
+		return DummyAasDescriptorFactory.createDummyDescriptor(AAS_PRE1_ID, AAS_PRE1_IDSHORT, AAS_PRE1_GLOBALASSETID, null, null, endpoints);
 	}
 
 	public Reference buildSmPre1Ref() {
@@ -133,7 +133,7 @@ public class TestFixture {
 	}
 
 	public AssetAdministrationShellDescriptor buildAasPos1Descriptor() {
-		return DummyAasDescriptorFactory.createDummyDescriptor(AAS_POS1_ID, AAS_POS1_IDSHORT, AAS_POS1_GLOBALASSETID, null, aasRepositoryBasePath);
+		return DummyAasDescriptorFactory.createDummyDescriptor(AAS_POS1_ID, AAS_POS1_IDSHORT, AAS_POS1_GLOBALASSETID, null, null, aasRepositoryBasePath);
 	}
 
 	public SubmodelDescriptor buildSmPos1Descriptor() {

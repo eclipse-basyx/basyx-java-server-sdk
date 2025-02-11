@@ -78,5 +78,13 @@
       "@type": "aas-registry",
       "aasIds": "specificAasId-2"
     }
+  },
+  {
+    "role": "basyx-uploader",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "aas-registry",
+      "aasIds": "*"
+    }
   }
 ]
