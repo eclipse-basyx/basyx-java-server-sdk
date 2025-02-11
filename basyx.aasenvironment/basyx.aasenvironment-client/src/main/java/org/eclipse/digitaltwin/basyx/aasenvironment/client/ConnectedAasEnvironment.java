@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
@@ -33,16 +34,20 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.internal.SerializationApi;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
 public class ConnectedAasEnvironment implements AasEnvironment {
+	protected static final String ENVIRONMENT_BASE_PATH = "http://localhost:8081";
 	
 	private final SerializationApi serializationApi;
-
-	private JsonSerializer jsonSerializer = new JsonSerializer();
+	
+	ConnectedAasEnvironment() {
+		this.serializationApi = new SerializationApi(ENVIRONMENT_BASE_PATH);
+	}
 	
 	public ConnectedAasEnvironment(String environmentBaseUrl) {
-		this(new SerializationApi(environmentBaseUrl));
+		this.serializationApi = new SerializationApi(environmentBaseUrl);
 	}
 	
 	ConnectedAasEnvironment(SerializationApi serializationApi) {
@@ -72,7 +77,10 @@ public class ConnectedAasEnvironment implements AasEnvironment {
 			boolean includeConceptDescriptions) throws SerializationException {
 		try {
 			Resource res = serializationApi.generateSerializationByIds("application/json", aasIds, submodelIds, includeConceptDescriptions);
-            return jsonSerializer.write(res);
+			
+			String jsonStr = new String(((ByteArrayResource) res).getByteArray(), StandardCharsets.UTF_8);
+
+            return jsonStr;
         } catch (Exception e) {
             throw new RuntimeException("Error generating serialization", e);
         }
@@ -81,15 +89,26 @@ public class ConnectedAasEnvironment implements AasEnvironment {
 	@Override
 	public String createXMLAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds,
 			boolean includeConceptDescriptions) throws SerializationException {
-		// TODO Auto-generated method stub
-		return "";
+		try {
+			Resource res = serializationApi.generateSerializationByIds("application/xml", aasIds, submodelIds, includeConceptDescriptions);
+
+			String jsonStr = new String(((ByteArrayResource) res).getByteArray(), StandardCharsets.UTF_8);
+
+            return jsonStr;
+        } catch (Exception e) {
+            throw new RuntimeException("Error generating serialization", e);
+        }
 	}
 
 	@Override
 	public byte[] createAASXAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds,
 			boolean includeConceptDescriptions) throws SerializationException, IOException {
-		// TODO Auto-generated method stub
-		return null ;
+		try {
+			Resource res = serializationApi.generateSerializationByIds("application/asset-administration-shell-package+xml", aasIds, submodelIds, includeConceptDescriptions);
+            return ((ByteArrayResource) res).getByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("Error generating serialization", e);
+        }
 	}
 
 	@Override

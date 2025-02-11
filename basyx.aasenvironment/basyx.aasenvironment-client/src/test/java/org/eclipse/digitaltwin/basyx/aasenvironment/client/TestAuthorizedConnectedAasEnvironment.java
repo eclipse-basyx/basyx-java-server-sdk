@@ -25,44 +25,34 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.aasenvironment.AASEnvironmentSerializationTestSuite;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
-import org.eclipse.digitaltwin.basyx.aasenvironment.TestAASEnvironmentSerialization;
-import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironment;
-import org.eclipse.digitaltwin.basyx.aasenvironment.client.internal.SerializationApi;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleConceptDescriptionRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryBackendProvider;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionInMemoryBackendProvider;
+import org.eclipse.digitaltwin.basyx.aasservice.client.TestAuthorizedConnectedAasService;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
-import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.io.Resource;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-public class TestConnectedAasEnvironment extends AASEnvironmentSerializationTestSuite  {	
+public class TestAuthorizedConnectedAasEnvironment extends TestConnectedAasEnvironment  {
+	
+	private static final String PROFILE = "authorization";
+	
 	protected ConnectedAasEnvironment connectedAasEnvironment;
 	
 	protected static ConfigurableApplicationContext appContext;
@@ -74,16 +64,21 @@ public class TestConnectedAasEnvironment extends AASEnvironmentSerializationTest
 	
 	@BeforeClass
 	public static void initApplication() throws FileNotFoundException, IOException {
-		appContext = new SpringApplication(DummyAasEnvironmentComponent.class).run(new String[] {});		
+		SpringApplication application = new SpringApplication(DummyAasEnvironmentComponent.class);
+		application.setAdditionalProfiles(PROFILE);
+		
+		appContext = application.run(new String[] {});	
 
 		aasRepository = appContext.getBean(AasRepository.class);
 		submodelRepository = appContext.getBean(SubmodelRepository.class);
 		conceptDescriptionRepository = appContext.getBean(ConceptDescriptionRepository.class);
-	
+
+		TestAuthorizedConnectedAasService.configureSecurityContext(TestAuthorizedConnectedAasService.getTokenProvider());
+		
 		for (Submodel submodel : createDummySubmodels()) {
 			submodelRepository.createSubmodel(submodel);
 		}
-
+		
 		for (AssetAdministrationShell shell : createDummyShells()) {
 			aasRepository.createAas(shell);
 		}
@@ -95,12 +90,15 @@ public class TestConnectedAasEnvironment extends AASEnvironmentSerializationTest
 
 	@AfterClass
 	public static void cleanUpContext() {
+		SecurityContextHolder.clearContext();
 		appContext.close();
 	}
 	
 	@Before
 	public void setup() throws IOException {
-		aasEnvironment = new ConnectedAasEnvironment();
+		TokenManager mockTokenManager = new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom")));
+		
+		aasEnvironment = new AuthorizedConnectedAasEnvironment(mockTokenManager);
 	}
 	
 	@Override
@@ -110,17 +108,17 @@ public class TestConnectedAasEnvironment extends AASEnvironmentSerializationTest
 
 	@Override
 	public AasRepository getAasRepository() {
-		return TestConnectedAasEnvironment.aasRepository;
+		return TestAuthorizedConnectedAasEnvironment.aasRepository;
 	}
 
 	@Override
 	public SubmodelRepository getSubmodelRepository() {
-		return TestConnectedAasEnvironment.submodelRepository;
+		return TestAuthorizedConnectedAasEnvironment.submodelRepository;
 	}
 
 	@Override
 	public ConceptDescriptionRepository getConceptDescriptionRepository() {
-		return TestConnectedAasEnvironment.conceptDescriptionRepository;
+		return TestAuthorizedConnectedAasEnvironment.conceptDescriptionRepository;
 	}
     
 }

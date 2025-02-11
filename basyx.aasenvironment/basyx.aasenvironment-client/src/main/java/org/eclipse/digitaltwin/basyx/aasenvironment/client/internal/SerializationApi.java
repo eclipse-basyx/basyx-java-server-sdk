@@ -42,6 +42,9 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiResponse;
 import org.eclipse.digitaltwin.basyx.client.internal.Pair;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.core.exceptions.AccessTokenRetrievalException;
+import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -151,10 +154,14 @@ public class SerializationApi {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("generateSerializationByIds", localVarResponse);
         }
-        return new ApiResponse<Resource>(
-          localVarResponse.statusCode(),
-          localVarResponse.headers().map(),
-          localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<Resource>() {}) // closes the InputStream
+
+        byte[] fileBytes = localVarResponse.body().readAllBytes();
+        Resource resource = new ByteArrayResource(fileBytes);
+
+        return new ApiResponse<>(
+            localVarResponse.statusCode(),
+            localVarResponse.headers().map(),
+            resource
         );
       } finally {
       }
@@ -173,8 +180,6 @@ public class SerializationApi {
       throw new ApiException(400, "Missing the required parameter 'serializationFormat' when calling generateSerializationByIds");
     }
 
-    
-
     HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
     String localVarPath = "/serialization";
@@ -182,15 +187,34 @@ public class SerializationApi {
     List<Pair> localVarQueryParams = new ArrayList<>();
     StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
     String localVarQueryParameterBaseName;
+    
+    String aasIdsEncoded = "";
+    for (int i = 0; i < aasIds.size(); i++) {
+    	if (aasIdsEncoded.length() > 0) {
+    		aasIdsEncoded += ",";
+    	}
+    	
+    	aasIdsEncoded += Base64UrlEncodedIdentifier.encodeIdentifier(aasIds.get(i));
+    }
+    
+    String submodelIdsEncoded = "";
+    for (int i = 0; i < submodelIds.size(); i++) {
+    	if (submodelIdsEncoded.length() > 0) {
+    		submodelIdsEncoded += ",";
+    	}
+    	
+    	submodelIdsEncoded += Base64UrlEncodedIdentifier.encodeIdentifier(submodelIds.get(i));
+    }
+     
     localVarQueryParameterBaseName = "aasIds";
-    localVarQueryParams.addAll(ApiClient.parameterToPairs("multi", "aasIds", aasIds));
+    localVarQueryParams.addAll(ApiClient.parameterToPairs("aasIds", aasIdsEncoded));
+    
     localVarQueryParameterBaseName = "submodelIds";
-    localVarQueryParams.addAll(ApiClient.parameterToPairs("multi", "submodelIds", submodelIds));
+    localVarQueryParams.addAll(ApiClient.parameterToPairs("submodelIds", submodelIdsEncoded));
+    
     localVarQueryParameterBaseName = "includeConceptDescriptions";
     localVarQueryParams.addAll(ApiClient.parameterToPairs("includeConceptDescriptions", includeConceptDescriptions));
-    localVarQueryParameterBaseName = "serializationFormat";
-    localVarQueryParams.addAll(ApiClient.parameterToPairs("serializationFormat", serializationFormat));
-
+    
     if (!localVarQueryParams.isEmpty() || localVarQueryStringJoiner.length() != 0) {
       StringJoiner queryJoiner = new StringJoiner("&");
       localVarQueryParams.forEach(p -> queryJoiner.add(p.getName() + '=' + p.getValue()));
@@ -201,10 +225,10 @@ public class SerializationApi {
     } else {
       localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
     }
+    
+    localVarRequestBuilder.header("Accept", serializationFormat);
 
-    localVarRequestBuilder.header("Accept", "application/asset-administration-shell-package+xml, application/json, application/xml");
-
-	  addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
+    addAuthorizationHeaderIfAuthIsEnabled(localVarRequestBuilder);
     
     localVarRequestBuilder.method("GET", HttpRequest.BodyPublishers.noBody());
     if (memberVarReadTimeout != null) {
