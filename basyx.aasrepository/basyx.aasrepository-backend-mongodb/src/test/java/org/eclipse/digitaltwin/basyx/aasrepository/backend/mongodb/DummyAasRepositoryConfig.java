@@ -25,8 +25,11 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
 
-import org.springframework.boot.test.context.TestConfiguration;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import com.mongodb.client.MongoClient;
@@ -38,18 +41,17 @@ import com.mongodb.client.MongoClients;
  * @author mateusmolina, danish
  *
  */
-@TestConfiguration
+@Configuration
 public class DummyAasRepositoryConfig {
 	public static final String COLLECTION = "aasRepositoryPersistencyTestCollection";
 	public static final String DB = "BaSyxTestDb";
 
+	@Autowired
+	private AasRepositoryFactory aasRepositoryFactory;
+
 	@Bean
-	MongoTemplate createAasRepoMongoTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-
-		MongoClient client = MongoClients.create(connectionURL);
-
-		return new MongoTemplate(client, DB);
+	AasRepository createAasRepository() {
+		return aasRepositoryFactory.create();
 	}
 
 }
