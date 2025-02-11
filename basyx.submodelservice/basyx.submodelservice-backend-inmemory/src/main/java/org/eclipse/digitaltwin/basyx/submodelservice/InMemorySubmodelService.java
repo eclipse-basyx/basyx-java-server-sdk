@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -154,14 +155,14 @@ public class InMemorySubmodelService implements SubmodelService {
 				SubmodelElementList list = (SubmodelElementList) parentSme;
 				List<SubmodelElement> submodelElements = list.getValue();
 				submodelElements.add(submodelElement);
-				list.setValue(submodelElements);
-				return;
-			}
-			if (parentSme instanceof SubmodelElementCollection) {
+			} else if (parentSme instanceof SubmodelElementCollection) {
 				SubmodelElementCollection collection = (SubmodelElementCollection) parentSme;
 				List<SubmodelElement> submodelElements = collection.getValue();
 				submodelElements.add(submodelElement);
-				collection.setValue(submodelElements);
+			} else if (parentSme instanceof Entity) {
+				Entity entity = (Entity) parentSme;
+				List<SubmodelElement> submodelElements = entity.getStatements();
+				submodelElements.add(submodelElement);
 			}
 		}
 	}
@@ -194,24 +195,30 @@ public class InMemorySubmodelService implements SubmodelService {
 	}
 
 	private void deleteNestedSubmodelElement(String idShortPath) {
-		SubmodelElement sm = parser.getSubmodelElementFromIdShortPath(idShortPath);
+		SubmodelElement sme = parser.getSubmodelElementFromIdShortPath(idShortPath);
 		if (helper.isDirectParentASubmodelElementList(idShortPath)) {
-			deleteNestedSubmodelElementFromList(idShortPath, sm);
+			deleteNestedSubmodelElementFromList(idShortPath, sme);
 		} else {
-			deleteNestedSubmodelElementFromCollection(idShortPath, sm);
+			deleteNestedSubmodelElementFromCollectionOrEntity(idShortPath, sme);
 		}
 	}
 
-	private void deleteNestedSubmodelElementFromList(String idShortPath, SubmodelElement sm) {
+	private void deleteNestedSubmodelElementFromList(String idShortPath, SubmodelElement sme) {
 		String collectionId = helper.extractDirectParentSubmodelElementListIdShort(idShortPath);
 		SubmodelElementList list = (SubmodelElementList) parser.getSubmodelElementFromIdShortPath(collectionId);
-		list.getValue().remove(sm);
+		list.getValue().remove(sme);
 	}
 
-	private void deleteNestedSubmodelElementFromCollection(String idShortPath, SubmodelElement sm) {
+	private void deleteNestedSubmodelElementFromCollectionOrEntity(String idShortPath, SubmodelElement sme) {
 		String collectionId = helper.extractDirectParentSubmodelElementCollectionIdShort(idShortPath);
-		SubmodelElementCollection collection = (SubmodelElementCollection) parser.getSubmodelElementFromIdShortPath(collectionId);
-		collection.getValue().remove(sm);
+		SubmodelElement parent = parser.getSubmodelElementFromIdShortPath(collectionId);
+		if (parent instanceof SubmodelElementCollection) {
+			SubmodelElementCollection collection = (SubmodelElementCollection) parent;
+			collection.getValue().remove(sme);
+		} else if (parent instanceof Entity) {
+			Entity entity = (Entity) parent;
+			entity.getStatements().remove(sme);
+		}
 	}
 
 	private void deleteFlatSubmodelElement(String idShortPath) throws ElementDoesNotExistException {
