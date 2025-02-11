@@ -78,5 +78,13 @@
       "@type": "submodel-registry",
       "submodelIds": "specificSubmodelId-2"
     }
+  },
+  {
+    "role": "basyx-uploader",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "submodel-registry",
+      "submodelIds": "*"
+    }
   }
 ]

@@ -55,17 +55,23 @@ public class AasTargetInformationAdapter implements TargetInformationAdapter {
 		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation").build();
 
 		SubmodelElementList aasId = new DefaultSubmodelElementList.Builder().idShort("aasIds").build();
+		Property typeProperty = new DefaultProperty.Builder().idShort("@type").value("aas").build();
 
 		List<SubmodelElement> aasIds = ((AasTargetInformation) targetInformation).getAasIds().stream().map(this::transform).collect(Collectors.toList());
 		aasId.setValue(aasIds);
 
-		targetInformationSMC.setValue(Arrays.asList(aasId));
+		targetInformationSMC.setValue(Arrays.asList(aasId, typeProperty));
 
 		return targetInformationSMC;
 	}
 
 	@Override
 	public TargetInformation adapt(SubmodelElementCollection targetInformation) {
+
+		String targetInformationType = getTargetInformationType(targetInformation);
+
+		if (!targetInformationType.equals("aas"))
+			throw new InvalidTargetInformationException("The TargetInformation @type: " + targetInformationType + " is not compatible with " + getClass().getName() + ".");
 
 		SubmodelElement aasIdSubmodelElement = targetInformation.getValue().stream().filter(sme -> sme.getIdShort().equals("aasIds")).findAny().orElseThrow(
 				() -> new InvalidTargetInformationException("The TargetInformation defined in the SubmodelElementCollection Rule with id: " + targetInformation.getIdShort() + " is not compatible with the " + getClass().getName()));
@@ -82,6 +88,14 @@ public class AasTargetInformationAdapter implements TargetInformationAdapter {
 
 	private Property transform(String aasId) {
 		return new DefaultProperty.Builder().value(aasId).build();
+	}
+
+	private String getTargetInformationType(SubmodelElementCollection targetInformation) {
+
+		Property typeProperty = (Property) targetInformation.getValue().stream().filter(sme -> sme.getIdShort().equals("@type")).findAny()
+				.orElseThrow(() -> new InvalidTargetInformationException("The TargetInformation defined in the SubmodelElementCollection Rule with id: " + targetInformation.getIdShort() + " does not have @type definition"));
+
+		return typeProperty.getValue();
 	}
 
 }

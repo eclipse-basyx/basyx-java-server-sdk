@@ -26,3 +26,15 @@ To end your session click on the logout button in the top right corner.
 ![Logout button in the AAS UI](logout.png)
 
 There are several other user accounts available, each with different roles. You can use them to test the different levels of access. The password for these users is their username without the dots. You can find them in the [Users](http://localhost:9097/admin/master/console/#/BaSyx/users) tab of the BaSyx realm in Keycloak.
+
+## Upload AAS Environment files (AASX/JSON/XML) with RBAC
+
+This secured example also demonstrates the secured upload of AAS Environment files with a specific role `basyx-uploader`. To upload an AAS Environment file using the AAS GUI, please login using below account:
+
+- username: basyx.uploader
+- password: basyxuploader
+
+After logging in, use the upload icon to upload the AAS Environment files.
+
+> **Note:** For uploading an AAS Environment file (AASX/JSON/XML), there should be defined rules for the creation, updation, and reading. As AAS Environment combines all repositories, aas-environment-rbac-rules should have rules for CREATE, UPDATE, and READ for targetInformation aas, submodel, and concept-descriptions. The reason is that while uploading the AAS Env files, it interacts with all the repositories and if any appropriate rule is missing then it throws the exception. This is also documented in [here](https://wiki.basyx.org/en/latest/content/user_documentation/basyx_components/v2/aas_environment/features/authorization.html#:~:text=For%20upload%2Drelated,subjects%20under%20consideration.).
+

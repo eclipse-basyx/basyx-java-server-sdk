@@ -28,11 +28,15 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.autho
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.Action;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
@@ -40,6 +44,9 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionExcep
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Decorator for authorized {@link ConceptDescriptionRepository}
@@ -49,6 +56,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
  */
 public class AuthorizedConceptDescriptionRepository implements ConceptDescriptionRepository {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizedConceptDescriptionRepository.class);
 	private ConceptDescriptionRepository decorated;
 	private RbacPermissionResolver<ConceptDescriptionTargetInformation> permissionResolver;
 	
@@ -61,9 +69,31 @@ public class AuthorizedConceptDescriptionRepository implements ConceptDescriptio
 	public CursorResult<List<ConceptDescription>> getAllConceptDescriptions(PaginationInfo pInfo) {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new ConceptDescriptionTargetInformation(getIdAsList("*")));
 		
-		throwExceptionIfInsufficientPermission(isAuthorized);
+		if (isAuthorized)
+			return decorated.getAllConceptDescriptions(pInfo);
 		
-		return decorated.getAllConceptDescriptions(pInfo);
+		List<TargetInformation> targetInformations = permissionResolver.getMatchingTargetInformationInRules(Action.READ, new ConceptDescriptionTargetInformation(getIdAsList("*")));
+		
+		List<String> allIds = targetInformations.stream().map(ConceptDescriptionTargetInformation.class::cast)
+				.map(ConceptDescriptionTargetInformation::getConceptDescriptionIds).flatMap(List::stream).collect(Collectors.toList());
+		
+		List<ConceptDescription> conceptDesc = allIds.stream().map(id -> {
+			try {
+				return getConceptDescription(id);
+			} catch (ElementDoesNotExistException e) {
+				LOGGER.error("Concept Description: '{}' not found, Error: {}", id, e.getMessage());
+				return null;
+			} catch (Exception e) {
+				LOGGER.error("Exception occurred while retrieving the Concept Description: {}, Error: {}", id, e.getMessage());
+				return null;
+			}
+		}).filter(Objects::nonNull).collect(Collectors.toList());
+		
+		TreeMap<String, ConceptDescription> aasMap = conceptDesc.stream().collect(Collectors.toMap(ConceptDescription::getId, aas -> aas, (a, b) -> a, TreeMap::new));
+
+		PaginationSupport<ConceptDescription> paginationSupport = new PaginationSupport<>(aasMap, ConceptDescription::getId);
+
+		return paginationSupport.getPaged(pInfo);
 	}
 
 	@Override
