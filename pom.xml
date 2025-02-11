@@ -293,6 +293,7 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<configuration>
 						<skip>${skipSurefire}</skip>
+						<argLine>--add-opens java.base/java.io=ALL-UNNAMED</argLine>
 					</configuration>
 					<dependencies>
 						<dependency>
