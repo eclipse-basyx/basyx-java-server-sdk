@@ -25,23 +25,17 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
-import static org.junit.Assert.*;
-
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.ConceptDescriptionRepositorySuite;
-import org.junit.Test;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -50,12 +44,9 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author danish, kammognie, mateusmolina
  *
  */
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionRepositorySuite {
-	private static final String CONFIGURED_CD_REPO_NAME = "configured-cd-repo-name";
-	private static final String COLLECTION = "conceptDescTestCollection";
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -71,59 +62,14 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 		return conceptDescriptionRepository;
 	}
 
+	@Before
+	public void cleanup() {
+		MongoDBUtilities.clearCollection(mongoTemplate, DummyConceptDescriptionRepositoryConfig.TEST_COLLECTION_NAME);
+	}
+
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions) {
-		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
-
 		return new CrudConceptDescriptionRepositoryFactory(conceptDescriptionRepositoryBackend).withRemoteCollection(conceptDescriptions).create();
-	}
-
-	@Test
-	public void testConfiguredMongoDBConceptDescriptionRepositoryName() {
-		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
-
-		ConceptDescriptionRepository repo = new CrudConceptDescriptionRepository(conceptDescriptionRepositoryBackend, CONFIGURED_CD_REPO_NAME);
-
-		assertEquals(CONFIGURED_CD_REPO_NAME, repo.getName());
-	}
-
-	@Test
-	public void conceptDescriptionIsPersisted() {
-		ConceptDescription expectedConceptDescription = createDummyConceptDescriptionOnRepo(conceptDescriptionRepository);
-		ConceptDescription retrievedConceptDescription = getConceptDescriptionFromNewBackendInstance(conceptDescriptionRepository, expectedConceptDescription.getId());
-
-		assertEquals(expectedConceptDescription, retrievedConceptDescription);
-	}
-
-	@Test
-	public void updatedConceptDescriptionIsPersisted() {
-		ConceptDescriptionRepository mongoDBConceptDescriptionRepository = getConceptDescriptionRepository();
-
-		ConceptDescription expectedConceptDescription = createDummyConceptDescriptionOnRepo(mongoDBConceptDescriptionRepository);
-
-		addDescriptionToConceptDescription(expectedConceptDescription);
-
-		mongoDBConceptDescriptionRepository.updateConceptDescription(expectedConceptDescription.getId(), expectedConceptDescription);
-
-		ConceptDescription retrievedConceptDescription = getConceptDescriptionFromNewBackendInstance(mongoDBConceptDescriptionRepository, expectedConceptDescription.getId());
-
-		assertEquals(expectedConceptDescription, retrievedConceptDescription);
-	}
-
-	private void addDescriptionToConceptDescription(ConceptDescription expectedConceptDescription) {
-		expectedConceptDescription.setDescription(Arrays.asList(new DefaultLangStringTextType.Builder().text("description").language("en").build()));
-	}
-
-	private ConceptDescription getConceptDescriptionFromNewBackendInstance(ConceptDescriptionRepository conceptDescriptionRepository, String conceptDescriptionId) {
-		return conceptDescriptionRepository.getConceptDescription(conceptDescriptionId);
-	}
-
-	private ConceptDescription createDummyConceptDescriptionOnRepo(ConceptDescriptionRepository conceptDescriptionRepository) {
-		ConceptDescription expectedConceptDescription = new DefaultConceptDescription.Builder().id("dummy").build();
-
-		conceptDescriptionRepository.createConceptDescription(expectedConceptDescription);
-
-		return expectedConceptDescription;
 	}
 
 }

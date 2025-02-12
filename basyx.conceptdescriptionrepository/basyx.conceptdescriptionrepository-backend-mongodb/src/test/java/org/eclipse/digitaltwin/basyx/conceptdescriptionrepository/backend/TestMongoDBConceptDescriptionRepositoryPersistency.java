@@ -51,7 +51,7 @@ public class TestMongoDBConceptDescriptionRepositoryPersistency extends ConceptD
 	@Before
 	public void clearTemplate() {
 		MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
-		MongoDBUtilities.clearCollection(mongoTemplate, DummyConceptDescriptionRepositoryConfig.COLLECTION);
+		MongoDBUtilities.clearCollection(mongoTemplate, DummyConceptDescriptionRepositoryConfig.TEST_COLLECTION_NAME);
 	}
 
 	@Override
