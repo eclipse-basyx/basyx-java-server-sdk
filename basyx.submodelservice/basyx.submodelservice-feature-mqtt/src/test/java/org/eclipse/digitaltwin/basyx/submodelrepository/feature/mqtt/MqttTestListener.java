@@ -69,6 +69,10 @@ public class MqttTestListener implements InterceptHandler {
 	}
 
 	@Override
+	public void onSessionLoopError(Throwable cause) {
+	}
+
+	@Override
 	public void onDisconnect(InterceptDisconnectMessage arg0) {
 	}
 
