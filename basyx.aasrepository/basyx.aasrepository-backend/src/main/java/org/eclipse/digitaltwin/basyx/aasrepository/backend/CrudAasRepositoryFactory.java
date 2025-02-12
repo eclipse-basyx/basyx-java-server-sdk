@@ -42,15 +42,17 @@ import org.springframework.stereotype.Component;
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
 public class CrudAasRepositoryFactory implements AasRepositoryFactory {
 
-	private final CrudAasRepository crudAasRepository;
+	private final AasRepositoryBackend aasRepositoryBackend;
+	private final String aasRepositoryName;
 
 	public CrudAasRepositoryFactory(AasRepositoryBackend aasRepositoryBackend, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
-		this.crudAasRepository = new CrudAasRepository(aasRepositoryBackend, aasRepositoryName);
+		this.aasRepositoryBackend = aasRepositoryBackend;
+		this.aasRepositoryName = aasRepositoryName;
 	}
 
 	@Override
 	public AasRepository create() {
-		return crudAasRepository;
+		return new CrudAasRepository(aasRepositoryBackend, aasRepositoryName);
 	}
 
 }
