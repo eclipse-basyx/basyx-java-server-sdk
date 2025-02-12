@@ -43,11 +43,11 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoRepositories(basePackages = "org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend")
 public class MongoDbConceptDescriptionRepositoryBackendConfiguration {
 
-    static final String REPO_FIELD = "basyx.cdrepository.mongodb.collectionName";
-    static final String REPO_FIELD_DEFAULT = "cd-repo";
+    static final String COLLECTION_NAME_FIELD = "basyx.cdrepository.mongodb.collectionName";
+    static final String DEFAULT_COLLECTION_NAME = "cd-repo";
 
     @Autowired
-    void mapMongoEntity(BasyxMongoMappingContext mappingContext, @Value("${" + REPO_FIELD + ":" + REPO_FIELD_DEFAULT + "}") String collectionName) {
+    void mapMongoEntity(BasyxMongoMappingContext mappingContext, @Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
         mappingContext.addEntityMapping(ConceptDescription.class, collectionName);
     }
 }

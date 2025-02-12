@@ -51,11 +51,11 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoRepositories(basePackages = "org.eclipse.digitaltwin.basyx.aasrepository.backend")
 public class MongoDBAasRepositoryBackendConfiguration {
 
-	static final String REPO_FIELD = "basyx.aasrepository.mongodb.collectionName";
-	static final String REPO_FIELD_DEFAULT = "aas-repo";
+	static final String COLLECTION_NAME_FIELD = "basyx.aasrepository.mongodb.collectionName";
+	static final String DEFAULT_COLLECTION_NAME = "aas-repo";
 
 	@Autowired
-	void mapAasMongoEntity(BasyxMongoMappingContext mappingContext, @Value("${" + REPO_FIELD + ":" + REPO_FIELD_DEFAULT + "}") String collectionName) {
+	void mapAasMongoEntity(BasyxMongoMappingContext mappingContext, @Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
 		mappingContext.addEntityMapping(AssetAdministrationShell.class, collectionName);
 	}
 
