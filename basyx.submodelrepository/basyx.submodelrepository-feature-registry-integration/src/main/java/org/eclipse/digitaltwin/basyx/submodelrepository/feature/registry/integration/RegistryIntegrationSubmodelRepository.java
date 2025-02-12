@@ -91,7 +91,7 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 
 	@Override
 	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
-		SubmodelDescriptor descriptor = new SubmodelDescriptorFactory(submodel, submodelRepositoryRegistryLink.getSubmodelRepositoryBaseURLs(), attributeMapper).create();
+		SubmodelDescriptor descriptor = new SubmodelDescriptorFactory(submodelRepositoryRegistryLink.getSubmodelRepositoryBaseURLs(), attributeMapper).create(submodel);
 
 		decorated.createSubmodel(submodel);
 

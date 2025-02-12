@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -32,19 +32,15 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.DecoratedAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
-import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
-import org.eclipse.digitaltwin.basyx.aasservice.feature.AasServiceFeature;
-import org.eclipse.digitaltwin.basyx.aasservice.feature.DecoratedAasServiceFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
 /**
  * Provides the spring bean configuration for the {@link AasRepository} and
  * {@link AasService} utilizing all found features for the respective services
  * 
- * @author schnicke
+ * @author schnicke, mateusmolina
  *
  */
 @Configuration
@@ -53,11 +49,5 @@ public class AasRepositoryConfiguration {
 	@ConditionalOnMissingBean
 	public static AasRepository getAasRepository(AasRepositoryFactory aasRepositoryFactory, List<AasRepositoryFeature> features) {
 		return new DecoratedAasRepositoryFactory(aasRepositoryFactory, features).create();
-	}
-
-	@Primary
-	@Bean
-	public static AasServiceFactory getAasService(AasServiceFactory aasServiceFactory, List<AasServiceFeature> features) {
-		return new DecoratedAasServiceFactory(aasServiceFactory, features);
 	}
 }

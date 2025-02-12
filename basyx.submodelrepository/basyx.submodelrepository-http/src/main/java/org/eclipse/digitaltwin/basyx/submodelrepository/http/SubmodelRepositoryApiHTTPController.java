@@ -48,6 +48,8 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
+import org.eclipse.digitaltwin.basyx.operation.OperationRequestExecutor;
+import org.eclipse.digitaltwin.basyx.operation.Invokable;
 import org.eclipse.digitaltwin.basyx.pagination.GetSubmodelElementsResult;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination.GetSubmodelsResult;
@@ -283,28 +285,12 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 	@Override
 	public ResponseEntity<OperationResult> invokeOperationSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid OperationRequest body, @Valid Boolean async) {
-		List<OperationVariable> inVars = new ArrayList<>();
-		inVars.addAll(body.getInputArguments());
-		inVars.addAll(body.getInoutputArguments());
 
-		List<OperationVariable> result = Arrays.asList(repository.invokeOperation(submodelIdentifier.getIdentifier(), idShortPath, inVars.toArray(new OperationVariable[0])));
+		// TODO: #566 Add async operation execution support to
+		// SubmodelRepositoryController
 
-		List<OperationVariable> outVars = new ArrayList<>(result);
-		List<OperationVariable> inoutputVars = new ArrayList<>();
-
-		if (!body.getInoutputArguments().isEmpty()) {
-			List<String> inoutputVarsIdShorts = body.getInoutputArguments().stream().map(OperationVariable::getValue).map(SubmodelElement::getIdShort).toList();
-
-			inoutputVars = result.stream().filter(opVar -> inoutputVarsIdShorts.contains(opVar.getValue().getIdShort())).toList();
-
-			outVars.removeAll(inoutputVars);
-		}
-
-		return ResponseEntity.ok(createOperationResult(outVars, inoutputVars));
-	}
-
-	private OperationResult createOperationResult(List<OperationVariable> outputVars, List<OperationVariable> inoutputVars) {
-		return new DefaultOperationResult.Builder().outputArguments(outputVars).inoutputArguments(inoutputVars).build();
+		Invokable invokable = inArgs -> repository.invokeOperation(submodelIdentifier.getIdentifier(), idShortPath, inArgs);
+		return ResponseEntity.ok(OperationRequestExecutor.executeOperationRequestSynchronously(invokable, body));
 	}
 
 	private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
