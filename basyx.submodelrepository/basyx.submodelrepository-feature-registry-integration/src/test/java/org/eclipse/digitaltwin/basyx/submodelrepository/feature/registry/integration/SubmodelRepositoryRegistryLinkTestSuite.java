@@ -137,7 +137,7 @@ public abstract class SubmodelRepositoryRegistryLinkTestSuite {
 	}
 
 	private String getSubmodelJSONString() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodel.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodel_RegInt.json");
 	}
 
 	private String getSinglePropertyJSONString() throws FileNotFoundException, IOException {

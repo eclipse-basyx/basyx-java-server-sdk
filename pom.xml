@@ -288,6 +288,20 @@
 						</execution>
 					</executions>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<skip>${skipSurefire}</skip>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>org.apache.maven.surefire</groupId>
+							<artifactId>surefire-junit47</artifactId>
+							<version>${maven-surefire-plugin.version}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -366,7 +380,7 @@
 			<dependency>
 				<groupId>io.moquette</groupId>
 				<artifactId>moquette-broker</artifactId>
-				<version>0.16</version>
+				<version>0.17</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -377,7 +391,7 @@
 			<dependency>
 				<groupId>org.apache.tika</groupId>
 				<artifactId>tika-core</artifactId>
-				<version>3.0.0</version>
+				<version>3.1.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.reflections</groupId>
