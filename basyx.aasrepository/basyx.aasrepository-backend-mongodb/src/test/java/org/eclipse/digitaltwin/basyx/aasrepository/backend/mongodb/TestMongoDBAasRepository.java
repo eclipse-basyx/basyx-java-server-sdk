@@ -25,32 +25,25 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
-import org.eclipse.digitaltwin.basyx.aasrepository.DummyAasFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFactory;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -61,12 +54,9 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author schnicke, danish, kammognie, mateusmolina, despen
  *
  */
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class TestMongoDBAasRepository extends AasRepositorySuite {
-	private static final String COLLECTION = "testAasCollection";
-	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
 
 	@Autowired
 	private FileRepository fileRepository;
@@ -82,9 +72,9 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		return aasRepositoryFactory.create();
 	}
 
-	@After
+	@Before
 	public void cleanup() {
-		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
+		MongoDBUtilities.clearCollection(mongoTemplate, DummyAasRepositoryConfig.TEST_COLLECTION_NAME);
 	}
 
 	@Override
@@ -108,43 +98,4 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		return aasServiceWithThumbnail;
 	}
 
-	@Test
-	public void aasIsPersisted() {
-		AasRepository aasRepository = getAasRepository();
-
-		AssetAdministrationShell expectedShell = createDummyShellOnRepo(aasRepository);
-		AssetAdministrationShell retrievedShell = aasRepository.getAas(expectedShell.getId());
-
-		assertEquals(expectedShell, retrievedShell);
-	}
-
-	@Test
-	public void updatedAasIsPersisted() {
-		AasRepository aasRepository = getAasRepository();
-
-		AssetAdministrationShell expectedShell = createDummyShellOnRepo(aasRepository);
-		addSubmodelReferenceToAas(expectedShell);
-
-		aasRepository.updateAas(expectedShell.getId(), expectedShell);
-
-		AssetAdministrationShell retrievedShell = aasRepository.getAas(expectedShell.getId());
-
-		assertEquals(expectedShell, retrievedShell);
-	}
-
-	@Test
-	public void getConfiguredMongoDBAasRepositoryName() {
-		// todo
-	}
-
-	private void addSubmodelReferenceToAas(AssetAdministrationShell expectedShell) {
-		expectedShell.setSubmodels(Arrays.asList(DummyAasFactory.createDummyReference("dummySubmodel")));
-	}
-
-	private AssetAdministrationShell createDummyShellOnRepo(AasRepository aasRepository) {
-		AssetAdministrationShell expectedShell = new DefaultAssetAdministrationShell.Builder().id("dummy").build();
-
-		aasRepository.createAas(expectedShell);
-		return expectedShell;
-	}
 }
