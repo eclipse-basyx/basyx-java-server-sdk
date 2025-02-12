@@ -35,46 +35,31 @@ import org.springframework.stereotype.Component;
  * Simple AAS Discovery factory that creates a {@link CrudAASXFileServer} with a
  * backend provider and a service factory
  * 
- * @author zielstor, fried
+ * @author zielstor, fried, mateusmolina
  * 
  */
 @Component
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
-public class SimpleAASXFileServerFactory implements AASXFileServerFactory {
+public class CrudAASXFileServerFactory implements AASXFileServerFactory {
 
-	private AASXFileServerBackendProvider aasxFileServerBackendProvider;
+	static final String DEFAULT_AASX_FILE_SERVER_NAME = "aasx-fileserver";
 
-	private String aasxFileServerName = null;
+	private final PackageBackend packageBackend;
+	private final String aasxFileServerName;
 
-	/**
-	 * Constructor
-	 * 
-	 * @param aasxFileServerBackendProvider
-	 *            The backend provider
-	 */
-	@Autowired(required = false)
-	public SimpleAASXFileServerFactory(AASXFileServerBackendProvider aasxFileServerBackendProvider) {
-		this.aasxFileServerBackendProvider = aasxFileServerBackendProvider;
+	@Autowired
+	public CrudAASXFileServerFactory(PackageBackend aasxFileServerBackend, @Value("${basyx.aasxfileserver.name:" + DEFAULT_AASX_FILE_SERVER_NAME + "}") String aasxFileServerName) {
+		this.packageBackend = aasxFileServerBackend;
+		this.aasxFileServerName = aasxFileServerName;
 	}
 
-	/**
-	 * Constructor
-	 * 
-	 * @param aasxFileServerBackendProvider
-	 *            The backend provider
-	 * @param aasRepositoryName
-	 *            The AASX file server name
-	 */
-	@Autowired(required = false)
-	public SimpleAASXFileServerFactory(AASXFileServerBackendProvider aasxFileServerBackendProvider,
-			@Value("${basyx.aasxfileserver.name:aasx-fileserver}") String aasRepositoryName) {
-		this(aasxFileServerBackendProvider);
-		this.aasxFileServerName = aasRepositoryName;
+	public CrudAASXFileServerFactory(PackageBackend aasxFileServerBackend) {
+		this(aasxFileServerBackend, DEFAULT_AASX_FILE_SERVER_NAME);
 	}
 
 	@Override
 	public AASXFileServer create() {
-		return new CrudAASXFileServer(aasxFileServerBackendProvider, aasxFileServerName);
+		return new CrudAASXFileServer(packageBackend, aasxFileServerName);
 	}
 
 }

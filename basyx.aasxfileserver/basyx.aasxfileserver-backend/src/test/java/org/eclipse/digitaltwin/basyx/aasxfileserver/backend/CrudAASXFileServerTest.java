@@ -35,7 +35,7 @@ public class CrudAASXFileServerTest {
 
 	@Test
 	public void getConfiguredAASXFileServerName() {
-		AASXFileServer service = new SimpleAASXFileServerFactory(null, CONFIGURED_AASX_FILE_SERVER_NAME).create();
+		AASXFileServer service = new CrudAASXFileServerFactory(null, CONFIGURED_AASX_FILE_SERVER_NAME).create();
 
 		assertEquals(CONFIGURED_AASX_FILE_SERVER_NAME, service.getName());
 	}

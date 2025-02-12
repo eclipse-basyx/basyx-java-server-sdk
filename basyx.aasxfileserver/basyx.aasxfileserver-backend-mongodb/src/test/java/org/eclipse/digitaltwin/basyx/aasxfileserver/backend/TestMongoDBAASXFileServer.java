@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,35 +23,31 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasxfileserver;
+package org.eclipse.digitaltwin.basyx.aasxfileserver.backend;
 
-import static org.junit.Assert.*;
-
-import org.eclipse.digitaltwin.basyx.aasxfileserver.backend.CrudAASXFileServerFactory;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.backend.InMemoryPackageBackend;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.core.AASXFileServerSuite;
-import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Tests the {@link AASXFileServerInMemoryBackendProvider}
+ * Tests the {@link AASXFileServer} with MongoDB backend
  * 
- * @author chaithra
+ * @author zielstor,fried, mateusmolina
  *
  */
-public class TestInMemoryAASXFileServer extends AASXFileServerSuite {
+@SpringBootTest
+@RunWith(SpringRunner.class)
+public class TestMongoDBAASXFileServer extends AASXFileServerSuite {
 
-	private static final String CONFIGURED_AASX_SERVER_NAME = "configured-aasx-server-name";
+	@Autowired
+	AASXFileServer aasxFileServer;
 
 	@Override
 	protected AASXFileServer getAASXFileServer() {
-		return new CrudAASXFileServerFactory(new InMemoryPackageBackend()).create();
-	}
-
-	@Test
-	public void getConfiguredInMemoryAASXFileServer() {
-		AASXFileServer server = new CrudAASXFileServerFactory(new InMemoryPackageBackend(), CONFIGURED_AASX_SERVER_NAME).create();
-
-		assertEquals(CONFIGURED_AASX_SERVER_NAME, server.getName());
+		return aasxFileServer;
 	}
 
 }
