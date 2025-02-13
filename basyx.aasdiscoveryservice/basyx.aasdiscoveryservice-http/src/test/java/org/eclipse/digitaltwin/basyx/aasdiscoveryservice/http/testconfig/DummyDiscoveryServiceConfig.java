@@ -30,6 +30,7 @@ import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory.InMemo
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 /**
  * Configuration for tests
@@ -38,6 +39,7 @@ import org.springframework.context.annotation.Configuration;
  *
  */
 @Configuration
+@Profile("httptests")
 public class DummyDiscoveryServiceConfig {
 
 	@Bean
