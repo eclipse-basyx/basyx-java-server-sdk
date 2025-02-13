@@ -113,7 +113,7 @@ public class SubmodelRepositoryRegistryLinkDescriptorGenerationTest {
     }
     
 	protected SubmodelRepository getSubmodelRepository() {
-        return new CrudSubmodelRepositoryFactory(new InMemorySubmodelRepositoryBackend(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())).create();
+        return new CrudSubmodelRepositoryFactory(InMemorySubmodelRepositoryBackend.buildDefault()).create();
 	}
 
 }

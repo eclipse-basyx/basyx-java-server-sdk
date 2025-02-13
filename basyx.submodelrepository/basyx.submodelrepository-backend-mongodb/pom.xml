@@ -34,7 +34,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.submodelservice-backend-inmemory</artifactId>
+			<artifactId>basyx.submodelservice-backend-mongodb</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>

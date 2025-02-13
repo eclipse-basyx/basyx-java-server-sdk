@@ -41,7 +41,7 @@ public class CrudSubmodelRepositoryTest {
 
 	@Test
 	public void getConfiguredAasRepositoryName() {
-		SubmodelRepository repo = new CrudSubmodelRepository(null, null, CONFIGURED_SUBMODEL_REPO_NAME);
+		SubmodelRepository repo = new CrudSubmodelRepository(null, CONFIGURED_SUBMODEL_REPO_NAME);
 
 		assertEquals(CONFIGURED_SUBMODEL_REPO_NAME, repo.getName());
 	}

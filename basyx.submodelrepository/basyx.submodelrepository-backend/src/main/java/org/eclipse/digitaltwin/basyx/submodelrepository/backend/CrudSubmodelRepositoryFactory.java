@@ -31,7 +31,6 @@ import java.util.Optional;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -51,19 +50,17 @@ public class CrudSubmodelRepositoryFactory implements SubmodelRepositoryFactory 
 	static final String DEFAULT_REPOSITORY_NAME = "sm-repo";
 
 	private final SubmodelRepositoryBackend backend;
-	private final SubmodelServiceFactory submodelServiceFactory;
 	private final String submodelRepositoryName;
 	private Optional<Collection<Submodel>> submodels = Optional.empty();
 
 	@Autowired
-	public CrudSubmodelRepositoryFactory(SubmodelRepositoryBackend submodelRepositoryBackend, SubmodelServiceFactory submodelServiceFactory, @Value("${basyx.smrepo.name:" + DEFAULT_REPOSITORY_NAME + "}") String submodelRepositoryName) {
+	public CrudSubmodelRepositoryFactory(SubmodelRepositoryBackend submodelRepositoryBackend, @Value("${basyx.smrepo.name:" + DEFAULT_REPOSITORY_NAME + "}") String submodelRepositoryName) {
 		this.backend = submodelRepositoryBackend;
-		this.submodelServiceFactory = submodelServiceFactory;
 		this.submodelRepositoryName = submodelRepositoryName;
 	}
 
-	public CrudSubmodelRepositoryFactory(SubmodelRepositoryBackend submodelRepositoryBackend, SubmodelServiceFactory submodelServiceFactory) {
-		this(submodelRepositoryBackend, submodelServiceFactory, DEFAULT_REPOSITORY_NAME);
+	public CrudSubmodelRepositoryFactory(SubmodelRepositoryBackend submodelRepositoryBackend) {
+		this(submodelRepositoryBackend, DEFAULT_REPOSITORY_NAME);
 	}
 
 	public CrudSubmodelRepositoryFactory withRemoteCollection(Collection<Submodel> submodels) {
@@ -74,9 +71,9 @@ public class CrudSubmodelRepositoryFactory implements SubmodelRepositoryFactory 
 	@Override
 	public SubmodelRepository create() {
 		if (!submodels.isPresent())
-			return new CrudSubmodelRepository(backend, submodelServiceFactory, submodelRepositoryName);
+			return new CrudSubmodelRepository(backend, submodelRepositoryName);
 
-		return new CrudSubmodelRepository(backend, submodelServiceFactory, submodelRepositoryName, submodels.get());
+		return new CrudSubmodelRepository(backend, submodelRepositoryName, submodels.get());
 	}
 
 }

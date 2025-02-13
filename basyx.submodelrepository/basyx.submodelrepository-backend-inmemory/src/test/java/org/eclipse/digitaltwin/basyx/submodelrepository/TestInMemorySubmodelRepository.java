@@ -25,18 +25,16 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.junit.Test;
 import org.junit.Test.None;
 
@@ -54,12 +52,12 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	
 	@Override
 	protected SubmodelRepository getSubmodelRepository() {
-		return new CrudSubmodelRepositoryFactory(new InMemorySubmodelRepositoryBackend(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())).create();
+		return new CrudSubmodelRepositoryFactory(InMemorySubmodelRepositoryBackend.buildDefault()).create();
 	}
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
-		return new CrudSubmodelRepositoryFactory(new InMemorySubmodelRepositoryBackend(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())).withRemoteCollection(submodels).create();
+		return new CrudSubmodelRepositoryFactory(InMemorySubmodelRepositoryBackend.buildDefault()).withRemoteCollection(submodels).create();
 	}
 	
 	@Override
@@ -71,7 +69,7 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 
 	@Test
 	public void getConfiguredInMemorySmRepositoryName() {
-		SubmodelRepository repo = new CrudSubmodelRepository(new InMemorySubmodelRepositoryBackend(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository()), CONFIGURED_SM_REPO_NAME);
+		SubmodelRepository repo = new CrudSubmodelRepository(InMemorySubmodelRepositoryBackend.buildDefault(), CONFIGURED_SM_REPO_NAME);
 
 		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
 	}

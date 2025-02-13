@@ -48,8 +48,6 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.eclipse.digitaltwin.basyx.serialization.SubmodelMetadataUtil;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.data.repository.CrudRepository;
@@ -65,20 +63,16 @@ import org.springframework.lang.NonNull;
 public class CrudSubmodelRepository implements SubmodelRepository {
 
 	private final SubmodelRepositoryBackend submodelBackend;
-
-	private final SubmodelServiceFactory submodelServiceFactory;
-
 	private final String submodelRepositoryName;
 
-	public CrudSubmodelRepository(SubmodelRepositoryBackend submodelRepositoryBackend, SubmodelServiceFactory submodelServiceFactory, String submodelRepositoryName) {
+	public CrudSubmodelRepository(SubmodelRepositoryBackend submodelRepositoryBackend, String submodelRepositoryName) {
 		this.submodelBackend = submodelRepositoryBackend;
-		this.submodelServiceFactory = submodelServiceFactory;
 		this.submodelRepositoryName = submodelRepositoryName;
 
 	}
 
-	public CrudSubmodelRepository(SubmodelRepositoryBackend submodelRepositoryBackend, SubmodelServiceFactory submodelServiceFactory, String submodelRepositoryName, Collection<Submodel> submodels) {
-		this(submodelRepositoryBackend, submodelServiceFactory, submodelRepositoryName);
+	public CrudSubmodelRepository(SubmodelRepositoryBackend submodelRepositoryBackend, String submodelRepositoryName, Collection<Submodel> submodels) {
+		this(submodelRepositoryBackend, submodelRepositoryName);
 
 		initializeRemoteCollection(submodels);
 	}
@@ -153,72 +147,47 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo) throws ElementDoesNotExistException {
-		return getSubmodelServiceOrThrow(submodelId).getSubmodelElements(pInfo);
+		return submodelBackend.getSubmodelElements(submodelId, pInfo);
 	}
 
 	@Override
 	public SubmodelElement getSubmodelElement(String submodelId, String smeIdShortPath) throws ElementDoesNotExistException {
-		return getSubmodelServiceOrThrow(submodelId).getSubmodelElement(smeIdShortPath);
+		return submodelBackend.getSubmodelElement(submodelId, smeIdShortPath);
 	}
 
 	@Override
 	public SubmodelElementValue getSubmodelElementValue(String submodelId, String smeIdShort) throws ElementDoesNotExistException {
-		return getSubmodelServiceOrThrow(submodelId).getSubmodelElementValue(smeIdShort);
+		return submodelBackend.getSubmodelElementValue(submodelId, smeIdShort);
 	}
 
 	@Override
 	public void setSubmodelElementValue(String submodelId, String smeIdShort, SubmodelElementValue value) throws ElementDoesNotExistException {
-		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
-
-		submodelService.setSubmodelElementValue(smeIdShort, value);
-
-		updateSubmodel(submodelId, submodelService.getSubmodel());
+		submodelBackend.setSubmodelElementValue(submodelId, smeIdShort, value);
 	}
 
 	@Override
 	public void createSubmodelElement(String submodelId, SubmodelElement smElement) {
-		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
-
-		submodelService.createSubmodelElement(smElement);
-
-		updateSubmodel(submodelId, submodelService.getSubmodel());
+		submodelBackend.createSubmodelElement(submodelId, smElement);
 	}
 
 	@Override
 	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
-		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
-
-		submodelService.createSubmodelElement(idShortPath, smElement);
-
-		updateSubmodel(submodelId, submodelService.getSubmodel());
+		submodelBackend.createSubmodelElement(submodelId, idShortPath, smElement);
 	}
 
 	@Override
 	public void updateSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
-
-		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
-
-		SubmodelElement element = submodelService.getSubmodelElement(idShortPath);
-
-		throwIfMismatchingIds(element.getIdShort(), submodelElement.getIdShort());
-
-		submodelService.updateSubmodelElement(idShortPath, submodelElement);
-
-		updateSubmodel(submodelId, submodelService.getSubmodel());
+		submodelBackend.updateSubmodelElement(submodelId, idShortPath, submodelElement);
 	}
 
 	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
-		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
-
-		submodelService.deleteSubmodelElement(idShortPath);
-
-		updateSubmodel(submodelId, submodelService.getSubmodel());
+		submodelBackend.deleteSubmodelElement(submodelId, idShortPath);
 	}
 
 	@Override
 	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
-		return getSubmodelServiceOrThrow(submodelId).invokeOperation(idShortPath, input);
+		return submodelBackend.invokeOperation(submodelId, idShortPath, input);
 	}
 
 	@Override
@@ -236,29 +205,28 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
-
-		return submodelService.getFileByPath(idShortPath);
+		return submodelBackend.getFileByPathSubmodel(submodelId, idShortPath);
 	}
 
 	@Override
 	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
-		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
-
-		submodelService.setFileValue(idShortPath, fileName, inputStream);
-
-		updateSubmodel(submodelId, submodelService.getSubmodel());
+		submodelBackend.setFileValue(submodelId, idShortPath, fileName, inputStream);
 	}
 
 	@Override
 	public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
-
-		submodelService.deleteFileValue(idShortPath);
-
-		updateSubmodel(submodelId, submodelService.getSubmodel());
+		submodelBackend.deleteFileValue(submodelId, idShortPath);
 	}
-	
+
+	@Override
+	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
+		submodelBackend.patchSubmodelElements(submodelId, submodelElementList);
+	}
+
+	@Override
+	public InputStream getFileByFilePath(String submodelId, String filePath) {
+		return submodelBackend.getFileByFilePath(submodelId, filePath);
+	}
 
 	private void initializeRemoteCollection(@NonNull Collection<Submodel> submodels) {
 		if (submodels.isEmpty())
@@ -280,12 +248,6 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	private void throwIfMissingId(Collection<Submodel> submodels) {
 		submodels.stream().map(Submodel::getId).forEach(this::throwIfSubmodelIdEmptyOrNull);
-	}
-
-	private SubmodelService getSubmodelServiceOrThrow(String submodelId) {
-		Submodel submodel = submodelBackend.findById(submodelId).orElseThrow(() -> new ElementDoesNotExistException(submodelId));
-
-		return submodelServiceFactory.create(submodel);
 	}
 
 	private void throwIfMismatchingIds(String existingId, String idToBeUpdated) {
@@ -310,20 +272,6 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 		if (!submodelBackend.existsById(submodelId))
 			throw new ElementDoesNotExistException(submodelId);
-	}
-
-	@Override
-	public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
-		Submodel submodel = getSubmodel(submodelId);
-		submodel.setSubmodelElements(submodelElementList);
-		submodelBackend.save(submodel);
-	}
-
-	@Override
-	public InputStream getFileByFilePath(String submodelId, String filePath) {
-		SubmodelService submodelService = getSubmodelServiceOrThrow(submodelId);
-
-		return submodelService.getFileByFilePath(filePath);
 	}
 
 }
