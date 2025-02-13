@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.PackageDescription;
@@ -37,6 +38,8 @@ import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.model.Package;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackagesBody;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -51,8 +54,12 @@ import org.springframework.data.repository.CrudRepository;
  */
 public class CrudAASXFileServer implements AASXFileServer {
 
+	static final String AASX_CONTENT_TYPE = "application/asset-administration-shell-package";
+
 	private final PackageBackend packageBackend;
+	private final FileRepository fileRepository;
 	private final String aasxFileServerName;
+
 	private AtomicInteger packageId = new AtomicInteger(0);
 
 	/**
@@ -60,20 +67,23 @@ public class CrudAASXFileServer implements AASXFileServer {
 	 * 
 	 * @param aasxFileServerBackendProvider
 	 *            The backend provider
+	 * @param fileRepository
+	 *            The file repository
 	 * @param aasxFileServerName
 	 *            The AASX file server name
 	 */
-	public CrudAASXFileServer(PackageBackend packageBackend, String aasxFileServerName) {
+	public CrudAASXFileServer(PackageBackend packageBackend, FileRepository fileRepository, String aasxFileServerName) {
 		this.packageBackend = packageBackend;
+		this.fileRepository = fileRepository;
 		this.aasxFileServerName = aasxFileServerName;
 	}
 
 	@Override
-	public CursorResult<List<PackageDescription>> getAllAASXPackageIds(String shellId,PaginationInfo pInfo) {
-		List<PackageDescription> packageDescriptions = getPackages().stream().map(Package::getPackageDescription).collect(Collectors.toList());
+	public CursorResult<List<PackageDescription>> getAllAASXPackageIds(String shellId, PaginationInfo pInfo) {
+		List<PackageDescription> packageDescriptions = getPackages().map(Package::getPackageDescription).toList();
 
 		if (!(shellId == null || shellId.isBlank()))
-			packageDescriptions = packageDescriptions.stream().filter(packageDesc -> containsShellId(packageDesc, shellId)).collect(Collectors.toList());
+			packageDescriptions = packageDescriptions.stream().filter(packageDesc -> containsShellId(packageDesc, shellId)).toList();
 
 		TreeMap<String, PackageDescription> packageDescriptionMap = packageDescriptions.stream().collect(Collectors.toMap(PackageDescription::getPackageId, submodel -> submodel, (a, b) -> a, TreeMap::new));
 
@@ -84,17 +94,22 @@ public class CrudAASXFileServer implements AASXFileServer {
 
 	@Override
 	public InputStream getAASXByPackageId(String packageId) throws ElementDoesNotExistException {
-		throwIfAASXPackageIdDoesNotExist(packageId);
-
-		return packageBackend.findById(packageId).get().getPackagesBody().getFile();
+		return packageBackend.findById(packageId).map(this::getISFromPackage).orElseThrow(ElementDoesNotExistException::new);
 	}
 
 	@Override
 	public void updateAASXByPackageId(String packageId, List<String> shellIds, InputStream file, String filename) throws ElementDoesNotExistException {
+		deleteAASXByPackageId(packageId);
 
-		throwIfAASXPackageIdDoesNotExist(packageId);
+		PackageDescription packageDescription = createPackageDescription(shellIds, packageId);
 
-		updateAASXPackage(packageId, shellIds, file, filename);
+		String filepath = fileRepository.save(new FileMetadata(filename, AASX_CONTENT_TYPE, file));
+
+		PackagesBody packagesBody = createPackagesBody(shellIds, filename, filepath);
+
+		Package pkg = createPackage(packageDescription, packagesBody);
+
+		packageBackend.save(pkg);
 	}
 
 	@Override
@@ -104,16 +119,20 @@ public class CrudAASXFileServer implements AASXFileServer {
 
 		PackageDescription packageDescription = createPackageDescription(shellIds, newpackageId);
 
-		createPackage(shellIds, file, fileName, newpackageId, packageDescription);
+		String filepath = fileRepository.save(new FileMetadata(fileName, AASX_CONTENT_TYPE, file));
+
+		PackagesBody packagesBody = createPackagesBody(shellIds, fileName, filepath);
+
+		Package pkg = createPackage(packageDescription, packagesBody);
+
+		packageBackend.save(pkg);
 
 		return packageDescription;
 	}
 
 	@Override
 	public void deleteAASXByPackageId(String packageId) throws ElementDoesNotExistException {
-		throwIfAASXPackageIdDoesNotExist(packageId);
-
-		packageBackend.deleteById(packageId);
+		packageBackend.findById(packageId).map(this::fullyDeletePackage).orElseThrow(ElementDoesNotExistException::new);
 	}
 
 	@Override
@@ -121,7 +140,34 @@ public class CrudAASXFileServer implements AASXFileServer {
 		return aasxFileServerName == null ? AASXFileServer.super.getName() : aasxFileServerName;
 	}
 
-	private PackageDescription createPackageDescription(List<String> shellIds, String newPackageId) {
+	private InputStream getISFromPackage(Package pkg) {
+		return fileRepository.find(pkg.getPackagesBody().getFilePath());
+	}
+
+	/**
+	 * 
+	 * @param pkg
+	 * @return id of the deleted package
+	 */
+	private String fullyDeletePackage(Package pkg) {
+		final String pkgId = pkg.getPackageId();
+
+		fileRepository.delete(pkg.getPackagesBody().getFilePath());
+		packageBackend.deleteById(pkgId);
+
+		return pkgId;
+	}
+
+	private boolean containsShellId(PackageDescription packageDesc, String shellId) {
+		return packageDesc.getItems().stream().anyMatch(aasId -> aasId.equals(shellId));
+	}
+
+	private Stream<Package> getPackages() {
+		Iterable<Package> aasxFileServerPackages = packageBackend.findAll();
+		return StreamSupport.stream(aasxFileServerPackages.spliterator(), false);
+	}
+
+	private static PackageDescription createPackageDescription(List<String> shellIds, String newPackageId) {
 		PackageDescription packageDescription = new DefaultPackageDescription();
 		packageDescription.setPackageId(newPackageId);
 		packageDescription.setItems(shellIds);
@@ -129,53 +175,17 @@ public class CrudAASXFileServer implements AASXFileServer {
 		return packageDescription;
 	}
 
-	private PackagesBody createPackagesBody(List<String> shellIds, InputStream file, String fileName) {
+	private static PackagesBody createPackagesBody(List<String> shellIds, String fileName, String filePath) {
 		PackagesBody packagesBody = new PackagesBody();
 		packagesBody.aasIds(shellIds);
-		packagesBody.file(file);
 		packagesBody.fileName(fileName);
+		packagesBody.setFilePath(filePath);
 
 		return packagesBody;
 	}
 
-	private void createPackage(List<String> shellIds, InputStream file, String fileName, String newPackageId, PackageDescription packageDescription) {
-		PackagesBody packagesBody = createPackagesBody(shellIds, file, fileName);
-
-		Package aasxPackage = new Package(newPackageId, packageDescription, packagesBody);
-
-		packageBackend.save(aasxPackage);
-	}
-
-	private void updateAASXPackage(String packageId, List<String> shellIds, InputStream file, String filename) {
-		Package aasxPackage = packageBackend.findById(packageId).get();
-
-		updatePackagesBody(shellIds, file, filename, aasxPackage.getPackagesBody());
-
-		aasxPackage.getPackageDescription().setItems(shellIds);
-
-		packageBackend.delete(aasxPackage);
-		packageBackend.save(aasxPackage);
-	}
-
-	private void updatePackagesBody(List<String> shellIds, InputStream file, String filename, PackagesBody packagesBody) {
-		packagesBody.setAasIds(shellIds);
-		packagesBody.setFileName(filename);
-		packagesBody.setFile(file);
-	}
-
-	private void throwIfAASXPackageIdDoesNotExist(String id) {
-
-		if (!packageBackend.existsById(id))
-			throw new ElementDoesNotExistException(id);
-	}
-
-	private boolean containsShellId(PackageDescription packageDesc, String shellId) {
-		return packageDesc.getItems().stream().anyMatch(aasId -> aasId.equals(shellId));
-	}
-
-	private List<Package> getPackages() {
-		Iterable<Package> aasxFileServerPackages = packageBackend.findAll();
-		return StreamSupport.stream(aasxFileServerPackages.spliterator(), false).collect(Collectors.toList());
+	private static Package createPackage(PackageDescription packageDescription, PackagesBody packagesBody) {
+		return new Package(packageDescription.getPackageId(), packageDescription, packagesBody);
 	}
 
 }

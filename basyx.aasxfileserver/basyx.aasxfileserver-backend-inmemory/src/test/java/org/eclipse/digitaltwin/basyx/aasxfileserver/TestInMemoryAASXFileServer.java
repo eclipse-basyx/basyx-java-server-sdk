@@ -30,6 +30,7 @@ import static org.junit.Assert.*;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.backend.CrudAASXFileServerFactory;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.backend.InMemoryPackageBackend;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.core.AASXFileServerSuite;
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.junit.Test;
 
 /**
@@ -44,12 +45,12 @@ public class TestInMemoryAASXFileServer extends AASXFileServerSuite {
 
 	@Override
 	protected AASXFileServer getAASXFileServer() {
-		return new CrudAASXFileServerFactory(new InMemoryPackageBackend()).create();
+		return new CrudAASXFileServerFactory(new InMemoryPackageBackend(), new InMemoryFileRepository()).create();
 	}
 
 	@Test
 	public void getConfiguredInMemoryAASXFileServer() {
-		AASXFileServer server = new CrudAASXFileServerFactory(new InMemoryPackageBackend(), CONFIGURED_AASX_SERVER_NAME).create();
+		AASXFileServer server = new CrudAASXFileServerFactory(new InMemoryPackageBackend(), new InMemoryFileRepository(), CONFIGURED_AASX_SERVER_NAME).create();
 
 		assertEquals(CONFIGURED_AASX_SERVER_NAME, server.getName());
 	}

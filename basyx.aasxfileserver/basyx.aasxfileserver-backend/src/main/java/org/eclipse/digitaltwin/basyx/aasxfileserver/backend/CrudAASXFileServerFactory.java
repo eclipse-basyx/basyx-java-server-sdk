@@ -26,6 +26,7 @@ package org.eclipse.digitaltwin.basyx.aasxfileserver.backend;
 
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServerFactory;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -45,21 +46,23 @@ public class CrudAASXFileServerFactory implements AASXFileServerFactory {
 	static final String DEFAULT_AASX_FILE_SERVER_NAME = "aasx-fileserver";
 
 	private final PackageBackend packageBackend;
+	private final FileRepository fileRepository;
 	private final String aasxFileServerName;
 
 	@Autowired
-	public CrudAASXFileServerFactory(PackageBackend aasxFileServerBackend, @Value("${basyx.aasxfileserver.name:" + DEFAULT_AASX_FILE_SERVER_NAME + "}") String aasxFileServerName) {
+	public CrudAASXFileServerFactory(PackageBackend aasxFileServerBackend, FileRepository fileRepository, @Value("${basyx.aasxfileserver.name:" + DEFAULT_AASX_FILE_SERVER_NAME + "}") String aasxFileServerName) {
 		this.packageBackend = aasxFileServerBackend;
+		this.fileRepository = fileRepository;
 		this.aasxFileServerName = aasxFileServerName;
 	}
 
-	public CrudAASXFileServerFactory(PackageBackend aasxFileServerBackend) {
-		this(aasxFileServerBackend, DEFAULT_AASX_FILE_SERVER_NAME);
+	public CrudAASXFileServerFactory(PackageBackend aasxFileServerBackend, FileRepository fileRepository) {
+		this(aasxFileServerBackend, fileRepository, DEFAULT_AASX_FILE_SERVER_NAME);
 	}
 
 	@Override
 	public AASXFileServer create() {
-		return new CrudAASXFileServer(packageBackend, aasxFileServerName);
+		return new CrudAASXFileServer(packageBackend, fileRepository, aasxFileServerName);
 	}
 
 }
