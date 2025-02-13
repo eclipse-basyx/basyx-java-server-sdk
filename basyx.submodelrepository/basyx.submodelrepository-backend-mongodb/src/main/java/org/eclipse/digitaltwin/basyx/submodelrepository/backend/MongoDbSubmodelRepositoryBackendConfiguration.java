@@ -22,14 +22,19 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelrepository;
+package org.eclipse.digitaltwin.basyx.submodelrepository.backend;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
  * Provides a InMemorySubmodelServiceFactory for usage in the MongoDB Submodel
@@ -38,14 +43,25 @@ import org.springframework.context.annotation.Configuration;
  * This is needed to ensure that the SubmodelServiceFeatures are processed
  * correctly when utilizing MongoDb
  * 
- * @author jungjan
+ * @author jungjan, mateusmolina
  *
  */
 @Configuration
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-public class MongoDBSubmodelRepositoryConfiguration {
+@EnableMongoRepositories(basePackages = "org.eclipse.digitaltwin.basyx.submodelrepository.backend")
+public class MongoDbSubmodelRepositoryBackendConfiguration {
+
+    static final String COLLECTION_NAME_FIELD = "basyx.submodelrepository.mongodb.collectionName";
+    static final String DEFAULT_COLLECTION_NAME = "submodel-repo";
+
 	@Bean
-	public SubmodelServiceFactory getInMemorySubmodelServiceFactory(FileRepository fileRepository) {
+	SubmodelServiceFactory getInMemorySubmodelServiceFactory(FileRepository fileRepository) {
 		return new InMemorySubmodelServiceFactory(fileRepository);
 	}
+
+    @Autowired
+    void mapMongoEntity(BasyxMongoMappingContext mappingContext, @Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
+        mappingContext.addEntityMapping(Submodel.class, collectionName);
+    }
+
 }

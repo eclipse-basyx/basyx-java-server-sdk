@@ -49,7 +49,7 @@ public class TestMongoDBSubmodelRepositoryPersistency extends SubmodelRepository
 	@Before
 	public void clearTemplate() {
 		MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
-		MongoDBUtilities.clearCollection(mongoTemplate, DummySubmodelRepositoryConfig.COLLECTION);
+		MongoDBUtilities.clearCollection(mongoTemplate, DummySubmodelRepositoryConfig.TEST_COLLECTION);
 	}
 
 	@Override

@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.backend;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
@@ -47,46 +48,35 @@ import org.springframework.stereotype.Component;
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
 public class SimpleSubmodelRepositoryFactory implements SubmodelRepositoryFactory {
 
-	private SubmodelBackendProvider submodelBackendProvider;
-	private SubmodelServiceFactory submodelServiceFactory;
-	private String submodelRepositoryName = null;
-	private Collection<Submodel> submodels;
+	static final String DEFAULT_REPOSITORY_NAME = "sm-repo";
 
-	@Autowired(required = false)
-	public SimpleSubmodelRepositoryFactory(SubmodelBackendProvider submodelBackendProvider, SubmodelServiceFactory submodelServiceFactory) {
-		this.submodelBackendProvider = submodelBackendProvider;
+	private final SubmodelRepositoryBackend backend;
+	private final SubmodelServiceFactory submodelServiceFactory;
+	private final String submodelRepositoryName;
+	private Optional<Collection<Submodel>> submodels = Optional.empty();
+
+	@Autowired
+	public SimpleSubmodelRepositoryFactory(SubmodelRepositoryBackend submodelRepositoryBackend, SubmodelServiceFactory submodelServiceFactory, @Value("${basyx.smrepo.name:" + DEFAULT_REPOSITORY_NAME + "}") String submodelRepositoryName) {
+		this.backend = submodelRepositoryBackend;
 		this.submodelServiceFactory = submodelServiceFactory;
-	}
-
-	@Autowired(required = false)
-	public SimpleSubmodelRepositoryFactory(SubmodelBackendProvider submodelBackendProvider, SubmodelServiceFactory submodelServiceFactory, @Value("${basyx.smrepo.name:sm-repo}") String submodelRepositoryName) {
-		this(submodelBackendProvider, submodelServiceFactory);
-
 		this.submodelRepositoryName = submodelRepositoryName;
 	}
 
-	@Autowired(required = false)
-	public SimpleSubmodelRepositoryFactory(SubmodelBackendProvider submodelBackendProvider, SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels) {
-		this(submodelBackendProvider, submodelServiceFactory);
-
-		this.submodels = submodels;
+	public SimpleSubmodelRepositoryFactory(SubmodelRepositoryBackend submodelRepositoryBackend, SubmodelServiceFactory submodelServiceFactory) {
+		this(submodelRepositoryBackend, submodelServiceFactory, DEFAULT_REPOSITORY_NAME);
 	}
 
-	@Autowired(required = false)
-	public SimpleSubmodelRepositoryFactory(SubmodelBackendProvider submodelBackendProvider, SubmodelServiceFactory submodelServiceFactory, Collection<Submodel> submodels,
-			@Value("${basyx.smrepo.name:sm-repo}") String submodelRepositoryName) {
-		this(submodelBackendProvider, submodelServiceFactory, submodels);
-
-		this.submodelRepositoryName = submodelRepositoryName;
+	public SimpleSubmodelRepositoryFactory withRemoteCollection(Collection<Submodel> submodels) {
+		this.submodels = Optional.of(submodels);
+		return this;
 	}
 
 	@Override
 	public SubmodelRepository create() {
+		if (!submodels.isPresent())
+			return new CrudSubmodelRepository(backend, submodelServiceFactory, submodelRepositoryName);
 
-		if (submodels == null)
-			return new CrudSubmodelRepository(submodelBackendProvider, submodelServiceFactory, submodelRepositoryName);
-
-		return new CrudSubmodelRepository(submodelBackendProvider, submodelServiceFactory, submodels, submodelRepositoryName);
+		return new CrudSubmodelRepository(backend, submodelServiceFactory, submodelRepositoryName, submodels.get());
 	}
 
 }
