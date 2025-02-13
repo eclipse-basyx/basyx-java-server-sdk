@@ -63,7 +63,7 @@ Following shows how a JSON based RBAC rule looks like a Submodel-based rule:
 ```json
 {
   "modelType": "SubmodelElementCollection",
-  "idShort": "YWRtaW5ERUxFVEVvcmcuZWNsaXBzZS5kaWdpdGFsdHdpbi5iYXN5eC5hYXNyZXBvc2l0b3J5LmZlYXR1cmUuYXV0aG9yaXphdGlvbi5BYXNUYXJnZXRJbmZvcm1hdGlvbg==",
+  "idShort": "YWRtaW5SRUFEb3JnLmVjbGlwc2UuZGlnaXRhbHR3aW4uYmFzeXguYWFzcmVwb3NpdG9yeS5mZWF0dXJlLmF1dGhvcml6YXRpb24uQWFzVGFyZ2V0SW5mb3JtYXRpb24=",
   "value": [
       {
           "modelType": "Property",
@@ -95,6 +95,11 @@ Following shows how a JSON based RBAC rule looks like a Submodel-based rule:
                           "value": "*"
                       }
                   ]
+              },
+              {
+                  "modelType": "Property",
+                  "value": "aas",
+                  "idShort": "@type"
               }
           ]
       }
@@ -134,7 +139,7 @@ Similarly, you can create idShorts using the below TargetInformation class as pe
 | Component                         |                                         TargetInformation Class                                                                     |
 |-----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
 | AAS Environment                   | org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization.AasEnvironmentTargetInformation                                  |
-| AAS Repository                    | org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.AuthorizedAasRepository                                           |
+| AAS Repository                    | org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.AasTargetInformation                                           |
 | Submodel Repository               | org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.SubmodelTargetInformation                                    |
 | Concept Description Repository    | org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.authorization.ConceptDescriptionTargetInformation                |
 | AAS Registry                      | org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.AasRegistryTargetInformation                                        |
