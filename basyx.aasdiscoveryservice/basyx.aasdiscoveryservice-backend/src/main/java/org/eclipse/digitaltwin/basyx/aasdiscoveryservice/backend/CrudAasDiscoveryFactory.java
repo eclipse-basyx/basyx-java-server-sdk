@@ -40,18 +40,18 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
-public class SimpleAasDiscoveryFactory implements AasDiscoveryServiceFactory {
+public class CrudAasDiscoveryFactory implements AasDiscoveryServiceFactory {
 
 	private final AasDiscoveryDocumentBackend aasDiscoveryDocumentBackend;
 	private final String aasDiscoveryName;
 
 	@Autowired
-	public SimpleAasDiscoveryFactory(AasDiscoveryDocumentBackend aasDiscoveryDocumentBackend, @Value("${basyx.aasdiscoveryservice.name:aas-discovery-service}") String aasDiscoveryName) {
+	public CrudAasDiscoveryFactory(AasDiscoveryDocumentBackend aasDiscoveryDocumentBackend, @Value("${basyx.aasdiscoveryservice.name:aas-discovery-service}") String aasDiscoveryName) {
 		this.aasDiscoveryDocumentBackend = aasDiscoveryDocumentBackend;
 		this.aasDiscoveryName = aasDiscoveryName;
 	}
 
-	public SimpleAasDiscoveryFactory(AasDiscoveryDocumentBackend aasBackendProvider) {
+	public CrudAasDiscoveryFactory(AasDiscoveryDocumentBackend aasBackendProvider) {
 		this(aasBackendProvider, "aas-discovery-service");
 	}
 

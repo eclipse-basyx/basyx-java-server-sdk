@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.feature.authorization;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.SimpleAasDiscoveryFactory;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.CrudAasDiscoveryFactory;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory.InMemoryAasDiscoveryDocumentBackend;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
@@ -41,7 +41,7 @@ public class MockAasDiscoveryServiceFactory implements AasDiscoveryServiceFactor
 	private final AasDiscoveryService aasDiscoveryService;
 
 	public MockAasDiscoveryServiceFactory() {
-		this.aasDiscoveryService = new SimpleAasDiscoveryFactory(new InMemoryAasDiscoveryDocumentBackend()).create();
+		this.aasDiscoveryService = new CrudAasDiscoveryFactory(new InMemoryAasDiscoveryDocumentBackend()).create();
 	}
 
 	@Override
