@@ -39,7 +39,7 @@ public class TestInMemoryAasDiscoveryService extends AasDiscoveryServiceSuite {
 
 	@Override
 	protected AasDiscoveryService getAasDiscoveryService() {
-		return new SimpleAasDiscoveryFactory(new AasDiscoveryInMemoryBackendProvider()).create();
+		return new SimpleAasDiscoveryFactory(new InMemoryAasDiscoveryDocumentBackend()).create();
 	}
 
 }

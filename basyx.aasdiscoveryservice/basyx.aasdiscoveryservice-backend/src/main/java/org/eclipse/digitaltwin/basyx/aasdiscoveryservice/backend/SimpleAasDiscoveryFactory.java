@@ -35,46 +35,29 @@ import org.springframework.stereotype.Component;
  * Simple AAS Discovery factory that creates a {@link CrudAasDiscovery} with a
  * backend provider and a service factory
  * 
- * @author zielstor, fried
+ * @author zielstor, fried, mateusmolina
  * 
  */
 @Component
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
 public class SimpleAasDiscoveryFactory implements AasDiscoveryServiceFactory {
 
-	private AasDiscoveryBackendProvider aasBackendProvider;
+	private final AasDiscoveryDocumentBackend aasDiscoveryDocumentBackend;
+	private final String aasDiscoveryName;
 
-	private String aasDiscoveryName = null;
-
-	/**
-	 * Constructor
-	 * 
-	 * @param aasBackendProvider
-	 *            The backend provider
-	 */
-	@Autowired(required = false)
-	public SimpleAasDiscoveryFactory(AasDiscoveryBackendProvider aasBackendProvider) {
-		this.aasBackendProvider = aasBackendProvider;
+	@Autowired
+	public SimpleAasDiscoveryFactory(AasDiscoveryDocumentBackend aasDiscoveryDocumentBackend, @Value("${basyx.aasdiscoveryservice.name:aas-discovery-service}") String aasDiscoveryName) {
+		this.aasDiscoveryDocumentBackend = aasDiscoveryDocumentBackend;
+		this.aasDiscoveryName = aasDiscoveryName;
 	}
 
-	/**
-	 * Constructor
-	 * 
-	 * @param aasBackendProvider
-	 *            The backend provider
-	 * @param aasDiscoveryName
-	 *            The name of the AAS discovery service
-	 */
-	@Autowired(required = false)
-	public SimpleAasDiscoveryFactory(AasDiscoveryBackendProvider aasBackendProvider,
-			@Value("${basyx.aasdiscoveryservice.name:aas-discovery-service}") String aasDiscoveryName) {
-		this(aasBackendProvider);
-		this.aasDiscoveryName = aasDiscoveryName;
+	public SimpleAasDiscoveryFactory(AasDiscoveryDocumentBackend aasBackendProvider) {
+		this(aasBackendProvider, "aas-discovery-service");
 	}
 
 	@Override
 	public AasDiscoveryService create() {
-		return new CrudAasDiscovery(aasBackendProvider, aasDiscoveryName);
+		return new CrudAasDiscovery(aasDiscoveryDocumentBackend, aasDiscoveryName);
 	}
 
 }

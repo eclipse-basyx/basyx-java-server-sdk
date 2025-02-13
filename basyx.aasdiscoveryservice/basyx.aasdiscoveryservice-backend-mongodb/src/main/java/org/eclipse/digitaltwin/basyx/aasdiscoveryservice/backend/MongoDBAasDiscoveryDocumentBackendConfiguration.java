@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,30 +23,33 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryBackendProvider;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocument;
-import org.eclipse.digitaltwin.basyx.common.backend.inmemory.core.InMemoryCrudRepository;
+import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
  * 
- * InMemory backend provider for the AAS Discovery
+ * Provides the MongoDB configuration for the {@link AasDiscoveryDocumentBackend}
  * 
- * @author zielstor, fried
+ * @author mateusmolina
+ *
  */
-@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
-@Component
-public class AasDiscoveryInMemoryBackendProvider implements AasDiscoveryBackendProvider {
+@Configuration
+@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
+@EnableMongoRepositories(basePackages = "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend")
+public class MongoDBAasDiscoveryDocumentBackendConfiguration {
 
-	private CrudRepository<AasDiscoveryDocument, String> repository = new InMemoryCrudRepository<AasDiscoveryDocument>(AasDiscoveryDocument::getShellIdentifier);
+	static final String COLLECTION_NAME_FIELD = "basyx.aasdiscoveryservice.mongodb.collectionName";
+	static final String DEFAULT_COLLECTION_NAME = "aasdiscovery-service";
 
-	@Override
-	public CrudRepository<AasDiscoveryDocument, String> getCrudRepository() {
-		return repository;
+	@Autowired
+	void mapAasMongoEntity(BasyxMongoMappingContext mappingContext, @Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
+		mappingContext.addEntityMapping(AasDiscoveryDocument.class, collectionName);
 	}
 
 }

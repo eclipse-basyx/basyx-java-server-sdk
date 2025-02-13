@@ -24,7 +24,7 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
 
-import static org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryUtils.deriveAssetLinksFromSpecificAssetIds;
+import static org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryUtils.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -44,43 +44,23 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.CrudRepository;
 
 /**
  * Default Implementation for the {@link AasDiscoveryService} based on Spring
  * {@link CrudRepository}
  * 
- * @author zielstor, fried
+ * @author zielstor, fried, mateusmolina
  *
  */
 public class CrudAasDiscovery implements AasDiscoveryService {
 
-	private AasDiscoveryBackendProvider provider;
-	private String aasDiscoveryServiceName;
+	private final AasDiscoveryDocumentBackend backend;
+	private final String aasDiscoveryServiceName;
 
-	/**
-	 * Constructor
-	 * 
-	 * @param provider
-	 *            The backend provider
-	 */
-	public CrudAasDiscovery(AasDiscoveryBackendProvider provider) {
-		this.provider = provider;
-	}
-
-	/**
-	 * Constructor
-	 * 
-	 * @param provider
-	 *            The backend provider
-	 * @param aasDiscoveryName
-	 *            The name of the AAS discovery service
-	 */
-	public CrudAasDiscovery(AasDiscoveryBackendProvider provider,
-			@Value("${basyx.aasdiscovery.name:aas-discovery}") String aasDiscoveryName) {
-		this(provider);
-		this.aasDiscoveryServiceName = aasDiscoveryName;
+	public CrudAasDiscovery(AasDiscoveryDocumentBackend backend, String aasDiscoveryServiceName) {
+		this.backend = backend;
+		this.aasDiscoveryServiceName = aasDiscoveryServiceName;
 	}
 
 	/**
@@ -140,7 +120,7 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 			List<AssetLink> shellAssetLinks = deriveAssetLinksFromSpecificAssetIds(specificAssetIds);
 			AasDiscoveryDocument aasDiscoveryDocument = new AasDiscoveryDocument(shellIdentifier,
 					new HashSet<>(shellAssetLinks), specificAssetIds);
-			provider.getCrudRepository().save(aasDiscoveryDocument);
+			backend.save(aasDiscoveryDocument);
 		}
 
 		return specificAssetIds;
@@ -159,7 +139,7 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 		synchronized (assetLinks) {
 			throwIfAssetLinkDoesNotExist(assetLinks, shellIdentifier);
 
-			provider.getCrudRepository().deleteById(shellIdentifier);
+			backend.deleteById(shellIdentifier);
 		}
 	}
 
@@ -185,7 +165,7 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	}
 
 	private Map<String, List<SpecificAssetId>> getAssetIds() {
-		Iterable<AasDiscoveryDocument> aasDiscoveryDocuments = provider.getCrudRepository().findAll();
+		Iterable<AasDiscoveryDocument> aasDiscoveryDocuments = backend.findAll();
 		List<AasDiscoveryDocument> aasDiscoveryDocumentList = StreamSupport
 				.stream(aasDiscoveryDocuments.spliterator(), false).collect(Collectors.toList());
 		Map<String, List<SpecificAssetId>> assetIds = aasDiscoveryDocumentList.stream().collect(
@@ -194,7 +174,7 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	}
 
 	private Map<String, Set<AssetLink>> getAssetLinks() {
-		Iterable<AasDiscoveryDocument> aasDiscoveryDocuments = provider.getCrudRepository().findAll();
+		Iterable<AasDiscoveryDocument> aasDiscoveryDocuments = backend.findAll();
 		List<AasDiscoveryDocument> aasDiscoveryDocumentList = StreamSupport
 				.stream(aasDiscoveryDocuments.spliterator(), false).collect(Collectors.toList());
 		Map<String, Set<AssetLink>> assetLinks = aasDiscoveryDocumentList.stream()
