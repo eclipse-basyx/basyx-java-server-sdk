@@ -54,7 +54,7 @@ import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -308,7 +308,7 @@ public class TestMqttSubmodelObserver {
 		
 		SAVED_FILE_PATH = fileRepository.save(new FileMetadata(FILE_SUBMODEL_ELEMENT_NAME, "", getInputStreamOfDummyFile(FILE_SUBMODEL_ELEMENT_CONTENT)));
 		
-		SubmodelRepositoryFactory repoFactory = new SimpleSubmodelRepositoryFactory(new InMemorySubmodelRepositoryBackend(), new InMemorySubmodelServiceFactory(fileRepository));
+		SubmodelRepositoryFactory repoFactory = new CrudSubmodelRepositoryFactory(new InMemorySubmodelRepositoryBackend(), new InMemorySubmodelServiceFactory(fileRepository));
 
 		return new MqttSubmodelRepositoryFactory(repoFactory, client, new MqttSubmodelRepositoryTopicFactory(new Base64URLEncoder())).create();
 	}

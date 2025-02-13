@@ -46,7 +46,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
-public class SimpleSubmodelRepositoryFactory implements SubmodelRepositoryFactory {
+public class CrudSubmodelRepositoryFactory implements SubmodelRepositoryFactory {
 
 	static final String DEFAULT_REPOSITORY_NAME = "sm-repo";
 
@@ -56,17 +56,17 @@ public class SimpleSubmodelRepositoryFactory implements SubmodelRepositoryFactor
 	private Optional<Collection<Submodel>> submodels = Optional.empty();
 
 	@Autowired
-	public SimpleSubmodelRepositoryFactory(SubmodelRepositoryBackend submodelRepositoryBackend, SubmodelServiceFactory submodelServiceFactory, @Value("${basyx.smrepo.name:" + DEFAULT_REPOSITORY_NAME + "}") String submodelRepositoryName) {
+	public CrudSubmodelRepositoryFactory(SubmodelRepositoryBackend submodelRepositoryBackend, SubmodelServiceFactory submodelServiceFactory, @Value("${basyx.smrepo.name:" + DEFAULT_REPOSITORY_NAME + "}") String submodelRepositoryName) {
 		this.backend = submodelRepositoryBackend;
 		this.submodelServiceFactory = submodelServiceFactory;
 		this.submodelRepositoryName = submodelRepositoryName;
 	}
 
-	public SimpleSubmodelRepositoryFactory(SubmodelRepositoryBackend submodelRepositoryBackend, SubmodelServiceFactory submodelServiceFactory) {
+	public CrudSubmodelRepositoryFactory(SubmodelRepositoryBackend submodelRepositoryBackend, SubmodelServiceFactory submodelServiceFactory) {
 		this(submodelRepositoryBackend, submodelServiceFactory, DEFAULT_REPOSITORY_NAME);
 	}
 
-	public SimpleSubmodelRepositoryFactory withRemoteCollection(Collection<Submodel> submodels) {
+	public CrudSubmodelRepositoryFactory withRemoteCollection(Collection<Submodel> submodels) {
 		this.submodels = Optional.of(submodels);
 		return this;
 	}

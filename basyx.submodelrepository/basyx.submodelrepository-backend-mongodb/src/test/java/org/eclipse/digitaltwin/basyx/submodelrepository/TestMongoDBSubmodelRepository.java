@@ -30,7 +30,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SubmodelRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
@@ -78,7 +78,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
-		return new SimpleSubmodelRepositoryFactory(submodelRepositoryBackend, submodelServiceFactory).withRemoteCollection(submodels).create();
+		return new CrudSubmodelRepositoryFactory(submodelRepositoryBackend, submodelServiceFactory).withRemoteCollection(submodels).create();
 	}
 
 	@Override

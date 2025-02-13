@@ -52,7 +52,7 @@ import org.eclipse.digitaltwin.basyx.operation.InvokableOperation;
 import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.SubmodelRepositoryHTTPSerializationExtension;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.junit.After;
@@ -189,7 +189,7 @@ public class TestOperationDelegationFeature {
 	}
 
 	private static SubmodelRepository createOperationDelegationSubmodelRepository(OperationDelegation operationDelegation) {
-		SubmodelRepositoryFactory repoFactory = new SimpleSubmodelRepositoryFactory(new InMemorySubmodelRepositoryBackend(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository()));
+		SubmodelRepositoryFactory repoFactory = new CrudSubmodelRepositoryFactory(new InMemorySubmodelRepositoryBackend(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository()));
 
 		return new OperationDelegationSubmodelRepositoryFactory(repoFactory, operationDelegation).create();
 	}

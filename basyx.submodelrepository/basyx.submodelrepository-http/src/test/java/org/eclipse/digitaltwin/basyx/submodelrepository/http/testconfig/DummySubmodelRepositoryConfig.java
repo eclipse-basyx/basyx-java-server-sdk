@@ -28,7 +28,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.http.testconfig;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -48,6 +48,6 @@ public class DummySubmodelRepositoryConfig {
 	@Bean
 	@ConditionalOnMissingBean
 	public SubmodelRepository createSubmodelRepository() {
-		return new SimpleSubmodelRepositoryFactory(new InMemorySubmodelRepositoryBackend(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())).create();
+		return new CrudSubmodelRepositoryFactory(new InMemorySubmodelRepositoryBackend(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())).create();
 	}
 }

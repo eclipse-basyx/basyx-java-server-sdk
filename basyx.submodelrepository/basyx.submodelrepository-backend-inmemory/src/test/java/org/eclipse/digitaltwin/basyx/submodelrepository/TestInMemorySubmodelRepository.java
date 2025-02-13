@@ -33,7 +33,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
@@ -54,12 +54,12 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	
 	@Override
 	protected SubmodelRepository getSubmodelRepository() {
-		return new SimpleSubmodelRepositoryFactory(new InMemorySubmodelRepositoryBackend(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())).create();
+		return new CrudSubmodelRepositoryFactory(new InMemorySubmodelRepositoryBackend(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())).create();
 	}
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
-		return new SimpleSubmodelRepositoryFactory(new InMemorySubmodelRepositoryBackend(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())).withRemoteCollection(submodels).create();
+		return new CrudSubmodelRepositoryFactory(new InMemorySubmodelRepositoryBackend(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())).withRemoteCollection(submodels).create();
 	}
 	
 	@Override

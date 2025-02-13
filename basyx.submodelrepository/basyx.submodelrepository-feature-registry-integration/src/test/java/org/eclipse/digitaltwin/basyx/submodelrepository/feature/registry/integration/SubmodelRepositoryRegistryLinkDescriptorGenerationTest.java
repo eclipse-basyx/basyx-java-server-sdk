@@ -42,7 +42,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMap
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -113,7 +113,7 @@ public class SubmodelRepositoryRegistryLinkDescriptorGenerationTest {
     }
     
 	protected SubmodelRepository getSubmodelRepository() {
-        return new SimpleSubmodelRepositoryFactory(new InMemorySubmodelRepositoryBackend(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())).create();
+        return new CrudSubmodelRepositoryFactory(new InMemorySubmodelRepositoryBackend(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())).create();
 	}
 
 }
