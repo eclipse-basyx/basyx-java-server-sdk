@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DummyAASXFileServerConfiguration {
 
+    static final String TEST_COLLECTION = "testAasxFileServerCollection";
+
     @Bean
     AASXFileServer aasxFileServer(AASXFileServerFactory factory) {
         return factory.create();
