@@ -90,7 +90,7 @@ public abstract class AASXFileServerSuite {
 		AASXFileServer server = getAASXFileServer();
 		PackageDescription actualPackageDescription = DummyAASXFileServerFactory.createFirstDummyAASXPackageOnServer(server);
 
-		PackageDescription expectedPackageDescription = DummyAASXFileServerFactory.createDummyPackageDescription("1", DummyAASXFileServerFactory.FIRST_SHELL_IDS);
+		PackageDescription expectedPackageDescription = DummyAASXFileServerFactory.createDummyPackageDescription(actualPackageDescription.getPackageId(), DummyAASXFileServerFactory.FIRST_SHELL_IDS);
 
 		assertEquals(expectedPackageDescription, actualPackageDescription);
 	}

@@ -25,9 +25,10 @@
 package org.eclipse.digitaltwin.basyx.aasxfileserver.backend;
 
 import java.io.InputStream;
+import java.util.Base64;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -59,8 +60,6 @@ public class CrudAASXFileServer implements AASXFileServer {
 	private final PackageBackend packageBackend;
 	private final FileRepository fileRepository;
 	private final String aasxFileServerName;
-
-	private AtomicInteger packageId = new AtomicInteger(0);
 
 	/**
 	 * Constructor
@@ -115,7 +114,7 @@ public class CrudAASXFileServer implements AASXFileServer {
 	@Override
 	public PackageDescription createAASXPackage(List<String> shellIds, InputStream file, String fileName) {
 
-		String newpackageId = String.valueOf(packageId.incrementAndGet());
+		String newpackageId = generateShortUUID();
 
 		PackageDescription packageDescription = createPackageDescription(shellIds, newpackageId);
 
@@ -186,6 +185,11 @@ public class CrudAASXFileServer implements AASXFileServer {
 
 	private static Package createPackage(PackageDescription packageDescription, PackagesBody packagesBody) {
 		return new Package(packageDescription.getPackageId(), packageDescription, packagesBody);
+	}
+
+	private static String generateShortUUID() {
+		UUID uuid = UUID.randomUUID();
+		return Base64.getUrlEncoder().withoutPadding().encodeToString(uuid.toString().getBytes());
 	}
 
 }
