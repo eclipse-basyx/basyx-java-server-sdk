@@ -29,9 +29,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceOperations;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.MongoDBAasServiceOperations;
-import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
+import org.eclipse.digitaltwin.basyx.common.mongocore.MappingEntry;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
@@ -54,9 +53,9 @@ public class MongoDBAasRepositoryBackendConfiguration {
 	static final String COLLECTION_NAME_FIELD = "basyx.aasrepository.mongodb.collectionName";
 	static final String DEFAULT_COLLECTION_NAME = "aas-repo";
 
-	@Autowired
-	void mapAasMongoEntity(BasyxMongoMappingContext mappingContext, @Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
-		mappingContext.addEntityMapping(AssetAdministrationShell.class, collectionName);
+	@Bean
+	MappingEntry aasMappingEntry(@Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
+		return MappingEntry.of(collectionName, AssetAdministrationShell.class);
 	}
 
 	@Bean

@@ -26,10 +26,10 @@
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
-import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.eclipse.digitaltwin.basyx.common.mongocore.MappingEntry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
@@ -46,8 +46,8 @@ public class MongoDbConceptDescriptionRepositoryBackendConfiguration {
     static final String COLLECTION_NAME_FIELD = "basyx.cdrepository.mongodb.collectionName";
     static final String DEFAULT_COLLECTION_NAME = "cd-repo";
 
-    @Autowired
-    void mapMongoEntity(BasyxMongoMappingContext mappingContext, @Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
-        mappingContext.addEntityMapping(ConceptDescription.class, collectionName);
+    @Bean
+    MappingEntry cdMappingEntry(@Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
+        return MappingEntry.of(collectionName, ConceptDescription.class);
     }
 }

@@ -26,14 +26,16 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.backend;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
+import org.eclipse.digitaltwin.basyx.common.mongocore.MappingEntry;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.MongoDbSubmodelOperations;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
@@ -54,14 +56,14 @@ public class MongoDbSubmodelRepositoryBackendConfiguration {
     static final String COLLECTION_NAME_FIELD = "basyx.submodelrepository.mongodb.collectionName";
     static final String DEFAULT_COLLECTION_NAME = "submodel-repo";
 
-	@Bean
-	SubmodelServiceFactory getInMemorySubmodelServiceFactory(FileRepository fileRepository) {
-		return new InMemorySubmodelServiceFactory(fileRepository);
-	}
+    @Bean
+    MappingEntry submodelMappingEntry(@Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
+        return MappingEntry.of(collectionName, Submodel.class);
+    }
 
-    @Autowired
-    void mapMongoEntity(BasyxMongoMappingContext mappingContext, @Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
-        mappingContext.addEntityMapping(Submodel.class, collectionName);
+    @Bean
+    SubmodelOperations submodelOperations(MongoOperations operations, FileRepository fileRepository) {
+        return new MongoDbSubmodelOperations(operations, fileRepository);
     }
 
 }

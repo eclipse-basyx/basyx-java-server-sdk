@@ -61,8 +61,7 @@ public class TestMongoDBSubmodelService extends SubmodelServiceSuite {
 
 	@Override
 	protected SubmodelService getSubmodelService(Submodel submodel) {
-		BasyxMongoMappingContext mappingContext = new BasyxMongoMappingContext();
-		return new MongoDBSubmodelServiceFactory(fileRepository, new SingleSubmodelMongoDBBackendProvider(mappingContext, COLLECTION, TEMPLATE)).create(submodel);
+		return null; // todo temp
 	}
 
 	@Override

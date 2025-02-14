@@ -27,8 +27,6 @@ package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
@@ -50,15 +48,6 @@ public class SingleSubmodelMongoDBBackendProvider {
 	private BasyxMongoMappingContext mappingContext;
 	
 	private MongoTemplate template;
-	
-	@Autowired
-	public SingleSubmodelMongoDBBackendProvider(BasyxMongoMappingContext mappingContext, @Value("${basyx.submodelservice.mongodb.collectionName:submodel-service}") String collectionName, MongoTemplate template) {
-		super();
-		this.mappingContext = mappingContext;
-		this.template = template;
-		
-		mappingContext.addEntityMapping(Submodel.class, collectionName);
-	}
 
 	public CrudRepository<Submodel, String> getCrudRepository() {
 		@SuppressWarnings("unchecked")

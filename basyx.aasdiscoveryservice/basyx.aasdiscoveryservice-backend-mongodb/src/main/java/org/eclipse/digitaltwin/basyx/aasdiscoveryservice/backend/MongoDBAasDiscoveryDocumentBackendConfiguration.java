@@ -25,10 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
 
-import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.eclipse.digitaltwin.basyx.common.mongocore.MappingEntry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
@@ -47,9 +47,9 @@ public class MongoDBAasDiscoveryDocumentBackendConfiguration {
 	static final String COLLECTION_NAME_FIELD = "basyx.aasdiscoveryservice.mongodb.collectionName";
 	static final String DEFAULT_COLLECTION_NAME = "aasdiscovery-service";
 
-	@Autowired
-	void mapAasMongoEntity(BasyxMongoMappingContext mappingContext, @Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
-		mappingContext.addEntityMapping(AasDiscoveryDocument.class, collectionName);
+	@Bean
+	MappingEntry aasDiscoveryDocumentMappingEntry(@Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
+		return MappingEntry.of(collectionName, AasDiscoveryDocument.class);
 	}
 
 }
