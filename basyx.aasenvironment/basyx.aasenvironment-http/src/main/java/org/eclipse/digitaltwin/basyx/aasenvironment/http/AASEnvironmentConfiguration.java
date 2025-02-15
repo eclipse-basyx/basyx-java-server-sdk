@@ -47,4 +47,9 @@ public class AASEnvironmentConfiguration {
 	public CorsPathPatternProvider getAASEnvironmentUploadRepoCorsUrlProvider() {
 		return new CorsPathPatternProvider("/upload");
 	}
+
+	@Bean
+	public CorsPathPatternProvider getAASEnvironmentDescriptionRepoCorsUrlProvider() {
+		return new CorsPathPatternProvider("/description");
+	}
 }
