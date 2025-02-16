@@ -49,6 +49,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.hibernate.validator.internal.metadata.aggregated.ValidatableParametersMetaData;
 
 /**
  * Decorator for authorized {@link AasRepository}
@@ -84,7 +85,10 @@ public class AuthorizedAasRepository implements AasRepository {
 		
 		AssetAdministrationShell shell = decorated.getAas(shellId);
 		
-		attributesMap.put("$aas#id", new Value(null, shellId, null, null, null, null, null, null));
+		Value aasIdValue = new Value();
+		aasIdValue.set$strVal(shellId);
+		
+		attributesMap.put("$aas#id", aasIdValue);
 		
 		AssetInformation assetInformation = shell.getAssetInformation();
 		
@@ -93,10 +97,18 @@ public class AuthorizedAasRepository implements AasRepository {
 			String assetType = assetInformation.getAssetType();
 			String globalAssetId = assetInformation.getGlobalAssetId();
 			
-			attributesMap.put("$aas.assetInformation#assetKind", new Value(assetKind, null, null, null, null, null, null, null));
-			attributesMap.put("$aas.assetInformation#assetType", new Value(assetType, null, null, null, null, null, null, null));
-			attributesMap.put("$aas.assetInformation#globalAssetId", new Value(globalAssetId, null, null, null, null, null, null, null));
+			Value assetKindValue = new Value();
+			assetKindValue.set$strVal(assetKind);
 			
+			Value assetTypeValue = new Value();
+			assetTypeValue.set$strVal(assetType);
+			
+			Value globalAssetIdValue = new Value();
+			globalAssetIdValue.set$strVal(globalAssetId);
+			
+			attributesMap.put("$aas#assetInformation.assetKind", assetKindValue);
+			attributesMap.put("$aas#assetInformation.assetType", assetTypeValue);
+			attributesMap.put("$aas#assetInformation.globalAssetId", globalAssetIdValue);
 		}
    
 		boolean isAuthorized = permissionResolver.hasPermission(RightsEnum.READ, new ObjectItem(null, "(AAS)" + shellId, null, null, null), attributesMap);

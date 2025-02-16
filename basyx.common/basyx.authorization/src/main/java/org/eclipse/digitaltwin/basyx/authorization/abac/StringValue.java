@@ -8,22 +8,22 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "strModel",
-    "strVal",
-    "castToString",
-    "attribute"
+    "$field",
+    "$strVal",
+    "$strCast",
+    "$attribute"
 })
 @Generated("jsonschema2pojo")
 public class StringValue {
 
-    @JsonProperty("strModel")
-    private String strModel;
-    @JsonProperty("strVal")
-    private String strVal;
-    @JsonProperty("castToString")
-    private CastValues castToString;
-    @JsonProperty("attribute")
-    private AttributeItem attribute;
+    @JsonProperty("$field")
+    private String $field;
+    @JsonProperty("$strVal")
+    private String $strVal;
+    @JsonProperty("$strCast")
+    private Value $strCast;
+    @JsonProperty("$attribute")
+    private AttributeItem $attribute;
 
     /**
      * No args constructor for use in serialization
@@ -34,78 +34,78 @@ public class StringValue {
 
     /**
      * 
-     * @param castToString
-     * @param strVal
-     * @param strModel
-     * @param attribute
+     * @param $strVal
+     * @param $strCast
+     * @param $attribute
+     * @param $field
      */
-    public StringValue(String strModel, String strVal, CastValues castToString, AttributeItem attribute) {
+    public StringValue(String $field, String $strVal, Value $strCast, AttributeItem $attribute) {
         super();
-        this.strModel = strModel;
-        this.strVal = strVal;
-        this.castToString = castToString;
-        this.attribute = attribute;
+        this.$field = $field;
+        this.$strVal = $strVal;
+        this.$strCast = $strCast;
+        this.$attribute = $attribute;
     }
 
-    @JsonProperty("strModel")
-    public String getStrModel() {
-        return strModel;
+    @JsonProperty("$field")
+    public String get$field() {
+        return $field;
     }
 
-    @JsonProperty("strModel")
-    public void setStrModel(String strModel) {
-        this.strModel = strModel;
+    @JsonProperty("$field")
+    public void set$field(String $field) {
+        this.$field = $field;
     }
 
-    @JsonProperty("strVal")
-    public String getStrVal() {
-        return strVal;
+    @JsonProperty("$strVal")
+    public String get$strVal() {
+        return $strVal;
     }
 
-    @JsonProperty("strVal")
-    public void setStrVal(String strVal) {
-        this.strVal = strVal;
+    @JsonProperty("$strVal")
+    public void set$strVal(String $strVal) {
+        this.$strVal = $strVal;
     }
 
-    @JsonProperty("castToString")
-    public CastValues getCastToString() {
-        return castToString;
+    @JsonProperty("$strCast")
+    public Value get$strCast() {
+        return $strCast;
     }
 
-    @JsonProperty("castToString")
-    public void setCastToString(CastValues castToString) {
-        this.castToString = castToString;
+    @JsonProperty("$strCast")
+    public void set$strCast(Value $strCast) {
+        this.$strCast = $strCast;
     }
 
-    @JsonProperty("attribute")
-    public AttributeItem getAttribute() {
-        return attribute;
+    @JsonProperty("$attribute")
+    public AttributeItem get$attribute() {
+        return $attribute;
     }
 
-    @JsonProperty("attribute")
-    public void setAttribute(AttributeItem attribute) {
-        this.attribute = attribute;
+    @JsonProperty("$attribute")
+    public void set$attribute(AttributeItem $attribute) {
+        this.$attribute = $attribute;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(StringValue.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
-        sb.append("strModel");
+        sb.append("$field");
         sb.append('=');
-        sb.append(((this.strModel == null)?"<null>":this.strModel));
+        sb.append(((this.$field == null)?"<null>":this.$field));
         sb.append(',');
-        sb.append("strVal");
+        sb.append("$strVal");
         sb.append('=');
-        sb.append(((this.strVal == null)?"<null>":this.strVal));
+        sb.append(((this.$strVal == null)?"<null>":this.$strVal));
         sb.append(',');
-        sb.append("castToString");
+        sb.append("$strCast");
         sb.append('=');
-        sb.append(((this.castToString == null)?"<null>":this.castToString));
+        sb.append(((this.$strCast == null)?"<null>":this.$strCast));
         sb.append(',');
-        sb.append("attribute");
+        sb.append("$attribute");
         sb.append('=');
-        sb.append(((this.attribute == null)?"<null>":this.attribute));
+        sb.append(((this.$attribute == null)?"<null>":this.$attribute));
         sb.append(',');
         if (sb.charAt((sb.length()- 1)) == ',') {
             sb.setCharAt((sb.length()- 1), ']');
@@ -118,10 +118,10 @@ public class StringValue {
     @Override
     public int hashCode() {
         int result = 1;
-        result = ((result* 31)+((this.castToString == null)? 0 :this.castToString.hashCode()));
-        result = ((result* 31)+((this.strModel == null)? 0 :this.strModel.hashCode()));
-        result = ((result* 31)+((this.attribute == null)? 0 :this.attribute.hashCode()));
-        result = ((result* 31)+((this.strVal == null)? 0 :this.strVal.hashCode()));
+        result = ((result* 31)+((this.$strVal == null)? 0 :this.$strVal.hashCode()));
+        result = ((result* 31)+((this.$field == null)? 0 :this.$field.hashCode()));
+        result = ((result* 31)+((this.$strCast == null)? 0 :this.$strCast.hashCode()));
+        result = ((result* 31)+((this.$attribute == null)? 0 :this.$attribute.hashCode()));
         return result;
     }
 
@@ -134,7 +134,7 @@ public class StringValue {
             return false;
         }
         StringValue rhs = ((StringValue) other);
-        return (((((this.castToString == rhs.castToString)||((this.castToString!= null)&&this.castToString.equals(rhs.castToString)))&&((this.strModel == rhs.strModel)||((this.strModel!= null)&&this.strModel.equals(rhs.strModel))))&&((this.attribute == rhs.attribute)||((this.attribute!= null)&&this.attribute.equals(rhs.attribute))))&&((this.strVal == rhs.strVal)||((this.strVal!= null)&&this.strVal.equals(rhs.strVal))));
+        return (((((this.$strVal == rhs.$strVal)||((this.$strVal!= null)&&this.$strVal.equals(rhs.$strVal)))&&((this.$field == rhs.$field)||((this.$field!= null)&&this.$field.equals(rhs.$field))))&&((this.$strCast == rhs.$strCast)||((this.$strCast!= null)&&this.$strCast.equals(rhs.$strCast))))&&((this.$attribute == rhs.$attribute)||((this.$attribute!= null)&&this.$attribute.equals(rhs.$attribute))));
     }
 
 }

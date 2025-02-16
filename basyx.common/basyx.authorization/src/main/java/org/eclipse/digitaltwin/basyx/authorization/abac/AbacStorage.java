@@ -34,6 +34,6 @@ import java.util.List;
  */
 public interface AbacStorage {
 	
-    public List<AllAccessPermissionRule> getAbacRules();
-    public void addRule(AllAccessPermissionRule rbacRule);
+    public List<AccessPermissionRule> getAbacRules();
+    public void addRule(AccessPermissionRule abacRule);
 }

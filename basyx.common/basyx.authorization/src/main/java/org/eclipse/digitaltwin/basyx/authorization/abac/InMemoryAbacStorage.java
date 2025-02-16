@@ -9,20 +9,20 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
  * @author danish
  */
 public class InMemoryAbacStorage implements AbacStorage {
-    private final List<AllAccessPermissionRule> abacRules;
+    private final AllAccessPermissionRules abacRules;
 
-    public InMemoryAbacStorage(List<AllAccessPermissionRule> abacRules) {
+    public InMemoryAbacStorage(AllAccessPermissionRules abacRules) {
         this.abacRules = abacRules;
     }
 
     @Override
-    public List<AllAccessPermissionRule> getAbacRules() {       
-        return abacRules;
+    public List<AccessPermissionRule> getAbacRules() {       
+        return abacRules.getRules();
     }
 
 	@Override
-	public void addRule(AllAccessPermissionRule abacRule) {
-		abacRules.add(abacRule);
+	public void addRule(AccessPermissionRule abacRule) {
+		abacRules.getRules().add(abacRule);
 		
 	}
 

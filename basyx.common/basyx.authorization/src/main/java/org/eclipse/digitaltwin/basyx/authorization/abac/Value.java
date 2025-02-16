@@ -9,34 +9,64 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "strModel",
-    "strVal",
-    "numVal",
-    "hexVal",
-    "dateTimeVal",
-    "timeVal",
-    "castToString",
-    "attribute"
+    "$field",
+    "$strVal",
+    "$attribute",
+    "$numVal",
+    "$hexVal",
+    "$dateTimeVal",
+    "$timeVal",
+    "$boolean",
+    "$strCast",
+    "$numCast",
+    "$hexCast",
+    "$boolCast",
+    "$dateTimeCast",
+    "$timeCast",
+    "$dayOfWeek",
+    "$dayOfMonth",
+    "$month",
+    "$year"
 })
 @Generated("jsonschema2pojo")
 public class Value {
 
-    @JsonProperty("strModel")
-    private String strModel;
-    @JsonProperty("strVal")
-    private String strVal;
-    @JsonProperty("numVal")
-    private Double numVal;
-    @JsonProperty("hexVal")
-    private String hexVal;
-    @JsonProperty("dateTimeVal")
-    private Date dateTimeVal;
-    @JsonProperty("timeVal")
-    private String timeVal;
-    @JsonProperty("castToString")
-    private CastValues castToString;
-    @JsonProperty("attribute")
-    private AttributeItem attribute;
+    @JsonProperty("$field")
+    private String $field;
+    @JsonProperty("$strVal")
+    private String $strVal;
+    @JsonProperty("$attribute")
+    private AttributeItem $attribute;
+    @JsonProperty("$numVal")
+    private Double $numVal;
+    @JsonProperty("$hexVal")
+    private String $hexVal;
+    @JsonProperty("$dateTimeVal")
+    private Date $dateTimeVal;
+    @JsonProperty("$timeVal")
+    private String $timeVal;
+    @JsonProperty("$boolean")
+    private Boolean $boolean;
+    @JsonProperty("$strCast")
+    private Value $strCast;
+    @JsonProperty("$numCast")
+    private Value $numCast;
+    @JsonProperty("$hexCast")
+    private Value $hexCast;
+    @JsonProperty("$boolCast")
+    private Value $boolCast;
+    @JsonProperty("$dateTimeCast")
+    private Value $dateTimeCast;
+    @JsonProperty("$timeCast")
+    private Value $timeCast;
+    @JsonProperty("$dayOfWeek")
+    private Date $dayOfWeek;
+    @JsonProperty("$dayOfMonth")
+    private Date $dayOfMonth;
+    @JsonProperty("$month")
+    private Date $month;
+    @JsonProperty("$year")
+    private Date $year;
 
     /**
      * No args constructor for use in serialization
@@ -47,142 +77,302 @@ public class Value {
 
     /**
      * 
-     * @param castToString
-     * @param numVal
-     * @param strVal
-     * @param hexVal
-     * @param timeVal
-     * @param strModel
-     * @param attribute
-     * @param dateTimeVal
+     * @param $strVal
+     * @param $boolean
+     * @param $attribute
+     * @param $strCast
+     * @param $numVal
+     * @param $dateTimeVal
+     * @param $timeVal
+     * @param $field
+     * @param $dayOfWeek
+     * @param $boolCast
+     * @param $hexCast
+     * @param $dayOfMonth
+     * @param $year
+     * @param $hexVal
+     * @param $timeCast
+     * @param $dateTimeCast
+     * @param $month
+     * @param $numCast
      */
-    public Value(String strModel, String strVal, Double numVal, String hexVal, Date dateTimeVal, String timeVal, CastValues castToString, AttributeItem attribute) {
+    public Value(String $field, String $strVal, AttributeItem $attribute, Double $numVal, String $hexVal, Date $dateTimeVal, String $timeVal, Boolean $boolean, Value $strCast, Value $numCast, Value $hexCast, Value $boolCast, Value $dateTimeCast, Value $timeCast, Date $dayOfWeek, Date $dayOfMonth, Date $month, Date $year) {
         super();
-        this.strModel = strModel;
-        this.strVal = strVal;
-        this.numVal = numVal;
-        this.hexVal = hexVal;
-        this.dateTimeVal = dateTimeVal;
-        this.timeVal = timeVal;
-        this.castToString = castToString;
-        this.attribute = attribute;
+        this.$field = $field;
+        this.$strVal = $strVal;
+        this.$attribute = $attribute;
+        this.$numVal = $numVal;
+        this.$hexVal = $hexVal;
+        this.$dateTimeVal = $dateTimeVal;
+        this.$timeVal = $timeVal;
+        this.$boolean = $boolean;
+        this.$strCast = $strCast;
+        this.$numCast = $numCast;
+        this.$hexCast = $hexCast;
+        this.$boolCast = $boolCast;
+        this.$dateTimeCast = $dateTimeCast;
+        this.$timeCast = $timeCast;
+        this.$dayOfWeek = $dayOfWeek;
+        this.$dayOfMonth = $dayOfMonth;
+        this.$month = $month;
+        this.$year = $year;
     }
 
-    @JsonProperty("strModel")
-    public String getStrModel() {
-        return strModel;
+    @JsonProperty("$field")
+    public String get$field() {
+        return $field;
     }
 
-    @JsonProperty("strModel")
-    public void setStrModel(String strModel) {
-        this.strModel = strModel;
+    @JsonProperty("$field")
+    public void set$field(String $field) {
+        this.$field = $field;
     }
 
-    @JsonProperty("strVal")
-    public String getStrVal() {
-        return strVal;
+    @JsonProperty("$strVal")
+    public String get$strVal() {
+        return $strVal;
     }
 
-    @JsonProperty("strVal")
-    public void setStrVal(String strVal) {
-        this.strVal = strVal;
+    @JsonProperty("$strVal")
+    public void set$strVal(String $strVal) {
+        this.$strVal = $strVal;
     }
 
-    @JsonProperty("numVal")
-    public Double getNumVal() {
-        return numVal;
+    @JsonProperty("$attribute")
+    public AttributeItem get$attribute() {
+        return $attribute;
     }
 
-    @JsonProperty("numVal")
-    public void setNumVal(Double numVal) {
-        this.numVal = numVal;
+    @JsonProperty("$attribute")
+    public void set$attribute(AttributeItem $attribute) {
+        this.$attribute = $attribute;
     }
 
-    @JsonProperty("hexVal")
-    public String getHexVal() {
-        return hexVal;
+    @JsonProperty("$numVal")
+    public Double get$numVal() {
+        return $numVal;
     }
 
-    @JsonProperty("hexVal")
-    public void setHexVal(String hexVal) {
-        this.hexVal = hexVal;
+    @JsonProperty("$numVal")
+    public void set$numVal(Double $numVal) {
+        this.$numVal = $numVal;
     }
 
-    @JsonProperty("dateTimeVal")
-    public Date getDateTimeVal() {
-        return dateTimeVal;
+    @JsonProperty("$hexVal")
+    public String get$hexVal() {
+        return $hexVal;
     }
 
-    @JsonProperty("dateTimeVal")
-    public void setDateTimeVal(Date dateTimeVal) {
-        this.dateTimeVal = dateTimeVal;
+    @JsonProperty("$hexVal")
+    public void set$hexVal(String $hexVal) {
+        this.$hexVal = $hexVal;
     }
 
-    @JsonProperty("timeVal")
-    public String getTimeVal() {
-        return timeVal;
+    @JsonProperty("$dateTimeVal")
+    public Date get$dateTimeVal() {
+        return $dateTimeVal;
     }
 
-    @JsonProperty("timeVal")
-    public void setTimeVal(String timeVal) {
-        this.timeVal = timeVal;
+    @JsonProperty("$dateTimeVal")
+    public void set$dateTimeVal(Date $dateTimeVal) {
+        this.$dateTimeVal = $dateTimeVal;
     }
 
-    @JsonProperty("castToString")
-    public CastValues getCastToString() {
-        return castToString;
+    @JsonProperty("$timeVal")
+    public String get$timeVal() {
+        return $timeVal;
     }
 
-    @JsonProperty("castToString")
-    public void setCastToString(CastValues castToString) {
-        this.castToString = castToString;
+    @JsonProperty("$timeVal")
+    public void set$timeVal(String $timeVal) {
+        this.$timeVal = $timeVal;
     }
 
-    @JsonProperty("attribute")
-    public AttributeItem getAttribute() {
-        return attribute;
+    @JsonProperty("$boolean")
+    public Boolean get$boolean() {
+        return $boolean;
     }
 
-    @JsonProperty("attribute")
-    public void setAttribute(AttributeItem attribute) {
-        this.attribute = attribute;
+    @JsonProperty("$boolean")
+    public void set$boolean(Boolean $boolean) {
+        this.$boolean = $boolean;
+    }
+
+    @JsonProperty("$strCast")
+    public Value get$strCast() {
+        return $strCast;
+    }
+
+    @JsonProperty("$strCast")
+    public void set$strCast(Value $strCast) {
+        this.$strCast = $strCast;
+    }
+
+    @JsonProperty("$numCast")
+    public Value get$numCast() {
+        return $numCast;
+    }
+
+    @JsonProperty("$numCast")
+    public void set$numCast(Value $numCast) {
+        this.$numCast = $numCast;
+    }
+
+    @JsonProperty("$hexCast")
+    public Value get$hexCast() {
+        return $hexCast;
+    }
+
+    @JsonProperty("$hexCast")
+    public void set$hexCast(Value $hexCast) {
+        this.$hexCast = $hexCast;
+    }
+
+    @JsonProperty("$boolCast")
+    public Value get$boolCast() {
+        return $boolCast;
+    }
+
+    @JsonProperty("$boolCast")
+    public void set$boolCast(Value $boolCast) {
+        this.$boolCast = $boolCast;
+    }
+
+    @JsonProperty("$dateTimeCast")
+    public Value get$dateTimeCast() {
+        return $dateTimeCast;
+    }
+
+    @JsonProperty("$dateTimeCast")
+    public void set$dateTimeCast(Value $dateTimeCast) {
+        this.$dateTimeCast = $dateTimeCast;
+    }
+
+    @JsonProperty("$timeCast")
+    public Value get$timeCast() {
+        return $timeCast;
+    }
+
+    @JsonProperty("$timeCast")
+    public void set$timeCast(Value $timeCast) {
+        this.$timeCast = $timeCast;
+    }
+
+    @JsonProperty("$dayOfWeek")
+    public Date get$dayOfWeek() {
+        return $dayOfWeek;
+    }
+
+    @JsonProperty("$dayOfWeek")
+    public void set$dayOfWeek(Date $dayOfWeek) {
+        this.$dayOfWeek = $dayOfWeek;
+    }
+
+    @JsonProperty("$dayOfMonth")
+    public Date get$dayOfMonth() {
+        return $dayOfMonth;
+    }
+
+    @JsonProperty("$dayOfMonth")
+    public void set$dayOfMonth(Date $dayOfMonth) {
+        this.$dayOfMonth = $dayOfMonth;
+    }
+
+    @JsonProperty("$month")
+    public Date get$month() {
+        return $month;
+    }
+
+    @JsonProperty("$month")
+    public void set$month(Date $month) {
+        this.$month = $month;
+    }
+
+    @JsonProperty("$year")
+    public Date get$year() {
+        return $year;
+    }
+
+    @JsonProperty("$year")
+    public void set$year(Date $year) {
+        this.$year = $year;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(Value.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
-        sb.append("strModel");
+        sb.append("$field");
         sb.append('=');
-        sb.append(((this.strModel == null)?"<null>":this.strModel));
+        sb.append(((this.$field == null)?"<null>":this.$field));
         sb.append(',');
-        sb.append("strVal");
+        sb.append("$strVal");
         sb.append('=');
-        sb.append(((this.strVal == null)?"<null>":this.strVal));
+        sb.append(((this.$strVal == null)?"<null>":this.$strVal));
         sb.append(',');
-        sb.append("numVal");
+        sb.append("$attribute");
         sb.append('=');
-        sb.append(((this.numVal == null)?"<null>":this.numVal));
+        sb.append(((this.$attribute == null)?"<null>":this.$attribute));
         sb.append(',');
-        sb.append("hexVal");
+        sb.append("$numVal");
         sb.append('=');
-        sb.append(((this.hexVal == null)?"<null>":this.hexVal));
+        sb.append(((this.$numVal == null)?"<null>":this.$numVal));
         sb.append(',');
-        sb.append("dateTimeVal");
+        sb.append("$hexVal");
         sb.append('=');
-        sb.append(((this.dateTimeVal == null)?"<null>":this.dateTimeVal));
+        sb.append(((this.$hexVal == null)?"<null>":this.$hexVal));
         sb.append(',');
-        sb.append("timeVal");
+        sb.append("$dateTimeVal");
         sb.append('=');
-        sb.append(((this.timeVal == null)?"<null>":this.timeVal));
+        sb.append(((this.$dateTimeVal == null)?"<null>":this.$dateTimeVal));
         sb.append(',');
-        sb.append("castToString");
+        sb.append("$timeVal");
         sb.append('=');
-        sb.append(((this.castToString == null)?"<null>":this.castToString));
+        sb.append(((this.$timeVal == null)?"<null>":this.$timeVal));
         sb.append(',');
-        sb.append("attribute");
+        sb.append("$boolean");
         sb.append('=');
-        sb.append(((this.attribute == null)?"<null>":this.attribute));
+        sb.append(((this.$boolean == null)?"<null>":this.$boolean));
+        sb.append(',');
+        sb.append("$strCast");
+        sb.append('=');
+        sb.append(((this.$strCast == null)?"<null>":this.$strCast));
+        sb.append(',');
+        sb.append("$numCast");
+        sb.append('=');
+        sb.append(((this.$numCast == null)?"<null>":this.$numCast));
+        sb.append(',');
+        sb.append("$hexCast");
+        sb.append('=');
+        sb.append(((this.$hexCast == null)?"<null>":this.$hexCast));
+        sb.append(',');
+        sb.append("$boolCast");
+        sb.append('=');
+        sb.append(((this.$boolCast == null)?"<null>":this.$boolCast));
+        sb.append(',');
+        sb.append("$dateTimeCast");
+        sb.append('=');
+        sb.append(((this.$dateTimeCast == null)?"<null>":this.$dateTimeCast));
+        sb.append(',');
+        sb.append("$timeCast");
+        sb.append('=');
+        sb.append(((this.$timeCast == null)?"<null>":this.$timeCast));
+        sb.append(',');
+        sb.append("$dayOfWeek");
+        sb.append('=');
+        sb.append(((this.$dayOfWeek == null)?"<null>":this.$dayOfWeek));
+        sb.append(',');
+        sb.append("$dayOfMonth");
+        sb.append('=');
+        sb.append(((this.$dayOfMonth == null)?"<null>":this.$dayOfMonth));
+        sb.append(',');
+        sb.append("$month");
+        sb.append('=');
+        sb.append(((this.$month == null)?"<null>":this.$month));
+        sb.append(',');
+        sb.append("$year");
+        sb.append('=');
+        sb.append(((this.$year == null)?"<null>":this.$year));
         sb.append(',');
         if (sb.charAt((sb.length()- 1)) == ',') {
             sb.setCharAt((sb.length()- 1), ']');
@@ -195,14 +385,24 @@ public class Value {
     @Override
     public int hashCode() {
         int result = 1;
-        result = ((result* 31)+((this.castToString == null)? 0 :this.castToString.hashCode()));
-        result = ((result* 31)+((this.numVal == null)? 0 :this.numVal.hashCode()));
-        result = ((result* 31)+((this.strVal == null)? 0 :this.strVal.hashCode()));
-        result = ((result* 31)+((this.hexVal == null)? 0 :this.hexVal.hashCode()));
-        result = ((result* 31)+((this.timeVal == null)? 0 :this.timeVal.hashCode()));
-        result = ((result* 31)+((this.strModel == null)? 0 :this.strModel.hashCode()));
-        result = ((result* 31)+((this.attribute == null)? 0 :this.attribute.hashCode()));
-        result = ((result* 31)+((this.dateTimeVal == null)? 0 :this.dateTimeVal.hashCode()));
+        result = ((result* 31)+((this.$strVal == null)? 0 :this.$strVal.hashCode()));
+        result = ((result* 31)+((this.$boolean == null)? 0 :this.$boolean.hashCode()));
+        result = ((result* 31)+((this.$attribute == null)? 0 :this.$attribute.hashCode()));
+        result = ((result* 31)+((this.$strCast == null)? 0 :this.$strCast.hashCode()));
+        result = ((result* 31)+((this.$numVal == null)? 0 :this.$numVal.hashCode()));
+        result = ((result* 31)+((this.$dateTimeVal == null)? 0 :this.$dateTimeVal.hashCode()));
+        result = ((result* 31)+((this.$timeVal == null)? 0 :this.$timeVal.hashCode()));
+        result = ((result* 31)+((this.$field == null)? 0 :this.$field.hashCode()));
+        result = ((result* 31)+((this.$dayOfWeek == null)? 0 :this.$dayOfWeek.hashCode()));
+        result = ((result* 31)+((this.$boolCast == null)? 0 :this.$boolCast.hashCode()));
+        result = ((result* 31)+((this.$hexCast == null)? 0 :this.$hexCast.hashCode()));
+        result = ((result* 31)+((this.$dayOfMonth == null)? 0 :this.$dayOfMonth.hashCode()));
+        result = ((result* 31)+((this.$year == null)? 0 :this.$year.hashCode()));
+        result = ((result* 31)+((this.$hexVal == null)? 0 :this.$hexVal.hashCode()));
+        result = ((result* 31)+((this.$timeCast == null)? 0 :this.$timeCast.hashCode()));
+        result = ((result* 31)+((this.$dateTimeCast == null)? 0 :this.$dateTimeCast.hashCode()));
+        result = ((result* 31)+((this.$month == null)? 0 :this.$month.hashCode()));
+        result = ((result* 31)+((this.$numCast == null)? 0 :this.$numCast.hashCode()));
         return result;
     }
 
@@ -215,7 +415,7 @@ public class Value {
             return false;
         }
         Value rhs = ((Value) other);
-        return (((((((((this.castToString == rhs.castToString)||((this.castToString!= null)&&this.castToString.equals(rhs.castToString)))&&((this.numVal == rhs.numVal)||((this.numVal!= null)&&this.numVal.equals(rhs.numVal))))&&((this.strVal == rhs.strVal)||((this.strVal!= null)&&this.strVal.equals(rhs.strVal))))&&((this.hexVal == rhs.hexVal)||((this.hexVal!= null)&&this.hexVal.equals(rhs.hexVal))))&&((this.timeVal == rhs.timeVal)||((this.timeVal!= null)&&this.timeVal.equals(rhs.timeVal))))&&((this.strModel == rhs.strModel)||((this.strModel!= null)&&this.strModel.equals(rhs.strModel))))&&((this.attribute == rhs.attribute)||((this.attribute!= null)&&this.attribute.equals(rhs.attribute))))&&((this.dateTimeVal == rhs.dateTimeVal)||((this.dateTimeVal!= null)&&this.dateTimeVal.equals(rhs.dateTimeVal))));
+        return (((((((((((((((((((this.$strVal == rhs.$strVal)||((this.$strVal!= null)&&this.$strVal.equals(rhs.$strVal)))&&((this.$boolean == rhs.$boolean)||((this.$boolean!= null)&&this.$boolean.equals(rhs.$boolean))))&&((this.$attribute == rhs.$attribute)||((this.$attribute!= null)&&this.$attribute.equals(rhs.$attribute))))&&((this.$strCast == rhs.$strCast)||((this.$strCast!= null)&&this.$strCast.equals(rhs.$strCast))))&&((this.$numVal == rhs.$numVal)||((this.$numVal!= null)&&this.$numVal.equals(rhs.$numVal))))&&((this.$dateTimeVal == rhs.$dateTimeVal)||((this.$dateTimeVal!= null)&&this.$dateTimeVal.equals(rhs.$dateTimeVal))))&&((this.$timeVal == rhs.$timeVal)||((this.$timeVal!= null)&&this.$timeVal.equals(rhs.$timeVal))))&&((this.$field == rhs.$field)||((this.$field!= null)&&this.$field.equals(rhs.$field))))&&((this.$dayOfWeek == rhs.$dayOfWeek)||((this.$dayOfWeek!= null)&&this.$dayOfWeek.equals(rhs.$dayOfWeek))))&&((this.$boolCast == rhs.$boolCast)||((this.$boolCast!= null)&&this.$boolCast.equals(rhs.$boolCast))))&&((this.$hexCast == rhs.$hexCast)||((this.$hexCast!= null)&&this.$hexCast.equals(rhs.$hexCast))))&&((this.$dayOfMonth == rhs.$dayOfMonth)||((this.$dayOfMonth!= null)&&this.$dayOfMonth.equals(rhs.$dayOfMonth))))&&((this.$year == rhs.$year)||((this.$year!= null)&&this.$year.equals(rhs.$year))))&&((this.$hexVal == rhs.$hexVal)||((this.$hexVal!= null)&&this.$hexVal.equals(rhs.$hexVal))))&&((this.$timeCast == rhs.$timeCast)||((this.$timeCast!= null)&&this.$timeCast.equals(rhs.$timeCast))))&&((this.$dateTimeCast == rhs.$dateTimeCast)||((this.$dateTimeCast!= null)&&this.$dateTimeCast.equals(rhs.$dateTimeCast))))&&((this.$month == rhs.$month)||((this.$month!= null)&&this.$month.equals(rhs.$month))))&&((this.$numCast == rhs.$numCast)||((this.$numCast!= null)&&this.$numCast.equals(rhs.$numCast))));
     }
 
 }

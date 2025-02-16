@@ -25,7 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.authorization.abac;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -85,9 +84,9 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 		// 'queryParameter'");
 		// }
 		//
-		List<AllAccessPermissionRule> allRules = abacStorage.getAbacRules();
+		List<AccessPermissionRule> allRules = abacStorage.getAbacRules();
 
-		List<AllAccessPermissionRule> filteredRules = filterAccessRules(allRules, rightsEnum, objectItem);
+		List<AccessPermissionRule> filteredRules = filterAccessRules(allRules, rightsEnum, objectItem);
 		SubjectInformation<Object> subjectInfo = getSubjectInformation();
 		Jwt jwt = (Jwt) subjectInfo.get();
 
@@ -118,8 +117,8 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
         }
     }
 
-	private static List<AllAccessPermissionRule> filterAccessRules(List<AllAccessPermissionRule> accessRules, RightsEnum rightsEnum, ObjectItem objectItem) {
-		return accessRules.stream().filter(rule -> containsRightForAction(rule.getRights(), rightsEnum)).filter(rule -> AllAccessPermissionRule.Access.ALLOW.equals(rule.getAccess()))
+	private static List<AccessPermissionRule> filterAccessRules(List<AccessPermissionRule> accessRules, RightsEnum rightsEnum, ObjectItem objectItem) {
+		return accessRules.stream().filter(rule -> containsRightForAction(rule.getAcl().getRights(), rightsEnum)).filter(rule -> Acl.Access.ALLOW.equals(rule.getAcl().getAccess()))
 				.filter(rule -> objectMatches(rule.getObjects(), objectItem)).toList();
 	}
 
@@ -141,16 +140,14 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 		return false;
 	}
 
-	private static boolean validateAccessRules(List<AllAccessPermissionRule> filteredRules, Map<String, Value> attributesMap, Jwt jwt) {
+	private static boolean validateAccessRules(List<AccessPermissionRule> filteredRules, Map<String, Value> attributesMap, Jwt jwt) {
 		
-		return filteredRules.stream().anyMatch(rule -> evaluateFormula(rule.getFormula(), attributesMap, populateAttrItemsMapWithAttributeValue(rule, jwt)));
+		return filteredRules.stream().anyMatch(rule -> evaluateFormula(rule.getFormula(), attributesMap, populateAttrItemsMapWithAttributeValue(rule.getAcl().getAttributes(), jwt)));
 	}
 
-	private static Map<String, Object> populateAttrItemsMapWithAttributeValue(AllAccessPermissionRule rule, Jwt jwt) {
+	private static Map<String, Object> populateAttrItemsMapWithAttributeValue(List<AttributeItem> attributeItems, Jwt jwt) {
 		
 		Map<String, Object> attributeItemsMap = new HashMap<String, Object>();
-		
-		List<AttributeItem> attributeItems = rule.getAttributes();
 		
 		List<String> claims = attributeItems.stream().map(attributeItem -> attributeItem.getClaim()).filter(Objects::nonNull).collect(Collectors.toList());
 		List<Global> globals = attributeItems.stream().map(attributeItem -> attributeItem.getGlobal()).filter(Objects::nonNull).collect(Collectors.toList());
@@ -231,32 +228,32 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	private static boolean evaluateEquality(List<Value> operands, Map<String, Value> attributesMap, Map<String, Object> attributeItemsMap) {
 	    if (operands.size() != 2) return false;
 
-	    if (operands.get(0).getStrModel() != null && operands.get(0).getStrModel().startsWith("$aas")) {
-	        return evaluateStrModelEquality(operands, attributesMap);
+	    if (operands.get(0).get$field() != null && operands.get(0).get$field().startsWith("$aas")) {
+	        return evaluateFieldlEquality(operands, attributesMap);
 	    }
 
-	    if (operands.get(0).getAttribute() != null) {
+	    if (operands.get(0).get$attribute() != null) {
 	        return evaluateAttributeEquality(operands, attributeItemsMap);
 	    }
 
 	    return false;
 	}
 
-	private static boolean evaluateStrModelEquality(List<Value> operands, Map<String, Value> attributesMap) {
-	    String strModel = operands.get(0).getStrModel();
+	private static boolean evaluateFieldlEquality(List<Value> operands, Map<String, Value> attributesMap) {
+	    String field = operands.get(0).get$field();
 
-	    if (operands.get(1).getStrVal() != null) {
-	        String ruleValue = operands.get(1).getStrVal();
+	    if (operands.get(1).get$strVal() != null) {
+	        String ruleValue = operands.get(1).get$strVal();
 
-	        if (attributesMap.containsKey(strModel)) {
-	            String objectValue = attributesMap.get(strModel).getStrVal();
+	        if (attributesMap.containsKey(field)) {
+	            String objectValue = attributesMap.get(field).get$strVal();
 	            return ruleValue.equals(objectValue);
 	        }
-	    } else if (operands.get(1).getTimeVal() != null) {
-	        String ruleValue = operands.get(1).getTimeVal();
+	    } else if (operands.get(1).get$timeVal() != null) {
+	        String ruleValue = operands.get(1).get$timeVal();
 
-	        if (attributesMap.containsKey(strModel)) {
-	            String objectValue = attributesMap.get(strModel).getTimeVal();
+	        if (attributesMap.containsKey(field)) {
+	            String objectValue = attributesMap.get(field).get$timeVal();
 	            return ruleValue.equals(objectValue);
 	        }
 	    }
@@ -264,7 +261,7 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	}
 
 	private static boolean evaluateAttributeEquality(List<Value> operands, Map<String, Object> attributeItemsMap) {
-	    AttributeItem ruleAttributeItem = operands.get(0).getAttribute();
+	    AttributeItem ruleAttributeItem = operands.get(0).get$attribute();
 
 	    if (ruleAttributeItem.getClaim() != null) {
 	        return evaluateClaimEquality(operands, attributeItemsMap);
@@ -275,10 +272,10 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	}
 
 	private static boolean evaluateClaimEquality(List<Value> operands, Map<String, Object> attributeItemsMap) {
-	    String ruleClaimItem = operands.get(0).getAttribute().getClaim();
+	    String ruleClaimItem = operands.get(0).get$attribute().getClaim();
 	    if (attributeItemsMap.containsKey("CLAIM#" + ruleClaimItem)) {
 	        Object objectAttributeClaimValue = attributeItemsMap.get("CLAIM#" + ruleClaimItem);
-	        String ruleAttributeClaimValue = operands.get(1).getStrVal();
+	        String ruleAttributeClaimValue = operands.get(1).get$strVal();
 
 	        if (ruleAttributeClaimValue != null) {
 	        	
@@ -295,7 +292,7 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	}
 
 	private static boolean evaluateGlobalEquality(List<Value> operands, Map<String, Object> attributeItemsMap) {
-	    Global ruleGlobalItem = operands.get(0).getAttribute().getGlobal();
+	    Global ruleGlobalItem = operands.get(0).get$attribute().getGlobal();
 
 	    if (ruleGlobalItem == Global.LOCALNOW) {
 	        System.out.println("The Global enum is set to LOCALNOW");
@@ -303,11 +300,11 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	        if (attributeItemsMap.containsKey("GLOBAL#LOCALNOW")) {
 	            LocalTime objectAttributeGlobalValue = (LocalTime) attributeItemsMap.get("GLOBAL#LOCALNOW");
 
-	            if (operands.get(1).getStrVal() != null) {
-	                String ruleAttributeGlobalValue = operands.get(1).getStrVal();
+	            if (operands.get(1).get$attribute() != null) {
+	                String ruleAttributeGlobalValue = operands.get(1).get$strVal();
 	                return ruleAttributeGlobalValue.equals(objectAttributeGlobalValue);
-	            } else if (operands.get(1).getTimeVal() != null) {
-	                String ruleAttributeGlobalValue = operands.get(1).getTimeVal();
+	            } else if (operands.get(1).get$timeVal() != null) {
+	                String ruleAttributeGlobalValue = operands.get(1).get$timeVal();
 	                
 	                LocalTime ruleTime = LocalTime.parse(ruleAttributeGlobalValue, FORMATTER);
 	                
@@ -324,11 +321,11 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	        if (attributeItemsMap.containsKey("GLOBAL#UTCNOW")) {
 	            LocalTime objectAttributeGlobalValue = (LocalTime) attributeItemsMap.get("GLOBAL#UTCNOW");
 
-	            if (operands.get(1).getStrVal() != null) {
-	                String ruleAttributeGlobalValue = operands.get(1).getStrVal();
+	            if (operands.get(1).get$strVal() != null) {
+	                String ruleAttributeGlobalValue = operands.get(1).get$strVal();
 	                return ruleAttributeGlobalValue.equals(objectAttributeGlobalValue);
-	            } else if (operands.get(1).getTimeVal() != null) {
-	                String ruleAttributeGlobalValue = operands.get(1).getTimeVal();
+	            } else if (operands.get(1).get$timeVal() != null) {
+	                String ruleAttributeGlobalValue = operands.get(1).get$timeVal();
 	                
 	                LocalTime ruleTime = LocalTime.parse(ruleAttributeGlobalValue, FORMATTER);
 	                
@@ -380,56 +377,56 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 
 	private static boolean evaluateContains(List<StringValue> operands, Map<String, Value> attributesMap) {
 	    if (operands.size() != 2) return false;
-	    return operands.get(1).getStrVal() != null &&
-	           operands.get(0).getStrVal() != null &&
-	           operands.get(0).getStrVal().contains(operands.get(1).getStrVal());
+	    return operands.get(1).get$strVal() != null &&
+	           operands.get(0).get$strVal() != null &&
+	           operands.get(0).get$strVal().contains(operands.get(1).get$strVal());
 	}
 
 	private static boolean evaluateStartsWith(List<StringValue> operands, Map<String, Value> attributesMap) {
 	    if (operands.size() != 2) return false;
-	    return operands.get(1).getStrVal() != null &&
-	           operands.get(0).getStrVal() != null &&
-	           operands.get(0).getStrVal().startsWith(operands.get(1).getStrVal());
+	    return operands.get(1).get$strVal() != null &&
+	           operands.get(0).get$strVal() != null &&
+	           operands.get(0).get$strVal().startsWith(operands.get(1).get$strVal());
 	}
 
 	private static boolean evaluateEndsWith(List<StringValue> operands, Map<String, Value> attributesMap) {
 	    if (operands.size() != 2) return false;
-	    return operands.get(1).getStrVal() != null &&
-	           operands.get(0).getStrVal() != null &&
-	           operands.get(0).getStrVal().endsWith(operands.get(1).getStrVal());
+	    return operands.get(1).get$strVal() != null &&
+	           operands.get(0).get$strVal() != null &&
+	           operands.get(0).get$strVal().endsWith(operands.get(1).get$strVal());
 	}
 
 	private static int compareValues(List<Value> operands, Map<String, Value> attributesMap, Map<String, Object> attributeItemsMap) {
 	    Value operand1Value = operands.get(0);
 	    
-	    if (operand1Value.getStrModel() != null && operand1Value.getStrModel().startsWith("$aas")) {
-	        return evaluateStrModelComparison(operands, attributesMap);
+	    if (operand1Value.get$field() != null && operand1Value.get$field().startsWith("$aas")) {
+	        return evaluateFieldComparison(operands, attributesMap);
 	    }
 	    
-	    if (operand1Value.getAttribute() != null) {
+	    if (operand1Value.get$attribute() != null) {
 	        return evaluateAttributeComparison(operands, attributeItemsMap);
 	    }
 
 	    return 0;
 	}
 	
-	private static int evaluateStrModelComparison(List<Value> operands, Map<String, Value> attributesMap) {
-	    String strModel = operands.get(0).getStrModel();
+	private static int evaluateFieldComparison(List<Value> operands, Map<String, Value> attributesMap) {
+	    String field = operands.get(0).get$field();
 
-	    if (operands.get(1).getStrVal() != null) {
-	        String ruleValue = operands.get(1).getStrVal();
+	    if (operands.get(1).get$strVal() != null) {
+	        String ruleValue = operands.get(1).get$strVal();
 
-	        if (attributesMap.containsKey(strModel)) {
-	            String objectValue = attributesMap.get(strModel).getStrVal();
+	        if (attributesMap.containsKey(field)) {
+	            String objectValue = attributesMap.get(field).get$strVal();
 	            return ruleValue.compareTo(objectValue);
 	        }
-	    } else if (operands.get(1).getTimeVal() != null) {
-	        String ruleTimeValueString = operands.get(1).getTimeVal();
+	    } else if (operands.get(1).get$timeVal() != null) {
+	        String ruleTimeValueString = operands.get(1).get$timeVal();
 	        
 	        LocalTime ruleTimeValue = LocalTime.parse(ruleTimeValueString);
 
-	        if (attributesMap.containsKey(strModel)) {
-	            String objectTimeValueString = attributesMap.get(strModel).getTimeVal();
+	        if (attributesMap.containsKey(field)) {
+	            String objectTimeValueString = attributesMap.get(field).get$timeVal();
 	            
 	            LocalTime objectTimeValue = LocalTime.parse(objectTimeValueString);
 	            
@@ -440,7 +437,7 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	}
 	
 	private static int evaluateAttributeComparison(List<Value> operands, Map<String, Object> attributeItemsMap) {
-	    AttributeItem ruleAttributeItem = operands.get(0).getAttribute();
+	    AttributeItem ruleAttributeItem = operands.get(0).get$attribute();
 
 	    if (ruleAttributeItem.getClaim() != null) {
 	        return evaluateClaimComparison(operands, attributeItemsMap);
@@ -451,10 +448,10 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	}
 	
 	private static int evaluateClaimComparison(List<Value> operands, Map<String, Object> attributeItemsMap) {
-	    String ruleClaimItem = operands.get(0).getAttribute().getClaim();
+	    String ruleClaimItem = operands.get(0).get$attribute().getClaim();
 	    if (attributeItemsMap.containsKey("CLAIM#" + ruleClaimItem)) {
 	        Object objectAttributeClaimValue = attributeItemsMap.get("CLAIM#" + ruleClaimItem);
-	        String ruleAttributeClaimValue = operands.get(1).getStrVal();
+	        String ruleAttributeClaimValue = operands.get(1).get$strVal();
 
 	        if (ruleAttributeClaimValue != null) {
 	        	
@@ -471,7 +468,7 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	}
 	
 	private static int evaluateGlobalComparison(List<Value> operands, Map<String, Object> attributeItemsMap) {
-	    Global ruleGlobalItem = operands.get(0).getAttribute().getGlobal();
+	    Global ruleGlobalItem = operands.get(0).get$attribute().getGlobal();
 
 	    if (ruleGlobalItem == Global.LOCALNOW) {
 	        System.out.println("The Global enum is set to LOCALNOW");
@@ -479,14 +476,14 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	        if (attributeItemsMap.containsKey("GLOBAL#LOCALNOW")) {
 	            LocalTime objectAttributeGlobalValue = (LocalTime) attributeItemsMap.get("GLOBAL#LOCALNOW");
 
-	            if (operands.get(1).getStrVal() != null) {
-	                String ruleAttributeGlobalValue = operands.get(1).getStrVal();
+	            if (operands.get(1).get$strVal() != null) {
+	                String ruleAttributeGlobalValue = operands.get(1).get$strVal();
 	                
 	                LocalTime ruleTime = LocalTime.parse(ruleAttributeGlobalValue, FORMATTER);
 	                
 	                return ruleTime.compareTo(objectAttributeGlobalValue);
-	            } else if (operands.get(1).getTimeVal() != null) {
-	            	String ruleTimeValueString = operands.get(1).getTimeVal();
+	            } else if (operands.get(1).get$timeVal() != null) {
+	            	String ruleTimeValueString = operands.get(1).get$timeVal();
 		            
 	            	LocalTime ruleTime = LocalTime.parse(ruleTimeValueString, FORMATTER);
 		            
@@ -503,14 +500,14 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	        if (attributeItemsMap.containsKey("GLOBAL#UTCNOW")) {
 	            LocalTime objectAttributeGlobalValue = (LocalTime) attributeItemsMap.get("GLOBAL#UTCNOW");
 
-	            if (operands.get(1).getStrVal() != null) {
-	                String ruleAttributeGlobalValue = operands.get(1).getStrVal();
+	            if (operands.get(1).get$strVal() != null) {
+	                String ruleAttributeGlobalValue = operands.get(1).get$strVal();
 	                
 	                LocalTime ruleTime = LocalTime.parse(ruleAttributeGlobalValue, FORMATTER);
 	                
 	                return ruleTime.compareTo(objectAttributeGlobalValue);
-	            } else if (operands.get(1).getTimeVal() != null) {
-	            	String ruleTimeValueString = operands.get(1).getTimeVal();
+	            } else if (operands.get(1).get$timeVal() != null) {
+	            	String ruleTimeValueString = operands.get(1).get$timeVal();
 		            
 	            	LocalTime ruleTime = LocalTime.parse(ruleTimeValueString, FORMATTER);
 		            

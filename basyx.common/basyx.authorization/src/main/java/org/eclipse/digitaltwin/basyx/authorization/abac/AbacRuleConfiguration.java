@@ -68,7 +68,7 @@ public class AbacRuleConfiguration {
 	public AbacStorage createInMemoryRbacStorage() throws IOException {
 		
 		if (filePath.isBlank())
-			return new InMemoryAbacStorage(new ArrayList<>());
+			return new InMemoryAbacStorage(null);
 		
 		return new InMemoryAbacStorage(new AbacRuleInitializer(objectMapper, filePath, resourceLoader).deserialize());
 	}

@@ -39,12 +39,12 @@ import java.util.List;
  * 
  * @author danish
  */
-public class AbacRuleDeserializer extends JsonDeserializer<List<AllAccessPermissionRule>> {
+public class AbacRuleDeserializer extends JsonDeserializer<List<AccessPermissionRule>> {
 
 	@Override
-	public List<AllAccessPermissionRule> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+	public List<AccessPermissionRule> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
 		ObjectMapper mapper = (ObjectMapper) p.getCodec();
-		List<AllAccessPermissionRule> rbacRules = mapper.readValue(p, new TypeReference<List<AllAccessPermissionRule>>() {
+		List<AccessPermissionRule> rbacRules = mapper.readValue(p, new TypeReference<List<AccessPermissionRule>>() {
 		});
 
 		return rbacRules;
