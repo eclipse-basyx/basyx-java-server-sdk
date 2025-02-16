@@ -33,6 +33,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.rbac.AasTargetInformation;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.rbac.backend.submodel.AasTargetInformationAdapter;
 import org.junit.Before;
 import org.junit.Test;

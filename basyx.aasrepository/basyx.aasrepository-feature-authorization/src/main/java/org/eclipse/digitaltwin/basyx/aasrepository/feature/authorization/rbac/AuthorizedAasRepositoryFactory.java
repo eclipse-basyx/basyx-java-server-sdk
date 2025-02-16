@@ -23,25 +23,30 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.authorization.abac;
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.rbac;
 
-import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.stereotype.Component;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 
 /**
- * SerializationExtension integrating the additional SubmodelRepository
- * serialization
+ * Factory for creating {@link AuthorizedAasRepository}
  * 
- * @author schnicke, danish
- *
+ * @author danish
  */
-//@Component
-public class AbacRuleSerializationExtension implements SerializationExtension {
+public class AuthorizedAasRepositoryFactory implements AasRepositoryFactory {
+
+	private AasRepositoryFactory decorated;
+	private RbacPermissionResolver<AasTargetInformation> permissionResolver;
+
+	public AuthorizedAasRepositoryFactory(AasRepositoryFactory decorated, RbacPermissionResolver<AasTargetInformation> permissionResolver) {
+		this.decorated = decorated;
+		this.permissionResolver = permissionResolver;
+	}
 
 	@Override
-	public void extend(Jackson2ObjectMapperBuilder builder) {
-//		builder.deserializerByType(LogicalComponent.class, new AbacRuleDeserializer());
+	public AasRepository create() {
+		return new AuthorizedAasRepository(decorated.create(), permissionResolver);
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,61 +23,30 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.abac;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
-import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.authorization.abac.AbacPermissionResolver;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 /**
- * Feature for authorized {@link AasRepository}
+ * Factory for creating {@link AuthorizedAasRepository}
  * 
  * @author danish
  */
-@Component
-@ConditionalOnExpression("#{${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false}}")
-@Order(0)
-public class AuthorizedAasRepositoryFeature implements AasRepositoryFeature {
-	
-	@Value("${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":}")
-	private boolean enabled;
-	
+public class AuthorizedAasRepositoryFactory implements AasRepositoryFactory {
+
+	private AasRepositoryFactory decorated;
 	private AbacPermissionResolver permissionResolver;
 
-	@Autowired
-	public AuthorizedAasRepositoryFeature(AbacPermissionResolver permissionResolver) {
+	public AuthorizedAasRepositoryFactory(AasRepositoryFactory decorated, AbacPermissionResolver permissionResolver) {
+		this.decorated = decorated;
 		this.permissionResolver = permissionResolver;
 	}
 
 	@Override
-	public AasRepositoryFactory decorate(AasRepositoryFactory aasRepositoryFactory) {
-		return new AuthorizedAasRepositoryFactory(aasRepositoryFactory, permissionResolver);
+	public AasRepository create() {
+		return new AuthorizedAasRepository(decorated.create(), permissionResolver);
 	}
 
-	@Override
-	public void initialize() {
-	}
-
-	@Override
-	public void cleanUp() {
-
-	}
-
-	@Override
-	public String getName() {
-		return "AasRepository Authorization";
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
 }

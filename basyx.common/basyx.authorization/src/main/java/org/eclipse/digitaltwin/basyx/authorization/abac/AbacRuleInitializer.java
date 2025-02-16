@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,23 +25,20 @@
 
 package org.eclipse.digitaltwin.basyx.authorization.abac;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingAuthorizationConfigurationException;
 import org.springframework.core.io.ResourceLoader;
 
 /**
- * Initializes {@link RbacRule} from the resource
+ * Initializes ABAC Rule from the resource
  * 
  * @author danish
  */
 public class AbacRuleInitializer {
 
-	private String rbacJsonFilePath;
+	private String abacJsonFilePath;
 
 	private final ObjectMapper objectMapper;
 
@@ -49,36 +46,19 @@ public class AbacRuleInitializer {
 
 	public AbacRuleInitializer(ObjectMapper objectMapper, String filePath, ResourceLoader resourceLoader) {
 		this.objectMapper = objectMapper;
-		this.rbacJsonFilePath = filePath;
+		this.abacJsonFilePath = filePath;
 		this.resourceLoader = resourceLoader;
 	}
 
 	/**
-	 * Provides the Map of {@link RbacRule} from the resource
+	 * Deserializes ABAC rules from the file path
 	 * 
-	 * It auto-generates the key based on hash of combination of role, {@link Action}, and the concrete {@link TargetInformation}
-	 * class.
-	 * 
-	 * @return map of rbac rules
+	 * @return bundled abac rules
 	 * @throws IOException
 	 */
 	public AllAccessPermissionRules deserialize() throws IOException {
 		
-		 // Deserialize into List<AllRulesWrapper>
-//        List<AllRulesWrapper> wrapperList = objectMapper.readValue(
-//        		getFile(rbacJsonFilePath),
-//            objectMapper.getTypeFactory().constructCollectionType(List.class, AllRulesWrapper.class)
-//        );
-
-        // Flatten the "AllRules" into a single list
-//        List<AllRule> flattenedRules = wrapperList.stream()
-//                                                  .flatMap(wrapper -> wrapper.getAllRules().stream())
-//                                                  .collect(Collectors.toList());
-		
-//		return objectMapper.readValue(getFile(rbacJsonFilePath), new TypeReference<List<AllAccessPermissionRule>>() {
-//		});
-		
-		AllAccessPermissionRulesWrapper accessPermissionRulesWrapper = objectMapper.readValue(getFile(rbacJsonFilePath), AllAccessPermissionRulesWrapper.class);
+		AllAccessPermissionRulesWrapper accessPermissionRulesWrapper = objectMapper.readValue(getFile(abacJsonFilePath), AllAccessPermissionRulesWrapper.class);
 		
 		return accessPermissionRulesWrapper.getAllAccessPermissionRules();
 	}

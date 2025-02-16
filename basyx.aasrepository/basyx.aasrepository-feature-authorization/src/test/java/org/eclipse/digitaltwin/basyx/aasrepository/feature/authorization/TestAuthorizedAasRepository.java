@@ -48,6 +48,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.rbac.AuthorizedAasRepository;
 import org.eclipse.digitaltwin.basyx.authorization.AccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.authorization.DummyCredential;
 import org.eclipse.digitaltwin.basyx.authorization.DummyCredentialStore;

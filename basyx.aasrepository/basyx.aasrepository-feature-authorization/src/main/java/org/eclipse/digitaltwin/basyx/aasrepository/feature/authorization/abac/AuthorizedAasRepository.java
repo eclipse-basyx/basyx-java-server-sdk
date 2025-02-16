@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.abac;
 
 import java.io.File;
 import java.io.InputStream;
@@ -35,21 +35,17 @@ import java.util.Map;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.authorization.abac.AbacPermissionResolver;
-import org.eclipse.digitaltwin.basyx.authorization.abac.LogicalExpression;
 import org.eclipse.digitaltwin.basyx.authorization.abac.ObjectItem;
 import org.eclipse.digitaltwin.basyx.authorization.abac.RightsEnum;
-import org.eclipse.digitaltwin.basyx.authorization.abac.StringValue;
 import org.eclipse.digitaltwin.basyx.authorization.abac.Value;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.hibernate.validator.internal.metadata.aggregated.ValidatableParametersMetaData;
 
 /**
  * Decorator for authorized {@link AasRepository}

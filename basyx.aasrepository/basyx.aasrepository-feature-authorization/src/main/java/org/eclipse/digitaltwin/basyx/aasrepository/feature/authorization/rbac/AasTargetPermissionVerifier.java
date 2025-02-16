@@ -27,7 +27,6 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.rbac;
 
 import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.AasTargetInformation;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
 

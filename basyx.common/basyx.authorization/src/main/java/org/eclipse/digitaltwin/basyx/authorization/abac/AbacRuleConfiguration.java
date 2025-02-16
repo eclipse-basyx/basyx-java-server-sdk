@@ -33,13 +33,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleInitializer;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Configurations for {@link RbacRule}

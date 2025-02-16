@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,22 +23,17 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.abac;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.rbac.AasTargetPermissionVerifier;
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.authorization.SubjectInformationProvider;
 import org.eclipse.digitaltwin.basyx.authorization.abac.AbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.abac.AbacStorage;
 import org.eclipse.digitaltwin.basyx.authorization.abac.SimpleAbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RoleProvider;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Configuration for authorized {@link AuthorizedAasRepository}
@@ -46,13 +41,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author danish
  */
 @Configuration
-@ConditionalOnExpression(value = "${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false} and ('${" + CommonAuthorizationProperties.TYPE_PROPERTY_KEY + "}'.equals('abac') or '${" + CommonAuthorizationProperties.TYPE_PROPERTY_KEY + "}'.isEmpty())")
+@ConditionalOnExpression(value = "${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false} and ('${" + CommonAuthorizationProperties.TYPE_PROPERTY_KEY + "}'.equals('abac'))")
 public class AuthorizedAasRepositoryAbacConfiguration {
-	
-	@Bean
-	public TargetPermissionVerifier<AasTargetInformation> getAasTargetPermissionVerifier() {
-		return new AasTargetPermissionVerifier();
-	}
 	
 	@Bean
 	public AbacPermissionResolver getAasPermissionResolver(AbacStorage abacStorage, RoleProvider roleProvider, SubjectInformationProvider<Object> subjectInformationProvider) {

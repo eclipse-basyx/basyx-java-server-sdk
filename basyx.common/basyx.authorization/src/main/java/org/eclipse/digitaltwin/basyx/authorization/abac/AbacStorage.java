@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -28,7 +28,7 @@ package org.eclipse.digitaltwin.basyx.authorization.abac;
 import java.util.List;
 
 /**
- * An interface for defining storage of {@link RbacRule}
+ * An interface for defining storage of ABAC Rules
  * 
  * @author danish
  */
