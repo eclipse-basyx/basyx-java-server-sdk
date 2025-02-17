@@ -25,16 +25,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelservice.component;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 
 /**
  * @author gerhard sonnenberg (DFKI GmbH)
@@ -54,17 +46,7 @@ public class GenericSubmodelFactory {
 	}
 
 	public Submodel create() {
-		return loadSubmodel();
+		return new SubmodelLoader(filePath).loadSubmodel();
 	}
 
-	public Submodel loadSubmodel() {
-		File submodelFile = new File(filePath);
-		try (FileInputStream fIn = new FileInputStream(submodelFile);
-				BufferedInputStream bIn = new BufferedInputStream(fIn)) {
-			JsonDeserializer deserializer = new JsonDeserializer();
-			return deserializer.read(bIn, DefaultSubmodel.class);
-		} catch (IOException | DeserializationException e) {
-			throw new IllegalStateException("Could not load submodel: " + submodelFile.getAbsolutePath(), e);
-		}
-	}
 }
