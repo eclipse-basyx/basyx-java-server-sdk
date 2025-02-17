@@ -61,7 +61,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapper;
  */
 public class SubmodelElementValueMapperFactory {
 
-	public ValueMapper create(SubmodelElement submodelElement) {
+	public static ValueMapper create(SubmodelElement submodelElement) {
 		if (submodelElement instanceof Property) {
 			return new PropertyValueMapper((Property) submodelElement);
 		} else if (submodelElement instanceof Range) {

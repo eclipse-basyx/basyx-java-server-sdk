@@ -1,13 +1,9 @@
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
-import java.io.InputStream;
 import java.util.List;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -30,15 +26,6 @@ public interface SubmodelOperations {
 
 	void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException ;
 
-	OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException ;
-
-	java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException ;
-
-	void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException ;
-
-	void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException ;
-
 	void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList);
 
-	InputStream getFileByFilePath(String submodelId, String filePath);
 }
