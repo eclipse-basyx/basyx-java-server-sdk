@@ -49,12 +49,22 @@ public class MqttSubmodelServiceConfiguration {
 
 	@ConditionalOnMissingBean
 	@Bean
-	public IMqttClient mqttClient(@Value("${mqtt.clientId}") String clientId, @Value("${mqtt.hostname}") String hostname, @Value("${mqtt.port}") int port) throws MqttException {
-		IMqttClient mqttClient = new MqttClient("tcp://" + hostname + ":" + port, clientId, new MemoryPersistence());
-
-		mqttClient.connect(mqttConnectOptions());
-
-		return mqttClient;
+	public IMqttClient mqttClient(@Value("${mqtt.clientId}") String clientId, 
+	                             @Value("${mqtt.hostname}") String hostname, 
+	                             @Value("${mqtt.port}") int port,
+	                             @Value("${mqtt.protocol:tcp}") String protocol,
+	                             @Value("${mqtt.username:}") String username,
+	                             @Value("${mqtt.password:}") String password) throws MqttException {
+	    IMqttClient mqttClient = new MqttClient(protocol+"://" + hostname + ":" + port, clientId, new MemoryPersistence());
+	    
+	    MqttConnectOptions options = mqttConnectOptions();
+	    if (!username.isEmpty() && !password.isEmpty()) {
+	        options.setUserName(username);
+	        options.setPassword(password.toCharArray());
+	    }
+	    
+	    mqttClient.connect(options);
+	    return mqttClient;
 	}
 
 	@ConditionalOnMissingBean
