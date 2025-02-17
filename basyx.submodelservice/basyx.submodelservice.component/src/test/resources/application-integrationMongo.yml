@@ -1,5 +1,5 @@
 basyx:
-  backend: InMemory
+  backend: MongoDB
   submodelservice:
     submodel:
       file: example/submodel.json 
