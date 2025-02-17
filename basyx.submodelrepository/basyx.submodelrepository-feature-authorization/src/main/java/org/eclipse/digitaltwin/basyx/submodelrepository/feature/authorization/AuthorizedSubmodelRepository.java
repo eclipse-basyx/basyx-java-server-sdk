@@ -205,21 +205,21 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public void createSubmodelElement(String submodelId, SubmodelElement smElement) {
+	public SubmodelElement createSubmodelElement(String submodelId, SubmodelElement smElement) {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(ALL_ALLOWED_WILDCARD)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
-		decorated.createSubmodelElement(submodelId, smElement);
+		return decorated.createSubmodelElement(submodelId, smElement);
 	}
 
 	@Override
-	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
+	public SubmodelElement createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(idShortPath)));
 
 		throwExceptionIfInsufficientPermission(isAuthorized);
 
-		decorated.createSubmodelElement(submodelId, idShortPath, smElement);
+		return decorated.createSubmodelElement(submodelId, idShortPath, smElement);
 	}
 
 	@Override
