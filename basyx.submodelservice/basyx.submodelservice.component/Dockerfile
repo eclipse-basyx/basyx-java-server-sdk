@@ -5,8 +5,9 @@ USER nobody
 WORKDIR /application
 ARG JAR_FILE=target/*-exec.jar
 COPY ${JAR_FILE} basyxExecutable.jar
-ARG AAS4J_JAR_FILE=target/libs/aas4j-model-1.0.2.jar
-COPY ${AAS4J_JAR_FILE} libs/aas4j-model-1.0.2.jar
+ARG AAS4J_VERSION=${aas4j-version}
+ARG AAS4J_JAR_FILE=target/libs/aas4j-model-${AAS4J_VERSION}.jar
+COPY ${AAS4J_JAR_FILE} libs/aas4j-model-${AAS4J_VERSION}.jar
 ARG PORT=8081
 ENV SERVER_PORT=${PORT}
 ARG CONTEXT_PATH=/
