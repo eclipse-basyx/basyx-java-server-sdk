@@ -23,9 +23,16 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.authorization.abac;
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.abac.backend.inmemory;
 
 import java.util.List;
+
+import org.eclipse.digitaltwin.basyx.authorization.abac.AbacStorage;
+import org.eclipse.digitaltwin.basyx.authorization.abac.AccessPermissionRule;
+import org.eclipse.digitaltwin.basyx.authorization.abac.Acl.Access;
+import org.eclipse.digitaltwin.basyx.authorization.abac.AllAccessPermissionRules;
+import org.eclipse.digitaltwin.basyx.authorization.abac.ObjectItem;
+import org.eclipse.digitaltwin.basyx.authorization.abac.RightsEnum;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
 
 /**
@@ -48,6 +55,36 @@ public class InMemoryAbacStorage implements AbacStorage {
 	@Override
 	public void addRule(AccessPermissionRule abacRule) {
 		abacRules.getRules().add(abacRule);
+		
+	}
+
+	@Override
+	public AccessPermissionRule getRule(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeRule(String ruleId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean exists(String ruleId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public List<AccessPermissionRule> getFilteredAbacRules(RightsEnum right, Access access, ObjectItem objectItem) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void update(String ruleId, AccessPermissionRule abacRule) {
+		// TODO Auto-generated method stub
 		
 	}
 

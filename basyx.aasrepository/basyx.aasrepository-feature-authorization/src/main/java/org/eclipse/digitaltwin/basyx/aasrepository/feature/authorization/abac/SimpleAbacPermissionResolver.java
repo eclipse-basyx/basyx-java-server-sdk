@@ -23,8 +23,9 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.authorization.abac;
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.abac;
 
+import java.nio.file.attribute.AclEntryFlag;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -37,7 +38,17 @@ import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.basyx.authorization.SubjectInformation;
 import org.eclipse.digitaltwin.basyx.authorization.SubjectInformationProvider;
+import org.eclipse.digitaltwin.basyx.authorization.abac.AbacPermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.abac.AbacStorage;
+import org.eclipse.digitaltwin.basyx.authorization.abac.AccessPermissionRule;
+import org.eclipse.digitaltwin.basyx.authorization.abac.Acl;
+import org.eclipse.digitaltwin.basyx.authorization.abac.AttributeItem;
 import org.eclipse.digitaltwin.basyx.authorization.abac.AttributeItem.Global;
+import org.eclipse.digitaltwin.basyx.authorization.abac.LogicalExpression;
+import org.eclipse.digitaltwin.basyx.authorization.abac.ObjectItem;
+import org.eclipse.digitaltwin.basyx.authorization.abac.RightsEnum;
+import org.eclipse.digitaltwin.basyx.authorization.abac.StringValue;
+import org.eclipse.digitaltwin.basyx.authorization.abac.Value;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RoleProvider;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NullSubjectException;
 import org.slf4j.Logger;
@@ -79,7 +90,8 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	public boolean hasPermission(RightsEnum rightsEnum, ObjectItem objectItem, Map<String, Value> attributesMap) {
 		List<AccessPermissionRule> allRules = abacStorage.getAbacRules();
 
-		List<AccessPermissionRule> filteredRules = filterAccessRules(allRules, rightsEnum, objectItem);
+//		List<AccessPermissionRule> filteredRules = filterAccessRules(allRules, rightsEnum, objectItem);
+		List<AccessPermissionRule> filteredRules = abacStorage.getFilteredAbacRules(rightsEnum, Acl.Access.ALLOW, objectItem);
 		SubjectInformation<Object> subjectInfo = getSubjectInformation();
 		Jwt jwt = (Jwt) subjectInfo.get();
 

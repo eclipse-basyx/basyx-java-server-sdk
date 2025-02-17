@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.authorization.abac;
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.abac.backend.inmemory;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -32,6 +32,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
+import org.eclipse.digitaltwin.basyx.authorization.abac.AbacRuleInitializer;
+import org.eclipse.digitaltwin.basyx.authorization.abac.AbacStorage;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;

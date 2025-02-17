@@ -45,15 +45,10 @@ public class CommonSecurityConfiguration {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http
-				.authorizeHttpRequests(authorize -> authorize
-						.requestMatchers("/actuator/health/**").permitAll()
-						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-						.anyRequest().authenticated()
-				)
-				.oauth2ResourceServer(oauth2 -> oauth2
-						.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-				);
+		http.csrf(csrf -> csrf.disable()) // Disable CSRF for all endpoints
+				.authorizeHttpRequests(authorize -> authorize.requestMatchers("/actuator/health/**").permitAll().requestMatchers(HttpMethod.GET, "/abac-rules/**").permitAll().requestMatchers(HttpMethod.POST, "/abac-rules/**").permitAll()
+						.requestMatchers(HttpMethod.DELETE, "/abac-rules/**").permitAll().requestMatchers(HttpMethod.PUT, "/abac-rules/**").permitAll().requestMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated())
+				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
 
 		return http.build();
 	}

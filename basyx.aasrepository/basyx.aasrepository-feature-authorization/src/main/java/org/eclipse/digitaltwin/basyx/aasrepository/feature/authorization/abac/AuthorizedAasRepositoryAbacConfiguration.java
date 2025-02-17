@@ -29,7 +29,6 @@ import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties
 import org.eclipse.digitaltwin.basyx.authorization.SubjectInformationProvider;
 import org.eclipse.digitaltwin.basyx.authorization.abac.AbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.abac.AbacStorage;
-import org.eclipse.digitaltwin.basyx.authorization.abac.SimpleAbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RoleProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;

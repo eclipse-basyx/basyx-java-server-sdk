@@ -35,5 +35,10 @@ import java.util.List;
 public interface AbacStorage {
 	
     public List<AccessPermissionRule> getAbacRules();
+    public List<AccessPermissionRule> getFilteredAbacRules(RightsEnum right, Acl.Access access, ObjectItem objectItem);
     public void addRule(AccessPermissionRule abacRule);
+    public AccessPermissionRule getRule(String id);
+    public void removeRule(String ruleId);
+    public boolean exists(String ruleId);
+    public void update(String ruleId, AccessPermissionRule abacRule);
 }
