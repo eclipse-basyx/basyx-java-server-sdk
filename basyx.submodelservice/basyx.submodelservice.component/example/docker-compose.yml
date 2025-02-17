@@ -1,23 +1,62 @@
 version: "3.9"
+
 services:
+  code-generator-jar:
+    image: openjdk:17
+    container_name: code-generator
+    volumes:
+      - jar-volume:/shared
+    command: >
+      bash -c "
+      # Create directories for source code and compiled classes
+      mkdir -p tmp/src tmp/bin &&
+      # Generate the Java source file 'HelloWorld.java'
+      cat <<EOF > tmp/src/HelloWorld.java
+      public class HelloWorld {
+          public String sayHello() {
+              return \\\"Hello World!\\\";
+          }
+      }EOF
+      &&
+      # Compile the Java source code, placing .class files into tmp/bin
+      javac -d tmp/bin tmp/src/HelloWorld.java &&
+      cd tmp/bin &&
+      # Package the compiled class into a JAR file
+      jar cf HelloWorld.jar HelloWorld.class &&
+      # Copy the generated JAR into the shared volume for use by other services
+      cp HelloWorld.jar /shared/HelloWorld.jar &&
+      echo 'Done'
+      "
+    restart: "no"
+    # This container is designed as a one-shot job.
+    # It exits after completing its task, and its successful completion is checked by submodel-service.
+
+
   submodel-service:
-    image: eclipsebasyx/submodel-service:test
-    build:
-      context: ..
+    image: eclipsebasyx/submodel-service:${REVISION}
     container_name: submodel-service
+    pull_policy: missing
     environment:
+      # add the mounted jar file file:submodel.json or submodel.json
       BASYX_SUBMODELSERVICE_SUBMODEL_FILE: submodel.json
+      # we add all sources -> they will be compiled on startup
       BASYX_SUBMODELSERVICE_FEATURE_OPERATION_DISPATCHER_JAVA_SOURCES: sources
+      # this is the jar file
       BASYX_SUBMODELSERVICE_FEATURE_OPERATION_DISPATCHER_JAVA_ADDITIONALCLASSPATH: jars/HelloWorld.jar
-      # we should use properties or yml files for operation mappings
-      # Environment variables could not be parsed properly
-      # dots of the idShortPath are not handled properly by spring and also the lower-case conversion of spring is problematic
-      # so either we use config file for mappings or define everything in a .properties or .yml file
+      # we specify the mappings in the application-mappings.yml
       SPRING_PROFILES_ACTIVE: mappings
     ports:
-    - 8111:8081
+      - ${PORT}:8081
     volumes:
-    - ./submodel.json:/application/submodel.json:ro
-    - ./sources/:/application/sources/:ro
-    - ./jars/:/application/jars/:ro
-    - ./application-mappings.yml:/application/config/application-mappings.yml/:ro
+      - ./submodel.json:/application/submodel.json:ro
+      - ./sources/:/application/sources/:ro
+      - jar-volume:/application/jars/:ro
+      - ./application-mappings.yml:/application/config/application-mappings.yml/:ro
+    depends_on:
+      code-generator-jar:
+        condition: service_completed_successfully
+    # submodel-service depends on the code-generator service to have completed successfully.
+    # It retrieves the generated JAR file from the shared volume mounted at /application/jars.
+
+volumes:
+  jar-volume:

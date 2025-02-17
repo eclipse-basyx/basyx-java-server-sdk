@@ -1,22 +1,14 @@
 #!/bin/bash
-
-project_was_built() {
-  if find ../target -type f -name "basyx.submodelservice.component*-exec.jar" | grep -q "^"; then
-    return 0  
-  else
-    return 1  
-  fi
-}
-
-build_maven() {
-  echo building maven artifacts ...
-  mvn -f ../../../pom.xml clean install -DskipTests
-}
+set -a
+# Source the .env file
+source .env
+# Disable automatic exporting of variables
+set +a
 
 run_square() {
   echo "Please enter an integer value:"
   read -r int_value
-  response=$(curl http://localhost:8111/submodel/submodel-elements/SquareOperation/invoke \
+  response=$(curl http://localhost:$PORT/submodel/submodel-elements/SquareOperation/invoke \
      -H "Content-Type: application/json" \
      -H "Accept: application/json" \
      -d "{ \"inputArguments\" : [{ \"value\" : { \"modelType\" : \"Property\", \"value\" : \"${int_value}\" }}]}" \
@@ -24,13 +16,12 @@ run_square() {
   echo result: $response
 }
 
-
 run_add() {
   echo "Please enter the first integer value:"
   read -r int_value1
   echo "Please enter the second integer value:"
   read -r int_value2
-  response=$(curl http://localhost:8111/submodel/submodel-elements/BasicOperations.AddOperation/invoke \
+  response=$(curl http://localhost:$PORT/submodel/submodel-elements/BasicOperations.AddOperation/invoke \
      -H "Content-Type: application/json" \
      -H "Accept: application/json" \
      -d "{ \"inputArguments\" : [{ \"value\" : { \"modelType\" : \"Property\", \"value\" : \"${int_value1}\" }},{ \"value\" : { \"modelType\" : \"Property\", \"value\" : \"${int_value2}\" }}]}" \
@@ -39,7 +30,7 @@ run_add() {
 }
 
 run_hello() {
-  response=$(curl http://localhost:8111/submodel/submodel-elements/BasicOperations.HelloOperation/invoke \
+  response=$(curl http://localhost:$PORT/submodel/submodel-elements/BasicOperations.HelloOperation/invoke \
      -H "Content-Type: application/json" \
      -H "Accept: application/json" \
      -d "{ }" \
@@ -76,21 +67,27 @@ run_tests() {
   done
 }
 
-if ! project_was_built; then
-  read -p "The maven artifact does not exist. Do you want to build all maven artifacts now? [Y/n]: " build_maven
-  build_maven=${build_maven:-Y}
-  if [[ "$build_maven" =~ ^[Yy]$ ]]; then
-    build_maven;
-  else
-    echo abort
-    return;
-  fi
-fi
+pull_submodel() {
+    URL="http://localhost:$PORT/submodel"
 
-docker-compose up --build --force-recreate --detach --wait
-echo service started: http://localhost:8111/submodel
+    while true; do
+        response=$(curl -s -w "\n%{http_code}" "$URL")
+        http_code=$(echo "$response" | tail -n1)
+        
+        if [ "$http_code" -eq 200 ]; then
+            cat submodel.json
+            break
+        else
+            echo "HTTP-Code: $http_code. Try to connect again after 2 seconds..."
+            echo "Check that the server is started!"
+            sleep 2
+        fi
+    done
+}
 
-run_tests;
+echo "##### Current Submodel #############"
+pull_submodel
 
-echo "Shutting down containers"
-docker-compose down
+echo "##### Test #########################"
+echo ""
+run_tests

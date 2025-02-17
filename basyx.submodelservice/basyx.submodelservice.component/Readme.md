@@ -1,91 +1,124 @@
-# Eclipse BaSyx - Standalone Submodel Service Component
+# 🚀 Eclipse BaSyx - Standalone Submodel Service Component
 
-This project provides a generic Submodel Service component. With this component, you can deploy your own Submodel Services without the need to build a Spring Boot application or create and deploy your own Dockerfiles.
+The **BaSyx Submodel Service Component** is a modular, Docker-based service that enables efficient deployment and management of submodels. This component allows you to deploy submodel services **without needing to build a Spring Boot application** or manually creating Dockerfiles.
 
-*Invoke* calls to the Submodel element *Operation* are delegated in the generic component to Java classes that can either be precompiled or provided as source code.
+*Invoke* calls to the submodel element *Operation* are delegated to Java classes that can either be precompiled or provided as source code. These Java methods can be provided as simple classes without additional dependencies. The `aas4j-model` module is already available at runtime, and additional libraries can be included via an environment variable.
 
-These methods can be provided as simple Java classes and do not require additional dependencies for the project. At runtime, the classes from the *aas4j-model* module are already available. Additional libraries can be included via an environment variable.
+---
 
-## Configuration
+## 📂 Project Structure
 
-The [example folder](./example/) contains sample settings. For assigning `idShortPaths` to executable Java classes, configuration should be done using Properties in the form of a Properties file or YAML. Environment variables are not processed correctly by Spring when mapping.
+| Directory | Description |
+|-----------|-------------|
+| `src/main/java/` | Contains the core implementation of the submodel service. |
+| `src/test/java/` | Includes unit and integration tests. |
+| `src/main/resources/` | Stores default configuration files such as `application.yml`. |
+| `example/` | Provides a sample setup using Docker Compose and dynamically compiled Java sources. |
+| `target/` | Generated build artifacts (ignored in version control). |
+| `Dockerfile` | Defines the standalone Docker image build process. |
+| `pom.xml` | Maven build configuration. |
 
-When running the container, the execution folder is /application. 
+---
 
-If you want to use a different folder for your classes (Property `basyx.submodelservice.feature.operation.dispatcher.java.classes` ) than `/application/classes`, you need to mount that folder to in the Docker container. This ensures that the classes can be accessed and executed correctly.
+## 🔧 Setup & Installation
 
-If you choose to use a different folder and do not mount it to /application/classes, you need to run the container as root. This is less secure and not recommended for production environments.
+### **1️⃣ Building the Project with Maven**
 
-For the sake of simplicity and security, it is recommended to use /application/classes as the default folder, as it is configured with the necessary permissions and is the default setting.
+To build the service manually, use:
+```bash
+mvn clean package
+```
+This will generate the JAR files inside the `target/` directory.
 
+---
 
-**Performance Note**: The startup time of the service can be significantly reduced if the sources are already compiled and placed as JAR files or class files in the /application directory. Pre-compiling your code before building the Docker image can improve performance and reduce initialization time.
+### **2️⃣ Building & Running with Docker**
 
-### System Properties
+To build the Docker image, **set the `docker.namespace` variable** before running the build:
+```bash
+export docker.namespace=my-docker-user
+mvn clean package -Ddocker.namespace=my-docker-user
+```
+Then, to run the service in a container:
+```bash
+docker run -p 8081:8081 my-docker-user/basyx-submodel-service
+```
 
-Below are the individual properties used when starting the application. Except for `basyx.submodel.file`, all properties are optional.
+---
 
-| Property                                                                                    | Example                              | Explanation                                                                                                                 |
-|---------------------------------------------------------------------------------------------|--------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
-| `basyx.submodelservice.submodel.file`                                                       | `mySubmodel.json`                    | Path to the file describing the Submodel.                                                                                   |
-| `basyx.submodelservice.feature.operation.dispatcher.enabled`                                | `true`                               | Determines whether the feature is enabled or not.                                                                           |
-| `basyx.submodelservice.feature.operation.dispatcher.mappings[SquareOperation]`              | `org.example.SquareOp`               | Maps the `idShortPath` of an operation to the class `org.example.SquareOp`.                                                 |
-| `basyx.submodelservice.feature.operation.dispatcher.mappings[BasicOperations.AddOperation]` | `org.basic.AddOperation`             | Another example of mapping an operation to a Java class.                                                                    |
-| `basyx.submodelservice.feature.operation.dispatcher.defaultMapping`                         | `org.example.MyOperation`            | Specifies the default operation to be called if no specific mapping is found.                                               |
-| `basyx.submodelservice.feature.operation.dispatcher.java.sources`                           | `src`                                | Directory containing the Java source files to be compiled. These classes can be dynamically loaded and executed at runtime. |
-| `basyx.submodelservice.feature.operation.dispatcher.java.classes`                           | `classes`                     | Directory for storing compiled classes. This is used in the classpath when loading classes.                                 |
-| `basyx.submodelservice.feature.operation.dispatcher.java.additionalClasspath`               | `jars/HelloWorld.jar,jars/test.jar`  | Comma-separated list of additional libraries used during source compilation and class loading.                              |
+### **3️⃣ Running with Docker Compose (Example Setup)**
 
-The example project contains an [application.yml](./example/application.yml) that demonstrates how configuration can be specified clearly using YAML.
+A sample setup using Docker Compose is provided in the `example/` directory. To use it, navigate to the folder and execute:
+```bash
+cd example
+./run-compose.sh
+```
+This starts the following services:
+1. **`code-generator-jar`**: Dynamically compiles Java sources.
+2. **`submodel-service`**: Loads the submodel and executes operations.
 
-### Structure of Java Classes
+The JAR file is **built inside Docker Compose** for demonstration purposes, showcasing the dependency on `aas4j` at compile time. In production, it's recommended to build the JAR externally and mount it into the container.
 
-The Java classes that execute operations do not require dependencies and do not need to extend interfaces or implement classes. It is important that they include a method with the following signature:
+---
+
+## 🌍 Configuration
+
+### **System Properties & Environment Variables**
+
+Configuration can be specified either **as system properties** or **via environment variables**.
+
+| Property | Example | Explanation |
+|----------|---------|-------------|
+| `basyx.submodelservice.submodel.file` | `mySubmodel.json` | Path to the submodel JSON file. |
+| `basyx.submodelservice.feature.operation.dispatcher.enabled` | `true` | Enables operation dispatching. |
+| `basyx.submodelservice.feature.operation.dispatcher.mappings[SquareOperation]` | `org.example.SquareOp` | Maps an `idShortPath` to a Java class. |
+| `basyx.submodelservice.feature.operation.dispatcher.defaultMapping` | `org.example.MyOperation` | Default operation mapping if no specific one is found. |
+| `basyx.submodelservice.feature.operation.dispatcher.java.sources` | `src` | Directory containing Java source files for runtime compilation. |
+| `basyx.submodelservice.feature.operation.dispatcher.java.classes` | `classes` | Directory for storing compiled classes. |
+| `basyx.submodelservice.feature.operation.dispatcher.java.additionalClasspath` | `jars/HelloWorld.jar` | Comma-separated list of additional JAR files for class loading. |
+
+---
+
+## 🏗 Structure of Java Classes
+
+Java classes that handle operations do not require dependencies and do not need to extend specific interfaces. A class should include a method with the following signature:
 
 ```java
 public OperationVariable[] invoke(String path, Operation op, OperationVariable[] in)
 ```
 
-Alternatively, the following method can be used if not all arguments are needed:
+Alternatively, a simplified version can be used:
 
 ```java
 public OperationVariable[] invoke(OperationVariable[] in)
 ```
 
-Here is a simple example:
+Example implementation:
 
 ```java
 package org.basic;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
-import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
-import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
-import org.eclipse.digitaltwin.aas4j.v3.model.Property;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationVariable;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
+import org.eclipse.digitaltwin.aas4j.v3.model.*;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.*;
 
 public class AddOperation {
-
-    public OperationVariable[] invoke(String path, Operation op, OperationVariable[] in)  {
+    public OperationVariable[] invoke(OperationVariable[] in) {
         Property first = (Property) in[0].getValue();
         Property second = (Property) in[1].getValue();
-        int iFirst = Integer.parseInt(first.getValue());
-        int iSecond = Integer.parseInt(second.getValue());
-        int result = iFirst + iSecond;
-        Property prop = new DefaultProperty.Builder()
-                            .value(String.valueOf(result))
-                            .valueType(DataTypeDefXsd.INT)
-                            .build();
+        int result = Integer.parseInt(first.getValue()) + Integer.parseInt(second.getValue());
+        Property prop = new DefaultProperty.Builder().value(String.valueOf(result)).valueType(DataTypeDefXsd.INT).build();
         return new OperationVariable[] { new DefaultOperationVariable.Builder().value(prop).build() };
     }
 }
 ```
 
-The execution is stateless. A new instance is created each time.
+The execution is **stateless**, meaning a new instance is created for each execution.
 
-### Creating a Custom Image
+---
 
-This setup allows for quick deployment of Submodel Services. However, if you want to avoid configuration and Docker volume binding, you can also create your own images quickly:
+## 🛠 Creating a Custom Image
+
+For quick deployment, a custom image can be built:
 
 ```dockerfile
 FROM eclipsebasyx/submodel-service:0.2.0-SNAPSHOT
@@ -95,5 +128,25 @@ COPY submodel.json /application/submodel.json
 COPY application.yml /application/config/application.yml
 ```
 
-The operations can also be precompiled and placed as JARs in the `/application/jars` folder, which is referenced in the `application.yml`. Alternatively, you can place Java classes of the correct syntax in the source folder and reference them in the properties via a mapping.
+Operations can also be precompiled as JARs and placed in `/application/jars`. Alternatively, Java classes can be provided as source files in `/application/sources` and referenced via mapping properties.
+
+---
+
+## ✅ Running Tests
+
+To execute the test suite, run:
+```bash
+mvn test
+```
+Integration tests are available for **MongoDB and InMemory** storage backends.
+
+---
+
+## 📌 Summary
+✅ **Supports standalone execution via Docker or dynamic deployment via Docker Compose (example setup in `example/`).**  
+✅ **Requires `docker.namespace` to be set before building the Docker image.**  
+✅ **Demonstrates dynamic Java compilation inside Docker Compose to showcase runtime flexibility.**  
+✅ **Easily configurable via system properties or environment variables (`application.yml`).**  
+
+For further details, refer to the example setup in the [`example/`](example/) directory. 🚀
 

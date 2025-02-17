@@ -1,5 +1,36 @@
-FROM eclipsebasyx/submodel-service:0.2.0-SNAPSHOT
-COPY sources/ /application/sources
-COPY jars/ /application/jars
+# we need to aas4j model to compile our sources
+FROM maven:3.9.9-amazoncorretto-11 AS aas4j-download
+RUN mvn dependency:copy -Dartifact=org.eclipse.digitaltwin.aas4j:aas4j-model:1.0.4 -DoutputDirectory=/tmp
+
+FROM amazoncorretto:17-alpine3.21-jdk AS jar-builder
+WORKDIR /app
+# Copy aas4j jar, just to compile the sources
+COPY --from=aas4j-download /tmp/aas4j-model-1.0.4.jar ./lib/aas4j-model-1.0.4.jar
+# Copy the current sources
+COPY sources/ sources/
+# Add an additional testfile here to have the same setup 
+# as shown in the docker-compose example
+RUN cat <<'EOF' > sources/HelloWorld.java
+public class HelloWorld {
+    public String sayHello() {
+        return "Hello from generated code!";
+    }
+}
+EOF
+# Create an output directory, compile the source code, and build the JAR file
+RUN mkdir -p ./target
+RUN javac -cp ./lib/aas4j-model-1.0.4.jar  -d ./target $(find sources -name "*.java")
+RUN cd target && jar cf Example.jar $(find . -name "*.class")
+
+FROM eclipsebasyx/submodel-service:2.0.0-SNAPSHOT
 COPY submodel.json /application/submodel.json
-COPY application.yml /application/config/application.yml
+# Copy the generated JAR file from the builder stage into the final image
+COPY --from=jar-builder /app/target/Example.jar jars/Example.jar
+# We could also just mount existing jars like this
+# COPY jars/ /application/jars
+ENV BASYX_BACKEND=InMemory
+ENV BASYX_SUBMODELSERVICE_SUBMODEL_FILE=/application/submodel.json
+ENV BASYX_SUBMODELSERVICE_FEATURE_DISPATCHER_ENABLED=true
+ENV BASYX_SUBMODELSERVICE_FEATURE_OPERATION_DISPATCHER_JAVA_ADDITIONALCLASSPATH=/application/jars/Example.jar
+COPY application-mappings.yml /application/application.yml
+# We can also copy sources here but and build it on start, but we should rather used the precompiled version as this has a faster startup time
