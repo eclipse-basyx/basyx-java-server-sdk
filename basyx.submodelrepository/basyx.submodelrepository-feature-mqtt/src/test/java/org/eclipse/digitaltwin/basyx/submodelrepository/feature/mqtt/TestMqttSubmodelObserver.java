@@ -144,9 +144,10 @@ public class TestMqttSubmodelObserver {
 	public void createSubmodelElementEvent() throws DeserializationException {
 		Submodel submodel = createSubmodelDummy("createSubmodelForElementEventId");
 		submodelRepository.createSubmodel(submodel);
+		SubmodelElement submodelElement = createSubmodelElementDummy("createSubmodelElementEventId");
+		SubmodelElement responseSubmodelElement = submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
 
-		SubmodelElement submodelElement = submodel.getSubmodelElements().get(0);
-
+		assertEquals(submodelElement, responseSubmodelElement);
 		assertEquals(topicFactory.createCreateSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()), listener.lastTopic);
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
 	}
@@ -155,10 +156,8 @@ public class TestMqttSubmodelObserver {
 	public void updateSubmodelElementEvent() throws DeserializationException {
 		Submodel submodel = createSubmodelDummyWithSubmodelElement("updateSubmodelForElementEventId", "updateSubmodelElementEventId");
 		submodelRepository.createSubmodel(submodel);
-		SubmodelElement submodelElement = createSubmodelElementDummy("updateSubmodelElementEventId");
-		SubmodelElement responseSubmodelElement = submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
 
-		assertEquals(submodelElement, responseSubmodelElement);
+		SubmodelElement submodelElement = submodel.getSubmodelElements().get(0);
 
 		SubmodelElementValue value = new PropertyValue("updatedValue");
 		submodelRepository.setSubmodelElementValue(submodel.getId(), submodelElement.getIdShort(), value);
