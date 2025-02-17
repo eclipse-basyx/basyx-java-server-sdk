@@ -25,12 +25,13 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.backend;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MappingEntry;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
+import org.eclipse.digitaltwin.basyx.submodelservice.DefaultSubmodelFileOperations;
 import org.eclipse.digitaltwin.basyx.submodelservice.MongoDbSubmodelOperations;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelFileOperations;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelOperations;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
@@ -62,8 +63,13 @@ public class MongoDbSubmodelRepositoryBackendConfiguration {
     }
 
     @Bean
-    SubmodelOperations submodelOperations(MongoOperations operations, FileRepository fileRepository) {
-        return new MongoDbSubmodelOperations(operations, fileRepository);
+    SubmodelOperations submodelOperations(MongoOperations operations) {
+        return new MongoDbSubmodelOperations(operations);
+    }
+
+    @Bean
+    SubmodelFileOperations submodelFileOperations(FileRepository fileRepository, @Qualifier("submodelOperations") SubmodelOperations operations) {
+        return new DefaultSubmodelFileOperations(fileRepository, operations);
     }
 
 }

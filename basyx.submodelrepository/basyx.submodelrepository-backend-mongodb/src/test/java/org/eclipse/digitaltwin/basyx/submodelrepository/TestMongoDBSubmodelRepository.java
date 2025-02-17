@@ -40,6 +40,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsCriteria;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -70,6 +72,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	@Before
 	public void cleanup() {
 		MongoDBUtilities.clearCollection(mongoTemplate, DummySubmodelRepositoryConfig.TEST_COLLECTION);
+		gridFsTemplate.delete(new Query(GridFsCriteria.whereFilename().ne("")));
 	}
 
 	@Override

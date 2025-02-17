@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.common.backend.inmemory.core.InMemoryCrudRepository;
@@ -78,12 +77,7 @@ public class InMemorySubmodelRepositoryBackend extends InMemoryCrudRepository<Su
     }
 
     @Override
-    public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
-        return getSubmodelService(submodelId).invokeOperation(idShortPath, input);
-    }
-
-    @Override
-    public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+    public java.io.File getFile(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
         return getSubmodelService(submodelId).getFileByPath(idShortPath);
     }
 
@@ -103,7 +97,7 @@ public class InMemorySubmodelRepositoryBackend extends InMemoryCrudRepository<Su
     }
 
     @Override
-    public InputStream getFileByFilePath(String submodelId, String filePath) {
+    public InputStream getInputStream(String submodelId, String filePath) {
         return getSubmodelService(submodelId).getFileByFilePath(filePath);
     }
 

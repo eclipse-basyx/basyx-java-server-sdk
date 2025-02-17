@@ -187,7 +187,8 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
-		return submodelBackend.invokeOperation(submodelId, idShortPath, input);
+		// non-supported by default
+		return new OperationVariable[0];
 	}
 
 	@Override
@@ -205,7 +206,7 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		return submodelBackend.getFileByPathSubmodel(submodelId, idShortPath);
+		return submodelBackend.getFile(submodelId, idShortPath);
 	}
 
 	@Override
@@ -225,7 +226,7 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public InputStream getFileByFilePath(String submodelId, String filePath) {
-		return submodelBackend.getFileByFilePath(submodelId, filePath);
+		return submodelBackend.getInputStream(submodelId, filePath);
 	}
 
 	private void initializeRemoteCollection(@NonNull Collection<Submodel> submodels) {
