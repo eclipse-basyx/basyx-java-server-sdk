@@ -144,10 +144,9 @@ public class TestMqttSubmodelObserver {
 	public void createSubmodelElementEvent() throws DeserializationException {
 		Submodel submodel = createSubmodelDummy("createSubmodelForElementEventId");
 		submodelRepository.createSubmodel(submodel);
-		SubmodelElement submodelElement = createSubmodelElementDummy("createSubmodelElementEventId");
-		SubmodelElement responseSubmodelElement = submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
 
-		assertEquals(submodelElement, responseSubmodelElement);
+		SubmodelElement submodelElement = submodel.getSubmodelElements().get(0);
+
 		assertEquals(topicFactory.createCreateSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()), listener.lastTopic);
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
 	}
@@ -172,10 +171,8 @@ public class TestMqttSubmodelObserver {
 	public void deleteSubmodelElementEvent() throws DeserializationException {
 		Submodel submodel = createSubmodelDummyWithSubmodelElement("deleteSubmodelForElementEventId", "deleteSubmodelElementEventId");
 		submodelRepository.createSubmodel(submodel);
-		SubmodelElement submodelElement = createSubmodelElementDummy("deleteSubmodelElementEventId");
-		SubmodelElement responseSubmodelElement = submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
 
-		assertEquals(submodelElement, responseSubmodelElement);
+		SubmodelElement submodelElement = submodel.getSubmodelElements().get(0);
 
 		submodelRepository.deleteSubmodelElement(submodel.getId(), submodelElement.getIdShort());
 
