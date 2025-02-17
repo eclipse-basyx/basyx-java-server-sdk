@@ -1,8 +1,10 @@
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.bson.Document;
 import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
@@ -20,7 +22,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.LimitOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -42,15 +43,27 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
     @Override
     public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo) throws ElementDoesNotExistException {
         List<AggregationOperation> ops = new ArrayList<>();
+
         ops.add(Aggregation.match(Criteria.where("_id").is(submodelId)));
-        ops.add(Aggregation.unwind(SUBMODEL_ELEMENTS_KEY));
 
         if (pInfo.getCursor() != null && !pInfo.getCursor().isEmpty()) {
-            ops.add(Aggregation.match(Criteria.where(SUBMODEL_ELEMENTS_KEY + ".idShort").gt(pInfo.getCursor())));
+            Document addCursorIndex = new Document("$addFields",
+                    new Document("cursorIndex", new Document("$cond", Arrays.asList(new Document("$eq", Arrays.asList(new Document("$indexOfArray", Arrays.asList("$" + SUBMODEL_ELEMENTS_KEY + ".idShort", pInfo.getCursor())), -1)), 0,
+                            new Document("$add", Arrays.asList(new Document("$indexOfArray", Arrays.asList("$" + SUBMODEL_ELEMENTS_KEY + ".idShort", pInfo.getCursor())), 1))))));
+            ops.add(context -> addCursorIndex);
+
+            int limit = (pInfo.getLimit() != null && pInfo.getLimit() > 0) ? pInfo.getLimit() : Integer.MAX_VALUE;
+
+            Document projectSlice = new Document("$project", new Document(SUBMODEL_ELEMENTS_KEY, new Document("$slice", Arrays.asList("$" + SUBMODEL_ELEMENTS_KEY, "$cursorIndex", limit))));
+            ops.add(context -> projectSlice);
+        } else {
+            if (pInfo.getLimit() != null && pInfo.getLimit() > 0) {
+                Document projectSlice = new Document("$project", new Document(SUBMODEL_ELEMENTS_KEY, new Document("$slice", Arrays.asList("$" + SUBMODEL_ELEMENTS_KEY, 0, pInfo.getLimit()))));
+                ops.add(context -> projectSlice);
+            }
         }
-        if (pInfo.getLimit() != null && pInfo.getLimit() > 0) {
-            ops.add(new LimitOperation(pInfo.getLimit()));
-        }
+
+        ops.add(Aggregation.unwind(SUBMODEL_ELEMENTS_KEY));
 
         ops.add(Aggregation.replaceRoot("$" + SUBMODEL_ELEMENTS_KEY));
 
@@ -63,9 +76,9 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
         }
 
         String nextCursor = null;
-        if (!elements.isEmpty()) {
+        if (!elements.isEmpty())
             nextCursor = elements.get(elements.size() - 1).getIdShort();
-        }
+
         return new CursorResult<>(nextCursor, elements);
     }
 
@@ -74,14 +87,14 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
         List<AggregationOperation> ops = MongoFilterBuilder.buildAggregationOperations(submodelId, idShortPath);
         Aggregation aggregation = Aggregation.newAggregation(ops);
 
-        try{
+        try {
             AggregationResults<SubmodelElement> results = mongoOperations.aggregate(aggregation, collectionName, SubmodelElement.class);
             SubmodelElement element = results.getUniqueMappedResult();
             if (element == null) {
                 throw new ElementDoesNotExistException(idShortPath);
             }
             return element;
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new ElementDoesNotExistException(idShortPath);
         }
     }
@@ -99,7 +112,7 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
     @Override
     public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
         SubmodelElement parentSme = getSubmodelElement(submodelId, idShortPath);
-        
+
         if (parentSme instanceof SubmodelElementList list) {
             List<SubmodelElement> submodelElements = list.getValue();
             submodelElements.add(submodelElement);
@@ -122,9 +135,9 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
         Update update = new Update().set(filterResult.key(), submodelElement);
 
         filterResult.filters().forEach(update::filterArray);
-        
+
         UpdateResult result = mongoOperations.updateFirst(query, update, collectionName);
-        
+
         if (result.getModifiedCount() == 0) {
             if (!existsSubmodel(submodelId))
                 throw new ElementDoesNotExistException(submodelId);
@@ -132,11 +145,11 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
             throw new ElementDoesNotExistException(idShortPath);
         }
     }
-    
+
     @Override
     public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
         MongoFilterResult filterResult = MongoFilterBuilder.parse(idShortPath);
-        
+
         Query query = new Query(Criteria.where("_id").is(submodelId));
         Update update = new Update().unset(filterResult.key());
 

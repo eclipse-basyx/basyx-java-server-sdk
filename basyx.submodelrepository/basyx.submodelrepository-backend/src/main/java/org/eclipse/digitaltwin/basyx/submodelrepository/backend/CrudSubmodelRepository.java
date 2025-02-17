@@ -43,6 +43,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -177,18 +178,21 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public void updateSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
+		deleteAssociatedFileIfAny(submodelId, idShortPath);
+
 		submodelBackend.updateSubmodelElement(submodelId, idShortPath, submodelElement);
 	}
 
 	@Override
 	public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
+		deleteAssociatedFileIfAny(submodelId, idShortPath);
+
 		submodelBackend.deleteSubmodelElement(submodelId, idShortPath);
 	}
 
 	@Override
 	public OperationVariable[] invokeOperation(String submodelId, String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
-		// non-supported by default
-		return new OperationVariable[0];
+		throw new NotInvokableException(idShortPath);
 	}
 
 	@Override
@@ -273,6 +277,13 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 		if (!submodelBackend.existsById(submodelId))
 			throw new ElementDoesNotExistException(submodelId);
+	}
+
+	private void deleteAssociatedFileIfAny(String submodelId, String idShortPath) {
+		try {
+			submodelBackend.deleteFileValue(submodelId, idShortPath);
+		} catch (Exception e) {
+		}
 	}
 
 }
