@@ -1,12 +1,12 @@
-package org.eclipse.digitaltwin.basyx.submodelservice;
+package org.eclipse.digitaltwin.basyx.submodelservice.backend;
 
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.submodelservice.IdShortPathParser.GenericPath;
-import org.eclipse.digitaltwin.basyx.submodelservice.IdShortPathParser.IdShortPath;
-import org.eclipse.digitaltwin.basyx.submodelservice.IdShortPathParser.IndexPath;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.IdShortPathParser.GenericPath;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.IdShortPathParser.IdShortPath;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.IdShortPathParser.IndexPath;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.ConditionalOperators.IfNull;

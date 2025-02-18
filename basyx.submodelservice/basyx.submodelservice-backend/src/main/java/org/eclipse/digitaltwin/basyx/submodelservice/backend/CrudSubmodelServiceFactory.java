@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
 public class CrudSubmodelServiceFactory implements SubmodelServiceFactory{
 
-    private final SubmodelBackend backend;
+    private final SingleSubmodelBackend backend;
 
-    public CrudSubmodelServiceFactory(SubmodelBackend backend) {
+    public CrudSubmodelServiceFactory(SingleSubmodelBackend backend) {
         this.backend = backend;
     }
 

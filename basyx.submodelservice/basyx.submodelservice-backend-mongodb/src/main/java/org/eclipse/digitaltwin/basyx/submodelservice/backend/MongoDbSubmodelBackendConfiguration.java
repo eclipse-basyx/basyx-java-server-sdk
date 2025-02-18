@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,54 +22,50 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelrepository.backend;
+package org.eclipse.digitaltwin.basyx.submodelservice.backend;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MappingEntry;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.eclipse.digitaltwin.basyx.submodelservice.DefaultSubmodelFileOperations;
-import org.eclipse.digitaltwin.basyx.submodelservice.MongoDbSubmodelOperations;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelFileOperations;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelOperations;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
- * Provides a InMemorySubmodelServiceFactory for usage in the MongoDB Submodel
- * Repository backend.<br>
- * <br>
- * This is needed to ensure that the SubmodelServiceFeatures are processed
- * correctly when utilizing MongoDb
  * 
- * @author jungjan, mateusmolina
+ * 
+ * 
+ * @author mateusmolina
  *
  */
 @Configuration
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-@EnableMongoRepositories(basePackages = "org.eclipse.digitaltwin.basyx.submodelrepository.backend")
-public class MongoDbSubmodelRepositoryBackendConfiguration {
+@EnableMongoRepositories(basePackages = "org.eclipse.digitaltwin.basyx.submodelservice.backend")
+public class MongoDbSubmodelBackendConfiguration {
 
-    static final String COLLECTION_NAME_FIELD = "basyx.submodelrepository.mongodb.collectionName";
-    static final String DEFAULT_COLLECTION_NAME = "submodel-repo";
+    static final String COLLECTION_NAME_FIELD = "basyx.submodelservice.mongodb.collectionName";
+    static final String DEFAULT_COLLECTION_NAME = "submodel-service";
 
     @Bean
+    @ConditionalOnMissingBean
     MappingEntry submodelMappingEntry(@Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
         return MappingEntry.of(collectionName, Submodel.class);
     }
 
     @Bean
+    @ConditionalOnMissingBean
     SubmodelOperations submodelOperations(MongoOperations operations) {
         return new MongoDbSubmodelOperations(operations);
     }
-
+    
     @Bean
+    @ConditionalOnMissingBean
     SubmodelFileOperations submodelFileOperations(FileRepository fileRepository, @Qualifier("submodelOperations") SubmodelOperations operations) {
         return new DefaultSubmodelFileOperations(fileRepository, operations);
     }
-
 }

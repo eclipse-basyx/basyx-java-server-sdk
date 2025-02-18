@@ -23,8 +23,10 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelservice.backend;
+package org.eclipse.digitaltwin.basyx.submodelrepository.backend;
 
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelFileOperations;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelOperations;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -37,10 +39,10 @@ import org.springframework.lang.NonNull;
 
 /**
  * Configures the Spring Data repository fragments for the
- * {@link SubmodelBackend}
+ * {@link SingleSubmodelBackend}
  * 
  * Requires a bean with the name "submodelOperations". It is composed with the
- * {@link SubmodelBackend} as a {@link RepositoryFragment}
+ * {@link SingleSubmodelBackend} as a {@link RepositoryFragment}
  * 
  * @author mateusmolina
  */

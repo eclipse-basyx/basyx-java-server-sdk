@@ -13,7 +13,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SubmodelRepositoryBackend;
+import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
-public class InMemorySubmodelRepositoryBackend extends InMemoryCrudRepository<Submodel> implements SubmodelRepositoryBackend {
+public class InMemorySubmodelRepositoryBackend extends InMemoryCrudRepository<Submodel> implements SubmodelBackend {
 
     private final SubmodelServiceFactory submodelServiceFactory;
 

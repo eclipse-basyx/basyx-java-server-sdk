@@ -18,10 +18,10 @@ import org.springframework.lang.NonNull;
 
 public class CrudSubmodelService implements SubmodelService {
 
-    private final SubmodelBackend backend;
+    private final SingleSubmodelBackend backend;
     private final String submodelId;
 
-    public CrudSubmodelService(SubmodelBackend submodelRepositoryBackend, @NonNull Submodel submodel) {
+    public CrudSubmodelService(SingleSubmodelBackend submodelRepositoryBackend, @NonNull Submodel submodel) {
         this.backend = submodelRepositoryBackend;
         this.submodelId = submodel.getId();
         hostSubmodel(submodel);

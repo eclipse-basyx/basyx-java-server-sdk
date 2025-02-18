@@ -59,8 +59,8 @@ public class CrudSubmodelRepositoryFactory implements SubmodelRepositoryFactory 
 		this.submodelRepositoryName = submodelRepositoryName;
 	}
 
-	public CrudSubmodelRepositoryFactory(SubmodelRepositoryBackend submodelRepositoryBackend) {
-		this(submodelRepositoryBackend, DEFAULT_REPOSITORY_NAME);
+	public CrudSubmodelRepositoryFactory(SubmodelBackend submodelBackend) {
+		this(submodelBackend, DEFAULT_REPOSITORY_NAME);
 	}
 
 	public CrudSubmodelRepositoryFactory withRemoteCollection(Collection<Submodel> submodels) {

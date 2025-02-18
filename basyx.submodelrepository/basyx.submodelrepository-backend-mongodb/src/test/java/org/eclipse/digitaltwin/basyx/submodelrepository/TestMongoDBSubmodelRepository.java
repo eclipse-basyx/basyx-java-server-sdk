@@ -31,7 +31,7 @@ import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SubmodelRepositoryBackend;
+import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -59,7 +59,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	private SubmodelRepository submodelRepository;
 
 	@Autowired
-	private SubmodelRepositoryBackend submodelRepositoryBackend;
+	private SubmodelBackend submodelBackend;
 
 	@Autowired
 	private FileRepository fileRepository;
@@ -77,7 +77,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
-		return new CrudSubmodelRepositoryFactory(submodelRepositoryBackend).withRemoteCollection(submodels).create();
+		return new CrudSubmodelRepositoryFactory(submodelBackend).withRemoteCollection(submodels).create();
 	}
 
 	@Override
