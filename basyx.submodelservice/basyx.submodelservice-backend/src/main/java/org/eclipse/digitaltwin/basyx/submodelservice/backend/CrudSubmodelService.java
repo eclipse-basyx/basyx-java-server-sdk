@@ -9,6 +9,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
@@ -64,11 +65,15 @@ public class CrudSubmodelService implements SubmodelService {
 
     @Override
     public void updateSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
+        deleteAssociatedFileIfAny(idShortPath);
+
         backend.updateSubmodelElement(submodelId, idShortPath, submodelElement);
     }
 
     @Override
     public void deleteSubmodelElement(String idShortPath) throws ElementDoesNotExistException {
+        deleteAssociatedFileIfAny(idShortPath);
+
         backend.deleteSubmodelElement(submodelId, idShortPath);
     }
 
@@ -79,7 +84,7 @@ public class CrudSubmodelService implements SubmodelService {
 
     @Override
     public OperationVariable[] invokeOperation(String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
-        throw new UnsupportedOperationException("Unimplemented method 'invokeOperation'");
+        throw new FeatureNotSupportedException("Unimplemented method 'invokeOperation'");
     }
 
     @Override
@@ -105,5 +110,12 @@ public class CrudSubmodelService implements SubmodelService {
 
     private void hostSubmodel(Submodel submodel) {
         this.backend.save(submodel);
+    }
+
+    private void deleteAssociatedFileIfAny(String idShortPath) {
+        try {
+            backend.deleteFileValue(submodelId, idShortPath);
+        } catch (Exception e) {
+        }
     }
 }

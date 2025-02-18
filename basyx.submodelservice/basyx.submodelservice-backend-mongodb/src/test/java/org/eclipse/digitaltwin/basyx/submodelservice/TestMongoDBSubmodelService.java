@@ -27,18 +27,16 @@
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBFileRepository;
-import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
-
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Test for mongoDb submodel service backend
@@ -46,22 +44,29 @@ import com.mongodb.client.MongoClients;
  * @author zhangzai, mateusmolina
  *
  */
+@SpringBootTest
+@RunWith(SpringRunner.class)
 public class TestMongoDBSubmodelService extends SubmodelServiceSuite {
-	private final String COLLECTION = "submodelTestCollection";
-	private final String CONNECTION_URL = "mongodb://mongoAdmin:mongoPassword@localhost:27017";
-	private final MongoClient CLIENT = MongoClients.create(CONNECTION_URL);
-	private final MongoTemplate TEMPLATE = new MongoTemplate(CLIENT, "BaSyxTestDb");
-	private final GridFsTemplate GRIDFS_TEMPLATE = new GridFsTemplate(TEMPLATE.getMongoDatabaseFactory(), TEMPLATE.getConverter());
-	private FileRepository fileRepository = new MongoDBFileRepository(GRIDFS_TEMPLATE);
 
-	@After
+	static final String TEST_COLLECTION = "submodelServiceTestCollection";
+
+	@Autowired
+	private FileRepository fileRepository;
+
+	@Autowired
+	private SubmodelServiceFactory submodelServiceFactory;
+
+	@Autowired
+	private MongoTemplate mongoTemplate;
+
+	@Before
 	public void clear() {
-		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
+		MongoDBUtilities.clearCollection(mongoTemplate, TEST_COLLECTION);
 	}
 
 	@Override
 	protected SubmodelService getSubmodelService(Submodel submodel) {
-		return null; // todo temp
+		return submodelServiceFactory.create(submodel);
 	}
 
 	@Override
