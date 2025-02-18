@@ -28,6 +28,7 @@ import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,10 +42,14 @@ public class MqttConfiguration {
 
 	@ConditionalOnMissingBean
 	@Bean
-	public IMqttClient mqttClient(@Value("${mqtt.clientId}") String clientId, @Value("${mqtt.hostname}") String hostname, @Value("${mqtt.port}") int port) throws MqttException {
-		IMqttClient mqttClient = new MqttClient("tcp://" + hostname + ":" + port, clientId);
-
-		mqttClient.connect(mqttConnectOptions());
+	public IMqttClient mqttClient(@Value("${mqtt.clientId}") String clientId, 
+								  @Value("${mqtt.hostname}") String hostname, 
+	                              @Value("${mqtt.port}") int port,
+	                              @Value("${mqtt.protocol:tcp}") String protocol,
+	                              MqttConnectOptions mqttConnectOptions) throws MqttException {
+	    IMqttClient mqttClient = new MqttClient(protocol+"://" + hostname + ":" + port, clientId, new MemoryPersistence());
+	    
+	    mqttClient.connect(mqttConnectOptions);
 
 		return mqttClient;
 	}
@@ -52,9 +57,16 @@ public class MqttConfiguration {
 	@ConditionalOnMissingBean
 	@Bean
 	@ConfigurationProperties(prefix = "mqtt")
-	public MqttConnectOptions mqttConnectOptions() {
+	public MqttConnectOptions mqttConnectOptions(@Value("${mqtt.username:}") String username, @Value("${mqtt.password:}") String password) {
 		MqttConnectOptions mqttConceptOptions = new MqttConnectOptions();
 		mqttConceptOptions.setAutomaticReconnect(true);
+
+		if (username.isBlank() || password.isBlank())
+	        return mqttConceptOptions;
+
+		mqttConceptOptions.setUserName(username);
+	    mqttConceptOptions.setPassword(password.toCharArray());
+
 		return mqttConceptOptions;
 	}
 }
