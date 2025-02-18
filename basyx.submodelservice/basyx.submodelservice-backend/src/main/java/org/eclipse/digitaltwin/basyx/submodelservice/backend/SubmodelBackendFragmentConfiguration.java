@@ -23,10 +23,8 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.backend;
+package org.eclipse.digitaltwin.basyx.submodelservice.backend;
 
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelFileOperations;
-import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelOperations;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -39,21 +37,21 @@ import org.springframework.lang.NonNull;
 
 /**
  * Configures the Spring Data repository fragments for the
- * {@link SubmodelRepositoryBackend}
+ * {@link SubmodelBackend}
  * 
  * Requires a bean with the name "submodelOperations". It is composed with the
- * {@link SubmodelRepositoryBackend} as a {@link RepositoryFragment}
+ * {@link SubmodelBackend} as a {@link RepositoryFragment}
  * 
  * @author mateusmolina
  */
 @Configuration
 @ConditionalOnBean(name="submodelOperations")
-public class SubmodelRepositoryFragmentConfiguration implements BeanPostProcessor {
+public class SubmodelBackendFragmentConfiguration implements BeanPostProcessor {
 
     private final SubmodelOperations submodelOperations;
     private final SubmodelFileOperations submodelFileOperations;
 
-    public SubmodelRepositoryFragmentConfiguration(@Qualifier("submodelOperations") SubmodelOperations submodelOperations, @Qualifier("submodelFileOperations") SubmodelFileOperations submodelFileOperations) {
+    public SubmodelBackendFragmentConfiguration(@Qualifier("submodelOperations") SubmodelOperations submodelOperations, @Qualifier("submodelFileOperations") SubmodelFileOperations submodelFileOperations) {
         this.submodelOperations = submodelOperations;
         this.submodelFileOperations = submodelFileOperations;
     }
@@ -63,7 +61,7 @@ public class SubmodelRepositoryFragmentConfiguration implements BeanPostProcesso
         if (!(bean instanceof RepositoryFactoryBeanSupport<?, ?, ?> beanfactory))
             return bean;
 
-        if (!beanfactory.getObjectType().equals(SubmodelRepositoryBackend.class))
+        if (!beanfactory.getObjectType().equals(SubmodelBackend.class))
             return bean;
 
         RepositoryFragment<SubmodelOperations> fragment1 = RepositoryFragment.implemented(SubmodelOperations.class, submodelOperations);

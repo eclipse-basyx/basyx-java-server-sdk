@@ -49,12 +49,12 @@ public class CrudSubmodelRepositoryFactory implements SubmodelRepositoryFactory 
 
 	static final String DEFAULT_REPOSITORY_NAME = "sm-repo";
 
-	private final SubmodelRepositoryBackend backend;
+	private final SubmodelBackend backend;
 	private final String submodelRepositoryName;
 	private Optional<Collection<Submodel>> submodels = Optional.empty();
 
 	@Autowired
-	public CrudSubmodelRepositoryFactory(SubmodelRepositoryBackend submodelRepositoryBackend, @Value("${basyx.smrepo.name:" + DEFAULT_REPOSITORY_NAME + "}") String submodelRepositoryName) {
+	public CrudSubmodelRepositoryFactory(SubmodelBackend submodelRepositoryBackend, @Value("${basyx.smrepo.name:" + DEFAULT_REPOSITORY_NAME + "}") String submodelRepositoryName) {
 		this.backend = submodelRepositoryBackend;
 		this.submodelRepositoryName = submodelRepositoryName;
 	}

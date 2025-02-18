@@ -63,17 +63,18 @@ import org.springframework.lang.NonNull;
  */
 public class CrudSubmodelRepository implements SubmodelRepository {
 
-	private final SubmodelRepositoryBackend submodelBackend;
+	private final SubmodelBackend submodelBackend;
 	private final String submodelRepositoryName;
 
-	public CrudSubmodelRepository(SubmodelRepositoryBackend submodelRepositoryBackend, String submodelRepositoryName) {
-		this.submodelBackend = submodelRepositoryBackend;
+	public CrudSubmodelRepository(SubmodelBackend submodelBackend, String submodelRepositoryName) {
+		this.submodelBackend = submodelBackend;
 		this.submodelRepositoryName = submodelRepositoryName;
 
 	}
 
-	public CrudSubmodelRepository(SubmodelRepositoryBackend submodelRepositoryBackend, String submodelRepositoryName, Collection<Submodel> submodels) {
-		this(submodelRepositoryBackend, submodelRepositoryName);
+	public CrudSubmodelRepository(SubmodelBackend submodelBackend, String submodelRepositoryName,
+			Collection<Submodel> submodels) {
+		this(submodelBackend, submodelRepositoryName);
 
 		initializeRemoteCollection(submodels);
 	}

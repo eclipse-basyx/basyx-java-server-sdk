@@ -1,4 +1,4 @@
-package org.eclipse.digitaltwin.basyx.submodelservice;
+package org.eclipse.digitaltwin.basyx.submodelservice.backend;
 
 import java.util.List;
 

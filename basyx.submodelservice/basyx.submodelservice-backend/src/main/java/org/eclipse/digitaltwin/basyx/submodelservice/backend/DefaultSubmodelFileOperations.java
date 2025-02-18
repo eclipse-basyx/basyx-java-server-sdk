@@ -1,4 +1,4 @@
-package org.eclipse.digitaltwin.basyx.submodelservice;
+package org.eclipse.digitaltwin.basyx.submodelservice.backend;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,6 +16,11 @@ import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 
+/**
+ * Default implementation of the SubmodelFileOperations interface using the FileRepository to store and retrieve files.
+ * 
+ * @author mateusmolina
+ */
 public class DefaultSubmodelFileOperations implements SubmodelFileOperations {
     private final FileRepository fileRepository;
     private final SubmodelOperations submodelOperations;

@@ -14,6 +14,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.MongoFilterBuilder.MongoFilterResult;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelOperations;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.factory.SubmodelElementValueMapperFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapper;
