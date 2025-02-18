@@ -1,4 +1,6 @@
-FROM amazoncorretto:17
+FROM eclipse-temurin:17
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
 USER nobody
 WORKDIR /application
 ARG JAR_FILE=target/*-exec.jar

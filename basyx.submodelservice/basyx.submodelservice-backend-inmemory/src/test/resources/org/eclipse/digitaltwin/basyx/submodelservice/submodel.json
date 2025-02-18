@@ -1,0 +1,57 @@
+{
+	"modelType": "Submodel",
+	"id": "http://sm.example.de/1",
+	"idShort": "SM1",
+	"submodelElements": [
+		{
+			"modelType": "Entity",
+			"idShort": "E1",
+			"statements": [
+				{
+					"modelType": "Property",
+					"idShort": "P1",
+					"value": "1",
+					"valueType": "xs:string"
+				}
+			]
+		},
+		{
+			"modelType": "SubmodelElementCollection",
+			"idShort": "C2",
+			"value": [
+				{
+					"modelType": "SubmodelElementList",
+					"idShort": "L1",
+					"value": [
+						{
+							"modelType": "Property",
+							"value": "2",
+							"valueType": "xs:string"
+						},
+						{
+							"modelType": "SubmodelElementList",
+							"value": [
+								{
+									"modelType": "Entity",
+									"statements": [
+										{
+											"modelType": "Property",
+											"idShort": "P3",
+											"value": "3",
+											"valueType": "xs:string"
+										}
+									]
+								},
+								{
+									"modelType": "Property",
+									"value": "4",
+									"valueType": "xs:string"
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}

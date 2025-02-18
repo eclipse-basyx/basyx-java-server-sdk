@@ -156,6 +156,21 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
+	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo) {
+		try {
+	        String encodedCursor = pInfo.getCursor() == null ? null : Base64UrlEncoder.encode(pInfo.getCursor());
+	        String encodedSemanticId = Base64UrlEncoder.encode(semanticId);
+	        return repoApi.getAllSubmodels(encodedSemanticId, null, pInfo.getLimit(), encodedCursor, null, null);
+	    } catch (ApiException e) {
+	        if (e.getCode() == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+	            return new CursorResult<>("", new ArrayList<>());
+	        } else {
+	            throw e;
+	        }
+	    }
+	}
+
+	@Override
 	public void updateSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
 		getConnectedSubmodelService(submodelId).updateSubmodelElement(idShortPath, submodelElement);
 	}
@@ -181,13 +196,13 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public void createSubmodelElement(String submodelId, SubmodelElement smElement) {
-		getConnectedSubmodelService(submodelId).createSubmodelElement(smElement);
+	public SubmodelElement createSubmodelElement(String submodelId, SubmodelElement smElement) {
+		return getConnectedSubmodelService(submodelId).createSubmodelElement(smElement);
 	}
 
 	@Override
-	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
-		getConnectedSubmodelService(submodelId).createSubmodelElement(idShortPath, smElement);
+	public SubmodelElement createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
+		return getConnectedSubmodelService(submodelId).createSubmodelElement(idShortPath, smElement);
 	}
 
 	@Override
@@ -202,12 +217,16 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public SubmodelValueOnly getSubmodelByIdValueOnly(String submodelId) throws ElementDoesNotExistException {
-		return new SubmodelValueOnly(getSubmodelByIdMetadata(submodelId).getSubmodelElements());
+		return new SubmodelValueOnly(getSubmodel(submodelId).getSubmodelElements());
 	}
 
 	@Override
 	public Submodel getSubmodelByIdMetadata(String submodelId) throws ElementDoesNotExistException {
-		return repoApi.getSubmodelById(submodelId, null, null);
+		try {
+			return repoApi.getSubmodelByIdMetadata(submodelId, null);
+		} catch (ApiException e) {
+			throw mapExceptionSubmodelAccess(submodelId, e); 
+		}
 	}
 
 	@Override

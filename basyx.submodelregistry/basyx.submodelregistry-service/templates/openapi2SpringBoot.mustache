@@ -15,7 +15,7 @@ import org.springframework.context.annotation.FullyQualifiedAnnotationBeanNameGe
     nameGenerator = FullyQualifiedAnnotationBeanNameGenerator.class
 )
 @ComponentScan(
-    basePackages = {"org.eclipse.digitaltwin.basyx.authorization", "org.eclipse.digitaltwin.basyx.authorization.rbac", "org.eclipse.digitaltwin.basyx.submodelregistry.feature", "{{basePackage}}", "{{apiPackage}}" , "{{configPackage}}"},
+    basePackages = {"org.eclipse.digitaltwin.basyx.authorization", "org.eclipse.digitaltwin.basyx.common.hierarchy", "org.eclipse.digitaltwin.basyx.authorization.rbac", "org.eclipse.digitaltwin.basyx.submodelregistry.feature", "{{basePackage}}", "{{apiPackage}}" , "{{configPackage}}"},
     nameGenerator = FullyQualifiedAnnotationBeanNameGenerator.class
 )
 public class OpenApiGeneratorApplication {

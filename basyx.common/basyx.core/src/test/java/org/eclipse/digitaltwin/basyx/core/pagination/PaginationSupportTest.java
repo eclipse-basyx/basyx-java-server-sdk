@@ -39,7 +39,7 @@ public class PaginationSupportTest {
 	@Test
 	public void testNoLimit() {
 		PaginationSupport<String> support = getPaginationSupport();
-		CursorResult<List<String>> cursorResult = support.getPaged(new PaginationInfo(null, null));
+		CursorResult<List<String>> cursorResult = support.getPaged(PaginationInfo.NO_LIMIT);
 		Assert.assertEquals(null, cursorResult.getCursor());
 		Assert.assertArrayEquals(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" }, cursorResult.getResult().toArray(String[]::new));
 	}

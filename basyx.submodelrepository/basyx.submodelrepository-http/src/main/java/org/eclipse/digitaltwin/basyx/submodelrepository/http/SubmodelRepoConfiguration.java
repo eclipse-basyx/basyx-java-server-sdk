@@ -42,4 +42,9 @@ public class SubmodelRepoConfiguration {
 	public CorsPathPatternProvider getSubmodelRepoCorsUrlProvider() {
 		return new CorsPathPatternProvider("/submodels/**");
 	}
+
+	@Bean
+	public CorsPathPatternProvider getSubmodelRepoDescriptionCorsUrlProvider() {
+		return new CorsPathPatternProvider("/description");
+	}
 }

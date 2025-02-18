@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -26,7 +26,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 
@@ -36,9 +36,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositorySuite;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
@@ -55,15 +54,13 @@ import org.junit.Test;
  */
 public class TestInMemoryAasRepository extends AasRepositorySuite {
 	private static final String CONFIGURED_AAS_REPO_NAME = "configured-aas-repo-name";
-	
-	private AasBackendProvider backendProvider = new AasInMemoryBackendProvider();
 
 	private static FileRepository fileRepository;
 	
 	@Override
 	protected AasRepository getAasRepository() {
 		fileRepository = new InMemoryFileRepository();
-		return new SimpleAasRepositoryFactory(backendProvider, new InMemoryAasServiceFactory(fileRepository)).create();
+		return new CrudAasRepositoryFactory(InMemoryAasRepositoryBackend.buildDefault(), "aas-repo").create();
 	}
 
 	@Override
@@ -87,7 +84,9 @@ public class TestInMemoryAasRepository extends AasRepositorySuite {
 	
 	@Test
 	public void getConfiguredInMemoryAasRepositoryName() {
-		AasRepository repo = new CrudAasRepository(backendProvider, new InMemoryAasServiceFactory(fileRepository), CONFIGURED_AAS_REPO_NAME);
+		fileRepository = new InMemoryFileRepository();
+		InMemoryAasRepositoryBackend backend = new InMemoryAasRepositoryBackend(new InMemoryAasServiceFactory(fileRepository));
+		AasRepository repo = new CrudAasRepository(backend, CONFIGURED_AAS_REPO_NAME);
 		
 		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
 	}

@@ -67,7 +67,6 @@ import org.springframework.util.ResourceUtils;
  */
 public class TestAuthorizedAasEnvironmentUpload {
 
-	private static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(0, null);
 	private static String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
 	private static String clientId = "basyx-client-api";
 	private static AccessTokenProvider tokenProvider;
@@ -94,9 +93,9 @@ public class TestAuthorizedAasEnvironmentUpload {
 		
 		configureSecurityContext();
 		
-		Collection<AssetAdministrationShell> assetAdministrationShells = aasRepo.getAllAas(NO_LIMIT_PAGINATION_INFO).getResult();
-		Collection<Submodel> submodels = submodelRepo.getAllSubmodels(NO_LIMIT_PAGINATION_INFO).getResult();
-		Collection<ConceptDescription> conceptDescriptions = conceptDescriptionRepo.getAllConceptDescriptions(NO_LIMIT_PAGINATION_INFO).getResult();
+		Collection<AssetAdministrationShell> assetAdministrationShells = aasRepo.getAllAas(PaginationInfo.NO_LIMIT).getResult();
+		Collection<Submodel> submodels = submodelRepo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult();
+		Collection<ConceptDescription> conceptDescriptions = conceptDescriptionRepo.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult();
 		
 		assetAdministrationShells.stream().forEach(aas -> aasRepo.deleteAas(aas.getId()));
 		submodels.stream().forEach(sm -> submodelRepo.deleteSubmodel(sm.getId()));

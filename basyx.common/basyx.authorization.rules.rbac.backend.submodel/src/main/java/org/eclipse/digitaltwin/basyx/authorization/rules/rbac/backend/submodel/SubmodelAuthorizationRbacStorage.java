@@ -37,6 +37,8 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleKeyGenerator;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * InMemory implementation of the {@link RbacStorage}
@@ -44,6 +46,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelSer
  * @author danish
  */
 public class SubmodelAuthorizationRbacStorage implements RbacStorage {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(SubmodelAuthorizationRbacStorage.class);
 	private RbacRuleAdapter ruleAdapter;
 	private ConnectedSubmodelService smService;
 
@@ -60,7 +64,13 @@ public class SubmodelAuthorizationRbacStorage implements RbacStorage {
 		List<SubmodelElementCollection> rbacRulesSMC = rbacRule.getAction().stream().map(action -> new RbacRule(rbacRule.getRole(), Arrays.asList(action), rbacRule.getTargetInformation()))
 				.map(rule -> ruleAdapter.adapt(rule, createKey(rule))).collect(Collectors.toList());
 
-		rbacRulesSMC.stream().forEach(rule -> smService.createSubmodelElement(rule));
+		rbacRulesSMC.stream().forEach(rule -> {
+			try {
+				smService.createSubmodelElement(rule);
+			} catch (Exception e) {
+				LOGGER.error("Exception while creating SubmodelElement for rule: " + rule.getIdShort() + ". Error: " + e.getMessage());
+			}
+		});
 	}
 
 	@Override
@@ -90,8 +100,8 @@ public class SubmodelAuthorizationRbacStorage implements RbacStorage {
 
 	@Override
 	public Map<String, RbacRule> getRbacRules() {
-		
-		return smService.getSubmodelElements(new PaginationInfo(0, "")).getResult().stream().map(SubmodelElementCollection.class::cast).map(ruleAdapter::adapt).collect(Collectors.toMap(rbacRule -> createKey(rbacRule), rbacRule -> rbacRule));
+
+		return smService.getSubmodelElements(PaginationInfo.NO_LIMIT).getResult().stream().map(SubmodelElementCollection.class::cast).map(ruleAdapter::adapt).collect(Collectors.toMap(rbacRule -> createKey(rbacRule), rbacRule -> rbacRule));
 	}
 
 	private String createKey(RbacRule rbacRule) {

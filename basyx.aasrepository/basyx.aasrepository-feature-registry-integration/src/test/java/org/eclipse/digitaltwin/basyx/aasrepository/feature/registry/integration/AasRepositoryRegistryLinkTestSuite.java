@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,13 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -40,10 +37,9 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscovery
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.GetAssetAdministrationShellDescriptorsResult;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.DummyAasDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
@@ -66,7 +62,7 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 	protected abstract RegistryAndDiscoveryInterfaceApi getAasRegistryApi();
 
 	private final AssetAdministrationShellDescriptor DUMMY_DESCRIPTOR = DummyAasDescriptorFactory
-			.createDummyDescriptor(DUMMY_AAS_ID, DUMMY_IDSHORT, DUMMY_GLOBAL_ASSETID, getAasRepoBaseUrls());
+			.createDummyDescriptor(DUMMY_AAS_ID, DUMMY_IDSHORT, DUMMY_GLOBAL_ASSETID, DummyAasDescriptorFactory.buildSpecificAssetIds(), DummyAasDescriptorFactory.buildAdministrationInformation("0", "9", "testTemplateId"), getAasRepoBaseUrls());
 
 	@Test
 	public void createAas() throws FileNotFoundException, IOException, ApiException {
@@ -129,25 +125,17 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 	}
 
 	private CloseableHttpResponse createAasOnRepo(String aasJsonContent) throws IOException {
-		return BaSyxHttpTestUtils.executePostOnURL(createAasRepositoryUrl(getFirstAasRepoBaseUrl()), aasJsonContent);
+		String url = RepositoryUrlHelper.createRepositoryUrl(getFirstAasRepoBaseUrl(), AAS_REPOSITORY_PATH);
+		return BaSyxHttpTestUtils.executePostOnURL(RepositoryUrlHelper.createRepositoryUrl(getFirstAasRepoBaseUrl(), AAS_REPOSITORY_PATH), aasJsonContent);
 	}
 
 	private String getSpecificAasAccessURL(String aasId) {
-		return createAasRepositoryUrl(getFirstAasRepoBaseUrl()) + "/"
+		return RepositoryUrlHelper.createRepositoryUrl(getFirstAasRepoBaseUrl(), AAS_REPOSITORY_PATH) + "/"
 				+ Base64UrlEncodedIdentifier.encodeIdentifier(aasId);
 	}
 
 	private String getFirstAasRepoBaseUrl() {
 		return getAasRepoBaseUrls()[0];
-	}
-
-	private static String createAasRepositoryUrl(String aasRepositoryBaseURL) {
-
-		try {
-			return new URL(new URL(aasRepositoryBaseURL), AAS_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The AAS Repository Base url is malformed. " + e.getMessage());
-		}
 	}
 
 }

@@ -16,16 +16,17 @@
 
 	<properties>
 		<lombok.maven-plugin.version>1.18.20.0</lombok.maven-plugin.version>
+		<lombok.maven-plugin.lombok.version>1.18.36</lombok.maven-plugin.lombok.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<generated.folder>src/generated</generated.folder>
-		<swagger.codegen.version>3.0.42</swagger.codegen.version>
+		<swagger.codegen.version>3.0.67</swagger.codegen.version>
 		<spring.fox.version>3.0.0</spring.fox.version>
 		<openapi.folder.name>open-api</openapi.folder.name>
 		<openapi.base.name>
 			Plattform_i40-SubmodelRegistryServiceSpecification-V3.0.1_SSP-001-resolved.yaml</openapi.base.name>
 		<openapi.name>Plattform_i40-SubmodelRegistry-and-Discovery.yaml</openapi.name>
-		<guava.version>33.2.1-jre</guava.version>
+		<guava.version>33.4.0-jre</guava.version>
 		<maven-plugin.version>3.6.0</maven-plugin.version>
 		<maven-project.version>3.0-alpha-2</maven-project.version>
 		<mustache.compiler.version>0.9.14</mustache.compiler.version>
@@ -51,6 +52,8 @@
 		<module>basyx.submodelregistry-service-release-log-mongodb</module>
 		<module>basyx.submodelregistry-service-release-kafka-mongodb</module>
 		<module>basyx.submodelregistry-feature-authorization</module>
+		<module>basyx.submodelregistry-feature-hierarchy</module>
+		<module>basyx.submodelregistry-feature-hierarchy-example</module>
 	</modules>
 
 	<developers>
@@ -71,6 +74,13 @@
 					<groupId>org.projectlombok</groupId>
 					<artifactId>lombok-maven-plugin</artifactId>
 					<version>${lombok.maven-plugin.version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.maven-plugin.lombok.version}</version>
+						</dependency>
+					</dependencies>
 				</plugin>
 				<plugin>
 					<groupId>io.swagger.codegen.v3</groupId>
@@ -190,6 +200,11 @@
 				<artifactId>basyx.submodelregistry-feature-authorization</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelregistry-feature-hierarchy</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<profiles>
@@ -222,6 +237,13 @@
 					<plugin>
 						<groupId>org.projectlombok</groupId>
 						<artifactId>lombok-maven-plugin</artifactId>
+						<dependencies>
+							<dependency>
+								<groupId>org.projectlombok</groupId>
+								<artifactId>lombok</artifactId>
+								<version>${lombok.maven-plugin.lombok.version}</version>
+							</dependency>
+						</dependencies>
 						<executions>
 							<execution>
 								<phase>generate-sources</phase>

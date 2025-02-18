@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -107,12 +107,19 @@ public class MqttAasRepository implements AasRepository {
 
 	@Override
 	public void addSubmodelReference(String aasId, Reference submodelReference) {
+		AssetAdministrationShell shell = decorated.getAas(aasId);
 		decorated.addSubmodelReference(aasId, submodelReference);
+		
+		String referenceId = submodelReference.getKeys().get(0).getValue();
+		
+		submodelReferenceCreated(shell, getName(), referenceId);
 	}
 
 	@Override
 	public void removeSubmodelReference(String aasId, String submodelId) {
+		AssetAdministrationShell shell = decorated.getAas(aasId);
 		decorated.removeSubmodelReference(aasId, submodelId);
+		submodelReferenceDeleted(shell, getName(), submodelId);
 	}
 
 	@Override
@@ -135,6 +142,14 @@ public class MqttAasRepository implements AasRepository {
 
 	private void aasDeleted(AssetAdministrationShell shell, String repoId) {
 		sendMqttMessage(topicFactory.createDeleteAASTopic(repoId), serializePayload(shell));
+	}
+	
+	private void submodelReferenceCreated(AssetAdministrationShell shell, String repoId, String referenceId) {
+		sendMqttMessage(topicFactory.createCreateAASSubmodelReferenceTopic(repoId, referenceId), serializePayload(shell));
+	}
+
+	private void submodelReferenceDeleted(AssetAdministrationShell shell, String repoId, String referenceId) {
+		sendMqttMessage(topicFactory.createDeleteAASSubmodelReferenceTopic(repoId, referenceId), serializePayload(shell));
 	}
 
 	private String serializePayload(AssetAdministrationShell shell) {

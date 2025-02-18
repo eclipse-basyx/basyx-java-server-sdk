@@ -65,6 +65,11 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo pInfo) {
 		return decorated.getAllSubmodels(pInfo);
 	}
+	
+	@Override
+	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo) {
+		return decorated.getAllSubmodels(semanticId, pInfo);
+	}
 
 	@Override
 	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException {
@@ -112,13 +117,13 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 	}
 
 	@Override
-	public void createSubmodelElement(String submodelId, SubmodelElement smElement) {
-		decorated.createSubmodelElement(submodelId, smElement);
+	public SubmodelElement createSubmodelElement(String submodelId, SubmodelElement smElement) {
+		return decorated.createSubmodelElement(submodelId, smElement);
 	}
 
 	@Override
-	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
-		decorated.createSubmodelElement(submodelId, idShortPath, smElement);
+	public SubmodelElement createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
+		return decorated.createSubmodelElement(submodelId, idShortPath, smElement);
 	}
 
 	@Override

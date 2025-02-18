@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -27,23 +27,32 @@ package org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AdministrativeInformation;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Endpoint;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.KeyTypes;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.ProtocolInformation;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Reference;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId;
+import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 
 /**
  * Factory for dummy AasDescriptors
  *
- * @author danish, mateusmolina
+ * @author danish, mateusmolina, zielstor
  *
  */
 public class DummyAasDescriptorFactory {
 	private static final String AAS_REPOSITORY_PATH = "/shells";
 
-	public static AssetAdministrationShellDescriptor createDummyDescriptor(String aasId, String idShort, String globalAssetId, String... aasRepoBaseUrls) {
+	public static AssetAdministrationShellDescriptor createDummyDescriptor(String aasId, String idShort, String globalAssetId, List<SpecificAssetId> specificAssetIds, AdministrativeInformation administrativeInformation, List<Endpoint> endpoints) {
 
 		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
 
@@ -51,23 +60,69 @@ public class DummyAasDescriptorFactory {
 		descriptor.setIdShort(idShort);
 		descriptor.setAssetKind(AssetKind.INSTANCE);
 		descriptor.setGlobalAssetId(globalAssetId);
-		for (String eachUrl : aasRepoBaseUrls) {
-			descriptor.addEndpointsItem(createEndpointItem(aasId, eachUrl));
-		}
+		descriptor.setSpecificAssetIds(specificAssetIds);
+		descriptor.setEndpoints(endpoints);
+		descriptor.setAdministration(administrativeInformation);
+
 		return descriptor;
 	}
 
-	private static Endpoint createEndpointItem(String aasId, String aasRepoBaseUrl) {
+	public static AssetAdministrationShellDescriptor createDummyDescriptor(String aasId, String idShort, String globalAssetId, List<SpecificAssetId> specificAssetIds, AdministrativeInformation administrativeInformation, String... aasRepoBaseUrls) {
+		LinkedList<Endpoint> endpoints = new LinkedList<>();
+
+		for (String eachUrl : aasRepoBaseUrls) {
+			endpoints.add(createEndpoint(aasId, eachUrl, "AAS-3.0"));
+		}
+
+		return createDummyDescriptor(aasId, idShort, globalAssetId, specificAssetIds, administrativeInformation, endpoints);
+	}
+
+	public static AdministrativeInformation buildAdministrationInformation(String version, String revision, String templateId) {
+		AdministrativeInformation administrativeInformation = new AdministrativeInformation();
+		administrativeInformation.setVersion(version);
+		administrativeInformation.setRevision(revision);
+		administrativeInformation.setTemplateId(templateId);
+		return administrativeInformation;
+	}
+
+	public static Endpoint createEndpoint(String endpointUrl, String endpointInterface) {
 		Endpoint endpoint = new Endpoint();
-		endpoint.setInterface("AAS-3.0");
-		endpoint.setProtocolInformation(createProtocolInformation(aasId, aasRepoBaseUrl));
+		endpoint.setInterface(endpointInterface);
+		endpoint.setProtocolInformation(createProtocolInformation(endpointUrl));
 
 		return endpoint;
 	}
 
-	private static ProtocolInformation createProtocolInformation(String aasId, String aasRepoBaseUrl) {
+	public static Endpoint createEndpoint(String aasId, String aasRepoBaseUrl, String endpointInterface) {
 		String href = createHref(aasId, aasRepoBaseUrl);
 
+		return createEndpoint(href, endpointInterface);
+	}
+
+	public static List<SpecificAssetId> buildSpecificAssetIds() {
+		Reference externalSubjectId = new Reference();
+		externalSubjectId.keys(Collections.singletonList(new org.eclipse.digitaltwin.basyx.aasregistry.client.model.Key().type(KeyTypes.BLOB).value("BlobValue"))).type(org.eclipse.digitaltwin.basyx.aasregistry.client.model.ReferenceTypes.EXTERNALREFERENCE);
+
+		Reference semanticId = new Reference();
+		semanticId.keys(Collections.singletonList(new org.eclipse.digitaltwin.basyx.aasregistry.client.model.Key().type(KeyTypes.BLOB).value("BlobValue"))).type(org.eclipse.digitaltwin.basyx.aasregistry.client.model.ReferenceTypes.EXTERNALREFERENCE);
+
+		Reference supplementalSemanticId = new Reference();
+		supplementalSemanticId.keys(Collections.singletonList(new org.eclipse.digitaltwin.basyx.aasregistry.client.model.Key().type(KeyTypes.BLOB).value("BlobValue"))).type(org.eclipse.digitaltwin.basyx.aasregistry.client.model.ReferenceTypes.EXTERNALREFERENCE);
+
+		SpecificAssetId specificAssetId = new SpecificAssetId();
+		specificAssetId.setName("name");
+		specificAssetId.setValue("value");
+		specificAssetId.setExternalSubjectId(externalSubjectId);
+		specificAssetId.setSemanticId(semanticId);
+		specificAssetId.setSupplementalSemanticIds(Collections.singletonList(supplementalSemanticId));
+
+		List<SpecificAssetId> specificAssetIds = new LinkedList<>();
+		specificAssetIds.add(specificAssetId);
+
+		return specificAssetIds;
+	}
+
+	private static ProtocolInformation createProtocolInformation(String href) {
 		ProtocolInformation protocolInformation = new ProtocolInformation();
 		protocolInformation.setHref(href);
 		protocolInformation.endpointProtocol(getProtocol(href));
@@ -76,7 +131,7 @@ public class DummyAasDescriptorFactory {
 	}
 
 	private static String createHref(String aasId, String aasRepoBaseUrl) {
-		return String.format("%s/%s", createAasRepositoryUrl(aasRepoBaseUrl), Base64UrlEncodedIdentifier.encodeIdentifier(aasId));
+		return String.format("%s/%s", RepositoryUrlHelper.createRepositoryUrl(aasRepoBaseUrl, AAS_REPOSITORY_PATH), Base64UrlEncodedIdentifier.encodeIdentifier(aasId));
 	}
 
 	private static String getProtocol(String endpoint) {
@@ -87,13 +142,5 @@ public class DummyAasDescriptorFactory {
 		}
 	}
 
-	private static String createAasRepositoryUrl(String aasRepositoryBaseURL) {
-
-		try {
-			return new URL(new URL(aasRepositoryBaseURL), AAS_REPOSITORY_PATH).toString();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("The AAS Repository Base url is malformed. " + e.getMessage());
-		}
-	}
 
 }

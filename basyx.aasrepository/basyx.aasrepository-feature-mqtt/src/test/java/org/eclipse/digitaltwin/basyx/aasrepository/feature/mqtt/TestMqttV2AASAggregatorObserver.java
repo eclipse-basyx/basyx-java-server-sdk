@@ -1,7 +1,5 @@
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
-
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -24,10 +22,12 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,13 +39,11 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShe
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.DummyAasFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryBackendProvider;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Base64URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener;
-import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
@@ -94,7 +92,7 @@ public class TestMqttV2AASAggregatorObserver {
 	public void createAasEvent() throws DeserializationException {
 		AssetAdministrationShell shell = createAasDummy("createAasEventId");
 		aasRepository.createAas(shell);
-
+		
 		assertEquals(topicFactory.createCreateAASTopic(aasRepository.getName()), listener.lastTopic);
 		assertEquals(shell, deserializePayload(listener.lastPayload));
 	}
@@ -121,6 +119,29 @@ public class TestMqttV2AASAggregatorObserver {
 		assertEquals(topicFactory.createDeleteAASTopic(aasRepository.getName()), listener.lastTopic);
 		assertEquals(shell, deserializePayload(listener.lastPayload));
 	}
+	
+	@Test
+	public void addSubmodelReferenceEvent() throws DeserializationException {
+		AssetAdministrationShell shell = createAasDummy("createAasSubmodelRefEventId");
+		aasRepository.createAas(shell);
+		
+		Reference submodelReference = DummyAasFactory.createDummyReference(DummyAasFactory.DUMMY_SUBMODEL_ID);
+		aasRepository.addSubmodelReference(shell.getId(), submodelReference);
+		
+		assertEquals(topicFactory.createCreateAASSubmodelReferenceTopic(aasRepository.getName(), DummyAasFactory.DUMMY_SUBMODEL_ID), listener.lastTopic);
+		assertEquals(shell, deserializePayload(listener.lastPayload));
+	}	
+	
+	@Test
+	public void removeSubmodelReferenceEvent() throws DeserializationException {
+		AssetAdministrationShell shell = createAasWithSubmodelReference("removeAasSubmodelRefEventId");
+		aasRepository.createAas(shell);
+		
+		aasRepository.removeSubmodelReference(shell.getId(), DummyAasFactory.DUMMY_SUBMODEL_ID);
+		
+		assertEquals(topicFactory.createDeleteAASSubmodelReferenceTopic(aasRepository.getName(), DummyAasFactory.DUMMY_SUBMODEL_ID), listener.lastTopic);
+		assertEquals(shell, deserializePayload(listener.lastPayload));
+	}	
 
 	private AssetAdministrationShell deserializePayload(String payload) throws DeserializationException {
 		return new JsonDeserializer().read(payload, AssetAdministrationShell.class);
@@ -135,9 +156,19 @@ public class TestMqttV2AASAggregatorObserver {
 		return new DefaultAssetAdministrationShell.Builder().id(aasId)
 				.build();
 	}
+	
+	private AssetAdministrationShell createAasWithSubmodelReference(String aasId) {
+		Reference submodelReference = DummyAasFactory.createDummyReference(DummyAasFactory.DUMMY_SUBMODEL_ID);
+		
+		List<Reference> submodelReferences = new ArrayList<Reference>();
+		submodelReferences.add(submodelReference);
+		
+		return new DefaultAssetAdministrationShell.Builder().id(aasId).submodels(submodelReferences)
+				.build();
+	}
 
 	private static AasRepository createMqttAasRepository(MqttClient client) {
-		AasRepositoryFactory repoFactory = new SimpleAasRepositoryFactory(new AasInMemoryBackendProvider(), new InMemoryAasServiceFactory(new InMemoryFileRepository()));
+		AasRepositoryFactory repoFactory = new CrudAasRepositoryFactory(InMemoryAasRepositoryBackend.buildDefault(), "aas-repo");
 
 		return new MqttAasRepositoryFactory(repoFactory, client, new MqttAasRepositoryTopicFactory(new URLEncoder())).create();
 	}

@@ -78,8 +78,6 @@ import org.junit.Test;
  *
  */
 public abstract class SubmodelServiceSuite {
-	protected static final PaginationInfo NO_LIMIT_PAGINATION_INFO = new PaginationInfo(null, null);
-
 	protected abstract SubmodelService getSubmodelService(Submodel submodel);
 
 	/**
@@ -107,7 +105,7 @@ public abstract class SubmodelServiceSuite {
 		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
 		SubmodelService smService = getSubmodelService(technicalData);
 
-		assertTrue(technicalData.getSubmodelElements().containsAll(smService.getSubmodelElements(NO_LIMIT_PAGINATION_INFO).getResult()));
+		assertTrue(technicalData.getSubmodelElements().containsAll(smService.getSubmodelElements(PaginationInfo.NO_LIMIT).getResult()));
 	}
 
 	@Test
@@ -719,6 +717,10 @@ public abstract class SubmodelServiceSuite {
 
 	private DefaultProperty createDummyProperty(String idShort) {
 		return new DefaultProperty.Builder().idShort(idShort).category("cat1").value("123").valueType(DataTypeDefXsd.INTEGER).build();
+	}
+	
+	private SubmodelElement createDummySME(String idShort) {
+		return new DefaultProperty.Builder().idShort(idShort).value("123").build();
 	}
 
 	private InputStream getInputStreamOfDummyFile(String fileContent) throws FileNotFoundException, IOException {

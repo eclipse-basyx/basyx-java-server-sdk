@@ -1,0 +1,89 @@
+services:
+  # AAS Environment
+  aas-env:
+    image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
+    container_name: aas-env
+    volumes:
+      - ./aas:/application/aas
+      - ./basyx/aas-env.properties:/application/application.properties
+    ports:
+      - '8081:8081'
+    restart: always
+    depends_on:
+      aas-registry:
+        condition: service_healthy
+      sm-registry:
+        condition: service_healthy
+
+  # AAS Registry
+  aas-registry:
+    image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: aas-registry
+    ports:
+      - '8082:8080'
+    volumes:
+      - ./basyx/aas-registry.yml:/workspace/config/application.yml
+    restart: always
+
+  # Submodel Registry
+  sm-registry:
+    image: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: sm-registry
+    ports:
+      - '8083:8080'
+    volumes:
+      - ./basyx/sm-registry.yml:/workspace/config/application.yml
+    restart: always
+
+  # AAS Web UI
+  aas-web-ui:
+    image: eclipsebasyx/aas-gui:SNAPSHOT
+    container_name: aas-ui
+    ports:
+      - '3000:3000'
+    environment:
+      AAS_REGISTRY_PATH: http://localhost:8082/shell-descriptors
+      SUBMODEL_REGISTRY_PATH: http://localhost:8083/submodel-descriptors
+      AAS_REPO_PATH: http://localhost:8081/shells
+      SUBMODEL_REPO_PATH: http://localhost:8081/submodels
+      CD_REPO_PATH: http://localhost:8081/concept-descriptions
+    restart: always
+    depends_on:
+      aas-env:
+        condition: service_healthy
+
+  # MQTT Broker
+  mosquitto:
+    image: eclipse-mosquitto:2.0.15
+    container_name: mosquitto
+    ports:
+      - 1883:1883
+    volumes:
+      - ./mosquitto:/mosquitto
+    healthcheck:
+      test: ["CMD-SHELL", mosquitto_sub -p 1883 -t 'topic' -C 1 -E -i probe -W 3]
+      interval: 5s
+      retries: 3
+      start_period: 1s
+      timeout: 10s  
+    restart: always
+
+  # MQTT Publisher (for testing)
+  mqtt-publisher:
+    build: ./mqtt-publisher
+    container_name: mqtt-publisher
+    depends_on:
+      - mosquitto
+    restart: always
+
+  # DataBridge
+  databridge:
+    image: eclipsebasyx/databridge:1.0.0-SNAPSHOT
+    container_name: databridge
+    volumes:
+      - "./databridge:/usr/share/config"
+    depends_on:
+      - mosquitto
+      - aas-env
+    restart: always
+

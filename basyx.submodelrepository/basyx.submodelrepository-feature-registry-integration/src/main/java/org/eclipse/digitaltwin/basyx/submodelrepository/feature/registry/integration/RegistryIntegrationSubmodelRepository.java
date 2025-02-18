@@ -73,6 +73,11 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 	public CursorResult<List<Submodel>> getAllSubmodels(PaginationInfo paginationInfo) {
 		return decorated.getAllSubmodels(paginationInfo);
 	}
+	
+	@Override
+	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo paginationInfo) {
+		return decorated.getAllSubmodels(semanticId, paginationInfo);
+	} 
 
 	@Override
 	public Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException {
@@ -86,9 +91,19 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 
 	@Override
 	public void createSubmodel(Submodel submodel) throws CollidingIdentifierException {
+		SubmodelDescriptor descriptor = new SubmodelDescriptorFactory(submodelRepositoryRegistryLink.getSubmodelRepositoryBaseURLs(), attributeMapper).create(submodel);
+
 		decorated.createSubmodel(submodel);
 
-		integrateSubmodelWithRegistry(submodel, submodelRepositoryRegistryLink.getSubmodelRepositoryBaseURLs());
+		boolean registrationSuccessful = false;
+
+		try {
+			registerSubmodel(descriptor);
+			registrationSuccessful = true;
+		} finally {
+			if (!registrationSuccessful)
+				decorated.deleteSubmodel(submodel.getId());
+		}
 	}
 
 	@Override
@@ -119,13 +134,13 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 	}
 
 	@Override
-	public void createSubmodelElement(String submodelId, SubmodelElement submodelElement) {
-		decorated.createSubmodelElement(submodelId, submodelElement);
+	public SubmodelElement createSubmodelElement(String submodelId, SubmodelElement submodelElement) {
+		return decorated.createSubmodelElement(submodelId, submodelElement);
 	}
 
 	@Override
-	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
-		decorated.createSubmodelElement(submodelId, idShortPath, submodelElement);
+	public SubmodelElement createSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
+		return decorated.createSubmodelElement(submodelId, idShortPath, submodelElement);
 	}
 	
 	@Override
@@ -168,17 +183,15 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 		decorated.deleteFileValue(submodelId, idShortPath);
 	}
 
-	private void integrateSubmodelWithRegistry(Submodel submodel, List<String> submodelRepositoryURLs) {
-		SubmodelDescriptor descriptor = new SubmodelDescriptorFactory(submodel, submodelRepositoryURLs, attributeMapper).create();
-
+	private void registerSubmodel(SubmodelDescriptor descriptor) {
 		SubmodelRegistryApi registryApi = submodelRepositoryRegistryLink.getRegistryApi();
 
 		try {
 			registryApi.postSubmodelDescriptor(descriptor);
 
-			logger.info("Submodel '{}' has been automatically linked with the Registry", submodel.getId());
+			logger.info("Submodel '{}' has been automatically linked with the Registry", descriptor.getId());
 		} catch (ApiException e) {
-			throw new RepositoryRegistryLinkException(submodel.getId(), e);
+			throw new RepositoryRegistryLinkException(descriptor.getId(), e);
 		}
 	}
 

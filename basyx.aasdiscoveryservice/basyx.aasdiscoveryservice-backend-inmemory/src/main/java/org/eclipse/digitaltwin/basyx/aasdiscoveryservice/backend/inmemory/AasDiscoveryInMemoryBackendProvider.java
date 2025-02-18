@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryBackendProvider;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocument;
+import org.eclipse.digitaltwin.basyx.common.backend.inmemory.core.InMemoryCrudRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
@@ -41,7 +42,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AasDiscoveryInMemoryBackendProvider implements AasDiscoveryBackendProvider {
 
-	private AasDiscoveryInMemoryCrudRepository repository = new AasDiscoveryInMemoryCrudRepository();
+	private CrudRepository<AasDiscoveryDocument, String> repository = new InMemoryCrudRepository<AasDiscoveryDocument>(AasDiscoveryDocument::getShellIdentifier);
 
 	@Override
 	public CrudRepository<AasDiscoveryDocument, String> getCrudRepository() {
