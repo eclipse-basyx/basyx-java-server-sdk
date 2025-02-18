@@ -59,6 +59,8 @@ This starts the following services:
 
 The JAR file is **built inside Docker Compose** for demonstration purposes, showcasing the dependency on `aas4j` at compile time. In production, it's recommended to build the JAR externally and mount it into the container.
 
+Use *docker compose down* to tear down the stack;
+
 ---
 
 ## 🌍 Configuration

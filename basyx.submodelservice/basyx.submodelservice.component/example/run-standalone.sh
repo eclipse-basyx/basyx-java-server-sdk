@@ -11,6 +11,6 @@ source provide-image.sh
 echo Building image eclipsebasyx/submodel-example:test ...
 
 docker buildx use default
-docker buildx build -f Dockerfile.standalone-example --build-arg AAS4J_VERSION=$AAS4J_VERSION  --build-arg REVISION=$REVISION -t eclipsebasyx/submodel-example:test . --load
+docker buildx build -f Dockerfile.standalone-example --build-arg REVISION=$REVISION -t eclipsebasyx/submodel-example:test . --load
 
 docker run -p $PORT:8081 eclipsebasyx/submodel-example:test 

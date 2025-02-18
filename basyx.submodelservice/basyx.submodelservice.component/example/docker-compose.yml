@@ -1,36 +1,4 @@
-version: "3.9"
-
 services:
-  code-generator-jar:
-    image: openjdk:17
-    container_name: code-generator
-    volumes:
-      - jar-volume:/shared
-    command: >
-      bash -c "
-      # Create directories for source code and compiled classes
-      mkdir -p tmp/src tmp/bin &&
-      # Generate the Java source file 'HelloWorld.java'
-      cat <<EOF > tmp/src/HelloWorld.java
-      public class HelloWorld {
-          public String sayHello() {
-              return \\\"Hello World!\\\";
-          }
-      }EOF
-      &&
-      # Compile the Java source code, placing .class files into tmp/bin
-      javac -d tmp/bin tmp/src/HelloWorld.java &&
-      cd tmp/bin &&
-      # Package the compiled class into a JAR file
-      jar cf HelloWorld.jar HelloWorld.class &&
-      # Copy the generated JAR into the shared volume for use by other services
-      cp HelloWorld.jar /shared/HelloWorld.jar &&
-      echo 'Done'
-      "
-    restart: "no"
-    # This container is designed as a one-shot job.
-    # It exits after completing its task, and its successful completion is checked by submodel-service.
-
 
   submodel-service:
     image: eclipsebasyx/submodel-service:${REVISION}
@@ -50,13 +18,5 @@ services:
     volumes:
       - ./submodel.json:/application/submodel.json:ro
       - ./sources/:/application/sources/:ro
-      - jar-volume:/application/jars/:ro
+      - ./jars/HelloWorld.jar:/application/jars/HelloWorld.jar:ro
       - ./application-mappings.yml:/application/config/application-mappings.yml/:ro
-    depends_on:
-      code-generator-jar:
-        condition: service_completed_successfully
-    # submodel-service depends on the code-generator service to have completed successfully.
-    # It retrieves the generated JAR file from the shared volume mounted at /application/jars.
-
-volumes:
-  jar-volume:

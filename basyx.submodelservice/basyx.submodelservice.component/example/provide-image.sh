@@ -30,7 +30,7 @@ image_available() {
 build_maven() {
   echo building maven artifacts ...
   mvn -f ../../../pom.xml clean install -DskipTests
-  mvn -f ../pom.xml install -Ddocker.namespace=$NAMESPACE -Drevision=$REVISION  -DskipTests
+  mvn -f ../pom.xml install -Ddocker.namespace=eclipsebasyx -Drevision=$REVISION  -DskipTests
 }
 
 if ! image_available; then

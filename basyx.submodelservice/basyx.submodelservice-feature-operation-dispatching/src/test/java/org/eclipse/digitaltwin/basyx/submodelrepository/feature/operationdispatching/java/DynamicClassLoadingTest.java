@@ -49,7 +49,9 @@ public class DynamicClassLoadingTest {
 		DynamicJavaClassLoader loader = new DynamicJavaClassLoader();
 		Path sources = Path.of("test", "sources");
 		Path classes = Path.of("target", "dynamic-loading", "classes");
-		List<Path> pathJars = List.of(Path.of("test/jars/HelloWorld.jar"));
+		Path jarPath = Path.of("..", "basyx.submodelservice.component", "example","jars","HelloWorld.jar");
+		
+		List<Path> pathJars = List.of(jarPath);
 		
 		loader.compileClasses(sources, classes, pathJars);
 
@@ -69,8 +71,8 @@ public class DynamicClassLoadingTest {
 		DynamicJavaClassLoader loader = new DynamicJavaClassLoader();
 		Path sources = Path.of("test", "wrongsyntax");
 		Path classes = Path.of("target", "dynamic-loading", "classes");
-		List<Path> pathJars = List.of(Path.of("example/jars/HelloWorld.jar"));
-		loader.compileClasses(sources, classes, pathJars);
+		Path jarPath = Path.of("..", "basyx.submodelservice.component", "example","jars","HelloWorld.jar");
+		loader.compileClasses(sources, classes, List.of(jarPath));
 	}
 	
 	@Test(expected = IllegalStateException.class)
@@ -78,8 +80,8 @@ public class DynamicClassLoadingTest {
 		DynamicJavaClassLoader loader = new DynamicJavaClassLoader();
 		Path sources = Path.of("test", "unknown");
 		Path classes = Path.of("target", "dynamic-loading", "classes");
-		List<Path> pathJars = List.of(Path.of("example/jars/HelloWorld.jar"));
-		loader.compileClasses(sources, classes, pathJars);
+		Path jarPath = Path.of("..", "basyx.submodelservice.component", "example","jars","HelloWorld.jar");
+		loader.compileClasses(sources, classes, List.of(jarPath));
 	}
 	
 	@Test

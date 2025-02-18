@@ -77,14 +77,14 @@ public class AbstractSubmodelServiceDecorator implements SubmodelService {
 	}
 
 	@Override
-	public void createSubmodelElement(SubmodelElement submodelElement) {
-		decorated.createSubmodelElement(submodelElement);
+	public SubmodelElement createSubmodelElement(SubmodelElement submodelElement) {
+		return decorated.createSubmodelElement(submodelElement);
 	}
 
 	@Override
-	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement)
+	public SubmodelElement createSubmodelElement(String idShortPath, SubmodelElement submodelElement)
 			throws ElementDoesNotExistException {
-		decorated.createSubmodelElement(idShortPath, submodelElement);
+		return decorated.createSubmodelElement(idShortPath, submodelElement);
 	}
 
 	@Override

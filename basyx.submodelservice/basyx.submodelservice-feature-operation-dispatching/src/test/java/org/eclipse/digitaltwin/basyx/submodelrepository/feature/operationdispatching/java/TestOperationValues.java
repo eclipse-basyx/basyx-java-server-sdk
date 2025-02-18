@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
+import org.eclipse.digitaltwin.aas4j.v3.model.ExecutionState;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
@@ -55,11 +56,11 @@ public class TestOperationValues {
 	}
 
 	public static OperationResult resultForInt(int... values) {
-		return new DefaultOperationResult.Builder().outputArguments(intInputArguments(values)).build();
+		return new DefaultOperationResult.Builder().success(true).outputArguments(intInputArguments(values)).build();
 	}
 	
 	public static OperationResult resultForString(String... values) {
-		return new DefaultOperationResult.Builder().outputArguments(stringInputArguments(values)).build();
+		return new DefaultOperationResult.Builder().success(true).outputArguments(stringInputArguments(values)).success(true).build();
 	}
 	
 	private static List<OperationVariable> intInputArguments(int... values) {

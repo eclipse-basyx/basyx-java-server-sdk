@@ -146,20 +146,6 @@
 							<execution>
 								<id>push-docker</id>
 							</execution>
-							<execution>
-								<id>docker-compose-up</id>
-								<phase>pre-integration-test</phase>
-								<goals>
-									<goal>start</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>docker-compose-down</id>
-								<phase>post-integration-test</phase>
-								<goals>
-									<goal>stop</goal>
-								</goals>
-							</execution>
 						</executions>
 					</plugin>
 					<plugin>

@@ -12,11 +12,11 @@ To get started quickly, use one of the provided shell scripts:
 # Standalone mode - builds and runs a preconfigured Docker image
 ./run-standalone.sh
 
-# Docker Compose mode - dynamically compiles Java sources and starts the service
+# Docker Compose mode - starts the service
 ./run-compose.sh
 ```
 
-Once the service is running, test it using:
+Once the service is running, test it in another shell using:
 
 ```bash
 ./run-tests.sh
@@ -36,19 +36,17 @@ This script executes predefined operations on the submodel to verify functionali
 
 ### 2️⃣ Docker Compose Mode (Dynamic Setup)
 
-- Uses `docker-compose.yml` to launch multiple services.
-- Dynamically compiles Java sources before starting the submodel service.
+- Uses `docker-compose.yml` to launch the service.
+- Dynamically compiles Java sources while starting the submodel service. 
 - Ideal for **flexibility**, allowing modifications and extensions without rebuilding the image.
-- **Note:** Typically, JAR files are built outside Docker Compose and mounted from the host system. However, in this setup, the JAR is generated within the `code-generator-jar` service to illustrate the build process and demonstrate the need for `aas4j` during compilation. At runtime, `aas4j` is not required.
+- **Note:** Typically, JAR files are built outside Docker Compose and mounted from the host system. During compilation you need the `aas4j-model` dependency. At runtime, `aas4j` is already provided.
 
 ---
 
 ## ⚙️ Docker Compose Configuration
 
-The **[docker-compose.yml](docker-compose.yml)** file defines two primary services:
+The **[docker-compose.yml](docker-compose.yml)** file defines one the submodel service for demonstration:
 
-1. **`code-generator-jar`**: Compiles Java sources at runtime and provides a JAR file.
-2. **`submodel-service`**: Loads precompiled JARs and dynamically compiles additional sources.
 
 ### 📂 Volume Mappings
 
@@ -56,7 +54,7 @@ The **[docker-compose.yml](docker-compose.yml)** file defines two primary servic
 | ---------------------------------------------------------------------------- | -------------------------------------------------------------- |
 | `./submodel.json:/application/submodel.json:ro`                              | Supplies the submodel definition                               |
 | `./sources/:/application/sources/:ro`                                        | Provides Java source files for dynamic compilation             |
-| `jar-volume:/application/jars/:ro`                                           | Stores the prebuilt `HelloWorld.jar` from `code-generator-jar` |
+| `./jars/HelloWorld.jar:/application/jars/HelloWorld.jar:ro`                  | Stores the prebuilt `HelloWorld.jar`                           |
 | `./application-mappings.yml:/application/config/application-mappings.yml:ro` | Contains `idShortPath` mappings                                |
 
 ---
@@ -90,7 +88,6 @@ This builds the **Dockerfile.standalone-example** image and runs it as a contain
 ./run-compose.sh
 ```
 
-- The `code-generator-jar` service **compiles and stores** `HelloWorld.jar`.
 - The `submodel-service` container **loads** the JAR and compiles additional sources.
 
 **Note:** Since both modes bind to the same port, only one should be active at a time.
@@ -114,8 +111,6 @@ Follow the script's instructions to interact with the submodel and validate its 
 ✅ **Standalone Mode:** Uses a precompiled Docker image for fast deployment.
 
 ✅ **Docker Compose Mode:** Dynamically compiles Java sources and integrates prebuilt JAR files.
-
-✅ **Code Generator Service:** Generates Java classes and provides them to the submodel.
 
 ✅ **Comprehensive Testing:** Run `./run-tests.sh` to verify the service functionality.
 

@@ -52,7 +52,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 		OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".mappings[HelloOperation]=HelloOperation",
 		OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".java.sources=test/sources",
 		OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".java.classes=target/dynamic-loading/classes",
-		OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".java.additionalClasspath=test/jars/HelloWorld.jar" })
+		OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".java.additionalClasspath=../basyx.submodelservice.component/example/jars/HelloWorld.jar" })
 /**
  * @author Gerhard Sonnenberg DFKI GmbH
  */

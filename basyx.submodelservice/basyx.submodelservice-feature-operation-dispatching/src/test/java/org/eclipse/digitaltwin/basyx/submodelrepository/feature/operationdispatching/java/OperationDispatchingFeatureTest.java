@@ -63,7 +63,7 @@ import org.springframework.web.server.ResponseStatusException;
 		OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".mappings[SquareOp]=SquareOperation",
 		OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".java.sources=test/sources",
 		OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".java.classes=test/classes",
-		OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".java.additionalClasspath=test/jars/HelloWorld.jar" })
+		OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".java.additionalClasspath=../basyx.submodelservice.component/example/jars/HelloWorld.jar" })
 /**
  * @author Gerhard Sonnenberg DFKI GmbH
  */
