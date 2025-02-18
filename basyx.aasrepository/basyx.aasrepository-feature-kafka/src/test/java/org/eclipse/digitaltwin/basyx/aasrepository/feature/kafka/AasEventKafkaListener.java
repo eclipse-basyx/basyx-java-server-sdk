@@ -41,7 +41,7 @@ import org.springframework.stereotype.Component;
 /**
  * @author geso02 (Sonnenberg DFKI GmbH)
  */
-@KafkaListener(topics = AasEventKafkaListener.TOPIC_NAME, batch = "false", groupId = "kafka-test", autoStartup = "true")
+@KafkaListener(topics = AasEventKafkaListener.TOPIC_NAME, batch = "false", groupId = "kafka-test-aas", autoStartup = "true")
 @Component 
 public class AasEventKafkaListener implements ConsumerSeekAware {
 
