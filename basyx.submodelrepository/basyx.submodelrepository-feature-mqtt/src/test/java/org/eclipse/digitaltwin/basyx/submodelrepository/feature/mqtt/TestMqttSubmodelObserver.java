@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -60,7 +61,9 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRe
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.junit.AfterClass;
@@ -340,4 +343,89 @@ public class TestMqttSubmodelObserver {
 
 		return broker;
 	}
+
+	@Test
+    public void TCPConnectionWithoutCredentials() throws Exception {
+        MqttSubmodelRepositoryConfiguration config = new MqttSubmodelRepositoryConfiguration();
+        MqttConnectOptions options = config.mqttConnectOptions("", "");
+        IMqttClient client = config.mqttClient(
+            "test-client",
+            "localhost",
+            1884,
+            "tcp",
+            options
+        );
+		//assertTrue(client.isConnected());
+        client.disconnect();
+        client.close();
+    }
+
+	@Test
+    public void TCPConnectionWitCredentials() throws Exception {
+        MqttSubmodelRepositoryConfiguration config = new MqttSubmodelRepositoryConfiguration();
+        MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
+        IMqttClient client = config.mqttClient(
+            "test-client",
+            "localhost",
+            1884,
+            "tcp",
+            options
+        );
+		assertTrue(client.isConnected());
+        client.disconnect();
+        client.close();
+    }
+
+	@Test
+    public void TCPConnectionWitWrongCredentials() throws Exception {
+        MqttSubmodelRepositoryConfiguration config = new MqttSubmodelRepositoryConfiguration();
+        MqttConnectOptions options = config.mqttConnectOptions("testuser", "false");
+		boolean authentication_failed = false;
+        try {
+			IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				1884,
+				"tcp",
+				options
+			);
+		} catch (MqttException e) {
+			if(MqttException.REASON_CODE_FAILED_AUTHENTICATION == e.getReasonCode()) {
+				authentication_failed = true;
+			}
+		}
+		assertTrue(authentication_failed);
+    }
+
+	@Test
+    public void WSConnectionWithoutCredentials() throws Exception {
+        MqttSubmodelRepositoryConfiguration config = new MqttSubmodelRepositoryConfiguration();
+        MqttConnectOptions options = config.mqttConnectOptions("", "");
+        IMqttClient client = config.mqttClient(
+            "test-client",
+            "localhost",
+            8080,
+            "ws",
+            options
+        );
+		assertTrue(client.isConnected());
+        client.disconnect();
+        client.close();
+    }
+
+	@Test
+    public void WSConnectionWitCredentials() throws Exception {
+        MqttSubmodelRepositoryConfiguration config = new MqttSubmodelRepositoryConfiguration();
+        MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
+        IMqttClient client = config.mqttClient(
+            "test-client",
+            "localhost",
+            8080,
+            "ws",
+            options
+        );
+		assertTrue(client.isConnected());
+        client.disconnect();
+        client.close();
+    }
 }
