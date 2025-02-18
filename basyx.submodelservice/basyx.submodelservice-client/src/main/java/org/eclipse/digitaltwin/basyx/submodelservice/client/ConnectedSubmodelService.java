@@ -113,14 +113,14 @@ public class ConnectedSubmodelService implements SubmodelService {
 	}
 
 	@Override
-	public SubmodelElement createSubmodelElement(SubmodelElement submodelElement) {
-		return serviceApi.postSubmodelElement(submodelElement);
+	public void createSubmodelElement(SubmodelElement submodelElement) {
+		serviceApi.postSubmodelElement(submodelElement);
 	}
 
 	@Override
-	public SubmodelElement createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
+	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
 		try {
-			return serviceApi.postSubmodelElementByPath(idShortPath, submodelElement);
+			serviceApi.postSubmodelElementByPath(idShortPath, submodelElement);
 		} catch (ApiException e) {
 			throw mapExceptionSubmodelElementAccess(idShortPath, e);
 		}
