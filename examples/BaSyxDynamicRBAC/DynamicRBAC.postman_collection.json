@@ -1,0 +1,1022 @@
+{
+	"info": {
+		"_postman_id": "7e8a490a-9d7e-4920-9fc3-93d5ddabec17",
+		"name": "DynamicRBAC",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "8199656"
+	},
+	"item": [
+		{
+			"name": "Rules",
+			"item": [
+				{
+					"name": "Frame",
+					"item": [
+						{
+							"name": "ResetRules",
+							"item": [
+								{
+									"name": "Reset_AASRegistry",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "oauth2",
+											"oauth2": {
+												"grant_type": "client_credentials",
+												"password": "",
+												"username": "",
+												"clientSecret": "{{workstation_1_clientsecret}}",
+												"clientId": "{{workstation_1_clientid}}",
+												"accessTokenUrl": "{{access_token_url}}",
+												"tokenName": "FrameSuppplierToken",
+												"addTokenTo": "header",
+												"refreshTokenUrl": "",
+												"client_authentication": "header"
+											}
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements/TWFudWZhY3R1cmVyRnJhbWVSRUFEb3JnLmVjbGlwc2UuZGlnaXRhbHR3aW4uYmFzeXguYWFzcmVnaXN0cnkuZmVhdHVyZS5hdXRob3JpemF0aW9uLkFhc1JlZ2lzdHJ5VGFyZ2V0SW5mb3JtYXRpb24="
+									},
+									"response": []
+								},
+								{
+									"name": "Reset_AASRepo",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "oauth2",
+											"oauth2": {
+												"grant_type": "client_credentials",
+												"password": "",
+												"username": "",
+												"clientSecret": "{{workstation_1_clientsecret}}",
+												"clientId": "{{workstation_1_clientid}}",
+												"accessTokenUrl": "{{access_token_url}}",
+												"tokenName": "FrameSuppplierToken",
+												"addTokenTo": "header",
+												"refreshTokenUrl": "",
+												"client_authentication": "header"
+											}
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements/TWFudWZhY3R1cmVyRnJhbWVSRUFEb3JnLmVjbGlwc2UuZGlnaXRhbHR3aW4uYmFzeXguYWFzcmVwb3NpdG9yeS5mZWF0dXJlLmF1dGhvcml6YXRpb24uQWFzVGFyZ2V0SW5mb3JtYXRpb24="
+									},
+									"response": []
+								},
+								{
+									"name": "Reset_SMReg",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "oauth2",
+											"oauth2": {
+												"grant_type": "client_credentials",
+												"password": "",
+												"username": "",
+												"clientSecret": "{{workstation_1_clientsecret}}",
+												"clientId": "{{workstation_1_clientid}}",
+												"accessTokenUrl": "{{access_token_url}}",
+												"tokenName": "FrameSuppplierToken",
+												"addTokenTo": "header",
+												"refreshTokenUrl": "",
+												"client_authentication": "header"
+											}
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements/TWFudWZhY3R1cmVyRnJhbWVSRUFEb3JnLmVjbGlwc2UuZGlnaXRhbHR3aW4uYmFzeXguc3VibW9kZWxyZWdpc3RyeS5mZWF0dXJlLmF1dGhvcml6YXRpb24uU3VibW9kZWxSZWdpc3RyeVRhcmdldEluZm9ybWF0aW9u"
+									},
+									"response": []
+								},
+								{
+									"name": "Reset_SMRepo",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "oauth2",
+											"oauth2": {
+												"grant_type": "client_credentials",
+												"password": "",
+												"username": "",
+												"clientSecret": "{{workstation_1_clientsecret}}",
+												"clientId": "{{workstation_1_clientid}}",
+												"accessTokenUrl": "{{access_token_url}}",
+												"tokenName": "FrameSuppplierToken",
+												"addTokenTo": "header",
+												"refreshTokenUrl": "",
+												"client_authentication": "header"
+											}
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements/TWFudWZhY3R1cmVyRnJhbWVSRUFEb3JnLmVjbGlwc2UuZGlnaXRhbHR3aW4uYmFzeXguc3VibW9kZWxyZXBvc2l0b3J5LmZlYXR1cmUuYXV0aG9yaXphdGlvbi5TdWJtb2RlbFRhcmdldEluZm9ybWF0aW9u"
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Frame_SupplierRuleForManufacturerAASRegistry",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": {
+										"password": "{{admin_password}}",
+										"username": "{{admin_username}}",
+										"clientSecret": "{{supplier_frame_secret}}",
+										"clientId": "{{supplier_frame_id}}",
+										"tokenName": "FrameSuppplierToken",
+										"addTokenTo": "header",
+										"refreshTokenUrl": "",
+										"client_authentication": "header",
+										"accessTokenUrl": "{{access_token_url}}",
+										"grant_type": "password_credentials"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"modelType\": \"SubmodelElementCollection\",\r\n  \"idShort\": \"TWFudWZhY3R1cmVyRnJhbWVSRUFEb3JnLmVjbGlwc2UuZGlnaXRhbHR3aW4uYmFzeXguYWFzcmVnaXN0cnkuZmVhdHVyZS5hdXRob3JpemF0aW9uLkFhc1JlZ2lzdHJ5VGFyZ2V0SW5mb3JtYXRpb24=\",\r\n  \"value\": [\r\n      {\r\n          \"modelType\": \"Property\",\r\n          \"value\": \"ManufacturerFrame\",\r\n          \"idShort\": \"role\"\r\n      },\r\n      {\r\n          \"modelType\": \"SubmodelElementList\",\r\n          \"idShort\": \"action\",\r\n          \"orderRelevant\": true,\r\n          \"value\": [\r\n              {\r\n                  \"modelType\": \"Property\",\r\n                  \"value\": \"READ\"\r\n              }\r\n          ]\r\n      },\r\n      {\r\n          \"modelType\": \"SubmodelElementCollection\",\r\n          \"idShort\": \"targetInformation\",\r\n          \"value\": [\r\n              {\r\n                  \"modelType\": \"SubmodelElementList\",\r\n                  \"idShort\": \"aasIds\",\r\n                  \"orderRelevant\": true,\r\n                  \"value\": [\r\n                      {\r\n                          \"modelType\": \"Property\",\r\n                          \"value\": \"https://example.com/ids/sm/5255_5191_9042_8127\"\r\n                      }\r\n                  ]\r\n              },\r\n              {\r\n                  \"modelType\": \"Property\",\r\n                  \"value\": \"aas-registry\",\r\n                  \"idShort\": \"@type\"\r\n              }\r\n          ]\r\n      }\r\n  ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements"
+							},
+							"response": []
+						},
+						{
+							"name": "Frame_SupplierRuleForManufacturerAASRepo",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": {
+										"username": "{{admin_username}}",
+										"password": "{{admin_password}}",
+										"clientSecret": "{{supplier_frame_secret}}",
+										"tokenName": "FrameSuppplierToken",
+										"scope": "",
+										"clientId": "{{supplier_frame_id}}",
+										"accessTokenUrl": "{{access_token_url}}",
+										"grant_type": "password_credentials",
+										"client_authentication": "body",
+										"addTokenTo": "header"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"modelType\": \"SubmodelElementCollection\",\r\n  \"idShort\": \"TWFudWZhY3R1cmVyRnJhbWVSRUFEb3JnLmVjbGlwc2UuZGlnaXRhbHR3aW4uYmFzeXguYWFzcmVwb3NpdG9yeS5mZWF0dXJlLmF1dGhvcml6YXRpb24uQWFzVGFyZ2V0SW5mb3JtYXRpb24=\",\r\n  \"value\": [\r\n      {\r\n          \"modelType\": \"Property\",\r\n          \"value\": \"ManufacturerFrame\",\r\n          \"idShort\": \"role\"\r\n      },\r\n      {\r\n          \"modelType\": \"SubmodelElementList\",\r\n          \"idShort\": \"action\",\r\n          \"orderRelevant\": true,\r\n          \"value\": [\r\n              {\r\n                  \"modelType\": \"Property\",\r\n                  \"value\": \"READ\"\r\n              }\r\n          ]\r\n      },\r\n      {\r\n          \"modelType\": \"SubmodelElementCollection\",\r\n          \"idShort\": \"targetInformation\",\r\n          \"value\": [\r\n              {\r\n                  \"modelType\": \"SubmodelElementList\",\r\n                  \"idShort\": \"aasIds\",\r\n                  \"orderRelevant\": true,\r\n                  \"value\": [\r\n                      {\r\n                          \"modelType\": \"Property\",\r\n                          \"value\": \"https://example.com/ids/sm/5255_5191_9042_8127\"\r\n                      }\r\n                  ]\r\n              },\r\n              {\r\n                  \"modelType\": \"Property\",\r\n                  \"value\": \"aas\",\r\n                  \"idShort\": \"@type\"\r\n              }\r\n          ]\r\n      }\r\n  ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements"
+							},
+							"response": []
+						},
+						{
+							"name": "Frame_SupplierRuleForManufacturerSMRegAllSMCombinedRules",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": {
+										"username": "{{admin_username}}",
+										"password": "{{admin_password}}",
+										"tokenName": "FrameSuppplierToken",
+										"clientSecret": "{{supplier_frame_secret}}",
+										"clientId": "{{supplier_frame_id}}",
+										"accessTokenUrl": "{{access_token_url}}",
+										"grant_type": "password_credentials",
+										"client_authentication": "body",
+										"addTokenTo": "header"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"modelType\": \"SubmodelElementCollection\",\r\n    \"idShort\": \"TWFudWZhY3R1cmVyRnJhbWVSRUFEb3JnLmVjbGlwc2UuZGlnaXRhbHR3aW4uYmFzeXguc3VibW9kZWxyZWdpc3RyeS5mZWF0dXJlLmF1dGhvcml6YXRpb24uU3VibW9kZWxSZWdpc3RyeVRhcmdldEluZm9ybWF0aW9u\",\r\n    \"value\": [\r\n        {\r\n            \"modelType\": \"Property\",\r\n            \"value\": \"ManufacturerFrame\",\r\n            \"idShort\": \"role\"\r\n        },\r\n        {\r\n            \"modelType\": \"SubmodelElementList\",\r\n            \"idShort\": \"action\",\r\n            \"orderRelevant\": true,\r\n            \"value\": [\r\n                {\r\n                    \"modelType\": \"Property\",\r\n                    \"value\": \"READ\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"modelType\": \"SubmodelElementCollection\",\r\n            \"idShort\": \"targetInformation\",\r\n            \"value\": [\r\n                {\r\n                    \"modelType\": \"SubmodelElementList\",\r\n                    \"idShort\": \"submodelIds\",\r\n                    \"orderRelevant\": true,\r\n                    \"value\": [\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"https://example.com/ids/sm/5255_5191_9042_0227\"\r\n                        },\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"https://example.com/ids/sm/5555_5191_9042_4676\"\r\n                        },\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"https://example.com/ids/sm/8275_5191_9042_5970\"\r\n                        }\r\n                    ]\r\n                },\r\n                {\r\n                    \"modelType\": \"Property\",\r\n                    \"value\": \"submodel-registry\",\r\n                    \"idShort\": \"@type\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements"
+							},
+							"response": []
+						},
+						{
+							"name": "Frame_SupplierRuleForManufacturerSMRepoAllSMCombinedRules",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": {
+										"password": "{{admin_password}}",
+										"username": "{{admin_username}}",
+										"tokenName": "FrameSuppplierToken",
+										"clientId": "{{supplier_frame_id}}",
+										"clientSecret": "{{supplier_frame_secret}}",
+										"accessTokenUrl": "{{access_token_url}}",
+										"grant_type": "password_credentials",
+										"client_authentication": "body",
+										"addTokenTo": "header"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"modelType\": \"SubmodelElementCollection\",\r\n    \"idShort\": \"TWFudWZhY3R1cmVyRnJhbWVSRUFEb3JnLmVjbGlwc2UuZGlnaXRhbHR3aW4uYmFzeXguc3VibW9kZWxyZXBvc2l0b3J5LmZlYXR1cmUuYXV0aG9yaXphdGlvbi5TdWJtb2RlbFRhcmdldEluZm9ybWF0aW9u\",\r\n    \"value\": [\r\n        {\r\n            \"modelType\": \"Property\",\r\n            \"value\": \"ManufacturerFrame\",\r\n            \"idShort\": \"role\"\r\n        },\r\n        {\r\n            \"modelType\": \"SubmodelElementList\",\r\n            \"idShort\": \"action\",\r\n            \"orderRelevant\": true,\r\n            \"value\": [\r\n                {\r\n                    \"modelType\": \"Property\",\r\n                    \"value\": \"READ\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"modelType\": \"SubmodelElementCollection\",\r\n            \"idShort\": \"targetInformation\",\r\n            \"value\": [\r\n                {\r\n                    \"modelType\": \"SubmodelElementList\",\r\n                    \"idShort\": \"submodelIds\",\r\n                    \"orderRelevant\": true,\r\n                    \"value\": [\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"https://example.com/ids/sm/5255_5191_9042_0227\"\r\n                        },\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"https://example.com/ids/sm/5555_5191_9042_4676\"\r\n                        },\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"https://example.com/ids/sm/8275_5191_9042_5970\"\r\n                        }\r\n                    ]\r\n                },\r\n                {\r\n                    \"modelType\": \"SubmodelElementList\",\r\n                    \"idShort\": \"submodelElementIdShortPaths\",\r\n                    \"orderRelevant\": true,\r\n                    \"value\": [\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"*\"\r\n                        }\r\n                    ]\r\n                },\r\n                {\r\n                    \"modelType\": \"Property\",\r\n                    \"value\": \"submodel\",\r\n                    \"idShort\": \"@type\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Gear",
+					"item": [
+						{
+							"name": "ResetRules",
+							"item": [
+								{
+									"name": "Reset_AASRegistry",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "oauth2",
+											"oauth2": {
+												"grant_type": "client_credentials",
+												"password": "",
+												"username": "",
+												"clientSecret": "{{workstation_1_clientsecret}}",
+												"clientId": "{{workstation_1_clientid}}",
+												"accessTokenUrl": "{{access_token_url}}",
+												"tokenName": "FrameSuppplierToken",
+												"addTokenTo": "header",
+												"refreshTokenUrl": "",
+												"client_authentication": "header"
+											}
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements/TWFudWZhY3R1cmVyR2VhclJFQURvcmcuZWNsaXBzZS5kaWdpdGFsdHdpbi5iYXN5eC5hYXNyZWdpc3RyeS5mZWF0dXJlLmF1dGhvcml6YXRpb24uQWFzUmVnaXN0cnlUYXJnZXRJbmZvcm1hdGlvbg=="
+									},
+									"response": []
+								},
+								{
+									"name": "Reset_AASRepo",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "oauth2",
+											"oauth2": {
+												"grant_type": "client_credentials",
+												"password": "",
+												"username": "",
+												"clientSecret": "{{workstation_1_clientsecret}}",
+												"clientId": "{{workstation_1_clientid}}",
+												"accessTokenUrl": "{{access_token_url}}",
+												"tokenName": "FrameSuppplierToken",
+												"addTokenTo": "header",
+												"refreshTokenUrl": "",
+												"client_authentication": "header"
+											}
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements/TWFudWZhY3R1cmVyR2VhclJFQURvcmcuZWNsaXBzZS5kaWdpdGFsdHdpbi5iYXN5eC5hYXNyZXBvc2l0b3J5LmZlYXR1cmUuYXV0aG9yaXphdGlvbi5BYXNUYXJnZXRJbmZvcm1hdGlvbg=="
+									},
+									"response": []
+								},
+								{
+									"name": "Reset_SMReg",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "oauth2",
+											"oauth2": {
+												"grant_type": "client_credentials",
+												"password": "",
+												"username": "",
+												"clientSecret": "{{workstation_1_clientsecret}}",
+												"clientId": "{{workstation_1_clientid}}",
+												"accessTokenUrl": "{{access_token_url}}",
+												"tokenName": "FrameSuppplierToken",
+												"addTokenTo": "header",
+												"refreshTokenUrl": "",
+												"client_authentication": "header"
+											}
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements/TWFudWZhY3R1cmVyR2VhclJFQURvcmcuZWNsaXBzZS5kaWdpdGFsdHdpbi5iYXN5eC5zdWJtb2RlbHJlZ2lzdHJ5LmZlYXR1cmUuYXV0aG9yaXphdGlvbi5TdWJtb2RlbFJlZ2lzdHJ5VGFyZ2V0SW5mb3JtYXRpb24="
+									},
+									"response": []
+								},
+								{
+									"name": "Reset_SMRepo",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "oauth2",
+											"oauth2": {
+												"grant_type": "client_credentials",
+												"password": "",
+												"username": "",
+												"clientSecret": "{{workstation_1_clientsecret}}",
+												"clientId": "{{workstation_1_clientid}}",
+												"accessTokenUrl": "{{access_token_url}}",
+												"tokenName": "FrameSuppplierToken",
+												"addTokenTo": "header",
+												"refreshTokenUrl": "",
+												"client_authentication": "header"
+											}
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements/TWFudWZhY3R1cmVyR2VhclJFQURvcmcuZWNsaXBzZS5kaWdpdGFsdHdpbi5iYXN5eC5zdWJtb2RlbHJlcG9zaXRvcnkuZmVhdHVyZS5hdXRob3JpemF0aW9uLlN1Ym1vZGVsVGFyZ2V0SW5mb3JtYXRpb24="
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Gear_SupplierRuleForManufacturerAASRegistry",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": {
+										"password": "{{admin_password}}",
+										"username": "{{admin_username}}",
+										"clientSecret": "{{supplier_gear_clientsecret}}",
+										"clientId": "{{supplier_gear_clientid}}",
+										"accessTokenUrl": "{{access_token_url}}",
+										"grant_type": "password_credentials",
+										"client_authentication": "body",
+										"tokenName": "Reg",
+										"addTokenTo": "header"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"modelType\": \"SubmodelElementCollection\",\r\n  \"idShort\": \"TWFudWZhY3R1cmVyR2VhclJFQURvcmcuZWNsaXBzZS5kaWdpdGFsdHdpbi5iYXN5eC5hYXNyZWdpc3RyeS5mZWF0dXJlLmF1dGhvcml6YXRpb24uQWFzUmVnaXN0cnlUYXJnZXRJbmZvcm1hdGlvbg==\",\r\n  \"value\": [\r\n      {\r\n          \"modelType\": \"Property\",\r\n          \"value\": \"ManufacturerGear\",\r\n          \"idShort\": \"role\"\r\n      },\r\n      {\r\n          \"modelType\": \"SubmodelElementList\",\r\n          \"idShort\": \"action\",\r\n          \"orderRelevant\": true,\r\n          \"value\": [\r\n              {\r\n                  \"modelType\": \"Property\",\r\n                  \"value\": \"READ\"\r\n              }\r\n          ]\r\n      },\r\n      {\r\n          \"modelType\": \"SubmodelElementCollection\",\r\n          \"idShort\": \"targetInformation\",\r\n          \"value\": [\r\n              {\r\n                  \"modelType\": \"SubmodelElementList\",\r\n                  \"idShort\": \"aasIds\",\r\n                  \"orderRelevant\": true,\r\n                  \"value\": [\r\n                      {\r\n                          \"modelType\": \"Property\",\r\n                          \"value\": \"https://example.com/ids/sm/4160_6191_9042_5066\"\r\n                      }\r\n                  ]\r\n              },\r\n              {\r\n                  \"modelType\": \"Property\",\r\n                  \"value\": \"aas-registry\",\r\n                  \"idShort\": \"@type\"\r\n              }\r\n          ]\r\n      }\r\n  ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements"
+							},
+							"response": []
+						},
+						{
+							"name": "Gear_SupplierRuleForManufacturerAASRepo",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": {
+										"password": "{{admin_password}}",
+										"username": "{{admin_username}}",
+										"clientSecret": "{{supplier_gear_clientsecret}}",
+										"clientId": "{{supplier_gear_clientid}}",
+										"accessTokenUrl": "{{access_token_url}}",
+										"grant_type": "password_credentials",
+										"client_authentication": "body",
+										"tokenName": "Reg",
+										"addTokenTo": "header"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"modelType\": \"SubmodelElementCollection\",\r\n  \"idShort\": \"TWFudWZhY3R1cmVyR2VhclJFQURvcmcuZWNsaXBzZS5kaWdpdGFsdHdpbi5iYXN5eC5hYXNyZXBvc2l0b3J5LmZlYXR1cmUuYXV0aG9yaXphdGlvbi5BYXNUYXJnZXRJbmZvcm1hdGlvbg==\",\r\n  \"value\": [\r\n      {\r\n          \"modelType\": \"Property\",\r\n          \"value\": \"ManufacturerGear\",\r\n          \"idShort\": \"role\"\r\n      },\r\n      {\r\n          \"modelType\": \"SubmodelElementList\",\r\n          \"idShort\": \"action\",\r\n          \"orderRelevant\": true,\r\n          \"value\": [\r\n              {\r\n                  \"modelType\": \"Property\",\r\n                  \"value\": \"READ\"\r\n              }\r\n          ]\r\n      },\r\n      {\r\n          \"modelType\": \"SubmodelElementCollection\",\r\n          \"idShort\": \"targetInformation\",\r\n          \"value\": [\r\n              {\r\n                  \"modelType\": \"SubmodelElementList\",\r\n                  \"idShort\": \"aasIds\",\r\n                  \"orderRelevant\": true,\r\n                  \"value\": [\r\n                      {\r\n                          \"modelType\": \"Property\",\r\n                          \"value\": \"https://example.com/ids/sm/4160_6191_9042_5066\"\r\n                      }\r\n                  ]\r\n              },\r\n              {\r\n                  \"modelType\": \"Property\",\r\n                  \"value\": \"aas\",\r\n                  \"idShort\": \"@type\"\r\n              }\r\n          ]\r\n      }\r\n  ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements"
+							},
+							"response": []
+						},
+						{
+							"name": "Gear_SupplierRuleForManufacturerSMRegAllSMCombinedRules",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": {
+										"password": "{{admin_password}}",
+										"username": "{{admin_username}}",
+										"clientSecret": "{{supplier_gear_clientsecret}}",
+										"clientId": "{{supplier_gear_clientid}}",
+										"accessTokenUrl": "{{access_token_url}}",
+										"grant_type": "password_credentials",
+										"client_authentication": "body",
+										"tokenName": "Reg",
+										"addTokenTo": "header"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"modelType\": \"SubmodelElementCollection\",\r\n    \"idShort\": \"TWFudWZhY3R1cmVyR2VhclJFQURvcmcuZWNsaXBzZS5kaWdpdGFsdHdpbi5iYXN5eC5zdWJtb2RlbHJlZ2lzdHJ5LmZlYXR1cmUuYXV0aG9yaXphdGlvbi5TdWJtb2RlbFJlZ2lzdHJ5VGFyZ2V0SW5mb3JtYXRpb24=\",\r\n    \"value\": [\r\n        {\r\n            \"modelType\": \"Property\",\r\n            \"value\": \"ManufacturerGear\",\r\n            \"idShort\": \"role\"\r\n        },\r\n        {\r\n            \"modelType\": \"SubmodelElementList\",\r\n            \"idShort\": \"action\",\r\n            \"orderRelevant\": true,\r\n            \"value\": [\r\n                {\r\n                    \"modelType\": \"Property\",\r\n                    \"value\": \"READ\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"modelType\": \"SubmodelElementCollection\",\r\n            \"idShort\": \"targetInformation\",\r\n            \"value\": [\r\n                {\r\n                    \"modelType\": \"SubmodelElementList\",\r\n                    \"idShort\": \"submodelIds\",\r\n                    \"orderRelevant\": true,\r\n                    \"value\": [\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"https://example.com/ids/sm/4160_6191_9042_9066\"\r\n                        },\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"https://example.com/ids/sm/9360_6191_9042_9415\"\r\n                        },\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"https://example.com/ids/sm/9560_6191_9042_7660\"\r\n                        }\r\n                    ]\r\n                },\r\n                {\r\n                    \"modelType\": \"Property\",\r\n                    \"value\": \"submodel-registry\",\r\n                    \"idShort\": \"@type\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements"
+							},
+							"response": []
+						},
+						{
+							"name": "Gear_SupplierRuleForManufacturerSMRepoAllSMCombinedRules",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": {
+										"password": "{{admin_password}}",
+										"username": "{{admin_username}}",
+										"clientSecret": "{{supplier_gear_clientsecret}}",
+										"clientId": "{{supplier_gear_clientid}}",
+										"accessTokenUrl": "{{access_token_url}}",
+										"grant_type": "password_credentials",
+										"client_authentication": "body",
+										"tokenName": "Reg",
+										"addTokenTo": "header"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"modelType\": \"SubmodelElementCollection\",\r\n    \"idShort\": \"TWFudWZhY3R1cmVyR2VhclJFQURvcmcuZWNsaXBzZS5kaWdpdGFsdHdpbi5iYXN5eC5zdWJtb2RlbHJlcG9zaXRvcnkuZmVhdHVyZS5hdXRob3JpemF0aW9uLlN1Ym1vZGVsVGFyZ2V0SW5mb3JtYXRpb24=\",\r\n    \"value\": [\r\n        {\r\n            \"modelType\": \"Property\",\r\n            \"value\": \"ManufacturerGear\",\r\n            \"idShort\": \"role\"\r\n        },\r\n        {\r\n            \"modelType\": \"SubmodelElementList\",\r\n            \"idShort\": \"action\",\r\n            \"orderRelevant\": true,\r\n            \"value\": [\r\n                {\r\n                    \"modelType\": \"Property\",\r\n                    \"value\": \"READ\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"modelType\": \"SubmodelElementCollection\",\r\n            \"idShort\": \"targetInformation\",\r\n            \"value\": [\r\n                {\r\n                    \"modelType\": \"SubmodelElementList\",\r\n                    \"idShort\": \"submodelIds\",\r\n                    \"orderRelevant\": true,\r\n                    \"value\": [\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"https://example.com/ids/sm/4160_6191_9042_9066\"\r\n                        },\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"https://example.com/ids/sm/9360_6191_9042_9415\"\r\n                        },\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"https://example.com/ids/sm/9560_6191_9042_7660\"\r\n                        }\r\n                    ]\r\n                },\r\n                {\r\n                    \"modelType\": \"SubmodelElementList\",\r\n                    \"idShort\": \"submodelElementIdShortPaths\",\r\n                    \"orderRelevant\": true,\r\n                    \"value\": [\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"*\"\r\n                        }\r\n                    ]\r\n                },\r\n                {\r\n                    \"modelType\": \"Property\",\r\n                    \"value\": \"submodel\",\r\n                    \"idShort\": \"@type\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Manufacturer",
+					"item": [
+						{
+							"name": "GET_FrameAAS",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": {
+										"password": "{{manufacturer_a_password}}",
+										"username": "{{manufacturer_a_username}}",
+										"clientSecret": "{{manufacturer_a_clinetsecret}}",
+										"clientId": "{{manufacturer_a_clientid}}",
+										"accessTokenUrl": "{{access_token_url}}",
+										"grant_type": "password_credentials",
+										"client_authentication": "body",
+										"tokenName": "Reg",
+										"addTokenTo": "header"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{dataspace_url}}:8081/shells/{{frame_shell_id}}"
+							},
+							"response": []
+						},
+						{
+							"name": "GET_SupplierSMFrom_FrameAAS",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": {
+										"password": "{{manufacturer_a_password}}",
+										"username": "{{manufacturer_a_username}}",
+										"clientSecret": "{{manufacturer_a_clinetsecret}}",
+										"clientId": "{{manufacturer_a_clientid}}",
+										"accessTokenUrl": "{{access_token_url}}",
+										"grant_type": "password_credentials",
+										"client_authentication": "body",
+										"tokenName": "Reg",
+										"addTokenTo": "header"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{dataspace_url}}:8081/submodels/{{supp_sm_frame}}"
+							},
+							"response": []
+						},
+						{
+							"name": "GET_GearAAS",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": {
+										"password": "{{manufacturer_a_password}}",
+										"username": "{{manufacturer_a_username}}",
+										"clientSecret": "{{manufacturer_a_clinetsecret}}",
+										"clientId": "{{manufacturer_a_clientid}}",
+										"accessTokenUrl": "{{access_token_url}}",
+										"grant_type": "password_credentials",
+										"client_authentication": "body",
+										"tokenName": "Reg",
+										"addTokenTo": "header"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{dataspace_url}}:8081/shells/{{gear_shell_id}}"
+							},
+							"response": []
+						},
+						{
+							"name": "GET_SupplierSMFrom_GearAAS",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": {
+										"password": "{{manufacturer_a_password}}",
+										"username": "{{manufacturer_a_username}}",
+										"clientSecret": "{{manufacturer_a_clinetsecret}}",
+										"clientId": "{{manufacturer_a_clientid}}",
+										"accessTokenUrl": "{{access_token_url}}",
+										"grant_type": "password_credentials",
+										"client_authentication": "body",
+										"tokenName": "Reg",
+										"addTokenTo": "header"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{dataspace_url}}:8081/submodels/{{supp_sm_gear}}"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "SubmodelPolicyHolder",
+			"item": [
+				{
+					"name": "DELETE_RULE",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": {
+								"clientSecret": "{{workstation_1_clientsecret}}",
+								"clientId": "{{workstation_1_clientid}}",
+								"accessTokenUrl": "{{access_token_url}}",
+								"grant_type": "client_credentials",
+								"password": "",
+								"username": "",
+								"client_authentication": "body",
+								"tokenName": "Reg",
+								"addTokenTo": "header"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements/R2VhclN1cHBsaWVyUkVBRG9yZy5lY2xpcHNlLmRpZ2l0YWx0d2luLmJhc3l4LmFhc3JlZ2lzdHJ5LmZlYXR1cmUuYXV0aG9yaXphdGlvbi5BYXNSZWdpc3RyeVRhcmdldEluZm9ybWF0aW9u"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE_SECURITY_SUBMODEL",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": {
+								"clientSecret": "{{workstation_1_clientsecret}}",
+								"clientId": "{{workstation_1_clientid}}",
+								"accessTokenUrl": "{{access_token_url}}",
+								"grant_type": "client_credentials",
+								"password": "",
+								"username": "",
+								"client_authentication": "body",
+								"tokenName": "Reg",
+								"addTokenTo": "header"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "ADD_RULE",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": {
+								"clientSecret": "{{workstation_1_clientsecret}}",
+								"clientId": "{{workstation_1_clientid}}",
+								"accessTokenUrl": "{{access_token_url}}",
+								"grant_type": "client_credentials",
+								"password": "",
+								"username": "",
+								"client_authentication": "body",
+								"tokenName": "Reg",
+								"addTokenTo": "header"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"modelType\": \"SubmodelElementCollection\",\r\n    \"idShort\": \"TWFudWZhY3R1cmVyVHlyZVJFQURvcmcuZWNsaXBzZS5kaWdpdGFsdHdpbi5iYXN5eC5zdWJtb2RlbHJlcG9zaXRvcnkuZmVhdHVyZS5hdXRob3JpemF0aW9uLlN1Ym1vZGVsVGFyZ2V0SW5mb3JtYXRpb24=\",\r\n    \"value\": [\r\n        {\r\n            \"modelType\": \"Property\",\r\n            \"value\": \"ManufacturerTyre\",\r\n            \"idShort\": \"role\"\r\n        },\r\n        {\r\n            \"modelType\": \"SubmodelElementList\",\r\n            \"idShort\": \"action\",\r\n            \"orderRelevant\": true,\r\n            \"value\": [\r\n                {\r\n                    \"modelType\": \"Property\",\r\n                    \"value\": \"READ\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"modelType\": \"SubmodelElementCollection\",\r\n            \"idShort\": \"targetInformation\",\r\n            \"value\": [\r\n                {\r\n                    \"modelType\": \"SubmodelElementList\",\r\n                    \"idShort\": \"submodelIds\",\r\n                    \"orderRelevant\": true,\r\n                    \"value\": [\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"https://example.com/ids/sm/2153_5191_9042_0707\"\r\n                        },\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"https://example.com/ids/sm/2553_5191_9042_9633\"\r\n                        },\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"https://example.com/ids/sm/9224_5191_9042_9970\"\r\n                        }\r\n                    ]\r\n                },\r\n                {\r\n                    \"modelType\": \"SubmodelElementList\",\r\n                    \"idShort\": \"submodelElementIdShortPaths\",\r\n                    \"orderRelevant\": true,\r\n                    \"value\": [\r\n                        {\r\n                            \"modelType\": \"Property\",\r\n                            \"value\": \"*\"\r\n                        }\r\n                    ]\r\n                },\r\n                {\r\n                    \"modelType\": \"Property\",\r\n                    \"value\": \"submodel\",\r\n                    \"idShort\": \"@type\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}/submodel-elements"
+					},
+					"response": []
+				},
+				{
+					"name": "RETRIEVE_ALL_RULES",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": {
+								"clientSecret": "{{workstation_1_clientsecret}}",
+								"clientId": "{{workstation_1_clientid}}",
+								"accessTokenUrl": "{{access_token_url}}",
+								"grant_type": "client_credentials",
+								"password": "",
+								"username": "",
+								"client_authentication": "body",
+								"tokenName": "Reg",
+								"addTokenTo": "header"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{dataspace_url}}:8089/submodels/{{security_submodel_id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "ADD_SECURITY_SUBMODEL",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": {
+								"clientSecret": "{{workstation_1_clientsecret}}",
+								"clientId": "{{workstation_1_clientid}}",
+								"accessTokenUrl": "{{access_token_url}}",
+								"grant_type": "client_credentials",
+								"password": "",
+								"username": "",
+								"client_authentication": "body",
+								"tokenName": "Reg",
+								"addTokenTo": "header"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"modelType\": \"Submodel\",\r\n    \"id\": \"SecuritySubmodel\",\r\n    \"idShort\": \"TechnicalData\",\r\n    \"kind\":\"Instance\",\r\n    \"submodelElements\": [],\r\n    \"semanticId\": {\r\n        \"keys\": [\r\n            {\r\n                \"type\": \"GlobalReference\",\r\n                \"value\": \"0173-1#01-AFZ615#016\"\r\n            }\r\n        ],\r\n        \"type\": \"ExternalReference\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{dataspace_url}}:8089/submodels"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "dataspace_url",
+			"value": "http://localhost"
+		},
+		{
+			"key": "supplier_frame_id",
+			"value": "SupplierFrame"
+		},
+		{
+			"key": "supplier_frame_secret",
+			"value": "vblqZgXc6QLs17Vw4zRNNoGpa1VB3ndH"
+		},
+		{
+			"key": "security_submodel_id",
+			"value": "U2VjdXJpdHlTdWJtb2RlbA=="
+		},
+		{
+			"key": "supplier_frame_username",
+			"value": "alice"
+		},
+		{
+			"key": "supplier_frame_password",
+			"value": "alice",
+			"type": "default"
+		},
+		{
+			"key": "basyx_client_id",
+			"value": "basyx-client-api"
+		},
+		{
+			"key": "admin_username",
+			"value": "john.doe"
+		},
+		{
+			"key": "admin_password",
+			"value": "johndoe",
+			"type": "default"
+		},
+		{
+			"key": "supplier_gear_clientid",
+			"value": "SupplierGear"
+		},
+		{
+			"key": "supplier_gear_clientsecret",
+			"value": "oiunidBFmZn5SZFpTj0xHY0hRiNDwzom"
+		},
+		{
+			"key": "supplier_gear_username",
+			"value": "bob"
+		},
+		{
+			"key": "supplier_gear_password",
+			"value": "bob",
+			"type": "string"
+		},
+		{
+			"key": "supplier_tyre_clientid",
+			"value": "SupplierTyre"
+		},
+		{
+			"key": "supplier_tyre_clientsecret",
+			"value": "ZhWg3CQqTOgTzbQE77YuTZM5V6CNBfWl"
+		},
+		{
+			"key": "supplier_tyre_username",
+			"value": "carol"
+		},
+		{
+			"key": "supplier_tyre_password",
+			"value": "carol",
+			"type": "default"
+		},
+		{
+			"key": "manufacturer_a_clientid",
+			"value": "ManufacturerA"
+		},
+		{
+			"key": "manufacturer_a_clinetsecret",
+			"value": "IOaRZpVYELuLjk7HecYe9gp5gkJx20Fh"
+		},
+		{
+			"key": "manufacturer_a_username",
+			"value": "dave"
+		},
+		{
+			"key": "manufacturer_a_password",
+			"value": "dave",
+			"type": "string"
+		},
+		{
+			"key": "workstation_1_clientid",
+			"value": "workstation-1"
+		},
+		{
+			"key": "workstation_1_clientsecret",
+			"value": "nY0mjyECF60DGzNmQUjL81XurSl8etom"
+		},
+		{
+			"key": "access_token_url",
+			"value": "http://localhost:9097/realms/BaSyx/protocol/openid-connect/token",
+			"type": "string"
+		},
+		{
+			"key": "frame_shell_id",
+			"value": "aHR0cHM6Ly9leGFtcGxlLmNvbS9pZHMvc20vNTI1NV81MTkxXzkwNDJfODEyNw==",
+			"type": "default"
+		},
+		{
+			"key": "supp_sm_frame",
+			"value": "aHR0cHM6Ly9leGFtcGxlLmNvbS9pZHMvc20vNTU1NV81MTkxXzkwNDJfNDY3Ng==",
+			"type": "default"
+		},
+		{
+			"key": "gear_shell_id",
+			"value": "aHR0cHM6Ly9leGFtcGxlLmNvbS9pZHMvc20vNDE2MF82MTkxXzkwNDJfNTA2Ng==",
+			"type": "default"
+		},
+		{
+			"key": "supp_sm_gear",
+			"value": "aHR0cHM6Ly9leGFtcGxlLmNvbS9pZHMvc20vOTM2MF82MTkxXzkwNDJfOTQxNQ==",
+			"type": "default"
+		}
+	]
+}

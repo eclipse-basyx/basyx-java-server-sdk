@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,17 +25,15 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
-import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
-import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBFileRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 
 /**
  * Configuration for tests
@@ -45,25 +43,15 @@ import org.springframework.data.mongodb.gridfs.GridFsTemplate;
  */
 @Configuration
 public class DummyAasRepositoryConfig {
-	public final static String COLLECTION = "aasRepositoryPersistencyTestCollection";
-	public final static String DB = "BaSyxTestDb";
+	public static final String COLLECTION = "aasRepositoryPersistencyTestCollection";
+	public static final String DB = "BaSyxTestDb";
+
+	@Autowired
+	private AasRepositoryFactory aasRepositoryFactory;
 
 	@Bean
-	public AasRepository createAasRepository(MongoTemplate template) {
-		return new SimpleAasRepositoryFactory(new AasMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, template), new InMemoryAasServiceFactory(new MongoDBFileRepository(configureDefaultGridFsTemplate(template)))).create();
-	}
-
-	@Bean
-	public MongoTemplate createAasRepoMongoTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-
-		MongoClient client = MongoClients.create(connectionURL);
-
-		return new MongoTemplate(client, DB);
-	}
-
-	private GridFsTemplate configureDefaultGridFsTemplate(MongoTemplate mongoTemplate) {
-		return new GridFsTemplate(mongoTemplate.getMongoDatabaseFactory(), mongoTemplate.getConverter());
+	AasRepository createAasRepository() {
+		return aasRepositoryFactory.create();
 	}
 
 }

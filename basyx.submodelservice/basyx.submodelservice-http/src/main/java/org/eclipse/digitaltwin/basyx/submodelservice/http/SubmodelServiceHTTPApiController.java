@@ -27,16 +27,12 @@ package org.eclipse.digitaltwin.basyx.submodelservice.http;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
-import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationResult;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
@@ -45,6 +41,8 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
+import org.eclipse.digitaltwin.basyx.operation.OperationRequestExecutor;
+import org.eclipse.digitaltwin.basyx.operation.Invokable;
 import org.eclipse.digitaltwin.basyx.pagination.GetSubmodelElementsResult;
 import org.eclipse.digitaltwin.basyx.serialization.SubmodelMetadataUtil;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
@@ -198,16 +196,16 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 	public ResponseEntity<SubmodelElement> postSubmodelElement(@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElement body,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level) {
-		service.createSubmodelElement(body);
-		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
+		SubmodelElement createdSME = service.createSubmodelElement(body);
+		return new ResponseEntity<SubmodelElement>(createdSME, HttpStatus.CREATED);
 	}
 
 	@Override
 	public ResponseEntity<SubmodelElement> postSubmodelElementByPath(
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElement body) {
-		service.createSubmodelElement(idShortPath, body);
-		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
+		SubmodelElement createdSME = service.createSubmodelElement(idShortPath, body);
+		return new ResponseEntity<SubmodelElement>(createdSME, HttpStatus.CREATED);
 	}
 	
 	@Override
@@ -236,30 +234,9 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 	public ResponseEntity<OperationResult> invokeOperation(
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Operation request object", required = true, schema = @Schema()) @Valid @RequestBody OperationRequest body) {
-		List<OperationVariable> inVars = new ArrayList<>();
-		inVars.addAll(body.getInputArguments());
-		inVars.addAll(body.getInoutputArguments());
 
-		List<OperationVariable> result = Arrays.asList(service.invokeOperation(idShortPath, inVars.toArray(new OperationVariable[0])));
-
-		List<OperationVariable> outVars = new ArrayList<>(result);
-		List<OperationVariable> inoutputVars = new ArrayList<>();
-
-		if (!body.getInoutputArguments().isEmpty()) {
-			List<String> inoutputVarsIdShorts = body.getInoutputArguments().stream().map(OperationVariable::getValue).map(SubmodelElement::getIdShort).toList();
-
-			inoutputVars = result.stream().filter(opVar -> inoutputVarsIdShorts.contains(opVar.getValue().getIdShort())).toList();
-
-			outVars.removeAll(inoutputVars);
-		}
-
-		return ResponseEntity.ok(createOperationResult(outVars, inoutputVars));
-	}
-
-	private OperationResult createOperationResult(List<OperationVariable> outputVars, List<OperationVariable> inoutputVars) {
-		return new DefaultOperationResult.Builder()
-				.outputArguments(outputVars).inoutputArguments(inoutputVars)
-				.build();
+		Invokable invokable = inArgs -> service.invokeOperation(idShortPath, inArgs);
+		return ResponseEntity.ok(OperationRequestExecutor.executeOperationRequestSynchronously(invokable, body));
 	}
 
 	private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {

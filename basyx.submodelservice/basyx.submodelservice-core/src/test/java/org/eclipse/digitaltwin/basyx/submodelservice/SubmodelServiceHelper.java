@@ -67,7 +67,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultRelationshipElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
-import org.eclipse.digitaltwin.basyx.InvokableOperation;
+import org.eclipse.digitaltwin.basyx.operation.InvokableOperation;
 
 import com.google.common.collect.Lists;
 
@@ -351,6 +351,14 @@ public class SubmodelServiceHelper {
 	}
 	
 	public static Property createDummyProperty(String idShort, String value, DataTypeDefXsd dataType) {
+		return new DefaultProperty.Builder().idShort(idShort)
+				.category("cat1")
+				.value(value)
+				.valueType(dataType)
+				.build();
+	}
+	
+	public static SubmodelElement createDummySME(String idShort, String value, DataTypeDefXsd dataType) {
 		return new DefaultProperty.Builder().idShort(idShort)
 				.category("cat1")
 				.value(value)

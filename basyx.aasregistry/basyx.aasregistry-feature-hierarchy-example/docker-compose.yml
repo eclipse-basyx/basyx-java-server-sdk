@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+
+  aas-registry-root:
+    image: aas-registry-test/aas-registry-feature-hierarchy-example:2.0.0-SNAPSHOT
+    container_name: aas-registry-root
+    ports:
+      - "8051:8080"
+    environment:
+      SERVER_SERVLET_CONTEXT_PATH: /
+    networks:
+      - basyx-aasregistry-feature-hierarchy-example
+      
+  registry.delegated-aas-registry:
+    image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: registry.delegated-aas-registry
+    ports:
+      - "8052:8080"
+    environment:
+      SERVER_SERVLET_CONTEXT_PATH: /
+    volumes:
+      - ./aas-registry-delegated.yml:/workspace/config/application.yml
+    networks:
+      - basyx-aasregistry-feature-hierarchy-example
+
+networks:
+  basyx-aasregistry-feature-hierarchy-example:
+    name: basyx-aasregistry-feature-hierarchy-example
+    driver: bridge

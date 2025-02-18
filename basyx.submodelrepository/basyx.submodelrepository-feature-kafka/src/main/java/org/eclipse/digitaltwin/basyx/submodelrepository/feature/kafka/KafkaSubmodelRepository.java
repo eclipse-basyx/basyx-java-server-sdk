@@ -108,16 +108,18 @@ public class KafkaSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public void createSubmodelElement(String submodelId, SubmodelElement submodelElement) {
-		decorated.createSubmodelElement(submodelId, submodelElement);
+	public SubmodelElement createSubmodelElement(String submodelId, SubmodelElement submodelElement) {
+		submodelElement = decorated.createSubmodelElement(submodelId, submodelElement);
 		eventHandler.onSubmodelElementCreated(submodelElement, submodelId, submodelElement.getIdShort());
+		return submodelElement;
 	}
 
 	@Override
-	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement)
+	public SubmodelElement createSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement)
 			throws ElementDoesNotExistException {
-		decorated.createSubmodelElement(submodelId, idShortPath, submodelElement);
+		submodelElement = decorated.createSubmodelElement(submodelId, idShortPath, submodelElement);
 		eventHandler.onSubmodelElementCreated(submodelElement, submodelId, idShortPath);
+		return submodelElement;
 	}
 
 	@Override

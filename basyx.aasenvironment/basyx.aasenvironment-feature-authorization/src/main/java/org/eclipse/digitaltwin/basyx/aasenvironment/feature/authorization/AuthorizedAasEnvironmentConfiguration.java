@@ -25,23 +25,25 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization;
 
+import java.util.List;
+
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization.rbac.AasEnvironmentTargetPermissionVerifier;
+import org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization.rbac.backend.submodel.AasEnvironmentTargetInformationAdapter;
 import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.AasEnvironmentPreconfigurationLoader;
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.SimpleRbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RoleProvider;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.SimpleRbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
+import org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.submodel.TargetInformationAdapter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ResourceLoader;
-
-import java.util.List;
 
 /**
  * Configuration for authorized {@link AasEnvironment}
@@ -59,7 +61,6 @@ public class AuthorizedAasEnvironmentConfiguration {
 	
 	@Bean
 	public RbacPermissionResolver<AasEnvironmentTargetInformation> getAasEnvironmentPermissionResolver(RbacStorage rbacStorage, RoleProvider roleProvider, TargetPermissionVerifier<AasEnvironmentTargetInformation> targetPermissionVerifier) {
-
 		return new SimpleRbacPermissionResolver<>(rbacStorage, roleProvider, targetPermissionVerifier);
 	}
 
@@ -68,6 +69,13 @@ public class AuthorizedAasEnvironmentConfiguration {
 	public static AasEnvironmentPreconfigurationLoader getAuthorizedAasEnvironmentPreconfigurationLoader(ResourceLoader resourceLoader, 
 			@Value(AasEnvironmentPreconfigurationLoader.PATHS_TO_LOAD_EXPR) List<String> pathsToLoad) {
 		return new AuthorizedAASEnvironmentPreconfigurationLoader(resourceLoader, pathsToLoad);
+	}
+	
+	@Bean
+	@Primary
+	public TargetInformationAdapter getAasEnvInformationAdapter() {
+
+		return new AasEnvironmentTargetInformationAdapter();
 	}
 
 }

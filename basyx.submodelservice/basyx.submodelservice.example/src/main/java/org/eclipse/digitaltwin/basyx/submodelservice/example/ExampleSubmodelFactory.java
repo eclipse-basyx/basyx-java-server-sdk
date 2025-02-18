@@ -46,7 +46,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
-import org.eclipse.digitaltwin.basyx.InvokableOperation;
+import org.eclipse.digitaltwin.basyx.operation.InvokableOperation;
 
 import com.google.common.collect.Lists;
 

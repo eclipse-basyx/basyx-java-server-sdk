@@ -29,12 +29,12 @@ import static org.junit.Assert.assertEquals;
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.InvokableOperation;
 import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBFileRepository;
+import org.eclipse.digitaltwin.basyx.operation.InvokableOperation;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SubmodelBackendProvider;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
