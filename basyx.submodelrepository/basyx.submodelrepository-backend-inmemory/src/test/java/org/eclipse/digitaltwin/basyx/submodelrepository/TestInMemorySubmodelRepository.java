@@ -25,18 +25,21 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.DefaultSubmodelFileOperations;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelFileOperations;
 import org.junit.Test;
 import org.junit.Test.None;
 
@@ -54,12 +57,18 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	
 	@Override
 	protected SubmodelRepository getSubmodelRepository() {
-		return new SimpleSubmodelRepositoryFactory(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())).create();
+		SubmodelBackend submodelBackend = InMemorySubmodelRepositoryBackend.buildDefault();
+		FileRepository fileRepository = new InMemoryFileRepository();
+		SubmodelFileOperations submodelFileOperations = new DefaultSubmodelFileOperations(fileRepository, submodelBackend);
+		return new CrudSubmodelRepositoryFactory(submodelBackend, submodelFileOperations).create();
 	}
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
-		return new SimpleSubmodelRepositoryFactory(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository()), submodels).create();
+		SubmodelBackend submodelBackend = InMemorySubmodelRepositoryBackend.buildDefault();
+		FileRepository fileRepository = new InMemoryFileRepository();
+		SubmodelFileOperations submodelFileOperations = new DefaultSubmodelFileOperations(fileRepository, submodelBackend);
+		return new CrudSubmodelRepositoryFactory(submodelBackend, submodelFileOperations).withRemoteCollection(submodels).create();
 	}
 	
 	@Override
@@ -71,7 +80,10 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 
 	@Test
 	public void getConfiguredInMemorySmRepositoryName() {
-		SubmodelRepository repo = new CrudSubmodelRepository(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository()), CONFIGURED_SM_REPO_NAME);
+		SubmodelBackend submodelBackend = InMemorySubmodelRepositoryBackend.buildDefault();
+		FileRepository fileRepository = new InMemoryFileRepository();
+		SubmodelFileOperations submodelFileOperations = new DefaultSubmodelFileOperations(fileRepository, submodelBackend);
+		SubmodelRepository repo = new CrudSubmodelRepository(submodelBackend, submodelFileOperations, CONFIGURED_SM_REPO_NAME);
 
 		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
 	}

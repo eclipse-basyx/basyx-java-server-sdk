@@ -45,44 +45,30 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.lang.NonNull;
 
 /**
- * Default Implementation for the {@link ConceptDescription} based on Spring
- * {@link CrudRepository}
+ * Default Implementation for the {@link ConceptDescription} based on
+ * {@link ConceptDescriptionRepositoryBackend}
  * 
  * @author mateusmolina, despen, zhangzai, kammognie, danish
  *
  */
+
 public class CrudConceptDescriptionRepository implements ConceptDescriptionRepository {
 
-	private CrudRepository<ConceptDescription, String> conceptDescriptionBackend;
-	private String conceptDescriptionRepositoryName = null;
+	private final ConceptDescriptionRepositoryBackend conceptDescriptionBackend;
+	private final String conceptDescriptionRepositoryName;
 
-	public CrudConceptDescriptionRepository(ConceptDescriptionBackendProvider conceptDescriptionBackendProvider) {
-		this.conceptDescriptionBackend = conceptDescriptionBackendProvider.getCrudRepository();
+	public CrudConceptDescriptionRepository(ConceptDescriptionRepositoryBackend conceptDescriptionBackend, String cdRepositoryNameString) {
+		this.conceptDescriptionBackend = conceptDescriptionBackend;
+		conceptDescriptionRepositoryName = cdRepositoryNameString;
 	}
 
-	public CrudConceptDescriptionRepository(ConceptDescriptionBackendProvider conceptDescriptionBackendProvider, String conceptDescriptionRepositoryName) {
-		this(conceptDescriptionBackendProvider);
+	public CrudConceptDescriptionRepository(ConceptDescriptionRepositoryBackend conceptDescriptionBackend, String cdRepositoryNameString, Collection<ConceptDescription> remoteCollection) {
+		this(conceptDescriptionBackend, cdRepositoryNameString);
 
-		this.conceptDescriptionRepositoryName = conceptDescriptionRepositoryName;
-	}
-
-	public CrudConceptDescriptionRepository(ConceptDescriptionBackendProvider aasBackendProvider, Collection<ConceptDescription> conceptDescriptions) {
-		this(aasBackendProvider);
-
-		throwIfMissingId(conceptDescriptions);
-
-		assertIdUniqueness(conceptDescriptions);
-
-		initializeRemoteCollection(conceptDescriptions);
-	}
-
-	public CrudConceptDescriptionRepository(ConceptDescriptionBackendProvider aasBackendProvider, Collection<ConceptDescription> conceptDescriptions, String conceptDescriptionRepositoryName) {
-		this(aasBackendProvider, conceptDescriptions);
-
-		this.conceptDescriptionRepositoryName = conceptDescriptionRepositoryName;
+		initializeRemoteCollection(remoteCollection);
 	}
 
 	@Override
@@ -172,9 +158,13 @@ public class CrudConceptDescriptionRepository implements ConceptDescriptionRepos
 		return conceptDescriptionRepositoryName == null ? ConceptDescriptionRepository.super.getName() : conceptDescriptionRepositoryName;
 	}
 
-	private void initializeRemoteCollection(Collection<ConceptDescription> conceptDescriptions) {
-		if (conceptDescriptions == null || conceptDescriptions.isEmpty())
+	private void initializeRemoteCollection(@NonNull Collection<ConceptDescription> conceptDescriptions) {
+		if (conceptDescriptions.isEmpty())
 			return;
+
+		throwIfMissingId(conceptDescriptions);
+
+		assertIdUniqueness(conceptDescriptions);
 
 		conceptDescriptions.stream().forEach(this::createConceptDescription);
 	}

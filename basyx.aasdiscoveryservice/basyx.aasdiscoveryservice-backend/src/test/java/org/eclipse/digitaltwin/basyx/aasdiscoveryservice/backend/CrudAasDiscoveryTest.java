@@ -34,7 +34,7 @@ public class CrudAasDiscoveryTest {
 
     @Test
     public void getConfiguredAasDiscoveryName(){
-		AasDiscoveryService service = new SimpleAasDiscoveryFactory(null, CONFIGURED_AAS_DISCOVERY_NAME).create();
+        AasDiscoveryService service = new CrudAasDiscoveryFactory(null, CONFIGURED_AAS_DISCOVERY_NAME).create();
 
         assertEquals(CONFIGURED_AAS_DISCOVERY_NAME,service.getName());
     }

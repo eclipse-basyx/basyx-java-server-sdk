@@ -40,28 +40,28 @@ import org.junit.Test;
 /**
  * Tests the {@link InMemoryConceptDescriptionRepository}
  * 
- * @author danish, kammognie
+ * @author danish, kammognie, mateusmolina
  *
  */
 public class TestInMemoryConceptDescriptionRepository extends ConceptDescriptionRepositorySuite {
 
 	private static final String CONFIGURED_CD_REPO_NAME = "configured-cd-repo-name";
 
-	private ConceptDescriptionBackendProvider backendProvider = new ConceptDescriptionInMemoryBackendProvider();
+	private final ConceptDescriptionRepositoryBackend backend = new InMemoryConceptDescriptionRepositoryBackend();
 
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository() {
-		return new SimpleConceptDescriptionRepositoryFactory(backendProvider).create();
+		return new CrudConceptDescriptionRepositoryFactory(backend).create();
 	}
 
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions) {
-		return new SimpleConceptDescriptionRepositoryFactory(backendProvider, conceptDescriptions).create();
+		return new CrudConceptDescriptionRepositoryFactory(backend).withRemoteCollection(conceptDescriptions).create();
 	}
 
 	@Test
 	public void getConfiguredInMemoryConceptDescriptionRepositoryName() {
-		ConceptDescriptionRepository repo = new CrudConceptDescriptionRepository(backendProvider, CONFIGURED_CD_REPO_NAME);
+		ConceptDescriptionRepository repo = new CrudConceptDescriptionRepository(backend, CONFIGURED_CD_REPO_NAME);
 
 		assertEquals(CONFIGURED_CD_REPO_NAME, repo.getName());
 	}
@@ -70,7 +70,7 @@ public class TestInMemoryConceptDescriptionRepository extends ConceptDescription
 	public void idCollisionDuringConstruction() {
 		Collection<ConceptDescription> conceptDescriptionsWithCollidingIds = createConceptDescriptionCollectionWithCollidingIds();
 
-		new CrudConceptDescriptionRepository(backendProvider, conceptDescriptionsWithCollidingIds);
+		new CrudConceptDescriptionRepositoryFactory(backend).withRemoteCollection(conceptDescriptionsWithCollidingIds).create();
 	}
 
 	private Collection<ConceptDescription> createConceptDescriptionCollectionWithCollidingIds() {

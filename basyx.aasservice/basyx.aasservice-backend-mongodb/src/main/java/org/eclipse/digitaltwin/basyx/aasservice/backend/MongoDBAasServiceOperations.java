@@ -28,9 +28,11 @@ package org.eclipse.digitaltwin.basyx.aasservice.backend;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.bson.Document;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Key;
@@ -52,10 +54,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.LimitOperation;
-import org.springframework.data.mongodb.core.aggregation.MatchOperation;
-import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
-import org.springframework.data.mongodb.core.aggregation.UnwindOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -70,8 +68,9 @@ import com.mongodb.client.result.UpdateResult;
  */
 public class MongoDBAasServiceOperations implements AasServiceOperations {
 
-    private static final String SMREF_KEY = "submodels";
-    private static final String ASSETINFORMATION_KEY = "assetInformation";
+    private static final String KEY_SMREF = "submodels";
+    private static final String KEY_ASSETINFORMATION = "assetInformation";
+    private static final String KEY_SMREF_KEY_VALUE = KEY_SMREF + ".keys.value";
 
     private final MongoOperations mongoOperations;
     private final String collectionName;
@@ -86,22 +85,29 @@ public class MongoDBAasServiceOperations implements AasServiceOperations {
 
     @Override
     public CursorResult<List<Reference>> getSubmodelReferences(@NonNull String aasId, @NonNull PaginationInfo pInfo) throws ElementDoesNotExistException {
-        MatchOperation matchAasId = Aggregation.match(Criteria.where("_id").is(aasId));
-        UnwindOperation unwindSubmodels = Aggregation.unwind(SMREF_KEY);
-        ProjectionOperation projectReference = Aggregation.project().and("submodels.keys").as("keys").and("submodels.type").as("type");
-
         List<AggregationOperation> ops = new ArrayList<>();
-        ops.add(matchAasId);
-        ops.add(unwindSubmodels);
-        ops.add(projectReference);
 
-        String cursor = pInfo.getCursor();
-        if (cursor != null && !cursor.isEmpty()) {
-            ops.add(Aggregation.match(Criteria.where("keys.value").gt(cursor)));
+        ops.add(Aggregation.match(Criteria.where("_id").is(aasId)));
+
+        if (pInfo.getCursor() != null && !pInfo.getCursor().isEmpty()) {
+            Document addCursorIndex = new Document("$addFields",
+                    new Document("cursorIndex", new Document("$cond", Arrays.asList(new Document("$eq", Arrays.asList(new Document("$indexOfArray", Arrays.asList("$" + KEY_SMREF_KEY_VALUE, pInfo.getCursor())), -1)), 0,
+                            new Document("$add", Arrays.asList(new Document("$indexOfArray", Arrays.asList("$" + KEY_SMREF_KEY_VALUE, pInfo.getCursor())), 1))))));
+            ops.add(context -> addCursorIndex);
+
+            int limit = (pInfo.getLimit() != null && pInfo.getLimit() > 0) ? pInfo.getLimit() : Integer.MAX_VALUE;
+
+            Document projectSlice = new Document("$project", new Document(KEY_SMREF, new Document("$slice", Arrays.asList("$" + KEY_SMREF, "$cursorIndex", limit))));
+            ops.add(context -> projectSlice);
+        } else {
+            if (pInfo.getLimit() != null && pInfo.getLimit() > 0) {
+                Document projectSlice = new Document("$project", new Document(KEY_SMREF, new Document("$slice", Arrays.asList("$" + KEY_SMREF, 0, pInfo.getLimit()))));
+                ops.add(context -> projectSlice);
+            }
         }
-        if (pInfo.getLimit() != null && pInfo.getLimit() > 0) {
-            ops.add(new LimitOperation(pInfo.getLimit()));
-        }
+
+        ops.add(Aggregation.unwind(KEY_SMREF));
+        ops.add(Aggregation.replaceRoot("$" + KEY_SMREF));
 
         Aggregation aggregation = Aggregation.newAggregation(ops);
         AggregationResults<DefaultReference> results = mongoOperations.aggregate(aggregation, collectionName, DefaultReference.class);
@@ -122,8 +128,8 @@ public class MongoDBAasServiceOperations implements AasServiceOperations {
     @Override
     public void addSubmodelReference(@NonNull String aasId, @NonNull Reference submodelReference) throws ElementDoesNotExistException, CollidingSubmodelReferenceException {
         String newKeyValue = submodelReference.getKeys().get(0).getValue();
-        Query query = new Query(new Criteria().andOperator(Criteria.where("_id").is(aasId), Criteria.where(SMREF_KEY).not().elemMatch(Criteria.where("keys.0.value").is(newKeyValue))));
-        Update update = new Update().push(SMREF_KEY, submodelReference);
+        Query query = new Query(new Criteria().andOperator(Criteria.where("_id").is(aasId), Criteria.where(KEY_SMREF).not().elemMatch(Criteria.where("keys.0.value").is(newKeyValue))));
+        Update update = new Update().push(KEY_SMREF, submodelReference);
         UpdateResult result = mongoOperations.updateFirst(query, update, collectionName);
 
         if (result.getMatchedCount() != 0)
@@ -138,7 +144,7 @@ public class MongoDBAasServiceOperations implements AasServiceOperations {
     @Override
     public void removeSubmodelReference(@NonNull String aasId, @NonNull String submodelId) throws ElementDoesNotExistException {
         Query query = new Query(Criteria.where("_id").is(aasId));
-        Update update = new Update().pull(SMREF_KEY, Query.query(Criteria.where("keys.value").is(submodelId)).getQueryObject());
+        Update update = new Update().pull(KEY_SMREF, Query.query(Criteria.where("keys.value").is(submodelId)).getQueryObject());
         UpdateResult result = mongoOperations.updateFirst(query, update, collectionName);
 
         if (result.getModifiedCount() != 0)
@@ -154,7 +160,7 @@ public class MongoDBAasServiceOperations implements AasServiceOperations {
     public void setAssetInformation(@NonNull String aasId, @NonNull AssetInformation aasInfo) {
         Query query = new Query(Criteria.where("_id").is(aasId));
 
-        Update update = new Update().set(ASSETINFORMATION_KEY, aasInfo);
+        Update update = new Update().set(KEY_ASSETINFORMATION, aasInfo);
 
         UpdateResult result = mongoOperations.updateFirst(query, update, collectionName);
 
@@ -167,7 +173,7 @@ public class MongoDBAasServiceOperations implements AasServiceOperations {
 
     @Override
     public AssetInformation getAssetInformation(@NonNull String aasId) {
-        Aggregation aggregation = Aggregation.newAggregation(Aggregation.match(Criteria.where("_id").is(aasId)), Aggregation.replaceRoot().withValueOf("$" + ASSETINFORMATION_KEY));
+        Aggregation aggregation = Aggregation.newAggregation(Aggregation.match(Criteria.where("_id").is(aasId)), Aggregation.replaceRoot().withValueOf("$" + KEY_ASSETINFORMATION));
 
         AggregationResults<DefaultAssetInformation> results = mongoOperations.aggregate(aggregation, collectionName, DefaultAssetInformation.class // Use concrete type
         );

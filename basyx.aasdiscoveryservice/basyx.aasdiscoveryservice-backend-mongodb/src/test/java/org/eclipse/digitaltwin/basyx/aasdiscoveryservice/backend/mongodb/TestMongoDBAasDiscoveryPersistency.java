@@ -51,7 +51,7 @@ public class TestMongoDBAasDiscoveryPersistency extends AasDiscoveryPersistencyT
 	@Before
 	public void clearTemplate() {
 		MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
-		MongoDBUtilities.clearCollection(mongoTemplate, DummyDiscoveryServiceConfig.COLLECTION);
+		MongoDBUtilities.clearCollection(mongoTemplate, DummyDiscoveryServiceConfig.TEST_COLLECTION);
 	}
 
 	@Override

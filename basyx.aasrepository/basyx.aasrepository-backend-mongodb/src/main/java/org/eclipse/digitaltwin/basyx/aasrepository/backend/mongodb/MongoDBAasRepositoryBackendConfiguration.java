@@ -29,17 +29,14 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceOperations;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.MongoDBAasServiceOperations;
-import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
+import org.eclipse.digitaltwin.basyx.common.mongocore.MappingEntry;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import org.springframework.data.mongodb.repository.support.MappingMongoEntityInformation;
 
 /**
  * 
@@ -52,17 +49,16 @@ import org.springframework.data.mongodb.repository.support.MappingMongoEntityInf
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
 @EnableMongoRepositories(basePackages = "org.eclipse.digitaltwin.basyx.aasrepository.backend")
 public class MongoDBAasRepositoryBackendConfiguration {
-	@Bean
-	MappingMongoEntityInformation<AssetAdministrationShell, String> mappingMongoEntityInformation(BasyxMongoMappingContext mappingContext, @Value("${basyx.aasrepository.mongodb.collectionName:aas-repo}") String collectionName) {
-		mappingContext.addEntityMapping(AssetAdministrationShell.class, collectionName);
 
-		@SuppressWarnings("unchecked")
-		MongoPersistentEntity<AssetAdministrationShell> entity = (MongoPersistentEntity<AssetAdministrationShell>) mappingContext.getPersistentEntity(AssetAdministrationShell.class);
-		return new MappingMongoEntityInformation<>(entity);
+	static final String COLLECTION_NAME_FIELD = "basyx.aasrepository.mongodb.collectionName";
+	static final String DEFAULT_COLLECTION_NAME = "aas-repo";
+
+	@Bean
+	MappingEntry aasMappingEntry(@Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
+		return MappingEntry.of(collectionName, AssetAdministrationShell.class);
 	}
 
 	@Bean
-	@DependsOn("mappingMongoEntityInformation")
 	AasServiceOperations aasServiceOperations(MongoOperations template, FileRepository fileRepository) {
 		return new MongoDBAasServiceOperations(template, fileRepository);
 	}

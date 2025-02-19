@@ -64,7 +64,7 @@ public class DummyAASXFileServerFactory {
 		return server.createAASXPackage(SECOND_SHELL_IDS, resourceStream, SECOND_FILENAME);
 	}
 
-	public static Collection<PackageDescription> createMultipleDummyAASXPackagesOnServer(AASXFileServer server) {
+	public static List<PackageDescription> createMultipleDummyAASXPackagesOnServer(AASXFileServer server) {
 		PackageDescription firstPackage = createFirstDummyAASXPackageOnServer(server);
 		PackageDescription secondPackage = createSecondDummyAASXPackageOnServer(server);
 
