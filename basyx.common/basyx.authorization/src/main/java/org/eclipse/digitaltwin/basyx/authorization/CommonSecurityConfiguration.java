@@ -53,6 +53,7 @@ public class CommonSecurityConfiguration {
 						.requestMatchers("/v3/**").permitAll()
 						.requestMatchers("/api-docs/**").permitAll()
 						.requestMatchers("api-docs/swagger-config/**").permitAll()
+						.requestMatchers(HttpMethod.GET, "/description").permitAll()
 						.anyRequest().authenticated()
 				)
 				.oauth2ResourceServer(oauth2 -> oauth2

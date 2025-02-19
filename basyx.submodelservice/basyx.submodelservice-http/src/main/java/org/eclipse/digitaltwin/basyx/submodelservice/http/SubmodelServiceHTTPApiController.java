@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -38,6 +39,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.http.CustomTypeCloneFactory;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
@@ -69,12 +71,14 @@ import jakarta.validation.constraints.Min;
 @RestController
 public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi {
 
-	private SubmodelService service;
+	private final SubmodelService service;
+	private final ObjectMapper objectMapper;
 
 	@Autowired
-	public SubmodelServiceHTTPApiController(SubmodelService service) {
+	public SubmodelServiceHTTPApiController(SubmodelService service, ObjectMapper objectMapper) {
 		this.service = service;
-	}
+        this.objectMapper = objectMapper;
+    }
 
 	@Override
 	public ResponseEntity<Void> deleteSubmodelElementByPath(
@@ -196,16 +200,21 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 	public ResponseEntity<SubmodelElement> postSubmodelElement(@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElement body,
 			@Parameter(in = ParameterIn.QUERY, description = "Determines the structural depth of the respective resource content", schema = @Schema(allowableValues = { "deep",
 					"core" }, defaultValue = "deep")) @Valid @RequestParam(value = "level", required = false, defaultValue = "deep") String level) {
-		service.createSubmodelElement(body);
-		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
+
+		SubmodelElement validatedBody = new CustomTypeCloneFactory<>(SubmodelElement.class, objectMapper).create(body);
+		service.createSubmodelElement(validatedBody);
+
+		return new ResponseEntity<>(validatedBody, HttpStatus.CREATED);
 	}
 
 	@Override
 	public ResponseEntity<SubmodelElement> postSubmodelElementByPath(
 			@Parameter(in = ParameterIn.PATH, description = "IdShort path to the submodel element (dot-separated)", required = true, schema = @Schema()) @PathVariable("idShortPath") String idShortPath,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Requested submodel element", required = true, schema = @Schema()) @Valid @RequestBody SubmodelElement body) {
-		service.createSubmodelElement(idShortPath, body);
-		return new ResponseEntity<SubmodelElement>(HttpStatus.CREATED);
+		SubmodelElement validatedBody = new CustomTypeCloneFactory<>(SubmodelElement.class, objectMapper).create(body);
+		service.createSubmodelElement(idShortPath, validatedBody);
+
+		return new ResponseEntity<>(validatedBody, HttpStatus.CREATED);
 	}
 	
 	@Override
