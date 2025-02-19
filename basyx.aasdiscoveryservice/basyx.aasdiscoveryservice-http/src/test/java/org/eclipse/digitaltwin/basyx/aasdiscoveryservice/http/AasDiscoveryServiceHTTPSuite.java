@@ -173,7 +173,7 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
 
 		String response = BaSyxHttpTestUtils.getResponseAsString(creationResponse);
-
+ 
 		BaSyxHttpTestUtils.assertSameJSONContent(submodelJSON, response);
 	}
 	

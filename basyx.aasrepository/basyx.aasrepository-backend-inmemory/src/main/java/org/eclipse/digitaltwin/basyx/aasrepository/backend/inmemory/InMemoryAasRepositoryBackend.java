@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
