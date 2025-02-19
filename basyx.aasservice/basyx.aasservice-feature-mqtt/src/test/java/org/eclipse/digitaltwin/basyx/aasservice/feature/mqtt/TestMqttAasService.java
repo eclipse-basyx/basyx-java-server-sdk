@@ -30,6 +30,8 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -57,7 +59,10 @@ import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
 import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
 import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
+import org.eclipse.paho.client.mqttv3.IMqttClient;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.junit.AfterClass;
@@ -225,4 +230,89 @@ public class TestMqttAasService extends AasServiceSuite {
 
 		return broker;
 	}
+
+	@Test
+    public void TCPConnectionWithoutCredentials() throws Exception {
+        MqttConfiguration config = new MqttConfiguration();
+        MqttConnectOptions options = config.mqttConnectOptions("", "");
+        IMqttClient client = config.mqttClient(
+            "test-client",
+            "localhost",
+            1884,
+            "tcp",
+            options
+        );
+		assertTrue(client.isConnected());
+        client.disconnect();
+        client.close();
+    }
+
+	@Test
+    public void TCPConnectionWitCredentials() throws Exception {
+        MqttConfiguration config = new MqttConfiguration();
+        MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
+        IMqttClient client = config.mqttClient(
+            "test-client",
+            "localhost",
+            1884,
+            "tcp",
+            options
+        );
+		assertTrue(client.isConnected());
+        client.disconnect();
+        client.close();
+    }
+
+	@Test
+    public void TCPConnectionWitWrongCredentials() throws Exception {
+        MqttConfiguration config = new MqttConfiguration();
+        MqttConnectOptions options = config.mqttConnectOptions("testuser", "false");
+		boolean authentication_failed = false;
+        try {
+			IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				1884,
+				"tcp",
+				options
+			);
+		} catch (MqttException e) {
+			if(MqttException.REASON_CODE_FAILED_AUTHENTICATION == e.getReasonCode()) {
+				authentication_failed = true;
+			}
+		}
+		assertTrue(authentication_failed);
+    }
+
+	@Test
+    public void WSConnectionWithoutCredentials() throws Exception {
+        MqttConfiguration config = new MqttConfiguration();
+        MqttConnectOptions options = config.mqttConnectOptions("", "");
+        IMqttClient client = config.mqttClient(
+            "test-client",
+            "localhost",
+            8080,
+            "ws",
+            options
+        );
+		assertTrue(client.isConnected());
+        client.disconnect();
+        client.close();
+    }
+
+	@Test
+    public void WSConnectionWitCredentials() throws Exception {
+        MqttConfiguration config = new MqttConfiguration();
+        MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
+        IMqttClient client = config.mqttClient(
+            "test-client",
+            "localhost",
+            8080,
+            "ws",
+            options
+        );
+		assertTrue(client.isConnected());
+        client.disconnect();
+        client.close();
+    }
 }
