@@ -49,6 +49,8 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.eclipse.digitaltwin.basyx.serialization.SubmodelMetadataUtil;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelFileOperations;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.data.repository.CrudRepository;
@@ -65,16 +67,18 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	private final SubmodelBackend submodelBackend;
 	private final String submodelRepositoryName;
+	private final SubmodelFileOperations submodelFileOperations;
 
-	public CrudSubmodelRepository(SubmodelBackend submodelBackend, String submodelRepositoryName) {
+	public CrudSubmodelRepository(SubmodelBackend submodelBackend, SubmodelFileOperations submodelFileOperations, String submodelRepositoryName) {
 		this.submodelBackend = submodelBackend;
+		this.submodelFileOperations = submodelFileOperations;
 		this.submodelRepositoryName = submodelRepositoryName;
 
 	}
 
-	public CrudSubmodelRepository(SubmodelBackend submodelBackend, String submodelRepositoryName,
+	public CrudSubmodelRepository(SubmodelBackend submodelBackend, SubmodelFileOperations submodelFileOperations, String submodelRepositoryName,
 			Collection<Submodel> submodels) {
-		this(submodelBackend, submodelRepositoryName);
+		this(submodelBackend, submodelFileOperations, submodelRepositoryName);
 
 		initializeRemoteCollection(submodels);
 	}
@@ -211,17 +215,17 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public java.io.File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		return submodelBackend.getFile(submodelId, idShortPath);
+		return submodelFileOperations.getFile(submodelId, idShortPath);
 	}
 
 	@Override
 	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
-		submodelBackend.setFileValue(submodelId, idShortPath, fileName, inputStream);
+		submodelFileOperations.setFileValue(submodelId, idShortPath, fileName, inputStream);
 	}
 
 	@Override
 	public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		submodelBackend.deleteFileValue(submodelId, idShortPath);
+		submodelFileOperations.deleteFileValue(submodelId, idShortPath);
 	}
 
 	@Override
@@ -231,7 +235,7 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public InputStream getFileByFilePath(String submodelId, String filePath) {
-		return submodelBackend.getInputStream(submodelId, filePath);
+		return submodelFileOperations.getInputStream(submodelId, filePath);
 	}
 
 	private void initializeRemoteCollection(@NonNull Collection<Submodel> submodels) {
@@ -282,7 +286,7 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	private void deleteAssociatedFileIfAny(String submodelId, String idShortPath) {
 		try {
-			submodelBackend.deleteFileValue(submodelId, idShortPath);
+			submodelFileOperations.deleteFileValue(submodelId, idShortPath);
 		} catch (Exception e) {
 		}
 	}

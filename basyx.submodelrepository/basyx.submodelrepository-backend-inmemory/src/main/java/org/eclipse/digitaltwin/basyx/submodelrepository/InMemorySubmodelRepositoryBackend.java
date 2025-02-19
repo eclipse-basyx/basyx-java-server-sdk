@@ -1,6 +1,5 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -8,12 +7,10 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.common.backend.inmemory.core.InMemoryCrudRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SubmodelBackend;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
@@ -77,28 +74,8 @@ public class InMemorySubmodelRepositoryBackend extends InMemoryCrudRepository<Su
     }
 
     @Override
-    public java.io.File getFile(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-        return getSubmodelService(submodelId).getFileByPath(idShortPath);
-    }
-
-    @Override
-    public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
-        doWithService(submodelId, s -> s.setFileValue(idShortPath, fileName, inputStream));
-    }
-
-    @Override
-    public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-        doWithService(submodelId, s -> s.deleteFileValue(idShortPath));
-    }
-
-    @Override
     public void patchSubmodelElements(String submodelId, List<SubmodelElement> submodelElementList) {
         doWithService(submodelId, s -> s.patchSubmodelElements(submodelElementList));
-    }
-
-    @Override
-    public InputStream getInputStream(String submodelId, String filePath) {
-        return getSubmodelService(submodelId).getFileByFilePath(filePath);
     }
 
     private SubmodelService getSubmodelService(String submodelId) {

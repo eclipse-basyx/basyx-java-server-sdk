@@ -34,6 +34,7 @@ import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
@@ -43,7 +44,9 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescr
 import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.DefaultSubmodelFileOperations;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelFileOperations;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -113,7 +116,10 @@ public class SubmodelRepositoryRegistryLinkDescriptorGenerationTest {
     }
     
 	protected SubmodelRepository getSubmodelRepository() {
-        return new CrudSubmodelRepositoryFactory(InMemorySubmodelRepositoryBackend.buildDefault()).create();
+        SubmodelBackend submodelBackend = InMemorySubmodelRepositoryBackend.buildDefault();
+        FileRepository fileRepository = new InMemoryFileRepository();
+        SubmodelFileOperations submodelFileOperations = new DefaultSubmodelFileOperations(fileRepository, submodelBackend);
+        return new CrudSubmodelRepositoryFactory(submodelBackend, submodelFileOperations).create();
 	}
 
 }

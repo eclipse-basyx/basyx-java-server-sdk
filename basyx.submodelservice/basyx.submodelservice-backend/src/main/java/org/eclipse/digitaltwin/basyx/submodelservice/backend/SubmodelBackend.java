@@ -5,6 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SingleSubmodelBackend extends CrudRepository<Submodel, String>, SubmodelOperations, SubmodelFileOperations {
+public interface SubmodelBackend extends CrudRepository<Submodel, String>, SubmodelOperations {
     
 }

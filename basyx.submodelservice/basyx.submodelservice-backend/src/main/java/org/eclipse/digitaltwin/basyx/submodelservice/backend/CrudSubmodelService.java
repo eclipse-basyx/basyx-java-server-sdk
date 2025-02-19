@@ -19,12 +19,14 @@ import org.springframework.lang.NonNull;
 
 public class CrudSubmodelService implements SubmodelService {
 
-    private final SingleSubmodelBackend backend;
+    private final SubmodelBackend backend;
     private final String submodelId;
+    private final SubmodelFileOperations submodelFileOperations;
 
-    public CrudSubmodelService(SingleSubmodelBackend submodelRepositoryBackend, @NonNull Submodel submodel) {
+    public CrudSubmodelService(SubmodelBackend submodelRepositoryBackend, SubmodelFileOperations submodelFileOperations, @NonNull Submodel submodel) {
         this.backend = submodelRepositoryBackend;
         this.submodelId = submodel.getId();
+        this.submodelFileOperations = submodelFileOperations;
         hostSubmodel(submodel);
     }
 
@@ -89,22 +91,22 @@ public class CrudSubmodelService implements SubmodelService {
 
     @Override
     public File getFileByPath(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-        return backend.getFile(submodelId, idShortPath);
+        return submodelFileOperations.getFile(submodelId, idShortPath);
     }
 
     @Override
     public void setFileValue(String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
-        backend.setFileValue(submodelId, idShortPath, fileName, inputStream);
+        submodelFileOperations.setFileValue(submodelId, idShortPath, fileName, inputStream);
     }
 
     @Override
     public void deleteFileValue(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-        backend.deleteFileValue(submodelId, idShortPath);
+        submodelFileOperations.deleteFileValue(submodelId, idShortPath);
     }
 
     @Override
     public InputStream getFileByFilePath(String filePath) {
-        return backend.getInputStream(submodelId, filePath);
+        return submodelFileOperations.getInputStream(submodelId, filePath);
     }
     
 
@@ -114,7 +116,7 @@ public class CrudSubmodelService implements SubmodelService {
 
     private void deleteAssociatedFileIfAny(String idShortPath) {
         try {
-            backend.deleteFileValue(submodelId, idShortPath);
+            submodelFileOperations.deleteFileValue(submodelId, idShortPath);
         } catch (Exception e) {
         }
     }

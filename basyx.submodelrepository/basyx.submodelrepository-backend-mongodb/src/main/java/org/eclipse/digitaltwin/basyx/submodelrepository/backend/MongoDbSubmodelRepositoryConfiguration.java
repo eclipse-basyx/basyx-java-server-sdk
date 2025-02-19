@@ -57,13 +57,4 @@ public class MongoDbSubmodelRepositoryConfiguration {
         return MappingEntry.of(collectionName, Submodel.class);
     }
 
-    @Bean
-    SubmodelOperations submodelOperations(MongoOperations operations) {
-        return new MongoDbSubmodelOperations(operations);
-    }
-
-    @Bean
-    SubmodelFileOperations submodelFileOperations(FileRepository fileRepository, @Qualifier("submodelOperations") SubmodelOperations operations) {
-        return new DefaultSubmodelFileOperations(fileRepository, operations);
-    }
 }

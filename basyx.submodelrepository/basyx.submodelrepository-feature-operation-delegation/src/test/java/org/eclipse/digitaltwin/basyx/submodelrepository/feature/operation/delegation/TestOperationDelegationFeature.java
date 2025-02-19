@@ -43,6 +43,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultQualifier;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.OperationDelegationException;
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
 import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
@@ -52,7 +53,10 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelReposito
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.SubmodelRepositoryHTTPSerializationExtension;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.DefaultSubmodelFileOperations;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelFileOperations;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -187,7 +191,9 @@ public class TestOperationDelegationFeature {
 	}
 
 	private static SubmodelRepository createOperationDelegationSubmodelRepository(OperationDelegation operationDelegation) {
-		SubmodelRepositoryFactory repoFactory = new CrudSubmodelRepositoryFactory(InMemorySubmodelRepositoryBackend.buildDefault());
+		SubmodelBackend submodelBackend = InMemorySubmodelRepositoryBackend.buildDefault();
+		SubmodelFileOperations submodelFileOperations = new DefaultSubmodelFileOperations(new InMemoryFileRepository(), submodelBackend);
+		SubmodelRepositoryFactory repoFactory = new CrudSubmodelRepositoryFactory(submodelBackend, submodelFileOperations);
 
 		return new OperationDelegationSubmodelRepositoryFactory(repoFactory, operationDelegation).create();
 	}

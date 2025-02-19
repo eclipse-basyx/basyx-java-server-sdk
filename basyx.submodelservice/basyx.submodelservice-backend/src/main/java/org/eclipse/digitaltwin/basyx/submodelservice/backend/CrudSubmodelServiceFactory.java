@@ -9,18 +9,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
-@ConditionalOnBean(SingleSubmodelBackend.class)
+@ConditionalOnBean(SubmodelBackend.class)
 public class CrudSubmodelServiceFactory implements SubmodelServiceFactory{
 
-    private final SingleSubmodelBackend backend;
+    private final SubmodelBackend backend;
+    private final SubmodelFileOperations submodelFileOperations;
 
-    public CrudSubmodelServiceFactory(SingleSubmodelBackend backend) {
+    public CrudSubmodelServiceFactory(SubmodelBackend backend, SubmodelFileOperations submodelFileOperations) {
         this.backend = backend;
+        this.submodelFileOperations = submodelFileOperations;
     }
 
     @Override
     public SubmodelService create(Submodel submodel) {
-        return new CrudSubmodelService(backend, submodel);
+        return new CrudSubmodelService(backend, submodelFileOperations, submodel);
     }
     
 }

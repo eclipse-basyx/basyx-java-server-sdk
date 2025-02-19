@@ -59,12 +59,17 @@ import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasR
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend.CrudConceptDescriptionRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend.InMemoryConceptDescriptionRepositoryBackend;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.DefaultSubmodelFileOperations;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelFileOperations;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -84,7 +89,10 @@ public class TestAASEnvironmentSerialization {
 
 	@Before
 	public void setup() {
-		submodelRepository = new CrudSubmodelRepositoryFactory(InMemorySubmodelRepositoryBackend.buildDefault()).create();
+		SubmodelBackend submodelBackend = InMemorySubmodelRepositoryBackend.buildDefault();
+		FileRepository fileRepository = new InMemoryFileRepository();
+		SubmodelFileOperations submodelFileOperations = new DefaultSubmodelFileOperations(fileRepository, submodelBackend);
+		submodelRepository = new CrudSubmodelRepositoryFactory(submodelBackend, submodelFileOperations).create();
 		aasRepository = new CrudAasRepositoryFactory(InMemoryAasRepositoryBackend.buildDefault(), "aas-repo").create();
 		conceptDescriptionRepository = new CrudConceptDescriptionRepositoryFactory(new InMemoryConceptDescriptionRepositoryBackend()).withRemoteCollection(createDummyConceptDescriptions()).create();
 
