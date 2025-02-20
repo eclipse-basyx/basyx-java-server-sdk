@@ -85,8 +85,7 @@
 	<pluginRepositories>
 		<pluginRepository>
 			<id>dash-licenses-snapshots</id>
-			<url>
-				https://repo.eclipse.org/content/repositories/dash-licenses-snapshots/</url>
+			<url>https://repo.eclipse.org/content/repositories/dash-licenses-snapshots/</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
@@ -548,8 +547,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>
-					basyx.submodelrepository-feature-operation-delegation</artifactId>
+				<artifactId>basyx.submodelrepository-feature-operation-delegation</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -713,8 +711,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>
-					basyx.conceptdescriptionrepository-feature-authorization</artifactId>
+				<artifactId>basyx.conceptdescriptionrepository-feature-authorization</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -939,8 +936,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>
-					basyx.submodelrepository-feature-operation-delegation</artifactId>
+				<artifactId>basyx.submodelrepository-feature-operation-delegation</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -1081,18 +1077,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.submodelservice-feature-operation-dispatching</artifactId>
-				<version>${revision}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.submodelservice-feature-operation-dispatching</artifactId>
-				<classifier>tests</classifier>
-				<version>${revision}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasenvironment-feature-authorization</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
@@ -1142,8 +1126,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>
-					basyx.conceptdescriptionrepository-feature-authorization</artifactId>
+				<artifactId>basyx.conceptdescriptionrepository-feature-authorization</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
