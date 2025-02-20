@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.junit.Before;
@@ -70,15 +71,9 @@ public class TestMongoDBSubmodelService extends SubmodelServiceSuite {
 	}
 
 	@Override
-	@Test(expected = FeatureNotSupportedException.class)
+	@Test(expected = ElementDoesNotExistException.class)
 	public void invokeOperation() {
 		super.invokeOperation();
-	}
-
-	@Override
-	@Test(expected = FeatureNotSupportedException.class)
-	public void invokeNonOperation() {
-		super.invokeNonOperation();
 	}
 
 	@Override

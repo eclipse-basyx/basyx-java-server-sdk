@@ -1,22 +1,23 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.backend;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.operation.InvokableOperation;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.springframework.lang.NonNull;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.List;
 
 public class CrudSubmodelService implements SubmodelService {
 
@@ -87,7 +88,12 @@ public class CrudSubmodelService implements SubmodelService {
 
     @Override
     public OperationVariable[] invokeOperation(String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException {
-        throw new FeatureNotSupportedException("Unimplemented method 'invokeOperation'");
+        SubmodelElement sme = getSubmodelElement(idShortPath);
+
+        if (!(sme instanceof InvokableOperation operation))
+            throw new NotInvokableException(idShortPath);
+
+        return operation.invoke(input);
     }
 
     @Override
