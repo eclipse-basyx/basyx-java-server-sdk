@@ -1,0 +1,12 @@
+FROM eclipsebasyx/submodel-service:2.0.0-SNAPSHOT
+COPY submodel.json /application/submodel.json
+COPY sources /application/sources
+COPY jars/HelloWorld.jar jars/HelloWorld.jar
+# these environment variables could also be all set in the application yaml
+# just an example for demonstration
+ENV BASYX_BACKEND=InMemory
+ENV BASYX_SUBMODELSERVICE_SUBMODEL_FILE=/application/submodel.json
+ENV BASYX_SUBMODELSERVICE_FEATURE_DISPATCHER_ENABLED=true
+ENV BASYX_SUBMODELSERVICE_FEATURE_OPERATION_DISPATCHER_JAVA_ADDITIONALCLASSPATH=/application/jars/HelloWorld.jar
+ENV BASYX_SUBMODELSERVICE_FEATURE_OPERATION_DISPATCHER_JAVA_SOURCES=/application/sources
+COPY application-mappings.yml /application/application.yml

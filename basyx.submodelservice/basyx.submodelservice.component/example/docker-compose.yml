@@ -1,0 +1,22 @@
+services:
+
+  submodel-service:
+    image: eclipsebasyx/submodel-service:${REVISION}
+    container_name: submodel-service
+    pull_policy: missing
+    environment:
+      # add the mounted jar file file:submodel.json or submodel.json
+      BASYX_SUBMODELSERVICE_SUBMODEL_FILE: submodel.json
+      # we add all sources -> they will be compiled on startup
+      BASYX_SUBMODELSERVICE_FEATURE_OPERATION_DISPATCHER_JAVA_SOURCES: sources
+      # this is the jar file
+      BASYX_SUBMODELSERVICE_FEATURE_OPERATION_DISPATCHER_JAVA_ADDITIONALCLASSPATH: jars/HelloWorld.jar
+      # we specify the mappings in the application-mappings.yml
+      SPRING_PROFILES_ACTIVE: mappings
+    ports:
+      - ${PORT}:8081
+    volumes:
+      - ./submodel.json:/application/submodel.json:ro
+      - ./sources/:/application/sources/:ro
+      - ./jars/HelloWorld.jar:/application/jars/HelloWorld.jar:ro
+      - ./application-mappings.yml:/application/config/application-mappings.yml/:ro

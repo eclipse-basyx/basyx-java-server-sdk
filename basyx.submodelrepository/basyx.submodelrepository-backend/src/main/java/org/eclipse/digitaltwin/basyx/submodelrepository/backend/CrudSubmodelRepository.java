@@ -25,25 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.backend;
 
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.*;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
@@ -57,10 +42,14 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.lang.NonNull;
 
+import java.io.InputStream;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 /**
- * Default Implementation for the {@link SubmodelRepository} based on Spring
- * {@link CrudRepository}
- * 
+ * Default Implementation for the {@link SubmodelRepository} using a {@link CrudRepository} as backend.
+ *
  * @author danish, mateusmolina
  *
  */
