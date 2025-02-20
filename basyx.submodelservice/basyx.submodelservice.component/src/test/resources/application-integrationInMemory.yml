@@ -1,0 +1,18 @@
+basyx:
+  backend: InMemory
+  submodelservice:
+    submodel:
+      file: example/submodel.json 
+    feature:
+      operation:
+        dispatcher:
+          enabled: true
+          defaultMapping: org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.java.DefaultInvokableOperation
+          mappings:
+            SquareOperation: SquareOperation
+            "BasicOperations.AddOperation": basic.ops.AddOperation
+          java:
+            sources: example/sources
+            classes: target/integration-test/classes
+            additionalClasspath: 
+            - example/jars/HelloWorld.jar
