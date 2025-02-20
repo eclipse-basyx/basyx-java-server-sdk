@@ -25,18 +25,18 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.backend;
 
-import java.util.Collection;
-import java.util.Optional;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
-import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelFileOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Simple Submodel repository factory that creates a
@@ -52,19 +52,19 @@ public class CrudSubmodelRepositoryFactory implements SubmodelRepositoryFactory 
 	static final String DEFAULT_REPOSITORY_NAME = "sm-repo";
 
 	private final SubmodelBackend backend;
-	private final SubmodelFileOperations fileOperations;
+	private final FileRepository fileRepository;
 	private final String submodelRepositoryName;
 	private Optional<Collection<Submodel>> submodels = Optional.empty();
 
 	@Autowired
-	public CrudSubmodelRepositoryFactory(SubmodelBackend submodelRepositoryBackend, SubmodelFileOperations submodelFileOperations, @Value("${basyx.smrepo.name:" + DEFAULT_REPOSITORY_NAME + "}") String submodelRepositoryName) {
+	public CrudSubmodelRepositoryFactory(SubmodelBackend submodelRepositoryBackend, FileRepository fileRepository, @Value("${basyx.smrepo.name:" + DEFAULT_REPOSITORY_NAME + "}") String submodelRepositoryName) {
 		this.backend = submodelRepositoryBackend;
-		this.fileOperations = submodelFileOperations;
+		this.fileRepository = fileRepository;
 		this.submodelRepositoryName = submodelRepositoryName;
 	}
 
-	public CrudSubmodelRepositoryFactory(SubmodelBackend submodelBackend, SubmodelFileOperations fileOperations) {
-		this(submodelBackend, fileOperations, DEFAULT_REPOSITORY_NAME);
+	public CrudSubmodelRepositoryFactory(SubmodelBackend submodelBackend, FileRepository fileRepository) {
+		this(submodelBackend, fileRepository, DEFAULT_REPOSITORY_NAME);
 	}
 
 	public CrudSubmodelRepositoryFactory withRemoteCollection(Collection<Submodel> submodels) {
@@ -74,10 +74,7 @@ public class CrudSubmodelRepositoryFactory implements SubmodelRepositoryFactory 
 
 	@Override
 	public SubmodelRepository create() {
-		if (!submodels.isPresent())
-			return new CrudSubmodelRepository(backend, fileOperations, submodelRepositoryName);
-
-		return new CrudSubmodelRepository(backend, fileOperations, submodelRepositoryName, submodels.get());
-	}
+        return submodels.map(submodelCollection -> new CrudSubmodelRepository(backend, fileRepository, submodelRepositoryName, submodelCollection)).orElseGet(() -> new CrudSubmodelRepository(backend, fileRepository, submodelRepositoryName));
+    }
 
 }

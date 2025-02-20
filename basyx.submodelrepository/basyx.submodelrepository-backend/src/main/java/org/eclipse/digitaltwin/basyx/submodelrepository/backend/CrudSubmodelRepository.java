@@ -44,6 +44,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -69,16 +70,16 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 	private final String submodelRepositoryName;
 	private final SubmodelFileOperations submodelFileOperations;
 
-	public CrudSubmodelRepository(SubmodelBackend submodelBackend, SubmodelFileOperations submodelFileOperations, String submodelRepositoryName) {
+	public CrudSubmodelRepository(SubmodelBackend submodelBackend, FileRepository fileRepository, String submodelRepositoryName) {
 		this.submodelBackend = submodelBackend;
-		this.submodelFileOperations = submodelFileOperations;
+		this.submodelFileOperations = new SubmodelFileOperations(fileRepository, submodelBackend);
 		this.submodelRepositoryName = submodelRepositoryName;
 
 	}
 
-	public CrudSubmodelRepository(SubmodelBackend submodelBackend, SubmodelFileOperations submodelFileOperations, String submodelRepositoryName,
+	public CrudSubmodelRepository(SubmodelBackend submodelBackend, FileRepository fileRepository, String submodelRepositoryName,
 			Collection<Submodel> submodels) {
-		this(submodelBackend, submodelFileOperations, submodelRepositoryName);
+		this(submodelBackend, fileRepository, submodelRepositoryName);
 
 		initializeRemoteCollection(submodels);
 	}
@@ -235,7 +236,7 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public InputStream getFileByFilePath(String submodelId, String filePath) {
-		return submodelFileOperations.getInputStream(submodelId, filePath);
+		return submodelFileOperations.getInputStream(filePath);
 	}
 
 	private void initializeRemoteCollection(@NonNull Collection<Submodel> submodels) {

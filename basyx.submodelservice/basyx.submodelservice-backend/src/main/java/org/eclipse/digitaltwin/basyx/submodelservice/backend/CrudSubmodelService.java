@@ -11,6 +11,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
@@ -23,10 +24,10 @@ public class CrudSubmodelService implements SubmodelService {
     private final String submodelId;
     private final SubmodelFileOperations submodelFileOperations;
 
-    public CrudSubmodelService(SubmodelBackend submodelRepositoryBackend, SubmodelFileOperations submodelFileOperations, @NonNull Submodel submodel) {
+    public CrudSubmodelService(SubmodelBackend submodelRepositoryBackend, FileRepository fileRepository, @NonNull Submodel submodel) {
         this.backend = submodelRepositoryBackend;
         this.submodelId = submodel.getId();
-        this.submodelFileOperations = submodelFileOperations;
+        this.submodelFileOperations = new SubmodelFileOperations(fileRepository, submodelRepositoryBackend);
         hostSubmodel(submodel);
     }
 
@@ -106,10 +107,9 @@ public class CrudSubmodelService implements SubmodelService {
 
     @Override
     public InputStream getFileByFilePath(String filePath) {
-        return submodelFileOperations.getInputStream(submodelId, filePath);
+        return submodelFileOperations.getInputStream(filePath);
     }
     
-
     private void hostSubmodel(Submodel submodel) {
         this.backend.save(submodel);
     }

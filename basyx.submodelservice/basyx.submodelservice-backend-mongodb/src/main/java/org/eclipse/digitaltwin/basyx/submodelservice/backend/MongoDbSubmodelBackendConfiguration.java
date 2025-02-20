@@ -61,9 +61,4 @@ public class MongoDbSubmodelBackendConfiguration {
     SubmodelOperations submodelOperations(MongoOperations operations) {
         return new MongoDbSubmodelOperations(operations);
     }
-    
-    @Bean
-    SubmodelFileOperations submodelFileOperations(FileRepository fileRepository, @Qualifier("submodelOperations") SubmodelOperations operations) {
-        return new DefaultSubmodelFileOperations(fileRepository, operations);
-    }
 }

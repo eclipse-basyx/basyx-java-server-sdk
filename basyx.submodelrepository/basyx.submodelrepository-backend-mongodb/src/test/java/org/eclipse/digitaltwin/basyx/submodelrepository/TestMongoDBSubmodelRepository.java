@@ -24,16 +24,13 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import java.util.Collection;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
-import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelFileOperations;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -45,6 +42,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsCriteria;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Collection;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -63,9 +62,6 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	private SubmodelBackend submodelBackend;
 
 	@Autowired
-	private SubmodelFileOperations submodelFileOperations;
-
-	@Autowired
 	private FileRepository fileRepository;
 
 	@Override
@@ -81,7 +77,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
-		return new CrudSubmodelRepositoryFactory(submodelBackend, submodelFileOperations).withRemoteCollection(submodels).create();
+		return new CrudSubmodelRepositoryFactory(submodelBackend, fileRepository).withRemoteCollection(submodels).create();
 	}
 
 	@Override

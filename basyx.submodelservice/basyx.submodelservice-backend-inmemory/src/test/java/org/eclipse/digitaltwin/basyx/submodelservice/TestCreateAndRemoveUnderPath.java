@@ -36,7 +36,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelService;
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.CrudSubmodelServiceFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,12 +45,12 @@ import org.junit.Test;
 public class TestCreateAndRemoveUnderPath {
 	
 	private Submodel submodel;
-	private InMemorySubmodelService service;
+	private SubmodelService service;
 
 	@Before
 	public void init() throws DeserializationException, IOException {
 		submodel = loadSubmodel();
-		service = new InMemorySubmodelService(submodel, null);
+		service = new CrudSubmodelServiceFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository()).create(submodel);
 	}
 
 	@Test

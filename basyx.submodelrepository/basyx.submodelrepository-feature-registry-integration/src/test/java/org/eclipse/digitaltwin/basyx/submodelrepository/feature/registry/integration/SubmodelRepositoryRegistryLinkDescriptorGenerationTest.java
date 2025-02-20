@@ -25,36 +25,32 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
 
-import static org.junit.Assert.*;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.factory.SubmodelDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
-import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
-import org.eclipse.digitaltwin.basyx.submodelservice.backend.DefaultSubmodelFileOperations;
-import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelFileOperations;
+import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.Mockito;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+
 /**
- * Test suite for {@link RegistryIntegrationAasRepository} feature
+ * Test suite for RegistryIntegrationAasRepository feature
  */
 @RunWith(Parameterized.class)
 public class SubmodelRepositoryRegistryLinkDescriptorGenerationTest {	
@@ -116,10 +112,7 @@ public class SubmodelRepositoryRegistryLinkDescriptorGenerationTest {
     }
     
 	protected SubmodelRepository getSubmodelRepository() {
-        SubmodelBackend submodelBackend = InMemorySubmodelRepositoryBackend.buildDefault();
-        FileRepository fileRepository = new InMemoryFileRepository();
-        SubmodelFileOperations submodelFileOperations = new DefaultSubmodelFileOperations(fileRepository, submodelBackend);
-        return new CrudSubmodelRepositoryFactory(submodelBackend, submodelFileOperations).create();
+        return new CrudSubmodelRepositoryFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository()).create();
 	}
 
 }

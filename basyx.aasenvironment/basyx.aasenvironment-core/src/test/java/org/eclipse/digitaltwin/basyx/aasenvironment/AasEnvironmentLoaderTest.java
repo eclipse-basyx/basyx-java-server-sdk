@@ -25,10 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironment;
@@ -40,20 +36,20 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend.CrudConceptDescriptionRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend.InMemoryConceptDescriptionRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
-import org.eclipse.digitaltwin.basyx.submodelservice.backend.DefaultSubmodelFileOperations;
-import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelFileOperations;
+import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.core.io.DefaultResourceLoader;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 
 /**
@@ -78,10 +74,7 @@ public class AasEnvironmentLoaderTest {
 
 	@Before
 	public void setUp() {
-		SubmodelBackend submodelBackend = InMemorySubmodelRepositoryBackend.buildDefault();
-		FileRepository fileRepository = new InMemoryFileRepository();
-		SubmodelFileOperations submodelFileOperations = new DefaultSubmodelFileOperations(fileRepository, submodelBackend);
-		submodelRepository = Mockito.spy(new CrudSubmodelRepositoryFactory(submodelBackend, submodelFileOperations).create());
+		submodelRepository = Mockito.spy(new CrudSubmodelRepositoryFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository()).create());
 		aasRepository = Mockito.spy(new CrudAasRepository(InMemoryAasRepositoryBackend.buildDefault(), "aas-repo"));
 		conceptDescriptionRepository = Mockito.spy(new CrudConceptDescriptionRepositoryFactory(new InMemoryConceptDescriptionRepositoryBackend()).create());
 	}

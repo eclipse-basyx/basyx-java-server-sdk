@@ -25,14 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.http.testconfig;
 
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.InMemorySubmodelRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
-import org.eclipse.digitaltwin.basyx.submodelservice.backend.DefaultSubmodelFileOperations;
-import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelFileOperations;
+import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,9 +47,6 @@ public class DummySubmodelRepositoryConfig {
 	@Bean
 	@ConditionalOnMissingBean
 	public SubmodelRepository createSubmodelRepository() {
-		SubmodelBackend submodelBackend = InMemorySubmodelRepositoryBackend.buildDefault();
-		FileRepository fileRepository = new InMemoryFileRepository();
-		SubmodelFileOperations submodelFileOperations = new DefaultSubmodelFileOperations(fileRepository, submodelBackend);
-		return new CrudSubmodelRepositoryFactory(submodelBackend, submodelFileOperations).create();
+		return new CrudSubmodelRepositoryFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository()).create();
 	}
 }
