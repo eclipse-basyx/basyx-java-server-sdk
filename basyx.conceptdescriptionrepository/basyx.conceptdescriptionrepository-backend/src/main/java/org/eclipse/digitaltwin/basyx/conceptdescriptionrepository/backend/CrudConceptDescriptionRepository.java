@@ -49,7 +49,7 @@ import org.springframework.lang.NonNull;
 
 /**
  * Default Implementation for the {@link ConceptDescription} based on
- * {@link ConceptDescriptionRepositoryBackend}
+ * {@link ConceptDescriptionBackend}
  * 
  * @author mateusmolina, despen, zhangzai, kammognie, danish
  *
@@ -57,15 +57,15 @@ import org.springframework.lang.NonNull;
 
 public class CrudConceptDescriptionRepository implements ConceptDescriptionRepository {
 
-	private final ConceptDescriptionRepositoryBackend conceptDescriptionBackend;
+	private final ConceptDescriptionBackend conceptDescriptionBackend;
 	private final String conceptDescriptionRepositoryName;
 
-	public CrudConceptDescriptionRepository(ConceptDescriptionRepositoryBackend conceptDescriptionBackend, String cdRepositoryNameString) {
+	public CrudConceptDescriptionRepository(ConceptDescriptionBackend conceptDescriptionBackend, String cdRepositoryNameString) {
 		this.conceptDescriptionBackend = conceptDescriptionBackend;
 		conceptDescriptionRepositoryName = cdRepositoryNameString;
 	}
 
-	public CrudConceptDescriptionRepository(ConceptDescriptionRepositoryBackend conceptDescriptionBackend, String cdRepositoryNameString, Collection<ConceptDescription> remoteCollection) {
+	public CrudConceptDescriptionRepository(ConceptDescriptionBackend conceptDescriptionBackend, String cdRepositoryNameString, Collection<ConceptDescription> remoteCollection) {
 		this(conceptDescriptionBackend, cdRepositoryNameString);
 
 		initializeRemoteCollection(remoteCollection);

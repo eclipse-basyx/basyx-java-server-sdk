@@ -23,26 +23,18 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasRepositoryBackend;
-import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 /**
+ * Backend interface for the {@link ConceptDescription}
  * 
- * InMemory backend provider for the AAS
- * 
- * @author mateusmolina, danish
+ * @author mateusmolina
  */
-@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
-@Configuration
-public class InMemoryAasRepositoryBackendConfiguration {
+@Repository
+public interface ConceptDescriptionBackend extends CrudRepository<ConceptDescription, String> {
 
-	@Bean
-	AasRepositoryBackend getAasBackend(AasServiceFactory aasServiceFactory) {
-		return new InMemoryAasRepositoryBackend(aasServiceFactory);
-	}
 }

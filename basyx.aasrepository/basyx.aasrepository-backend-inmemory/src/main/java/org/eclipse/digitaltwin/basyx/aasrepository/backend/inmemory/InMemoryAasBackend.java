@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasRepositoryBackend;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackend;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
@@ -44,22 +44,22 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
 /**
- * InMemory implementation of the {@link AasRepositoryBackend} based on the
+ * InMemory implementation of the {@link AasBackend} based on the
  * {@link AasService}
  * 
  * @author mateusmolina
  */
-public class InMemoryAasRepositoryBackend extends InMemoryCrudRepository<AssetAdministrationShell> implements AasRepositoryBackend {
+public class InMemoryAasBackend extends InMemoryCrudRepository<AssetAdministrationShell> implements AasBackend {
 
     private final AasServiceFactory aasServiceFactory;
 
-    public InMemoryAasRepositoryBackend(AasServiceFactory aasServiceFactory) {
+    public InMemoryAasBackend(AasServiceFactory aasServiceFactory) {
         super(aas -> aas.getId());
         this.aasServiceFactory = aasServiceFactory;
     }
 
-    public static InMemoryAasRepositoryBackend buildDefault() {
-        return new InMemoryAasRepositoryBackend(new InMemoryAasServiceFactory(new InMemoryFileRepository()));
+    public static InMemoryAasBackend buildDefault() {
+        return new InMemoryAasBackend(new InMemoryAasServiceFactory(new InMemoryFileRepository()));
     }
 
     @Override

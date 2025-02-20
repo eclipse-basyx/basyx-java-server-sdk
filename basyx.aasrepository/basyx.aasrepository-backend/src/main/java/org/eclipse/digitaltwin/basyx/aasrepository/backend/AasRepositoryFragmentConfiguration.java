@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
-import org.eclipse.digitaltwin.basyx.aasservice.AasServiceOperations;
+import org.eclipse.digitaltwin.basyx.aasservice.AasOperations;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -38,10 +38,10 @@ import org.springframework.lang.NonNull;
 
 /**
  * Configures the Spring Data repository fragments for the
- * {@link AasRepositoryBackend}
+ * {@link AasBackend}
  * 
  * Requires a bean with the name "aasServiceOperations". It is composed with the
- * {@link AasRepositoryBackend} as a {@link RepositoryFragment}
+ * {@link AasBackend} as a {@link RepositoryFragment}
  * 
  * @author mateusmolina
  */
@@ -49,9 +49,9 @@ import org.springframework.lang.NonNull;
 @ConditionalOnBean(name="aasServiceOperations")
 public class AasRepositoryFragmentConfiguration implements BeanPostProcessor {
 
-    private final AasServiceOperations aasServiceOperations;
+    private final AasOperations aasServiceOperations;
 
-    public AasRepositoryFragmentConfiguration(@Qualifier("aasServiceOperations") AasServiceOperations aasServiceOperations) {
+    public AasRepositoryFragmentConfiguration(@Qualifier("aasServiceOperations") AasOperations aasServiceOperations) {
         this.aasServiceOperations = aasServiceOperations;
     }
 
@@ -60,10 +60,10 @@ public class AasRepositoryFragmentConfiguration implements BeanPostProcessor {
         if (!(bean instanceof RepositoryFactoryBeanSupport<?, ?, ?> beanfactory))
             return bean;
 
-        if (!beanfactory.getObjectType().equals(AasRepositoryBackend.class))
+        if (!beanfactory.getObjectType().equals(AasBackend.class))
             return bean;
 
-        RepositoryFragment<AasServiceOperations> fragment = RepositoryFragment.implemented(AasServiceOperations.class, aasServiceOperations);
+        RepositoryFragment<AasOperations> fragment = RepositoryFragment.implemented(AasOperations.class, aasServiceOperations);
         RepositoryFragments fragments = RepositoryFragments.of(fragment);
         beanfactory.setRepositoryFragments(fragments);
 

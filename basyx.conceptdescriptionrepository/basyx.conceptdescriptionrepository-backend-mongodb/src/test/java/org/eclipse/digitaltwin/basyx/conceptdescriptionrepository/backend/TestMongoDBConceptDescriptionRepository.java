@@ -55,7 +55,7 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 	private ConceptDescriptionRepository conceptDescriptionRepository;
 
 	@Autowired
-	private ConceptDescriptionRepositoryBackend conceptDescriptionRepositoryBackend;
+	private ConceptDescriptionBackend conceptDescriptionRepositoryBackend;
 
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository() {

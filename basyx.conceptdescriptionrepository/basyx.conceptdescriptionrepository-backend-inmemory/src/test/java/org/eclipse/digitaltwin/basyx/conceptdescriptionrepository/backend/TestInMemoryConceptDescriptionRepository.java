@@ -47,7 +47,7 @@ public class TestInMemoryConceptDescriptionRepository extends ConceptDescription
 
 	private static final String CONFIGURED_CD_REPO_NAME = "configured-cd-repo-name";
 
-	private final ConceptDescriptionRepositoryBackend backend = new InMemoryConceptDescriptionRepositoryBackend();
+	private final ConceptDescriptionBackend backend = new InMemoryConceptDescriptionBackend();
 
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository() {

@@ -38,9 +38,9 @@ import org.springframework.stereotype.Component;
  */
 @ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
 @Component
-public class InMemoryConceptDescriptionRepositoryBackend extends InMemoryCrudRepository<ConceptDescription> implements ConceptDescriptionRepositoryBackend {
+public class InMemoryConceptDescriptionBackend extends InMemoryCrudRepository<ConceptDescription> implements ConceptDescriptionBackend {
 
-	public InMemoryConceptDescriptionRepositoryBackend() {
+	public InMemoryConceptDescriptionBackend() {
 		super(ConceptDescription::getId);
 	}
 

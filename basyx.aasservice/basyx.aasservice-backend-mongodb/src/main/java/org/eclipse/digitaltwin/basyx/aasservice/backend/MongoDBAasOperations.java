@@ -42,7 +42,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
-import org.eclipse.digitaltwin.basyx.aasservice.AasServiceOperations;
+import org.eclipse.digitaltwin.basyx.aasservice.AasOperations;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
@@ -62,11 +62,11 @@ import org.springframework.lang.NonNull;
 import com.mongodb.client.result.UpdateResult;
 
 /**
- * MongoDB implementation of the {@link AasServiceOperations}
+ * MongoDB implementation of the {@link AasOperations}
  * 
  * @author mateusmolina
  */
-public class MongoDBAasServiceOperations implements AasServiceOperations {
+public class MongoDBAasOperations implements AasOperations {
 
     private static final String KEY_SMREF = "submodels";
     private static final String KEY_ASSETINFORMATION = "assetInformation";
@@ -76,7 +76,7 @@ public class MongoDBAasServiceOperations implements AasServiceOperations {
     private final String collectionName;
     private final FileRepository fileRepository;
 
-    public MongoDBAasServiceOperations(MongoOperations mongoOperations, FileRepository fileRepository) {
+    public MongoDBAasOperations(MongoOperations mongoOperations, FileRepository fileRepository) {
         this.mongoOperations = mongoOperations;
         this.fileRepository = fileRepository;
         collectionName = mongoOperations.getCollectionName(AssetAdministrationShell.class);

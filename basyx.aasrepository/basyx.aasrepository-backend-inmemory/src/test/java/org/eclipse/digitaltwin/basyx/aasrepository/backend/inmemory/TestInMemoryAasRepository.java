@@ -47,7 +47,7 @@ import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.junit.Test;
 
 /**
- * Tests the {@link InMemoryAasRepository} name
+ * Tests the {@link CrudAasRepository} with {@link InMemoryAasBackend} name
  * 
  * @author schnicke, kammognie, mateusmolina
  *
@@ -60,7 +60,7 @@ public class TestInMemoryAasRepository extends AasRepositorySuite {
 	@Override
 	protected AasRepository getAasRepository() {
 		fileRepository = new InMemoryFileRepository();
-		return new CrudAasRepositoryFactory(InMemoryAasRepositoryBackend.buildDefault(), "aas-repo").create();
+		return new CrudAasRepositoryFactory(InMemoryAasBackend.buildDefault(), "aas-repo").create();
 	}
 
 	@Override
@@ -85,7 +85,7 @@ public class TestInMemoryAasRepository extends AasRepositorySuite {
 	@Test
 	public void getConfiguredInMemoryAasRepositoryName() {
 		fileRepository = new InMemoryFileRepository();
-		InMemoryAasRepositoryBackend backend = new InMemoryAasRepositoryBackend(new InMemoryAasServiceFactory(fileRepository));
+		InMemoryAasBackend backend = new InMemoryAasBackend(new InMemoryAasServiceFactory(fileRepository));
 		AasRepository repo = new CrudAasRepository(backend, CONFIGURED_AAS_REPO_NAME);
 		
 		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());

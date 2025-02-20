@@ -23,31 +23,43 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
+package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.aasservice.AasOperations;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.MongoDBAasOperations;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MappingEntry;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
- * Configuration for the MongoDB concept description repository backend
  * 
- * @author mateusmolina
+ * Provides the MongoDB configuration for the {@link AasRepository}
+ * 
+ * @author schnicke, mateusmolina
+ *
  */
 @Configuration
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-@EnableMongoRepositories(basePackages = "org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend")
-public class MongoDbConceptDescriptionRepositoryBackendConfiguration {
+@EnableMongoRepositories(basePackages = "org.eclipse.digitaltwin.basyx.aasrepository.backend")
+public class MongoDBAasBackendConfiguration {
 
-    static final String COLLECTION_NAME_FIELD = "basyx.cdrepository.mongodb.collectionName";
-    static final String DEFAULT_COLLECTION_NAME = "cd-repo";
+	static final String COLLECTION_NAME_FIELD = "basyx.aasrepository.mongodb.collectionName";
+	static final String DEFAULT_COLLECTION_NAME = "aas-repo";
 
-    @Bean
-    MappingEntry cdMappingEntry(@Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
-        return MappingEntry.of(collectionName, ConceptDescription.class);
-    }
+	@Bean
+	MappingEntry aasMappingEntry(@Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
+		return MappingEntry.of(collectionName, AssetAdministrationShell.class);
+	}
+
+	@Bean
+	AasOperations aasServiceOperations(MongoOperations template, FileRepository fileRepository) {
+		return new MongoDBAasOperations(template, fileRepository);
+	}
 }

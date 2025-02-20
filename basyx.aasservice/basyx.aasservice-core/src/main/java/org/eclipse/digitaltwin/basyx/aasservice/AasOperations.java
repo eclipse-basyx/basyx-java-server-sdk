@@ -44,7 +44,7 @@ import org.springframework.lang.NonNull;
  * @author mateusmolina
  *
  */
-public interface AasServiceOperations {
+public interface AasOperations {
 
 	/**
 	 * Retrieves all Submodel References for the given AAS.

@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * {@link CrudConceptDescriptionRepository} factory using a
- * {@link ConceptDescriptionRepositoryBackend}
+ * {@link ConceptDescriptionBackend}
  * 
  * @author mateusmolina, danish
  * 
@@ -47,18 +47,18 @@ import org.springframework.stereotype.Component;
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
 public class CrudConceptDescriptionRepositoryFactory implements ConceptDescriptionRepositoryFactory {
 
-	private final ConceptDescriptionRepositoryBackend backend;
+	private final ConceptDescriptionBackend backend;
 	private final String repositoryName;
 
 	private Optional<Collection<ConceptDescription>> remoteCollection = Optional.empty();
 
 	@Autowired
-	public CrudConceptDescriptionRepositoryFactory(ConceptDescriptionRepositoryBackend backend, @Value("${basyx.cdrepo.name:cd-repo}") String conceptDescriptionRepositoryName) {
+	public CrudConceptDescriptionRepositoryFactory(ConceptDescriptionBackend backend, @Value("${basyx.cdrepo.name:cd-repo}") String conceptDescriptionRepositoryName) {
 		this.backend = backend;
 		this.repositoryName = conceptDescriptionRepositoryName;
 	}
 
-	public CrudConceptDescriptionRepositoryFactory(ConceptDescriptionRepositoryBackend backend) {
+	public CrudConceptDescriptionRepositoryFactory(ConceptDescriptionBackend backend) {
 		this(backend, "cd-repo");
 	}
 

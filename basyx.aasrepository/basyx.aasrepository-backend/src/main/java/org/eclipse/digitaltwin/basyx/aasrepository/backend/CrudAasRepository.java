@@ -53,11 +53,11 @@ import org.springframework.data.repository.CrudRepository;
  */
 public class CrudAasRepository implements AasRepository {
 
-	private final AasRepositoryBackend aasBackend;
+	private final AasBackend aasBackend;
 
 	private final String aasRepositoryName;
 
-	public CrudAasRepository(AasRepositoryBackend aasBackend, String aasRepositoryName) {
+	public CrudAasRepository(AasBackend aasBackend, String aasRepositoryName) {
 		this.aasBackend = aasBackend;
 		this.aasRepositoryName = aasRepositoryName;
 	}

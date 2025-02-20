@@ -27,7 +27,7 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.testconf
 
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend.CrudConceptDescriptionRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend.InMemoryConceptDescriptionRepositoryBackend;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend.InMemoryConceptDescriptionBackend;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -44,6 +44,6 @@ public class DummyConceptDescriptionRepositoryConfig {
 
 		@Bean
 		ConceptDescriptionRepository createConceptDescriptionRepository() {
-			return new CrudConceptDescriptionRepositoryFactory(new InMemoryConceptDescriptionRepositoryBackend()).create();
+			return new CrudConceptDescriptionRepositoryFactory(new InMemoryConceptDescriptionBackend()).create();
 		}
 }

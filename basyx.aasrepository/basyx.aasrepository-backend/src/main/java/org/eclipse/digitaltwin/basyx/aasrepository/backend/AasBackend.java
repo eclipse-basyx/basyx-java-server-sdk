@@ -23,18 +23,19 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
+package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.basyx.aasservice.AasOperations;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * Backend interface for the {@link ConceptDescription}
+ * Backend interface for the {@link AssetAdministrationShell}  
  * 
  * @author mateusmolina
  */
 @Repository
-public interface ConceptDescriptionRepositoryBackend extends CrudRepository<ConceptDescription, String> {
+public interface AasBackend extends CrudRepository<AssetAdministrationShell, String>, AasOperations {
 
 }

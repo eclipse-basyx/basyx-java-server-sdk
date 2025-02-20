@@ -23,43 +23,26 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
+package org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasservice.AasServiceOperations;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.MongoDBAasServiceOperations;
-import org.eclipse.digitaltwin.basyx.common.mongocore.MappingEntry;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.springframework.beans.factory.annotation.Value;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackend;
+import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
  * 
- * Provides the MongoDB configuration for the {@link AasRepository}
+ * InMemory backend provider for the AAS
  * 
- * @author schnicke, mateusmolina
- *
+ * @author mateusmolina, danish
  */
+@ConditionalOnExpression("'${basyx.backend}'.equals('InMemory')")
 @Configuration
-@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-@EnableMongoRepositories(basePackages = "org.eclipse.digitaltwin.basyx.aasrepository.backend")
-public class MongoDBAasRepositoryBackendConfiguration {
-
-	static final String COLLECTION_NAME_FIELD = "basyx.aasrepository.mongodb.collectionName";
-	static final String DEFAULT_COLLECTION_NAME = "aas-repo";
+public class InMemoryAasRepositoryConfiguration {
 
 	@Bean
-	MappingEntry aasMappingEntry(@Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
-		return MappingEntry.of(collectionName, AssetAdministrationShell.class);
-	}
-
-	@Bean
-	AasServiceOperations aasServiceOperations(MongoOperations template, FileRepository fileRepository) {
-		return new MongoDBAasServiceOperations(template, fileRepository);
+	AasBackend getAasBackend(AasServiceFactory aasServiceFactory) {
+		return new InMemoryAasBackend(aasServiceFactory);
 	}
 }
