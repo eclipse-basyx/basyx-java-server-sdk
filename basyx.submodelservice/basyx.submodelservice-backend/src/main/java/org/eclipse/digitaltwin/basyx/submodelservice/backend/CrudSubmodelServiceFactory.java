@@ -23,5 +23,10 @@ public class CrudSubmodelServiceFactory implements SubmodelServiceFactory{
     public SubmodelService create(Submodel submodel) {
         return new CrudSubmodelService(backend, fileRepository, submodel);
     }
-    
+
+    @Override
+    public SubmodelService create(String submodelId) {
+       return new CrudSubmodelService(backend, fileRepository, submodelId);
+    }
+
 }

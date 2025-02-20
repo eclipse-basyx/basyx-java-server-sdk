@@ -48,4 +48,9 @@ public class DecoratedSubmodelServiceFactory extends DecoratedFactory<SubmodelSe
 	public SubmodelService create(Submodel submodel) {
 		return getDecorated().create(submodel);
 	}
+
+	@Override
+	public SubmodelService create(String submodelId) {
+		return getDecorated().create(submodelId);
+	}
 }

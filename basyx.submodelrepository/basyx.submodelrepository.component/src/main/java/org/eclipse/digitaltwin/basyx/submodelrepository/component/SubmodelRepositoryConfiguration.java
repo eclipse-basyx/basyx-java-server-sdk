@@ -56,4 +56,9 @@ public class SubmodelRepositoryConfiguration {
 		return new DecoratedSubmodelRepositoryFactory(aasRepositoryFactory, features).create();
 	}
 
+	@Primary
+	@Bean
+	public SubmodelServiceFactory getSubmodelServiceFactory(SubmodelServiceFactory aasServiceFactory, List<SubmodelServiceFeature> features) {
+		return new DecoratedSubmodelServiceFactory(aasServiceFactory, features);
+	}
 }

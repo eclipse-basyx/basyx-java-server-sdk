@@ -26,10 +26,14 @@ public class CrudSubmodelService implements SubmodelService {
     private final SubmodelFileOperations submodelFileOperations;
 
     public CrudSubmodelService(SubmodelBackend submodelRepositoryBackend, FileRepository fileRepository, @NonNull Submodel submodel) {
-        this.backend = submodelRepositoryBackend;
-        this.submodelId = submodel.getId();
-        this.submodelFileOperations = new SubmodelFileOperations(fileRepository, submodelRepositoryBackend);
+        this(submodelRepositoryBackend, fileRepository, submodel.getId());
         hostSubmodel(submodel);
+    }
+
+    public CrudSubmodelService(SubmodelBackend submodelRepositoryBackend, FileRepository fileRepository, @NonNull String submodelId) {
+        this.backend = submodelRepositoryBackend;
+        this.submodelId = submodelId;
+        this.submodelFileOperations = new SubmodelFileOperations(fileRepository, submodelRepositoryBackend);
     }
 
     @Override

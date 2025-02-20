@@ -51,4 +51,9 @@ public class MqttSubmodelServiceFactory implements SubmodelServiceFactory {
 	public SubmodelService create(Submodel submodel) {
 		return new MqttSubmodelService(decorated.create(submodel), client, topicFactory);
 	}
+
+	@Override
+	public SubmodelService create(String submodelId) {
+		return new MqttSubmodelService(decorated.create(submodelId), client, topicFactory);
+	}
 }
