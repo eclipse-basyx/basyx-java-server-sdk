@@ -78,7 +78,7 @@ public class AbstractSubmodelServiceDecorator implements SubmodelService {
 
 	@Override
 	public void createSubmodelElement(SubmodelElement submodelElement) {
-		return decorated.createSubmodelElement(submodelElement);
+		decorated.createSubmodelElement(submodelElement);
 	}
 
 	@Override
