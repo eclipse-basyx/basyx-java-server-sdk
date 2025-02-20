@@ -89,8 +89,7 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
 	// Function that checks if a query satisfies any rule
 	public boolean hasPermission(RightsEnum rightsEnum, ObjectItem objectItem, Map<String, Value> attributesMap) {
 		List<AccessPermissionRule> allRules = abacStorage.getAbacRules();
-
-//		List<AccessPermissionRule> filteredRules = filterAccessRules(allRules, rightsEnum, objectItem);
+		
 		List<AccessPermissionRule> filteredRules = abacStorage.getFilteredAbacRules(rightsEnum, Acl.Access.ALLOW, objectItem);
 		SubjectInformation<Object> subjectInfo = getSubjectInformation();
 		Jwt jwt = (Jwt) subjectInfo.get();
@@ -121,29 +120,6 @@ public class SimpleAbacPermissionResolver implements AbacPermissionResolver {
             return null; 
         }
     }
-
-	private static List<AccessPermissionRule> filterAccessRules(List<AccessPermissionRule> accessRules, RightsEnum rightsEnum, ObjectItem objectItem) {
-		return accessRules.stream().filter(rule -> containsRightForAction(rule.getAcl().getRights(), rightsEnum)).filter(rule -> Acl.Access.ALLOW.equals(rule.getAcl().getAccess()))
-				.filter(rule -> objectMatches(rule.getObjects(), objectItem)).toList();
-	}
-
-	private static boolean containsRightForAction(List<RightsEnum> list, RightsEnum rightsEnum) {
-		return list.contains(rightsEnum);
-	}
-
-	private static boolean objectMatches(List<ObjectItem> objects, ObjectItem objectItem) {
-
-		if (objects.size() > 1)
-			return false;
-
-		if (objects.get(0).getRoute() != null)
-			return objects.get(0).getRoute().equals(objectItem.getRoute());
-
-		if (objects.get(0).getIdentifiable() != null)
-			return objects.get(0).getIdentifiable().equals("(AAS)*") || objects.get(0).getIdentifiable().equals(objectItem.getIdentifiable());
-
-		return false;
-	}
 
 	private static boolean validateAccessRules(List<AccessPermissionRule> filteredRules, Map<String, Value> attributesMap, Jwt jwt) {
 		

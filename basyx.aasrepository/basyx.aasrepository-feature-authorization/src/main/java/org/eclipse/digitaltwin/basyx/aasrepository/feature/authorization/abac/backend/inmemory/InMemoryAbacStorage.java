@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.authorization.abac.AbacStorage;
 import org.eclipse.digitaltwin.basyx.authorization.abac.AccessPermissionRule;
+import org.eclipse.digitaltwin.basyx.authorization.abac.Acl;
 import org.eclipse.digitaltwin.basyx.authorization.abac.Acl.Access;
 import org.eclipse.digitaltwin.basyx.authorization.abac.AllAccessPermissionRules;
 import org.eclipse.digitaltwin.basyx.authorization.abac.ObjectItem;
@@ -78,14 +79,32 @@ public class InMemoryAbacStorage implements AbacStorage {
 
 	@Override
 	public List<AccessPermissionRule> getFilteredAbacRules(RightsEnum right, Access access, ObjectItem objectItem) {
-		// TODO Auto-generated method stub
-		return null;
+		return abacRules.getRules().stream().filter(rule -> containsRightForAction(rule.getAcl().getRights(), right)).filter(rule -> Acl.Access.ALLOW.equals(rule.getAcl().getAccess()))
+				.filter(rule -> objectMatches(rule.getObjects(), objectItem)).toList();
 	}
 
 	@Override
 	public void update(String ruleId, AccessPermissionRule abacRule) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private static boolean containsRightForAction(List<RightsEnum> list, RightsEnum rightsEnum) {
+		return list.contains(rightsEnum);
+	}
+
+	private static boolean objectMatches(List<ObjectItem> objects, ObjectItem objectItem) {
+
+		if (objects.size() > 1)
+			return false;
+
+		if (objects.get(0).getRoute() != null)
+			return objects.get(0).getRoute().equals(objectItem.getRoute());
+
+		if (objects.get(0).getIdentifiable() != null)
+			return objects.get(0).getIdentifiable().equals("(AAS)*") || objects.get(0).getIdentifiable().equals(objectItem.getIdentifiable());
+
+		return false;
 	}
 
 }

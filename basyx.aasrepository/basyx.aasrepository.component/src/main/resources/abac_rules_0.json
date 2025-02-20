@@ -8,6 +8,9 @@
 							"CLAIM": "email"
 						},
 						{
+							"CLAIM": "preferred_username"
+						},
+						{
 							"CLAIM": "realm_access.roles"
 						},
 						{
@@ -43,11 +46,11 @@
 									"$eq": [
 										{
 											"$attribute": {
-												"CLAIM": "email"
+												"CLAIM": "preferred_username"
 											}
 										},
 										{
-											"$strVal": "reader@gmail.com"
+											"$strVal": "john.doe"
 										}
 									]
 								}
@@ -75,7 +78,7 @@
 											}
 										},
 										{
-											"$timeVal": "19:00"
+											"$timeVal": "11:00"
 										}
 									]
 								}

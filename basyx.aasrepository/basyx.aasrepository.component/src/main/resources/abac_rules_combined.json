@@ -1,0 +1,144 @@
+{
+	"AllAccessPermissionRules": {
+		"rules": [
+			{
+				"ACL": {
+					"ATTRIBUTES": [
+					],
+					"RIGHTS": [
+						"READ",
+						"UPDATE"
+					],
+					"ACCESS": "ALLOW"
+				},
+				"OBJECTS": [
+					{
+						"IDENTIFIABLE": "(AAS)DummyAASID"
+					}
+				],
+				"FORMULA": {
+					"$eq": [
+						{
+							"$field": "$aas#assetInformation.globalAssetId"
+						},
+						{
+							"$strVal": "https://example.org/Asset"
+						}
+					]
+				}
+			}
+			,
+			{
+				"ACL": {
+					"ATTRIBUTES": [
+						{
+							"GLOBAL": "UTCNOW"
+						}
+					],
+					"RIGHTS": [
+						"READ",
+						"UPDATE"
+					],
+					"ACCESS": "ALLOW"
+				},
+				"OBJECTS": [
+					{
+						"IDENTIFIABLE": "(AAS)AASID_005"
+					}
+				],
+				"FORMULA": {
+					"$and": [
+						{
+							"$ge": [
+								{
+									"$attribute": {
+										"GLOBAL": "UTCNOW"
+									}
+								},
+								{
+									"$timeVal": "11:00"
+								}
+							]
+						},
+						{
+							"$le": [
+								{
+									"$attribute": {
+										"GLOBAL": "UTCNOW"
+									}
+								},
+								{
+									"$timeVal": "16:00"
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"ACL": {
+					"ATTRIBUTES": [
+						{
+							"CLAIM": "preferred_username"
+						},
+						{
+							"CLAIM": "realm_access.roles"
+						}
+					],
+					"RIGHTS": [
+						"READ",
+						"UPDATE"
+					],
+					"ACCESS": "ALLOW"
+				},
+				"OBJECTS": [
+					{
+						"IDENTIFIABLE": "(AAS)*"
+					}
+				],
+				"FORMULA": {
+					"$and": [
+						{
+							"$and": [
+								{
+									"$eq": [
+										{
+											"$field": "$aas#id"
+										},
+										{
+											"$strVal": "AASID_004"
+										}
+									]
+								},
+								{
+									"$eq": [
+										{
+											"$attribute": {
+												"CLAIM": "preferred_username"
+											}
+										},
+										{
+											"$strVal": "john.doe"
+										}
+									]
+								}
+							]
+						},
+						{
+							"$eq": [
+								{
+									"$attribute": {
+										"CLAIM": "realm_access.roles"
+									}
+								},
+								{
+									"$strVal": "default-roles-basyx"
+								}
+							]
+						}
+					]
+				}
+			}
+		]
+	}
+}
