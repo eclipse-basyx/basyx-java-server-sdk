@@ -23,19 +23,36 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.backend;
+package org.eclipse.digitaltwin.basyx.aasservice.backend;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasservice.AasOperations;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import org.eclipse.digitaltwin.basyx.common.mongocore.MappingEntry;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
- * Backend interface for the {@link AssetAdministrationShell}  
+ * 
+ * Provides the MongoDB configuration for the AasService
  * 
  * @author mateusmolina
+ *
  */
-@Repository
-public interface AasBackend extends CrudRepository<AssetAdministrationShell, String>, AasOperations {
+@Configuration
+@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
+@EnableMongoRepositories(basePackages = "org.eclipse.digitaltwin.basyx.aasservice.backend")
+public class MongoDBAasServiceConfiguration {
+
+	static final String COLLECTION_NAME_FIELD = "basyx.aasservice.mongodb.collectionName";
+	static final String DEFAULT_COLLECTION_NAME = "aas-service";
+
+	@Bean
+	@ConditionalOnMissingBean
+	MappingEntry aasMappingEntry(@Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
+		return MappingEntry.of(collectionName, AssetAdministrationShell.class);
+	}
 
 }

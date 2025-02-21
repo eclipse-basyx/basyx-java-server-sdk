@@ -24,13 +24,11 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import io.moquette.broker.Server;
+import io.moquette.broker.config.ClasspathResourceLoader;
+import io.moquette.broker.config.IConfig;
+import io.moquette.broker.config.IResourceLoader;
+import io.moquette.broker.config.ResourceLoaderConfig;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -40,10 +38,11 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.DummyAasFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasBackend;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasBackend;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Base64URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener;
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
@@ -51,11 +50,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import io.moquette.broker.Server;
-import io.moquette.broker.config.ClasspathResourceLoader;
-import io.moquette.broker.config.IConfig;
-import io.moquette.broker.config.IResourceLoader;
-import io.moquette.broker.config.ResourceLoaderConfig;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests events emitting with the MqttAASAggregatorObserver
@@ -168,7 +168,7 @@ public class TestMqttV2AASAggregatorObserver {
 	}
 
 	private static AasRepository createMqttAasRepository(MqttClient client) {
-		AasRepositoryFactory repoFactory = new CrudAasRepositoryFactory(InMemoryAasBackend.buildDefault(), "aas-repo");
+		AasRepositoryFactory repoFactory = CrudAasRepositoryFactory.builder().aasRepositoryBackend(new InMemoryAasBackend()).fileRepository(new InMemoryFileRepository()).buildFactory();
 
 		return new MqttAasRepositoryFactory(repoFactory, client, new MqttAasRepositoryTopicFactory(new URLEncoder())).create();
 	}

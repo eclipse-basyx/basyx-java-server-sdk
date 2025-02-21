@@ -25,30 +25,25 @@
 
 package org.eclipse.digitaltwin.basyx.aasservice.feature.mqtt;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.moquette.broker.Server;
+import io.moquette.broker.config.ClasspathResourceLoader;
+import io.moquette.broker.config.IConfig;
+import io.moquette.broker.config.IResourceLoader;
+import io.moquette.broker.config.ResourceLoaderConfig;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
+import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasBackend;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasBackend;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceSuite;
 import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFactory;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.CrudAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasBackend;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
@@ -64,14 +59,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
-import io.moquette.broker.Server;
-import io.moquette.broker.config.ClasspathResourceLoader;
-import io.moquette.broker.config.IConfig;
-import io.moquette.broker.config.IResourceLoader;
-import io.moquette.broker.config.ResourceLoaderConfig;
+import static org.junit.Assert.assertEquals;
 
 public class TestMqttAasService extends AasServiceSuite {
 
@@ -129,7 +121,7 @@ public class TestMqttAasService extends AasServiceSuite {
 	
 	private static AasServiceFactory createMqttAasServiceFactory(MqttClient client) {
 		fileRepository = new InMemoryFileRepository();
-		AasServiceFactory serviceFactory = new InMemoryAasServiceFactory(fileRepository);
+		AasServiceFactory serviceFactory = new CrudAasServiceFactory(new InMemoryAasBackend(), fileRepository);
 		MqttAasServiceFeature mqttFeature = new MqttAasServiceFeature(client, aasRepository, objectMapper);
 		
 		return mqttFeature.decorate(serviceFactory);
@@ -198,9 +190,7 @@ public class TestMqttAasService extends AasServiceSuite {
 	}
 
 	private static AasRepository createMqttAasRepository() {
-		AasBackend aasBackend = new InMemoryAasBackend(mqttAasServiceFactory);
-		AasRepositoryFactory repoFactory = new CrudAasRepositoryFactory(aasBackend, "aas-repo");
-		return repoFactory.create();
+		return CrudAasRepositoryFactory.builder().aasRepositoryBackend(new InMemoryAasBackend()).fileRepository(new InMemoryFileRepository()).create();
 	}
 
 	private static MqttClient createAndConnectClient() throws MqttException, MqttSecurityException {

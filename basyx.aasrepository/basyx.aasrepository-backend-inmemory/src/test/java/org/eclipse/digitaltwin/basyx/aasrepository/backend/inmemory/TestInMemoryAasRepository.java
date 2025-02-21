@@ -40,7 +40,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFactory;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasBackend;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
@@ -60,7 +60,7 @@ public class TestInMemoryAasRepository extends AasRepositorySuite {
 	@Override
 	protected AasRepository getAasRepository() {
 		fileRepository = new InMemoryFileRepository();
-		return new CrudAasRepositoryFactory(InMemoryAasBackend.buildDefault(), "aas-repo").create();
+		return CrudAasRepositoryFactory.builder().aasRepositoryBackend(new InMemoryAasBackend()).fileRepository(fileRepository).create();
 	}
 
 	@Override
@@ -84,10 +84,8 @@ public class TestInMemoryAasRepository extends AasRepositorySuite {
 	
 	@Test
 	public void getConfiguredInMemoryAasRepositoryName() {
-		fileRepository = new InMemoryFileRepository();
-		InMemoryAasBackend backend = new InMemoryAasBackend(new InMemoryAasServiceFactory(fileRepository));
-		AasRepository repo = new CrudAasRepository(backend, CONFIGURED_AAS_REPO_NAME);
-		
+		AasRepository repo = CrudAasRepositoryFactory.builder().aasRepositoryBackend(new InMemoryAasBackend()).fileRepository(new InMemoryFileRepository()).aasRepositoryName(CONFIGURED_AAS_REPO_NAME).create();
+
 		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
 	}
 }

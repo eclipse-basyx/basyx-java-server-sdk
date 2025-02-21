@@ -27,9 +27,15 @@ package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.AasBackend;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.CrudAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 /**
  * Simple AAS repository factory that provides the {@link CrudAasRepository}
@@ -42,17 +48,62 @@ import org.springframework.stereotype.Component;
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
 public class CrudAasRepositoryFactory implements AasRepositoryFactory {
 
+	static final String DEFAULT_AAS_REPO_NAME = "aas-repo";
+
 	private final AasBackend aasRepositoryBackend;
+	private final AasServiceFactory aasServiceFactory;
 	private final String aasRepositoryName;
 
-	public CrudAasRepositoryFactory(AasBackend aasRepositoryBackend, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
+	public CrudAasRepositoryFactory(AasBackend aasRepositoryBackend, AasServiceFactory aasServiceFactory, @Value("${basyx.aasrepo.name:"+DEFAULT_AAS_REPO_NAME+"}") String aasRepositoryName) {
 		this.aasRepositoryBackend = aasRepositoryBackend;
+		this.aasServiceFactory = aasServiceFactory;
 		this.aasRepositoryName = aasRepositoryName;
 	}
 
 	@Override
 	public AasRepository create() {
-		return new CrudAasRepository(aasRepositoryBackend, aasRepositoryName);
+		return new CrudAasRepository(aasRepositoryBackend, aasServiceFactory, aasRepositoryName);
+	}
+
+	/**
+	 * Creates a new {@link Builder} for internal use
+	 */
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	public static class Builder {
+		private AasBackend aasRepositoryBackend;
+		private FileRepository fileRepository;
+		private Optional<String> aasRepositoryName = Optional.empty();
+
+		public Builder aasRepositoryBackend(AasBackend aasRepositoryBackend) {
+			this.aasRepositoryBackend = aasRepositoryBackend;
+			return this;
+		}
+
+		public Builder fileRepository(FileRepository fileRepository) {
+			this.fileRepository = fileRepository;
+			return this;
+		}
+
+		public Builder aasRepositoryName(String aasRepositoryName) {
+			this.aasRepositoryName = Optional.of(aasRepositoryName);
+			return this;
+		}
+
+		public CrudAasRepositoryFactory buildFactory() {
+			assert aasRepositoryBackend != null;
+			assert fileRepository != null;
+
+			AasServiceFactory aasServiceFactory = new CrudAasServiceFactory(aasRepositoryBackend, fileRepository);
+
+			return new CrudAasRepositoryFactory(aasRepositoryBackend, aasServiceFactory, aasRepositoryName.orElse(DEFAULT_AAS_REPO_NAME));
+		}
+
+		public AasRepository create() {
+			return buildFactory().create();
+		}
 	}
 
 }

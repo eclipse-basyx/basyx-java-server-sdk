@@ -41,4 +41,11 @@ public interface AasServiceFactory {
 	 * @return
 	 */
 	public AasService create(AssetAdministrationShell aas);
+
+	/**
+	 * Creates a new AasService assuming an AAS with ID aasId is already hosted in the storage backend
+	 *
+	 * @param aasId
+	 */
+	public AasService create(String aasId);
 }

@@ -25,29 +25,14 @@
 
 package org.eclipse.digitaltwin.basyx.aasservice.backend;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
+import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
-import org.eclipse.digitaltwin.aas4j.v3.model.Key;
-import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
+import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
-import org.eclipse.digitaltwin.basyx.aasservice.AasOperations;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepositoryHelper;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -59,7 +44,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.lang.NonNull;
 
-import com.mongodb.client.result.UpdateResult;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * MongoDB implementation of the {@link AasOperations}
@@ -74,11 +61,9 @@ public class MongoDBAasOperations implements AasOperations {
 
     private final MongoOperations mongoOperations;
     private final String collectionName;
-    private final FileRepository fileRepository;
 
     public MongoDBAasOperations(MongoOperations mongoOperations, FileRepository fileRepository) {
         this.mongoOperations = mongoOperations;
-        this.fileRepository = fileRepository;
         collectionName = mongoOperations.getCollectionName(AssetAdministrationShell.class);
     }
 
@@ -113,7 +98,7 @@ public class MongoDBAasOperations implements AasOperations {
         AggregationResults<DefaultReference> results = mongoOperations.aggregate(aggregation, collectionName, DefaultReference.class);
         List<DefaultReference> refs = results.getMappedResults();
 
-        if (refs.isEmpty() && !existsAas(aasId))
+        if (refs.isEmpty() && existsAas(aasId))
             throw new ElementDoesNotExistException(aasId);
 
         String nextCursor = null;
@@ -135,7 +120,7 @@ public class MongoDBAasOperations implements AasOperations {
         if (result.getMatchedCount() != 0)
             return;
 
-        if (!existsAas(aasId))
+        if (existsAas(aasId))
             throw new ElementDoesNotExistException(aasId);
 
         throw new CollidingSubmodelReferenceException(newKeyValue);
@@ -150,7 +135,7 @@ public class MongoDBAasOperations implements AasOperations {
         if (result.getModifiedCount() != 0)
             return;
 
-        if (!existsAas(aasId))
+        if (existsAas(aasId))
             throw new ElementDoesNotExistException(aasId);
 
         throw new ElementDoesNotExistException(submodelId);
@@ -167,7 +152,7 @@ public class MongoDBAasOperations implements AasOperations {
         // Second check for the case where the update was not performed because the
         // aasInfo is the
         // same as the existing one
-        if (result.getModifiedCount() == 0 && !existsAas(aasId))
+        if (result.getModifiedCount() == 0 && existsAas(aasId))
             throw new ElementDoesNotExistException(aasId);
     }
 
@@ -186,37 +171,8 @@ public class MongoDBAasOperations implements AasOperations {
         return aasInfo;
     }
 
-    @Override
-    public File getThumbnail(@NonNull String aasId) {
-        return FileRepositoryHelper.fetchAndStoreFileLocally(fileRepository, getThumbnailResourcePathOrThrow(getAssetInformation(aasId)));
-    }
-
-    @Override
-    public void setThumbnail(@NonNull String aasId, @NonNull String fileName, @NonNull String contentType, @NonNull InputStream inputStream) {
-        String filePath = FileRepositoryHelper.saveOrOverwriteFile(fileRepository, fileName, contentType, inputStream);
-        setAssetInformation(aasId, configureAssetInformationThumbnail(getAssetInformation(aasId), contentType, filePath));
-    }
-
-    @Override
-    public void deleteThumbnail(@NonNull String aasId) {
-        AssetInformation assetInformation = getAssetInformation(aasId);
-        FileRepositoryHelper.removeFileIfExists(fileRepository, getThumbnailResourcePathOrThrow(assetInformation));
-        setAssetInformation(aasId, configureAssetInformationThumbnail(assetInformation, "", ""));
-    }
-
     private boolean existsAas(String aasId) {
-        return mongoOperations.exists(new Query(Criteria.where("_id").is(aasId)), AssetAdministrationShell.class, collectionName);
-    }
-
-    private String getThumbnailResourcePathOrThrow(AssetInformation assetInformation) {
-        return Optional.ofNullable(assetInformation).map(AssetInformation::getDefaultThumbnail).map(Resource::getPath).orElseThrow(FileDoesNotExistException::new);
-    }
-    private static AssetInformation configureAssetInformationThumbnail(AssetInformation assetInformation, String contentType, String filePath) {
-        Resource resource = new DefaultResource();
-        resource.setContentType(contentType);
-        resource.setPath(filePath);
-        assetInformation.setDefaultThumbnail(resource);
-        return assetInformation;
+        return !mongoOperations.exists(new Query(Criteria.where("_id").is(aasId)), AssetAdministrationShell.class, collectionName);
     }
 
     private static String extractSubmodelId(Reference reference) {

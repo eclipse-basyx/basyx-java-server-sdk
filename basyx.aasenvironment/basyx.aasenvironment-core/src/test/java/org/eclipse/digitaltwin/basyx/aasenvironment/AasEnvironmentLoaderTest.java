@@ -30,8 +30,8 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException
 import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasBackend;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasBackend;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend.CrudConceptDescriptionRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend.InMemoryConceptDescriptionBackend;
@@ -75,7 +75,7 @@ public class AasEnvironmentLoaderTest {
 	@Before
 	public void setUp() {
 		submodelRepository = Mockito.spy(new CrudSubmodelRepositoryFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository()).create());
-		aasRepository = Mockito.spy(new CrudAasRepository(InMemoryAasBackend.buildDefault(), "aas-repo"));
+		aasRepository = Mockito.spy(CrudAasRepositoryFactory.builder().aasRepositoryBackend(new InMemoryAasBackend()).fileRepository(new InMemoryFileRepository()).create());
 		conceptDescriptionRepository = Mockito.spy(new CrudConceptDescriptionRepositoryFactory(new InMemoryConceptDescriptionBackend()).create());
 	}
 

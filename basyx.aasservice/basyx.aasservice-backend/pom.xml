@@ -9,9 +9,9 @@
 		<version>${revision}</version>
 	</parent>
 
-	<artifactId>basyx.aasservice-backend-inmemory</artifactId>
-	<name>BaSyx AAS Service backend-inmemory</name>
-	<description>BaSyx AAS Service backend-inmemory</description>
+	<artifactId>basyx.aasservice-backend</artifactId>
+	<name>BaSyx AAS Service backend</name>
+	<description>BaSyx AAS Service Backend</description>
 
 	<dependencies>
 		<dependency>
@@ -24,22 +24,17 @@
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.filerepository-backend-inmemory</artifactId>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-commons</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>org.eclipse.digitaltwin.basyx</groupId>
-            <artifactId>basyx.aasservice-backend</artifactId>
-        </dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.backend.inmemory.core</artifactId>
+			<artifactId>basyx.filerepository-backend</artifactId>
 		</dependency>
 	</dependencies>
 </project>
