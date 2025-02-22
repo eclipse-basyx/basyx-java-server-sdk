@@ -358,14 +358,6 @@ public class SubmodelServiceHelper {
 				.build();
 	}
 	
-	public static SubmodelElement createDummySME(String idShort, String value, DataTypeDefXsd dataType) {
-		return new DefaultProperty.Builder().idShort(idShort)
-				.category("cat1")
-				.value(value)
-				.valueType(dataType)
-				.build();
-	}
-	
 	public static File createDummyFile(String idShort, String contentType, String value) {
 		return new DefaultFile.Builder().idShort(idShort)
 				.category("file")

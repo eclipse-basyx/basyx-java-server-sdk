@@ -196,13 +196,13 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public SubmodelElement createSubmodelElement(String submodelId, SubmodelElement smElement) {
-		return getConnectedSubmodelService(submodelId).createSubmodelElement(smElement);
+	public void createSubmodelElement(String submodelId, SubmodelElement smElement) {
+		getConnectedSubmodelService(submodelId).createSubmodelElement(smElement);
 	}
 
 	@Override
-	public SubmodelElement createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
-		return getConnectedSubmodelService(submodelId).createSubmodelElement(idShortPath, smElement);
+	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
+		getConnectedSubmodelService(submodelId).createSubmodelElement(idShortPath, smElement);
 	}
 
 	@Override
