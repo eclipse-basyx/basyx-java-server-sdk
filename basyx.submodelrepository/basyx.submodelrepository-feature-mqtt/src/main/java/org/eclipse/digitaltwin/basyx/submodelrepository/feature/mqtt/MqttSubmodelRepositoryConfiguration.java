@@ -63,15 +63,15 @@ public class MqttSubmodelRepositoryConfiguration {
 	@Bean
 	@ConfigurationProperties(prefix = "mqtt")
 	public MqttConnectOptions mqttConnectOptions(@Value("${mqtt.username:}") String username, @Value("${mqtt.password:}") String password) {
-		MqttConnectOptions mqttConceptOptions = new MqttConnectOptions();
-		mqttConceptOptions.setAutomaticReconnect(true);
+		MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
+		mqttConnectOptions.setAutomaticReconnect(true);
 
 		if (username.isBlank() || password.isBlank())
-	        return mqttConceptOptions;
+	        return mqttConnectOptions;
 
-		mqttConceptOptions.setUserName(username);
-	    mqttConceptOptions.setPassword(password.toCharArray());
+		mqttConnectOptions.setUserName(username);
+		mqttConnectOptions.setPassword(password.toCharArray());
 
-		return mqttConceptOptions;
+		return mqttConnectOptions;
 	}
 }
