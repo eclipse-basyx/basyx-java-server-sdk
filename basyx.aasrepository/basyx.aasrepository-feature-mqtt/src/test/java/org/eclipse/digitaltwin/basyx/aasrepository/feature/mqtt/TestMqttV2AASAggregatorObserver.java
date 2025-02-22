@@ -44,7 +44,9 @@ import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasR
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Base64URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener;
+import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.junit.AfterClass;
@@ -195,4 +197,85 @@ public class TestMqttV2AASAggregatorObserver {
 
 		return broker;
 	}
+
+	@Test
+	public void checkTCPConnectionWithoutCredentials() throws Exception {
+		MqttAasRepositoryConfiguration config = new MqttAasRepositoryConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("", "");
+		IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				1884,
+				"tcp",
+				options);
+		assertTrue(client.isConnected());
+		client.disconnect();
+		client.close();
+	}
+
+	@Test
+	public void checkTCPConnectionWitCredentials() throws Exception {
+		MqttAasRepositoryConfiguration config = new MqttAasRepositoryConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
+		IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				1884,
+				"tcp",
+				options);
+		assertTrue(client.isConnected());
+		client.disconnect();
+		client.close();
+	}
+
+	@Test
+	public void checkTCPConnectionWitWrongCredentials() throws Exception {
+		MqttAasRepositoryConfiguration config = new MqttAasRepositoryConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("testuser", "false");
+		boolean authentication_failed = false;
+		try {
+			IMqttClient client = config.mqttClient(
+					"test-client",
+					"localhost",
+					1884,
+					"tcp",
+					options);
+		} catch (MqttException e) {
+			if (MqttException.REASON_CODE_FAILED_AUTHENTICATION == e.getReasonCode()) {
+				authentication_failed = true;
+			}
+		}
+		assertTrue(authentication_failed);
+	}
+
+	@Test
+	public void checkWSConnectionWithoutCredentials() throws Exception {
+		MqttAasRepositoryConfiguration config = new MqttAasRepositoryConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("", "");
+		IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				8080,
+				"ws",
+				options);
+		assertTrue(client.isConnected());
+		client.disconnect();
+		client.close();
+	}
+
+	@Test
+	public void checkWSConnectionWitCredentials() throws Exception {
+		MqttAasRepositoryConfiguration config = new MqttAasRepositoryConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
+		IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				8080,
+				"ws",
+				options);
+		assertTrue(client.isConnected());
+		client.disconnect();
+		client.close();
+	}
+
 }
