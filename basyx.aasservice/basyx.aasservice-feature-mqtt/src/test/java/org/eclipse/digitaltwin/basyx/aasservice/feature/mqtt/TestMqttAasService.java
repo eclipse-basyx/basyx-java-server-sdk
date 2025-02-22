@@ -232,7 +232,7 @@ public class TestMqttAasService extends AasServiceSuite {
 	}
 
 	@Test
-    public void TCPConnectionWithoutCredentials() throws Exception {
+    public void checkTCPConnectionWithoutCredentials() throws Exception {
         MqttConfiguration config = new MqttConfiguration();
         MqttConnectOptions options = config.mqttConnectOptions("", "");
         IMqttClient client = config.mqttClient(
@@ -248,7 +248,7 @@ public class TestMqttAasService extends AasServiceSuite {
     }
 
 	@Test
-    public void TCPConnectionWitCredentials() throws Exception {
+    public void checkTCPConnectionWitCredentials() throws Exception {
         MqttConfiguration config = new MqttConfiguration();
         MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
         IMqttClient client = config.mqttClient(
@@ -264,7 +264,7 @@ public class TestMqttAasService extends AasServiceSuite {
     }
 
 	@Test
-    public void TCPConnectionWitWrongCredentials() throws Exception {
+    public void checkTCPConnectionWitWrongCredentials() throws Exception {
         MqttConfiguration config = new MqttConfiguration();
         MqttConnectOptions options = config.mqttConnectOptions("testuser", "false");
 		boolean authentication_failed = false;
@@ -285,7 +285,7 @@ public class TestMqttAasService extends AasServiceSuite {
     }
 
 	@Test
-    public void WSConnectionWithoutCredentials() throws Exception {
+    public void checkWSConnectionWithoutCredentials() throws Exception {
         MqttConfiguration config = new MqttConfiguration();
         MqttConnectOptions options = config.mqttConnectOptions("", "");
         IMqttClient client = config.mqttClient(
@@ -301,7 +301,7 @@ public class TestMqttAasService extends AasServiceSuite {
     }
 
 	@Test
-    public void WSConnectionWitCredentials() throws Exception {
+    public void checkWSConnectionWitCredentials() throws Exception {
         MqttConfiguration config = new MqttConfiguration();
         MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
         IMqttClient client = config.mqttClient(

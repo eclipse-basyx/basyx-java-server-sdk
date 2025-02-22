@@ -199,7 +199,7 @@ public class TestMqttV2AASAggregatorObserver {
 	}
 		
 	@Test
-    public void TCPConnectionWithoutCredentials() throws Exception {
+    public void checkTCPConnectionWithoutCredentials() throws Exception {
         MqttAasRepositoryConfiguration config = new MqttAasRepositoryConfiguration();
         MqttConnectOptions options = config.mqttConnectOptions("", "");
         IMqttClient client = config.mqttClient(
@@ -215,7 +215,7 @@ public class TestMqttV2AASAggregatorObserver {
     }
 
 	@Test
-    public void TCPConnectionWitCredentials() throws Exception {
+    public void checkTCPConnectionWitCredentials() throws Exception {
         MqttAasRepositoryConfiguration config = new MqttAasRepositoryConfiguration();
         MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
         IMqttClient client = config.mqttClient(
@@ -231,7 +231,7 @@ public class TestMqttV2AASAggregatorObserver {
     }
 
 	@Test
-    public void TCPConnectionWitWrongCredentials() throws Exception {
+    public void checkTCPConnectionWitWrongCredentials() throws Exception {
         MqttAasRepositoryConfiguration config = new MqttAasRepositoryConfiguration();
         MqttConnectOptions options = config.mqttConnectOptions("testuser", "false");
 		boolean authentication_failed = false;
@@ -252,7 +252,7 @@ public class TestMqttV2AASAggregatorObserver {
     }
 
 	@Test
-    public void WSConnectionWithoutCredentials() throws Exception {
+    public void checkWSConnectionWithoutCredentials() throws Exception {
         MqttAasRepositoryConfiguration config = new MqttAasRepositoryConfiguration();
         MqttConnectOptions options = config.mqttConnectOptions("", "");
         IMqttClient client = config.mqttClient(
@@ -268,7 +268,7 @@ public class TestMqttV2AASAggregatorObserver {
     }
 
 	@Test
-    public void WSConnectionWitCredentials() throws Exception {
+    public void checkWSConnectionWitCredentials() throws Exception {
         MqttAasRepositoryConfiguration config = new MqttAasRepositoryConfiguration();
         MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
         IMqttClient client = config.mqttClient(
