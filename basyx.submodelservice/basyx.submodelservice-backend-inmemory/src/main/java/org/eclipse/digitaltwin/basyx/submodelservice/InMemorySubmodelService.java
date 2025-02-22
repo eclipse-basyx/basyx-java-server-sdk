@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 the Eclipse BaSyx Authors
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,7 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
+ * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
@@ -62,9 +62,9 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapper;
 
 /**
  * Implements the SubmodelService as in-memory variant
- *
+ * 
  * @author schnicke, danish, mateusmolina
- *
+ * 
  */
 public class InMemorySubmodelService implements SubmodelService {
 
@@ -78,7 +78,7 @@ public class InMemorySubmodelService implements SubmodelService {
 
 	/**
 	 * Creates the InMemory SubmodelService containing the passed Submodel
-	 *
+	 * 
 	 * @param submodel
 	 */
 	public InMemorySubmodelService(Submodel submodel, FileRepository fileRepository) {
@@ -128,14 +128,12 @@ public class InMemorySubmodelService implements SubmodelService {
 	}
 
 	@Override
-	public SubmodelElement createSubmodelElement(SubmodelElement submodelElement) throws CollidingIdentifierException {
+	public void createSubmodelElement(SubmodelElement submodelElement) throws CollidingIdentifierException {
 		synchronized (submodelLock) {
 			List<SubmodelElement> smElements = submodel.getSubmodelElements();
 			throwIfSubmodelElementExists(submodelElement.getIdShort());
 			smElements.add(submodelElement);
 		}
-
-		return submodelElement;
 	}
 
 	private void throwIfSubmodelElementExists(String submodelElementId) {
@@ -148,10 +146,10 @@ public class InMemorySubmodelService implements SubmodelService {
 	}
 
 	@Override
-	public SubmodelElement createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException, CollidingIdentifierException {
+	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException, CollidingIdentifierException {
 		synchronized (submodelLock) {
 			throwIfSubmodelElementExists(getFullIdShortPath(idShortPath, submodelElement.getIdShort()));
-
+			
 			SubmodelElement parentSme = parser.getSubmodelElementFromIdShortPath(idShortPath);
 			if (parentSme instanceof SubmodelElementList) {
 				SubmodelElementList list = (SubmodelElementList) parentSme;
@@ -167,8 +165,6 @@ public class InMemorySubmodelService implements SubmodelService {
 				submodelElements.add(submodelElement);
 			}
 		}
-
-		return submodelElement;
 	}
 
 	@Override

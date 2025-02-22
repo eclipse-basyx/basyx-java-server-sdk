@@ -718,10 +718,6 @@ public abstract class SubmodelServiceSuite {
 	private DefaultProperty createDummyProperty(String idShort) {
 		return new DefaultProperty.Builder().idShort(idShort).category("cat1").value("123").valueType(DataTypeDefXsd.INTEGER).build();
 	}
-	
-	private SubmodelElement createDummySME(String idShort) {
-		return new DefaultProperty.Builder().idShort(idShort).value("123").build();
-	}
 
 	private InputStream getInputStreamOfDummyFile(String fileContent) throws FileNotFoundException, IOException {
 		return new ByteArrayInputStream(fileContent.getBytes());

@@ -125,6 +125,9 @@ jobs:
         if: "!contains(matrix.name, 'registry')"
         run: echo "FINAL_ARGS=" >> $GITHUB_ENV
 
+      - name: Set short SHA
+        run: echo "SHORT_SHA=${GITHUB_SHA:0:7}" >> $GITHUB_ENV
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
@@ -134,8 +137,9 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: |
             ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:2.0.0-SNAPSHOT
+            ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:2.0.0-SNAPSHOT-${{ env.SHORT_SHA }}
           build-args: ${{ env.FINAL_ARGS }}
 
       - name: Verify Docker Image
         run: |
-          docker pull ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:2.0.0-SNAPSHOT
+          docker pull ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:2.0.0-SNAPSHOT-${{ env.SHORT_SHA }}
