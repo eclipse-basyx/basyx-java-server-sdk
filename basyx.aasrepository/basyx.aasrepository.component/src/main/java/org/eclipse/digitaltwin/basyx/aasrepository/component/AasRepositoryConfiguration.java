@@ -25,16 +25,20 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.component;
 
-import java.util.List;
-
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.DecoratedAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
+import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.feature.AasServiceFeature;
+import org.eclipse.digitaltwin.basyx.aasservice.feature.DecoratedAasServiceFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+
+import java.util.List;
 
 /**
  * Provides the spring bean configuration for the {@link AasRepository} and
@@ -49,5 +53,11 @@ public class AasRepositoryConfiguration {
 	@ConditionalOnMissingBean
 	public static AasRepository getAasRepository(AasRepositoryFactory aasRepositoryFactory, List<AasRepositoryFeature> features) {
 		return new DecoratedAasRepositoryFactory(aasRepositoryFactory, features).create();
+	}
+
+	@Primary
+	@Bean
+	public AasServiceFactory getAasServiceFactory(AasServiceFactory aasServiceFactory, List<AasServiceFeature> features) {
+		return new DecoratedAasServiceFactory(aasServiceFactory, features);
 	}
 }

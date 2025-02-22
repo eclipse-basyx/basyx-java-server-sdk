@@ -25,22 +25,21 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Collection;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
 import org.junit.Test;
 import org.junit.Test.None;
 
-import com.google.common.collect.Lists;
+import java.util.Collection;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests the {@link CrudSubmodelRepository} with InMemory backend
@@ -54,12 +53,12 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	
 	@Override
 	protected SubmodelRepository getSubmodelRepository() {
-		return new SimpleSubmodelRepositoryFactory(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository())).create();
+		return new CrudSubmodelRepositoryFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository()).create();
 	}
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
-		return new SimpleSubmodelRepositoryFactory(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository()), submodels).create();
+		return new CrudSubmodelRepositoryFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository()).withRemoteCollection(submodels).create();
 	}
 	
 	@Override
@@ -71,7 +70,7 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 
 	@Test
 	public void getConfiguredInMemorySmRepositoryName() {
-		SubmodelRepository repo = new CrudSubmodelRepository(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory(new InMemoryFileRepository()), CONFIGURED_SM_REPO_NAME);
+		SubmodelRepository repo = new CrudSubmodelRepositoryFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository(), CONFIGURED_SM_REPO_NAME).create();
 
 		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
 	}
@@ -91,11 +90,11 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	}
 
 	private Collection<Submodel> createSubmodelCollectionWithCollidingIds() {
-		return Lists.newArrayList(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
+		return List.of(DummySubmodelFactory.createTechnicalDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
 	}
 	
 	private Collection<Submodel> createSubmodelCollectionWithUniqueIds() {
-		return Lists.newArrayList(DummySubmodelFactory.createSimpleDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
+		return List.of(DummySubmodelFactory.createSimpleDataSubmodel(), DummySubmodelFactory.createTechnicalDataSubmodel());
 	}
 
 }

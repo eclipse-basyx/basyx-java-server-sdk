@@ -27,21 +27,15 @@ package org.eclipse.digitaltwin.basyx.aasxfileserver.http;
 
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServerFactory;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServerInMemoryBackendProvider;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.backend.CrudAASXFileServer;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.feature.AASXFileServerFeature;
-import org.eclipse.digitaltwin.basyx.aasxfileserver.feature.DecoratedAASXFileServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.List;
 
 @Configuration
 public class DummyAASXFileServerConfiguration {
 
     @Bean
-    public static AASXFileServer getAASXFileServer() {
-        return new CrudAASXFileServer(new AASXFileServerInMemoryBackendProvider(),"");
+    AASXFileServer getAASXFileServer(AASXFileServerFactory factory) {
+        return factory.create();
     }
 
 }

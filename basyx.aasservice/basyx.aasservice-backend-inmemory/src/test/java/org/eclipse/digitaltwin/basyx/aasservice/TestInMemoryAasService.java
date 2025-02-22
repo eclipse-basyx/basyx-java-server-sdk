@@ -26,16 +26,17 @@
 
 package org.eclipse.digitaltwin.basyx.aasservice;
 
-import java.io.IOException;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.CrudAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasBackend;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
+
+import java.io.IOException;
 
 public class TestInMemoryAasService extends AasServiceSuite {
 	
@@ -44,7 +45,7 @@ public class TestInMemoryAasService extends AasServiceSuite {
 	@Override
 	protected AasService getAasService(AssetAdministrationShell shell) {
 		fileRepository = new InMemoryFileRepository();
-		return new InMemoryAasServiceFactory(fileRepository).create(shell);
+		return new CrudAasServiceFactory(new InMemoryAasBackend(), fileRepository).create(shell);
 	}
 
 	@Override

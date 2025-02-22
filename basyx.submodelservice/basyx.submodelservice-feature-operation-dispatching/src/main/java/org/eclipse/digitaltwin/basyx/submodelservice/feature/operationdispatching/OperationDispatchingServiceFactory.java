@@ -47,4 +47,9 @@ public class OperationDispatchingServiceFactory implements SubmodelServiceFactor
 	public SubmodelService create(Submodel submodel) {
 		return new OperationDispatcherSubmodelService(decorated.create(submodel), executorProvider);
 	}
+
+	@Override
+	public SubmodelService create(String submodelId) {
+		return new OperationDispatcherSubmodelService(decorated.create(submodelId), executorProvider);
+	}
 }

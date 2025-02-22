@@ -50,7 +50,7 @@ public class TestMongoDBAasRepositoryPersistency extends AasRepositoryPersistenc
 	@Before
 	public void clearTemplate() {
 		MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
-		MongoDBUtilities.clearCollection(mongoTemplate, DummyAasRepositoryConfig.COLLECTION);
+		MongoDBUtilities.clearCollection(mongoTemplate, DummyAasRepositoryConfig.TEST_COLLECTION_NAME);
 	}
 
 	@Override

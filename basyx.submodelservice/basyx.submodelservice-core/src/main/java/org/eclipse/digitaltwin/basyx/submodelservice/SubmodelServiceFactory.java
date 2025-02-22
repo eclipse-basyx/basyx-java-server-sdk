@@ -42,4 +42,14 @@ public interface SubmodelServiceFactory {
 	 * @return
 	 */
 	public SubmodelService create(Submodel submodel);
+
+	/**
+	 * Creates a new SubmodelService containing the Submodel with the given id
+	 *
+	 * The submodel is assumed to be already stored in the backend
+	 *
+	 * @param submodelId
+	 * @return the created SubmodelService
+	 */
+	public SubmodelService create(String submodelId);
 }

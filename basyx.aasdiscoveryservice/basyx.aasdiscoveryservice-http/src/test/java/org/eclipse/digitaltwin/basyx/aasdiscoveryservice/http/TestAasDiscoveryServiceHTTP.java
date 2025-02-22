@@ -33,7 +33,7 @@ import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServic
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -47,8 +47,8 @@ public class TestAasDiscoveryServiceHTTP extends AasDiscoveryServiceHTTPSuite {
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
-	public static void startConceptDescriptionRepo() throws Exception {
-		appContext = new SpringApplication(DummyAasDiscoveryServiceComponent.class).run(new String[] {});
+	public static void startConceptDescriptionRepo() {
+		appContext = new SpringApplicationBuilder(DummyAasDiscoveryServiceComponent.class).profiles("httptests").run();
 	}
 
 	@Override
