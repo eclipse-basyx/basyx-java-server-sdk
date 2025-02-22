@@ -49,14 +49,16 @@ public class MqttSubmodelServiceConfiguration {
 
 	@ConditionalOnMissingBean
 	@Bean
-	public IMqttClient mqttClient(@Value("${mqtt.clientId}") String clientId, 
-								  @Value("${mqtt.hostname}") String hostname, 
-	                              @Value("${mqtt.port}") int port,
-	                              @Value("${mqtt.protocol:tcp}") String protocol,
-	                              MqttConnectOptions mqttConnectOptions) throws MqttException {
-	    IMqttClient mqttClient = new MqttClient(protocol+"://" + hostname + ":" + port, clientId, new MemoryPersistence());
-	    
-	    mqttClient.connect(mqttConnectOptions);
+	public IMqttClient mqttClient(
+			@Value("${mqtt.clientId}") String clientId,
+			@Value("${mqtt.hostname}") String hostname,
+			@Value("${mqtt.port}") int port,
+			@Value("${mqtt.protocol:tcp}") String protocol,
+			MqttConnectOptions mqttConnectOptions) throws MqttException {
+		IMqttClient mqttClient = new MqttClient(protocol + "://" + hostname + ":" + port, clientId,
+				new MemoryPersistence());
+
+		mqttClient.connect(mqttConnectOptions);
 
 		return mqttClient;
 	}
@@ -64,15 +66,17 @@ public class MqttSubmodelServiceConfiguration {
 	@ConditionalOnMissingBean
 	@Bean
 	@ConfigurationProperties(prefix = "mqtt")
-	public MqttConnectOptions mqttConnectOptions(@Value("${mqtt.username:}") String username, @Value("${mqtt.password:}") String password) {
+	public MqttConnectOptions mqttConnectOptions(
+			@Value("${mqtt.username:}") String username,
+			@Value("${mqtt.password:}") String password) {
 		MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
 		mqttConnectOptions.setAutomaticReconnect(true);
 
 		if (username.isBlank() || password.isBlank())
-	        return mqttConnectOptions;
+			return mqttConnectOptions;
 
 		mqttConnectOptions.setUserName(username);
-	    mqttConnectOptions.setPassword(password.toCharArray());
+		mqttConnectOptions.setPassword(password.toCharArray());
 
 		return mqttConnectOptions;
 	}
