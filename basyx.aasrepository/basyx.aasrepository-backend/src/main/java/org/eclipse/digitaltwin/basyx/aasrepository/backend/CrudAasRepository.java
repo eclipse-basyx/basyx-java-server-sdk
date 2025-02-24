@@ -24,13 +24,6 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
@@ -46,6 +39,13 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.springframework.data.repository.CrudRepository;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Default Implementation for the {@link AasRepository} based on Spring
@@ -147,7 +147,7 @@ public class CrudAasRepository implements AasRepository {
 
 	@Override
 	public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
-		getService(aasId).setThumbnail(aasId, fileName, inputStream);
+		getService(aasId).setThumbnail(fileName, contentType, inputStream);
 	}
 
 	@Override
