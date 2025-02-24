@@ -10,6 +10,9 @@ services:
     # build it with `docker build -t basyx.conceptdescriptionrepository.component .
     volumes:
       - ./cd-repo.properties:/application/application.properties
+	  # Do NOT change any port while running in a Docker container.
+	  # Changing this will make the service unreachable from outside the container.
+	  # This port should only be changed when running the application without Docker
     ports:
       - 8081:8081
     networks:

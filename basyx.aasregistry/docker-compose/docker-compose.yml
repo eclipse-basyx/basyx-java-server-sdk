@@ -22,6 +22,9 @@ services:
     image: portainer/portainer-ce:2.0.1
     container_name: portainer
     restart: always
+	# Do NOT change any port while running in a Docker container.
+	# Changing this will make the service unreachable from outside the container.
+	# This port should only be changed when running the application without Docker
     ports:
       - "9090:9000"
     volumes:

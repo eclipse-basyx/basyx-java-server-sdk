@@ -1,5 +1,8 @@
 version: '3'
 services:
+	# Do NOT change any port while running in a Docker container.
+	# Changing this will make the service unreachable from outside the container.
+	# This port should only be changed when running the application without Docker
   aas-env:
     image: eclipsebasyx/aas-environment:2.0.0-milestone-04
     container_name: aas-env
