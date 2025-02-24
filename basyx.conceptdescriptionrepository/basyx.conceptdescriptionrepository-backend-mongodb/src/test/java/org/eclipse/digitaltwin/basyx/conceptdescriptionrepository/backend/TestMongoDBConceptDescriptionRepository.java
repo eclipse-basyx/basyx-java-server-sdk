@@ -69,7 +69,7 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions) {
-		return new CrudConceptDescriptionRepositoryFactory(conceptDescriptionRepositoryBackend).withRemoteCollection(conceptDescriptions).create();
+		return CrudConceptDescriptionRepositoryFactory.builder().backend(conceptDescriptionRepositoryBackend).remoteCollection(conceptDescriptions).create();
 	}
 
 }

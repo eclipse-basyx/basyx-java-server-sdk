@@ -64,27 +64,63 @@ public class CrudSubmodelRepositoryFactory implements SubmodelRepositoryFactory 
         this.submodelRepositoryName = submodelRepositoryName;
     }
 
-    public CrudSubmodelRepositoryFactory(SubmodelBackend submodelBackend, SubmodelServiceFactory submodelServiceFactory) {
-        this(submodelBackend, submodelServiceFactory, DEFAULT_REPOSITORY_NAME);
-    }
-
-    public CrudSubmodelRepositoryFactory(SubmodelBackend submodelBackend, FileRepository fileRepository) {
-		this(submodelBackend, new CrudSubmodelServiceFactory(submodelBackend, fileRepository));
-	}
-
-    public CrudSubmodelRepositoryFactory(SubmodelBackend submodelBackend, FileRepository fileRepository, String submodelRepositoryName) {
-        this(submodelBackend, new CrudSubmodelServiceFactory(submodelBackend, fileRepository), submodelRepositoryName);
-    }
-
-    public CrudSubmodelRepositoryFactory withRemoteCollection(Collection<Submodel> submodels) {
+    public void setRemoteCollection(Collection<Submodel> submodels) {
         this.submodels = Optional.of(submodels);
-        return this;
     }
 
     @Override
     public SubmodelRepository create() {
         return submodels.map(submodelCollection -> new CrudSubmodelRepository(backend, submodelServiceFactory, submodelRepositoryName, submodelCollection))
                 .orElseGet(() -> new CrudSubmodelRepository(backend, submodelServiceFactory, submodelRepositoryName));
+    }
+
+    public static Builder builder(){
+        return new Builder();
+    }
+
+    public static class Builder {
+        private SubmodelBackend submodelBackend;
+        private FileRepository fileRepository;
+        private Optional<String> repositoryName = Optional.empty();
+        private Optional<Collection<Submodel>> submodels = Optional.empty();
+
+        public Builder backend(SubmodelBackend submodelBackend) {
+            this.submodelBackend = submodelBackend;
+            return this;
+        }
+
+        public Builder fileRepository(FileRepository fileRepository) {
+            this.fileRepository = fileRepository;
+            return this;
+        }
+
+        public Builder repositoryName(String repositoryName){
+            this.repositoryName = Optional.of(repositoryName);
+            return this;
+        }
+
+        public Builder remoteCollection(Collection<Submodel> submodels){
+            this.submodels = Optional.of(submodels);
+            return this;
+        }
+
+        public CrudSubmodelRepositoryFactory buildFactory(){
+            assert submodelBackend != null;
+            assert fileRepository != null;
+
+            CrudSubmodelServiceFactory submodelServiceFactory = new CrudSubmodelServiceFactory(submodelBackend, fileRepository);
+
+            CrudSubmodelRepositoryFactory submodelRepositoryFactory = new CrudSubmodelRepositoryFactory(submodelBackend, submodelServiceFactory, repositoryName.orElse(DEFAULT_REPOSITORY_NAME));
+
+            submodels.ifPresent(submodelRepositoryFactory::setRemoteCollection);
+
+            return submodelRepositoryFactory;
+        }
+
+        public SubmodelRepository create(){
+            return buildFactory().create();
+        }
+
     }
 
 }

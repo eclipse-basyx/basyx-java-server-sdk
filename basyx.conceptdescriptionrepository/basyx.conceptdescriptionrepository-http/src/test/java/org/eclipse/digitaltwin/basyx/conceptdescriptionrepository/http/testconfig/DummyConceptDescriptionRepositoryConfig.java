@@ -44,6 +44,6 @@ public class DummyConceptDescriptionRepositoryConfig {
 
 		@Bean
 		ConceptDescriptionRepository createConceptDescriptionRepository() {
-			return new CrudConceptDescriptionRepositoryFactory(new InMemoryConceptDescriptionBackend()).create();
+			return CrudConceptDescriptionRepositoryFactory.builder().backend(new InMemoryConceptDescriptionBackend()).create();
 		}
 }

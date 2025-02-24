@@ -105,6 +105,6 @@ public final class MongoFilterBuilder{
         return sb.substring(0, sb.length() - 1);
     }
 
-    public static record MongoFilterResult(String key, List<CriteriaDefinition> filters) {
+    public record MongoFilterResult(String key, List<CriteriaDefinition> filters) {
     }
 }

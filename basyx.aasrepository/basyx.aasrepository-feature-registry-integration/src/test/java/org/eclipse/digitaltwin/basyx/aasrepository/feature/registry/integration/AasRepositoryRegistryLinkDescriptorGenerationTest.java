@@ -114,7 +114,7 @@ public class AasRepositoryRegistryLinkDescriptorGenerationTest {
     }
     
 	protected AasRepository getAasRepository() {
-        return CrudAasRepositoryFactory.builder().aasRepositoryBackend(new InMemoryAasBackend()).fileRepository( new InMemoryFileRepository()).create();
+        return CrudAasRepositoryFactory.builder().backend(new InMemoryAasBackend()).fileRepository( new InMemoryFileRepository()).create();
 	}
 
 }

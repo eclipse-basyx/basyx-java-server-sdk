@@ -77,7 +77,7 @@ public class CrudAasRepositoryFactory implements AasRepositoryFactory {
 		private FileRepository fileRepository;
 		private Optional<String> aasRepositoryName = Optional.empty();
 
-		public Builder aasRepositoryBackend(AasBackend aasRepositoryBackend) {
+		public Builder backend(AasBackend aasRepositoryBackend) {
 			this.aasRepositoryBackend = aasRepositoryBackend;
 			return this;
 		}
@@ -87,7 +87,7 @@ public class CrudAasRepositoryFactory implements AasRepositoryFactory {
 			return this;
 		}
 
-		public Builder aasRepositoryName(String aasRepositoryName) {
+		public Builder repositoryName(String aasRepositoryName) {
 			this.aasRepositoryName = Optional.of(aasRepositoryName);
 			return this;
 		}

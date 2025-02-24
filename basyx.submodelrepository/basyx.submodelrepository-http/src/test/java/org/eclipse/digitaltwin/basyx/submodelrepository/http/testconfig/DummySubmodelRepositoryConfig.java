@@ -47,6 +47,6 @@ public class DummySubmodelRepositoryConfig {
 	@Bean
 	@ConditionalOnMissingBean
 	public SubmodelRepository createSubmodelRepository() {
-		return new CrudSubmodelRepositoryFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository()).create();
+		return CrudSubmodelRepositoryFactory.builder().backend(new InMemorySubmodelBackend()).fileRepository(new InMemoryFileRepository()).create();
 	}
 }

@@ -53,12 +53,12 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 	
 	@Override
 	protected SubmodelRepository getSubmodelRepository() {
-		return new CrudSubmodelRepositoryFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository()).create();
+		return CrudSubmodelRepositoryFactory.builder().backend(new InMemorySubmodelBackend()).fileRepository(new InMemoryFileRepository()).create();
 	}
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
-		return new CrudSubmodelRepositoryFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository()).withRemoteCollection(submodels).create();
+		return CrudSubmodelRepositoryFactory.builder().backend(new InMemorySubmodelBackend()).fileRepository(new InMemoryFileRepository()).remoteCollection(submodels).create();
 	}
 	
 	@Override
@@ -70,7 +70,7 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 
 	@Test
 	public void getConfiguredInMemorySmRepositoryName() {
-		SubmodelRepository repo = new CrudSubmodelRepositoryFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository(), CONFIGURED_SM_REPO_NAME).create();
+		SubmodelRepository repo = CrudSubmodelRepositoryFactory.builder().backend(new InMemorySubmodelBackend()).fileRepository(new InMemoryFileRepository()).repositoryName(CONFIGURED_SM_REPO_NAME).create();
 
 		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
 	}

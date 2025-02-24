@@ -61,7 +61,7 @@ public class InMemoryFileRepository implements FileRepository {
 		try (FileOutputStream outStream = new FileOutputStream(targetFile)) {
 			IOUtils.copy(fileMetadata.getFileContent(), outStream);
 		} catch (IOException e) {
-			throw new FileHandlingException(fileMetadata.getFileName());
+			throw new FileHandlingException(fileMetadata.getFileName(), e);
 		}
 
 		fileMetadata.setFileName(filePath);

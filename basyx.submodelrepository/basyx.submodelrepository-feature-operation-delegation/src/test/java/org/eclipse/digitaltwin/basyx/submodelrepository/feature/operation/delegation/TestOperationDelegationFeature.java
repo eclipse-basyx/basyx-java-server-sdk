@@ -182,7 +182,7 @@ public class TestOperationDelegationFeature {
 	}
 
 	private static SubmodelRepository createOperationDelegationSubmodelRepository(OperationDelegation operationDelegation) {
-		SubmodelRepositoryFactory repoFactory = new CrudSubmodelRepositoryFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository());
+		SubmodelRepositoryFactory repoFactory = CrudSubmodelRepositoryFactory.builder().backend(new InMemorySubmodelBackend()).fileRepository(new InMemoryFileRepository()).buildFactory();
 
 		return new OperationDelegationSubmodelRepositoryFactory(repoFactory, operationDelegation).create();
 	}

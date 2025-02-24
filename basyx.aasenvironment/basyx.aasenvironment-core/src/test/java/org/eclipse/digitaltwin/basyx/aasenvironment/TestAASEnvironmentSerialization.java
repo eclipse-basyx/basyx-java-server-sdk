@@ -81,9 +81,9 @@ public class TestAASEnvironmentSerialization {
 
 	@Before
 	public void setup() {
-		submodelRepository = new CrudSubmodelRepositoryFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository()).create();
-		aasRepository = CrudAasRepositoryFactory.builder().aasRepositoryBackend(new InMemoryAasBackend()).fileRepository(new InMemoryFileRepository()).create();
-		conceptDescriptionRepository = new CrudConceptDescriptionRepositoryFactory(new InMemoryConceptDescriptionBackend()).withRemoteCollection(createDummyConceptDescriptions()).create();
+		submodelRepository = CrudSubmodelRepositoryFactory.builder().backend(new InMemorySubmodelBackend()).fileRepository(new InMemoryFileRepository()).create();
+		aasRepository = CrudAasRepositoryFactory.builder().backend(new InMemoryAasBackend()).fileRepository(new InMemoryFileRepository()).create();
+		conceptDescriptionRepository = CrudConceptDescriptionRepositoryFactory.builder().backend(new InMemoryConceptDescriptionBackend()).remoteCollection(createDummyConceptDescriptions()).create();
 
 		for (Submodel submodel : createDummySubmodels()) {
 			submodelRepository.createSubmodel(submodel);

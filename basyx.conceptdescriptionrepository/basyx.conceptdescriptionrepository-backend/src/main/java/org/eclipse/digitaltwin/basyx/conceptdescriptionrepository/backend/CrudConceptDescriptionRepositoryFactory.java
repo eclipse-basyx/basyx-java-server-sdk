@@ -46,37 +46,64 @@ import org.springframework.stereotype.Component;
 @Component
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
 public class CrudConceptDescriptionRepositoryFactory implements ConceptDescriptionRepositoryFactory {
+	static final String DEFAULT_REPO_NAME = "cd-repo";
 
 	private final ConceptDescriptionBackend backend;
 	private final String repositoryName;
-
 	private Optional<Collection<ConceptDescription>> remoteCollection = Optional.empty();
 
 	@Autowired
-	public CrudConceptDescriptionRepositoryFactory(ConceptDescriptionBackend backend, @Value("${basyx.cdrepo.name:cd-repo}") String conceptDescriptionRepositoryName) {
+	public CrudConceptDescriptionRepositoryFactory(ConceptDescriptionBackend backend, @Value("${basyx.cdrepo.name:"+DEFAULT_REPO_NAME+"}") String conceptDescriptionRepositoryName) {
 		this.backend = backend;
 		this.repositoryName = conceptDescriptionRepositoryName;
 	}
 
-	public CrudConceptDescriptionRepositoryFactory(ConceptDescriptionBackend backend) {
-		this(backend, "cd-repo");
-	}
-
-	public CrudConceptDescriptionRepositoryFactory withRemoteCollection(Collection<ConceptDescription> conceptDescriptions) {
-		this.remoteCollection = Optional.of(conceptDescriptions);
-		return this;
+	public void setRemoteCollection(Collection<ConceptDescription> collection){
+		this.remoteCollection = Optional.of(collection);
 	}
 
 	@Override
 	public ConceptDescriptionRepository create() {
-		CrudConceptDescriptionRepository repo;
-
-		if (remoteCollection.isPresent())
-			repo = new CrudConceptDescriptionRepository(backend, repositoryName, remoteCollection.get());
-		else
-			repo = new CrudConceptDescriptionRepository(backend, repositoryName);
-
-		return repo;
+        return remoteCollection.map(conceptDescriptions -> new CrudConceptDescriptionRepository(backend, repositoryName, conceptDescriptions)).orElseGet(() -> new CrudConceptDescriptionRepository(backend, repositoryName));
 	}
 
+	public static Builder builder(){
+		return new Builder();
+	}
+
+	public static class Builder {
+		private ConceptDescriptionBackend backend;
+		private Optional<String> repositoryName = Optional.empty();
+		private Optional<Collection<ConceptDescription>> remoteCollection = Optional.empty();
+
+
+		public Builder backend(ConceptDescriptionBackend backend){
+			this.backend = backend;
+			return this;
+		}
+
+		public Builder repositoryName(String repositoryName){
+			this.repositoryName = Optional.of(repositoryName);
+			return this;
+		}
+
+		public Builder remoteCollection(Collection<ConceptDescription> remoteCollection){
+			this.remoteCollection = Optional.of(remoteCollection);
+			return this;
+		}
+
+		public CrudConceptDescriptionRepositoryFactory buildFactory(){
+			assert backend != null;
+
+			CrudConceptDescriptionRepositoryFactory factory = new CrudConceptDescriptionRepositoryFactory(backend, repositoryName.orElse(DEFAULT_REPO_NAME));
+
+			remoteCollection.ifPresent(factory::setRemoteCollection);
+
+			return factory;
+		}
+
+		public ConceptDescriptionRepository create(){
+			return buildFactory().create();
+		}
+	}
 }

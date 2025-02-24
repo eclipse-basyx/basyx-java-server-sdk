@@ -55,9 +55,9 @@ public final class IdShortPathParser {
     public sealed interface GenericPath permits IdShortPath, IndexPath {
     }
 
-    public static final record IdShortPath(String idShort) implements GenericPath {
+    public record IdShortPath(String idShort) implements GenericPath {
     }
 
-    public static final record IndexPath(int index) implements GenericPath {
+    public record IndexPath(int index) implements GenericPath {
     }
 }

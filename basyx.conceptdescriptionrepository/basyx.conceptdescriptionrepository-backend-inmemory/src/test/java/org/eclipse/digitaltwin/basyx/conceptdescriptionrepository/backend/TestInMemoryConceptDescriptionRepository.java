@@ -51,12 +51,12 @@ public class TestInMemoryConceptDescriptionRepository extends ConceptDescription
 
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository() {
-		return new CrudConceptDescriptionRepositoryFactory(backend).create();
+		return CrudConceptDescriptionRepositoryFactory.builder().backend(backend).create();
 	}
 
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions) {
-		return new CrudConceptDescriptionRepositoryFactory(backend).withRemoteCollection(conceptDescriptions).create();
+		return CrudConceptDescriptionRepositoryFactory.builder().backend(backend).remoteCollection(conceptDescriptions).create();
 	}
 
 	@Test
@@ -70,7 +70,7 @@ public class TestInMemoryConceptDescriptionRepository extends ConceptDescription
 	public void idCollisionDuringConstruction() {
 		Collection<ConceptDescription> conceptDescriptionsWithCollidingIds = createConceptDescriptionCollectionWithCollidingIds();
 
-		new CrudConceptDescriptionRepositoryFactory(backend).withRemoteCollection(conceptDescriptionsWithCollidingIds).create();
+		CrudConceptDescriptionRepositoryFactory.builder().backend(backend).remoteCollection(conceptDescriptionsWithCollidingIds).create();
 	}
 
 	private Collection<ConceptDescription> createConceptDescriptionCollectionWithCollidingIds() {

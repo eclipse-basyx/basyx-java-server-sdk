@@ -32,7 +32,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -62,7 +61,7 @@ public class MongoDBAasOperations implements AasOperations {
     private final MongoOperations mongoOperations;
     private final String collectionName;
 
-    public MongoDBAasOperations(MongoOperations mongoOperations, FileRepository fileRepository) {
+    public MongoDBAasOperations(MongoOperations mongoOperations) {
         this.mongoOperations = mongoOperations;
         collectionName = mongoOperations.getCollectionName(AssetAdministrationShell.class);
     }

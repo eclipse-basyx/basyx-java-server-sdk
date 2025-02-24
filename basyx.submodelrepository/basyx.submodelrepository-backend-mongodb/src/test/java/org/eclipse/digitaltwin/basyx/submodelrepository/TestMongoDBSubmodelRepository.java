@@ -77,7 +77,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
-		return new CrudSubmodelRepositoryFactory(submodelBackend, fileRepository).withRemoteCollection(submodels).create();
+		return CrudSubmodelRepositoryFactory.builder().backend(submodelBackend).fileRepository(fileRepository).remoteCollection(submodels).create();
 	}
 
 	@Override

@@ -303,7 +303,7 @@ public class TestMqttSubmodelObserver {
 		
 		SAVED_FILE_PATH = fileRepository.save(new FileMetadata(FILE_SUBMODEL_ELEMENT_NAME, "", getInputStreamOfDummyFile(FILE_SUBMODEL_ELEMENT_CONTENT)));
 
-		SubmodelRepositoryFactory repoFactory = new CrudSubmodelRepositoryFactory(new InMemorySubmodelBackend(), fileRepository);
+		SubmodelRepositoryFactory repoFactory = CrudSubmodelRepositoryFactory.builder().backend(new InMemorySubmodelBackend()).fileRepository(fileRepository).buildFactory();
 
 
 		return new MqttSubmodelRepositoryFactory(repoFactory, client, new MqttSubmodelRepositoryTopicFactory(new Base64URLEncoder())).create();

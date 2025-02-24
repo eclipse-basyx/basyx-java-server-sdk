@@ -74,9 +74,9 @@ public class AasEnvironmentLoaderTest {
 
 	@Before
 	public void setUp() {
-		submodelRepository = Mockito.spy(new CrudSubmodelRepositoryFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository()).create());
-		aasRepository = Mockito.spy(CrudAasRepositoryFactory.builder().aasRepositoryBackend(new InMemoryAasBackend()).fileRepository(new InMemoryFileRepository()).create());
-		conceptDescriptionRepository = Mockito.spy(new CrudConceptDescriptionRepositoryFactory(new InMemoryConceptDescriptionBackend()).create());
+		submodelRepository = Mockito.spy(CrudSubmodelRepositoryFactory.builder().backend(new InMemorySubmodelBackend()).fileRepository(new InMemoryFileRepository()).create());
+		aasRepository = Mockito.spy(CrudAasRepositoryFactory.builder().backend(new InMemoryAasBackend()).fileRepository(new InMemoryFileRepository()).create());
+		conceptDescriptionRepository = Mockito.spy(CrudConceptDescriptionRepositoryFactory.builder().backend(new InMemoryConceptDescriptionBackend()).create());
 	}
 
 	protected void loadRepositories(List<String> pathsToLoad) throws IOException, DeserializationException, InvalidFormatException {

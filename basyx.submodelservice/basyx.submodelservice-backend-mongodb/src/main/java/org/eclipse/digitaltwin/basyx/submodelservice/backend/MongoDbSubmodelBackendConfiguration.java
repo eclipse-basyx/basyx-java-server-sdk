@@ -56,9 +56,4 @@ public class MongoDbSubmodelBackendConfiguration {
     MappingEntry submodelMappingEntry(@Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
         return MappingEntry.of(collectionName, Submodel.class);
     }
-
-    @Bean
-    SubmodelOperations submodelOperations(MongoOperations operations) {
-        return new MongoDbSubmodelOperations(operations);
-    }
 }
