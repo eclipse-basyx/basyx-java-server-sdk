@@ -22,6 +22,7 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+
 package org.eclipse.digitaltwin.basyx.submodelservice.backend;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -37,8 +38,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
- * 
- * 
+ * Configuration for the SubmodelBackend with MongoDB backend
  * 
  * @author mateusmolina
  *

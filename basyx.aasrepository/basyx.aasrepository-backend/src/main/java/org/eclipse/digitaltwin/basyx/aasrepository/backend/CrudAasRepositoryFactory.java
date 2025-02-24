@@ -38,8 +38,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 /**
- * Simple AAS repository factory that provides the {@link CrudAasRepository}
- * component
+ * Factory component for the {@link CrudAasRepository}
  * 
  * @author mateusmolina
  * 
