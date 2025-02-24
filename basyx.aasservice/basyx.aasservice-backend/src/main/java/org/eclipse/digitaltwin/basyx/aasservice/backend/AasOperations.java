@@ -22,6 +22,7 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+
 package org.eclipse.digitaltwin.basyx.aasservice.backend;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -45,9 +46,8 @@ public interface AasOperations {
     /**
      * Retrieves all Submodel References for the given AAS.
      *
-     * @param aasId the identifier of the Asset Administration Shell; must not be
-     *              {@code null}
-     * @param pInfo the pagination information; must not be {@code null}
+     * @param aasId the identifier of the Asset Administration Shell
+     * @param pInfo the pagination information 
      * @return a {@code CursorResult} containing a list of Submodel References
      * @throws ElementDoesNotExistException if the Asset Administration Shell with the specified
      *                                      {@code aasId} does not exist
@@ -57,9 +57,8 @@ public interface AasOperations {
     /**
      * Adds a Submodel Reference to the specified AAS.
      *
-     * @param aasId             the identifier of the Asset Administration Shell; must not be
-     *                          {@code null}
-     * @param submodelReference the reference to be added; must not be {@code null}
+     * @param aasId             the identifier of the Asset Administration Shell
+     * @param submodelReference the reference to be added
      * @throws ElementDoesNotExistException        if the Asset Administration Shell with the specified
      *                                             {@code aasId} does not exist
      * @throws CollidingSubmodelReferenceException if the provided submodel reference conflicts with an existing
@@ -70,9 +69,8 @@ public interface AasOperations {
     /**
      * Removes a Submodel Reference from the specified AAS.
      *
-     * @param aasId      the identifier of the Asset Administration Shell; must not be
-     *                   {@code null}
-     * @param submodelId the identifier of the submodel to remove; must not be {@code null}
+     * @param aasId      the identifier of the Asset Administration Shell
+     * @param submodelId the identifier of the submodel to remove
      * @throws ElementDoesNotExistException if the Asset Administration Shell with the specified
      *                                      {@code aasId} does not exist
      */
@@ -81,9 +79,8 @@ public interface AasOperations {
     /**
      * Sets the asset information of the specified AAS.
      *
-     * @param aasId            the identifier of the Asset Administration Shell; must not be
-     *                         {@code null}
-     * @param assetInformation the asset information to be set; must not be {@code null}
+     * @param aasId            the identifier of the Asset Administration Shell
+     * @param assetInformation the asset information to be set
      * @throws ElementDoesNotExistException if the Asset Administration Shell with the specified
      *                                      {@code aasId} does not exist
      */
@@ -92,9 +89,8 @@ public interface AasOperations {
     /**
      * Retrieves the asset information of the specified AAS.
      *
-     * @param aasId the identifier of the Asset Administration Shell; must not be
-     *              {@code null}
-     * @return the asset information of the AAS, or {@code null} if not found
+     * @param aasId the identifier of the Asset Administration Shell
+     * @return the asset information of the AAS, or  if not found
      * @throws ElementDoesNotExistException if the Asset Administration Shell with the specified
      *                                      {@code aasId} does not exist
      */
