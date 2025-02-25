@@ -1,0 +1,92 @@
+{
+	"AllAccessPermissionRules": {
+		"rules": [
+			{
+				"ACL": {
+					"ATTRIBUTES": [
+						{
+							"CLAIM": "email"
+						},
+						{
+							"CLAIM": "preferred_username"
+						},
+						{
+							"CLAIM": "realm_access.roles"
+						},
+						{
+							"GLOBAL": "UTCNOW"
+						}
+					],
+					"RIGHTS": [
+						"READ",
+						"UPDATE"
+					],
+					"ACCESS": "ALLOW"
+				},
+				"OBJECTS": [
+					{
+						"IDENTIFIABLE": "(AAS)DummyAASID"
+					}
+				],
+				"FORMULA": {
+					"$and": [
+						{
+							"$or": [
+								{
+									"$eq": [
+										{
+											"$field": "$aas#id"
+										},
+										{
+											"$strVal": "DummyAASID"
+										}
+									]
+								},
+								{
+									"$eq": [
+										{
+											"$attribute": {
+												"CLAIM": "preferred_username"
+											}
+										},
+										{
+											"$strVal": "john.doe"
+										}
+									]
+								}
+							]
+						},
+						{
+							"$and": [
+								{
+									"$eq": [
+										{
+											"$attribute": {
+												"CLAIM": "realm_access.roles"
+											}
+										},
+										{
+											"$strVal": "default-roles-basyx"
+										}
+									]
+								},
+								{
+									"$ge": [
+										{
+											"$attribute": {
+												"GLOBAL": "UTCNOW"
+											}
+										},
+										{
+											"$timeVal": "11:00"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			}
+		]
+	}
+}

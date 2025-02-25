@@ -23,60 +23,30 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.rbac;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
-import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 /**
- * Feature for authorized {@link AasRepository}
+ * Factory for creating {@link AuthorizedAasRepository}
  * 
  * @author danish
  */
-@Component
-@ConditionalOnExpression("#{${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false}}")
-@Order(0)
-public class AuthorizedAasRepositoryFeature implements AasRepositoryFeature {
-	
-	@Value("${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":}")
-	private boolean enabled;
-	
+public class AuthorizedAasRepositoryFactory implements AasRepositoryFactory {
+
+	private AasRepositoryFactory decorated;
 	private RbacPermissionResolver<AasTargetInformation> permissionResolver;
 
-	@Autowired
-	public AuthorizedAasRepositoryFeature(RbacPermissionResolver<AasTargetInformation> permissionResolver) {
+	public AuthorizedAasRepositoryFactory(AasRepositoryFactory decorated, RbacPermissionResolver<AasTargetInformation> permissionResolver) {
+		this.decorated = decorated;
 		this.permissionResolver = permissionResolver;
 	}
 
 	@Override
-	public AasRepositoryFactory decorate(AasRepositoryFactory aasRepositoryFactory) {
-		return new AuthorizedAasRepositoryFactory(aasRepositoryFactory, permissionResolver);
+	public AasRepository create() {
+		return new AuthorizedAasRepository(decorated.create(), permissionResolver);
 	}
 
-	@Override
-	public void initialize() {
-	}
-
-	@Override
-	public void cleanUp() {
-
-	}
-
-	@Override
-	public String getName() {
-		return "AasRepository Authorization";
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
 }

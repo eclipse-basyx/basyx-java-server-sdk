@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,32 +23,29 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.abac;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.Action;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
+import org.eclipse.digitaltwin.basyx.authorization.abac.AbacPermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.abac.ObjectItem;
+import org.eclipse.digitaltwin.basyx.authorization.abac.RightsEnum;
+import org.eclipse.digitaltwin.basyx.authorization.abac.Value;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Decorator for authorized {@link AasRepository}
@@ -58,50 +55,59 @@ import org.slf4j.LoggerFactory;
  */
 public class AuthorizedAasRepository implements AasRepository {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizedAasRepository.class);
 	private AasRepository decorated;
-	private RbacPermissionResolver<AasTargetInformation> permissionResolver;
+	private AbacPermissionResolver permissionResolver;
 	
 
-	public AuthorizedAasRepository(AasRepository decorated, RbacPermissionResolver<AasTargetInformation> permissionResolver) {
+	public AuthorizedAasRepository(AasRepository decorated, AbacPermissionResolver permissionResolver) {
 		this.decorated = decorated;
 		this.permissionResolver = permissionResolver;
 	}
 
 	@Override
 	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasTargetInformation(getIdAsList("*")));
 		
-		if (isAuthorized)
-			return decorated.getAllAas(pInfo);
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
-		List<TargetInformation> targetInformations = permissionResolver.getMatchingTargetInformationInRules(Action.READ, new AasTargetInformation(getIdAsList("*")));
+		throwExceptionIfInsufficientPermission(isAuthorized);
 		
-		List<String> allIds = targetInformations.stream().map(AasTargetInformation.class::cast)
-				.map(AasTargetInformation::getAasIds).flatMap(List::stream).collect(Collectors.toList());
-		
-		List<AssetAdministrationShell> shells = allIds.stream().map(id -> {
-			try {
-				return getAas(id);
-			} catch (ElementDoesNotExistException e) {
-				LOGGER.error("AAS: '{}' not found, Error: {}", id, e.getMessage());
-				return null;
-			} catch (Exception e) {
-				LOGGER.error("Exception occurred while retrieving the AAS: {}, Error: {}", id, e.getMessage());
-				return null;
-			}
-		}).filter(Objects::nonNull).collect(Collectors.toList());
-		
-		TreeMap<String, AssetAdministrationShell> aasMap = shells.stream().collect(Collectors.toMap(AssetAdministrationShell::getId, aas -> aas, (a, b) -> a, TreeMap::new));
-
-		PaginationSupport<AssetAdministrationShell> paginationSupport = new PaginationSupport<>(aasMap, AssetAdministrationShell::getId);
-
-		return paginationSupport.getPaged(pInfo);
+		return decorated.getAllAas(pInfo);
 	}
 
 	@Override
 	public AssetAdministrationShell getAas(String shellId) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasTargetInformation(getIdAsList(shellId)));
+		
+		Map<String, Value> attributesMap = new HashMap<String, Value>();
+		
+		AssetAdministrationShell shell = decorated.getAas(shellId);
+		
+		Value aasIdValue = new Value();
+		aasIdValue.set$strVal(shellId);
+		
+		attributesMap.put("$aas#id", aasIdValue);
+		
+		AssetInformation assetInformation = shell.getAssetInformation();
+		
+		if (assetInformation != null) {
+			String assetKind = assetInformation.getAssetKind().toString();
+			String assetType = assetInformation.getAssetType();
+			String globalAssetId = assetInformation.getGlobalAssetId();
+			
+			Value assetKindValue = new Value();
+			assetKindValue.set$strVal(assetKind);
+			
+			Value assetTypeValue = new Value();
+			assetTypeValue.set$strVal(assetType);
+			
+			Value globalAssetIdValue = new Value();
+			globalAssetIdValue.set$strVal(globalAssetId);
+			
+			attributesMap.put("$aas#assetInformation.assetKind", assetKindValue);
+			attributesMap.put("$aas#assetInformation.assetType", assetTypeValue);
+			attributesMap.put("$aas#assetInformation.globalAssetId", globalAssetIdValue);
+		}
+   
+		boolean isAuthorized = permissionResolver.hasPermission(RightsEnum.READ, new ObjectItem(null, "(AAS)" + shellId, null, null, null), attributesMap);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -110,16 +116,17 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public void createAas(AssetAdministrationShell shell) throws CollidingIdentifierException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.CREATE, new AasTargetInformation(getIdAsList(shell.getId())));
-		
-		throwExceptionIfInsufficientPermission(isAuthorized);
+//		
+//		boolean isAuthorized = permissionResolver.hasPermission(new QueryJsonSchema(null, mainQuery, null));
+//		
+//		throwExceptionIfInsufficientPermission(isAuthorized);
 		
 		decorated.createAas(shell);
 	}
 
 	@Override
 	public void updateAas(String shellId, AssetAdministrationShell shell) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new AasTargetInformation(getIdAsList(shellId)));
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -128,7 +135,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public void deleteAas(String shellId) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.DELETE, new AasTargetInformation(getIdAsList(shellId)));
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -137,7 +144,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public CursorResult<List<Reference>> getSubmodelReferences(String shellId, PaginationInfo paginationInfo) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasTargetInformation(getIdAsList(shellId)));
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -146,7 +153,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public void addSubmodelReference(String shellId, Reference submodelReference) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new AasTargetInformation(getIdAsList(shellId)));
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -155,7 +162,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public void removeSubmodelReference(String shellId, String submodelId) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new AasTargetInformation(getIdAsList(shellId)));
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -164,7 +171,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public void setAssetInformation(String shellId, AssetInformation shellInfo) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new AasTargetInformation(getIdAsList(shellId)));
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -173,7 +180,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public AssetInformation getAssetInformation(String shellId) throws ElementDoesNotExistException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasTargetInformation(getIdAsList(shellId)));
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -182,7 +189,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public File getThumbnail(String shellId) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasTargetInformation(getIdAsList(shellId)));
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -191,7 +198,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public void setThumbnail(String shellId, String fileName, String contentType, InputStream inputStream) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new AasTargetInformation(getIdAsList(shellId)));
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -200,7 +207,7 @@ public class AuthorizedAasRepository implements AasRepository {
 
 	@Override
 	public void deleteThumbnail(String shellId) {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new AasTargetInformation(getIdAsList(shellId)));
+		boolean isAuthorized = permissionResolver.hasPermission(null, null, null);
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		

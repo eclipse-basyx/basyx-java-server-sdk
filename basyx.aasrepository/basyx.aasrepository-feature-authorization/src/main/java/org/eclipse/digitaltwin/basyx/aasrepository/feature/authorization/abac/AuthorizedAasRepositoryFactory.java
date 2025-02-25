@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,11 +23,11 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.abac;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.abac.AbacPermissionResolver;
 
 /**
  * Factory for creating {@link AuthorizedAasRepository}
@@ -37,9 +37,9 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 public class AuthorizedAasRepositoryFactory implements AasRepositoryFactory {
 
 	private AasRepositoryFactory decorated;
-	private RbacPermissionResolver<AasTargetInformation> permissionResolver;
+	private AbacPermissionResolver permissionResolver;
 
-	public AuthorizedAasRepositoryFactory(AasRepositoryFactory decorated, RbacPermissionResolver<AasTargetInformation> permissionResolver) {
+	public AuthorizedAasRepositoryFactory(AasRepositoryFactory decorated, AbacPermissionResolver permissionResolver) {
 		this.decorated = decorated;
 		this.permissionResolver = permissionResolver;
 	}

@@ -23,34 +23,31 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.component;
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.abac;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.DecoratedAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasservice.AasService;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
+import org.eclipse.digitaltwin.basyx.authorization.SubjectInformationProvider;
+import org.eclipse.digitaltwin.basyx.authorization.abac.AbacPermissionResolver;
+import org.eclipse.digitaltwin.basyx.authorization.abac.AbacStorage;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RoleProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Provides the spring bean configuration for the {@link AasRepository} and
- * {@link AasService} utilizing all found features for the respective services
+ * Configuration for authorized {@link AuthorizedAasRepository}
  * 
- * @author schnicke, mateusmolina
- *
+ * @author danish
  */
 @Configuration
-public class AasRepositoryConfiguration {
+@ConditionalOnExpression(value = "${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false} and ('${" + CommonAuthorizationProperties.TYPE_PROPERTY_KEY + "}'.equals('abac'))")
+public class AuthorizedAasRepositoryAbacConfiguration {
+	
 	@Bean
-	@ConditionalOnMissingBean
-	public static AasRepository getAasRepository(AasRepositoryFactory aasRepositoryFactory, List<AasRepositoryFeature> features) {
-		return new DecoratedAasRepositoryFactory(aasRepositoryFactory, features).create();
+	public AbacPermissionResolver getAasPermissionResolver(AbacStorage abacStorage, RoleProvider roleProvider, SubjectInformationProvider<Object> subjectInformationProvider) {
+
+		return new SimpleAbacPermissionResolver(abacStorage, roleProvider, subjectInformationProvider);
 	}
+	
+
 }

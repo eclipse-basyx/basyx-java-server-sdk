@@ -1,0 +1,111 @@
+/*******************************************************************************
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * SPDX-License-Identifier: MIT
+ ******************************************************************************/
+
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.abac.backend.inmemory;
+
+import java.util.List;
+
+import org.eclipse.digitaltwin.basyx.authorization.abac.AbacStorage;
+import org.eclipse.digitaltwin.basyx.authorization.abac.AccessPermissionRule;
+import org.eclipse.digitaltwin.basyx.authorization.abac.Acl;
+import org.eclipse.digitaltwin.basyx.authorization.abac.Acl.Access;
+import org.eclipse.digitaltwin.basyx.authorization.abac.AllAccessPermissionRules;
+import org.eclipse.digitaltwin.basyx.authorization.abac.ObjectItem;
+import org.eclipse.digitaltwin.basyx.authorization.abac.RightsEnum;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
+
+/**
+ * InMemory implementation of the {@link RbacStorage}
+ * 
+ * @author danish
+ */
+public class InMemoryAbacStorage implements AbacStorage {
+    private final AllAccessPermissionRules abacRules;
+
+    public InMemoryAbacStorage(AllAccessPermissionRules abacRules) {
+        this.abacRules = abacRules;
+    }
+
+    @Override
+    public List<AccessPermissionRule> getAbacRules() {       
+        return abacRules.getRules();
+    }
+
+	@Override
+	public void addRule(AccessPermissionRule abacRule) {
+		abacRules.getRules().add(abacRule);
+		
+	}
+
+	@Override
+	public AccessPermissionRule getRule(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeRule(String ruleId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean exists(String ruleId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public List<AccessPermissionRule> getFilteredAbacRules(RightsEnum right, Access access, ObjectItem objectItem) {
+		return abacRules.getRules().stream().filter(rule -> containsRightForAction(rule.getAcl().getRights(), right)).filter(rule -> Acl.Access.ALLOW.equals(rule.getAcl().getAccess()))
+				.filter(rule -> objectMatches(rule.getObjects(), objectItem)).toList();
+	}
+
+	@Override
+	public void update(String ruleId, AccessPermissionRule abacRule) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private static boolean containsRightForAction(List<RightsEnum> list, RightsEnum rightsEnum) {
+		return list.contains(rightsEnum);
+	}
+
+	private static boolean objectMatches(List<ObjectItem> objects, ObjectItem objectItem) {
+
+		if (objects.size() > 1)
+			return false;
+
+		if (objects.get(0).getRoute() != null)
+			return objects.get(0).getRoute().equals(objectItem.getRoute());
+
+		if (objects.get(0).getIdentifiable() != null)
+			return objects.get(0).getIdentifiable().equals("(AAS)*") || objects.get(0).getIdentifiable().equals(objectItem.getIdentifiable());
+
+		return false;
+	}
+
+}
+

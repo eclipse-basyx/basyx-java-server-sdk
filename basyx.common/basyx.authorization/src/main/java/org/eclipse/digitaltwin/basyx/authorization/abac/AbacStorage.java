@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2025 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,38 +19,26 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.component;
+package org.eclipse.digitaltwin.basyx.authorization.abac;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.DecoratedAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasservice.AasService;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
- * Provides the spring bean configuration for the {@link AasRepository} and
- * {@link AasService} utilizing all found features for the respective services
+ * An interface for defining storage of ABAC Rules
  * 
- * @author schnicke, mateusmolina
- *
+ * @author danish
  */
-@Configuration
-public class AasRepositoryConfiguration {
-	@Bean
-	@ConditionalOnMissingBean
-	public static AasRepository getAasRepository(AasRepositoryFactory aasRepositoryFactory, List<AasRepositoryFeature> features) {
-		return new DecoratedAasRepositoryFactory(aasRepositoryFactory, features).create();
-	}
+public interface AbacStorage {
+	
+    public List<AccessPermissionRule> getAbacRules();
+    public List<AccessPermissionRule> getFilteredAbacRules(RightsEnum right, Acl.Access access, ObjectItem objectItem);
+    public void addRule(AccessPermissionRule abacRule);
+    public AccessPermissionRule getRule(String id);
+    public void removeRule(String ruleId);
+    public boolean exists(String ruleId);
+    public void update(String ruleId, AccessPermissionRule abacRule);
 }

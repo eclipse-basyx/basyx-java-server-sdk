@@ -46,6 +46,7 @@ public class CommonSecurityConfiguration {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
+				.csrf(csrf -> csrf.disable()) // For just ABAC prototype
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/actuator/health/**").permitAll()
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -53,6 +54,10 @@ public class CommonSecurityConfiguration {
 						.requestMatchers("/v3/**").permitAll()
 						.requestMatchers("/api-docs/**").permitAll()
 						.requestMatchers("api-docs/swagger-config/**").permitAll()
+						.requestMatchers(HttpMethod.GET, "/abac-rules/**").permitAll() // For just ABAC prototype
+						.requestMatchers(HttpMethod.POST, "/abac-rules/**").permitAll() // For just ABAC prototype
+						.requestMatchers(HttpMethod.DELETE, "/abac-rules/**").permitAll() // For just ABAC prototype
+						.requestMatchers(HttpMethod.PUT, "/abac-rules/**").permitAll() // For just ABAC prototype
 						.anyRequest().authenticated()
 				)
 				.oauth2ResourceServer(oauth2 -> oauth2
