@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,10 +38,8 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministratio
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.factory.AasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.SimpleAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.AasInMemoryBackendProvider;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
-import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.junit.Before;
 import org.junit.Test;
@@ -103,8 +101,8 @@ public class AasRepositoryRegistryLinkDescriptorGenerationTest {
     private AssetAdministrationShellDescriptor createAndRetrieveDescriptor(AssetAdministrationShell shell) {
         registryIntegrationAasRepository.createAas(shell);
 
-        AasDescriptorFactory descriptorFactory = new AasDescriptorFactory(shell, mockedRegistryLink.getAasRepositoryBaseURLs(), mockedAttributeMapper);
-        return descriptorFactory.create();
+        AasDescriptorFactory descriptorFactory = new AasDescriptorFactory(mockedRegistryLink.getAasRepositoryBaseURLs(), mockedAttributeMapper);
+        return descriptorFactory.create(shell);
     }
     
     private AssetAdministrationShell createDummyAas() {
@@ -115,7 +113,7 @@ public class AasRepositoryRegistryLinkDescriptorGenerationTest {
     }
     
 	protected AasRepository getAasRepository() {
-		return new SimpleAasRepositoryFactory(new AasInMemoryBackendProvider(), new InMemoryAasServiceFactory(new InMemoryFileRepository())).create();
+        return new CrudAasRepositoryFactory(InMemoryAasRepositoryBackend.buildDefault(), "aas-repo").create();
 	}
 
 }

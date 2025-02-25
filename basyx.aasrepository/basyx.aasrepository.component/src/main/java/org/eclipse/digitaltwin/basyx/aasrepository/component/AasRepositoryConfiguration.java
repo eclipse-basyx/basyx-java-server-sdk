@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -35,27 +35,15 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.DecoratedAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
-import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
-import org.eclipse.digitaltwin.basyx.aasservice.feature.AasServiceFeature;
-import org.eclipse.digitaltwin.basyx.aasservice.feature.DecoratedAasServiceFactory;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleDeserializer;
-import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformationSubtype;
-import org.reflections.Reflections;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 /**
  * Provides the spring bean configuration for the {@link AasRepository} and
  * {@link AasService} utilizing all found features for the respective services
  * 
- * @author schnicke
+ * @author schnicke, mateusmolina
  *
  */
 @Configuration
@@ -65,20 +53,4 @@ public class AasRepositoryConfiguration {
 	public static AasRepository getAasRepository(AasRepositoryFactory aasRepositoryFactory, List<AasRepositoryFeature> features) {
 		return new DecoratedAasRepositoryFactory(aasRepositoryFactory, features).create();
 	}
-
-	@Primary
-	@Bean
-	public static AasServiceFactory getAasService(AasServiceFactory aasServiceFactory, List<AasServiceFeature> features) {
-		return new DecoratedAasServiceFactory(aasServiceFactory, features);
-	}
-	
-//	@Bean
-//	public ObjectMapper getAasMapper(Jackson2ObjectMapperBuilder builder) {
-//		ObjectMapper mapper = builder.build();
-//
-//		mapper.findAndRegisterModules(); // Ensure all modules are loaded
-//		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//
-//		return mapper;
-//	}
 }

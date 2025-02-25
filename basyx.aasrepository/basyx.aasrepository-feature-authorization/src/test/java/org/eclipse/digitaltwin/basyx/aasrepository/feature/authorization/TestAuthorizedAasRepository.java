@@ -132,7 +132,7 @@ public class TestAuthorizedAasRepository {
 		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
 		
 		CloseableHttpResponse retrievalResponse = getAllAasWithAuthorization(accessToken);
-		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
+		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 	
 	@Test

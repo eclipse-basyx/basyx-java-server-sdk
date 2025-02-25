@@ -25,15 +25,15 @@
 
 package org.eclipse.digitaltwin.basyx.client.internal;
 
+import static org.junit.Assert.*;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
-import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
-import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
 import org.junit.Before;
 import org.junit.Test;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.PasswordCredential;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.PasswordCredentialAccessTokenProvider;
 
 import java.io.IOException;
-
-import static org.junit.Assert.*;
 
 /**
  * Tests the behaviour of {@link TokenManager}
@@ -41,22 +41,22 @@ import static org.junit.Assert.*;
  * @author danish
  */
 public class TokenManagerTest {
-    
+
+    private static final String TOKEN_ENDPOINT = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
     private TokenManager tokenManager;
 
     @Before
     public void setUp() {
-        tokenManager = new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom")));
+        tokenManager = new TokenManager(TOKEN_ENDPOINT, new PasswordCredentialAccessTokenProvider(new PasswordCredential("basyx.reader", "basyxreader"), new ClientCredential("max-sso", "8ccc227xJflxGgtFkwwssHRZUh99nAAc")));
     }
 
     @Test
-    public void testGetAccessToken_RetrievesNewTokenAfterExpiry() throws IOException, InterruptedException {
-
+    public void retrieveNewAccessTokenWhenExpired() throws IOException, InterruptedException {        
         String initialAccessToken = tokenManager.getAccessToken();
         assertNotNull(initialAccessToken);
 
-        long tokenLifetime = 300000;
-        Thread.sleep(tokenLifetime + 60000);
+        long tokenLifetime = 2000;
+        Thread.sleep(tokenLifetime + 5);
 
         String newAccessToken = tokenManager.getAccessToken();
         assertNotNull(newAccessToken);
@@ -64,4 +64,67 @@ public class TokenManagerTest {
         assertNotEquals(initialAccessToken, newAccessToken);
     }
     
+    @Test
+    public void provideSameAccessTokenWhenNotExpired() throws IOException, InterruptedException {        
+        String initialAccessToken = tokenManager.getAccessToken();
+        assertNotNull(initialAccessToken);
+
+        long tokenLifetime = 800;
+        Thread.sleep(tokenLifetime);
+
+        String newAccessToken = tokenManager.getAccessToken();
+        assertNotNull(newAccessToken);
+        
+        assertEquals(initialAccessToken, newAccessToken);
+    }
+    
+    @Test
+    public void retrieveNewAccessTokenUsingRefreshTokenWhenAccessTokenIsExpired() throws IOException, InterruptedException {
+    	String initialAccessToken = tokenManager.getAccessToken();
+        assertNotNull(initialAccessToken);
+
+        long tokenLifetime = 2000;
+        Thread.sleep(tokenLifetime + 15);
+
+        String newAccessToken = tokenManager.getAccessToken();
+        assertNotNull(newAccessToken);
+        
+        assertNotEquals(initialAccessToken, newAccessToken);
+    }
+
+    @Test
+    public void retrieveNewAccessTokenUsingRefreshTokenWhenExpired() throws IOException, InterruptedException {
+    	String initialAccessToken = tokenManager.getAccessToken();
+        assertNotNull(initialAccessToken);
+
+        long tokenLifetime = 4000;
+        Thread.sleep(tokenLifetime + 5);
+
+        String newAccessToken = tokenManager.getAccessToken();
+        assertNotNull(newAccessToken);
+        
+        assertNotEquals(initialAccessToken, newAccessToken);
+    }
+
+    @Test
+    // This test is for verifying the behavior described in the issue: https://github.com/eclipse-basyx/basyx-java-server-sdk/issues/530
+    public void retrieveNewAccessTokenWhenSSOMaxReached() throws IOException, InterruptedException {
+    	String initialAccessToken = tokenManager.getAccessToken();
+        assertNotNull(initialAccessToken);
+        
+        long timeLimit = 6000;
+        String intermediateAccessToken = null;
+        
+        while (timeLimit > 0) {
+        	intermediateAccessToken = tokenManager.getAccessToken();
+        	
+        	Thread.sleep(2000);
+        	
+        	timeLimit -= 2000;
+        }
+        
+        assertNotNull(intermediateAccessToken);
+        assertNotEquals(initialAccessToken, intermediateAccessToken);
+    }
+
 }

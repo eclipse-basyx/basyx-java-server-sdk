@@ -43,4 +43,9 @@ public class AasDiscoveryServiceHTTPConfiguration {
 	public CorsPathPatternProvider getAasDiscoveryServiceCorsUrlProvider() {
 		return new CorsPathPatternProvider("/lookup/shells/**");
 	}
+
+	@Bean
+	public CorsPathPatternProvider getAasDiscoveryServiceDescriptionCorsUrlProvider() {
+		return new CorsPathPatternProvider("/description");
+	}
 }

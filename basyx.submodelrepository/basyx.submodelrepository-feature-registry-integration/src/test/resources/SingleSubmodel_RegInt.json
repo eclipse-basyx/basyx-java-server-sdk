@@ -1,0 +1,410 @@
+{
+    "modelType": "Submodel",
+    "id": "7A7104BDAB57E184",
+    "idShort": "TechnicalData",
+    "kind": "Instance",
+    "administration": {
+        "version": "0",
+        "revision": "9",
+        "templateId": "testTemplateId"
+    },
+    "submodelElements": [
+        {
+            "modelType": "Property",
+            "value": "5000",
+            "valueType": "xs:integer",
+            "category": "PARAMETER",
+            "idShort": "MaxRotationSpeed",
+            "semanticId": {
+                "keys": [
+                    {
+                        "type": "ConceptDescription",
+                        "value": "0173-1#02-BAA120#008"
+                    }
+                ],
+                "type": "ExternalReference"
+            }
+        },
+        {
+            "modelType": "Range",
+            "max": "300",
+            "min": "200",
+            "valueType": "xs:integer",
+            "category": "PARAMETER",
+            "idShort": "RotationSpeedRange",
+            "semanticId": {
+                "keys": [
+                    {
+                        "type": "ConceptDescription",
+                        "value": "0173-1#02-BAA120#008"
+                    }
+                ],
+                "type": "ExternalReference"
+            }
+        },
+        {
+            "modelType": "MultiLanguageProperty",
+            "category": "PARAM",
+            "idShort": "MultiLanguage",
+            "semanticId": {
+                "keys": [
+                    {
+                        "type": "ConceptDescription",
+                        "value": "0173-1#02-BAA120#008"
+                    }
+                ],
+                "type": "ExternalReference"
+            },
+            "value": [
+                {
+                    "language": "en",
+                    "text": "Hello"
+                },
+                {
+                    "language": "de",
+                    "text": "Hallo"
+                }
+            ]
+        },
+        {
+            "modelType": "File",
+            "contentType": "application/json",
+            "value": "testFile.json",
+            "category": "PARAMETER",
+            "idShort": "FileData",
+            "semanticId": {
+                "keys": [
+                    {
+                        "type": "ConceptDescription",
+                        "value": "0173-1#02-BAA120#008"
+                    }
+                ],
+                "type": "ExternalReference"
+            }
+        },
+        {
+            "modelType": "Entity",
+            "entityType": "CoManagedEntity",
+            "specificAssetIds": [
+                {
+                    "name": "specificAssetIdName",
+                    "value": "specificValue"
+                }
+            ],
+            "statements": [
+                {
+                    "modelType": "Property",
+                    "value": "5000",
+                    "valueType": "xs:integer",
+                    "category": "PARAMETER",
+                    "idShort": "MaxRotationSpeed",
+                    "semanticId": {
+                        "keys": [
+                            {
+                                "type": "ConceptDescription",
+                                "value": "0173-1#02-BAA120#008"
+                            }
+                        ],
+                        "type": "ExternalReference"
+                    }
+                },
+                {
+                    "modelType": "Range",
+                    "max": "300",
+                    "min": "200",
+                    "valueType": "xs:integer",
+                    "category": "PARAMETER",
+                    "idShort": "RotationSpeedRange",
+                    "semanticId": {
+                        "keys": [
+                            {
+                                "type": "ConceptDescription",
+                                "value": "0173-1#02-BAA120#008"
+                            }
+                        ],
+                        "type": "ExternalReference"
+                    }
+                }
+            ],
+            "category": "Entity",
+            "idShort": "EntityData",
+            "globalAssetId": "globalAssetID",
+            "semanticId": {
+                "keys": [
+                    {
+                        "type": "ConceptDescription",
+                        "value": "0173-1#02-BAA120#008"
+                    }
+                ],
+                "type": "ExternalReference"
+            }
+        },
+        {
+            "modelType": "ReferenceElement",
+            "category": "PARAMETER",
+            "idShort": "ReferenceElement",
+            "value": {
+                "keys": [
+                    {
+                        "type": "DataElement",
+                        "value": "DataElement"
+                    }
+                ],
+                "type": "ModelReference"
+            },
+            "semanticId": {
+                "keys": [
+                    {
+                        "type": "ConceptDescription",
+                        "value": "0173-1#02-BAA120#008"
+                    }
+                ],
+                "type": "ExternalReference"
+            }
+        },
+        {
+            "modelType": "RelationshipElement",
+            "category": "PARAMETER",
+            "idShort": "RelationshipElement",
+            "first": {
+                "keys": [
+                    {
+                        "type": "DataElement",
+                        "value": "DataElement"
+                    }
+                ],
+                "type": "ModelReference"
+            },
+            "second": {
+                "keys": [
+                    {
+                        "type": "BasicEventElement",
+                        "value": "BasicEventElement"
+                    }
+                ],
+                "type": "ExternalReference"
+            },
+            "semanticId": {
+                "keys": [
+                    {
+                        "type": "ConceptDescription",
+                        "value": "0173-1#02-BAA120#008"
+                    }
+                ],
+                "type": "ExternalReference"
+            }
+        },
+        {
+            "modelType": "AnnotatedRelationshipElement",
+            "category": "PARAMETER",
+            "idShort": "AnnotatedRelationshipElement",
+            "first": {
+                "keys": [
+                    {
+                        "type": "DataElement",
+                        "value": "DataElement"
+                    }
+                ],
+                "type": "ModelReference"
+            },
+            "second": {
+                "keys": [
+                    {
+                        "type": "BasicEventElement",
+                        "value": "BasicEventElement"
+                    }
+                ],
+                "type": "ExternalReference"
+            },
+            "annotations": [
+                {
+                    "modelType": "Property",
+                    "value": "5000",
+                    "valueType": "xs:integer",
+                    "category": "PARAMETER",
+                    "idShort": "MaxRotationSpeed",
+                    "semanticId": {
+                        "keys": [
+                            {
+                                "type": "ConceptDescription",
+                                "value": "0173-1#02-BAA120#008"
+                            }
+                        ],
+                        "type": "ExternalReference"
+                    }
+                },
+                {
+                    "modelType": "Range",
+                    "max": "300",
+                    "min": "200",
+                    "valueType": "xs:integer",
+                    "category": "PARAMETER",
+                    "idShort": "RotationSpeedRange",
+                    "semanticId": {
+                        "keys": [
+                            {
+                                "type": "ConceptDescription",
+                                "value": "0173-1#02-BAA120#008"
+                            }
+                        ],
+                        "type": "ExternalReference"
+                    }
+                }
+            ],
+            "semanticId": {
+                "keys": [
+                    {
+                        "type": "ConceptDescription",
+                        "value": "0173-1#02-BAA120#008"
+                    }
+                ],
+                "type": "ExternalReference"
+            }
+        },
+        {
+            "modelType": "Blob",
+            "contentType": "application/xml",
+            "value": "VGVzdCBjb250ZW50IG9mIFhNTCBmaWxl",
+            "category": "PARAMETER",
+            "idShort": "BlobData",
+            "semanticId": {
+                "keys": [
+                    {
+                        "type": "ConceptDescription",
+                        "value": "0173-1#02-BAA120#008"
+                    }
+                ],
+                "type": "ExternalReference"
+            }
+        },
+        {
+            "modelType": "SubmodelElementCollection",
+            "category": "PARAMETER",
+            "idShort": "SubmodelElementCollection",
+            "value": [
+                {
+                    "modelType": "File",
+                    "contentType": "application/json",
+                    "value": "testFile.json",
+                    "category": "PARAMETER",
+                    "idShort": "FileData",
+                    "semanticId": {
+                        "keys": [
+                            {
+                                "type": "ConceptDescription",
+                                "value": "0173-1#02-BAA120#008"
+                            }
+                        ],
+                        "type": "ExternalReference"
+                    }
+                },
+                {
+                    "modelType": "Property",
+                    "value": "5000",
+                    "valueType": "xs:integer",
+                    "category": "PARAMETER",
+                    "idShort": "MaxRotationSpeed",
+                    "semanticId": {
+                        "keys": [
+                            {
+                                "type": "ConceptDescription",
+                                "value": "0173-1#02-BAA120#008"
+                            }
+                        ],
+                        "type": "ExternalReference"
+                    }
+                }
+            ],
+            "semanticId": {
+                "keys": [
+                    {
+                        "type": "ConceptDescription",
+                        "value": "0173-1#02-BAA120#008"
+                    }
+                ],
+                "type": "ExternalReference"
+            }
+        },
+        {
+            "modelType": "SubmodelElementList",
+            "category": "PARAMETER",
+            "idShort": "SubmodelElementList",
+            "orderRelevant": true,
+            "value": [
+                {
+                    "modelType": "Range",
+                    "max": "300",
+                    "min": "200",
+                    "valueType": "xs:integer",
+                    "category": "PARAMETER",
+                    "idShort": "RotationSpeedRange",
+                    "semanticId": {
+                        "keys": [
+                            {
+                                "type": "ConceptDescription",
+                                "value": "0173-1#02-BAA120#008"
+                            }
+                        ],
+                        "type": "ExternalReference"
+                    }
+                },
+                {
+                    "modelType": "Property",
+                    "value": "5000",
+                    "valueType": "xs:integer",
+                    "category": "PARAMETER",
+                    "idShort": "MaxRotationSpeed",
+                    "semanticId": {
+                        "keys": [
+                            {
+                                "type": "ConceptDescription",
+                                "value": "0173-1#02-BAA120#008"
+                            }
+                        ],
+                        "type": "ExternalReference"
+                    }
+                }
+            ],
+            "semanticId": {
+                "keys": [
+                    {
+                        "type": "ConceptDescription",
+                        "value": "0173-1#02-BAA120#008"
+                    }
+                ],
+                "type": "ExternalReference"
+            }
+        },
+        {
+            "modelType": "Operation",
+            "idShort": "square",
+            "inputVariables": [
+                {
+                    "value": {
+                        "modelType": "Property",
+                        "valueType": "xs:int",
+                        "idShort": "input"
+                    }
+                }
+            ],
+            "outputVariables": [
+                {
+                    "value": {
+                        "modelType": "Property",
+                        "valueType": "xs:int",
+                        "idShort": "result"
+                    }
+                }
+            ]
+        }
+    ],
+    "semanticId": {
+        "keys": [
+            {
+                "type": "GlobalReference",
+                "value": "0173-1#01-AFZ615#016"
+            }
+        ],
+        "type": "ExternalReference"
+    }
+}
