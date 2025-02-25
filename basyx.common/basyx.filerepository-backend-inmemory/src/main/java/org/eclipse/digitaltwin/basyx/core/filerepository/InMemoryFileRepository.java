@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -61,7 +61,7 @@ public class InMemoryFileRepository implements FileRepository {
 		try (FileOutputStream outStream = new FileOutputStream(targetFile)) {
 			IOUtils.copy(fileMetadata.getFileContent(), outStream);
 		} catch (IOException e) {
-			throw new FileHandlingException(fileMetadata.getFileName());
+			throw new FileHandlingException(fileMetadata.getFileName(), e);
 		}
 
 		fileMetadata.setFileName(filePath);

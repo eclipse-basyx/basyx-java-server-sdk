@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -41,4 +41,11 @@ public interface AasServiceFactory {
 	 * @return
 	 */
 	public AasService create(AssetAdministrationShell aas);
+
+	/**
+	 * Creates a new AasService assuming an AAS with ID aasId is already hosted in the storage backend
+	 *
+	 * @param aasId
+	 */
+	public AasService create(String aasId);
 }

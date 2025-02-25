@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -42,7 +42,7 @@ import com.mongodb.client.gridfs.model.GridFSFile;
 
 /**
  * A MongoDB implementation of the {@link FileRepository}
- * 
+ *
  * @author danish
  */
 @Component
@@ -68,13 +68,13 @@ public class MongoDBFileRepository implements FileRepository {
 
 	@Override
 	public String save(FileMetadata fileMetadata) throws FileHandlingException {
-		
+
 		if (exists(fileMetadata.getFileName()))
-			throw new FileHandlingException();
-		
+			throw new FileHandlingException("File '%s' already exists.".formatted(fileMetadata.getFileName()));
+
 		gridFsTemplate.store(fileMetadata.getFileContent(), fileMetadata.getFileName(), fileMetadata.getContentType());
-		
-		return fileMetadata.getFileName();	
+
+		return fileMetadata.getFileName();
 	}
 
 	@Override

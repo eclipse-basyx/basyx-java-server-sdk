@@ -24,17 +24,13 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.backend;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.aasservice.AasService;
+import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.AasBackend;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
@@ -42,8 +38,14 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.CrudRepository;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Default Implementation for the {@link AasRepository} based on Spring
@@ -54,12 +56,14 @@ import org.springframework.data.repository.CrudRepository;
  */
 public class CrudAasRepository implements AasRepository {
 
-	private final AasRepositoryBackend aasBackend;
+	private final AasBackend aasBackend;
+	private final AasServiceFactory aasServiceFactory;
 
 	private final String aasRepositoryName;
 
-	public CrudAasRepository(AasRepositoryBackend aasBackend, @Value("${basyx.aasrepo.name:aas-repo}") String aasRepositoryName) {
+	public CrudAasRepository(AasBackend aasBackend, AasServiceFactory aasServiceFactory, String aasRepositoryName) {
 		this.aasBackend = aasBackend;
+		this.aasServiceFactory = aasServiceFactory;
 		this.aasRepositoryName = aasRepositoryName;
 	}
 
@@ -108,27 +112,27 @@ public class CrudAasRepository implements AasRepository {
 
 	@Override
 	public CursorResult<List<Reference>> getSubmodelReferences(String aasId, PaginationInfo pInfo) {
-		return aasBackend.getSubmodelReferences(aasId, pInfo);
+		return getService(aasId).getSubmodelReferences(pInfo);
 	}
 
 	@Override
 	public void addSubmodelReference(String aasId, Reference submodelReference) {
-		aasBackend.addSubmodelReference(aasId, submodelReference);
+		getService(aasId).addSubmodelReference(submodelReference);
 	}
 
 	@Override
 	public void removeSubmodelReference(String aasId, String submodelId) {
-		aasBackend.removeSubmodelReference(aasId, submodelId);
+		getService(aasId).removeSubmodelReference(submodelId);
 	}
 
 	@Override
 	public void setAssetInformation(String aasId, AssetInformation aasInfo) throws ElementDoesNotExistException {
-		aasBackend.setAssetInformation(aasId, aasInfo);
+		getService(aasId).setAssetInformation(aasInfo);
 	}
 
 	@Override
 	public AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException {
-		return aasBackend.getAssetInformation(aasId);
+		return getService(aasId).getAssetInformation();
 	}
 
 	@Override
@@ -138,17 +142,17 @@ public class CrudAasRepository implements AasRepository {
 
 	@Override
 	public File getThumbnail(String aasId) {
-		return aasBackend.getThumbnail(aasId);
+		return getService(aasId).getThumbnail();
 	}
 
 	@Override
 	public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
-		aasBackend.setThumbnail(aasId, fileName, contentType, inputStream);
+		getService(aasId).setThumbnail(fileName, contentType, inputStream);
 	}
 
 	@Override
 	public void deleteThumbnail(String aasId) {
-		aasBackend.deleteThumbnail(aasId);
+		getService(aasId).deleteThumbnail();
 	}
 
 	private void throwIfMismatchingIds(String aasId, AssetAdministrationShell newAas) {
@@ -173,4 +177,9 @@ public class CrudAasRepository implements AasRepository {
 		if (!aasBackend.existsById(aasId))
 			throw new ElementDoesNotExistException(aasId);
 	}
+
+	private AasService getService(String aasId) {
+		return aasServiceFactory.create(aasId);
+	}
+
 }

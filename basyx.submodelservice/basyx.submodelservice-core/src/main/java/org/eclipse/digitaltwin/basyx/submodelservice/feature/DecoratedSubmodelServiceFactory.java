@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -47,5 +47,10 @@ public class DecoratedSubmodelServiceFactory extends DecoratedFactory<SubmodelSe
 	@Override
 	public SubmodelService create(Submodel submodel) {
 		return getDecorated().create(submodel);
+	}
+
+	@Override
+	public SubmodelService create(String submodelId) {
+		return getDecorated().create(submodelId);
 	}
 }
