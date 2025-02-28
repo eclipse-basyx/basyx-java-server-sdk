@@ -65,12 +65,9 @@ public class CrudAASXFileServer implements AASXFileServer {
 	/**
 	 * Constructor
 	 * 
-	 * @param aasxFileServerBackendProvider
-	 *            The backend provider
-	 * @param fileRepository
-	 *            The file repository
-	 * @param aasxFileServerName
-	 *            The AASX file server name
+	 * @param packageBackend The backend provider
+	 * @param fileRepository The file repository
+	 * @param aasxFileServerName The AASX file server name
 	 */
 	public CrudAASXFileServer(PackageBackend packageBackend, FileRepository fileRepository, String aasxFileServerName) {
 		this.packageBackend = packageBackend;
