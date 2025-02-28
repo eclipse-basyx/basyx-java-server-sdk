@@ -20,6 +20,9 @@ logging:
     root: INFO
 server:
   shutdown: graceful
+  # Do NOT change any port while running in a Docker container.
+  # Changing this will make the service unreachable from outside the container.
+  # This port should only be changed when running the application without Docker
   port: 8080
   error:
     whitelabel:

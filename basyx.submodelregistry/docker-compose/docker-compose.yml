@@ -16,7 +16,9 @@ volumes:
   mongodb-data-5.0.10:
     driver: local
   submodel-config:
-     
+	# Do NOT change any port while running in a Docker container.
+	# Changing this will make the service unreachable from outside the container.
+	# This port should only be changed when running the application without Docker     
 services:  
   portainer:
     image: portainer/portainer-ce:2.0.1
