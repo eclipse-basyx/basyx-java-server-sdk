@@ -35,4 +35,4 @@ jobs:
           cache: maven
 
       - name: Validate Javadoc
-        run: mvn clean javadoc:check
+        run: mvn clean javadoc:javadoc
