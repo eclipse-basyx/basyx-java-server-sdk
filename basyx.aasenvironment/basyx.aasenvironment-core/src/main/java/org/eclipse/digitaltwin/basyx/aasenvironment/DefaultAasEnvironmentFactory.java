@@ -32,7 +32,7 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.springframework.stereotype.Component;
 
 /**
- * Default {@link AasEnvironment} factory that creates an {@link AasEnvironment}
+ * Default {@link AasEnvironmentt} factory that creates an {@link AasEnvironment}
  * 
  * @author danish
  * 
