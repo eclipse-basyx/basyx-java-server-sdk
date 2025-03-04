@@ -40,12 +40,6 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
       - name: Build BaSyx
         run: |
           mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
@@ -72,12 +66,6 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Build BaSyx
         run: |
@@ -106,12 +94,6 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
       - name: Build BaSyx
         run: |
           mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
@@ -138,12 +120,6 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Build BaSyx
         run: |
@@ -172,12 +148,6 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
       - name: Build BaSyx
         run: |
           mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
@@ -204,12 +174,6 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Build BaSyx
         run: |
@@ -238,12 +202,6 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
       - name: Build BaSyx
         run: |
           mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
@@ -270,12 +228,6 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Build BaSyx
         run: |
@@ -304,12 +256,6 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
       - name: Build BaSyx
         run: |
           mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
@@ -336,12 +282,6 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Build BaSyx
         run: |
@@ -370,12 +310,6 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
       - name: Build BaSyx
         run: |
           mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
@@ -402,12 +336,6 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Build BaSyx
         run: |
@@ -436,12 +364,6 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
       - name: Build BaSyx
         run: |
           mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
@@ -469,12 +391,6 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
       - name: Build BaSyx
         run: |
           mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
@@ -501,12 +417,6 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Build BaSyx
         run: |

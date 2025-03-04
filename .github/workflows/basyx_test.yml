@@ -36,12 +36,6 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
@@ -67,12 +61,6 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
@@ -103,12 +91,6 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
@@ -137,12 +119,6 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
@@ -173,12 +149,6 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
@@ -204,12 +174,6 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
@@ -240,12 +204,6 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
@@ -271,12 +229,6 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
@@ -307,12 +259,6 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
@@ -342,12 +288,6 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
@@ -376,12 +316,6 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
