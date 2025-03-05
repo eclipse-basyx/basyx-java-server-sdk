@@ -25,26 +25,35 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.CrudAasDiscoveryFactory;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryPersistencyTestSuite;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.BeforeClass;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
- * Tests the AasDiscoveryService with MongoDb as backend
+ * Test persistency for AasDiscovery with MongoDB Storage backend
  * 
- * @author danish, mateusmolina
- *
+ * @author mateusmolina
  */
-@SpringBootTest
-@RunWith(SpringRunner.class)
-public class TestInMemoryAasDiscoveryService extends AasDiscoveryServiceSuite {
+public class TestInMemoryAasDiscoveryPersistency extends AasDiscoveryPersistencyTestSuite {
+	private static ConfigurableApplicationContext applicationContext;
+
+	@BeforeClass
+	public static void initComponent() {
+		applicationContext = new SpringApplication(DummyAasDiscoveryServiceComponent.class).run();
+
+	}
 
 	@Override
 	protected AasDiscoveryService getAasDiscoveryService() {
-		return new CrudAasDiscoveryFactory(new InMemoryAasDiscoveryDocumentBackend()).create();
+		return applicationContext.getBean(AasDiscoveryService.class);
 	}
+
+	@Override
+	protected void restartComponent() {
+		applicationContext.close();
+		initComponent();
+	}
+
 }
