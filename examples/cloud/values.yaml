@@ -107,7 +107,7 @@ aas-environment:
     # spring.data.mongodb.password=adminPassword
 
     #basyx.environment=file:aas
-    basyx.aasrepository.feature.mqtt.enabled = false
+    basyx.aasrepository.feature.mqtt.enabled = true
     basyx.cors.allowed-origins=*
     basyx.cors.allowed-methods=GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
     basyx.aasrepository.feature.registryintegration=https://registry.basyx.factory-x.catena-x.net
