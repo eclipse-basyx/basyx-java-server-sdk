@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -28,17 +28,23 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Convert;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
-import org.springframework.data.annotation.Id;
 
 /**
  * Represents a document in the AAS discovery service
  */
+@Entity
 public class AasDiscoveryDocument {
 	@Id
+	@org.springframework.data.annotation.Id
 	private String shellIdentifier;
+	@Convert(converter = AssetLinkSetConverter.class)
 	private Set<AssetLink> assetLinks;
+	@Convert(converter = SpecificAssetIdListConverter.class)
 	private List<SpecificAssetId> specificAssetIds;
 	
 	/**
@@ -57,6 +63,10 @@ public class AasDiscoveryDocument {
 		this.specificAssetIds = specificAssetIds;
 	}
 
+	public AasDiscoveryDocument() {
+
+	}
+	
 	/**
 	 * Get the shell identifier
 	 * 
