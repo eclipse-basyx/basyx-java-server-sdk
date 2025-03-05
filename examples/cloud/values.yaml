@@ -92,7 +92,7 @@ aas-discovery:
 aas-environment:
   image:
     name: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   service:
     port: 8081
   config: |-
@@ -116,11 +116,12 @@ aas-environment:
     spring.servlet.multipart.max-file-size=128MB
     spring.servlet.multipart.max-request-size=128MB
 
-    #mqtt.clientId=AAS-Environment-BIC
-    #mqtt.hostname=mqtt.cluster.local
-    #mqtt.port=1884
-    #mqtt.username=user1
-    #mqtt.password=password1
+    mqtt.clientId=basyx
+    mqtt.hostname=mqttbroker.factory-x.catena-x.net
+    mqtt.protocol=wss
+    mqtt.port=443
+    mqtt.username=fx-factory
+    mqtt.password=password
   ingress:
     enabled: true
     host: basyx.factory-x.catena-x.net
