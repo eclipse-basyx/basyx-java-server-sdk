@@ -102,40 +102,42 @@ public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 	}
 
 	@Override
-	public ResponseEntity<Boolean> uploadEnvironment(MultipartFile envFile) {
+	public ResponseEntity<Boolean> uploadEnvironment(
+			@RequestParam(value = "file") MultipartFile envFile,
+			@RequestParam(value = "overwrite", required = false, defaultValue = "false") boolean overwrite) {
 		try {
 			EnvironmentType envType = EnvironmentType.getFromMimeType(envFile.getContentType());
 
 			if (envType == null)
 				envType = EnvironmentType.AASX;
 
-			aasEnvironment.loadEnvironment(CompleteEnvironment.fromInputStream(envFile.getInputStream(), envType));
+			aasEnvironment.loadEnvironment(CompleteEnvironment.fromInputStream(envFile.getInputStream(), envType), overwrite);
 
 		} catch (InvalidFormatException e) {
-			return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
 		} catch (DeserializationException | IOException e) {
-			return new ResponseEntity<Boolean>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 
 	private List<String> getOriginalIds(List<String> ids) {
 		List<String> results = new ArrayList<>();
-		
+
 		if (!areValidIds(ids))
 			return results;
-		
+
 		ids.forEach(id -> {
 			results.add(Base64UrlEncodedIdentifier.fromEncodedValue(id).getIdentifier());
 		});
-		
+
 		return results;
 	}
 
 	private boolean areParametersValid(String accept, @Valid List<String> aasIds, @Valid List<String> submodelIds) {
 		if (!areValidIds(aasIds) && !areValidIds(submodelIds))
 			return false;
-		
+
 		return (accept.equals(ACCEPT_AASX) || accept.equals(ACCEPT_JSON) || accept.equals(ACCEPT_XML));
 	}
 
