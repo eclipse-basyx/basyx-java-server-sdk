@@ -127,7 +127,7 @@ public class DefaultAASEnvironment implements AasEnvironment {
 			SubmodelElement submodelElement = stack.pop();
 
 			if (submodelElement instanceof File file) {
-                if(!isURL(file.getValue()))
+				if(!isURL(file.getValue()))
 					files.add(file);
 			} else if (submodelElement instanceof SubmodelElementCollection collection) {
 				stack.addAll(collection.getValue());
@@ -139,14 +139,16 @@ public class DefaultAASEnvironment implements AasEnvironment {
 		return files;
 	}
 
-	public void loadEnvironment(CompleteEnvironment completeEnvironment) {
+	public void loadEnvironment(CompleteEnvironment completeEnvironment, boolean overwrite) {
 		Environment environment = completeEnvironment.getEnvironment();
 		List<InMemoryFile> relatedFiles = completeEnvironment.getRelatedFiles();
 
 		if (environment == null)
 			return;
 
-		checker.assertNoDuplicateIds(environment);
+		if(!overwrite){
+			checker.assertNoDuplicateIds(environment);
+		}
 
 		createShellsOnRepositoryFromEnvironment(environment, relatedFiles);
 		createSubmodelsOnRepositoryFromEnvironment(environment, completeEnvironment.getRelatedFiles());
@@ -371,7 +373,7 @@ public class DefaultAASEnvironment implements AasEnvironment {
 				logger.error("Thumbnail file {} does not exist in the repository", thumbnail.getPath());
 			}
 		}
-    }
+	}
 
 	private static boolean isThumbnailSet(Resource thumbnail) {
 		return thumbnail != null && thumbnail.getPath() != null;
@@ -379,21 +381,21 @@ public class DefaultAASEnvironment implements AasEnvironment {
 
 	private static String getThumbnailPathInAASX(String path) {
 		try {
-            return "/" + getHashedFilePath(path) + "." + getFileExtensionFromPath(path);
-        } catch (NoSuchAlgorithmException e) {
+			return "/" + getHashedFilePath(path) + "." + getFileExtensionFromPath(path);
+		} catch (NoSuchAlgorithmException e) {
 			logger.error("Could not hash thumbnail path {}", path);
-            throw new RuntimeException(e);
-        }
-    }
+			throw new RuntimeException(e);
+		}
+	}
 
 	private static String getFilePathInAASX(String path) {
 		try {
-            return aasxFilePathPrefix + getHashedFilePath(path) + "." + getFileExtensionFromPath(path);
-        } catch (NoSuchAlgorithmException e) {
+			return aasxFilePathPrefix + getHashedFilePath(path) + "." + getFileExtensionFromPath(path);
+		} catch (NoSuchAlgorithmException e) {
 			logger.error("Could not hash file path {}", path);
-            throw new RuntimeException(e);
-        }
-    }
+			throw new RuntimeException(e);
+		}
+	}
 
 	private static String getFileExtensionFromPath(String file) {
 		String[] split = file.split("\\.");

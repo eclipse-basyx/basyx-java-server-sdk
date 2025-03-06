@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,7 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasenvironment;
@@ -32,7 +32,7 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEn
 
 /**
  * Specifies the overall AasEnvironment API
- * 
+ *
  * @author zhangzai, danish
  *
  */
@@ -40,7 +40,7 @@ public interface AasEnvironment {
 
 	/**
 	 * Generate serialization from given aas and
-	 * 
+	 *
 	 * @param aasIds
 	 * @param submodelIds
 	 * @param includeConceptDescriptions
@@ -52,6 +52,9 @@ public interface AasEnvironment {
 	public String createXMLAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException;
 
 	public byte[] createAASXAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException, IOException;
-	
-	public void loadEnvironment(CompleteEnvironment completeEnvironment);
+
+	public void loadEnvironment(CompleteEnvironment completeEnvironment, boolean overwrite);
+	default void loadEnvironment(CompleteEnvironment completeEnvironment){
+		loadEnvironment(completeEnvironment, false);
+	}
 }
