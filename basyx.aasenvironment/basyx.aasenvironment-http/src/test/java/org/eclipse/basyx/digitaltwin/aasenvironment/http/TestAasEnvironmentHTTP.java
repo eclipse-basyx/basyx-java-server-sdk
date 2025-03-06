@@ -70,11 +70,11 @@ public class TestAasEnvironmentHTTP {
 	public static final String AASX_MIMETYPE = "application/asset-administration-shell-package+xml";
 
 	public static final String AASX_ENV_PATH = "testEnvironment.aasx";
-	private static final String JSON_ENV_PATH = "testEnvironment.json";
+	static final String JSON_ENV_PATH = "testEnvironment.json";
 	private static final String XML_ENV_PATH = "testEnvironment.xml";
 	private static final String WRONGEXT_ENV_PATH = "testEnvironment.txt";
-	private static final String JSON_OPERATIONALDATA_ENV_PATH = "operationalDataEnvironment.json";
-	private static final String AASENVIRONMENT_VALUE_ONLY_JSON = "AASEnvironmentValueOnly.json";
+	static final String JSON_OPERATIONALDATA_ENV_PATH = "operationalDataEnvironment.json";
+	static final String AASENVIRONMENT_VALUE_ONLY_JSON = "AASEnvironmentValueOnly.json";
 
 	private static ConfigurableApplicationContext appContext;
 	private static SubmodelRepository submodelRepo;
@@ -277,18 +277,22 @@ public class TestAasEnvironmentHTTP {
 		return aasCreateRequest;
 	}
 
-	private static HttpPost createPostRequestWithFile(String filepath, String contentType) throws FileNotFoundException {
+	static HttpPost createPostRequestWithFile(String filepath, String contentType, boolean overwrite) throws FileNotFoundException {
 		java.io.File file = ResourceUtils.getFile("classpath:" + filepath);
 
-		return BaSyxHttpTestUtils.createPostRequestWithFile(getAASXUploadURL(), file, contentType);
+		return BaSyxHttpTestUtils.createPostRequestWithFile(getAASXUploadURL(overwrite), file, contentType);
+	}
+
+	static HttpPost createPostRequestWithFile(String filepath, String contentType) throws FileNotFoundException {
+		return createPostRequestWithFile(filepath, contentType, false);
 	}
 
 	public static String getURL() {
 		return "http://localhost:8081";
 	}
 
-	private static String getAASXUploadURL() {
-		return getURL() + "/upload";
+	private static String getAASXUploadURL(boolean overwrite) {
+		return getURL() + "/upload?overwrite="+overwrite;
 	}
 
 	public static String getOperationalDataValueOnlyURL() {
