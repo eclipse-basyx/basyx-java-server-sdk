@@ -16,10 +16,11 @@
 		<module>basyx.aasdiscoveryservice-core</module>
 		<module>basyx.aasdiscoveryservice-backend-mongodb</module>
 		<module>basyx.aasdiscoveryservice-http</module>
-		<module>basyx.aasdiscoveryservice-backend-inmemory</module>
+<!--		<module>basyx.aasdiscoveryservice-backend-inmemory</module>-->
 		<module>basyx.aasdiscoveryservice-tck</module>
 		<module>basyx.aasdiscoveryservice.component</module>
 		<module>basyx.aasdiscoveryservice-feature-authorization</module>
         <module>basyx.aasdiscoveryservice-backend</module>
+        <module>basyx.aasdiscoveryservice-backend-h2</module>
     </modules>
 </project>

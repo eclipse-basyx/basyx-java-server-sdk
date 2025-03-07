@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright (C) 2025 the Eclipse BaSyx Authors
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2; /*******************************************************************************
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,19 +23,19 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * CrudRepository for the AasDiscoveryDocument
+ * Spring application configured for tests.
  * 
  * @author mateusmolina
+ *
  */
-@Repository
-public interface AasDiscoveryDocumentBackend extends CrudRepository<AasDiscoveryDocument, String>, QuerydslPredicateExecutor<AasDiscoveryDocument> {
-    
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
+public class DummyAasDiscoveryServiceComponent {
+
+	public static void main(String[] args) {
+		SpringApplication.run(DummyAasDiscoveryServiceComponent.class, args);
+	}
 }

@@ -66,7 +66,8 @@ import org.springframework.util.ResourceUtils;
  * 
  * @author danish
  */
-public class TestAuthorizedSubmodelRepository {
+public class
+TestAuthorizedSubmodelRepository {
 
 	private static final String SUBMODEL_REPOSITORY_PATH = "/submodels";
 	private static final String SUBMODEL_SIMPLE_2_JSON = "authorization/SubmodelSimple_2.json";
