@@ -68,7 +68,7 @@ public class PaginationSupport<T extends Object> {
 
 
 	private Stream<Entry<String, T>> applyFilter(DescriptorFilter filter, Predicate<Entry<String, T>> filterMethod, Stream<Entry<String, T>> aStream) {
-		if (filter != null) {
+		if (filter != null && filter.isFiltered()) {
 			return aStream.filter(filterMethod);
 		}
 		return aStream;
