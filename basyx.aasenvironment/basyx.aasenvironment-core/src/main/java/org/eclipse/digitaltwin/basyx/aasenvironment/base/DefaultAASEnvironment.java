@@ -139,14 +139,14 @@ public class DefaultAASEnvironment implements AasEnvironment {
 		return files;
 	}
 
-	public void loadEnvironment(CompleteEnvironment completeEnvironment, boolean overwrite) {
+	public void loadEnvironment(CompleteEnvironment completeEnvironment, boolean ignoreDuplicates) {
 		Environment environment = completeEnvironment.getEnvironment();
 		List<InMemoryFile> relatedFiles = completeEnvironment.getRelatedFiles();
 
 		if (environment == null)
 			return;
 
-		if(!overwrite){
+		if(!ignoreDuplicates){
 			checker.assertNoDuplicateIds(environment);
 		}
 

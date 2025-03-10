@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,23 +25,12 @@
 
 package org.eclipse.basyx.digitaltwin.aasenvironment.http;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.ParseException;
-import org.apache.hc.core5.http.ProtocolException;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
-import org.eclipse.digitaltwin.basyx.aasenvironment.TestAASEnvironmentSerialization;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
-import org.eclipse.digitaltwin.basyx.http.HttpBaSyxHeader;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.junit.AfterClass;
@@ -53,20 +42,16 @@ import org.junit.runners.Parameterized.Parameters;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.ResourceUtils;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import static org.eclipse.basyx.digitaltwin.aasenvironment.http.TestAasEnvironmentHTTP.*;
 import static org.junit.Assert.*;
 
 @RunWith(Parameterized.class)
-public class TestAasEnvironmentHTTP_OverwriteEnv {
+public class TestAasEnvironmentHTTP_IgnoreDuplicates {
 
 
 	private static ConfigurableApplicationContext appContext;
@@ -97,22 +82,22 @@ public class TestAasEnvironmentHTTP_OverwriteEnv {
 	@Parameters(name = "TestCase: {0}")
 	public static Collection<Object[]> data() {
 		return Arrays.asList(new Object[][] {
-				{ "NO_CHANGE" },    // Normal overwrite test
-				{ "DELETE_AAS" },   // Delete AAS before overwriting
-				{ "DELETE_SM" },    // Delete Submodel before overwriting
-				{ "DELETE_CD" }     // Delete ConceptDescription before overwriting
+				{ "NO_CHANGE" },    // Normal test. No changes before AASX reupload
+				{ "DELETE_AAS" },   // Delete AAS before AASX reupload
+				{ "DELETE_SM" },    // Delete Submodel before AASX reupload
+				{ "DELETE_CD" }     // Delete ConceptDescription before AASX reupload
 		});
 	}
 
 
 	@Test
-	public void testEnvironmentOverwrite_AASX() throws IOException {
+	public void testEnvironmentIgnoreDuplicates_AASX() throws IOException {
 		uploadInitialAASX();
 		recordInitialCounts();
 
 		applyScenarioModifications();
 
-		overwriteAASX();
+		reuploadAASX();
 		verifyFinalState();
 
 		cleanEnvironment();
@@ -167,7 +152,7 @@ public class TestAasEnvironmentHTTP_OverwriteEnv {
 		assertEquals(initialCdCount - 1, conceptDescriptionRepo.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
 	}
 
-	private void overwriteAASX() throws IOException {
+	private void reuploadAASX() throws IOException {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executePostRequest(
 				HttpClients.createDefault(),
 				createPostRequestWithFile(AASX_ENV_PATH, AASX_MIMETYPE, true));

@@ -104,14 +104,15 @@ public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 	@Override
 	public ResponseEntity<Boolean> uploadEnvironment(
 			@RequestParam(value = "file") MultipartFile envFile,
-			@RequestParam(value = "overwrite", required = false, defaultValue = "false") boolean overwrite) {
+			@RequestParam(value = "ignore-duplicates", required = false, defaultValue = "false") boolean ignoreDuplicates) {
 		try {
 			EnvironmentType envType = EnvironmentType.getFromMimeType(envFile.getContentType());
 
 			if (envType == null)
 				envType = EnvironmentType.AASX;
 
-			aasEnvironment.loadEnvironment(CompleteEnvironment.fromInputStream(envFile.getInputStream(), envType), overwrite);
+			aasEnvironment.loadEnvironment(CompleteEnvironment.fromInputStream(envFile.getInputStream(), envType),
+					ignoreDuplicates);
 
 		} catch (InvalidFormatException e) {
 			return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);

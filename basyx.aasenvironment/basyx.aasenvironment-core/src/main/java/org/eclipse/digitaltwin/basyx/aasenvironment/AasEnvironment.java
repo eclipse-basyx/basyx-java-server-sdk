@@ -53,7 +53,7 @@ public interface AasEnvironment {
 
 	public byte[] createAASXAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException, IOException;
 
-	void loadEnvironment(CompleteEnvironment completeEnvironment, boolean overwrite);
+	void loadEnvironment(CompleteEnvironment completeEnvironment, boolean ignoreDuplicates);
 
 	default void loadEnvironment(CompleteEnvironment completeEnvironment){
 		loadEnvironment(completeEnvironment, false);

@@ -277,10 +277,10 @@ public class TestAasEnvironmentHTTP {
 		return aasCreateRequest;
 	}
 
-	static HttpPost createPostRequestWithFile(String filepath, String contentType, boolean overwrite) throws FileNotFoundException {
+	static HttpPost createPostRequestWithFile(String filepath, String contentType, boolean ignoreDuplicates) throws FileNotFoundException {
 		java.io.File file = ResourceUtils.getFile("classpath:" + filepath);
 
-		return BaSyxHttpTestUtils.createPostRequestWithFile(getAASXUploadURL(overwrite), file, contentType);
+		return BaSyxHttpTestUtils.createPostRequestWithFile(getAASXUploadURL(ignoreDuplicates), file, contentType);
 	}
 
 	static HttpPost createPostRequestWithFile(String filepath, String contentType) throws FileNotFoundException {
@@ -291,8 +291,8 @@ public class TestAasEnvironmentHTTP {
 		return "http://localhost:8081";
 	}
 
-	private static String getAASXUploadURL(boolean overwrite) {
-		return getURL() + "/upload?overwrite="+overwrite;
+	private static String getAASXUploadURL(boolean ignoreDuplicates) {
+		return getURL() + "/upload?ignore-duplicates="+ignoreDuplicates;
 	}
 
 	public static String getOperationalDataValueOnlyURL() {

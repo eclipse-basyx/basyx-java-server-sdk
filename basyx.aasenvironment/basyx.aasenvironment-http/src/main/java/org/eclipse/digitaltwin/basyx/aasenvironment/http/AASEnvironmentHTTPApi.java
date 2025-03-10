@@ -78,7 +78,7 @@ public interface AASEnvironmentHTTPApi {
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	ResponseEntity<Boolean> uploadEnvironment(
 			@Parameter(description = "An environment file (XML, JSON, AASX)") @Valid @RequestParam("file") MultipartFile envFile,
-			@Parameter(description = "Flag to indicate if existing environment should be overwritten (default: false)", schema = @Schema(defaultValue = "false"))
-			@RequestParam(value = "overwrite", required = false, defaultValue = "false") boolean overwrite
+			@Parameter(description = "Flag to indicate if already existing Ids should be ignored when reuploading an environment (default: false)", schema = @Schema(defaultValue = "false"))
+			@RequestParam(value = "ignore-duplicates", required = false, defaultValue = "false") boolean ignoreDuplicates
 	);
 }
