@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2025 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 DFKI GmbH (https://www.dfki.de/en/web)
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,35 +21,39 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  * SPDX-License-Identifier: MIT
+ * 
  ******************************************************************************/
-
-package org.eclipse.digitaltwin.basyx.submodelservice;
+package org.eclipse.digitaltwin.basyx.submodelservice.feature.registry.integration;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 
 /**
- * Interface for a factory creating an SubmodelService based on a Submodel
+ * Factory for creating {@link RegistryIntegrationSubmodelService}
  * 
- * @author schnicke
- *
+ * @author Gerhard Sonnenberg (DFKI GmbH)
  */
-public interface SubmodelServiceFactory {
-	/**
-	 * Creates a new SubmodelService containing the Submodel passed as parameter
-	 * 
-	 * @param submodel
-	 * @return
-	 */
-	public SubmodelService create(Submodel submodel);
+public class RegistryIntegrationSubmodelServiceFactory implements SubmodelServiceFactory {
 
-	/**
-	 * Creates a new SubmodelService containing the Submodel with the given id
-	 *
-	 * The submodel is assumed to be already stored in the backend
-	 *
-	 * @param submodelId
-	 * @return the created SubmodelService
-	 */
-	public SubmodelService create(String submodelId);
-	
+	private final SubmodelServiceFactory decorated;
+	private final SubmodelRegistration registration;
+
+	public RegistryIntegrationSubmodelServiceFactory(SubmodelServiceFactory decorated, SubmodelRegistration registration) {
+		this.decorated = decorated;
+		this.registration = registration;
+	}
+
+	@Override
+	public SubmodelService create(Submodel submodel) {
+		SubmodelService service = decorated.create(submodel);
+		registration.register(submodel);
+		return service;
+	}
+
+	@Override
+	public SubmodelService create(String submodelId) {
+		// not relevant for submodel service, just for repositories
+		return decorated.create(submodelId);
+	}
 }

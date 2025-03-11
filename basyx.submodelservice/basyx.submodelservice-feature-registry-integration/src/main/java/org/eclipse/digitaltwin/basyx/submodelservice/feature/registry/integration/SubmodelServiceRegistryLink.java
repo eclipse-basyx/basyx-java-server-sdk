@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2025 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 DFKI GmbH (https://www.dfki.de/en/web)
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,35 +21,36 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  * SPDX-License-Identifier: MIT
+ * 
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelservice;
+package org.eclipse.digitaltwin.basyx.submodelservice.feature.registry.integration;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import java.util.List;
+
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 
 /**
- * Interface for a factory creating an SubmodelService based on a Submodel
+ * Represents information for linking {@link SubmodelService} with SubmodelRegistry
  * 
- * @author schnicke
- *
+ * @author Gerhard Sonnenberg (DFKI GmbH)
  */
-public interface SubmodelServiceFactory {
-	/**
-	 * Creates a new SubmodelService containing the Submodel passed as parameter
-	 * 
-	 * @param submodel
-	 * @return
-	 */
-	public SubmodelService create(Submodel submodel);
-
-	/**
-	 * Creates a new SubmodelService containing the Submodel with the given id
-	 *
-	 * The submodel is assumed to be already stored in the backend
-	 *
-	 * @param submodelId
-	 * @return the created SubmodelService
-	 */
-	public SubmodelService create(String submodelId);
+public class SubmodelServiceRegistryLink {
 	
+	private SubmodelRegistryApi registryApi;
+	private List<String> submodelServiceBaseURLs;
+	
+	public SubmodelServiceRegistryLink(SubmodelRegistryApi registryApi, List<String> submodelServiceBaseURLs) {
+		this.registryApi = registryApi;
+		this.submodelServiceBaseURLs = submodelServiceBaseURLs;
+	}
+
+	public SubmodelRegistryApi getRegistryApi() {
+		return registryApi;
+	}
+
+	public List<String> getSubmodelServiceBaseURLs() {
+		return submodelServiceBaseURLs;
+	}
 }

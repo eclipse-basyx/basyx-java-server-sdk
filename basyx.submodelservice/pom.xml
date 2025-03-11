@@ -22,6 +22,7 @@
 		<module>basyx.submodelservice-backend-mongodb</module>
 		<module>basyx.submodelservice-feature-mqtt</module>
 		<module>basyx.submodelservice-feature-operation-dispatching</module>
+		<module>basyx.submodelservice-feature-registry-integration</module>
 		<module>basyx.submodelservice.example</module>
 		<module>basyx.submodelservice.component</module>
 		<module>basyx.submodelservice-client</module>
