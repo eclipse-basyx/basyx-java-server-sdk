@@ -53,7 +53,7 @@ import org.springframework.data.repository.CrudRepository;
  */
 public class CrudAasDiscovery implements AasDiscoveryService {
 
-	private final AasDiscoveryDocumentBackend backend;
+	protected final AasDiscoveryDocumentBackend backend;
 	private final String aasDiscoveryServiceName;
 
 	public CrudAasDiscovery(AasDiscoveryDocumentBackend backend, String aasDiscoveryServiceName) {
@@ -198,7 +198,7 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 				.map(Map.Entry::getKey).collect(Collectors.toSet());
 	}
 
-	private CursorResult<List<String>> paginateList(PaginationInfo pInfo, List<String> shellIdentifiers) {
+	protected CursorResult<List<String>> paginateList(PaginationInfo pInfo, List<String> shellIdentifiers) {
 		TreeMap<String, String> shellIdentifierMap = shellIdentifiers.stream()
 				.collect(Collectors.toMap(Function.identity(), Function.identity(), (a, b) -> a, TreeMap::new));
 
@@ -207,7 +207,7 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 		return paginationSupport.getPaged(pInfo);
 	}
 
-	private static List<AasDiscoveryDocument> convertIterableToList(Iterable<AasDiscoveryDocument> result) {
+	protected static List<AasDiscoveryDocument> convertIterableToList(Iterable<AasDiscoveryDocument> result) {
 		List<AasDiscoveryDocument> aasDiscoveryDocuments = StreamSupport.stream(result.spliterator(), false)
 				.collect(Collectors.toList());
 		return aasDiscoveryDocuments;

@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model;
 
 import java.util.Objects;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
@@ -42,6 +43,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 public class AssetLink {
 
 	private String name;
+	@Column(name = "asset_value")
 	private String value;
 
 	public AssetLink() {

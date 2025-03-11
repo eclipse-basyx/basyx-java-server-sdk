@@ -25,6 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.feature.authorization;
 
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.CrudAasDiscoveryFactory;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -44,7 +45,7 @@ public class TestAuthorizedAasDiscoveryServiceWildcard extends AuthorizedAasDisc
 
 	@BeforeClass
 	public static void setUpSpring() {
-		SpringApplication springApp = new SpringApplication(DummyAasDiscoveryServiceComponent.class);
+		SpringApplication springApp = new SpringApplication(DummyAuthorizedInMemoryAasDiscoveryServiceComponent.class);
 		springApp.setAdditionalProfiles(PROFILE);
 
 		appContext = springApp.run(new String[] {});
@@ -57,7 +58,7 @@ public class TestAuthorizedAasDiscoveryServiceWildcard extends AuthorizedAasDisc
 
 	@Override
 	protected AasDiscoveryService getUnauthDiscoveryService() {
-		return appContext.getBean(MockAasDiscoveryServiceFactory.class).getAasDiscoveryService();
+		return appContext.getBean(CrudAasDiscoveryFactory.class).create();
 	}
 
 	@Override

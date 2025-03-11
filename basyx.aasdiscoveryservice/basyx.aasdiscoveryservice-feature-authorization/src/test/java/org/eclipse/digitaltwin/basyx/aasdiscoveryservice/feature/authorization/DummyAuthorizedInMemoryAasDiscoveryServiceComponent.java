@@ -25,31 +25,19 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.feature.authorization;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.CrudAasDiscoveryFactory;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Mocked variant of {@link InMemoryAasDiscoveryServiceFactory} that enables
- * direct access to the underlying service.
- *
- * @author mateusmolina
+ * Spring application configured for tests.
+ * 
+ * @author fried
  *
  */
-public class MockAasDiscoveryServiceFactory implements AasDiscoveryServiceFactory {
-	private final AasDiscoveryService aasDiscoveryService;
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
+public class DummyAuthorizedInMemoryAasDiscoveryServiceComponent {
 
-	public MockAasDiscoveryServiceFactory() {
-		this.aasDiscoveryService = new CrudAasDiscoveryFactory(new InMemoryAasDiscoveryDocumentBackend()).create();
+	public static void main(String[] args) {
+		SpringApplication.run(DummyAuthorizedInMemoryAasDiscoveryServiceComponent.class, args);
 	}
-
-	@Override
-	public AasDiscoveryService create() {
-		return aasDiscoveryService;
-	}
-
-	AasDiscoveryService getAasDiscoveryService() {
-		return aasDiscoveryService;
-	}
-
 }

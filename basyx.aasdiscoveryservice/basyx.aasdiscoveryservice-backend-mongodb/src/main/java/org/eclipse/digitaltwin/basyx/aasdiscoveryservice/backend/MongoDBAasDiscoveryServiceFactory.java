@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (C) 2025 the Eclipse BaSyx Authors
- * 
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,46 +19,41 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
 
-import jakarta.transaction.Transactional;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
-import org.junit.Before;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
 
-/**
- * Tests the AasDiscoveryService with H2 as backend
- * 
- * @author fried
- *
- */
-@SpringBootTest
-@RunWith(SpringRunner.class)
-public class TestInMemoryAasDiscoveryService extends AasDiscoveryServiceSuite {
-	@Autowired
-	AasDiscoveryService aasDiscoveryService;
+@Component
+@ConditionalOnProperty(name="basyx.backend", havingValue = "MongoDB")
+@Primary
+public class MongoDBAasDiscoveryServiceFactory extends CrudAasDiscoveryFactory{
 
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+    private final AasDiscoveryDocumentBackend aasDiscoveryDocumentBackend;
+    private final String aasDiscoveryName;
 
-	@Before
-	@Transactional
-	public void cleanup() {
-		jdbcTemplate.execute("DELETE FROM aas_asset_links");
-		jdbcTemplate.execute("DELETE FROM aas_discovery_document");
-	}
+    @Autowired
+    public MongoDBAasDiscoveryServiceFactory(AasDiscoveryDocumentBackend aasDiscoveryDocumentBackend, @Value("${basyx.aasdiscoveryservice.name:aas-discovery-service}") String aasDiscoveryName) {
+        super(aasDiscoveryDocumentBackend, aasDiscoveryName);
+        this.aasDiscoveryDocumentBackend = aasDiscoveryDocumentBackend;
+        this.aasDiscoveryName = aasDiscoveryName;
+    }
 
-	@Override
-	protected AasDiscoveryService getAasDiscoveryService() {
-		return aasDiscoveryService;
-	}
+    public MongoDBAasDiscoveryServiceFactory(AasDiscoveryDocumentBackend aasBackendProvider) {
+        this(aasBackendProvider, "aas-discovery-service");
+    }
+
+    @Override
+    public AasDiscoveryService create() {
+        return new MongoDBAasDiscoveryService(this.aasDiscoveryDocumentBackend, this.aasDiscoveryName);
+    }
+
 }

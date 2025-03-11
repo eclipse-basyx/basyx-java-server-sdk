@@ -33,7 +33,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Configuration for tests
  * 
- * @author mateusmolina
+ * @author fried
  *
  */
 @Configuration
