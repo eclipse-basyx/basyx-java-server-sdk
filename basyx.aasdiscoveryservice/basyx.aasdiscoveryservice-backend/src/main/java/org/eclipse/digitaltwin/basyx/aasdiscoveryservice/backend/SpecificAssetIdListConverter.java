@@ -28,22 +28,21 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
+
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 @Converter
-public class SpecificAssetIdListConverter implements AttributeConverter<List<SpecificAssetId>, String> {
+public class SpecificAssetIdListConverter implements AttributeConverter<List<DefaultSpecificAssetId>, String> {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public String convertToDatabaseColumn(List<SpecificAssetId> specificAssetIds) {
+    public String convertToDatabaseColumn(List<DefaultSpecificAssetId> specificAssetIds) {
         try {
             return objectMapper.writeValueAsString(specificAssetIds);
         } catch (JsonProcessingException e) {
@@ -52,9 +51,9 @@ public class SpecificAssetIdListConverter implements AttributeConverter<List<Spe
     }
 
     @Override
-    public List<SpecificAssetId> convertToEntityAttribute(String dbData) {
+    public List<DefaultSpecificAssetId> convertToEntityAttribute(String dbData) {
         try {
-            return objectMapper.readValue(dbData, new TypeReference<List<SpecificAssetId>>() {});
+            return objectMapper.readValue(dbData, new TypeReference<List<DefaultSpecificAssetId>>() {});
         } catch (IOException e) {
             throw new IllegalArgumentException("Error converting JSON to SpecificAssetId List", e);
         }

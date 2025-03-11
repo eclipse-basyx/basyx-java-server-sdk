@@ -26,7 +26,6 @@
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.testconfig;
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.CrudAasDiscoveryFactory;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory.InMemoryAasDiscoveryDocumentBackend;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,10 +40,5 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 @Profile("httptests")
 public class DummyDiscoveryServiceConfig {
-
-	@Bean
-	AasDiscoveryService aasDiscoveryService() {
-		return new CrudAasDiscoveryFactory(new InMemoryAasDiscoveryDocumentBackend()).create();
-	}
 
 }

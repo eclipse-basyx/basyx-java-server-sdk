@@ -25,12 +25,16 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.CrudAasDiscoveryFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -42,9 +46,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class TestInMemoryAasDiscoveryService extends AasDiscoveryServiceSuite {
+	@Autowired
+	AasDiscoveryService aasDiscoveryService;
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
+	@Before
+	@Transactional
+	public void cleanup() {
+		jdbcTemplate.execute("DELETE FROM aas_discovery_document");
+	}
 
 	@Override
 	protected AasDiscoveryService getAasDiscoveryService() {
-		return new CrudAasDiscoveryFactory(new InMemoryAasDiscoveryDocumentBackend()).create();
-	}
+		return aasDiscoveryService;
+	}<
 }

@@ -28,9 +28,7 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Convert;
+import jakarta.persistence.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 
@@ -42,9 +40,11 @@ public class AasDiscoveryDocument {
 	@Id
 	@org.springframework.data.annotation.Id
 	private String shellIdentifier;
-	@Convert(converter = AssetLinkSetConverter.class)
+	@ElementCollection
+	@CollectionTable(name = "aas_asset_links", joinColumns = @JoinColumn(name = "aas_discovery_document_id"))
 	private Set<AssetLink> assetLinks;
 	@Convert(converter = SpecificAssetIdListConverter.class)
+	@Column(length = 2000)
 	private List<SpecificAssetId> specificAssetIds;
 	
 	/**

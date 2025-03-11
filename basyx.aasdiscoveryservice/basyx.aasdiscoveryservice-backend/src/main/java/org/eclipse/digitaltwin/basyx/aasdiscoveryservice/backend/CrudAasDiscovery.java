@@ -31,13 +31,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.core.types.dsl.SetPath;
+import com.querydsl.core.types.dsl.Expressions;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.QAssetLink;
 import org.eclipse.digitaltwin.basyx.core.exceptions.AssetLinkDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
@@ -75,7 +74,15 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	@Override
 	public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo, List<AssetLink> assetIds) {
 		QAasDiscoveryDocument qDoc = QAasDiscoveryDocument.aasDiscoveryDocument;
-		BooleanExpression predicate = qDoc.assetLinks.any().in(assetIds);
+		BooleanExpression predicate = Expressions.FALSE;
+
+		for (AssetLink asset : assetIds) {
+			predicate = predicate.or(
+					qDoc.assetLinks.any().name.eq(asset.getName())
+							.and(qDoc.assetLinks.any().value.eq(asset.getValue()))
+			);
+		}
+
 		Iterable<AasDiscoveryDocument> result = backend.findAll(predicate);
 
 		List<AasDiscoveryDocument> aasDiscoveryDocuments = convertIterableToList(result);

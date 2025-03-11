@@ -26,6 +26,8 @@
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model;
 
 import java.util.Objects;
+
+import jakarta.persistence.Embeddable;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 
@@ -36,6 +38,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
  * @author danish
  *
  */
+@Embeddable
 public class AssetLink {
 
 	private String name;
