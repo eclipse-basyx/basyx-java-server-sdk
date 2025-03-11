@@ -155,6 +155,11 @@ public class DefaultAASEnvironment implements AasEnvironment {
 		createConceptDescriptionsOnRepositoryFromEnvironment(environment);
 	}
 
+	@Override
+	public void loadEnvironment(CompleteEnvironment completeEnvironment) {
+		loadEnvironment(completeEnvironment, false);
+	}
+
 	private void createConceptDescriptionsOnRepositoryFromEnvironment(Environment environment) {
 		IdentifiableRepository<ConceptDescription> repo = new DelegatingIdentifiableRepository<ConceptDescription>(conceptDescriptionRepository::getConceptDescription, conceptDescriptionRepository::updateConceptDescription,
 				conceptDescriptionRepository::createConceptDescription);
