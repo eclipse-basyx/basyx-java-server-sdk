@@ -1,4 +1,4 @@
-/*******************************************************************************
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2; /*******************************************************************************
  * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -23,18 +23,41 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
-
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import jakarta.transaction.Transactional;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * CrudRepository for the AasDiscoveryDocument
+ * Tests the AasDiscoveryService with MongoDb as backend
  * 
- * @author mateusmolina
+ * @author danish, mateusmolina
+ *
  */
-@Repository
-public interface AasDiscoveryDocumentBackend extends CrudRepository<AasDiscoveryDocument, String>, QuerydslPredicateExecutor<AasDiscoveryDocument> {
-    
+@SpringBootTest
+@RunWith(SpringRunner.class)
+public class TestH2AasDiscoveryService extends AasDiscoveryServiceSuite {
+
+	@Autowired
+	AasDiscoveryService aasDiscoveryService;
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
+	@Before
+	@Transactional
+	public void cleanup() {
+		jdbcTemplate.execute("DELETE FROM aas_discovery_document");
+	}
+
+	@Override
+	protected AasDiscoveryService getAasDiscoveryService() {
+		return aasDiscoveryService;
+	}
+
 }

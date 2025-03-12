@@ -1,4 +1,4 @@
-/*******************************************************************************
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.feature.authorization; /*******************************************************************************
  * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -23,18 +23,27 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.feature.AasDiscoveryServiceFeature;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.feature.DecoratedAasDiscoveryServiceFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 /**
- * CrudRepository for the AasDiscoveryDocument
+ * Configuration for tests
  * 
  * @author mateusmolina
+ *
  */
-@Repository
-public interface AasDiscoveryDocumentBackend extends CrudRepository<AasDiscoveryDocument, String>, QuerydslPredicateExecutor<AasDiscoveryDocument> {
-    
+@Configuration
+public class DummyAuthDiscoveryServiceConfig {
+
+	@Bean
+	AasDiscoveryService aasDiscoveryService(AasDiscoveryServiceFactory factory, List<AasDiscoveryServiceFeature> features) {
+		return new DecoratedAasDiscoveryServiceFactory(factory,features).create();
+	}
+
 }

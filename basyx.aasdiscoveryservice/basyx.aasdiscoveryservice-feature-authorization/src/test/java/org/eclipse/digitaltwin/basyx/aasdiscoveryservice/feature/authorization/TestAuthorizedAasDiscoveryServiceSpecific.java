@@ -57,7 +57,7 @@ public class TestAuthorizedAasDiscoveryServiceSpecific extends AuthorizedAasDisc
 
 	@Override
 	protected AasDiscoveryService getUnauthDiscoveryService() {
-		return appContext.getBean(MockAasDiscoveryServiceFactory.class).getAasDiscoveryService();
+		return appContext.getBean(AasDiscoveryService.class);
 	}
 
 	@Override
