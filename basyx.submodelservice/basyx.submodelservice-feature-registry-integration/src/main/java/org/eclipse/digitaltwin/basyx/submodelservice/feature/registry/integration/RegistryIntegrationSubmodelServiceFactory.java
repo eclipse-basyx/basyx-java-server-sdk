@@ -30,7 +30,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 
 /**
- * Factory for creating {@link RegistryIntegrationSubmodelService}
+ * Factory for to register a submodel descriptor
  * 
  * @author Gerhard Sonnenberg (DFKI GmbH)
  */

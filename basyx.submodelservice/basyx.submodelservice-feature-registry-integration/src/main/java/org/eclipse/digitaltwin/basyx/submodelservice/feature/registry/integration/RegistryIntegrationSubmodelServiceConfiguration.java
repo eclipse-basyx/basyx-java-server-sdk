@@ -35,6 +35,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.GrantTy
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.AuthorizedConnectedSubmodelRegistry;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

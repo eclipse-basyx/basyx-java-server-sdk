@@ -25,6 +25,7 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelservice.feature.registry.integration;
 
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.SubmodelServiceFeature;
 import org.springframework.beans.factory.annotation.Autowired;
