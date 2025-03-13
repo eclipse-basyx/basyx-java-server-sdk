@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>basyx.submodelservice-feature-registry-integration</artifactId>
-	<name>BaSyx AAS Submodel Service feature-registry-integration</name>
+	<name>BaSyx Submodel Service feature-registry-integration</name>
 	<description>BaSyx Submodel Service feature-registry-integration</description>
 
 	<dependencies>

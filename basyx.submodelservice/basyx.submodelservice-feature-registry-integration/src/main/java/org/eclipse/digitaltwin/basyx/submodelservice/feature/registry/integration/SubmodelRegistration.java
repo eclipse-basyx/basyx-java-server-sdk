@@ -33,7 +33,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.AccessTokenRetrievalExcepti
 import org.eclipse.digitaltwin.basyx.core.exceptions.RepositoryRegistryUnlinkException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.factory.SubmodelDescriptorFactory;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.factory.SubmodelServiceDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.slf4j.Logger;
@@ -64,7 +64,7 @@ public class SubmodelRegistration {
 
 	public void register(Submodel submodel) {
 		List<String> baseUrls = registryLink.getSubmodelServiceBaseURLs();
-		SubmodelDescriptor descriptor = new SubmodelDescriptorFactory(baseUrls, attributeMapper).create(submodel);
+		SubmodelDescriptor descriptor = new SubmodelServiceDescriptorFactory(baseUrls, attributeMapper).create(submodel);
 		SubmodelRegistryApi registryApi = registryLink.getRegistryApi();
 		try {
 			registryApi.postSubmodelDescriptor(descriptor);

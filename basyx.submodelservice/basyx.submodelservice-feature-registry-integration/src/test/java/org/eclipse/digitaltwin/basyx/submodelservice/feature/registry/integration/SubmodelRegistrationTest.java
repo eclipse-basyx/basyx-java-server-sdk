@@ -51,6 +51,9 @@ public class SubmodelRegistrationTest {
 		SubmodelRegistryApi api = new SubmodelRegistryApi("http://localhost:8060");
 		SubmodelDescriptor descriptor = api.getSubmodelDescriptorById(SubmodelServiceTestConfiguration.SM_ID);
 		Assertions.assertEquals(1, descriptor.getEndpoints().size());
+		
+		String href = descriptor.getEndpoints().get(0).getProtocolInformation().getHref();
+		Assertions.assertEquals("http://localhost:8765/submodel", href);
 	}
 	
 	@AfterClass

@@ -25,8 +25,13 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelservice.feature.registry.integration;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 import org.junit.AfterClass;
 import org.junit.jupiter.api.Assertions;
@@ -51,6 +56,11 @@ public class SubmodelRegistrationMultiUrlTest {
 		SubmodelRegistryApi api = new SubmodelRegistryApi("http://localhost:8060");
 		SubmodelDescriptor descriptor = api.getSubmodelDescriptorById(SubmodelServiceTestConfiguration.SM_ID);
 		Assertions.assertEquals(2, descriptor.getEndpoints().size());
+
+		Set<String> hrefs =	descriptor.getEndpoints().stream().map(Endpoint::getProtocolInformation).map(ProtocolInformation::getHref).collect(Collectors.toSet());
+				
+		Assertions.assertTrue(hrefs.contains("http://localhost:8765/submodel"));
+		Assertions.assertTrue(hrefs.contains("http://smservice:8081/submodel"));
 	}
 	
 	@AfterClass
