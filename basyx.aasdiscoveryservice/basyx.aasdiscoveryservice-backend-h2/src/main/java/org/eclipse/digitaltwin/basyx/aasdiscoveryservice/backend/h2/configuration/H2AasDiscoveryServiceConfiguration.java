@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,17 +25,21 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.configuration;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.CrudAasDiscoveryFactory;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend.H2CrudAasDiscoveryFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+/**
+ * Configuration to add H2 to the Spring Context
+ * @author fried
+ */
 @Configuration
 @ConditionalOnProperty(name="basyx.backend",havingValue = "InMemory")
-@EnableJpaRepositories(basePackages = "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.dto")
-@EntityScan(basePackages = "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.dto")
-@Import(CrudAasDiscoveryFactory.class)
+@EnableJpaRepositories(basePackages = "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend")
+@EntityScan(basePackages = "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend")
+@Import(H2CrudAasDiscoveryFactory.class)
 public class H2AasDiscoveryServiceConfiguration {
 }

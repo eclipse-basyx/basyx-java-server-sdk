@@ -23,33 +23,21 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2;
+import static org.junit.Assert.assertEquals;
 
-import org.eclipse.digitaltwin.basyx.common.mongocore.MappingEntry;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend.H2CrudAasDiscoveryFactory;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
+import org.junit.Test;
 
-/**
- * 
- * Provides the MongoDB configuration for the {@link AasDiscoveryDocumentBackend}
- * 
- * @author mateusmolina
- *
- */
-@Configuration
-@ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-@EnableMongoRepositories(basePackages = "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend")
-public class MongoDBAasDiscoveryDocumentBackendConfiguration {
+public class H2CrudAasDiscoveryTest {
+    private static final String CONFIGURED_AAS_DISCOVERY_NAME = "test-aas-discovery";
 
-	static final String COLLECTION_NAME_FIELD = "basyx.aasdiscoveryservice.mongodb.collectionName";
-	static final String DEFAULT_COLLECTION_NAME = "aasdiscovery-service";
+    @Test
+    public void getConfiguredAasDiscoveryName(){
+        AasDiscoveryService service = new H2CrudAasDiscoveryFactory(null, CONFIGURED_AAS_DISCOVERY_NAME).create();
 
-	@Bean
-	MappingEntry aasDiscoveryDocumentMappingEntry(@Value("${" + COLLECTION_NAME_FIELD + ":" + DEFAULT_COLLECTION_NAME + "}") String collectionName) {
-		return MappingEntry.of(collectionName, AasDiscoveryDocument.class);
-	}
+        assertEquals(CONFIGURED_AAS_DISCOVERY_NAME,service.getName());
+    }
 
 }

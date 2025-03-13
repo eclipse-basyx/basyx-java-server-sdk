@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,17 +23,21 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.dto;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend;
 
 import jakarta.persistence.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.converter.AssetLinksConverter;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.converter.SpecificAssetIdsConverter;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.converter.AssetLinksConverter;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.converter.SpecificAssetIdsConverter;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Wrapper class for {@link org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocument} for Querydsl Support
+ * @author fried
+ */
 @Entity
 @Table(name = "aas_discovery_document")
 public class AasDiscoveryDocumentEntity {

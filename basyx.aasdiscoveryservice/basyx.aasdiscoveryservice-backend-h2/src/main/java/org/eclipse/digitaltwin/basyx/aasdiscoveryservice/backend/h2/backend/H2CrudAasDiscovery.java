@@ -22,21 +22,12 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend;
 
-import static org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryUtils.*;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
+import jakarta.persistence.Column;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocument;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocumentBackend;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 import org.eclipse.digitaltwin.basyx.core.exceptions.AssetLinkDoesNotExistException;
@@ -44,21 +35,30 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryUtils.deriveAssetLinksFromSpecificAssetIds;
 
 /**
- * Default Implementation for the {@link AasDiscoveryService} based on Spring
+ * H2 Implementation for the {@link AasDiscoveryService} based on Spring
  * {@link CrudRepository}
  * 
  * @author zielstor, fried, mateusmolina
  *
  */
-public class CrudAasDiscovery implements AasDiscoveryService {
+public class H2CrudAasDiscovery implements AasDiscoveryService {
 
 	private final AasDiscoveryDocumentBackend backend;
 	private final String aasDiscoveryServiceName;
 
-	public CrudAasDiscovery(AasDiscoveryDocumentBackend backend, String aasDiscoveryServiceName) {
+	public H2CrudAasDiscovery(AasDiscoveryDocumentBackend backend, String aasDiscoveryServiceName) {
 		this.backend = backend;
 		this.aasDiscoveryServiceName = aasDiscoveryServiceName;
 	}

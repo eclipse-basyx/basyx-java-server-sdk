@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.feature.authorization;
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.springframework.boot.SpringApplication;
@@ -57,7 +58,7 @@ public class TestAuthorizedAasDiscoveryServiceSpecific extends AuthorizedAasDisc
 
 	@Override
 	protected AasDiscoveryService getUnauthDiscoveryService() {
-		return appContext.getBean(AasDiscoveryService.class);
+		return appContext.getBean(AasDiscoveryServiceFactory.class).create();
 	}
 
 	@Override

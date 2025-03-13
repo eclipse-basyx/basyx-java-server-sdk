@@ -22,42 +22,44 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend;
 
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocumentBackend;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 /**
- * Simple AAS Discovery factory that creates a {@link CrudAasDiscovery} with a
+ * Simple AAS Discovery factory that creates a {@link H2CrudAasDiscovery} with a
  * backend provider and a service factory
  * 
  * @author zielstor, fried, mateusmolina
  * 
  */
 @Component
-@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.backend:}')")
-public class CrudAasDiscoveryFactory implements AasDiscoveryServiceFactory {
+@ConditionalOnProperty(name="basyx.backend",havingValue = "InMemory")
+public class H2CrudAasDiscoveryFactory implements AasDiscoveryServiceFactory {
 
 	private final AasDiscoveryDocumentBackend aasDiscoveryDocumentBackend;
 	private final String aasDiscoveryName;
 
 	@Autowired
-	public CrudAasDiscoveryFactory(AasDiscoveryDocumentBackend aasDiscoveryDocumentBackend, @Value("${basyx.aasdiscoveryservice.name:aas-discovery-service}") String aasDiscoveryName) {
+	public H2CrudAasDiscoveryFactory(AasDiscoveryDocumentBackend aasDiscoveryDocumentBackend, @Value("${basyx.aasdiscoveryservice.name:aas-discovery-service}") String aasDiscoveryName) {
 		this.aasDiscoveryDocumentBackend = aasDiscoveryDocumentBackend;
 		this.aasDiscoveryName = aasDiscoveryName;
 	}
 
-	public CrudAasDiscoveryFactory(AasDiscoveryDocumentBackend aasBackendProvider) {
+	public H2CrudAasDiscoveryFactory(AasDiscoveryDocumentBackend aasBackendProvider) {
 		this(aasBackendProvider, "aas-discovery-service");
 	}
 
 	@Override
 	public AasDiscoveryService create() {
-		return new CrudAasDiscovery(aasDiscoveryDocumentBackend, aasDiscoveryName);
+		return new H2CrudAasDiscovery(aasDiscoveryDocumentBackend, aasDiscoveryName);
 	}
 
 }

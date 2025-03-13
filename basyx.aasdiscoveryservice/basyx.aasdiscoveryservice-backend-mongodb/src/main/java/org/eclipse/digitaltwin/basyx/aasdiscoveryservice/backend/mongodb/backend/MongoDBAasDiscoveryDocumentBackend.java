@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.dto;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.backend;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
@@ -42,19 +42,23 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+/**
+ * Implementation of {@link AasDiscoveryDocumentBackend} for MongoDB
+ * @author fried
+ */
 @Service
-@ConditionalOnProperty(name="basyx.backend",havingValue = "InMemory")
-public class H2AasDiscoveryDocumentBackend implements AasDiscoveryDocumentBackend {
-    private final JpaAasDiscoveryDocumentRepository jpaRepo;
+@ConditionalOnProperty(name="basyx.backend",havingValue = "MongoDB")
+public class MongoDBAasDiscoveryDocumentBackend  implements AasDiscoveryDocumentBackend {
+    private final MongoDBAasDiscoveryDocumentRepository repository;
 
-    public H2AasDiscoveryDocumentBackend(JpaAasDiscoveryDocumentRepository jpaRepo) {
-        this.jpaRepo = jpaRepo;
+    public MongoDBAasDiscoveryDocumentBackend(MongoDBAasDiscoveryDocumentRepository repository) {
+        this.repository = repository;
     }
 
     @Override
     public <S extends AasDiscoveryDocument> S save(S doc) {
         AasDiscoveryDocumentEntity entity = toEntity(doc);
-        jpaRepo.save(entity);
+        repository.save(entity);
         return doc;
     }
 
@@ -68,41 +72,41 @@ public class H2AasDiscoveryDocumentBackend implements AasDiscoveryDocumentBacken
 
     @Override
     public Optional<AasDiscoveryDocument> findById(String id) {
-        return jpaRepo.findById(id).map(this::toDomain);
+        return repository.findById(id).map(this::toDomain);
     }
 
     @Override
     public boolean existsById(String id) {
-        return jpaRepo.existsById(id);
+        return repository.existsById(id);
     }
 
     @Override
     public Iterable<AasDiscoveryDocument> findAll() {
-        return jpaRepo.findAll().stream()
+        return repository.findAll().stream()
                 .map(this::toDomain)
                 .toList();
     }
 
     @Override
     public Iterable<AasDiscoveryDocument> findAllById(Iterable<String> ids) {
-        return jpaRepo.findAllById(ids).stream()
+        return repository.findAllById(ids).stream()
                 .map(this::toDomain)
                 .toList();
     }
 
     @Override
     public long count() {
-        return jpaRepo.count();
+        return repository.count();
     }
 
     @Override
     public void deleteById(String id) {
-        jpaRepo.deleteById(id);
+        repository.deleteById(id);
     }
 
     @Override
     public void delete(AasDiscoveryDocument doc) {
-        jpaRepo.delete(toEntity(doc));
+        repository.delete(toEntity(doc));
     }
 
     @Override
@@ -121,7 +125,7 @@ public class H2AasDiscoveryDocumentBackend implements AasDiscoveryDocumentBacken
 
     @Override
     public void deleteAll() {
-        jpaRepo.deleteAll();
+        repository.deleteAll();
     }
 
     private AasDiscoveryDocumentEntity toEntity(AasDiscoveryDocument doc) {
@@ -134,7 +138,7 @@ public class H2AasDiscoveryDocumentBackend implements AasDiscoveryDocumentBacken
 
     @Override
     public Optional<AasDiscoveryDocument> findOne(Predicate predicate) {
-        return jpaRepo.findOne(predicate).map(this::toDomain);
+        return repository.findOne(predicate).map(this::toDomain);
     }
 
     public List<AasDiscoveryDocumentEntity> IterableToList(Iterable<AasDiscoveryDocumentEntity> iterable){
@@ -145,49 +149,49 @@ public class H2AasDiscoveryDocumentBackend implements AasDiscoveryDocumentBacken
 
     @Override
     public Iterable<AasDiscoveryDocument> findAll(Predicate predicate) {
-        return IterableToList(jpaRepo.findAll(predicate)).stream()
+        return IterableToList(repository.findAll(predicate)).stream()
                 .map(this::toDomain)
                 .toList();
     }
 
     @Override
     public Iterable<AasDiscoveryDocument> findAll(Predicate predicate, Sort sort) {
-        return IterableToList(jpaRepo.findAll(predicate, sort)).stream()
+        return IterableToList(repository.findAll(predicate, sort)).stream()
                 .map(this::toDomain)
                 .toList();
     }
 
     @Override
     public Iterable<AasDiscoveryDocument> findAll(Predicate predicate, OrderSpecifier<?>... orders) {
-        return IterableToList(jpaRepo.findAll(predicate, orders)).stream()
+        return IterableToList(repository.findAll(predicate, orders)).stream()
                 .map(this::toDomain)
                 .toList();
     }
 
     @Override
     public Iterable<AasDiscoveryDocument> findAll(OrderSpecifier<?>... orders) {
-        return IterableToList(jpaRepo.findAll(orders)).stream()
+        return IterableToList(repository.findAll(orders)).stream()
                 .map(this::toDomain)
                 .toList();
     }
 
     @Override
     public Page<AasDiscoveryDocument> findAll(Predicate predicate, Pageable pageable) {
-        return jpaRepo.findAll(predicate, pageable).map(this::toDomain);
+        return repository.findAll(predicate, pageable).map(this::toDomain);
     }
 
     @Override
     public long count(Predicate predicate) {
-        return jpaRepo.count(predicate);
+        return repository.count(predicate);
     }
 
     @Override
     public boolean exists(Predicate predicate) {
-        return jpaRepo.exists(predicate);
+        return repository.exists(predicate);
     }
 
     @Override
     public <S extends AasDiscoveryDocument, R> R findBy(Predicate predicate, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
-        throw new FeatureNotImplementedException("findBy not implemented for H2 backend");
+        throw new FeatureNotImplementedException("findBy not implemented for MongoDB backend");
     }
 }

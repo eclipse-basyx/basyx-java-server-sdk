@@ -23,18 +23,20 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
-import static org.junit.Assert.assertEquals;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb;
 
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.backend.MongoDBCrudAasDiscoveryFactory;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.junit.Test;
 
-public class CrudAasDiscoveryTest {
+import static org.junit.Assert.assertEquals;
+
+public class MongoDBCrudAasDiscoveryTest {
     private static final String CONFIGURED_AAS_DISCOVERY_NAME = "test-aas-discovery";
 
     @Test
     public void getConfiguredAasDiscoveryName(){
-        AasDiscoveryService service = new CrudAasDiscoveryFactory(null, CONFIGURED_AAS_DISCOVERY_NAME).create();
+        AasDiscoveryService service = new MongoDBCrudAasDiscoveryFactory(null, CONFIGURED_AAS_DISCOVERY_NAME).create();
 
         assertEquals(CONFIGURED_AAS_DISCOVERY_NAME,service.getName());
     }

@@ -1,5 +1,5 @@
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2; /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+/*******************************************************************************
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,7 +22,7 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2; /*********
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
