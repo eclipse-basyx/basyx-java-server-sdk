@@ -26,19 +26,17 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
 
 import static org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryUtils.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.QAssetLink;
 import org.eclipse.digitaltwin.basyx.core.exceptions.AssetLinkDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
@@ -55,7 +53,7 @@ import org.springframework.data.repository.CrudRepository;
  */
 public class CrudAasDiscovery implements AasDiscoveryService {
 
-	private final AasDiscoveryDocumentBackend backend;
+	protected final AasDiscoveryDocumentBackend backend;
 	private final String aasDiscoveryServiceName;
 
 	public CrudAasDiscovery(AasDiscoveryDocumentBackend backend, String aasDiscoveryServiceName) {
@@ -75,8 +73,21 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	 */
 	@Override
 	public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo, List<AssetLink> assetIds) {
-		Set<String> shellIds = getShellIdsWithAssetLinks(assetIds);
+		QAasDiscoveryDocument qDoc = QAasDiscoveryDocument.aasDiscoveryDocument;
+		BooleanExpression predicate = Expressions.FALSE;
 
+		for (AssetLink asset : assetIds) {
+			predicate = predicate.or(
+					qDoc.assetLinks.any().name.eq(asset.getName())
+							.and(qDoc.assetLinks.any().value.eq(asset.getValue()))
+			);
+		}
+
+		Iterable<AasDiscoveryDocument> result = backend.findAll(predicate);
+
+		List<AasDiscoveryDocument> aasDiscoveryDocuments = convertIterableToList(result);
+
+		Set<String> shellIds = new HashSet<>(aasDiscoveryDocuments.stream().map(AasDiscoveryDocument::getShellIdentifier).toList());
 		return paginateList(pInfo, new ArrayList<>(shellIds));
 	}
 
@@ -90,11 +101,11 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	 */
 	@Override
 	public List<SpecificAssetId> getAllAssetLinksById(String shellIdentifier) {
-		Map<String, List<SpecificAssetId>> assetIds = getAssetIds();
-
-		throwIfSpecificAssetIdLinkDoesNotExist(assetIds, shellIdentifier);
-
-		return assetIds.get(shellIdentifier);
+		List<SpecificAssetId> assetIds = getAssetIds(shellIdentifier);
+		if(assetIds.isEmpty()){
+			throw new AssetLinkDoesNotExistException(shellIdentifier);
+		}
+		return getAssetIds(shellIdentifier);
 	}
 
 	/**
@@ -112,16 +123,16 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	public List<SpecificAssetId> createAllAssetLinksById(String shellIdentifier,
 			List<SpecificAssetId> specificAssetIds) {
 
-		Map<String, Set<AssetLink>> assetLinks = getAssetLinks();
-
-		synchronized (assetLinks) {
-			throwIfAssetLinkExists(assetLinks, shellIdentifier);
-
-			List<AssetLink> shellAssetLinks = deriveAssetLinksFromSpecificAssetIds(specificAssetIds);
-			AasDiscoveryDocument aasDiscoveryDocument = new AasDiscoveryDocument(shellIdentifier,
-					new HashSet<>(shellAssetLinks), specificAssetIds);
-			backend.save(aasDiscoveryDocument);
+		QAasDiscoveryDocument qDoc = QAasDiscoveryDocument.aasDiscoveryDocument;
+		BooleanExpression predicate = qDoc.shellIdentifier.eq(shellIdentifier);
+		if(backend.exists(predicate)) {
+			throw new CollidingAssetLinkException(shellIdentifier);
 		}
+
+		List<AssetLink> shellAssetLinks = deriveAssetLinksFromSpecificAssetIds(specificAssetIds);
+		AasDiscoveryDocument aasDiscoveryDocument = new AasDiscoveryDocument(shellIdentifier,
+				new HashSet<>(shellAssetLinks), specificAssetIds);
+		backend.save(aasDiscoveryDocument);
 
 		return specificAssetIds;
 	}
@@ -135,12 +146,12 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 	 */
 	@Override
 	public void deleteAllAssetLinksById(String shellIdentifier) {
-		Map<String, Set<AssetLink>> assetLinks = getAssetLinks();
-		synchronized (assetLinks) {
-			throwIfAssetLinkDoesNotExist(assetLinks, shellIdentifier);
-
-			backend.deleteById(shellIdentifier);
+		QAasDiscoveryDocument qDoc = QAasDiscoveryDocument.aasDiscoveryDocument;
+		BooleanExpression predicate = qDoc.shellIdentifier.eq(shellIdentifier);
+		if(!backend.exists(predicate)){
+			throw new AssetLinkDoesNotExistException(shellIdentifier);
 		}
+		backend.deleteById(shellIdentifier);
 	}
 
 	@Override
@@ -164,19 +175,17 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 			throw new AssetLinkDoesNotExistException(shellIdentifier);
 	}
 
-	private Map<String, List<SpecificAssetId>> getAssetIds() {
-		Iterable<AasDiscoveryDocument> aasDiscoveryDocuments = backend.findAll();
-		List<AasDiscoveryDocument> aasDiscoveryDocumentList = StreamSupport
-				.stream(aasDiscoveryDocuments.spliterator(), false).collect(Collectors.toList());
-		Map<String, List<SpecificAssetId>> assetIds = aasDiscoveryDocumentList.stream().collect(
-				Collectors.toMap(AasDiscoveryDocument::getShellIdentifier, AasDiscoveryDocument::getSpecificAssetIds));
-		return assetIds;
+	private List<SpecificAssetId> getAssetIds(String shellIdentifier) {
+		QAasDiscoveryDocument qDoc = QAasDiscoveryDocument.aasDiscoveryDocument;
+		BooleanExpression predicate = qDoc.shellIdentifier.eq(shellIdentifier);
+		Iterable<AasDiscoveryDocument> result = backend.findAll(predicate);
+		return StreamSupport.stream(result.spliterator(), false).findFirst().map(AasDiscoveryDocument::getSpecificAssetIds)
+				.orElseThrow(() -> new AssetLinkDoesNotExistException(shellIdentifier));
 	}
 
 	private Map<String, Set<AssetLink>> getAssetLinks() {
 		Iterable<AasDiscoveryDocument> aasDiscoveryDocuments = backend.findAll();
-		List<AasDiscoveryDocument> aasDiscoveryDocumentList = StreamSupport
-				.stream(aasDiscoveryDocuments.spliterator(), false).collect(Collectors.toList());
+		List<AasDiscoveryDocument> aasDiscoveryDocumentList = convertIterableToList(aasDiscoveryDocuments);
 		Map<String, Set<AssetLink>> assetLinks = aasDiscoveryDocumentList.stream()
 				.collect(Collectors.toMap(AasDiscoveryDocument::getShellIdentifier, AasDiscoveryDocument::getAssetLinks,
 						(a, b) -> a, TreeMap::new));
@@ -189,12 +198,18 @@ public class CrudAasDiscovery implements AasDiscoveryService {
 				.map(Map.Entry::getKey).collect(Collectors.toSet());
 	}
 
-	private CursorResult<List<String>> paginateList(PaginationInfo pInfo, List<String> shellIdentifiers) {
+	protected CursorResult<List<String>> paginateList(PaginationInfo pInfo, List<String> shellIdentifiers) {
 		TreeMap<String, String> shellIdentifierMap = shellIdentifiers.stream()
 				.collect(Collectors.toMap(Function.identity(), Function.identity(), (a, b) -> a, TreeMap::new));
 
 		PaginationSupport<String> paginationSupport = new PaginationSupport<>(shellIdentifierMap, Function.identity());
 
 		return paginationSupport.getPaged(pInfo);
+	}
+
+	protected static List<AasDiscoveryDocument> convertIterableToList(Iterable<AasDiscoveryDocument> result) {
+		List<AasDiscoveryDocument> aasDiscoveryDocuments = StreamSupport.stream(result.spliterator(), false)
+				.collect(Collectors.toList());
+		return aasDiscoveryDocuments;
 	}
 }

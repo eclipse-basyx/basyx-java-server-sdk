@@ -23,18 +23,21 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory;
 
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * CrudRepository for the AasDiscoveryDocument
+ * Spring application configured for tests.
  * 
- * @author mateusmolina
+ * @author fried
+ *
  */
-@Repository
-public interface AasDiscoveryDocumentBackend extends CrudRepository<AasDiscoveryDocument, String>, QuerydslPredicateExecutor<AasDiscoveryDocument> {
-    
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
+public class DummyInMemoryAasDiscoveryServiceComponent {
+
+	public static void main(String[] args) {
+		SpringApplication.run(DummyInMemoryAasDiscoveryServiceComponent.class, args);
+	}
 }

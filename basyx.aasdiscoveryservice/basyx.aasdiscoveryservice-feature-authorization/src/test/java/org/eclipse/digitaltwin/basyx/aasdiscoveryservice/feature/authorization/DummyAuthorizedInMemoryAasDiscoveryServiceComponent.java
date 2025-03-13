@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -30,14 +30,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * Spring application configured for tests.
- *
- * @author mateusmolina
+ * 
+ * @author fried
  *
  */
 @SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
-public class DummyAasDiscoveryServiceComponent {
+public class DummyAuthorizedInMemoryAasDiscoveryServiceComponent {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DummyAasDiscoveryServiceComponent.class, args);
+		SpringApplication.run(DummyAuthorizedInMemoryAasDiscoveryServiceComponent.class, args);
 	}
 }
