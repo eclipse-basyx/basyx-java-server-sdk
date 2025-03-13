@@ -53,6 +53,6 @@ config: |
   basyx.feature.authorization.type = rbac
   basyx.feature.authorization.jwtBearerTokenProvider = keycloak
   basyx.feature.authorization.rbac.file = file:/application/rbac_rules.json
-  spring.security.oauth2.resourceserver.jwt.issuer-uri= http://basyx-keycloak.basyx.svc.cluster.local:8080/realms/BaSyx
+  spring.security.oauth2.resourceserver.jwt.issuer-uri= http://keycloak.basyx.local:8080/realms/BaSyx
 
 
