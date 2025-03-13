@@ -10,18 +10,23 @@ dependencies:
 - name: aas-registry
   version: "0.0.1"
   repository: file://dependency_charts/aas-registry
+  condition: aas-registry.enabled
 - name: sm-registry
   version: "0.0.1"
   repository: file://dependency_charts/sm-registry
+  condition: sm-registry.enabled
 - name: aas-discovery
   version: "0.0.1"
   repository: file://dependency_charts/aas-discovery
+  condition: aas-discovery.enabled
 - name: aas-environment
   version: "0.0.1"
   repository: file://dependency_charts/aas-environment
+  condition: aas-environment.enabled
 - name: aas-web-ui
   version: "0.0.1"
   repository: file://dependency_charts/aas-web-ui
+  condition: aas-web-ui.enabled
 - name: mongodb
   version: "14.5.0"
   repository: https://charts.bitnami.com/bitnami
@@ -29,6 +34,10 @@ dependencies:
   condition: mongodb.enabled
   # Isolation der MongoDB-Variablen durch eigenen Namespace
   namespace: project-factory-x
+- repository: https://charts.bitnami.com/bitnami
+  name: keycloak
+  version: 24.4.11
+  condition: keycloak.enabled
 
 # MongoDB has an issue with charts not sitting well in an umbrella chart.
 # This is a bug with some common variables being defined externally.

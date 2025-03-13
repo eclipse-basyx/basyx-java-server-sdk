@@ -12,6 +12,9 @@ config:
   conceptdescriptionRepoUrl: "aas-environment:8080/concept-descriptions"
   aasRegistryUrl: "aas-registry:8080/api/v3.0"
   submodelRegistryUrl: "sm-registry:8080/api/v3.0"
+  keycloakUrl: https://keycloak.basyx.factory-x.catena-x.net
+  keycloakRealm: BaSyx
+  keycloakClientId: basyx-web-ui
 
 logo:
   relativePath: null
@@ -27,3 +30,17 @@ externalPlugins:
 ingress:
   enabled: false
   host: aas-web-ui.local
+
+apirule:
+  enabled: false
+  host: aas-web-ui.local
+  methods: 
+      - "GET" 
+      - "HEAD" 
+      - "POST" 
+      - "PUT" 
+      - "DELETE" 
+      - "CONNECT" 
+      - "OPTIONS" 
+      - "TRACE"
+      - "PATCH"

@@ -29,6 +29,20 @@ ingress:
   enabled: false
   host: aas-registry.local
 
+apirule:
+  enabled: false
+  host: aas-registry.local
+  methods: 
+      - "GET" 
+      - "HEAD" 
+      - "POST" 
+      - "PUT" 
+      - "DELETE" 
+      - "CONNECT" 
+      - "OPTIONS" 
+      - "TRACE"
+      - "PATCH"
+
 # Content of application.yaml
 config: |
   basyx:

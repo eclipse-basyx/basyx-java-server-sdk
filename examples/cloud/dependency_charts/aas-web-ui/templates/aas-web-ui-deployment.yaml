@@ -36,6 +36,12 @@ spec:
               value: {{ .Values.config.aasRegistryUrl }}
             - name: SUBMODEL_REGISTRY_PATH
               value: {{ .Values.config.submodelRegistryUrl }}
+            - name: KEYCLOAK_URL
+              value: {{ .Values.config.keycloakUrl }}
+            - name: KEYCLOAK_REALM
+              value: {{ .Values.config.keycloakRealm }}
+            - name: KEYCLOAK_CLIENT_ID
+              value: {{ .Values.config.keycloakClientId }}
             # - name: CHOCKIDAR_USEPOLLING
             #   value: "true"
             # - name: VITE_PRIMARY_COLOR

@@ -12,7 +12,51 @@ mongodb:
   service:
     nameOverride: mongodb
 
+keycloak:
+  enabled: false
+  postgresql:
+    enabled: true
+    auth:
+      username: keycloak
+      password: password
+      database: keycloak
+  ingress:
+    enabled: false
+    ingressClassName: ""
+    hostname: keycloak.local
+    tls: false
+  apirule:
+    enabled: false
+    host: keycloak.basyx.factory-x.catena-x.net
+    methods: 
+      - "GET" 
+      - "HEAD" 
+      - "POST" 
+      - "PUT" 
+      - "DELETE" 
+      - "CONNECT" 
+      - "OPTIONS" 
+      - "TRACE"
+      - "PATCH"
+  auth:
+    adminUser: user
+    adminPassword: password
+  service:
+    type: ClusterIP
+  fullnameOverride: basyx-keycloak
+  extraVolumes:
+    - name: basyx-keycloak-realm
+      configMap:
+        name: basyx-keycloak-realm
+  extraVolumeMounts:
+    - mountPath: /opt/keycloak/data/import/BaSyx-realm.json
+      subPath: BaSyx-realm.json
+      name: basyx-keycloak-realm
+  command: ["/bin/sh", "-c"]
+  args: ["kc.sh import --file /opt/keycloak/data/import/BaSyx-realm.json; kc.sh start-dev --hostname=keycloak.basyx.factory-x.catena-x.net --hostname-strict=false --hostname-debug=true"]
+
 aas-registry:
+  enabled: true
   image:
     # Possible current options:
     # - eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
@@ -31,10 +75,23 @@ aas-registry:
   kafka:
     connectionString: null
   mongodb:
-    connectionString: mongodb://adminUser:adminPassword@mongodb:27017
+    connectionString: mongodb://adminUser:adminPassword@mongodb.product-factory-x.svc.cluster.local:27017
   ingress:
-    enabled: true
+    enabled: false
     host: registry.basyx.factory-x.catena-x.net
+  apirule:
+    enabled: false
+    host: registry.basyx.factory-x.catena-x.net
+    methods: 
+      - "GET" 
+      - "HEAD" 
+      - "POST" 
+      - "PUT" 
+      - "DELETE" 
+      - "CONNECT" 
+      - "OPTIONS" 
+      - "TRACE"
+      - "PATCH"
   config: |-
     basyx:
       cors:
@@ -42,6 +99,7 @@ aas-registry:
         allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
 
 sm-registry:
+  enabled: true
   image:
     # Images similar to those above.
     # name: eclipsebasyx/submodel-registry-log-mongodb:2.0.0-SNAPSHOT
@@ -53,8 +111,21 @@ sm-registry:
     # connectionString: mongodb://adminUser:adminPassword@mongodb:27017
     connectionString: null
   ingress:
-    enabled: true
+    enabled: false
     host: smregistry.basyx.factory-x.catena-x.net
+  apirule:
+    enabled: false
+    host: smregistry.basyx.factory-x.catena-x.net
+    methods: 
+      - "GET" 
+      - "HEAD" 
+      - "POST" 
+      - "PUT" 
+      - "DELETE" 
+      - "CONNECT" 
+      - "OPTIONS" 
+      - "TRACE"
+      - "PATCH"
   config: |-
     basyx:
       cors:
@@ -84,12 +155,32 @@ aas-discovery:
 
     basyx.cors.allowed-origins=*
     basyx.cors.allowed-methods=GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+
+    basyx.feature.authorization.enabled = true
+    basyx.feature.authorization.type = rbac
+    basyx.feature.authorization.jwtBearerTokenProvider = keycloak
+    basyx.feature.authorization.rbac.file = file:/application/rbac_rules.json
+    spring.security.oauth2.resourceserver.jwt.issuer-uri = http://basyx-keycloak.basyx.svc.cluster.local:8080/realms/BaSyx
   ingress:
-    enabled: true
+    enabled: false
     host: discovery.basyx.factory-x.catena-x.net
+  apirule:
+    enabled: false
+    host: discovery.basyx.factory-x.catena-x.net
+    methods: 
+      - "GET" 
+      - "HEAD" 
+      - "POST" 
+      - "PUT" 
+      - "DELETE" 
+      - "CONNECT" 
+      - "OPTIONS" 
+      - "TRACE"
+      - "PATCH"
 
 # Also needs an ingress.
 aas-environment:
+  enabled: true
   image:
     name: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
     pullPolicy: Always
@@ -125,23 +216,53 @@ aas-environment:
     mqtt.username=fx-factory
     mqtt.password=password
   ingress:
-    enabled: true
-    host: basyx.factory-x.catena-x.net
+    enabled: false
+    host: enviroment.basyx.factory-x.catena-x.net
+  apirule:
+    enabled: false
+    host: enviroment.basyx.factory-x.catena-x.net
+    methods: 
+      - "GET" 
+      - "HEAD" 
+      - "POST" 
+      - "PUT" 
+      - "DELETE" 
+      - "CONNECT" 
+      - "OPTIONS" 
+      - "TRACE"
+      - "PATCH"
 
 # Needs specific ingress.
 aas-web-ui:
+  enabled: true
   image:
     name: eclipsebasyx/aas-gui:SNAPSHOT
     pullPolicy: Always
   ingress:
-    enabled: true
+    enabled: false
     host: ui.basyx.factory-x.catena-x.net
+  apirule:
+    enabled: false
+    host: ui.basyx.factory-x.catena-x.net
+    methods: 
+      - "GET" 
+      - "HEAD" 
+      - "POST" 
+      - "PUT" 
+      - "DELETE" 
+      - "CONNECT" 
+      - "OPTIONS" 
+      - "TRACE"
+      - "PATCH"
   config:
-    aasRepoUrl: "https://basyx.factory-x.catena-x.net/shells"
-    aasSubmodelsRepoUrl: "https://basyx.factory-x.catena-x.net/submodels"
-    conceptdescriptionRepoUrl: "https://basyx.factory-x.catena-x.net/concept-descriptions"
-    aasRegistryUrl: "https://registry.basyx.factory-x.catena-x.net"
-    submodelRegistryUrl: "https://smregistry.basyx.factory-x.catena-x.net"
+    aasRepoUrl: "aas-environment:8080/shells"
+    aasSubmodelsRepoUrl: "aas-environment:8080/submodels"
+    conceptdescriptionRepoUrl: "aas-environment:8080/concept-descriptions"
+    aasRegistryUrl: "aas-registry:8080/api/v3.0"
+    submodelRegistryUrl: "sm-registry:8080/api/v3.0"
+    keycloakUrl: "https://keycloak.basyx.factory-x.catena-x.net"
+    keacloakRealm: BaSyx
+    keycloakClientId: basyx-web-ui
   externalPlugins:
     enabled: false
     plugins:

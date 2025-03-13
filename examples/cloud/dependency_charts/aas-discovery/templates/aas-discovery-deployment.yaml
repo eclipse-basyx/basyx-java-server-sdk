@@ -35,8 +35,14 @@ spec:
             - mountPath: /workspace/config/application.properties
               name: {{ template "aas-discovery.fullname" $ }}-config
               subPath: application.properties
+            - mountPath: /application/rbac-rules.json
+              name: {{ template "aas-discovery.fullname" $ }}-rbac-rules
+              subPath: rbac-rules.json
       volumes:
         - name: {{ template "aas-discovery.fullname" $ }}-config
           configMap:
             name: {{ template "aas-discovery.fullname" $ }}-config
+        - name: {{ template "aas-discovery.fullname" $ }}-rbac-rules
+          configMap:
+            name: {{ template "aas-discovery.fullname" $ }}-rbac-rules
 {{ end -}}

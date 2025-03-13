@@ -36,4 +36,18 @@ config: |
       allowed-origins: "*"
       allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
 
+apirule:
+  enabled: false
+  host: sm-registry.local
+  methods: 
+      - "GET" 
+      - "HEAD" 
+      - "POST" 
+      - "PUT" 
+      - "DELETE" 
+      - "CONNECT" 
+      - "OPTIONS" 
+      - "TRACE"
+      - "PATCH"
+
 

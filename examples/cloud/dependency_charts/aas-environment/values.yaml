@@ -22,6 +22,20 @@ ingress:
   enabled: false
   host: aas-environment.local
 
+apirule:
+  enabled: false
+  host: aas-environment.local
+  methods: 
+      - "GET" 
+      - "HEAD" 
+      - "POST" 
+      - "PUT" 
+      - "DELETE" 
+      - "CONNECT" 
+      - "OPTIONS" 
+      - "TRACE"
+      - "PATCH"
+
 config: |
   server.port=8080
 

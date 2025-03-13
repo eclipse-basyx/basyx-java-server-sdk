@@ -18,6 +18,20 @@ ingress:
   enabled: false
   host: aas-discovery.local
 
+apirule:
+  enabled: false
+  host: aas-discovery.local
+  methods: 
+    - "GET" 
+    - "HEAD" 
+    - "POST" 
+    - "PUT" 
+    - "DELETE" 
+    - "CONNECT" 
+    - "OPTIONS" 
+    - "TRACE"
+    - "PATCH"
+
 # Content of application.properties
 config: |
   server.port=8080
@@ -34,5 +48,11 @@ config: |
 
   basyx.cors.allowed-origins=*
   basyx.cors.allowed-methods=GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+
+  basyx.feature.authorization.enabled = true
+  basyx.feature.authorization.type = rbac
+  basyx.feature.authorization.jwtBearerTokenProvider = keycloak
+  basyx.feature.authorization.rbac.file = file:/application/rbac_rules.json
+  spring.security.oauth2.resourceserver.jwt.issuer-uri= http://basyx-keycloak.basyx.svc.cluster.local:8080/realms/BaSyx
 
 
