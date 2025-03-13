@@ -43,7 +43,8 @@ import java.util.Set;
 public class AasDiscoveryDocumentEntity {
     @Id
     private String shellIdentifier;
-    @Convert(converter = AssetLinksConverter.class)
+    @ElementCollection
+    @CollectionTable(name = "aas_asset_links", joinColumns = @JoinColumn(name = "aas_discovery_document_id"))
     private Set<AssetLink> assetLinks;
     @Convert(converter = SpecificAssetIdsConverter.class)
     @Column(length = 255000)

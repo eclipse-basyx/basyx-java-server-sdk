@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import jakarta.persistence.Column;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocument;
@@ -75,8 +77,21 @@ public class H2CrudAasDiscovery implements AasDiscoveryService {
 	 */
 	@Override
 	public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo, List<AssetLink> assetIds) {
-		Set<String> shellIds = getShellIdsWithAssetLinks(assetIds);
+		QAasDiscoveryDocumentEntity qDoc = QAasDiscoveryDocumentEntity.aasDiscoveryDocumentEntity;
+		BooleanExpression predicate = Expressions.FALSE;
 
+		for (AssetLink asset : assetIds) {
+			predicate = predicate.or(
+					qDoc.assetLinks.any().name.eq(asset.getName())
+							.and(qDoc.assetLinks.any().value.eq(asset.getValue()))
+			);
+		}
+
+		Iterable<AasDiscoveryDocument> result = backend.findAll(predicate);
+
+		List<AasDiscoveryDocument> aasDiscoveryDocuments = convertIterableToList(result);
+
+		Set<String> shellIds = new HashSet<>(aasDiscoveryDocuments.stream().map(AasDiscoveryDocument::getShellIdentifier).toList());
 		return paginateList(pInfo, new ArrayList<>(shellIds));
 	}
 
@@ -90,11 +105,11 @@ public class H2CrudAasDiscovery implements AasDiscoveryService {
 	 */
 	@Override
 	public List<SpecificAssetId> getAllAssetLinksById(String shellIdentifier) {
-		Map<String, List<SpecificAssetId>> assetIds = getAssetIds();
-
-		throwIfSpecificAssetIdLinkDoesNotExist(assetIds, shellIdentifier);
-
-		return assetIds.get(shellIdentifier);
+		List<SpecificAssetId> assetIds = getAssetIds(shellIdentifier);
+		if(assetIds.isEmpty()){
+			throw new AssetLinkDoesNotExistException(shellIdentifier);
+		}
+		return getAssetIds(shellIdentifier);
 	}
 
 	/**
@@ -110,18 +125,18 @@ public class H2CrudAasDiscovery implements AasDiscoveryService {
 	 */
 	@Override
 	public List<SpecificAssetId> createAllAssetLinksById(String shellIdentifier,
-			List<SpecificAssetId> specificAssetIds) {
+														 List<SpecificAssetId> specificAssetIds) {
 
-		Map<String, Set<AssetLink>> assetLinks = getAssetLinks();
-
-		synchronized (assetLinks) {
-			throwIfAssetLinkExists(assetLinks, shellIdentifier);
-
-			List<AssetLink> shellAssetLinks = deriveAssetLinksFromSpecificAssetIds(specificAssetIds);
-			AasDiscoveryDocument aasDiscoveryDocument = new AasDiscoveryDocument(shellIdentifier,
-					new HashSet<>(shellAssetLinks), specificAssetIds);
-			backend.save(aasDiscoveryDocument);
+		QAasDiscoveryDocumentEntity qDoc = QAasDiscoveryDocumentEntity.aasDiscoveryDocumentEntity;
+		BooleanExpression predicate = qDoc.shellIdentifier.eq(shellIdentifier);
+		if(backend.exists(predicate)) {
+			throw new CollidingAssetLinkException(shellIdentifier);
 		}
+
+		List<AssetLink> shellAssetLinks = deriveAssetLinksFromSpecificAssetIds(specificAssetIds);
+		AasDiscoveryDocument aasDiscoveryDocument = new AasDiscoveryDocument(shellIdentifier,
+				new HashSet<>(shellAssetLinks), specificAssetIds);
+		backend.save(aasDiscoveryDocument);
 
 		return specificAssetIds;
 	}
@@ -135,12 +150,12 @@ public class H2CrudAasDiscovery implements AasDiscoveryService {
 	 */
 	@Override
 	public void deleteAllAssetLinksById(String shellIdentifier) {
-		Map<String, Set<AssetLink>> assetLinks = getAssetLinks();
-		synchronized (assetLinks) {
-			throwIfAssetLinkDoesNotExist(assetLinks, shellIdentifier);
-
-			backend.deleteById(shellIdentifier);
+		QAasDiscoveryDocumentEntity qDoc = QAasDiscoveryDocumentEntity.aasDiscoveryDocumentEntity;
+		BooleanExpression predicate = qDoc.shellIdentifier.eq(shellIdentifier);
+		if(!backend.exists(predicate)){
+			throw new AssetLinkDoesNotExistException(shellIdentifier);
 		}
+		backend.deleteById(shellIdentifier);
 	}
 
 	@Override
@@ -159,24 +174,22 @@ public class H2CrudAasDiscovery implements AasDiscoveryService {
 	}
 
 	private void throwIfSpecificAssetIdLinkDoesNotExist(Map<String, List<SpecificAssetId>> assetIds,
-			String shellIdentifier) {
+														String shellIdentifier) {
 		if (!assetIds.containsKey(shellIdentifier))
 			throw new AssetLinkDoesNotExistException(shellIdentifier);
 	}
 
-	private Map<String, List<SpecificAssetId>> getAssetIds() {
-		Iterable<AasDiscoveryDocument> aasDiscoveryDocuments = backend.findAll();
-		List<AasDiscoveryDocument> aasDiscoveryDocumentList = StreamSupport
-				.stream(aasDiscoveryDocuments.spliterator(), false).collect(Collectors.toList());
-		Map<String, List<SpecificAssetId>> assetIds = aasDiscoveryDocumentList.stream().collect(
-				Collectors.toMap(AasDiscoveryDocument::getShellIdentifier, AasDiscoveryDocument::getSpecificAssetIds));
-		return assetIds;
+	private List<SpecificAssetId> getAssetIds(String shellIdentifier) {
+		QAasDiscoveryDocumentEntity qDoc = QAasDiscoveryDocumentEntity.aasDiscoveryDocumentEntity;
+		BooleanExpression predicate = qDoc.shellIdentifier.eq(shellIdentifier);
+		Iterable<AasDiscoveryDocument> result = backend.findAll(predicate);
+		return StreamSupport.stream(result.spliterator(), false).findFirst().map(AasDiscoveryDocument::getSpecificAssetIds)
+				.orElseThrow(() -> new AssetLinkDoesNotExistException(shellIdentifier));
 	}
 
 	private Map<String, Set<AssetLink>> getAssetLinks() {
 		Iterable<AasDiscoveryDocument> aasDiscoveryDocuments = backend.findAll();
-		List<AasDiscoveryDocument> aasDiscoveryDocumentList = StreamSupport
-				.stream(aasDiscoveryDocuments.spliterator(), false).collect(Collectors.toList());
+		List<AasDiscoveryDocument> aasDiscoveryDocumentList = convertIterableToList(aasDiscoveryDocuments);
 		Map<String, Set<AssetLink>> assetLinks = aasDiscoveryDocumentList.stream()
 				.collect(Collectors.toMap(AasDiscoveryDocument::getShellIdentifier, AasDiscoveryDocument::getAssetLinks,
 						(a, b) -> a, TreeMap::new));
@@ -196,5 +209,11 @@ public class H2CrudAasDiscovery implements AasDiscoveryService {
 		PaginationSupport<String> paginationSupport = new PaginationSupport<>(shellIdentifierMap, Function.identity());
 
 		return paginationSupport.getPaged(pInfo);
+	}
+
+	private static List<AasDiscoveryDocument> convertIterableToList(Iterable<AasDiscoveryDocument> result) {
+		List<AasDiscoveryDocument> aasDiscoveryDocuments = StreamSupport.stream(result.spliterator(), false)
+				.collect(Collectors.toList());
+		return aasDiscoveryDocuments;
 	}
 }
