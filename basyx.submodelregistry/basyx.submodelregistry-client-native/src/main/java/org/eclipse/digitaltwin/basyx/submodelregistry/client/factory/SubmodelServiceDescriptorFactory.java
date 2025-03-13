@@ -31,7 +31,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMap
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 
 /**
- * Factory for creating the {@link SubmodelDescriptor} for submodel services
+ * Factory for creating the SubmodelDescriptor for submodel services
  * 
  * @author Gerhard Sonnenberg (DFKI GmbH)
  */
