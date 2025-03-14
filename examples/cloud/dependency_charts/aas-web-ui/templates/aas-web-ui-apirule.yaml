@@ -1,0 +1,20 @@
+{{- if and .Values.apirule.enabled .Values.enabled }}
+apiVersion: gateway.kyma-project.io/v2alpha1
+kind: APIRule
+metadata:
+  labels:
+    {{- include "aas-web-ui.labels" . | nindent 4 }}
+  name: {{ include "aas-web-ui.fullname" . }}
+spec:
+  gateway: kyma-system/kyma-gateway
+  hosts:
+    - {{ .Values.apirule.host }}
+  service:
+    name: {{ include "aas-web-ui.fullname" . }}
+    port: {{ .Values.service.port }}
+  timeout: 360
+  rules:
+    - path: /*
+      methods: {{- toYaml .Values.apirule.methods | nindent 6 }}
+      noAuth: true
+{{ end -}}

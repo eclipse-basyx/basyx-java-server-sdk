@@ -1,0 +1,37 @@
+{{- if .Values.keycloak.apirule.enabled }}
+apiVersion: gateway.kyma-project.io/v2alpha1
+kind: APIRule
+metadata:
+  name: {{ .Values.keycloak.fullnameOverride }}
+spec:
+  gateway: kyma-system/kyma-gateway
+  hosts:
+    - {{ .Values.keycloak.apirule.host }}
+  service:
+    name: {{ .Values.keycloak.fullnameOverride }}
+    port: 80
+  timeout: 360
+  rules:
+    - path: /*
+      methods: {{- toYaml .Values.keycloak.apirule.methods | nindent 6 }}
+      noAuth: true
+  {{- if index .Values "aas-web-ui" "enabled" }}
+  corsPolicy:
+    allowMethods:
+      - POST
+      - GET
+      - PUT
+      - DELETE
+      - PATCH
+      - OPTIONS
+    allowOrigins:
+      {{- if and (index .Values "aas-web-ui" "ingress" "enabled") (index .Values "aas-web-ui" "apirule" "enabled") }}
+      {{ fail "Both ingress and apirule enabled. Failing the pipeline." }}
+      {{ else if index .Values "aas-web-ui" "ingress" "enabled" }}
+      - prefix: https://{{ index .Values "aas-web-ui" "ingress" "host" }}
+      {{- else if index .Values "aas-web-ui" "apirule" "enabled" }}
+      - prefix: https://{{ index .Values "aas-web-ui" "apirule" "host" }}
+      {{ end }}
+    allowCredentials: true
+  {{ end -}}
+{{ end -}}

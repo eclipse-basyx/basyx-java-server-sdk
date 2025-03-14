@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "aas-web-ui.fullname" . }}
+  labels:
+    {{- include "aas-web-ui.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "aas-web-ui.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "aas-web-ui.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.name }}      
+          env:
+            - name: AAS_REPO_PATH
+              value: {{ .Values.config.aasRepoUrl }}
+            - name: SUBMODEL_REPO_PATH
+              value: {{ .Values.config.aasSubmodelsRepoUrl }}
+            - name: CD_REPO_PATH
+              value: {{ .Values.config.conceptdescriptionRepoUrl }}
+            - name: AAS_REGISTRY_PATH
+              value: {{ .Values.config.aasRegistryUrl }}
+            - name: SUBMODEL_REGISTRY_PATH
+              value: {{ .Values.config.submodelRegistryUrl }}
+            - name: KEYCLOAK_URL
+              value: {{ .Values.config.keycloakUrl }}
+            - name: KEYCLOAK_REALM
+              value: {{ .Values.config.keycloakRealm }}
+            - name: KEYCLOAK_CLIENT_ID
+              value: {{ .Values.config.keycloakClientId }}
+            # - name: CHOCKIDAR_USEPOLLING
+            #   value: "true"
+            # - name: VITE_PRIMARY_COLOR
+            #   value: blue
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          volumeMounts:
+            {{- if .Values.logo.relativePath }}
+            - mountPath: /app/src/assets/
+              name: {{ template "aas-web-ui.fullname" $ }}-config
+            {{- end }}
+            {{- if .Values.externalPlugins.enabled }}
+            - mountPath: /app/src/UserPlugins/
+              name: plugins-volume
+            {{- end }}
+      restartPolicy: Always
+      volumes:
+        {{- if .Values.logo.relativePath }}
+        - name: {{ template "aas-web-ui.fullname" $ }}-logo
+          configMap:
+            name: {{ template "aas-web-ui.fullname" $ }}-logo
+        {{- end }}
+        {{- if .Values.externalPlugins.enabled }}
+        - name: plugins-volume
+          projected:
+            sources:
+            {{- range $index, $element := .Values.externalPlugins.plugins }}
+              - configMap:
+                  name: {{ $element.configMapName }}
+                  items:
+                    - key: {{ $element.fileName }}
+                      path: {{ $element.fileName }}
+            {{- end }}
+        {{- end }}
+        
+
