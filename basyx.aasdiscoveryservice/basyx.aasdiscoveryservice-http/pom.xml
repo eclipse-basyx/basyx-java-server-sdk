@@ -35,7 +35,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.aasdiscoveryservice-backend-mongodb</artifactId>
+			<artifactId>basyx.aasdiscoveryservice-backend-inmemory</artifactId>
 			<scope>test</scope>
 		</dependency>
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -42,4 +41,14 @@ public interface SubmodelServiceFactory {
 	 * @return
 	 */
 	public SubmodelService create(Submodel submodel);
+
+	/**
+	 * Creates a new SubmodelService containing the Submodel with the given id
+	 *
+	 * The submodel is assumed to be already stored in the backend
+	 *
+	 * @param submodelId
+	 * @return the created SubmodelService
+	 */
+	public SubmodelService create(String submodelId);
 }

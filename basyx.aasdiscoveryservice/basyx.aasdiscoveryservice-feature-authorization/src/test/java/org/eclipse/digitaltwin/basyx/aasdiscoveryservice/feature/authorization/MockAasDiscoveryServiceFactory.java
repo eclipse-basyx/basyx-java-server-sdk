@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.feature.authorization;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.SimpleAasDiscoveryFactory;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory.AasDiscoveryInMemoryBackendProvider;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.CrudAasDiscoveryFactory;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.inmemory.InMemoryAasDiscoveryDocumentBackend;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
 
@@ -41,7 +41,7 @@ public class MockAasDiscoveryServiceFactory implements AasDiscoveryServiceFactor
 	private final AasDiscoveryService aasDiscoveryService;
 
 	public MockAasDiscoveryServiceFactory() {
-		this.aasDiscoveryService = new SimpleAasDiscoveryFactory(new AasDiscoveryInMemoryBackendProvider()).create();
+		this.aasDiscoveryService = new CrudAasDiscoveryFactory(new InMemoryAasDiscoveryDocumentBackend()).create();
 	}
 
 	@Override

@@ -37,8 +37,7 @@ public class DescriptorFilter {
 	final String assetType;
 	
 	public boolean isFiltered() {
-		return kind != null;
+		return kind != null || assetType != null;
 	}
 
-	
 }

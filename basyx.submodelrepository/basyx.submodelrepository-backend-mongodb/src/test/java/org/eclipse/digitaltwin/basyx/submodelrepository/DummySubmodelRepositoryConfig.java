@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,16 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
-import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBFileRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
 /**
  * Configuration for tests
@@ -45,25 +37,11 @@ import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 @Configuration
 public class DummySubmodelRepositoryConfig {
 
-	public final static String COLLECTION = "submodelRepositoryPersistencyTestCollection";
-	public final static String DB = "BaSyxTestDb";
+	static final String TEST_COLLECTION = "submodelRepositoryTestCollection";
 
 	@Bean
-	public SubmodelRepository createSubmodelRepository(MongoTemplate template) {
-		return new SimpleSubmodelRepositoryFactory(new SubmodelMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, template), new InMemorySubmodelServiceFactory(new MongoDBFileRepository(configureDefaultGridFsTemplate(template)))).create();
-	}
-
-	@Bean
-	public MongoTemplate createSMMongoTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-
-		MongoClient client = MongoClients.create(connectionURL);
-
-		return new MongoTemplate(client, DB);
-	}
-
-	private GridFsTemplate configureDefaultGridFsTemplate(MongoTemplate mongoTemplate) {
-		return new GridFsTemplate(mongoTemplate.getMongoDatabaseFactory(), mongoTemplate.getConverter());
+	SubmodelRepository submodelRepository(SubmodelRepositoryFactory factory) {
+		return factory.create();
 	}
 
 }

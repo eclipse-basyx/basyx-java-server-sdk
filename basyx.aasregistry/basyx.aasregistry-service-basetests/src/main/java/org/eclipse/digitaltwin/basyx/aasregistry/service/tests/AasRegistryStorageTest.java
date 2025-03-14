@@ -32,6 +32,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetKind;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.LangStringTextType;
@@ -160,6 +163,40 @@ public abstract class AasRegistryStorageTest extends ExtensionsTest {
 	@Test
 	public void whenGetAllAssetAdministrationShellDescriptorsFilteredByInstance_thenOnlyInstance() throws IOException {
 		Collection<AssetAdministrationShellDescriptor> found = getAllAasDescriptorsFiltered(AssetKind.INSTANCE, null);
+		List<AssetAdministrationShellDescriptor> expected = testResourcesLoader.loadList(AssetAdministrationShellDescriptor.class);
+		assertThat(found).containsExactlyInAnyOrderElementsOf(expected);
+		verifyNoEventSent();
+	}
+	
+	@Test
+	public void whenGetAllAssetAdministrationShellDescriptorsFilteredByInstanceAndType_thenOnlyMatching() throws IOException {
+		Collection<AssetAdministrationShellDescriptor> found = getAllAasDescriptorsFiltered(AssetKind.INSTANCE, "A");
+		List<AssetAdministrationShellDescriptor> expected = testResourcesLoader.loadList(AssetAdministrationShellDescriptor.class);
+		assertThat(found).containsExactlyInAnyOrderElementsOf(expected);
+		verifyNoEventSent();
+	}
+	
+	@Test
+	public void whenGetAllAssetAdministrationShellDescriptorsFilteredByTypeAndType_thenOnlyMatching() throws IOException {
+		Collection<AssetAdministrationShellDescriptor> found = getAllAasDescriptorsFiltered(AssetKind.TYPE, "A");
+		List<AssetAdministrationShellDescriptor> expected = testResourcesLoader.loadList(AssetAdministrationShellDescriptor.class);
+		assertThat(found).containsExactlyInAnyOrderElementsOf(expected);
+		verifyNoEventSent();
+	}
+	
+	@Test
+	public void whenGetAllAssetAdministrationShellDescriptorsFilteredNoKindButType_thenOnlyMatching() throws IOException, SerializationException {
+		Collection<AssetAdministrationShellDescriptor> found = getAllAasDescriptorsFiltered(null, "A");
+		List<AssetAdministrationShellDescriptor> expected = testResourcesLoader.loadList(AssetAdministrationShellDescriptor.class);
+		
+		System.out.println(new JsonSerializer().write(found));
+		assertThat(found).containsExactlyInAnyOrderElementsOf(expected);
+		verifyNoEventSent();
+	}
+	
+	@Test
+	public void whenGetAllAssetAdministrationShellDescriptorsFilteredNotApplicableAndType_thenOnlyMatching() throws IOException {
+		Collection<AssetAdministrationShellDescriptor> found = getAllAasDescriptorsFiltered(AssetKind.NOTAPPLICABLE, "A");
 		List<AssetAdministrationShellDescriptor> expected = testResourcesLoader.loadList(AssetAdministrationShellDescriptor.class);
 		assertThat(found).containsExactlyInAnyOrderElementsOf(expected);
 		verifyNoEventSent();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -44,10 +44,11 @@ import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Base64URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelElementSerializer;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.mqtt.MqttSubmodelServiceConfiguration;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.CrudSubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.mqtt.MqttSubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.mqtt.MqttSubmodelServiceTopicFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
@@ -163,7 +164,7 @@ public class TestMqttSubmodelObserver {
 
 	private static SubmodelService createMqttSubmodelService(MqttClient client) {
 
-		SubmodelServiceFactory repoFactory = new InMemorySubmodelServiceFactory(new InMemoryFileRepository());
+		SubmodelServiceFactory repoFactory = new CrudSubmodelServiceFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository());
 		return new MqttSubmodelServiceFactory(repoFactory, client, new MqttSubmodelServiceTopicFactory(new Base64URLEncoder())).create(DummySubmodelFactory.createSubmodelWithAllSubmodelElements());
 	}
 

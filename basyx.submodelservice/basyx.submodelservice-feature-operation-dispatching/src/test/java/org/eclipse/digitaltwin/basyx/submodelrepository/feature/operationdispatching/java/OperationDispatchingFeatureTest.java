@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 DFKI GmbH (https://www.dfki.de/en/web)
+ * Copyright (C) 2025 DFKI GmbH (https://www.dfki.de/en/web)
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,20 +25,16 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.operationdispatching.java;
 
-import java.util.List;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
-import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
-import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
-import org.eclipse.digitaltwin.aas4j.v3.model.Property;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.CrudSubmodelService;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.CrudSubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.OperationDispatcherMapping;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.OperationDispatchingSubmodelServiceFeature;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.java.JavaInvokableDefinition;
@@ -53,9 +49,11 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { OperationDispatchingSubmodelServiceFeature.class,
-		InMemorySubmodelServiceFactory.class, ReflectionBasedOperationDispatcherProviderComponent.class,
+		CrudSubmodelServiceFactory.class, InMemorySubmodelBackend.class, ReflectionBasedOperationDispatcherProviderComponent.class,
 		InMemoryFileRepository.class, SubmodelServiceFactoryTestConfiguration.class })
 @EnableConfigurationProperties(value = { JavaInvokableDefinition.class, OperationDispatcherMapping.class })
 @TestPropertySource(properties = { "basyx.backend=InMemory",

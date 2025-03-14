@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -50,7 +50,7 @@ public class TestMongoDBAasRepositoryPersistency extends AasRepositoryPersistenc
 	@Before
 	public void clearTemplate() {
 		MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
-		MongoDBUtilities.clearCollection(mongoTemplate, DummyAasRepositoryConfig.COLLECTION);
+		MongoDBUtilities.clearCollection(mongoTemplate, DummyAasRepositoryConfig.TEST_COLLECTION_NAME);
 	}
 
 	@Override
