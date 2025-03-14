@@ -27,23 +27,28 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb;
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
-import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Tests the AasDiscoveryService with MongoDb as backend
  * 
- * @author danish, mateusmolina
+ * @author danish, mateusmolina, fried
  *
  */
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class TestMongoDBAasDiscoveryService extends AasDiscoveryServiceSuite {
+
+	private static ConfigurableApplicationContext applicationContext;
 
 	@Autowired
 	MongoTemplate mongoTemplate;
@@ -51,9 +56,22 @@ public class TestMongoDBAasDiscoveryService extends AasDiscoveryServiceSuite {
 	@Autowired
 	AasDiscoveryService aasDiscoveryService;
 
+
+	@BeforeClass
+	public static void initTest(){
+		applicationContext = new SpringApplication(DummyAasDiscoveryServiceComponent.class).run();
+
+	}
+
 	@Before
 	public void cleanup() {
-		MongoDBUtilities.clearCollection(mongoTemplate, DummyDiscoveryServiceConfig.TEST_COLLECTION);
+		mongoTemplate.getDb().drop();
+	}
+
+	@AfterClass
+	public static void cleanupTest() {
+		MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
+		mongoTemplate.getDb().drop();
 	}
 
 	@Override

@@ -24,7 +24,7 @@
 		<module>basyx.conceptdescriptionrepository</module>
 		<module>basyx.aasxfileserver</module>
 		<module>basyx.aasdiscoveryservice</module>
-	</modules>
+    </modules>
 	<name>BaSyx Parent</name>
 	<description>Parent POM for Eclipse BaSyx</description>
 	<url>https://www.eclipse.org/basyx/</url>
@@ -80,6 +80,8 @@
 		<docker.host.port>8081</docker.host.port>
 		<docker.container.port>8081</docker.container.port>
 		<aas4j-version>1.0.4</aas4j-version>
+		<querydsl-version>5.1.0</querydsl-version>
+		<jakarta-version>3.1.0</jakarta-version>
 	</properties>
 
 	<pluginRepositories>
@@ -760,7 +762,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.aasdiscoveryservice-backend-inmemory</artifactId>
+				<artifactId>basyx.aasdiscoveryservice-backend-h2</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -1220,6 +1222,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasdiscoveryservice-backend-h2</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasdiscoveryservice-http</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
@@ -1227,12 +1235,6 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasdiscoveryservice-tck</artifactId>
-				<version>${revision}</version>
-				<classifier>tests</classifier>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.aasdiscoveryservice-backend-inmemory</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>

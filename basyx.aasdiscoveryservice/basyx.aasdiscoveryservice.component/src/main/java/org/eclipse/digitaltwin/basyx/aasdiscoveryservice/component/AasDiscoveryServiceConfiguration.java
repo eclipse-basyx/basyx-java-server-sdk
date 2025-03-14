@@ -33,6 +33,7 @@ import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.feature.AasDiscove
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.feature.DecoratedAasDiscoveryServiceFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 /**
  * Provides the spring bean configuration for the {@link AasDiscoveryService}
@@ -45,6 +46,7 @@ import org.springframework.context.annotation.Configuration;
 public class AasDiscoveryServiceConfiguration {
 
 	@Bean
+	@Primary
 	public static AasDiscoveryService getAasDiscoveryService(AasDiscoveryServiceFactory aasDiscoveryServiceFactory, List<AasDiscoveryServiceFeature> features) {
 		return new DecoratedAasDiscoveryServiceFactory(aasDiscoveryServiceFactory, features).create();
 	}

@@ -25,6 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend;
 
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -34,6 +35,6 @@ import org.springframework.stereotype.Repository;
  * @author mateusmolina
  */
 @Repository
-public interface AasDiscoveryDocumentBackend extends CrudRepository<AasDiscoveryDocument, String> {
+public interface AasDiscoveryDocumentBackend extends CrudRepository<AasDiscoveryDocument, String>, QuerydslPredicateExecutor<AasDiscoveryDocument> {
     
 }
