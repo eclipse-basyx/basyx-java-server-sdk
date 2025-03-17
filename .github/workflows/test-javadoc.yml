@@ -35,5 +35,7 @@ jobs:
           cache: maven
       - name: BaSyx Clean Install
         run: mvn clean install -Dmaven.test.skip=true -T1C
+      - name: Generate QueryDSL classes
+        run: mvn clean compile
       - name: Validate Javadoc
         run: mvn clean javadoc:javadoc
