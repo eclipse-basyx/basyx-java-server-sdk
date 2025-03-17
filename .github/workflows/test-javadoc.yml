@@ -24,23 +24,20 @@ env:
   MVN_ARGS_BUILD_BASYX_NO_TESTS: -DskipTests
 
 jobs:
-  build-test-aas-repository:
+  test-javadoc:
     runs-on: ubuntu-latest
     name: Test JavaDoc
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-
       - name: Build BaSyx
         run: |
           mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
-
       - name: Test Javadoc
         run: |
           mvn clean javadoc:javadoc

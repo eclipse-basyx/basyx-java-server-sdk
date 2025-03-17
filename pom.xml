@@ -1371,9 +1371,7 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<configuration>
-							<additionalSourceDirs>
-								<additionalSourceDir>${project.build.directory}/generated-sources/annotations</additionalSourceDir>
-							</additionalSourceDirs>
+							<sourcepath>target/generated-sources/annotations</sourcepath>
 						</configuration>
 						<executions>
 							<execution>
