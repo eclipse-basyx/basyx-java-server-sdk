@@ -1,0 +1,18 @@
+[
+	{
+		"id": "identification_1",
+		"assetType": "B"
+	},
+	{
+		"id": "identification_2",
+		"assetKind": "Type",
+		"assetType": "A"
+	}, 
+	{
+		"id": "identification_3"	 
+	}, 
+	{
+		"id": "identification_4",
+		"assetType": "A"
+	}  
+]
