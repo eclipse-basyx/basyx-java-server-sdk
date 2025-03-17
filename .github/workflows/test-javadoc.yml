@@ -35,11 +35,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-      - name: Build BaSyx
-        run: |
-          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
+      - name: Build & Generate Sources
+        run: mvn clean compile
       - name: Test Javadoc
-        run: |
-          mvn clean javadoc:javadoc
+        run: mvn javadoc:javadoc
       - name: Clean up
         run: exit 0
