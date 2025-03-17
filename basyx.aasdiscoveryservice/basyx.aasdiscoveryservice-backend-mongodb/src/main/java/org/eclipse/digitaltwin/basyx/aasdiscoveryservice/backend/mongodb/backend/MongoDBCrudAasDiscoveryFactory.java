@@ -41,7 +41,7 @@ import org.springframework.stereotype.Component;
  * 
  */
 @Component
-@ConditionalOnProperty(name="basyx.backend",havingValue = "MongoDB")
+@ConditionalOnProperty(name = "basyx.backend", havingValue = "MongoDB")
 public class MongoDBCrudAasDiscoveryFactory implements AasDiscoveryServiceFactory {
 
 	private final AasDiscoveryDocumentBackend aasDiscoveryDocumentBackend;

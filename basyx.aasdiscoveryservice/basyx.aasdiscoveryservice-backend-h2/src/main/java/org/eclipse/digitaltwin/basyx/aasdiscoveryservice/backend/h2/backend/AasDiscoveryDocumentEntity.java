@@ -27,7 +27,6 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend;
 
 import jakarta.persistence.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.converter.AssetLinksConverter;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.converter.SpecificAssetIdsConverter;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 

@@ -1,4 +1,4 @@
-package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.feature.authorization; /*******************************************************************************
+/*******************************************************************************
  * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -22,6 +22,8 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.feature.authorization;
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+
+package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.feature.authorization;
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;

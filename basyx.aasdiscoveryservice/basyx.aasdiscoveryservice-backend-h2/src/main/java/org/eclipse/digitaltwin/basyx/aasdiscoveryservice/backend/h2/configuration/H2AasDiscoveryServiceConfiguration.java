@@ -37,7 +37,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * @author fried
  */
 @Configuration
-@ConditionalOnProperty(name="basyx.backend",havingValue = "InMemory")
+@ConditionalOnProperty(name = "basyx.backend", havingValue = "InMemory")
 @EnableJpaRepositories(basePackages = "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend")
 @EntityScan(basePackages = "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend")
 @Import(H2CrudAasDiscoveryFactory.class)

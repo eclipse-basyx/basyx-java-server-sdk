@@ -60,7 +60,6 @@ public class TestMongoDBAasDiscoveryService extends AasDiscoveryServiceSuite {
 	@BeforeClass
 	public static void initTest(){
 		applicationContext = new SpringApplication(DummyAasDiscoveryServiceComponent.class).run();
-
 	}
 
 	@Before

@@ -151,43 +151,12 @@ public class MongoDBCrudAasDiscovery implements AasDiscoveryService {
 		return aasDiscoveryServiceName == null ? AasDiscoveryService.super.getName() : aasDiscoveryServiceName;
 	}
 
-	private void throwIfAssetLinkExists(Map<String, Set<AssetLink>> assetLinks, String shellIdentifier) {
-		if (assetLinks.containsKey(shellIdentifier))
-			throw new CollidingAssetLinkException(shellIdentifier);
-	}
-
-	private void throwIfAssetLinkDoesNotExist(Map<String, Set<AssetLink>> assetLinks, String shellIdentifier) {
-		if (!assetLinks.containsKey(shellIdentifier))
-			throw new AssetLinkDoesNotExistException(shellIdentifier);
-	}
-
-	private void throwIfSpecificAssetIdLinkDoesNotExist(Map<String, List<SpecificAssetId>> assetIds,
-														String shellIdentifier) {
-		if (!assetIds.containsKey(shellIdentifier))
-			throw new AssetLinkDoesNotExistException(shellIdentifier);
-	}
-
 	private List<SpecificAssetId> getAssetIds(String shellIdentifier) {
 		QAasDiscoveryDocumentEntity qDoc = QAasDiscoveryDocumentEntity.aasDiscoveryDocumentEntity;
 		BooleanExpression predicate = qDoc.shellIdentifier.eq(shellIdentifier);
 		Iterable<AasDiscoveryDocument> result = backend.findAll(predicate);
 		return StreamSupport.stream(result.spliterator(), false).findFirst().map(AasDiscoveryDocument::getSpecificAssetIds)
 				.orElseThrow(() -> new AssetLinkDoesNotExistException(shellIdentifier));
-	}
-
-	private Map<String, Set<AssetLink>> getAssetLinks() {
-		Iterable<AasDiscoveryDocument> aasDiscoveryDocuments = backend.findAll();
-		List<AasDiscoveryDocument> aasDiscoveryDocumentList = convertIterableToList(aasDiscoveryDocuments);
-		Map<String, Set<AssetLink>> assetLinks = aasDiscoveryDocumentList.stream()
-				.collect(Collectors.toMap(AasDiscoveryDocument::getShellIdentifier, AasDiscoveryDocument::getAssetLinks,
-						(a, b) -> a, TreeMap::new));
-		return assetLinks;
-	}
-
-	private Set<String> getShellIdsWithAssetLinks(List<AssetLink> requestedLinks) {
-		Map<String, Set<AssetLink>> assetLinks = getAssetLinks();
-		return assetLinks.entrySet().stream().filter(entry -> entry.getValue().containsAll(requestedLinks))
-				.map(Map.Entry::getKey).collect(Collectors.toSet());
 	}
 
 	private CursorResult<List<String>> paginateList(PaginationInfo pInfo, List<String> shellIdentifiers) {

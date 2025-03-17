@@ -47,7 +47,7 @@ import java.util.function.Function;
  * @author fried
  */
 @Service
-@ConditionalOnProperty(name="basyx.backend",havingValue = "InMemory")
+@ConditionalOnProperty(name = "basyx.backend", havingValue = "InMemory")
 public class H2AasDiscoveryDocumentBackend implements AasDiscoveryDocumentBackend {
     private final JpaAasDiscoveryDocumentRepository jpaRepo;
 

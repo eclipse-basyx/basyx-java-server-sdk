@@ -47,7 +47,7 @@ import java.util.function.Function;
  * @author fried
  */
 @Service
-@ConditionalOnProperty(name="basyx.backend",havingValue = "MongoDB")
+@ConditionalOnProperty(name = "basyx.backend", havingValue = "MongoDB")
 public class MongoDBAasDiscoveryDocumentBackend  implements AasDiscoveryDocumentBackend {
     private final MongoDBAasDiscoveryDocumentRepository repository;
 

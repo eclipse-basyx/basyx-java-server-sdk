@@ -41,7 +41,7 @@ import org.springframework.stereotype.Component;
  * 
  */
 @Component
-@ConditionalOnProperty(name="basyx.backend",havingValue = "InMemory")
+@ConditionalOnProperty(name = "basyx.backend", havingValue = "InMemory")
 public class H2CrudAasDiscoveryFactory implements AasDiscoveryServiceFactory {
 
 	private final AasDiscoveryDocumentBackend aasDiscoveryDocumentBackend;

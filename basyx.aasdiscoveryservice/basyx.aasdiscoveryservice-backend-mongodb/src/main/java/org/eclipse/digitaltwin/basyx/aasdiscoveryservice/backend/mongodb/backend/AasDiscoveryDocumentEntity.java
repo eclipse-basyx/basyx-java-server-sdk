@@ -28,7 +28,7 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.backen
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.converter.AssetLinksConverter;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.converter.AssetLinksConverter;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.converter.SpecificAssetIdsConverter;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 
