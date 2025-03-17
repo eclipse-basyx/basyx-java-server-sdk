@@ -24,12 +24,16 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend;
 
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.Column;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocument;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocumentBackend;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.dto.QSpecificAssetIdEntity;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.dto.SpecificAssetIdEntity;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 import org.eclipse.digitaltwin.basyx.core.exceptions.AssetLinkDoesNotExistException;
@@ -37,6 +41,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
@@ -59,10 +64,12 @@ public class H2CrudAasDiscovery implements AasDiscoveryService {
 
 	private final AasDiscoveryDocumentBackend backend;
 	private final String aasDiscoveryServiceName;
+	private final JPAQueryFactory queryFactory;
 
-	public H2CrudAasDiscovery(AasDiscoveryDocumentBackend backend, String aasDiscoveryServiceName) {
+	public H2CrudAasDiscovery(AasDiscoveryDocumentBackend backend, String aasDiscoveryServiceName, JPAQueryFactory queryFactory) {
 		this.backend = backend;
 		this.aasDiscoveryServiceName = aasDiscoveryServiceName;
+		this.queryFactory = queryFactory;
 	}
 
 	/**
@@ -78,6 +85,8 @@ public class H2CrudAasDiscovery implements AasDiscoveryService {
 	@Override
 	public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo, List<AssetLink> assetIds) {
 		QAasDiscoveryDocumentEntity qDoc = QAasDiscoveryDocumentEntity.aasDiscoveryDocumentEntity;
+		QSpecificAssetIdEntity specificAssetId = QSpecificAssetIdEntity.specificAssetIdEntity; // Alias for join
+
 		BooleanExpression predicate = Expressions.FALSE;
 
 		for (AssetLink asset : assetIds) {
@@ -87,13 +96,17 @@ public class H2CrudAasDiscovery implements AasDiscoveryService {
 			);
 		}
 
-		Iterable<AasDiscoveryDocument> result = backend.findAll(predicate);
+		List<AasDiscoveryDocumentEntity> aasDiscoveryDocuments = findAllWithJoin(predicate);
 
-		List<AasDiscoveryDocument> aasDiscoveryDocuments = convertIterableToList(result);
+		Set<String> shellIds = aasDiscoveryDocuments.stream()
+				.map(AasDiscoveryDocumentEntity::getShellIdentifier)
+				.collect(Collectors.toSet());
 
-		Set<String> shellIds = new HashSet<>(aasDiscoveryDocuments.stream().map(AasDiscoveryDocument::getShellIdentifier).toList());
+
 		return paginateList(pInfo, new ArrayList<>(shellIds));
 	}
+
+
 
 	/**
 	 * Returns a list of asset identifier key-value-pairs based on an Asset
@@ -106,7 +119,7 @@ public class H2CrudAasDiscovery implements AasDiscoveryService {
 	@Override
 	public List<SpecificAssetId> getAllAssetLinksById(String shellIdentifier) {
 		List<SpecificAssetId> assetIds = getAssetIds(shellIdentifier);
-		if(assetIds.isEmpty()){
+		if (assetIds.isEmpty()) {
 			throw new AssetLinkDoesNotExistException(shellIdentifier);
 		}
 		return assetIds;
@@ -126,20 +139,25 @@ public class H2CrudAasDiscovery implements AasDiscoveryService {
 	@Override
 	public List<SpecificAssetId> createAllAssetLinksById(String shellIdentifier,
 														 List<SpecificAssetId> specificAssetIds) {
-
 		QAasDiscoveryDocumentEntity qDoc = QAasDiscoveryDocumentEntity.aasDiscoveryDocumentEntity;
 		BooleanExpression predicate = qDoc.shellIdentifier.eq(shellIdentifier);
-		if(backend.exists(predicate)) {
+		if (backend.exists(predicate)) {
 			throw new CollidingAssetLinkException(shellIdentifier);
 		}
 
 		List<AssetLink> shellAssetLinks = deriveAssetLinksFromSpecificAssetIds(specificAssetIds);
-		AasDiscoveryDocument aasDiscoveryDocument = new AasDiscoveryDocument(shellIdentifier,
-				new HashSet<>(shellAssetLinks), specificAssetIds);
-		backend.save(aasDiscoveryDocument);
+		AasDiscoveryDocument aasDiscoveryDocument = new AasDiscoveryDocument(
+				shellIdentifier,
+				new HashSet<>(shellAssetLinks),
+				specificAssetIds
+		);
 
+		aasDiscoveryDocument.getSpecificAssetIds().size();
+
+		backend.save(aasDiscoveryDocument);
 		return specificAssetIds;
 	}
+
 
 	/**
 	 * Deletes all asset identifier key-value-pairs linked to an Asset
@@ -166,8 +184,17 @@ public class H2CrudAasDiscovery implements AasDiscoveryService {
 	private List<SpecificAssetId> getAssetIds(String shellIdentifier) {
 		QAasDiscoveryDocumentEntity qDoc = QAasDiscoveryDocumentEntity.aasDiscoveryDocumentEntity;
 		BooleanExpression predicate = qDoc.shellIdentifier.eq(shellIdentifier);
-		Iterable<AasDiscoveryDocument> result = backend.findAll(predicate);
-		return StreamSupport.stream(result.spliterator(), false).findFirst().map(AasDiscoveryDocument::getSpecificAssetIds)
+
+		List<AasDiscoveryDocumentEntity> result = findAllWithJoin(predicate);
+
+		return result.stream()
+				.findFirst()
+				.map(AasDiscoveryDocumentEntity::getSpecificAssetIds)
+				.map(specificAssetIdEntities -> specificAssetIdEntities.stream()
+						.map(SpecificAssetIdEntity::toSpecificAssetId)
+						.map(specificAssetId -> (SpecificAssetId) specificAssetId)
+						.toList()
+				)
 				.orElseThrow(() -> new AssetLinkDoesNotExistException(shellIdentifier));
 	}
 
@@ -184,5 +211,16 @@ public class H2CrudAasDiscovery implements AasDiscoveryService {
 		List<AasDiscoveryDocument> aasDiscoveryDocuments = StreamSupport.stream(result.spliterator(), false)
 				.collect(Collectors.toList());
 		return aasDiscoveryDocuments;
+	}
+
+	private List<AasDiscoveryDocumentEntity> findAllWithJoin(Predicate predicate) {
+		QSpecificAssetIdEntity specificAssetId = QSpecificAssetIdEntity.specificAssetIdEntity;
+		QAasDiscoveryDocumentEntity qDoc = QAasDiscoveryDocumentEntity.aasDiscoveryDocumentEntity;
+
+		return queryFactory
+				.selectFrom(qDoc)
+				.leftJoin(qDoc.specificAssetIds, specificAssetId).fetchJoin()
+				.where(predicate)
+				.fetch();
 	}
 }

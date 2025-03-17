@@ -24,74 +24,44 @@
  ******************************************************************************/
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend;
-
 import jakarta.persistence.*;
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.converter.SpecificAssetIdsConverter;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.dto.SpecificAssetIdEntity;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 
 import java.util.List;
 import java.util.Set;
 
-/**
- * Wrapper class for {@link org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocument} for Querydsl Support
- * @author fried
- */
 @Entity
 @Table(name = "aas_discovery_document")
 public class AasDiscoveryDocumentEntity {
     @Id
     private String shellIdentifier;
+
     @ElementCollection
     @CollectionTable(name = "aas_asset_links", joinColumns = @JoinColumn(name = "aas_discovery_document_id"))
     private Set<AssetLink> assetLinks;
-    @Convert(converter = SpecificAssetIdsConverter.class)
-    @Column(length = 255000)
-    private List<SpecificAssetId> specificAssetIds;
 
-    /**
-     * Constructor
-     *
-     * @param shellIdentifier
-     *            The shell identifier
-     * @param assetLinks
-     *            The asset links
-     * @param specificAssetIds
-     *            The specific asset ids
-     */
-    public AasDiscoveryDocumentEntity(String shellIdentifier, Set<AssetLink> assetLinks, List<SpecificAssetId> specificAssetIds) {
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "aas_discovery_document_id")
+    private List<SpecificAssetIdEntity> specificAssetIds;
+
+    public AasDiscoveryDocumentEntity() {}
+
+    public AasDiscoveryDocumentEntity(String shellIdentifier, Set<AssetLink> assetLinks, List<SpecificAssetIdEntity> specificAssetIds) {
         this.shellIdentifier = shellIdentifier;
         this.assetLinks = assetLinks;
         this.specificAssetIds = specificAssetIds;
     }
 
-    public AasDiscoveryDocumentEntity() {
-    }
-
-    /**
-     * Get the shell identifier
-     *
-     * @return The shell identifier
-     */
     public String getShellIdentifier() {
         return shellIdentifier;
     }
 
-    /**
-     * Get the asset links
-     *
-     * @return The asset links
-     */
     public Set<AssetLink> getAssetLinks() {
         return assetLinks;
     }
 
-    /**
-     * Get the specific asset ids
-     *
-     * @return The specific asset ids
-     */
-    public List<SpecificAssetId> getSpecificAssetIds() {
+    public List<SpecificAssetIdEntity> getSpecificAssetIds() {
         return specificAssetIds;
     }
 }

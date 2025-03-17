@@ -25,9 +25,13 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.configuration;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend.H2CrudAasDiscoveryFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -39,7 +43,17 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Configuration
 @ConditionalOnProperty(name = "basyx.backend", havingValue = "InMemory")
 @EnableJpaRepositories(basePackages = "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend")
-@EntityScan(basePackages = "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend")
+@EntityScan(basePackages = {
+        "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend",
+        "org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.dto"
+})
 @Import(H2CrudAasDiscoveryFactory.class)
 public class H2AasDiscoveryServiceConfiguration {
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Bean
+    public JPAQueryFactory jpaQueryFactory() {
+        return new JPAQueryFactory(entityManager);
+    }
 }

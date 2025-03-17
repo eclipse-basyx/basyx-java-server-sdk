@@ -27,8 +27,11 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocument;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocumentBackend;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.dto.SpecificAssetIdEntity;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotImplementedException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Page;
@@ -129,11 +132,28 @@ public class H2AasDiscoveryDocumentBackend implements AasDiscoveryDocumentBacken
     }
 
     private AasDiscoveryDocumentEntity toEntity(AasDiscoveryDocument doc) {
-        return new AasDiscoveryDocumentEntity(doc.getShellIdentifier(),doc.getAssetLinks(),doc.getSpecificAssetIds());
+        List<SpecificAssetIdEntity> specificAssetIdEntities = doc.getSpecificAssetIds().stream()
+                .map(id -> new SpecificAssetIdEntity((DefaultSpecificAssetId) id))
+                .toList();
+
+        return new AasDiscoveryDocumentEntity(
+                doc.getShellIdentifier(),
+                doc.getAssetLinks(),
+                specificAssetIdEntities
+        );
     }
 
     private AasDiscoveryDocument toDomain(AasDiscoveryDocumentEntity entity) {
-        return new AasDiscoveryDocument(entity.getShellIdentifier(),entity.getAssetLinks(),entity.getSpecificAssetIds());
+        List<SpecificAssetId> specificAssetIds = entity.getSpecificAssetIds().stream()
+                .map(SpecificAssetIdEntity::toSpecificAssetId)
+                .map(specificAssetId -> (SpecificAssetId) specificAssetId)
+                .toList();
+
+        return new AasDiscoveryDocument(
+                entity.getShellIdentifier(),
+                entity.getAssetLinks(),
+                specificAssetIds
+        );
     }
 
     @Override

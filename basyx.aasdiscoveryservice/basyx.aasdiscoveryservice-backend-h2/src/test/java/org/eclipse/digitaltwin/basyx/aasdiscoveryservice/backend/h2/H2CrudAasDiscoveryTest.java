@@ -35,7 +35,7 @@ public class H2CrudAasDiscoveryTest {
 
     @Test
     public void getConfiguredAasDiscoveryName(){
-        AasDiscoveryService service = new H2CrudAasDiscoveryFactory(null, CONFIGURED_AAS_DISCOVERY_NAME).create();
+        AasDiscoveryService service = new H2CrudAasDiscoveryFactory(null, CONFIGURED_AAS_DISCOVERY_NAME, null).create();
 
         assertEquals(CONFIGURED_AAS_DISCOVERY_NAME,service.getName());
     }

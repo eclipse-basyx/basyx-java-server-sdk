@@ -52,6 +52,9 @@ public class TestH2AasDiscoveryService extends AasDiscoveryServiceSuite {
 	@Before
 	@Transactional
 	public void cleanup() {
+		jdbcTemplate.execute("DELETE FROM keys");
+		jdbcTemplate.execute("DELETE FROM references");
+		jdbcTemplate.execute("DELETE FROM specific_asset_ids");
 		jdbcTemplate.execute("DELETE FROM aas_asset_links");
 		jdbcTemplate.execute("DELETE FROM aas_discovery_document");
 	}

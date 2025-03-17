@@ -24,6 +24,7 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocumentBackend;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
@@ -46,20 +47,23 @@ public class H2CrudAasDiscoveryFactory implements AasDiscoveryServiceFactory {
 
 	private final AasDiscoveryDocumentBackend aasDiscoveryDocumentBackend;
 	private final String aasDiscoveryName;
+	private final JPAQueryFactory queryFactory;
+
 
 	@Autowired
-	public H2CrudAasDiscoveryFactory(AasDiscoveryDocumentBackend aasDiscoveryDocumentBackend, @Value("${basyx.aasdiscoveryservice.name:aas-discovery-service}") String aasDiscoveryName) {
+	public H2CrudAasDiscoveryFactory(AasDiscoveryDocumentBackend aasDiscoveryDocumentBackend, @Value("${basyx.aasdiscoveryservice.name:aas-discovery-service}") String aasDiscoveryName, JPAQueryFactory queryFactory) {
 		this.aasDiscoveryDocumentBackend = aasDiscoveryDocumentBackend;
 		this.aasDiscoveryName = aasDiscoveryName;
+		this.queryFactory = queryFactory;
 	}
 
-	public H2CrudAasDiscoveryFactory(AasDiscoveryDocumentBackend aasBackendProvider) {
-		this(aasBackendProvider, "aas-discovery-service");
+	public H2CrudAasDiscoveryFactory(AasDiscoveryDocumentBackend aasBackendProvider, JPAQueryFactory queryFactory) {
+		this(aasBackendProvider, "aas-discovery-service", queryFactory);
 	}
 
 	@Override
 	public AasDiscoveryService create() {
-		return new H2CrudAasDiscovery(aasDiscoveryDocumentBackend, aasDiscoveryName);
+		return new H2CrudAasDiscovery(aasDiscoveryDocumentBackend, aasDiscoveryName, queryFactory);
 	}
 
 }
