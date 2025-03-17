@@ -109,7 +109,7 @@ public class H2CrudAasDiscovery implements AasDiscoveryService {
 		if(assetIds.isEmpty()){
 			throw new AssetLinkDoesNotExistException(shellIdentifier);
 		}
-		return getAssetIds(shellIdentifier);
+		return assetIds;
 	}
 
 	/**
