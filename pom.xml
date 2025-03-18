@@ -1419,6 +1419,9 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
+						<configuration>
+							<sourcepath>${project.basedir}/src;${project.basedir}/target/generated-sources/annotations</sourcepath>
+						</configuration>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
@@ -1427,6 +1430,28 @@
 								</goals>
 							</execution>
 						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.8.1</version>
+						<configuration>
+							<source>${java.version}</source>
+							<target>${java.version}</target>
+							<annotationProcessorPaths>
+								<path>
+									<groupId>com.querydsl</groupId>
+									<artifactId>querydsl-apt</artifactId>
+									<version>${querydsl-version}</version>
+									<classifier>jakarta</classifier>
+								</path>
+								<path>
+									<groupId>jakarta.persistence</groupId>
+									<artifactId>jakarta.persistence-api</artifactId>
+									<version>${jakarta-version}</version>
+								</path>
+							</annotationProcessorPaths>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
