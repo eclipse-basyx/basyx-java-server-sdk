@@ -80,6 +80,8 @@
 		<docker.host.port>8081</docker.host.port>
 		<docker.container.port>8081</docker.container.port>
 		<aas4j-version>1.0.4</aas4j-version>
+		<querydsl-version>5.1.0</querydsl-version>
+		<jakarta-version>3.1.0</jakarta-version>
 	</properties>
 
 	<pluginRepositories>
@@ -760,7 +762,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.aasdiscoveryservice-backend-inmemory</artifactId>
+				<artifactId>basyx.aasdiscoveryservice-backend-h2</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -1232,7 +1234,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.aasdiscoveryservice-backend-inmemory</artifactId>
+				<artifactId>basyx.aasdiscoveryservice-backend-h2</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -1422,6 +1424,28 @@
 								</goals>
 							</execution>
 						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.8.1</version>
+						<configuration>
+							<source>${java.version}</source>
+							<target>${java.version}</target>
+							<annotationProcessorPaths>
+								<path>
+									<groupId>com.querydsl</groupId>
+									<artifactId>querydsl-apt</artifactId>
+									<version>${querydsl-version}</version>
+									<classifier>jakarta</classifier>
+								</path>
+								<path>
+									<groupId>jakarta.persistence</groupId>
+									<artifactId>jakarta.persistence-api</artifactId>
+									<version>${jakarta-version}</version>
+								</path>
+							</annotationProcessorPaths>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
