@@ -29,7 +29,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * Spring application configured for tests.
  * 
- * @author mateusmolina
+ * @author fried
  *
  */
 @SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
