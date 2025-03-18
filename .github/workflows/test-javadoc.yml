@@ -19,10 +19,6 @@ on:
       - 'LICENSE'
       - 'NOTICE'
 
-env:
-  VERSION: 2.0.0-SNAPSHOT
-  MVN_ARGS_BUILD_BASYX_NO_TESTS: -DskipTests
-
 jobs:
   javadoc:
     runs-on: ubuntu-latest
