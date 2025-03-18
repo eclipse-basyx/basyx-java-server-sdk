@@ -28,11 +28,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.aasdiscoveryservice-backend-mongodb</artifactId>
+			<artifactId>basyx.aasdiscoveryservice-backend-h2</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.aasdiscoveryservice-backend-h2</artifactId>
+			<artifactId>basyx.aasdiscoveryservice-backend-mongodb</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
