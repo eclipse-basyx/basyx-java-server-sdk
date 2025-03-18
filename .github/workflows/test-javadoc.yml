@@ -37,6 +37,6 @@ jobs:
           cache: maven
       - name: Test Javadoc
         run: |
-          mvn clean compile javadoc:javadoc
+          mvn package -DskipTests javadoc:javadoc
       - name: Clean up
         run: exit 0
