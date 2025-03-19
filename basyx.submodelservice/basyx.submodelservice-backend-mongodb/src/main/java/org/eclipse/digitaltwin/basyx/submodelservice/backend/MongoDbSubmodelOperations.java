@@ -172,7 +172,7 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
         if (result.getModifiedCount() == 0) {
             if (!existsSubmodel(submodelId))
                 throw new ElementDoesNotExistException(submodelId);
-            if(!existsSubmodelElement(submodelId,idShortPath))
+            if (!existsSubmodelElement(submodelId, idShortPath))
                 throw new ElementDoesNotExistException(idShortPath);
         }
     }
