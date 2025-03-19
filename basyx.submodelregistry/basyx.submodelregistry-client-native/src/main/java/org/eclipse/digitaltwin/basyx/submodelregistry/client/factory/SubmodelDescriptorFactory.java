@@ -53,14 +53,14 @@ public class SubmodelDescriptorFactory {
 	private static final String SUBMODEL_INTERFACE = "SUBMODEL-3.0";
 	private static final String SUBMODEL_REPOSITORY_PATH = "submodels";
 
-	private final List<String> submodelRepositoryURLs;
+	private final List<String> submodelBaseURLs;
 	private static AttributeMapper attributeMapper;
 
-	public SubmodelDescriptorFactory(List<String> submodelRepositoryBaseURLs, AttributeMapper attributeMapper) {
-		this.submodelRepositoryURLs = createSubmodelRepositoryUrls(submodelRepositoryBaseURLs);
+	public SubmodelDescriptorFactory(List<String> submodelBaseURLs, AttributeMapper attributeMapper) {
+		this.submodelBaseURLs = createSubmodelServerUrls(submodelBaseURLs);
 		SubmodelDescriptorFactory.attributeMapper = attributeMapper;
 	}
-
+	
 	/**
 	 * Creates {@link SubmodelDescriptor}
 	 * 
@@ -74,7 +74,7 @@ public class SubmodelDescriptorFactory {
 
 		setIdShort(submodel.getIdShort(), descriptor);
 
-		setEndpointItem(submodel.getId(), descriptor, submodelRepositoryURLs);
+		setEndpointItem(submodel.getId(), descriptor, submodelBaseURLs);
 
 		setDescription(submodel.getDescription(), descriptor);
 
@@ -91,7 +91,7 @@ public class SubmodelDescriptorFactory {
 		return descriptor;
 	}
 
-	private static void setDescription(List<LangStringTextType> descriptions, SubmodelDescriptor descriptor) {
+	private void setDescription(List<LangStringTextType> descriptions, SubmodelDescriptor descriptor) {
 
 		if (descriptions == null || descriptions.isEmpty())
 			return;
@@ -99,7 +99,7 @@ public class SubmodelDescriptorFactory {
 		descriptor.setDescription(attributeMapper.mapDescription(descriptions));
 	}
 
-	private static void setDisplayName(List<LangStringNameType> displayNames, SubmodelDescriptor descriptor) {
+	private void setDisplayName(List<LangStringNameType> displayNames, SubmodelDescriptor descriptor) {
 
 		if (displayNames == null || displayNames.isEmpty())
 			return;
@@ -107,7 +107,7 @@ public class SubmodelDescriptorFactory {
 		descriptor.setDisplayName(attributeMapper.mapDisplayName(displayNames));
 	}
 
-	private static void setExtensions(List<Extension> extensions, SubmodelDescriptor descriptor) {
+	private void setExtensions(List<Extension> extensions, SubmodelDescriptor descriptor) {
 
 		if (extensions == null || extensions.isEmpty())
 			return;
@@ -115,7 +115,7 @@ public class SubmodelDescriptorFactory {
 		descriptor.setExtensions(attributeMapper.mapExtensions(extensions));
 	}
 
-	private static void setAdministration(AdministrativeInformation administration, SubmodelDescriptor descriptor) {
+	private void setAdministration(AdministrativeInformation administration, SubmodelDescriptor descriptor) {
 
 		if (administration == null)
 			return;
@@ -123,7 +123,7 @@ public class SubmodelDescriptorFactory {
 		descriptor.setAdministration(attributeMapper.mapAdministration(administration));
 	}
 
-	private static void setSemanticId(Reference reference, SubmodelDescriptor descriptor) {
+	private void setSemanticId(Reference reference, SubmodelDescriptor descriptor) {
 
 		if (reference == null)
 			return;
@@ -131,7 +131,7 @@ public class SubmodelDescriptorFactory {
 		descriptor.setSemanticId(attributeMapper.mapSemanticId(reference));
 	}
 
-	private static void setSupplementalSemanticId(List<Reference> supplementalSemanticIds, SubmodelDescriptor descriptor) {
+	private void setSupplementalSemanticId(List<Reference> supplementalSemanticIds, SubmodelDescriptor descriptor) {
 
 		if (supplementalSemanticIds == null || supplementalSemanticIds.isEmpty())
 			return;
@@ -139,20 +139,20 @@ public class SubmodelDescriptorFactory {
 		descriptor.setSupplementalSemanticId(attributeMapper.mapSupplementalSemanticId(supplementalSemanticIds));
 	}
 
-	private static void setEndpointItem(String shellId, SubmodelDescriptor descriptor, List<String> submodelRepositoryURLs) {
+	private void setEndpointItem(String submodelId, SubmodelDescriptor descriptor, List<String> submodelServerURLs) {
 
-		for (String eachUrl : submodelRepositoryURLs) {
+		for (String eachUrl : submodelServerURLs) {
 			Endpoint endpoint = new Endpoint();
 			endpoint.setInterface(SUBMODEL_INTERFACE);
-			ProtocolInformation protocolInformation = createProtocolInformation(shellId, eachUrl);
+			ProtocolInformation protocolInformation = createProtocolInformation(submodelId, eachUrl);
 			endpoint.setProtocolInformation(protocolInformation);
 
 			descriptor.addEndpointsItem(endpoint);
 		}
 	}
 
-	private static ProtocolInformation createProtocolInformation(String shellId, String url) {
-		String href = String.format("%s/%s", url, Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
+	private ProtocolInformation createProtocolInformation(String submodelId, String url) {
+		String href = createHref(submodelId, url);
 
 		ProtocolInformation protocolInformation = new ProtocolInformation();
 		protocolInformation.endpointProtocol(getProtocol(href));
@@ -161,15 +161,20 @@ public class SubmodelDescriptorFactory {
 		return protocolInformation;
 	}
 
-	private static void setIdShort(String idShort, SubmodelDescriptor descriptor) {
+	protected String createHref(String submodelId, String url) {
+		return String.format("%s/%s", url, Base64UrlEncodedIdentifier.encodeIdentifier(submodelId));
+	}
+
+
+	private void setIdShort(String idShort, SubmodelDescriptor descriptor) {
 		descriptor.setIdShort(idShort);
 	}
 
-	private static void setId(String shellId, SubmodelDescriptor descriptor) {
+	private void setId(String shellId, SubmodelDescriptor descriptor) {
 		descriptor.setId(shellId);
 	}
 
-	private static String getProtocol(String endpoint) {
+	private String getProtocol(String endpoint) {
 		try {
 			return new URL(endpoint).getProtocol();
 		} catch (MalformedURLException e) {
@@ -177,11 +182,15 @@ public class SubmodelDescriptorFactory {
 		}
 	}
 
-	private static List<String> createSubmodelRepositoryUrls(List<String> submodelRepositoryBaseURLs) {
+	private List<String> createSubmodelServerUrls(List<String> submodelRepositoryBaseURLs) {
 		List<String> toReturn = new ArrayList<>(submodelRepositoryBaseURLs.size());
 		for (String eachUrl : submodelRepositoryBaseURLs) {
-			toReturn.add(RepositoryUrlHelper.createRepositoryUrl(eachUrl, SUBMODEL_REPOSITORY_PATH));
+			toReturn.add(RepositoryUrlHelper.createRepositoryUrl(eachUrl, getSubmodelPathPrefix()));
 		}
 		return toReturn;
+	}
+	
+	protected String getSubmodelPathPrefix() {
+		return SUBMODEL_REPOSITORY_PATH;
 	}
 }
