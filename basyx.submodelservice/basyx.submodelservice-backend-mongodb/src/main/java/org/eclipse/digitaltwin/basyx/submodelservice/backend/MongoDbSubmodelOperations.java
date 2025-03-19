@@ -227,10 +227,10 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
     }
 
     private boolean existsSubmodelElement(String submodelId, String idShortPath){
-        try{
+        try {
             getSubmodelElement(submodelId, idShortPath);
             return true;
-        }catch(ElementDoesNotExistException e){
+        } catch(ElementDoesNotExistException e) {
             return false;
         }
     }
