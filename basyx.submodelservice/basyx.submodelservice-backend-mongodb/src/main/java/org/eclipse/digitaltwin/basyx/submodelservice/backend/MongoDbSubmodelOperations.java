@@ -172,8 +172,8 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
         if (result.getModifiedCount() == 0) {
             if (!existsSubmodel(submodelId))
                 throw new ElementDoesNotExistException(submodelId);
-
-            throw new ElementDoesNotExistException(idShortPath);
+            if (!existsSubmodelElement(submodelId, idShortPath))
+                throw new ElementDoesNotExistException(idShortPath);
         }
     }
 
@@ -224,6 +224,15 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
 
     private boolean existsSubmodel(String submodelId) {
         return mongoOperations.exists(new Query(Criteria.where("_id").is(submodelId)), collectionName);
+    }
+
+    private boolean existsSubmodelElement(String submodelId, String idShortPath){
+        try {
+            getSubmodelElement(submodelId, idShortPath);
+            return true;
+        } catch(ElementDoesNotExistException e) {
+            return false;
+        }
     }
 
 }
