@@ -1,0 +1,10 @@
+{{- if .Values.logo.relativePath }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "aas-web-ui.fullname" . }}-logo
+  labels:
+    {{- include "aas-web-ui.labels" . | nindent 4 }}
+data:
+  logo.png: {{ .Files.Get .Values.logo.relativePath | b64enc | quote }}
+{{ end -}}

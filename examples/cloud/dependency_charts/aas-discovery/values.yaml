@@ -1,0 +1,58 @@
+imagePullSecrets: []
+
+# Enabled by default
+enabled: true
+
+image: 
+  name: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
+  pullPolicy: IfNotPresent
+
+resources: {}
+podAnnotations: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  host: aas-discovery.local
+
+apirule:
+  enabled: false
+  host: aas-discovery.local
+  methods: 
+    - "GET" 
+    - "HEAD" 
+    - "POST" 
+    - "PUT" 
+    - "DELETE" 
+    - "CONNECT" 
+    - "OPTIONS" 
+    - "TRACE"
+    - "PATCH"
+
+# Content of application.properties
+config: |
+  server.port=8080
+  spring.application.name=AAS Discovery Service
+
+  basyx.aasdiscoveryservice.name=aas-discovery-service
+
+  basyx.backend=MongoDB
+  spring.data.mongodb.host=mongo
+  spring.data.mongodb.database=aas-discovery
+  spring.data.mongodb.authentication-database=admin
+  spring.data.mongodb.username=mongoAdmin
+  spring.data.mongodb.password=mongoPassword
+
+  basyx.cors.allowed-origins=*
+  basyx.cors.allowed-methods=GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+
+  basyx.feature.authorization.enabled = true
+  basyx.feature.authorization.type = rbac
+  basyx.feature.authorization.jwtBearerTokenProvider = keycloak
+  basyx.feature.authorization.rbac.file = file:/application/rbac_rules.json
+  spring.security.oauth2.resourceserver.jwt.issuer-uri= http://keycloak.basyx.local:8080/realms/BaSyx
+
+
