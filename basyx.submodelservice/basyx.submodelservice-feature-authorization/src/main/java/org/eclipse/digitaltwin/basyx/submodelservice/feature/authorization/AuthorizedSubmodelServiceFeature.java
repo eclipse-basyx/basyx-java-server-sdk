@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 DFKI GmbH (https://www.dfki.de/en/web)
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,43 +21,40 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  * SPDX-License-Identifier: MIT
- * 
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching;
 
+package org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization;
+
+import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
+import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.SubmodelServiceFeature;
-import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.execution.OperationExecutorProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * @author Gerhard Sonnenberg DFKI GmbH
+ * Feature for AuthorizedSubmodelService
+ * 
+ * @author Gerhard Sonnenberg ( DFKI GmbH)
  */
-@ConditionalOnProperty(name = OperationDispatchingSubmodelServiceFeature.FEATURENAME +".enabled", havingValue = "true", matchIfMissing = false)
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
-public class OperationDispatchingSubmodelServiceFeature implements SubmodelServiceFeature {
-
-	public final static String FEATURENAME = "basyx.submodelservice.feature.operation.dispatcher";
-
-	@Value("${" + FEATURENAME + ".enabled:false}")
-	private boolean enabled;
+@ConditionalOnExpression("#{${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false}}")
+@Order(Ordered.LOWEST_PRECEDENCE) // this will move it to the front when decorating the features
+public class AuthorizedSubmodelServiceFeature implements SubmodelServiceFeature {
 	
-	private OperationExecutorProvider provider;
+	private final RbacPermissionResolver<SubmodelTargetInformation> permissionResolver;
 
 	@Autowired
-	public OperationDispatchingSubmodelServiceFeature(OperationExecutorProvider provider) {
-		this.provider = provider;
+	public AuthorizedSubmodelServiceFeature(RbacPermissionResolver<SubmodelTargetInformation> permissionResolver) {
+		this.permissionResolver = permissionResolver;
 	}
 
 	@Override
-	public SubmodelServiceFactory decorate(SubmodelServiceFactory component) {
-		return new OperationDispatchingServiceFactory(component, provider);
+	public SubmodelServiceFactory decorate(SubmodelServiceFactory submodelServiceFactory) {
+		return new AuthorizedSubmodelServiceFactory(submodelServiceFactory, permissionResolver);
 	}
 
 	@Override
@@ -71,11 +68,11 @@ public class OperationDispatchingSubmodelServiceFeature implements SubmodelServi
 
 	@Override
 	public String getName() {
-		return "SubmodelService reflection based operation dispatcher";
+		return "SubmodelService Authorization";
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return enabled;
+		return true;
 	}
 }
