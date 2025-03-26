@@ -162,7 +162,7 @@ services:
         - basyx-java-server-sdk
 
   keycloak-fixed-uri:
-    image: eclipsebasyx/keycloak:26.0.7
+    image: eclipsebasyx/keycloak:0.0.1
     build:
       context: ./keycloak
       dockerfile: Dockerfile.keycloak
