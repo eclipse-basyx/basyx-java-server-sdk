@@ -105,6 +105,27 @@ After starting the service, execute:
 Follow the script's instructions to interact with the submodel and validate its operations.
 
 ---
+## 🔐 Security Test Script
+
+The script `run-security-test.sh` demonstrates how rule-based authorization can be tested against the Submodel Service using Keycloak.
+
+It performs the following steps:
+
+1. **Token Retrieval**  
+   Obtains an access token via the client credentials grant from Keycloak.
+
+2. **Authorized Requests**  
+   Executes operations that are allowed for the configured client (e.g., reading the submodel or invoking permitted operations).
+
+3. **Denied Request (Negative Test)**  
+   Attempts to invoke an unauthorized operation to validate that access is correctly denied (e.g., `SquareOperation` should fail with a 403 Forbidden).
+
+The script outputs the HTTP status code and response body for each request.  
+No external tools are required – the output is printed directly to the console for easy inspection.
+
+> 📝 Tip: You can modify the Keycloak roles or policies to experiment with different access rules.
+--
+
 
 ## 📌 Summary
 

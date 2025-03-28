@@ -23,31 +23,35 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization.SubmodelTargetInformation;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
+import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
 
 /**
- * Factory for creating {@link AuthorizedSubmodelRepository}
+ * Factory for creating AuthorizedSubmodelService 
  * 
- * @author danish
+ * @author Gerhard Sonnenberg (DFKI GmbH)
  */
-public class AuthorizedSubmodelRepositoryFactory implements SubmodelRepositoryFactory {
+public class AuthorizedSubmodelServiceFactory implements SubmodelServiceFactory {
 
-	private SubmodelRepositoryFactory decorated;
+	private SubmodelServiceFactory decorated;
 	private RbacPermissionResolver<SubmodelTargetInformation> permissionResolver;
 
-	public AuthorizedSubmodelRepositoryFactory(SubmodelRepositoryFactory decorated, RbacPermissionResolver<SubmodelTargetInformation> permissionResolver) {
+	public AuthorizedSubmodelServiceFactory(SubmodelServiceFactory decorated, RbacPermissionResolver<SubmodelTargetInformation> permissionResolver) {
 		this.decorated = decorated;
 		this.permissionResolver = permissionResolver;
 	}
 
 	@Override
-	public SubmodelRepository create() {
-		return new AuthorizedSubmodelRepository(decorated.create(), permissionResolver);
+	public SubmodelService create(String submodelId) {
+		return new AuthorizedSubmodelService(decorated.create(submodelId), permissionResolver, submodelId);
 	}
-
+	
+	@Override
+	public SubmodelService create(Submodel submodel) {
+		return new AuthorizedSubmodelService(decorated.create(submodel), permissionResolver, submodel.getId());
+	}
 }

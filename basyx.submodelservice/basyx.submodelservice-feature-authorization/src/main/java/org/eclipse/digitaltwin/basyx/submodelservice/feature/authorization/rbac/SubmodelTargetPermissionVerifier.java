@@ -23,13 +23,15 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.rbac;
+package org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization.rbac;
 
 import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.SubmodelTargetInformation;
+import org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization.SubmodelTargetInformation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Verifies the {@link SubmodelTargetInformation} against the {@link RbacRule}
@@ -38,6 +40,8 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.Su
  */
 public class SubmodelTargetPermissionVerifier implements TargetPermissionVerifier<SubmodelTargetInformation> {
 
+	private final Logger log = LoggerFactory.getLogger(SubmodelTargetPermissionVerifier.class);
+	
 	private static final String ALL_ALLOWED_WILDCARD = "*";
 
 	@Override
@@ -58,8 +62,9 @@ public class SubmodelTargetPermissionVerifier implements TargetPermissionVerifie
 	}
 	
 	private boolean areElementsAllowed(List<String> rbacRuleIds, List<String> targetInformationIds) {
-		
-		return allElementsAllowed(rbacRuleIds) || rbacRuleIds.containsAll(targetInformationIds);	
+		boolean toReturn = allElementsAllowed(rbacRuleIds) || rbacRuleIds.containsAll(targetInformationIds);
+		log.info("Are elements allowed? present: " + rbacRuleIds + " - requested: " + targetInformationIds);
+		return toReturn;
 	}
 	
 	private boolean allElementsAllowed(List<String> rbacRuleIds) {
