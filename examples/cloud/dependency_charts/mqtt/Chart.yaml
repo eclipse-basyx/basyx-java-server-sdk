@@ -19,7 +19,7 @@
 
 apiVersion: v2
 name: eclipse-mosquitto
-description: A Helm chart for Kubernetes
+description: A Helm chart for running Eclipse Mosquitto
 type: application
 version: 0.0.1
 appVersion: 2.0.21
