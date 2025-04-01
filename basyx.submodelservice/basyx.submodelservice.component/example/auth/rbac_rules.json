@@ -1,0 +1,20 @@
+[
+  {
+    "role": "basyx-reader",
+    "action": "READ",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": "*"
+    }
+  },
+  {
+    "role": "basyx-reader",
+    "action": "EXECUTE",
+    "targetInformation": {
+      "@type": "submodel",
+      "submodelIds": "*",
+      "submodelElementIdShortPaths": ["BasicOperations.AddOperation" ]
+    }
+  }
+]

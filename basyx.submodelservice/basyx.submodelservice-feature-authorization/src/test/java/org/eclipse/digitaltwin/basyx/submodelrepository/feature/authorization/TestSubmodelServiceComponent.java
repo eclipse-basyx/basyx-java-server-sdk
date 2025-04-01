@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,29 +25,20 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
 
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization.SubmodelTargetInformation;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Factory for creating {@link AuthorizedSubmodelRepository}
+ * Spring application configured for tests.
  * 
- * @author danish
+ * @author Gerhard Sonnenberg (DFKI GmbH)
+ *
  */
-public class AuthorizedSubmodelRepositoryFactory implements SubmodelRepositoryFactory {
 
-	private SubmodelRepositoryFactory decorated;
-	private RbacPermissionResolver<SubmodelTargetInformation> permissionResolver;
-
-	public AuthorizedSubmodelRepositoryFactory(SubmodelRepositoryFactory decorated, RbacPermissionResolver<SubmodelTargetInformation> permissionResolver) {
-		this.decorated = decorated;
-		this.permissionResolver = permissionResolver;
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
+public class TestSubmodelServiceComponent {
+	
+	public static void main(String[] args) {
+		SpringApplication.run(TestSubmodelServiceComponent.class, args);
 	}
-
-	@Override
-	public SubmodelRepository create() {
-		return new AuthorizedSubmodelRepository(decorated.create(), permissionResolver);
-	}
-
 }

@@ -1,0 +1,51 @@
+{
+	"modelType": "Submodel",
+	"id": "http://aas.dfki.de/sm/1",
+	"idShort": "Sm1",
+	"submodelElements": [
+		{
+			"modelType": "Property",
+			"idShort": "SME_1",
+			"value": "1"
+		},
+		{
+			"modelType": "SubmodelElementCollection",
+			"idShort": "SME_2",
+			"value": [
+				{
+					"modelType": "Property",
+					"idShort": "SME_2_1",
+					"value": "2_1"
+				}
+			]
+		},
+		{
+			"modelType": "Property",
+			"idShort": "SME_3",
+			"value": "3"
+		},
+		{
+			"modelType": "Property",
+			"idShort": "SME_4",
+			"value": "4"
+		},
+		{
+			"modelType": "Property",
+			"idShort": "SME_5",
+			"value": "5"
+		},
+		{
+			"modelType": "File",
+			"idShort": "SME_6",
+			"value": "BaSyx-Logo.png"
+		},
+		{
+			"modelType": "Operation",
+			"idShort": "SME_7"
+		},
+		{
+			"modelType": "Operation",
+			"idShort": "SME_8"
+		}
+	]
+}
