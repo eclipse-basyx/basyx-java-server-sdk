@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2025 the Eclipse BaSyx Authors
+ * Copyright (C) 2024 DFKI GmbH (https://www.dfki.de/en/web)
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,35 +21,21 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  * SPDX-License-Identifier: MIT
- ******************************************************************************/
-
-package org.eclipse.digitaltwin.basyx.submodelservice;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-
-/**
- * Interface for a factory creating an SubmodelService based on a Submodel
  * 
- * @author schnicke
- *
- */
-public interface SubmodelServiceFactory {
-	/**
-	 * Creates a new SubmodelService containing the Submodel passed as parameter
-	 * 
-	 * @param submodel
-	 * @return
-	 */
-	public SubmodelService create(Submodel submodel);
+ ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.submodelservice.feature.registry.integration;
 
-	/**
-	 * Creates a new SubmodelService containing the Submodel with the given id
-	 *
-	 * The submodel is assumed to be already stored in the backend
-	 *
-	 * @param submodelId
-	 * @return the created SubmodelService
-	 */
-	public SubmodelService create(String submodelId);
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+/**
+ * @author Gerhard Sonnenberg (DFKI GmbH)
+ */
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
+public class SubmodelServiceTestApplication {
 	
+	public static void main(String[] args) {
+		SpringApplication.run(SubmodelServiceTestApplication.class, args);
+	}
 }

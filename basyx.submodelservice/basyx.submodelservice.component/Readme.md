@@ -79,6 +79,21 @@ Configuration can be specified either **as system properties** or **via environm
 | `basyx.submodelservice.feature.operation.dispatcher.java.classes` | `classes` | Directory for storing compiled classes. |
 | `basyx.submodelservice.feature.operation.dispatcher.java.additionalClasspath` | `jars/HelloWorld.jar` | Comma-separated list of additional JAR files for class loading. |
 
+### Registry Integration Feature
+
+The **BaSyx Submodel Service Component** supports automatic registration and deregistration of Submodel Descriptors in the Submodel Registry.
+
+Configuration can be specified either **as system properties** or **via environment variables**. The following table summarizes the relevant properties:
+
+| Property | Example | Explanation |
+|----------|---------|-------------|
+| `basyx.submodelservice.feature.registryintegration` | `http://localhost:8060` | Base URL of the Submodel Registry. |
+| `basyx.externalurl` | `http://localhost:8081,http://docker-internal-url:8081` | External service base URL(s). |
+
+For additional details on authorized registry integration, refer to the [Submodel Registry Integration Feature documentation](../basyx.submodelservice-feature-registry-integration/Readme.md).
+
+
+
 ---
 
 ## 🏗 Structure of Java Classes
