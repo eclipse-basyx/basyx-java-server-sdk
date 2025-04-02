@@ -27,6 +27,10 @@ dependencies:
   version: "0.0.1"
   repository: file://dependency_charts/aas-web-ui
   condition: aas-web-ui.enabled
+- name: mqtt
+  version: "0.0.1"
+  repository: file://dependency_charts/mqtt
+  condition: mqtt.enabled
 - name: mongodb
   version: "14.5.0"
   repository: https://charts.bitnami.com/bitnami
