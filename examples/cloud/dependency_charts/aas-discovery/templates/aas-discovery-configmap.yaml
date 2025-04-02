@@ -1,0 +1,11 @@
+{{- if .Values.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "aas-discovery.fullname" . }}-config
+  labels:
+    {{- include "aas-discovery.labels" . | nindent 4 }}
+data:
+  application.properties: |-
+    {{ .Values.config | nindent 4 }}
+{{ end -}}

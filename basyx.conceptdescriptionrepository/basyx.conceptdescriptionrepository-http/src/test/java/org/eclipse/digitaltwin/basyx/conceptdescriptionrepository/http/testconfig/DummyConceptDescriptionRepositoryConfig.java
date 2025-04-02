@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -26,9 +26,8 @@
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.testconfig;
 
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend.ConceptDescriptionInMemoryBackendProvider;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend.SimpleConceptDescriptionRepositoryFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend.CrudConceptDescriptionRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend.InMemoryConceptDescriptionBackend;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -36,7 +35,7 @@ import org.springframework.context.annotation.Profile;
 /**
  * Configuration for tests
  * 
- * @author danish, kammognie
+ * @author danish, kammognie, mateusmolina
  *
  */
 @Configuration
@@ -44,8 +43,7 @@ import org.springframework.context.annotation.Profile;
 public class DummyConceptDescriptionRepositoryConfig {
 
 		@Bean
-		@ConditionalOnMissingBean
-		public ConceptDescriptionRepository createConceptDescriptionRepository() {
-			return new SimpleConceptDescriptionRepositoryFactory(new ConceptDescriptionInMemoryBackendProvider()).create();
+		ConceptDescriptionRepository createConceptDescriptionRepository() {
+			return CrudConceptDescriptionRepositoryFactory.builder().backend(new InMemoryConceptDescriptionBackend()).create();
 		}
 }

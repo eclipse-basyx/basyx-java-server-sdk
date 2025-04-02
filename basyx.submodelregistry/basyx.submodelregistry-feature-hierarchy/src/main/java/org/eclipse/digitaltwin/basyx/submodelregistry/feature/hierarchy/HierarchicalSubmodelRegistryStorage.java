@@ -41,7 +41,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRe
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Decorator for Hierarchical {@link AasRegistryStorage}
+ * Decorator for Hierarchical {@link SubmodelRegistryStorage}
  *
  * @author mateusmolina
  */

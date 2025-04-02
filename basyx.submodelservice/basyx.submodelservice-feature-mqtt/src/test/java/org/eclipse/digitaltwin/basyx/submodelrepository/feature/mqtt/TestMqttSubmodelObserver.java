@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -43,14 +44,18 @@ import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Base64URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelElementSerializer;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.feature.mqtt.MqttSubmodelServiceConfiguration;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.CrudSubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.mqtt.MqttSubmodelServiceFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.mqtt.MqttSubmodelServiceTopicFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.junit.AfterClass;
@@ -97,37 +102,34 @@ public class TestMqttSubmodelObserver {
 	public void createSubmodelElementEvent() throws DeserializationException {
 
 		SubmodelElement submodelElement = createSubmodelElementDummy("createSubmodelElementEventId");
-		SubmodelElement responseSubmodelElement = submodelService.createSubmodelElement(submodelElement);
+		submodelService.createSubmodelElement(submodelElement);
 
 		assertEquals(topicFactory.createCreateSubmodelElementTopic(submodelElement.getIdShort()), listener.lastTopic);
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
-		assertEquals(submodelElement, responseSubmodelElement);
 	}
 
 	@Test
 	public void updateSubmodelElementEvent() throws DeserializationException {
 
 		SubmodelElement submodelElement = createSubmodelElementDummy("updateSubmodelElementEventId");
-		SubmodelElement responseSubmodelElement = submodelService.createSubmodelElement(submodelElement);
+		submodelService.createSubmodelElement(submodelElement);
 
 		SubmodelElementValue value = new PropertyValue("updatedValue");
 		submodelService.setSubmodelElementValue(submodelElement.getIdShort(), value);
 
 		assertEquals(topicFactory.createUpdateSubmodelElementTopic(submodelElement.getIdShort()), listener.lastTopic);
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
-		assertEquals(submodelElement, responseSubmodelElement);
 	}
 
 	@Test
 	public void deleteSubmodelElementEvent() throws DeserializationException {
 
 		SubmodelElement submodelElement = createSubmodelElementDummy("deleteSubmodelElementEventId");
-		SubmodelElement responseSubmodelElement = submodelService.createSubmodelElement(submodelElement);
+		submodelService.createSubmodelElement(submodelElement);
 		submodelService.deleteSubmodelElement(submodelElement.getIdShort());
 
 		assertEquals(topicFactory.createDeleteSubmodelElementTopic(submodelElement.getIdShort()), listener.lastTopic);
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
-		assertEquals(submodelElement, responseSubmodelElement);
 	}
 
 	@Test
@@ -136,14 +138,13 @@ public class TestMqttSubmodelObserver {
 		SubmodelElement submodelElement = createSubmodelElementDummy("noValueSubmodelElementEventId");
 		List<Qualifier> qualifierList = createNoValueQualifierList();
 		submodelElement.setQualifiers(qualifierList);
-		SubmodelElement responseSubmodelElement = submodelService.createSubmodelElement(submodelElement);
+		submodelService.createSubmodelElement(submodelElement);
 
 		assertEquals(topicFactory.createCreateSubmodelElementTopic(submodelElement.getIdShort()), listener.lastTopic);
 		assertNotEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
 
 		((Property) submodelElement).setValue(null);
 		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
-		assertEquals(submodelElement, responseSubmodelElement);
 	}
 
 	private List<Qualifier> createNoValueQualifierList() {
@@ -163,7 +164,7 @@ public class TestMqttSubmodelObserver {
 
 	private static SubmodelService createMqttSubmodelService(MqttClient client) {
 
-		SubmodelServiceFactory repoFactory = new InMemorySubmodelServiceFactory(new InMemoryFileRepository());
+		SubmodelServiceFactory repoFactory = new CrudSubmodelServiceFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository());
 		return new MqttSubmodelServiceFactory(repoFactory, client, new MqttSubmodelServiceTopicFactory(new Base64URLEncoder())).create(DummySubmodelFactory.createSubmodelWithAllSubmodelElements());
 	}
 
@@ -191,5 +192,85 @@ public class TestMqttSubmodelObserver {
 		broker.startServer(classPathConfig);
 
 		return broker;
+	}
+
+	@Test
+	public void checkTCPConnectionWithoutCredentials() throws Exception {
+		MqttSubmodelServiceConfiguration config = new MqttSubmodelServiceConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("", "");
+		IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				1884,
+				"tcp",
+				options);
+		assertTrue(client.isConnected());
+		client.disconnect();
+		client.close();
+	}
+
+	@Test
+	public void checkTCPConnectionWitCredentials() throws Exception {
+		MqttSubmodelServiceConfiguration config = new MqttSubmodelServiceConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
+		IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				1884,
+				"tcp",
+				options);
+		assertTrue(client.isConnected());
+		client.disconnect();
+		client.close();
+	}
+
+	@Test
+	public void checkTCPConnectionWitWrongCredentials() throws Exception {
+		MqttSubmodelServiceConfiguration config = new MqttSubmodelServiceConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("testuser", "false");
+		boolean authentication_failed = false;
+		try {
+			IMqttClient client = config.mqttClient(
+					"test-client",
+					"localhost",
+					1884,
+					"tcp",
+					options);
+		} catch (MqttException e) {
+			if (MqttException.REASON_CODE_FAILED_AUTHENTICATION == e.getReasonCode()) {
+				authentication_failed = true;
+			}
+		}
+		assertTrue(authentication_failed);
+	}
+
+	@Test
+	public void checkWSConnectionWithoutCredentials() throws Exception {
+		MqttSubmodelServiceConfiguration config = new MqttSubmodelServiceConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("", "");
+		IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				8080,
+				"ws",
+				options);
+		assertTrue(client.isConnected());
+		client.disconnect();
+		client.close();
+	}
+
+	@Test
+	public void checkWSConnectionWitCredentials() throws Exception {
+		MqttSubmodelServiceConfiguration config = new MqttSubmodelServiceConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
+		IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				8080,
+				"ws",
+				options);
+		assertTrue(client.isConnected());
+		client.disconnect();
+		client.close();
 	}
 }

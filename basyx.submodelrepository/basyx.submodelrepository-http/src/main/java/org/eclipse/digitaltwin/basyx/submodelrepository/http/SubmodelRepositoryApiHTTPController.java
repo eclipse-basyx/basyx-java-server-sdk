@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
@@ -45,6 +46,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifierSize;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
+import org.eclipse.digitaltwin.basyx.http.CustomTypeCloneFactory;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
@@ -77,12 +79,14 @@ import jakarta.validation.constraints.Min;
 @RestController
 public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHTTPApi {
 
-	private SubmodelRepository repository;
+	private final SubmodelRepository repository;
+	private final ObjectMapper objectMapper;
 
 	@Autowired
-	public SubmodelRepositoryApiHTTPController(SubmodelRepository repository) {
+	public SubmodelRepositoryApiHTTPController(SubmodelRepository repository, ObjectMapper objectMapper) {
 		this.repository = repository;
-	}
+        this.objectMapper = objectMapper;
+    }
 
 	@Override
 	public ResponseEntity<Submodel> postSubmodel(@Parameter(in = ParameterIn.DEFAULT, description = "Submodel object", required = true, schema = @Schema()) @Valid @RequestBody Submodel body) {
@@ -177,14 +181,18 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 	@Override
 	public ResponseEntity<SubmodelElement> postSubmodelElementByPathSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, @Valid SubmodelElement body, @Valid String level, @Valid String extent) {
-		SubmodelElement createdSME = repository.createSubmodelElement(submodelIdentifier.getIdentifier(), idShortPath, body);
-		return new ResponseEntity<SubmodelElement>(createdSME, HttpStatus.CREATED);
+		SubmodelElement validatedBody = new CustomTypeCloneFactory<>(SubmodelElement.class, objectMapper).create(body);
+
+		repository.createSubmodelElement(submodelIdentifier.getIdentifier(), idShortPath, validatedBody);
+		return new ResponseEntity<>(validatedBody, HttpStatus.CREATED);
 	}
 
 	@Override
 	public ResponseEntity<SubmodelElement> postSubmodelElementSubmodelRepo(Base64UrlEncodedIdentifier submodelIdentifier, @Valid SubmodelElement body) {
-	    SubmodelElement createdSME = repository.createSubmodelElement(submodelIdentifier.getIdentifier(), body);
-	    return new ResponseEntity<SubmodelElement>(createdSME, HttpStatus.CREATED);
+		SubmodelElement validatedBody = new CustomTypeCloneFactory<>(SubmodelElement.class, objectMapper).create(body);
+
+		repository.createSubmodelElement(submodelIdentifier.getIdentifier(), validatedBody);
+		return new ResponseEntity<>(validatedBody, HttpStatus.CREATED);
 	}
 
 	@Override

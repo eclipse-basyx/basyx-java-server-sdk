@@ -385,9 +385,8 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 		String element = getJSONValueAsString("SubmodelElementNew.json");
 		CloseableHttpResponse createdResponse = BaSyxHttpTestUtils.executePostOnURL(createSubmodelElementsURL(), element);
 
-		CloseableHttpResponse fetchedResponse = requestSubmodelElement("MaxRotationSpeedNew");
 		assertEquals(HttpStatus.CREATED.value(), createdResponse.getCode());
-		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedResponse));
+		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(createdResponse));
 	}
 	
 	@Test

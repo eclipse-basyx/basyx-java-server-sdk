@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -24,38 +24,37 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.common.mongocore;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.BasicMongoPersistentEntity;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.util.TypeInformation;
 import org.springframework.stereotype.Component;
+import org.springframework.lang.NonNull;
 
 /**
  * Custom BaSyx Mongo Mapping Context Necessary for configuring MongoDB
  * collection names for AAS, SM and CD
  * 
+ * This component retrieves all {@link MappingEntry} defined in the Spring Context,
+ * 
  * @author mateusmolina, despen
  */
 @Component
 public class BasyxMongoMappingContext extends MongoMappingContext {
-	private final Map<Class<?>, String> customCollectionNames = new HashMap<>();
 
-	public BasyxMongoMappingContext() {
-		super();
-	}
+	private final List<MappingEntry> entries;
 
-	public void addEntityMapping(Class<?> clazz, String collectionName) {
-		customCollectionNames.put(clazz, collectionName);
+	public BasyxMongoMappingContext(List<MappingEntry> entries) {
+		this.entries = entries;
 	}
 
 	@Override
-	protected <T> BasicMongoPersistentEntity<T> createPersistentEntity(TypeInformation<T> typeInformation) {
+	protected @NonNull <T> BasicMongoPersistentEntity<T> createPersistentEntity(@NonNull TypeInformation<T> typeInformation) {
 		return new BasicMongoPersistentEntity<T>(typeInformation) {
 			@Override
-			public String getCollection() {
-				return customCollectionNames.getOrDefault(typeInformation.getType(), super.getCollection());
+			public @NonNull String getCollection() {
+				return entries.stream().filter(e -> e.getEntityClass().equals(typeInformation.getType())).findFirst().map(MappingEntry::getCollectionName).orElseGet(super::getCollection);
 			}
 		};
 	}

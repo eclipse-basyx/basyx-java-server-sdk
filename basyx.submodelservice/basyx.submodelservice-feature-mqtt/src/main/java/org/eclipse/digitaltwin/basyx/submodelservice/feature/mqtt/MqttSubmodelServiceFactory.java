@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -50,5 +50,10 @@ public class MqttSubmodelServiceFactory implements SubmodelServiceFactory {
 	@Override
 	public SubmodelService create(Submodel submodel) {
 		return new MqttSubmodelService(decorated.create(submodel), client, topicFactory);
+	}
+
+	@Override
+	public SubmodelService create(String submodelId) {
+		return new MqttSubmodelService(decorated.create(submodelId), client, topicFactory);
 	}
 }

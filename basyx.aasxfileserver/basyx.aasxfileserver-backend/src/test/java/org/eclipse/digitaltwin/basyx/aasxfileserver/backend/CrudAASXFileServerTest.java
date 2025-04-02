@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2024 the Eclipse BaSyx Authors
+* Copyright (C) 2025 the Eclipse BaSyx Authors
 * 
 * Permission is hereby granted, free of charge, to any person obtaining
 * a copy of this software and associated documentation files (the
@@ -35,7 +35,7 @@ public class CrudAASXFileServerTest {
 
 	@Test
 	public void getConfiguredAASXFileServerName() {
-		AASXFileServer service = new SimpleAASXFileServerFactory(null, CONFIGURED_AASX_FILE_SERVER_NAME).create();
+		AASXFileServer service = new CrudAASXFileServerFactory(null, null, CONFIGURED_AASX_FILE_SERVER_NAME).create();
 
 		assertEquals(CONFIGURED_AASX_FILE_SERVER_NAME, service.getName());
 	}

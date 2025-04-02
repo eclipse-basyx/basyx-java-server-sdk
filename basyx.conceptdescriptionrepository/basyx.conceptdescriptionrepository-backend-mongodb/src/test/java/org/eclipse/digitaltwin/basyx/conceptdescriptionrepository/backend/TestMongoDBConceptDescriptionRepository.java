@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,119 +25,51 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
-import static org.junit.Assert.*;
-
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultConceptDescription;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
-import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.ConceptDescriptionRepositorySuite;
-import org.junit.Test;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
-
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Tests the {@link MongoDBConceptDescriptionRepository}
  * 
- * @author danish, kammognie
+ * @author danish, kammognie, mateusmolina
  *
  */
+@SpringBootTest
+@RunWith(SpringRunner.class)
 public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionRepositorySuite {
-	private static final String CONFIGURED_CD_REPO_NAME = "configured-cd-repo-name";
-	private static final String COLLECTION = "conceptDescTestCollection";
+
+	@Autowired
+	private MongoTemplate mongoTemplate;
+
+	@Autowired
+	private ConceptDescriptionRepository conceptDescriptionRepository;
+
+	@Autowired
+	private ConceptDescriptionBackend conceptDescriptionRepositoryBackend;
 
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository() {
-		MongoTemplate template = createTemplate();
+		return conceptDescriptionRepository;
+	}
 
-		MongoDBUtilities.clearCollection(template, COLLECTION);
-
-		ConceptDescriptionBackendProvider cdBackendProvider = new ConceptDescriptionMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, template);
-		ConceptDescriptionRepositoryFactory cdRepositoryFactory = new SimpleConceptDescriptionRepositoryFactory(cdBackendProvider);
-
-		return cdRepositoryFactory.create();
+	@Before
+	public void cleanup() {
+		MongoDBUtilities.clearCollection(mongoTemplate, DummyConceptDescriptionRepositoryConfig.TEST_COLLECTION_NAME);
 	}
 
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions) {
-		MongoTemplate template = createTemplate();
-
-		MongoDBUtilities.clearCollection(template, COLLECTION);
-
-		ConceptDescriptionBackendProvider cdBackendProvider = new ConceptDescriptionMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, template);
-		ConceptDescriptionRepositoryFactory cdRepositoryFactory = new SimpleConceptDescriptionRepositoryFactory(cdBackendProvider, conceptDescriptions);
-
-		return cdRepositoryFactory.create();
-	}
-
-	@Test
-	public void testConfiguredMongoDBConceptDescriptionRepositoryName() {
-		MongoTemplate template = createTemplate();
-
-		MongoDBUtilities.clearCollection(template, COLLECTION);
-
-		ConceptDescriptionBackendProvider cdBackendProvider = new ConceptDescriptionMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, template);
-		ConceptDescriptionRepository repo = new CrudConceptDescriptionRepository(cdBackendProvider, CONFIGURED_CD_REPO_NAME);
-
-		assertEquals(CONFIGURED_CD_REPO_NAME, repo.getName());
-	}
-
-	@Test
-	public void conceptDescriptionIsPersisted() {
-		ConceptDescriptionRepository conceptDescriptionRepository = getConceptDescriptionRepository();
-		ConceptDescription expectedConceptDescription = createDummyConceptDescriptionOnRepo(conceptDescriptionRepository);
-		ConceptDescription retrievedConceptDescription = getConceptDescriptionFromNewBackendInstance(conceptDescriptionRepository, expectedConceptDescription.getId());
-
-		assertEquals(expectedConceptDescription, retrievedConceptDescription);
-	}
-
-	@Test
-	public void updatedConceptDescriptionIsPersisted() {
-		ConceptDescriptionRepository mongoDBConceptDescriptionRepository = getConceptDescriptionRepository();
-
-		ConceptDescription expectedConceptDescription = createDummyConceptDescriptionOnRepo(mongoDBConceptDescriptionRepository);
-
-		addDescriptionToConceptDescription(expectedConceptDescription);
-
-		mongoDBConceptDescriptionRepository.updateConceptDescription(expectedConceptDescription.getId(), expectedConceptDescription);
-
-		ConceptDescription retrievedConceptDescription = getConceptDescriptionFromNewBackendInstance(mongoDBConceptDescriptionRepository, expectedConceptDescription.getId());
-
-		assertEquals(expectedConceptDescription, retrievedConceptDescription);
-	}
-
-	private void addDescriptionToConceptDescription(ConceptDescription expectedConceptDescription) {
-		expectedConceptDescription.setDescription(Arrays.asList(new DefaultLangStringTextType.Builder().text("description").language("en").build()));
-	}
-
-	private ConceptDescription getConceptDescriptionFromNewBackendInstance(ConceptDescriptionRepository conceptDescriptionRepository, String conceptDescriptionId) {
-		ConceptDescription retrievedConceptDescription = conceptDescriptionRepository.getConceptDescription(conceptDescriptionId);
-
-		return retrievedConceptDescription;
-	}
-
-	private ConceptDescription createDummyConceptDescriptionOnRepo(ConceptDescriptionRepository conceptDescriptionRepository) {
-		ConceptDescription expectedConceptDescription = new DefaultConceptDescription.Builder().id("dummy").build();
-
-		conceptDescriptionRepository.createConceptDescription(expectedConceptDescription);
-
-		return expectedConceptDescription;
-	}
-
-	private MongoTemplate createTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-
-		MongoClient client = MongoClients.create(connectionURL);
-
-		return new MongoTemplate(client, "BaSyxTestDb");
+		return CrudConceptDescriptionRepositoryFactory.builder().backend(conceptDescriptionRepositoryBackend).remoteCollection(conceptDescriptions).create();
 	}
 
 }

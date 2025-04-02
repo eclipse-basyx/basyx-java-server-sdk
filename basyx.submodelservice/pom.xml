@@ -17,19 +17,16 @@
 	<modules>
 		<module>basyx.submodelservice-core</module>
 		<module>basyx.submodelservice-http</module>
+		<module>basyx.submodelservice-backend</module>
 		<module>basyx.submodelservice-backend-inmemory</module>
 		<module>basyx.submodelservice-backend-mongodb</module>
 		<module>basyx.submodelservice-feature-mqtt</module>
 		<module>basyx.submodelservice-feature-kafka</module>
+		<module>basyx.submodelservice-feature-operation-dispatching</module>
 		<module>basyx.submodelservice.example</module>
+		<module>basyx.submodelservice.component</module>
 		<module>basyx.submodelservice-client</module>
 	</modules>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.client</artifactId>
-			<version>${revision}</version>
-		</dependency>
-	</dependencies>
+
 </project>

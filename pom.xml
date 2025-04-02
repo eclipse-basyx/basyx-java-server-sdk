@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.2</version>
+		<version>3.4.4</version>
 		<relativePath />
 	</parent>
 	<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -80,12 +80,15 @@
 		<docker.host.port>8081</docker.host.port>
 		<docker.container.port>8081</docker.container.port>
 		<aas4j-version>1.0.4</aas4j-version>
+		<querydsl-version>5.1.0</querydsl-version>
+		<jakarta-version>3.2.0</jakarta-version>
 	</properties>
 
 	<pluginRepositories>
 		<pluginRepository>
 			<id>dash-licenses-snapshots</id>
-			<url>https://repo.eclipse.org/content/repositories/dash-licenses-snapshots/</url>
+			<url>
+				https://repo.eclipse.org/content/repositories/dash-licenses-snapshots/</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
@@ -97,7 +100,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>flatten-maven-plugin</artifactId>
-				<version>1.6.0</version>
+				<version>1.7.0</version>
 				<configuration>
 					<updatePomFile>true</updatePomFile>
 					<pomElements>
@@ -170,7 +173,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>3.5.2</version>
+					<version>3.5.3</version>
 					<executions>
 						<execution>
 							<id>integration-test</id>
@@ -480,6 +483,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-backend</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelservice-backend-inmemory</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -559,7 +567,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.submodelrepository-feature-operation-delegation</artifactId>
+				<artifactId>
+					basyx.submodelrepository-feature-operation-delegation</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -581,6 +590,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasservice-core</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasservice-backend</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -747,7 +761,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.conceptdescriptionrepository-feature-authorization</artifactId>
+				<artifactId>
+					basyx.conceptdescriptionrepository-feature-authorization</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -783,7 +798,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.aasdiscoveryservice-backend-inmemory</artifactId>
+				<artifactId>basyx.aasdiscoveryservice-backend-h2</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -972,7 +987,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.submodelrepository-feature-operation-delegation</artifactId>
+				<artifactId>
+					basyx.submodelrepository-feature-operation-delegation</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -1113,6 +1129,18 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-feature-operation-dispatching</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-feature-operation-dispatching</artifactId>
+				<classifier>tests</classifier>
+				<version>${revision}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasenvironment-feature-authorization</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
@@ -1162,7 +1190,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.conceptdescriptionrepository-feature-authorization</artifactId>
+				<artifactId>
+					basyx.conceptdescriptionrepository-feature-authorization</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -1241,7 +1270,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.aasdiscoveryservice-backend-inmemory</artifactId>
+				<artifactId>basyx.aasdiscoveryservice-backend-h2</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -1431,6 +1460,28 @@
 								</goals>
 							</execution>
 						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.14.0</version>
+						<configuration>
+							<source>${java.version}</source>
+							<target>${java.version}</target>
+							<annotationProcessorPaths>
+								<path>
+									<groupId>com.querydsl</groupId>
+									<artifactId>querydsl-apt</artifactId>
+									<version>${querydsl-version}</version>
+									<classifier>jakarta</classifier>
+								</path>
+								<path>
+									<groupId>jakarta.persistence</groupId>
+									<artifactId>jakarta.persistence-api</artifactId>
+									<version>${jakarta-version}</version>
+								</path>
+							</annotationProcessorPaths>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>

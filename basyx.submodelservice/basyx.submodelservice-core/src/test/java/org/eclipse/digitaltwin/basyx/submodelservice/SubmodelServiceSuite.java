@@ -82,7 +82,7 @@ public abstract class SubmodelServiceSuite {
 
 	/**
 	 * SubmodelService independent way to check if a file exists in storage
-	 * 
+	 *
 	 * @param fileValue
 	 * @return
 	 */
@@ -379,6 +379,19 @@ public abstract class SubmodelServiceSuite {
 
 		Property actualUpdatedProperty = (Property) submodelService.getSubmodelElement(idShortPath);
 		assertEquals(expectedUpdatedProperty, actualUpdatedProperty);
+	}
+
+	@Test
+	public void updateNonNestedSMEWithoutChange() {
+		Submodel technicalSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
+		SubmodelService submodelService = getSubmodelService(technicalSubmodel);
+
+		String idShortPath = "dummyProperty";
+
+		Property property = createDummyProperty(idShortPath);
+		submodelService.createSubmodelElement(property);
+
+		submodelService.updateSubmodelElement(idShortPath, property);
 	}
 
 	@Test
@@ -717,10 +730,6 @@ public abstract class SubmodelServiceSuite {
 
 	private DefaultProperty createDummyProperty(String idShort) {
 		return new DefaultProperty.Builder().idShort(idShort).category("cat1").value("123").valueType(DataTypeDefXsd.INTEGER).build();
-	}
-	
-	private SubmodelElement createDummySME(String idShort) {
-		return new DefaultProperty.Builder().idShort(idShort).value("123").build();
 	}
 
 	private InputStream getInputStreamOfDummyFile(String fileContent) throws FileNotFoundException, IOException {

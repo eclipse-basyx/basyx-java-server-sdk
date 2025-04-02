@@ -78,7 +78,7 @@ public class SubmodelElementSerializer {
 	/**
 	 * Serializer to create a JSON String for the given submodel elements.
 	 * 
-	 * @param submodelElement
+	 * @param submodelElements
 	 * @return serialized list of submodelElements as JSON String
 	 */
 	public static String serializeSubmodelElements(List<SubmodelElement> submodelElements) {

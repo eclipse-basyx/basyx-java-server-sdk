@@ -23,6 +23,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.filerepository-backend-inmemory</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.aasxfileserver-core</artifactId>
 			<classifier>tests</classifier>
 			<scope>test</scope>

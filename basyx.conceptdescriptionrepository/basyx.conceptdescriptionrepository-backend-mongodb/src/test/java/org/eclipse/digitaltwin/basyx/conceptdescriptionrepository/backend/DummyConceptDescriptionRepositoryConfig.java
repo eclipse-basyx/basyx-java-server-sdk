@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,14 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
-import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepositoryFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 
 /**
  * Configuration for tests
@@ -42,21 +38,12 @@ import com.mongodb.client.MongoClients;
  */
 @Configuration
 public class DummyConceptDescriptionRepositoryConfig {
-	public final static String COLLECTION = "cdRepositoryPersistencyTestCollection";
-	public final static String DB = "BaSyxTestDb";
+
+	static final String TEST_COLLECTION_NAME = "testConceptDescriptionCollection";
 
 	@Bean
-	public ConceptDescriptionRepository createConceptDescriptionRepository(MongoTemplate template) {
-		return new SimpleConceptDescriptionRepositoryFactory(new ConceptDescriptionMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, template)).create();
-	}
-
-	@Bean
-	public MongoTemplate createCDMongoTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-
-		MongoClient client = MongoClients.create(connectionURL);
-
-		return new MongoTemplate(client, DB);
+	ConceptDescriptionRepository conceptDescriptionRepository(ConceptDescriptionRepositoryFactory factory) {
+		return factory.create();
 	}
 
 }

@@ -25,30 +25,25 @@
 
 package org.eclipse.digitaltwin.basyx.aasservice.feature.mqtt;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.moquette.broker.Server;
+import io.moquette.broker.config.ClasspathResourceLoader;
+import io.moquette.broker.config.IConfig;
+import io.moquette.broker.config.IResourceLoader;
+import io.moquette.broker.config.ResourceLoaderConfig;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
+import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.AasRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceSuite;
 import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFactory;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.CrudAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasBackend;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
@@ -57,21 +52,21 @@ import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
 import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
 import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
+import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
-import io.moquette.broker.Server;
-import io.moquette.broker.config.ClasspathResourceLoader;
-import io.moquette.broker.config.IConfig;
-import io.moquette.broker.config.IResourceLoader;
-import io.moquette.broker.config.ResourceLoaderConfig;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestMqttAasService extends AasServiceSuite {
 
@@ -129,7 +124,7 @@ public class TestMqttAasService extends AasServiceSuite {
 	
 	private static AasServiceFactory createMqttAasServiceFactory(MqttClient client) {
 		fileRepository = new InMemoryFileRepository();
-		AasServiceFactory serviceFactory = new InMemoryAasServiceFactory(fileRepository);
+		AasServiceFactory serviceFactory = new CrudAasServiceFactory(new InMemoryAasBackend(), fileRepository);
 		MqttAasServiceFeature mqttFeature = new MqttAasServiceFeature(client, aasRepository, objectMapper);
 		
 		return mqttFeature.decorate(serviceFactory);
@@ -198,9 +193,7 @@ public class TestMqttAasService extends AasServiceSuite {
 	}
 
 	private static AasRepository createMqttAasRepository() {
-		AasRepositoryBackend aasBackend = new InMemoryAasRepositoryBackend(mqttAasServiceFactory);
-		AasRepositoryFactory repoFactory = new CrudAasRepositoryFactory(aasBackend, "aas-repo");
-		return repoFactory.create();
+		return CrudAasRepositoryFactory.builder().backend(new InMemoryAasBackend()).fileRepository(new InMemoryFileRepository()).create();
 	}
 
 	private static MqttClient createAndConnectClient() throws MqttException, MqttSecurityException {
@@ -224,5 +217,85 @@ public class TestMqttAasService extends AasServiceSuite {
 		broker.startServer(classPathConfig);
 
 		return broker;
+	}
+
+	@Test
+	public void checkTCPConnectionWithoutCredentials() throws Exception {
+		MqttConfiguration config = new MqttConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("", "");
+		IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				1884,
+				"tcp",
+				options);
+		assertTrue(client.isConnected());
+		client.disconnect();
+		client.close();
+	}
+
+	@Test
+	public void checkTCPConnectionWitCredentials() throws Exception {
+		MqttConfiguration config = new MqttConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
+		IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				1884,
+				"tcp",
+				options);
+		assertTrue(client.isConnected());
+		client.disconnect();
+		client.close();
+	}
+
+	@Test
+	public void checkTCPConnectionWitWrongCredentials() throws Exception {
+		MqttConfiguration config = new MqttConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("testuser", "false");
+		boolean authentication_failed = false;
+		try {
+			IMqttClient client = config.mqttClient(
+					"test-client",
+					"localhost",
+					1884,
+					"tcp",
+					options);
+		} catch (MqttException e) {
+			if (MqttException.REASON_CODE_FAILED_AUTHENTICATION == e.getReasonCode()) {
+				authentication_failed = true;
+			}
+		}
+		assertTrue(authentication_failed);
+	}
+
+	@Test
+	public void checkWSConnectionWithoutCredentials() throws Exception {
+		MqttConfiguration config = new MqttConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("", "");
+		IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				8080,
+				"ws",
+				options);
+		assertTrue(client.isConnected());
+		client.disconnect();
+		client.close();
+	}
+
+	@Test
+	public void checkWSConnectionWitCredentials() throws Exception {
+		MqttConfiguration config = new MqttConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
+		IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				8080,
+				"ws",
+				options);
+		assertTrue(client.isConnected());
+		client.disconnect();
+		client.close();
 	}
 }

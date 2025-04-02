@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -33,7 +33,7 @@ import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServic
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -47,8 +47,8 @@ public class TestAasDiscoveryServiceHTTP extends AasDiscoveryServiceHTTPSuite {
 	private static ConfigurableApplicationContext appContext;
 
 	@BeforeClass
-	public static void startConceptDescriptionRepo() throws Exception {
-		appContext = new SpringApplication(DummyAasDiscoveryServiceComponent.class).run(new String[] {});
+	public static void startConceptDescriptionRepo() {
+		appContext = new SpringApplicationBuilder(DummyAasDiscoveryServiceComponent.class).run();
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class TestAasDiscoveryServiceHTTP extends AasDiscoveryServiceHTTPSuite {
 
 	@Override
 	protected String getURL() {
-		return "http://localhost:8080/lookup/shells";
+		return "http://localhost:4753/lookup/shells";
 	}
 
 }

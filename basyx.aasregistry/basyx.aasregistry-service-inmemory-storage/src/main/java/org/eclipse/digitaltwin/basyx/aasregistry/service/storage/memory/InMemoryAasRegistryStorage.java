@@ -250,26 +250,25 @@ public class InMemoryAasRegistryStorage implements AasRegistryStorage {
 		private final DescriptorFilter filter;
 
 		public boolean matches(AssetAdministrationShellDescriptor descr) {
-			AssetKind filterKind = filter.getKind();
-			AssetKind targetKind = descr.getAssetKind();
 
+			return matchesKind(filter.getKind(), descr.getAssetKind()) && matchesType(filter.getAssetType(), descr.getAssetType());
+		}
+
+		private boolean matchesKind(AssetKind filterKind, AssetKind descrKind) {
 			if (filterKind == null) {
 				return true;
 			}
-			if (filterKind == AssetKind.INSTANCE) {
-				return targetKind == AssetKind.INSTANCE;
-			} else if (filterKind == AssetKind.NOTAPPLICABLE) {
-				return targetKind == null;
-			} else if (targetKind != AssetKind.TYPE) {
-				return false;
-			} else {
-				String filterType = filter.getAssetType();
-				if (filterType == null) {
-					return true;
-				}
-				String targetType = descr.getAssetType();
-				return filterType.equals(targetType);
+			if (filterKind == AssetKind.NOTAPPLICABLE) {
+				return descrKind == null;
 			}
+			return filterKind == descrKind;
+		}
+
+		private boolean matchesType(String filterType, String descrType) {
+			if (filterType == null) {
+				return true;
+			}
+			return filterType.equals(descrType);
 		}
 	}
 

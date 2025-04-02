@@ -117,13 +117,13 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 	}
 
 	@Override
-	public SubmodelElement createSubmodelElement(String submodelId, SubmodelElement smElement) {
-		return decorated.createSubmodelElement(submodelId, smElement);
+	public void createSubmodelElement(String submodelId, SubmodelElement smElement) {
+		decorated.createSubmodelElement(submodelId, smElement);
 	}
 
 	@Override
-	public SubmodelElement createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
-		return decorated.createSubmodelElement(submodelId, idShortPath, smElement);
+	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
+		decorated.createSubmodelElement(submodelId, idShortPath, smElement);
 	}
 
 	@Override

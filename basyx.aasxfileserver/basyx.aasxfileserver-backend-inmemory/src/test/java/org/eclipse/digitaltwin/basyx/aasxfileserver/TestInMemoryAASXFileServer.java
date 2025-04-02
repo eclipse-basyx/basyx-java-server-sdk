@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,10 +25,12 @@
 
 package org.eclipse.digitaltwin.basyx.aasxfileserver;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-import org.eclipse.digitaltwin.basyx.aasxfileserver.backend.SimpleAASXFileServerFactory;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.backend.CrudAASXFileServerFactory;
+import org.eclipse.digitaltwin.basyx.aasxfileserver.backend.InMemoryPackageBackend;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.core.AASXFileServerSuite;
+import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.junit.Test;
 
 /**
@@ -43,12 +45,12 @@ public class TestInMemoryAASXFileServer extends AASXFileServerSuite {
 
 	@Override
 	protected AASXFileServer getAASXFileServer() {
-		return new SimpleAASXFileServerFactory(new AASXFileServerInMemoryBackendProvider()).create();
+		return new CrudAASXFileServerFactory(new InMemoryPackageBackend(), new InMemoryFileRepository()).create();
 	}
 
 	@Test
 	public void getConfiguredInMemoryAASXFileServer() {
-		AASXFileServer server =  new SimpleAASXFileServerFactory(new AASXFileServerInMemoryBackendProvider(),CONFIGURED_AASX_SERVER_NAME).create();
+		AASXFileServer server = new CrudAASXFileServerFactory(new InMemoryPackageBackend(), new InMemoryFileRepository(), CONFIGURED_AASX_SERVER_NAME).create();
 
 		assertEquals(CONFIGURED_AASX_SERVER_NAME, server.getName());
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -26,12 +26,12 @@
 
 package org.eclipse.digitaltwin.basyx.aasservice.feature;
 
-import java.util.List;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.core.DecoratedFactory;
+
+import java.util.List;
 
 /**
  * Factory utilized for decorating {@link AasServiceFactory}
@@ -55,5 +55,10 @@ public class DecoratedAasServiceFactory extends DecoratedFactory<AasServiceFacto
 	@Override
 	public AasService create(AssetAdministrationShell shell) {
 		return getDecorated().create(shell);
+	}
+
+	@Override
+	public AasService create(String aasId) {
+		return getDecorated().create(aasId);
 	}
 }
