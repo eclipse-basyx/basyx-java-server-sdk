@@ -92,6 +92,8 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		AasServiceFactory sf = new CrudAasServiceFactory(aasRepositoryBackend, fileRepo);
 		CrudAasRepositoryFactory factory = new CrudAasRepositoryFactory(aasRepositoryBackend, sf, "test");
 		repo = feature.decorate(factory).create();
+
+		while(listener.next(100, TimeUnit.MICROSECONDS) != null);
 	}
 
 

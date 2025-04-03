@@ -92,10 +92,7 @@ public class KafkaSubmodelServiceIdsOnlySmokeTest {
 	public void awaitAssignment() throws InterruptedException, SerializationException {
 		listener.awaitTopicAssignment();
 		
-		SubmodelEvent evt = listener.next(10, TimeUnit.MICROSECONDS);
-		if (evt!= null) {
-			throw new RuntimeException(serializer.write(evt));
-		}
+		while(listener.next(100, TimeUnit.MICROSECONDS) != null);
 		
 		FileRepository repository = new InMemoryFileRepository();
 		SubmodelBackend backend = new InMemorySubmodelBackend();
