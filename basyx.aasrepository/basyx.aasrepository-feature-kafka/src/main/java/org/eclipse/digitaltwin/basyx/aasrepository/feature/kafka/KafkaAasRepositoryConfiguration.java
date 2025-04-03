@@ -54,7 +54,7 @@ public class KafkaAasRepositoryConfiguration {
 	@ConditionalOnMissingBean
 	public AasEventDistributer aasEventDistributer(JsonSerializer serializer,
 			KafkaTemplate<String, String> template,
-			@Value("${" + KafkaAasRepositoryFeature.FEATURENAME + ".topic.name}") String topicName) {
+			@Value("${" + KafkaAasRepositoryFeature.FEATURENAME + ".topic.name:aas-events}") String topicName) {
 		return new KafkaAasEventDistributer(serializer, template, topicName);
 	}
 	

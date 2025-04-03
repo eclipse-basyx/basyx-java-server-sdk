@@ -47,4 +47,10 @@ public class KafkaSubmodelServiceFactory implements SubmodelServiceFactory {
 	public SubmodelService create(Submodel submodel) {
 		return new KafkaSubmodelService(decorated.create(submodel), handler, submodel.getId());
 	}
+
+	@Override
+	public SubmodelService create(String submodelId) {
+		// do not perform a decoration here as this is only used from submodel repository
+		return decorated.create(submodelId);
+	}
 }

@@ -10,10 +10,12 @@ The feature is configured using the following Spring properties:
 
 | Property                                        |  Default       | Description                                                    |
 |-------------------------------------------------|----------------|----------------------------------------------------------------|
-| basyx.submodelrepository.feature.kafka.enabled  |     false      | Specifies whether the feature is enabled                       |
+| basyx.submodelservice.feature.kafka.enabled  |     false      | Specifies whether the feature is enabled                       |
 | basyx.feature.kafka.enabled                     |     false      | Specifies whether the feature is enabled (for both aas-repository and submodel-repository) |
-| basyx.submodelrepository.feature.kafka.topic.name | aas-repo-events | The name of the topic where events are sent                    |
+| basyx.submodelservice.feature.kafka.topic.name |  submodel-events | The name of the topic where events are sent                   |
+| basyx.submodelservice.feature.kafka.submodelevents | false | Specifies whether to send submodel creation and deletion events when starting and tearing down  the submodel service |
 | spring.kafka.bootstrap-servers                  |     -          | The address of the Kafka brokers, e.g., `PLAINTEXT_HOST://localhost:9092` |
+
 
 ## Message Structure
 

@@ -28,16 +28,17 @@ package org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultBlob;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.CrudSubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEventType;
 import org.junit.After;
@@ -89,7 +90,8 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 	public void awaitAssignment() throws InterruptedException {
 		listener.awaitTopicAssignment();
 		FileRepository repository = new InMemoryFileRepository();
-		SubmodelServiceFactory smFactory = new InMemorySubmodelServiceFactory(repository);
+		SubmodelBackend backend = new InMemorySubmodelBackend();
+		SubmodelServiceFactory smFactory = new CrudSubmodelServiceFactory(backend ,repository);
 		service = feature.decorate(smFactory).create(submodel);
 	}
 	

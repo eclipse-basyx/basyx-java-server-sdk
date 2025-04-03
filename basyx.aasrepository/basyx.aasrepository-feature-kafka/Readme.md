@@ -12,7 +12,7 @@ The feature is configured through the following Spring properties:
 |-----------------------------------------------|-----------------|-----------------------------------------------------|
 | basyx.aasrepository.feature.kafka.enabled     | false           | Specifies whether the feature is enabled for AAS repository |
 | basyx.feature.kafka.enabled                   | false           | Specifies whether the feature is enabled for both the AAS repository and Submodel repository |
-| basyx.aasrepository.feature.kafka.topic.name  | aas-repo-events | The name of the topic where events are sent          |
+| basyx.aasrepository.feature.kafka.topic.name  | aas-events | The name of the topic where events are sent          |
 | spring.kafka.bootstrap-servers                | -               | The address of the Kafka brokers, e.g., PLAINTEXT_HOST://localhost:9092 |
 
 ## Structure of the Messages

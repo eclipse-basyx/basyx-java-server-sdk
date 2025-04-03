@@ -65,7 +65,7 @@ public class KafkaSubmodelServiceConfiguration {
 	@ConditionalOnMissingBean
 	public SubmodelEventDistributer eventDistributer(DataPreservationLevel level, JsonSerializer serializer,
 			KafkaTemplate<String, String> template,
-			@Value("${" + KafkaSubmodelServiceFeature.FEATURENAME + ".topic.name}") String topicName) {
+			@Value("${" + KafkaSubmodelServiceFeature.FEATURENAME + ".topic.name:submodel-events}") String topicName) {
 		SubmodelEventDistributer distributer = new KafkaSubmodelEventDistributer(serializer, template, topicName);
 		if (DataPreservationLevel.REMOVE_BLOB_VALUE == level) {
 			BlobRemovingSubmodelShrinker shrinker = new BlobRemovingSubmodelShrinker();

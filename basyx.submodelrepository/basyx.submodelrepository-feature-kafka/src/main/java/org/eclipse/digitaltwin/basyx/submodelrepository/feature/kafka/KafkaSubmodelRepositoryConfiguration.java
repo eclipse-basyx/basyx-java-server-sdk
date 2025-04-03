@@ -62,7 +62,7 @@ public class KafkaSubmodelRepositoryConfiguration {
 	@ConditionalOnMissingBean
 	public SubmodelEventDistributer submodelEventDistributer(DataPreservationLevel level, JsonSerializer serializer,
 			KafkaTemplate<String, String> template,
-			@Value("${" + KafkaSubmodelRepositoryFeature.FEATURENAME + ".topic.name}") String topicName) {		
+			@Value("${" + KafkaSubmodelRepositoryFeature.FEATURENAME + ".topic.name:submodel-events}") String topicName) {		
 		return new KafkaSubmodelServiceConfiguration().eventDistributer(level, serializer, template, topicName);
 	}
 

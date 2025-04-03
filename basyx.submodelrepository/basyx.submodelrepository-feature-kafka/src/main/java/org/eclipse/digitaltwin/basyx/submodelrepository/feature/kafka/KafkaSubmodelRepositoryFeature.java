@@ -43,9 +43,6 @@ public class KafkaSubmodelRepositoryFeature implements SubmodelRepositoryFeature
 	public final static String FEATURENAME = "basyx.submodelrepository.feature.kafka";
 
 	public final static String FEATURE_ENABLED_EXPRESSION = "#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.kafka.enabled:false}}"; 
-	
-	@Value("${" + FEATURENAME + ".topic.name}")
-	private String topicName;
 
 	private final SubmodelEventHandler handler;
 	

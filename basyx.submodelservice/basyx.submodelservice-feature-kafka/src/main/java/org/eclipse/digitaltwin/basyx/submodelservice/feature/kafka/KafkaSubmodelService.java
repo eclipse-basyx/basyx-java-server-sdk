@@ -85,18 +85,16 @@ public class KafkaSubmodelService implements SubmodelService {
 	}
 
 	@Override
-	public SubmodelElement createSubmodelElement(SubmodelElement submodelElement) {
-		submodelElement = decorated.createSubmodelElement(submodelElement);
+	public void createSubmodelElement(SubmodelElement submodelElement) {
+		decorated.createSubmodelElement(submodelElement);
 		eventHandler.onSubmodelElementCreated(submodelElement, submodelId, submodelElement.getIdShort());
-		return submodelElement;
 	}
 
 	@Override
-	public SubmodelElement createSubmodelElement(String idShortPath, SubmodelElement submodelElement)
+	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement)
 			throws ElementDoesNotExistException {
-		submodelElement = decorated.createSubmodelElement(idShortPath, submodelElement);
+		decorated.createSubmodelElement(idShortPath, submodelElement);
 		eventHandler.onSubmodelElementCreated(submodelElement, submodelId, idShortPath + "." + submodelElement.getIdShort());
-		return submodelElement;
 	}
 
 	@Override

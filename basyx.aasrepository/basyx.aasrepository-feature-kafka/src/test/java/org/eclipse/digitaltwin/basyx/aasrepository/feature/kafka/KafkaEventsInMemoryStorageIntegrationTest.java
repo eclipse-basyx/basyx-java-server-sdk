@@ -38,11 +38,13 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.aasrepository.backend.inmemory.InMemoryAasRepositoryBackend;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEvent;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEventType;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
-import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.AasBackend;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.CrudAasServiceFactory;
+import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasBackend;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.After;
@@ -85,9 +87,10 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	@Before
 	public void awaitAssignment() throws InterruptedException {
 		listener.awaitTopicAssignment();
-		AasServiceFactory sf = new InMemoryAasServiceFactory(new InMemoryFileRepository());
-		InMemoryAasRepositoryBackend aasRepositoryBackend = new InMemoryAasRepositoryBackend(sf);
-		CrudAasRepositoryFactory factory = new CrudAasRepositoryFactory(aasRepositoryBackend, "test");
+		FileRepository fileRepo = new InMemoryFileRepository();
+		AasBackend aasRepositoryBackend = new InMemoryAasBackend();
+		AasServiceFactory sf = new CrudAasServiceFactory(aasRepositoryBackend, fileRepo);
+		CrudAasRepositoryFactory factory = new CrudAasRepositoryFactory(aasRepositoryBackend, sf, "test");
 		repo = feature.decorate(factory).create();
 	}
 
