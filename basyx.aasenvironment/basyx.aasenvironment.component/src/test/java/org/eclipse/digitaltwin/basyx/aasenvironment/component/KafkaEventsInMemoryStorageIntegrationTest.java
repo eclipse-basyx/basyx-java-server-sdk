@@ -95,8 +95,11 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	public void awaitAssignment() throws InterruptedException {
 		aasEventListener.awaitTopicAssignment();
 		submodelEventListener.awaitTopicAssignment();
+		
+		while(aasEventListener.next(100, TimeUnit.MICROSECONDS) != null);
+		while(submodelEventListener.next(100, TimeUnit.MICROSECONDS) != null);
+		
 	}
-
 
 	@Test
 	public void testCreateAas() throws Exception {
