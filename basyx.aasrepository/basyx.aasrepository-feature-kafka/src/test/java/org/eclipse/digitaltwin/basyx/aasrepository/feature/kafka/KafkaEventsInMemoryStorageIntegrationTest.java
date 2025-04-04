@@ -93,7 +93,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		CrudAasRepositoryFactory factory = new CrudAasRepositoryFactory(aasRepositoryBackend, sf, "test");
 		repo = feature.decorate(factory).create();
 
-		while(listener.next(100, TimeUnit.MICROSECONDS) != null);
+		cleanup();
 	}
 
 
@@ -145,14 +145,14 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 
 		repo.deleteAas(shell.getId());
 
-		AasEvent evtUpdated = listener.next();
-		Assert.assertEquals(AasEventType.AAS_DELETED, evtUpdated.getType());
+		AasEvent evtDeleted = listener.next();
+		Assert.assertEquals(AasEventType.AAS_DELETED, evtDeleted.getType());
 
-		Assert.assertEquals(TestShells.ID_AAS, evtUpdated.getId());
-		Assert.assertNull(evtUpdated.getSubmodelId());
-		Assert.assertNull(evtUpdated.getAssetInformation());
-		Assert.assertNull(evtUpdated.getReference());
-		Assert.assertNull(evtUpdated.getAas());
+		Assert.assertEquals(TestShells.ID_AAS, evtDeleted.getId());
+		Assert.assertNull(evtDeleted.getSubmodelId());
+		Assert.assertNull(evtDeleted.getAssetInformation());
+		Assert.assertNull(evtDeleted.getReference());
+		Assert.assertNull(evtDeleted.getAas());
 	}
 	
 	@Test
@@ -210,14 +210,14 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		Assert.assertEquals(shell, evtCreated.getAas());
 
 		repo.removeSubmodelReference(TestShells.ID_AAS, TestShells.ID_SM);
-		AasEvent evtRefAdded = listener.next();
-		Assert.assertEquals(AasEventType.SM_REF_DELETED, evtRefAdded.getType());
+		AasEvent evtRefRemoved = listener.next();
+		Assert.assertEquals(AasEventType.SM_REF_DELETED, evtRefRemoved.getType());
 
-		Assert.assertEquals(TestShells.ID_AAS, evtRefAdded.getId());
-		Assert.assertEquals(TestShells.ID_SM, evtRefAdded.getSubmodelId());
-		Assert.assertNull(evtRefAdded.getAssetInformation());
-		Assert.assertNull(evtRefAdded.getReference());
-		Assert.assertNull(evtRefAdded.getAas());
+		Assert.assertEquals(TestShells.ID_AAS, evtRefRemoved.getId());
+		Assert.assertEquals(TestShells.ID_SM, evtRefRemoved.getSubmodelId());
+		Assert.assertNull(evtRefRemoved.getAssetInformation());
+		Assert.assertNull(evtRefRemoved.getReference());
+		Assert.assertNull(evtRefRemoved.getAas());
 	}
 	
 	@Test
@@ -239,7 +239,11 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@After
-	public void assertNoAdditionalEvents() throws InterruptedException {
-		listener.next(100, TimeUnit.MICROSECONDS);
+	public void cleanup() throws InterruptedException {
+		for (AssetAdministrationShell aas : repo.getAllAas(new PaginationInfo(null, null)).getResult()) {
+			repo.deleteAas(aas.getId());
+		}
+		while(listener.next(100, TimeUnit.MICROSECONDS) != null);
 	}
+	
 }

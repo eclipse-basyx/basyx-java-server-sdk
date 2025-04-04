@@ -108,8 +108,8 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	public void awaitAssignment() throws InterruptedException {
 		listener.awaitTopicAssignment();
 		repo = feature.decorate(factory).create();
-		while (listener.next(100, TimeUnit.MICROSECONDS) != null)
-			;
+		
+		cleanup();
 	}
 
 	@Test

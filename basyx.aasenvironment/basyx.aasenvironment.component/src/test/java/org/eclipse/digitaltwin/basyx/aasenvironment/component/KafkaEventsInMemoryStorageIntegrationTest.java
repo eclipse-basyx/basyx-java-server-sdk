@@ -30,10 +30,13 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.AasEventKafkaListener;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.KafkaAasRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.TestShells;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEvent;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.kafka.KafkaSubmodelRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.SubmodelEventKafkaListener;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.TestSubmodels;
@@ -91,14 +94,18 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	@Autowired
 	private JsonSerializer serializer;
 	
+	@Autowired
+	private SubmodelRepository smRepo;
+	
+	@Autowired
+	private AasRepository aasRepo;
+	
 	@Before
 	public void awaitAssignment() throws InterruptedException {
 		aasEventListener.awaitTopicAssignment();
 		submodelEventListener.awaitTopicAssignment();
 		
-		while(aasEventListener.next(100, TimeUnit.MICROSECONDS) != null);
-		while(submodelEventListener.next(100, TimeUnit.MICROSECONDS) != null);
-		
+		cleanup();
 	}
 
 	@Test
@@ -135,8 +142,14 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@After
-	public void assertNoAdditionalEvents() throws InterruptedException {
-		aasEventListener.next(100, TimeUnit.MICROSECONDS);
-		submodelEventListener.next(100, TimeUnit.MICROSECONDS);
+	public void cleanup() throws InterruptedException {	
+		for (AssetAdministrationShell aas : aasRepo.getAllAas(new PaginationInfo(null, null)).getResult()) {
+			aasRepo.deleteAas(aas.getId());
+		}
+		while(aasEventListener.next(100, TimeUnit.MICROSECONDS) != null);
+		for (Submodel sm : smRepo.getAllSubmodels(new PaginationInfo(null, null)).getResult()) {
+			smRepo.deleteSubmodel(sm.getId());
+		}
+		while(submodelEventListener.next(100, TimeUnit.MICROSECONDS) != null);
 	}
 }

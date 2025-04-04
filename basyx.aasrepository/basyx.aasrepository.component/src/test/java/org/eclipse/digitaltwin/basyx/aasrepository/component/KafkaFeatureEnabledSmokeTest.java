@@ -25,14 +25,20 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.component;
 
+import java.util.concurrent.TimeUnit;
+
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.KafkaAasRepositoryFeature;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.AasEventKafkaListener;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEvent;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEventType;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,9 +81,21 @@ public class KafkaFeatureEnabledSmokeTest {
 	@Autowired
 	private AasEventKafkaListener listener;
 
+	@Autowired
+	private AasRepository aasRepo;
+	
 	@Before
 	public void provideAas() throws InterruptedException {
 		listener.awaitTopicAssignment();
+		cleanup();
+	}
+	
+	@After
+	public void cleanup() throws InterruptedException {	
+		for (AssetAdministrationShell aas : aasRepo.getAllAas(new PaginationInfo(null, null)).getResult()) {
+			aasRepo.deleteAas(aas.getId());
+		}
+		while(listener.next(100, TimeUnit.MICROSECONDS) != null);
 	}
 
 	@Test
