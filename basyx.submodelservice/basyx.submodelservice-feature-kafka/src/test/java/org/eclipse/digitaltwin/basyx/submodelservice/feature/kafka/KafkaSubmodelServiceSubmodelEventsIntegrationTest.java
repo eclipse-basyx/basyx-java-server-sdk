@@ -107,5 +107,4 @@ public class KafkaSubmodelServiceSubmodelEventsIntegrationTest {
 		Assert.assertNull(listener.next(50, TimeUnit.MILLISECONDS));
 	}
 
-
 }
