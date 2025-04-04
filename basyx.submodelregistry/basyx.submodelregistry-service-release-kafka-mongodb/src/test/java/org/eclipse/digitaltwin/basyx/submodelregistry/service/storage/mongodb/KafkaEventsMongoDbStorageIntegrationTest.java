@@ -30,6 +30,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.kafka.common.TopicPartition;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.BaseIntegrationTest;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.EventQueue;
 import org.junit.Before;
@@ -52,9 +53,10 @@ public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTes
 	@Autowired
 	private RegistrationEventKafkaListener listener;
 
-	@Before
-	public void awaitAssignment() throws InterruptedException {
+	@Override
+	public void setUp() throws ApiException, InterruptedException {
 		listener.awaitTopicAssignment();
+		super.setUp();
 	}
 	
 	@Override
