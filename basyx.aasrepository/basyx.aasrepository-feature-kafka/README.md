@@ -8,12 +8,12 @@ A key concern is that the insertion order is preserved for each Shell event. Eve
 
 The feature is configured through the following Spring properties:
 
-| Property                                      | Default         | Description                                         |
-|-----------------------------------------------|-----------------|-----------------------------------------------------|
-| basyx.aasrepository.feature.kafka.enabled     | false           | Specifies whether the feature is enabled for AAS repository |
+| Property                                      | Default         | Description                                                                                  |
+|-----------------------------------------------|-----------------|----------------------------------------------------------------------------------------------|
+| basyx.aasrepository.feature.kafka.enabled     | false           | Specifies whether the feature is enabled for AAS repository                                  |
 | basyx.feature.kafka.enabled                   | false           | Specifies whether the feature is enabled for both the AAS repository and Submodel repository |
-| basyx.aasrepository.feature.kafka.topic.name  | aas-events | The name of the topic where events are sent          |
-| spring.kafka.bootstrap-servers                | -               | The address of the Kafka brokers, e.g., PLAINTEXT_HOST://localhost:9092 |
+| basyx.aasrepository.feature.kafka.topic.name  | aas-events      | The name of the topic where events are sent                                                  |
+| spring.kafka.bootstrap-servers                | -               | The address of the Kafka brokers, e.g., PLAINTEXT_HOST://localhost:9092                      |
 
 ## Structure of the Messages
 

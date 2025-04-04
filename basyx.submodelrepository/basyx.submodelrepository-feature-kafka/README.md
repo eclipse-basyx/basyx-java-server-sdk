@@ -8,14 +8,12 @@ It is essential to maintain the insertion order of events per submodel. Events f
 
 The feature is configured using the following Spring properties:
 
-| Property                                        |  Default       | Description                                                    |
-|-------------------------------------------------|----------------|----------------------------------------------------------------|
-| basyx.submodelservice.feature.kafka.enabled  |     false      | Specifies whether the feature is enabled                       |
-| basyx.feature.kafka.enabled                     |     false      | Specifies whether the feature is enabled (for both aas-repository and submodel-repository) |
-| basyx.submodelservice.feature.kafka.topic.name |  submodel-events | The name of the topic where events are sent                   |
-| basyx.submodelservice.feature.kafka.submodelevents | false | Specifies whether to send submodel creation and deletion events when starting and tearing down  the submodel service |
-| spring.kafka.bootstrap-servers                  |     -          | The address of the Kafka brokers, e.g., `PLAINTEXT_HOST://localhost:9092` |
-
+| Property                                          |  Default       | Description                                                                                |
+|---------------------------------------------------|----------------|--------------------------------------------------------------------------------------------|
+| basyx.submodelrepository.feature.kafka.enabled    |     false      | Specifies whether the feature is enabled                                                   |
+| basyx.feature.kafka.enabled                       |     false      | Specifies whether the feature is enabled (for both aas-repository and submodel-repository) |
+| basyx.submodelrepository.feature.kafka.topic.name | submodel-events aas-events for [submodel component](../basyx.submodelservice.component/), otherwise no default | The name of the topic where events are sent |
+| spring.kafka.bootstrap-servers                    |      -         | The address of the Kafka brokers, e.g., `PLAINTEXT_HOST://localhost:9092`                                     |
 
 ## Message Structure
 
@@ -36,6 +34,7 @@ The messages are transmitted as strings in JSON format:
 ```
 
 Depending on the event type, the fields of the JSON message are populated. The following event types are available:
+
 
 * SM_CREATED
 * SM_UPDATED
