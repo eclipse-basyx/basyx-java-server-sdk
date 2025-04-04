@@ -1,0 +1,194 @@
+networks:
+  basyx-network:
+    driver: bridge
+  kafka-network:
+    driver: bridge
+
+services:
+
+  kafka-example:
+    image: confluentinc/cp-kafka:${KAFKA_VERSION}
+    hostname: kafka
+    container_name: kafka-example
+    ports:
+      - 9093:9093
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INTER_BROKER://kafka:9094,PLAINTEXT://kafka:9092,EXTERNAL://localhost:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTER_BROKER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENERS: INTER_BROKER://:9094,CONTROLLER://:9095,PLAINTEXT://:9092,EXTERNAL://:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTER_BROKER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_BROKER_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9095
+      ALLOW_PLAINTEXT_LISTENER: 'yes'
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      CLUSTER_ID: jmpccZs2RHaYUbZ-LgaIhQ
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_MIN_INSYNC_REPLICAS: 1
+      KAFKA_NUM_PARTITIONS: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    networks:
+      - kafka-network
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/kafka/9092"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 15s
+
+  akhq-example:
+    image: tchiotludo/akhq:${AKHQ_VERSION}
+    container_name: akhq-example
+    restart: always
+    ports:
+      - 8101:8080
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            docker-kafka-server:
+              properties:
+                bootstrap.servers: "kafka:9092"
+    depends_on:
+      - kafka-example
+    networks:
+      - kafka-network
+
+  consumer-aas-example:
+    image: confluentinc/cp-kafka:7.8.1
+    container_name: consumer-aas-example
+    depends_on:
+      - kafka-example
+    networks:
+      - kafka-network
+    entrypoint: >
+      sh -c "kafka-console-consumer --bootstrap-server kafka:9092 --include 'aas-registry|submodel-registry|aas-events|submodel-events' --from-beginning --group console-consumer-group"
+
+  aas-registry-example:
+    image: eclipsebasyx/aas-registry-kafka-mem:${BASYX_VERSION}
+    hostname: aas-registry
+    container_name: aas-registry-example
+    restart: always
+    ports:
+      - 8102:8080
+    environment: 
+      KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
+      BASYX_CORS_ALLOWED_ORIGINS: '*'
+      BASYX_CORS_ALLOWED_METHODS: GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+    depends_on:
+      - kafka-example
+    networks:
+      - basyx-network
+      - kafka-network
+
+  submodel-registry-example:
+    image:  eclipsebasyx/submodel-registry-kafka-mem:${BASYX_VERSION}
+    hostname: submodel-registry
+    container_name: submodel-registry-example
+    restart: always
+    ports:
+      - 8103:8080
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
+      BASYX_CORS_ALLOWED_ORIGINS: '*'
+      BASYX_CORS_ALLOWED_METHODS: GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+    depends_on:
+      - kafka-example
+    networks:
+      - basyx-network
+      - kafka-network
+
+  aas-environment-example:
+    image: eclipsebasyx/aas-environment:${BASYX_VERSION}
+    hostname: aas-environment
+    container_name: aas-environment-example
+    restart: always
+    ports:
+      - 8104:8081
+    environment:      
+      
+      BASYX_AASREPOSITORY_FEATURE_REGISTRYINTEGRATION: http://aas-registry:8080
+      BASYX_SUBMODELREPOSITORY_FEATURE_REGISTRYINTEGRATION: http://submodel-registry:8080
+      BASYX_AASREPOSITORY_FEATURE_AASXUPLOAD_ENABLED: "true"   
+      BASYX_CORS_ALLOWED_ORIGINS: '*'
+      BASYX_ENVIRONMENT: file:/application/aas/
+      BASYX_CORS_ALLOWED_METHODS: GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+      BASYX_EXTERNALURL: http://localhost:8104,http://aas-environment:8081
+
+      ### Kafka specific settings ###
+
+      # Enable kafka 
+      # also BASYX_SUBMODELREPOSITORY_FEATURE_KAFKA_ENABLED and BASYX_AASREPOSITORY_FEATURE_KAFKA_ENABLED could be set to true
+      BASYX_FEATURE_KAFKA_ENABLED: "true"
+      # set the broker references (docker intern)
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
+      # topic name -> defaults to submodel-events
+      BASYX_SUBMODELREPOSITORY_FEATURE_KAFKA_TOPIC_NAME: sm-repo-events
+      # topic name -> defaults to aas-events
+      BASYX_AASREPOSITORY_FEATURE_KAFKA_TOPIC_NAME: aas-repo-events
+
+    volumes: 
+    - ./aas:/application/aas
+    depends_on:    
+      aas-registry-example:
+        condition: service_healthy
+      submodel-registry-example:
+        condition: service_healthy
+    networks:
+      - basyx-network
+      - kafka-network
+
+  submodel-service-example:
+    image: eclipsebasyx/submodel-service:${BASYX_VERSION}
+    hostname: submodel-service
+    container_name: submodel-service-example
+    restart: always
+    environment:
+      BASYX_SUBMODELSERVICE_SUBMODEL_FILE: submodel.json
+      BASYX_SUBMODELSERVICE_FEATURE_OPERATION_DISPATCHER_ENABLED: "true"
+      ### Kafka specific settings ###
+
+      # Enable kafka 
+      # also BASYX_SUBMODELSERVICE_FEATURE_KAFKA_ENABLED could be set to true
+      BASYX_SUBMODELSERVICE_FEATURE_KAFKA_ENABLED: "true"
+      BASYX_FEATURE_KAFKA_ENABLED: "true"
+      # set the broker references (docker intern)
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
+      # topic name -> defaults to submodel-events
+      BASYX_SUBMODELSERVICE_FEATURE_KAFKA_TOPIC_NAME: sm-service-events
+      # notify on startup and teardown events
+      BASYX_SUBMODELSERVICE_FEATURE_KAFKA_SUBMODELEVENTS: true
+
+    ports:
+      - 8105:8081
+    volumes:
+      - ./submodel.json:/application/submodel.json:ro
+    networks:
+      - basyx-network
+      - kafka-network
+
+  aas-gui-example:
+    image: eclipsebasyx/aas-gui:${AAS_WEBUI_VERSION}
+    container_name: aas-gui-example
+    restart: always
+    ports:
+      - 8106:3000
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+      AAS_REGISTRY_PATH: http://localhost:8102
+      SUBMODEL_REGISTRY_PATH: http://localhost:8103
+      AAS_REPO_PATH: http://localhost:8104/shells
+      SUBMODEL_REPO_PATH: http://localhost:8104/submodels
+      CD_REPO_PATH: http://localhost:8104/concept-descriptions
+    networks:
+      - basyx-network
+    depends_on:
+      aas-registry-example:
+        condition: service_healthy
+      submodel-registry-example:
+        condition: service_healthy    
+      aas-environment-example:
+        condition: service_healthy

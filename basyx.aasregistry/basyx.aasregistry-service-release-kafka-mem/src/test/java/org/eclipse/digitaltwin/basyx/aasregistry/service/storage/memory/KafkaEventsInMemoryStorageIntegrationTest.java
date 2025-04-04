@@ -30,8 +30,13 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.kafka.common.TopicPartition;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.BaseIntegrationTest;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.EventQueue;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.junit.After;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,10 +56,12 @@ public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTe
 	@Autowired
 	private RegistrationEventKafkaListener listener;
 
-	@Before
-	public void awaitAssignment() throws InterruptedException {
+	@Override
+	public void setUp() throws Exception {
 		listener.awaitTopicAssignment();
+		super.setUp();
 	}
+
 	
 	@Override
 	public EventQueue queue() {

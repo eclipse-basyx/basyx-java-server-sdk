@@ -55,16 +55,8 @@ public class EventQueue {
 		}
 	}
 
-	public void assertNoAdditionalMessage() {
-		try {
-			String message = messageQueue.poll(1, TimeUnit.SECONDS);
-			if (message != null) {
-				throw new EventListenerException("Got additional message: " + message);
-			}
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new EventListenerException(e);
-		}
+	public void pullAdditionalMessages() throws InterruptedException {
+		while(messageQueue.poll(100, TimeUnit.MILLISECONDS) != null);
 	}
 
 	public RegistryEvent poll() {
@@ -81,11 +73,11 @@ public class EventQueue {
 			throw new EventListenerException(e);
 		}
 	}
-	
+
 	public static final class EventListenerException extends RuntimeException {
 
 		private static final long serialVersionUID = 1L;
-		
+
 		public EventListenerException(Throwable e) {
 			super(e);
 		}

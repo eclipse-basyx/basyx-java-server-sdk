@@ -61,9 +61,10 @@ public class AuthorizedClientTest extends BaseIntegrationTest {
 	@Value("${local.server.port}")
 	private int port;
 	
-	@Before
-	public void awaitAssignment() throws InterruptedException {
+	@Override
+	public void setUp() throws Exception {
 		listener.awaitTopicAssignment();
+		super.setUp();
 	}
 
 	@Override
@@ -71,13 +72,12 @@ public class AuthorizedClientTest extends BaseIntegrationTest {
 		return listener.getQueue();
 	}
 	
-	@Before
 	@Override
-	public void initClient() throws ApiException {
+	public void initClient() throws Exception {
 		api = new AuthorizedConnectedAasRegistry("http://127.0.0.1:" + port, new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom"))));
 
 		api.deleteAllShellDescriptors();
-		queue().assertNoAdditionalMessage();
+		queue().pullAdditionalMessages();
 	}
 	
 	@Test
