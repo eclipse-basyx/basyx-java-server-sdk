@@ -25,6 +25,7 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -50,11 +51,9 @@ public class AasEventKafkaListener implements ConsumerSeekAware {
 	private final LinkedBlockingDeque<AasEvent> evt = new LinkedBlockingDeque<AasEvent>();
 	private final JsonDeserializer deserializer;
 	private final CountDownLatch latch = new CountDownLatch(1);
-	private final long startupTime;
 
 	public AasEventKafkaListener(JsonDeserializer deserializer) {
 		this.deserializer = deserializer;
-		startupTime = System.currentTimeMillis();
 	}
 
 	@KafkaHandler
@@ -79,7 +78,7 @@ public class AasEventKafkaListener implements ConsumerSeekAware {
 	public void onPartitionsAssigned(Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
 		for (TopicPartition eachPartition : assignments.keySet()) {
 			if (TOPIC_NAME.equals(eachPartition.topic())) {
-				callback.seekToTimestamp(TOPIC_NAME, 0, startupTime-1);
+				callback.seekToEnd(List.of(eachPartition));
 				latch.countDown();
 			}
 		}

@@ -25,6 +25,7 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -51,11 +52,6 @@ public class SubmodelEventKafkaListener implements ConsumerSeekAware {
 	private final LinkedBlockingDeque<SubmodelEvent> evt = new LinkedBlockingDeque<SubmodelEvent>();
 	private final JsonDeserializer deserializer = new JsonDeserializer();
 	private final CountDownLatch latch = new CountDownLatch(1);
-	private final long startupTime;
-
-	public SubmodelEventKafkaListener() {
-		startupTime = System.currentTimeMillis();
-	}
 
 	@KafkaHandler
 	public void receiveMessage(String content) {
@@ -79,7 +75,7 @@ public class SubmodelEventKafkaListener implements ConsumerSeekAware {
 	public void onPartitionsAssigned(Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
 		for (TopicPartition eachPartition : assignments.keySet()) {
 			if (TOPIC_NAME.equals(eachPartition.topic())) {
-				callback.seekToTimestamp(TOPIC_NAME, 0, startupTime-1);
+				callback.seekToEnd(List.of(eachPartition));
 				latch.countDown();
 			}
 		}
