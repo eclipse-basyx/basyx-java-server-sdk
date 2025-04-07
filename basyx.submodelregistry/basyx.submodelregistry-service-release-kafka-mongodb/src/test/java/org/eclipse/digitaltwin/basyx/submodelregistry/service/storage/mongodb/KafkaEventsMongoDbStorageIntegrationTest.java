@@ -92,7 +92,6 @@ public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTes
 					ConsumerSeekCallback callback) {
 			for (TopicPartition eachPartition : assignments.keySet()) {
 				if (topicName.equals(eachPartition.topic())) {
-					callback.seekToEnd(List.of(eachPartition));
 					latch.countDown();
 				}
 			}		

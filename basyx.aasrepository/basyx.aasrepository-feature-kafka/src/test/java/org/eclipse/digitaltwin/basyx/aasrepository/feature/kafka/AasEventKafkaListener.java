@@ -78,7 +78,6 @@ public class AasEventKafkaListener implements ConsumerSeekAware {
 	public void onPartitionsAssigned(Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
 		for (TopicPartition eachPartition : assignments.keySet()) {
 			if (TOPIC_NAME.equals(eachPartition.topic())) {
-				callback.seekToEnd(List.of(eachPartition));
 				latch.countDown();
 			}
 		}

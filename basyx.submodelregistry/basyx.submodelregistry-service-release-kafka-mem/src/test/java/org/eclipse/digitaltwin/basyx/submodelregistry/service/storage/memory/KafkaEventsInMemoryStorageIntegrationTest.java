@@ -87,7 +87,6 @@ public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTe
 					ConsumerSeekCallback callback) {
 			for (TopicPartition eachPartition : assignments.keySet()) {
 				if ("submodel-registry".equals(eachPartition.topic())) {
-					callback.seekToEnd(List.of(eachPartition));
 					latch.countDown();
 				}
 			}		

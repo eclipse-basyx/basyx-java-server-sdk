@@ -24,7 +24,6 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.storage.memory;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -83,7 +82,6 @@ public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTe
 					ConsumerSeekCallback callback) {
 			for (TopicPartition eachPartition : assignments.keySet()) {
 				if ("aas-registry".equals(eachPartition.topic())) {
-					callback.seekToEnd(List.of(eachPartition));
 					latch.countDown();
 				}
 			}		
