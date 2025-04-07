@@ -71,7 +71,6 @@ public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTes
 		@Value("${spring.kafka.template.default-topic}")
 		private String topicName;	
 		
-		@SuppressWarnings("unused")
 		public RegistrationEventKafkaListener(ObjectMapper mapper) {
 			this.queue = new EventQueue(mapper);
 		}

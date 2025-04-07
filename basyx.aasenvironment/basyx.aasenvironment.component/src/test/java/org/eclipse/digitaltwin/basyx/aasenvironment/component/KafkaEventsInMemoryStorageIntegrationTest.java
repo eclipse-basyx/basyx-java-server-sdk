@@ -146,10 +146,10 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		for (AssetAdministrationShell aas : aasRepo.getAllAas(new PaginationInfo(null, null)).getResult()) {
 			aasRepo.deleteAas(aas.getId());
 		}
-		while(aasEventListener.next(100, TimeUnit.MICROSECONDS) != null);
+
 		for (Submodel sm : smRepo.getAllSubmodels(new PaginationInfo(null, null)).getResult()) {
 			smRepo.deleteSubmodel(sm.getId());
 		}
-		while(submodelEventListener.next(100, TimeUnit.MICROSECONDS) != null);
+		while(submodelEventListener.next(300, TimeUnit.MICROSECONDS) != null);
 	}
 }

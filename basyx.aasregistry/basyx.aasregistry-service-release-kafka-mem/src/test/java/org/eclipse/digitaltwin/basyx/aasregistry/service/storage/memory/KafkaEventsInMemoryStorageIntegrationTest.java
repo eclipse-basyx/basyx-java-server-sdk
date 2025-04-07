@@ -30,16 +30,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.kafka.common.TopicPartition;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.BaseIntegrationTest;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.EventQueue;
-import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
-import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.junit.After;
-import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.ConsumerSeekAware;
@@ -75,9 +68,6 @@ public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTe
 		private final EventQueue queue;
 		private final CountDownLatch latch = new CountDownLatch(1);
 		
-		@Value("${spring.kafka.template.default-topic}")
-		private String topicName;	
-		
 		@SuppressWarnings("unused")
 		public RegistrationEventKafkaListener(ObjectMapper mapper) {
 			this.queue = new EventQueue(mapper);
@@ -92,7 +82,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTe
 		public void onPartitionsAssigned(Map<TopicPartition, Long> assignments,
 					ConsumerSeekCallback callback) {
 			for (TopicPartition eachPartition : assignments.keySet()) {
-				if (topicName.equals(eachPartition.topic())) {
+				if ("aas-registry".equals(eachPartition.topic())) {
 					callback.seekToEnd(List.of(eachPartition));
 					latch.countDown();
 				}

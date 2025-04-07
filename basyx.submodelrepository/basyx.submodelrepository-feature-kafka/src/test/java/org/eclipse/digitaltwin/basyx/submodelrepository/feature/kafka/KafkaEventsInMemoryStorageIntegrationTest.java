@@ -348,8 +348,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 				repo.deleteSubmodel(sm.getId());
 			}
 		}
-		while (listener.next(100, TimeUnit.MICROSECONDS) != null)
-			;
+		while (listener.next(300, TimeUnit.MICROSECONDS) != null);
 
 	}
 }

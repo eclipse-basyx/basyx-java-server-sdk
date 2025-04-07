@@ -135,6 +135,6 @@ public class KafkaSubmodelServiceIdsOnlySmokeTest {
 
 	@After
 	public void assertNoAdditionalKafkaMessageOnTopic() throws InterruptedException, SerializationException {
-		Assert.assertNull(listener.next(100, TimeUnit.MILLISECONDS));
+		Assert.assertNull(listener.next(300, TimeUnit.MILLISECONDS));
 	}
 }
