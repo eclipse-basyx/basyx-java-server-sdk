@@ -47,7 +47,9 @@ public class AuthorizedSubmodelServiceFactory implements SubmodelServiceFactory 
 
 	@Override
 	public SubmodelService create(String submodelId) {
-		return new AuthorizedSubmodelService(decorated.create(submodelId), permissionResolver, submodelId);
+		// this is just used by submodelrepository and is just a helper method
+		// no decoration here
+		return decorated.create(submodelId);
 	}
 	
 	@Override
