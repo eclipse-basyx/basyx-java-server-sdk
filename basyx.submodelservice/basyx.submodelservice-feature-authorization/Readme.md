@@ -4,7 +4,7 @@ This feature enables authorized access to the Submodel Service.
 To enable this feature, the following properties should be configured:
 
 ```
-basyx.feature.authorization.enabled = true
+basyx.feature.authorization.enabled = true 
 basyx.feature.authorization.type = <The type of authorization to enable>
 basyx.feature.authorization.jwtBearerTokenProvider = <The Jwt token provider>
 basyx.feature.authorization.rbac.file = <Class path of the Rbac rules file if authorization type is rbac>
