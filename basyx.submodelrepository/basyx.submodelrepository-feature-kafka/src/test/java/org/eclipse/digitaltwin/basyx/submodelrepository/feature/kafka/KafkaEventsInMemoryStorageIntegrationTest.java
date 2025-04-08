@@ -54,7 +54,6 @@ import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -357,7 +356,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		}
 	}
 	
-	@AfterClass
+	@After
 	public void assertNoAdditionalEvent() throws InterruptedException {
 		Assert.assertNull(listener.next(1, TimeUnit.SECONDS));
 	}

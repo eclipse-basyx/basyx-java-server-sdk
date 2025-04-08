@@ -48,7 +48,6 @@ import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -247,7 +246,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 			Assert.assertEquals(aas.getId(), deletedEvt.getId());
 		}
 	}
-	@AfterClass
+	@After
 	public void assertNoAdditionalEvent() throws InterruptedException {
 		Assert.assertNull(listener.next(1, TimeUnit.SECONDS));
 	}

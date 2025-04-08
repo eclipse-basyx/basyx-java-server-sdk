@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
@@ -42,7 +41,6 @@ import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEventType;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -130,7 +128,7 @@ public class KafkaSubmodelServiceIdsOnlySmokeTest {
 	
 	}
 
-	@AfterClass
+	@After
 	public void assertNoAdditionalKafkaMessageOnTopic() throws InterruptedException, SerializationException {
 		Assert.assertNull(listener.next(1, TimeUnit.SECONDS));
 	}
