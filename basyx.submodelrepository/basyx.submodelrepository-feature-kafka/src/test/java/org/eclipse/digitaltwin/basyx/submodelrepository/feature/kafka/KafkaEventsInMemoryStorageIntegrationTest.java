@@ -227,7 +227,6 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		Assert.assertEquals(TestSubmodels.IDSHORT_PROP_0, evt.getSmElementPath());
 		Assert.assertNull(evt.getSubmodel());
 		Assert.assertEquals(elem, evt.getSmElement());
-
 	}
 
 	@Test
