@@ -3,21 +3,21 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent> 
+	<parent>
 		<groupId>org.eclipse.digitaltwin.basyx</groupId>
-		<artifactId>basyx.submodelrepository</artifactId>
+		<artifactId>basyx.submodelservice</artifactId>
 		<version>${revision}</version>
 	</parent>
 
-	<artifactId>basyx.submodelrepository-feature-authorization</artifactId>
+	<artifactId>basyx.submodelservice-feature-authorization</artifactId>
 
-	<name>BaSyx Submodelrepository feature-authorization</name>
-	<description>BaSyx Submodelrepository feature-authorization</description>
+	<name>BaSyx submodelservice-feature-authorization</name>
+	<description>BaSyx submodelservice-feature-authorization</description>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.submodelrepository-core</artifactId>
+			<artifactId>basyx.submodelservice-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -41,18 +41,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.submodelrepository-http</artifactId>
-			<classifier>tests</classifier>
+			<artifactId>basyx.submodelservice-http</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.submodelrepository-http</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.submodelrepository-backend-inmemory</artifactId>
+			<artifactId>basyx.submodelservice-backend</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -70,7 +64,7 @@
 			<exclusions>
 				<exclusion>
 					<groupId>org.eclipse.digitaltwin.basyx</groupId>
-					<artifactId>basyx.submodelrepository-client</artifactId>
+					<artifactId>basyx.submodelservice-core</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -78,17 +72,13 @@
 				</exclusion>
 				<exclusion>
 					<groupId>org.eclipse.digitaltwin.basyx</groupId>
-					<artifactId>basyx.submodelservice-core</artifactId>
+					<artifactId>basyx.submodelservice-client</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.eclipse.digitaltwin.basyx</groupId>
-					<artifactId>basyx.submodelservice-client</artifactId>
+					<artifactId>basyx.submodelrepository-client</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.submodelservice-feature-authorization</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
@@ -98,6 +88,16 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

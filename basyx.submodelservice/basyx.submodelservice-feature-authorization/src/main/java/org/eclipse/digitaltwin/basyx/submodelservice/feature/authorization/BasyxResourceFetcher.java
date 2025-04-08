@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,32 +22,21 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+package org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization;
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
+import java.util.List;
 
-import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization.SubmodelTargetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.Referable;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
+@FunctionalInterface
 /**
- * Factory for creating {@link AuthorizedSubmodelRepository}
+ * Generic functional interface to support the auth-basaed filtered fetcher
  * 
- * @author danish
+ * @author Gerhard Sonnenberg (DFKI GmbH)
  */
-public class AuthorizedSubmodelRepositoryFactory implements SubmodelRepositoryFactory {
+public interface BasyxResourceFetcher<R extends Referable> {
 
-	private SubmodelRepositoryFactory decorated;
-	private RbacPermissionResolver<SubmodelTargetInformation> permissionResolver;
-
-	public AuthorizedSubmodelRepositoryFactory(SubmodelRepositoryFactory decorated, RbacPermissionResolver<SubmodelTargetInformation> permissionResolver) {
-		this.decorated = decorated;
-		this.permissionResolver = permissionResolver;
-	}
-
-	@Override
-	public SubmodelRepository create() {
-		return new AuthorizedSubmodelRepository(decorated.create(), permissionResolver);
-	}
-
+	CursorResult<List<R>> fetch(PaginationInfo info);
 }

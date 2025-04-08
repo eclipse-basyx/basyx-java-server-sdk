@@ -1,0 +1,14 @@
+basyx:
+  feature:
+    authorization:
+      enabled: true
+      type: rbac
+      jwtBearerTokenProvider: keycloak
+      rbac:
+        file: file:/application/rbac_rules.json
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:9102/realms/BaSyx

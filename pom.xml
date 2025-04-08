@@ -491,6 +491,12 @@
 				<artifactId>basyx.submodelservice-backend-inmemory</artifactId>
 				<version>${revision}</version>
 			</dependency>
+
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-feature-authorization</artifactId>
+				<version>${revision}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelservice-feature-kafka</artifactId>
