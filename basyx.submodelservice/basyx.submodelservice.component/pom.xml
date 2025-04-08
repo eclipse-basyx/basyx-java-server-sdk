@@ -33,6 +33,10 @@
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.submodelservice-feature-operation-dispatching</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.submodelservice-feature-kafka</artifactId>
 		</dependency>		
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -125,7 +129,7 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<version>0.45.1</version>
+						<version>0.46.0</version>
 						<configuration>
 							<images>
 								<image>

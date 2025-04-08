@@ -32,7 +32,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.kafka.common.TopicPartition;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.BaseIntegrationTest;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.EventQueue;
-import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaHandler;
@@ -51,9 +50,10 @@ public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTes
 	@Autowired
 	private RegistrationEventKafkaListener listener;
 
-	@Before
-	public void awaitAssignment() throws InterruptedException {
+	@Override
+	public void setUp() throws Exception {
 		listener.awaitTopicAssignment();
+		super.setUp();
 	}
 
 	@Override
@@ -71,7 +71,6 @@ public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTes
 		@Value("${spring.kafka.template.default-topic}")
 		private String topicName;	
 		
-		@SuppressWarnings("unused")
 		public RegistrationEventKafkaListener(ObjectMapper mapper) {
 			this.queue = new EventQueue(mapper);
 		}
@@ -89,7 +88,6 @@ public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTes
 		public void onPartitionsAssigned(Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
 			for (TopicPartition eachPartition : assignments.keySet()) {
 				if (topicName.equals(eachPartition.topic())) {
-					callback.seekToEnd(List.of(eachPartition));
 					latch.countDown();
 				}
 			}

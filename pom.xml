@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.3</version>
+		<version>3.4.4</version>
 		<relativePath />
 	</parent>
 	<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -80,6 +80,8 @@
 		<docker.host.port>8081</docker.host.port>
 		<docker.container.port>8081</docker.container.port>
 		<aas4j-version>1.0.4</aas4j-version>
+		<querydsl-version>5.1.0</querydsl-version>
+		<jakarta-version>3.2.0</jakarta-version>
 	</properties>
 
 	<pluginRepositories>
@@ -171,7 +173,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>3.5.2</version>
+					<version>3.5.3</version>
 					<executions>
 						<execution>
 							<id>integration-test</id>
@@ -226,7 +228,7 @@
 				<plugin>
 					<groupId>io.fabric8</groupId>
 					<artifactId>docker-maven-plugin</artifactId>
-					<version>0.45.1</version>
+					<version>0.46.0</version>
 					<configuration>
 						<images>
 							<image>
@@ -497,6 +499,18 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-feature-kafka</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelservice-feature-kafka</artifactId>
+				<classifier>tests</classifier>
+				<scope>test</scope>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelservice-backend-mongodb</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -652,6 +666,30 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-feature-kafka</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-feature-kafka</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-feature-kafka</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-feature-kafka</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-feature-registry-integration</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -766,7 +804,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.aasdiscoveryservice-backend-inmemory</artifactId>
+				<artifactId>basyx.aasdiscoveryservice-backend-h2</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -1238,7 +1276,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.aasdiscoveryservice-backend-inmemory</artifactId>
+				<artifactId>basyx.aasdiscoveryservice-backend-h2</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -1428,6 +1466,28 @@
 								</goals>
 							</execution>
 						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.14.0</version>
+						<configuration>
+							<source>${java.version}</source>
+							<target>${java.version}</target>
+							<annotationProcessorPaths>
+								<path>
+									<groupId>com.querydsl</groupId>
+									<artifactId>querydsl-apt</artifactId>
+									<version>${querydsl-version}</version>
+									<classifier>jakarta</classifier>
+								</path>
+								<path>
+									<groupId>jakarta.persistence</groupId>
+									<artifactId>jakarta.persistence-api</artifactId>
+									<version>${jakarta-version}</version>
+								</path>
+							</annotationProcessorPaths>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>

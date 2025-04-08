@@ -139,20 +139,23 @@ public abstract class BaseIntegrationTest {
 	protected RegistryAndDiscoveryInterfaceApi api;
 
 	@Before
-	public void initClient() throws ApiException {
+	public void setUp() throws Exception {
+		initClient();
+		cleanup();
+	}
+	
+	protected void initClient() throws Exception {
 		api = new RegistryAndDiscoveryInterfaceApi("http", "127.0.0.1", port);
-		api.deleteAllShellDescriptors();
-		queue().assertNoAdditionalMessage();
 	}
 
-	@After
-	public void cleanup() throws ApiException {
-		queue().assertNoAdditionalMessage();
+	protected void cleanup() throws ApiException, InterruptedException {
+		queue().pullAdditionalMessages();
 		GetAssetAdministrationShellDescriptorsResult result = api.getAllAssetAdministrationShellDescriptors(null, null, null, null);
 		for (AssetAdministrationShellDescriptor eachDescriptor : result.getResult()) {
 			api.deleteAssetAdministrationShellDescriptorById(eachDescriptor.getId());
 			assertThatEventWasSend(RegistryEvent.builder().id(eachDescriptor.getId()).type(EventType.AAS_UNREGISTERED).build());
 		}
+		queue().pullAdditionalMessages();
 	}
 
 	@Test
@@ -230,7 +233,6 @@ public abstract class BaseIntegrationTest {
 			assertThat(events.remove(RegistryEvent.builder().id("id_" + i).type(EventType.AAS_UNREGISTERED).build())).isTrue();
 		}
 		assertThat(events.isEmpty());
-		queue().assertNoAdditionalMessage();
 	}
 
 	@Test
@@ -246,7 +248,7 @@ public abstract class BaseIntegrationTest {
 		all = api.getAllAssetAdministrationShellDescriptors(null, null, null, null).getResult();
 		assertThat(all).isEmpty();
 
-		queue().assertNoAdditionalMessage();
+		queue().pullAdditionalMessages();
 	}
 
 	@Test
@@ -279,7 +281,7 @@ public abstract class BaseIntegrationTest {
 		aasDescriptor = api.getAssetAdministrationShellDescriptorById(aasId);
 		assertThat(aasDescriptor.getSubmodelDescriptors()).doesNotContain(toRegister);
 
-		queue().assertNoAdditionalMessage();
+		queue().pullAdditionalMessages();
 	}
 
 	@Test

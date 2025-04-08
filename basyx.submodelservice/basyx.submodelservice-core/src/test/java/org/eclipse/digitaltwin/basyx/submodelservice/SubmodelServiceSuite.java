@@ -82,7 +82,7 @@ public abstract class SubmodelServiceSuite {
 
 	/**
 	 * SubmodelService independent way to check if a file exists in storage
-	 * 
+	 *
 	 * @param fileValue
 	 * @return
 	 */
@@ -379,6 +379,19 @@ public abstract class SubmodelServiceSuite {
 
 		Property actualUpdatedProperty = (Property) submodelService.getSubmodelElement(idShortPath);
 		assertEquals(expectedUpdatedProperty, actualUpdatedProperty);
+	}
+
+	@Test
+	public void updateNonNestedSMEWithoutChange() {
+		Submodel technicalSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
+		SubmodelService submodelService = getSubmodelService(technicalSubmodel);
+
+		String idShortPath = "dummyProperty";
+
+		Property property = createDummyProperty(idShortPath);
+		submodelService.createSubmodelElement(property);
+
+		submodelService.updateSubmodelElement(idShortPath, property);
 	}
 
 	@Test
