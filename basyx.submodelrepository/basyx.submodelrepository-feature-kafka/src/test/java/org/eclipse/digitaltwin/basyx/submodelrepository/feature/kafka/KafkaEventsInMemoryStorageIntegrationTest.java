@@ -347,7 +347,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 			for (Submodel sm : repo.getAllSubmodels(new PaginationInfo(null, null)).getResult()) {
 				repo.deleteSubmodel(sm.getId());
 				Assert.assertEquals(SubmodelEventType.SM_DELETED, listener.next().getType());		
-			}
+			} 
 		}
 		Assert.assertNull(listener.next(1, TimeUnit.SECONDS));
 	}
