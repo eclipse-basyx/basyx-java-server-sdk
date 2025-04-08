@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization;
 
 import static org.junit.Assert.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;

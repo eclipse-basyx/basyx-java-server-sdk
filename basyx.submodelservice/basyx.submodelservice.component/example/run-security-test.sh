@@ -14,7 +14,7 @@ CLIENT_ID="workstation-1"
 CLIENT_SECRET="nY0mjyECF60DGzNmQUjL81XurSl8etom"
 
 # --- Fetch Access Token ---
-echo "🔐 Requesting access token from Keycloak..."
+echo "Requesting access token from Keycloak..."
 
 ACCESS_TOKEN=$(curl -s -X POST "$TOKEN_URL" \
   -H "Content-Type: application/x-www-form-urlencoded" \
@@ -25,18 +25,18 @@ ACCESS_TOKEN=$(curl -s -X POST "$TOKEN_URL" \
 
 # --- Check if token was retrieved ---
 if [ -z "$ACCESS_TOKEN" ]; then
-  echo "❌ Failed to retrieve access token."
+  echo "Failed to retrieve access token."
   return 1
 fi
 
-echo "✅ Access token received."
+echo "Access token received."
 
 # ---------------------------------------------
 # GET /submodel (should succeed)
 # ---------------------------------------------
 echo ""
 echo "================================="
-echo "🔎 Calling 'GET /submodel' (should succeed)"
+echo "Calling 'GET /submodel' (should succeed)"
 
 curl -s -w "\n->  HTTP Status Code: %{http_code}\n" \
   -X GET "http://localhost:8123/submodel" \
@@ -48,7 +48,7 @@ curl -s -w "\n->  HTTP Status Code: %{http_code}\n" \
 # ---------------------------------------------
 echo ""
 echo "================================="
-echo "🔎 Calling 'AddOperation' (should succeed)"
+echo "Calling 'AddOperation' (should succeed)"
 
 curl -s -w "\n->  HTTP Status Code: %{http_code}\n" \
   -X POST "http://localhost:8123/submodel/submodel-elements/BasicOperations.AddOperation/invoke" \
@@ -66,7 +66,7 @@ curl -s -w "\n->  HTTP Status Code: %{http_code}\n" \
 # ---------------------------------------------
 echo ""
 echo "================================="
-echo "🔎 Calling 'SquareOperation' (should fail!)"
+echo "Calling 'SquareOperation' (should fail!)"
 
 curl -s -w "\n-> HTTP Status Code: %{http_code}\n" \
   -X POST "http://localhost:8123/submodel/submodel-elements/SquareOperation/invoke" \

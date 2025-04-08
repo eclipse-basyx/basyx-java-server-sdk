@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -66,7 +66,7 @@ import org.springframework.util.ResourceUtils;
 		"spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:9096/realms/BaSyx" })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
-public class TestAuthorizedSubmodelRepository {
+public class TestAuthorizedSubmodelService {
 
 	private static final String HEADER_AUTH = "Authorization";
 	private static final String EP_HEALTH = "/actuator/health";
