@@ -40,6 +40,7 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.feature.kafka.KafkaSubmo
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.SubmodelEventKafkaListener;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.TestSubmodels;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
+import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEventType;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -151,7 +152,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		for (Submodel sm : smRepo.getAllSubmodels(new PaginationInfo(null, null)).getResult()) {
 			smRepo.deleteSubmodel(sm.getId());
 			SubmodelEvent smEvt = submodelEventListener.next();
-			Assert.assertEquals(AasEventType.AAS_DELETED, smEvt.getType());
+			Assert.assertEquals(SubmodelEventType.SM_DELETED, smEvt.getType());
 		}
 	}
 }
