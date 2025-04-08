@@ -54,6 +54,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -315,9 +316,12 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@Test
-	public void testGetterAreWorking() throws ElementDoesNotExistException, SerializationException {
+	public void testGetterAreWorking() throws ElementDoesNotExistException, SerializationException, InterruptedException {
 		Submodel expectedSm = TestSubmodels.submodel();
 		repo.createSubmodel(expectedSm);
+		SubmodelEvent evt = listener.next();
+		Assert.assertEquals(SubmodelEventType.SM_CREATED , evt.getType());
+		
 		List<Submodel> result = repo.getAllSubmodels(new PaginationInfo(null, null)).getResult();
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(expectedSm, result.get(0));
@@ -346,9 +350,15 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		if (repo != null) {
 			for (Submodel sm : repo.getAllSubmodels(new PaginationInfo(null, null)).getResult()) {
 				repo.deleteSubmodel(sm.getId());
-				Assert.assertEquals(SubmodelEventType.SM_DELETED, listener.next().getType());		
+				SubmodelEvent evt = listener.next();
+				Assert.assertEquals(SubmodelEventType.SM_DELETED, evt.getType());		
+				Assert.assertEquals(sm.getId(), evt.getType());		
 			} 
 		}
+	}
+	
+	@AfterClass
+	public void assertNoAdditionalEvent() throws InterruptedException {
 		Assert.assertNull(listener.next(1, TimeUnit.SECONDS));
 	}
 }

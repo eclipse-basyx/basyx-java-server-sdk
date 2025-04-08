@@ -32,6 +32,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEventType;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -101,7 +102,7 @@ public class KafkaSubmodelServiceSubmodelEventsIntegrationTest {
 		Assert.assertNull(evt.getSmElement());
 	}
 	
-	@After
+	@AfterClass
 	public void assertNoAdditionalKafkaMessageOnTopic() throws InterruptedException, SerializationException {
 		Assert.assertNull(listener.next(1, TimeUnit.SECONDS));
 	}
