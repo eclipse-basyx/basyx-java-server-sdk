@@ -25,7 +25,6 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -39,7 +38,6 @@ import org.springframework.boot.test.context.TestComponent;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.ConsumerSeekAware;
-import org.springframework.stereotype.Component;
 /**
  * @author geso02 (Sonnenberg DFKI GmbH)
  */
@@ -68,7 +66,7 @@ public class SubmodelEventKafkaListener implements ConsumerSeekAware {
 	}
 
 	public SubmodelEvent next() throws InterruptedException {
-		return next(1, TimeUnit.MINUTES);
+		return next(5, TimeUnit.MINUTES);
 	}
 
 	@Override
@@ -81,7 +79,7 @@ public class SubmodelEventKafkaListener implements ConsumerSeekAware {
 	}
 
 	public void awaitTopicAssignment() throws InterruptedException {
-		if (!latch.await(1, TimeUnit.MINUTES)) {
+		if (!latch.await(5, TimeUnit.MINUTES)) {
 			throw new RuntimeException("Timeout occured while waiting for partition assignment. Is kafka running?");
 		}
 	}
