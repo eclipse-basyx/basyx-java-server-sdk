@@ -357,4 +357,5 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	public void assertNoAdditionalEvent() throws InterruptedException {
 		Assert.assertNull(listener.next(1, TimeUnit.SECONDS));
 	}
+	
 }
