@@ -238,7 +238,6 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 
 		SubmodelElement elem = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_1, "88");
 		repo.createSubmodelElement(ID_SM1, TestSubmodels.IDSHORT_COLL, elem);
-
 		evt = listener.next();
 		Assert.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
 		Assert.assertEquals(ID_SM1, evt.getId());
