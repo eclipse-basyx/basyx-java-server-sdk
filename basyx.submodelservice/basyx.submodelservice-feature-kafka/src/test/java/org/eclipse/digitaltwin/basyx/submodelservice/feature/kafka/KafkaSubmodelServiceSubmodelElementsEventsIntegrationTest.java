@@ -90,8 +90,6 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 	public void awaitAssignment() throws InterruptedException {
 		listener.awaitTopicAssignment();
 		
-		while(listener.next(100, TimeUnit.MICROSECONDS) != null);
-		
 		FileRepository repository = new InMemoryFileRepository();
 		SubmodelBackend backend = new InMemorySubmodelBackend();
 		SubmodelServiceFactory smFactory = new CrudSubmodelServiceFactory(backend ,repository);
@@ -102,13 +100,10 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 	public void testToplevelSubmodelElementAdded() throws InterruptedException, SerializationException {
 		Assert.assertTrue(feature.isEnabled());
 
-		SubmodelEvent evt = listener.next(2, TimeUnit.SECONDS);
-
-		
 		SubmodelElement elem = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_1, "ID");
 		service.createSubmodelElement(elem);
 
-		evt = listener.next();
+		SubmodelEvent evt = listener.next();
 		Assert.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
 		Assert.assertEquals(submodel.getId(), evt.getId());
 		Assert.assertEquals(TestSubmodels.IDSHORT_PROP_1, evt.getSmElementPath());
@@ -173,6 +168,6 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 
 	@After
 	public void assertNoAdditionalKafkaMessageOnTopic() throws InterruptedException, SerializationException {
-		Assert.assertNull(listener.next(300, TimeUnit.MILLISECONDS));
+		Assert.assertNull(listener.next(1, TimeUnit.SECONDS));
 	}
 }

@@ -25,7 +25,6 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -42,11 +41,9 @@ import org.springframework.stereotype.Component;
 /**
  * @author geso02 (Sonnenberg DFKI GmbH)
  */
-@KafkaListener(topics = AasEventKafkaListener.TOPIC_NAME, batch = "false", groupId = "kafka-test-aas", autoStartup = "true")
+@KafkaListener(topics = TestApplication.KAFKA_AAS_TOPIC, batch = "false", groupId = TestApplication.KAFKA_GROUP_ID, autoStartup = "true")
 @Component 
 public class AasEventKafkaListener implements ConsumerSeekAware {
-
-	public static final String TOPIC_NAME = "aas-events";
 	
 	private final LinkedBlockingDeque<AasEvent> evt = new LinkedBlockingDeque<AasEvent>();
 	private final JsonDeserializer deserializer;
@@ -77,7 +74,7 @@ public class AasEventKafkaListener implements ConsumerSeekAware {
 	@Override
 	public void onPartitionsAssigned(Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
 		for (TopicPartition eachPartition : assignments.keySet()) {
-			if (TOPIC_NAME.equals(eachPartition.topic())) {
+			if (TestApplication.KAFKA_AAS_TOPIC.equals(eachPartition.topic())) {
 				latch.countDown();
 			}
 		}

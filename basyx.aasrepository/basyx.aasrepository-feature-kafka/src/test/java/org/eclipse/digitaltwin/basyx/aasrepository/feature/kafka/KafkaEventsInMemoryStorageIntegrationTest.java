@@ -71,8 +71,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @TestPropertySource(properties = { KafkaAasRepositoryFeature.FEATURENAME + ".enabled=true",
 		"spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092",
-		KafkaAasRepositoryFeature.FEATURENAME + ".topic.name=aas-events"
-
+		KafkaAasRepositoryFeature.FEATURENAME + ".topic.name="+TestApplication.KAFKA_AAS_TOPIC
 })
 public class KafkaEventsInMemoryStorageIntegrationTest {
 
@@ -242,8 +241,9 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	public void cleanup() throws InterruptedException {
 		for (AssetAdministrationShell aas : repo.getAllAas(new PaginationInfo(null, null)).getResult()) {
 			repo.deleteAas(aas.getId());
+			AasEvent evtCreated = listener.next();
+			Assert.assertEquals(AasEventType.AAS_DELETED, evtCreated.getType());
 		}
-		while(listener.next(100, TimeUnit.MICROSECONDS) != null);
+		Assert.assertNull(listener.next(1, TimeUnit.SECONDS));
 	}
-	
 }
