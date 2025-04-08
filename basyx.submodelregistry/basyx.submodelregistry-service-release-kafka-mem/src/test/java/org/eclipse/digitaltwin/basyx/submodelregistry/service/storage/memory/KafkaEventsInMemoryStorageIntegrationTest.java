@@ -30,11 +30,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.kafka.common.TopicPartition;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.BaseIntegrationTest;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.EventQueue;
-import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.ConsumerSeekAware;
@@ -53,10 +52,12 @@ public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTe
 	@Autowired
 	private RegistrationEventKafkaListener listener;
 
-	@Before
-	public void awaitAssignment() throws InterruptedException {
+	@Override
+	public void setUp() throws ApiException, InterruptedException {
 		listener.awaitTopicAssignment();
+		super.setUp();
 	}
+	
 	
 	@Override
 	public EventQueue queue() {
@@ -67,12 +68,9 @@ public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTe
 	@Component
 	private static class RegistrationEventKafkaListener implements ConsumerSeekAware {
 		
-		
 		private final EventQueue queue;
 		private final CountDownLatch latch = new CountDownLatch(1);
 		
-		@Value("${spring.kafka.template.default-topic}")
-		private String topicName;
 		
 		@SuppressWarnings("unused")
 		public RegistrationEventKafkaListener(ObjectMapper mapper) {
@@ -88,8 +86,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTe
 		public void onPartitionsAssigned(Map<TopicPartition, Long> assignments,
 					ConsumerSeekCallback callback) {
 			for (TopicPartition eachPartition : assignments.keySet()) {
-				if (topicName.equals(eachPartition.topic())) {
-					callback.seekToEnd(List.of(eachPartition));
+				if ("submodel-registry".equals(eachPartition.topic())) {
 					latch.countDown();
 				}
 			}		
