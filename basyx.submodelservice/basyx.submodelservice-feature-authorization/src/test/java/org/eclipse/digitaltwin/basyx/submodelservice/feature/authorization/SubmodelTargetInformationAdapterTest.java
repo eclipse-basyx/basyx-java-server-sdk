@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization;
 
 import static org.junit.Assert.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InvalidTargetInformationException;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.rbac.backend.submodel.SubmodelTargetInformationAdapter;
+import org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization.rbac.backend.submodel.SubmodelTargetInformationAdapter;
 
 /**
  * Tests {@link SubmodelTargetInformationAdapter}
