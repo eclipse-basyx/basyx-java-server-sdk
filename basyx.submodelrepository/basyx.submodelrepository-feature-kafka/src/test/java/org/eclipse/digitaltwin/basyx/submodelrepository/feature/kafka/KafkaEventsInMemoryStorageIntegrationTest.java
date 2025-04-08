@@ -247,8 +247,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@Test
-	public void testSubmodelElementAddedAndBlobValueNotPartOfTheEvent() throws InterruptedException {
-		
+	public void testSubmodelElementAddedAndBlobValueNotPartOfTheEvent() throws InterruptedException {		
 		Submodel sm = TestSubmodels.submodel();
 		repo.createSubmodel(sm);
 		SubmodelEvent evt = listener.next();
