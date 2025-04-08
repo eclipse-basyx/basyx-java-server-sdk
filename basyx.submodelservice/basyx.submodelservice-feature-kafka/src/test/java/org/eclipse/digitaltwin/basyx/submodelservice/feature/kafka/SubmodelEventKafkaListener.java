@@ -38,7 +38,6 @@ import org.springframework.boot.test.context.TestComponent;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.ConsumerSeekAware;
-import org.springframework.stereotype.Component;
 /**
  * @author geso02 (Sonnenberg DFKI GmbH)
  */
