@@ -43,7 +43,6 @@ import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InvalidTargetInformationException;
-import org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization.SubmodelTargetInformation;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization.rbac.backend.submodel.SubmodelTargetInformationAdapter;
 
 /**

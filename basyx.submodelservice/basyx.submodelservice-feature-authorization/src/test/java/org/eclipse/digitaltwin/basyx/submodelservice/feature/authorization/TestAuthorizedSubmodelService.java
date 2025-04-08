@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -40,7 +40,6 @@ import java.io.File;
 import org.eclipse.digitaltwin.basyx.authorization.AccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.authorization.DummyCredential;
 import org.eclipse.digitaltwin.basyx.authorization.DummyCredentialStore;
-import org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization.AuthorizedSubmodelService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
