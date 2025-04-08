@@ -25,8 +25,6 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
-import java.util.concurrent.TimeUnit;
-
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -35,6 +33,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.AasEventKafkaLi
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.KafkaAasRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.TestShells;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEvent;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEventType;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.kafka.KafkaSubmodelRepositoryFeature;
@@ -145,11 +144,14 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	public void cleanup() throws InterruptedException {	
 		for (AssetAdministrationShell aas : aasRepo.getAllAas(new PaginationInfo(null, null)).getResult()) {
 			aasRepo.deleteAas(aas.getId());
+			AasEvent aasEvt = aasEventListener.next();
+			Assert.assertEquals(AasEventType.AAS_DELETED, aasEvt.getType());
 		}
 
 		for (Submodel sm : smRepo.getAllSubmodels(new PaginationInfo(null, null)).getResult()) {
 			smRepo.deleteSubmodel(sm.getId());
+			SubmodelEvent smEvt = submodelEventListener.next();
+			Assert.assertEquals(AasEventType.AAS_DELETED, smEvt.getType());
 		}
-		while(submodelEventListener.next(300, TimeUnit.MICROSECONDS) != null);
 	}
 }
