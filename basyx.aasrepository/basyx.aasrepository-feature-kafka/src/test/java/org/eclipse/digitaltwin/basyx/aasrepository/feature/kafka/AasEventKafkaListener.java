@@ -68,7 +68,7 @@ public class AasEventKafkaListener implements ConsumerSeekAware {
 	}
 
 	public AasEvent next() throws InterruptedException {
-		return next(1, TimeUnit.MINUTES);
+		return next(5, TimeUnit.MINUTES);
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class AasEventKafkaListener implements ConsumerSeekAware {
 	}
 
 	public void awaitTopicAssignment() throws InterruptedException {
-		if (!latch.await(1, TimeUnit.MINUTES)) {
+		if (!latch.await(5, TimeUnit.MINUTES)) {
 			throw new RuntimeException("Timeout occured while waiting for partition assignment. Is kafka running?");
 		}
 	}
