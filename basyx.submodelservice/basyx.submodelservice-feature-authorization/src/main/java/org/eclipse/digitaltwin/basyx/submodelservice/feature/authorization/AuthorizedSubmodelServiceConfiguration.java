@@ -66,9 +66,4 @@ public class AuthorizedSubmodelServiceConfiguration {
 		return new SubmodelTargetInformationAdapter();
 	}
 	
-	@Bean
-	@ConditionalOnProperty(name = "spring.security.oauth2.resourceserver.jwt.issuer-uri", matchIfMissing = false)
-	public JwtDecoder jwtDecoder(@Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String issuerUri) {
-		return JwtDecoders.fromIssuerLocation(issuerUri);
-	}
 }
