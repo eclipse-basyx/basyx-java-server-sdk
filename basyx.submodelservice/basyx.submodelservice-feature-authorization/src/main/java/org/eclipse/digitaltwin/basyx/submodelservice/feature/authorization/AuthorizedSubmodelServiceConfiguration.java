@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
+package org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization;
 
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
@@ -32,20 +32,24 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.SimpleRbacPermissionReso
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RoleProvider;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetPermissionVerifier;
 import org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.submodel.TargetInformationAdapter;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.rbac.SubmodelTargetPermissionVerifier;
-import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.rbac.backend.submodel.SubmodelTargetInformationAdapter;
+import org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization.rbac.SubmodelTargetPermissionVerifier;
+import org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization.rbac.backend.submodel.SubmodelTargetInformationAdapter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtDecoders;
 
 /**
- * Configuration for authorized {@link AuthorizedSubmodelRepository}
+ * Configuration for AuthorizedSubmodelService
  * 
- * @author danish
+ * @author Gerhard Sonnenberg ( DFKI GmbH )
  */
 @Configuration
 @ConditionalOnExpression("#{${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false}}")
-public class AuthorizedSubmodelRepositoryConfiguration {
+public class AuthorizedSubmodelServiceConfiguration {
 
 	@Bean
 	public TargetPermissionVerifier<SubmodelTargetInformation> getSubmodelTargetPermissionVerifier() {
@@ -54,14 +58,12 @@ public class AuthorizedSubmodelRepositoryConfiguration {
 
 	@Bean
 	public RbacPermissionResolver<SubmodelTargetInformation> getSubmodelPermissionResolver(RbacStorage rbacStorage, RoleProvider roleProvider, TargetPermissionVerifier<SubmodelTargetInformation> targetPermissionVerifier) {
-
 		return new SimpleRbacPermissionResolver<>(rbacStorage, roleProvider, targetPermissionVerifier);
 	}
 	
 	@Bean
 	public TargetInformationAdapter getSubmodelTargetInformationAdapter() {
-
 		return new SubmodelTargetInformationAdapter();
 	}
-
+	
 }

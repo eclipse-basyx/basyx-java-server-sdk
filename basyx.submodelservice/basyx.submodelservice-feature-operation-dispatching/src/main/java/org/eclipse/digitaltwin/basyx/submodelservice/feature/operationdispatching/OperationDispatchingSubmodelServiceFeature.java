@@ -31,6 +31,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatchin
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
@@ -38,6 +40,7 @@ import org.springframework.stereotype.Component;
  */
 @ConditionalOnProperty(name = OperationDispatchingSubmodelServiceFeature.FEATURENAME +".enabled", havingValue = "true", matchIfMissing = false)
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class OperationDispatchingSubmodelServiceFeature implements SubmodelServiceFeature {
 
 	public final static String FEATURENAME = "basyx.submodelservice.feature.operation.dispatcher";

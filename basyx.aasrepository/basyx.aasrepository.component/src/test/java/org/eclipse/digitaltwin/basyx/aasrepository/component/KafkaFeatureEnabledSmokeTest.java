@@ -33,6 +33,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.KafkaAasRepositoryFeature;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.TestApplication;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.AasEventKafkaListener;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEvent;
@@ -66,7 +67,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @TestPropertySource(properties = { "basyx.feature.kafka.enabled=true",
 		"spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092",
 		KafkaAasRepositoryFeature.FEATURENAME + "kafka.enabled=true",
-		KafkaAasRepositoryFeature.FEATURENAME + ".topic.name=" + AasEventKafkaListener.TOPIC_NAME })
+		KafkaAasRepositoryFeature.FEATURENAME + ".topic.name=" + TestApplication.KAFKA_AAS_TOPIC })
 public class KafkaFeatureEnabledSmokeTest {
 
 	@LocalServerPort
