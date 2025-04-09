@@ -36,8 +36,6 @@ jobs:
         - name: submodel-repository
           path: basyx.submodelrepository/basyx.submodelrepository.component
         - name: submodel-service
-          path: basyx.submodelservice/basyx.submodelservice.component
-        - name: conceptdescription-repository
           path: basyx.conceptdescriptionrepository/basyx.conceptdescriptionrepository.component
         - name: aas-discovery
           path: basyx.aasdiscoveryservice/basyx.aasdiscoveryservice.component
@@ -140,9 +138,7 @@ jobs:
           tags: |
             ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:2.0.0-SNAPSHOT
             ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:2.0.0-SNAPSHOT-${{ env.SHORT_SHA }}
-          build-args:
-            FINAL_NAME=${{ env.FINAL_NAME }}
-            AAS4J_VERSION=1.0.4
+          build-args: FINAL_NAME=${{ env.FINAL_NAME }}
 
       - name: Verify Docker Image
         run: |
