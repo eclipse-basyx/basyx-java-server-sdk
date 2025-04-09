@@ -227,7 +227,6 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		Assert.assertEquals(TestSubmodels.IDSHORT_PROP_0, evt.getSmElementPath());
 		Assert.assertNull(evt.getSubmodel());
 		Assert.assertEquals(elem, evt.getSmElement());
-
 	}
 
 	@Test
@@ -239,7 +238,6 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 
 		SubmodelElement elem = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_1, "88");
 		repo.createSubmodelElement(ID_SM1, TestSubmodels.IDSHORT_COLL, elem);
-
 		evt = listener.next();
 		Assert.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
 		Assert.assertEquals(ID_SM1, evt.getId());
@@ -249,8 +247,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@Test
-	public void testSubmodelElementAddedAndBlobValueNotPartOfTheEvent() throws InterruptedException {
-		
+	public void testSubmodelElementAddedAndBlobValueNotPartOfTheEvent() throws InterruptedException {		
 		Submodel sm = TestSubmodels.submodel();
 		repo.createSubmodel(sm);
 		SubmodelEvent evt = listener.next();
@@ -315,9 +312,12 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@Test
-	public void testGetterAreWorking() throws ElementDoesNotExistException, SerializationException {
+	public void testGetterAreWorking() throws ElementDoesNotExistException, SerializationException, InterruptedException {
 		Submodel expectedSm = TestSubmodels.submodel();
 		repo.createSubmodel(expectedSm);
+		SubmodelEvent evt = listener.next();
+		Assert.assertEquals(SubmodelEventType.SM_CREATED , evt.getType());
+		
 		List<Submodel> result = repo.getAllSubmodels(new PaginationInfo(null, null)).getResult();
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(expectedSm, result.get(0));
@@ -346,9 +346,12 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		if (repo != null) {
 			for (Submodel sm : repo.getAllSubmodels(new PaginationInfo(null, null)).getResult()) {
 				repo.deleteSubmodel(sm.getId());
-			}
+				SubmodelEvent evt = listener.next();
+				Assert.assertEquals(SubmodelEventType.SM_DELETED, evt.getType());		
+				Assert.assertEquals(sm.getId(), evt.getId());		
+			} 
 		}
-		while (listener.next(300, TimeUnit.MICROSECONDS) != null);
-
 	}
+	
+
 }

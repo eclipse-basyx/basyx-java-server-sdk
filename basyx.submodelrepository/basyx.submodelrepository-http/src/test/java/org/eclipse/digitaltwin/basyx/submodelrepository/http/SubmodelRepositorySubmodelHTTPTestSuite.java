@@ -322,7 +322,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	public void uploadFileToFileSubmodelElement() throws IOException {
 		CloseableHttpResponse submodelElementFileUploadResponse = uploadFileToSubmodelElement(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT);
 
-		assertEquals(HttpStatus.OK.value(), submodelElementFileUploadResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), submodelElementFileUploadResponse.getCode());
 	}
 
 	@Test

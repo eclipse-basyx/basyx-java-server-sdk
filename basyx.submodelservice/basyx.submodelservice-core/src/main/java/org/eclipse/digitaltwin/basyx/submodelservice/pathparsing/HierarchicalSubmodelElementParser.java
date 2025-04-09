@@ -85,6 +85,12 @@ public class HierarchicalSubmodelElementParser {
 	 */
 	public String getIdShortPathOfParentElement(String idShortPath) {
 
+		boolean isLastElementABracket = idShortPath.endsWith("]");
+		if (isLastElementABracket){
+			int lastElementBracketIndex = idShortPath.lastIndexOf("[");
+			return idShortPath.substring(0, lastElementBracketIndex);
+		}
+
 		int lastElementIdShortIndex = idShortPath.lastIndexOf(".");
 
 		if (lastElementIdShortIndex == -1)
