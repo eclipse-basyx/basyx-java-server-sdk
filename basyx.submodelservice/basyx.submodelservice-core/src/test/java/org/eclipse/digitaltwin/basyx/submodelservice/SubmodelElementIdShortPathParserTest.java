@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Stack;
 
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.HierarchicalSubmodelElementParser;
 import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.PathToken;
 import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.SubmodelElementIdShortPathParser;
 import org.junit.Test;
@@ -77,5 +78,28 @@ public class SubmodelElementIdShortPathParserTest {
 		SubmodelElementIdShortPathParser pathParser = new SubmodelElementIdShortPathParser();
 		Stack<PathToken> tokenStack = pathParser.parsePathTokens(ID_SHORT_WITH_SPECIAL_CHARACTERS);
 		assertEquals(ID_SHORT_WITH_SPECIAL_CHARACTERS, tokenStack.pop().getToken());
+	}
+
+	@Test
+	public void parentPathIsExtractedCorrectly() {
+		String[][] testCases = {
+				// input                expected output
+				{ "a",                 "a" },
+				{ "a.b",               "a" },
+				{ "a.b[0]",            "a.b" },
+				{ "a.b[0].c",          "a.b[0]" },
+				{ "a.b[0].c.d",        "a.b[0].c" },
+				{ "sensor[3].value[1]", "sensor[3].value" },
+				{ "root.list[12][3]",  "root.list[12]" },
+				{ "deep.nest[4].elem[2].data", "deep.nest[4].elem[2]" },
+		};
+
+		for (String[] testCase : testCases) {
+			String input = testCase[0];
+			String expected = testCase[1];
+			HierarchicalSubmodelElementParser hierarchicalSubmodelElementParser = new HierarchicalSubmodelElementParser(null);
+			String actual = hierarchicalSubmodelElementParser.getIdShortPathOfParentElement(input);
+			assertEquals("Failed for input: " + input, expected, actual);
+		}
 	}
 }
