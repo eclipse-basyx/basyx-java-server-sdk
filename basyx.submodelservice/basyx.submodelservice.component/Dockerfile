@@ -1,4 +1,4 @@
-FROM amazoncorretto:17
+FROM eclipse-temurin:17
 RUN mkdir -p /application/classes
 RUN chmod -R a+rwx /application/classes
 USER nobody
