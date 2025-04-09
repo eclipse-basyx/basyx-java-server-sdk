@@ -245,7 +245,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 			fileInputstream = file.getInputStream();
 			repository.setFileValue(submodelIdentifier.getIdentifier(), idShortPath, fileName, fileInputstream);
 			closeInputStream(fileInputstream);
-			return new ResponseEntity<Void>(HttpStatus.OK);
+			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 		} catch (ElementDoesNotExistException e) {
 			closeInputStream(fileInputstream);
 			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
