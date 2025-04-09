@@ -140,7 +140,9 @@ jobs:
           tags: |
             ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:2.0.0-SNAPSHOT
             ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:2.0.0-SNAPSHOT-${{ env.SHORT_SHA }}
-          build-args: ${{ env.FINAL_ARGS }}
+          build-args:
+            ${{ env.FINAL_ARGS }}
+            AAS4J_VERSION=1.0.4
 
       - name: Verify Docker Image
         run: |
