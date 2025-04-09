@@ -465,6 +465,23 @@ public abstract class SubmodelServiceSuite {
 	}
 
 	@Test
+	public void updateSMEInSubmodelElementList(){
+		Submodel operationDataSubmodel = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
+		SubmodelService submodelService = getSubmodelService(operationDataSubmodel);
+
+		DefaultProperty submodelElement = (DefaultProperty) submodelService.getSubmodelElement(generateIdShortPath());
+
+		String expectedValue = "1308";
+		submodelElement.setValue(expectedValue);
+
+		submodelService.updateSubmodelElement(generateIdShortPath(), submodelElement);
+
+		DefaultProperty actualElement = (DefaultProperty) submodelService.getSubmodelElement(generateIdShortPath());
+
+        assertEquals(expectedValue, actualElement.getValue());
+	}
+
+	@Test
 	public void deleteNestedSubmodelElementInSubmodelElementCollection() {
 		Submodel operationDataSubmodel = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
 		SubmodelService submodelService = getSubmodelService(operationDataSubmodel);

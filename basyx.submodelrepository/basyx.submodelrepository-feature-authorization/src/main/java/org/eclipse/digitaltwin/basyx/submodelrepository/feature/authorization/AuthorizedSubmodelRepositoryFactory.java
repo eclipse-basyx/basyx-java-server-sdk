@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization.SubmodelTargetInformation;
 
 /**
  * Factory for creating {@link AuthorizedSubmodelRepository}

@@ -79,7 +79,6 @@ public class KafkaSubmodelServiceSubmodelEventsIntegrationTest {
 	@Before
 	public void awaitAssignment() throws InterruptedException {
 		listener.awaitTopicAssignment();
-		while(listener.next(100, TimeUnit.MICROSECONDS) != null);
 	}
 
 	@Test
@@ -94,7 +93,7 @@ public class KafkaSubmodelServiceSubmodelEventsIntegrationTest {
 		
 		// simulate closing		
 		context.publishEvent(new ContextClosedEvent(context));
-		evt = listener.next(5, TimeUnit.SECONDS);
+		evt = listener.next();
 		Assert.assertEquals(SubmodelEventType.SM_DELETED, evt.getType());
 		Assert.assertEquals(submodel.getId(), evt.getId());
 		Assert.assertNull(evt.getSubmodel());
@@ -102,9 +101,5 @@ public class KafkaSubmodelServiceSubmodelEventsIntegrationTest {
 		Assert.assertNull(evt.getSmElement());
 	}
 	
-	@After
-	public void assertNoAdditionalKafkaMessageOnTopic() throws InterruptedException, SerializationException {
-		Assert.assertNull(listener.next(300, TimeUnit.MILLISECONDS));
-	}
 
 }

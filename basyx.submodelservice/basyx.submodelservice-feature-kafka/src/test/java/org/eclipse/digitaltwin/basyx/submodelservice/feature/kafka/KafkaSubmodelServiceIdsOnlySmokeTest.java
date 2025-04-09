@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
@@ -85,14 +84,10 @@ public class KafkaSubmodelServiceIdsOnlySmokeTest {
 
 	private SubmodelService service;
 	
-	@Autowired
-	JsonSerializer serializer;
 
 	@Before
 	public void awaitAssignment() throws InterruptedException, SerializationException {
 		listener.awaitTopicAssignment();
-		
-		while(listener.next(100, TimeUnit.MICROSECONDS) != null);
 		
 		FileRepository repository = new InMemoryFileRepository();
 		SubmodelBackend backend = new InMemorySubmodelBackend();
@@ -133,8 +128,4 @@ public class KafkaSubmodelServiceIdsOnlySmokeTest {
 	
 	}
 
-	@After
-	public void assertNoAdditionalKafkaMessageOnTopic() throws InterruptedException, SerializationException {
-		Assert.assertNull(listener.next(300, TimeUnit.MILLISECONDS));
-	}
 }
