@@ -33,6 +33,5 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-
       - name: Validate Javadoc
-        run: mvn clean javadoc:javadoc
+        run: mvn package -DskipTests javadoc:javadoc

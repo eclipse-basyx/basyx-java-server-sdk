@@ -48,7 +48,7 @@ public class TestAasDiscoveryServiceHTTP extends AasDiscoveryServiceHTTPSuite {
 
 	@BeforeClass
 	public static void startConceptDescriptionRepo() {
-		appContext = new SpringApplicationBuilder(DummyAasDiscoveryServiceComponent.class).profiles("httptests").run();
+		appContext = new SpringApplicationBuilder(DummyAasDiscoveryServiceComponent.class).run();
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class TestAasDiscoveryServiceHTTP extends AasDiscoveryServiceHTTPSuite {
 
 	@Override
 	protected String getURL() {
-		return "http://localhost:8080/lookup/shells";
+		return "http://localhost:4753/lookup/shells";
 	}
 
 }

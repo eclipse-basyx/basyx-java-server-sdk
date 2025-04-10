@@ -82,21 +82,26 @@ public class AuthorizedAasEnvironment implements AasEnvironment {
 		
 		return decorated.createAASXAASEnvironmentSerialization(aasIds, submodelIds, includeConceptDescriptions);
 	}
-	
+
 	private void throwExceptionIfInsufficientPermission(boolean isAuthorized) {
 		if (!isAuthorized)
 			throw new InsufficientPermissionException("Insufficient Permission: The current subject does not have the required permissions for this operation.");
 	}
 
 	@Override
-	public void loadEnvironment(CompleteEnvironment completeEnvironment) {
+	public void loadEnvironment(CompleteEnvironment completeEnvironment, boolean ignoreDuplicates) {
 		Environment environment = completeEnvironment.getEnvironment();
 		
 		boolean isAuthorized = permissionResolver.hasPermission(Action.CREATE, new AasEnvironmentTargetInformation(getAasIds(environment.getAssetAdministrationShells()), getSubmodelIds(environment.getSubmodels())));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
-		decorated.loadEnvironment(completeEnvironment);
+		decorated.loadEnvironment(completeEnvironment, ignoreDuplicates);
+	}
+
+	@Override
+	public void loadEnvironment(CompleteEnvironment completeEnvironment) {
+		loadEnvironment(completeEnvironment, false);
 	}
 
 	private List<String> getSubmodelIds(List<Submodel> submodels) {

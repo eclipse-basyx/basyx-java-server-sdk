@@ -1,0 +1,294 @@
+mongodb:
+  enabled: true
+  auth:
+    enabled: true
+    rootUser: adminUser
+    rootPassword: adminPassword
+  architecture: standalone
+  persistence:
+    size: 10Gi
+  service:
+    nameOverride: mongodb
+
+keycloak:
+  enabled: false
+  postgresql:
+    enabled: true
+    auth:
+      username: keycloak
+      password: password
+      database: keycloak
+  ingress:
+    enabled: false
+    ingressClassName: ""
+    hostname: keycloak.basyx.local
+    tls: false
+  apirule:
+    enabled: false
+    host: keycloak.basyx.local
+    methods: 
+      - "GET" 
+      - "HEAD" 
+      - "POST" 
+      - "PUT" 
+      - "DELETE" 
+      - "CONNECT" 
+      - "OPTIONS" 
+      - "TRACE"
+      - "PATCH"
+  auth:
+    adminUser: user
+    adminPassword: password
+  service:
+    type: ClusterIP
+  fullnameOverride: basyx-keycloak
+  extraVolumes:
+    - name: basyx-keycloak-realm
+      configMap:
+        name: basyx-keycloak-realm
+  extraVolumeMounts:
+    - mountPath: /opt/keycloak/data/import/BaSyx-realm.json
+      subPath: BaSyx-realm.json
+      name: basyx-keycloak-realm
+  command: ["/bin/sh", "-c"]
+  args: ["kc.sh import --file /opt/keycloak/data/import/BaSyx-realm.json; kc.sh start-dev --hostname=keycloak.basyx.local --hostname-strict=false --hostname-debug=true"]
+
+aas-registry:
+  enabled: true
+  image:
+    # Possible current options:
+    # - eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
+    # - eclipsebasyx/aas-registry-kafka-mongodb:2.0.0-SNAPSHOT - Storage - MongoDB - Event-sink- Kafka
+    # - eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT - Storage - MongoDB - Event-sink- Logging (Pod)
+    # - eclipsebasyx/aas-registry-kafka-mem:2.0.0-SNAPSHOT - Storage - In-memory - Event-sink- Kafka
+    # - eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT - Storage - In-memory - Event-sink- Logging (Pod)
+
+    # If Kafka is used, then the appropriate Bootstrap connection string must be provided.
+    # If Mongo is used, then the appropriate MongoDB connection string must be provided.
+    name: eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
+    pullPolicy: IfNotPresent
+  service:
+    port: 8080
+  # Keep it null if not deploying a Kafka instance.
+  kafka:
+    connectionString: null
+  mongodb:
+    connectionString: mongodb://adminUser:adminPassword@mongodb:27017
+  ingress:
+    enabled: false
+    host: registry.basyx.factory-x.catena-x.net
+  apirule:
+    enabled: false
+    host: registry.basyx.local
+    methods: 
+      - "GET" 
+      - "HEAD" 
+      - "POST" 
+      - "PUT" 
+      - "DELETE" 
+      - "CONNECT" 
+      - "OPTIONS" 
+      - "TRACE"
+      - "PATCH"
+  config: |-
+    basyx:
+      cors:
+        allowed-origins: "*"
+        allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
+
+sm-registry:
+  enabled: true
+  image:
+    # Images similar to those above.
+    # name: eclipsebasyx/submodel-registry-log-mongodb:2.0.0-SNAPSHOT
+    name: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
+    pullPolicy: Always
+  service:
+    port: 8080
+  mongodb:
+    # connectionString: mongodb://adminUser:adminPassword@mongodb:27017
+    connectionString: null
+  ingress:
+    enabled: false
+    host: smregistry.basyx.local
+  apirule:
+    enabled: false
+    host: smregistry.basyx.local
+    methods: 
+      - "GET" 
+      - "HEAD" 
+      - "POST" 
+      - "PUT" 
+      - "DELETE" 
+      - "CONNECT" 
+      - "OPTIONS" 
+      - "TRACE"
+      - "PATCH"
+  config: |-
+    basyx:
+      cors:
+        allowed-origins: "*"
+        allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
+
+aas-discovery:
+  enabled: true
+  image:
+    name: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
+    pullPolicy: IfNotPresent
+  service:
+    port: 8080
+  config: |-
+    server.port=8080
+    spring.application.name=AAS Discovery Service
+
+    basyx.aasdiscoveryservice.name=aas-discovery-service
+
+    basyx.backend=InMemory
+    # basyx.backend=MongoDB
+    # spring.data.mongodb.host=mongo
+    # spring.data.mongodb.database=aas-discovery
+    # spring.data.mongodb.authentication-database=admin
+    # spring.data.mongodb.username=mongoAdmin
+    # spring.data.mongodb.password=mongoPassword
+
+    basyx.cors.allowed-origins=*
+    basyx.cors.allowed-methods=GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+
+    basyx.feature.authorization.enabled = true
+    basyx.feature.authorization.type = rbac
+    basyx.feature.authorization.jwtBearerTokenProvider = keycloak
+    basyx.feature.authorization.rbac.file = file:/application/rbac_rules.json
+    spring.security.oauth2.resourceserver.jwt.issuer-uri = http://basyx-keycloak.basyx.svc.cluster.local:8080/realms/BaSyx
+  ingress:
+    enabled: false
+    host: discovery.basyx.local
+  apirule:
+    enabled: false
+    host: discovery.basyx.local
+    methods: 
+      - "GET" 
+      - "HEAD" 
+      - "POST" 
+      - "PUT" 
+      - "DELETE" 
+      - "CONNECT" 
+      - "OPTIONS" 
+      - "TRACE"
+      - "PATCH"
+
+# Also needs an ingress.
+aas-environment:
+  enabled: true
+  image:
+    name: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
+    pullPolicy: Always
+  service:
+    port: 8081
+  config: |-
+    server.port=8081
+
+    basyx.backend = InMemory
+    # basyx.backend = MongoDB
+    # spring.data.mongodb.host=mongodb
+    # spring.data.mongodb.database=aas-env
+    # spring.data.mongodb.authentication-database=admin
+    # spring.data.mongodb.username=adminUser
+    # spring.data.mongodb.password=adminPassword
+
+    #basyx.environment=file:aas
+    
+    basyx.cors.allowed-origins=*
+    basyx.cors.allowed-methods=GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+    basyx.aasrepository.feature.registryintegration=https://registry.basyx.local
+    basyx.submodelrepository.feature.registryintegration=https://smregistry.basyx.local
+    basyx.externalurl=https://basyx.local
+    spring.servlet.multipart.max-file-size=128MB
+    spring.servlet.multipart.max-request-size=128MB
+    
+    basyx.aasrepository.feature.mqtt.enabled = true
+    basyx.submodelrepository.feature.mqtt.enabled = true
+    mqtt.clientId=basyx
+    mqtt.hostname=mqttbroker.local
+    mqtt.protocol=wss
+    mqtt.port=443
+    mqtt.username=fx-factory
+    mqtt.password=password
+  ingress:
+    enabled: false
+    host: enviroment.basyx.local
+  apirule:
+    enabled: false
+    host: enviroment.basyx.local
+    methods: 
+      - "GET" 
+      - "HEAD" 
+      - "POST" 
+      - "PUT" 
+      - "DELETE" 
+      - "CONNECT" 
+      - "OPTIONS" 
+      - "TRACE"
+      - "PATCH"
+
+# Needs specific ingress.
+aas-web-ui:
+  enabled: true
+  image:
+    name: eclipsebasyx/aas-gui:SNAPSHOT
+    pullPolicy: Always
+  ingress:
+    enabled: false
+    host: ui.basyx.local
+  apirule:
+    enabled: false
+    host: ui.basyx.local
+    methods: 
+      - "GET" 
+      - "HEAD" 
+      - "POST" 
+      - "PUT" 
+      - "DELETE" 
+      - "CONNECT" 
+      - "OPTIONS" 
+      - "TRACE"
+      - "PATCH"
+  config:
+    aasRepoUrl: "aas-environment:8080/shells"
+    aasSubmodelsRepoUrl: "aas-environment:8080/submodels"
+    conceptdescriptionRepoUrl: "aas-environment:8080/concept-descriptions"
+    aasRegistryUrl: "aas-registry:8080/api/v3.0"
+    submodelRegistryUrl: "sm-registry:8080/api/v3.0"
+    keycloakUrl: "https://keycloak.basyx.local"
+    keacloakRealm: BaSyx
+    keycloakClientId: basyx-web-ui
+  externalPlugins:
+    enabled: false
+    plugins:
+    - fileName: HelloWorldPlugin.vue
+      configMapName: hello-world-plugin
+
+mqtt:
+  enabled: true
+  websockets:
+    enabled: true
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: websockets.mqtt.basyx.local
+        type: websockets
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+      - host: mqtt.basyx.local
+        type: mqtt
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
