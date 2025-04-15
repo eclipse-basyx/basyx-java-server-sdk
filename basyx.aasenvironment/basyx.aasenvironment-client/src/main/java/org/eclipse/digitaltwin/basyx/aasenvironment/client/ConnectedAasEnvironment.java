@@ -111,6 +111,11 @@ public class ConnectedAasEnvironment implements AasEnvironment {
 	}
 
 	@Override
+	public void loadEnvironment(CompleteEnvironment completeEnvironment, boolean ignoreDuplicates) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
 	public void loadEnvironment(CompleteEnvironment completeEnvironment) {
 		// TODO Auto-generated method stub
 		
