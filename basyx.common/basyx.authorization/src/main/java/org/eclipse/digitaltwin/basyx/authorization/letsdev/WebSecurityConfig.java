@@ -1,4 +1,4 @@
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.letsdev;
+package org.eclipse.digitaltwin.basyx.authorization.letsdev;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

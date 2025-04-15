@@ -1,4 +1,4 @@
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.letsdev;
+package org.eclipse.digitaltwin.basyx.authorization.letsdev;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +15,11 @@ public class LdSsoConfigProperties {
     public String[] getWhitelistedIps() {
 
         return whitelistedIps;
+    }
+
+    public void setWhitelistedIps(String[] whitelistedIps) {
+
+        this.whitelistedIps = whitelistedIps;
     }
 
     public String getBaseUrl() {
