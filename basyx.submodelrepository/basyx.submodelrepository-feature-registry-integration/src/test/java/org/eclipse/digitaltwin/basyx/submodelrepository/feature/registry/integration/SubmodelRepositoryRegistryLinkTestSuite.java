@@ -42,7 +42,6 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistr
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.DummySubmodelDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.GetSubmodelDescriptorsResult;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
@@ -64,6 +63,11 @@ public abstract class SubmodelRepositoryRegistryLinkTestSuite {
 
 	private final SubmodelDescriptor DUMMY_DESCRIPTOR = DummySubmodelDescriptorFactory.createDummyDescriptor(DUMMY_SUBMODEL_ID, DUMMY_SUBMODEL_IDSHORT, DummySubmodelDescriptorFactory.createSemanticId(),
 			DummySubmodelDescriptorFactory.buildAdministrationInformation("0", "9", "testTemplateId"), getSubmodelRepoBaseUrls());
+	
+	@Before
+	public void cleanup() throws ApiException {
+		getSubmodelRegistryApi().deleteAllSubmodelDescriptors();
+	}
 	
 	@Test
 	public void createSubmodel() throws FileNotFoundException, IOException, ApiException {
@@ -137,7 +141,7 @@ public abstract class SubmodelRepositoryRegistryLinkTestSuite {
 	}
 
 	private String getSubmodelJSONString() throws FileNotFoundException, IOException {
-		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodel.json");
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("SingleSubmodel_RegInt.json");
 	}
 
 	private String getSinglePropertyJSONString() throws FileNotFoundException, IOException {

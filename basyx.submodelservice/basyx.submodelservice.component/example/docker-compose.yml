@@ -1,0 +1,91 @@
+networks:
+  auth:
+    driver: bridge
+
+services:
+  submodel-service:
+    image: eclipsebasyx/submodel-service:${REVISION}
+    container_name: submodel-service
+    pull_policy: missing
+    environment:
+      # add the mounted jar file file:submodel.json or submodel.json
+      BASYX_SUBMODELSERVICE_SUBMODEL_FILE: submodel.json
+      # we add all sources -> they will be compiled on startup
+      BASYX_SUBMODELSERVICE_FEATURE_OPERATION_DISPATCHER_JAVA_SOURCES: sources
+      # this is the jar file
+      BASYX_SUBMODELSERVICE_FEATURE_OPERATION_DISPATCHER_JAVA_ADDITIONALCLASSPATH: jars/HelloWorld.jar
+      # we specify the mappings in the application-mappings.yml
+      SPRING_PROFILES_ACTIVE: mappings
+    ports:
+      - ${PORT}:8081
+    volumes:
+      - ./submodel.json:/application/submodel.json:ro
+      - ./sources/:/application/sources/:ro
+      - ./jars/HelloWorld.jar:/application/jars/HelloWorld.jar:ro
+      - ./application-mappings.yml:/application/config/application-mappings.yml/:ro
+  submodel-service-auth:
+    image: eclipsebasyx/submodel-service:${REVISION}
+    container_name: submodel-service-auth
+    pull_policy: missing    
+    # extra_hosts:
+    # - "host.docker.internal:host-gateway"
+    environment:
+      # add the mounted jar file file:submodel.json or submodel.json
+      BASYX_SUBMODELSERVICE_SUBMODEL_FILE: submodel.json
+      # we add all sources -> they will be compiled on startup
+      BASYX_SUBMODELSERVICE_FEATURE_OPERATION_DISPATCHER_JAVA_SOURCES: sources
+      # this is the jar file
+      BASYX_SUBMODELSERVICE_FEATURE_OPERATION_DISPATCHER_JAVA_ADDITIONALCLASSPATH: jars/HelloWorld.jar
+      # we specify the mappings in the application-mappings.yml
+      # and rbac related things in application-security.yml
+      SPRING_PROFILES_ACTIVE: mappings,rbac
+    ports:
+      - ${PORT_AUTH}:8081
+    volumes:
+      - ./auth/rbac_rules.json:/application/rbac_rules.json:ro
+      - ./auth/application-rbac.yml:/application/config/application-rbac.yml/:ro
+      - ./submodel.json:/application/submodel.json:ro
+      - ./sources/:/application/sources/:ro
+      - ./jars/HelloWorld.jar:/application/jars/HelloWorld.jar:ro
+      - ./application-mappings.yml:/application/config/application-mappings.yml/:ro
+    networks:
+      - auth
+    depends_on:
+      keycloak-healthcheck:
+        condition: service_completed_successfully
+
+  keycloak:
+    image: test/keycloak-submodel:24.0.4
+    build: 
+      context: ../../../ci/keycloak
+      dockerfile: Dockerfile.keycloak
+    container_name: keycloak
+    command: ["start-dev", "--import-realm"]
+    ports:
+      - 9102:9102
+    environment:
+      KC_HTTP_PORT: 9102
+      KC_HTTP_ENABLED: "true"
+      KC_HTTPS_ENABLED: "false"
+      KC_HEALTH_ENABLED: "true"      
+      KC_HOSTNAME: localhost
+      KC_SPI_INITIALIZER_ISSUER_BASE_URI: http://keycloak:9102
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: keycloak-admin
+      KC_IMPORT: /opt/keycloak/data/import/
+    networks:
+      - auth   
+      
+  keycloak-healthcheck:
+    image: curlimages/curl:latest
+    command: >
+      sh -c "
+        echo 'Waiting for Keycloak to become ready...';
+        until curl -sf http://keycloak:9102/health/ready; do
+          sleep 5;
+        done;
+        echo 'Keycloak is ready!'"
+    depends_on:
+      - keycloak
+    networks:
+      - auth

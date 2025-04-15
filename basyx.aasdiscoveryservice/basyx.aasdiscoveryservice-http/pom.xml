@@ -35,7 +35,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.aasdiscoveryservice-backend-mongodb</artifactId>
+			<artifactId>basyx.aasdiscoveryservice-backend-h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.aasdiscoveryservice-backend</artifactId>
 			<scope>test</scope>
 		</dependency>
 

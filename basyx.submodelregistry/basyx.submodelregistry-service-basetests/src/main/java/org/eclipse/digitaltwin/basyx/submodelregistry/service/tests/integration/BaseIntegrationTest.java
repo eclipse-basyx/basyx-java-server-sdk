@@ -114,18 +114,24 @@ public abstract class BaseIntegrationTest {
 	public TestResourcesLoader resourceLoader = new TestResourcesLoader(BaseIntegrationTest.class.getPackageName(), mapper);
 
 	protected SubmodelRegistryApi api;
-
+	
 	@Before
-	public void initClient() throws ApiException {
-		api = new SubmodelRegistryApi("http", "127.0.0.1", port);
-		// there should be no descriptor
-		api.deleteAllSubmodelDescriptors();
-		queue().assertNoAdditionalMessage();
+	public void setUp() throws ApiException, InterruptedException {
+		initClient();
+		cleanup();
 	}
-
+	
 	@After
-	public void cleanup() throws ApiException {
-		queue().assertNoAdditionalMessage();
+	public void tearDown() throws ApiException, InterruptedException {
+		cleanup();
+	}
+	
+	protected void initClient() throws ApiException, InterruptedException {
+		api = new SubmodelRegistryApi("http", "127.0.0.1", port);
+	}
+	
+	protected void cleanup() throws ApiException, InterruptedException {	
+		queue().noAdditionalMessage();
 		GetSubmodelDescriptorsResult result = api.getAllSubmodelDescriptors(null, null);
 		for (SubmodelDescriptor eachDescriptor : result.getResult()) {
 			api.deleteSubmodelDescriptorById(eachDescriptor.getId());
@@ -161,7 +167,7 @@ public abstract class BaseIntegrationTest {
 	}
 
 	@Test
-	public void whenDeleteAll_thenAllDescriptorsAreRemoved() throws ApiException {
+	public void whenDeleteAll_thenAllDescriptorsAreRemoved() throws ApiException, InterruptedException {
 		for (int i = 0; i < DELETE_ALL_TEST_INSTANCE_COUNT; i++) {
 			SubmodelDescriptor descr = new SubmodelDescriptor();
 			String id = "id_" + i;
@@ -189,7 +195,7 @@ public abstract class BaseIntegrationTest {
 		for (int i = 0; i < DELETE_ALL_TEST_INSTANCE_COUNT; i++) {
 			assertThat(events.remove(RegistryEvent.builder().id("id_" + i).type(EventType.SUBMODEL_UNREGISTERED).build())).isTrue();
 		}
-		queue().assertNoAdditionalMessage();
+		queue().noAdditionalMessage();
 	}
 
 	@Test
@@ -205,7 +211,7 @@ public abstract class BaseIntegrationTest {
 		all = api.getAllSubmodelDescriptors(null, null).getResult();
 		assertThat(all).isEmpty();
 
-		queue().assertNoAdditionalMessage();
+		queue().noAdditionalMessage();
 	}
 
 	@Test

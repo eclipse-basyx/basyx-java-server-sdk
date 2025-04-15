@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -40,7 +40,7 @@ public class CrudConceptDescriptionRepositoryTest {
 
 	@Test
 	public void getConfiguredAasRepositoryName() {
-		ConceptDescriptionRepository repo = new CrudConceptDescriptionRepository(() -> null, CONFIGURED_CD_REPO_NAME);
+		ConceptDescriptionRepository repo = new CrudConceptDescriptionRepository(null, CONFIGURED_CD_REPO_NAME);
 
 		assertEquals(CONFIGURED_CD_REPO_NAME, repo.getName());
 	}

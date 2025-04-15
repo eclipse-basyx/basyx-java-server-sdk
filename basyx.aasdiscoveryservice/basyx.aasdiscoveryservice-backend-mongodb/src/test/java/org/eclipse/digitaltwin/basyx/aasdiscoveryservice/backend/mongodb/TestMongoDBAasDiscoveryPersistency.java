@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -27,7 +27,6 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb;
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryPersistencyTestSuite;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.boot.SpringApplication;
@@ -37,7 +36,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 /**
  * Test persistency for AasDiscovery with MongoDB Storage backend
  * 
- * @author mateusmolina
+ * @author mateusmolina, fried
  */
 public class TestMongoDBAasDiscoveryPersistency extends AasDiscoveryPersistencyTestSuite {
 	private static ConfigurableApplicationContext applicationContext;
@@ -51,7 +50,7 @@ public class TestMongoDBAasDiscoveryPersistency extends AasDiscoveryPersistencyT
 	@Before
 	public void clearTemplate() {
 		MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
-		MongoDBUtilities.clearCollection(mongoTemplate, DummyDiscoveryServiceConfig.COLLECTION);
+		mongoTemplate.getDb().drop();
 	}
 
 	@Override

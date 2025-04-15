@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,102 +25,57 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Arrays;
-import java.util.List;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.SimpleAasDiscoveryFactory;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
-import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
-import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
-import org.junit.Test;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
-
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Tests the {@link MongoDBAasDiscoveryService}
+ * Tests the AasDiscoveryService with MongoDb as backend
  * 
- * @author danish
+ * @author danish, mateusmolina, fried
  *
  */
+@SpringBootTest
+@RunWith(SpringRunner.class)
 public class TestMongoDBAasDiscoveryService extends AasDiscoveryServiceSuite {
-	private static final String CONFIGURED_AAS_DISC_SERV_NAME = "configured-aas-discovery-service-name";
-	private final String COLLECTION = "aasDiscoveryServiceTestCollection";
+
+	private static ConfigurableApplicationContext applicationContext;
+
+	@Autowired
+	MongoTemplate mongoTemplate;
+
+	@Autowired
+	AasDiscoveryService aasDiscoveryService;
+
+
+	@BeforeClass
+	public static void initTest(){
+		applicationContext = new SpringApplication(DummyAasDiscoveryServiceComponent.class).run();
+	}
+
+	@Before
+	public void cleanup() {
+		mongoTemplate.getDb().drop();
+	}
+
+	@AfterClass
+	public static void cleanupTest() {
+		MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
+		mongoTemplate.getDb().drop();
+	}
 
 	@Override
 	protected AasDiscoveryService getAasDiscoveryService() {
-		MongoTemplate mongoTemplate = createTemplate();
-		MongoDBUtilities.clearCollection(mongoTemplate, COLLECTION);
-		AasDiscoveryMongoDBBackendProvider aasDiscoveryBackendProvider = new AasDiscoveryMongoDBBackendProvider(
-				new BasyxMongoMappingContext(),
-				COLLECTION, mongoTemplate);
-		AasDiscoveryServiceFactory aasDiscoveryFactory = new SimpleAasDiscoveryFactory(aasDiscoveryBackendProvider);
-
-		return aasDiscoveryFactory.create();
-	}
-
-	@Test
-	public void configuredMongoDBAasDiscoveryServiceName() {
-		MongoTemplate template = createTemplate();
-
-		clearDatabase(template);
-
-		AasDiscoveryMongoDBBackendProvider aasDiscoveryBackendProvider = new AasDiscoveryMongoDBBackendProvider(
-				new BasyxMongoMappingContext(), COLLECTION, template);
-		AasDiscoveryServiceFactory aasDiscoveryFactory = new SimpleAasDiscoveryFactory(aasDiscoveryBackendProvider,
-				CONFIGURED_AAS_DISC_SERV_NAME);
-		AasDiscoveryService service = aasDiscoveryFactory.create();
-
-		assertEquals(CONFIGURED_AAS_DISC_SERV_NAME, service.getName());
-	}
-
-	@Test
-	public void assetLinkIsPersisted() {
-		AasDiscoveryService aasDiscoveryService = getAasDiscoveryService();
-
-		String dummyShellIdentifier = "DummyShellID";
-
-		List<SpecificAssetId> expectedAssetIDs = createDummyAssetLinkOnDiscoveryService(dummyShellIdentifier, aasDiscoveryService);
-
-		List<SpecificAssetId> actualAssetIDs = aasDiscoveryService.getAllAssetLinksById(dummyShellIdentifier);
-
-		assertEquals(expectedAssetIDs, actualAssetIDs);
-
-		removeCreatedAssetLink(dummyShellIdentifier, aasDiscoveryService);
-	}
-
-	private List<SpecificAssetId> createDummyAssetLinkOnDiscoveryService(String testShellIdentifier, AasDiscoveryService aasDiscoveryService) {
-		AssetAdministrationShell aas = getSingleDummyShell(testShellIdentifier);
-		createAssetLink(aas, aasDiscoveryService);
-
-		SpecificAssetId specificAssetId_1 = createDummySpecificAssetId("TestAsset1", "TestAssetValue1");
-		SpecificAssetId specificAssetId_2 = createDummySpecificAssetId("TestAsset2", "TestAssetValue2");
-
-		return Arrays.asList(specificAssetId_1, specificAssetId_2);
-	}
-
-	private void removeCreatedAssetLink(String dummyShellIdentifier, AasDiscoveryService aasDiscoveryService) {
-		aasDiscoveryService.deleteAllAssetLinksById(dummyShellIdentifier);
-	}
-
-	private MongoTemplate createTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-
-		MongoClient client = MongoClients.create(connectionURL);
-
-		return new MongoTemplate(client, "BaSyxTestDb");
-	}
-
-	private void clearDatabase(MongoTemplate template) {
-		template.remove(new Query(), COLLECTION);
+		return aasDiscoveryService;
 	}
 
 }

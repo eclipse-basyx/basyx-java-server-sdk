@@ -35,7 +35,7 @@ jobs:
           path: basyx.aasrepository/basyx.aasrepository.component
         - name: submodel-repository
           path: basyx.submodelrepository/basyx.submodelrepository.component
-        - name: conceptdescription-repository
+        - name: submodel-service
           path: basyx.conceptdescriptionrepository/basyx.conceptdescriptionrepository.component
         - name: aas-discovery
           path: basyx.aasdiscoveryservice/basyx.aasdiscoveryservice.component
@@ -119,11 +119,14 @@ jobs:
 
           # Extract the final name without .jar extension
           FINAL_NAME=$(basename "$JAR_FILE" .jar)
-          echo "FINAL_ARGS=FINAL_NAME=${FINAL_NAME}" >> $GITHUB_ENV
+          echo "FINAL_NAME=${FINAL_NAME}" >> $GITHUB_ENV
 
       - name: No-Op for Non-Registry Modules
         if: "!contains(matrix.name, 'registry')"
-        run: echo "FINAL_ARGS=" >> $GITHUB_ENV
+        run: echo echo "FINAL_NAME=" >> $GITHUB_ENV
+
+      - name: Set short SHA
+        run: echo "SHORT_SHA=${GITHUB_SHA:0:7}" >> $GITHUB_ENV
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
@@ -134,8 +137,9 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: |
             ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:2.0.0-SNAPSHOT
-          build-args: ${{ env.FINAL_ARGS }}
+            ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:2.0.0-SNAPSHOT-${{ env.SHORT_SHA }}
+          build-args: FINAL_NAME=${{ env.FINAL_NAME }}
 
       - name: Verify Docker Image
         run: |
-          docker pull ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:2.0.0-SNAPSHOT
+          docker pull ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:2.0.0-SNAPSHOT-${{ env.SHORT_SHA }}

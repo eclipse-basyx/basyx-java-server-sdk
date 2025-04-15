@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,7 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.aasxfileserver.model;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -41,8 +40,17 @@ import org.springframework.validation.annotation.Validated;
 public class PackagesBody {
 
 	private List<String> aasIds = null;
-	private InputStream file = null;
 	private String fileName = null;
+	private String filePath = null;
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
 	private String packageId = null;
 
 	public PackagesBody aasIds(List<String> aasIds) {
@@ -64,19 +72,6 @@ public class PackagesBody {
 
 	public void setAasIds(List<String> aasIds) {
 		this.aasIds = aasIds;
-	}
-
-	public PackagesBody file(InputStream file) {
-		this.file = file;
-		return this;
-	}
-
-	public InputStream getFile() {
-		return file;
-	}
-
-	public void setFile(InputStream file) {
-		this.file = file;
 	}
 
 	public PackagesBody fileName(String fileName) {
@@ -114,12 +109,12 @@ public class PackagesBody {
 			return false;
 		}
 		PackagesBody packagesBody = (PackagesBody) o;
-		return Objects.equals(this.aasIds, packagesBody.aasIds) && Objects.equals(this.file, packagesBody.file) && Objects.equals(this.fileName, packagesBody.fileName);
+		return Objects.equals(this.aasIds, packagesBody.aasIds) && Objects.equals(this.fileName, packagesBody.fileName);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(aasIds, file, fileName);
+		return Objects.hash(aasIds, fileName);
 	}
 
 	@Override
@@ -128,7 +123,6 @@ public class PackagesBody {
 		sb.append("class PackagesBody {\n");
 
 		sb.append("    aasIds: ").append(toIndentedString(aasIds)).append("\n");
-		sb.append("    file: ").append(toIndentedString(file)).append("\n");
 		sb.append("    fileName: ").append(toIndentedString(fileName)).append("\n");
 		sb.append("}");
 		return sb.toString();

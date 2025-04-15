@@ -42,4 +42,9 @@ public class AasRepoConfiguration {
 	public CorsPathPatternProvider getAasRepoCorsUrlProvider() {
 		return new CorsPathPatternProvider("/shells/**");
 	}
+
+	@Bean
+	public CorsPathPatternProvider getAasRepoDescriptionCorsUrlProvider() {
+		return new CorsPathPatternProvider("/description");
+	}
 }

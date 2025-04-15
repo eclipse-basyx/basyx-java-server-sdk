@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,15 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb;
 
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.SimpleAasDiscoveryFactory;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 
 /**
  * Configuration for tests
@@ -44,22 +39,11 @@ import com.mongodb.client.MongoClients;
 @Configuration
 public class DummyDiscoveryServiceConfig {
 
-	public final static String COLLECTION = "discoveryServicePersistencyTestCollection";
-	public final static String DB = "BaSyxTestDb";
+	static final String TEST_COLLECTION = "discoveryServiceTestCollection";
 
 	@Bean
-	public AasDiscoveryService createAasDiscoveryService(MongoTemplate template) {
-		return new SimpleAasDiscoveryFactory(
-				new AasDiscoveryMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, template)).create();
-	}
-
-	@Bean
-	public MongoTemplate createMongoTemplate() {
-		String connectionURL = "mongodb://mongoAdmin:mongoPassword@localhost:27017/";
-
-		MongoClient client = MongoClients.create(connectionURL);
-
-		return new MongoTemplate(client, DB);
+	AasDiscoveryService aasDiscoveryService(AasDiscoveryServiceFactory factory) {
+		return factory.create();
 	}
 
 }

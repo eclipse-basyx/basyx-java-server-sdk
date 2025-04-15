@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -27,8 +27,9 @@ package org.eclipse.digitaltwin.basyx.submodelservice.http;
 
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.CrudSubmodelServiceFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
@@ -37,7 +38,7 @@ public class DummySubmodelServiceComponent {
 
 	@Bean
 	public SubmodelService getSubmodelService() {
-		return new InMemorySubmodelServiceFactory(new InMemoryFileRepository())
+		return new CrudSubmodelServiceFactory(new InMemorySubmodelBackend(),new InMemoryFileRepository())
 				.create(DummySubmodelFactory.createSubmodelWithAllSubmodelElements());
 	}
 }

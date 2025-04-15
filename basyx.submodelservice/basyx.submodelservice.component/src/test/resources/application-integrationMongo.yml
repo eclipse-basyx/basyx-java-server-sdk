@@ -1,0 +1,28 @@
+basyx:
+  backend: MongoDB
+  submodelservice:
+    submodel:
+      file: example/submodel.json 
+    feature:
+      operation:
+        dispatcher:
+          enabled: true
+          defaultMapping: org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.java.DefaultInvokableOperation
+          mappings:
+            SquareOperation: SquareOperation
+            "BasicOperations.AddOperation": basic.ops.AddOperation
+          java:
+            sources: example/sources
+            classes: target/integration-test/classes
+            additionalClasspath: 
+            - example/jars/HelloWorld.jar
+spring:
+  data:
+    mongodb:
+      host: 127.0.0.1
+      port: 27017
+      collectionName: submodelServiceTestCollection
+      database: submodelservice
+      authentication-database: admin
+      username: mongoAdmin
+      password: mongoPassword

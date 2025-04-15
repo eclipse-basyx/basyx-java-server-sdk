@@ -82,7 +82,7 @@ public abstract class SubmodelServiceSuite {
 
 	/**
 	 * SubmodelService independent way to check if a file exists in storage
-	 * 
+	 *
 	 * @param fileValue
 	 * @return
 	 */
@@ -382,6 +382,19 @@ public abstract class SubmodelServiceSuite {
 	}
 
 	@Test
+	public void updateNonNestedSMEWithoutChange() {
+		Submodel technicalSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
+		SubmodelService submodelService = getSubmodelService(technicalSubmodel);
+
+		String idShortPath = "dummyProperty";
+
+		Property property = createDummyProperty(idShortPath);
+		submodelService.createSubmodelElement(property);
+
+		submodelService.updateSubmodelElement(idShortPath, property);
+	}
+
+	@Test
 	public void updateNonFileSMEWithFileSME() {
 		Submodel technicalSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
 		SubmodelService submodelService = getSubmodelService(technicalSubmodel);
@@ -449,6 +462,23 @@ public abstract class SubmodelServiceSuite {
 		submodelService.setFileValue(idShortPathPropertyInSmeCol, "jsonFile2.json", getInputStreamOfDummyFile(DUMMY_JSON_2));
 
 		assertStoredFileContentEquals(submodelService, idShortPathPropertyInSmeCol, DUMMY_JSON_2);
+	}
+
+	@Test
+	public void updateSMEInSubmodelElementList(){
+		Submodel operationDataSubmodel = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
+		SubmodelService submodelService = getSubmodelService(operationDataSubmodel);
+
+		DefaultProperty submodelElement = (DefaultProperty) submodelService.getSubmodelElement(generateIdShortPath());
+
+		String expectedValue = "1308";
+		submodelElement.setValue(expectedValue);
+
+		submodelService.updateSubmodelElement(generateIdShortPath(), submodelElement);
+
+		DefaultProperty actualElement = (DefaultProperty) submodelService.getSubmodelElement(generateIdShortPath());
+
+        assertEquals(expectedValue, actualElement.getValue());
 	}
 
 	@Test

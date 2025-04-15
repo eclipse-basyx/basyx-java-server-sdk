@@ -44,10 +44,17 @@ public class MqttAasRepositoryConfiguration {
 
 	@ConditionalOnMissingBean
 	@Bean
-	public IMqttClient mqttClient(@Value("${mqtt.clientId}") String clientId, @Value("${mqtt.hostname}") String hostname, @Value("${mqtt.port}") int port) throws MqttException {
-		IMqttClient mqttClient = new MqttClient("tcp://" + hostname + ":" + port, clientId, new MemoryPersistence());
+	public IMqttClient mqttClient(
+			@Value("${mqtt.clientId}") String clientId,
+			@Value("${mqtt.hostname}") String hostname,
+			@Value("${mqtt.port}") int port,
+			@Value("${mqtt.protocol:tcp}") String protocol,
+			MqttConnectOptions mqttConnectOptions)
+			throws MqttException {
+		IMqttClient mqttClient = new MqttClient(protocol + "://" + hostname + ":" + port, clientId,
+				new MemoryPersistence());
 
-		mqttClient.connect(mqttConnectOptions());
+		mqttClient.connect(mqttConnectOptions);
 
 		return mqttClient;
 	}
@@ -55,9 +62,18 @@ public class MqttAasRepositoryConfiguration {
 	@ConditionalOnMissingBean
 	@Bean
 	@ConfigurationProperties(prefix = "mqtt")
-	public MqttConnectOptions mqttConnectOptions() {
-		MqttConnectOptions mqttConceptOptions = new MqttConnectOptions();
-		mqttConceptOptions.setAutomaticReconnect(true);
-		return mqttConceptOptions;
+	public MqttConnectOptions mqttConnectOptions(
+			@Value("${mqtt.username:}") String username,
+			@Value("${mqtt.password:}") String password) {
+		MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
+		mqttConnectOptions.setAutomaticReconnect(true);
+
+		if (username.isBlank() || password.isBlank())
+			return mqttConnectOptions;
+
+		mqttConnectOptions.setUserName(username);
+		mqttConnectOptions.setPassword(password.toCharArray());
+
+		return mqttConnectOptions;
 	}
 }

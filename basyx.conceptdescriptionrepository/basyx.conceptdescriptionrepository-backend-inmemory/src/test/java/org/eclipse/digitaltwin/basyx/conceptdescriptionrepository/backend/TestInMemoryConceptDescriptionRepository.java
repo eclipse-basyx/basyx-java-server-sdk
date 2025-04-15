@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -40,28 +40,28 @@ import org.junit.Test;
 /**
  * Tests the {@link InMemoryConceptDescriptionRepository}
  * 
- * @author danish, kammognie
+ * @author danish, kammognie, mateusmolina
  *
  */
 public class TestInMemoryConceptDescriptionRepository extends ConceptDescriptionRepositorySuite {
 
 	private static final String CONFIGURED_CD_REPO_NAME = "configured-cd-repo-name";
 
-	private ConceptDescriptionBackendProvider backendProvider = new ConceptDescriptionInMemoryBackendProvider();
+	private final ConceptDescriptionBackend backend = new InMemoryConceptDescriptionBackend();
 
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository() {
-		return new SimpleConceptDescriptionRepositoryFactory(backendProvider).create();
+		return CrudConceptDescriptionRepositoryFactory.builder().backend(backend).create();
 	}
 
 	@Override
 	protected ConceptDescriptionRepository getConceptDescriptionRepository(Collection<ConceptDescription> conceptDescriptions) {
-		return new SimpleConceptDescriptionRepositoryFactory(backendProvider, conceptDescriptions).create();
+		return CrudConceptDescriptionRepositoryFactory.builder().backend(backend).remoteCollection(conceptDescriptions).create();
 	}
 
 	@Test
 	public void getConfiguredInMemoryConceptDescriptionRepositoryName() {
-		ConceptDescriptionRepository repo = new CrudConceptDescriptionRepository(backendProvider, CONFIGURED_CD_REPO_NAME);
+		ConceptDescriptionRepository repo = new CrudConceptDescriptionRepository(backend, CONFIGURED_CD_REPO_NAME);
 
 		assertEquals(CONFIGURED_CD_REPO_NAME, repo.getName());
 	}
@@ -70,7 +70,7 @@ public class TestInMemoryConceptDescriptionRepository extends ConceptDescription
 	public void idCollisionDuringConstruction() {
 		Collection<ConceptDescription> conceptDescriptionsWithCollidingIds = createConceptDescriptionCollectionWithCollidingIds();
 
-		new CrudConceptDescriptionRepository(backendProvider, conceptDescriptionsWithCollidingIds);
+		CrudConceptDescriptionRepositoryFactory.builder().backend(backend).remoteCollection(conceptDescriptionsWithCollidingIds).create();
 	}
 
 	private Collection<ConceptDescription> createConceptDescriptionCollectionWithCollidingIds() {

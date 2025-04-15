@@ -385,9 +385,8 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 		String element = getJSONValueAsString("SubmodelElementNew.json");
 		CloseableHttpResponse createdResponse = BaSyxHttpTestUtils.executePostOnURL(createSubmodelElementsURL(), element);
 
-		CloseableHttpResponse fetchedResponse = requestSubmodelElement("MaxRotationSpeedNew");
 		assertEquals(HttpStatus.CREATED.value(), createdResponse.getCode());
-		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(fetchedResponse));
+		BaSyxHttpTestUtils.assertSameJSONContent(element, BaSyxHttpTestUtils.getResponseAsString(createdResponse));
 	}
 	
 	@Test
@@ -570,7 +569,7 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 	public void uploadFileToFileSubmodelElement() throws IOException {
 		CloseableHttpResponse submodelElementFileUploadResponse = uploadFileToSubmodelElement(DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT);
 
-		assertEquals(HttpStatus.OK.value(), submodelElementFileUploadResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), submodelElementFileUploadResponse.getCode());
 	}
 
 	@Test

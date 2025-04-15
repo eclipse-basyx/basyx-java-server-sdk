@@ -939,7 +939,7 @@ public class TestAuthorizedSubmodelRepository {
 		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
 
 		CloseableHttpResponse retrievalResponse = uploadFileToSubmodelElementWithAuthorization(getSMEFileUploadURL(SPECIFIC_SUBMODEL_ID_2, FILE_SUBMODEL_ELEMENT_IDSHORT_PATH, FILE_NAME), FILE_NAME, file, accessToken);
-		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), retrievalResponse.getCode());
 
 		deleteElementWithAuthorization(getSpecificSubmodelAccessURL(SPECIFIC_SUBMODEL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
@@ -955,7 +955,7 @@ public class TestAuthorizedSubmodelRepository {
 		String accessToken = tokenProvider.getAccessToken(dummyCredential.getUsername(), dummyCredential.getPassword());
 
 		CloseableHttpResponse retrievalResponse = uploadFileToSubmodelElementWithAuthorization(getSMEFileUploadURL(SPECIFIC_SUBMODEL_ID_2, FILE_SUBMODEL_ELEMENT_IDSHORT_PATH, FILE_NAME), FILE_NAME, file, accessToken);
-		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), retrievalResponse.getCode());
 
 		deleteElementWithAuthorization(getSpecificSubmodelAccessURL(SPECIFIC_SUBMODEL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}

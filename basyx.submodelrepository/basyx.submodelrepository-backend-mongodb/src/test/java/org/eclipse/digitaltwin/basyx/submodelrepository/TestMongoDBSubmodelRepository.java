@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -24,69 +24,65 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Collection;
-
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.common.mongocore.BasyxMongoMappingContext;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.eclipse.digitaltwin.basyx.core.filerepository.MongoDBFileRepository;
-import org.eclipse.digitaltwin.basyx.operation.InvokableOperation;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SubmodelBackendProvider;
+import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsCriteria;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import java.util.Collection;
 
+@SpringBootTest
+@RunWith(SpringRunner.class)
 public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
-	private final String COLLECTION = "submodelTestCollection";
-	private final String CONNECTION_URL = "mongodb://mongoAdmin:mongoPassword@localhost:27017";
-	private final MongoClient CLIENT = MongoClients.create(CONNECTION_URL);
-	private final MongoTemplate TEMPLATE = new MongoTemplate(CLIENT, "BaSyxTestDb");
-	private final GridFsTemplate GRIDFS_TEMPLATE = new GridFsTemplate(TEMPLATE.getMongoDatabaseFactory(), TEMPLATE.getConverter());
-	private static final String CONFIGURED_SM_REPO_NAME = "configured-sm-repo-name";
+
+	@Autowired
+	private MongoTemplate mongoTemplate;
+
+	@Autowired
+	private GridFsTemplate gridFsTemplate;
+
+	@Autowired
+	private SubmodelRepository submodelRepository;
+
+	@Autowired
+	private SubmodelBackend submodelBackend;
+
+	@Autowired
 	private FileRepository fileRepository;
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository() {
-		MongoDBUtilities.clearCollection(TEMPLATE, COLLECTION);
-		fileRepository = new MongoDBFileRepository(GRIDFS_TEMPLATE);
+		return submodelRepository;
+	}
 
-		SubmodelBackendProvider submodelBackendProvider = new SubmodelMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, TEMPLATE);
-		SubmodelRepositoryFactory submodelRepositoryFactory = new SimpleSubmodelRepositoryFactory(submodelBackendProvider, new InMemorySubmodelServiceFactory(fileRepository));
-
-		return submodelRepositoryFactory.create();
+	@Before
+	public void cleanup() {
+		MongoDBUtilities.clearCollection(mongoTemplate, DummySubmodelRepositoryConfig.TEST_COLLECTION);
+		gridFsTemplate.delete(new Query(GridFsCriteria.whereFilename().ne("")));
 	}
 
 	@Override
 	protected SubmodelRepository getSubmodelRepository(Collection<Submodel> submodels) {
-		SubmodelRepository repo = getSubmodelRepository();
-
-		addSubmodelsToRepoWithoutInvokableOperations(submodels, repo);
-
-		return repo;
+		return CrudSubmodelRepositoryFactory.builder().backend(submodelBackend).fileRepository(fileRepository).remoteCollection(submodels).create();
 	}
 
 	@Override
 	protected boolean fileExistsInStorage(String fileValue) {
 		return fileRepository.exists(fileValue);
-	}
-
-	@Test
-	public void getConfiguredMongoDBSmRepositoryName() {
-		SubmodelBackendProvider submodelBackendProvider = new SubmodelMongoDBBackendProvider(new BasyxMongoMappingContext(), COLLECTION, TEMPLATE);
-		SubmodelRepository repo = new SimpleSubmodelRepositoryFactory(submodelBackendProvider, new InMemorySubmodelServiceFactory(fileRepository), CONFIGURED_SM_REPO_NAME).create();
-
-		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
 	}
 
 	@Override
@@ -99,17 +95,6 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	@Override
 	public void invokeNonOperation() {
 		super.invokeNonOperation();
-	}
-
-	private static Submodel removeInvokableFromInvokableOperation(Submodel sm) {
-		sm.getSubmodelElements().stream().filter(InvokableOperation.class::isInstance).map(InvokableOperation.class::cast).forEach(o -> o.setInvokable(null));
-		return sm;
-	}
-
-	private static void addSubmodelsToRepoWithoutInvokableOperations(Collection<Submodel> submodels, SubmodelRepository repo) {
-		submodels.stream()
-		.map(TestMongoDBSubmodelRepository::removeInvokableFromInvokableOperation) // TODO: Remove this after MongoDB uses AAS4J serializer
-		.forEach(repo::createSubmodel);
 	}
 
 }

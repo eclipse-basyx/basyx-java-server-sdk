@@ -76,5 +76,9 @@ public interface AASEnvironmentHTTPApi {
 			@ApiResponse(responseCode = "400", description = "Bad Request, invalid file format or structure", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
 			@ApiResponse(responseCode = "500", description = "Internal Server Error, processing failure", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))) })
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
-	ResponseEntity<Boolean> uploadEnvironment(@Parameter(description = "An environment file (XML, JSON, AASX)") @Valid @RequestParam("file") MultipartFile envFile);
+	ResponseEntity<Boolean> uploadEnvironment(
+			@Parameter(description = "An environment file (XML, JSON, AASX)") @Valid @RequestParam("file") MultipartFile envFile,
+			@Parameter(description = "Flag to indicate if already existing Ids should be ignored when reuploading an environment (default: false)", schema = @Schema(defaultValue = "false"))
+			@RequestParam(value = "ignore-duplicates", required = false, defaultValue = "false") boolean ignoreDuplicates
+	);
 }

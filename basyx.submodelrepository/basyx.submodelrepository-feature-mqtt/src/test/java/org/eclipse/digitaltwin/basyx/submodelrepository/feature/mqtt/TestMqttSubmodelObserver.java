@@ -1,7 +1,5 @@
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
-
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,8 +23,11 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
+package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -53,14 +54,15 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelInMemoryBackendProvider;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelrepository.backend.SimpleSubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelServiceFactory;
+import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
+import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.junit.AfterClass;
@@ -309,8 +311,8 @@ public class TestMqttSubmodelObserver {
 		FileRepository fileRepository = new InMemoryFileRepository();
 		
 		SAVED_FILE_PATH = fileRepository.save(new FileMetadata(FILE_SUBMODEL_ELEMENT_NAME, "", getInputStreamOfDummyFile(FILE_SUBMODEL_ELEMENT_CONTENT)));
-		
-		SubmodelRepositoryFactory repoFactory = new SimpleSubmodelRepositoryFactory(new SubmodelInMemoryBackendProvider(), new InMemorySubmodelServiceFactory(fileRepository));
+
+		SubmodelRepositoryFactory repoFactory = CrudSubmodelRepositoryFactory.builder().backend(new InMemorySubmodelBackend()).fileRepository(fileRepository).buildFactory();
 
 		return new MqttSubmodelRepositoryFactory(repoFactory, client, new MqttSubmodelRepositoryTopicFactory(new Base64URLEncoder())).create();
 	}
@@ -336,5 +338,85 @@ public class TestMqttSubmodelObserver {
 		broker.startServer(classPathConfig);
 
 		return broker;
+	}
+
+	@Test
+	public void checkTCPConnectionWithoutCredentials() throws Exception {
+		MqttSubmodelRepositoryConfiguration config = new MqttSubmodelRepositoryConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("", "");
+		IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				1884,
+				"tcp",
+				options);
+		// assertTrue(client.isConnected());
+		client.disconnect();
+		client.close();
+	}
+
+	@Test
+	public void checkTCPConnectionWitCredentials() throws Exception {
+		MqttSubmodelRepositoryConfiguration config = new MqttSubmodelRepositoryConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
+		IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				1884,
+				"tcp",
+				options);
+		assertTrue(client.isConnected());
+		client.disconnect();
+		client.close();
+	}
+
+	@Test
+	public void checkTCPConnectionWitWrongCredentials() throws Exception {
+		MqttSubmodelRepositoryConfiguration config = new MqttSubmodelRepositoryConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("testuser", "false");
+		boolean authentication_failed = false;
+		try {
+			IMqttClient client = config.mqttClient(
+					"test-client",
+					"localhost",
+					1884,
+					"tcp",
+					options);
+		} catch (MqttException e) {
+			if (MqttException.REASON_CODE_FAILED_AUTHENTICATION == e.getReasonCode()) {
+				authentication_failed = true;
+			}
+		}
+		assertTrue(authentication_failed);
+	}
+
+	@Test
+	public void checkWSConnectionWithoutCredentials() throws Exception {
+		MqttSubmodelRepositoryConfiguration config = new MqttSubmodelRepositoryConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("", "");
+		IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				8080,
+				"ws",
+				options);
+		assertTrue(client.isConnected());
+		client.disconnect();
+		client.close();
+	}
+
+	@Test
+	public void checkWSConnectionWitCredentials() throws Exception {
+		MqttSubmodelRepositoryConfiguration config = new MqttSubmodelRepositoryConfiguration();
+		MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
+		IMqttClient client = config.mqttClient(
+				"test-client",
+				"localhost",
+				8080,
+				"ws",
+				options);
+		assertTrue(client.isConnected());
+		client.disconnect();
+		client.close();
 	}
 }
