@@ -15,6 +15,9 @@ import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
+
+import java.util.ArrayList;
 import java.util.List;
 import static org.springframework.security.oauth2.core.OAuth2TokenIntrospectionClaimNames.AUD;
 
@@ -35,18 +38,25 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .oauth2ResourceServer(oauth2ResourceServerCustomizer ->
-                        oauth2ResourceServerCustomizer.jwt(jwtCustomizer -> {
-                            jwtCustomizer.jwkSetUri(ldSsoConfigProperties.getBaseUrl() + JWKS_PATH);
-                            jwtCustomizer.jwtAuthenticationConverter(new JwtAuthenticationConverter());
-                            jwtCustomizer.decoder(jwtDecoder()); // Validate jwt aud claim
-                        })
-                )
-                .authorizeHttpRequests(customizer ->
-                        customizer
-                                .anyRequest()
-                                .authenticated()
-                );
+            .oauth2ResourceServer(oauth2ResourceServerCustomizer ->
+                oauth2ResourceServerCustomizer.jwt(jwtCustomizer -> {
+                    jwtCustomizer.jwkSetUri(ldSsoConfigProperties.getBaseUrl() + JWKS_PATH);
+                    jwtCustomizer.jwtAuthenticationConverter(new JwtAuthenticationConverter());
+                    jwtCustomizer.decoder(jwtDecoder()); // Validate jwt aud claim
+                })
+            )
+            .authorizeHttpRequests(customizer -> {
+                for (int i = 0; i < ldSsoConfigProperties.getWhitelistedIps().length; i++) {
+                    String currentIp = ldSsoConfigProperties.getWhitelistedIps()[i];
+                    customizer
+                        .requestMatchers(new IpAddressMatcher(currentIp))
+                        .permitAll();
+                }
+
+                customizer
+                    .anyRequest()
+                    .authenticated();
+            });
 
         return http.build();
     }

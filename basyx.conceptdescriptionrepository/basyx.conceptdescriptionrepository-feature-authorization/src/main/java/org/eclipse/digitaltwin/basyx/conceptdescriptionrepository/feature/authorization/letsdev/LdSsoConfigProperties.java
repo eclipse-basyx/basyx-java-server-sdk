@@ -10,6 +10,12 @@ public class LdSsoConfigProperties {
     String baseUrl;
     String audience;
     Boolean debugEnabled = false;
+    String[] whitelistedIps = {};
+
+    public String[] getWhitelistedIps() {
+
+        return whitelistedIps;
+    }
 
     public String getBaseUrl() {
 

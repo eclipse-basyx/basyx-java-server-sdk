@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 import java.util.List;
 
@@ -44,11 +45,18 @@ public class WebSecurityConfig {
                             jwtCustomizer.decoder(jwtDecoder()); // Validate jwt aud claim
                         })
                 )
-                .authorizeHttpRequests(customizer ->
+                .authorizeHttpRequests(customizer -> {
+                    for (int i = 0; i < ldSsoConfigProperties.getWhitelistedIps().length; i++) {
+                        String currentIp = ldSsoConfigProperties.getWhitelistedIps()[i];
                         customizer
-                                .anyRequest()
-                                .authenticated()
-                );
+                                .requestMatchers(new IpAddressMatcher(currentIp))
+                                .permitAll();
+                    }
+
+                    customizer
+                            .anyRequest()
+                            .authenticated();
+                });
 
         return http.build();
     }
