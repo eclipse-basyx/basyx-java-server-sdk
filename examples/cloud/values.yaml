@@ -1,31 +1,91 @@
+## MongoDB parameters
+##
 mongodb:
+  ## @param mongodb.enabled Enable MongoDB 
+  ##
   enabled: true
+  ## MongoDB auth parameters
+  ##
   auth:
+    ## @param mongodb.auth.enabled Enable authentication
+    ## ref: https://docs.mongodb.com/manual/tutorial/enable-authentication/
+    ##
     enabled: true
+    ## @param mongodb.rootUser MongoDB root user
+    ##
     rootUser: adminUser
+    ## @param mongodb.rootPassword MongoDB root password
+    ## ref: https://github.com/bitnami/containers/tree/main/bitnami/mongodb#setting-the-root-user-and-password-on-first-run
+    ##
     rootPassword: adminPassword
+  ## @param mongodb.architecture MongoDB architecture (`standalone` or `replicaset`)
+  ##
   architecture: standalone
+  ## MongoDB persistence parameters
+  ##
   persistence:
+    ## @param mongodb.persistence.size PVC Storage Request for MongoDB data volume
+    ##
     size: 10Gi
+  ## MongoDB service parameters
+  ##
   service:
+    ## @param mongodb.service.nameOverride MongoDB service name
+    ##
     nameOverride: mongodb
 
+## Keycloak parameters
+##
 keycloak:
+  ## @param keycloak.enabled Enable Keycloak 
+  ##
   enabled: false
+  ## Keycloak PostgreSQL parameters
+  ##
   postgresql:
+    ## @param keycloak.postgresql.enabled Enable PostgreSQL
+    ##
     enabled: true
+    ## PostgreSQL Auth parameters
+    ##
     auth:
+      ## @param keycloak.postgresql.auth.username PostgreSQL user
+      ##
       username: keycloak
+      ## @param keycloak.postgresql.auth.password PostgreSQL password
+      ## 
       password: password
+      ## @param keycloak.postgresql.auth.database PostgreSQL database
+      ## 
       database: keycloak
+  ## Keycloak ingress parameters
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+  ##
   ingress:
+    ## @param keycloak.ingress.enabled Enable ingress for Keycloak
+    ##
     enabled: false
+    ## @param keycloak.ingress.ingressClassName IngressClass for the ingress
+    ##
     ingressClassName: ""
+    ## @param keycloak.ingress.hostname Ingress hostname for Keycloak
+    ##
     hostname: keycloak.basyx.local
+    ## @param keycloak.ingress.tls Enable tls
+    ##
     tls: false
+  ## Keycloak apirule parameters
+  ## ref: https://kyma-project.io/#/api-gateway/user/custom-resources/apirule/04-10-apirule-custom-resource
+  ##
   apirule:
+    ## @param keycloak.apirule.enabled Enable apirule for Keycloak
+    ##
     enabled: false
+    ## @param keycloak.apirule.hostname Apirule hostname for Keycloak
+    ##
     host: keycloak.basyx.local
+    ## @param keycloak.apirule.methods HTTP methods allowed for CORS header
+    ##
     methods: 
       - "GET" 
       - "HEAD" 
@@ -36,50 +96,263 @@ keycloak:
       - "OPTIONS" 
       - "TRACE"
       - "PATCH"
+  ## Keycloak auth parameters
+  ## ref: https://github.com/bitnami/containers/tree/main/bitnami/keycloak#admin-credentials
+  ##
   auth:
+    ## @param keycloak.auth.adminUser Keycloak administrator user
+    ##
     adminUser: user
+    ## @param keycloak.auth.adminPassword Keycloak administrator password for the new user
+    ##
     adminPassword: password
+  ## Keycloak service parameters
+  ##
   service:
+    ## @param keycloak.service.type Kubernetes service type
+    ##
     type: ClusterIP
+  ## @param keycloak.fullnameOverride Overrides the release name for Keycloak
+  ##
   fullnameOverride: basyx-keycloak
+  ## @param keycloak.extraVolumes Adds volumes to the Keycloak deployment
+  ##
   extraVolumes:
     - name: basyx-keycloak-realm
       configMap:
         name: basyx-keycloak-realm
+  ## @param keycloak.extraVolumes Mounts volumes to the Keycloak pod
+  ##
   extraVolumeMounts:
     - mountPath: /opt/keycloak/data/import/BaSyx-realm.json
       subPath: BaSyx-realm.json
       name: basyx-keycloak-realm
+  ## @param keycloak.command Overrides container command
   command: ["/bin/sh", "-c"]
+  ## @param keycloak.args Overrides container command args
+  ## Depends on: @param keycloak.apirule.hostname or keycloak.ingress.hostname (see flag hostname)
+  ##
   args: ["kc.sh import --file /opt/keycloak/data/import/BaSyx-realm.json; kc.sh start-dev --hostname=keycloak.basyx.local --hostname-strict=false --hostname-debug=true"]
 
+## MQTT parameters
+##
+mqtt:
+  ## @param mqtt.enabled Enable MQTT
+  ##
+  enabled: true
+  ## MQTT websockets parameters
+  ##
+  websockets:
+    ## @params mqtt.websockets.enabled Enable websockets for MQTT
+    ##
+    enabled: true
+  ## MQTT ingress parameters
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+  ##
+  ingress:
+    ## @param mqtt.ingress.enabled Enable ingress for Keycloak
+    ##
+    enabled: false
+    ## @param mqtt.ingress.ingressClassName IngressClass for the ingress
+    ##
+    ingressClassName: ""
+    ## @param mqtt.ingress.annotations Annotations for the ingress
+    ##
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    ## @param mqtt.ingress.hosts Ingress hosts for MQTT
+    ##
+    hosts:
+      ## @param mqtt.ingress.hosts[0].host Ingress hostname for MQTT
+      ##
+      - host: websockets.mqtt.basyx.local
+      ## @param mqtt.ingress.hosts[0].type Type of exposed service for MQTT (websockets or mqtt)
+      ##
+        type: websockets
+      ## @param mqtt.ingress.hosts[0].paths Ingress paths for MQTT
+      ##
+        paths:
+          ## @param mqtt.ingress.hosts[0].paths[0].path Path where to expose service
+          ##
+          - path: /
+          ## @param mqtt.ingress.hosts[0].paths[0].pathType Type of path
+          ##
+            pathType: ImplementationSpecific
+      ## @param mqtt.ingress.hosts[1].host Ingress hostname for MQTT
+      ##
+      - host: mqtt.basyx.local  
+      ## @param mqtt.ingress.hosts[1].type Type of exposed service for MQTT (websockets or mqtt)
+      ##
+        type: mqtt
+      ## @param mqtt.ingress.hosts[1].paths Ingress paths for MQTT
+      ##
+        paths:
+          ## @param mqtt.ingress.hosts[1].paths[0].path Path where to expose service
+          ##
+          - path: /
+          ## @param mqtt.ingress.hosts[1].paths[0].pathType Type of path
+          ##
+            pathType: ImplementationSpecific
+    ## @param mqtt.ingress.tls Enable tls for ingress
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+  ## MQTT apirule parameters
+  ## ref: https://kyma-project.io/#/api-gateway/user/custom-resources/apirule/04-10-apirule-custom-resource
+  ##
+  apirules:
+      ## @param mqtt.apirules[0].enabled Enable apirule for MQTT
+      ##
+    - enabled: false
+      ## @param mqtt.apirules[0].type Type of exposed service for MQTT (websockets or mqtt)
+      ##
+      type: websockets
+      ## @param mqtt.apirules[0].gateway Specifies the Istio Gateway. The value must reference an actual Gateway in the cluster.
+      ##
+      gateway: kyma-system/kyma-gateway
+      ## @param mqtt.apirules[0].corsPolicy Allows configuring CORS headers sent with the response. If corsPolicy is not defined, the CORS headers are enforced to be empty.
+      ##
+      corsPolicy: 
+        ## @param mqtt.apirules[0].corsPolicy.allowMethods Allowed methods for CORS header
+        ##
+        allowMethods:
+        - POST
+        - GET
+        - PUT
+        - DELETE
+        - PATCH
+        - OPTIONS
+        - HEAD
+        ## @param mqtt.apirules[0].corsPolicy.allowMethods Allowed origins for CORS header
+        ##
+        allowOrigins:
+          - regex: ".*" # allow all origins
+        ## @param mqtt.apirules[0].corsPolicy.allowCredentials Allow credentials for CORS header
+        ##
+        allowCredentials: true
+      ## @param mqtt.apirules[0].hostname The hostname to be used to precisely map incoming traffic onto the underlying network service
+      ##
+      hostname: websockets.mqtt.basyx.local
+      ## @param mqtt.apirules[0].annotations Additional ingress annotations to add
+      ##
+      annotations: {}
+      ## @param mqtt.apirules[1].enabled Enable apirule for MQTT
+      ##
+    - enabled: false
+      ## @param mqtt.apirules[1].type Type of exposed service for MQTT (websockets or mqtt)
+      ##
+      type: mqtt
+      ## @param mqtt.apirules[1].gateway Specifies the Istio Gateway. The value must reference an actual Gateway in the cluster.
+      ##
+      gateway: kyma-system/kyma-gateway
+      ## @param mqtt.apirules[1].corsPolicy Allows configuring CORS headers sent with the response. If corsPolicy is not defined, the CORS headers are enforced to be empty.
+      ##
+      corsPolicy: 
+        ## @param mqtt.apirules[1].corsPolicy.allowMethods Allowed methods for CORS header
+        ##
+        allowMethods:
+        - POST
+        - GET
+        - PUT
+        - DELETE
+        - PATCH
+        - OPTIONS
+        - HEAD
+        ## @param mqtt.apirules[1].corsPolicy.allowMethods Allowed origins for CORS header
+        ##
+        allowOrigins:
+          - regex: ".*" # allow all origins
+        ## @param mqtt.apirules[1].corsPolicy.allowCredentials Allow credentials for CORS header
+        ##
+        allowCredentials: true
+      ## @param mqtt.apirules[1].hostname The hostname to be used to precisely map incoming traffic onto the underlying network service
+      ##
+      hostname: mqtt.basyx.local
+      ## @param mqtt.apirules[1].annotations Additional ingress annotations to add
+      ##
+      annotations: {}
+  ## MQTT auth parameters
+  ## 
+  auth:
+    ## @param mqtt.auth.enabled Enabled auth for MQTT auth
+    ##
+    enabled: false
+    ## @param mqtt.users User data for MQTT auth
+    users: {}
+      # - username: user
+      #   password: password
+      #   acl:
+      #     - topic: "#"
+      #       access: readwrite
+
+## AAS Registry parameters
+##
 aas-registry:
+  ## @param aas-registry.enabled Enable AAS Registry
+  ##
   enabled: true
+  ## AAS Registry image parameters
+  ##
   image:
-    # Possible current options:
-    # - eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
-    # - eclipsebasyx/aas-registry-kafka-mongodb:2.0.0-SNAPSHOT - Storage - MongoDB - Event-sink- Kafka
-    # - eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT - Storage - MongoDB - Event-sink- Logging (Pod)
-    # - eclipsebasyx/aas-registry-kafka-mem:2.0.0-SNAPSHOT - Storage - In-memory - Event-sink- Kafka
-    # - eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT - Storage - In-memory - Event-sink- Logging (Pod)
-
-    # If Kafka is used, then the appropriate Bootstrap connection string must be provided.
-    # If Mongo is used, then the appropriate MongoDB connection string must be provided.
+    ## @param aas-registry.image.name Name of the AAS Registry image
+    ## Possible current options:
+    ## - eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
+    ## - eclipsebasyx/aas-registry-kafka-mongodb:2.0.0-SNAPSHOT - Storage - MongoDB - Event-sink- Kafka
+    ## - eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT - Storage - MongoDB - Event-sink- Logging (Pod)
+    ## - eclipsebasyx/aas-registry-kafka-mem:2.0.0-SNAPSHOT - Storage - In-memory - Event-sink- Kafka
+    ## - eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT - Storage - In-memory - Event-sink- Logging (Pod)
+    ##
+    ## If Kafka is used, then the appropriate Bootstrap connection string must be provided.
+    ## If Mongo is used, then the appropriate MongoDB connection string must be provided.
+    ##
     name: eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
+    ## @param aas-registry.image.pullPolicy Pull policy of the AAS Registry image
+    ##
     pullPolicy: IfNotPresent
+  ## AAS Registry service parameters
+  ##
   service:
+    ## @param aas-registry.service.port Port of the AAS Registry service
+    ##
     port: 8080
-  # Keep it null if not deploying a Kafka instance.
+  ## AAS Registry Kafka parameters
+  ## Keep it null if not deploying a Kafka instance.
+  ##
   kafka:
+    ## @param aas-registry.kafka.connectionString Connection string for Kafka
+    ##
     connectionString: null
+  ## AAS Registry MongoDB parameters
+  ##
   mongodb:
+    ## @param aas-registry.mongodb.connectionString Connection string for MongoDB
+    ## Depends on: @param mongodb.auth.*, @param mongodb.service.nameOverride
+    ##
     connectionString: mongodb://adminUser:adminPassword@mongodb:27017
+  ## AAS Registry ingress parameters
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+  ##
   ingress:
+    ## @param aas-registry.ingress.enabled Enable ingress for AAS Registry
+    ##
     enabled: false
+    ## @param aas-registry.ingress.host Ingress hostname for AAS Registry
+    ##
     host: registry.basyx.factory-x.catena-x.net
+  ## AAS Registry apirule parameters
+  ## ref: https://kyma-project.io/#/api-gateway/user/custom-resources/apirule/04-10-apirule-custom-resource
+  ##
   apirule:
+    ## @param aas-registry.apirule.enabled Enable apirule for AAS Registry
+    ##
     enabled: false
+    ## @param aas-registry.apirule.hostname Apirule hostname for AAS Registry
+    ##
     host: registry.basyx.local
+    ## @param aas-registry.apirule.methods HTTP methods allowed for CORS header
+    ##
     methods: 
       - "GET" 
       - "HEAD" 
@@ -90,30 +363,66 @@ aas-registry:
       - "OPTIONS" 
       - "TRACE"
       - "PATCH"
+  ## @param aas-registry.config Configuration for AAS Registry
+  ##
   config: |-
     basyx:
       cors:
         allowed-origins: "*"
         allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
 
+## SM Registry parameters
+##
 sm-registry:
+  ## @param sm-registry.enabled Enable SM Registry
+  ##
   enabled: true
+  ## SM Registry image parameters
+  ##
   image:
-    # Images similar to those above.
-    # name: eclipsebasyx/submodel-registry-log-mongodb:2.0.0-SNAPSHOT
+    ## @param sm-registry.image.name Name of the SM Registry image
+    ## Images similar to those above.
+    ## name: eclipsebasyx/submodel-registry-log-mongodb:2.0.0-SNAPSHOT
+    ##
     name: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
+    ## @param sm-registry.image.pullPolicy Pull policy of the SM Registry image
+    ##
     pullPolicy: Always
+  ## SM Registry service parameters
+  ##
   service:
+    ## @param sm-registry.service.port Port of the SM Registry service
+    ##
     port: 8080
+  ## SM Registry MongoDB parameters
+  ##
   mongodb:
-    # connectionString: mongodb://adminUser:adminPassword@mongodb:27017
-    connectionString: null
+    ## @param sm-registry.mongodb.connectionString Connection string for MongoDB
+    ## Depends on: @param mongodb.auth.*, @param mongodb.service.nameOverride
+    ##
+    connectionString: mongodb://adminUser:adminPassword@mongodb:27017
+  ## SM Registry ingress parameters
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+  ##
   ingress:
+    ## @param sm-registry.ingress.enabled Enable ingress for SM Registry
+    ##
     enabled: false
+    ## @param sm-registry.ingress.host Ingress hostname for SM Registry
+    ##
     host: smregistry.basyx.local
+  ## SM Registry apirule parameters
+  ## ref: https://kyma-project.io/#/api-gateway/user/custom-resources/apirule/04-10-apirule-custom-resource
+  ##
   apirule:
+    ## @param sm-registry.apirule.enabled Enable apirule for SM Registry
+    ##
     enabled: false
+    ## @param sm-registry.apirule.hostname Apirule hostname for SM Registry
+    ##
     host: smregistry.basyx.local
+    ## @param sm-registry.apirule.methods HTTP methods allowed for CORS header
+    ##
     methods: 
       - "GET" 
       - "HEAD" 
@@ -124,19 +433,38 @@ sm-registry:
       - "OPTIONS" 
       - "TRACE"
       - "PATCH"
+  ## @param sm-registry.config Configuration for SM Registry
+  ##
   config: |-
     basyx:
       cors:
         allowed-origins: "*"
         allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
 
+## AAS Discovery parameters
+##
 aas-discovery:
+  ## @param aas-discovery.enabled Enable AAS Discovery
+  ##
   enabled: true
+  ## AAS Discovery image parameters
+  ##
   image:
+    ## @param aas-discovery.image.name Name of the AAS Discovery image
+    ##
     name: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
+    ## @param aas-discovery.image.pullPolicy Pull policy of the AAS Discovery image
+    ##
     pullPolicy: IfNotPresent
+  ## AAS Discovery service parameters
+  ##
   service:
+    ## @param aas-discovery.service.port Port of the AAS Discovery service
+    ##
     port: 8080
+  ## @param aas-discovery.config Configuration for AAS Discovery
+  ## Depends on: @param mongodb.enabled, @param mongodb.auth.*, @param keycloak.enabled, (@param keycloak.ingress.hostname or @param keycloak.apirule.host)
+  ##
   config: |-
     server.port=8080
     spring.application.name=AAS Discovery Service
@@ -144,6 +472,7 @@ aas-discovery:
     basyx.aasdiscoveryservice.name=aas-discovery-service
 
     basyx.backend=InMemory
+    # Depends on: @param @param mongodb.enabled, @param mongodb.auth.*
     # basyx.backend=MongoDB
     # spring.data.mongodb.host=mongo
     # spring.data.mongodb.database=aas-discovery
@@ -154,17 +483,36 @@ aas-discovery:
     basyx.cors.allowed-origins=*
     basyx.cors.allowed-methods=GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
 
+    # Depends on: @param keycloak.enabled
     basyx.feature.authorization.enabled = true
     basyx.feature.authorization.type = rbac
+    # Depends on: @param keycloak.enabled
     basyx.feature.authorization.jwtBearerTokenProvider = keycloak
     basyx.feature.authorization.rbac.file = file:/application/rbac_rules.json
+    # Depends on: @param keycloak.enabled, (@param keycloak.ingress.hostname or @param keycloak.apirule.host)
     spring.security.oauth2.resourceserver.jwt.issuer-uri = http://basyx-keycloak.basyx.svc.cluster.local:8080/realms/BaSyx
+  ## AAS Discovery ingress parameters
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+  ##
   ingress:
+    ## @param aas-discovery.ingress.enabled Enable ingress for AAS Discovery
+    ##
     enabled: false
+    ## @param aas-discovery.ingress.host Ingress hostname for AAS Discovery
+    ##
     host: discovery.basyx.local
+  ## AAS Discovery apirule parameters
+  ## ref: https://kyma-project.io/#/api-gateway/user/custom-resources/apirule/04-10-apirule-custom-resource
+  ##
   apirule:
+    ## @param aas-discovery.apirule.enabled Enable apirule for AAS Discovery
+    ##
     enabled: false
+    ## @param aas-discovery.apirule.hostname Apirule hostname for AAS Discovery
+    ##
     host: discovery.basyx.local
+    ## @param aas-discovery.apirule.methods HTTP methods allowed for CORS header
+    ##
     methods: 
       - "GET" 
       - "HEAD" 
@@ -176,18 +524,35 @@ aas-discovery:
       - "TRACE"
       - "PATCH"
 
-# Also needs an ingress.
+## AAS Environment parameters
+##
 aas-environment:
+  ## @param aas-environment.enabled Enable AAS Environment
+  ##
   enabled: true
+  ## AAS Environment image parameters
+  ##
   image:
+    ## @param aas-environment.image.name Name of the AAS Environment image
+    ##
     name: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
+    ## @param aas-environment.image.pullPolicy Pull policy of the AAS Environment image
+    ##
     pullPolicy: Always
+  ## AAS Environment service parameters
+  ##
   service:
+    ## @param aas-environment.service.port Port of the AAS Environment service
+    ##
     port: 8081
+  ## @param aas-environment.config Configuration for AAS Environment
+  ## Depends on: @param mongodb.enabled, @param mongodb.auth.*, @param keycloak.enabled, (@param keycloak.ingress.hostname or @param keycloak.apirule.host), @param mqtt.enabled, @param mqtt.websockets.enabled, (@param mqtt.ingress.hosts or @param mqtt.apirules), @param mqtt.auth.enabled, @param mqtt.auth.users, @param aas-registry.enabled, (@param aas-registry.ingress.host or @param aas-registry.apirule.host), @param sm-registry.enabled, (@param sm-registry.ingress.host or @param sm-registry.apirule.host), (@param aas-environment.ingress.host or @param aas-environment.apirule.host)
+  ##
   config: |-
     server.port=8081
 
     basyx.backend = InMemory
+    # Depends on: @param @param mongodb.enabled, @param mongodb.auth.*
     # basyx.backend = MongoDB
     # spring.data.mongodb.host=mongodb
     # spring.data.mongodb.database=aas-env
@@ -199,26 +564,56 @@ aas-environment:
     
     basyx.cors.allowed-origins=*
     basyx.cors.allowed-methods=GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+    # URL of AAS Registry
+    # Depends on: @param aas-registry.enabled, (@param aas-registry.ingress.host or @param aas-registry.apirule.host)
     basyx.aasrepository.feature.registryintegration=https://registry.basyx.local
+    # URL of SM Registry
+    # Depends on: @param sm-registry.enabled, (@param sm-registry.ingress.host or @param sm-registry.apirule.host)
     basyx.submodelrepository.feature.registryintegration=https://smregistry.basyx.local
-    basyx.externalurl=https://basyx.local
+    # URL of AAS Environment
+    # Depends on: (@param aas-environment.ingress.host or @param aas-environment.apirule.host)
+    basyx.externalurl=https://basyx.local 
     spring.servlet.multipart.max-file-size=128MB
     spring.servlet.multipart.max-request-size=128MB
     
+    # Depends on: @param mqtt.enabled
     basyx.aasrepository.feature.mqtt.enabled = true
+    # Depends on: @param mqtt.enabled
     basyx.submodelrepository.feature.mqtt.enabled = true
+    # Depends on: @param mqtt.auth.*
     mqtt.clientId=basyx
+    # Depends on: (@param mqtt.ingress.hosts or @param mqtt.apirules)
     mqtt.hostname=mqttbroker.local
-    mqtt.protocol=wss
+    # Depends on: @param.websockets.enabled, (@param mqtt.ingress.hosts or @param mqtt.apirules)
+    mqtt.protocol=ws
+    # Depends on: @param.websockets.enabled, (@param mqtt.ingress.hosts or @param mqtt.apirules)
     mqtt.port=443
+    # Depends on: @param mqtt.auth.*
     mqtt.username=fx-factory
+    # Depends on: @param mqtt.auth.*
     mqtt.password=password
+  ## AAS Environment ingress parameters
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+  ##
   ingress:
+    ## @param aas-environment.ingress.enabled Enable ingress for AAS Environment
+    ##
     enabled: false
-    host: enviroment.basyx.local
+    ## @param aas-environment.ingress.host Ingress hostname for AAS Environment
+    ##
+    host: basyx.local
+  ## AAS Environment apirule parameters
+  ## ref: https://kyma-project.io/#/api-gateway/user/custom-resources/apirule/04-10-apirule-custom-resource
+  ##
   apirule:
+    ## @param aas-environment.apirule.enabled Enable apirule for AAS Environment
+    ##
     enabled: false
-    host: enviroment.basyx.local
+    ## @param aas-environment.apirule.hostname Apirule hostname for AAS Environment
+    ##
+    host: basyx.local
+    ## @param aas-environment.apirule.methods HTTP methods allowed for CORS header
+    ##
     methods: 
       - "GET" 
       - "HEAD" 
@@ -230,18 +625,43 @@ aas-environment:
       - "TRACE"
       - "PATCH"
 
-# Needs specific ingress.
+## AAS Web UI parameters
+##
 aas-web-ui:
+  ## @param aas-web-ui.enabled Enable AAS Web UI
+  ##
   enabled: true
+  ## AAS Web UI image parameters
+  ##
   image:
+    ## @param aas-web-ui.image.name Name of the AAS Web UI image
+    ##
     name: eclipsebasyx/aas-gui:SNAPSHOT
+    ## @param aas-web-ui.image.pullPolicy Pull policy of the AAS Web UI image
+    ##
     pullPolicy: Always
+  ## AAS Web UI ingress parameters
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+  ##
   ingress:
+    ## @param aas-web-ui.ingress.enabled Enable ingress for AAS Web UI
+    ##
     enabled: false
+    ## @param aas-web-ui.ingress.host Ingress hostname for AAS Web UI
+    ##
     host: ui.basyx.local
+  ## AAS Web UI apirule parameters
+  ## ref: https://kyma-project.io/#/api-gateway/user/custom-resources/apirule/04-10-apirule-custom-resource
+  ##
   apirule:
+    ## @param aas-web-ui.apirule.enabled Enable apirule for AAS Web UI
+    ##
     enabled: false
+    ## @param aas-web-ui.apirule.hostname Apirule hostname for AAS Web UI
+    ##
     host: ui.basyx.local
+    ## @param aas-web-ui.apirule.methods HTTP methods allowed for CORS header
+    ##
     methods: 
       - "GET" 
       - "HEAD" 
@@ -252,43 +672,50 @@ aas-web-ui:
       - "OPTIONS" 
       - "TRACE"
       - "PATCH"
+  ## AAS Web UI config parameters
+  ##
   config:
+    ## @param aas-web-ui.config.aasRepoUrl URL of AAS Repository
+    ## Depends on:   @param aas-environment.enabled, (@param aas-environment.ingress.host or @param aas-environment.apirule.host)
+    ##
     aasRepoUrl: "aas-environment:8080/shells"
+    ## @param aas-web-ui.config.aasSubmodelsRepoUrl URL of SM Repository
+    ## Depends on:   @param aas-environment.enabled, (@param aas-environment.ingress.host or @param aas-environment.apirule.host)
+    ##
     aasSubmodelsRepoUrl: "aas-environment:8080/submodels"
+    ## @param aas-web-ui.config.conceptdescriptionRepoUrl URL of Concept Description Repository
+    ## Depends on:   @param aas-environment.enabled, (@param aas-environment.ingress.host or @param aas-environment.apirule.host)
+    ##
     conceptdescriptionRepoUrl: "aas-environment:8080/concept-descriptions"
+    ## @param aas-web-ui.config.aasRegistryUrl URL of AAS Registry
+    ## Depends on:   @param aas-registry.enabled, (@param aas-registry.ingress.host or @param aas-registry.apirule.host)
+    ##
     aasRegistryUrl: "aas-registry:8080/api/v3.0"
+    ## @param aas-web-ui.config.submodelRegistryUrl URL of SM Registry
+    ## Depends on:   @param sm-registry.enabled, (@param sm-registry.ingress.host or @param sm-registry.apirule.host)
+    ##
     submodelRegistryUrl: "sm-registry:8080/api/v3.0"
+    ## @param aas-web-ui.config.keycloakUrl URL of Keycloak
+    ## Depends on: @param keycloak.enabled, (@param keycloak.ingress.hostname or @param keycloak.apirule.host)
+    ##
     keycloakUrl: "https://keycloak.basyx.local"
+    ## @param aas-web-ui.config.keacloakRealm Keycloak realm
+    ## Depends on: @param keycloak.extraVolumes (Keycloak Realm Import)
+    ##
     keacloakRealm: BaSyx
+    ## @param aas-web-ui.config.keacloakRealm Keycloak client id
+    ## Depends on: @param keycloak.extraVolumes (Keycloak Realm Import)
+    ##
     keycloakClientId: basyx-web-ui
+  
+  ## AAS Web UI external plugins parameters
+  ##
   externalPlugins:
+    ## @param aas-web-ui.externalPlugins.enabled Enabled external plugins for AAS Web UI
+    ##
     enabled: false
-    plugins:
-    - fileName: HelloWorldPlugin.vue
-      configMapName: hello-world-plugin
-
-mqtt:
-  enabled: true
-  websockets:
-    enabled: true
-  ingress:
-    enabled: false
-    className: ""
-    annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
-    hosts:
-      - host: websockets.mqtt.basyx.local
-        type: websockets
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
-      - host: mqtt.basyx.local
-        type: mqtt
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
-    tls: []
-    #  - secretName: chart-example-tls
-    #    hosts:
-    #      - chart-example.local
+    ## @param aas-web-ui-externalPlugins.plugins Plugins for AAS Web UI
+    ##
+    plugins: {}
+    # - fileName: HelloWorldPlugin.vue
+    #   configMapName: hello-world-plugin
