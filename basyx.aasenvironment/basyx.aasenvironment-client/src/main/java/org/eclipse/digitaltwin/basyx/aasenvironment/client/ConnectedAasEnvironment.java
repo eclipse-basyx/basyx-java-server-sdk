@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.internal.SerializationApi;
@@ -112,12 +113,13 @@ public class ConnectedAasEnvironment implements AasEnvironment {
 
 	@Override
 	public void loadEnvironment(CompleteEnvironment completeEnvironment, boolean ignoreDuplicates) {
-		// TODO Auto-generated method stub
+		throw new NotImplementedException(
+				"loadEnvironment(CompleteEnvironment completeEnvironment, boolean ignoreDuplicates) is not yet implemented");
 	}
 
 	@Override
 	public void loadEnvironment(CompleteEnvironment completeEnvironment) {
-		// TODO Auto-generated method stub
-		
+		throw new NotImplementedException(
+				"loadEnvironment(CompleteEnvironment completeEnvironment) is not yet implemented");
 	}
 }
