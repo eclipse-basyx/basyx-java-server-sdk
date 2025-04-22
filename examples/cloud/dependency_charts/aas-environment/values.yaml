@@ -37,8 +37,6 @@ apirule:
       - "PATCH"
 
 config: |
-  server.port=8080
-
   basyx.backend = MongoDB
   spring.data.mongodb.host=mongo
   spring.data.mongodb.database=aas-env

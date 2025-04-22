@@ -366,10 +366,12 @@ aas-registry:
   ## @param aas-registry.config Configuration for AAS Registry
   ##
   config: |-
-    basyx:
-      cors:
-        allowed-origins: "*"
-        allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
+    spring.application.name=AAS Registry
+
+    logging.level.root=DEBUG
+
+    basyx.cors.allowed-origins="*"
+    basyx.cors.allowed-methods="GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
 
 ## SM Registry parameters
 ##
@@ -436,10 +438,12 @@ sm-registry:
   ## @param sm-registry.config Configuration for SM Registry
   ##
   config: |-
-    basyx:
-      cors:
-        allowed-origins: "*"
-        allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
+    spring.application.name=AAS Submodel Registry
+
+    logging.level.root=DEBUG
+
+    basyx.cors.allowed-origins="*"
+    basyx.cors.allowed-methods="GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
 
 ## AAS Discovery parameters
 ##
@@ -466,8 +470,9 @@ aas-discovery:
   ## Depends on: @param mongodb.enabled, @param mongodb.auth.*, @param keycloak.enabled, (@param keycloak.ingress.hostname or @param keycloak.apirule.host)
   ##
   config: |-
-    server.port=8080
     spring.application.name=AAS Discovery Service
+
+    logging.level.root=DEBUG
 
     basyx.aasdiscoveryservice.name=aas-discovery-service
 
@@ -484,13 +489,13 @@ aas-discovery:
     basyx.cors.allowed-methods=GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
 
     # Depends on: @param keycloak.enabled
-    basyx.feature.authorization.enabled = true
-    basyx.feature.authorization.type = rbac
+    basyx.feature.authorization.enabled = false
+    # basyx.feature.authorization.type = rbac
     # Depends on: @param keycloak.enabled
-    basyx.feature.authorization.jwtBearerTokenProvider = keycloak
-    basyx.feature.authorization.rbac.file = file:/application/rbac_rules.json
+    # basyx.feature.authorization.jwtBearerTokenProvider = keycloak
+    # basyx.feature.authorization.rbac.file = file:/application/rbac_rules.json
     # Depends on: @param keycloak.enabled, (@param keycloak.ingress.hostname or @param keycloak.apirule.host)
-    spring.security.oauth2.resourceserver.jwt.issuer-uri = http://basyx-keycloak.basyx.svc.cluster.local:8080/realms/BaSyx
+    # spring.security.oauth2.resourceserver.jwt.issuer-uri = http://basyx-keycloak.basyx.svc.cluster.local:8080/realms/BaSyx
   ## AAS Discovery ingress parameters
   ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
   ##
@@ -549,7 +554,9 @@ aas-environment:
   ## Depends on: @param mongodb.enabled, @param mongodb.auth.*, @param keycloak.enabled, (@param keycloak.ingress.hostname or @param keycloak.apirule.host), @param mqtt.enabled, @param mqtt.websockets.enabled, (@param mqtt.ingress.hosts or @param mqtt.apirules), @param mqtt.auth.enabled, @param mqtt.auth.users, @param aas-registry.enabled, (@param aas-registry.ingress.host or @param aas-registry.apirule.host), @param sm-registry.enabled, (@param sm-registry.ingress.host or @param sm-registry.apirule.host), (@param aas-environment.ingress.host or @param aas-environment.apirule.host)
   ##
   config: |-
-    server.port=8081
+    spring.application.name=AAS Environment Service
+
+    logging.level.root=DEBUG
 
     basyx.backend = InMemory
     # Depends on: @param @param mongodb.enabled, @param mongodb.auth.*
@@ -572,7 +579,7 @@ aas-environment:
     basyx.submodelrepository.feature.registryintegration=https://smregistry.basyx.local
     # URL of AAS Environment
     # Depends on: (@param aas-environment.ingress.host or @param aas-environment.apirule.host)
-    basyx.externalurl=https://basyx.local 
+    basyx.externalurl=https://basyx.local
     spring.servlet.multipart.max-file-size=128MB
     spring.servlet.multipart.max-request-size=128MB
     
@@ -580,18 +587,17 @@ aas-environment:
     basyx.aasrepository.feature.mqtt.enabled = true
     # Depends on: @param mqtt.enabled
     basyx.submodelrepository.feature.mqtt.enabled = true
-    # Depends on: @param mqtt.auth.*
     mqtt.clientId=basyx
     # Depends on: (@param mqtt.ingress.hosts or @param mqtt.apirules)
     mqtt.hostname=mqttbroker.local
     # Depends on: @param.websockets.enabled, (@param mqtt.ingress.hosts or @param mqtt.apirules)
-    mqtt.protocol=ws
+    mqtt.protocol=wss
     # Depends on: @param.websockets.enabled, (@param mqtt.ingress.hosts or @param mqtt.apirules)
     mqtt.port=443
     # Depends on: @param mqtt.auth.*
-    mqtt.username=fx-factory
+    # mqtt.username=fx-factory
     # Depends on: @param mqtt.auth.*
-    mqtt.password=password
+    # mqtt.password=password
   ## AAS Environment ingress parameters
   ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
   ##

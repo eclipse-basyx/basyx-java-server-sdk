@@ -8,13 +8,13 @@ metadata:
 spec:
   gateway: kyma-system/kyma-gateway
   hosts:
-    - {{ .Values.apirule.host }}
+  - {{ .Values.apirule.host }}
   service:
     name: {{ include "aas-discovery.fullname" . }}
     port: {{ .Values.service.port }}
   timeout: 360
   rules:
-    - path: /*
-      methods: {{- toYaml .Values.apirule.methods | nindent 6 }}
-      noAuth: true
+  - path: /*
+    methods: {{- toYaml .Values.apirule.methods | nindent 6 }}
+    noAuth: true
 {{ end -}}

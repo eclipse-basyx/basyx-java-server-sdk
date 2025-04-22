@@ -34,7 +34,6 @@ apirule:
 
 # Content of application.properties
 config: |
-  server.port=8080
   spring.application.name=AAS Discovery Service
 
   basyx.aasdiscoveryservice.name=aas-discovery-service

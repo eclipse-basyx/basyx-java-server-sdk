@@ -29,12 +29,14 @@ ingress:
   enabled: false
   host: sm-registry.local
 
-# Content of application.yaml
+# Content of application.properties
 config: |
-  basyx:
-    cors:
-      allowed-origins: "*"
-      allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
+  spring.application.name=AAS Submodel Registry
+
+  logging.level.root=DEBUG
+
+  basyx.cors.allowed-origins="*"
+  basyx.cors.allowed-methods="GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
 
 apirule:
   enabled: false
