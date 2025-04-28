@@ -27,15 +27,17 @@ spec:
         image: {{ .Values.image.name }}      
         env:
         - name: AAS_REPO_PATH
-          value: {{ .Values.config.aasRepoUrl }}
+          value: {{ .Values.config.aasRepoUrl | quote }}
         - name: SUBMODEL_REPO_PATH
-          value: {{ .Values.config.aasSubmodelsRepoUrl }}
+          value: {{ .Values.config.aasSubmodelsRepoUrl | quote }}
         - name: CD_REPO_PATH
-          value: {{ .Values.config.conceptdescriptionRepoUrl }}
+          value: {{ .Values.config.conceptdescriptionRepoUrl | quote }}
+        - name: AAS_DISCOVERY_PATH
+          value: {{ .Values.config.aasDiscoveryUrl | quote }}
         - name: AAS_REGISTRY_PATH
-          value: {{ .Values.config.aasRegistryUrl }}
+          value: {{ .Values.config.aasRegistryUrl | quote }}
         - name: SUBMODEL_REGISTRY_PATH
-          value: {{ .Values.config.submodelRegistryUrl }}
+          value: {{ .Values.config.submodelRegistryUrl | quote }}
         - name: KEYCLOAK_URL
           value: {{ .Values.config.keycloakUrl }}
         - name: KEYCLOAK_REALM

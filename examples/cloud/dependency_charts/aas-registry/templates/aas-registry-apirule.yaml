@@ -7,6 +7,12 @@ metadata:
   name: {{ include "aas-environment.fullname" . }}
 spec:
   gateway: kyma-system/kyma-gateway
+  {{- if .Values.apirule.corsPolicy }}
+  corsPolicy: 
+    {{- with .Values.apirule.corsPolicy }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- end }}
   hosts:
   - {{ .Values.apirule.host }}
   service:

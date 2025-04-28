@@ -51,5 +51,17 @@ apirule:
       - "OPTIONS" 
       - "TRACE"
       - "PATCH"
-
+  # -- Allows configuring CORS headers sent with the response. If corsPolicy is not defined, the CORS headers are enforced to be empty.
+  corsPolicy: 
+    allowMethods:
+    - POST
+    - GET
+    - PUT
+    - DELETE
+    - PATCH
+    - OPTIONS
+    - HEAD
+    allowOrigins:
+      - regex: ".*" # allow all origins
+    allowCredentials: true
 

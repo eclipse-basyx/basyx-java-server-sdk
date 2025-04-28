@@ -132,7 +132,7 @@ keycloak:
   ## @param keycloak.args Overrides container command args
   ## Depends on: @param keycloak.apirule.hostname or keycloak.ingress.hostname (see flag hostname)
   ##
-  args: ["kc.sh import --file /opt/keycloak/data/import/BaSyx-realm.json; kc.sh start-dev --hostname=keycloak.basyx.local --hostname-strict=false --hostname-debug=true"]
+  args: ["kc.sh import --file /opt/keycloak/data/import/BaSyx-realm.json; kc.sh start-dev --hostname=https://keycloak.basyx.local --hostname-strict=false --hostname-debug=true"]
 
 ## MQTT parameters
 ##
@@ -280,12 +280,12 @@ mqtt:
     ##
     enabled: false
     ## @param mqtt.users User data for MQTT auth
-    users: {}
-      # - username: user
-      #   password: password
-      #   acl:
-      #     - topic: "#"
-      #       access: readwrite
+    users: []
+    # - username: user
+    #   password: password
+    #   acl:
+    #     - topic: "#"
+    #       access: readwrite
 
 ## AAS Registry parameters
 ##
@@ -363,6 +363,29 @@ aas-registry:
       - "OPTIONS" 
       - "TRACE"
       - "PATCH"
+    ## @param aas-registry.apirule.corsPolicy CORS policy for the apirule
+    ##
+    corsPolicy: 
+      allowMethods:
+      - POST
+      - GET
+      - PUT
+      - DELETE
+      - PATCH
+      - OPTIONS
+      - HEAD
+      allowHeaders:
+      - Access-Control-Allow-Headers
+      - Origin
+      - Accept
+      - Authorization
+      - X-Requested-With
+      - Content-Type
+      - Access-Control-Request-Method
+      - Access-Control-Request-Headers
+      allowOrigins:
+        - regex: ".*" # allow all origins
+      allowCredentials: true 
   ## @param aas-registry.config Configuration for AAS Registry
   ##
   config: |-
@@ -435,6 +458,29 @@ sm-registry:
       - "OPTIONS" 
       - "TRACE"
       - "PATCH"
+    ## @param sm-registry.apirule.corsPolicy CORS policy for the apirule
+    ##
+    corsPolicy: 
+      allowMethods:
+      - POST
+      - GET
+      - PUT
+      - DELETE
+      - PATCH
+      - OPTIONS
+      - HEAD
+      allowHeaders:
+      - Access-Control-Allow-Headers
+      - Origin
+      - Accept
+      - Authorization
+      - X-Requested-With
+      - Content-Type
+      - Access-Control-Request-Method
+      - Access-Control-Request-Headers
+      allowOrigins:
+        - regex: ".*" # allow all origins
+      allowCredentials: true 
   ## @param sm-registry.config Configuration for SM Registry
   ##
   config: |-
@@ -528,6 +574,29 @@ aas-discovery:
       - "OPTIONS" 
       - "TRACE"
       - "PATCH"
+    ## @param aas-discovery.apirule.corsPolicy CORS policy for the apirule
+    ##
+    corsPolicy: 
+      allowMethods:
+      - POST
+      - GET
+      - PUT
+      - DELETE
+      - PATCH
+      - OPTIONS
+      - HEAD
+      allowHeaders:
+      - Access-Control-Allow-Headers
+      - Origin
+      - Accept
+      - Authorization
+      - X-Requested-With
+      - Content-Type
+      - Access-Control-Request-Method
+      - Access-Control-Request-Headers
+      allowOrigins:
+        - regex: ".*" # allow all origins
+      allowCredentials: true 
 
 ## AAS Environment parameters
 ##
@@ -595,7 +664,7 @@ aas-environment:
     # Depends on: @param.websockets.enabled, (@param mqtt.ingress.hosts or @param mqtt.apirules)
     mqtt.port=443
     # Depends on: @param mqtt.auth.*
-    # mqtt.username=fx-factory
+    # mqtt.username=user
     # Depends on: @param mqtt.auth.*
     # mqtt.password=password
   ## AAS Environment ingress parameters
@@ -630,6 +699,29 @@ aas-environment:
       - "OPTIONS" 
       - "TRACE"
       - "PATCH"
+    ## @param aas-environment.apirule.corsPolicy CORS policy for the apirule
+    ##
+    corsPolicy: 
+      allowMethods:
+      - POST
+      - GET
+      - PUT
+      - DELETE
+      - PATCH
+      - OPTIONS
+      - HEAD
+      allowHeaders:
+      - Access-Control-Allow-Headers
+      - Origin
+      - Accept
+      - Authorization
+      - X-Requested-With
+      - Content-Type
+      - Access-Control-Request-Method
+      - Access-Control-Request-Headers
+      allowOrigins:
+        - regex: ".*" # allow all origins
+      allowCredentials: true
 
 ## AAS Web UI parameters
 ##
@@ -678,6 +770,29 @@ aas-web-ui:
       - "OPTIONS" 
       - "TRACE"
       - "PATCH"
+    ## @param aas-web-ui.apirule.corsPolicy CORS policy for the apirule
+    ##
+    corsPolicy: 
+      allowMethods:
+      - POST
+      - GET
+      - PUT
+      - DELETE
+      - PATCH
+      - OPTIONS
+      - HEAD
+      allowHeaders:
+      - Access-Control-Allow-Headers
+      - Origin
+      - Accept
+      - Authorization
+      - X-Requested-With
+      - Content-Type
+      - Access-Control-Request-Method
+      - Access-Control-Request-Headers
+      allowOrigins:
+        - regex: ".*" # allow all origins
+      allowCredentials: true
   ## AAS Web UI config parameters
   ##
   config:
@@ -693,22 +808,26 @@ aas-web-ui:
     ## Depends on:   @param aas-environment.enabled, (@param aas-environment.ingress.host or @param aas-environment.apirule.host)
     ##
     conceptdescriptionRepoUrl: "aas-environment:8080/concept-descriptions"
+    ## @param aas-web-ui.config.aasDiscoveryUrl URL of AAS Discovery
+    ## Depends on:   @param aas-discovery.enabled, (@param aas-discovery.ingress.host or @param aas-discovery.apirule.host)
+    ##
+    aasDiscoveryUrl: "aas-discovery:8080/lookup/shells"
     ## @param aas-web-ui.config.aasRegistryUrl URL of AAS Registry
     ## Depends on:   @param aas-registry.enabled, (@param aas-registry.ingress.host or @param aas-registry.apirule.host)
     ##
-    aasRegistryUrl: "aas-registry:8080/api/v3.0"
+    aasRegistryUrl: "aas-registry:8080/shell-descriptors"
     ## @param aas-web-ui.config.submodelRegistryUrl URL of SM Registry
     ## Depends on:   @param sm-registry.enabled, (@param sm-registry.ingress.host or @param sm-registry.apirule.host)
     ##
-    submodelRegistryUrl: "sm-registry:8080/api/v3.0"
+    submodelRegistryUrl: "sm-registry:8080/submodel-descriptors"
     ## @param aas-web-ui.config.keycloakUrl URL of Keycloak
     ## Depends on: @param keycloak.enabled, (@param keycloak.ingress.hostname or @param keycloak.apirule.host)
     ##
     keycloakUrl: "https://keycloak.basyx.local"
-    ## @param aas-web-ui.config.keacloakRealm Keycloak realm
+    ## @param aas-web-ui.config.keycloakRealm Keycloak realm
     ## Depends on: @param keycloak.extraVolumes (Keycloak Realm Import)
     ##
-    keacloakRealm: BaSyx
+    keycloakRealm: BaSyx
     ## @param aas-web-ui.config.keacloakRealm Keycloak client id
     ## Depends on: @param keycloak.extraVolumes (Keycloak Realm Import)
     ##
