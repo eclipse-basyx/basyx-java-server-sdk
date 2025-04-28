@@ -158,24 +158,24 @@ services:
       networks:
         - basyx-java-server-sdk
 
-  keycloak-fixed-uri:
-    image: eclipsebasyx/keycloak:0.0.1
-    build:
-      context: ./keycloak
-      dockerfile: Dockerfile.keycloak
-    container_name: keycloak-fixed
-    environment:
-      KC_HOSTNAME: localhost
-      KC_SPI_INITIALIZER_ISSUER_BASE_URI: http://keycloak-fixed:8080
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: keycloak-admin
-    command: ["start-dev", "--import-realm"]
-    ports:
-      - 9097:8080
-    volumes:
-      - ./keycloak/realm:/opt/keycloak/data/import:ro
-    networks:
-      - basyx-java-server-sdk
+  # keycloak-fixed-uri:
+  #   image: eclipsebasyx/keycloak:0.0.1
+  #   build:
+  #     context: ./keycloak
+  #     dockerfile: Dockerfile.keycloak
+  #   container_name: keycloak-fixed
+  #   environment:
+  #     KC_HOSTNAME: localhost
+  #     KC_SPI_INITIALIZER_ISSUER_BASE_URI: http://keycloak-fixed:8080
+  #     KEYCLOAK_ADMIN: admin
+  #     KEYCLOAK_ADMIN_PASSWORD: keycloak-admin
+  #   command: ["start-dev", "--import-realm"]
+  #   ports:
+  #     - 9097:8080
+  #   volumes:
+  #     - ./keycloak/realm:/opt/keycloak/data/import:ro
+  #   networks:
+  #     - basyx-java-server-sdk
 
 networks:
   basyx-java-server-sdk:
