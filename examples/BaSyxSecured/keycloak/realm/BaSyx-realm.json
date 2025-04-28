@@ -1629,8 +1629,10 @@
     "enabled" : true,
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
-    "redirectUris" : [ "http://localhost:3000/*" ],
-    "webOrigins" : [ "http://localhost:3000" ],
+    "redirectUris" : [ 
+        "http://aasgui.basyx.localhost/*", "http://localhost:3000/*" ],
+    "webOrigins" : [ 
+        "http://aasgui.basyx.localhost", "http://localhost:3000" ],
     "notBefore" : 0,
     "bearerOnly" : false,
     "consentRequired" : false,
@@ -1644,7 +1646,7 @@
     "attributes" : {
       "oidc.ciba.grant.enabled" : "false",
       "backchannel.logout.session.required" : "true",
-      "post.logout.redirect.uris" : "http://localhost:3000/*",
+      "post.logout.redirect.uris": "http://localhost:3000/*##http://aasgui.basyx.localhost/*",
       "oauth2.device.authorization.grant.enabled" : "true",
       "display.on.consent.screen" : "false",
       "backchannel.logout.revoke.offline.tokens" : "false"
