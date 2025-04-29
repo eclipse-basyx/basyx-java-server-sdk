@@ -4,7 +4,11 @@ services:
     container_name: test_submodel_repository
     environment:
       - SERVER_PORT=8081
-      - SPRING_DATA_MONGODB_URI=mongodb://mongoAdmin:mongoPassword@mongodb:27017
+      - SPRING_DATA_MONGODB_HOST=mongo
+      - SPRING_DATA_MONGODB_DATABASE=smrepo
+      - SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE=admin
+      - SPRING_DATA_MONGODB_USERNAME=mongoAdmin
+      - SPRING_DATA_MONGODB_PASSWORD=mongoAdmin
       - BASYX_BACKEND=MongoDB
     ports:
       - '8081:8081'
