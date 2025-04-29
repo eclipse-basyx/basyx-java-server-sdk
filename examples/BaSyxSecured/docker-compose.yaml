@@ -1,18 +1,18 @@
 services:
 
   # nginx reverse proxy to support dns lookup
-  # nginx-proxy:
-  #   image: nginxproxy/nginx-proxy:1.6.0-alpine
-  #   container_name: proxy
-  #   restart: always
-  #   ports:
-  #     - "80:80"
-  #   volumes:
-  #     - /var/run/docker.sock:/tmp/docker.sock:ro
-  #   environment:
-  #     DEFAULT_HOST: aasgui.basyx.localhost
-  #   networks:
-  #     - basyx-java-server-sdk
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy:1.6.0-alpine
+    container_name: proxy
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    environment:
+      DEFAULT_HOST: aasgui.basyx.localhost
+    networks:
+      - basyx-java-server-sdk
 
   # AAS Environment
   aas-env:

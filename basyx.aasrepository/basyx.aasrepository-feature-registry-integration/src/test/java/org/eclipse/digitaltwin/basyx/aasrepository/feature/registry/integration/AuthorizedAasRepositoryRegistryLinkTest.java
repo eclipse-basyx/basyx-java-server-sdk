@@ -51,7 +51,7 @@ import org.springframework.http.HttpStatus;
 public class AuthorizedAasRepositoryRegistryLinkTest extends AasRepositoryRegistryLinkTestSuite {
 
 	private static final String AAS_REPO_URL = "http://localhost:8081";
-	private static final String AAS_REGISTRY_BASE_URL = "http://localhost:8051";
+	private static final String AAS_REGISTRY_BASE_URL = "http://localhost:8052";
 	private static ConfigurableApplicationContext appContext;
 	private static AasRepositoryRegistryLink aasRepositoryRegistryLink;
 	
