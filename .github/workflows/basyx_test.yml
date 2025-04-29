@@ -45,6 +45,13 @@ jobs:
       - name: Test BaSyx Common
         run: mvn test -f "basyx.common/pom.xml"
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
@@ -71,8 +78,22 @@ jobs:
       - name: Test AASX FileServer
         run: mvn test -f "basyx.aasxfileserver/pom.xml" -DskipITs
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi        
+
       - name: Test AASX FileServer IT
         run: mvn verify -f "basyx.aasxfileserver/basyx.aasxfileserver.component" -Ddocker.namespace=test -DskipSurefire=true
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()
@@ -100,8 +121,22 @@ jobs:
       - name: Test AAS Environment
         run: mvn test -f "basyx.aasenvironment/pom.xml" -DskipITs
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Test AAS Environment IT
         run: mvn verify -f "basyx.aasenvironment/basyx.aasenvironment.component" -Ddocker.namespace=test -DskipSurefire=true
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()
@@ -129,8 +164,22 @@ jobs:
       - name: Test AAS Repository
         run: mvn test -f "basyx.aasrepository/pom.xml" -DskipITs
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Test AAS Repository IT
         run: mvn verify -f "basyx.aasrepository/basyx.aasrepository.component" -Ddocker.namespace=test -DskipSurefire=true
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()
@@ -158,6 +207,13 @@ jobs:
       - name: Test AAS Service
         run: mvn test -f "basyx.aasservice/pom.xml"
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
@@ -184,8 +240,22 @@ jobs:
       - name: Test Submodel Repository
         run: mvn test -f "basyx.submodelrepository/pom.xml" -DskipITs
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Test Submodel Repository IT
         run: mvn verify -f "basyx.submodelrepository/basyx.submodelrepository.component" -Ddocker.namespace=test -DskipSurefire=true
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()
@@ -213,6 +283,13 @@ jobs:
       - name: Test Submodel Service
         run: mvn test -f "basyx.submodelservice/pom.xml"
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
@@ -239,8 +316,22 @@ jobs:
       - name: Test Concept Description Repository
         run: mvn test -f "basyx.conceptdescriptionrepository/pom.xml" -DskipITs
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Test Concept Description Repository IT
         run: mvn verify -f "basyx.conceptdescriptionrepository/basyx.conceptdescriptionrepository.component" -Ddocker.namespace=test -DskipSurefire=true
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()
@@ -268,8 +359,22 @@ jobs:
       - name: Test Submodel Registry
         run: mvn test -f "basyx.submodelregistry/pom.xml" -DskipITs
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Test Submodel Registry IT
         run: mvn verify -f "basyx.submodelregistry" -Ddocker.namespace=test -DskipSurefire=true
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()
@@ -297,8 +402,22 @@ jobs:
       - name: Test AAS Registry
         run: mvn test -f "basyx.aasregistry/pom.xml" -DskipITs
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Test AAS Registry IT
         run: mvn verify -f "basyx.aasregistry" -Ddocker.namespace=test -DskipSurefire=true
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()
@@ -326,8 +445,22 @@ jobs:
       - name: Test AAS Discovery Service
         run: mvn test -f "basyx.aasdiscoveryservice/pom.xml" -DskipITs
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Test AAS Discovery Service IT
         run: mvn verify -f "basyx.aasdiscoveryservice/basyx.aasdiscoveryservice.component" -Ddocker.namespace=test -DskipSurefire=true
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()
