@@ -1089,7 +1089,6 @@ public class AssetAdministrationShellRepositoryApi {
 	    	try {
 	    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
 			} catch (IOException e) {
-				e.printStackTrace();
 				throw new AccessTokenRetrievalException("Unable to request access token");
 			}
 	    }

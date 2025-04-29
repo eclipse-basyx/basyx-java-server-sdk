@@ -93,7 +93,7 @@ public class TestAuthorizedConnectedAasEnvironment extends TestConnectedAasEnvir
 	
 	@Before
 	public void setup() throws IOException {
-		TokenManager mockTokenManager = new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom")));
+		TokenManager mockTokenManager = new TokenManager("http://localhost:9098/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom")));
 		
 		aasEnvironment = new AuthorizedConnectedAasEnvironment(mockTokenManager);
 	}
