@@ -55,6 +55,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import com.mongodb.client.result.UpdateResult;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * MongoDb implementation of the {@link SubmodelOperations}
@@ -180,6 +181,7 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
     }
 
     @Override
+    @Transactional
     public synchronized void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
 
         Submodel submodel = getSubmodel(submodelId);
