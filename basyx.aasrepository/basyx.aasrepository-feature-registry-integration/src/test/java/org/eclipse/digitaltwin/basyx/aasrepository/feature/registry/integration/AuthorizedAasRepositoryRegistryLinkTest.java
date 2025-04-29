@@ -84,7 +84,6 @@ public class AuthorizedAasRepositoryRegistryLinkTest extends AasRepositoryRegist
 		ApiException exception = assertThrows(ApiException.class, () -> {
 			registryApi.postAssetAdministrationShellDescriptor(descriptor);
 		});
-
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), exception.getCode());
 	}
 
