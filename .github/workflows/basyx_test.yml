@@ -36,8 +36,26 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
+
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait --build
+        run: docker compose --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -68,9 +86,27 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait --build
+        run: docker compose --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -111,9 +147,27 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait --build
+        run: docker compose --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -154,9 +208,27 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait --build
+        run: docker compose --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -197,9 +269,27 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait --build
+        run: docker compose --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -230,9 +320,27 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait --build
+        run: docker compose --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -273,9 +381,27 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait --build
+        run: docker compose --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -306,9 +432,27 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait --build
+        run: docker compose --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -349,9 +493,27 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait --build
+        run: docker compose --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -392,9 +554,27 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait --build
+        run: docker compose --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -435,9 +615,27 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait --build
+        run: docker compose --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
