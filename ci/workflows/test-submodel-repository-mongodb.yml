@@ -1,0 +1,26 @@
+services:
+  submodel-repo:
+    image: eclipsebasyx/submodel-repository:$BASYX_VERSION
+    container_name: submodel-repo
+    environment:
+      - SERVER_PORT=8081
+    volumes:
+      - ./properties/submodel-repo.properties:/application/application.properties
+    ports:
+      - '8081:8081'
+    restart: always
+    depends_on:
+      mongo:
+        condition: service_healthy
+  mongo:
+    image: mongo:5.0.10
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoAdmin
+      MONGO_INITDB_ROOT_PASSWORD: mongoPassword
+    restart: always
+    healthcheck:
+      test: mongo
+      interval: 10s
+      timeout: 5s
+      retries: 5
