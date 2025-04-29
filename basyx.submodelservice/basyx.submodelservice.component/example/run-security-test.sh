@@ -9,7 +9,7 @@
 # =============================================
 
 # --- Keycloak credentials ---
-TOKEN_URL="http://localhost:9102/realms/BaSyx/protocol/openid-connect/token"
+TOKEN_URL="http://localhost/realms/BaSyx/protocol/openid-connect/token"
 CLIENT_ID="workstation-1"
 CLIENT_SECRET="nY0mjyECF60DGzNmQUjL81XurSl8etom"
 

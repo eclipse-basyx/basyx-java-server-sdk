@@ -3,6 +3,21 @@ networks:
     driver: bridge
 
 services:
+
+  # nginx reverse proxy to support dns lookup
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy:1.6.0-alpine
+    container_name: proxy
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    environment:
+      DEFAULT_HOST: keycloak.basyx.localhost
+    networks:
+      - auth
+
   submodel-service:
     image: eclipsebasyx/submodel-service:${REVISION}
     container_name: submodel-service
@@ -23,12 +38,13 @@ services:
       - ./sources/:/application/sources/:ro
       - ./jars/HelloWorld.jar:/application/jars/HelloWorld.jar:ro
       - ./application-mappings.yml:/application/config/application-mappings.yml/:ro
+
   submodel-service-auth:
     image: eclipsebasyx/submodel-service:${REVISION}
     container_name: submodel-service-auth
     pull_policy: missing    
-    # extra_hosts:
-    # - "host.docker.internal:host-gateway"
+    extra_hosts:
+    - "keycloak.basyx.localhost:host-gateway"
     environment:
       # add the mounted jar file file:submodel.json or submodel.json
       BASYX_SUBMODELSERVICE_SUBMODEL_FILE: submodel.json
@@ -55,24 +71,23 @@ services:
         condition: service_completed_successfully
 
   keycloak:
-    image: test/keycloak-submodel:24.0.4
-    build: 
-      context: ../../../ci/keycloak
-      dockerfile: Dockerfile.keycloak
+    image: keycloak/keycloak:24.0.4
     container_name: keycloak
-    command: ["start-dev", "--import-realm"]
-    ports:
-      - 9102:9102
     environment:
-      KC_HTTP_PORT: 9102
-      KC_HTTP_ENABLED: "true"
-      KC_HTTPS_ENABLED: "false"
-      KC_HEALTH_ENABLED: "true"      
-      KC_HOSTNAME: localhost
-      KC_SPI_INITIALIZER_ISSUER_BASE_URI: http://keycloak:9102
+      VIRTUAL_HOST: keycloak.basyx.localhost
+      VIRTUAL_PORT: "8080"
+      KC_HOSTNAME: keycloak.basyx.localhost
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: keycloak-admin
+      KC_HTTP_ENABLED: "true"
+      KC_HTTPS_ENABLED: "false"
+      KC_HEALTH_ENABLED: "true"
       KC_IMPORT: /opt/keycloak/data/import/
+    command: ["start-dev", "--import-realm"]
+    ports:
+      - 9097:8080
+    volumes:
+      - ./keycloak/realm:/opt/keycloak/data/import
     networks:
       - auth   
       
@@ -81,7 +96,7 @@ services:
     command: >
       sh -c "
         echo 'Waiting for Keycloak to become ready...';
-        until curl -sf http://keycloak:9102/health/ready; do
+        until curl -sf http://keycloak:8080/health/ready; do
           sleep 5;
         done;
         echo 'Keycloak is ready!'"
