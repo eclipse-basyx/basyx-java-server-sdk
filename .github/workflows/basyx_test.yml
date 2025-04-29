@@ -37,7 +37,7 @@ jobs:
           cache: maven
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --build --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -70,7 +70,7 @@ jobs:
           cache: maven
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --build --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -113,7 +113,7 @@ jobs:
           cache: maven
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --build --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -156,7 +156,7 @@ jobs:
           cache: maven
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --build --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -199,7 +199,7 @@ jobs:
           cache: maven
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --build --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -232,7 +232,7 @@ jobs:
           cache: maven
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --build --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -275,7 +275,7 @@ jobs:
           cache: maven
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --build --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -308,7 +308,7 @@ jobs:
           cache: maven
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --build --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -351,7 +351,7 @@ jobs:
           cache: maven
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --build --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -394,7 +394,7 @@ jobs:
           cache: maven
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --build --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
@@ -437,7 +437,7 @@ jobs:
           cache: maven
 
       - name: Start environment
-        run: docker compose --project-directory ./ci up -d --wait
+        run: docker compose --build --project-directory ./ci up -d --wait
 
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}

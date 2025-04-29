@@ -95,6 +95,8 @@ services:
   
   secured-aas-registry-log-mem:
     image: eclipsebasyx/aas-registry-log-mem:$BASYX_VERSION
+    build:
+      context: ./basyx.aasregistry/basyx.aasregistry-service-release-log-mem/src/main/docker
     container_name: secured-aas-registry-log-mem
     ports:
       - "8051:8080"
@@ -115,6 +117,8 @@ services:
   
   secured-sm-registry-log-mem:
     image: eclipsebasyx/submodel-registry-log-mem:$BASYX_VERSION
+    build:
+      context: ./basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem/src/main/docker
     container_name: secured-sm-registry-log-mem
     environment:
       SERVER_SERVLET_CONTEXT_PATH: /
@@ -135,6 +139,8 @@ services:
 
   configuration-sm-repo:
     image: eclipsebasyx/submodel-repository:$BASYX_VERSION
+    build:
+      context: ./basyx.submodelrepository/basyx.submodelrepository.component
     container_name: configuration-sm-repo
     ports:
       - "8055:8081"
