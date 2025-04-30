@@ -19,13 +19,13 @@ spec:
         {{- include "aas-environment.selectorLabels" . | nindent 8 }}
     spec:
       volumes:
-        {{- if .Values.startup.enabled }}
-        - name: startup
-          emptyDir: {}
-        {{- end }}
-        - name: {{ template "aas-environment.fullname" $ }}-config
-          configMap:
-            name: {{ template "aas-environment.fullname" $ }}-config
+      {{- if .Values.startup.enabled }}
+      - name: startup
+        emptyDir: {}
+      {{- end }}
+      - name: {{ template "aas-environment.fullname" $ }}-config
+        configMap:
+          name: {{ template "aas-environment.fullname" $ }}-config
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -49,6 +49,9 @@ spec:
       - name: {{ .Chart.Name }}
         image: {{ .Values.image.name }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: SERVER_PORT
+          value: {{ .Values.service.port | quote }}
         ports:
         - name: http
           containerPort: {{ .Values.service.port }}

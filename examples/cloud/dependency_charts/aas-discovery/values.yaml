@@ -31,10 +31,22 @@ apirule:
     - "OPTIONS" 
     - "TRACE"
     - "PATCH"
+  # -- Allows configuring CORS headers sent with the response. If corsPolicy is not defined, the CORS headers are enforced to be empty.
+  corsPolicy: 
+    allowMethods:
+    - POST
+    - GET
+    - PUT
+    - DELETE
+    - PATCH
+    - OPTIONS
+    - HEAD
+    allowOrigins:
+      - regex: ".*" # allow all origins
+    allowCredentials: true
 
 # Content of application.properties
 config: |
-  server.port=8080
   spring.application.name=AAS Discovery Service
 
   basyx.aasdiscoveryservice.name=aas-discovery-service

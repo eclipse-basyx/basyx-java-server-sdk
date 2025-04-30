@@ -2,8 +2,8 @@ apiVersion: v2
 name: aas-basyx-v2-full
 description: Umbrella chart for the AAS Basyx v2 Environment
 type: application
-version: 0.0.1
-appVersion: 0.0.1
+version: 2.0.0
+appVersion: 2.0.0
 
 dependencies:
 # Contains frontend, backend and dashboard
@@ -36,8 +36,6 @@ dependencies:
   repository: https://charts.bitnami.com/bitnami
   alias: mongodb
   condition: mongodb.enabled
-  # Isolation der MongoDB-Variablen durch eigenen Namespace
-  namespace: project-factory-x
 - repository: https://charts.bitnami.com/bitnami
   name: keycloak
   version: 24.4.11
