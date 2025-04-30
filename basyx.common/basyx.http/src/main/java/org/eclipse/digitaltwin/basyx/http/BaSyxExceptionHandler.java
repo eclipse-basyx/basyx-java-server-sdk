@@ -26,6 +26,8 @@
 
 package org.eclipse.digitaltwin.basyx.http;
 
+import org.eclipse.digitaltwin.basyx.core.MessageType;
+import org.eclipse.digitaltwin.basyx.core.ResultMessage;
 import org.eclipse.digitaltwin.basyx.core.exceptions.AssetLinkDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -46,7 +48,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -59,13 +63,8 @@ import java.util.Map;
 public class BaSyxExceptionHandler {
 
 	private ResponseEntity<Object> buildResponse(String message, HttpStatus status) {
-		Map<String, Object> body = new HashMap<>();
-		body.put("timestamp", System.currentTimeMillis()/1000);
-		body.put("messageType", "ERROR");
-		body.put("code", status.value());
-		body.put("text", message);
-		body.put("correlationId", "TODO");
-		return new ResponseEntity<>(body, status);
+		var body = new ResultMessage(message, status.value(), "TODO", MessageType.Error).build();
+		return new ResponseEntity<>(List.of(body), status);
 	}
 
 	@ExceptionHandler(ElementDoesNotExistException.class)
