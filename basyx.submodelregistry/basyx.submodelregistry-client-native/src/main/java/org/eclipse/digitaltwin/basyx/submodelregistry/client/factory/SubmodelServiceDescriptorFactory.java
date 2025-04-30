@@ -23,33 +23,35 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelservice;
+package org.eclipse.digitaltwin.basyx.submodelregistry.client.factory;
 
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import java.util.List;
+
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMapper;
+import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
 
 /**
- * Interface for a factory creating an SubmodelService based on a Submodel
+ * Factory for creating the SubmodelDescriptor for submodel services
  * 
- * @author schnicke
- *
+ * @author Gerhard Sonnenberg (DFKI GmbH)
  */
-public interface SubmodelServiceFactory {
-	/**
-	 * Creates a new SubmodelService containing the Submodel passed as parameter
-	 * 
-	 * @param submodel
-	 * @return
-	 */
-	public SubmodelService create(Submodel submodel);
+public class SubmodelServiceDescriptorFactory extends SubmodelDescriptorFactory {
 
-	/**
-	 * Creates a new SubmodelService containing the Submodel with the given id
-	 *
-	 * The submodel is assumed to be already stored in the backend
-	 *
-	 * @param submodelId
-	 * @return the created SubmodelService
-	 */
-	public SubmodelService create(String submodelId);
+	private static final String SUBMODEL_SERVICE_PATH = "submodel";
+
+	public SubmodelServiceDescriptorFactory(List<String> submodelBaseURLs, AttributeMapper attributeMapper) {
+		super(submodelBaseURLs, attributeMapper);
+	}
 	
+	@Override
+	protected String getSubmodelPathPrefix() {
+		return SUBMODEL_SERVICE_PATH;
+	}
+	
+	@Override
+	protected String createHref(String submodelId, String url) {
+		// the submodelId is not relevant for a submodel service
+		// the href just ends with /submodel
+		return url;
+	}
 }
