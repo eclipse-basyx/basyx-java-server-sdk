@@ -42,11 +42,26 @@ apirule:
       - "OPTIONS" 
       - "TRACE"
       - "PATCH"
+  # -- Allows configuring CORS headers sent with the response. If corsPolicy is not defined, the CORS headers are enforced to be empty.
+  corsPolicy: 
+    allowMethods:
+    - POST
+    - GET
+    - PUT
+    - DELETE
+    - PATCH
+    - OPTIONS
+    - HEAD
+    allowOrigins:
+      - regex: ".*" # allow all origins
+    allowCredentials: true
 
-# Content of application.yaml
+# Content of application.properties
 config: |
-  basyx:
-    cors:
-      allowed-origins: "*"
-      allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
+  spring.application.name=AAS Registry
+
+  logging.level.root=DEBUG
+
+  basyx.cors.allowed-origins="*"
+  basyx.cors.allowed-methods="GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
 

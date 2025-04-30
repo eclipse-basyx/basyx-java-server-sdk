@@ -10,9 +10,9 @@ metadata:
 spec:
   ingressClassName: nginx
   tls:
-    - hosts:
-        - {{ .Values.ingress.host }}
-      secretName: {{ include "sm-registry.fullname" . }}-tls
+  - hosts:
+      - {{ .Values.ingress.host }}
+    secretName: {{ include "sm-registry.fullname" . }}-tls
   rules:
   - host: {{ .Values.ingress.host }}
     http:
