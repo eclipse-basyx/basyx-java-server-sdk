@@ -16,7 +16,7 @@
 
 	<properties>
 		<lombok.maven-plugin.version>1.18.20.0</lombok.maven-plugin.version>
-		<lombok.maven-plugin.lombok.version>1.18.36</lombok.maven-plugin.lombok.version>
+		<lombok.maven-plugin.lombok.version>1.18.38</lombok.maven-plugin.lombok.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -28,7 +28,7 @@
 			Plattform_i40-AssetAdministrationShellRegistryServiceSpecification-V3.0.1_SSP-001-resolved.yaml
 		</openapi.base.name>
 		<openapi.name>Plattform_i40-Registry-and-Discovery.yaml</openapi.name>
-		<guava.version>33.4.5-jre</guava.version>
+		<guava.version>33.4.8-jre</guava.version>
 		<maven-plugin.version>3.9.0</maven-plugin.version>
 		<maven-project.version>3.0-alpha-2</maven-project.version>
 		<mustache.compiler.version>0.9.14</mustache.compiler.version>
