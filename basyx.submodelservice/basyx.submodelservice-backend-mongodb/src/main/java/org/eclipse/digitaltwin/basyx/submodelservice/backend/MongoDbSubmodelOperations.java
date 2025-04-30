@@ -40,6 +40,8 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelOperations;
 import org.eclipse.digitaltwin.basyx.submodelservice.backend.MongoFilterBuilder.MongoFilterResult;
+import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.HierarchicalSubmodelElementParser;
+import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.SubmodelElementIdShortHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.factory.SubmodelElementValueMapperFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapper;
@@ -53,6 +55,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import com.mongodb.client.result.UpdateResult;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * MongoDb implementation of the {@link SubmodelOperations}
@@ -178,20 +181,78 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
     }
 
     @Override
-    public void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
-        MongoFilterResult filterResult = MongoFilterBuilder.parse(idShortPath);
+    @Transactional
+    public synchronized void deleteSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
 
+        Submodel submodel = getSubmodel(submodelId);
+        if (!SubmodelElementIdShortHelper.isNestedIdShortPath(idShortPath)) {
+            deleteFlatSubmodelElement(submodel, idShortPath);
+        }else {
+            deleteNestedSubmodelElement(submodel, idShortPath);
+        }
+        Update update = new Update().set(SUBMODEL_ELEMENTS_KEY, submodel.getSubmodelElements());
         Query query = new Query(Criteria.where("_id").is(submodelId));
-        Update update = new Update().unset(filterResult.key());
-
-        filterResult.filters().forEach(update::filterArray);
-
         UpdateResult result = mongoOperations.updateFirst(query, update, collectionName);
         if (result.getModifiedCount() == 0) {
             if (!existsSubmodel(submodelId))
                 throw new ElementDoesNotExistException(submodelId);
-            throw new ElementDoesNotExistException(idShortPath);
+            if (!existsSubmodelElement(submodelId, idShortPath))
+                throw new ElementDoesNotExistException(idShortPath);
         }
+    }
+
+    private Submodel getSubmodel(String submodelId) throws ElementDoesNotExistException {
+        Query query = new Query(Criteria.where("_id").is(submodelId));
+        Submodel submodel = mongoOperations.findOne(query, Submodel.class, collectionName);
+
+        if (submodel == null) {
+            throw new ElementDoesNotExistException(submodelId);
+        }
+
+        return submodel;
+    }
+
+    private static void deleteNestedSubmodelElement(Submodel submodel, String idShortPath) {
+        HierarchicalSubmodelElementParser parser = new HierarchicalSubmodelElementParser(submodel);
+        SubmodelElement sme = parser.getSubmodelElementFromIdShortPath(idShortPath);
+        if (SubmodelElementIdShortHelper.isDirectParentASubmodelElementList(idShortPath)) {
+            deleteNestedSubmodelElementFromList(parser, idShortPath, sme);
+        } else {
+            deleteNestedSubmodelElementFromCollectionOrEntity(parser, idShortPath, sme);
+        }
+    }
+    private static void deleteNestedSubmodelElementFromList(HierarchicalSubmodelElementParser parser, String idShortPath, SubmodelElement sme) {
+        String collectionId = SubmodelElementIdShortHelper.extractDirectParentSubmodelElementListIdShort(idShortPath);
+        SubmodelElementList list = (SubmodelElementList) parser.getSubmodelElementFromIdShortPath(collectionId);
+        list.getValue().remove(sme);
+    }
+
+    private static void deleteNestedSubmodelElementFromCollectionOrEntity(HierarchicalSubmodelElementParser parser, String idShortPath, SubmodelElement sme) {
+        String collectionId = SubmodelElementIdShortHelper.extractDirectParentSubmodelElementCollectionIdShort(idShortPath);
+        SubmodelElement parent = parser.getSubmodelElementFromIdShortPath(collectionId);
+        if (parent instanceof SubmodelElementCollection collection) {
+            collection.getValue().remove(sme);
+        } else if (parent instanceof Entity entity) {
+            entity.getStatements().remove(sme);
+        }
+    }
+
+    private static void deleteFlatSubmodelElement(Submodel submodel, String idShortPath) throws ElementDoesNotExistException {
+        int index = findIndexOfElementTobeDeleted(submodel, idShortPath);
+        if (index >= 0) {
+            submodel.getSubmodelElements().remove(index);
+            return;
+        }
+        throw new ElementDoesNotExistException();
+    }
+
+    private static int findIndexOfElementTobeDeleted(Submodel submodel, String idShortPath) {
+        for (SubmodelElement sme : submodel.getSubmodelElements()) {
+            if (sme.getIdShort().equals(idShortPath)) {
+                return submodel.getSubmodelElements().indexOf(sme);
+            }
+        }
+        return -1;
     }
 
     @Override

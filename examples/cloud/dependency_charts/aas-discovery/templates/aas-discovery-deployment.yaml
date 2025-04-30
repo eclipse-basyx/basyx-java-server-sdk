@@ -32,7 +32,7 @@ spec:
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           volumeMounts:
-            - mountPath: /workspace/config/application.properties
+            - mountPath: /application/application.properties
               name: {{ template "aas-discovery.fullname" $ }}-config
               subPath: application.properties
             - mountPath: /application/rbac-rules.json
