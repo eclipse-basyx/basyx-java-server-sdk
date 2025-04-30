@@ -25,10 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.client;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.client.internal.AssetAdministrationShellRepositoryApi;
-import org.eclipse.digitaltwin.basyx.aasservice.client.AuthorizedConnectedAasService;
-import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
-import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 
 /**
