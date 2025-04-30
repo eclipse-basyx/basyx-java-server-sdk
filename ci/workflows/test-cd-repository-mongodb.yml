@@ -1,0 +1,30 @@
+services:
+  cd-repository:
+    image: test/conceptdescription-repository:$BASYX_VERSION
+    container_name: test_cd_repository
+    environment:
+      - SERVER_PORT=8081
+      - SPRING_DATA_MONGODB_HOST=mongo
+      - SPRING_DATA_MONGODB_DATABASE=cdrepository
+      - SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE=admin
+      - SPRING_DATA_MONGODB_USERNAME=mongoAdmin
+      - SPRING_DATA_MONGODB_PASSWORD=mongoPassword
+      - BASYX_BACKEND=MongoDB
+    ports:
+      - '8081:8081'
+    restart: always
+    depends_on:
+      mongo:
+        condition: service_healthy
+  mongo:
+    image: mongo:5.0.10
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoAdmin
+      MONGO_INITDB_ROOT_PASSWORD: mongoPassword
+    restart: always
+    healthcheck:
+      test: mongo
+      interval: 10s
+      timeout: 5s
+      retries: 5
