@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 DFKI GmbH (https://www.dfki.de/en/web)
+ * Copyright (C) 2025 DFKI GmbH (https://www.dfki.de/en/web)
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
