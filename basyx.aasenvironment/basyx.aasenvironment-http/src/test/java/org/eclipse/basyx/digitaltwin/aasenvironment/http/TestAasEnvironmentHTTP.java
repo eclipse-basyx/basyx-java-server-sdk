@@ -227,6 +227,15 @@ public class TestAasEnvironmentHTTP {
 	}
 
 	@Test
+	public void testEnvironmentUpload_AASX_CollidingIdentifier() throws IOException, InvalidFormatException, UnsupportedOperationException, DeserializationException, ParseException {
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executePostRequest(HttpClients.createDefault(), createPostRequestWithFile(AASX_ENV_PATH, AASX_MIMETYPE));
+
+		CloseableHttpResponse response2 = BaSyxHttpTestUtils.executePostRequest(HttpClients.createDefault(), createPostRequestWithFile(AASX_ENV_PATH, AASX_MIMETYPE));
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+		assertEquals(HttpStatus.CONFLICT.value(), response2.getCode());
+	}
+
+	@Test
 	public void testEnvironmentUpload_JSON() throws IOException, InvalidFormatException, UnsupportedOperationException, DeserializationException, ParseException {
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executePostRequest(HttpClients.createDefault(), createPostRequestWithFile(JSON_ENV_PATH, JSON_MIMETYPE));
 

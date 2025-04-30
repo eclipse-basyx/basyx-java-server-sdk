@@ -44,84 +44,97 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Configures overall Exception to HTTP status code mapping
  * 
- * @author schnicke
+ * @author schnicke, fried
  *
  */
 @ControllerAdvice
-public class BaSyxExceptionHandler extends ResponseEntityExceptionHandler {
+public class BaSyxExceptionHandler {
+
+	private ResponseEntity<Object> buildResponse(String message, HttpStatus status) {
+		Map<String, Object> body = new HashMap<>();
+		body.put("timestamp", System.currentTimeMillis()/1000);
+		body.put("messageType", "ERROR");
+		body.put("code", status.value());
+		body.put("text", message);
+		body.put("correlationId", "TODO");
+		return new ResponseEntity<>(body, status);
+	}
 
 	@ExceptionHandler(ElementDoesNotExistException.class)
-	public <T> ResponseEntity<T> handleElementNotFoundException(ElementDoesNotExistException exception, WebRequest request) {
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	public ResponseEntity<Object> handleElementNotFoundException(ElementDoesNotExistException exception, WebRequest request) {
+		return buildResponse(exception.getMessage(), HttpStatus.NOT_FOUND);
 	}
 	
 	@ExceptionHandler(AssetLinkDoesNotExistException.class)
-	public <T> ResponseEntity<T> handleElementNotFoundException(AssetLinkDoesNotExistException exception, WebRequest request) {
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	public ResponseEntity<Object> handleElementNotFoundException(AssetLinkDoesNotExistException exception, WebRequest request) {
+		return buildResponse(exception.getMessage(), HttpStatus.NOT_FOUND);
 	}
 	
 	@ExceptionHandler(FileDoesNotExistException.class)
-	public <T> ResponseEntity<T> handleElementNotFoundException(FileDoesNotExistException exception, WebRequest request) {
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	public ResponseEntity<Object> handleElementNotFoundException(FileDoesNotExistException exception, WebRequest request) {
+		return buildResponse(exception.getMessage(), HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(CollidingIdentifierException.class)
-	public <T> ResponseEntity<T> handleCollidingIdentifierException(CollidingIdentifierException exception, WebRequest request) {
-		return new ResponseEntity<>(HttpStatus.CONFLICT);
+	public ResponseEntity<Object> handleCollidingIdentifierException(CollidingIdentifierException exception, WebRequest request) {
+		return buildResponse(exception.getMessage(), HttpStatus.CONFLICT);
 	}
 	
 	@ExceptionHandler(MissingIdentifierException.class)
-	public <T> ResponseEntity<T> handleMissingIdentifierException(MissingIdentifierException exception, WebRequest request) {
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	public ResponseEntity<Object> handleMissingIdentifierException(MissingIdentifierException exception, WebRequest request) {
+		return buildResponse(exception.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(CollidingAssetLinkException.class)
-	public <T> ResponseEntity<T> handleCollidingIdentifierException(CollidingAssetLinkException exception, WebRequest request) {
-		return new ResponseEntity<>(HttpStatus.CONFLICT);
+	public ResponseEntity<Object> handleCollidingIdentifierException(CollidingAssetLinkException exception, WebRequest request) {
+		return buildResponse(exception.getMessage(), HttpStatus.CONFLICT);
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
-	public <T> ResponseEntity<T> handleIllegalArgumentException(IllegalArgumentException exception) {
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(IdentificationMismatchException.class)
-	public <T> ResponseEntity<T> handleIdMismatchException(IdentificationMismatchException exception) {
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	public ResponseEntity<Object> handleIdMismatchException(IdentificationMismatchException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(FeatureNotSupportedException.class)
-	public <T> ResponseEntity<T> handleFeatureNotSupportedException(FeatureNotSupportedException exception) {
-		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+	public ResponseEntity<Object> handleFeatureNotSupportedException(FeatureNotSupportedException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	@ExceptionHandler(NotInvokableException.class)
-	public <T> ResponseEntity<T> handleNotInvokableException(NotInvokableException exception) {
-		return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+	public ResponseEntity<Object> handleNotInvokableException(NotInvokableException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
 	}
 	
 	@ExceptionHandler(ElementNotAFileException.class)
-	public <T> ResponseEntity<T> handleElementNotAFileException(ElementNotAFileException exception) {
-		return new ResponseEntity<>(HttpStatus.PRECONDITION_FAILED);
+	public ResponseEntity<Object> handleElementNotAFileException(ElementNotAFileException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.PRECONDITION_FAILED);
 	}
 	
 	@ExceptionHandler(InsufficientPermissionException.class)
-	public <T> ResponseEntity<T> handleInsufficientPermissionException(InsufficientPermissionException exception, WebRequest request) {
-		return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+	public ResponseEntity<Object> handleInsufficientPermissionException(InsufficientPermissionException exception, WebRequest request) {
+		return buildResponse(exception.getMessage(), HttpStatus.FORBIDDEN);
 	}
 	
 	@ExceptionHandler(NullSubjectException.class)
-	public <T> ResponseEntity<T> handleNullSubjectException(NullSubjectException exception) {
-		return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+	public ResponseEntity<Object> handleNullSubjectException(NullSubjectException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.UNAUTHORIZED);
 	}
 	
 	@ExceptionHandler(OperationDelegationException.class)
-	public <T> ResponseEntity<T> handleNullSubjectException(OperationDelegationException exception) {
-		return new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
+	public ResponseEntity<Object> handleNullSubjectException(OperationDelegationException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.FAILED_DEPENDENCY);
 	}
 }
