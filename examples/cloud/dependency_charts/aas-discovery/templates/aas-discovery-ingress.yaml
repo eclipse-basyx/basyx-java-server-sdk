@@ -10,9 +10,9 @@ metadata:
       cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   tls:
-    - hosts:
-        - {{ .Values.ingress.host }}
-      secretName: {{ include "aas-discovery.fullname" . }}-tls
+  - hosts:
+      - {{ .Values.ingress.host }}
+    secretName: {{ include "aas-discovery.fullname" . }}-tls
   rules:
   - host: {{ .Values.ingress.host }}
     http:

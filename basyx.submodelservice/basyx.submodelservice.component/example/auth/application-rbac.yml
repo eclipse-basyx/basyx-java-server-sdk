@@ -11,4 +11,4 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:9102/realms/BaSyx
+          issuer-uri: http://keycloak.basyx.localhost/realms/BaSyx

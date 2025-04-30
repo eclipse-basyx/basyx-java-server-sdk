@@ -63,8 +63,8 @@ public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
 	protected final static String AAS_REGISTRY_BASE_PATH = "http://localhost:8051";
 	protected final static String SM_REGISTRY_BASE_PATH = "http://localhost:8061";
 	
-	private final static TokenManager TOKEN_MANAGER = new TokenManager("http://localhost:9096/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom")));
-	private final static TokenManager TOKEN_MANAGER_REGISTRY = new TokenManager("http://localhost:9097/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom")));
+	private final static TokenManager TOKEN_MANAGER = new TokenManager("http://localhost:9098/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom")));
+	private final static TokenManager TOKEN_MANAGER_REGISTRY = new TokenManager("http://localhost/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom")));
 	
 	private static AuthorizedConnectedAasRepository connectedAasRepository;
 	private static AuthorizedConnectedSubmodelRepository connectedSmRepository;

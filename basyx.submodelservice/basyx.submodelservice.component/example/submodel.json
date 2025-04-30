@@ -4,9 +4,11 @@
 	"idShort": "example",
 	"kind": "Instance",
 	"semanticId": {
+		"type": "ExternalReference",
 		"keys": [
 			{
-				"value": "123"
+				"value": "123",
+				"type": "AssetAdministrationShell"
 			}
 		]
 	},

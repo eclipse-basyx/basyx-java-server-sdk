@@ -7,14 +7,20 @@ metadata:
   name: {{ include "sm-registry.fullname" . }}
 spec:
   gateway: kyma-system/kyma-gateway
+  {{- if .Values.apirule.corsPolicy }}
+  corsPolicy: 
+    {{- with .Values.apirule.corsPolicy }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- end }}
   hosts:
-    - {{ .Values.apirule.host }}
+  - {{ .Values.apirule.host }}
   service:
     name: {{ include "sm-registry.fullname" . }}
     port: {{ .Values.service.port }}
   timeout: 360
   rules:
-    - path: /*
-      methods: {{- toYaml .Values.apirule.methods | nindent 6 }}
-      noAuth: true
+  - path: /*
+    methods: {{- toYaml .Values.apirule.methods | nindent 6 }}
+    noAuth: true
 {{ end -}}
