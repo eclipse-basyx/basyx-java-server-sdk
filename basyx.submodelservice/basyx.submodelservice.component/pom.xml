@@ -75,46 +75,10 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>download-artifact</id>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<phase>validate</phase>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>org.eclipse.digitaltwin.aas4j</groupId>
-									<artifactId>aas4j-model</artifactId>
-									<version>${aas4j-version}</version>
-									<type>jar</type>
-									<outputDirectory>
-										${project.build.directory}/libs</outputDirectory>
-								</artifactItem>
-							</artifactItems>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<classifier>exec</classifier>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifestEntries>
-							<Class-Path>libs/aas4j-model-${aas4j-version}.jar</Class-Path>
-						</manifestEntries>
-					</archive>
 				</configuration>
 			</plugin>
 
@@ -133,7 +97,6 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<version>0.46.0</version>
 						<configuration>
 							<images>
 								<image>
