@@ -27,18 +27,22 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.AuthorizedConnectedAasRegistry;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.AccessTokenProviderFactory;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.AccessTokenProvider;
+import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.GrantType;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -70,13 +74,19 @@ public class AuthorizedAasRepositoryRegistryLinkTest extends AasRepositoryRegist
 		appContext.close();
 	}
 	
+	
 	@Test
 	public void sendUnauthorizedRequest() throws IOException {
-		TokenManager mockTokenManager = Mockito.mock(TokenManager.class);
+		String clientId = "workstation-1";
+		String clientSecret = "nY0mjyECF60DGzNmQUjL81XurSl8etom";
+		
+        AccessTokenProviderFactory factory = new AccessTokenProviderFactory(GrantType.CLIENT_CREDENTIALS, List.of());
+        factory.setClientCredentials(clientId, clientSecret);
+        AccessTokenProvider provider = factory.create();
+        //issuer will also have the port number and will not match the registry issuer -> 401 invalid token, unauthorized
+		TokenManager tokenManager = new TokenManager("http://localhost:9098/realms/BaSyx/protocol/openid-connect/token", provider);
 
-		Mockito.when(mockTokenManager.getAccessToken()).thenReturn("mockedAccessToken");
-
-		RegistryAndDiscoveryInterfaceApi registryApi = new AuthorizedConnectedAasRegistry(AAS_REGISTRY_BASE_URL, mockTokenManager);
+		RegistryAndDiscoveryInterfaceApi registryApi = new AuthorizedConnectedAasRegistry("http://localhost:8051", tokenManager);
 
 		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
 		descriptor.setIdShort("shortId");
