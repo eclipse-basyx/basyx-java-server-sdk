@@ -568,6 +568,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>
+					basyx.submodelrepository-feature-discovery-integration</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelrepository-feature-authorization</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -1098,6 +1104,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-feature-registry-integration</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-feature-discovery-integration</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
