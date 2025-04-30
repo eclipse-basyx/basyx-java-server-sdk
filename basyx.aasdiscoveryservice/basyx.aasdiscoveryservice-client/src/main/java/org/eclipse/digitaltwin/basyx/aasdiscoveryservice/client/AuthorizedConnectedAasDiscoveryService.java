@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -30,7 +30,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 /**
  * Provides access to an Authorized Aas Repository on a remote server
  * 
- * @author danish
+ * @author fried
  */
 public class AuthorizedConnectedAasDiscoveryService extends ConnectedAasDiscoveryService {
 
