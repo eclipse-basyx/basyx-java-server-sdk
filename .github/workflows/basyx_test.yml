@@ -35,7 +35,10 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-
+          
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -56,9 +59,6 @@ jobs:
 
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
-
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
 
       - name: Test BaSyx Common
         run: mvn test -f "basyx.common/pom.xml"
@@ -87,6 +87,10 @@ jobs:
           distribution: 'adopt'
           cache: maven
           
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -108,8 +112,8 @@ jobs:
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test AASX FileServer
         run: mvn test -f "basyx.aasxfileserver/pom.xml" -DskipITs
@@ -148,6 +152,10 @@ jobs:
           distribution: 'adopt'
           cache: maven
           
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -169,8 +177,8 @@ jobs:
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test AAS Environment
         run: mvn test -f "basyx.aasenvironment/pom.xml" -DskipITs
@@ -209,6 +217,10 @@ jobs:
           distribution: 'adopt'
           cache: maven
           
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -230,8 +242,8 @@ jobs:
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test AAS Repository
         run: mvn test -f "basyx.aasrepository/pom.xml" -DskipITs
@@ -270,6 +282,10 @@ jobs:
           distribution: 'adopt'
           cache: maven
           
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -291,8 +307,8 @@ jobs:
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test AAS Service
         run: mvn test -f "basyx.aasservice/pom.xml"
@@ -321,6 +337,10 @@ jobs:
           distribution: 'adopt'
           cache: maven
           
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -342,8 +362,8 @@ jobs:
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test Submodel Repository
         run: mvn test -f "basyx.submodelrepository/pom.xml" -DskipITs
@@ -382,6 +402,10 @@ jobs:
           distribution: 'adopt'
           cache: maven
           
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -403,8 +427,8 @@ jobs:
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test Submodel Service
         run: mvn test -f "basyx.submodelservice/pom.xml"
@@ -433,6 +457,10 @@ jobs:
           distribution: 'adopt'
           cache: maven
           
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -454,8 +482,8 @@ jobs:
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test Concept Description Repository
         run: mvn test -f "basyx.conceptdescriptionrepository/pom.xml" -DskipITs
@@ -494,6 +522,10 @@ jobs:
           distribution: 'adopt'
           cache: maven
           
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -515,8 +547,8 @@ jobs:
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test Submodel Registry
         run: mvn test -f "basyx.submodelregistry/pom.xml" -DskipITs
@@ -555,6 +587,10 @@ jobs:
           distribution: 'adopt'
           cache: maven
           
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -576,8 +612,8 @@ jobs:
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test AAS Registry
         run: mvn test -f "basyx.aasregistry/pom.xml" -DskipITs
@@ -616,6 +652,10 @@ jobs:
           distribution: 'adopt'
           cache: maven
           
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -637,8 +677,8 @@ jobs:
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test AAS Discovery Service
         run: mvn test -f "basyx.aasdiscoveryservice/pom.xml" -DskipITs
