@@ -1,5 +1,5 @@
 # Stage 1: Download the AAS4J dependency
-FROM maven:3.9-eclipse-temurin-17 AS maven-downloader
+FROM --platform=$BUILDPLATFORM maven:3.9-eclipse-temurin-17 AS maven-downloader
 ARG AAS4J_VERSION=1.0.4
 WORKDIR /download
 RUN mvn -B org.apache.maven.plugins:maven-dependency-plugin:3.6.0:get \
