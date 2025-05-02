@@ -84,7 +84,15 @@ services:
     networks:
       - basyx-java-server-sdk
 
-  
+  aas-discovery:
+    image: eclipsebasyx/aas-discovery:$BASYX_VERSION
+    container_name: aas-discovery
+    ports:
+      - "8049:8081"
+    restart: always
+    networks:
+      - basyx-java-server-sdk
+
   aas-registry-log-mem:
     image: eclipsebasyx/aas-registry-log-mem:$BASYX_VERSION
     container_name: aas-registry-log-mem

@@ -52,9 +52,6 @@ public class DiscoveryIntegrationAasRepositoryConfiguration {
 	@Value("${basyx.aasrepository.feature.discoveryintegration:#{null}}")
 	private String discoveryBasePath;
 
-	@Value("#{'${basyx.externalurl}'.split(',')}")
-	private List<String> aasRepositoryBaseURLs;
-
 	@Value("${basyx.aasrepository.feature.discoveryintegration.authorization.enabled:false}")
 	private boolean isAuthorizationEnabledOnRegistry;
 

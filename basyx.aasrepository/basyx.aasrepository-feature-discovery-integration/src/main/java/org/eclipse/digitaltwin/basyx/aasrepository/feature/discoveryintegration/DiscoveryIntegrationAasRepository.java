@@ -82,7 +82,7 @@ public class DiscoveryIntegrationAasRepository implements AasRepository {
 
 	private void createAssetLinksOnDiscoveryServiceIfNecessary(AssetAdministrationShell shell) {
 		List<SpecificAssetId> linksToAdd = new ArrayList<>(shell.getAssetInformation().getSpecificAssetIds());
-		if(!shell.getAssetInformation().getGlobalAssetId().isEmpty()){
+		if(shell.getAssetInformation().getGlobalAssetId() != null){
 			linksToAdd.add(getGlobalAssetIdAsSpecificAssetId(shell));
 		}
 		if(!linksToAdd.isEmpty()){
@@ -98,17 +98,24 @@ public class DiscoveryIntegrationAasRepository implements AasRepository {
 	@Override
 	public void updateAas(String shellId, AssetAdministrationShell shell) {
 		AssetAdministrationShell oldShell = getAas(shellId);
-		if(oldShell.getAssetInformation().getGlobalAssetId().equals(shell.getAssetInformation().getGlobalAssetId()) && oldShell.getAssetInformation().getSpecificAssetIds().equals(shell.getAssetInformation().getSpecificAssetIds())){
+		if(!isGlobalAssetIdUpdated(shell, oldShell) && !specificAssetIdsUpdated(shell, oldShell)){
 			logger.info("No changes in asset links, skipping update on discovery service");
 		} else {
 			try {
 				discoveryApi.deleteAllAssetLinksById(shellId);
-			} catch (Exception e){
-				throw new RepositoryDiscoveryUnlinkException(shellId, e);
+			} catch (Exception ignored){
 			}
 			createAssetLinksOnDiscoveryServiceIfNecessary(shell);
 		}
 		decorated.updateAas(shellId, shell);
+	}
+
+	private static boolean specificAssetIdsUpdated(AssetAdministrationShell shell, AssetAdministrationShell oldShell) {
+		return !(oldShell.getAssetInformation().getSpecificAssetIds() != null && oldShell.getAssetInformation().getSpecificAssetIds().equals(shell.getAssetInformation().getSpecificAssetIds()));
+	}
+
+	private static boolean isGlobalAssetIdUpdated(AssetAdministrationShell shell, AssetAdministrationShell oldShell) {
+		return !(oldShell.getAssetInformation().getGlobalAssetId() != null && oldShell.getAssetInformation().getGlobalAssetId().equals(shell.getAssetInformation().getGlobalAssetId()));
 	}
 
 	@Override

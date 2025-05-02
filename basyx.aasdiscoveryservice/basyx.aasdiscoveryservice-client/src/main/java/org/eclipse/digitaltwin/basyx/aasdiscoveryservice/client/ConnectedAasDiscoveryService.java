@@ -61,7 +61,7 @@ public class ConnectedAasDiscoveryService implements AasDiscoveryService {
             return discoveryApi.getAllAssetAdministrationShellIdsByAssetLink(assetIds, pInfo.getLimit(), pInfo.getCursor());
         } catch (ApiException e) {
             if(e.getCode() == HttpStatus.NOT_FOUND.value()){
-                throw new AssetLinkDoesNotExistException("No matching element for given assetIds");
+                throw new AssetLinkDoesNotExistException();
             } else {
                 throw new RuntimeException("Error while getting all Asset Administration Shell IDs by Asset Link", e);
             }
@@ -74,7 +74,7 @@ public class ConnectedAasDiscoveryService implements AasDiscoveryService {
             return discoveryApi.getAllAssetLinksById(shellIdentifier);
         } catch (ApiException e) {
             if(e.getCode() == HttpStatus.NOT_FOUND.value()){
-                throw new AssetLinkDoesNotExistException("Element with id "+shellIdentifier+" does not exist");
+                throw new AssetLinkDoesNotExistException(shellIdentifier);
             } else {
                 throw new RuntimeException("Error while getting all Asset Links by ID", e);
             }
@@ -87,7 +87,7 @@ public class ConnectedAasDiscoveryService implements AasDiscoveryService {
             return discoveryApi.postAllAssetLinksById(shellIdentifier, assetIds);
         } catch (ApiException e) {
             if(e.getCode() == HttpStatus.CONFLICT.value()){
-                throw new CollidingAssetLinkException("Asset Links for shell "+shellIdentifier+" already exists");
+                throw new CollidingAssetLinkException(shellIdentifier);
             } else {
                 throw new RuntimeException("Error while creating all Asset Links by ID", e);
             }
@@ -100,7 +100,7 @@ public class ConnectedAasDiscoveryService implements AasDiscoveryService {
             discoveryApi.deleteAllAssetLinksById(shellIdentifier);
         } catch (ApiException e) {
             if(e.getCode() == HttpStatus.NOT_FOUND.value()){
-                throw new AssetLinkDoesNotExistException("Element with id "+shellIdentifier+" does not exist");
+                throw new AssetLinkDoesNotExistException(shellIdentifier);
             } else {
                 throw new RuntimeException("Error while deleting all Asset Links by ID", e);
             }
