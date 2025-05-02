@@ -45,7 +45,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertThrows;
 
-public class AuthorizedAasRepositoryDiscoveryIntegrationTest extends AasRepositoryDiscoveryIntegrationTestSuite{
+public class AuthorizedAasRepositoryDiscoveryIntegrationTest extends AasRepositoryDiscoveryIntegrationTestSuite {
     private static ConfigurableApplicationContext appContext;
 
     @BeforeClass
@@ -61,7 +61,6 @@ public class AuthorizedAasRepositoryDiscoveryIntegrationTest extends AasReposito
         appContext.close();
     }
 
-    @Before
     @After
     public void resetRepository() {
         AssetAdministrationShell shell = getDemoAAS(false, false);

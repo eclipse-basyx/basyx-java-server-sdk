@@ -28,6 +28,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
@@ -80,42 +81,10 @@ public class DiscoveryIntegrationAasRepository implements AasRepository {
 		createAssetLinksOnDiscoveryServiceIfNecessary(shell);
 	}
 
-	private void createAssetLinksOnDiscoveryServiceIfNecessary(AssetAdministrationShell shell) {
-		List<SpecificAssetId> linksToAdd = new ArrayList<>(shell.getAssetInformation().getSpecificAssetIds());
-		if(shell.getAssetInformation().getGlobalAssetId() != null){
-			linksToAdd.add(getGlobalAssetIdAsSpecificAssetId(shell));
-		}
-		if(!linksToAdd.isEmpty()){
-			try {
-				discoveryApi.createAllAssetLinksById(shell.getId(), linksToAdd);
-			} catch (Exception e) {
-				decorated.deleteAas(shell.getId());
-				throw new RepositoryDiscoveryLinkException(shell.getId(), e);
-			}
-		}
-	}
-
 	@Override
 	public void updateAas(String shellId, AssetAdministrationShell shell) {
-		AssetAdministrationShell oldShell = getAas(shellId);
-		if(!isGlobalAssetIdUpdated(shell, oldShell) && !specificAssetIdsUpdated(shell, oldShell)){
-			logger.info("No changes in asset links, skipping update on discovery service");
-		} else {
-			try {
-				discoveryApi.deleteAllAssetLinksById(shellId);
-			} catch (Exception ignored){
-			}
-			createAssetLinksOnDiscoveryServiceIfNecessary(shell);
-		}
+		updateAssetLinks(shellId, shell);
 		decorated.updateAas(shellId, shell);
-	}
-
-	private static boolean specificAssetIdsUpdated(AssetAdministrationShell shell, AssetAdministrationShell oldShell) {
-		return !(oldShell.getAssetInformation().getSpecificAssetIds() != null && oldShell.getAssetInformation().getSpecificAssetIds().equals(shell.getAssetInformation().getSpecificAssetIds()));
-	}
-
-	private static boolean isGlobalAssetIdUpdated(AssetAdministrationShell shell, AssetAdministrationShell oldShell) {
-		return !(oldShell.getAssetInformation().getGlobalAssetId() != null && oldShell.getAssetInformation().getGlobalAssetId().equals(shell.getAssetInformation().getGlobalAssetId()));
 	}
 
 	@Override
@@ -151,6 +120,7 @@ public class DiscoveryIntegrationAasRepository implements AasRepository {
 
 	@Override
 	public void setAssetInformation(String shellId, AssetInformation shellInfo) throws ElementDoesNotExistException {
+		updateAssetLinks(shellId, wrapAssetInformationInShell(shellId, shellInfo));
 		decorated.setAssetInformation(shellId, shellInfo);
 	}
 
@@ -174,8 +144,48 @@ public class DiscoveryIntegrationAasRepository implements AasRepository {
 		decorated.deleteThumbnail(aasId);
 	}
 
+	private static DefaultAssetAdministrationShell wrapAssetInformationInShell(String shellId, AssetInformation shellInfo) {
+		return new DefaultAssetAdministrationShell.Builder().assetInformation(shellInfo).id(shellId).build();
+	}
+
+	private void updateAssetLinks(String shellId, AssetAdministrationShell shell) {
+		AssetAdministrationShell oldShell = getAas(shellId);
+		if(!isGlobalAssetIdUpdated(shell, oldShell) && !specificAssetIdsUpdated(shell, oldShell)){
+			logger.info("No changes in asset links, skipping update on discovery service");
+		} else {
+			try {
+				discoveryApi.deleteAllAssetLinksById(shellId);
+			} catch (Exception ignored){
+			}
+			createAssetLinksOnDiscoveryServiceIfNecessary(shell);
+		}
+	}
+
 	private static DefaultSpecificAssetId getGlobalAssetIdAsSpecificAssetId(AssetAdministrationShell shell) {
 		return new DefaultSpecificAssetId.Builder().name("globalAssetId").value(shell.getAssetInformation().getGlobalAssetId()).build();
+	}
+
+	private void createAssetLinksOnDiscoveryServiceIfNecessary(AssetAdministrationShell shell) {
+		List<SpecificAssetId> linksToAdd = new ArrayList<>(shell.getAssetInformation().getSpecificAssetIds());
+		if(shell.getAssetInformation().getGlobalAssetId() != null){
+			linksToAdd.add(getGlobalAssetIdAsSpecificAssetId(shell));
+		}
+		if(!linksToAdd.isEmpty()){
+			try {
+				discoveryApi.createAllAssetLinksById(shell.getId(), linksToAdd);
+			} catch (Exception e) {
+				decorated.deleteAas(shell.getId());
+				throw new RepositoryDiscoveryLinkException(shell.getId(), e);
+			}
+		}
+	}
+
+	private static boolean specificAssetIdsUpdated(AssetAdministrationShell shell, AssetAdministrationShell oldShell) {
+		return !(oldShell.getAssetInformation().getSpecificAssetIds() != null && oldShell.getAssetInformation().getSpecificAssetIds().equals(shell.getAssetInformation().getSpecificAssetIds()));
+	}
+
+	private static boolean isGlobalAssetIdUpdated(AssetAdministrationShell shell, AssetAdministrationShell oldShell) {
+		return !(oldShell.getAssetInformation().getGlobalAssetId() != null && oldShell.getAssetInformation().getGlobalAssetId().equals(shell.getAssetInformation().getGlobalAssetId()));
 	}
 
 }

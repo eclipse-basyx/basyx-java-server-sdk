@@ -25,6 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.discoveryintegration;
 
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.client.AuthorizedConnectedAasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.client.ConnectedAasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
@@ -38,7 +39,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Configuration for integrating {@link AasRepository} with Discovery
@@ -53,7 +53,7 @@ public class DiscoveryIntegrationAasRepositoryConfiguration {
 	private String discoveryBasePath;
 
 	@Value("${basyx.aasrepository.feature.discoveryintegration.authorization.enabled:false}")
-	private boolean isAuthorizationEnabledOnRegistry;
+	private boolean isAuthorizationEnabledOnDiscovery;
 
 	@Value("${basyx.aasrepository.feature.discoveryintegration.authorization.token-endpoint:#{null}}")
 	private String authenticationServerTokenEndpoint;
@@ -78,12 +78,12 @@ public class DiscoveryIntegrationAasRepositoryConfiguration {
 
 	@Bean
 	public AasDiscoveryService getConnectedAasDiscoveryService() {
-		if (!isAuthorizationEnabledOnRegistry)
+		if (!isAuthorizationEnabledOnDiscovery)
 			return new ConnectedAasDiscoveryService(discoveryBasePath);
 
 		TokenManager tokenManager = new TokenManager(authenticationServerTokenEndpoint, createAccessTokenProvider());
 
-		return new ConnectedAasDiscoveryService(discoveryBasePath, tokenManager);
+		return new AuthorizedConnectedAasDiscoveryService(discoveryBasePath, tokenManager);
 	}
 
 	private AccessTokenProvider createAccessTokenProvider() {

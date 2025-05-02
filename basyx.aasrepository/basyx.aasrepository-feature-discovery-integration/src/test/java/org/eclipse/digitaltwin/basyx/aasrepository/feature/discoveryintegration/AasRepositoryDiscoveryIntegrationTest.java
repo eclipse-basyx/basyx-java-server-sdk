@@ -36,7 +36,7 @@ import org.junit.BeforeClass;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-public class AasRepositoryDiscoveryIntegrationTest extends AasRepositoryDiscoveryIntegrationTestSuite{
+public class AasRepositoryDiscoveryIntegrationTest extends AasRepositoryDiscoveryIntegrationTestSuite {
     private static ConfigurableApplicationContext appContext;
 
     @BeforeClass
@@ -49,7 +49,6 @@ public class AasRepositoryDiscoveryIntegrationTest extends AasRepositoryDiscover
         appContext.close();
     }
 
-    @Before
     @After
     public void resetRepository() {
         AssetAdministrationShell shell = getDemoAAS(false, false);

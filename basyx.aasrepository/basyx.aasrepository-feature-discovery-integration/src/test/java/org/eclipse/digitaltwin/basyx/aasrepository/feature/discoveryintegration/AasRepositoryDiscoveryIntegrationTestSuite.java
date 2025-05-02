@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.discoveryintegration
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
@@ -112,12 +113,48 @@ public abstract class AasRepositoryDiscoveryIntegrationTestSuite {
         }
     }
 
+    @Test
+    public void updateAAS() throws IOException {
+        AssetAdministrationShell aas = getDemoAAS(true, true);
+        String aasJSON = new ObjectMapper().writeValueAsString(aas);
+        CloseableHttpResponse postResponse = BaSyxHttpTestUtils.executePostOnURL(getAASRepositoryURL(),aasJSON);
+        if(postResponse.getCode()/100 != 2){
+            throw new RuntimeException("POST request to AAS Repository failed with status code: " + postResponse.getCode());
+        }
+        postResponse.close();
+
+        addAssetIdToAAS(aas);
+
+        String newAasJSON = new ObjectMapper().writeValueAsString(aas);
+        CloseableHttpResponse putResponse = BaSyxHttpTestUtils.executePutOnURL(getAASRepositoryURL() + "/" + new Base64UrlEncodedIdentifier(aas.getId()).getEncodedIdentifier(),newAasJSON);
+        if(putResponse.getCode()/100 != 2){
+            throw new RuntimeException("PUT request to AAS Repository failed with status code: " + putResponse.getCode());
+        }
+
+        List<SpecificAssetId> assetIds = getDiscoveryService().getAllAssetLinksById(aas.getId());
+        assertEquals(3,assetIds.size());
+        assertEquals("test-specific-asset-id",assetIds.get(0).getName());
+        assertEquals("test-specific-asset-id-value",assetIds.get(0).getValue());
+        assertEquals("test-specific-asset-id-2",assetIds.get(1).getName());
+        assertEquals("test-specific-asset-id-value-2",assetIds.get(1).getValue());
+
+        putResponse.close();
+    }
+
     @Test(expected = AssetLinkDoesNotExistException.class)
     public void deleteAAS_expectDiscoveryLinkRemoved() throws IOException {
         executeCreateTestWithProperties(true, true);
         AssetAdministrationShell aas = getDemoAAS(false, false);
-        BaSyxHttpTestUtils.executeDeleteOnURL(getAASRepositoryURL()+"/"+new Base64UrlEncodedIdentifier(aas.getId()).getEncodedIdentifier());
-        List<SpecificAssetId> assetIds = getDiscoveryService().getAllAssetLinksById(aas.getId());
+        BaSyxHttpTestUtils.executeDeleteOnURL(getAASRepositoryURL() + "/" + new Base64UrlEncodedIdentifier(aas.getId()).getEncodedIdentifier());
+        getDiscoveryService().getAllAssetLinksById(aas.getId());
+    }
+
+    private static void addAssetIdToAAS(AssetAdministrationShell aas) {
+        AssetInformation aasAssetInformation = aas.getAssetInformation();
+        List<SpecificAssetId> assetIds = aasAssetInformation.getSpecificAssetIds();
+        assetIds.add(new DefaultSpecificAssetId.Builder().name("test-specific-asset-id-2").value("test-specific-asset-id-value-2").build());
+        aasAssetInformation.setSpecificAssetIds(assetIds);
+        aas.setAssetInformation(aasAssetInformation);
     }
 
     private void executeCreateTestWithProperties(boolean globalAssetId, boolean specificAssetId) {
@@ -146,9 +183,8 @@ public abstract class AasRepositoryDiscoveryIntegrationTestSuite {
         expectedCount = specificAssetId ? expectedCount + 1 : expectedCount;
         try {
             String aasJSON = new ObjectMapper().writeValueAsString(aas);
-            CloseableHttpResponse putResponse = BaSyxHttpTestUtils.executePutOnURL(getAASRepositoryURL()+"/"+new Base64UrlEncodedIdentifier(aas.getId()).getEncodedIdentifier(),aasJSON);
+            CloseableHttpResponse putResponse = BaSyxHttpTestUtils.executePutOnURL(getAASRepositoryURL() + "/" + new Base64UrlEncodedIdentifier(aas.getId()).getEncodedIdentifier(),aasJSON);
             if(putResponse.getCode()/100 != 2){
-                System.out.println(getAASRepositoryURL()+"/"+new Base64UrlEncodedIdentifier(aas.getId()).getEncodedIdentifier());
                 throw new RuntimeException("PUT request to AAS Repository failed with status code: " + putResponse.getCode());
             }
             putResponse.close();

@@ -51,10 +51,6 @@ public class ConnectedAasDiscoveryService implements AasDiscoveryService {
         this.discoveryApi = new AssetAdministrationShellDiscoveryApi(baseURL);
     }
 
-    public ConnectedAasDiscoveryService(String baseURL, TokenManager tokenManager){
-        this.discoveryApi = new AssetAdministrationShellDiscoveryApi(baseURL, tokenManager);
-    }
-
     @Override
     public CursorResult<List<String>> getAllAssetAdministrationShellIdsByAssetLink(PaginationInfo pInfo, List<AssetLink> assetIds) {
         try{
