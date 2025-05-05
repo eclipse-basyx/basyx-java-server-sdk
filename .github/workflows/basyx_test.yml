@@ -39,6 +39,9 @@ jobs:
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
         
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -91,6 +94,9 @@ jobs:
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
         
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -156,6 +162,9 @@ jobs:
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
         
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -221,6 +230,9 @@ jobs:
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
         
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -285,7 +297,10 @@ jobs:
          
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
-        
+
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -340,7 +355,10 @@ jobs:
          
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
-        
+
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -405,7 +423,10 @@ jobs:
          
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
-        
+
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -460,7 +481,10 @@ jobs:
          
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
-        
+
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -525,7 +549,10 @@ jobs:
          
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
-        
+
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -591,6 +618,9 @@ jobs:
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
         
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
@@ -656,6 +686,9 @@ jobs:
       - name: Build BaSyx
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
         
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
       - name: Build Submodel Repository
         run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
 
