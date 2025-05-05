@@ -26,22 +26,12 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.discoveryintegration;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.client.AuthorizedConnectedAasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.client.ConnectedAasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
-import org.eclipse.digitaltwin.basyx.client.internal.authorization.AccessTokenProviderFactory;
-import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
-import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.AccessTokenProvider;
-import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.GrantType;
 import org.junit.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.http.HttpStatus;
-
-import java.io.IOException;
-import java.util.List;
 
 import static org.junit.Assert.assertThrows;
 
@@ -50,7 +40,7 @@ public class AuthorizedAasRepositoryDiscoveryIntegrationTest extends AasReposito
 
     @BeforeClass
     public static void setUp() {
-        SpringApplication application = new SpringApplication(DummyAasRepositoryIntegrationComponent.class);
+        SpringApplication application = new SpringApplication(DummyAasRepositoryDiscoveryIntegrationComponent.class);
         application.setAdditionalProfiles("authdiscovery");
 
         appContext = application.run(new String[] {});

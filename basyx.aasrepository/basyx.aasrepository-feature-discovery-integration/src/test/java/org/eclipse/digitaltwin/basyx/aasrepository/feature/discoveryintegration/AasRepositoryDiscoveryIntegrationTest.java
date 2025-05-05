@@ -31,7 +31,6 @@ import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServic
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -41,7 +40,7 @@ public class AasRepositoryDiscoveryIntegrationTest extends AasRepositoryDiscover
 
     @BeforeClass
     public static void setUp() {
-        appContext = SpringApplication.run(DummyAasRepositoryIntegrationComponent.class);
+        appContext = SpringApplication.run(DummyAasRepositoryDiscoveryIntegrationComponent.class);
     }
 
     @AfterClass
