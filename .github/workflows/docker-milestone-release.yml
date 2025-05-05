@@ -20,6 +20,8 @@ jobs:
         - name: submodel-repository
           path: basyx.submodelrepository/basyx.submodelrepository.component
         - name: submodel-service
+          path: basyx.submodelservice/basyx.submodelservice.component
+        - name: conceptdescription-repository
           path: basyx.conceptdescriptionrepository/basyx.conceptdescriptionrepository.component
         - name: aas-discovery
           path: basyx.aasdiscoveryservice/basyx.aasdiscoveryservice.component
