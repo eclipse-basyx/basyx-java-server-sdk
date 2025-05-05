@@ -31,12 +31,14 @@ import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.DecoratedAasRepositoryFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import java.util.List;
 
 @Configuration
 public class DiscoveryIntegrationTestConfiguration {
     @Bean
+    @Primary
     AasRepository getDiscoveryIntegrationAasRepository(AasRepositoryFactory aasRepositoryFactory, List<AasRepositoryFeature> features) {
         return new DecoratedAasRepositoryFactory(aasRepositoryFactory, features).create();
     }
