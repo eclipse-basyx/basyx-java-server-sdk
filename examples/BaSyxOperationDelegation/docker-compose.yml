@@ -1,4 +1,3 @@
-version: '3'
 services:
   aas-env:
     image: eclipsebasyx/aas-environment:2.0.0-milestone-04
