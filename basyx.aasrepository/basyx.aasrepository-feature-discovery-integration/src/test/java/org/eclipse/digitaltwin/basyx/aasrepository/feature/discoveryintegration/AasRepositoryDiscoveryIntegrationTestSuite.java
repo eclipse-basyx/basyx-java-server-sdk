@@ -27,9 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.discoveryintegration
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
-import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
@@ -46,69 +44,72 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
- * Test suite to test the AAS Repository Integration with the AAS Discovery Service
- * Extend this Class to test your implementation
+ * Test suite to test the AAS Repository Integration with the AAS Discovery Service.
+ * Extend this Class to test your implementation.
  *
  * @author fried
  */
 public abstract class AasRepositoryDiscoveryIntegrationTestSuite {
 
     protected abstract AasDiscoveryService getDiscoveryService();
-
     protected abstract String getAASRepositoryURL();
 
+    // -------------------- CREATE TESTS --------------------
+
     @Test
-    public void createAASWithGlobalAssetId(){
+    public void createAASWithGlobalAssetId() {
         executeCreateTestWithProperties(true, false);
     }
 
     @Test
-    public void createAASWithSpecificAssetId(){
+    public void createAASWithSpecificAssetId() {
         executeCreateTestWithProperties(false, true);
     }
 
     @Test
-    public void createAASWithGlobalAssetIdAndSpecificAssetId(){
+    public void createAASWithGlobalAssetIdAndSpecificAssetId() {
         executeCreateTestWithProperties(true, true);
     }
 
     @Test(expected = AssetLinkDoesNotExistException.class)
-    public void createAASWithoutGlobalAndSpecificAssetId_expectNoDiscoveryLink(){
+    public void createAASWithoutGlobalAndSpecificAssetId_expectNoDiscoveryLink() {
         executeCreateTestWithProperties(false, false);
     }
 
+    // -------------------- UPDATE TESTS --------------------
+
     @Test
     public void updateAAS_withGlobalAssetId() throws IOException {
-        try{
+        try {
             executeCreateTestWithProperties(false, false);
             fail();
-        }catch(AssetLinkDoesNotExistException e){
+        } catch (AssetLinkDoesNotExistException e) {
             executeUpdateTestWithProperties(true, false);
         }
     }
 
     @Test
-    public void updateAAS_withSpecificAssetId(){
-        try{
+    public void updateAAS_withSpecificAssetId() {
+        try {
             executeCreateTestWithProperties(false, false);
             fail();
-        }catch(AssetLinkDoesNotExistException e){
+        } catch (AssetLinkDoesNotExistException e) {
             executeUpdateTestWithProperties(false, true);
         }
     }
 
     @Test(expected = AssetLinkDoesNotExistException.class)
-    public void updateAAS_withoutGlobalAndSpecificAssetId_expectNoDiscoveryLink(){
+    public void updateAAS_withoutGlobalAndSpecificAssetId_expectNoDiscoveryLink() {
         executeCreateTestWithProperties(true, false);
         executeUpdateTestWithProperties(false, false);
     }
 
     @Test
-    public void updateAAS_withGlobalAndSpecificAssetId(){
-        try{
+    public void updateAAS_withGlobalAndSpecificAssetId() {
+        try {
             executeCreateTestWithProperties(false, false);
             fail();
-        }catch(AssetLinkDoesNotExistException e){
+        } catch (AssetLinkDoesNotExistException e) {
             executeUpdateTestWithProperties(true, true);
         }
     }
@@ -116,61 +117,57 @@ public abstract class AasRepositoryDiscoveryIntegrationTestSuite {
     @Test
     public void updateAAS() throws IOException {
         AssetAdministrationShell aas = getDemoAAS(true, true);
-        String aasJSON = new ObjectMapper().writeValueAsString(aas);
-        CloseableHttpResponse postResponse = BaSyxHttpTestUtils.executePostOnURL(getAASRepositoryURL(),aasJSON);
-        if(postResponse.getCode()/100 != 2){
-            throw new RuntimeException("POST request to AAS Repository failed with status code: " + postResponse.getCode());
-        }
-        postResponse.close();
+        postAAS(aas);
 
         addAssetIdToAAS(aas);
+        updateAAS(aas);
 
-        String newAasJSON = new ObjectMapper().writeValueAsString(aas);
-        CloseableHttpResponse putResponse = BaSyxHttpTestUtils.executePutOnURL(getAASRepositoryURL() + "/" + new Base64UrlEncodedIdentifier(aas.getId()).getEncodedIdentifier(),newAasJSON);
-        if(putResponse.getCode()/100 != 2){
-            throw new RuntimeException("PUT request to AAS Repository failed with status code: " + putResponse.getCode());
-        }
-
-        List<SpecificAssetId> assetIds = getDiscoveryService().getAllAssetLinksById(aas.getId());
-        assertEquals(3,assetIds.size());
-        assertEquals("test-specific-asset-id",assetIds.get(0).getName());
-        assertEquals("test-specific-asset-id-value",assetIds.get(0).getValue());
-        assertEquals("test-specific-asset-id-2",assetIds.get(1).getName());
-        assertEquals("test-specific-asset-id-value-2",assetIds.get(1).getValue());
-
-        putResponse.close();
+        assertNewAssetLinksAreSet(aas);
     }
+
+    @Test
+    public void updateAAS_AssetInformation() throws IOException {
+        AssetAdministrationShell aas = getDemoAAS(true, true);
+        postAAS(aas);
+
+        addAssetIdToAAS(aas);
+        AssetInformation newInfo = aas.getAssetInformation();
+        String assetInfoJSON = new ObjectMapper().writeValueAsString(newInfo);
+
+        CloseableHttpResponse putResponse = BaSyxHttpTestUtils.executePutOnURL(getAASAssetInformationURL(aas), assetInfoJSON);
+        throwErrorIfRequestWasUnsuccessful(putResponse, "PUT request to AAS Repository failed with status code: ");
+        putResponse.close();
+
+        assertNewAssetLinksAreSet(aas);
+    }
+
+    // -------------------- DELETE TEST --------------------
 
     @Test(expected = AssetLinkDoesNotExistException.class)
     public void deleteAAS_expectDiscoveryLinkRemoved() throws IOException {
         executeCreateTestWithProperties(true, true);
         AssetAdministrationShell aas = getDemoAAS(false, false);
-        BaSyxHttpTestUtils.executeDeleteOnURL(getAASRepositoryURL() + "/" + new Base64UrlEncodedIdentifier(aas.getId()).getEncodedIdentifier());
+        BaSyxHttpTestUtils.executeDeleteOnURL(getAASURL(aas));
         getDiscoveryService().getAllAssetLinksById(aas.getId());
     }
 
-    private static void addAssetIdToAAS(AssetAdministrationShell aas) {
-        AssetInformation aasAssetInformation = aas.getAssetInformation();
-        List<SpecificAssetId> assetIds = aasAssetInformation.getSpecificAssetIds();
-        assetIds.add(new DefaultSpecificAssetId.Builder().name("test-specific-asset-id-2").value("test-specific-asset-id-value-2").build());
-        aasAssetInformation.setSpecificAssetIds(assetIds);
-        aas.setAssetInformation(aasAssetInformation);
+    // -------------------- HELPER METHODS --------------------
+
+    private String getAASURL(AssetAdministrationShell aas) {
+        return getAASRepositoryURL() + "/" + encode(aas.getId());
+    }
+
+    private String getAASAssetInformationURL(AssetAdministrationShell aas) {
+        return getAASRepositoryURL() + "/" + encode(aas.getId()) + "/asset-information";
     }
 
     private void executeCreateTestWithProperties(boolean globalAssetId, boolean specificAssetId) {
         AssetAdministrationShell aas = getDemoAAS(globalAssetId, specificAssetId);
-        int expectedCount = 0;
-        expectedCount = globalAssetId ? expectedCount + 1 : expectedCount;
-        expectedCount = specificAssetId ? expectedCount + 1 : expectedCount;
+        int expectedCount = (globalAssetId ? 1 : 0) + (specificAssetId ? 1 : 0);
         try {
-            String aasJSON = new ObjectMapper().writeValueAsString(aas);
-            CloseableHttpResponse postResponse = BaSyxHttpTestUtils.executePostOnURL(getAASRepositoryURL(),aasJSON);
-            if(postResponse.getCode()/100 != 2){
-                throw new RuntimeException("POST request to AAS Repository failed with status code: " + postResponse.getCode());
-            }
-            postResponse.close();
+            postAAS(aas);
             List<SpecificAssetId> assetIds = getDiscoveryService().getAllAssetLinksById(aas.getId());
-            assertEquals(expectedCount,assetIds.size());
+            assertEquals(expectedCount, assetIds.size());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -178,33 +175,78 @@ public abstract class AasRepositoryDiscoveryIntegrationTestSuite {
 
     private void executeUpdateTestWithProperties(boolean globalAssetId, boolean specificAssetId) {
         AssetAdministrationShell aas = getDemoAAS(globalAssetId, specificAssetId);
-        int expectedCount = 0;
-        expectedCount = globalAssetId ? expectedCount + 1 : expectedCount;
-        expectedCount = specificAssetId ? expectedCount + 1 : expectedCount;
+        int expectedCount = (globalAssetId ? 1 : 0) + (specificAssetId ? 1 : 0);
         try {
             String aasJSON = new ObjectMapper().writeValueAsString(aas);
-            CloseableHttpResponse putResponse = BaSyxHttpTestUtils.executePutOnURL(getAASRepositoryURL() + "/" + new Base64UrlEncodedIdentifier(aas.getId()).getEncodedIdentifier(),aasJSON);
-            if(putResponse.getCode()/100 != 2){
-                throw new RuntimeException("PUT request to AAS Repository failed with status code: " + putResponse.getCode());
-            }
+            CloseableHttpResponse putResponse = BaSyxHttpTestUtils.executePutOnURL(
+                    getAASURL(aas), aasJSON);
+            throwErrorIfRequestWasUnsuccessful(putResponse, "PUT request to AAS Repository failed with status code: ");
             putResponse.close();
             List<SpecificAssetId> assetIds = getDiscoveryService().getAllAssetLinksById(aas.getId());
-            assertEquals(expectedCount,assetIds.size());
+            assertEquals(expectedCount, assetIds.size());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    protected AssetAdministrationShell getDemoAAS(boolean hasGlobalAssetId, boolean hasSpecificAssetId){
-        DefaultAssetAdministrationShell.Builder builder = new DefaultAssetAdministrationShell.Builder().id("test-aas-id").idShort("taas");
-        DefaultAssetInformation.Builder assetInformation = new DefaultAssetInformation.Builder();
-        if(hasGlobalAssetId){
-            assetInformation.globalAssetId("test-global-asset-id");
+    private void postAAS(AssetAdministrationShell aas) throws IOException {
+        String aasJSON = new ObjectMapper().writeValueAsString(aas);
+        CloseableHttpResponse postResponse = BaSyxHttpTestUtils.executePostOnURL(getAASRepositoryURL(), aasJSON);
+        throwErrorIfRequestWasUnsuccessful(postResponse, "POST request to AAS Repository failed with status code: ");
+        postResponse.close();
+    }
+
+    private void updateAAS(AssetAdministrationShell aas) throws IOException {
+        String newAasJSON = new ObjectMapper().writeValueAsString(aas);
+        CloseableHttpResponse putResponse = BaSyxHttpTestUtils.executePutOnURL(
+                getAASURL(aas), newAasJSON);
+        throwErrorIfRequestWasUnsuccessful(putResponse, "PUT request to AAS Repository failed with status code: ");
+        putResponse.close();
+    }
+
+    private void assertNewAssetLinksAreSet(AssetAdministrationShell aas) {
+        List<SpecificAssetId> assetIds = getDiscoveryService().getAllAssetLinksById(aas.getId());
+        assertEquals(3, assetIds.size());
+        assertEquals("test-specific-asset-id", assetIds.get(0).getName());
+        assertEquals("test-specific-asset-id-value", assetIds.get(0).getValue());
+        assertEquals("test-specific-asset-id-2", assetIds.get(1).getName());
+        assertEquals("test-specific-asset-id-value-2", assetIds.get(1).getValue());
+    }
+
+    private static void addAssetIdToAAS(AssetAdministrationShell aas) {
+        AssetInformation info = aas.getAssetInformation();
+        List<SpecificAssetId> assetIds = info.getSpecificAssetIds();
+        assetIds.add(new DefaultSpecificAssetId.Builder()
+                .name("test-specific-asset-id-2")
+                .value("test-specific-asset-id-value-2")
+                .build());
+        info.setSpecificAssetIds(assetIds);
+        aas.setAssetInformation(info);
+    }
+
+    private static void throwErrorIfRequestWasUnsuccessful(CloseableHttpResponse response, String message) {
+        if (response.getCode() / 100 != 2) {
+            throw new RuntimeException(message + response.getCode());
         }
-        if(hasSpecificAssetId){
-            assetInformation.specificAssetIds(new DefaultSpecificAssetId.Builder().name("test-specific-asset-id").value("test-specific-asset-id-value").build());
+    }
+
+    private static String encode(String id) {
+        return new Base64UrlEncodedIdentifier(id).getEncodedIdentifier();
+    }
+
+    protected AssetAdministrationShell getDemoAAS(boolean hasGlobalAssetId, boolean hasSpecificAssetId) {
+        DefaultAssetInformation.Builder assetInfoBuilder = new DefaultAssetInformation.Builder();
+        if (hasGlobalAssetId) assetInfoBuilder.globalAssetId("test-global-asset-id");
+        if (hasSpecificAssetId) {
+            assetInfoBuilder.specificAssetIds(new DefaultSpecificAssetId.Builder()
+                    .name("test-specific-asset-id")
+                    .value("test-specific-asset-id-value")
+                    .build());
         }
-        builder.assetInformation(assetInformation.build());
-        return builder.build();
+        return new DefaultAssetAdministrationShell.Builder()
+                .id("test-aas-id")
+                .idShort("taas")
+                .assetInformation(assetInfoBuilder.build())
+                .build();
     }
 }
