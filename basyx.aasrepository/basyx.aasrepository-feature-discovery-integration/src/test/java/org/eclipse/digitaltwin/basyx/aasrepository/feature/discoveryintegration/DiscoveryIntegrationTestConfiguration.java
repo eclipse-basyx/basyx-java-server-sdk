@@ -37,7 +37,7 @@ import java.util.List;
 @Configuration
 public class DiscoveryIntegrationTestConfiguration {
     @Bean
-    AasRepository getAasRepository(AasRepositoryFactory aasRepositoryFactory, List<AasRepositoryFeature> features) {
+    AasRepository getDiscoveryIntegrationAasRepository(AasRepositoryFactory aasRepositoryFactory, List<AasRepositoryFeature> features) {
         return new DecoratedAasRepositoryFactory(aasRepositoryFactory, features).create();
     }
 }
