@@ -16,3 +16,10 @@ basyx:
             sources:
             classes: classes
             additionalClasspath: []
+
+# Disable the Swagger UI - enabled by default
+#springdoc:
+#  swagger-ui:
+#    enabled: false
+#  api-docs:
+#      enabled: false
