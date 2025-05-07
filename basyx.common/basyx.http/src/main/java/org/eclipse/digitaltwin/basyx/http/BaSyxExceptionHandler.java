@@ -28,30 +28,15 @@ package org.eclipse.digitaltwin.basyx.http;
 
 import org.eclipse.digitaltwin.basyx.core.MessageType;
 import org.eclipse.digitaltwin.basyx.core.ResultMessage;
-import org.eclipse.digitaltwin.basyx.core.exceptions.AssetLinkDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.NullSubjectException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.OperationDelegationException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Configures overall Exception to HTTP status code mapping
@@ -62,78 +47,109 @@ import java.util.Map;
 @ControllerAdvice
 public class BaSyxExceptionHandler {
 
-	private ResponseEntity<Object> buildResponse(String message, HttpStatus status) {
-		var body = new ResultMessage(message, status.value(), "TODO", MessageType.Error).build();
+	private ResponseEntity<Object> buildResponse(String message, HttpStatus status, Object object) {
+		var body = new ResultMessage(message, status.value(), object.getClass().getSimpleName() + "-" + status.value(), MessageType.Error).build();
 		return new ResponseEntity<>(List.of(body), status);
 	}
 
 	@ExceptionHandler(ElementDoesNotExistException.class)
-	public ResponseEntity<Object> handleElementNotFoundException(ElementDoesNotExistException exception, WebRequest request) {
-		return buildResponse(exception.getMessage(), HttpStatus.NOT_FOUND);
+	public ResponseEntity<Object> handleElementNotFoundException(ElementDoesNotExistException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.NOT_FOUND, exception);
 	}
 	
 	@ExceptionHandler(AssetLinkDoesNotExistException.class)
-	public ResponseEntity<Object> handleElementNotFoundException(AssetLinkDoesNotExistException exception, WebRequest request) {
-		return buildResponse(exception.getMessage(), HttpStatus.NOT_FOUND);
+	public ResponseEntity<Object> handleElementNotFoundException(AssetLinkDoesNotExistException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.NOT_FOUND, exception);
 	}
 	
 	@ExceptionHandler(FileDoesNotExistException.class)
-	public ResponseEntity<Object> handleElementNotFoundException(FileDoesNotExistException exception, WebRequest request) {
-		return buildResponse(exception.getMessage(), HttpStatus.NOT_FOUND);
+	public ResponseEntity<Object> handleElementNotFoundException(FileDoesNotExistException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.NOT_FOUND, exception);
 	}
 
 	@ExceptionHandler(CollidingIdentifierException.class)
-	public ResponseEntity<Object> handleCollidingIdentifierException(CollidingIdentifierException exception, WebRequest request) {
-		return buildResponse(exception.getMessage(), HttpStatus.CONFLICT);
+	public ResponseEntity<Object> handleCollidingIdentifierException(CollidingIdentifierException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.CONFLICT, exception);
 	}
 	
 	@ExceptionHandler(MissingIdentifierException.class)
-	public ResponseEntity<Object> handleMissingIdentifierException(MissingIdentifierException exception, WebRequest request) {
-		return buildResponse(exception.getMessage(), HttpStatus.BAD_REQUEST);
+	public ResponseEntity<Object> handleMissingIdentifierException(MissingIdentifierException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.BAD_REQUEST, exception);
 	}
 	
 	@ExceptionHandler(CollidingAssetLinkException.class)
-	public ResponseEntity<Object> handleCollidingIdentifierException(CollidingAssetLinkException exception, WebRequest request) {
-		return buildResponse(exception.getMessage(), HttpStatus.CONFLICT);
+	public ResponseEntity<Object> handleCollidingIdentifierException(CollidingAssetLinkException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.CONFLICT, exception);
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException exception) {
-		return buildResponse(exception.getMessage(), HttpStatus.BAD_REQUEST);
+		return buildResponse(exception.getMessage(), HttpStatus.BAD_REQUEST, exception);
 	}
 	
 	@ExceptionHandler(IdentificationMismatchException.class)
 	public ResponseEntity<Object> handleIdMismatchException(IdentificationMismatchException exception) {
-		return buildResponse(exception.getMessage(), HttpStatus.BAD_REQUEST);
+		return buildResponse(exception.getMessage(), HttpStatus.BAD_REQUEST, exception);
 	}
 
 	@ExceptionHandler(FeatureNotSupportedException.class)
 	public ResponseEntity<Object> handleFeatureNotSupportedException(FeatureNotSupportedException exception) {
-		return buildResponse(exception.getMessage(), HttpStatus.NOT_IMPLEMENTED);
+		return buildResponse(exception.getMessage(), HttpStatus.NOT_IMPLEMENTED, exception);
 	}
 
 	@ExceptionHandler(NotInvokableException.class)
 	public ResponseEntity<Object> handleNotInvokableException(NotInvokableException exception) {
-		return buildResponse(exception.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
+		return buildResponse(exception.getMessage(), HttpStatus.METHOD_NOT_ALLOWED, exception);
 	}
 	
 	@ExceptionHandler(ElementNotAFileException.class)
 	public ResponseEntity<Object> handleElementNotAFileException(ElementNotAFileException exception) {
-		return buildResponse(exception.getMessage(), HttpStatus.PRECONDITION_FAILED);
+		return buildResponse(exception.getMessage(), HttpStatus.PRECONDITION_FAILED, exception);
 	}
 	
 	@ExceptionHandler(InsufficientPermissionException.class)
-	public ResponseEntity<Object> handleInsufficientPermissionException(InsufficientPermissionException exception, WebRequest request) {
-		return buildResponse(exception.getMessage(), HttpStatus.FORBIDDEN);
+	public ResponseEntity<Object> handleInsufficientPermissionException(InsufficientPermissionException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.FORBIDDEN, exception);
 	}
 	
 	@ExceptionHandler(NullSubjectException.class)
 	public ResponseEntity<Object> handleNullSubjectException(NullSubjectException exception) {
-		return buildResponse(exception.getMessage(), HttpStatus.UNAUTHORIZED);
+		return buildResponse(exception.getMessage(), HttpStatus.UNAUTHORIZED, exception);
 	}
 	
 	@ExceptionHandler(OperationDelegationException.class)
 	public ResponseEntity<Object> handleNullSubjectException(OperationDelegationException exception) {
-		return buildResponse(exception.getMessage(), HttpStatus.FAILED_DEPENDENCY);
+		return buildResponse(exception.getMessage(), HttpStatus.FAILED_DEPENDENCY, exception);
 	}
+
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.BAD_REQUEST, exception);
+	}
+
+	@ExceptionHandler(RepositoryRegistryLinkException.class)
+	public ResponseEntity<Object> handleRepositoryRegistryLinkException(RepositoryRegistryLinkException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, exception);
+	}
+
+	@ExceptionHandler(RepositoryRegistryUnlinkException.class)
+	public ResponseEntity<Object> handleRepositoryRegistryUnlinkException(RepositoryRegistryUnlinkException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, exception);
+	}
+
+	@ExceptionHandler(MissingKeyTypeException.class)
+	public ResponseEntity<Object> handleMissingKeyTypeException(MissingKeyTypeException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.BAD_REQUEST, exception);
+	}
+
+	@ExceptionHandler(MissingAuthorizationConfigurationException.class)
+	public ResponseEntity<Object> handleMissingAuthorizationConfigurationException(MissingAuthorizationConfigurationException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, exception);
+	}
+
+	@ExceptionHandler(InvalidTargetInformationException.class)
+	public ResponseEntity<Object> handleInvalidTargetInformationException(InvalidTargetInformationException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, exception);
+	}
+
 }

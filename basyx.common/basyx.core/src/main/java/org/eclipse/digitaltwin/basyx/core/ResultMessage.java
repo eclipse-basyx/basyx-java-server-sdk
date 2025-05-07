@@ -25,10 +25,16 @@
 
 package org.eclipse.digitaltwin.basyx.core;
 
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Creates a Message for HTTP Result in the standardized format.
+ * @author fried
+ */
 public class ResultMessage {
 
     private final String message;
@@ -45,7 +51,9 @@ public class ResultMessage {
 
     public Object build() {
         Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", System.currentTimeMillis()/1000); // TODO: Change to dateTime
+        String timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
+
+        body.put("timestamp", timestamp);
         body.put("messageType", this.messageType);
         body.put("code", this.code);
         body.put("text", this.message);
