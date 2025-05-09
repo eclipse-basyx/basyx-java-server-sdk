@@ -89,10 +89,18 @@ public class KafkaSubmodelServiceIdsOnlySmokeTest {
 	public void awaitAssignment() throws InterruptedException, SerializationException {
 		listener.awaitTopicAssignment();
 		
+		assertNoAdditionalMessage();
+		
 		FileRepository repository = new InMemoryFileRepository();
 		SubmodelBackend backend = new InMemorySubmodelBackend();
 		SubmodelServiceFactory smFactory = new CrudSubmodelServiceFactory(backend ,repository);
 		service = feature.decorate(smFactory).create(submodel);
+	}
+	
+	@After
+	public void assertNoAdditionalMessage() throws InterruptedException {
+		SubmodelEvent evt = listener.next(1, TimeUnit.SECONDS);
+		Assert.assertNull(evt);
 	}
 	
 	@Test
