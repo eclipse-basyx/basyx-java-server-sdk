@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -58,7 +58,7 @@ public class DiscoveryIntegrationAasRepository implements AasRepository {
 	private AasRepository decorated;
 
 	private final AasDiscoveryService discoveryApi;
-	
+
 	public DiscoveryIntegrationAasRepository(AasRepository decorated, AasDiscoveryService discoveryApi) {
 		this.decorated = decorated;
 		this.discoveryApi = discoveryApi;
@@ -94,6 +94,7 @@ public class DiscoveryIntegrationAasRepository implements AasRepository {
 		try {
 			discoveryApi.deleteAllAssetLinksById(shellId);
 		} catch (Exception e){
+			logger.error("Failed to unlink asset in discovery service for AAS ID {}", shellId, e);
 			throw new RepositoryDiscoveryUnlinkException(shellId, e);
 		}
 	}
@@ -162,30 +163,52 @@ public class DiscoveryIntegrationAasRepository implements AasRepository {
 	}
 
 	private static DefaultSpecificAssetId getGlobalAssetIdAsSpecificAssetId(AssetAdministrationShell shell) {
-		return new DefaultSpecificAssetId.Builder().name("globalAssetId").value(shell.getAssetInformation().getGlobalAssetId()).build();
+		if (shell.getAssetInformation() == null || shell.getAssetInformation().getGlobalAssetId() == null)
+			throw new IllegalArgumentException("AssetInformation or GlobalAssetId is null");
+
+		return new DefaultSpecificAssetId.Builder()
+				.name("globalAssetId")
+				.value(shell.getAssetInformation().getGlobalAssetId())
+				.build();
 	}
 
 	private void createAssetLinksOnDiscoveryServiceIfNecessary(AssetAdministrationShell shell) {
-		List<SpecificAssetId> linksToAdd = new ArrayList<>(shell.getAssetInformation().getSpecificAssetIds());
-		if(shell.getAssetInformation().getGlobalAssetId() != null){
+		if (shell.getAssetInformation() == null) return;
+
+		List<SpecificAssetId> linksToAdd;
+		if (shell.getAssetInformation().getSpecificAssetIds() != null) {
+			linksToAdd = new ArrayList<>(shell.getAssetInformation().getSpecificAssetIds());
+		} else {
+			linksToAdd = new ArrayList<>();
+		}
+
+		if (shell.getAssetInformation().getGlobalAssetId() != null) {
 			linksToAdd.add(getGlobalAssetIdAsSpecificAssetId(shell));
 		}
-		if(!linksToAdd.isEmpty()){
+
+		if(!linksToAdd.isEmpty()) {
 			try {
 				discoveryApi.createAllAssetLinksById(shell.getId(), linksToAdd);
 			} catch (Exception e) {
 				decorated.deleteAas(shell.getId());
+				logger.error("Failed to link asset in discovery service for AAS ID {}", shell.getId(), e);
 				throw new RepositoryDiscoveryLinkException(shell.getId(), e);
 			}
 		}
 	}
 
 	private static boolean specificAssetIdsUpdated(AssetAdministrationShell shell, AssetAdministrationShell oldShell) {
-		return !(oldShell.getAssetInformation().getSpecificAssetIds() != null && oldShell.getAssetInformation().getSpecificAssetIds().equals(shell.getAssetInformation().getSpecificAssetIds()));
+		return !(oldShell.getAssetInformation() != null &&
+				oldShell.getAssetInformation().getSpecificAssetIds() != null &&
+				oldShell.getAssetInformation().getSpecificAssetIds().equals(
+						shell.getAssetInformation().getSpecificAssetIds()));
 	}
 
 	private static boolean isGlobalAssetIdUpdated(AssetAdministrationShell shell, AssetAdministrationShell oldShell) {
-		return !(oldShell.getAssetInformation().getGlobalAssetId() != null && oldShell.getAssetInformation().getGlobalAssetId().equals(shell.getAssetInformation().getGlobalAssetId()));
+		return !(oldShell.getAssetInformation() != null &&
+				oldShell.getAssetInformation().getGlobalAssetId() != null &&
+				oldShell.getAssetInformation().getGlobalAssetId().equals(
+						shell.getAssetInformation().getGlobalAssetId()));
 	}
 
 }

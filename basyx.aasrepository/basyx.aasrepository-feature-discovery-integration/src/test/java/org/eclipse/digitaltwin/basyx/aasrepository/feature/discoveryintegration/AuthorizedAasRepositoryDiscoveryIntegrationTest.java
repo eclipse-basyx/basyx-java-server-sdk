@@ -61,7 +61,7 @@ public class AuthorizedAasRepositoryDiscoveryIntegrationTest extends AasReposito
 
     @Override
     protected AasDiscoveryService getDiscoveryService() {
-        return new ConnectedAasDiscoveryService("http://localhost:8049");
+        return new ConnectedAasDiscoveryService("http://localhost:8081");
     }
 
     @Override
