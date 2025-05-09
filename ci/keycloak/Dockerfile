@@ -1,4 +1,4 @@
-FROM quay.io/keycloak/keycloak:22.0.0
+FROM quay.io/keycloak/keycloak:24.0.4
 ARG HTTP_PROXY
 ARG HTTPS_PROXY
 # Make the realm configuration available for import
