@@ -198,7 +198,10 @@ public class DiscoveryIntegrationAasRepository implements AasRepository {
 	}
 
 	private static boolean specificAssetIdsUpdated(AssetAdministrationShell shell, AssetAdministrationShell oldShell) {
-		return !(oldShell.getAssetInformation() != null && oldShell.getAssetInformation().getSpecificAssetIds() != null && oldShell.getAssetInformation().getSpecificAssetIds().equals(shell.getAssetInformation().getSpecificAssetIds()));
+		return !(oldShell.getAssetInformation() != null && 
+             oldShell.getAssetInformation().getSpecificAssetIds() != null &&
+             oldShell.getAssetInformation().getSpecificAssetIds().equals(
+               shell.getAssetInformation().getSpecificAssetIds()));
 	}
 
 	private static boolean isGlobalAssetIdUpdated(AssetAdministrationShell shell, AssetAdministrationShell oldShell) {
