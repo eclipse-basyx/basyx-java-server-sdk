@@ -100,7 +100,7 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 	
 	@After
 	public void skipAdditionalMessage() throws InterruptedException {
-		while(listener.next(1, TimeUnit.MILLISECONDS) == null);
+		while(listener.next(1, TimeUnit.SECONDS) != null);
 		
 	}
 	
