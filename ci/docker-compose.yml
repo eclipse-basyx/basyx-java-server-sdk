@@ -1,4 +1,3 @@
-version: "3.9"
 services:
 
   nginx-proxy:
@@ -16,18 +15,15 @@ services:
 
   mongo:
     image: mongo:5.0.10
-    # Provide mongo config
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongoAdmin
       MONGO_INITDB_ROOT_PASSWORD: mongoPassword
-    # Set health checks to wait until mongo has started
     healthcheck:
       test: mongo
       interval: 10s
       start_period: 5s
       retries: 5
-    # Maps tcp port to host
     ports:
       - 27017:27017
     networks:
@@ -109,6 +105,9 @@ services:
     volumes:
       - ./keycloak/rules/rbac_rules-aas-discovery.json:/rbac/rbac_rules.json:ro
     restart: always
+    depends_on:
+      keycloak-healthcheck:
+        condition: service_healthy
     networks:
       - basyx-java-server-sdk
 
@@ -153,6 +152,9 @@ services:
     volumes:
       - ./keycloak/rules/rbac_rules-aas-registry.json:/rbac/rbac_rules.json:ro
     restart: always
+    depends_on:
+      keycloak-healthcheck:
+        condition: service_healthy
     networks:
       - basyx-java-server-sdk
   
@@ -174,6 +176,9 @@ services:
       - ./keycloak/rules/rbac_rules-sm-registry.json:/rbac/rbac_rules.json:ro
     ports:
       - "8061:8080"
+    depends_on:
+      keycloak-healthcheck:
+        condition: service_healthy
     restart: always
     networks:
       - basyx-java-server-sdk
@@ -187,6 +192,9 @@ services:
       - ./rules/sm-repo-rbac_rules.json:/application/rbac_rules.json
       - ./rules/sm-repo.properties:/application/application.properties
     restart: always
+    depends_on:
+      keycloak-healthcheck:
+        condition: service_healthy
     networks:
       - basyx-java-server-sdk
 
@@ -253,9 +261,19 @@ services:
         until curl -sf http://keycloak-nginx:8080/health/ready; do
           sleep 5;
         done;
-        echo 'Keycloak is ready!'"
+        echo 'Keycloak is ready!';
+        # Create a file that signals Keycloak is ready
+        touch /tmp/keycloak-ready;
+        # Keep container running after health check passes
+        tail -f /dev/null"
     depends_on:
-      - keycloak
+      - keycloak-nginx
+    healthcheck:
+      test: ["CMD", "test", "-f", "/tmp/keycloak-ready"]
+      interval: 10s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
     networks:
       - basyx-java-server-sdk
 
