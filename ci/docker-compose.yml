@@ -111,6 +111,8 @@ services:
     restart: always
     networks:
       - basyx-java-server-sdk
+    depends_on:
+      - keycloak-nginx
 
   aas-registry-log-mem:
     image: eclipsebasyx/aas-registry-log-mem:$BASYX_VERSION
