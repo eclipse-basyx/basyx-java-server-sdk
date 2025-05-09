@@ -1,4 +1,4 @@
-# Eclipse BaSyx - Submodel Repository 
+# Eclipse BaSyx - Submodel Repository test
 Eclipse BaSyx provides the Submodel Repository as off-the-shelf component:
 
     docker run --name=sm-repo -p:8081:8081 -v C:/tmp/application.properties:/application/application.properties eclipsebasyx/submodel-repository:2.0.0-SNAPSHOT 
