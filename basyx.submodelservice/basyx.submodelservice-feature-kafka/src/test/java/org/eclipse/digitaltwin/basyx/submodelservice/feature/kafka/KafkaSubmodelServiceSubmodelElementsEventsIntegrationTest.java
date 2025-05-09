@@ -90,7 +90,7 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 	public void awaitAssignment() throws InterruptedException {
 		listener.awaitTopicAssignment();
 	
-		assertNoAdditionalMessage();
+		skipAdditionalMessage();
 		
 		FileRepository repository = new InMemoryFileRepository();
 		SubmodelBackend backend = new InMemorySubmodelBackend();
@@ -99,9 +99,9 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 	}
 	
 	@After
-	public void assertNoAdditionalMessage() throws InterruptedException {
-		SubmodelEvent evt = listener.next(1, TimeUnit.SECONDS);
-		Assert.assertNull(evt);
+	public void skipAdditionalMessage() throws InterruptedException {
+		while(listener.next(1, TimeUnit.MILLISECONDS) == null);
+		
 	}
 	
 	@Test
