@@ -115,6 +115,13 @@ public abstract class AasRepositoryDiscoveryIntegrationTestSuite {
     }
 
     @Test
+    public void updateAAS_withoutChange() {
+        executeCreateTestWithProperties(true, false);
+        executeUpdateTestWithProperties(true, false);
+        assertOnlyGlobalAssetIdIsSet(getDemoAAS(true,false));
+    }
+
+    @Test
     public void updateAAS() throws IOException {
         AssetAdministrationShell aas = getDemoAAS(true, true);
         postAAS(aas);
@@ -211,6 +218,13 @@ public abstract class AasRepositoryDiscoveryIntegrationTestSuite {
         assertEquals("test-specific-asset-id-value", assetIds.get(0).getValue());
         assertEquals("test-specific-asset-id-2", assetIds.get(1).getName());
         assertEquals("test-specific-asset-id-value-2", assetIds.get(1).getValue());
+    }
+
+    private void assertOnlyGlobalAssetIdIsSet(AssetAdministrationShell aas) {
+        List<SpecificAssetId> assetIds = getDiscoveryService().getAllAssetLinksById(aas.getId());
+        assertEquals(1, assetIds.size());
+        assertEquals("globalAssetId", assetIds.get(0).getName());
+        assertEquals("test-global-asset-id", assetIds.get(0).getValue());
     }
 
     private static void addAssetIdToAAS(AssetAdministrationShell aas) {
