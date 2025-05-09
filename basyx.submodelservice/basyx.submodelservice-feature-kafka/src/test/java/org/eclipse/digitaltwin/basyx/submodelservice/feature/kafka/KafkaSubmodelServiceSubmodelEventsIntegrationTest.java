@@ -81,6 +81,12 @@ public class KafkaSubmodelServiceSubmodelEventsIntegrationTest {
 		listener.awaitTopicAssignment();
 	}
 
+	@After
+	public void assertGotTearDownMessage() throws InterruptedException {
+		SubmodelEvent evt = listener.next(1, TimeUnit.MINUTES);
+		Assert.assertNull(evt);
+	}
+
 	@Test
 	public void testSubmodelEvents() throws InterruptedException {
 		// we expect the "onStartup" submodel created event

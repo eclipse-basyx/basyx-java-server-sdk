@@ -89,11 +89,19 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 	@Before
 	public void awaitAssignment() throws InterruptedException {
 		listener.awaitTopicAssignment();
+
+		skipAdditionalMessage();
 		
 		FileRepository repository = new InMemoryFileRepository();
 		SubmodelBackend backend = new InMemorySubmodelBackend();
 		SubmodelServiceFactory smFactory = new CrudSubmodelServiceFactory(backend ,repository);
 		service = feature.decorate(smFactory).create(submodel);
+	}
+
+	@After
+	public void skipAdditionalMessage() throws InterruptedException {
+		while(listener.next(1, TimeUnit.SECONDS) != null);
+
 	}
 	
 	@Test
