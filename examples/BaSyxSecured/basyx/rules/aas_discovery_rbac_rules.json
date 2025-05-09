@@ -39,5 +39,19 @@
         }
       ]
     }
+  },
+  {
+    "role": "admin",
+    "action": ["CREATE", "READ", "UPDATE", "DELETE"],
+    "targetInformation": {
+      "@type": "aas-discovery-service",
+      "aasIds": "*",
+      "assetIds": [
+        {
+          "name": "*",
+          "value": "*"
+        }
+      ]
+    }
   }
 ]
