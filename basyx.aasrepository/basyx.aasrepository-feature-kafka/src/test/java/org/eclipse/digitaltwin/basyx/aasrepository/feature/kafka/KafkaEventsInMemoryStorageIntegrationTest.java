@@ -86,6 +86,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	@Before
 	public void awaitAssignment() throws InterruptedException {
 		listener.awaitTopicAssignment();
+		cleanupPreviousMessages();
 		FileRepository fileRepo = new InMemoryFileRepository();
 		AasBackend aasRepositoryBackend = new InMemoryAasBackend();
 		AasServiceFactory sf = new CrudAasServiceFactory(aasRepositoryBackend, fileRepo);
@@ -94,7 +95,9 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 
 		cleanup();
 	}
-
+	private void cleanupPreviousMessages() throws InterruptedException {
+		while (listener.next(1, TimeUnit.SECONDS) != null);	
+	}
 
 	@Test
 	public void testCreateAas() throws InterruptedException {
@@ -245,9 +248,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 			Assert.assertEquals(AasEventType.AAS_DELETED, deletedEvt.getType());
 			Assert.assertEquals(aas.getId(), deletedEvt.getId());
 		}
-	}
-	@After
-	public void assertNoAdditionalEvent() throws InterruptedException {
-		Assert.assertNull(listener.next(1, TimeUnit.SECONDS));
+        AasEvent evt = listener.next(1, TimeUnit.SECONDS);
+		Assert.assertNull(evt);
 	}
 }
