@@ -104,22 +104,14 @@ public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 	@Override
 	public ResponseEntity<Boolean> uploadEnvironment(
 			@RequestParam(value = "file") MultipartFile envFile,
-			@RequestParam(value = "ignore-duplicates", required = false, defaultValue = "false") boolean ignoreDuplicates) {
-		try {
-			EnvironmentType envType = EnvironmentType.getFromMimeType(envFile.getContentType());
+			@RequestParam(value = "ignore-duplicates", required = false, defaultValue = "false") boolean ignoreDuplicates) throws IOException, InvalidFormatException, DeserializationException {
+		EnvironmentType envType = EnvironmentType.getFromMimeType(envFile.getContentType());
 
-			if (envType == null)
-				envType = EnvironmentType.AASX;
-
-			aasEnvironment.loadEnvironment(CompleteEnvironment.fromInputStream(envFile.getInputStream(), envType),
-					ignoreDuplicates);
-
-		} catch (InvalidFormatException e) {
-			return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
-		} catch (DeserializationException | IOException e) {
-			return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<>(true, HttpStatus.OK);
+		if (envType == null)
+			envType = EnvironmentType.AASX;
+		aasEnvironment.loadEnvironment(CompleteEnvironment.fromInputStream(envFile.getInputStream(), envType),
+				ignoreDuplicates);
+        return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 
 	private List<String> getOriginalIds(List<String> ids) {

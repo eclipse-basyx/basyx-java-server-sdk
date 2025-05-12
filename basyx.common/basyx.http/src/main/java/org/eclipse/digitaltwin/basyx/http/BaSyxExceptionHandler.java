@@ -26,6 +26,9 @@
 
 package org.eclipse.digitaltwin.basyx.http;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import org.apache.commons.lang3.SerializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.basyx.core.MessageType;
 import org.eclipse.digitaltwin.basyx.core.ResultMessage;
 import org.eclipse.digitaltwin.basyx.core.exceptions.*;
@@ -33,7 +36,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
@@ -104,7 +106,7 @@ public class BaSyxExceptionHandler {
 	
 	@ExceptionHandler(ElementNotAFileException.class)
 	public ResponseEntity<Object> handleElementNotAFileException(ElementNotAFileException exception) {
-		return buildResponse(exception.getMessage(), HttpStatus.PRECONDITION_FAILED, exception);
+		return buildResponse(exception.getMessage(), HttpStatus.BAD_REQUEST, exception);
 	}
 	
 	@ExceptionHandler(InsufficientPermissionException.class)
@@ -150,6 +152,21 @@ public class BaSyxExceptionHandler {
 	@ExceptionHandler(InvalidTargetInformationException.class)
 	public ResponseEntity<Object> handleInvalidTargetInformationException(InvalidTargetInformationException exception) {
 		return buildResponse(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, exception);
+	}
+
+	@ExceptionHandler(SerializationException.class)
+	public ResponseEntity<Object> handleSerializationException(SerializationException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, exception);
+	}
+
+	@ExceptionHandler(DeserializationException.class)
+	public ResponseEntity<Object> handleDeserializationException(DeserializationException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.BAD_REQUEST, exception);
+	}
+
+	@ExceptionHandler(InvalidFormatException.class)
+	public ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.BAD_REQUEST, exception);
 	}
 
 }
