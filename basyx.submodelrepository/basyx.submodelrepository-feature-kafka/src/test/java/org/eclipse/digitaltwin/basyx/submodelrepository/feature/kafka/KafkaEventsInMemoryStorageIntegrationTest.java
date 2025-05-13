@@ -105,8 +105,12 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	public void awaitAssignment() throws InterruptedException {
 		listener.awaitTopicAssignment();
 		repo = feature.decorate(factory).create();
-		
+		cleanupPreviousMessages();
 		cleanup();
+	}
+	
+	private void cleanupPreviousMessages() throws InterruptedException {
+		while (listener.next(1, TimeUnit.SECONDS) != null);	
 	}
 
 	@Test
@@ -351,6 +355,8 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 				Assert.assertEquals(sm.getId(), evt.getId());		
 			} 
 		}
+		SubmodelEvent evt = listener.next(1, TimeUnit.SECONDS);
+		Assert.assertNull(evt);
 	}
 	
 
