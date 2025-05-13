@@ -106,7 +106,7 @@ public class BaSyxExceptionHandler {
 	
 	@ExceptionHandler(ElementNotAFileException.class)
 	public ResponseEntity<Object> handleElementNotAFileException(ElementNotAFileException exception) {
-		return buildResponse(exception.getMessage(), HttpStatus.BAD_REQUEST, exception);
+		return buildResponse(exception.getMessage(), HttpStatus.PRECONDITION_FAILED, exception);
 	}
 	
 	@ExceptionHandler(InsufficientPermissionException.class)
