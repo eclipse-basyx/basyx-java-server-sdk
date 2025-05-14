@@ -62,6 +62,8 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.AccessTokenRetrievalExcepti
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.http.description.ServiceDescription;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.util.MimeTypeUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -76,6 +78,9 @@ public class AssetAdministrationShellServiceApi {
   private final Duration memberVarReadTimeout;
   private final Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
   private TokenManager tokenManager;
+
+  @Autowired
+  private Environment env;
 
   public AssetAdministrationShellServiceApi() {
     this(new ApiClient());
@@ -1162,14 +1167,18 @@ public class AssetAdministrationShellServiceApi {
 	}
 	
 	private void addAuthorizationHeaderIfAuthIsEnabled(HttpRequest.Builder localVarRequestBuilder) {
-		if (tokenManager != null) {
-	    	try {
-	    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new AccessTokenRetrievalException("Unable to request access token");
-			}
-	    }
+        // Using LD SSO
+        String apiToken = env.getProperty("ld-sso.api-token");
+        localVarRequestBuilder.header("Authorization", "Bearer " + apiToken);
+
+//		if (tokenManager != null) {
+//	    	try {
+//	    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//				throw new AccessTokenRetrievalException("Unable to request access token");
+//			}
+//	    }
 	}
 
 }
