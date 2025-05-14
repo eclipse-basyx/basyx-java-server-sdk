@@ -71,10 +71,10 @@ jobs:
           cache: maven
 
       - name: Start BaSyx Dynamic RBAC Example
-        run: docker compose -f examples/BaSyxDynamicRBAC/docker-compose.yml up -d
+        run: docker compose -f examples/BaSyxDynamicRBAC/docker-compose.yaml up -d
 
       - name: Stop BaSyx Dynamic RBAC Example
-        run: docker compose -f examples/BaSyxDynamicRBAC/docker-compose.yml down
+        run: docker compose -f examples/BaSyxDynamicRBAC/docker-compose.yaml down
 
   test-basyx-kafka:
     runs-on: ubuntu-latest
@@ -90,10 +90,10 @@ jobs:
           cache: maven
 
       - name: Start BaSyx Kafka Example
-        run: docker compose -f examples/BaSyxKafka/docker-compose.yml up -d
+        run: docker compose -f examples/BaSyxKafka/docker-compose.yaml up -d
 
       - name: Stop BaSyx Kafka Example
-        run: docker compose -f examples/BaSyxKafka/docker-compose.yml down
+        run: docker compose -f examples/BaSyxKafka/docker-compose.yaml down
 
   test-basyx-minimal:
     runs-on: ubuntu-latest
@@ -166,7 +166,7 @@ jobs:
           cache: maven
 
       - name: Start BaSyx Secured Example
-        run: docker compose -f examples/BaSyxSecured/docker-compose.yml up -d
+        run: docker compose -f examples/BaSyxSecured/docker-compose.yaml up -d
 
       - name: Stop BaSyx Secured Example
-        run: docker compose -f examples/BaSyxSecured/docker-compose.yml down
+        run: docker compose -f examples/BaSyxSecured/docker-compose.yaml down
