@@ -65,11 +65,17 @@ public class SubmodelAuthorizationRbacStorage implements RbacStorage {
 				.map(rule -> ruleAdapter.adapt(rule, createKey(rule))).collect(Collectors.toList());
 
 		rbacRulesSMC.stream().forEach(rule -> {
-			try {
-				smService.createSubmodelElement(rule);
+			try{
+				smService.getSubmodelElement(rule.getIdShort());
+				LOGGER.warn("Rule with key " + rule.getIdShort() + " already exists. Skipping creation.");
 			} catch (Exception e) {
-				LOGGER.error("Exception while creating SubmodelElement for rule: " + rule.getIdShort() + ". Error: " + e.getMessage());
+				try {
+					smService.createSubmodelElement(rule);
+				} catch (Exception e2) {
+					LOGGER.error("Exception while creating SubmodelElement for rule: " + rule.getIdShort() + ". Error: " + e2.getMessage());
+				}
 			}
+
 		});
 	}
 
