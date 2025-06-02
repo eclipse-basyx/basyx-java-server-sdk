@@ -38,6 +38,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetAssetAdministrationShellsResult;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetReferencesResult;
@@ -241,7 +242,7 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 		for (Base64UrlEncodedIdentifier base64UrlEncodedIdentifier : assetIds) {
 
 			var decodedString = base64UrlEncodedIdentifier.getIdentifier();
-			result.add(objectMapper.readValue(decodedString, SpecificAssetId.class));
+			result.add(objectMapper.readValue(decodedString, DefaultSpecificAssetId.class));
 
 		}
 

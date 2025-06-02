@@ -14,7 +14,8 @@
 			"modelType": "AssetAdministrationShell",
 			"assetInformation": {
 				"assetKind": "Instance",
-				"globalAssetId": "globalAssetId"
+				"globalAssetId": "globalAssetId",
+				"specificAssetIds":[{"name":"testId","value":"testValue"}]
 			},
 			"id": "customIdentifier",
 			"idShort": "ExampleMotor"
