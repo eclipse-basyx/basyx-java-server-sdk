@@ -98,6 +98,11 @@ public class InMemoryAasBackend extends InMemoryCrudRepository<AssetAdministrati
 		return getAas(aasId).getAssetInformation();
 	}
 
+	@Override
+	public Iterable<AssetAdministrationShell> getAllAas(List<SpecificAssetId> assetIds, String idShort) {
+		return findAll();
+	}
+
 	private static Reference getSubmodelReferenceById(AssetAdministrationShell aas, String submodelId) {
 		List<Reference> submodelReferences = aas.getSubmodels();
 

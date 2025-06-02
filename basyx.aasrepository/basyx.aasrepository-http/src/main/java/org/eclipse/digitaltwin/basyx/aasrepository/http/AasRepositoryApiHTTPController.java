@@ -119,7 +119,7 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 		}
 
 		PaginationInfo paginationInfo = new PaginationInfo(limit, decodedCursor);
-		CursorResult<List<AssetAdministrationShell>> paginatedAAS = aasRepository.getAllAas(paginationInfo);
+		CursorResult<List<AssetAdministrationShell>> paginatedAAS = aasRepository.getAllAas(assetIds, idShort, paginationInfo);
 
 		GetAssetAdministrationShellsResult result = new GetAssetAdministrationShellsResult();
 

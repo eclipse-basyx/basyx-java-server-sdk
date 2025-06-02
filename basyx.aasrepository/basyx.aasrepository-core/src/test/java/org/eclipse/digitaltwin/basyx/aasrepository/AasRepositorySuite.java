@@ -72,7 +72,7 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 		List<AssetAdministrationShell> expected = DummyAasFactory.createShells();
 		AasRepository aasRepo = getAasRepository(expected);
 		PaginationInfo pInfo = new PaginationInfo(2, null);
-		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(pInfo).getResult();
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(null,null,pInfo).getResult();
 		assertEquals(expected, coll);
 	}
 
@@ -222,7 +222,7 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 		List<AssetAdministrationShell> expected = DummyAasFactory.createShells();
 		AasRepository aasRepo = getAasRepository(expected);
 
-		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null));
+		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(null,null,new PaginationInfo(1, null));
 		List<AssetAdministrationShell> resultList = result.getResult();
 		assertEquals(1, resultList.size());
 		assertEquals(DummyAasFactory.AASWITHSUBMODELREF_ID, resultList.stream().findFirst().get().getId());
@@ -234,11 +234,11 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 		AasRepository aasRepo = getAasRepository(expected);
 		List<AssetAdministrationShell> retrieved = new ArrayList<>();
 
-		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null));
+		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(null,null,new PaginationInfo(1, null));
 		retrieved.addAll(result.getResult());
 
 		String cursor = result.getCursor();
-		result = aasRepo.getAllAas(new PaginationInfo(1, cursor));
+		result = aasRepo.getAllAas(null,null, new PaginationInfo(1, cursor));
 		retrieved.addAll(result.getResult());
 
 		assertEquals(expected, retrieved);

@@ -52,6 +52,7 @@ public class DummyAasFactory {
 	public static AssetAdministrationShell createAasWithSubmodelReference() {
 		return new DefaultAssetAdministrationShell.Builder()
 				.id(AASWITHSUBMODELREF_ID)
+				.idShort("aasSubmodelRefs")
 				.submodels(createDummyReference(DUMMY_SUBMODEL_ID))
 				.build();
 	}
@@ -59,6 +60,7 @@ public class DummyAasFactory {
 	public static AssetAdministrationShell createAasWithAssetInformation() {
 		return new DefaultAssetAdministrationShell.Builder()
 				.id(AASWITHASSETINFORMATION_ID)
+				.idShort("aasAssetInfo")
 				.assetInformation(createDummyAssetInformation())
 				.build();
 	}
