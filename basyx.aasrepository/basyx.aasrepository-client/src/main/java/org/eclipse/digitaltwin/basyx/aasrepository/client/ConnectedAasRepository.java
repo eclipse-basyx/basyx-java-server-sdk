@@ -83,6 +83,9 @@ public class ConnectedAasRepository implements AasRepository {
 	public CursorResult<List<AssetAdministrationShell>> getAllAas(List<SpecificAssetId> assetIds, String idShort, PaginationInfo pInfo) {
 		String encodedCursor = pInfo.getCursor() == null ? null : Base64UrlEncoder.encode(pInfo.getCursor());
 		ObjectMapper mapper = new ObjectMapper();
+		if(assetIds == null || assetIds.isEmpty()) {
+			return repoApi.getAllAssetAdministrationShells(null, idShort, pInfo.getLimit(), encodedCursor);
+		}
 		List<String> encodedAssetIds = assetIds.stream()
 				.map(assetId -> {
 					try {
