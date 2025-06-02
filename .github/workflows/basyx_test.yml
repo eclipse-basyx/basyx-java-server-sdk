@@ -461,7 +461,7 @@ jobs:
             exit 1;
           fi
 
-      - name: Test AAS Registry IT
+      - name: Test Submodel Service IT
         run: mvn verify -f "basyx.submodelservice" -Ddocker.namespace=test -DskipSurefire=true
 
       - name: Stop environment
