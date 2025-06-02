@@ -77,6 +77,15 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 	}
 
 	@Test
+	public void allAasRetrievalWithIdShort() throws Exception {
+		List<AssetAdministrationShell> expected = DummyAasFactory.createShells();
+		AasRepository aasRepo = getAasRepository(expected);
+		PaginationInfo pInfo = new PaginationInfo(2, null);
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(null,"aasAssetInfo",pInfo).getResult();
+		assertEquals(1, coll.size());
+	}
+
+	@Test
 	public void getAasByIdentifier() throws CollidingIdentifierException, ElementDoesNotExistException {
 		AssetAdministrationShell expected = DummyAasFactory.createAasWithSubmodelReference();
 		AasRepository aasRepo = getAasRepository(Collections.singleton(expected));

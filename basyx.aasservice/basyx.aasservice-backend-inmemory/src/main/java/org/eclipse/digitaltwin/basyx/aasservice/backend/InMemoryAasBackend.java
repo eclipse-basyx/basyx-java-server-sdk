@@ -100,7 +100,22 @@ public class InMemoryAasBackend extends InMemoryCrudRepository<AssetAdministrati
 
 	@Override
 	public Iterable<AssetAdministrationShell> getAllAas(List<SpecificAssetId> assetIds, String idShort) {
-		return findAll();
+		Iterable<AssetAdministrationShell> allAas = findAll();
+		List<AssetAdministrationShell> filteredAas = new java.util.ArrayList<>();
+		String globalAssetId = null;
+		try {
+			globalAssetId = assetIds.stream().filter(assetId -> assetId.getName().equals("globalAssetId")).findFirst().get().getValue();
+			assetIds.removeIf(assetId -> assetId.getName().equals("globalAssetId"));
+		} catch (Exception e) {}
+		for (AssetAdministrationShell aas : allAas) {
+			boolean matchesAssetIds = (assetIds == null || assetIds.stream().allMatch(assetId -> aas.getAssetInformation().getSpecificAssetIds().contains(assetId)));
+			boolean matchesIdShort = (idShort == null || aas.getIdShort().equals(idShort));
+			boolean matchesGlobalAssetId = (globalAssetId == null || (aas.getAssetInformation() != null && aas.getAssetInformation().getGlobalAssetId() != null && aas.getAssetInformation().getGlobalAssetId().equals(globalAssetId)));
+			if (matchesAssetIds && matchesIdShort && matchesGlobalAssetId) {
+				filteredAas.add(aas);
+			}
+		}
+		return filteredAas;
 	}
 
 	private static Reference getSubmodelReferenceById(AssetAdministrationShell aas, String submodelId) {
