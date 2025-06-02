@@ -30,9 +30,12 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.internal.AssetAdministrationShellRepositoryApi;
 import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
@@ -77,9 +80,19 @@ public class ConnectedAasRepository implements AasRepository {
 	}
 
 	@Override
-	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
+	public CursorResult<List<AssetAdministrationShell>> getAllAas(List<SpecificAssetId> assetIds, String idShort, PaginationInfo pInfo) {
 		String encodedCursor = pInfo.getCursor() == null ? null : Base64UrlEncoder.encode(pInfo.getCursor());
-		return repoApi.getAllAssetAdministrationShells(null, null, pInfo.getLimit(), encodedCursor);
+		ObjectMapper mapper = new ObjectMapper();
+		List<String> encodedAssetIds = assetIds.stream()
+				.map(assetId -> {
+					try {
+						String value = mapper.writeValueAsString(assetId);
+						return Base64UrlEncoder.encode(value);
+					} catch (JsonProcessingException e) {
+						throw new RuntimeException(e);
+					}
+				}).toList();
+		return repoApi.getAllAssetAdministrationShells(encodedAssetIds, idShort, pInfo.getLimit(), encodedCursor);
 	}
 
 	@Override

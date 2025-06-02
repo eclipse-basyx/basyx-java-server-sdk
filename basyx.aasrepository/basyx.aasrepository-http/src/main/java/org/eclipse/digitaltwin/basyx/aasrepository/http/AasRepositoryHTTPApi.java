@@ -118,7 +118,7 @@ public interface AasRepositoryHTTPApi {
 			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PagedResult.class))) })
 	@RequestMapping(value = "/shells", produces = { "application/json" }, method = RequestMethod.GET)
 	ResponseEntity<PagedResult> getAllAssetAdministrationShells(
-			@Parameter(in = ParameterIn.QUERY, description = "A list of specific Asset identifiers", schema = @Schema()) @Valid @RequestParam(value = "assetIds", required = false) List<SpecificAssetId> assetIds,
+			@Parameter(in = ParameterIn.QUERY, description = "A list of specific Asset identifiers", schema = @Schema()) @Valid @RequestParam(value = "assetIds", required = false) List<Base64UrlEncodedIdentifier> assetIds,
 			@Parameter(in = ParameterIn.QUERY, description = "The Asset Administration Shell’s IdShort", schema = @Schema()) @Valid @RequestParam(value = "idShort", required = false) String idShort,
 			@Min(0) @Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array", schema = @Schema(allowableValues = {
 					"1" }, minimum = "0")) @Valid @RequestParam(value = "limit", required = false) Integer limit,

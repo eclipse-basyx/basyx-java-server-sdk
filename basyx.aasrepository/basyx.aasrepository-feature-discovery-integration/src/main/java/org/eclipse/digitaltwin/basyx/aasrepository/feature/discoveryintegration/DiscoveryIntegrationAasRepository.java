@@ -65,8 +65,8 @@ public class DiscoveryIntegrationAasRepository implements AasRepository {
 	}
 
 	@Override
-	public CursorResult<List<AssetAdministrationShell>> getAllAas(PaginationInfo pInfo) {
-		return decorated.getAllAas(pInfo);
+	public CursorResult<List<AssetAdministrationShell>> getAllAas(List<SpecificAssetId> assetIds, String idShort, PaginationInfo pInfo) {
+		return decorated.getAllAas(assetIds, idShort, pInfo);
 	}
 
 	@Override
