@@ -113,7 +113,7 @@ public class TestAasEnvironmentHTTP_IgnoreDuplicates {
 	}
 
 	private void recordInitialCounts() {
-		initialAasCount = aasRepo.getAllAas(PaginationInfo.NO_LIMIT).getResult().size();
+		initialAasCount = aasRepo.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size();
 		initialSmCount = submodelRepo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size();
 		initialCdCount = conceptDescriptionRepo.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size();
 	}
@@ -137,7 +137,7 @@ public class TestAasEnvironmentHTTP_IgnoreDuplicates {
 	private void deleteAas() {
 		aasRepo.deleteAas(AAS_ID);
 		assertThrows(ElementDoesNotExistException.class, () -> aasRepo.getAas(AAS_ID));
-		assertEquals(initialAasCount - 1, aasRepo.getAllAas(PaginationInfo.NO_LIMIT).getResult().size());
+		assertEquals(initialAasCount - 1, aasRepo.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
 	}
 
 	private void deleteSubmodel() {
@@ -162,7 +162,7 @@ public class TestAasEnvironmentHTTP_IgnoreDuplicates {
 	}
 
 	private void verifyFinalState() {
-		assertEquals(initialAasCount, aasRepo.getAllAas(PaginationInfo.NO_LIMIT).getResult().size());
+		assertEquals(initialAasCount, aasRepo.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
 		assertEquals(initialSmCount, submodelRepo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
 		assertEquals(initialCdCount, conceptDescriptionRepo.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
 	}

@@ -296,7 +296,7 @@ public class TestConnectedAasEnvironment {
 	}
 
 	private void validateRepositoriesState() {
-		assertTrue(getAasRepository().getAllAas(PaginationInfo.NO_LIMIT).getResult().containsAll(createDummyShells()));
+		assertTrue(getAasRepository().getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().containsAll(createDummyShells()));
 		assertTrue(getSubmodelRepository().getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().containsAll(createDummySubmodels()));
 		assertTrue(getConceptDescriptionRepository().getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().containsAll(createDummyConceptDescriptions()));
 	}    

@@ -100,7 +100,7 @@ public class TestAuthorizedAasEnvironmentSerialization {
 	public void reset() throws FileNotFoundException, IOException {
 		configureSecurityContext();
 		
-		Collection<AssetAdministrationShell> assetAdministrationShells = aasRepo.getAllAas(PaginationInfo.NO_LIMIT).getResult();
+		Collection<AssetAdministrationShell> assetAdministrationShells = aasRepo.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult();
 		Collection<Submodel> submodels = submodelRepo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult();
 		Collection<ConceptDescription> conceptDescriptions = conceptDescriptionRepo.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult();
 		

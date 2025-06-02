@@ -75,7 +75,7 @@ public class TestAuthorizedConnectedAasRepository extends AasRepositorySuite {
 		TestAuthorizedConnectedAasService.configureSecurityContext(TestAuthorizedConnectedAasService.getTokenProvider());
 		
 		AasRepository repo = appContext.getBean(AasRepository.class);
-		repo.getAllAas(PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteAas);
+		repo.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteAas);
 		
 		SecurityContextHolder.clearContext();
 	}

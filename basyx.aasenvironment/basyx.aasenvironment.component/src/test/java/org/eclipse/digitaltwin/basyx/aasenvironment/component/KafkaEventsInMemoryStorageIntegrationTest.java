@@ -143,7 +143,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 
 	@After
 	public void cleanup() throws InterruptedException {	
-		for (AssetAdministrationShell aas : aasRepo.getAllAas(new PaginationInfo(null, null)).getResult()) {
+		for (AssetAdministrationShell aas : aasRepo.getAllAas(null, null, new PaginationInfo(null, null)).getResult()) {
 			aasRepo.deleteAas(aas.getId());
 			AasEvent aasEvt = aasEventListener.next();
 			Assert.assertEquals(AasEventType.AAS_DELETED, aasEvt.getType());
