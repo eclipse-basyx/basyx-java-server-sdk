@@ -33,11 +33,12 @@ import java.util.List;
 import java.util.Objects;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Paginated wrapper for {@link AasRepository#getAllAas(org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo)}
+ * Paginated wrapper for {@link AasRepository#getAllAas(List, String, PaginationInfo)}
  */
 @Validated
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-05-22T07:02:56.105163402Z[GMT]")
