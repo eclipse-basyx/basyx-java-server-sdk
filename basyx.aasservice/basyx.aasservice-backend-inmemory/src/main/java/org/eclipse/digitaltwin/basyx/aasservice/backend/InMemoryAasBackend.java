@@ -105,10 +105,16 @@ public class InMemoryAasBackend extends InMemoryCrudRepository<AssetAdministrati
 		String globalAssetId = null;
 		try {
 			globalAssetId = assetIds.stream().filter(assetId -> assetId.getName().equals("globalAssetId")).findFirst().get().getValue();
-			assetIds.removeIf(assetId -> assetId.getName().equals("globalAssetId"));
+			assetIds = assetIds.stream().filter(assetId -> !assetId.getName().equals("globalAssetId")).collect(Collectors.toList());
 		} catch (Exception e) {}
-		for (AssetAdministrationShell aas : allAas) {
-			boolean matchesAssetIds = (assetIds == null || assetIds.stream().allMatch(assetId -> aas.getAssetInformation().getSpecificAssetIds().contains(assetId)));
+		for (AssetAdministrationShell aas : allAas){
+			boolean matchesAssetIds;
+			try {
+				matchesAssetIds = (assetIds == null || assetIds.stream().allMatch(assetId -> aas.getAssetInformation().getSpecificAssetIds().contains(assetId)));
+			}catch (NullPointerException e) {
+				// If AssetInformation is null, we cannot match specific asset IDs
+				matchesAssetIds = false;
+			}
 			boolean matchesIdShort = (idShort == null || aas.getIdShort().equals(idShort));
 			boolean matchesGlobalAssetId = (globalAssetId == null || (aas.getAssetInformation() != null && aas.getAssetInformation().getGlobalAssetId() != null && aas.getAssetInformation().getGlobalAssetId().equals(globalAssetId)));
 			if (matchesAssetIds && matchesIdShort && matchesGlobalAssetId) {

@@ -37,6 +37,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceSuite;
 import org.eclipse.digitaltwin.basyx.core.exceptions.*;
@@ -81,8 +82,19 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 		List<AssetAdministrationShell> expected = DummyAasFactory.createShells();
 		AasRepository aasRepo = getAasRepository(expected);
 		PaginationInfo pInfo = new PaginationInfo(2, null);
-		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(null,"aasAssetInfo",pInfo).getResult();
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(null, "aasAssetInfo", pInfo).getResult();
 		assertEquals(1, coll.size());
+		assertEquals(coll.toArray()[0], expected.get(1));
+	}
+
+	@Test
+	public void allAasRetrievalWithAssetId() throws Exception {
+		List<AssetAdministrationShell> expected = DummyAasFactory.createShells();
+		AasRepository aasRepo = getAasRepository(expected);
+		PaginationInfo pInfo = new PaginationInfo(2, null);
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(Collections.singletonList(new DefaultSpecificAssetId.Builder().name("globalAssetId").value("assetIDTestKey").build()), null,pInfo).getResult();
+		assertEquals(1, coll.size());
+		assertEquals(coll.toArray()[0], expected.get(1));
 	}
 
 	@Test
