@@ -34,10 +34,14 @@ import org.apache.kafka.common.TopicPartition;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.TestComponent;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.ConsumerSeekAware;
+import org.springframework.messaging.handler.annotation.Payload;
+
 /**
  * @author geso02 (Sonnenberg DFKI GmbH)
  */
@@ -46,13 +50,18 @@ import org.springframework.kafka.listener.ConsumerSeekAware;
 public class SubmodelEventKafkaListener implements ConsumerSeekAware {
 
 	public static final String TOPIC_NAME = "submodel-events";
-	
+	private static final Logger log = LoggerFactory.getLogger(SubmodelEventKafkaListener.class);
+
 	private final LinkedBlockingDeque<SubmodelEvent> evt = new LinkedBlockingDeque<SubmodelEvent>();
 	private final JsonDeserializer deserializer = new JsonDeserializer();
 	private final CountDownLatch latch = new CountDownLatch(1);
 
 	@KafkaHandler
-	public void receiveMessage(String content) {
+	public void receiveMessage(@Payload(required = false) String content) {
+		if (content == null) {
+			log.warn("Payload is null – topic {} not yet ready?", SubmodelEventKafkaListener.TOPIC_NAME);
+			return;
+		}
 		try {
 			SubmodelEvent event = deserializer.read(content, SubmodelEvent.class);
 			evt.offerFirst(event);
@@ -79,8 +88,9 @@ public class SubmodelEventKafkaListener implements ConsumerSeekAware {
 	}
 
 	public void awaitTopicAssignment() throws InterruptedException {
-//		if (!latch.await(30, TimeUnit.MINUTES)) {
-//			throw new RuntimeException("Timeout occured while waiting for partition assignment. Is kafka running?");
-//		}
+		// if (!latch.await(30, TimeUnit.MINUTES)) {
+		// throw new RuntimeException("Timeout occured while waiting for partition
+		// assignment. Is kafka running?");
+		// }
 	}
 }

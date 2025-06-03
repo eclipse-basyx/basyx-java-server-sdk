@@ -26,23 +26,23 @@ package org.eclipse.digitaltwin.basyx.aasregistry.service.storage.memory;
 
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.kafka.common.TopicPartition;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.BaseIntegrationTest;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.EventQueue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.ConsumerSeekAware;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.TestPropertySource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@TestPropertySource(
-		properties = {"spring.profiles.active=kafkaEvents,inMemoryStorage",
-				"spring.kafka.bootstrap-servers=localhost:9092"})
+@TestPropertySource(properties = { "spring.profiles.active=kafkaEvents,inMemoryStorage", "spring.kafka.bootstrap-servers=localhost:9092" })
 public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTest {
 
 	@Autowired
@@ -54,43 +54,47 @@ public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTe
 		super.setUp();
 	}
 
-	
 	@Override
 	public EventQueue queue() {
 		return listener.queue;
 	}
 
-	@KafkaListener(topics = "aas-registry", batch = "false", groupId = "kafka-test", autoStartup = "true" )
+	@KafkaListener(topics = "aas-registry", batch = "false", groupId = "kafka-test", autoStartup = "true")
 	@Component
 	private static class RegistrationEventKafkaListener implements ConsumerSeekAware {
-		
+
+		private static final Logger log = LoggerFactory.getLogger(RegistrationEventKafkaListener.class);
 		private final EventQueue queue;
 		private final CountDownLatch latch = new CountDownLatch(1);
-		
+
 		@SuppressWarnings("unused")
 		public RegistrationEventKafkaListener(ObjectMapper mapper) {
 			this.queue = new EventQueue(mapper);
 		}
-		
+
 		@KafkaHandler
-		public void receiveMessage(String content) {
+		public void receiveMessage(@Payload(required = false) String content) {
+			if (content == null) {
+				log.warn("Payload is null – topic aas-registry not yet ready?");
+				return;
+			}
 			queue.offer(content);
 		}
 
 		@Override
-		public void onPartitionsAssigned(Map<TopicPartition, Long> assignments,
-					ConsumerSeekCallback callback) {
+		public void onPartitionsAssigned(Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
 			for (TopicPartition eachPartition : assignments.keySet()) {
 				if ("aas-registry".equals(eachPartition.topic())) {
 					latch.countDown();
 				}
-			}		
+			}
 		}
-		
+
 		public void awaitTopicAssignment() throws InterruptedException {
-//			if (!latch.await(30, TimeUnit.MINUTES)) {
-//				throw new RuntimeException("Timeout occured while waiting for partition assignment. Is kafka running?");
-//			}
+			// if (!latch.await(30, TimeUnit.MINUTES)) {
+			// throw new RuntimeException("Timeout occured while waiting for partition
+			// assignment. Is kafka running?");
+			// }
 		}
 	}
 

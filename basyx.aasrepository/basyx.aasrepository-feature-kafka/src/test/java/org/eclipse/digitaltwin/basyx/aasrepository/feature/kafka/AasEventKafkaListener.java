@@ -34,17 +34,22 @@ import org.apache.kafka.common.TopicPartition;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.ConsumerSeekAware;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
+
 /**
  * @author geso02 (Sonnenberg DFKI GmbH)
  */
 @KafkaListener(topics = TestApplication.KAFKA_AAS_TOPIC, batch = "false", groupId = TestApplication.KAFKA_GROUP_ID, autoStartup = "true")
-@Component 
+@Component
 public class AasEventKafkaListener implements ConsumerSeekAware {
-	
+
+	private static final Logger log = LoggerFactory.getLogger(AasEventKafkaListener.class);
 	private final LinkedBlockingDeque<AasEvent> evt = new LinkedBlockingDeque<AasEvent>();
 	private final JsonDeserializer deserializer;
 	private final CountDownLatch latch = new CountDownLatch(1);
@@ -54,7 +59,11 @@ public class AasEventKafkaListener implements ConsumerSeekAware {
 	}
 
 	@KafkaHandler
-	public void receiveMessage(String content) {
+	public void receiveMessage(@Payload(required = false) String content) {
+		if (content == null) {
+			log.warn("Payload is null – topic {} not yet ready?", TestApplication.KAFKA_AAS_TOPIC);
+			return;
+		}
 		try {
 			AasEvent event = deserializer.read(content, AasEvent.class);
 			evt.offerFirst(event);
@@ -81,8 +90,9 @@ public class AasEventKafkaListener implements ConsumerSeekAware {
 	}
 
 	public void awaitTopicAssignment() throws InterruptedException {
-//		if (!latch.await(30, TimeUnit.MINUTES)) {
-//			throw new RuntimeException("Timeout occured while waiting for partition assignment. Is kafka running?");
-//		}
+		// if (!latch.await(30, TimeUnit.MINUTES)) {
+		// throw new RuntimeException("Timeout occured while waiting for partition
+		// assignment. Is kafka running?");
+		// }
 	}
 }

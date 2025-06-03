@@ -24,21 +24,21 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.mongodb;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.kafka.common.TopicPartition;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.BaseIntegrationTest;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.EventQueue;
-import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.ConsumerSeekAware;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.TestPropertySource;
 
@@ -67,7 +67,8 @@ public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTes
 	@KafkaListener(topics = "submodel-registry", batch = "false", groupId = "kafka-test", autoStartup = "true" )
 	@Component
 	public static class RegistrationEventKafkaListener implements ConsumerSeekAware {
-				
+
+		private static final Logger log = LoggerFactory.getLogger(RegistrationEventKafkaListener.class);
 		private final EventQueue queue;
 		private final CountDownLatch latch = new CountDownLatch(1);
 		
@@ -79,7 +80,11 @@ public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTes
 		}
 		
 		@KafkaHandler
-		public void receiveMessage(String content) {
+		public void receiveMessage(@Payload(required = false)String content) {
+			if (content == null) {
+				log.warn("Payload is null – topic submodel-registry not yet ready?");
+				return;
+			}
 			queue.offer(content);
 		}
 		
