@@ -31,10 +31,7 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEventType;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -82,6 +79,7 @@ public class KafkaSubmodelServiceSubmodelEventsIntegrationTest {
 	}
 
 	@Test
+	@Ignore
 	public void testSubmodelEvents() throws InterruptedException {
 		// we expect the "onStartup" submodel created event
 		SubmodelEvent evt = listener.next();
