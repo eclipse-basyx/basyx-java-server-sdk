@@ -30,6 +30,8 @@ services:
       - '8081:8081'
     restart: always
     depends_on:
+      keycloak:
+        condition: service_healthy
       aas-registry:
         condition: service_healthy
       sm-registry:

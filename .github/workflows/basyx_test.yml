@@ -461,6 +461,9 @@ jobs:
             exit 1;
           fi
 
+      - name: Test Submodel Service IT
+        run: mvn verify -f "basyx.submodelservice" -Ddocker.namespace=test -DskipSurefire=true
+
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
