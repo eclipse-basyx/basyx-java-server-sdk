@@ -59,7 +59,7 @@ public class TestAasRepositoryHTTPError extends AasRepositoryHTTPErrorSuite {
     @Override
     public void resetRepository() {
         AasRepository repo = appContext.getBean(AasRepository.class);
-        repo.getAllAas(PaginationInfo.NO_LIMIT)
+        repo.getAllAas(null, null, PaginationInfo.NO_LIMIT)
                 .getResult()
                 .stream()
                 .map(aas -> aas.getId())
