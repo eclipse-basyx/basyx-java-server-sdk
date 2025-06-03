@@ -231,7 +231,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		
 		Assert.assertEquals(1, repo.getSubmodelReferences(TestShells.ID_AAS, new PaginationInfo(null, null)).getResult().size());
 		Assert.assertEquals(shell, repo.getAas(TestShells.ID_AAS));
-		Assert.assertEquals(1, repo.getAllAas(new PaginationInfo(null, null)).getResult().size());
+		Assert.assertEquals(1, repo.getAllAas(null, null, new PaginationInfo(null, null)).getResult().size());
 		Assert.assertEquals(shell.getAssetInformation(), repo.getAssetInformation(TestShells.ID_AAS));
 	}
 	
@@ -242,7 +242,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 
 	@After
 	public void cleanup() throws InterruptedException {
-		for (AssetAdministrationShell aas : repo.getAllAas(new PaginationInfo(null, null)).getResult()) {
+		for (AssetAdministrationShell aas : repo.getAllAas(null, null, new PaginationInfo(null, null)).getResult()) {
 			repo.deleteAas(aas.getId());
 			AasEvent deletedEvt = listener.next();
 			Assert.assertEquals(AasEventType.AAS_DELETED, deletedEvt.getType());

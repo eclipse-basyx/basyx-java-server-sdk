@@ -46,6 +46,7 @@ import org.springframework.lang.NonNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * MongoDB implementation of the {@link AasOperations}
@@ -168,6 +169,37 @@ public class MongoDBAasOperations implements AasOperations {
             throw new ElementDoesNotExistException(aasId);
 
         return aasInfo;
+    }
+
+    @Override
+    public Iterable<AssetAdministrationShell> getAllAas(List<SpecificAssetId> assetIds, String idShort) {
+        Query query = new Query();
+        Criteria criteria = new Criteria();
+
+        String globalAssetId = null;
+        try {
+            globalAssetId = assetIds.stream().filter(assetId -> assetId.getName().equals("globalAssetId")).findFirst().get().getValue();
+            assetIds = assetIds.stream().filter(assetId -> !assetId.getName().equals("globalAssetId")).collect(Collectors.toList());
+        } catch (Exception ignored) {}
+
+        if (assetIds != null && !assetIds.isEmpty()) {
+            List<Criteria> assetIdCriteria = new ArrayList<>();
+            for (SpecificAssetId assetId : assetIds) {
+                assetIdCriteria.add(Criteria.where("assetInformation.specificAssetIds.name").is(assetId.getName()));
+                assetIdCriteria.add(Criteria.where("assetInformation.specificAssetIds.value").is(assetId.getValue()));
+            }
+            criteria.andOperator(assetIdCriteria);
+        }
+        if (idShort != null && !idShort.isEmpty()) {
+            criteria.and("idShort").is(idShort);
+        }
+        query.addCriteria(criteria);
+
+        if (globalAssetId != null && !globalAssetId.isEmpty()) {
+            query.addCriteria(Criteria.where("assetInformation.globalAssetId").is(globalAssetId));
+        }
+
+        return mongoOperations.find(query, AssetAdministrationShell.class, collectionName);
     }
 
     private boolean existsAas(String aasId) {

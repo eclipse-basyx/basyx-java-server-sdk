@@ -56,7 +56,7 @@ public class TestConnectedAasService extends AasServiceSuite {
 	@After
 	public void removeAasFromRepo() {
 		AasRepository repo = appContext.getBean(AasRepository.class);
-		repo.getAllAas(PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteAas);
+		repo.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteAas);
 	}
 
 	@AfterClass

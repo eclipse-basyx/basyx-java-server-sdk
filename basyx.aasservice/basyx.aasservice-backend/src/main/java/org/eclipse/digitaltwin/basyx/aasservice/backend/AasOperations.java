@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.aasservice.backend;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
@@ -96,4 +97,12 @@ public interface AasOperations {
      */
     AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException;
 
+    /**
+     * Retrieves all AASs that match the given asset IDs and idShort.
+     *
+     * @param assetIds the list of specific asset IDs to filter AASs
+     * @param idShort  the idShort to filter AASs
+     * @return an iterable collection of AssetAdministrationShells that match the criteria
+     */
+    Iterable<AssetAdministrationShell> getAllAas(List<SpecificAssetId> assetIds, String idShort);
 }

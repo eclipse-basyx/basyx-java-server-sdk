@@ -117,7 +117,7 @@ public class TestEnvironmentWithRegistryIntegration {
     }
 
     private static void assertRepositoriesAreEmpty() {
-        assertTrue(aasRepository.getAllAas(PaginationInfo.NO_LIMIT).getResult().isEmpty());
+        assertTrue(aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().isEmpty());
         assertTrue(smRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().isEmpty());
     }
 
