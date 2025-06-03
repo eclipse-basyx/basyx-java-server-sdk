@@ -71,12 +71,19 @@ services:
       KAFKA_NUM_PARTITIONS: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    # healthcheck:
+    #   test: ["CMD", "bash", "-c", "kafka-topics.sh --bootstrap-server kafka:9093 --list || exit 1"]
+    #   interval: 10s
+    #   timeout: 10s
+    #   retries: 20
+    #   start_period: 10s
     healthcheck:
-      test: ["CMD", "bash", "-c", "kafka-topics.sh --bootstrap-server kafka:9093 --list || exit 1"]
-      interval: 10s
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/kafka/9092"]
+      interval: 5s
       timeout: 10s
-      retries: 7
-      start_period: 10s
+      retries: 40
+      start_period: 5s
+
     networks:
       - basyx-java-server-sdk
 
