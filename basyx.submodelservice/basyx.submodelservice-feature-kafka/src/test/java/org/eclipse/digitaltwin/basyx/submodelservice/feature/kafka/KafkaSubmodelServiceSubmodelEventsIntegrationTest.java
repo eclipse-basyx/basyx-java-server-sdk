@@ -26,7 +26,6 @@
 //package org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka;
 //
 //import java.util.concurrent.TimeUnit;
-//
 //import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 //import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 //import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
