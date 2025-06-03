@@ -79,7 +79,7 @@ public class SubmodelEventKafkaListener implements ConsumerSeekAware {
 	}
 
 	public void awaitTopicAssignment() throws InterruptedException {
-		if (!latch.await(5, TimeUnit.MINUTES)) {
+		if (!latch.await(60, TimeUnit.MINUTES)) {
 			throw new RuntimeException("Timeout occured while waiting for partition assignment. Is kafka running?");
 		}
 	}
