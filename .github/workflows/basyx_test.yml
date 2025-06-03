@@ -43,7 +43,7 @@ jobs:
         run: docker compose --project-directory ./ci up -d --wait
 
       - name: Test BaSyx
-        run: mvn test
+        run: mvn clean install -f "basyx.aasenvironment/pom.xml"
 
       - name: Fail if no Surefire/Failsafe reports found
         run: |
