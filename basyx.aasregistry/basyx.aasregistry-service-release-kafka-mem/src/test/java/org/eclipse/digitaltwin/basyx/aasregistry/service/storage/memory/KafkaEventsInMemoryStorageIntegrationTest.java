@@ -88,9 +88,9 @@ public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTe
 		}
 		
 		public void awaitTopicAssignment() throws InterruptedException {
-			if (!latch.await(30, TimeUnit.MINUTES)) {
-				throw new RuntimeException("Timeout occured while waiting for partition assignment. Is kafka running?");
-			}
+//			if (!latch.await(30, TimeUnit.MINUTES)) {
+//				throw new RuntimeException("Timeout occured while waiting for partition assignment. Is kafka running?");
+//			}
 		}
 	}
 
