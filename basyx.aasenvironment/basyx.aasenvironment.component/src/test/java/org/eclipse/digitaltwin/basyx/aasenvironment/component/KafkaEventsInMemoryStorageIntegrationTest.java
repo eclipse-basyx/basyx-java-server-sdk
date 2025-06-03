@@ -70,7 +70,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @TestPropertySource(properties = {
 		"basyx.environment=",
 		"basyx.feature.kafka.enabled=true",
-		"spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092"
+		"spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092",
+		"spring.kafka.consumer.auto-offset-reset=earliest"
 })
 @AutoConfigureMockMvc
 @Import({ SubmodelEventKafkaListener.class, AasEventKafkaListener.class})
