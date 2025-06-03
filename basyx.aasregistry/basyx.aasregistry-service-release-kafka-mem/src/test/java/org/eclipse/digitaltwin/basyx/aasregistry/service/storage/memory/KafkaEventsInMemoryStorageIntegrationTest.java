@@ -42,7 +42,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @TestPropertySource(
 		properties = {"spring.profiles.active=kafkaEvents,inMemoryStorage",
-				"spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092"})
+				"spring.kafka.bootstrap-servers=localhost:9092"})
 public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTest {
 
 	@Autowired
@@ -88,7 +88,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTe
 		}
 		
 		public void awaitTopicAssignment() throws InterruptedException {
-			if (!latch.await(5, TimeUnit.MINUTES)) {
+			if (!latch.await(30, TimeUnit.MINUTES)) {
 				throw new RuntimeException("Timeout occured while waiting for partition assignment. Is kafka running?");
 			}
 		}

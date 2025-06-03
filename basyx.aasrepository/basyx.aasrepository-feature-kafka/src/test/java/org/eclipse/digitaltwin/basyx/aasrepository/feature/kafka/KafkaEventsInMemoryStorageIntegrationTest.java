@@ -70,7 +70,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ContextConfiguration(classes = {TestApplication.class})
 @RunWith(SpringRunner.class)
 @TestPropertySource(properties = { KafkaAasRepositoryFeature.FEATURENAME + ".enabled=true",
-		"spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092",
+		"spring.kafka.bootstrap-servers=localhost:9092",
 		KafkaAasRepositoryFeature.FEATURENAME + ".topic.name="+TestApplication.KAFKA_AAS_TOPIC
 })
 public class KafkaEventsInMemoryStorageIntegrationTest {

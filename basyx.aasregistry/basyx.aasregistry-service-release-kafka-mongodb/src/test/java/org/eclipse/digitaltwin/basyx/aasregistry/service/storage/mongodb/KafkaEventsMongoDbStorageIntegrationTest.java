@@ -43,7 +43,7 @@ import org.springframework.test.context.TestPropertySource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @TestPropertySource(properties = { "spring.profiles.active=kafkaEvents,mongoDbStorage",
-		"spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092", "spring.data.mongodb.database=aasregistry",
+		"spring.kafka.bootstrap-servers=localhost:9092", "spring.data.mongodb.database=aasregistry",
 		"spring.data.mongodb.uri=mongodb://mongoAdmin:mongoPassword@localhost:27017/" })
 public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTest {
 

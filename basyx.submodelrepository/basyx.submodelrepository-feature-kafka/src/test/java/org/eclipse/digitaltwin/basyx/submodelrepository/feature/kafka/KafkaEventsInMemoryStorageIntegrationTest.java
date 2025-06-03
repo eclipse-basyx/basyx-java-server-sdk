@@ -76,7 +76,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test-submodel")
 @ContextConfiguration(classes = SubmodelServiceTestComponent.class)
-@TestPropertySource(properties = { "basyx.backend=InMemory", "spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092", KafkaSubmodelRepositoryFeature.FEATURENAME + ".preservationlevel=REMOVE_BLOB_VALUE",
+@TestPropertySource(properties = { "basyx.backend=InMemory", "spring.kafka.bootstrap-servers=localhost:9092", KafkaSubmodelRepositoryFeature.FEATURENAME + ".preservationlevel=REMOVE_BLOB_VALUE",
 		KafkaSubmodelRepositoryFeature.FEATURENAME + ".enabled=true", KafkaSubmodelRepositoryFeature.FEATURENAME + ".topic.name=submodel-events" })
 @Import(value = { SubmodelEventKafkaListener.class })
 public class KafkaEventsInMemoryStorageIntegrationTest {

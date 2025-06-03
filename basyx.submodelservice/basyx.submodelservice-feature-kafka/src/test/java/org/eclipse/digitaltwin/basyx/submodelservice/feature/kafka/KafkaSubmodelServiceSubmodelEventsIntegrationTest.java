@@ -58,7 +58,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test-submodel")
 @ContextConfiguration(classes = {SubmodelServiceTestComponent.class})
-@TestPropertySource(properties = { "spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092",
+@TestPropertySource(properties = { "spring.kafka.bootstrap-servers=localhost:9092",
 		KafkaSubmodelServiceFeature.FEATURENAME + ".preservationlevel=REMOVE_BLOB_VALUE",
 		KafkaSubmodelServiceFeature.FEATURENAME + ".enabled=true",
 		KafkaSubmodelServiceFeature.FEATURENAME + ".topic.name=" + SubmodelEventKafkaListener.TOPIC_NAME,
