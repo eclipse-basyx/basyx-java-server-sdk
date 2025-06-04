@@ -30,20 +30,19 @@ import static org.junit.Assert.assertThrows;
 
 import java.io.IOException;
 
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.AuthorizedConnectedSubmodelRegistry;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.mongodb.KafkaEventsMongoDbStorageIntegrationTest.RegistrationEventKafkaListener;
+import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEvent;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.BaseIntegrationTest;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.EventQueue;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
@@ -56,21 +55,26 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {"spring.profiles.active=kafkaEvents,mongoDbStorage", "spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092", "spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:9096/realms/BaSyx", "basyx.feature.authorization.enabled=true", "basyx.feature.authorization.type=rbac", "basyx.feature.authorization.jwtBearerTokenProvider=keycloak", "basyx.feature.authorization.rbac.file=classpath:rbac_rules.json", "spring.data.mongodb.database=submodelregistry", "spring.data.mongodb.uri=mongodb://mongoAdmin:mongoPassword@localhost:27017/"})
 public class AuthorizedClientTest extends BaseIntegrationTest {
 	
-	@Autowired
-	private RegistrationEventKafkaListener listener;
-	
+
+	private final KafkaAdapter<RegistryEvent> adapter = new KafkaAdapter<>("localhost:9092", "submodel-events", RegistryEvent.class);
+
 	@Value("${local.server.port}")
 	private int port;
 	
+	
 	@Override
-	public void setUp() throws ApiException, InterruptedException {
-		listener.awaitTopicAssignment();
-		super.setUp();
+	protected RegistryEvent next() {
+		return adapter.next();
 	}
 	
 	@Override
-	public EventQueue queue() {
-		return listener.getQueue();
+	protected void close() {
+		adapter.close();
+	}
+	
+	@Override
+	protected void assertNoAdditionalMessage() {
+		adapter.assertNoAdditionalMessages();
 	}
 	
 	@Override

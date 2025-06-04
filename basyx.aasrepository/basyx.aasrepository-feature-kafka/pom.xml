@@ -12,7 +12,12 @@
 	<name>BaSyx AAS Repository feature-kafka</name>
 	<description>BaSyx AAS Repository feature-kafka</description>
 
-	<dependencies>		
+	<dependencies>	
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.kafka</artifactId>
+			<scope>test</scope>
+		</dependency>	
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.aasrepository-core</artifactId>

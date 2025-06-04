@@ -19,6 +19,7 @@
 		<module>basyx.mqttcore</module>
 		<module>basyx.mongocore</module>
 		<module>basyx.authorization</module>
+		<module>basyx.kafka</module>
 		<module>basyx.hierarchy</module>
 		<module>basyx.client</module>
 		<module>basyx.backend.inmemory.core</module>

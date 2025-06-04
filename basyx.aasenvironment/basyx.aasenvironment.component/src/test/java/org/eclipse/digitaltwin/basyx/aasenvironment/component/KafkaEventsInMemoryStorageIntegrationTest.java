@@ -25,19 +25,19 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.AasEventKafkaListener;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.KafkaAasRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.TestShells;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEvent;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEventType;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.kafka.KafkaSubmodelRepositoryFeature;
-import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.SubmodelEventKafkaListener;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.TestSubmodels;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEventType;
@@ -50,7 +50,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -73,14 +72,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 		"spring.kafka.bootstrap-servers=localhost:9092"
 })
 @AutoConfigureMockMvc
-@Import({ SubmodelEventKafkaListener.class, AasEventKafkaListener.class})
 public class KafkaEventsInMemoryStorageIntegrationTest {
 	
-	@Autowired
-	private AasEventKafkaListener aasEventListener;
 	
-	@Autowired
-	private SubmodelEventKafkaListener submodelEventListener;
+	private final KafkaAdapter<SubmodelEvent> adapterSm = new KafkaAdapter<>("localhost:9092", "submodel-events", SubmodelEvent.class);
+	
+	private final KafkaAdapter<AasEvent> adapterAas = new KafkaAdapter<>("localhost:9092", "aas-events", AasEvent.class);
+	
 	
 	@Autowired
 	private KafkaAasRepositoryFeature aasFeature;
@@ -101,9 +99,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	private AasRepository aasRepo;
 	
 	@Before
-	public void awaitAssignment() throws InterruptedException {
-		aasEventListener.awaitTopicAssignment();
-		submodelEventListener.awaitTopicAssignment();
+	public void init() {
 		
 		cleanup();
 	}
@@ -116,7 +112,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		mvc.perform(MockMvcRequestBuilders.post("/shells").contentType(MediaType.APPLICATION_JSON).content(body).accept(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isCreated())
 				.andExpect(MockMvcResultMatchers.content().json(body));
-		AasEvent aasEvt = aasEventListener.next();
+		AasEvent aasEvt = adapterAas.next();
 		Assert.assertEquals(shell, aasEvt.getAas());
 		Assert.assertEquals(shell.getId(), aasEvt.getId());
 		Assert.assertNull(aasEvt.getSubmodelId());
@@ -127,7 +123,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		body = serializer.write(sm);
 		mvc.perform(MockMvcRequestBuilders.post("/submodels").contentType(MediaType.APPLICATION_JSON).content(body).accept(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isCreated());
-		SubmodelEvent smEvt = submodelEventListener.next();
+		SubmodelEvent smEvt = adapterSm.next();
 		Assert.assertEquals(sm, smEvt.getSubmodel());
 		Assert.assertEquals(sm.getId(), smEvt.getId());
 		Assert.assertNull(smEvt.getSmElement());
@@ -142,16 +138,25 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@After
-	public void cleanup() throws InterruptedException {	
+	public void dispose() {
+		try {
+			cleanup();
+		} finally {
+			adapterAas.close();
+			adapterSm.close();
+		}
+	}
+	
+	public void cleanup() {	
 		for (AssetAdministrationShell aas : aasRepo.getAllAas(null, null, new PaginationInfo(null, null)).getResult()) {
 			aasRepo.deleteAas(aas.getId());
-			AasEvent aasEvt = aasEventListener.next();
+			AasEvent aasEvt = adapterAas.next();
 			Assert.assertEquals(AasEventType.AAS_DELETED, aasEvt.getType());
 		}
 
 		for (Submodel sm : smRepo.getAllSubmodels(new PaginationInfo(null, null)).getResult()) {
 			smRepo.deleteSubmodel(sm.getId());
-			SubmodelEvent smEvt = submodelEventListener.next();
+			SubmodelEvent smEvt = adapterSm.next();
 			Assert.assertEquals(SubmodelEventType.SM_DELETED, smEvt.getType());
 		}
 	}

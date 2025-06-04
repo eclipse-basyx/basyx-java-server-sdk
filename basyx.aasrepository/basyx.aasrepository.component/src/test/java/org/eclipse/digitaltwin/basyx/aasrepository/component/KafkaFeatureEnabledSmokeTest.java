@@ -25,20 +25,17 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.component;
 
-import java.util.concurrent.TimeUnit;
-
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.KafkaAasRepositoryFeature;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.TestApplication;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.AasEventKafkaListener;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.KafkaAasRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEvent;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEventType;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -67,7 +64,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @TestPropertySource(properties = { "basyx.feature.kafka.enabled=true",
 		"spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092",
 		KafkaAasRepositoryFeature.FEATURENAME + "kafka.enabled=true",
-		KafkaAasRepositoryFeature.FEATURENAME + ".topic.name=" + TestApplication.KAFKA_AAS_TOPIC })
+		KafkaAasRepositoryFeature.FEATURENAME + ".topic.name=aas-events" })
 public class KafkaFeatureEnabledSmokeTest {
 
 	@LocalServerPort
@@ -79,33 +76,41 @@ public class KafkaFeatureEnabledSmokeTest {
 	@Autowired
 	private JsonSerializer serializer;
 
-	@Autowired
-	private AasEventKafkaListener listener;
-
+	private final KafkaAdapter<AasEvent> adapter = new KafkaAdapter<>("localhost:9092", "aas-events", AasEvent.class);
+	
+	
 	@Autowired
 	private AasRepository aasRepo;
 	
 	@Before
-	public void provideAas() throws InterruptedException {
-		listener.awaitTopicAssignment();
+	public void provideAas() {	
 		cleanup();
 	}
 	
 	@After
-	public void cleanup() throws InterruptedException {	
+	public void dispose() {
+		try {
+			cleanup();
+		} finally {
+			adapter.close();
+		}
+	}
+	
+	public void cleanup() {	
 		for (AssetAdministrationShell aas : aasRepo.getAllAas(null, null, new PaginationInfo(null, null)).getResult()) {
 			aasRepo.deleteAas(aas.getId());
+			adapter.next();
 		}
-		while(listener.next(100, TimeUnit.MICROSECONDS) != null);
+		adapter.assertNoAdditionalMessages();
 	}
 
 	@Test
-	public void testAasCreatedEvent() throws InterruptedException, SerializationException {
+	public void testAasCreatedEvent() throws SerializationException {
 		AssetAdministrationShell shell = new DefaultAssetAdministrationShell.Builder().id("http://aas.id/1")
 				.idShort("1").build();
 		HttpEntity<String> entity = createHttpEntity(shell);
 		restTemplate.exchange(createEndpointUrl(), HttpMethod.POST, entity, String.class);
-		AasEvent event = listener.next();
+		AasEvent event = adapter.next();
 		Assert.assertEquals(AasEventType.AAS_CREATED, event.getType());
 		Assert.assertEquals(shell.getId(), event.getId());
 		Assert.assertEquals(shell, event.getAas());

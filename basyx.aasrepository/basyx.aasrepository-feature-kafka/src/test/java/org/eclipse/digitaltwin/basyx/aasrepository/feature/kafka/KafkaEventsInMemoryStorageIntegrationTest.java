@@ -25,8 +25,7 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka;
 
-import java.util.concurrent.TimeUnit;
-
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
@@ -47,6 +46,7 @@ import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasBackend;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -75,8 +75,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 })
 public class KafkaEventsInMemoryStorageIntegrationTest {
 
-	@Autowired
-	private AasEventKafkaListener listener;
+	
+	private final KafkaAdapter<AasEvent> adapter = new KafkaAdapter<>("localhost:9092", TestApplication.KAFKA_AAS_TOPIC, AasEvent.class);
+	
 
 	@Autowired
 	private KafkaAasRepositoryFeature feature;
@@ -84,9 +85,8 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	private AasRepository repo;
 
 	@Before
-	public void awaitAssignment() throws InterruptedException {
-		listener.awaitTopicAssignment();
-		cleanupPreviousMessages();
+	public void awaitAssignment()  {
+
 		FileRepository fileRepo = new InMemoryFileRepository();
 		AasBackend aasRepositoryBackend = new InMemoryAasBackend();
 		AasServiceFactory sf = new CrudAasServiceFactory(aasRepositoryBackend, fileRepo);
@@ -95,16 +95,13 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 
 		cleanup();
 	}
-	private void cleanupPreviousMessages() throws InterruptedException {
-		while (listener.next(1, TimeUnit.SECONDS) != null);	
-	}
 
 	@Test
-	public void testCreateAas() throws InterruptedException {
+	public void testCreateAas() {
 		AssetAdministrationShell shell = TestShells.shell();
 		repo.createAas(shell);
 
-		AasEvent evt = listener.next();
+		AasEvent evt = adapter.next();
 		Assert.assertEquals(AasEventType.AAS_CREATED, evt.getType());
 		Assert.assertEquals(TestShells.ID_AAS, evt.getId());
 		Assert.assertNull(evt.getSubmodelId());
@@ -114,11 +111,11 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@Test
-	public void testUpdateAas() throws InterruptedException {
+	public void testUpdateAas() {
 		AssetAdministrationShell shell = TestShells.shell();
 		repo.createAas(shell);
 
-		AasEvent evtCreated = listener.next();
+		AasEvent evtCreated = adapter.next();
 		Assert.assertEquals(AasEventType.AAS_CREATED, evtCreated.getType());
 		Assert.assertEquals(shell, evtCreated.getAas());
 
@@ -126,7 +123,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		newShell.setIdShort("newIdShort");
 		repo.updateAas(newShell.getId(), newShell);
 
-		AasEvent evtUpdated = listener.next();
+		AasEvent evtUpdated = adapter.next();
 		Assert.assertEquals(AasEventType.AAS_UPDATED, evtUpdated.getType());
 
 		Assert.assertEquals(TestShells.ID_AAS, evtUpdated.getId());
@@ -137,17 +134,17 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@Test
-	public void testDelete() throws InterruptedException {
+	public void testDelete() {
 		AssetAdministrationShell shell = TestShells.shell();
 		repo.createAas(shell);
 
-		AasEvent evtCreated = listener.next();
+		AasEvent evtCreated = adapter.next();
 		Assert.assertEquals(AasEventType.AAS_CREATED, evtCreated.getType());
 		Assert.assertEquals(shell, evtCreated.getAas());
 
 		repo.deleteAas(shell.getId());
 
-		AasEvent evtDeleted = listener.next();
+		AasEvent evtDeleted = adapter.next();
 		Assert.assertEquals(AasEventType.AAS_DELETED, evtDeleted.getType());
 
 		Assert.assertEquals(TestShells.ID_AAS, evtDeleted.getId());
@@ -158,18 +155,18 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 	
 	@Test
-	public void testAssetInformation() throws InterruptedException {
+	public void testAssetInformation() {
 		AssetAdministrationShell shell = TestShells.shell();
 		repo.createAas(shell);
 
-		AasEvent evtCreated = listener.next();
+		AasEvent evtCreated = adapter.next();
 		Assert.assertEquals(AasEventType.AAS_CREATED, evtCreated.getType());
 		Assert.assertEquals(shell, evtCreated.getAas());
 
 		AssetInformation assetInfo = new DefaultAssetInformation.Builder().assetKind(AssetKind.TYPE).assetType("robot").globalAssetId("aas:robot:id").build();
 		repo.setAssetInformation(shell.getId(), assetInfo);
 
-		AasEvent evtAasIdSet = listener.next();
+		AasEvent evtAasIdSet = adapter.next();
 		Assert.assertEquals(AasEventType.ASSET_INFORMATION_SET, evtAasIdSet.getType());
 
 		Assert.assertEquals(TestShells.ID_AAS, evtAasIdSet.getId());
@@ -180,11 +177,11 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 	
 	@Test
-	public void testSubmodelReferenceAdded() throws InterruptedException {
+	public void testSubmodelReferenceAdded() {
 		AssetAdministrationShell shell = TestShells.shell();
 		repo.createAas(shell);
 
-		AasEvent evtCreated = listener.next();
+		AasEvent evtCreated = adapter.next();
 		Assert.assertEquals(AasEventType.AAS_CREATED, evtCreated.getType());
 		Assert.assertEquals(shell, evtCreated.getAas());
 
@@ -192,7 +189,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		Reference ref = new DefaultReference.Builder().type(ReferenceTypes.MODEL_REFERENCE).keys(new DefaultKey.Builder().type(KeyTypes.SUBMODEL).value(smId).build()).build();
 		repo.addSubmodelReference(TestShells.ID_AAS, ref);
 
-		AasEvent evtRefAdded = listener.next();
+		AasEvent evtRefAdded = adapter.next();
 		Assert.assertEquals(AasEventType.SM_REF_ADDED, evtRefAdded.getType());
 
 		Assert.assertEquals(TestShells.ID_AAS, evtRefAdded.getId());
@@ -203,16 +200,16 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 	
 	@Test
-	public void testSubmodelReferenceRemoved() throws InterruptedException {
+	public void testSubmodelReferenceRemoved() {
 		AssetAdministrationShell shell = TestShells.shell();
 		repo.createAas(shell);
 
-		AasEvent evtCreated = listener.next();
+		AasEvent evtCreated = adapter.next();
 		Assert.assertEquals(AasEventType.AAS_CREATED, evtCreated.getType());
 		Assert.assertEquals(shell, evtCreated.getAas());
 
 		repo.removeSubmodelReference(TestShells.ID_AAS, TestShells.ID_SM);
-		AasEvent evtRefRemoved = listener.next();
+		AasEvent evtRefRemoved = adapter.next();
 		Assert.assertEquals(AasEventType.SM_REF_DELETED, evtRefRemoved.getType());
 
 		Assert.assertEquals(TestShells.ID_AAS, evtRefRemoved.getId());
@@ -223,10 +220,10 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 	
 	@Test
-	public void testGetterAreWorking() throws InterruptedException {
+	public void testGetterAreWorking() {
 		AssetAdministrationShell shell = TestShells.shell();
 		repo.createAas(shell);
-		AasEvent evtCreated = listener.next();
+		AasEvent evtCreated = adapter.next();
 		Assert.assertEquals(AasEventType.AAS_CREATED, evtCreated.getType());
 		
 		Assert.assertEquals(1, repo.getSubmodelReferences(TestShells.ID_AAS, new PaginationInfo(null, null)).getResult().size());
@@ -241,14 +238,20 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@After
-	public void cleanup() throws InterruptedException {
+	public void tearDown() {
+		try {
+			cleanup();
+		} finally {
+			adapter.close();
+		}
+	}
+	public void cleanup() {
 		for (AssetAdministrationShell aas : repo.getAllAas(null, null, new PaginationInfo(null, null)).getResult()) {
 			repo.deleteAas(aas.getId());
-			AasEvent deletedEvt = listener.next();
+			AasEvent deletedEvt = adapter.next();
 			Assert.assertEquals(AasEventType.AAS_DELETED, deletedEvt.getType());
 			Assert.assertEquals(aas.getId(), deletedEvt.getId());
 		}
-        AasEvent evt = listener.next(1, TimeUnit.SECONDS);
-		Assert.assertNull(evt);
+        adapter.assertNoAdditionalMessages();
 	}
 }

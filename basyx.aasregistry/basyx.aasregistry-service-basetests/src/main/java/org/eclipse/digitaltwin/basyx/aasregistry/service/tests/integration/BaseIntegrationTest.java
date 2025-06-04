@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.assertj.core.api.SoftAssertionsProvider.ThrowingRunnable;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiResponse;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
@@ -148,15 +149,17 @@ public abstract class BaseIntegrationTest {
 		api = new RegistryAndDiscoveryInterfaceApi("http", "127.0.0.1", port);
 	}
 
-	protected void cleanup() throws ApiException, InterruptedException {
-		queue().pullAdditionalMessages();
+	protected void cleanup() throws ApiException, InterruptedException, DeserializationException {
+		assertNoAdditionalMessages();
 		GetAssetAdministrationShellDescriptorsResult result = api.getAllAssetAdministrationShellDescriptors(null, null, null, null);
 		for (AssetAdministrationShellDescriptor eachDescriptor : result.getResult()) {
 			api.deleteAssetAdministrationShellDescriptorById(eachDescriptor.getId());
 			assertThatEventWasSend(RegistryEvent.builder().id(eachDescriptor.getId()).type(EventType.AAS_UNREGISTERED).build());
 		}
-		queue().pullAdditionalMessages();
+		assertNoAdditionalMessages();
 	}
+
+	protected abstract void assertNoAdditionalMessages();
 
 	@Test
 	public void whenGetDescription_thenDescriptionIsReturned() throws ApiException {
@@ -177,12 +180,14 @@ public abstract class BaseIntegrationTest {
 		assertThat(IntStream.iterate(0, i -> i + 1).limit(300).parallel().mapToObj(op).filter(i -> i > 300).findAny()).isEmpty();
 		assertThat(api.getAssetAdministrationShellDescriptorById(descriptor.getId()).getSubmodelDescriptors()).hasSize(300);
 		for (int i = 0; i < 300; i++) {
-			RegistryEvent evt = queue().poll();
+			RegistryEvent evt = next();
 			assertThat(evt.getId()).isEqualTo(descriptor.getId());
 			assertThat(Integer.parseInt(evt.getSubmodelId())).isGreaterThanOrEqualTo(0).isLessThan(300);
 			
 		}
 	}
+
+	protected abstract RegistryEvent next();
 
 	private Integer writeSubModel(String descriptorId, int idx) {
 		SubmodelDescriptor sm = new SubmodelDescriptor();
@@ -227,7 +232,7 @@ public abstract class BaseIntegrationTest {
 		HashSet<RegistryEvent> events = new HashSet<>();
 		// we do not have a specific order, so read all events first
 		for (int i = 0; i < DELETE_ALL_TEST_INSTANCE_COUNT; i++) {
-			events.add(queue().poll());
+			events.add(next());
 		}
 		for (int i = 0; i < DELETE_ALL_TEST_INSTANCE_COUNT; i++) {
 			assertThat(events.remove(RegistryEvent.builder().id("id_" + i).type(EventType.AAS_UNREGISTERED).build())).isTrue();
@@ -236,7 +241,7 @@ public abstract class BaseIntegrationTest {
 	}
 
 	@Test
-	public void whenCreateAndDeleteDescriptors_thenAllDescriptorsAreRemoved() throws IOException, InterruptedException, TimeoutException, ApiException {
+	public void whenCreateAndDeleteDescriptors_thenAllDescriptorsAreRemoved() throws IOException, InterruptedException, TimeoutException, ApiException, DeserializationException {
 		List<AssetAdministrationShellDescriptor> deployed = initialize();
 		List<AssetAdministrationShellDescriptor> all = api.getAllAssetAdministrationShellDescriptors(null, null, null, null).getResult();
 		assertThat(all).containsExactlyInAnyOrderElementsOf(deployed);
@@ -248,11 +253,11 @@ public abstract class BaseIntegrationTest {
 		all = api.getAllAssetAdministrationShellDescriptors(null, null, null, null).getResult();
 		assertThat(all).isEmpty();
 
-		queue().pullAdditionalMessages();
+		assertNoAdditionalMessages();
 	}
 
 	@Test
-	public void whenRegisterAndUnregisterSubmodel_thenSubmodelIsCreatedAndDeleted() throws IOException, InterruptedException, TimeoutException, ApiException {
+	public void whenRegisterAndUnregisterSubmodel_thenSubmodelIsCreatedAndDeleted() throws IOException, InterruptedException, TimeoutException, ApiException, DeserializationException {
 		List<AssetAdministrationShellDescriptor> deployed = initialize();
 		List<AssetAdministrationShellDescriptor> all = api.getAllAssetAdministrationShellDescriptors(null, null, null, null).getResult();
 		assertThat(all).asList().containsExactlyInAnyOrderElementsOf(deployed);
@@ -281,7 +286,7 @@ public abstract class BaseIntegrationTest {
 		aasDescriptor = api.getAssetAdministrationShellDescriptorById(aasId);
 		assertThat(aasDescriptor.getSubmodelDescriptors()).doesNotContain(toRegister);
 
-		queue().pullAdditionalMessages();
+		assertNoAdditionalMessages();
 	}
 
 	@Test
@@ -615,14 +620,14 @@ public abstract class BaseIntegrationTest {
 	}	
 	
 	private void deleteAdminAssetShellDescriptor(String aasId) throws ApiException {
-		queue().reset();
+		assertNoAdditionalMessages();
 
 		int response = api.deleteAssetAdministrationShellDescriptorByIdWithHttpInfo(URLEncoder.encode(aasId, StandardCharsets.UTF_8)).getStatusCode();
 		assertThat(response).isEqualTo(NO_CONTENT);
 		assertThatEventWasSend(RegistryEvent.builder().id(aasId).type(EventType.AAS_UNREGISTERED).build());
 	}
 
-	private List<AssetAdministrationShellDescriptor> initialize() throws IOException, InterruptedException, TimeoutException, ApiException {
+	private List<AssetAdministrationShellDescriptor> initialize() throws IOException, TimeoutException, ApiException {
 		List<AssetAdministrationShellDescriptor> descriptors = resourceLoader.loadRepositoryDefinition(AssetAdministrationShellDescriptor.class);
 		List<org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor> eventContent = resourceLoader
 				.loadRepositoryDefinition(org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor.class);
@@ -639,7 +644,7 @@ public abstract class BaseIntegrationTest {
 	}
 
 	private void assertThatEventWasSend(RegistryEvent expected) {
-		RegistryEvent evt = queue().poll();
+		RegistryEvent evt = next();
 		assertThat(evt).isEqualTo(expected);
 	}
 
@@ -674,5 +679,4 @@ public abstract class BaseIntegrationTest {
 		return mapper.readerFor(outCls).readValue(data);
 	}
 
-	public abstract EventQueue queue();
 }

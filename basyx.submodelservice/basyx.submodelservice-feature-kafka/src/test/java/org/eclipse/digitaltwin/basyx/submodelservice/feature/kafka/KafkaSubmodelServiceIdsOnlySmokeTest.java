@@ -28,11 +28,14 @@ package org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
@@ -68,14 +71,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 @TestPropertySource(properties = { "spring.kafka.bootstrap-servers=localhost:9092",
 		KafkaSubmodelServiceFeature.FEATURENAME + ".preservationlevel=IDS_ONLY",
 		KafkaSubmodelServiceFeature.FEATURENAME + ".enabled=true",
-		KafkaSubmodelServiceFeature.FEATURENAME + ".topic.name=" + SubmodelEventKafkaListener.TOPIC_NAME,
+		KafkaSubmodelServiceFeature.FEATURENAME + ".topic.name=submodel-events",
 })
-@Import(SubmodelEventKafkaListener.class)
 public class KafkaSubmodelServiceIdsOnlySmokeTest {
 
-	@Autowired
-	private SubmodelEventKafkaListener listener;
-
+	
+	private final KafkaAdapter<SubmodelEvent> adapter = new KafkaAdapter<>("localhost:9092", "submodel-events", SubmodelEvent.class);
+	
+	
 	@Autowired
 	private KafkaSubmodelServiceFeature feature;
 
@@ -84,37 +87,31 @@ public class KafkaSubmodelServiceIdsOnlySmokeTest {
 
 	private SubmodelService service;
 	
-
 	@Before
-	public void awaitAssignment() throws InterruptedException, SerializationException {
-		listener.awaitTopicAssignment();
-
-		cleanupPreviousMessages();
-		
+	public void init() throws InterruptedException, SerializationException {		
 		FileRepository repository = new InMemoryFileRepository();
 		SubmodelBackend backend = new InMemorySubmodelBackend();
 		SubmodelServiceFactory smFactory = new CrudSubmodelServiceFactory(backend ,repository);
 		service = feature.decorate(smFactory).create(submodel);
 	}
 
-	private void cleanupPreviousMessages() throws InterruptedException {
-		while (listener.next(1, TimeUnit.SECONDS) != null);	
-	}
-
 	@After
-	public void assertNoAdditionalMessage() throws InterruptedException {
-		SubmodelEvent evt = listener.next(1, TimeUnit.SECONDS);
-		Assert.assertNull(evt);
+	public void assertNoAdditionalMessageAndStopPolling() throws InterruptedException {
+		try {
+			adapter.assertNoAdditionalMessages();
+		} finally {
+			adapter.close();
+		}
 	}
 	
 	@Test
-	public void testToplevelSubmodelElementAdded() throws InterruptedException {
+	public void testToplevelSubmodelElementAdded() {
 		Assert.assertTrue(feature.isEnabled());
 		
 		SubmodelElement elem = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_1, "ID");
 		service.createSubmodelElement(elem);
 
-		SubmodelEvent evt = listener.next();
+		SubmodelEvent evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
 		Assert.assertEquals(submodel.getId(), evt.getId());
 		Assert.assertEquals(TestSubmodels.IDSHORT_PROP_1, evt.getSmElementPath());
@@ -123,14 +120,14 @@ public class KafkaSubmodelServiceIdsOnlySmokeTest {
 	}
 	
 	@Test
-	public void testSubmodelElementPatched() throws InterruptedException, SerializationException {
+	public void testSubmodelElementPatched() {
 		Assert.assertTrue(feature.isEnabled());
 
 		SubmodelElement elem0 = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_0, "0");
 		SubmodelElement elem1 = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_1, "1");
 		service.patchSubmodelElements(List.of(elem0, elem1));
 
-		SubmodelEvent evt = listener.next();
+		SubmodelEvent evt = adapter.next();
 		// the submodel was updated
 		Assert.assertEquals(SubmodelEventType.SM_UPDATED, evt.getType());
 		Assert.assertEquals(submodel.getId(), evt.getId());

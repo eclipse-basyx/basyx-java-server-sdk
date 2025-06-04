@@ -24,25 +24,10 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.mongodb;
 
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-
-import org.apache.kafka.common.TopicPartition;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
+import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEvent;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.BaseIntegrationTest;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.EventQueue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.annotation.KafkaHandler;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.listener.ConsumerSeekAware;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.stereotype.Component;
 import org.springframework.test.context.TestPropertySource;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @TestPropertySource(properties = { "spring.profiles.active=kafkaEvents,mongoDbStorage",
@@ -50,62 +35,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 		"spring.data.mongodb.uri=mongodb://mongoAdmin:mongoPassword@localhost:27017/" })
 public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTest {
 
-	@Autowired
-	private RegistrationEventKafkaListener listener;
 
+	private final KafkaAdapter<RegistryEvent> adapter = new KafkaAdapter<>("localhost:9092", "submodel-registry", RegistryEvent.class);
+	
 	@Override
-	public void setUp() throws ApiException, InterruptedException {
-		listener.awaitTopicAssignment();
-		super.setUp();
+	protected void close() {
+		adapter.close();
+	}
+	@Override
+	protected void assertNoAdditionalMessage() {
+		adapter.assertNoAdditionalMessages();
 	}
 	
 	@Override
-	public EventQueue queue() {
-		return listener.queue;
-	}
-	
-	@KafkaListener(topics = "submodel-registry", batch = "false", groupId = "kafka-test", autoStartup = "true" )
-	@Component
-	public static class RegistrationEventKafkaListener implements ConsumerSeekAware {
-
-		private static final Logger log = LoggerFactory.getLogger(RegistrationEventKafkaListener.class);
-		private final EventQueue queue;
-		private final CountDownLatch latch = new CountDownLatch(1);
-		
-		@Value("${spring.kafka.template.default-topic}")
-		private String topicName;
-		
-		public RegistrationEventKafkaListener(ObjectMapper mapper) {
-			this.queue = new EventQueue(mapper);
-		}
-		
-		@KafkaHandler
-		public void receiveMessage(@Payload(required = false)String content) {
-			if (content == null) {
-				log.warn("Payload is null – topic submodel-registry not yet ready?");
-				return;
-			}
-			queue.offer(content);
-		}
-		
-		public EventQueue getQueue() {
-			return this.queue;
-		}
-
-		@Override
-		public void onPartitionsAssigned(Map<TopicPartition, Long> assignments,
-					ConsumerSeekCallback callback) {
-			for (TopicPartition eachPartition : assignments.keySet()) {
-				if (topicName.equals(eachPartition.topic())) {
-					latch.countDown();
-				}
-			}		
-		}
-		
-		public void awaitTopicAssignment() throws InterruptedException {
-//			if (!latch.await(30, TimeUnit.MINUTES)) {
-//				throw new RuntimeException("Timeout occured while waiting for partition assignment. Is Kafka running?");
-//			}
-		}
+	protected RegistryEvent next() {
+		return adapter.next();
 	}
 }
