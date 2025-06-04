@@ -37,6 +37,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultBlob;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapters;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
@@ -45,8 +46,10 @@ import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEventType;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +77,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 
-	private final KafkaAdapter<SubmodelEvent> adapter = new KafkaAdapter<>("localhost:9092", "submodel-events", SubmodelEvent.class);
+	private static KafkaAdapter<SubmodelEvent> adapter;
+
+	@BeforeClass
+	public static void initAdapter() {
+		adapter = new KafkaAdapter<>("localhost:9092", "submodel-events", SubmodelEvent.class);
+	}
+
+	@AfterClass
+	public static void disposeAdapter() {
+		adapter.close();
+	}
 
 	@Autowired
 	private KafkaSubmodelServiceFeature feature;
@@ -95,11 +108,9 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 
 	@After
 	public void assertNoAdditionalMessageAndStopPolling() throws InterruptedException {
-		try {
-			adapter.assertNoAdditionalMessages();
-		} finally {
-			adapter.close();
-		}
+		
+		adapter.assertNoAdditionalMessages();
+		
 	}
 
 	@Test

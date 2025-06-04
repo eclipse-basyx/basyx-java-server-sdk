@@ -36,6 +36,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapters;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
@@ -44,8 +45,10 @@ import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEventType;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,17 +71,22 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ActiveProfiles("test-submodel")
 @ContextConfiguration(classes = SubmodelServiceTestComponent.class)
 @RunWith(SpringRunner.class)
-@TestPropertySource(properties = { "spring.kafka.bootstrap-servers=localhost:9092",
-		KafkaSubmodelServiceFeature.FEATURENAME + ".preservationlevel=IDS_ONLY",
-		KafkaSubmodelServiceFeature.FEATURENAME + ".enabled=true",
-		KafkaSubmodelServiceFeature.FEATURENAME + ".topic.name=submodel-events",
-})
+@TestPropertySource(properties = { "spring.kafka.bootstrap-servers=localhost:9092", KafkaSubmodelServiceFeature.FEATURENAME + ".preservationlevel=IDS_ONLY", KafkaSubmodelServiceFeature.FEATURENAME + ".enabled=true",
+		KafkaSubmodelServiceFeature.FEATURENAME + ".topic.name=submodel-events", })
 public class KafkaSubmodelServiceIdsOnlySmokeTest {
 
-	
-	private final KafkaAdapter<SubmodelEvent> adapter = new KafkaAdapter<>("localhost:9092", "submodel-events", SubmodelEvent.class);
-	
-	
+	private static KafkaAdapter<SubmodelEvent> adapter;
+
+	@BeforeClass
+	public static void initAdapter() {
+		adapter = new KafkaAdapter<>("localhost:9092", "submodel-events", SubmodelEvent.class);
+	}
+
+	@AfterClass
+	public static void disposeAdapter() {
+		adapter.close();
+	}
+
 	@Autowired
 	private KafkaSubmodelServiceFeature feature;
 
@@ -86,28 +94,25 @@ public class KafkaSubmodelServiceIdsOnlySmokeTest {
 	private Submodel submodel;
 
 	private SubmodelService service;
-	
+
 	@Before
-	public void init() throws InterruptedException, SerializationException {		
+	public void init() throws InterruptedException, SerializationException {
+		adapter.skipMessages();
 		FileRepository repository = new InMemoryFileRepository();
 		SubmodelBackend backend = new InMemorySubmodelBackend();
-		SubmodelServiceFactory smFactory = new CrudSubmodelServiceFactory(backend ,repository);
+		SubmodelServiceFactory smFactory = new CrudSubmodelServiceFactory(backend, repository);
 		service = feature.decorate(smFactory).create(submodel);
 	}
 
 	@After
 	public void assertNoAdditionalMessageAndStopPolling() throws InterruptedException {
-		try {
-			adapter.assertNoAdditionalMessages();
-		} finally {
-			adapter.close();
-		}
+		adapter.assertNoAdditionalMessages();
 	}
-	
+
 	@Test
 	public void testToplevelSubmodelElementAdded() {
 		Assert.assertTrue(feature.isEnabled());
-		
+
 		SubmodelElement elem = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_1, "ID");
 		service.createSubmodelElement(elem);
 
@@ -118,7 +123,7 @@ public class KafkaSubmodelServiceIdsOnlySmokeTest {
 		Assert.assertNull(evt.getSubmodel());
 		Assert.assertNull(evt.getSmElement());
 	}
-	
+
 	@Test
 	public void testSubmodelElementPatched() {
 		Assert.assertTrue(feature.isEnabled());
@@ -134,7 +139,7 @@ public class KafkaSubmodelServiceIdsOnlySmokeTest {
 		Assert.assertNull(evt.getSubmodel()); // ids only
 		Assert.assertNull(evt.getSmElementPath());
 		Assert.assertNull(evt.getSmElement());
-	
+
 	}
 
 }

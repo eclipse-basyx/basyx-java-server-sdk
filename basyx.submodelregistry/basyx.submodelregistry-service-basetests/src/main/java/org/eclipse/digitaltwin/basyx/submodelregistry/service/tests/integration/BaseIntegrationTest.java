@@ -38,6 +38,10 @@ import java.util.stream.IntStream;
 
 import org.assertj.core.api.SoftAssertionsProvider.ThrowingRunnable;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.TestApplication;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEvent;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapters;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiResponse;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
@@ -69,7 +73,9 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEve
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEvent.EventType;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.TestResourcesLoader;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -105,6 +111,18 @@ public abstract class BaseIntegrationTest {
 	private static final int OK = 200;
 
 	private static final int NOT_FOUND = 404;
+	
+	private static KafkaAdapter<RegistryEvent> adapter;
+
+	@BeforeClass
+	public static void initAdapter() {
+		adapter = new KafkaAdapter<>("localhost:9092", "submodel-registry", RegistryEvent.class);
+	}
+
+	@AfterClass
+	public static void disposeAdapter() {
+		adapter.close();
+	}
 
 	@Value("${local.server.port}")
 	private int port;
@@ -116,29 +134,26 @@ public abstract class BaseIntegrationTest {
 
 	protected SubmodelRegistryApi api;
 	
+	
 	@Before
 	public void setUp() throws ApiException, InterruptedException, DeserializationException {
+		adapter.skipMessages();
 		initClient();
 		cleanup();
+		
 	}
 	
 	@After
 	public void tearDown() throws ApiException, InterruptedException, DeserializationException {
-		try {
-			cleanup();
-		} finally {
-			close();
-		}
+		cleanup();
 	}
-	
-	protected abstract void close();
 
 	protected void initClient() throws ApiException, InterruptedException {
 		api = new SubmodelRegistryApi("http", "127.0.0.1", port);
 	}
 	
 	protected void cleanup() throws ApiException, InterruptedException, DeserializationException {	
-		assertNoAdditionalMessage();
+		adapter.assertNoAdditionalMessages();
 		GetSubmodelDescriptorsResult result = api.getAllSubmodelDescriptors(null, null);
 		for (SubmodelDescriptor eachDescriptor : result.getResult()) {
 			api.deleteSubmodelDescriptorById(eachDescriptor.getId());
@@ -160,7 +175,7 @@ public abstract class BaseIntegrationTest {
 		IntStream.iterate(0, i -> i + 1).limit(300).parallel().forEach(this::postSubmodel);		
 		assertThat(api.getAllSubmodelDescriptors(null, null).getResult()).hasSize(300);
 		for (int i = 0; i < 300; i++) {
-			next();
+			adapter.next();
 		}
 	}
 
@@ -197,12 +212,12 @@ public abstract class BaseIntegrationTest {
 		HashSet<RegistryEvent> events = new HashSet<>();
 		// we do not have a specific order, so read all events first
 		for (int i = 0; i < DELETE_ALL_TEST_INSTANCE_COUNT; i++) {
-			events.add(next());
+			events.add(adapter.next());
 		}
 		for (int i = 0; i < DELETE_ALL_TEST_INSTANCE_COUNT; i++) {
 			assertThat(events.remove(RegistryEvent.builder().id("id_" + i).type(EventType.SUBMODEL_UNREGISTERED).build())).isTrue();
 		}
-		assertNoAdditionalMessage();
+		adapter.assertNoAdditionalMessages();
 	}
 
 	@Test
@@ -218,11 +233,8 @@ public abstract class BaseIntegrationTest {
 		all = api.getAllSubmodelDescriptors(null, null).getResult();
 		assertThat(all).isEmpty();
 
-		assertNoAdditionalMessage();
+		adapter.assertNoAdditionalMessages();
 	}
-
-	protected abstract void assertNoAdditionalMessage();
-
 	@Test
 	public void whenInvalidInput_thenSuccessfullyValidated() throws Exception {
 		initialize();
@@ -364,11 +376,9 @@ public abstract class BaseIntegrationTest {
 	}
 
 	private void assertThatEventWasSend(RegistryEvent build) throws InterruptedException, DeserializationException {
-		RegistryEvent evt = next();
+		RegistryEvent evt = adapter.next();
 		assertThat(evt).isEqualTo(build);
 	}
-
-	protected abstract RegistryEvent next() throws InterruptedException, DeserializationException;
 
 	public Endpoint defaultClientEndpoint() {
 		ProtocolInformation protocolInfo = new ProtocolInformation().href("http://127.0.0.1:8099/submodel").endpointProtocol("HTTP").subprotocol("AAS");

@@ -7,7 +7,6 @@
 		<groupId>org.eclipse.digitaltwin.basyx</groupId>
 		<artifactId>basyx.submodelregistry</artifactId>
 		<version>${revision}</version>
-
 	</parent>
 
 	<artifactId>basyx.submodelregistry-service-basetests</artifactId>
@@ -34,6 +33,10 @@
 	</build>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.kafka</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

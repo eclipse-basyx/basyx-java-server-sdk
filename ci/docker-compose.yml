@@ -29,23 +29,23 @@ services:
     networks:
       - basyx-java-server-sdk
 
-  akhq:
-    image: tchiotludo/akhq:0.24.0
-    container_name: akhq
-    environment:
-      AKHQ_CONFIGURATION: |
-        akhq:
-          connections:
-            docker-kafka-server:
-              properties:
-                bootstrap.servers: "kafka:9093"
-    ports:
-      - 8086:8080
-    restart: always
-    depends_on:
-      - kafka
-    networks:
-      - basyx-java-server-sdk
+  # akhq:
+  #   image: tchiotludo/akhq:0.24.0
+  #   container_name: akhq
+  #   environment:
+  #     AKHQ_CONFIGURATION: |
+  #       akhq:
+  #         connections:
+  #           docker-kafka-server:
+  #             properties:
+  #               bootstrap.servers: "kafka:9093"
+  #   ports:
+  #     - 8086:8080
+  #   restart: always
+  #   depends_on:
+  #     - kafka
+  #   networks:
+  #     - basyx-java-server-sdk
 
   kafka:
     image: confluentinc/cp-kafka:7.9.1
@@ -77,13 +77,6 @@ services:
       timeout: 10s
       retries: 40
       start_period: 5s
-    # healthcheck:
-    #   test: ["CMD", "bash", "-c", "echo > /dev/tcp/kafka/9092"]
-    #   interval: 20s
-    #   timeout: 10s
-    #   retries: 40
-    #   start_period: 5s
-
     networks:
       - basyx-java-server-sdk
 

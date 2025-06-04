@@ -24,29 +24,11 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.storage.memory;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEvent;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.BaseIntegrationTest;
-import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
-import org.junit.After;
 import org.springframework.test.context.TestPropertySource;
 
 @TestPropertySource(properties = { "spring.profiles.active=kafkaEvents,inMemoryStorage", "spring.kafka.bootstrap-servers=localhost:9092" })
 public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTest {
 
-	private final KafkaAdapter<RegistryEvent> adapter = new KafkaAdapter<>("localhost:9092", "aas-registry", RegistryEvent.class);
-
-	@Override
-	protected RegistryEvent next() {
-		return adapter.next();
-	}
-
-	@Override
-	protected void assertNoAdditionalMessages() {
-		adapter.assertNoAdditionalMessages();
-	}
-
-	@After
-	public void dispose() {
-		adapter.close();
-	}
+	
 }

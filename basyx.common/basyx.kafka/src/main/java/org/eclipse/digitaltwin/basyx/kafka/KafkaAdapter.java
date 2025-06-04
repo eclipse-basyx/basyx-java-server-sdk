@@ -66,7 +66,7 @@ public class KafkaAdapter<T> {
 		this.consumer = init();
 		this.cls = cls;
 		awaitAssignment();
-		consumer.seekToEnd(consumer.assignment()); 
+		skipMessages(); 
 	}
 
 
@@ -102,7 +102,7 @@ public class KafkaAdapter<T> {
 		if (consumer.assignment().isEmpty()) {
 			throw new RuntimeException("Failed to wait for topic assignment. Is KAFKA running?");
 		}
-		LOG.info("Partitions {} assigned after {} ms." + consumer.assignment(), System.currentTimeMillis() - start);
+		LOG.info("Partitions {} assigned after {} ms.", consumer.assignment(), System.currentTimeMillis() - start);
 	}
 
 	private String nextMessage() {
@@ -124,7 +124,7 @@ public class KafkaAdapter<T> {
 			LOG.info("Got message");	
 			return deque.remove();
 		}
-		LOG.info("Failed to receive message");
+		LOG.info("Got no message");
 		return null;
 	}
 
@@ -147,6 +147,7 @@ public class KafkaAdapter<T> {
 			throw new RuntimeException("Got an additional message within 1 second: \n" + next); 
 		}
 	}
+	
 
 	public void close() {
 		LOG.info("Dispose");
@@ -155,7 +156,9 @@ public class KafkaAdapter<T> {
 
 	public void skipMessages() {
 		LOG.info("SkipMessages");
-		while (nextMessage(Duration.ofMillis(100)) != null);
+		//consumer.seekToEnd(consumer.assignment());
+		while (nextMessage(Duration.ofMillis(0)) != null);
+		LOG.info("After skipMessages");
 	}
 
 }

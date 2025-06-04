@@ -30,12 +30,18 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.TestApplication;
+import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEvent;
 import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapters;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.kafka.KafkaSubmodelRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEventType;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,16 +66,23 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ComponentScan(basePackages = { "org.eclipse.digitaltwin.basyx" })
 @ContextConfiguration(classes = { SubmodelRepositoryComponent.class })
 @RunWith(SpringRunner.class)
-@TestPropertySource(properties = { "basyx.feature.kafka.enabled=true",
-		"spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092",
-		KafkaSubmodelRepositoryFeature.FEATURENAME + ".enabled=true",
+@TestPropertySource(properties = { "basyx.feature.kafka.enabled=true", "spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092", KafkaSubmodelRepositoryFeature.FEATURENAME + ".enabled=true",
 		KafkaSubmodelRepositoryFeature.FEATURENAME + ".topic.name=submodel-events" })
 
 public class SubmodelKafkaFeatureEnabledSmokeTest {
 
-	
-	private final KafkaAdapter<SubmodelEvent> adapter = new KafkaAdapter<>("localhost:9092", "submodel-events", SubmodelEvent.class);
-	
+	private static KafkaAdapter<SubmodelEvent> adapter;
+
+	@BeforeClass
+	public static void initAdapter() {
+		adapter = new KafkaAdapter<>("localhost:9092", "submodel-events", SubmodelEvent.class);
+	}
+
+	@AfterClass
+	public static void disposeAdapter() {
+		adapter.close();
+	}
+
 	@LocalServerPort
 	private int port;
 
@@ -79,9 +92,11 @@ public class SubmodelKafkaFeatureEnabledSmokeTest {
 	@Autowired
 	private JsonSerializer serializer;
 
-
 	
-
+	@Before
+	public void setUp() {
+		adapter.skipMessages();
+	}
 	@Test
 	public void testAasCreatedEvent() throws SerializationException {
 		Submodel sm = new DefaultSubmodel.Builder().id("http://sm.id/1").build();
@@ -92,17 +107,12 @@ public class SubmodelKafkaFeatureEnabledSmokeTest {
 		Assert.assertEquals(sm.getId(), event.getId());
 		Assert.assertEquals(sm, event.getSubmodel());
 	}
-	
 
 	@After
 	public void cleanup() {
-		try {
-			adapter.assertNoAdditionalMessages();
-		} finally {
-			adapter.close();
-		}
+		adapter.assertNoAdditionalMessages();
+
 	}
-	
 
 	private String createEndpointUrl() {
 		return "http://localhost:" + port + "/submodels";

@@ -24,8 +24,6 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.mongodb;
 
-import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEvent;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.BaseIntegrationTest;
 import org.springframework.test.context.TestPropertySource;
 
@@ -36,19 +34,4 @@ import org.springframework.test.context.TestPropertySource;
 public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTest {
 
 
-	private final KafkaAdapter<RegistryEvent> adapter = new KafkaAdapter<>("localhost:9092", "submodel-registry", RegistryEvent.class);
-	
-	@Override
-	protected void close() {
-		adapter.close();
-	}
-	@Override
-	protected void assertNoAdditionalMessage() {
-		adapter.assertNoAdditionalMessages();
-	}
-	
-	@Override
-	protected RegistryEvent next() {
-		return adapter.next();
-	}
 }

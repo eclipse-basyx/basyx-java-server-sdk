@@ -25,7 +25,6 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka;
 
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
@@ -48,8 +47,10 @@ import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,18 +67,23 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@ComponentScan(basePackages = { "org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka"})
-@ContextConfiguration(classes = {TestApplication.class})
+@ComponentScan(basePackages = { "org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka" })
+@ContextConfiguration(classes = { TestApplication.class })
 @RunWith(SpringRunner.class)
-@TestPropertySource(properties = { KafkaAasRepositoryFeature.FEATURENAME + ".enabled=true",
-		"spring.kafka.bootstrap-servers=localhost:9092",
-		KafkaAasRepositoryFeature.FEATURENAME + ".topic.name="+TestApplication.KAFKA_AAS_TOPIC
-})
+@TestPropertySource(properties = { KafkaAasRepositoryFeature.FEATURENAME + ".enabled=true", "spring.kafka.bootstrap-servers=localhost:9092", KafkaAasRepositoryFeature.FEATURENAME + ".topic.name=" + TestApplication.KAFKA_AAS_TOPIC })
 public class KafkaEventsInMemoryStorageIntegrationTest {
 
-	
-	private final KafkaAdapter<AasEvent> adapter = new KafkaAdapter<>("localhost:9092", TestApplication.KAFKA_AAS_TOPIC, AasEvent.class);
-	
+	private static KafkaAdapter<AasEvent> adapter;
+
+	@BeforeClass
+	public static void initAdapter() {
+		adapter = new KafkaAdapter<>("localhost:9092", TestApplication.KAFKA_AAS_TOPIC, AasEvent.class);
+	}
+
+	@AfterClass
+	public static void disposeSdapter() {
+		adapter.close();
+	}
 
 	@Autowired
 	private KafkaAasRepositoryFeature feature;
@@ -85,8 +91,8 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	private AasRepository repo;
 
 	@Before
-	public void awaitAssignment()  {
-
+	public void init() {
+		adapter.skipMessages();
 		FileRepository fileRepo = new InMemoryFileRepository();
 		AasBackend aasRepositoryBackend = new InMemoryAasBackend();
 		AasServiceFactory sf = new CrudAasServiceFactory(aasRepositoryBackend, fileRepo);
@@ -153,7 +159,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		Assert.assertNull(evtDeleted.getReference());
 		Assert.assertNull(evtDeleted.getAas());
 	}
-	
+
 	@Test
 	public void testAssetInformation() {
 		AssetAdministrationShell shell = TestShells.shell();
@@ -175,7 +181,7 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		Assert.assertNull(evtAasIdSet.getReference());
 		Assert.assertNull(evtAasIdSet.getAas());
 	}
-	
+
 	@Test
 	public void testSubmodelReferenceAdded() {
 		AssetAdministrationShell shell = TestShells.shell();
@@ -195,10 +201,10 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		Assert.assertEquals(TestShells.ID_AAS, evtRefAdded.getId());
 		Assert.assertEquals(smId, evtRefAdded.getSubmodelId());
 		Assert.assertNull(evtRefAdded.getAssetInformation());
-		Assert.assertEquals(ref , evtRefAdded.getReference());
+		Assert.assertEquals(ref, evtRefAdded.getReference());
 		Assert.assertNull(evtRefAdded.getAas());
 	}
-	
+
 	@Test
 	public void testSubmodelReferenceRemoved() {
 		AssetAdministrationShell shell = TestShells.shell();
@@ -218,20 +224,20 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		Assert.assertNull(evtRefRemoved.getReference());
 		Assert.assertNull(evtRefRemoved.getAas());
 	}
-	
+
 	@Test
 	public void testGetterAreWorking() {
 		AssetAdministrationShell shell = TestShells.shell();
 		repo.createAas(shell);
 		AasEvent evtCreated = adapter.next();
 		Assert.assertEquals(AasEventType.AAS_CREATED, evtCreated.getType());
-		
+
 		Assert.assertEquals(1, repo.getSubmodelReferences(TestShells.ID_AAS, new PaginationInfo(null, null)).getResult().size());
 		Assert.assertEquals(shell, repo.getAas(TestShells.ID_AAS));
 		Assert.assertEquals(1, repo.getAllAas(null, null, new PaginationInfo(null, null)).getResult().size());
 		Assert.assertEquals(shell.getAssetInformation(), repo.getAssetInformation(TestShells.ID_AAS));
 	}
-	
+
 	@Test
 	public void testFeatureIsEnabled() {
 		Assert.assertTrue(feature.isEnabled());
@@ -239,12 +245,9 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 
 	@After
 	public void tearDown() {
-		try {
-			cleanup();
-		} finally {
-			adapter.close();
-		}
+		cleanup();
 	}
+
 	public void cleanup() {
 		for (AssetAdministrationShell aas : repo.getAllAas(null, null, new PaginationInfo(null, null)).getResult()) {
 			repo.deleteAas(aas.getId());
@@ -252,6 +255,6 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 			Assert.assertEquals(AasEventType.AAS_DELETED, deletedEvt.getType());
 			Assert.assertEquals(aas.getId(), deletedEvt.getId());
 		}
-        adapter.assertNoAdditionalMessages();
+		adapter.assertNoAdditionalMessages();
 	}
 }
