@@ -66,11 +66,7 @@ public class KafkaAdapter<T> {
 		this.consumer = init();
 		this.cls = cls;
 		awaitAssignment();
-		// if a client for that group already read data 
-		// latest is the last not read
-		// only if the group is new we will position the cursor to the end
-		// only required if we use the same group id but for now just use different ids
-		//this.skipMessages();
+		consumer.seekToEnd(consumer.assignment()); 
 	}
 
 
@@ -121,7 +117,7 @@ public class KafkaAdapter<T> {
 			ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
 			for (ConsumerRecord<String, String> record : records) {
 				this.deque.add(record.value());
-				consumer.commitAsync();
+				consumer.commitSync();
 			}
 		}
 		if (!deque.isEmpty()) {
