@@ -39,8 +39,13 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KafkaAdapter<T> {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(KafkaAdapter.class);
+	
 	private final KafkaConsumer<String, String> consumer;
 
 	private final String bootstrapServers;
@@ -92,13 +97,16 @@ public class KafkaAdapter<T> {
 	}
 
 	private void awaitAssignment() {
-		long deadline = System.currentTimeMillis() + assignmentTimeout.toMillis();
+		LOG.info("Await Assignment");
+		long start = System.currentTimeMillis();
+		long deadline = start + assignmentTimeout.toMillis();
 		while (consumer.assignment().isEmpty() && System.currentTimeMillis() < deadline) {
 			consumer.poll(Duration.ofMillis(100));
 		}
 		if (consumer.assignment().isEmpty()) {
 			throw new RuntimeException("Failed to wait for topic assignment. Is KAFKA running?");
 		}
+		LOG.info("Partitions {} assigned after {} ms." + consumer.assignment(), System.currentTimeMillis() - start);
 	}
 
 	private String nextMessage() {
@@ -106,19 +114,21 @@ public class KafkaAdapter<T> {
 	}
 	
 	private String nextMessage(Duration duration) {
-
+		LOG.info("Reading Kafka message");
 		long deadline = System.currentTimeMillis() + duration.toMillis();
 
 		while (deque.isEmpty() && System.currentTimeMillis() < deadline) {
-			ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(200));
+			ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
 			for (ConsumerRecord<String, String> record : records) {
 				this.deque.add(record.value());
-				consumer.commitSync();
+				consumer.commitAsync();
 			}
 		}
 		if (!deque.isEmpty()) {
+			LOG.info("Got message");	
 			return deque.remove();
 		}
+		LOG.info("Failed to receive message");
 		return null;
 	}
 
@@ -136,17 +146,19 @@ public class KafkaAdapter<T> {
 	}
 
 	public void assertNoAdditionalMessages() {
-		String next = nextMessage(Duration.ofSeconds(1)); 
+		String next = nextMessage(Duration.ofMillis(100)); 
 		if (next != null) {
 			throw new RuntimeException("Got an additional message within 1 second: \n" + next); 
 		}
 	}
 
 	public void close() {
+		LOG.info("Dispose");
 		this.consumer.close();
 	}
 
 	public void skipMessages() {
+		LOG.info("SkipMessages");
 		while (nextMessage(Duration.ofMillis(100)) != null);
 	}
 

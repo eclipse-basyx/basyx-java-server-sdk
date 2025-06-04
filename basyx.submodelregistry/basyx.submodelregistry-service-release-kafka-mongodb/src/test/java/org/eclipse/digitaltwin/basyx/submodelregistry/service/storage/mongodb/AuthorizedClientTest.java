@@ -56,7 +56,7 @@ import org.springframework.test.context.TestPropertySource;
 public class AuthorizedClientTest extends BaseIntegrationTest {
 	
 
-	private final KafkaAdapter<RegistryEvent> adapter = new KafkaAdapter<>("localhost:9092", "submodel-events", RegistryEvent.class);
+	private final KafkaAdapter<RegistryEvent> adapter = new KafkaAdapter<>("localhost:9092", "submodel-registry", RegistryEvent.class);
 
 	@Value("${local.server.port}")
 	private int port;
