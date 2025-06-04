@@ -45,10 +45,14 @@ import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetReferences
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.core.query.Query;
+import org.eclipse.digitaltwin.basyx.core.query.elasticsearch.AasElasticsearchQueryConverter;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
@@ -219,6 +223,17 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 			closeInputStream(fileInputstream);
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	@Override
+	public ResponseEntity<String> queryAssetAdministrationShells(Query query, Integer limit, Base64UrlEncodedCursor cursor) {
+		QueryBuilder esQuery = AasElasticsearchQueryConverter.convert(query);
+
+		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+//		SearchResponse response = client.prepareSearch("aas-index")
+//				.setQuery(esQuery)
+//				.execute()
+//				.actionGet();
 	}
 
 	private void closeInputStream(InputStream fileInputstream) {

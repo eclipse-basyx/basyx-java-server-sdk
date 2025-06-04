@@ -676,6 +676,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-feature-search</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-feature-kafka</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
@@ -1097,6 +1102,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-feature-mqtt</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-feature-search</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>

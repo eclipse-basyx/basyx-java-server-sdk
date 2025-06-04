@@ -34,6 +34,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Result;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetAssetAdministrationShellsResult;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetReferencesResult;
+import org.eclipse.digitaltwin.basyx.core.query.Query;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
@@ -315,5 +316,54 @@ public interface AasRepositoryHTTPApi {
 			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,
 			@Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema()) @RequestParam(value = "fileName", required = true) String fileName,
 			@Parameter(description = "file detail") @Valid @RequestPart("file") MultipartFile file);
+
+
+	@Operation(
+			summary = "Returns all Asset Administration Shells that conform to the input query",
+			tags = { "Asset Administration Shell Repository API" },
+			operationId = "queryAssetAdministrationShells"
+	)
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Requested Asset Administration Shells",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "400", description = "Bad Request",
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized",
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
+			@ApiResponse(responseCode = "403", description = "Forbidden",
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
+			@ApiResponse(responseCode = "500", description = "Internal Server Error",
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
+			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes",
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class)))
+	})
+	@RequestMapping(
+			value = "/query/shells",
+			produces = { "application/json" },
+			consumes = { "application/json" },
+			method = RequestMethod.POST
+	)
+	ResponseEntity<String> queryAssetAdministrationShells(
+			@Parameter(
+					description = "Query object",
+					required = true,
+					schema = @Schema(implementation = String.class)
+			)
+			@Valid @RequestBody Query query,
+
+			@Parameter(
+					in = ParameterIn.QUERY,
+					description = "Maximum number of results to be returned"
+			)
+			@RequestParam(value = "limit", required = false) Integer limit,
+
+			@Parameter(
+					in = ParameterIn.QUERY,
+					description = "Cursor for pagination"
+			)
+			@RequestParam(value = "cursor", required = false) Base64UrlEncodedCursor cursor
+	);
+
 
 }
