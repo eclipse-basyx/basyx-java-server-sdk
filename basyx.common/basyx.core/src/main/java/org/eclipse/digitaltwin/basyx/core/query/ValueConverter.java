@@ -228,23 +228,53 @@ public class ValueConverter {
      * Converts model field patterns to ElasticSearch field names
      */
     private String convertModelFieldToElasticField(String modelField) {
-        // Convert the model pattern to ElasticSearch field name
-        // This is a simplified conversion - you may need to customize based on your mapping
-        if (modelField.startsWith("$aas#")) {
-            return modelField.replace("$aas#", "aas.");
-        } else if (modelField.startsWith("$sm#")) {
-            return modelField.replace("$sm#", "submodel.");
-        } else if (modelField.startsWith("$sme")) {
-            return modelField.replaceFirst("\\$sme(?:\\.[^#]*)?#", "submodelElement.");
-        } else if (modelField.startsWith("$cd#")) {
-            return modelField.replace("$cd#", "conceptDescription.");
-        } else if (modelField.startsWith("$aasdesc#")) {
-            return modelField.replace("$aasdesc#", "aasDescriptor.");
-        } else if (modelField.startsWith("$smdesc#")) {
-            return modelField.replace("$smdesc#", "submodelDescriptor.");
+        if (modelField == null) {
+            return null;
         }
         
-        return modelField;
+        String result = modelField;
+        
+        // Remove model prefixes and convert to actual field names
+        if (modelField.startsWith("$aas#")) {
+            result = modelField.replace("$aas#", "");
+        } else if (modelField.startsWith("$sm#")) {
+            result = modelField.replace("$sm#", "");
+        } else if (modelField.startsWith("$sme")) {
+            result = modelField.replaceFirst("\\$sme(?:\\.[^#]*)?#", "");
+        } else if (modelField.startsWith("$cd#")) {
+            result = modelField.replace("$cd#", "");
+        } else if (modelField.startsWith("$aasdesc#")) {
+            result = modelField.replace("$aasdesc#", "");
+        } else if (modelField.startsWith("$smdesc#")) {
+            result = modelField.replace("$smdesc#", "");
+        }
+        
+        // Remove array brackets [] from field names
+        result = result.replaceAll("\\[\\]", "");
+        
+        // Add .keyword suffix for string fields that need exact matching
+        // This is typically needed for fields that contain text values
+        if (isStringField(result)) {
+            result = result + ".keyword";
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Determines if a field should have .keyword suffix for exact matching
+     */
+    private boolean isStringField(String fieldName) {
+        // Add .keyword suffix for fields that typically contain string values that need exact matching
+        return fieldName.contains("name") || 
+               fieldName.contains("value") || 
+               fieldName.contains("idShort") || 
+               fieldName.contains("id") || 
+               fieldName.contains("type") || 
+               fieldName.contains("assetKind") || 
+               fieldName.contains("assetType") || 
+               fieldName.contains("globalAssetId") || 
+               fieldName.contains("externalSubjectId");
     }
     
     /**
