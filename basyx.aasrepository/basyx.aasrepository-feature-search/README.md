@@ -51,3 +51,6 @@
 
 ## TODOS
 * [ ] Extract Query Package from basyx.core to own module (e.g. basyx.querycore)
+* [ ] Comparison of two fields is not possible yet
+* [ ] Unit Tests
+* [ ] Integration Tests
