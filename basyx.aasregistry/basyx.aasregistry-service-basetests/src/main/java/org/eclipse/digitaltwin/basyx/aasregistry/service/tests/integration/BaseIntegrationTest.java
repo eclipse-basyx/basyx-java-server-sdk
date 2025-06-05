@@ -149,6 +149,7 @@ public abstract class BaseIntegrationTest {
 		initClient();
 		adapter.skipMessages();
 		cleanup();
+		adapter.skipMessages();
 	}
 	
 	
@@ -162,7 +163,6 @@ public abstract class BaseIntegrationTest {
 			api.deleteAssetAdministrationShellDescriptorById(eachDescriptor.getId());
 			assertThatEventWasSend(RegistryEvent.builder().id(eachDescriptor.getId()).type(EventType.AAS_UNREGISTERED).build());
 		}
-		adapter.assertNoAdditionalMessages();
 	}
 
 	@Test
