@@ -25,7 +25,6 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -43,10 +42,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.TestSubmodels
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEventType;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,24 +88,11 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	@Autowired
 	private AasRepository aasRepo;
 
-	private static KafkaAdapter<SubmodelEvent> adapterSm;
-	private static KafkaAdapter<AasEvent> adapterAas;
-
-	@BeforeClass
-	public static void initAdapter() {
-		adapterSm = new KafkaAdapter<>("localhost:9092", "submodel-events", SubmodelEvent.class);
-		adapterAas = new KafkaAdapter<>("localhost:9092", "aas-events", AasEvent.class);
-	}
-
-	@AfterClass
-	public static void disposeAdapter() {
-		adapterSm.close();
-		adapterAas.close();
-	}
+	private static KafkaAdapter<SubmodelEvent> adapterSm = KafkaAdapters.getAdapter("submodel-events", SubmodelEvent.class);
+	private static KafkaAdapter<AasEvent> adapterAas = KafkaAdapters.getAdapter("aas-events", AasEvent.class);
 	
 	@Before
 	public void init() {
-
 		cleanup();
 	}
 

@@ -75,17 +75,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 		KafkaSubmodelServiceFeature.FEATURENAME + ".topic.name=submodel-events", })
 public class KafkaSubmodelServiceIdsOnlySmokeTest {
 
-	private static KafkaAdapter<SubmodelEvent> adapter;
+	private static KafkaAdapter<SubmodelEvent> adapter = KafkaAdapters.getAdapter("submodel-events", SubmodelEvent.class);
 
-	@BeforeClass
-	public static void initAdapter() {
-		adapter = new KafkaAdapter<>("localhost:9092", "submodel-events", SubmodelEvent.class);
-	}
-
-	@AfterClass
-	public static void disposeAdapter() {
-		adapter.close();
-	}
 
 	@Autowired
 	private KafkaSubmodelServiceFeature feature;

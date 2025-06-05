@@ -38,8 +38,6 @@ import java.util.stream.IntStream;
 
 import org.assertj.core.api.SoftAssertionsProvider.ThrowingRunnable;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.TestApplication;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEvent;
 import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
 import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapters;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
@@ -73,9 +71,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEve
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEvent.EventType;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.TestResourcesLoader;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -112,17 +108,8 @@ public abstract class BaseIntegrationTest {
 
 	private static final int NOT_FOUND = 404;
 	
-	private static KafkaAdapter<RegistryEvent> adapter;
+	private static KafkaAdapter<RegistryEvent> adapter = KafkaAdapters.getAdapter("submodel-registry", RegistryEvent.class);
 
-	@BeforeClass
-	public static void initAdapter() {
-		adapter = new KafkaAdapter<>("localhost:9092", "submodel-registry", RegistryEvent.class);
-	}
-
-	@AfterClass
-	public static void disposeAdapter() {
-		adapter.close();
-	}
 
 	@Value("${local.server.port}")
 	private int port;

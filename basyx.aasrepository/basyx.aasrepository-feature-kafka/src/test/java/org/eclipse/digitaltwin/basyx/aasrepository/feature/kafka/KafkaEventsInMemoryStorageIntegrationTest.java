@@ -46,11 +46,10 @@ import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapters;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,17 +72,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @TestPropertySource(properties = { KafkaAasRepositoryFeature.FEATURENAME + ".enabled=true", "spring.kafka.bootstrap-servers=localhost:9092", KafkaAasRepositoryFeature.FEATURENAME + ".topic.name=" + TestApplication.KAFKA_AAS_TOPIC })
 public class KafkaEventsInMemoryStorageIntegrationTest {
 
-	private static KafkaAdapter<AasEvent> adapter;
-
-	@BeforeClass
-	public static void initAdapter() {
-		adapter = new KafkaAdapter<>("localhost:9092", TestApplication.KAFKA_AAS_TOPIC, AasEvent.class);
-	}
-
-	@AfterClass
-	public static void disposeSdapter() {
-		adapter.close();
-	}
+	private static KafkaAdapter<AasEvent> adapter = KafkaAdapters.getAdapter(TestApplication.KAFKA_AAS_TOPIC, AasEvent.class);
 
 	@Autowired
 	private KafkaAasRepositoryFeature feature;

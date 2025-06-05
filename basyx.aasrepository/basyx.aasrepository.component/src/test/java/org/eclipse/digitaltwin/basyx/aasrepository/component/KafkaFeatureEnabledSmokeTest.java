@@ -69,17 +69,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 		KafkaAasRepositoryFeature.FEATURENAME + ".topic.name=aas-events" })
 public class KafkaFeatureEnabledSmokeTest {
 
-	private static KafkaAdapter<AasEvent> adapter;
+	private static KafkaAdapter<AasEvent> adapter = KafkaAdapters.getAdapter(TestApplication.KAFKA_AAS_TOPIC, AasEvent.class);
 
-	@BeforeClass
-	public static void initAdapter() {
-		adapter = new KafkaAdapter<>("localhost:9092", TestApplication.KAFKA_AAS_TOPIC, AasEvent.class);
-	}
-
-	@AfterClass
-	public static void disposeAdapter() {
-		adapter.close();
-	}
 	
 	@LocalServerPort
 	private int port;

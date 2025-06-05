@@ -25,23 +25,18 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository.component;
 
-import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.TestApplication;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEvent;
 import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
 import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapters;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.kafka.KafkaSubmodelRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEventType;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,17 +66,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 public class SubmodelKafkaFeatureEnabledSmokeTest {
 
-	private static KafkaAdapter<SubmodelEvent> adapter;
+	private static KafkaAdapter<SubmodelEvent> adapter = KafkaAdapters.getAdapter("submodel-events", SubmodelEvent.class);
 
-	@BeforeClass
-	public static void initAdapter() {
-		adapter = new KafkaAdapter<>("localhost:9092", "submodel-events", SubmodelEvent.class);
-	}
-
-	@AfterClass
-	public static void disposeAdapter() {
-		adapter.close();
-	}
 
 	@LocalServerPort
 	private int port;
