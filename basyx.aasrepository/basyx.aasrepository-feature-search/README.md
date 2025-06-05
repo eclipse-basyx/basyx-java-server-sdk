@@ -54,3 +54,4 @@
 * [ ] Comparison of two fields is not possible yet
 * [ ] Unit Tests
 * [ ] Integration Tests
+* [ ] Pagination
