@@ -70,8 +70,8 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch</artifactId>
+			<groupId>co.elastic.clients</groupId>
+			<artifactId>elasticsearch-java</artifactId>
 			<version>9.0.1</version>
 		</dependency>
 	</dependencies>

@@ -20,17 +20,17 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class QlSchema {
 
     @JsonProperty("Query")
-    private Query query;
+    private AASQuery query;
     @JsonProperty("AllAccessPermissionRules")
     private AllAccessPermissionRules allAccessPermissionRules;
 
     @JsonProperty("Query")
-    public Query getQuery() {
+    public AASQuery getQuery() {
         return query;
     }
 
     @JsonProperty("Query")
-    public void setQuery(Query query) {
+    public void setQuery(AASQuery query) {
         this.query = query;
     }
 
