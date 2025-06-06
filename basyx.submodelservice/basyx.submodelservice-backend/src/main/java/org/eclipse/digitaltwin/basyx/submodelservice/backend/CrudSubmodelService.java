@@ -38,10 +38,14 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.operation.InvokableOperation;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -54,6 +58,7 @@ public class CrudSubmodelService implements SubmodelService {
     private final SubmodelBackend backend;
     private final String submodelId;
     private final SubmodelFileOperations submodelFileOperations;
+    private Logger logger = LoggerFactory.getLogger(CrudSubmodelService.class);
 
     public CrudSubmodelService(SubmodelBackend submodelRepositoryBackend, FileRepository fileRepository, @NonNull Submodel submodel) {
         this(submodelRepositoryBackend, fileRepository, submodel.getId());
@@ -102,10 +107,77 @@ public class CrudSubmodelService implements SubmodelService {
     }
 
     @Override
-    public void updateSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
-        deleteAssociatedFileIfAny(idShortPath);
+    public void updateSubmodelElement(String idShortPath, SubmodelElement newElement) throws ElementDoesNotExistException {
+        SubmodelElement existingSubmodelElement = backend.getSubmodelElement(submodelId, idShortPath);
+        boolean existingSubmodelElementIsFile = existingSubmodelElement instanceof org.eclipse.digitaltwin.aas4j.v3.model.File;
+        boolean newSubmodelElementIsFile = newElement instanceof org.eclipse.digitaltwin.aas4j.v3.model.File;
 
-        backend.updateSubmodelElement(submodelId, idShortPath, submodelElement);
+        if (existingSubmodelElementIsFile && newSubmodelElementIsFile) {
+            handleFileAttachmentUpdate(submodelId, idShortPath, newElement);
+        } else if (existingSubmodelElementIsFile) {
+            deleteAssociatedFileIfAny(idShortPath);
+        }
+
+        backend.updateSubmodelElement(submodelId, idShortPath, newElement);
+    }
+
+    private void handleFileAttachmentUpdate(String submodelId, String idShortPath, SubmodelElement updatedElement) {
+        try {
+            if (hasFilePathChanged(submodelId, idShortPath, updatedElement)) {
+                deleteAssociatedFileIfAny(idShortPath);
+            }
+        } catch (Exception e) {
+            logger.warn("Could not verify file path change for '{}'. Assuming changed. Reason: {}", idShortPath, e.getMessage());
+            deleteAssociatedFileIfAny(idShortPath);
+        }
+    }
+
+    private boolean hasFilePathChanged(String submodelId, String idShortPath, SubmodelElement updatedElement) {
+        if (!(updatedElement instanceof org.eclipse.digitaltwin.aas4j.v3.model.File file)) {
+            logger.warn("Expected File element but got: {}", updatedElement.getClass().getSimpleName());
+            return true;
+        }
+
+        String newPathString = extractFilePath(file);
+        if (newPathString == null) {
+            return true;
+        }
+
+        String oldPathString = getExistingFilePath(submodelId, idShortPath);
+        if (oldPathString == null) {
+            return true;
+        }
+
+        return pathsDiffer(oldPathString, newPathString);
+    }
+
+    private boolean isFileElement(SubmodelElement element) {
+        return element instanceof org.eclipse.digitaltwin.aas4j.v3.model.File;
+    }
+
+    // Extracts the new file path (value) from the updated File element
+    private String extractFilePath(org.eclipse.digitaltwin.aas4j.v3.model.File fileElement) {
+        return fileElement.getValue();
+    }
+
+    private String getExistingFilePath(String submodelId, String idShortPath) {
+        try {
+            return submodelFileOperations.getFile(submodelId, idShortPath).getPath();
+        } catch (Exception e) {
+            logger.warn("Failed to retrieve existing file path for '{}': {}", idShortPath, e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private boolean pathsDiffer(String path1, String path2) {
+        try {
+            Path normalized1 = Paths.get(path1).normalize().toAbsolutePath();
+            Path normalized2 = Paths.get(path2).normalize().toAbsolutePath();
+            return !normalized1.equals(normalized2);
+        } catch (Exception e) {
+            logger.error("Error comparing file paths: {}", e.getMessage(), e);
+            return true; // Consider paths different in case of error
+        }
     }
 
     @Override
