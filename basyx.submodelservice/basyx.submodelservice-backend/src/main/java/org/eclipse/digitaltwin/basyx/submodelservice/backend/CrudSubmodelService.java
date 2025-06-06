@@ -106,12 +106,19 @@ public class CrudSubmodelService implements SubmodelService {
         backend.createSubmodelElement(submodelId, idShortPath, submodelElement);
     }
 
-   @Override
-    public void updateSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
-        if (isFileElement(submodelElement)) {
-            handleFileAttachmentUpdate(submodelId, idShortPath, submodelElement);
+    @Override
+    public void updateSubmodelElement(String idShortPath, SubmodelElement newElement) throws ElementDoesNotExistException {
+        SubmodelElement existingSubmodelElement = backend.getSubmodelElement(submodelId, idShortPath);
+        boolean existingSubmodelElementIsFile = existingSubmodelElement instanceof org.eclipse.digitaltwin.aas4j.v3.model.File;
+        boolean newSubmodelElementIsFile = newElement instanceof org.eclipse.digitaltwin.aas4j.v3.model.File;
+
+        if (existingSubmodelElementIsFile && newSubmodelElementIsFile) {
+            handleFileAttachmentUpdate(submodelId, idShortPath, newElement);
+        } else if (existingSubmodelElementIsFile) {
+            deleteAssociatedFileIfAny(idShortPath);
         }
-        backend.updateSubmodelElement(submodelId, idShortPath, submodelElement);
+
+        backend.updateSubmodelElement(submodelId, idShortPath, newElement);
     }
 
     private void handleFileAttachmentUpdate(String submodelId, String idShortPath, SubmodelElement updatedElement) {
