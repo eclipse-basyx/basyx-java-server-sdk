@@ -31,6 +31,7 @@ import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
@@ -114,10 +115,23 @@ public class KafkaSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement)
+	public void createSubmodelElement(String submodelId, String parentPath, SubmodelElement submodelElement)
 			throws ElementDoesNotExistException {
-		decorated.createSubmodelElement(submodelId, idShortPath, submodelElement);
-		eventHandler.onSubmodelElementCreated(submodelElement, submodelId, idShortPath);
+		decorated.createSubmodelElement(submodelId, parentPath, submodelElement);
+		String path = computePath(submodelId, parentPath, submodelElement.getIdShort());
+		eventHandler.onSubmodelElementCreated(submodelElement, submodelId, path);
+	}
+
+	private String computePath(String submodelId, String parentPath, String smeIdShort) {
+		SubmodelElement parent = getSubmodelElement(submodelId, parentPath);
+			if (parent instanceof SubmodelElementList) {
+				SubmodelElementList parentList = (SubmodelElementList) parent;
+				int listSize = parentList.getValue().size();
+				// new element is appended
+				return parentPath + "[" + listSize + "]";
+			} else {
+				return parentPath + "." + smeIdShort;
+			}
 	}
 
 	@Override

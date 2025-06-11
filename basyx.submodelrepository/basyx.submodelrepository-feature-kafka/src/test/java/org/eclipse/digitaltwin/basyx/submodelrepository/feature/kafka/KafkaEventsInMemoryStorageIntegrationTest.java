@@ -238,7 +238,27 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
 		Assert.assertEquals(ID_SM1, evt.getId());
-		Assert.assertEquals(TestSubmodels.IDSHORT_COLL, evt.getSmElementPath());
+		Assert.assertEquals(TestSubmodels.IDSHORT_COLL + "." + TestSubmodels.IDSHORT_PROP_1, evt.getSmElementPath());
+		Assert.assertNull(evt.getSubmodel());
+		Assert.assertEquals(elem, evt.getSmElement());
+	}
+	
+	@Test
+	public void testSubmodelElementAddedUnderListPath() {
+		Submodel sm = TestSubmodels.createSubmodel(ID_SM1, TestSubmodels.IDSHORT_PROP_0, "7");
+		sm.getSubmodelElements().add(new DefaultSubmodelElementList.Builder().idShort("List")
+				.value(new DefaultProperty.Builder().idShort("P77").value("77").build())
+				.build());
+		repo.createSubmodel(sm);
+		SubmodelEvent evt = adapter.next();
+		Assert.assertEquals(SubmodelEventType.SM_CREATED, evt.getType());
+
+		SubmodelElement elem = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_1, "88");
+		repo.createSubmodelElement(ID_SM1, TestSubmodels.IDSHORT_COLL, elem);
+		evt = adapter.next();
+		Assert.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
+		Assert.assertEquals(ID_SM1, evt.getId());
+		Assert.assertEquals("List[1]", evt.getSmElementPath());
 		Assert.assertNull(evt.getSubmodel());
 		Assert.assertEquals(elem, evt.getSmElement());
 	}
