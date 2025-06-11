@@ -127,8 +127,9 @@ public class KafkaSubmodelRepository implements SubmodelRepository {
 			if (parent instanceof SubmodelElementList) {
 				SubmodelElementList parentList = (SubmodelElementList) parent;
 				int listSize = parentList.getValue().size();
+				int pos = listSize -1; // already added starting with zero
 				// new element is appended
-				return parentPath + "[" + listSize + "]";
+				return parentPath + "[" + pos + "]";
 			} else {
 				return parentPath + "." + smeIdShort;
 			}
