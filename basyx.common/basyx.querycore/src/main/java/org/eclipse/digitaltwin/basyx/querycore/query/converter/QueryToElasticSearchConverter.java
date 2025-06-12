@@ -33,16 +33,5 @@ public class QueryToElasticSearchConverter {
         
         return logicalExpressionConverter.convert(condition);
     }
-    
-    /**
-     * Converts a custom Query object to ElasticSearch QueryDSL Query with source filtering
-     * 
-     * @param customQuery The custom query to convert
-     * @return ElasticSearch QueryDSL Query
-     */
-    public co.elastic.clients.elasticsearch._types.query_dsl.Query convertWithSelect(AASQuery customQuery) {
-        // For now, we focus on the query conversion
-        // Source filtering would be handled at the search request level, not in the query itself
-        return convert(customQuery);
-    }
+
 }

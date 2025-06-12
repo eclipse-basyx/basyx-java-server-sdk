@@ -151,6 +151,10 @@
 			<artifactId>basyx.authorization</artifactId>
 			<classifier>tests</classifier>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.querycore</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

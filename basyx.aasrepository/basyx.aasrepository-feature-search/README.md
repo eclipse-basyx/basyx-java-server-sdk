@@ -50,8 +50,9 @@
 
 
 ## TODOS
-* [ ] Extract Query Package from basyx.core to own module (e.g. basyx.querycore)
-* [ ] Comparison of two fields is not possible yet
+* [x] Extract Query Package from basyx.core to own module (e.g. basyx.querycore)
+* [x] Comparison of two fields is not possible yet
+* [ ] Fix Error: ava.lang.ClassNotFoundException: co.elastic.clients.elasticsearch._types.ScriptSource$Builder in ValueConverter during Runtime
 * [ ] Unit Tests
 * [ ] Integration Tests
 * [ ] Pagination

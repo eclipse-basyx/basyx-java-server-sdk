@@ -212,4 +212,100 @@ public class QueryConverterExample {
         
         return queryConverter.convert(customQuery);
     }
+    
+    /**
+     * Example: Field-to-field equality comparison
+     * Custom Query: { "$condition": { "$eq": [{"$field": "$aas#idShort"}, {"$field": "$aas#displayName"}] } }
+     */
+    public Query createFieldToFieldEqualityQuery() {
+        // Create two field value objects
+        Value leftFieldValue = new Value();
+        leftFieldValue.set$field("$aas#idShort");
+        
+        Value rightFieldValue = new Value();
+        rightFieldValue.set$field("$aas#displayName");
+        
+        // Create logical expression with equality
+        LogicalExpression condition = new LogicalExpression();
+        condition.set$eq(Arrays.asList(leftFieldValue, rightFieldValue));
+        
+        // Create query
+        AASQuery customQuery = new AASQuery();
+        customQuery.set$condition(condition);
+        
+        return queryConverter.convert(customQuery);
+    }
+    
+    /**
+     * Example: Field-to-field range comparison
+     * Custom Query: { "$condition": { "$gt": [{"$field": "$sme#minValue"}, {"$field": "$sme#maxValue"}] } }
+     */
+    public Query createFieldToFieldRangeQuery() {
+        Value leftFieldValue = new Value();
+        leftFieldValue.set$field("$sme#minValue");
+        
+        Value rightFieldValue = new Value();
+        rightFieldValue.set$field("$sme#maxValue");
+        
+        LogicalExpression condition = new LogicalExpression();
+        condition.set$gt(Arrays.asList(leftFieldValue, rightFieldValue));
+        
+        AASQuery customQuery = new AASQuery();
+        customQuery.set$condition(condition);
+        
+        return queryConverter.convert(customQuery);
+    }
+    
+    /**
+     * Example: Field-to-field string contains comparison
+     * Custom Query: { "$condition": { "$contains": [{"$field": "$aas#description"}, {"$field": "$aas#idShort"}] } }
+     */
+    public Query createFieldToFieldStringContainsQuery() {
+        StringValue leftFieldValue = new StringValue();
+        leftFieldValue.set$field("$aas#description");
+        
+        StringValue rightFieldValue = new StringValue();
+        rightFieldValue.set$field("$aas#idShort");
+        
+        LogicalExpression condition = new LogicalExpression();
+        condition.set$contains(Arrays.asList(leftFieldValue, rightFieldValue));
+        
+        AASQuery customQuery = new AASQuery();
+        customQuery.set$condition(condition);
+        
+        return queryConverter.convert(customQuery);
+    }
+    
+    /**
+     * Example: Complex query with both field-to-field and field-to-value comparisons
+     * Find AAS where idShort equals displayName AND value > 100
+     */
+    public Query createMixedFieldComparisonQuery() {
+        // Field-to-field condition: idShort equals displayName
+        Value leftField1 = new Value();
+        leftField1.set$field("$aas#idShort");
+        Value rightField1 = new Value();
+        rightField1.set$field("$aas#displayName");
+        
+        LogicalExpression condition1 = new LogicalExpression();
+        condition1.set$eq(Arrays.asList(leftField1, rightField1));
+        
+        // Field-to-value condition: value > 100
+        Value fieldValue2 = new Value();
+        fieldValue2.set$field("$sme#value");
+        Value numValue2 = new Value();
+        numValue2.set$numVal(100.0);
+        
+        LogicalExpression condition2 = new LogicalExpression();
+        condition2.set$gt(Arrays.asList(fieldValue2, numValue2));
+        
+        // Combine with AND
+        LogicalExpression andCondition = new LogicalExpression();
+        andCondition.set$and(Arrays.asList(condition1, condition2));
+        
+        AASQuery customQuery = new AASQuery();
+        customQuery.set$condition(andCondition);
+        
+        return queryConverter.convert(customQuery);
+    }
 }

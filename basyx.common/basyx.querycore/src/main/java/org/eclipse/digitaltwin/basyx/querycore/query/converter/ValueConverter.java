@@ -1,5 +1,6 @@
 package org.eclipse.digitaltwin.basyx.querycore.query.converter;
 
+import co.elastic.clients.elasticsearch._types.Script;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch._types.FieldValue;
@@ -18,11 +19,20 @@ public class ValueConverter {
     private static final SimpleDateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
     
     /**
-     * Converts equality comparison between two values
+     * Converts equality comparison between two values (supports field-to-field comparison)
      */
     public Query convertEqualityComparison(Value leftValue, Value rightValue) {
-        String fieldName = extractFieldName(leftValue);
-        Object value = extractValue(rightValue);
+        String leftField = extractFieldName(leftValue);
+        String rightField = extractFieldName(rightValue);
+        
+        // Field-to-field comparison
+        if (leftField != null && rightField != null) {
+            return createFieldToFieldComparison(leftField, rightField, "eq");
+        }
+        
+        // Field-to-value comparison (existing logic)
+        String fieldName = leftField != null ? leftField : extractFieldName(rightValue);
+        Object value = leftField != null ? extractValue(rightValue) : extractValue(leftValue);
         
         if (fieldName != null && value != null) {
             return QueryBuilders.term()
@@ -35,11 +45,20 @@ public class ValueConverter {
     }
 
     /**
-     * Converts inequality comparison between two values
+     * Converts inequality comparison between two values (supports field-to-field comparison)
      */
     public Query convertInequalityComparison(Value leftValue, Value rightValue) {
-        String fieldName = extractFieldName(leftValue);
-        Object value = extractValue(rightValue);
+        String leftField = extractFieldName(leftValue);
+        String rightField = extractFieldName(rightValue);
+        
+        // Field-to-field comparison
+        if (leftField != null && rightField != null) {
+            return createFieldToFieldComparison(leftField, rightField, "ne");
+        }
+        
+        // Field-to-value comparison (existing logic)
+        String fieldName = leftField != null ? leftField : extractFieldName(rightValue);
+        Object value = leftField != null ? extractValue(rightValue) : extractValue(leftValue);
 
         if (fieldName != null && value != null) {
             return QueryBuilders.bool()
@@ -54,15 +73,22 @@ public class ValueConverter {
     }
 
 /**
- * Converts range comparison between two values
+ * Converts range comparison between two values (supports field-to-field comparison)
  */
-
     public Query convertRangeComparison(Value leftValue,
                                         Value rightValue,
                                         String operator) {
-
-        String fieldName = extractFieldName(leftValue);
-        Object rawValue   = extractValue(rightValue);
+        String leftField = extractFieldName(leftValue);
+        String rightField = extractFieldName(rightValue);
+        
+        // Field-to-field comparison
+        if (leftField != null && rightField != null) {
+            return createFieldToFieldComparison(leftField, rightField, operator);
+        }
+        
+        // Field-to-value comparison (existing logic)
+        String fieldName = leftField != null ? leftField : extractFieldName(rightValue);
+        Object rawValue = leftField != null ? extractValue(rightValue) : extractValue(leftValue);
 
         if (fieldName != null && rawValue != null) {
             JsonData value = JsonData.of(rawValue);   // works for all scalar types
@@ -86,12 +112,22 @@ public class ValueConverter {
         // fall-back: match-all
         return QueryBuilders.matchAll(m -> m);
     }
+    
     /**
-     * Converts string comparison operations
+     * Converts string comparison operations (supports field-to-field comparison)
      */
     public Query convertStringComparison(StringValue leftValue, StringValue rightValue, String operation) {
-        String fieldName = extractStringFieldName(leftValue);
-        String value = extractStringValue(rightValue);
+        String leftField = extractStringFieldName(leftValue);
+        String rightField = extractStringFieldName(rightValue);
+        
+        // Field-to-field string comparison
+        if (leftField != null && rightField != null) {
+            return createFieldToFieldStringComparison(leftField, rightField, operation);
+        }
+        
+        // Field-to-value comparison (existing logic)
+        String fieldName = leftField != null ? leftField : extractStringFieldName(rightValue);
+        String value = leftField != null ? extractStringValue(rightValue) : extractStringValue(leftValue);
 
         if (fieldName != null && value != null) {
             switch (operation) {
@@ -130,6 +166,75 @@ public class ValueConverter {
         return QueryBuilders.matchAll().build()._toQuery();
     }
     
+    /**
+     * Creates field-to-field comparison using ElasticSearch script queries
+     */
+    private Query createFieldToFieldComparison(String leftField, String rightField, String operator) {
+        String scriptSource;
+        
+        switch (operator) {
+            case "eq":
+                scriptSource = String.format("doc['%s'].value == doc['%s'].value", leftField, rightField);
+                break;
+            case "ne":
+                scriptSource = String.format("doc['%s'].value != doc['%s'].value", leftField, rightField);
+                break;
+            case "gt":
+                scriptSource = String.format("doc['%s'].value > doc['%s'].value", leftField, rightField);
+                break;
+            case "gte":
+                scriptSource = String.format("doc['%s'].value >= doc['%s'].value", leftField, rightField);
+                break;
+            case "lt":
+                scriptSource = String.format("doc['%s'].value < doc['%s'].value", leftField, rightField);
+                break;
+            case "lte":
+                scriptSource = String.format("doc['%s'].value <= doc['%s'].value", leftField, rightField);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported field-to-field operator: " + operator);
+        }
+        
+        return QueryBuilders.script(s -> s
+            .script(script -> script
+                .source(source -> source.scriptString(scriptSource))
+                .lang("painless")
+            )
+        );
+    }
+    
+    /**
+     * Creates field-to-field string comparison using script queries
+     */
+    private Query createFieldToFieldStringComparison(String leftField, String rightField, String operation) {
+        String scriptSource;
+        
+        switch (operation) {
+            case "contains":
+                scriptSource = String.format("doc['%s'].value.contains(doc['%s'].value)", leftField, rightField);
+                break;
+            case "starts-with":
+                scriptSource = String.format("doc['%s'].value.startsWith(doc['%s'].value)", leftField, rightField);
+                break;
+            case "ends-with":
+                scriptSource = String.format("doc['%s'].value.endsWith(doc['%s'].value)", leftField, rightField);
+                break;
+            case "regex":
+                scriptSource = String.format("doc['%s'].value ==~ doc['%s'].value", leftField, rightField);
+                break;
+            default:
+                scriptSource = String.format("doc['%s'].value.equals(doc['%s'].value)", leftField, rightField);
+                break;
+        }
+        
+        return QueryBuilders.script(s -> s
+            .script(script -> script
+                .source(source -> source.scriptString(scriptSource))
+                .lang("painless")
+            )
+        );
+    }
+
     /**
      * Extracts field name from a Value object
      */
