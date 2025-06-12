@@ -69,15 +69,19 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Build all modules first
-        run: mvn clean install -DskipTests
-
       - name: Extract Release Tag
         id: extract_tag
         run: |
           # Extract the release tag from the GitHub context
           TAG_NAME=${GITHUB_REF#refs/tags/}
           echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
+
+      # Set the project version from the release tag
+      - name: Set project version from tag
+        run: mvn --batch-mode versions:set -DnewVersion=${{ env.TAG_NAME }} -DgenerateBackupPoms=false
+
+      - name: Build all modules first
+        run: mvn clean install -DskipTests
 
       # Build the project
       # For registry modules, we activate the dockerbuild profile and specify the module with --pl
