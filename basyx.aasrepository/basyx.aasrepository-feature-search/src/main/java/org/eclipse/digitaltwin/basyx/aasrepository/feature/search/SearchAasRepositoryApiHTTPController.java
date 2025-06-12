@@ -30,16 +30,13 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.basyx.core.query.ElasticSearchRequestBuilder;
-import org.eclipse.digitaltwin.basyx.core.query.AASQuery;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
+import org.eclipse.digitaltwin.basyx.querycore.query.AASQuery;
+import org.eclipse.digitaltwin.basyx.querycore.query.converter.ElasticSearchRequestBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -84,6 +81,5 @@ public class SearchAasRepositoryApiHTTPController implements SearchAasRepository
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        //return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 	}
 }

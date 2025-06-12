@@ -1,7 +1,12 @@
-package org.eclipse.digitaltwin.basyx.querycore.query;
+package org.eclipse.digitaltwin.basyx.querycore.query.converter;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
+import org.eclipse.digitaltwin.basyx.querycore.query.AASQuery;
+import org.eclipse.digitaltwin.basyx.querycore.query.LogicalExpression;
+import org.eclipse.digitaltwin.basyx.querycore.query.StringValue;
+import org.eclipse.digitaltwin.basyx.querycore.query.Value;
+
 import java.util.Arrays;
 import java.util.List;
 

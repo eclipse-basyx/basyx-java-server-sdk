@@ -34,7 +34,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.eclipse.digitaltwin.aas4j.v3.model.Result;
-import org.eclipse.digitaltwin.basyx.core.query.AASQuery;
+import org.eclipse.digitaltwin.basyx.querycore.query.AASQuery;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

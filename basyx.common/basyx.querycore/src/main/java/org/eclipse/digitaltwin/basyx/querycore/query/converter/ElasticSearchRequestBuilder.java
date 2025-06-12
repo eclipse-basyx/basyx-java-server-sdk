@@ -1,8 +1,9 @@
-package org.eclipse.digitaltwin.basyx.querycore.query;
+package org.eclipse.digitaltwin.basyx.querycore.query.converter;
 
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.search.SourceConfig;
 import co.elastic.clients.elasticsearch.core.search.SourceFilter;
+import org.eclipse.digitaltwin.basyx.querycore.query.AASQuery;
 
 import java.util.List;
 import java.util.Arrays;

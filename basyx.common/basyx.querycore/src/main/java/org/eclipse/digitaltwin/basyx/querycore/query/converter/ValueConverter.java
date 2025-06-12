@@ -1,10 +1,12 @@
-package org.eclipse.digitaltwin.basyx.querycore.query;
+package org.eclipse.digitaltwin.basyx.querycore.query.converter;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
-import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
 import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.json.JsonData;
+import org.eclipse.digitaltwin.basyx.querycore.query.StringValue;
+import org.eclipse.digitaltwin.basyx.querycore.query.Value;
+
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
