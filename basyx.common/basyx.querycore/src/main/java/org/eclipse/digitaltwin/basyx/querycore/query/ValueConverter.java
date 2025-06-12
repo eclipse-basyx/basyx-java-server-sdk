@@ -1,4 +1,4 @@
-package org.eclipse.digitaltwin.basyx.core.query;
+package org.eclipse.digitaltwin.basyx.querycore.query;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
@@ -7,7 +7,6 @@ import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.json.JsonData;
 import java.util.Date;
 import java.text.SimpleDateFormat;
-import java.util.regex.Pattern;
 
 /**
  * Converts Value and StringValue objects to ElasticSearch QueryDSL operations

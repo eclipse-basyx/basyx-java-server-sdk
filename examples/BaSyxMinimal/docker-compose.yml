@@ -69,7 +69,7 @@ services:
         condition: service_healthy
 
   aas-discovery:
-    image: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
+    image: eclipsebasyx/aas-discovery:2.0.0-milestone-03.1
     ports:
       - 8084:8081
     volumes:

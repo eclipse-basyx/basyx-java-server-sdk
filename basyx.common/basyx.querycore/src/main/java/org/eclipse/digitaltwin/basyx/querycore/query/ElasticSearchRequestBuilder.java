@@ -1,4 +1,4 @@
-package org.eclipse.digitaltwin.basyx.core.query;
+package org.eclipse.digitaltwin.basyx.querycore.query;
 
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.search.SourceConfig;

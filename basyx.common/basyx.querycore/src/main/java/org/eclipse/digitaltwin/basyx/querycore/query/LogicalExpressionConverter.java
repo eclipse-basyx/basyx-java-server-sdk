@@ -1,10 +1,9 @@
-package org.eclipse.digitaltwin.basyx.core.query;
+package org.eclipse.digitaltwin.basyx.querycore.query;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * Converts LogicalExpression objects to ElasticSearch QueryDSL Query objects
