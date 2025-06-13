@@ -193,6 +193,16 @@ public abstract class AasRepositoryHTTPSuite {
 	}
 
 	@Test
+	public void getAllAasWithMultipleAssetIds() throws IOException, ParseException {
+		createMultipleAasOnServer();
+		CloseableHttpResponse retrievalResponse = getAllAasMultipleGlobalAssetIdsParam();
+		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+
+		String actualJsonFromServer = BaSyxHttpTestUtils.getResponseAsString(retrievalResponse);
+		BaSyxHttpTestUtils.assertSameJSONContent(getEmptyResultJSONString(), getJSONWithoutCursorInfo(actualJsonFromServer));
+	}
+
+	@Test
 	public void deleteAas() throws IOException {
 		createDummyAasOnServer(getAas1JSONString());
 
@@ -423,6 +433,10 @@ public abstract class AasRepositoryHTTPSuite {
 	private String getPaginatedAas1JSONString() throws FileNotFoundException, IOException {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("PaginatedAasSimple_1.json");
 	}
+
+	private String getEmptyResultJSONString() throws FileNotFoundException, IOException {
+		return BaSyxHttpTestUtils.readJSONStringFromClasspath("EmptyResponse.json");
+	}
 	
 	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException {
 		return BaSyxHttpTestUtils.removeCursorFromJSON(response);
@@ -487,6 +501,10 @@ public abstract class AasRepositoryHTTPSuite {
 
 	protected CloseableHttpResponse getAllAasGlobalAssetIdsParam() throws IOException {
 		return BaSyxHttpTestUtils.executeGetOnURL(getURL()+"?assetIds=ew0KIm5hbWUiOiJnbG9iYWxBc3NldElkIiwNCiJ2YWx1ZSI6Imdsb2JhbEFzc2V0SWQiDQp9");
+	}
+
+	protected CloseableHttpResponse getAllAasMultipleGlobalAssetIdsParam() throws IOException {
+		return BaSyxHttpTestUtils.executeGetOnURL(getURL()+"?assetIds=ew0KIm5hbWUiOiJnbG9iYWxBc3NldElkIiwNCiJ2YWx1ZSI6Imdsb2JhbEFzc2V0SWQiDQp9&assetIds=ew0KIm5hbWUiOiJnbG9iYWxBc3NldElkIiwNCiJ2YWx1ZSI6ImR1bW15QWFzQXNzZXRJZCINCn0");
 	}
 
 	protected CloseableHttpResponse getAllAasIdShortParam() throws IOException {
