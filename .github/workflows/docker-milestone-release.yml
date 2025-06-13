@@ -95,17 +95,17 @@ jobs:
           
           # Find the JAR file using multiple search patterns
           echo "Looking for JAR files in standard target directory..."
-          JAR_FILE=$(find "${MODULE_PATH}/target" -name "*.jar" -not -name "*sources*" -not -name "*javadoc*" | head -n 1)
+          JAR_FILE=$(find "${MODULE_PATH}/target" -name "*.jar" -not -name "*sources*" -not -name "*javadoc*" -not -name "*-tests.jar" | head -n 1)
           
           if [ -z "$JAR_FILE" ]; then
             echo "Not found in standard location, trying docker build location..."
-            JAR_FILE=$(find "${MODULE_PATH}" -path "*/docker/*/${{ env.DOCKER_NAMESPACE }}/*/${{ github.event.release.tag_name }}/build/maven/*.jar" | head -n 1)
+            JAR_FILE=$(find "${MODULE_PATH}" -path "*/docker/*/${{ env.DOCKER_NAMESPACE }}/*/${{ github.event.release.tag_name }}/build/maven/*[!tests].jar" | head -n 1)
           fi
           
           # If still not found, try a more aggressive search
           if [ -z "$JAR_FILE" ]; then
             echo "Still not found, trying broader search..."
-            JAR_FILE=$(find "${MODULE_PATH}" -name "*.jar" -not -name "*sources*" -not -name "*javadoc*" | head -n 1)
+            JAR_FILE=$(find "${MODULE_PATH}" -name "*.jar" -not -name "*sources*" -not -name "*javadoc*" -not -name "*-tests.jar" | head -n 1)
           fi
           
           if [ -z "$JAR_FILE" ]; then
