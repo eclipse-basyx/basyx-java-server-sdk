@@ -74,8 +74,6 @@ public class SubmodelServiceApi {
   private final String memberVarBaseUri;
   private final Consumer<HttpRequest.Builder> memberVarInterceptor;
   private final Duration memberVarReadTimeout;
-  private final Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
-  private final Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
 	
   private TokenManager tokenManager;
 
@@ -114,15 +112,19 @@ public SubmodelServiceApi(ApiClient apiClient) {
     memberVarBaseUri = apiClient.getBaseUri();
     memberVarInterceptor = apiClient.getRequestInterceptor();
     memberVarReadTimeout = apiClient.getReadTimeout();
-    memberVarResponseInterceptor = apiClient.getResponseInterceptor();
-	memberVarAsyncResponseInterceptor = apiClient.getAsyncResponseInterceptor();
   }
 
-  protected ApiException getApiException(String operationId, HttpResponse<InputStream> response) throws IOException {
-    String body = response.body() == null ? null : new String(response.body().readAllBytes());
-    String message = formatExceptionMessage(operationId, response.statusCode(), body);
-    return new ApiException(response.statusCode(), message, response.headers(), body);
-  }
+	protected ApiException getApiException(String operationId, HttpResponse<String> response) throws IOException {
+		String message = formatExceptionMessage(operationId, response.statusCode(), response.body());
+		return new ApiException(response.statusCode(), message, response.headers(), response.body());
+	}
+
+	protected ApiException getApiExceptionInputStream(String operationId, HttpResponse<InputStream> response)
+			throws IOException {
+		String body = response.body() == null ? null : new String(response.body().readAllBytes());
+		String message = formatExceptionMessage(operationId, response.statusCode(), body);
+		return new ApiException(response.statusCode(), message, response.headers(), body);
+	}
 
   private String formatExceptionMessage(String operationId, int statusCode, String body) {
     if (body == null || body.isEmpty()) {
@@ -184,10 +186,9 @@ public SubmodelServiceApi(ApiClient apiClient) {
 	public ApiResponse<Submodel> getSubmodelWithHttpInfoNoUrlEncoding(String level, String extent) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = getSubmodelRequestBuilder(level, extent);
 		try {
-			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-			if (memberVarResponseInterceptor != null) {
-				memberVarResponseInterceptor.accept(localVarResponse);
-			}
+			HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+					HttpResponse.BodyHandlers.ofString());
+
 			try {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("getSubmodel", localVarResponse);
@@ -304,10 +305,9 @@ public SubmodelServiceApi(ApiClient apiClient) {
 	public ApiResponse<SubmodelElement> getSubmodelElementByPathWithHttpInfoNoUrlEncoding(String idShortPath, String level, String extent) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = getSubmodelElementByPathRequestBuilder(idShortPath, level, extent);
 		try {
-			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-			if (memberVarResponseInterceptor != null) {
-				memberVarResponseInterceptor.accept(localVarResponse);
-			}
+			HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+					HttpResponse.BodyHandlers.ofString());
+
 			try {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("getSubmodelElementByPath", localVarResponse);
@@ -431,10 +431,9 @@ public SubmodelServiceApi(ApiClient apiClient) {
 	public ApiResponse<SubmodelElementValue> getSubmodelElementByPathValueOnlyWithHttpInfoNoUrlEncoding(String idShortPath, String level, String extent) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = getSubmodelElementByPathValueOnlyRequestBuilder(idShortPath, level, extent);
 		try {
-			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-			if (memberVarResponseInterceptor != null) {
-				memberVarResponseInterceptor.accept(localVarResponse);
-			}
+			HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+					HttpResponse.BodyHandlers.ofString());
+
 			try {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("getSubmodelElementByPathValueOnly", localVarResponse);
@@ -568,21 +567,15 @@ public SubmodelServiceApi(ApiClient apiClient) {
 	public ApiResponse<Void> patchSubmodelElementByPathValueOnlyWithHttpInfoNoUrlEncoding(String idShortPath, SubmodelElementValue getSubmodelElementsValueResult, Integer limit, String cursor, String level) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = patchSubmodelElementByPathValueOnlyRequestBuilder(idShortPath, getSubmodelElementsValueResult, limit, cursor, level);
 		try {
-			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-			if (memberVarResponseInterceptor != null) {
-				memberVarResponseInterceptor.accept(localVarResponse);
-			}
+			HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+					HttpResponse.BodyHandlers.ofString());
+
 			try {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("patchSubmodelElementByPathValueOnly", localVarResponse);
 				}
 				return new ApiResponse<Void>(localVarResponse.statusCode(), localVarResponse.headers().map(), null);
 			} finally {
-				// Drain the InputStream
-				while (localVarResponse.body().read() != -1) {
-					// Ignore
-				}
-				localVarResponse.body().close();
 			}
 		} catch (IOException e) {
 			throw new ApiException(e);
@@ -683,12 +676,9 @@ public SubmodelServiceApi(ApiClient apiClient) {
 	  public ApiResponse<SubmodelElement> postSubmodelElementWithHttpInfoNoUrlEncoding(SubmodelElement submodelElement) throws ApiException {
 	    HttpRequest.Builder localVarRequestBuilder = postSubmodelElementRequestBuilder(submodelElement);
 	    try {
-	      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+	      HttpResponse<String> localVarResponse = memberVarHttpClient.send(
 	          localVarRequestBuilder.build(),
-	          HttpResponse.BodyHandlers.ofInputStream());
-	      if (memberVarResponseInterceptor != null) {
-	        memberVarResponseInterceptor.accept(localVarResponse);
-	      }
+					HttpResponse.BodyHandlers.ofString());
 	      try {
 	        if (localVarResponse.statusCode()/ 100 != 2) {
 	          throw getApiException("postSubmodelElement", localVarResponse);
@@ -791,10 +781,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		public ApiResponse<SubmodelElement> postSubmodelElementByPathWithHttpInfoNoUrlEncoding(String idShortPath, SubmodelElement submodelElement) throws ApiException {
 			HttpRequest.Builder localVarRequestBuilder = postSubmodelElementByPathRequestBuilder(idShortPath, submodelElement);
 			try {
-				HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-				if (memberVarResponseInterceptor != null) {
-					memberVarResponseInterceptor.accept(localVarResponse);
-				}
+				HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+						HttpResponse.BodyHandlers.ofString());
 				try {
 					if (localVarResponse.statusCode() / 100 != 2) {
 						throw getApiException("postSubmodelElementByPath", localVarResponse);
@@ -905,21 +893,14 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		public ApiResponse<Void> putSubmodelElementByPathWithHttpInfoNoUrlEncoding(String idShortPath, SubmodelElement submodelElement, String level) throws ApiException {
 			HttpRequest.Builder localVarRequestBuilder = putSubmodelElementByPathRequestBuilder(idShortPath, submodelElement, level);
 			try {
-				HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-				if (memberVarResponseInterceptor != null) {
-					memberVarResponseInterceptor.accept(localVarResponse);
-				}
+				HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+						HttpResponse.BodyHandlers.ofString());
 				try {
 					if (localVarResponse.statusCode() / 100 != 2) {
 						throw getApiException("putSubmodelElementByPath", localVarResponse);
 					}
 					return new ApiResponse<Void>(localVarResponse.statusCode(), localVarResponse.headers().map(), null);
 				} finally {
-					// Drain the InputStream
-					while (localVarResponse.body().read() != -1) {
-						// Ignore
-					}
-					localVarResponse.body().close();
 				}
 			} catch (IOException e) {
 				throw new ApiException(e);
@@ -1022,21 +1003,14 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		public ApiResponse<Void> deleteSubmodelElementByPathWithHttpInfoNoUrlEncoding(String idShortPath) throws ApiException {
 			HttpRequest.Builder localVarRequestBuilder = deleteSubmodelElementByPathRequestBuilder(idShortPath);
 			try {
-				HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-				if (memberVarResponseInterceptor != null) {
-					memberVarResponseInterceptor.accept(localVarResponse);
-				}
+				HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+						HttpResponse.BodyHandlers.ofString());
 				try {
 					if (localVarResponse.statusCode() / 100 != 2) {
 						throw getApiException("deleteSubmodelElementByPath", localVarResponse);
 					}
 					return new ApiResponse<Void>(localVarResponse.statusCode(), localVarResponse.headers().map(), null);
 				} finally {
-					// Drain the InputStream
-					while (localVarResponse.body().read() != -1) {
-						// Ignore
-					}
-					localVarResponse.body().close();
 				}
 			} catch (IOException e) {
 				throw new ApiException(e);
@@ -1101,10 +1075,9 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		private ApiResponse<Base64UrlEncodedCursorResult<List<SubmodelElement>>> getAllSubmodelElementsApiResponse(Integer limit, String cursor, String level, String extent) throws ApiException {
 			HttpRequest.Builder localVarRequestBuilder = getAllSubmodelElementsRequestBuilder(limit, cursor, level, extent);
 			try {
-				HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-				if (memberVarResponseInterceptor != null) {
-					memberVarResponseInterceptor.accept(localVarResponse);
-				}
+				HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+						HttpResponse.BodyHandlers.ofString());
+
 				try {
 					if (localVarResponse.statusCode() / 100 != 2) {
 						throw getApiException("getAllSubmodelElements", localVarResponse);
@@ -1186,21 +1159,14 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		private ApiResponse<Void> putFileByPathApiResponse(String idShortPath, String fileName, InputStream inputStream) throws ApiException {
 			try {
 				HttpRequest.Builder localVarRequestBuilder = putFileByPathRequestBuilder(idShortPath, fileName, inputStream);
-				HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-				if (memberVarResponseInterceptor != null) {
-					memberVarResponseInterceptor.accept(localVarResponse);
-				}
+				HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+						HttpResponse.BodyHandlers.ofString());
 				try {
 					if (localVarResponse.statusCode() / 100 != 2) {
 						throw getApiException("putFileByPath", localVarResponse);
 					}
 					return new ApiResponse<Void>(localVarResponse.statusCode(), localVarResponse.headers().map(), null);
 				} finally {
-					// Drain the InputStream
-					while (localVarResponse.body().read() != -1) {
-						// Ignore
-					}
-					localVarResponse.body().close();
 				}
 			} catch (IOException e) {
 				throw new ApiException(e);
@@ -1211,10 +1177,12 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		}
 
 		private HttpRequest.Builder putFileByPathRequestBuilder(String idShortPath, String fileName, InputStream inputStream) throws ApiException, IOException {
-			if (idShortPath == null)
+			if (idShortPath == null) {
 				throw new ApiException(400, "Missing the required parameter 'idShortPath' when calling putFileByPath");
-			if (inputStream == null)
+			}
+			if (inputStream == null) {
 				throw new ApiException(400, "Missing the required parameter 'inputStream' when calling putFileByPath");
+			}
 
 			HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
@@ -1297,21 +1265,14 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		public ApiResponse<Void> deleteFileByPathWithHttpInfoNoUrlEncoding(String idShortPath) throws ApiException {
 			HttpRequest.Builder localVarRequestBuilder = deleteFileByPathRequestBuilder(idShortPath);
 			try {
-				HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-				if (memberVarResponseInterceptor != null) {
-					memberVarResponseInterceptor.accept(localVarResponse);
-				}
+				HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+						HttpResponse.BodyHandlers.ofString());
 				try {
 					if (localVarResponse.statusCode() / 100 != 2) {
 						throw getApiException("deleteFileByPath", localVarResponse);
 					}
 					return new ApiResponse<Void>(localVarResponse.statusCode(), localVarResponse.headers().map(), null);
 				} finally {
-					// Drain the InputStream
-					while (localVarResponse.body().read() != -1) {
-						// Ignore
-					}
-					localVarResponse.body().close();
 				}
 			} catch (IOException e) {
 				throw new ApiException(e);
@@ -1365,12 +1326,10 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		private ApiResponse<File> getFileByPathApiResponse(String idShortPath) throws ApiException {
 			HttpRequest.Builder localVarRequestBuilder = getFileByPathRequestBuilder(idShortPath);
 			try {
-				HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-				if (memberVarResponseInterceptor != null) {
-					memberVarResponseInterceptor.accept(localVarResponse);
-				}
+				HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+						HttpResponse.BodyHandlers.ofInputStream());
 				if (localVarResponse.statusCode() / 100 != 2) {
-					throw getApiException("getFileByPath", localVarResponse);
+					throw getApiExceptionInputStream("getFileByPath", localVarResponse);
 				}
 				if (localVarResponse.body() == null) {
 					return new ApiResponse<File>(localVarResponse.statusCode(), localVarResponse.headers().map(), null);
@@ -1463,10 +1422,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		public ApiResponse<OperationResult> invokeOperationWithHttpInfoNoUrlEncoding(String idShortPath, OperationRequest operationRequest) throws ApiException {
 			HttpRequest.Builder localVarRequestBuilder = invokeOperationRequestBuilder(idShortPath, operationRequest);
 			try {
-				HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-				if (memberVarResponseInterceptor != null) {
-					memberVarResponseInterceptor.accept(localVarResponse);
-				}
+				HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+						HttpResponse.BodyHandlers.ofString());
 				try {
 					if (localVarResponse.statusCode() / 100 != 2) {
 						throw getApiException("invokeOperation", localVarResponse);

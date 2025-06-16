@@ -25,7 +25,6 @@
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.client.internal;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -63,8 +62,6 @@ public class AssetAdministrationShellDiscoveryApi {
     private final String baseUri;
     private final Consumer<HttpRequest.Builder> requestInterceptor;
     private final Duration readTimeout;
-    private final Consumer<HttpResponse<InputStream>> responseInterceptor;
-    private final Consumer<HttpResponse<String>> asyncResponseInterceptor;
     private TokenManager tokenManager;
 
     public AssetAdministrationShellDiscoveryApi() {
@@ -82,8 +79,6 @@ public class AssetAdministrationShellDiscoveryApi {
         this.baseUri = apiClient.getBaseUri();
         this.requestInterceptor = apiClient.getRequestInterceptor();
         this.readTimeout = apiClient.getReadTimeout();
-        this.responseInterceptor = apiClient.getResponseInterceptor();
-        this.asyncResponseInterceptor = apiClient.getAsyncResponseInterceptor();
     }
 
     public AssetAdministrationShellDiscoveryApi(String baseUri) {
@@ -103,9 +98,11 @@ public class AssetAdministrationShellDiscoveryApi {
     public ApiResponse<Base64UrlEncodedCursorResult<List<String>>> getAllAssetAdministrationShellIdsByAssetLinkWithHttpInfo(List<AssetLink> assetIds, Integer limit, String cursor) throws ApiException {
         HttpRequest.Builder requestBuilder = getAllShellIdsRequestBuilder(assetIds, limit, cursor);
         try {
-            HttpResponse<InputStream> response = httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-            if (responseInterceptor != null) responseInterceptor.accept(response);
-            if (response.statusCode() / 100 != 2) throw getApiException("getAllAssetAdministrationShellIdsByAssetLink", response);
+			HttpResponse<String> response = httpClient.send(requestBuilder.build(),
+					HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() / 100 != 2) {
+				throw getApiException("getAllAssetAdministrationShellIdsByAssetLink", response);
+			}
             return new ApiResponse<>(
                     response.statusCode(),
                     response.headers().map(),
@@ -136,14 +133,20 @@ public class AssetAdministrationShellDiscoveryApi {
         queryParams.addAll(ApiClient.parameterToPairs("cursor", cursor));
 
         StringJoiner query = new StringJoiner("&");
-        for (Pair p : queryParams) query.add(p.getName() + "=" + p.getValue());
+        for (Pair p : queryParams) {
+			query.add(p.getName() + "=" + p.getValue());
+		}
 
         builder.uri(URI.create(baseUri + path + (query.length() > 0 ? "?" + query : "")));
         builder.header("Accept", "application/json");
         addAuthorizationHeaderIfAuthIsEnabled(builder);
         builder.method("GET", HttpRequest.BodyPublishers.noBody());
-        if (readTimeout != null) builder.timeout(readTimeout);
-        if (requestInterceptor != null) requestInterceptor.accept(builder);
+        if (readTimeout != null) {
+			builder.timeout(readTimeout);
+		}
+        if (requestInterceptor != null) {
+			requestInterceptor.accept(builder);
+		}
         return builder;
     }
 
@@ -153,14 +156,18 @@ public class AssetAdministrationShellDiscoveryApi {
         builder.header("Accept", "application/json");
         addAuthorizationHeaderIfAuthIsEnabled(builder);
         builder.method("GET", HttpRequest.BodyPublishers.noBody());
-        if (readTimeout != null) builder.timeout(readTimeout);
-        if (requestInterceptor != null) requestInterceptor.accept(builder);
+        if (readTimeout != null) {
+			builder.timeout(readTimeout);
+		}
+        if (requestInterceptor != null) {
+			requestInterceptor.accept(builder);
+		}
 
         try {
-            HttpResponse<InputStream> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofInputStream());
-            if (responseInterceptor != null) responseInterceptor.accept(response);
-            if (response.statusCode() / 100 != 2)
-                throw getApiException("getAllAssetLinksById", response);
+			HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() / 100 != 2) {
+				throw getApiException("getAllAssetLinksById", response);
+			}
             return objectMapper.readValue(response.body(), new TypeReference<List<SpecificAssetId>>() {});
         } catch (IOException | InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -182,14 +189,18 @@ public class AssetAdministrationShellDiscoveryApi {
             throw new ApiException(e);
         }
 
-        if (readTimeout != null) builder.timeout(readTimeout);
-        if (requestInterceptor != null) requestInterceptor.accept(builder);
+        if (readTimeout != null) {
+			builder.timeout(readTimeout);
+		}
+        if (requestInterceptor != null) {
+			requestInterceptor.accept(builder);
+		}
 
         try {
-            HttpResponse<InputStream> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofInputStream());
-            if (responseInterceptor != null) responseInterceptor.accept(response);
-            if (response.statusCode() / 100 != 2)
-                throw getApiException("postAllAssetLinksById", response);
+			HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() / 100 != 2) {
+				throw getApiException("postAllAssetLinksById", response);
+			}
             return objectMapper.readValue(response.body(), new TypeReference<List<SpecificAssetId>>() {});
         } catch (IOException | InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -203,14 +214,18 @@ public class AssetAdministrationShellDiscoveryApi {
         builder.header("Accept", "application/json");
         addAuthorizationHeaderIfAuthIsEnabled(builder);
         builder.method("DELETE", HttpRequest.BodyPublishers.noBody());
-        if (readTimeout != null) builder.timeout(readTimeout);
-        if (requestInterceptor != null) requestInterceptor.accept(builder);
+        if (readTimeout != null) {
+			builder.timeout(readTimeout);
+		}
+        if (requestInterceptor != null) {
+			requestInterceptor.accept(builder);
+		}
 
         try {
-            HttpResponse<InputStream> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofInputStream());
-            if (responseInterceptor != null) responseInterceptor.accept(response);
-            if (response.statusCode() / 100 != 2)
-                throw getApiException("deleteAllAssetLinksById", response);
+			HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() / 100 != 2) {
+				throw getApiException("deleteAllAssetLinksById", response);
+			}
         } catch (IOException | InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new ApiException(e);
@@ -223,14 +238,18 @@ public class AssetAdministrationShellDiscoveryApi {
         builder.header("Accept", "application/json");
         addAuthorizationHeaderIfAuthIsEnabled(builder);
         builder.method("GET", HttpRequest.BodyPublishers.noBody());
-        if (readTimeout != null) builder.timeout(readTimeout);
-        if (requestInterceptor != null) requestInterceptor.accept(builder);
+        if (readTimeout != null) {
+			builder.timeout(readTimeout);
+		}
+        if (requestInterceptor != null) {
+			requestInterceptor.accept(builder);
+		}
 
         try {
-            HttpResponse<InputStream> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofInputStream());
-            if (responseInterceptor != null) responseInterceptor.accept(response);
-            if (response.statusCode() / 100 != 2)
-                throw getApiException("getDescription", response);
+			HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() / 100 != 2) {
+				throw getApiException("getDescription", response);
+			}
             return objectMapper.readValue(response.body(), Object.class);
         } catch (IOException | InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -238,9 +257,10 @@ public class AssetAdministrationShellDiscoveryApi {
         }
     }
 
-    private ApiException getApiException(String operationId, HttpResponse<InputStream> response) throws IOException {
-        String body = response.body() == null ? null : new String(response.body().readAllBytes());
-        return new ApiException(response.statusCode(), operationId + " call failed with: " + response.statusCode() + " - " + (body != null ? body : "[no body]"), response.headers(), body);
+	private ApiException getApiException(String operationId, HttpResponse<String> response) throws IOException {
+		return new ApiException(response.statusCode(),
+				operationId + " call failed with: " + response.statusCode() + " - " + response.body(),
+				response.headers(), response.body());
     }
 
     private void addAuthorizationHeaderIfAuthIsEnabled(HttpRequest.Builder builder) {
