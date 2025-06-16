@@ -90,7 +90,6 @@
 								<dateLibrary>java8</dateLibrary>
 								<sourceFolder>java</sourceFolder>
 								<useJakartaEe>true</useJakartaEe>
-								<returnResponse>true</returnResponse>
 							</configOptions>
 						</configuration>
 					</execution>
