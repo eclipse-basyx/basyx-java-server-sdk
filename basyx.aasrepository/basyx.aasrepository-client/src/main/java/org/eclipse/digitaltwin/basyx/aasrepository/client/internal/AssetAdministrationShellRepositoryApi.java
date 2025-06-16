@@ -25,7 +25,6 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.client.internal;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -63,9 +62,6 @@ public class AssetAdministrationShellRepositoryApi {
   private final String memberVarBaseUri;
   private final Consumer<HttpRequest.Builder> memberVarInterceptor;
   private final Duration memberVarReadTimeout;
-  private final Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
-
-  private final Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
   private TokenManager tokenManager;
   
   public AssetAdministrationShellRepositoryApi() {
@@ -102,14 +98,11 @@ public class AssetAdministrationShellRepositoryApi {
     memberVarBaseUri = apiClient.getBaseUri();
     memberVarInterceptor = apiClient.getRequestInterceptor();
     memberVarReadTimeout = apiClient.getReadTimeout();
-    memberVarResponseInterceptor = apiClient.getResponseInterceptor();
-    memberVarAsyncResponseInterceptor = apiClient.getAsyncResponseInterceptor();
   }
 
-  protected ApiException getApiException(String operationId, HttpResponse<InputStream> response) throws IOException {
-    String body = response.body() == null ? null : new String(response.body().readAllBytes());
-    String message = formatExceptionMessage(operationId, response.statusCode(), body);
-    return new ApiException(response.statusCode(), message, response.headers(), body);
+	protected ApiException getApiException(String operationId, HttpResponse<String> response) throws IOException {
+		String message = formatExceptionMessage(operationId, response.statusCode(), response.body());
+		return new ApiException(response.statusCode(), message, response.headers(), response.body());
   }
 
   private String formatExceptionMessage(String operationId, int statusCode, String body) {
@@ -154,12 +147,10 @@ public class AssetAdministrationShellRepositoryApi {
   public ApiResponse<Void> deleteAssetAdministrationShellByIdWithHttpInfoNoUrlEncoding(String aasIdentifier) throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = deleteAssetAdministrationShellByIdRequestBuilder(aasIdentifier);
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+          HttpResponse.BodyHandlers.ofString());
+      
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("deleteAssetAdministrationShellById", localVarResponse);
@@ -170,11 +161,6 @@ public class AssetAdministrationShellRepositoryApi {
           null
         );
       } finally {
-        // Drain the InputStream
-        while (localVarResponse.body().read() != -1) {
-            // Ignore
-        }
-        localVarResponse.body().close();
       }
     } catch (IOException e) {
       throw new ApiException(e);
@@ -251,12 +237,9 @@ public class AssetAdministrationShellRepositoryApi {
   public ApiResponse<Void> deleteSubmodelReferenceByIdAasRepositoryWithHttpInfoNoUrlEncoding(String aasIdentifier, String submodelIdentifier) throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = deleteSubmodelReferenceByIdAasRepositoryRequestBuilder(aasIdentifier, submodelIdentifier);
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+				HttpResponse.BodyHandlers.ofString());
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("deleteSubmodelReferenceByIdAasRepository", localVarResponse);
@@ -267,11 +250,6 @@ public class AssetAdministrationShellRepositoryApi {
           null
         );
       } finally {
-        // Drain the InputStream
-        while (localVarResponse.body().read() != -1) {
-            // Ignore
-        }
-        localVarResponse.body().close();
       }
     } catch (IOException e) {
       throw new ApiException(e);
@@ -344,10 +322,8 @@ public class AssetAdministrationShellRepositoryApi {
 	private ApiResponse<Base64UrlEncodedCursorResult<List<AssetAdministrationShell>>> getAllAssetAdministrationShellsApiResponse(List<String> assetIds, String idShort, Integer limit, String cursor) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = getAllAssetAdministrationShellsRequestBuilder(assetIds, idShort, limit, cursor);
 		try {
-			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-			if (memberVarResponseInterceptor != null) {
-				memberVarResponseInterceptor.accept(localVarResponse);
-			}
+			HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+					HttpResponse.BodyHandlers.ofString());
 			try {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("getAllAssetAdministrationShells", localVarResponse);
@@ -446,12 +422,9 @@ public class AssetAdministrationShellRepositoryApi {
   public ApiResponse<AssetAdministrationShell> getAssetAdministrationShellByIdWithHttpInfoNoUrlEncoding(String aasIdentifier) throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = getAssetAdministrationShellByIdRequestBuilder(aasIdentifier);
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+				HttpResponse.BodyHandlers.ofString());
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("getAssetAdministrationShellById", localVarResponse);
@@ -535,12 +508,9 @@ public class AssetAdministrationShellRepositoryApi {
   public ApiResponse<Reference> getAssetAdministrationShellByIdReferenceAasRepositoryWithHttpInfoNoUrlEncoding(String aasIdentifier) throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = getAssetAdministrationShellByIdReferenceAasRepositoryRequestBuilder(aasIdentifier);
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+				HttpResponse.BodyHandlers.ofString());
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("getAssetAdministrationShellByIdReferenceAasRepository", localVarResponse);
@@ -624,12 +594,9 @@ public class AssetAdministrationShellRepositoryApi {
   public ApiResponse<AssetInformation> getAssetInformationAasRepositoryWithHttpInfoNoUrlEncoding(String aasIdentifier) throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = getAssetInformationAasRepositoryRequestBuilder(aasIdentifier);
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+				HttpResponse.BodyHandlers.ofString());
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("getAssetInformationAasRepository", localVarResponse);
@@ -713,12 +680,9 @@ public class AssetAdministrationShellRepositoryApi {
   public ApiResponse<AssetAdministrationShell> postAssetAdministrationShellWithHttpInfoNoUrlEncoding(AssetAdministrationShell assetAdministrationShell) throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = postAssetAdministrationShellRequestBuilder(assetAdministrationShell);
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+				HttpResponse.BodyHandlers.ofString());
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("postAssetAdministrationShell", localVarResponse);
@@ -810,12 +774,9 @@ public class AssetAdministrationShellRepositoryApi {
   public ApiResponse<Reference> postSubmodelReferenceAasRepositoryWithHttpInfoNoUrlEncoding(String aasIdentifier, Reference reference) throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = postSubmodelReferenceAasRepositoryRequestBuilder(aasIdentifier, reference);
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+				HttpResponse.BodyHandlers.ofString());
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("postSubmodelReferenceAasRepository", localVarResponse);
@@ -911,12 +872,9 @@ public class AssetAdministrationShellRepositoryApi {
   public ApiResponse<Void> putAssetAdministrationShellByIdWithHttpInfoNoUrlEncoding(String aasIdentifier, AssetAdministrationShell assetAdministrationShell) throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = putAssetAdministrationShellByIdRequestBuilder(aasIdentifier, assetAdministrationShell);
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+				HttpResponse.BodyHandlers.ofString());
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("putAssetAdministrationShellById", localVarResponse);
@@ -927,11 +885,6 @@ public class AssetAdministrationShellRepositoryApi {
           null
         );
       } finally {
-        // Drain the InputStream
-        while (localVarResponse.body().read() != -1) {
-            // Ignore
-        }
-        localVarResponse.body().close();
       }
     } catch (IOException e) {
       throw new ApiException(e);
@@ -1016,12 +969,9 @@ public class AssetAdministrationShellRepositoryApi {
   public ApiResponse<Void> putAssetInformationAasRepositoryWithHttpInfoNoUrlEncoding(String aasIdentifier, AssetInformation assetInformation) throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = putAssetInformationAasRepositoryRequestBuilder(aasIdentifier, assetInformation);
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+				HttpResponse.BodyHandlers.ofString());
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("putAssetInformationAasRepository", localVarResponse);
@@ -1032,11 +982,6 @@ public class AssetAdministrationShellRepositoryApi {
           null
         );
       } finally {
-        // Drain the InputStream
-        while (localVarResponse.body().read() != -1) {
-            // Ignore
-        }
-        localVarResponse.body().close();
       }
     } catch (IOException e) {
       throw new ApiException(e);

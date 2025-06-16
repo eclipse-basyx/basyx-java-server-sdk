@@ -59,8 +59,6 @@ public class {{classname}} {
   private final String memberVarBaseUri;
   private final {{#fullJavaUtil}}java.util.function.{{/fullJavaUtil}}Consumer<HttpRequest.Builder> memberVarInterceptor;
   private final Duration memberVarReadTimeout;
-  private final {{#fullJavaUtil}}java.util.function.{{/fullJavaUtil}}Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
-  private final {{#fullJavaUtil}}java.util.function.{{/fullJavaUtil}}Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
   private TokenManager tokenManager;
   
   public {{classname}}() {
@@ -101,8 +99,6 @@ public class {{classname}} {
     memberVarBaseUri = apiClient.getBaseUri();
     memberVarInterceptor = apiClient.getRequestInterceptor();
     memberVarReadTimeout = apiClient.getReadTimeout();
-    memberVarResponseInterceptor = apiClient.getResponseInterceptor();
-    memberVarAsyncResponseInterceptor = apiClient.getAsyncResponseInterceptor();
   }
   {{#asyncNative}}
 
@@ -113,10 +109,9 @@ public class {{classname}} {
   {{/asyncNative}}
   {{^asyncNative}}
 
-  protected ApiException getApiException(String operationId, HttpResponse<InputStream> response) throws IOException {
-    String body = response.body() == null ? null : new String(response.body().readAllBytes());
-    String message = formatExceptionMessage(operationId, response.statusCode(), body);
-    return new ApiException(response.statusCode(), message, response.headers(), body);
+  protected ApiException getApiException(String operationId, HttpResponse<String> response) throws IOException {
+    String message = formatExceptionMessage(operationId, response.statusCode(), response.body());
+    return new ApiException(response.statusCode(), message, response.headers(), response.body());
   }
   {{/asyncNative}}
 
@@ -273,12 +268,9 @@ public class {{classname}} {
     {{^asyncNative}}
     HttpRequest.Builder localVarRequestBuilder = {{operationId}}RequestBuilder({{#allParams}}{{paramName}}{{^-last}}, {{/-last}}{{/allParams}});
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+      HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+          HttpResponse.BodyHandlers.ofString());
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("{{operationId}}", localVarResponse);
@@ -311,13 +303,6 @@ public class {{classname}} {
         );
         {{/vendorExtensions.x-java-text-plain-string}}
       } finally {
-        {{^returnType}}
-        // Drain the InputStream
-        while (localVarResponse.body().read() != -1) {
-            // Ignore
-        }
-        localVarResponse.body().close();
-        {{/returnType}}
       }
     } catch (IOException e) {
       throw new ApiException(e);
