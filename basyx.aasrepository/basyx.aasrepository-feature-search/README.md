@@ -52,7 +52,8 @@
 ## TODOS
 * [x] Extract Query Package from basyx.core to own module (e.g. basyx.querycore)
 * [x] Comparison of two fields is not possible yet
-* [ ] Fix Error: ava.lang.ClassNotFoundException: co.elastic.clients.elasticsearch._types.ScriptSource$Builder in ValueConverter during Runtime
+* [x] Fix Error: ava.lang.ClassNotFoundException: co.elastic.clients.elasticsearch._types.ScriptSource$Builder in ValueConverter during Runtime
+* [ ] Fix error: When comparing fields -> first check with a bool.must if the fields are there. (See ChatGPT Chat -> Ask Claude)
 * [ ] Unit Tests
 * [ ] Integration Tests
 * [ ] Pagination
