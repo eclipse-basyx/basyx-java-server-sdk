@@ -45,7 +45,13 @@ spec:
         - mountPath: /workspace/config/application.properties
           name: {{ template "sm-registry.fullname" $ }}-config
           subPath: application.properties
+        - mountPath: /application/rbac-rules.json
+          name: {{ template "sm-registry.fullname" $ }}-rbac-rules
+          subPath: rbac-rules.json
       volumes:
       - name: {{ template "sm-registry.fullname" $ }}-config
         configMap:
           name: {{ template "sm-registry.fullname" $ }}-config
+      - name: {{ template "sm-registry.fullname" $ }}-rbac-rules
+        configMap:
+          name: {{ template "sm-registry.fullname" $ }}-rbac-rules

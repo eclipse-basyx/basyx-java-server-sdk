@@ -1,0 +1,82 @@
+[
+    {
+      "role": "basyx-reader",
+      "action": "READ",
+      "targetInformation": {
+        "@type": "submodel-registry",
+        "submodelIds": "*"
+      }
+    },
+    {
+      "role": "admin",
+      "action": ["CREATE", "READ", "UPDATE", "DELETE"],
+      "targetInformation": {
+        "@type": "submodel-registry",
+        "submodelIds": "*"
+      }
+    },
+    {
+      "role": "basyx-reader-two",
+      "action": "READ",
+      "targetInformation": {
+        "@type": "submodel-registry",
+        "submodelIds": "dummySubmodelId_3"
+      }
+    },
+    {
+      "role": "basyx-creator",
+      "action": "CREATE",
+      "targetInformation": {
+        "@type": "submodel-registry",
+        "submodelIds": "*"
+      }
+    },
+    {
+      "role": "basyx-updater",
+      "action": "UPDATE",
+      "targetInformation": {
+        "@type": "submodel-registry",
+        "submodelIds": "*"
+      }
+    },
+    {
+      "role": "basyx-updater-two",
+      "action": "UPDATE",
+      "targetInformation": {
+        "@type": "submodel-registry",
+        "submodelIds": "dummySubmodelId_3"
+      }
+    },
+    {
+      "role": "basyx-asset-updater",
+      "action": "UPDATE",
+      "targetInformation": {
+        "@type": "submodel-registry",
+        "submodelIds": "*"
+      }
+    },
+    {
+      "role": "basyx-asset-updater-two",
+      "action": "UPDATE",
+      "targetInformation": {
+        "@type": "submodel-registry",
+        "submodelIds": "specificSubmodelId-2"
+      }
+    },
+    {
+      "role": "basyx-deleter",
+      "action": "DELETE",
+      "targetInformation": {
+        "@type": "submodel-registry",
+        "submodelIds": "*"
+      }
+    },
+    {
+      "role": "basyx-deleter-two",
+      "action": "DELETE",
+      "targetInformation": {
+        "@type": "submodel-registry",
+        "submodelIds": "specificSubmodelId-2"
+      }
+    }
+  ]

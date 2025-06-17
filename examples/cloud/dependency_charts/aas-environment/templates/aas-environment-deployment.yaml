@@ -26,6 +26,9 @@ spec:
       - name: {{ template "aas-environment.fullname" $ }}-config
         configMap:
           name: {{ template "aas-environment.fullname" $ }}-config
+      - name: {{ template "aas-environment.fullname" $ }}-rbac-rules
+        configMap:
+          name: {{ template "aas-environment.fullname" $ }}-rbac-rules
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -62,6 +65,9 @@ spec:
         - mountPath: /application/application.properties
           name: {{ template "aas-environment.fullname" $ }}-config
           subPath: application.properties
+        - mountPath: /application/rbac-rules.json
+          name: {{ template "aas-discovery.fullname" $ }}-rbac-rules
+          subPath: rbac-rules.json
         {{- if .Values.startup.enabled }}
         - mountPath: /application/aas
           name: startup

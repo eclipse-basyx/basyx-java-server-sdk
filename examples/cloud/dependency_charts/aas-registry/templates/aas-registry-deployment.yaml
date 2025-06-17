@@ -45,7 +45,13 @@ spec:
         - mountPath: /workspace/config/application.properties
           name: {{ template "aas-registry.fullname" $ }}-config
           subPath: application.properties
+        - mountPath: /application/rbac-rules.json
+          name: {{ template "aas-registry.fullname" $ }}-rbac-rules
+          subPath: rbac-rules.json
       volumes:
       - name: {{ template "aas-registry.fullname" $ }}-config
         configMap:
           name: {{ template "aas-registry.fullname" $ }}-config
+      - name: {{ template "aas-registry.fullname" $ }}-rbac-rules
+        configMap:
+          name: {{ template "aas-registry.fullname" $ }}-rbac-rules
