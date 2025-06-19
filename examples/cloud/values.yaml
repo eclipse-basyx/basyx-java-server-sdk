@@ -396,6 +396,15 @@ aas-registry:
     basyx.cors.allowed-origins="*"
     basyx.cors.allowed-methods="GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
 
+    # Depends on: @param keycloak.enabled
+    basyx.feature.authorization.enabled = false
+    # basyx.feature.authorization.type = rbac
+    # Depends on: @param keycloak.enabled
+    # basyx.feature.authorization.jwtBearerTokenProvider = keycloak
+    # basyx.feature.authorization.rbac.file = file:/application/rbac_rules.json
+    # Depends on: @param keycloak.enabled, (@param keycloak.ingress.hostname or @param keycloak.apirule.host)
+    # spring.security.oauth2.resourceserver.jwt.issuer-uri = http://basyx-keycloak.basyx.svc.cluster.local:8080/realms/BaSyx
+
 ## SM Registry parameters
 ##
 sm-registry:
@@ -490,6 +499,15 @@ sm-registry:
 
     basyx.cors.allowed-origins="*"
     basyx.cors.allowed-methods="GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
+
+    # Depends on: @param keycloak.enabled
+    basyx.feature.authorization.enabled = false
+    # basyx.feature.authorization.type = rbac
+    # Depends on: @param keycloak.enabled
+    # basyx.feature.authorization.jwtBearerTokenProvider = keycloak
+    # basyx.feature.authorization.rbac.file = file:/application/rbac_rules.json
+    # Depends on: @param keycloak.enabled, (@param keycloak.ingress.hostname or @param keycloak.apirule.host)
+    # spring.security.oauth2.resourceserver.jwt.issuer-uri = http://basyx-keycloak.basyx.svc.cluster.local:8080/realms/BaSyx
 
 ## AAS Discovery parameters
 ##
@@ -667,6 +685,15 @@ aas-environment:
     # mqtt.username=user
     # Depends on: @param mqtt.auth.*
     # mqtt.password=password
+
+    # Depends on: @param keycloak.enabled
+    basyx.feature.authorization.enabled = false
+    # basyx.feature.authorization.type = rbac
+    # Depends on: @param keycloak.enabled
+    # basyx.feature.authorization.jwtBearerTokenProvider = keycloak
+    # basyx.feature.authorization.rbac.file = file:/application/rbac_rules.json
+    # Depends on: @param keycloak.enabled, (@param keycloak.ingress.hostname or @param keycloak.apirule.host)
+    # spring.security.oauth2.resourceserver.jwt.issuer-uri = http://basyx-keycloak.basyx.svc.cluster.local:8080/realms/BaSyx
   ## AAS Environment ingress parameters
   ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
   ##
