@@ -879,6 +879,11 @@
 				<artifactId>basyx.submodelregistry-client-native</artifactId>
 				<version>${revision}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-feature-search</artifactId>
+				<version>${revision}</version>
+			</dependency>
 
 			<!-- tests -->
 			<!-- basyx.common -->
@@ -1247,6 +1252,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasregistry-feature-hierarchy</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-feature-search</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>

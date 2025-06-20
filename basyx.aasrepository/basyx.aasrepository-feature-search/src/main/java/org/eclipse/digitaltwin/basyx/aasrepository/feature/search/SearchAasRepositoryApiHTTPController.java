@@ -26,13 +26,18 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.search;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.AASQuery;
+import org.eclipse.digitaltwin.basyx.querycore.query.QueryPaging;
+import org.eclipse.digitaltwin.basyx.querycore.query.QueryResponse;
+import org.eclipse.digitaltwin.basyx.querycore.query.QueryResult;
 import org.eclipse.digitaltwin.basyx.querycore.query.converter.ElasticSearchRequestBuilder;
+import org.eclipse.digitaltwin.basyx.querycore.query.executor.ESQueryExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
@@ -42,6 +47,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import co.elastic.clients.elasticsearch._types.SortOrder;
+
+import java.util.Base64;
+import java.nio.charset.StandardCharsets;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-10T15:59:05.892Z[GMT]")
 @RestController
@@ -56,30 +65,16 @@ public class SearchAasRepositoryApiHTTPController implements SearchAasRepository
 	}
 
 	@Override
-	public ResponseEntity<String> queryAssetAdministrationShells(AASQuery query, Integer limit, Base64UrlEncodedCursor cursor) {
-		ElasticSearchRequestBuilder builder = new ElasticSearchRequestBuilder();
-		SearchRequest searchRequest = builder.buildSearchRequest(query, "aas-index");
+	public ResponseEntity<QueryResponse> queryAssetAdministrationShells(AASQuery query, Integer limit, Base64UrlEncodedCursor cursor) {
+        QueryResponse queryResponse = null;
         try {
-            SearchResponse<Object> response = client.search(searchRequest, Object.class);
-
-			List<Hit<Object>> topHits = response.hits().hits();
-			ObjectMapper objectMapper = new ObjectMapper();
-			List<Object> objectHits = topHits.stream()
-					.map(Hit::source)
-					.toList();
-
-			HashMap<String, Object> responseMap = new HashMap<>();
-			responseMap.put("result", objectHits);
-			HashMap<String, String> pagingMetadata = new HashMap<>();
-			pagingMetadata.put("cursor","null");
-			pagingMetadata.put("resultType",(query.get$select() == null || query.get$select().isEmpty()) ? "AssetAdministrationShell" : "Identifier");
-			responseMap.put("paging_metadata",pagingMetadata);
-
-			String mapped = objectMapper.writeValueAsString(responseMap);
-
-			return new ResponseEntity<String>(mapped, HttpStatus.OK);
+			ESQueryExecutor executor = new ESQueryExecutor(client, "aas-index", "AssetAdministrationShell");
+            queryResponse = executor.executeQueryAndGetResponse(query, limit, cursor);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        return new ResponseEntity<QueryResponse>(queryResponse, HttpStatus.OK);
 	}
+
 }

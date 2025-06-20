@@ -195,11 +195,15 @@ public class ValueConverter {
                 throw new IllegalArgumentException("Unsupported field-to-field operator: " + operator);
         }
         
-        return QueryBuilders.script(s -> s
-            .script(script -> script
-                .source(source -> source.scriptString(scriptSource))
-                .lang("painless")
-            )
+        return QueryBuilders.bool(b -> b
+            .must(QueryBuilders.exists(e -> e.field(leftField)))
+            .must(QueryBuilders.exists(e -> e.field(rightField)))
+            .must(QueryBuilders.script(s -> s
+                .script(script -> script
+                    .source(source -> source.scriptString(scriptSource))
+                    .lang("painless")
+                )
+            ))
         );
     }
     
@@ -227,11 +231,15 @@ public class ValueConverter {
                 break;
         }
         
-        return QueryBuilders.script(s -> s
-            .script(script -> script
-                .source(source -> source.scriptString(scriptSource))
-                .lang("painless")
-            )
+        return QueryBuilders.bool(b -> b
+            .must(QueryBuilders.exists(e -> e.field(leftField)))
+            .must(QueryBuilders.exists(e -> e.field(rightField)))
+            .must(QueryBuilders.script(s -> s
+                .script(script -> script
+                    .source(source -> source.scriptString(scriptSource))
+                    .lang("painless")
+                )
+            ))
         );
     }
 

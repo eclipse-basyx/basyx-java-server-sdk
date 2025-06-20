@@ -42,7 +42,7 @@
 
 * All BaSyx components need ABAC and AASQL (even Discovery)
 * ABAC needs active AASQL and ES
-* THe AAS Repo will be the first component to implement AASQL and ABAC (as a proof of concept)
+* The AAS Repo will be the first component to implement AASQL and ABAC (as a proof of concept)
 
 ## Risks
 
@@ -52,8 +52,12 @@
 ## TODOS
 * [x] Extract Query Package from basyx.core to own module (e.g. basyx.querycore)
 * [x] Comparison of two fields is not possible yet
-* [x] Fix Error: ava.lang.ClassNotFoundException: co.elastic.clients.elasticsearch._types.ScriptSource$Builder in ValueConverter during Runtime
-* [ ] Fix error: When comparing fields -> first check with a bool.must if the fields are there. (See ChatGPT Chat -> Ask Claude)
+* [x] Fix Error: java.lang.ClassNotFoundException: co.elastic.clients.elasticsearch._types.ScriptSource$Builder in ValueConverter during Runtime
+* [x] Fix configuration: ES Feature starts for AAS Repo even if it is not configured
+* [x] In Registries, add ES feature to release POMs (only for the variants with MongoDB!)
+* [x] Fix error: When comparing fields -> first check with a bool.must if the fields are there. (See ChatGPT Chat -> Ask Claude)
+* [x] Pagination
+* [ ] Empty elements should not be included (empty arrays)
 * [ ] Unit Tests
 * [ ] Integration Tests
-* [ ] Pagination
+* [ ] Configurable Index Names

@@ -36,6 +36,7 @@ import jakarta.validation.Valid;
 import org.eclipse.digitaltwin.aas4j.v3.model.Result;
 import org.eclipse.digitaltwin.basyx.querycore.query.AASQuery;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
+import org.eclipse.digitaltwin.basyx.querycore.query.QueryResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -69,7 +70,7 @@ public interface SearchAasRepositoryHTTPApi {
 			consumes = { "application/json" },
 			method = RequestMethod.POST
 	)
-	ResponseEntity<String> queryAssetAdministrationShells(
+	ResponseEntity<QueryResponse> queryAssetAdministrationShells(
 			@Parameter(
 					description = "Query object",
 					required = true,
