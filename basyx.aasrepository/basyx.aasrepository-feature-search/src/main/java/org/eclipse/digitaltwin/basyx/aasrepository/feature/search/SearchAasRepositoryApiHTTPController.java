@@ -39,6 +39,7 @@ import org.eclipse.digitaltwin.basyx.querycore.query.QueryResult;
 import org.eclipse.digitaltwin.basyx.querycore.query.converter.ElasticSearchRequestBuilder;
 import org.eclipse.digitaltwin.basyx.querycore.query.executor.ESQueryExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +60,9 @@ public class SearchAasRepositoryApiHTTPController implements SearchAasRepository
 
 	private final ElasticsearchClient client;
 
+	@Value("${" + SearchAasRepositoryFeature.FEATURENAME + ".indexname:" + SearchAasRepositoryFeature.DEFAULT_INDEX + "}")
+	private String indexName;
+
 	@Autowired
 	public SearchAasRepositoryApiHTTPController(ElasticsearchClient client) {
 		this.client = client;
@@ -68,7 +72,7 @@ public class SearchAasRepositoryApiHTTPController implements SearchAasRepository
 	public ResponseEntity<QueryResponse> queryAssetAdministrationShells(AASQuery query, Integer limit, Base64UrlEncodedCursor cursor) {
         QueryResponse queryResponse = null;
         try {
-			ESQueryExecutor executor = new ESQueryExecutor(client, "aas-index", "AssetAdministrationShell");
+			ESQueryExecutor executor = new ESQueryExecutor(client, indexName, "AssetAdministrationShell");
             queryResponse = executor.executeQueryAndGetResponse(query, limit, cursor);
         } catch (IOException e) {
             throw new RuntimeException(e);

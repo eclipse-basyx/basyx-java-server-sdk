@@ -33,16 +33,18 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 public class SearchAasRepositoryFactory implements AasRepositoryFactory {
 
 	private final ElasticsearchClient esclient;
+	private final String indexName;
 	private AasRepositoryFactory decorated;
 
-	public SearchAasRepositoryFactory(AasRepositoryFactory decorated, ElasticsearchClient client) {
+	public SearchAasRepositoryFactory(AasRepositoryFactory decorated, ElasticsearchClient client, String indexName) {
 		this.decorated = decorated;
 		this.esclient = client;
+		this.indexName = indexName;
 	}
 
 	@Override
 	public AasRepository create() {
-		return new SearchAasRepository(decorated.create(), esclient);
+		return new SearchAasRepository(decorated.create(), esclient, indexName);
 	}
 
 }

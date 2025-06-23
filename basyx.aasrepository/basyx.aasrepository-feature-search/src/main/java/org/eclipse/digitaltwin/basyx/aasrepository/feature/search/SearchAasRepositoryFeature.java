@@ -37,11 +37,15 @@ import org.springframework.stereotype.Component;
 @ConditionalOnExpression("#{${" + SearchAasRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
 @Component
 public class SearchAasRepositoryFeature implements AasRepositoryFeature {
-	public final static String FEATURENAME = "basyx.aasrepository.feature.search";
+	public static final String FEATURENAME = "basyx.aasrepository.feature.search";
+	public static final String DEFAULT_INDEX = "aas-index";
 	private final ElasticsearchClient esclient;
 
 	@Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
 	private boolean enabled;
+
+	@Value("${" + SearchAasRepositoryFeature.FEATURENAME + ".indexname:" + SearchAasRepositoryFeature.DEFAULT_INDEX + "}")
+	private String indexName;
 
 	@Autowired
 	public SearchAasRepositoryFeature(ElasticsearchClient client) {
@@ -50,7 +54,7 @@ public class SearchAasRepositoryFeature implements AasRepositoryFeature {
 
 	@Override
 	public AasRepositoryFactory decorate(AasRepositoryFactory aasServiceFactory) {
-		return new SearchAasRepositoryFactory(aasServiceFactory, esclient);
+		return new SearchAasRepositoryFactory(aasServiceFactory, esclient, indexName);
 	}
 
 	@Override

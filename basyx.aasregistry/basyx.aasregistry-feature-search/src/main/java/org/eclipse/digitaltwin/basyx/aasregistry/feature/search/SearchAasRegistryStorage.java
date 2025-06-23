@@ -48,12 +48,13 @@ public class SearchAasRegistryStorage implements AasRegistryStorage {
     private final ElasticsearchClient esclient;
     private final AasRegistryStorage decorated;
 
-    protected static final String ES_INDEX = "aas-descr-index";
+    private final String indexName;
 
 
-    SearchAasRegistryStorage(AasRegistryStorage decorated, ElasticsearchClient esclient) {
+    SearchAasRegistryStorage(AasRegistryStorage decorated, ElasticsearchClient esclient, String indexName) {
         this.decorated = decorated;
         this.esclient = esclient;
+        this.indexName = indexName;
     }
 
     @Override
@@ -126,7 +127,7 @@ public class SearchAasRegistryStorage implements AasRegistryStorage {
     private void indexAasDescriptor(AssetAdministrationShellDescriptor descr) {
         try {
             esclient.create(
-                    c -> c.index(ES_INDEX)
+                    c -> c.index(indexName)
                             .id(descr.getId())
                             .document(descr)
             );
@@ -138,7 +139,7 @@ public class SearchAasRegistryStorage implements AasRegistryStorage {
     private void updateAasDescriptorIndex(AssetAdministrationShellDescriptor descr) {
         try {
             esclient.update(
-                    u -> u.index(ES_INDEX)
+                    u -> u.index(indexName)
                             .id(descr.getId())
                             .doc(descr),
                     AssetAdministrationShellDescriptor.class
@@ -151,7 +152,7 @@ public class SearchAasRegistryStorage implements AasRegistryStorage {
     private void deindexAasDescriptor(String aasDescrId) {
         try {
             esclient.delete(
-                    d -> d.index(ES_INDEX)
+                    d -> d.index(indexName)
                             .id(aasDescrId)
             );
         } catch (IOException e) {
@@ -168,7 +169,7 @@ public class SearchAasRegistryStorage implements AasRegistryStorage {
     private void clearIndex() {
         try {
             esclient.deleteByQuery(d -> d
-                .index(ES_INDEX)
+                .index(indexName)
                 .query(q -> q
                         .matchAll(m -> m)
                 )

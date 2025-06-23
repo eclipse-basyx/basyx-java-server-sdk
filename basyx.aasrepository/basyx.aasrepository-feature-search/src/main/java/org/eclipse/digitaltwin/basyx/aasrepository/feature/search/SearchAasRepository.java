@@ -44,14 +44,15 @@ import java.util.List;
 
 public class SearchAasRepository implements AasRepository {
 	private static final Logger logger = LoggerFactory.getLogger(SearchAasRepository.class);
-	private static final String ES_INDEX = "aas-index";
 	private final ElasticsearchClient esclient;
+	private final String indexName;
 
 	private AasRepository decorated;
 
-	public SearchAasRepository(AasRepository decorated, ElasticsearchClient esclient) {
+	public SearchAasRepository(AasRepository decorated, ElasticsearchClient esclient, String indexName) {
 		this.decorated = decorated;
 		this.esclient = esclient;
+		this.indexName = indexName;
 	}
 
 	@Override
@@ -135,7 +136,7 @@ public class SearchAasRepository implements AasRepository {
 	private void indexAAS(AssetAdministrationShell aas) {
 		try {
 			esclient.create(
-					c -> c.index(ES_INDEX)
+					c -> c.index(indexName)
 							.id(aas.getId())
 							.document(aas)
 			);
@@ -147,7 +148,7 @@ public class SearchAasRepository implements AasRepository {
 	private void updateAASIndex(AssetAdministrationShell aas) {
 		try {
 			esclient.update(
-					u -> u.index(ES_INDEX)
+					u -> u.index(indexName)
 							.id(aas.getId())
 							.doc(aas),
 					AssetAdministrationShell.class
@@ -160,7 +161,7 @@ public class SearchAasRepository implements AasRepository {
 	private void deindexAAS(String aasId) {
 		try {
 			esclient.delete(
-					d -> d.index(ES_INDEX)
+					d -> d.index(indexName)
 							.id(aasId)
 			);
 		} catch (IOException e) {

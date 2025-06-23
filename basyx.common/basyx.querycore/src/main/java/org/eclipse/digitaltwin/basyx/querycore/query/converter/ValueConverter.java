@@ -171,25 +171,35 @@ public class ValueConverter {
      */
     private Query createFieldToFieldComparison(String leftField, String rightField, String operator) {
         String scriptSource;
-        
+
+        String scriptLeftField = leftField;
+        String scriptRightField = rightField;
+
+        if (!leftField.endsWith(".keyword")) {
+            scriptLeftField += ".keyword";
+        }
+        if (!rightField.endsWith(".keyword")) {
+            scriptRightField += ".keyword";
+        }
+
         switch (operator) {
             case "eq":
-                scriptSource = String.format("doc['%s'].value == doc['%s'].value", leftField, rightField);
+                scriptSource = String.format("doc['%s'].value == doc['%s'].value", scriptLeftField, scriptRightField);
                 break;
             case "ne":
-                scriptSource = String.format("doc['%s'].value != doc['%s'].value", leftField, rightField);
+                scriptSource = String.format("doc['%s'].value != doc['%s'].value", scriptLeftField, scriptRightField);
                 break;
             case "gt":
-                scriptSource = String.format("doc['%s'].value > doc['%s'].value", leftField, rightField);
+                scriptSource = String.format("doc['%s'].value > doc['%s'].value", scriptLeftField, scriptRightField);
                 break;
             case "gte":
-                scriptSource = String.format("doc['%s'].value >= doc['%s'].value", leftField, rightField);
+                scriptSource = String.format("doc['%s'].value >= doc['%s'].value", scriptLeftField, scriptRightField);
                 break;
             case "lt":
-                scriptSource = String.format("doc['%s'].value < doc['%s'].value", leftField, rightField);
+                scriptSource = String.format("doc['%s'].value < doc['%s'].value", scriptLeftField, scriptRightField);
                 break;
             case "lte":
-                scriptSource = String.format("doc['%s'].value <= doc['%s'].value", leftField, rightField);
+                scriptSource = String.format("doc['%s'].value <= doc['%s'].value", scriptLeftField, scriptRightField);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported field-to-field operator: " + operator);

@@ -49,6 +49,9 @@ public class SearchAasRegistryConfigurationGuard implements InitializingBean {
     @Value("${spring.elasticsearch.password:#{null}}")
     private String elasticsearchPassword;
 
+    @Value("${" + SearchAasRegistryFeature.FEATURENAME + ".indexname:" + SearchAasRegistryFeature.DEFAULT_INDEX + "}")
+    private String indexName;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         boolean error = false;
@@ -73,6 +76,13 @@ public class SearchAasRegistryConfigurationGuard implements InitializingBean {
             error = true;
         } else {
             logger.info("Elasticsearch Password: " + "***");
+        }
+
+        if (indexName == null || indexName.isEmpty()) {
+            logger.error("Index name is not configured. Please set the property '" + SearchAasRegistryFeature.FEATURENAME + ".indexname'.");
+            error = true;
+        } else {
+            logger.info("Index Name: " + indexName);
         }
 
         logger.info(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");

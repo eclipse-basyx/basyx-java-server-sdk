@@ -47,6 +47,7 @@ import org.springframework.stereotype.Component;
 @Order(1)
 public class SearchAasRegistryFeature implements AasRegistryStorageFeature {
     public final static String FEATURENAME = "basyx.aasregistry.feature.search";
+    public static final String DEFAULT_INDEX = "aas-descr-index";
     private final ElasticsearchClient esclient;
 
     public SearchAasRegistryFeature(ElasticsearchClient esclient) {
@@ -56,9 +57,12 @@ public class SearchAasRegistryFeature implements AasRegistryStorageFeature {
     @Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
     private boolean enabled;
 
+    @Value("${" + FEATURENAME + ".indexname:" + DEFAULT_INDEX + "}")
+    private String indexName;
+
     @Override
     public AasRegistryStorage decorate(AasRegistryStorage aasRegistryStorage) {
-       return new SearchAasRegistryStorage(aasRegistryStorage, esclient);
+       return new SearchAasRegistryStorage(aasRegistryStorage, esclient, indexName);
     }
 
     @Override

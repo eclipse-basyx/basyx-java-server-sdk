@@ -40,6 +40,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.AASQuery;
 import org.eclipse.digitaltwin.basyx.querycore.query.QueryResponse;
 import org.springframework.http.ResponseEntity;
@@ -75,7 +76,7 @@ public interface SearchAasRegistryHTTPApi {
             method = RequestMethod.POST)
     ResponseEntity<QueryResponse> queryAssetAdministrationShellDescriptors(@Min(1)@Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array" ,schema=@Schema(allowableValues={ "1" }, minimum="1"
                                                                                                            )) @Valid @RequestParam(value = "limit", required = false) Integer limit
-            , @Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue" ,schema=@Schema()) @Valid @RequestParam(value = "cursor", required = false) String cursor
+            , @Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue" ,schema=@Schema()) @Valid @RequestParam(value = "cursor", required = false) Base64UrlEncodedCursor cursor
             , @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody AASQuery body
     );
 }

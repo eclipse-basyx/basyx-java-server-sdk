@@ -67,6 +67,11 @@
 			<artifactId>basyx.aasregistry-service-basetests</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>co.elastic.clients</groupId>
+			<artifactId>elasticsearch-java</artifactId>
+			<version>9.0.1</version>
+		</dependency>
 	</dependencies>
 
 </project>

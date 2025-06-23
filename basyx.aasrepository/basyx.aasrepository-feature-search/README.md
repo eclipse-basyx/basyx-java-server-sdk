@@ -57,7 +57,7 @@
 * [x] In Registries, add ES feature to release POMs (only for the variants with MongoDB!)
 * [x] Fix error: When comparing fields -> first check with a bool.must if the fields are there. (See ChatGPT Chat -> Ask Claude)
 * [x] Pagination
-* [ ] Empty elements should not be included (empty arrays)
+* [x] Empty elements should not be included (empty arrays)
 * [ ] Unit Tests
 * [ ] Integration Tests
-* [ ] Configurable Index Names
+* [x] Configurable Index Names

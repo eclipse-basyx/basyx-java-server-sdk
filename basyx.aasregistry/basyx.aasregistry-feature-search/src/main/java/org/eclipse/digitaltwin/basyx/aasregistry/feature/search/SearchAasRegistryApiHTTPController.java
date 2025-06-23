@@ -32,14 +32,17 @@ import co.elastic.clients.elasticsearch.esql.ElasticsearchEsqlClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
+import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.AASQuery;
 import org.eclipse.digitaltwin.basyx.querycore.query.QueryPaging;
 import org.eclipse.digitaltwin.basyx.querycore.query.QueryResponse;
 import org.eclipse.digitaltwin.basyx.querycore.query.QueryResult;
 import org.eclipse.digitaltwin.basyx.querycore.query.converter.ElasticSearchRequestBuilder;
+import org.eclipse.digitaltwin.basyx.querycore.query.executor.ESQueryExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,32 +58,25 @@ public class SearchAasRegistryApiHTTPController implements SearchAasRegistryHTTP
     private static final Logger log = LoggerFactory.getLogger(SearchAasRegistryApiHTTPController.class);
 
     private final ElasticsearchClient esClient;
-    private final ObjectMapper objectMapper;
+
+    @Value("${" + SearchAasRegistryFeature.FEATURENAME + ".indexname:" + SearchAasRegistryFeature.DEFAULT_INDEX + "}")
+    private String indexName;
 
     @Autowired
-    public SearchAasRegistryApiHTTPController(ObjectMapper objectMapper, ElasticsearchClient esClient) {
+    public SearchAasRegistryApiHTTPController(ElasticsearchClient esClient) {
         this.esClient = esClient;
-        this.objectMapper = objectMapper;
     }
 
-    public ResponseEntity<QueryResponse> queryAssetAdministrationShellDescriptors(Integer limit, String cursor, AASQuery query) {
-        ElasticSearchRequestBuilder builder = new ElasticSearchRequestBuilder();
-        SearchRequest searchRequest = builder.buildSearchRequest(query, SearchAasRegistryStorage.ES_INDEX);
+    public ResponseEntity<QueryResponse> queryAssetAdministrationShellDescriptors(Integer limit, Base64UrlEncodedCursor cursor, AASQuery query) {
+        QueryResponse queryResponse;
         try {
-            SearchResponse<Object> response = esClient.search(searchRequest, Object.class);
-            List<Hit<Object>> hits = response.hits().hits();
-            List<AssetAdministrationShellDescriptor> descriptors = hits.stream()
-                    .map(hit -> objectMapper.convertValue(hit.source(), AssetAdministrationShellDescriptor.class))
-                    .collect(Collectors.toList());
-
-            QueryPaging queryPaging = new QueryPaging("not implemented", "AssetAdministrationShellDescriptors");
-            QueryResult<AssetAdministrationShellDescriptor> queryResult = new QueryResult<AssetAdministrationShellDescriptor>(descriptors);
-            QueryResponse queryResponse = new QueryResponse(queryPaging, queryResult);
-            return ResponseEntity.ok(queryResponse);
+            ESQueryExecutor executor = new ESQueryExecutor(esClient, indexName, "AssetAdministrationShellDescriptor");
+            queryResponse = executor.executeQueryAndGetResponse(query, limit, cursor);
         } catch (IOException e) {
-            log.error("Error executing search request", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new RuntimeException(e);
         }
+
+        return new ResponseEntity<>(queryResponse, HttpStatus.OK);
     }
 
 }

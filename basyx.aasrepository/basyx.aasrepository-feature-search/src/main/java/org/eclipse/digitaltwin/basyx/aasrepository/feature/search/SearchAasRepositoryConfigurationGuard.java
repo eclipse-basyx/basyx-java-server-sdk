@@ -29,6 +29,9 @@ public class SearchAasRepositoryConfigurationGuard implements InitializingBean {
     @Value("${basyx.backend:#{null}}")
     private String basyxBackend;
 
+    @Value("${" + SearchAasRepositoryFeature.FEATURENAME + ".indexname:" + SearchAasRepositoryFeature.DEFAULT_INDEX + "}")
+    private String indexName;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         boolean error = false;
@@ -60,6 +63,13 @@ public class SearchAasRepositoryConfigurationGuard implements InitializingBean {
             error = true;
         } else {
             logger.info("BaSyx Backend: " + basyxBackend);
+        }
+
+        if (indexName == null || indexName.isEmpty()) {
+            logger.error("Index name is not configured. Please set the property '" + SearchAasRepositoryFeature.FEATURENAME + ".indexname'.");
+            error = true;
+        } else {
+            logger.info("Index Name: " + indexName);
         }
 
         logger.info(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
