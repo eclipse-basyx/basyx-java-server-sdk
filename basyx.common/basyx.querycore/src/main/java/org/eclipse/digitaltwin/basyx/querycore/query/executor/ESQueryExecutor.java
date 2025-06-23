@@ -18,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ESQueryExecutor<T> {
+public class ESQueryExecutor {
 
     private final String indexName;
     private final String modelName;
@@ -31,7 +31,7 @@ public class ESQueryExecutor<T> {
         this.client = client;
     }
 
-    public QueryResponse<T> executeQueryAndGetResponse(AASQuery query, Integer limit, Base64UrlEncodedCursor cursor) throws IOException {
+    public QueryResponse executeQueryAndGetResponse(AASQuery query, Integer limit, Base64UrlEncodedCursor cursor) throws IOException {
         ElasticSearchRequestBuilder builder = new ElasticSearchRequestBuilder();
         SearchRequest baseSearchRequest = builder.buildSearchRequest(query, indexName);
 
@@ -57,7 +57,7 @@ public class ESQueryExecutor<T> {
 
         String nextCursor = getNextCursor(hasMore, pageHits);
 
-        QueryResponse<T> queryResponse = getQueryResponse(query, objectHits, nextCursor);
+        QueryResponse queryResponse = getQueryResponse(query, objectHits, nextCursor);
         return queryResponse;
     }
 
