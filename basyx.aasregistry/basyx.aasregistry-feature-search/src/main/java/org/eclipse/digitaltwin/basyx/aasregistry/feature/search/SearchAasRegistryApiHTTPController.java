@@ -63,7 +63,7 @@ public class SearchAasRegistryApiHTTPController implements SearchAasRegistryHTTP
         this.objectMapper = objectMapper;
     }
 
-    public ResponseEntity<QueryResponse> queryAssetAdministrationShellDescriptors(Integer limit, String cursor, AASQuery query) {
+    public ResponseEntity<QueryResponse<AssetAdministrationShellDescriptor>> queryAssetAdministrationShellDescriptors(Integer limit, String cursor, AASQuery query) {
         ElasticSearchRequestBuilder builder = new ElasticSearchRequestBuilder();
         SearchRequest searchRequest = builder.buildSearchRequest(query, SearchAasRegistryStorage.ES_INDEX);
         try {
@@ -75,7 +75,7 @@ public class SearchAasRegistryApiHTTPController implements SearchAasRegistryHTTP
 
             QueryPaging queryPaging = new QueryPaging("not implemented", "AssetAdministrationShellDescriptors");
             QueryResult<AssetAdministrationShellDescriptor> queryResult = new QueryResult<AssetAdministrationShellDescriptor>(descriptors);
-            QueryResponse queryResponse = new QueryResponse(queryPaging, queryResult);
+            QueryResponse<AssetAdministrationShellDescriptor> queryResponse = new QueryResponse<>(queryPaging, queryResult);
             return ResponseEntity.ok(queryResponse);
         } catch (IOException e) {
             log.error("Error executing search request", e);

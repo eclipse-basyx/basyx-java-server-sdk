@@ -2,10 +2,10 @@ package org.eclipse.digitaltwin.basyx.querycore.query;
 
 import java.util.List;
 
-public class QueryResult {
-    public List<Object> result;
+public class QueryResult<T> {
+    public List<T> result;
 
-    public QueryResult(List result) {
+    public QueryResult(List<T> result) {
         this.result = result;
     }
 

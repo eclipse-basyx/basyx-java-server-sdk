@@ -31,6 +31,7 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.AASQuery;
 import org.eclipse.digitaltwin.basyx.querycore.query.QueryPaging;
@@ -65,16 +66,16 @@ public class SearchAasRepositoryApiHTTPController implements SearchAasRepository
 	}
 
 	@Override
-	public ResponseEntity<QueryResponse> queryAssetAdministrationShells(AASQuery query, Integer limit, Base64UrlEncodedCursor cursor) {
-        QueryResponse queryResponse = null;
+	public ResponseEntity<QueryResponse<AssetAdministrationShell>> queryAssetAdministrationShells(AASQuery query, Integer limit, Base64UrlEncodedCursor cursor) {
+        QueryResponse<AssetAdministrationShell> queryResponse = null;
         try {
-			ESQueryExecutor executor = new ESQueryExecutor(client, "aas-index", "AssetAdministrationShell");
+			ESQueryExecutor<AssetAdministrationShell> executor = new ESQueryExecutor<>(client, "aas-index", "AssetAdministrationShell");
             queryResponse = executor.executeQueryAndGetResponse(query, limit, cursor);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return new ResponseEntity<QueryResponse>(queryResponse, HttpStatus.OK);
+        return new ResponseEntity<QueryResponse<AssetAdministrationShell>>(queryResponse, HttpStatus.OK);
 	}
 
 }

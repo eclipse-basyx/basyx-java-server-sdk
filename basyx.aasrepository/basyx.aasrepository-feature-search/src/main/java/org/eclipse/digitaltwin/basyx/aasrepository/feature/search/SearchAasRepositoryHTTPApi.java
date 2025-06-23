@@ -33,6 +33,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Result;
 import org.eclipse.digitaltwin.basyx.querycore.query.AASQuery;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
@@ -70,7 +71,7 @@ public interface SearchAasRepositoryHTTPApi {
 			consumes = { "application/json" },
 			method = RequestMethod.POST
 	)
-	ResponseEntity<QueryResponse> queryAssetAdministrationShells(
+	ResponseEntity<QueryResponse<AssetAdministrationShell>> queryAssetAdministrationShells(
 			@Parameter(
 					description = "Query object",
 					required = true,
