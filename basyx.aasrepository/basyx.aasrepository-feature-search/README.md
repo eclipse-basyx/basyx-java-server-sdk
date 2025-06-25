@@ -59,7 +59,8 @@
 * [x] Pagination
 * [x] Empty elements should not be included (empty arrays)
 * [x] Configurable Index Names
-* [ ] Unit Tests
+* [x] Implement Casting Operators
+* [x] Unit Test
+* [ ] !Priority! Duplicate search module for the missing components 
 * [ ] Integration Tests
-* [ ] Duplicate search module for the missing components
-* [ ] Implement Casting Operators 
+* [ ] Validate Expected Queries (unformatted ones) -> Depends on other components to utilize the AASQL

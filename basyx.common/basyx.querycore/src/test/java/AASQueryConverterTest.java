@@ -42,11 +42,16 @@ import java.util.Map;
 public class AASQueryConverterTest {
 
     Map<String, String> queries = new HashMap<>() {{
-//        put("eq_field_field.json", "expected_eq_field_field.json");
-//        put("eq_field_strval.json", "expected_eq_field_strval.json");
-        put("gt_field_numval.json", "expected_eq_field_strval.json");
-//        put("contains_field_strval.json", "expected_contains_field_strval.json");
-//        put("le_field_numVal.json", "expected_eq_field_strval.json");
+        put("and_eq_eq_lt_field_strval.json", "expected_and_eq_eq_lt_field_strval.json");
+        put("contains_field_strval.json", "expected_contains_field_strval.json");
+        put("eq_field_field.json", "expected_eq_field_field.json");
+        put("eq_field_strval.json", "expected_eq_field_strval.json");
+        put("gt_field_numcast_field_numcast.json", "expected_gt_field_numcast_field_numcast.json");
+        put("le_field_field.json", "expected_le_field_field.json");
+        put("le_field_numVal.json", "expected_le_field_numVal.json");
+        put("match_eq_eq_field_strval.json", "expected_match_eq_eq_field_strval.json");
+        put("match_specific_asset_ids.json", "expected_match_specific_asset_ids.json");
+        put("regex_field_strval.json", "expected_regex_field_strval.json");
     }};
 
     @Test

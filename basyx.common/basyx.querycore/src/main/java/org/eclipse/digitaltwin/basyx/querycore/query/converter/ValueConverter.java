@@ -82,7 +82,15 @@ public class ValueConverter {
         
         // Field-to-field comparison
         if (leftField != null && rightField != null) {
-            return createFieldToFieldComparison(leftField, rightField, operator);
+            // Check if either value involves casting operations
+            String leftCastType = detectCastType(leftValue);
+            String rightCastType = detectCastType(rightValue);
+            
+            if (leftCastType != null || rightCastType != null) {
+                return createFieldToFieldCastComparison(leftField, rightField, leftCastType, rightCastType, operator);
+            } else {
+                return createFieldToFieldComparison(leftField, rightField, operator);
+            }
         }
         
         // Field-to-value comparison (existing logic)
@@ -149,6 +157,9 @@ public class ValueConverter {
                         .build()._toQuery();
 
                 case "regex":
+                    if (value.startsWith("^") && value.endsWith("$")) {
+                        value = value.substring(1, value.length() - 1);
+                    }
                     return QueryBuilders.regexp()
                         .field(fieldName)
                         .value(value)
@@ -493,5 +504,115 @@ public class ValueConverter {
         return value.replace("\\", "\\\\")
                    .replace("*", "\\*")
                    .replace("?", "\\?");
+    }
+    
+    /**
+     * Detects the cast type of a Value object (str, num, bool, hex, date, time)
+     */
+    private String detectCastType(Value value) {
+        if (value == null) return null;
+        
+        if (value.get$strCast() != null) {
+            return "str";
+        }
+        if (value.get$numCast() != null) {
+            return "num";
+        }
+        if (value.get$boolCast() != null) {
+            return "bool";
+        }
+        if (value.get$hexCast() != null) {
+            return "hex";
+        }
+        if (value.get$dateTimeCast() != null) {
+            return "date";
+        }
+        if (value.get$timeCast() != null) {
+            return "time";
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Creates field-to-field comparison with type casting using ElasticSearch script queries
+     */
+    private Query createFieldToFieldCastComparison(String leftField, String rightField, String leftCastType, String rightCastType, String operator) {
+        String scriptSource;
+
+        String scriptLeftField = leftField;
+        String scriptRightField = rightField;
+
+        if (!leftField.endsWith(".keyword")) {
+            scriptLeftField += ".keyword";
+        }
+        if (!rightField.endsWith(".keyword")) {
+            scriptRightField += ".keyword";
+        }
+
+        // Generate Painless script for type casting
+        String leftCastScript = generateCastScript("doc['" + scriptLeftField + "'].value", leftCastType);
+        String rightCastScript = generateCastScript("doc['" + scriptRightField + "'].value", rightCastType);
+
+        switch (operator) {
+            case "eq":
+                scriptSource = String.format("%s == %s", leftCastScript, rightCastScript);
+                break;
+            case "ne":
+                scriptSource = String.format("%s != %s", leftCastScript, rightCastScript);
+                break;
+            case "gt":
+                scriptSource = String.format("%s > %s", leftCastScript, rightCastScript);
+                break;
+            case "gte":
+                scriptSource = String.format("%s >= %s", leftCastScript, rightCastScript);
+                break;
+            case "lt":
+                scriptSource = String.format("%s < %s", leftCastScript, rightCastScript);
+                break;
+            case "lte":
+                scriptSource = String.format("%s <= %s", leftCastScript, rightCastScript);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported field-to-field operator: " + operator);
+        }
+        
+        return QueryBuilders.bool(b -> b
+            .must(QueryBuilders.exists(e -> e.field(leftField)))
+            .must(QueryBuilders.exists(e -> e.field(rightField)))
+            .must(QueryBuilders.script(s -> s
+                .script(script -> script
+                    .source(source -> source.scriptString(scriptSource))
+                    .lang("painless")
+                )
+            ))
+        );
+    }
+    
+    /**
+     * Generates Painless script for type casting
+     */
+    private String generateCastScript(String fieldExpression, String castType) {
+        if (castType == null) {
+            return fieldExpression; // No casting
+        }
+        
+        switch (castType) {
+            case "str":
+                return fieldExpression + ".toString()";
+            case "num":
+                return String.format("Double.parseDouble(%s.toString())", fieldExpression);
+            case "bool":
+                return String.format("Boolean.parseBoolean(%s.toString())", fieldExpression);
+            case "hex":
+                // For hex values like "16#ABC", extract the hex part and convert to number
+                return String.format("Integer.parseInt(%s.toString().substring(3), 16)", fieldExpression);
+            case "date":
+            case "time":
+                // For date/time, return as string representation
+                return fieldExpression + ".toString()";
+            default:
+                return fieldExpression; // No casting applied
+        }
     }
 }

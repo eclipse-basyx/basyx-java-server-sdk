@@ -1,0 +1,1 @@
+{"bool":{"must":[{"bool":{"must":[{"term":{"idShort.keyword":{"value":"TechnicalData"}}},{"term":{"value.keyword":{"value":"27-37-09-05"}}}]}},{"bool":{"must":[{"term":{"idShort.keyword":{"value":"TechnicalData"}}},{"term":{"semanticId":{"value":"0173-1#02-BAF016#006"}}},{"range":{"value.keyword":{"lt":100.0}}}]}}]}}
