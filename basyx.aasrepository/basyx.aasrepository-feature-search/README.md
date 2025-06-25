@@ -58,6 +58,8 @@
 * [x] Fix error: When comparing fields -> first check with a bool.must if the fields are there. (See ChatGPT Chat -> Ask Claude)
 * [x] Pagination
 * [x] Empty elements should not be included (empty arrays)
+* [x] Configurable Index Names
 * [ ] Unit Tests
 * [ ] Integration Tests
-* [x] Configurable Index Names
+* [ ] Duplicate search module for the missing components
+* [ ] Implement Casting Operators 

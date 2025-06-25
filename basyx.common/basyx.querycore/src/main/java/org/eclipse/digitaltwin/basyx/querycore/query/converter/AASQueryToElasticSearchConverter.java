@@ -1,17 +1,17 @@
 package org.eclipse.digitaltwin.basyx.querycore.query.converter;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
-import org.eclipse.digitaltwin.basyx.querycore.query.AASQuery;
-import org.eclipse.digitaltwin.basyx.querycore.query.LogicalExpression;
+import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
+import org.eclipse.digitaltwin.basyx.querycore.query.model.LogicalExpression;
 
 /**
  * Converts custom Query objects to ElasticSearch QueryDSL Query objects for ElasticSearch 9.0.1
  */
-public class QueryToElasticSearchConverter {
+public class AASQueryToElasticSearchConverter {
     
     private final LogicalExpressionConverter logicalExpressionConverter;
     
-    public QueryToElasticSearchConverter() {
+    public AASQueryToElasticSearchConverter() {
         this.logicalExpressionConverter = new LogicalExpressionConverter();
     }
     

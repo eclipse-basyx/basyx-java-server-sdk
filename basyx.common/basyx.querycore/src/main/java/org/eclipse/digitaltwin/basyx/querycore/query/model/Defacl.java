@@ -1,5 +1,5 @@
 
-package org.eclipse.digitaltwin.basyx.querycore.query;
+package org.eclipse.digitaltwin.basyx.querycore.query.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

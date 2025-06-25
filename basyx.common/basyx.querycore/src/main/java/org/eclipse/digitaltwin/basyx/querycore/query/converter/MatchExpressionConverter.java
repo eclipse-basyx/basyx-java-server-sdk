@@ -3,7 +3,7 @@ package org.eclipse.digitaltwin.basyx.querycore.query.converter;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
-import org.eclipse.digitaltwin.basyx.querycore.query.MatchExpression;
+import org.eclipse.digitaltwin.basyx.querycore.query.model.MatchExpression;
 
 import java.util.List;
 

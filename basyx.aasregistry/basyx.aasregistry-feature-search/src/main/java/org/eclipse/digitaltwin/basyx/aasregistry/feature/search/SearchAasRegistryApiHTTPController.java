@@ -25,19 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.feature.search;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch.core.SearchRequest;
-import co.elastic.clients.elasticsearch.core.SearchResponse;
-import co.elastic.clients.elasticsearch.core.search.Hit;
-import co.elastic.clients.elasticsearch.esql.ElasticsearchEsqlClient;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
-import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
-import org.eclipse.digitaltwin.basyx.querycore.query.AASQuery;
-import org.eclipse.digitaltwin.basyx.querycore.query.QueryPaging;
-import org.eclipse.digitaltwin.basyx.querycore.query.QueryResponse;
-import org.eclipse.digitaltwin.basyx.querycore.query.QueryResult;
-import org.eclipse.digitaltwin.basyx.querycore.query.converter.ElasticSearchRequestBuilder;
+import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
+import org.eclipse.digitaltwin.basyx.querycore.query.model.QueryResponse;
 import org.eclipse.digitaltwin.basyx.querycore.query.executor.ESQueryExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +38,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2025-06-18T09:42:17.580283867Z[GMT]")
 @RestController

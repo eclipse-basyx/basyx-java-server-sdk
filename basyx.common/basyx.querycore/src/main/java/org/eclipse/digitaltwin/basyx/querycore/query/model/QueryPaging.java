@@ -1,4 +1,4 @@
-package org.eclipse.digitaltwin.basyx.querycore.query;
+package org.eclipse.digitaltwin.basyx.querycore.query.model;
 
 public class QueryPaging {
     public String cursor;

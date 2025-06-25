@@ -7,10 +7,10 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
-import org.eclipse.digitaltwin.basyx.querycore.query.AASQuery;
-import org.eclipse.digitaltwin.basyx.querycore.query.QueryPaging;
-import org.eclipse.digitaltwin.basyx.querycore.query.QueryResponse;
-import org.eclipse.digitaltwin.basyx.querycore.query.QueryResult;
+import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
+import org.eclipse.digitaltwin.basyx.querycore.query.model.QueryPaging;
+import org.eclipse.digitaltwin.basyx.querycore.query.model.QueryResponse;
+import org.eclipse.digitaltwin.basyx.querycore.query.model.QueryResult;
 import org.eclipse.digitaltwin.basyx.querycore.query.converter.ElasticSearchRequestBuilder;
 
 import java.io.IOException;

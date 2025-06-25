@@ -1,5 +1,5 @@
 
-package org.eclipse.digitaltwin.basyx.querycore.query;
+package org.eclipse.digitaltwin.basyx.querycore.query.model;
 
 import java.util.ArrayList;
 import java.util.List;
