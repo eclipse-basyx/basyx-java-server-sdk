@@ -1147,18 +1147,20 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		 *            IdShort path to the submodel element (dot-separated) (required)
 		 * @param fileName
 		 *            (optional)
+		 * @param contentType
+		 *            content type of the file (optional)
 		 * @param inputStream
 		 *            (optional)
 		 * @throws ApiException
 		 *             if fails to make API call
 		 */
-		public void putFileByPath(String idShortPath, String fileName, InputStream inputStream) throws ApiException {
-			putFileByPathApiResponse(idShortPath, fileName, inputStream);
+		public void putFileByPath(String idShortPath, String fileName, String contentType, InputStream inputStream) throws ApiException {
+			putFileByPathApiResponse(idShortPath, fileName, contentType, inputStream);
 		}
 
-		private ApiResponse<Void> putFileByPathApiResponse(String idShortPath, String fileName, InputStream inputStream) throws ApiException {
+		private ApiResponse<Void> putFileByPathApiResponse(String idShortPath, String fileName, String contentType, InputStream inputStream) throws ApiException {
 			try {
-				HttpRequest.Builder localVarRequestBuilder = putFileByPathRequestBuilder(idShortPath, fileName, inputStream);
+				HttpRequest.Builder localVarRequestBuilder = putFileByPathRequestBuilder(idShortPath, fileName, contentType, inputStream);
 				HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
 						HttpResponse.BodyHandlers.ofString());
 				try {
@@ -1176,7 +1178,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			}
 		}
 
-		private HttpRequest.Builder putFileByPathRequestBuilder(String idShortPath, String fileName, InputStream inputStream) throws ApiException, IOException {
+		private HttpRequest.Builder putFileByPathRequestBuilder(String idShortPath, String fileName, String contentType, InputStream inputStream) throws ApiException, IOException {
 			if (idShortPath == null) {
 				throw new ApiException(400, "Missing the required parameter 'idShortPath' when calling putFileByPath");
 			}
@@ -1194,7 +1196,8 @@ public SubmodelServiceApi(ApiClient apiClient) {
 
 			var multiPartBuilder = MultipartEntityBuilder.create();
 			multiPartBuilder.addTextBody("fileName", fileName);
-			multiPartBuilder.addBinaryBody("file", inputStream, ContentType.DEFAULT_BINARY, fileName);
+			ContentType fileContentType = contentType != null ? ContentType.parse(contentType) : ContentType.DEFAULT_BINARY;
+			multiPartBuilder.addBinaryBody("file", inputStream, fileContentType, fileName);
 
 			var entity = multiPartBuilder.build();
 			HttpRequest.BodyPublisher formDataPublisher;

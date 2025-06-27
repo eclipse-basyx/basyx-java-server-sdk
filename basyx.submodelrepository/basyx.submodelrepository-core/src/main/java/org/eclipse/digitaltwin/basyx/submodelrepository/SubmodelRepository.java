@@ -252,11 +252,17 @@ public interface SubmodelRepository {
 	 *            the Submodel id
 	 * @param idShortPath
 	 *            the IdShort path of the file element
+	 * @param fileName
+	 *            the file name
+	 * @param contentType
+	 *            the content type of the file
+	 * @param inputStream
+	 *            the inputStream of the file to be uploaded
 	 * 
 	 * @throws ElementDoesNotExistException
 	 * @throws ElementNotAFileException
 	 */
-	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException;
+	public void setFileValue(String submodelId, String idShortPath, String fileName, String contentType, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException;
 
 	/**
 	 * Deletes the file of a file submodelelement
