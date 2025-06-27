@@ -180,9 +180,9 @@ public class ConnectedSubmodelService implements SubmodelService {
 	}
 
 	@Override
-	public void setFileValue(String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
+	public void setFileValue(String idShortPath, String fileName, String contentType, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
 		try {
-			serviceApi.putFileByPath(idShortPath, fileName, inputStream);
+			serviceApi.putFileByPath(idShortPath, fileName, contentType, inputStream);
 		} catch (ApiException e) {
 			throw mapExceptionFileAccess(idShortPath, e);
 		}

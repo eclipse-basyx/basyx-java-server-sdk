@@ -179,10 +179,10 @@ public class AuthorizedSubmodelService implements SubmodelService {
 	}
 	
 	@Override
-	public void setFileValue(String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
+	public void setFileValue(String idShortPath, String fileName, String contentType, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(List.of(smId), List.of(idShortPath)));
 		throwExceptionIfInsufficientPermission(isAuthorized);
-		decorated.setFileValue(idShortPath, fileName, inputStream);
+		decorated.setFileValue(idShortPath, fileName, contentType, inputStream);
 	}
 
 	private void throwExceptionIfInsufficientSubmodelAccess() {

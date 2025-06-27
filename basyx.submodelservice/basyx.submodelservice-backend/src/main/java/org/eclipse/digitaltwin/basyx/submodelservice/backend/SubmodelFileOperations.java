@@ -68,7 +68,7 @@ public class SubmodelFileOperations  {
 		return createFile(filePath, fileContent);
 	}
 
-	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
+	public void setFileValue(String submodelId, String idShortPath, String fileName, String contentType, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
         SubmodelElement submodelElement = submodelOperations.getSubmodelElement(submodelId, idShortPath);
 
         throwIfSmElementIsNotAFile(submodelElement);
@@ -80,14 +80,14 @@ public class SubmodelFileOperations  {
 
         String uniqueFileName = createUniqueFileName(submodelId, idShortPath, fileName);
 
-        FileMetadata fileMetadata = new FileMetadata(uniqueFileName, fileSmElement.getContentType(), inputStream);
+        FileMetadata fileMetadata = new FileMetadata(uniqueFileName, contentType, inputStream);
 
         if (fileRepository.exists(fileMetadata.getFileName()))
             fileRepository.delete(fileMetadata.getFileName());
 
         String filePath = fileRepository.save(fileMetadata);
 
-        FileBlobValue fileValue = new FileBlobValue(fileSmElement.getContentType(), filePath);
+        FileBlobValue fileValue = new FileBlobValue(contentType, filePath);
 
         submodelOperations.setSubmodelElementValue(submodelId, idShortPath, fileValue);
 	}

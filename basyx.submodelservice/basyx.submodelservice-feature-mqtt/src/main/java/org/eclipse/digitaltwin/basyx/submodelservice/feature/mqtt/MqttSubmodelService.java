@@ -140,8 +140,8 @@ public class MqttSubmodelService implements SubmodelService {
 	}
 
 	@Override
-	public void setFileValue(String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
-		decorated.setFileValue(idShortPath, fileName, inputStream);
+	public void setFileValue(String idShortPath, String fileName, String contentType, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
+		decorated.setFileValue(idShortPath, fileName, contentType, inputStream);
 	}
 
 	@Override

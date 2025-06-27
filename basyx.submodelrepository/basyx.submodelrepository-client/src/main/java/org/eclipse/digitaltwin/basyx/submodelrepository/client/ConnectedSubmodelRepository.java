@@ -235,8 +235,8 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
-	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
-		getConnectedSubmodelService(submodelId).setFileValue(idShortPath, fileName, inputStream);
+	public void setFileValue(String submodelId, String idShortPath, String fileName, String contentType, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
+		getConnectedSubmodelService(submodelId).setFileValue(idShortPath, fileName, contentType, inputStream);
 	}
 
 	@Override

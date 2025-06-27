@@ -208,8 +208,8 @@ public class CrudSubmodelService implements SubmodelService {
     }
 
     @Override
-    public void setFileValue(String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
-        submodelFileOperations.setFileValue(submodelId, idShortPath, fileName, inputStream);
+    public void setFileValue(String idShortPath, String fileName, String contentType, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
+        submodelFileOperations.setFileValue(submodelId, idShortPath, fileName, contentType, inputStream);
     }
 
     @Override
