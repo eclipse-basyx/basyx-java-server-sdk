@@ -104,6 +104,9 @@ public class InMemoryAasBackend extends InMemoryCrudRepository<AssetAdministrati
 		List<AssetAdministrationShell> filteredAas = new java.util.ArrayList<>();
 		String globalAssetId = null;
 		try {
+			if(assetIds.stream().filter(assetId -> assetId.getName().equals("globalAssetId")).count() > 1){
+				return filteredAas;
+			}
 			globalAssetId = assetIds.stream().filter(assetId -> assetId.getName().equals("globalAssetId")).findFirst().get().getValue();
 			assetIds = assetIds.stream().filter(assetId -> !assetId.getName().equals("globalAssetId")).collect(Collectors.toList());
 		} catch (Exception e) {}
