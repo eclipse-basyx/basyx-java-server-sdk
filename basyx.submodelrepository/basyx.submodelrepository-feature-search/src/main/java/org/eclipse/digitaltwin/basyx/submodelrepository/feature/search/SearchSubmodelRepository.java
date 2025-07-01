@@ -30,6 +30,7 @@ import co.elastic.clients.elasticsearch._types.mapping.Property;
 import co.elastic.clients.elasticsearch._types.mapping.TypeMapping;
 import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
 import co.elastic.clients.elasticsearch.indices.ExistsRequest;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.basyx.core.exceptions.*;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
@@ -43,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.List;
 
 public class SearchSubmodelRepository implements SubmodelRepository {
@@ -154,7 +156,7 @@ public class SearchSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public File getFileByPathSubmodel(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
-		return getFileByPathSubmodel(submodelId, idShortPath);
+		return decorated.getFileByPathSubmodel(submodelId, idShortPath);
 	}
 
 	@Override
@@ -182,10 +184,11 @@ public class SearchSubmodelRepository implements SubmodelRepository {
 
 	private void indexSM(Submodel submodel) {
 		try {
+			JsonNode normalizedSubmodel = IndexNormalizer.toIndexable(submodel);
 			esclient.create(
 					c -> c.index(indexName)
 							.id(submodel.getId())
-							.document(submodel)
+							.document(normalizedSubmodel)
 			);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -194,11 +197,12 @@ public class SearchSubmodelRepository implements SubmodelRepository {
 
 	private void updateSMIndex(Submodel submodel) {
 		try {
+			JsonNode normalizedSubmodel = IndexNormalizer.toIndexable(submodel);
 			esclient.update(
 					u -> u.index(indexName)
 							.id(submodel.getId())
-							.doc(submodel),
-					Submodel.class
+							.doc(normalizedSubmodel),
+					JsonNode.class
 			);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -223,56 +227,34 @@ public class SearchSubmodelRepository implements SubmodelRepository {
 	}
 
 	private void ensureIndexExists() {
+		String mappingJson = "{ \"mappings\": {"
+				+ "  \"dynamic_templates\": ["
+				+ "    { \"aas_value_string\": { \"path_match\": \"*.value\", \"match_mapping_type\": \"string\", \"mapping\": { \"type\": \"keyword\" } } },"
+				+ "    { \"aas_value_long\": { \"path_match\": \"*.value\", \"match_mapping_type\": \"long\", \"mapping\": { \"type\": \"long\" } } },"
+				+ "    { \"aas_value_double\": { \"path_match\": \"*.value\", \"match_mapping_type\": \"double\", \"mapping\": { \"type\": \"double\" } } },"
+				+ "    { \"aas_value_boolean\": { \"path_match\": \"*.value\", \"match_mapping_type\": \"boolean\", \"mapping\": { \"type\": \"boolean\" } } },"
+				+ "    { \"aas_children\": { \"path_match\": \"*.children\", \"match_mapping_type\": \"object\", \"mapping\": { \"type\": \"nested\" } } }"
+				+ "  ],"
+				+ "  \"properties\": {"
+				+ "    \"id\": { \"type\": \"keyword\" },"
+				+ "    \"idShort\": { \"type\": \"keyword\" },"
+				+ "    \"description\": { \"type\": \"object\", \"enabled\": true },"
+				+ "    \"displayName\": { \"type\": \"object\", \"enabled\": true },"
+				+ "    \"semanticId\": { \"type\": \"object\", \"enabled\": true },"
+				+ "    \"submodelElements\": { \"type\": \"nested\" },"
+				+ "    \"category\": { \"type\": \"keyword\" },"
+				+ "    \"kind\": { \"type\": \"keyword\" }"
+				+ "  }"
+				+ "} }";
+
 		try {
-			// Check if index exists
 			boolean indexExists = esclient.indices().exists(ExistsRequest.of(e -> e.index(indexName))).value();
-			
 			if (!indexExists) {
-				// Create index with proper mapping
-				CreateIndexRequest createIndexRequest = CreateIndexRequest.of(c -> c
-					.index(indexName)
-					.mappings(TypeMapping.of(m -> m
-						.properties("id", Property.of(p -> p.keyword(k -> k)))
-						.properties("idShort", Property.of(p -> p.text(t -> t)))
-						.properties("description", Property.of(p -> p.object(o -> o
-							.enabled(false)  // Store but don't analyze complex description objects
-						)))
-						.properties("displayName", Property.of(p -> p.object(o -> o
-							.enabled(false)  // Store but don't analyze complex displayName objects
-						)))
-						.properties("semanticId", Property.of(p -> p.object(o -> o
-							.enabled(false)  // Store but don't analyze complex semanticId objects
-						)))
-						.properties("submodelElements", Property.of(p -> p.nested(n -> n
-							.properties("idShort", Property.of(p2 -> p2.text(t2 -> t2)))
-							.properties("modelType", Property.of(p2 -> p2.text(t2 -> t2)))
-							.properties("description", Property.of(p2 -> p2.object(o2 -> o2)))
-							.properties("displayName", Property.of(p2 -> p2.object(o2 -> o2)))
-							.properties("semanticId", Property.of(p2 -> p2.object(o2 -> o2)))
-							.properties("category", Property.of(p2 -> p2.text(t2 -> t2)))
-						)))
-						.properties("qualifiers", Property.of(p -> p.object(o -> o
-							.enabled(false)  // Store but don't analyze complex qualifiers
-						)))
-						.properties("extensions", Property.of(p -> p.object(o -> o
-							.enabled(false)  // Store but don't analyze complex extensions
-						)))
-						.properties("supplementalSemanticIds", Property.of(p -> p.object(o -> o
-							.enabled(false)  // Store but don't analyze complex supplementalSemanticIds
-						)))
-						.properties("embeddedDataSpecifications", Property.of(p -> p.object(o -> o
-							.enabled(false)  // Store but don't analyze complex embeddedDataSpecifications
-						)))
-						.properties("administration", Property.of(p -> p.object(o -> o
-							.enabled(false)  // Store but don't analyze complex administration objects
-						)))
-						.properties("category", Property.of(p -> p.text(t -> t)))
-						.properties("kind", Property.of(p -> p.keyword(k -> k)))
-					))
-				);
-				
-				esclient.indices().create(createIndexRequest);
-				logger.info("Created Elasticsearch index: {} with proper mappings", indexName);
+				esclient.indices().create(CreateIndexRequest.of(c -> c
+						.index(indexName)
+						.withJson(new StringReader(mappingJson))
+				));
+				logger.info("Created Elasticsearch index: {} with dynamic template mapping", indexName);
 			}
 		} catch (Exception e) {
 			logger.error("Failed to ensure index exists: {}", indexName, e);
