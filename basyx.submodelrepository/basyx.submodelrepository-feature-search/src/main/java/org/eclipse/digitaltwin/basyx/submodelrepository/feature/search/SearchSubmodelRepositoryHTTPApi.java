@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.search;
+package org.eclipse.digitaltwin.basyx.submodelrepository.feature.search;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,23 +34,26 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.eclipse.digitaltwin.aas4j.v3.model.Result;
-import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
+import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.QueryResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-10T15:59:05.892Z[GMT]")
 @Validated
-public interface SearchAasRepositoryHTTPApi {
+public interface SearchSubmodelRepositoryHTTPApi {
 	@Operation(
-			summary = "Returns all Asset Administration Shells that conform to the input query",
-			tags = { "Asset Administration Shell Repository API" },
-			operationId = "queryAssetAdministrationShells"
+			summary = "Returns all Submodels that conform to the input query",
+			tags = { "Submodel Repository API" },
+			operationId = "querySubmodels"
 	)
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Requested Asset Administration Shells",
+			@ApiResponse(responseCode = "200", description = "Requested Submodels",
 					content = @Content(mediaType = "application/json",
 							schema = @Schema(implementation = QueryResponse.class))),
 			@ApiResponse(responseCode = "400", description = "Bad Request",
@@ -65,12 +68,12 @@ public interface SearchAasRepositoryHTTPApi {
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class)))
 	})
 	@RequestMapping(
-			value = "/query/shells",
+			value = "/query/submodels",
 			produces = { "application/json" },
 			consumes = { "application/json" },
 			method = RequestMethod.POST
 	)
-	ResponseEntity<QueryResponse> queryAssetAdministrationShells(
+	ResponseEntity<QueryResponse> querySubmodels(
 			@Parameter(
 					description = "Query object",
 					required = true,
