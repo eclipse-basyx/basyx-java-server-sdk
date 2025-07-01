@@ -25,6 +25,10 @@
 package org.eclipse.digitaltwin.basyx.conceptdescription.feature.search;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.mapping.Property;
+import co.elastic.clients.elasticsearch._types.mapping.TypeMapping;
+import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
+import co.elastic.clients.elasticsearch.indices.ExistsRequest;
 import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -49,6 +53,7 @@ public class SearchCdRepository implements ConceptDescriptionRepository {
 		this.decorated = decorated;
 		this.esclient = esclient;
 		this.indexName = indexName;
+		ensureIndexExists();
 	}
 
 	@Override
@@ -127,6 +132,49 @@ public class SearchCdRepository implements ConceptDescriptionRepository {
 			);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	private void ensureIndexExists() {
+		try {
+			// Check if index exists
+			boolean indexExists = esclient.indices().exists(ExistsRequest.of(e -> e.index(indexName))).value();
+			
+			if (!indexExists) {
+				// Create index with proper mapping
+				CreateIndexRequest createIndexRequest = CreateIndexRequest.of(c -> c
+					.index(indexName)
+					.mappings(TypeMapping.of(m -> m
+						.properties("id", Property.of(p -> p.keyword(k -> k)))
+						.properties("idShort", Property.of(p -> p.text(t -> t)))
+						.properties("description", Property.of(p -> p.object(o -> o
+							.enabled(false)  // Store but don't analyze complex description objects
+						)))
+						.properties("displayName", Property.of(p -> p.object(o -> o
+							.enabled(false)  // Store but don't analyze complex displayName objects
+						)))
+						.properties("isCaseOf", Property.of(p -> p.object(o -> o
+							.enabled(false)  // Store but don't analyze complex reference objects
+						)))
+						.properties("extensions", Property.of(p -> p.object(o -> o
+							.enabled(false)  // Store but don't analyze complex extensions
+						)))
+						.properties("embeddedDataSpecifications", Property.of(p -> p.object(o -> o
+							.enabled(false)  // Store but don't analyze complex embeddedDataSpecifications
+						)))
+						.properties("administration", Property.of(p -> p.object(o -> o
+							.enabled(false)  // Store but don't analyze complex administration objects
+						)))
+						.properties("category", Property.of(p -> p.text(t -> t)))
+					))
+				);
+				
+				esclient.indices().create(createIndexRequest);
+				logger.info("Created Elasticsearch index: {} with proper mappings", indexName);
+			}
+		} catch (Exception e) {
+			logger.error("Failed to ensure index exists: {}", indexName, e);
+			throw new RuntimeException("Failed to initialize Elasticsearch index", e);
 		}
 	}
 

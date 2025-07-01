@@ -25,6 +25,11 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.search;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.mapping.DynamicMapping;
+import co.elastic.clients.elasticsearch._types.mapping.Property;
+import co.elastic.clients.elasticsearch._types.mapping.TypeMapping;
+import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
+import co.elastic.clients.elasticsearch.indices.ExistsRequest;
 import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.basyx.core.exceptions.*;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
@@ -51,6 +56,7 @@ public class SearchSubmodelRepository implements SubmodelRepository {
 		this.decorated = decorated;
 		this.esclient = esclient;
 		this.indexName = indexName;
+		ensureIndexExists();
 	}
 
 	@Override
@@ -214,6 +220,64 @@ public class SearchSubmodelRepository implements SubmodelRepository {
 		Submodel submodel = getSubmodel(smId);
 		deindexSM(smId);
 		indexSM(submodel);
+	}
+
+	private void ensureIndexExists() {
+		try {
+			// Check if index exists
+			boolean indexExists = esclient.indices().exists(ExistsRequest.of(e -> e.index(indexName))).value();
+			
+			if (!indexExists) {
+				// Create index with proper mapping
+				CreateIndexRequest createIndexRequest = CreateIndexRequest.of(c -> c
+					.index(indexName)
+					.mappings(TypeMapping.of(m -> m
+						.properties("id", Property.of(p -> p.keyword(k -> k)))
+						.properties("idShort", Property.of(p -> p.text(t -> t)))
+						.properties("description", Property.of(p -> p.object(o -> o
+							.enabled(false)  // Store but don't analyze complex description objects
+						)))
+						.properties("displayName", Property.of(p -> p.object(o -> o
+							.enabled(false)  // Store but don't analyze complex displayName objects
+						)))
+						.properties("semanticId", Property.of(p -> p.object(o -> o
+							.enabled(false)  // Store but don't analyze complex semanticId objects
+						)))
+						.properties("submodelElements", Property.of(p -> p.nested(n -> n
+							.properties("idShort", Property.of(p2 -> p2.text(t2 -> t2)))
+							.properties("modelType", Property.of(p2 -> p2.text(t2 -> t2)))
+							.properties("description", Property.of(p2 -> p2.object(o2 -> o2)))
+							.properties("displayName", Property.of(p2 -> p2.object(o2 -> o2)))
+							.properties("semanticId", Property.of(p2 -> p2.object(o2 -> o2)))
+							.properties("category", Property.of(p2 -> p2.text(t2 -> t2)))
+						)))
+						.properties("qualifiers", Property.of(p -> p.object(o -> o
+							.enabled(false)  // Store but don't analyze complex qualifiers
+						)))
+						.properties("extensions", Property.of(p -> p.object(o -> o
+							.enabled(false)  // Store but don't analyze complex extensions
+						)))
+						.properties("supplementalSemanticIds", Property.of(p -> p.object(o -> o
+							.enabled(false)  // Store but don't analyze complex supplementalSemanticIds
+						)))
+						.properties("embeddedDataSpecifications", Property.of(p -> p.object(o -> o
+							.enabled(false)  // Store but don't analyze complex embeddedDataSpecifications
+						)))
+						.properties("administration", Property.of(p -> p.object(o -> o
+							.enabled(false)  // Store but don't analyze complex administration objects
+						)))
+						.properties("category", Property.of(p -> p.text(t -> t)))
+						.properties("kind", Property.of(p -> p.keyword(k -> k)))
+					))
+				);
+				
+				esclient.indices().create(createIndexRequest);
+				logger.info("Created Elasticsearch index: {} with proper mappings", indexName);
+			}
+		} catch (Exception e) {
+			logger.error("Failed to ensure index exists: {}", indexName, e);
+			throw new RuntimeException("Failed to initialize Elasticsearch index", e);
+		}
 	}
 
 }

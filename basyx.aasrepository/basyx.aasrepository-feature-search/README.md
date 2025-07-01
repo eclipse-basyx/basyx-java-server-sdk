@@ -61,6 +61,7 @@
 * [x] Configurable Index Names
 * [x] Implement Casting Operators
 * [x] Unit Test
-* [ ] !Priority! Duplicate search module for the missing components 
+* [x] !Priority! Duplicate search module for the missing components 
+* [ ] In SearchSubmodelRepository, ensure that the index does not disable certain fields in ensureIndexExists
 * [ ] Integration Tests
 * [ ] Validate Expected Queries (unformatted ones) -> Depends on other components to utilize the AASQL
