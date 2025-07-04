@@ -30,15 +30,6 @@ After opening the page you will be redirected to the Keycloak login page. Use th
 
 <img width="60%" alt="image" src="images/login.png">
 
-## 📌 Note
-
-> **Important:**  
-> Currently, AAS GUI can only be used by admin account (`john.doe` with password `johndoe`) and not with any user account due to a limitation.
-> This problem will be fixed with this [Pull Request](https://github.com/eclipse-basyx/basyx-java-server-sdk/pull/575)
-> Once this PR is merged then you can login with any user account.
-> For now, please use provided Postman collection to interact with the authorized components with user accounts.
-
-
 ## Security in BaSyx
 
 Detailed documentation of BaSyx Security is available inside Authorization section of each component [here](https://wiki.basyx.org/en/latest/content/user_documentation/basyx_components/v2/index.html)
@@ -140,7 +131,7 @@ Similarly, you can create idShorts using the below TargetInformation class as pe
 |-----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
 | AAS Environment                   | org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization.AasEnvironmentTargetInformation                                  |
 | AAS Repository                    | org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization.AasTargetInformation                                           |
-| Submodel Repository               | org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.SubmodelTargetInformation                                    |
+| Submodel Repository               | org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization.SubmodelTargetInformation                                 |
 | Concept Description Repository    | org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.authorization.ConceptDescriptionTargetInformation                |
 | AAS Registry                      | org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.AasRegistryTargetInformation                                        |
 | Submodel Registry                 | org.eclipse.digitaltwin.basyx.submodelregistry.feature.authorization.SubmodelRegistryTargetInformation                              |
