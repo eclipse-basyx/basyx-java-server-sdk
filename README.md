@@ -46,17 +46,19 @@ The future roadmap of BaSyx is described [here](https://github.com/eclipse-basyx
 We're distributing our SNAPSHOT releases via DockerHub and Maven Central. For using the snapshots from Maven Central, add the following part to your project's POM:
 
 ```
-<repository>
-	<id>sonatype.snapshots</id>
-	<name>Sonatype Snapshot Repository</name>
-	<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-	<releases>
-		<enabled>false</enabled>
-	</releases>
-	<snapshots>
-		<enabled>true</enabled>
-	</snapshots>
-</repository>
+<repositories>
+  <repository>
+    <name>Central Portal Snapshots</name>
+    <id>central-portal-snapshots</id>
+    <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+    <releases>
+      <enabled>false</enabled>
+    </releases>
+    <snapshots>
+      <enabled>true</enabled>
+    </snapshots>
+  </repository>
+</repositories>
 ```
 
 ## Getting Involved & Contributing
