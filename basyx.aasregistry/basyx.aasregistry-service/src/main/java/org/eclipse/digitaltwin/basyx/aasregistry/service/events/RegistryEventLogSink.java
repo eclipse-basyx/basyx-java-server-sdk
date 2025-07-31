@@ -24,6 +24,7 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.events;
 
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.client.internal.AssetAdministrationShellDiscoveryApi;
 import org.slf4j.Marker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,19 +38,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-@Component
+@Component("RegistryEventLogSink")
 @ConditionalOnProperty(prefix = "events", name = "sink", havingValue = "log")
 public class RegistryEventLogSink implements RegistryEventSink {
+
 
 	@Autowired
 	@Qualifier("mappingJackson2HttpMessageConverter")
 	private MappingJackson2HttpMessageConverter converter;
+
+
 
 	@Override
 	public void consumeEvent(RegistryEvent evt) {
 		try {
 			ObjectMapper objectMapper = converter.getObjectMapper();
 			String msg = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(evt);
+			log.debug(msg.toString());
+
+
+			//discoveryApi.postAllAssetLinksById("identifier")
 			log.debug("Event sent -> " + msg);
 		} catch (JsonProcessingException e) {
 			log.error(Marker.ANY_MARKER, "Failed to process json ", e);

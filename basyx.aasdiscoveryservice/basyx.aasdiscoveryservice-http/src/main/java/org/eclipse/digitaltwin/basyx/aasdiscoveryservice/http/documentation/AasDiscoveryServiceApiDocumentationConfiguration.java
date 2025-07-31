@@ -51,5 +51,4 @@ public class AasDiscoveryServiceApiDocumentationConfiguration extends Repository
 				.contact(apiContact())
 				.license(apiLicence());
 	}
-
 }
