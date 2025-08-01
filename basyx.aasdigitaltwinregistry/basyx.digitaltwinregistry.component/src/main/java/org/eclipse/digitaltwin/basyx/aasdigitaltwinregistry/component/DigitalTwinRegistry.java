@@ -15,7 +15,7 @@ import org.springframework.context.annotation.FilterType;
 
 @ComponentScan(
         basePackages = {
-                "org.eclipse.digitaltwin.basyx",
+               "org.eclipse.digitaltwin.basyx",
 //                "org.eclipse.digitaltwin.basyx.aasregistry",
 //                "org.eclipse.digitaltwin.basyx.aasdiscoveryservice"
         },
@@ -46,7 +46,7 @@ import org.springframework.context.annotation.FilterType;
                         type = FilterType.ASSIGNABLE_TYPE,
                         value = AasDiscoveryServiceComponent.class
                 ),
-                //@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.SpringDocConfiguration.class),
+                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.SpringDocConfiguration.class),
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.documentation.AasDiscoveryServiceApiDocumentationConfiguration.class)
         }
 )

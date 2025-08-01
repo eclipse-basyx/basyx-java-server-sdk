@@ -84,6 +84,7 @@ public class ConnectedAasDiscoveryService implements AasDiscoveryService {
     @Override
     public List<SpecificAssetId> createAllAssetLinksById(String shellIdentifier, List<SpecificAssetId> assetIds) {
         try{
+            System.out.println("I am here");
             return discoveryApi.postAllAssetLinksById(shellIdentifier, assetIds);
         } catch (ApiException e) {
             if(e.getCode() == HttpStatus.CONFLICT.value()){

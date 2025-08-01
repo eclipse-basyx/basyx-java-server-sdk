@@ -24,7 +24,11 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.events;
 
+import lombok.AllArgsConstructor;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.client.internal.AssetAdministrationShellDiscoveryApi;
+
 import org.slf4j.Marker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,11 +41,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.log4j.Log4j2;
 
+import java.util.List;
+
 @Log4j2
 @Component("RegistryEventLogSink")
 @ConditionalOnProperty(prefix = "events", name = "sink", havingValue = "log")
 public class RegistryEventLogSink implements RegistryEventSink {
 
+
+
+//	String baseUri = "http://localhost:8080";
+//	AssetAdministrationShellDiscoveryApi apiClient = new AssetAdministrationShellDiscoveryApi(baseUri);
 
 	@Autowired
 	@Qualifier("mappingJackson2HttpMessageConverter")
@@ -54,10 +64,12 @@ public class RegistryEventLogSink implements RegistryEventSink {
 		try {
 			ObjectMapper objectMapper = converter.getObjectMapper();
 			String msg = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(evt);
-			log.debug(msg.toString());
 
+			SpecificAssetId specificAssetId = new DefaultSpecificAssetId();
+			specificAssetId.setName("manufacturerPartId");
+			specificAssetId.setValue("123-345-567103");
 
-			//discoveryApi.postAllAssetLinksById("identifier")
+			//apiClient.postAllAssetLinksById("dXJuOnV1aWQ6ZTVjOTZhYjUtODk2YS0xMjM0LTg3NjEtZWZkNzQ3NzdjYTk3", List.of(specificAssetId) );
 			log.debug("Event sent -> " + msg);
 		} catch (JsonProcessingException e) {
 			log.error(Marker.ANY_MARKER, "Failed to process json ", e);

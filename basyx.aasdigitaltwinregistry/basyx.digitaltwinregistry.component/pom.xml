@@ -21,6 +21,19 @@
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.fasterxml.woodstox</groupId>
+            <artifactId>woodstox-core</artifactId>
+            <version>7.1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>stax2-api</artifactId>
+            <version>4.2.2</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -158,15 +171,8 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.digitaltwin.basyx</groupId>
-            <artifactId>basyx.aasdiscoveryservice-backend-inmemory</artifactId>
-            <version>${revision}</version>
-
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.digitaltwin.basyx</groupId>
             <artifactId>basyx.aasdiscoveryservice-backend-mongodb</artifactId>
             <version>${revision}</version>
-
         </dependency>
         <dependency>
             <groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -187,6 +193,10 @@
         <dependency>
             <groupId>org.eclipse.digitaltwin.aas4j</groupId>
             <artifactId>aas4j-dataformat-aasx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.digitaltwin.aas4j</groupId>
+            <artifactId>aas4j-model</artifactId>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>

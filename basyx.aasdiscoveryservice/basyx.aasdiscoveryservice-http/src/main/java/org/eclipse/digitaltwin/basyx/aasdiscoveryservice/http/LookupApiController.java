@@ -108,7 +108,7 @@ public class LookupApiController implements LookupApi {
     }
 
     public ResponseEntity<List<SpecificAssetId>> postAllAssetLinksById(@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,@Parameter(in = ParameterIn.DEFAULT, description = "A list of specific Asset identifiers", required=true, schema=@Schema()) @Valid @RequestBody List<SpecificAssetId> body) {
-        List<SpecificAssetId> assetIDs = aasDiscoveryService.createAllAssetLinksById(aasIdentifier.getIdentifier(), body);
+		List<SpecificAssetId> assetIDs = aasDiscoveryService.createAllAssetLinksById(aasIdentifier.getIdentifier(), body);
         
         return new ResponseEntity<List<SpecificAssetId>>(assetIDs, HttpStatus.CREATED);
     }

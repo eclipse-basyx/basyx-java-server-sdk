@@ -1,4 +1,7 @@
 basyx:
+    aasdiscoveryservice:
+        mongodb:
+            collectionName: aasregistry
     backend: MongoDB
     cors:
         allowed-methods: GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
@@ -18,7 +21,6 @@ registry:
 server:
     port: 8081
 spring:
-
     main:
         allow-bean-definition-overriding: true
     application:
@@ -40,8 +42,9 @@ description:
 
 logging:
     level:
-        org.eclipse.digitaltwin.basyx: DEBUG
-        org.springframework.security: DEBUG
+        root: TRACE
+        org.eclipse.digitaltwin.basyx: TRACE
+        org.springframework: TRACE
 
 springdoc:
     api-docs:
