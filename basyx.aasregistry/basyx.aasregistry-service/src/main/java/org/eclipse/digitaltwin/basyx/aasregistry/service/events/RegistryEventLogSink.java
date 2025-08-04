@@ -24,10 +24,11 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.events;
 
-import lombok.AllArgsConstructor;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.client.internal.AssetAdministrationShellDiscoveryApi;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.backend.MongoDBCrudAasDiscovery;
+
 
 import org.slf4j.Marker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +51,9 @@ public class RegistryEventLogSink implements RegistryEventSink {
 
 
 
-//	String baseUri = "http://localhost:8080";
-//	AssetAdministrationShellDiscoveryApi apiClient = new AssetAdministrationShellDiscoveryApi(baseUri);
+	@Autowired MongoDBCrudAasDiscovery mongoDBCrudAasDiscovery;
+
+
 
 	@Autowired
 	@Qualifier("mappingJackson2HttpMessageConverter")
@@ -65,11 +67,13 @@ public class RegistryEventLogSink implements RegistryEventSink {
 			ObjectMapper objectMapper = converter.getObjectMapper();
 			String msg = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(evt);
 
+
 			SpecificAssetId specificAssetId = new DefaultSpecificAssetId();
 			specificAssetId.setName("manufacturerPartId");
-			specificAssetId.setValue("123-345-567103");
+			specificAssetId.setValue("123-456-789");
+			log.debug("I am here isnjfdsbfhfhfdshfdghffv" +specificAssetId.toString());
+			mongoDBCrudAasDiscovery.createAllAssetLinksById("dXJuOnV1aWQ6ZTVjOTZhYjUtODk2YS0xMjM0LTg3NjEtZWZkNzQ3NzdjYTfdfdsfk3", List.of(specificAssetId));
 
-			//apiClient.postAllAssetLinksById("dXJuOnV1aWQ6ZTVjOTZhYjUtODk2YS0xMjM0LTg3NjEtZWZkNzQ3NzdjYTk3", List.of(specificAssetId) );
 			log.debug("Event sent -> " + msg);
 		} catch (JsonProcessingException e) {
 			log.error(Marker.ANY_MARKER, "Failed to process json ", e);

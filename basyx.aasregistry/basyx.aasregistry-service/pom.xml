@@ -225,6 +225,10 @@
             <groupId>org.eclipse.digitaltwin.basyx</groupId>
             <artifactId>basyx.aasdiscoveryservice-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.digitaltwin.basyx</groupId>
+            <artifactId>basyx.aasdiscoveryservice-backend-mongodb</artifactId>
+        </dependency>
     </dependencies>
 	<dependencyManagement>
 		<dependencies>

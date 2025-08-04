@@ -42,9 +42,10 @@ description:
 
 logging:
     level:
-        root: TRACE
-        org.eclipse.digitaltwin.basyx: TRACE
-        org.springframework: TRACE
+        root: DEBUG
+        org.eclipse.digitaltwin.basyx: DEBUG
+
+
 
 springdoc:
     api-docs:
