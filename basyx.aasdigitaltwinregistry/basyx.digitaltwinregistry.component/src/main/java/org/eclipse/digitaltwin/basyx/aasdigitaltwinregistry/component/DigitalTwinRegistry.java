@@ -16,8 +16,7 @@ import org.springframework.context.annotation.FilterType;
 @ComponentScan(
         basePackages = {
                "org.eclipse.digitaltwin.basyx",
-//                "org.eclipse.digitaltwin.basyx.aasregistry",
-//                "org.eclipse.digitaltwin.basyx.aasdiscoveryservice"
+
         },
         excludeFilters = {
                 // Existing excludes
