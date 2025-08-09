@@ -176,12 +176,10 @@ public class MongoDBAasOperations implements AasOperations {
         Query query = new Query();
         Criteria criteria = new Criteria();
 
-        String globalAssetId = null;
-        try {
-            globalAssetId = assetIds.stream().filter(assetId -> assetId.getName().equals("globalAssetId")).findFirst().get().getValue();
-            assetIds = assetIds.stream().filter(assetId -> !assetId.getName().equals("globalAssetId")).collect(Collectors.toList());
-        } catch (Exception ignored) {}
-
+        List<String> globalAssetId = assetIds.stream()
+                .filter(assetId -> "globalAssetId".equals(assetId.getName()))
+                .map(SpecificAssetId::getValue)
+                .collect(Collectors.toList());
         if (assetIds != null && !assetIds.isEmpty()) {
             List<Criteria> assetIdCriteria = new ArrayList<>();
             for (SpecificAssetId assetId : assetIds) {
@@ -195,8 +193,8 @@ public class MongoDBAasOperations implements AasOperations {
         }
         query.addCriteria(criteria);
 
-        if (globalAssetId != null && !globalAssetId.isEmpty()) {
-            query.addCriteria(Criteria.where("assetInformation.globalAssetId").is(globalAssetId));
+        for (String id : globalAssetId) {
+            query.addCriteria(Criteria.where("assetInformation.globalAssetId").is(id));
         }
 
         return mongoOperations.find(query, AssetAdministrationShell.class, collectionName);
