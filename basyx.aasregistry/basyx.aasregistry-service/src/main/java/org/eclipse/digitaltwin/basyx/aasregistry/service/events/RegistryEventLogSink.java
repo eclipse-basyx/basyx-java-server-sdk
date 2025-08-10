@@ -25,11 +25,13 @@
 package org.eclipse.digitaltwin.basyx.aasregistry.service.events;
 
 
+import jakarta.validation.Valid;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.backend.MongoDBCrudAasDiscovery;
 
 
+import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.slf4j.Marker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,7 +44,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.log4j.Log4j2;
 
+import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Component("RegistryEventLogSink")
@@ -66,18 +70,24 @@ public class RegistryEventLogSink implements RegistryEventSink {
 		try {
 			ObjectMapper objectMapper = converter.getObjectMapper();
 			String msg = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(evt);
+			String encodedId = Base64.getEncoder().encodeToString(evt.getId().getBytes());
 
+			if(evt.getType().equals(RegistryEvent.EventType.AAS_REGISTERED)) {
+				@Valid List<org.eclipse.digitaltwin.basyx.aasregistry.model.@Valid SpecificAssetId> ids = evt.getAasDescriptor().getSpecificAssetIds();
 
-			SpecificAssetId specificAssetId = new DefaultSpecificAssetId();
-			specificAssetId.setName("manufacturerPartId");
-			specificAssetId.setValue("123-456-789");
-			log.debug("I am here isnjfdsbfhfhfdshfdghffv" +specificAssetId.toString());
-			mongoDBCrudAasDiscovery.createAllAssetLinksById("dXJuOnV1aWQ6ZTVjOTZhYjUtODk2YS0xMjM0LTg3NjEtZWZkNzQ3NzdjYTfdfdsfk3", List.of(specificAssetId));
+				List<SpecificAssetId> specificAssetIds = ids.stream()
+						.map(rId -> {
+							SpecificAssetId assetId = new DefaultSpecificAssetId();
+							assetId.setName(rId.getName());
+							assetId.setValue(rId.getValue());
+							return assetId;
+						}).collect(Collectors.toList());
 
+				mongoDBCrudAasDiscovery.createAllAssetLinksById(encodedId, specificAssetIds);
+			} else if (evt.getType().equals(RegistryEvent.EventType.AAS_UNREGISTERED)) mongoDBCrudAasDiscovery.deleteAllAssetLinksById(encodedId);
 			log.debug("Event sent -> " + msg);
 		} catch (JsonProcessingException e) {
 			log.error(Marker.ANY_MARKER, "Failed to process json ", e);
 		}
 	}
-
 }
