@@ -27,19 +27,24 @@ public final class IndexNormalizer {
 
         switch (modelType) {
             case "SubmodelElementCollection":
-            case "SubmodelElementList":
-                move(obj, "value", "children");
+                move(obj, "value", "smcChildren");
                 break;
-
+            case "SubmodelElementList":
+                move(obj, "value", "smlChildren");
+                break;
             case "Reference":
+                move(obj, "value", "referenceChildren");
+                break;
             case "MultiLanguageProperty":
                 move(obj, "value", "content");
                 break;
-
-            case "Blob":
-                obj.remove("value");
-                break;
-
+//            TODO: Remove if unnecessary
+//            case "Blob":
+//                move(obj, "value", "blobValue");
+//                break;
+//            case "File":
+//                move(obj, "value", "fileValue");
+//                break;
             default:
                 // nothing special
         }
