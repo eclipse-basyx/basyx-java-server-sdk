@@ -40,7 +40,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Configuration
-@EnableWebMvc
 public class RestConfiguration extends BaSyxHTTPConfiguration  {
 	
 	@Bean
