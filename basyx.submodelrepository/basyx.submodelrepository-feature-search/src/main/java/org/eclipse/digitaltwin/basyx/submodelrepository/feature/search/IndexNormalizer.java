@@ -8,7 +8,9 @@ import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 public final class IndexNormalizer {
@@ -16,45 +18,70 @@ public final class IndexNormalizer {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    /**
+     * Represents a node and its corresponding source object for iterative processing
+     */
+    private static class ProcessingNode {
+        final JsonNode jsonNode;
+        final Object sourceObject;
+
+        ProcessingNode(JsonNode jsonNode, Object sourceObject) {
+            this.jsonNode = jsonNode;
+            this.sourceObject = sourceObject;
+        }
+    }
+
     public static JsonNode toIndexable(Submodel sm) throws SerializationException {
         JsonNode root = MAPPER.valueToTree(sm);
-        rewriteRecursively(root, sm);
+        rewriteIteratively(root, sm);
         return root;
     }
 
-    private static void rewriteRecursively(JsonNode node, Object sourceObject) {
-        if (!node.isObject() || sourceObject == null) return;
+    private static void rewriteIteratively(JsonNode rootNode, Object rootSourceObject) {
+        Deque<ProcessingNode> stack = new ArrayDeque<>();
+        stack.push(new ProcessingNode(rootNode, rootSourceObject));
 
-        ObjectNode obj = (ObjectNode) node;
-        
-        JsonNode valueNode = obj.get("value");
-        if (valueNode != null && (valueNode.isObject() || valueNode.isArray())) {
-            if (sourceObject instanceof SubmodelElementCollection) {
-                move(obj, "value", "smcChildren");
-            } else if (sourceObject instanceof SubmodelElementList) {
-                move(obj, "value", "smlChildren");
-            } else if (sourceObject instanceof Reference) {
-                move(obj, "value", "referenceChildren");
-            } else if (sourceObject instanceof MultiLanguageProperty) {
-                move(obj, "value", "langContent");
+        while (!stack.isEmpty()) {
+            ProcessingNode current = stack.pop();
+            JsonNode node = current.jsonNode;
+            Object sourceObject = current.sourceObject;
+
+            if (!node.isObject() || sourceObject == null) {
+                continue;
             }
-        }
 
-        List<String> names = new ArrayList<>();
-        obj.fieldNames().forEachRemaining(names::add);
-
-        for (String name : names) {
-            JsonNode child = obj.get(name);
-            Object childSourceObject = getChildSourceObject(sourceObject, name);
+            ObjectNode obj = (ObjectNode) node;
             
-            if (child.isArray()) {
-                for (int i = 0; i < child.size(); i++) {
-                    JsonNode arrayChild = child.get(i);
-                    Object arrayChildSource = getArrayChildSourceObject(childSourceObject, i);
-                    rewriteRecursively(arrayChild, arrayChildSource);
+            JsonNode valueNode = obj.get("value");
+            if (valueNode != null && (valueNode.isObject() || valueNode.isArray())) {
+                if (sourceObject instanceof SubmodelElementCollection) {
+                    move(obj, "value", "smcChildren");
+                } else if (sourceObject instanceof SubmodelElementList) {
+                    move(obj, "value", "smlChildren");
+                } else if (sourceObject instanceof Reference) {
+                    move(obj, "value", "referenceChildren");
+                } else if (sourceObject instanceof MultiLanguageProperty) {
+                    move(obj, "value", "langContent");
                 }
-            } else if (child.isObject()) {
-                rewriteRecursively(child, childSourceObject);
+            }
+
+            List<String> names = new ArrayList<>();
+            obj.fieldNames().forEachRemaining(names::add);
+
+            for (int i = names.size() - 1; i >= 0; i--) {
+                String name = names.get(i);
+                JsonNode child = obj.get(name);
+                Object childSourceObject = getChildSourceObject(sourceObject, name);
+                
+                if (child.isArray()) {
+                    for (int j = child.size() - 1; j >= 0; j--) {
+                        JsonNode arrayChild = child.get(j);
+                        Object arrayChildSource = getArrayChildSourceObject(childSourceObject, j);
+                        stack.push(new ProcessingNode(arrayChild, arrayChildSource));
+                    }
+                } else if (child.isObject()) {
+                    stack.push(new ProcessingNode(child, childSourceObject));
+                }
             }
         }
     }

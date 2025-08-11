@@ -110,10 +110,9 @@ public class ESQueryExecutor {
         if (obj instanceof List) {
             List<?> list = (List<?>) obj;
             if (list.isEmpty()) {
-                return list; // Return empty list as-is, will be filtered out by parent
+                return list;
             }
 
-            // Filter each element in the list
             return list.stream()
                     .map(this::filterEmptyArrays)
                     .collect(Collectors.toList());
@@ -160,7 +159,6 @@ public class ESQueryExecutor {
                 .size(pageSize + 1)
                 .sort(SortOptions.of(s -> s.field(f -> f.field("id.keyword").order(SortOrder.Asc))));
         
-        // Preserve source filtering from base request to ensure $select field works
         if (baseSearchRequest.source() != null) {
             searchRequestBuilder.source(baseSearchRequest.source());
         }
@@ -178,28 +176,38 @@ public class ESQueryExecutor {
     }
 
     public void rewriteRecursively(JsonNode node){
-        if (!node.isObject()) return;
-        ObjectNode obj = (ObjectNode) node;
+        if (node == null || !node.isObject()) return;
+        
+        Stack<JsonNode> nodeStack = new Stack<>();
+        nodeStack.push(node);
+        
+        while (!nodeStack.isEmpty()) {
+            JsonNode currentNode = nodeStack.pop();
+            
+            if (!currentNode.isObject()) continue;
+            ObjectNode obj = (ObjectNode) currentNode;
 
-        move(obj, "smcChildren", "value");
-        move(obj, "smlChildren", "value");
-        move(obj, "referenceChildren", "value");
-        move(obj, "langContent", "value");
+            move(obj, "smcChildren", "value");
+            move(obj, "smlChildren", "value");
+            move(obj, "referenceChildren", "value");
+            move(obj, "langContent", "value");
 
-        // Recursively process child nodes
-        List<String> names = new ArrayList<>();
-        obj.fieldNames().forEachRemaining(names::add);
+            List<String> names = new ArrayList<>();
+            obj.fieldNames().forEachRemaining(names::add);
 
-        for (String name : names) {
-            JsonNode child = obj.get(name);
+            for (String name : names) {
+                JsonNode child = obj.get(name);
 
-            if (child.isArray()) {
-                for (int i = 0; i < child.size(); i++) {
-                    JsonNode arrayChild = child.get(i);
-                    rewriteRecursively(arrayChild);
+                if (child.isArray()) {
+                    for (int i = 0; i < child.size(); i++) {
+                        JsonNode arrayChild = child.get(i);
+                        if (arrayChild.isObject()) {
+                            nodeStack.push(arrayChild);
+                        }
+                    }
+                } else if (child.isObject()) {
+                    nodeStack.push(child);
                 }
-            } else if (child.isObject()) {
-                rewriteRecursively(child);
             }
         }
     }
