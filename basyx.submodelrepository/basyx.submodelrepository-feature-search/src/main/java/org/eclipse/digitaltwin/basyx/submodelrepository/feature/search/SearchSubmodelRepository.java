@@ -31,6 +31,7 @@ import co.elastic.clients.elasticsearch._types.mapping.TypeMapping;
 import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
 import co.elastic.clients.elasticsearch.indices.ExistsRequest;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.basyx.core.exceptions.*;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
@@ -58,7 +59,7 @@ public class SearchSubmodelRepository implements SubmodelRepository {
 		this.decorated = decorated;
 		this.esclient = esclient;
 		this.indexName = indexName;
-		ensureIndexExists();
+		//ensureIndexExists();
 	}
 
 	@Override
@@ -192,8 +193,10 @@ public class SearchSubmodelRepository implements SubmodelRepository {
 			);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
-		}
-	}
+		} catch (SerializationException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 	private void updateSMIndex(Submodel submodel) {
 		try {
@@ -206,8 +209,10 @@ public class SearchSubmodelRepository implements SubmodelRepository {
 			);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
-		}
-	}
+		} catch (SerializationException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 	private void deindexSM(String smID) {
 		try {
@@ -224,42 +229,6 @@ public class SearchSubmodelRepository implements SubmodelRepository {
 		Submodel submodel = getSubmodel(smId);
 		deindexSM(smId);
 		indexSM(submodel);
-	}
-
-	private void ensureIndexExists() {
-		String mappingJson = "{ \"mappings\": {"
-				+ "  \"dynamic_templates\": ["
-				+ "    { \"aas_value_string\": { \"path_match\": \"*.value\", \"match_mapping_type\": \"string\", \"mapping\": { \"type\": \"keyword\" } } },"
-				+ "    { \"aas_value_long\": { \"path_match\": \"*.value\", \"match_mapping_type\": \"long\", \"mapping\": { \"type\": \"long\" } } },"
-				+ "    { \"aas_value_double\": { \"path_match\": \"*.value\", \"match_mapping_type\": \"double\", \"mapping\": { \"type\": \"double\" } } },"
-				+ "    { \"aas_value_boolean\": { \"path_match\": \"*.value\", \"match_mapping_type\": \"boolean\", \"mapping\": { \"type\": \"boolean\" } } },"
-				+ "    { \"aas_children\": { \"path_match\": \"*.children\", \"match_mapping_type\": \"object\", \"mapping\": { \"type\": \"nested\" } } }"
-				+ "  ],"
-				+ "  \"properties\": {"
-				+ "    \"id\": { \"type\": \"keyword\" },"
-				+ "    \"idShort\": { \"type\": \"keyword\" },"
-				+ "    \"description\": { \"type\": \"object\", \"enabled\": true },"
-				+ "    \"displayName\": { \"type\": \"object\", \"enabled\": true },"
-				+ "    \"semanticId\": { \"type\": \"object\", \"enabled\": true },"
-				+ "    \"submodelElements\": { \"type\": \"nested\" },"
-				+ "    \"category\": { \"type\": \"keyword\" },"
-				+ "    \"kind\": { \"type\": \"keyword\" }"
-				+ "  }"
-				+ "} }";
-
-		try {
-			boolean indexExists = esclient.indices().exists(ExistsRequest.of(e -> e.index(indexName))).value();
-			if (!indexExists) {
-				esclient.indices().create(CreateIndexRequest.of(c -> c
-						.index(indexName)
-						.withJson(new StringReader(mappingJson))
-				));
-				logger.info("Created Elasticsearch index: {} with dynamic template mapping", indexName);
-			}
-		} catch (Exception e) {
-			logger.error("Failed to ensure index exists: {}", indexName, e);
-			throw new RuntimeException("Failed to initialize Elasticsearch index", e);
-		}
 	}
 
 }

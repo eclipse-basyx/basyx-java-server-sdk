@@ -3,50 +3,41 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.search;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
+import org.eclipse.digitaltwin.aas4j.v3.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public final class IndexNormalizer {
+    private static final Logger logger = LoggerFactory.getLogger(IndexNormalizer.class);
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    public static JsonNode toIndexable(Submodel sm) {
+    public static JsonNode toIndexable(Submodel sm) throws SerializationException {
         JsonNode root = MAPPER.valueToTree(sm);
-        rewriteRecursively(root);
+        rewriteRecursively(root, sm);
         return root;
     }
 
-
-    private static void rewriteRecursively(JsonNode node) {
-        if (!node.isObject()) return;
+    private static void rewriteRecursively(JsonNode node, Object sourceObject) {
+        if (!node.isObject() || sourceObject == null) return;
 
         ObjectNode obj = (ObjectNode) node;
-        String modelType = extractModelType(obj);
-
-        switch (modelType) {
-            case "SubmodelElementCollection":
+        
+        JsonNode valueNode = obj.get("value");
+        if (valueNode != null && (valueNode.isObject() || valueNode.isArray())) {
+            if (sourceObject instanceof SubmodelElementCollection) {
                 move(obj, "value", "smcChildren");
-                break;
-            case "SubmodelElementList":
+            } else if (sourceObject instanceof SubmodelElementList) {
                 move(obj, "value", "smlChildren");
-                break;
-            case "Reference":
+            } else if (sourceObject instanceof Reference) {
                 move(obj, "value", "referenceChildren");
-                break;
-            case "MultiLanguageProperty":
-                move(obj, "value", "content");
-                break;
-//            TODO: Remove if unnecessary
-//            case "Blob":
-//                move(obj, "value", "blobValue");
-//                break;
-//            case "File":
-//                move(obj, "value", "fileValue");
-//                break;
-            default:
-                // nothing special
+            } else if (sourceObject instanceof MultiLanguageProperty) {
+                move(obj, "value", "langContent");
+            }
         }
 
         List<String> names = new ArrayList<>();
@@ -54,17 +45,103 @@ public final class IndexNormalizer {
 
         for (String name : names) {
             JsonNode child = obj.get(name);
-            if (child.isArray())  child.forEach(IndexNormalizer::rewriteRecursively);
-            else if (child.isObject()) rewriteRecursively(child);
+            Object childSourceObject = getChildSourceObject(sourceObject, name);
+            
+            if (child.isArray()) {
+                for (int i = 0; i < child.size(); i++) {
+                    JsonNode arrayChild = child.get(i);
+                    Object arrayChildSource = getArrayChildSourceObject(childSourceObject, i);
+                    rewriteRecursively(arrayChild, arrayChildSource);
+                }
+            } else if (child.isObject()) {
+                rewriteRecursively(child, childSourceObject);
+            }
         }
     }
 
-    private static String extractModelType(ObjectNode node) {
-        JsonNode mt = node.get("modelType");
-        if (mt == null) return "";
-        if (mt.isTextual()) return mt.asText();
-        if (mt.isObject())  return mt.path("name").asText();
-        return "";
+    /**
+     * Gets the child source object corresponding to a field name
+     */
+    private static Object getChildSourceObject(Object parent, String fieldName) {
+        if (parent == null) return null;
+        
+        try {
+            switch (fieldName) {
+                case "submodelElements":
+                    if (parent instanceof Submodel) {
+                        return ((Submodel) parent).getSubmodelElements();
+                    }
+                    break;
+                case "value":
+                    if (parent instanceof SubmodelElementCollection) {
+                        return ((SubmodelElementCollection) parent).getValue();
+                    } else if (parent instanceof SubmodelElementList) {
+                        return ((SubmodelElementList) parent).getValue();
+                    } else if (parent instanceof Reference) {
+                        return ((Reference) parent).getKeys();
+                    } else if (parent instanceof MultiLanguageProperty) {
+                        return ((MultiLanguageProperty) parent).getValue();
+                    }
+                    break;
+                case "smcChildren": // Handle renamed field
+                    if (parent instanceof SubmodelElementCollection) {
+                        return ((SubmodelElementCollection) parent).getValue();
+                    }
+                    break;
+                case "smlChildren": // Handle renamed field
+                    if (parent instanceof SubmodelElementList) {
+                        return ((SubmodelElementList) parent).getValue();
+                    }
+                    break;
+                case "referenceChildren": // Handle renamed field
+                    if (parent instanceof Reference) {
+                        return ((Reference) parent).getKeys();
+                    }
+                    break;
+                case "langContent": // Handle renamed field
+                    if (parent instanceof MultiLanguageProperty) {
+                        return ((MultiLanguageProperty) parent).getValue();
+                    }
+                    break;
+                case "semanticId":
+                    if (parent instanceof HasSemantics) {
+                        return ((HasSemantics) parent).getSemanticId();
+                    }
+                    break;
+                case "keys":
+                    if (parent instanceof Reference) {
+                        return ((Reference) parent).getKeys();
+                    }
+                    break;
+                // Add more field mappings as needed
+            }
+        } catch (Exception e) {
+            logger.debug("Could not get child source object for field '{}' from parent type '{}'", 
+                        fieldName, parent.getClass().getSimpleName());
+        }
+        
+        return null;
+    }
+
+    /**
+     * Gets the array child source object at a specific index
+     */
+    private static Object getArrayChildSourceObject(Object arraySource, int index) {
+        if (arraySource == null) return null;
+        
+        try {
+            if (arraySource instanceof List<?>) {
+                List<?> list = (List<?>) arraySource;
+                if (index >= 0 && index < list.size()) {
+                    return list.get(index);
+                }
+            }
+        } catch (Exception e) {
+            logger.debug("Could not get array child source object at index {} from array type '{}'", 
+                        index, arraySource.getClass().getSimpleName());
+        }
+        
+        return null;
     }
 
     private static void move(ObjectNode node, String from, String to) {
