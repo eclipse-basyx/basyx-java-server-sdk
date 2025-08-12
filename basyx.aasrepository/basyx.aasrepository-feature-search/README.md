@@ -47,6 +47,7 @@
 ## Risks
 
 * Errors can be catched in the decorated functions (transactional)
+* Security needs to be considered -> Just query id of elements and then go to the MongoDB
 
 
 ## TODOS
@@ -61,7 +62,10 @@
 * [x] Configurable Index Names
 * [x] Implement Casting Operators
 * [x] Unit Test
-* [x] !Priority! Duplicate search module for the missing components 
-* [ ] In SearchSubmodelRepository, ensure that the index does not disable certain fields in ensureIndexExists
+* [x] !Priority! Duplicate search module for the missing components
 * [ ] Integration Tests
 * [ ] Validate Expected Queries (unformatted ones) -> Depends on other components to utilize the AASQL
+* [ ] Make the following SME Props queryable: value, valueType, semanticId, idShort
+* [ ] Make other Components (AAS,CD) also fetch Data from MongoDB not ES
+* [ ] Note down that comparison operators don't work for SME filtering in SM Repo without idShortPath
+* [ ] Handle Search Queries with SML (Indices)

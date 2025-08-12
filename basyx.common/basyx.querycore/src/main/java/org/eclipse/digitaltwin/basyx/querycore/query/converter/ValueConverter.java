@@ -396,9 +396,19 @@ public class ValueConverter {
         } else if (modelField.startsWith("$sm#")) {
             result = modelField.replace("$sm#", "");
         } else if (modelField.startsWith("$sme")) {
+            boolean hasIdShortPath = !result.startsWith("$sme#");
+            String idShortPath = "";
+            if (hasIdShortPath) {
+                int indexOfRaute = result.indexOf("#");
+                idShortPath = result.substring(5, indexOfRaute);
+            }
             result = modelField.replaceFirst("\\$sme(?:\\.[^#]*)?#", "");
             // Mark as SME field for wildcard handling
-            result = "SME_WILDCARD:" + result;
+            if (!hasIdShortPath) {
+                result = "SME_WILDCARD:" + result;
+            } else {
+                result = "submodelElements." + idShortPath+ "." + result;
+            }
         } else if (modelField.startsWith("$cd#")) {
             result = modelField.replace("$cd#", "");
         } else if (modelField.startsWith("$aasdesc#")) {
@@ -668,7 +678,7 @@ public class ValueConverter {
 
         // Create a wildcard pattern that matches the field at any nesting level
         // Pattern: submodelElements.*{fieldName}:{value} OR submodelElements.*.smcChildren.*{fieldName}:{value}
-        String queryPattern = "submodelElements.*."+searchField;
+        String queryPattern = "*"+searchField;
 
         return QueryBuilders.queryString(q -> q
                 .query(value)
@@ -682,25 +692,20 @@ public class ValueConverter {
     private Query createSmeWildcardStringQuery(String wildcardField, String value, String operation) {
         String fieldName = extractSmeFieldName(wildcardField);
         
-        // Add .keyword suffix for string fields that need exact matching
         String searchField = fieldName;
-        if (isStringField(fieldName)) {
-            searchField = fieldName + ".keyword";
-        }
-        
+
         String searchValue;
         switch (operation) {
             case "contains":
-                searchValue = "*" + escapeQueryString(value) + "*";
+                searchValue = "*" + value + "*";
                 break;
             case "starts-with":
-                searchValue = escapeQueryString(value) + "*";
+                searchValue = value + "*";
                 break;
             case "ends-with":
-                searchValue = "*" + escapeQueryString(value);
+                searchValue = "*" + value;
                 break;
             case "regex":
-                // For regex, use the value as-is (queryString supports regex)
                 searchValue = value;
                 break;
             default:
@@ -709,10 +714,10 @@ public class ValueConverter {
         }
         
         // Create a wildcard pattern that matches the field at any nesting level
-        String queryPattern = "submodelElements.*."+searchField;
+        String queryPattern = "*"+searchField;
 
         return QueryBuilders.queryString(q -> q
-                .query(value)
+                .query(searchValue)
                 .fields(queryPattern)
         );
     }
@@ -723,12 +728,8 @@ public class ValueConverter {
     private Query createSmeWildcardRangeQuery(String wildcardField, Object value, String operator) {
         String fieldName = extractSmeFieldName(wildcardField);
         
-        // Add .keyword suffix for string fields that need exact matching
         String searchField = fieldName;
-        if (isStringField(fieldName)) {
-            searchField = fieldName + ".keyword";
-        }
-        
+
         String rangeOperator;
         switch (operator) {
             case "gt": rangeOperator = ">"; break;
@@ -739,11 +740,13 @@ public class ValueConverter {
         }
         
         // Create a wildcard pattern that matches the field at any nesting level with range comparison
-        String queryPattern = "submodelElements.*."+searchField;
+        String queryPattern = "*"+searchField;
+
+        // Construct the range query string with proper syntax: fieldPattern:(>=value)
+        String rangeQuery = queryPattern + ":(" + rangeOperator + value.toString() + ")";
 
         return QueryBuilders.queryString(q -> q
-                .query(value.toString())
-                .fields(queryPattern)
+                .query(rangeQuery)
         );
     }
     

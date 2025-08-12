@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -24,22 +27,26 @@ public final class IndexNormalizer {
     private static class ProcessingNode {
         final JsonNode jsonNode;
         final Object sourceObject;
+        final String pathPrefix; // e.g. "submodelElements.1234."
 
-        ProcessingNode(JsonNode jsonNode, Object sourceObject) {
+        ProcessingNode(JsonNode jsonNode, Object sourceObject, String pathPrefix) {
             this.jsonNode = jsonNode;
             this.sourceObject = sourceObject;
+            this.pathPrefix = pathPrefix;
         }
     }
 
-    public static JsonNode toIndexable(Submodel sm) throws SerializationException {
-        JsonNode root = MAPPER.valueToTree(sm);
+    public static JsonNode toIndexable(Submodel sm) throws SerializationException, IOException {
+        JsonSerializer serializer = new JsonSerializer();
+        String submodelAsString = serializer.write(sm);
+        JsonNode root = MAPPER.readTree(new StringReader(submodelAsString));
         rewriteIteratively(root, sm);
         return root;
     }
 
     private static void rewriteIteratively(JsonNode rootNode, Object rootSourceObject) {
         Deque<ProcessingNode> stack = new ArrayDeque<>();
-        stack.push(new ProcessingNode(rootNode, rootSourceObject));
+        stack.push(new ProcessingNode(rootNode, rootSourceObject, "submodelElements."));
 
         while (!stack.isEmpty()) {
             ProcessingNode current = stack.pop();
@@ -51,39 +58,40 @@ public final class IndexNormalizer {
             }
 
             ObjectNode obj = (ObjectNode) node;
-            
+
+            // Get the idShort to build path
+            // TODO: Handle SML Indizes
+            String idShort = obj.has("idShort") && !(sourceObject instanceof Submodel) ? obj.get("idShort").asText() : null;
+            String currentPath = idShort != null ? current.pathPrefix + idShort + "." : current.pathPrefix;
+
+            // If this element has a "value" that is primitive, we can directly move it to the flattened key
             JsonNode valueNode = obj.get("value");
-            if (valueNode != null && (valueNode.isObject() || valueNode.isArray())) {
-                if (sourceObject instanceof SubmodelElementCollection) {
-                    move(obj, "value", "smcChildren");
-                } else if (sourceObject instanceof SubmodelElementList) {
-                    move(obj, "value", "smlChildren");
-                } else if (sourceObject instanceof ReferenceElement) {
-                    move(obj, "value", "referenceElementChildren");
-                } else if (sourceObject instanceof MultiLanguageProperty) {
-                    move(obj, "value", "langContent");
-                } else {
-                    move(obj, "value", "peps");
-                }
+            if (valueNode != null && !valueNode.isObject() && !valueNode.isArray()) {
+                // Set it at the flattened path
+                ((ObjectNode) rootNode).set(currentPath + "value", valueNode);
             }
 
-            List<String> names = new ArrayList<>();
-            obj.fieldNames().forEachRemaining(names::add);
+            // Traverse children if it's a collection/list/etc.
+            List<SubmodelElement> children = null;
+            if (sourceObject instanceof Submodel) {
+                children = ((Submodel) sourceObject).getSubmodelElements();
+            } else if (sourceObject instanceof SubmodelElementCollection) {
+                children = ((SubmodelElementCollection) sourceObject).getValue();
+            } else if (sourceObject instanceof SubmodelElementList) {
+                children = ((SubmodelElementList) sourceObject).getValue();
+            }
 
-            for (int i = names.size() - 1; i >= 0; i--) {
-                String name = names.get(i);
-                JsonNode child = obj.get(name);
-                Object childSourceObject = getChildSourceObject(sourceObject, name);
-                
-                if (child.isArray()) {
-                    for (int j = child.size() - 1; j >= 0; j--) {
-                        JsonNode arrayChild = child.get(j);
-                        Object arrayChildSource = getArrayChildSourceObject(childSourceObject, j);
-                        stack.push(new ProcessingNode(arrayChild, arrayChildSource));
+            if (children != null) {
+                for (int i = children.size() - 1; i >= 0; i--) {
+                    JsonNode childNode = obj.get("value") != null ? obj.get("value").get(i) : (obj.get("submodelElements") != null ? obj.get("submodelElements").get(i) : null);
+                    if (childNode != null) {
+                        stack.push(new ProcessingNode(childNode, children.get(i), currentPath));
                     }
-                } else if (child.isObject()) {
-                    stack.push(new ProcessingNode(child, childSourceObject));
                 }
+            }
+            if(valueNode != null && (valueNode.isObject() || valueNode.isArray())){
+                // Remove Value if is non-primitive
+                move(obj,"value", "_value");
             }
         }
     }
@@ -130,6 +138,41 @@ public final class IndexNormalizer {
                 case "langContent": // Handle renamed field
                     if (parent instanceof MultiLanguageProperty) {
                         return ((MultiLanguageProperty) parent).getValue();
+                    }
+                    break;
+                default:
+                    // Handle dynamically created fields based on SubmodelElement idShort
+                    if (parent instanceof SubmodelElement parentElement) {
+                        String parentIdShort = parentElement.getIdShort();
+                        // Check if this field name matches the idShort or is a nested field
+                        if (fieldName.equals(parentIdShort)) {
+                            if (parent instanceof SubmodelElementCollection) {
+                                return ((SubmodelElementCollection) parent).getValue();
+                            } else if (parent instanceof SubmodelElementList) {
+                                return ((SubmodelElementList) parent).getValue();
+                            } else if (parent instanceof ReferenceElement) {
+                                return ((ReferenceElement) parent).getValue();
+                            } else if (parent instanceof MultiLanguageProperty) {
+                                return ((MultiLanguageProperty) parent).getValue();
+                            } else if (parent instanceof Property) {
+                                return parent; // For Property.value nested structure
+                            }
+                        }
+                        // Handle nested .value fields (e.g., "porpa" field containing {value: "123"})
+                        if (fieldName.equals("value") && parent instanceof Property) {
+                            return parent;
+                        }
+                    }
+                    
+                    // Handle cases where we're processing arrays of SubmodelElements
+                    if (parent instanceof List<?> parentList && !parentList.isEmpty()) {
+                        // Try to find a SubmodelElement in the list that matches the field name
+                        for (Object item : parentList) {
+                            if (item instanceof SubmodelElement element && 
+                                fieldName.equals(element.getIdShort())) {
+                                return element;
+                            }
+                        }
                     }
                     break;
                 case "semanticId":

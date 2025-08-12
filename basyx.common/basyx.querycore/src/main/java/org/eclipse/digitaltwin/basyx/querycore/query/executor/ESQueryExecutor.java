@@ -121,9 +121,8 @@ public class ESQueryExecutor {
     }
 
     private QueryResponse getQueryResponse(AASQuery query, List<Object> objectHits, String nextCursor) {
-        QueryResult queryResult = new QueryResult(objectHits);
         QueryPaging queryPaging = new QueryPaging(nextCursor, getResultType(query));
-        QueryResponse queryResponse = new QueryResponse(queryPaging, queryResult);
+        QueryResponse queryResponse = new QueryResponse(queryPaging, objectHits);
         return queryResponse;
     }
 

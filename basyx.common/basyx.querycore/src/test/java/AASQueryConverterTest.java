@@ -52,6 +52,8 @@ public class AASQueryConverterTest {
         put("match_eq_eq_field_strval.json", "expected_match_eq_eq_field_strval.json");
         put("match_specific_asset_ids.json", "expected_match_specific_asset_ids.json");
         put("regex_field_strval.json", "expected_regex_field_strval.json");
+        put("starts-with_field_strval.json", "expected_starts-with_field_strval.json");
+        put("ends-with_field_strval.json", "expected_ends-with_field_strval.json");
     }};
 
     @Test
