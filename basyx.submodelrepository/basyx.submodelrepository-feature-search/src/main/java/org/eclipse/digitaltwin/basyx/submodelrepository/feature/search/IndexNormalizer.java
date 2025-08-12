@@ -58,10 +58,12 @@ public final class IndexNormalizer {
                     move(obj, "value", "smcChildren");
                 } else if (sourceObject instanceof SubmodelElementList) {
                     move(obj, "value", "smlChildren");
-                } else if (sourceObject instanceof Reference) {
-                    move(obj, "value", "referenceChildren");
+                } else if (sourceObject instanceof ReferenceElement) {
+                    move(obj, "value", "referenceElementChildren");
                 } else if (sourceObject instanceof MultiLanguageProperty) {
                     move(obj, "value", "langContent");
+                } else {
+                    move(obj, "value", "peps");
                 }
             }
 

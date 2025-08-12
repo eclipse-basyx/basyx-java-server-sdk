@@ -34,6 +34,11 @@ public class ValueConverter {
         Object value = leftField != null ? extractValue(rightValue) : extractValue(leftValue);
         
         if (fieldName != null && value != null) {
+            // Check if this is an SME wildcard field
+            if (isSmeWildcardField(fieldName)) {
+                return createSmeWildcardQuery(fieldName, value.toString());
+            }
+            
             return QueryBuilders.term()
                 .field(fieldName)
                 .value(convertToFieldValue(value))
@@ -60,6 +65,13 @@ public class ValueConverter {
         Object value = leftField != null ? extractValue(rightValue) : extractValue(leftValue);
 
         if (fieldName != null && value != null) {
+            // Check if this is an SME wildcard field
+            if (isSmeWildcardField(fieldName)) {
+                return QueryBuilders.bool()
+                    .mustNot(createSmeWildcardQuery(fieldName, value.toString()))
+                    .build()._toQuery();
+            }
+            
             return QueryBuilders.bool()
                 .mustNot(QueryBuilders.term()
                     .field(fieldName)
@@ -98,6 +110,11 @@ public class ValueConverter {
         Object rawValue = leftField != null ? extractValue(rightValue) : extractValue(leftValue);
 
         if (fieldName != null && rawValue != null) {
+            // Check if this is an SME wildcard field
+            if (isSmeWildcardField(fieldName)) {
+                return createSmeWildcardRangeQuery(fieldName, rawValue, operator);
+            }
+            
             JsonData value = JsonData.of(rawValue);   // works for all scalar types
 
             return QueryBuilders.range(r -> r
@@ -137,6 +154,11 @@ public class ValueConverter {
         String value = leftField != null ? extractStringValue(rightValue) : extractStringValue(leftValue);
 
         if (fieldName != null && value != null) {
+            // Check if this is an SME wildcard field
+            if (isSmeWildcardField(fieldName)) {
+                return createSmeWildcardStringQuery(fieldName, value, operation);
+            }
+            
             switch (operation) {
                 case "contains":
                     return QueryBuilders.wildcard()
@@ -375,6 +397,8 @@ public class ValueConverter {
             result = modelField.replace("$sm#", "");
         } else if (modelField.startsWith("$sme")) {
             result = modelField.replaceFirst("\\$sme(?:\\.[^#]*)?#", "");
+            // Mark as SME field for wildcard handling
+            result = "SME_WILDCARD:" + result;
         } else if (modelField.startsWith("$cd#")) {
             result = modelField.replace("$cd#", "");
         } else if (modelField.startsWith("$aasdesc#")) {
@@ -614,5 +638,136 @@ public class ValueConverter {
             default:
                 return fieldExpression; // No casting applied
         }
+    }
+    
+    /**
+     * Checks if a field is an SME wildcard field that needs special handling
+     */
+    private boolean isSmeWildcardField(String fieldName) {
+        return fieldName != null && fieldName.startsWith("SME_WILDCARD:");
+    }
+    
+    /**
+     * Extracts the actual field name from an SME wildcard field
+     */
+    private String extractSmeFieldName(String wildcardField) {
+        if (wildcardField.startsWith("SME_WILDCARD:")) {
+            return wildcardField.substring("SME_WILDCARD:".length());
+        }
+        return wildcardField;
+    }
+    
+    /**
+     * Creates a wildcard query using QueryBuilders.queryString for SME fields at any nesting level
+     */
+    private Query createSmeWildcardQuery(String wildcardField, String value) {
+        String fieldName = extractSmeFieldName(wildcardField);
+        
+        // Add .keyword suffix for string fields that need exact matching
+        String searchField = fieldName;
+
+        // Create a wildcard pattern that matches the field at any nesting level
+        // Pattern: submodelElements.*{fieldName}:{value} OR submodelElements.*.smcChildren.*{fieldName}:{value}
+        String queryPattern = "submodelElements.*."+searchField;
+
+        return QueryBuilders.queryString(q -> q
+                .query(value)
+                .fields(queryPattern)
+        );
+    }
+    
+    /**
+     * Creates a wildcard string query using QueryBuilders.queryString for SME fields at any nesting level
+     */
+    private Query createSmeWildcardStringQuery(String wildcardField, String value, String operation) {
+        String fieldName = extractSmeFieldName(wildcardField);
+        
+        // Add .keyword suffix for string fields that need exact matching
+        String searchField = fieldName;
+        if (isStringField(fieldName)) {
+            searchField = fieldName + ".keyword";
+        }
+        
+        String searchValue;
+        switch (operation) {
+            case "contains":
+                searchValue = "*" + escapeQueryString(value) + "*";
+                break;
+            case "starts-with":
+                searchValue = escapeQueryString(value) + "*";
+                break;
+            case "ends-with":
+                searchValue = "*" + escapeQueryString(value);
+                break;
+            case "regex":
+                // For regex, use the value as-is (queryString supports regex)
+                searchValue = value;
+                break;
+            default:
+                searchValue = escapeQueryString(value);
+                break;
+        }
+        
+        // Create a wildcard pattern that matches the field at any nesting level
+        String queryPattern = "submodelElements.*."+searchField;
+
+        return QueryBuilders.queryString(q -> q
+                .query(value)
+                .fields(queryPattern)
+        );
+    }
+    
+    /**
+     * Creates a wildcard range query using QueryBuilders.queryString for SME fields at any nesting level
+     */
+    private Query createSmeWildcardRangeQuery(String wildcardField, Object value, String operator) {
+        String fieldName = extractSmeFieldName(wildcardField);
+        
+        // Add .keyword suffix for string fields that need exact matching
+        String searchField = fieldName;
+        if (isStringField(fieldName)) {
+            searchField = fieldName + ".keyword";
+        }
+        
+        String rangeOperator;
+        switch (operator) {
+            case "gt": rangeOperator = ">"; break;
+            case "gte": rangeOperator = ">="; break;
+            case "lt": rangeOperator = "<"; break;
+            case "lte": rangeOperator = "<="; break;
+            default: throw new IllegalArgumentException("Unsupported range operator: " + operator);
+        }
+        
+        // Create a wildcard pattern that matches the field at any nesting level with range comparison
+        String queryPattern = "submodelElements.*."+searchField;
+
+        return QueryBuilders.queryString(q -> q
+                .query(value.toString())
+                .fields(queryPattern)
+        );
+    }
+    
+    /**
+     * Escapes special characters for Elasticsearch query string queries
+     */
+    private String escapeQueryString(String value) {
+        // Escape special query string characters
+        return value.replace("\\", "\\\\")
+                   .replace("\"", "\\\"")
+                   .replace("+", "\\+")
+                   .replace("-", "\\-")
+                   .replace("=", "\\=")
+                   .replace("&&", "\\&&")
+                   .replace("||", "\\||")
+                   .replace("!", "\\!")
+                   .replace("(", "\\(")
+                   .replace(")", "\\)")
+                   .replace("{", "\\{")
+                   .replace("}", "\\}")
+                   .replace("[", "\\[")
+                   .replace("]", "\\]")
+                   .replace("^", "\\^")
+                   .replace("~", "\\~")
+                   .replace(":", "\\:");
     }
 }

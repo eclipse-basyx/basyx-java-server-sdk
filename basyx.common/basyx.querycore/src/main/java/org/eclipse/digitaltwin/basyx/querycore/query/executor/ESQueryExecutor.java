@@ -9,7 +9,6 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.QueryPaging;
@@ -72,7 +71,7 @@ public class ESQueryExecutor {
         for(Object hit : objectHits){
             if (hit instanceof ObjectNode) {
                 ObjectNode node = (ObjectNode) hit;
-                rewriteRecursively(node);
+                rewriteIterative(node);
             } else {
                 logger.warn("Hit is not an ObjectNode: {}", hit.getClass().getName());
             }
@@ -175,7 +174,7 @@ public class ESQueryExecutor {
         if (v != null) node.set(to, v);
     }
 
-    public void rewriteRecursively(JsonNode node){
+    public void rewriteIterative(JsonNode node){
         if (node == null || !node.isObject()) return;
         
         Stack<JsonNode> nodeStack = new Stack<>();
