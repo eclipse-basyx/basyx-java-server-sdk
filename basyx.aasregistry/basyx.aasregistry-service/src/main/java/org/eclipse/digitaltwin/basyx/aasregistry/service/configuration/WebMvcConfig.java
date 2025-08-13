@@ -34,14 +34,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Component
 public class WebMvcConfig implements WebMvcConfigurer {
 
-	private MappingJackson2HttpMessageConverter converter;
+	private final MappingJackson2HttpMessageConverter converter;
 	
 	public WebMvcConfig(MappingJackson2HttpMessageConverter converter) {
 		this.converter = converter;
 	}
 	
 	@Override
-	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+	public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
 		converters.add(converter);
 	}
 
