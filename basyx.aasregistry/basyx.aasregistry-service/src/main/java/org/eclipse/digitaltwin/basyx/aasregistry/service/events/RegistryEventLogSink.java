@@ -42,7 +42,6 @@ import lombok.extern.log4j.Log4j2;
 public class RegistryEventLogSink implements RegistryEventSink {
 
 	@Autowired
-	@Qualifier("mappingJackson2HttpMessageConverter")
 	private MappingJackson2HttpMessageConverter converter;
 
 	@Override
