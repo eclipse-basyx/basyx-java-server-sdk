@@ -185,7 +185,7 @@ jobs:
           cache: maven
 
       - name: Start BaSyx Node-RED Example
-        run: docker compose -f examples/BaSyxNodeRED/docker-compose.yaml up -d
+        run: docker compose -f examples/BaSyxNodeRED/docker-compose.yml up -d
 
       - name: Stop BaSyx Node-RED Example
-        run: docker compose -f examples/BaSyxNodeRED/docker-compose.yaml down
+        run: docker compose -f examples/BaSyxNodeRED/docker-compose.yml down
