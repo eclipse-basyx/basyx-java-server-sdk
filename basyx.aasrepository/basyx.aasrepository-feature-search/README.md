@@ -69,3 +69,4 @@
 * [x] Make other Components (AAS,CD) also fetch Data from MongoDB not ES
 * [ ] Note down that comparison operators don't work for SME filtering in SM Repo without idShortPath
 * [ ] Handle Search Queries with SML (Indices)
+* [ ] Handle error case when Query is not valid (e.g.  "$field: $sme", "$field: $sme.smc.smc.propa")

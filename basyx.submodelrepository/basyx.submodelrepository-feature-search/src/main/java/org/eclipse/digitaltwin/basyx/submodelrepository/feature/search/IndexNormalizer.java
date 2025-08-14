@@ -28,11 +28,15 @@ public final class IndexNormalizer {
         final JsonNode jsonNode;
         final Object sourceObject;
         final String pathPrefix; // e.g. "submodelElements.1234."
+        final int childIndex; // Used for array elements to track the index
+        private final Object parentObject;
 
-        ProcessingNode(JsonNode jsonNode, Object sourceObject, String pathPrefix) {
+        ProcessingNode(JsonNode jsonNode, Object sourceObject, Object parentObject, String pathPrefix, int childIndex) {
             this.jsonNode = jsonNode;
             this.sourceObject = sourceObject;
             this.pathPrefix = pathPrefix;
+            this.childIndex = childIndex;
+            this.parentObject = parentObject;
         }
     }
 
@@ -46,7 +50,7 @@ public final class IndexNormalizer {
 
     private static void rewriteIteratively(JsonNode rootNode, Object rootSourceObject) {
         Deque<ProcessingNode> stack = new ArrayDeque<>();
-        stack.push(new ProcessingNode(rootNode, rootSourceObject, "submodelElements."));
+        stack.push(new ProcessingNode(rootNode, rootSourceObject,null, "submodelElements.",0));
 
         while (!stack.isEmpty()) {
             ProcessingNode current = stack.pop();
@@ -62,14 +66,22 @@ public final class IndexNormalizer {
             // Get the idShort to build path
             // TODO: Handle SML Indizes
             String idShort = obj.has("idShort") && !(sourceObject instanceof Submodel) ? obj.get("idShort").asText() : null;
-            String currentPath = idShort != null ? current.pathPrefix + idShort + "." : current.pathPrefix;
+            String currentPath = "";
+            if (current.parentObject instanceof SubmodelElementList) {
+                currentPath = current.pathPrefix.endsWith(".") ?  current.pathPrefix.substring(0, current.pathPrefix.length() - 1) :  current.pathPrefix;
+                currentPath = currentPath + "["+current.childIndex+"]" + (current.sourceObject instanceof SubmodelElementList ? "" : ".");
+            } else {
+                currentPath = idShort != null ? current.pathPrefix + idShort + "." : current.pathPrefix;
+            }
 
             // If this element has a "value" that is primitive, we can directly move it to the flattened key
-            JsonNode valueNode = obj.get("value");
-            if (valueNode != null && !valueNode.isObject() && !valueNode.isArray()) {
-                // Set it at the flattened path
-                ((ObjectNode) rootNode).set(currentPath + "value", valueNode);
-            }
+            JsonNode valueNode = indexField(obj, "value", (ObjectNode) rootNode, currentPath);
+
+            indexField(obj, "valueType", (ObjectNode) rootNode, currentPath);
+
+            indexField(obj, "idShort", (ObjectNode) rootNode, currentPath);
+
+            indexField(obj, "language", (ObjectNode) rootNode, currentPath);
 
             // Traverse children if it's a collection/list/etc.
             List<SubmodelElement> children = null;
@@ -85,7 +97,7 @@ public final class IndexNormalizer {
                 for (int i = children.size() - 1; i >= 0; i--) {
                     JsonNode childNode = obj.get("value") != null ? obj.get("value").get(i) : (obj.get("submodelElements") != null ? obj.get("submodelElements").get(i) : null);
                     if (childNode != null) {
-                        stack.push(new ProcessingNode(childNode, children.get(i), currentPath));
+                        stack.push(new ProcessingNode(childNode,children.get(i), current.sourceObject, currentPath, i));
                     }
                 }
             }
@@ -94,6 +106,15 @@ public final class IndexNormalizer {
                 move(obj,"value", "_value");
             }
         }
+    }
+
+    private static JsonNode indexField(ObjectNode obj, String fieldName, ObjectNode rootNode, String currentPath) {
+        JsonNode node = obj.get(fieldName);
+        if (node != null && !node.isObject() && !node.isArray()) {
+            // Set it at the flattened path
+            rootNode.set(currentPath + (currentPath.endsWith("]") ? "." : "") + fieldName, node);
+        }
+        return node;
     }
 
     /**

@@ -1,6 +1,7 @@
 package org.eclipse.digitaltwin.basyx.querycore.query.executor;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.ElasticsearchException;
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
@@ -48,37 +49,40 @@ public class ESQueryExecutor {
         applyCursor(cursor, searchRequestBuilder);
 
         SearchRequest paginatedSearchRequest = searchRequestBuilder.build();
+        try {
+            SearchResponse<Object> response = client.search(paginatedSearchRequest, Object.class);
 
-        SearchResponse<Object> response = client.search(paginatedSearchRequest, Object.class);
+            List<Hit<Object>> topHits = response.hits().hits();
 
-        List<Hit<Object>> topHits = response.hits().hits();
+            boolean hasMore = topHits.size() > pageSize;
+            List<Hit<Object>> pageHits = hasMore ? topHits.subList(0, pageSize) : topHits;
 
-        boolean hasMore = topHits.size() > pageSize;
-        List<Hit<Object>> pageHits = hasMore ? topHits.subList(0, pageSize) : topHits;
+            ObjectMapper mapper = new ObjectMapper();
 
-        ObjectMapper mapper = new ObjectMapper();
-
-        List<Object> objectHits = pageHits.stream()
-                .map(Hit::source)
-                .map(this::filterEmptyArrays)
-                .map(mapper::valueToTree)
-                .toList();
+            List<Object> objectHits = pageHits.stream()
+                    .map(Hit::source)
+                    .map(this::filterEmptyArrays)
+                    .map(mapper::valueToTree)
+                    .toList();
 
 
+            String nextCursor = getNextCursor(hasMore, pageHits);
 
-        String nextCursor = getNextCursor(hasMore, pageHits);
-
-        for(Object hit : objectHits){
-            if (hit instanceof ObjectNode) {
-                ObjectNode node = (ObjectNode) hit;
-                rewriteIterative(node);
-            } else {
-                logger.warn("Hit is not an ObjectNode: {}", hit.getClass().getName());
+            for (Object hit : objectHits) {
+                if (hit instanceof ObjectNode) {
+                    ObjectNode node = (ObjectNode) hit;
+                    rewriteIterative(node);
+                } else {
+                    logger.warn("Hit is not an ObjectNode: {}", hit.getClass().getName());
+                }
             }
-        }
 
-        QueryResponse queryResponse = getQueryResponse(query, objectHits, nextCursor);
-        return queryResponse;
+            QueryResponse queryResponse = getQueryResponse(query, objectHits, nextCursor);
+            return queryResponse;
+        } catch(ElasticsearchException exception) {
+            logger.error("Elasticsearch query execution failed: {}", exception.getMessage(), exception);
+            return new QueryResponse(new QueryPaging(null, getResultType(query)), Collections.emptyList());
+        }
     }
 
     /**
