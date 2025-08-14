@@ -64,7 +64,6 @@ public final class IndexNormalizer {
             ObjectNode obj = (ObjectNode) node;
 
             // Get the idShort to build path
-            // TODO: Handle SML Indizes
             String idShort = obj.has("idShort") && !(sourceObject instanceof Submodel) ? obj.get("idShort").asText() : null;
             String currentPath = "";
             if (current.parentObject instanceof SubmodelElementList) {

@@ -417,9 +417,6 @@ public class ValueConverter {
             result = modelField.replace("$smdesc#", "");
         }
         
-        // Remove array brackets [] from field names
-        result = result.replaceAll("\\[\\]", "");
-        
         // Add .keyword suffix for string fields that need exact matching
         // This is typically needed for fields that contain text values
         if (isStringField(result)) {
@@ -654,7 +651,7 @@ public class ValueConverter {
      * Checks if a field is an SME wildcard field that needs special handling
      */
     private boolean isSmeWildcardField(String fieldName) {
-        return fieldName != null && fieldName.startsWith("SME_WILDCARD:");
+        return fieldName != null && (fieldName.startsWith("SME_WILDCARD:") || fieldName.contains("[]"));
     }
     
     /**
@@ -682,7 +679,7 @@ public class ValueConverter {
 
         return QueryBuilders.queryString(q -> q
                 .query(escapeQueryString(value))
-                .fields(queryPattern)
+                .fields(queryPattern.replace("[]","[*]"))
         );
     }
     
