@@ -681,7 +681,7 @@ public class ValueConverter {
         String queryPattern = "*"+searchField;
 
         return QueryBuilders.queryString(q -> q
-                .query(value)
+                .query(escapeQueryString(value))
                 .fields(queryPattern)
         );
     }
@@ -771,6 +771,7 @@ public class ValueConverter {
                    .replace("]", "\\]")
                    .replace("^", "\\^")
                    .replace("~", "\\~")
+                   .replace("*", "\\*")
                    .replace(":", "\\:");
     }
 }

@@ -66,6 +66,6 @@
 * [ ] Integration Tests
 * [ ] Validate Expected Queries (unformatted ones) -> Depends on other components to utilize the AASQL
 * [ ] Make the following SME Props queryable: value, valueType, semanticId, idShort
-* [ ] Make other Components (AAS,CD) also fetch Data from MongoDB not ES
+* [x] Make other Components (AAS,CD) also fetch Data from MongoDB not ES
 * [ ] Note down that comparison operators don't work for SME filtering in SM Repo without idShortPath
 * [ ] Handle Search Queries with SML (Indices)

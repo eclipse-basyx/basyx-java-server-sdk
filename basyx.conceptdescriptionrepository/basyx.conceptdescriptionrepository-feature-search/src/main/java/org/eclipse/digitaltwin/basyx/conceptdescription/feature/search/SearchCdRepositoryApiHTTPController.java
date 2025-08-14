@@ -26,6 +26,9 @@
 package org.eclipse.digitaltwin.basyx.conceptdescription.feature.search;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.executor.ESQueryExecutor;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
@@ -38,6 +41,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-10T15:59:05.892Z[GMT]")
 @RestController
@@ -45,26 +50,51 @@ import java.io.IOException;
 public class SearchCdRepositoryApiHTTPController implements SearchCdRepositoryHTTPApi {
 
 	private final ElasticsearchClient client;
+	private final ConceptDescriptionRepository backend;
 
 	@Value("${" + SearchCdRepositoryFeature.FEATURENAME + ".indexname:" + SearchCdRepositoryFeature.DEFAULT_INDEX + "}")
 	private String indexName;
 
 	@Autowired
-	public SearchCdRepositoryApiHTTPController(ElasticsearchClient client) {
+	public SearchCdRepositoryApiHTTPController(ElasticsearchClient client, ConceptDescriptionRepository backend) {
 		this.client = client;
+		this.backend = backend;
 	}
 
 	@Override
-	public ResponseEntity<QueryResponse> queryConceptDescriptions(Integer limit, Base64UrlEncodedCursor cursor,AASQuery query) {
+	public ResponseEntity<QueryResponse> queryConceptDescriptions(Integer limit, Base64UrlEncodedCursor cursor, AASQuery query) {
         QueryResponse queryResponse = null;
         try {
-			ESQueryExecutor executor = new ESQueryExecutor(client, indexName, "ConceptDescription");
-            queryResponse = executor.executeQueryAndGetResponse(query, limit, cursor);
+			if (query.get$select() != null && query.get$select().equals("id")) {
+				queryResponse = getQueryResponse(query, limit, cursor);
+			} else {
+				// Hard Code to only retrieve ids -> Fetching the actual CD from MongoDB
+				query.set$select("id");
+				queryResponse = getQueryResponse(query, limit, cursor);
+				queryResponse.paging_metadata.resulType = "ConceptDescription";
+				List<ConceptDescription> cds = new ArrayList<>();
+				for (Object id : queryResponse.result) {
+					String identifier = ((ObjectNode) id).get("id").asText();
+					ConceptDescription cd = backend.getConceptDescription(identifier);
+					cds.add(cd);
+
+				}
+				queryResponse.result = cds.stream()
+						.map(cd -> (Object) cd)
+						.toList();
+			}
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return new ResponseEntity<QueryResponse>(queryResponse, HttpStatus.OK);
+        return new ResponseEntity<>(queryResponse, HttpStatus.OK);
+	}
+
+	private QueryResponse getQueryResponse(AASQuery query, Integer limit, Base64UrlEncodedCursor cursor) throws IOException {
+		QueryResponse queryResponse;
+		ESQueryExecutor executor = new ESQueryExecutor(client, indexName, "ConceptDescription");
+		queryResponse = executor.executeQueryAndGetResponse(query, limit, cursor);
+		return queryResponse;
 	}
 
 }
