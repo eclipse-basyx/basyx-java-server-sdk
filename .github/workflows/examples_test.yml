@@ -170,3 +170,22 @@ jobs:
 
       - name: Stop BaSyx Secured Example
         run: docker compose -f examples/BaSyxSecured/docker-compose.yaml down
+
+  test-basyx-node-red:
+    runs-on: ubuntu-latest
+    name: Test BaSyx Node-RED Example
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Start BaSyx Node-RED Example
+        run: docker compose -f examples/BaSyxNodeRED/docker-compose.yaml up -d
+
+      - name: Stop BaSyx Node-RED Example
+        run: docker compose -f examples/BaSyxNodeRED/docker-compose.yaml down
