@@ -1,0 +1,36 @@
+{
+  "$condition": {
+    "$or": [
+      {
+        "$match": [
+          { "$eq": [
+            { "$field": "$aas#assetInformation.specificAssetIds[].name" },
+            { "$strVal": "supplierId" }
+          ]
+          },
+          { "$eq": [
+            { "$field": "$aas#assetInformation.specificAssetIds[].value" },
+            { "$strVal": "aas-1" }
+          ]
+          }
+        ]
+      },
+      {
+        "$match": [
+          {
+            "$eq": [
+              { "$field": "$aas#assetInformation.specificAssetIds[].name" },
+              { "$strVal": "customerId" }
+            ]
+          },
+          {
+            "$eq": [
+              { "$field": "$aas#assetInformation.specificAssetIds[].value" },
+              { "$strVal": "aas-2" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

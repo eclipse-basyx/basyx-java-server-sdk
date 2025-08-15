@@ -1,0 +1,8 @@
+{
+  "$condition": {
+    "$le": [
+      { "$field": "$aas#administration.revision" },
+      { "$field": "$aas#administration.version" }
+    ]
+  }
+}

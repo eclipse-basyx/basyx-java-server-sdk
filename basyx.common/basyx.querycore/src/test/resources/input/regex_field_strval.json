@@ -1,0 +1,12 @@
+{
+  "$condition": {
+    "$regex": [
+      {
+        "$field": "$aas#idShort"
+      },
+      {
+        "$strVal": "^Sensor_[0-9]+$"
+      }
+    ]
+  }
+}

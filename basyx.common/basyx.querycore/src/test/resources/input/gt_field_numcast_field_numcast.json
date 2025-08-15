@@ -1,0 +1,16 @@
+{
+  "$condition": {
+    "$gt": [
+      {
+        "$numCast": {
+          "$field": "$aas#administration.version"
+        }
+      },
+      {
+        "$numCast": {
+          "$field": "$aas#administration.revision"
+        }
+      }
+    ]
+  }
+}

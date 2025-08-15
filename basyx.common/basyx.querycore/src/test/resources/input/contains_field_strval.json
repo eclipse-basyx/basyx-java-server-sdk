@@ -1,0 +1,8 @@
+{
+  "$condition": {
+    "$contains": [
+      { "$field": "$aas#assetInformation.assetKind" },
+      { "$strVal": "NST" }
+    ]
+  }
+}

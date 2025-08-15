@@ -1,0 +1,24 @@
+{
+  "bool": {
+    "must": [
+      {
+        "exists": {
+          "field": "displayName.language"
+        }
+      },
+      {
+        "exists": {
+          "field": "description.language"
+        }
+      },
+      {
+        "script": {
+          "script": {
+            "source": "doc['displayName.language.keyword'].value == doc['description.language.keyword'].value",
+            "lang": "painless"
+          }
+        }
+      }
+    ]
+  }
+}

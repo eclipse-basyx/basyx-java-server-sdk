@@ -1,0 +1,7 @@
+{
+  "regexp": {
+    "idShort.keyword": {
+      "value": "Sensor_[0-9]+"
+    }
+  }
+}

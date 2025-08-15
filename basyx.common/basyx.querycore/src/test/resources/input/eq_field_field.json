@@ -1,0 +1,8 @@
+{
+  "$condition": {
+    "$eq": [
+      { "$field": "$sm#displayName[].language" },
+      { "$field": "$sm#description[].language" }
+    ]
+  }
+}

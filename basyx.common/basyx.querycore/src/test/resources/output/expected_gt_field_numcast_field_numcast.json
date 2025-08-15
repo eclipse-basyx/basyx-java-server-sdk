@@ -1,0 +1,24 @@
+{
+  "bool": {
+    "must": [
+      {
+        "exists": {
+          "field": "administration.version"
+        }
+      },
+      {
+        "exists": {
+          "field": "administration.revision"
+        }
+      },
+      {
+        "script": {
+          "script": {
+            "source": "Double.parseDouble(doc['administration.version.keyword'].value.toString()) > Double.parseDouble(doc['administration.revision.keyword'].value.toString())",
+            "lang": "painless"
+          }
+        }
+      }
+    ]
+  }
+}

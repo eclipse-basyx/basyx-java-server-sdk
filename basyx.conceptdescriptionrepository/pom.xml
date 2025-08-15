@@ -22,5 +22,6 @@
 		<module>basyx.conceptdescriptionrepository-feature-authorization</module>
 		<module>basyx.conceptdescriptionrepository-tck</module>
 		<module>basyx.conceptdescriptionrepository.component</module>
-	</modules>
+        <module>basyx.conceptdescriptionrepository-feature-search</module>
+    </modules>
 </project>

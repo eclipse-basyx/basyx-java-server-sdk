@@ -1,0 +1,18 @@
+{
+  "$condition": {
+    "$match": [
+      {
+        "$eq": [
+          { "$field": "$sme.Documents[].DocumentClassification.Class#value" },
+          { "$strVal": "03-01" }
+        ]
+      },
+      {
+        "$eq": [
+          { "$field": "$sme.Documents[].DocumentVersion.SMLLanguages[]#language" },
+          { "$strVal": "nl" }
+        ]
+      }
+    ]
+  }
+}
