@@ -162,7 +162,7 @@ public class ValueConverter {
             if (isSmeWildcardField(fieldName)) {
                 return createSmeWildcardStringQuery(fieldName, value, operation);
             }
-            
+
             switch (operation) {
                 case "contains":
                     return QueryBuilders.wildcard()
@@ -393,7 +393,7 @@ public class ValueConverter {
         }
         
         String result = modelField;
-        
+
         // Remove model prefixes and convert to actual field names
         if (modelField.startsWith("$aas#")) {
             result = modelField.replace("$aas#", "");
@@ -426,7 +426,8 @@ public class ValueConverter {
         if (isStringField(result)) {
             result = result + ".keyword";
         }
-        
+//        result = result.replace("semanticId.keys[]", "semanticId.keys.value");
+//        result = result.replace("supplementalSemanticIds[].keys[]", "supplementalSemanticIds.keys.value");
         return result;
     }
     
@@ -674,8 +675,8 @@ public class ValueConverter {
 
         // Create a wildcard pattern that matches the field at any nesting level
         // Pattern: submodelElements.*{fieldName}:{value} OR submodelElements.*.smcChildren.*{fieldName}:{value}
-        String queryPattern = "*"+searchField;
 
+        String queryPattern = "*"+searchField;
         return QueryBuilders.queryString(q -> q
                 .query(escapeQueryString(value))
                 .fields(queryPattern.replace("[]","[*]"))
@@ -687,7 +688,9 @@ public class ValueConverter {
      */
     private Query createSmeWildcardStringQuery(String wildcardField, String value, String operation) {
         String fieldName = extractSmeFieldName(wildcardField);
-        
+        fieldName = fieldName.replace("semanticId.keys[]", "semanticId.keys.value")
+                            .replace("supplementalSemanticIds[].keys[]", "supplementalSemanticIds.keys.value")
+                            .replace("submodels.keys[]", "submodels.keys.value");
         String searchField = fieldName;
 
         String searchValue;

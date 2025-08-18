@@ -22,18 +22,17 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.submodelrepository.feature.search;
+package org.eclipse.digitaltwin.basyx.aasrepository.feature.search;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.QueryResponse;
-import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -47,28 +46,28 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-public class TestSearchSubmodelRepository {
+public class TestSearchAasRepository {
     private static ConfigurableApplicationContext appContext;
-    private static SubmodelRepository searchBackend;
-    private static SearchSubmodelRepositoryApiHTTPController searchAPI;
+    private static AasRepository searchBackend;
+    private static SearchAasRepositoryApiHTTPController searchAPI;
 
     @BeforeClass
     public static void startSmRepo() throws Exception {
-        appContext = new SpringApplicationBuilder(DummySearchSubmodelRepositoryComponent.class).run(new String[] {});
-        searchBackend = appContext.getBean(SubmodelRepository.class);
-        searchAPI = appContext.getBean(SearchSubmodelRepositoryApiHTTPController.class);
-        preloadSubmodels();
+        appContext = new SpringApplicationBuilder(DummySearchAasRepositoryComponent.class).run(new String[] {});
+        searchBackend = appContext.getBean(AasRepository.class);
+        searchAPI = appContext.getBean(SearchAasRepositoryApiHTTPController.class);
+        preloadShells();
     }
 
     @Test
     public void testRepo() throws FileNotFoundException, DeserializationException {
-        File file = new File(TestSearchSubmodelRepository.class.getResource("/query.json").getFile());
+        File file = new File(TestSearchAasRepository.class.getResource("/query.json").getFile());
         AASQuery query = queryFromFile(file);
-        ResponseEntity<QueryResponse> result = searchAPI.querySubmodels(query, -1, new Base64UrlEncodedCursor(""));
+        ResponseEntity<QueryResponse> result = searchAPI.queryAssetAdministrationShells(query, -1, new Base64UrlEncodedCursor(""));
         QueryResponse response = result.getBody();
         assert response != null;
-        List<Submodel> submodels = response.result.stream().map(o->(Submodel)o).toList();
-        Assert.assertEquals(3,submodels.size());
+        List<AssetAdministrationShell> shells = response.result.stream().map(o->(AssetAdministrationShell)o).toList();
+        Assert.assertEquals(3,shells.size());
     }
 
     private static AASQuery queryFromFile(File file) throws FileNotFoundException, DeserializationException {
@@ -81,28 +80,24 @@ public class TestSearchSubmodelRepository {
         return deserializer.read(new FileInputStream(file), Environment.class);
     }
 
-    private static void preloadSubmodels() throws FileNotFoundException, DeserializationException {
-        File file = new File(TestSearchSubmodelRepository.class.getResource("/Example-Full.json").getFile());
+    private static void preloadShells() throws FileNotFoundException, DeserializationException {
+        File file = new File(TestSearchAasRepository.class.getResource("/Example-Full.json").getFile());
         Environment env = envFromFile(file);
-        for(Submodel submodel : env.getSubmodels()) {
-            searchBackend.createSubmodel(submodel);
+        for(AssetAdministrationShell aas : env.getAssetAdministrationShells()) {
+            searchBackend.createAas(aas);
         }
     }
 
     @AfterClass
     public static void shutdownAasRepo() {
-        searchBackend.getAllSubmodels(new PaginationInfo(0, "")).getResult().forEach(submodel -> {
+        searchBackend.getAllAas(null, null, new PaginationInfo(0, "")).getResult().forEach(aas -> {
             try {
-                searchBackend.deleteSubmodel(submodel.getId());
+                searchBackend.deleteAas(aas.getId());
             } catch (Exception e) {
                 // Ignore exceptions during cleanup
             }
         });
         appContext.close();
-    }
-
-    private String getURL() {
-        return "http://localhost:8081/submodels";
     }
 
 }

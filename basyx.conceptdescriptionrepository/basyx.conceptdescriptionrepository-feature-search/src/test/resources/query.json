@@ -1,0 +1,38 @@
+{
+  "$condition": {
+    "match": [
+      {
+        "$eq": [
+          {
+            "$field": "$cd#description[].language"
+          },
+          {
+            "$strVal": "en-us"
+          }
+        ]
+      },
+      {
+        "$lt": [
+          {
+            "$numCast": {
+              "$field": "cd#administration.revision"
+            }
+          },
+          {
+            "$numVal": 11
+          }
+        ]
+      },
+      {
+        "$contains": [
+          {
+            "$field": "$cd#isCaseOf.keys[]"
+          },
+          {
+            "$strVal": "acplt"
+          }
+        ]
+      }
+    ]
+  }
+}
