@@ -28,8 +28,8 @@
  * https://github.com/swagger-api/swagger-codegen
  * Do not edit the class manually.
  */
-package org.eclipse.digitaltwin.basyx.aasregistry.feature.search;
 
+package org.eclipse.digitaltwin.basyx.aasregistry.feature.search;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -50,8 +50,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.eclipse.digitaltwin.aas4j.v3.model.Result;
-
-
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2025-06-18T09:42:17.580283867Z[GMT]")
 @Validated

@@ -23,7 +23,11 @@ public class ValueConverter {
     public Query convertEqualityComparison(Value leftValue, Value rightValue) {
         String leftField = extractFieldName(leftValue);
         String rightField = extractFieldName(rightValue);
-        
+
+        if(!leftField.endsWith(".keyword")) {
+            leftField = leftField + ".keyword";
+        }
+
         // Field-to-field comparison
         if (leftField != null && rightField != null) {
             return createFieldToFieldComparison(leftField, rightField, "eq");
@@ -449,7 +453,7 @@ public class ValueConverter {
         if (value instanceof String) {
             return FieldValue.of((String) value);
         } else if (value instanceof Number) {
-            return FieldValue.of(((Number) value).doubleValue());
+            return FieldValue.of(value);
         } else if (value instanceof Boolean) {
             return FieldValue.of((Boolean) value);
         } else {
@@ -490,17 +494,12 @@ public class ValueConverter {
         return value != null ? value.toString() : null;
     }
     
-    private Double convertToNumber(Object value) {
-        if (value instanceof Number) {
-            return ((Number) value).doubleValue();
-        } else if (value instanceof String) {
-            try {
-                return Double.parseDouble((String) value);
-            } catch (NumberFormatException e) {
-                return null;
-            }
+    private Number convertToNumber(Object value) {
+        try{
+            return (Number) value;
+        }catch (ClassCastException e){
+            return null;
         }
-        return null;
     }
     
     private Boolean convertToBoolean(Object value) {

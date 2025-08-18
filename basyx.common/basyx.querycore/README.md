@@ -51,6 +51,7 @@
 
 
 ## TODOS
+
 * [x] Extract Query Package from basyx.core to own module (e.g. basyx.querycore)
 * [x] Comparison of two fields is not possible yet
 * [x] Fix Error: java.lang.ClassNotFoundException: co.elastic.clients.elasticsearch._types.ScriptSource$Builder in ValueConverter during Runtime
@@ -70,3 +71,5 @@
 * [ ] Note down that comparison operators don't work for SME filtering in SM Repo without idShortPath
 * [x] Handle Search Queries with SML (Indices)
 * [ ] Handle error case when Query is not valid (e.g.  "$field: $sme", "$field: $sme.smc.smc.propa")
+* [x] License Header hinzufügen
+* When querying for (supplemental-)semanticId Keys append with .value 

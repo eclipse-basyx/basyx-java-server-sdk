@@ -28,6 +28,7 @@
  * https://github.com/swagger-api/swagger-codegen
  * Do not edit the class manually.
  */
+
 package org.eclipse.digitaltwin.basyx.submodelregistry.feature.search;
 
 

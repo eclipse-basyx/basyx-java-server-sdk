@@ -22,6 +22,7 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+
 package org.eclipse.digitaltwin.basyx.conceptdescription.feature.search;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;

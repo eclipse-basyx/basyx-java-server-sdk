@@ -20,12 +20,32 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.digitaltwin.basyx</groupId>
+            <artifactId>basyx.submodelrepository-backend</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.digitaltwin.basyx</groupId>
+            <artifactId>basyx.submodelrepository-backend-mongodb</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.digitaltwin.basyx</groupId>
             <artifactId>basyx.querycore</artifactId>
         </dependency>
         <dependency>
             <groupId>co.elastic.clients</groupId>
             <artifactId>elasticsearch-java</artifactId>
             <version>9.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.19.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.19.0</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -49,10 +69,29 @@
             <artifactId>basyx.http</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.digitaltwin.basyx</groupId>
+            <artifactId>basyx.http</artifactId>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
+        <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
             <version>1.3.2</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.digitaltwin.basyx</groupId>
+            <artifactId>basyx.submodelrepository-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.digitaltwin.basyx</groupId>
+            <artifactId>basyx.submodelservice-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.digitaltwin.basyx</groupId>
+            <artifactId>basyx.submodelrepository-core</artifactId>
         </dependency>
     </dependencies>
 

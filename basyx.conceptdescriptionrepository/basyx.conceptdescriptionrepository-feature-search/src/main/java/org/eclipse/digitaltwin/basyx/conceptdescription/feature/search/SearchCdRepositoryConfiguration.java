@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.digitaltwin.basyx.conceptdescription.feature.search;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;

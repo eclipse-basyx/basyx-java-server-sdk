@@ -22,6 +22,7 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
+
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.search;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
@@ -59,7 +60,6 @@ public class SearchSubmodelRepository implements SubmodelRepository {
 		this.decorated = decorated;
 		this.esclient = esclient;
 		this.indexName = indexName;
-		//ensureIndexExists();
 	}
 
 	@Override
