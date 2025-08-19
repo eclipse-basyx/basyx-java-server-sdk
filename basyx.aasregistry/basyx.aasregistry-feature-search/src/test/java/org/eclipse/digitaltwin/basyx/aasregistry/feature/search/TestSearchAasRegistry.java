@@ -23,20 +23,23 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.submodelregistry.feature.search;
+package org.eclipse.digitaltwin.basyx.aasregistry.feature.search;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.basyx.aasregistry.model.*;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.QueryResponse;
-import org.eclipse.digitaltwin.basyx.submodelregistry.model.*;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.ResponseEntity;
@@ -48,51 +51,48 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static org.junit.Assert.assertEquals;
-
 /**
- * Tests for {@link SearchSubmodelRegistryStorage} feature
+ * Tests for {@link org.eclipse.digitaltwin.basyx.aasregistry.feature.search.SearchAasRegistryStorage} feature
  *
  * @author danish
  */
-public class TestSearchSubmodelRegistry {
+public class TestSearchAasRegistry {
 
 	private static ConfigurableApplicationContext appContext;
 	private static final String BASE_URL = "http://localhost:8080";
-	public static String submodelRegistryBaseUrl = BASE_URL + "/submodel-descriptors";
-	private static SubmodelRegistryStorage storage;
-	private static SearchSubmodelRegistryApiHTTPController searchAPI;
+	private static SearchAasRegistryStorage storage;
+	private static SearchAasRegistryApiHTTPController searchAPI;
 
 
 	@BeforeClass
-	public static void setUp() throws IOException, DeserializationException {
-		appContext = new SpringApplication(DummySearchSubmodelRegistryComponent.class).run(new String[] {});
-		storage = appContext.getBean(SearchSubmodelRegistryStorage.class);
-		searchAPI = appContext.getBean(SearchSubmodelRegistryApiHTTPController.class);
-		preloadSmds();
+	public static void setUp() throws IOException, DeserializationException, InterruptedException {
+		appContext = new SpringApplication(DummySearchAasRegistryComponent.class).run();
+		storage = appContext.getBean(SearchAasRegistryStorage.class);
+		searchAPI = appContext.getBean(SearchAasRegistryApiHTTPController.class);
+		preloadAasdf();
+		Thread.sleep(500);
 	}
 
 	@AfterClass
 	public static void tearDown() {
-		List<org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor> descriptors = storage.getAllSubmodelDescriptors(PaginationInfo.NO_LIMIT).getResult();
+		List<org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor> descriptors = storage.getAllAasDescriptors(PaginationInfo.NO_LIMIT, new DescriptorFilter(null, null)).getResult();
 
-		descriptors.forEach(descriptor -> storage.removeSubmodelDescriptor(descriptor.getId()));
+		descriptors.forEach(descriptor -> storage.removeAasDescriptor(descriptor.getId()));
 		appContext.close();
 	}
 
 	@Test
 	public void testRepo() throws FileNotFoundException, DeserializationException {
-		File file = new File(Objects.requireNonNull(TestSearchSubmodelRegistry.class.getResource("/query.json")).getFile());
+		File file = new File(Objects.requireNonNull(TestSearchAasRegistry.class.getResource("/query.json")).getFile());
 		AASQuery query = queryFromFile(file);
-		ResponseEntity<QueryResponse> result = searchAPI.querySubmodelDescriptors(100, new Base64UrlEncodedCursor(""), query);
+		ResponseEntity<QueryResponse> result = searchAPI.queryAssetAdministrationShellDescriptors(100, new Base64UrlEncodedCursor(""), query);
 		QueryResponse response = result.getBody();
 		assert response != null;
-		List<SubmodelDescriptor> topHits = response.result.stream().map(o->(SubmodelDescriptor)o).toList();
-		Assert.assertEquals(4,topHits.size());
+		List<AssetAdministrationShellDescriptor> topHits = response.result.stream().map(o->(AssetAdministrationShellDescriptor)o).toList();
+		Assert.assertEquals(2,topHits.size());
 	}
 
 	private static AASQuery queryFromFile(File file) throws FileNotFoundException, DeserializationException {
@@ -105,54 +105,45 @@ public class TestSearchSubmodelRegistry {
 		return deserializer.read(new FileInputStream(file), Environment.class);
 	}
 
-	private static void preloadSmds() throws FileNotFoundException, DeserializationException {
-		File file = new File(TestSearchSubmodelRegistry.class.getResource("/Example-Full.json").getFile());
+	private static void preloadAasdf() throws FileNotFoundException, DeserializationException {
+		File file = new File(TestSearchAasRegistry.class.getResource("/Example-Full.json").getFile());
 		Environment env = envFromFile(file);
-		for(Submodel sm : env.getSubmodels()) {
-			Endpoint endpoint = new Endpoint("AAS-3.0", createProtocolInformation(sm.getId()));
-			SubmodelDescriptor descriptor = new SubmodelDescriptor(sm.getId(), List.of(endpoint));
-			if(sm.getAdministration() != null) {
+		for(AssetAdministrationShell aas : env.getAssetAdministrationShells()) {
+			Endpoint endpoint = new Endpoint("AAS-3.0", createProtocolInformation(aas.getId()));
+
+			AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor(aas.getId());
+			descriptor.setEndpoints(List.of(endpoint));
+
+			if(aas.getAdministration() != null) {
 				AdministrativeInformation administration = new AdministrativeInformation();
-				administration.setVersion(sm.getAdministration().getVersion());
-				administration.setRevision(sm.getAdministration().getRevision());
+				administration.setVersion(aas.getAdministration().getVersion());
+				administration.setRevision(aas.getAdministration().getRevision());
 				descriptor.setAdministration(administration);
 			}
-			descriptor.setIdShort(sm.getIdShort());
-
+			descriptor.setIdShort(aas.getIdShort());
 
 			List<LangStringTextType> descriptions = new ArrayList<>();
-			for(org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType el : sm.getDescription()){
+			for(org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType el : aas.getDescription()){
 				LangStringTextType description = new LangStringTextType(el.getLanguage(), el.getText());
 				descriptions.add(description);
 			}
 
 			List<LangStringNameType> displayNames = new ArrayList<>();
-			for(org.eclipse.digitaltwin.aas4j.v3.model.LangStringNameType el : sm.getDisplayName()) {
+			for(org.eclipse.digitaltwin.aas4j.v3.model.LangStringNameType el : aas.getDisplayName()) {
 				LangStringNameType displayName = new LangStringNameType(el.getLanguage(), el.getText());
 				displayNames.add(displayName);
 			}
 
 			descriptor.setDescription(descriptions);
 			descriptor.setDisplayName(displayNames);
+			descriptor.setAssetKind(AssetKind.INSTANCE);
 
-			if(sm.getSemanticId() != null) {
-				List<Key> keys = new ArrayList<>();
-				for (org.eclipse.digitaltwin.aas4j.v3.model.Key key : sm.getSemanticId().getKeys()) {
-					Key k = new Key();
-					k.setType(KeyTypes.SUBMODEL);
-					k.setValue(key.getValue());
-					keys.add(k);
-				}
-
-				descriptor.setSemanticId(new Reference(ReferenceTypes.EXTERNALREFERENCE, keys));
-			}
-
-			storage.insertSubmodelDescriptor(descriptor);
+			storage.insertAasDescriptor(descriptor);
 		}
 	}
 
-	private static ProtocolInformation createProtocolInformation(String submodelId) {
-		String href = String.format("%s/%s", BASE_URL + "/submodels", Base64UrlEncodedIdentifier.encodeIdentifier(submodelId));
+	private static ProtocolInformation createProtocolInformation(String shellId) {
+		String href = String.format("%s/%s", BASE_URL + "/shells", Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
 
 		ProtocolInformation protocolInformation = new ProtocolInformation(href);
 		protocolInformation.endpointProtocol(getProtocol(href));

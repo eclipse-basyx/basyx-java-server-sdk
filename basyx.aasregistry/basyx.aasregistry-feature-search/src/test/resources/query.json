@@ -22,12 +22,12 @@
         ]
       },
       {
-        "$startsWith": [
+        "$ends-with": [
           {
             "$field": "$aasdesc#idShort"
           },
           {
-            "$strVal": "Test"
+            "$strVal": "Mandatory"
           }
         ]
       }
