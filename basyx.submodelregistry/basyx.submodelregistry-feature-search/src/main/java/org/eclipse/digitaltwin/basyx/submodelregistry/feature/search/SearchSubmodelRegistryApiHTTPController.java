@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,6 +48,7 @@ import java.util.List;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2025-06-18T09:42:17.580283867Z[GMT]")
 @RestController
+@ConditionalOnProperty(name = {SearchSubmodelRegistryFeature.FEATURENAME + ".enabled", "basyx.feature.search.enabled"}, havingValue = "true", matchIfMissing = false)
 public class SearchSubmodelRegistryApiHTTPController implements SearchSubmodelRegistryHTTPApi {
 
     private static final Logger log = LoggerFactory.getLogger(SearchSubmodelRegistryApiHTTPController.class);
