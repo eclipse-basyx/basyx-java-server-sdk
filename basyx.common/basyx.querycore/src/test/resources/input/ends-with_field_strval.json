@@ -1,6 +1,6 @@
 {
   "$condition": {
-    "$starts-with": [
+    "$ends-with": [
       { "$field": "$aas#assetInformation.assetKind" },
       { "$strVal": "NST" }
     ]
