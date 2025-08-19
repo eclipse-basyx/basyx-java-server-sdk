@@ -37,6 +37,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.assertj.core.api.SoftAssertionsProvider.ThrowingRunnable;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapters;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiResponse;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
@@ -104,6 +107,9 @@ public abstract class BaseIntegrationTest {
 	private static final int OK = 200;
 
 	private static final int NOT_FOUND = 404;
+	
+	private static KafkaAdapter<RegistryEvent> adapter = KafkaAdapters.getAdapter("submodel-registry", RegistryEvent.class);
+
 
 	@Value("${local.server.port}")
 	private int port;
@@ -115,23 +121,26 @@ public abstract class BaseIntegrationTest {
 
 	protected SubmodelRegistryApi api;
 	
+	
 	@Before
-	public void setUp() throws ApiException, InterruptedException {
+	public void setUp() throws ApiException, InterruptedException, DeserializationException {
+		adapter.skipMessages();
 		initClient();
 		cleanup();
+		
 	}
 	
 	@After
-	public void tearDown() throws ApiException, InterruptedException {
+	public void tearDown() throws ApiException, InterruptedException, DeserializationException {
 		cleanup();
 	}
-	
+
 	protected void initClient() throws ApiException, InterruptedException {
 		api = new SubmodelRegistryApi("http", "127.0.0.1", port);
 	}
 	
-	protected void cleanup() throws ApiException, InterruptedException {	
-		queue().noAdditionalMessage();
+	protected void cleanup() throws ApiException, InterruptedException, DeserializationException {	
+		adapter.assertNoAdditionalMessages();
 		GetSubmodelDescriptorsResult result = api.getAllSubmodelDescriptors(null, null);
 		for (SubmodelDescriptor eachDescriptor : result.getResult()) {
 			api.deleteSubmodelDescriptorById(eachDescriptor.getId());
@@ -149,11 +158,11 @@ public abstract class BaseIntegrationTest {
 	}
 
 	@Test
-	public void whenWritingParallel_transactionManagementWorks() throws ApiException {
+	public void whenWritingParallel_transactionManagementWorks() throws ApiException, InterruptedException, DeserializationException {
 		IntStream.iterate(0, i -> i + 1).limit(300).parallel().forEach(this::postSubmodel);		
 		assertThat(api.getAllSubmodelDescriptors(null, null).getResult()).hasSize(300);
 		for (int i = 0; i < 300; i++) {
-			queue().poll();
+			adapter.next();
 		}
 	}
 
@@ -167,7 +176,7 @@ public abstract class BaseIntegrationTest {
 	}
 
 	@Test
-	public void whenDeleteAll_thenAllDescriptorsAreRemoved() throws ApiException, InterruptedException {
+	public void whenDeleteAll_thenAllDescriptorsAreRemoved() throws ApiException, InterruptedException, DeserializationException {
 		for (int i = 0; i < DELETE_ALL_TEST_INSTANCE_COUNT; i++) {
 			SubmodelDescriptor descr = new SubmodelDescriptor();
 			String id = "id_" + i;
@@ -190,16 +199,16 @@ public abstract class BaseIntegrationTest {
 		HashSet<RegistryEvent> events = new HashSet<>();
 		// we do not have a specific order, so read all events first
 		for (int i = 0; i < DELETE_ALL_TEST_INSTANCE_COUNT; i++) {
-			events.add(queue().poll());
+			events.add(adapter.next());
 		}
 		for (int i = 0; i < DELETE_ALL_TEST_INSTANCE_COUNT; i++) {
 			assertThat(events.remove(RegistryEvent.builder().id("id_" + i).type(EventType.SUBMODEL_UNREGISTERED).build())).isTrue();
 		}
-		queue().noAdditionalMessage();
+		adapter.assertNoAdditionalMessages();
 	}
 
 	@Test
-	public void whenCreateAndDeleteDescriptors_thenAllDescriptorsAreRemoved() throws IOException, InterruptedException, TimeoutException, ApiException {
+	public void whenCreateAndDeleteDescriptors_thenAllDescriptorsAreRemoved() throws IOException, InterruptedException, TimeoutException, ApiException, DeserializationException {
 		List<SubmodelDescriptor> deployed = initialize();
 		List<SubmodelDescriptor> all = api.getAllSubmodelDescriptors(null, null).getResult();
 		assertThat(all).containsExactlyInAnyOrderElementsOf(deployed);
@@ -211,9 +220,8 @@ public abstract class BaseIntegrationTest {
 		all = api.getAllSubmodelDescriptors(null, null).getResult();
 		assertThat(all).isEmpty();
 
-		queue().noAdditionalMessage();
+		adapter.assertNoAdditionalMessages();
 	}
-
 	@Test
 	public void whenInvalidInput_thenSuccessfullyValidated() throws Exception {
 		initialize();
@@ -258,7 +266,7 @@ public abstract class BaseIntegrationTest {
 	}
 
 	@Test
-	public void whenUseSubmodelDescriptorPagination_thenUseRefetching() throws IOException, InterruptedException, TimeoutException, ApiException {
+	public void whenUseSubmodelDescriptorPagination_thenUseRefetching() throws IOException, InterruptedException, TimeoutException, ApiException, DeserializationException {
 		List<SubmodelDescriptor> postedDescriptors = initialize();
 		List<SubmodelDescriptor> postedDescriptorsSorted = postedDescriptors.stream().sorted(Comparator.comparing(SubmodelDescriptor::getId)).collect(Collectors.toList());
 		assertThat(postedDescriptors).hasSize(5);
@@ -280,7 +288,7 @@ public abstract class BaseIntegrationTest {
 	}
 
 	@Test
-	public void whenSendFullObjectStructure_ItemIsProcessedProperly() throws ApiException, JsonProcessingException {
+	public void whenSendFullObjectStructure_ItemIsProcessedProperly() throws ApiException, JsonProcessingException, InterruptedException, DeserializationException {
 		LangStringTextType dType = new LangStringTextType().language(LANG_DE_DE).text("description");
 		LangStringNameType nType = new LangStringNameType().language(LANG_DE_DE).text("display");
 		ProtocolInformation protInfo = new ProtocolInformation();
@@ -311,7 +319,7 @@ public abstract class BaseIntegrationTest {
 	}
 
 	@Test
-	public void whenPostSubmodelDescriptor_LocationIsReturned() throws ApiException, IOException {
+	public void whenPostSubmodelDescriptor_LocationIsReturned() throws ApiException, IOException, InterruptedException, DeserializationException {
 		SubmodelDescriptor sm = new SubmodelDescriptor().id("https://sm.id").addEndpointsItem(defaultClientEndpoint());
 		ApiResponse<SubmodelDescriptor> response = api.postSubmodelDescriptorWithHttpInfo(sm);
 		assertThatEventWasSend(new RegistryEvent(sm.getId(), EventType.SUBMODEL_REGISTERED, convert(sm)));
@@ -332,14 +340,14 @@ public abstract class BaseIntegrationTest {
 		assertThat(status).isEqualTo(200);			
 	}	
 
-	private void deleteSubmodelDescriptor(String submodelId) throws ApiException {
-		queue().reset();
+	private void deleteSubmodelDescriptor(String submodelId) throws ApiException, InterruptedException, DeserializationException {
+		
 		int response = api.deleteSubmodelDescriptorByIdWithHttpInfo(submodelId).getStatusCode();
 		assertThat(response).isEqualTo(NO_CONTENT);
 		assertThatEventWasSend(RegistryEvent.builder().id(submodelId).type(EventType.SUBMODEL_UNREGISTERED).build());
 	}
 
-	private List<SubmodelDescriptor> initialize() throws IOException, InterruptedException, TimeoutException, ApiException {
+	private List<SubmodelDescriptor> initialize() throws IOException, InterruptedException, TimeoutException, ApiException, DeserializationException {
 		List<SubmodelDescriptor> descriptors = resourceLoader.loadRepositoryDefinition(SubmodelDescriptor.class);
 		List<org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor> repoContent = resourceLoader.loadRepositoryDefinition(org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor.class);
 
@@ -354,8 +362,8 @@ public abstract class BaseIntegrationTest {
 		return descriptors;
 	}
 
-	private void assertThatEventWasSend(RegistryEvent build) {
-		RegistryEvent evt = queue().poll();
+	private void assertThatEventWasSend(RegistryEvent build) throws InterruptedException, DeserializationException {
+		RegistryEvent evt = adapter.next();
 		assertThat(evt).isEqualTo(build);
 	}
 
@@ -381,6 +389,5 @@ public abstract class BaseIntegrationTest {
 			assertThat(ex.getCode()).isEqualTo(statusCode);
 		}
 	}
-	
-	public abstract EventQueue queue();
+
 }

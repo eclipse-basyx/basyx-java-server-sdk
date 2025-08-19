@@ -1,9 +1,0 @@
-{{- if .Values.keycloak.enabled }}
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Values.keycloak.fullnameOverride }}-realm
-data:
-  BaSyx-realm.json: |-
-{{ .Files.Get "config/BaSyx-realm.json" | indent 4 }}
-{{ end -}}

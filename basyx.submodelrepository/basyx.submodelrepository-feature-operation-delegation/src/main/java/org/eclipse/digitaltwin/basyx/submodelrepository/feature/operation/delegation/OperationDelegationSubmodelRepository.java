@@ -159,8 +159,8 @@ public class OperationDelegationSubmodelRepository implements SubmodelRepository
 	}
 
 	@Override
-	public void setFileValue(String submodelId, String idShortPath, String fileName, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
-		decorated.setFileValue(submodelId, idShortPath, fileName, inputStream);
+	public void setFileValue(String submodelId, String idShortPath, String fileName, String contentType, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
+		decorated.setFileValue(submodelId, idShortPath, fileName, contentType, inputStream);
 		
 	}
 

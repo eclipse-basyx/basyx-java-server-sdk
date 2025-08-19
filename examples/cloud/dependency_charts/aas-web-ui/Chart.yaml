@@ -1,5 +1,0 @@
-apiVersion: v2
-description: A Helm chart for running the Basyx AAS Web UI for a Basyx AAS Environment and Registry (Basyx v2 - AAS v3)
-name: aas-web-ui
-type: application
-version: 0.0.1

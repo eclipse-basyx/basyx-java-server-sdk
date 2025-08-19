@@ -429,7 +429,7 @@ public abstract class SubmodelServiceSuite {
 
 		String idShortPathPropertyInSmeCol = SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT + "." + SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT;
 
-		submodelService.setFileValue(idShortPathPropertyInSmeCol, "jsonFile1.json", getInputStreamOfDummyFile(DUMMY_JSON_1));
+		submodelService.setFileValue(idShortPathPropertyInSmeCol, "jsonFile1.json", "application/json", getInputStreamOfDummyFile(DUMMY_JSON_1));
 
 		String fileValue = ((File) submodelService.getSubmodelElement(idShortPathPropertyInSmeCol)).getValue();
 
@@ -452,14 +452,14 @@ public abstract class SubmodelServiceSuite {
 
 		String idShortPathPropertyInSmeCol = SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT + "." + SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT;
 
-		submodelService.setFileValue(idShortPathPropertyInSmeCol, "jsonFile1.json", getInputStreamOfDummyFile(DUMMY_JSON_1));
+		submodelService.setFileValue(idShortPathPropertyInSmeCol, "jsonFile1.json", "application/json", getInputStreamOfDummyFile(DUMMY_JSON_1));
 
 		assertStoredFileContentEquals(submodelService, idShortPathPropertyInSmeCol, DUMMY_JSON_1);
 
 		File newFileSME = SubmodelServiceHelper.createDummyFile(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "text/plain", "someArbitraryPlainText");
 		submodelService.updateSubmodelElement(idShortPathPropertyInSmeCol, newFileSME);
 
-		submodelService.setFileValue(idShortPathPropertyInSmeCol, "jsonFile2.json", getInputStreamOfDummyFile(DUMMY_JSON_2));
+		submodelService.setFileValue(idShortPathPropertyInSmeCol, "jsonFile2.json", "application/json", getInputStreamOfDummyFile(DUMMY_JSON_2));
 
 		assertStoredFileContentEquals(submodelService, idShortPathPropertyInSmeCol, DUMMY_JSON_2);
 	}
@@ -556,7 +556,7 @@ public abstract class SubmodelServiceSuite {
 		Submodel technicalDataSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
 		SubmodelService submodelService = getSubmodelService(technicalDataSubmodel);
 
-		submodelService.setFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "jsonFile1.json", getInputStreamOfDummyFile(DUMMY_JSON_1));
+		submodelService.setFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "jsonFile1.json", "application/json", getInputStreamOfDummyFile(DUMMY_JSON_1));
 
 		SubmodelElement submodelElement = submodelService.getSubmodelElement(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 		String fileValue = ((File) submodelElement).getValue();
@@ -574,7 +574,7 @@ public abstract class SubmodelServiceSuite {
 		SubmodelService submodelService = getSubmodelService(technicalDataSubmodel);
 		String expectedFileExtension = "json";
 
-		submodelService.setFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "jsonFile1.json", getInputStreamOfDummyFile(DUMMY_JSON_1));
+		submodelService.setFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "jsonFile1.json", "application/json", getInputStreamOfDummyFile(DUMMY_JSON_1));
 
 		java.io.File retrievedValue = submodelService.getFileByPath(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 
@@ -587,7 +587,7 @@ public abstract class SubmodelServiceSuite {
 		Submodel technicalDataSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
 		SubmodelService submodelService = getSubmodelService(technicalDataSubmodel);
 
-		submodelService.setFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "jsonFile1.json", getInputStreamOfDummyFile(DUMMY_JSON_1));
+		submodelService.setFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "jsonFile1.json", "application/json", getInputStreamOfDummyFile(DUMMY_JSON_1));
 
 		String filePath = ((File)submodelService.getSubmodelElement(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT)).getValue();
 
@@ -612,7 +612,7 @@ public abstract class SubmodelServiceSuite {
 		Submodel technicalDataSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
 		SubmodelService submodelService = getSubmodelService(technicalDataSubmodel);
 
-		submodelService.setFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "jsonFile1.json", getInputStreamOfDummyFile(DUMMY_JSON_1));
+		submodelService.setFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "jsonFile1.json", "application/json", getInputStreamOfDummyFile(DUMMY_JSON_1));
 
 		submodelService.deleteFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 
@@ -628,11 +628,11 @@ public abstract class SubmodelServiceSuite {
 		Submodel technicalDataSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
 		SubmodelService submodelService = getSubmodelService(technicalDataSubmodel);
 
-		submodelService.setFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "jsonFile1.json", getInputStreamOfDummyFile(DUMMY_JSON_1));
+		submodelService.setFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "jsonFile1.json", "application/json", getInputStreamOfDummyFile(DUMMY_JSON_1));
 
 		assertStoredFileContentEquals(submodelService, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, DUMMY_JSON_1);
 
-		submodelService.setFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "jsonFile2.json", getInputStreamOfDummyFile(DUMMY_JSON_2));
+		submodelService.setFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "jsonFile2.json", "application/json", getInputStreamOfDummyFile(DUMMY_JSON_2));
 
 		assertStoredFileContentEquals(submodelService, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, DUMMY_JSON_2);
 	}

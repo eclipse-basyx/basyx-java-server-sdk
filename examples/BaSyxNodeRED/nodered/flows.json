@@ -1,0 +1,380 @@
+[
+    {
+        "id": "65cbde2e2212e2ea",
+        "type": "tab",
+        "label": "AAS Flow",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "09991ca5f027a207",
+        "type": "mqtt-broker",
+        "name": "Mosquitto",
+        "broker": "mosquitto",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "3472dee554540f44",
+        "type": "comment",
+        "z": "65cbde2e2212e2ea",
+        "name": "Write Temperature MQTT Topic into AAS Property",
+        "info": "",
+        "x": 220,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "4108b0b847b7cb41",
+        "type": "mqtt in",
+        "z": "65cbde2e2212e2ea",
+        "name": "",
+        "topic": "EnvironmentalSensor/Temperature",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "09991ca5f027a207",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 180,
+        "y": 100,
+        "wires": [
+            [
+                "db99b28862f70f99"
+            ]
+        ]
+    },
+    {
+        "id": "8b8f34ee74780b11",
+        "type": "http request",
+        "z": "65cbde2e2212e2ea",
+        "name": "Update Temperature Property",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 910,
+        "y": 100,
+        "wires": [
+            [
+                "e483c16f6c737dad"
+            ]
+        ]
+    },
+    {
+        "id": "db99b28862f70f99",
+        "type": "function",
+        "z": "65cbde2e2212e2ea",
+        "name": "Request preparation for Temperature PATCH",
+        "func": "let temperatureValue = msg.payload;\nlet formattedTemp = parseFloat(temperatureValue).toFixed(2);\n\nmsg = {\n    \"url\": \"http://aas-env:8081/submodels/YjdlNTA2NzgtZGY3Mi00ODAxLWI3YzAtNzI2NTNkMmU0NzI0/submodel-elements/TemperatureValue/$value\",\n    \"method\": \"PATCH\",\n    \"payload\": JSON.stringify(formattedTemp),\n    \"headers\": {\n        \"Content-Type\": \"application/json\"\n    }\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 100,
+        "wires": [
+            [
+                "8b8f34ee74780b11"
+            ]
+        ]
+    },
+    {
+        "id": "e483c16f6c737dad",
+        "type": "function",
+        "z": "65cbde2e2212e2ea",
+        "name": "Retrieve Response",
+        "func": "// Check if the request was successful\nif (msg.statusCode === 204) {\n    msg.payload = {\n        \"success\": true,\n        \"message\": \"Temperature property updated successfully\",\n        \"statusCode\": msg.statusCode,\n        \"timestamp\": new Date().toISOString()\n    };\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1190,
+        "y": 100,
+        "wires": [
+            [
+                "2ca91e9ae5a940cf"
+            ]
+        ]
+    },
+    {
+        "id": "2ca91e9ae5a940cf",
+        "type": "debug",
+        "z": "65cbde2e2212e2ea",
+        "d": true,
+        "name": "Log Response",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1420,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "dacc4e21ba62972f",
+        "type": "comment",
+        "z": "65cbde2e2212e2ea",
+        "name": "Write Humidity MQTT Topic into AAS Property",
+        "info": "",
+        "x": 210,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "f4479d1040dcb2e3",
+        "type": "mqtt in",
+        "z": "65cbde2e2212e2ea",
+        "name": "",
+        "topic": "EnvironmentalSensor/Humidity",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "09991ca5f027a207",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 240,
+        "wires": [
+            [
+                "a11eec39afcfd5d9"
+            ]
+        ]
+    },
+    {
+        "id": "6d01919a34ad7ed6",
+        "type": "http request",
+        "z": "65cbde2e2212e2ea",
+        "name": "Update Humidity Property",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 890,
+        "y": 240,
+        "wires": [
+            [
+                "d6c3e577f7290a94"
+            ]
+        ]
+    },
+    {
+        "id": "a11eec39afcfd5d9",
+        "type": "function",
+        "z": "65cbde2e2212e2ea",
+        "name": "Request preparation for Humidity PATCH",
+        "func": "let humidityValue = msg.payload;\nlet formattedHumidity = parseFloat(humidityValue).toFixed(2);\n\nmsg = {\n    \"url\": \"http://aas-env:8081/submodels/YjdlNTA2NzgtZGY3Mi00ODAxLWI3YzAtNzI2NTNkMmU0NzI0/submodel-elements/HumidityValue/$value\",\n    \"method\": \"PATCH\",\n    \"payload\": JSON.stringify(formattedHumidity),\n    \"headers\": {\n        \"Content-Type\": \"application/json\"\n    }\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 240,
+        "wires": [
+            [
+                "6d01919a34ad7ed6"
+            ]
+        ]
+    },
+    {
+        "id": "d6c3e577f7290a94",
+        "type": "function",
+        "z": "65cbde2e2212e2ea",
+        "name": "Retrieve Response",
+        "func": "// Check if the request was successful\nif (msg.statusCode === 204) {\n    msg.payload = {\n        \"success\": true,\n        \"message\": \"Humidity property updated successfully\",\n        \"statusCode\": msg.statusCode,\n        \"timestamp\": new Date().toISOString()\n    };\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1190,
+        "y": 240,
+        "wires": [
+            [
+                "fc8f0848b22cac9b"
+            ]
+        ]
+    },
+    {
+        "id": "fc8f0848b22cac9b",
+        "type": "debug",
+        "z": "65cbde2e2212e2ea",
+        "d": true,
+        "name": "Log Response",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1420,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "c1c98a427f301802",
+        "type": "comment",
+        "z": "65cbde2e2212e2ea",
+        "name": "Write Air Quality MQTT Topic into AAS Property",
+        "info": "",
+        "x": 220,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "65877bd3cb5799f2",
+        "type": "mqtt in",
+        "z": "65cbde2e2212e2ea",
+        "name": "",
+        "topic": "EnvironmentalSensor/AirQuality",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "09991ca5f027a207",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 380,
+        "wires": [
+            [
+                "74d9093ee0180a7d"
+            ]
+        ]
+    },
+    {
+        "id": "53e37b0b6ed67a79",
+        "type": "http request",
+        "z": "65cbde2e2212e2ea",
+        "name": "Update Air Quality Property",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 900,
+        "y": 380,
+        "wires": [
+            [
+                "6d7ab653eb981aa7"
+            ]
+        ]
+    },
+    {
+        "id": "74d9093ee0180a7d",
+        "type": "function",
+        "z": "65cbde2e2212e2ea",
+        "name": "Request preparation for Air Quality PATCH",
+        "func": "let airQualityValue = msg.payload;\nlet formattedAirQuality = parseFloat(airQualityValue).toFixed(2);\n\nmsg = {\n    \"url\": \"http://aas-env:8081/submodels/YjdlNTA2NzgtZGY3Mi00ODAxLWI3YzAtNzI2NTNkMmU0NzI0/submodel-elements/AirQualityValue/$value\",\n    \"method\": \"PATCH\",\n    \"payload\": JSON.stringify(formattedAirQuality),\n    \"headers\": {\n        \"Content-Type\": \"application/json\"\n    }\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 380,
+        "wires": [
+            [
+                "53e37b0b6ed67a79"
+            ]
+        ]
+    },
+    {
+        "id": "6d7ab653eb981aa7",
+        "type": "function",
+        "z": "65cbde2e2212e2ea",
+        "name": "Retrieve Response",
+        "func": "// Check if the request was successful\nif (msg.statusCode === 204) {\n    msg.payload = {\n        \"success\": true,\n        \"message\": \"Air Quality property updated successfully\",\n        \"statusCode\": msg.statusCode,\n        \"timestamp\": new Date().toISOString()\n    };\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1190,
+        "y": 380,
+        "wires": [
+            [
+                "9e014c6896b583cf"
+            ]
+        ]
+    },
+    {
+        "id": "9e014c6896b583cf",
+        "type": "debug",
+        "z": "65cbde2e2212e2ea",
+        "d": true,
+        "name": "Log Response",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1420,
+        "y": 380,
+        "wires": []
+    }
+]

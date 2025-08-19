@@ -66,7 +66,7 @@ public abstract class SubmodelRepositoryPersistencyTestSuite {
 		Submodel submodel = DummySubmodelFactory.createSubmodelWithFileElement();
 		getSubmodelRepository().createSubmodel(submodel);
 
-		getSubmodelRepository().setFileValue(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "dummyFile.jpeg", createDummyImageIS_A());
+		getSubmodelRepository().setFileValue(DummySubmodelFactory.SUBMODEL_FOR_FILE_TEST, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, "dummyFile.jpeg", "image/jpeg", createDummyImageIS_A());
 
 		restartComponent();
 

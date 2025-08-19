@@ -198,7 +198,8 @@ public class DefaultAASEnvironment implements AasEnvironment {
 			return;
 		}
 
-		submodelRepository.setFileValue(submodelId, fileSMEIdShortPath, getFileName(inMemoryFile.getPath()), new ByteArrayInputStream(inMemoryFile.getFileContent()));
+		String contentType = (fileSME.getContentType() != null && !fileSME.getContentType().trim().isEmpty()) ? fileSME.getContentType() : null;
+		submodelRepository.setFileValue(submodelId, fileSMEIdShortPath, getFileName(inMemoryFile.getPath()), contentType, new ByteArrayInputStream(inMemoryFile.getFileContent()));
 	}
 
 	private String getFileName(String path) {

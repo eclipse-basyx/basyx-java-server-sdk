@@ -35,7 +35,6 @@ import org.springframework.context.annotation.Bean;
 public class TestApplication {
 	
 	public static final String KAFKA_AAS_TOPIC = "aas-events";
-	public static final String KAFKA_GROUP_ID = "kafka-tests";
 	
 	
 	@Bean

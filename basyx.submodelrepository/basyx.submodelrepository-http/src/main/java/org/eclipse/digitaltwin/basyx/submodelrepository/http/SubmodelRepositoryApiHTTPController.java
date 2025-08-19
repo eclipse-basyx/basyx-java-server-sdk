@@ -243,7 +243,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		InputStream fileInputstream = null;
 		try {
 			fileInputstream = file.getInputStream();
-			repository.setFileValue(submodelIdentifier.getIdentifier(), idShortPath, fileName, fileInputstream);
+			repository.setFileValue(submodelIdentifier.getIdentifier(), idShortPath, fileName, file.getContentType(), fileInputstream);
 			closeInputStream(fileInputstream);
 			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 		} catch (ElementDoesNotExistException e) {

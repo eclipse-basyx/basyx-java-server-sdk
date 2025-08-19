@@ -27,7 +27,6 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.kafka;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
@@ -44,9 +43,10 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollect
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapters;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactory;
-import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.SubmodelEventKafkaListener;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.SubmodelServiceTestComponent;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.TestSubmodels;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
@@ -60,7 +60,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
@@ -76,9 +75,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test-submodel")
 @ContextConfiguration(classes = SubmodelServiceTestComponent.class)
-@TestPropertySource(properties = { "basyx.backend=InMemory", "spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092", KafkaSubmodelRepositoryFeature.FEATURENAME + ".preservationlevel=REMOVE_BLOB_VALUE",
+@TestPropertySource(properties = { "basyx.backend=InMemory", "spring.kafka.bootstrap-servers=localhost:9092", KafkaSubmodelRepositoryFeature.FEATURENAME + ".preservationlevel=REMOVE_BLOB_VALUE",
 		KafkaSubmodelRepositoryFeature.FEATURENAME + ".enabled=true", KafkaSubmodelRepositoryFeature.FEATURENAME + ".topic.name=submodel-events" })
-@Import(value = { SubmodelEventKafkaListener.class })
+
 public class KafkaEventsInMemoryStorageIntegrationTest {
 
 	private static final String IDSHORT_BLOB = "blob";
@@ -87,8 +86,9 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 
 	private static final String ID_SM1 = "http://sm.id/1";
 
-	@Autowired
-	private SubmodelEventKafkaListener listener;
+	private KafkaAdapter<SubmodelEvent> adapter = KafkaAdapters.getAdapter( "submodel-events", SubmodelEvent.class);
+	
+	private SubmodelRepository repo;
 
 	@Autowired
 	private KafkaSubmodelRepositoryFeature feature;
@@ -96,29 +96,22 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	@Autowired
 	private SubmodelRepositoryFactory factory;
 
-	private SubmodelRepository repo;
-
 	@Autowired
 	private JsonSerializer serializer;
 
 	@Before
-	public void awaitAssignment() throws InterruptedException {
-		listener.awaitTopicAssignment();
+	public void init() {
 		repo = feature.decorate(factory).create();
-		cleanupPreviousMessages();
+		adapter.skipMessages();
 		cleanup();
-	}
-	
-	private void cleanupPreviousMessages() throws InterruptedException {
-		while (listener.next(1, TimeUnit.SECONDS) != null);	
 	}
 
 	@Test
-	public void testSubmodelCreated() throws InterruptedException {
+	public void testSubmodelCreated() {
 		Submodel sm = TestSubmodels.createSubmodel(ID_SM1, TestSubmodels.IDSHORT_PROP_0, "7");
 		repo.createSubmodel(sm);
 
-		SubmodelEvent evt = listener.next();
+		SubmodelEvent evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SM_CREATED, evt.getType());
 		Assert.assertEquals(ID_SM1, evt.getId());
 		Assert.assertEquals(sm, evt.getSubmodel());
@@ -127,16 +120,16 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@Test
-	public void testSubmodelUpdated() throws InterruptedException {
+	public void testSubmodelUpdated() {
 		Submodel sm = TestSubmodels.createSubmodel(ID_SM1, TestSubmodels.IDSHORT_PROP_0, "7");
 		repo.createSubmodel(sm);
-		SubmodelEvent evt = listener.next();
+		SubmodelEvent evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SM_CREATED, evt.getType());
 
 		Submodel smUpdated = TestSubmodels.createSubmodel(ID_SM1, TestSubmodels.IDSHORT_PROP_0, "9");
 		repo.updateSubmodel(ID_SM1, smUpdated);
 
-		evt = listener.next();
+		evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SM_UPDATED, evt.getType());
 		Assert.assertEquals(ID_SM1, evt.getId());
 		Assert.assertEquals(smUpdated, evt.getSubmodel());
@@ -145,16 +138,16 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@Test
-	public void testSubmodelPatched() throws InterruptedException {
+	public void testSubmodelPatched() {
 		Submodel sm = TestSubmodels.createSubmodel(ID_SM1, TestSubmodels.IDSHORT_PROP_0, "7");
 		repo.createSubmodel(sm);
-		SubmodelEvent evt = listener.next();
+		SubmodelEvent evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SM_CREATED, evt.getType());
 
 		SubmodelElement elem1 = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_1, "2");
 		repo.patchSubmodelElements(ID_SM1, List.of(elem1));
 
-		evt = listener.next();
+		evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SM_UPDATED, evt.getType());
 		Assert.assertEquals(ID_SM1, evt.getId());
 		Submodel smPatched = new DefaultSubmodel.Builder().id(ID_SM1).idShort(TestSubmodels.IDSHORT_SM).submodelElements(List.of(elem1)).build();
@@ -164,14 +157,14 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@Test
-	public void testSetSubmodelElementValue() throws InterruptedException {
-		PropertyValue value = new PropertyValue("111");		
+	public void testSetSubmodelElementValue() {
+		PropertyValue value = new PropertyValue("111");
 		Submodel sm = TestSubmodels.createSubmodel(TestSubmodels.ID_SM, TestSubmodels.IDSHORT_PROP_0, "7");
 		repo.createSubmodel(sm);
-		SubmodelEvent evt = listener.next();
+		SubmodelEvent evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SM_CREATED, evt.getType());
 		repo.setSubmodelElementValue(TestSubmodels.ID_SM, TestSubmodels.IDSHORT_PROP_0, value);
-		evt = listener.next();
+		evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SME_UPDATED, evt.getType());
 
 		Assert.assertEquals(TestSubmodels.ID_SM, evt.getId());
@@ -181,14 +174,14 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@Test
-	public void testSubmodelDeleted() throws InterruptedException {
+	public void testSubmodelDeleted() {
 		Submodel sm = TestSubmodels.createSubmodel(ID_SM1, TestSubmodels.IDSHORT_PROP_0, "7");
 		repo.createSubmodel(sm);
-		SubmodelEvent evt = listener.next();
+		SubmodelEvent evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SM_CREATED, evt.getType());
 
 		repo.deleteSubmodel(ID_SM1);
-		evt = listener.next();
+		evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SM_DELETED, evt.getType());
 
 		Assert.assertEquals(ID_SM1, evt.getId());
@@ -198,16 +191,16 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@Test
-	public void testSubmodelElementAdded() throws InterruptedException {
+	public void testSubmodelElementAdded() {
 		Submodel sm = TestSubmodels.createSubmodel(ID_SM1, TestSubmodels.IDSHORT_PROP_0, "7");
 		repo.createSubmodel(sm);
-		SubmodelEvent evt = listener.next();
+		SubmodelEvent evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SM_CREATED, evt.getType());
 
 		SubmodelElement elem = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_1, "88");
 		repo.createSubmodelElement(ID_SM1, elem);
 
-		evt = listener.next();
+		evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
 		Assert.assertEquals(ID_SM1, evt.getId());
 		Assert.assertEquals(TestSubmodels.IDSHORT_PROP_1, evt.getSmElementPath());
@@ -216,16 +209,16 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@Test
-	public void testSubmodelElementUpdated() throws InterruptedException {
+	public void testSubmodelElementUpdated() {
 		Submodel sm = TestSubmodels.createSubmodel(ID_SM1, TestSubmodels.IDSHORT_PROP_0, "7");
 		repo.createSubmodel(sm);
-		SubmodelEvent evt = listener.next();
+		SubmodelEvent evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SM_CREATED, evt.getType());
 
 		SubmodelElement elem = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_0, "88");
 		repo.updateSubmodelElement(ID_SM1, TestSubmodels.IDSHORT_PROP_0, elem);
 
-		evt = listener.next();
+		evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SME_UPDATED, evt.getType());
 		Assert.assertEquals(ID_SM1, evt.getId());
 		Assert.assertEquals(TestSubmodels.IDSHORT_PROP_0, evt.getSmElementPath());
@@ -234,54 +227,74 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@Test
-	public void testSubmodelElementAddedUnderPath() throws InterruptedException {
+	public void testSubmodelElementAddedUnderPath() {
 		Submodel sm = TestSubmodels.createSubmodel(ID_SM1, TestSubmodels.IDSHORT_PROP_0, "7");
 		repo.createSubmodel(sm);
-		SubmodelEvent evt = listener.next();
+		SubmodelEvent evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SM_CREATED, evt.getType());
 
 		SubmodelElement elem = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_1, "88");
 		repo.createSubmodelElement(ID_SM1, TestSubmodels.IDSHORT_COLL, elem);
-		evt = listener.next();
+		evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
 		Assert.assertEquals(ID_SM1, evt.getId());
-		Assert.assertEquals(TestSubmodels.IDSHORT_COLL, evt.getSmElementPath());
+		Assert.assertEquals(TestSubmodels.IDSHORT_COLL + "." + TestSubmodels.IDSHORT_PROP_1, evt.getSmElementPath());
+		Assert.assertNull(evt.getSubmodel());
+		Assert.assertEquals(elem, evt.getSmElement());
+	}
+	
+	@Test
+	public void testSubmodelElementAddedUnderListPath() {
+		Submodel sm = TestSubmodels.createSubmodel(ID_SM1, TestSubmodels.IDSHORT_PROP_0, "7");
+		sm.getSubmodelElements().add(new DefaultSubmodelElementList.Builder().idShort("List")
+				.value(new DefaultProperty.Builder().idShort("P77").value("77").build())
+				.build());
+		repo.createSubmodel(sm);
+		SubmodelEvent evt = adapter.next();
+		Assert.assertEquals(SubmodelEventType.SM_CREATED, evt.getType());
+
+		SubmodelElement elem = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_1, "88");
+		repo.createSubmodelElement(ID_SM1, "List", elem);
+		evt = adapter.next();
+		Assert.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
+		Assert.assertEquals(ID_SM1, evt.getId());
+		Assert.assertEquals("List[1]", evt.getSmElementPath());
 		Assert.assertNull(evt.getSubmodel());
 		Assert.assertEquals(elem, evt.getSmElement());
 	}
 
 	@Test
-	public void testSubmodelElementAddedAndBlobValueNotPartOfTheEvent() throws InterruptedException {		
+	public void testSubmodelElementAddedAndBlobValueNotPartOfTheEvent() {
 		Submodel sm = TestSubmodels.submodel();
 		repo.createSubmodel(sm);
-		SubmodelEvent evt = listener.next();
+		SubmodelEvent evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SM_CREATED, evt.getType());
-		
+
 		SubmodelElementList sme = new DefaultSubmodelElementList.Builder().idShort(IDSHORT_LIST0).value(new DefaultBlob.Builder().idShort(IDSHORT_BLOB).value(new byte[] { 1, 2, 3, 4 }).build()).build();
 		repo.createSubmodelElement(TestSubmodels.ID_SM, TestSubmodels.IDSHORT_COLL, sme);
 
-		SubmodelEvent evtCreated = listener.next();
+		SubmodelEvent evtCreated = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SME_CREATED, evtCreated.getType());
 
 		SubmodelElementList expected = new DefaultSubmodelElementList.Builder().idShort(IDSHORT_LIST0).value(new DefaultBlob.Builder().idShort(IDSHORT_BLOB).build()).build();
 
 		Assert.assertEquals(TestSubmodels.ID_SM, evtCreated.getId());
-		Assert.assertEquals(TestSubmodels.IDSHORT_COLL, evtCreated.getSmElementPath());
+		Assert.assertEquals(TestSubmodels.IDSHORT_COLL + "." + IDSHORT_LIST0, evtCreated.getSmElementPath());
 		Assert.assertEquals(expected, evtCreated.getSmElement());
 		Assert.assertNull(evtCreated.getSubmodel());
 	}
 
 	@Test
-	public void testSubmodelElementCreatedAndBlobValueNotPartOfTheEvent() throws InterruptedException {
+	public void testSubmodelElementCreatedAndBlobValueNotPartOfTheEvent() {
 		Submodel sm = TestSubmodels.submodel();
 		repo.createSubmodel(sm);
-		SubmodelEvent evt = listener.next();
+		SubmodelEvent evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SM_CREATED, evt.getType());
-		
+
 		Blob blob = new DefaultBlob.Builder().idShort(IDSHORT_BLOB).value(new byte[] { 1, 2, 3, 4 }).build();
 		repo.createSubmodelElement(TestSubmodels.ID_SM, blob);
 
-		SubmodelEvent evtCreated = listener.next();
+		SubmodelEvent evtCreated = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SME_CREATED, evtCreated.getType());
 
 		Blob expected = new DefaultBlob.Builder().idShort(IDSHORT_BLOB).build();
@@ -293,20 +306,20 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@Test
-	public void testSubmodelElementDeleted() throws InterruptedException {
+	public void testSubmodelElementDeleted() {
 		Submodel sm = TestSubmodels.submodel();
 		repo.createSubmodel(sm);
-		SubmodelEvent evt = listener.next();
+		SubmodelEvent evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SM_CREATED, evt.getType());
-				
+
 		Property prop = new DefaultProperty.Builder().idShort(IDSHORT_BLOB).value("4").build();
 		repo.createSubmodelElement(TestSubmodels.ID_SM, prop);
 
-		SubmodelEvent evtCreated = listener.next();
+		SubmodelEvent evtCreated = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SME_CREATED, evtCreated.getType());
 		repo.deleteSubmodelElement(TestSubmodels.ID_SM, TestSubmodels.IDSHORT_PROP_TO_BE_REMOVED);
 
-		SubmodelEvent evtDeleted = listener.next();
+		SubmodelEvent evtDeleted = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SME_DELETED, evtDeleted.getType());
 
 		Assert.assertEquals(TestSubmodels.ID_SM, evtDeleted.getId());
@@ -316,12 +329,12 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 	}
 
 	@Test
-	public void testGetterAreWorking() throws ElementDoesNotExistException, SerializationException, InterruptedException {
+	public void testGetterAreWorking() throws ElementDoesNotExistException, SerializationException {
 		Submodel expectedSm = TestSubmodels.submodel();
 		repo.createSubmodel(expectedSm);
-		SubmodelEvent evt = listener.next();
-		Assert.assertEquals(SubmodelEventType.SM_CREATED , evt.getType());
-		
+		SubmodelEvent evt = adapter.next();
+		Assert.assertEquals(SubmodelEventType.SM_CREATED, evt.getType());
+
 		List<Submodel> result = repo.getAllSubmodels(new PaginationInfo(null, null)).getResult();
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(expectedSm, result.get(0));
@@ -345,19 +358,22 @@ public class KafkaEventsInMemoryStorageIntegrationTest {
 		Assert.assertTrue(feature.isEnabled());
 	}
 
-	@After
-	public void cleanup() throws InterruptedException {
+	public void cleanup() {
 		if (repo != null) {
 			for (Submodel sm : repo.getAllSubmodels(new PaginationInfo(null, null)).getResult()) {
 				repo.deleteSubmodel(sm.getId());
-				SubmodelEvent evt = listener.next();
-				Assert.assertEquals(SubmodelEventType.SM_DELETED, evt.getType());		
-				Assert.assertEquals(sm.getId(), evt.getId());		
-			} 
+				SubmodelEvent evt = adapter.next();
+				Assert.assertEquals(SubmodelEventType.SM_DELETED, evt.getType());
+				Assert.assertEquals(sm.getId(), evt.getId());
+			}
 		}
-		SubmodelEvent evt = listener.next(1, TimeUnit.SECONDS);
-		Assert.assertNull(evt);
+		adapter.assertNoAdditionalMessages();
+
 	}
-	
+
+	@After
+	public void tearDown() {
+		cleanup();
+	}
 
 }
