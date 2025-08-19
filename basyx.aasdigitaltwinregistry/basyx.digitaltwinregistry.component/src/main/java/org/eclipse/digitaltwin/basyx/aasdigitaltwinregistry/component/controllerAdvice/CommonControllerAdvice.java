@@ -20,6 +20,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NullSubjectException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.OperationDelegationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -126,8 +127,13 @@ public class CommonControllerAdvice {
         Result result = new Result();
         Message message = newExceptionMessage(ex.getMessage(), status);
         result.addMessagesItem(message);
-        return new ResponseEntity<>(result, status);
+
+        return ResponseEntity
+                .status(status)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(result);
     }
+
 
     private Message newExceptionMessage(String msg, HttpStatus status) {
         Message message = new Message();
