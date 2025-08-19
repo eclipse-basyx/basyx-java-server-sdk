@@ -1,6 +1,6 @@
 {
   "$condition": {
-    "or": [
+    "$or": [
       {
         "$contains": [
           {

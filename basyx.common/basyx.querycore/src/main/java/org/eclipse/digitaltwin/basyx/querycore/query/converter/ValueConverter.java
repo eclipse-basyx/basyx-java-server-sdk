@@ -208,8 +208,8 @@ public class ValueConverter {
     private Query createFieldToFieldComparison(String leftField, String rightField, String operator) {
         String scriptSource;
 
-        String scriptLeftField = leftField;
-        String scriptRightField = rightField;
+        String scriptLeftField = convertToESFields(leftField);
+        String scriptRightField = convertToESFields(rightField);
 
         if (!leftField.endsWith(".keyword")) {
             scriptLeftField += ".keyword";
@@ -240,10 +240,12 @@ public class ValueConverter {
             default:
                 throw new IllegalArgumentException("Unsupported field-to-field operator: " + operator);
         }
-        
+
+        String finalScriptLeftField = scriptLeftField;
+        String finalScriptRightField = scriptRightField;
         return QueryBuilders.bool(b -> b
-            .must(QueryBuilders.exists(e -> e.field(leftField)))
-            .must(QueryBuilders.exists(e -> e.field(rightField)))
+            .must(QueryBuilders.exists(e -> e.field(finalScriptLeftField)))
+            .must(QueryBuilders.exists(e -> e.field(finalScriptRightField)))
             .must(QueryBuilders.script(s -> s
                 .script(script -> script
                     .source(source -> source.scriptString(scriptSource))
@@ -571,8 +573,8 @@ public class ValueConverter {
     private Query createFieldToFieldCastComparison(String leftField, String rightField, String leftCastType, String rightCastType, String operator) {
         String scriptSource;
 
-        String scriptLeftField = leftField;
-        String scriptRightField = rightField;
+        String scriptLeftField = convertToESFields(leftField);
+        String scriptRightField = convertToESFields(rightField);
 
         if (!leftField.endsWith(".keyword")) {
             scriptLeftField += ".keyword";
@@ -669,7 +671,7 @@ public class ValueConverter {
      */
     private Query createSmeWildcardQuery(String wildcardField, String value) {
         String fieldName = extractSmeFieldName(wildcardField);
-        
+        fieldName = convertToESFields(fieldName);
         // Add .keyword suffix for string fields that need exact matching
         String searchField = fieldName;
 
@@ -682,16 +684,13 @@ public class ValueConverter {
                 .fields(queryPattern.replace("[]","[*]"))
         );
     }
-    
+
     /**
      * Creates a wildcard string query using QueryBuilders.queryString for SME fields at any nesting level
      */
     private Query createSmeWildcardStringQuery(String wildcardField, String value, String operation) {
         String fieldName = extractSmeFieldName(wildcardField);
-        fieldName = fieldName.replace("semanticId.keys[]", "semanticId.keys.value")
-                            .replace("supplementalSemanticIds[].keys[]", "supplementalSemanticIds.keys.value")
-                            .replace("submodels.keys[]", "submodels.keys.value");
-        String searchField = fieldName;
+        String searchField = convertToESFields(fieldName);
 
         String searchValue;
         switch (operation) {
@@ -772,5 +771,17 @@ public class ValueConverter {
                    .replace("~", "\\~")
                    .replace("*", "\\*")
                    .replace(":", "\\:");
+    }
+
+
+    private static String convertToESFields(String fieldName) {
+        fieldName = fieldName.replace("semanticId.keys[]", "semanticId.keys.value")
+                .replace("supplementalSemanticIds[].keys[]", "supplementalSemanticIds.keys.value")
+                .replace("submodels.keys[]", "submodels.keys.value")
+                .replace("description[].language", "description.language")
+                .replace("description[].text", "description.text")
+                .replace("isCaseOf.keys[]", "isCaseOf.keys.value")
+                .replace("endpoints[]", "endpoints");
+        return fieldName;
     }
 }

@@ -22,13 +22,14 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.digitaltwin.basyx.aasrepository.feature.search;
+package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.search;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.conceptdescription.feature.search.SearchCdRepositoryApiHTTPController;
+import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
@@ -46,28 +47,29 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-public class TestSearchAasRepository {
+public class TestSearchCdRepository {
     private static ConfigurableApplicationContext appContext;
-    private static AasRepository searchBackend;
-    private static SearchAasRepositoryApiHTTPController searchAPI;
+    private static ConceptDescriptionRepository searchBackend;
+    private static SearchCdRepositoryApiHTTPController searchAPI;
 
     @BeforeClass
-    public static void startSmRepo() throws Exception {
-        appContext = new SpringApplicationBuilder(DummySearchAasRepositoryComponent.class).run(new String[] {});
-        searchBackend = appContext.getBean(AasRepository.class);
-        searchAPI = appContext.getBean(SearchAasRepositoryApiHTTPController.class);
-        preloadShells();
+    public static void startCdRepo() throws Exception {
+        appContext = new SpringApplicationBuilder(DummySearchCdRepositoryComponent.class).run(new String[] {});
+        searchBackend = appContext.getBean(ConceptDescriptionRepository.class);
+        searchAPI = appContext.getBean(SearchCdRepositoryApiHTTPController.class);
+        preloadCds();
+        waitForData();
     }
 
     @Test
     public void testRepo() throws FileNotFoundException, DeserializationException {
-        File file = new File(TestSearchAasRepository.class.getResource("/query.json").getFile());
+        File file = new File(TestSearchCdRepository.class.getResource("/query.json").getFile());
         AASQuery query = queryFromFile(file);
-        ResponseEntity<QueryResponse> result = searchAPI.queryAssetAdministrationShells(query, -1, new Base64UrlEncodedCursor(""));
+        ResponseEntity<QueryResponse> result = searchAPI.queryConceptDescriptions(100, new Base64UrlEncodedCursor(""), query);
         QueryResponse response = result.getBody();
         assert response != null;
-        List<AssetAdministrationShell> shells = response.result.stream().map(o->(AssetAdministrationShell)o).toList();
-        Assert.assertEquals(4,shells.size());
+        List<ConceptDescription> topHits = response.result.stream().map(o->(ConceptDescription)o).toList();
+        Assert.assertEquals(1,topHits.size());
     }
 
     private static AASQuery queryFromFile(File file) throws FileNotFoundException, DeserializationException {
@@ -80,24 +82,32 @@ public class TestSearchAasRepository {
         return deserializer.read(new FileInputStream(file), Environment.class);
     }
 
-    private static void preloadShells() throws FileNotFoundException, DeserializationException {
-        File file = new File(TestSearchAasRepository.class.getResource("/Example-Full.json").getFile());
+    private static void preloadCds() throws FileNotFoundException, DeserializationException {
+        File file = new File(TestSearchCdRepository.class.getResource("/Example-Full.json").getFile());
         Environment env = envFromFile(file);
-        for(AssetAdministrationShell aas : env.getAssetAdministrationShells()) {
-            searchBackend.createAas(aas);
+        for(ConceptDescription cd : env.getConceptDescriptions()) {
+            searchBackend.createConceptDescription(cd);
         }
     }
 
     @AfterClass
-    public static void shutdownAasRepo() {
-        searchBackend.getAllAas(null, null, new PaginationInfo(0, "")).getResult().forEach(aas -> {
+    public static void shutdownCdRepo() {
+        resetRepo();
+        appContext.close();
+    }
+
+    private static void resetRepo() {
+        searchBackend.getAllConceptDescriptions(new PaginationInfo(0, "")).getResult().forEach(cd -> {
             try {
-                searchBackend.deleteAas(aas.getId());
+                searchBackend.deleteConceptDescription(cd.getId());
             } catch (Exception e) {
                 // Ignore exceptions during cleanup
             }
         });
-        appContext.close();
+    }
+
+    private static void waitForData() throws InterruptedException {
+        Thread.sleep(500);
     }
 
 }

@@ -2,21 +2,19 @@
   "$condition": {
     "$match": [
       {
-        "$eq": [
+        "$contains": [
           {
-            "$field": "$cd#description[].language"
+            "$field": "$smdesc#endpoints[].protocolInformation.href"
           },
           {
-            "$strVal": "en-us"
+            "$strVal": "localhost"
           }
         ]
       },
       {
         "$eq": [
           {
-            "$numCast": {
-              "$field": "$cd#administration.revision"
-            }
+            "$field": "$smdesc#administration.revision"
           },
           {
             "$numVal": 9
@@ -24,12 +22,12 @@
         ]
       },
       {
-        "$contains": [
+        "$ne": [
           {
-            "$field": "$cd#isCaseOf.keys[]"
+            "$field": "$smdesc#idShort"
           },
           {
-            "$strVal": "acplt"
+            "$field": "$smdesc#semanticId.keys[]"
           }
         ]
       }
