@@ -29,8 +29,10 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.elasticsearch.ReactiveElasticsearchRepositoriesAutoConfiguration;
 import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchClientAutoConfiguration;
 import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration;
+import org.springframework.boot.autoconfigure.elasticsearch.ReactiveElasticsearchClientAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -43,7 +45,9 @@ import org.springframework.context.annotation.Configuration;
         ElasticsearchClientAutoConfiguration.class,
         ElasticsearchRepositoriesAutoConfiguration.class,
         ElasticsearchDataAutoConfiguration.class,
-        ElasticsearchRestClientAutoConfiguration.class
+        ElasticsearchRestClientAutoConfiguration.class,
+        ReactiveElasticsearchClientAutoConfiguration.class,
+        ReactiveElasticsearchRepositoriesAutoConfiguration.class
 })
 public class DisableSearchSubmodelRepositoryConfiguration {
 }

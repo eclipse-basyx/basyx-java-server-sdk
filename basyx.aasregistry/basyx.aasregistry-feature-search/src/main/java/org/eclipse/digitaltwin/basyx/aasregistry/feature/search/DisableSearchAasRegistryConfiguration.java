@@ -25,12 +25,16 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.feature.search;
 
+import org.springframework.boot.actuate.autoconfigure.data.elasticsearch.ElasticsearchReactiveHealthContributorAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.metrics.export.elastic.ElasticMetricsExportAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.elasticsearch.ReactiveElasticsearchRepositoriesAutoConfiguration;
 import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchClientAutoConfiguration;
 import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration;
+import org.springframework.boot.autoconfigure.elasticsearch.ReactiveElasticsearchClientAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -43,7 +47,11 @@ import org.springframework.context.annotation.Configuration;
         ElasticsearchClientAutoConfiguration.class,
         ElasticsearchRepositoriesAutoConfiguration.class,
         ElasticsearchDataAutoConfiguration.class,
-        ElasticsearchRestClientAutoConfiguration.class
+        ElasticsearchRestClientAutoConfiguration.class,
+        ElasticsearchReactiveHealthContributorAutoConfiguration.class,
+        ElasticMetricsExportAutoConfiguration.class,
+        ReactiveElasticsearchClientAutoConfiguration.class,
+        ReactiveElasticsearchRepositoriesAutoConfiguration.class
 })
 public class DisableSearchAasRegistryConfiguration {
 }
