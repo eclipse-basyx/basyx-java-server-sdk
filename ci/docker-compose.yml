@@ -1,5 +1,5 @@
 include:
-  docker-compose-elastic.yml
+  - docker-compose-elastic.yml
 services:
 
   nginx-proxy:
