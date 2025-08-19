@@ -1,57 +1,39 @@
 basyx:
-    aasdiscoveryservice:
-        mongodb:
-            collectionName: aasregistry
-    backend: MongoDB
-    cors:
-        allowed-methods: GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
-        allowed-origins: '*'
+  aasdiscoveryservice:
+  cors:
+    allowed-methods: GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+    allowed-origins: '*'
+
 management:
-    endpoints:
-        web:
-            exposure:
-                include: health,metrics,mappings
-
-
-registry:
-    type: MongoDB
-    discovery:
-        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,mappings
 
 server:
-    port: 8081
+  port: 8081
+
 spring:
-    main:
-        allow-bean-definition-overriding: true
-    application:
-        name: BaSyx Digital Twin Registry
-    data:
-        mongodb:
-            authentication-database: aasregistry
-            database: aasregistry
-            host: localhost
-            password: smartsystemshubdatabaseforfactoryX
-            port: 27017
-            username: smartsystemhub
-    profiles:
-        active: logEvents,MongoDB
+  profiles:
+    active: logEvents,InMemory
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: BaSyx Digital Twin Registry
 
 description:
-    profiles: https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-001
-
+  profiles: https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-001
 
 logging:
-    level:
-        root: DEBUG
-        org.eclipse.digitaltwin.basyx: DEBUG
-
-
+  level:
+    root: DEBUG
+    org.eclipse.digitaltwin.basyx: DEBUG
 
 springdoc:
-    api-docs:
-        enabled: true
-    swagger-ui:
-        enabled: true
-        path: /swagger-ui.html
-        csrf:
-            enabled: false
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    csrf:
+      enabled: false

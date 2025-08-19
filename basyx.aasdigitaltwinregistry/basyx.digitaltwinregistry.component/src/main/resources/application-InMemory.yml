@@ -1,0 +1,17 @@
+spring:
+  config:
+    activate:
+      on-profile: InMemory
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration
+
+basyx:
+  backend: InMemory
+
+registry:
+  type: InMemory
+  discovery:
+    enabled: true
+
