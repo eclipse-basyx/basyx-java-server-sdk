@@ -48,7 +48,6 @@ import java.util.List;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2025-06-18T09:42:17.580283867Z[GMT]")
 @RestController
-@ConditionalOnProperty(name = {SearchSubmodelRegistryFeature.FEATURENAME + ".enabled", "basyx.feature.search.enabled"}, havingValue = "true", matchIfMissing = false)
 public class SearchSubmodelRegistryApiHTTPController implements SearchSubmodelRegistryHTTPApi {
 
     private static final Logger log = LoggerFactory.getLogger(SearchSubmodelRegistryApiHTTPController.class);
