@@ -25,17 +25,23 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.search;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.AasRepositoryFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-@ConditionalOnExpression("#{${" + SearchAasRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+
+/**
+ * Feature for AAS Repository search functionality
+ * 
+ */
 @Component
+@ConditionalOnProperty(name = SearchAasRepositoryFeature.FEATURENAME + ".enabled", havingValue = "true", matchIfMissing = false)
 public class SearchAasRepositoryFeature implements AasRepositoryFeature {
+	
 	public static final String FEATURENAME = "basyx.aasrepository.feature.search";
 	public static final String DEFAULT_INDEX = "aas-index";
 	private final ElasticsearchClient esclient;
@@ -50,28 +56,29 @@ public class SearchAasRepositoryFeature implements AasRepositoryFeature {
 	public SearchAasRepositoryFeature(ElasticsearchClient client) {
 		this.esclient = client;
 	}
-
+	
 	@Override
-	public AasRepositoryFactory decorate(AasRepositoryFactory aasServiceFactory) {
-		return new SearchAasRepositoryFactory(aasServiceFactory, esclient, indexName);
-	}
-
-	@Override
-	public void initialize() {
-	}
-
-	@Override
-	public void cleanUp() {
-
+	public AasRepositoryFactory decorate(AasRepositoryFactory aasRepositoryFactory) {
+		return new SearchAasRepositoryFactory(aasRepositoryFactory, esclient, indexName);
 	}
 
 	@Override
 	public String getName() {
-		return "AasRepository Search";
+		return "AAS Repository Search";
+	}
+
+	@Override
+	public void initialize() {
+		// No initialization needed
+	}
+
+	@Override
+	public void cleanUp() {
+		// No cleanup needed
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return enabled;
+		return true;
 	}
 }

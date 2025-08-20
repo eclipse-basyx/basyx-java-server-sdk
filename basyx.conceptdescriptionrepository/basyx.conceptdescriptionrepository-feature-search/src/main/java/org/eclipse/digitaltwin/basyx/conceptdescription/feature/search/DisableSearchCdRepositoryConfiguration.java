@@ -26,7 +26,7 @@
 package org.eclipse.digitaltwin.basyx.conceptdescription.feature.search;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration;
 import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchClientAutoConfiguration;
@@ -35,10 +35,10 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Configuration to prevent Elasticsearch from being injected by Spring
- * @author fried
+ * author fried
  */
 @Configuration
-@ConditionalOnProperty(name = {SearchCdRepositoryFeature.FEATURENAME + ".enabled", "basyx.feature.search.enabled"}, havingValue = "false", matchIfMissing = true)
+@ConditionalOnExpression("!(${" + SearchCdRepositoryFeature.FEATURENAME + ".enabled:false} || ${basyx.feature.search.enabled:false})")
 @EnableAutoConfiguration(exclude = {
         ElasticsearchClientAutoConfiguration.class,
         ElasticsearchRepositoriesAutoConfiguration.class,

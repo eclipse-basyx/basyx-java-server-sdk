@@ -57,6 +57,7 @@ public class TestSearchAasRepository {
         searchBackend = appContext.getBean(AasRepository.class);
         searchAPI = appContext.getBean(SearchAasRepositoryApiHTTPController.class);
         preloadShells();
+        Thread.sleep(2000);
     }
 
     @Test

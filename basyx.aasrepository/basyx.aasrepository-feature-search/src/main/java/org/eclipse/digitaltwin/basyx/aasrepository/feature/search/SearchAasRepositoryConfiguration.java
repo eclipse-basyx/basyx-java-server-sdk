@@ -6,8 +6,7 @@
  * "Software"), to deal in the Software without restriction, including
  * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
+ * permit persons to whom the Software is furnished to do so, subject to the following conditions:
  * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
@@ -25,11 +24,31 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.search;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
-@ConditionalOnExpression("#{${" + SearchAasRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
+@ConditionalOnProperty(name = SearchAasRepositoryFeature.FEATURENAME + ".enabled", havingValue = "true", matchIfMissing = false)
 @Configuration
 public class SearchAasRepositoryConfiguration {
 
+}
+
+/**
+ * Configuration to provide a safe Elasticsearch health indicator when search feature is not enabled
+ */
+@Configuration
+@ConditionalOnProperty(name = SearchAasRepositoryFeature.FEATURENAME + ".enabled", havingValue = "false", matchIfMissing = true)
+class SafeElasticsearchHealthConfiguration {
+    
+    @Bean(name = "elasticsearchHealthIndicator")
+    @Primary
+    public HealthIndicator elasticsearchHealthIndicator() {
+        return () -> Health.up()
+                .withDetail("elasticsearch", "disabled - search feature not enabled")
+                .build();
+    }
 }

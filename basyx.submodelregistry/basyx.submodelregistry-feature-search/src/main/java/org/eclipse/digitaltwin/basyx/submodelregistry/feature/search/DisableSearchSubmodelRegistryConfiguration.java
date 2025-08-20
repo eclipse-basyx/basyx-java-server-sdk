@@ -28,7 +28,7 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.feature.search;
 import org.springframework.boot.actuate.autoconfigure.data.elasticsearch.ElasticsearchReactiveHealthContributorAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.metrics.export.elastic.ElasticMetricsExportAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ReactiveElasticsearchRepositoriesAutoConfiguration;
@@ -42,7 +42,7 @@ import org.springframework.context.annotation.Configuration;
  * @author fried
  */
 @Configuration
-@ConditionalOnProperty(name = {SearchSubmodelRegistryFeature.FEATURENAME + ".enabled", "basyx.feature.search.enabled"}, havingValue = "false", matchIfMissing = true)
+@ConditionalOnExpression("!(${" + SearchSubmodelRegistryFeature.FEATURENAME + ".enabled:false} || ${basyx.feature.search.enabled:false})")
 @EnableAutoConfiguration(exclude = {
         ElasticsearchClientAutoConfiguration.class,
         ElasticsearchRepositoriesAutoConfiguration.class,
