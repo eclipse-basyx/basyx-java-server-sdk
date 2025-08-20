@@ -15,7 +15,7 @@ server:
 
 spring:
   profiles:
-    active: logEvents,MongoDB
+    active: logEvents,InMemory
   main:
     allow-bean-definition-overriding: true
   application:
