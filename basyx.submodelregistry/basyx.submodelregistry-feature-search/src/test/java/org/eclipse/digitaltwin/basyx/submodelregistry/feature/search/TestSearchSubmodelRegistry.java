@@ -69,7 +69,7 @@ public class TestSearchSubmodelRegistry {
 
 
 	@BeforeClass
-	public static void setUp() throws IOException, DeserializationException {
+	public static void setUp() throws IOException, DeserializationException, InterruptedException {
 		appContext = new SpringApplication(DummySearchSubmodelRegistryComponent.class).run(new String[] {});
 		storage = appContext.getBean(SearchSubmodelRegistryStorage.class);
 		searchAPI = appContext.getBean(SearchSubmodelRegistryApiHTTPController.class);
