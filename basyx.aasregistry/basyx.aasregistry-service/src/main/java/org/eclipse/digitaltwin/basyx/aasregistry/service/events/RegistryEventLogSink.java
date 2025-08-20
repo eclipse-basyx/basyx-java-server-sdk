@@ -68,6 +68,7 @@ public class RegistryEventLogSink implements RegistryEventSink {
 	@Override
 	public void consumeEvent(RegistryEvent evt) {
 		try {
+			log.info("Event received: {}", evt.toString());
 			ObjectMapper objectMapper = converter.getObjectMapper();
 			String msg = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(evt);
 			String encodedId = Base64.getEncoder().encodeToString(evt.getId().getBytes());

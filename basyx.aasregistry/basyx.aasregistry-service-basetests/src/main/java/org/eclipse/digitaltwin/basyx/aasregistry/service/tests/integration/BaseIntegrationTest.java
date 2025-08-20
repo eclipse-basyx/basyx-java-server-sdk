@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 DFKI GmbH (https://www.dfki.de/en/web)
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,7 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration;
@@ -135,10 +135,10 @@ public abstract class BaseIntegrationTest {
 	private int port;
 
 	private ObjectMapper mapper = new ObjectMapper();
-	
+
 
 	private final KafkaAdapter<RegistryEvent> adapter = KafkaAdapters.getAdapter("aas-registry", RegistryEvent.class);
-	
+
 	@Rule
 	public TestResourcesLoader resourceLoader = new TestResourcesLoader(BaseIntegrationTest.class.getPackageName(), mapper);
 
@@ -151,8 +151,8 @@ public abstract class BaseIntegrationTest {
 		cleanup();
 		adapter.skipMessages();
 	}
-	
-	
+
+
 	protected void initClient() throws Exception {
 		api = new RegistryAndDiscoveryInterfaceApi("http", "127.0.0.1", port);
 	}
@@ -187,7 +187,7 @@ public abstract class BaseIntegrationTest {
 			RegistryEvent evt = adapter.next();
 			assertThat(evt.getId()).isEqualTo(descriptor.getId());
 			assertThat(Integer.parseInt(evt.getSubmodelId())).isGreaterThanOrEqualTo(0).isLessThan(300);
-			
+
 		}
 	}
 
@@ -369,7 +369,7 @@ public abstract class BaseIntegrationTest {
 		assertThat(descr).isEqualTo(getResult.getData());
 	}
 
-	
+
 	@Test
 	public void whenPutShellDescriptorSameId_thenUpdated() throws IOException, InterruptedException, TimeoutException, ApiException {
 		initialize();
@@ -377,7 +377,7 @@ public abstract class BaseIntegrationTest {
 		ApiResponse<Void> putResult = api.putAssetAdministrationShellDescriptorByIdWithHttpInfo(descr.getId(), descr);
 		assertThat(putResult.getStatusCode()).isEqualTo(NO_CONTENT);
 		assertThatEventWasSend(RegistryEvent.builder().id(IDENTIFICATION_5).aasDescriptor(convert(descr)).type(EventType.AAS_REGISTERED).build());
-		
+
 		ApiResponse<AssetAdministrationShellDescriptor> getResult = api.getAssetAdministrationShellDescriptorByIdWithHttpInfo(descr.getId());
 		assertThat(getResult.getStatusCode()).isEqualTo(OK);
 		assertThat(descr).isEqualTo(getResult.getData());
@@ -538,12 +538,12 @@ public abstract class BaseIntegrationTest {
 		api.searchShellDescriptors(new ShellDescriptorSearchRequest());
 	}
 
-	@Test 
+	@Test
 	public void whenInvalidExtensionSettings_thenException() throws Exception {
 		initialize();
 		ShellDescriptorQuery query1 = new ShellDescriptorQuery().extensionName("TAG").path(AasRegistryPaths.extensions().value()).value("A");
 		ShellDescriptorQuery query2 = new ShellDescriptorQuery().extensionName("TAG").path(AasRegistryPaths.submodelDescriptors().endpoints().protocolInformation().endpointProtocolVersion()).value("B");
-		
+
 		ShellDescriptorSearchRequest request = new ShellDescriptorSearchRequest().query(query1.combinedWith(query2));
 		assertThrowsApiException(()->api.searchShellDescriptors(request), BAD_REQUEST);
 	}
@@ -572,11 +572,11 @@ public abstract class BaseIntegrationTest {
 				.addSpecificAssetIdsItem(saId).administration(aInfo).assetKind(AssetKind.TYPE).assetType("tp1").globalAssetId("global1").addSubmodelDescriptorsItem(sm);
 
 		AssetAdministrationShellDescriptor descr = api.postAssetAdministrationShellDescriptor(descriptor);
-		assertThat(descr).isEqualTo(descriptor); 
+		assertThat(descr).isEqualTo(descriptor);
 		RegistryEvent evt = RegistryEvent.builder().id(descriptor.getId()).aasDescriptor(convert(descriptor)).type(EventType.AAS_REGISTERED).build();
 		assertThatEventWasSend(evt);
 	}
-	
+
 	@Test
 	public void whenPostShellDescriptor_LocationIsReturned() throws ApiException, IOException {
 		AssetAdministrationShellDescriptor descr = new AssetAdministrationShellDescriptor().id("https://test.id");
@@ -585,41 +585,41 @@ public abstract class BaseIntegrationTest {
 		assertThat(locations).hasSize(1);
 		assertThatEventWasSend(RegistryEvent.builder().id(descr.getId()).aasDescriptor(convert(descr)).type(EventType.AAS_REGISTERED).build());
 		String location = locations.get(0);
-		
+
 		String expectedSuffix = "/shell-descriptors/aHR0cHM6Ly90ZXN0Lmlk";
 		assertThat(location).endsWith(expectedSuffix);
 		assertRestResourceAvailable(location);
 	}
-	
+
 	@Test
 	public void whenPostSubmodelDescriptor_LocationIsReturned() throws ApiException, IOException {
 		AssetAdministrationShellDescriptor shell = new AssetAdministrationShellDescriptor().id("https://shell.id");
 		api.postAssetAdministrationShellDescriptor(shell);
-		
+
 		assertThatEventWasSend(RegistryEvent.builder().id(shell.getId()).aasDescriptor(convert(shell)).type(EventType.AAS_REGISTERED).build());
-		
+
 		SubmodelDescriptor sm =  new SubmodelDescriptor().id("https://sm.id").addEndpointsItem(defaultEndpoint());
 		ApiResponse<SubmodelDescriptor>  response = api.postSubmodelDescriptorThroughSuperpathWithHttpInfo(shell.getId(), sm);
 		List<String> locations = response.getHeaders().get("Location");
 		assertThat(locations).hasSize(1);
 		String location = locations.get(0);
-		
+
 		assertThatEventWasSend(RegistryEvent.builder().id(shell.getId()).submodelId(sm.getId()).submodelDescriptor(convert(sm)).type(EventType.SUBMODEL_REGISTERED).build());
-		
+
 		String expectedSuffix = "/shell-descriptors/aHR0cHM6Ly9zaGVsbC5pZA==/submodel-descriptors/aHR0cHM6Ly9zbS5pZA==";
 		assertThat(location).endsWith(expectedSuffix);
 		assertRestResourceAvailable(location);
 	}
-	
+
 
 	private void assertRestResourceAvailable(String location) throws IOException {
 		URL url = new URL(location);
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		con.setRequestMethod("GET");
 		int status = con.getResponseCode();
-		assertThat(status).isEqualTo(200);		
-	}	
-	
+		assertThat(status).isEqualTo(200);
+	}
+
 	private void deleteAdminAssetShellDescriptor(String aasId) throws ApiException {
 		adapter.assertNoAdditionalMessages();
 
@@ -669,12 +669,12 @@ public abstract class BaseIntegrationTest {
 	private  org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor convert(SubmodelDescriptor clientSm) throws JsonProcessingException {
 		return convert(clientSm, SubmodelDescriptor.class, org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor.class);
 	}
-	
+
 	private  org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor convert(AssetAdministrationShellDescriptor clientShellDescr) throws JsonProcessingException {
 		return convert(clientShellDescr, AssetAdministrationShellDescriptor.class, org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor.class);
 	}
-	
-	
+
+
 	private <O,I> O convert(I in, Class<I> inCls, Class<O> outCls) throws JsonProcessingException {
 		String data = mapper.writerFor(inCls).writeValueAsString(in);
 		return mapper.readerFor(outCls).readValue(data);

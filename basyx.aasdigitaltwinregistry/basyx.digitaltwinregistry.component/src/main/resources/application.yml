@@ -22,12 +22,12 @@ spring:
     name: BaSyx Digital Twin Registry
 
 description:
-  profiles: https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-001
+  profiles: https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-001, https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-002, https://admin-shell.io/aas/API/3/0/DiscoveryServiceSpecification/SSP-001
 
 logging:
   level:
-    root: INFO
-    org.eclipse.digitaltwin.basyx: INFO
+    root: DEBUG
+    org.eclipse.digitaltwin.basyx: DEBUG
 
 springdoc:
   api-docs:
