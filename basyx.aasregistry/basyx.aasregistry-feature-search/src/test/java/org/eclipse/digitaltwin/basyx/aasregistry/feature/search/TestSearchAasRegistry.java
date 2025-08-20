@@ -73,7 +73,7 @@ public class TestSearchAasRegistry {
 		storage = appContext.getBean(SearchAasRegistryStorage.class);
 		searchAPI = appContext.getBean(SearchAasRegistryApiHTTPController.class);
 		preloadAasdf();
-		Thread.sleep(500);
+		Thread.sleep(2000);
 	}
 
 	@AfterClass

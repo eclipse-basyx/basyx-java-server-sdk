@@ -74,6 +74,7 @@ public class TestSearchSubmodelRegistry {
 		storage = appContext.getBean(SearchSubmodelRegistryStorage.class);
 		searchAPI = appContext.getBean(SearchSubmodelRegistryApiHTTPController.class);
 		preloadSmds();
+		Thread.sleep(2000);
 	}
 
 	@AfterClass

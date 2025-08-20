@@ -107,7 +107,7 @@ public class TestSearchCdRepository {
     }
 
     private static void waitForData() throws InterruptedException {
-        Thread.sleep(500);
+        Thread.sleep(2000);
     }
 
 }

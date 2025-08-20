@@ -58,6 +58,7 @@ public class TestSearchSubmodelRepository {
         searchBackend = appContext.getBean(SubmodelRepository.class);
         searchAPI = appContext.getBean(SearchSubmodelRepositoryApiHTTPController.class);
         preloadSubmodels();
+        Thread.sleep(2000);
     }
 
     @Test
