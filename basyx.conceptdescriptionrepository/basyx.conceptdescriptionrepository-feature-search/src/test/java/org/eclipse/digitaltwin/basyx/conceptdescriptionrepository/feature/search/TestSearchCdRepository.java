@@ -61,7 +61,7 @@ public class TestSearchCdRepository {
         searchAPI = appContext.getBean(SearchCdRepositoryApiHTTPController.class);
         preloadCds();
         await().atMost(10, SECONDS).until(() ->
-                !searchBackend.getAllConceptDescriptions(new PaginationInfo(0, "")).getResult().isEmpty()
+                !searchBackend.getAllConceptDescriptions(new PaginationInfo(1, "")).getResult().isEmpty()
         );
     }
 

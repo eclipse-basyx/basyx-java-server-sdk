@@ -62,7 +62,7 @@ public class TestSearchSubmodelRepository {
         searchAPI = appContext.getBean(SearchSubmodelRepositoryApiHTTPController.class);
         preloadSubmodels();
         await().atMost(10, SECONDS).until(() ->
-                !searchBackend.getAllSubmodels(new PaginationInfo(0, "")).getResult().isEmpty()
+                !searchBackend.getAllSubmodels(new PaginationInfo(1, "")).getResult().isEmpty()
         );
     }
 

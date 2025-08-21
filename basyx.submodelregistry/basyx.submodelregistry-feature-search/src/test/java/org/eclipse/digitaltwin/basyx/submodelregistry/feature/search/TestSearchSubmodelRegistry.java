@@ -76,7 +76,7 @@ public class TestSearchSubmodelRegistry {
 		searchAPI = appContext.getBean(SearchSubmodelRegistryApiHTTPController.class);
 		preloadSmds();
 		await().atMost(10, SECONDS).until(() ->
-				!storage.getAllSubmodelDescriptors(new PaginationInfo(0, "")).getResult().isEmpty()
+				!storage.getAllSubmodelDescriptors(new PaginationInfo(1, "")).getResult().isEmpty()
 		);
 	}
 

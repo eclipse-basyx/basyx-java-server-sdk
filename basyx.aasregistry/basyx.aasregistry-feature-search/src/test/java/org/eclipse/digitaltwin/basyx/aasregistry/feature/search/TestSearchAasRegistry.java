@@ -76,7 +76,7 @@ public class TestSearchAasRegistry {
 		searchAPI = appContext.getBean(SearchAasRegistryApiHTTPController.class);
 		preloadAasdf();
 		await().atMost(10, SECONDS).until(() ->
-				!storage.getAllAasDescriptors(new PaginationInfo(0, ""), new DescriptorFilter(null, null)).getResult().isEmpty()
+				!storage.getAllAasDescriptors(new PaginationInfo(1, ""), new DescriptorFilter(null, null)).getResult().isEmpty()
 		);
 	}
 

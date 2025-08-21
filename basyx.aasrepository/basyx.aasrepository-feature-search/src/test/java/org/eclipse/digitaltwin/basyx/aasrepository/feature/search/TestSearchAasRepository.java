@@ -60,7 +60,7 @@ public class TestSearchAasRepository {
         searchAPI = appContext.getBean(SearchAasRepositoryApiHTTPController.class);
         preloadShells();
         await().atMost(10, SECONDS).until(() ->
-                !searchBackend.getAllAas(null, null, new PaginationInfo(0, "")).getResult().isEmpty()
+                !searchBackend.getAllAas(null, null, new PaginationInfo(1, "")).getResult().isEmpty()
         );
     }
 
