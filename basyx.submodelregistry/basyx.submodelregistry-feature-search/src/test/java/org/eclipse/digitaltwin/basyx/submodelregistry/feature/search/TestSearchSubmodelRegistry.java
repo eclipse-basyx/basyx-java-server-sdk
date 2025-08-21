@@ -70,22 +70,30 @@ public class TestSearchSubmodelRegistry {
 
 
 	@BeforeClass
-	public static void setUp() throws IOException, DeserializationException, InterruptedException {
+	public static void setUp() {
 		appContext = new SpringApplication(DummySearchSubmodelRegistryComponent.class).run(new String[] {});
 		storage = appContext.getBean(SearchSubmodelRegistryStorage.class);
 		searchAPI = appContext.getBean(SearchSubmodelRegistryApiHTTPController.class);
-		preloadSmds();
-		await().atMost(10, SECONDS).until(() ->
-				!storage.getAllSubmodelDescriptors(new PaginationInfo(1, "")).getResult().isEmpty()
-		);
 	}
 
 	@AfterClass
 	public static void tearDown() {
+		appContext.close();
+	}
+
+	@Before
+	public void preloadData() throws FileNotFoundException, DeserializationException {
+		preloadSmds();
+		await().atMost(10, SECONDS).until(() ->
+			!storage.getAllSubmodelDescriptors(new PaginationInfo(1, "")).getResult().isEmpty()
+		);
+	}
+
+	@After
+	public void resetRepo(){
 		List<org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor> descriptors = storage.getAllSubmodelDescriptors(PaginationInfo.NO_LIMIT).getResult();
 
 		descriptors.forEach(descriptor -> storage.removeSubmodelDescriptor(descriptor.getId()));
-		appContext.close();
 	}
 
 	@Test

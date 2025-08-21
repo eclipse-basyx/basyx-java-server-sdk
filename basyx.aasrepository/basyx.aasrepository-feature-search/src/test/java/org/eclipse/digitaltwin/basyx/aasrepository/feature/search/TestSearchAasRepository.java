@@ -33,10 +33,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.QueryResponse;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.ResponseEntity;
@@ -54,14 +51,28 @@ public class TestSearchAasRepository {
     private static SearchAasRepositoryApiHTTPController searchAPI;
 
     @BeforeClass
-    public static void startAasRepo() throws Exception {
+    public static void startAasRepo() {
         appContext = new SpringApplicationBuilder(DummySearchAasRepositoryComponent.class).run(new String[] {});
         searchBackend = appContext.getBean(AasRepository.class);
         searchAPI = appContext.getBean(SearchAasRepositoryApiHTTPController.class);
+
+    }
+
+    @Before
+    public void preloadData() throws FileNotFoundException, DeserializationException {
         preloadShells();
         await().atMost(10, SECONDS).until(() ->
                 !searchBackend.getAllAas(null, null, new PaginationInfo(1, "")).getResult().isEmpty()
         );
+    }
+
+    @After
+    public void resetRepo(){
+        searchBackend.getAllAas(null, null, new PaginationInfo(100, "")).getResult().forEach(aas -> {
+            try {
+                searchBackend.deleteAas(aas.getId());
+            } catch (Exception ignored) {}
+        });
     }
 
     @Test
@@ -95,13 +106,6 @@ public class TestSearchAasRepository {
 
     @AfterClass
     public static void shutdownAasRepo() {
-        searchBackend.getAllAas(null, null, new PaginationInfo(0, "")).getResult().forEach(aas -> {
-            try {
-                searchBackend.deleteAas(aas.getId());
-            } catch (Exception e) {
-                // Ignore exceptions during cleanup
-            }
-        });
         appContext.close();
     }
 

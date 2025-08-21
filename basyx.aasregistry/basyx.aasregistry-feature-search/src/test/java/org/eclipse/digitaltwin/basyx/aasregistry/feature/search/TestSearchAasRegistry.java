@@ -36,10 +36,7 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.QueryResponse;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.ResponseEntity;
@@ -70,22 +67,30 @@ public class TestSearchAasRegistry {
 
 
 	@BeforeClass
-	public static void setUp() throws IOException, DeserializationException, InterruptedException {
+	public static void setUp() {
 		appContext = new SpringApplication(DummySearchAasRegistryComponent.class).run();
 		storage = appContext.getBean(SearchAasRegistryStorage.class);
 		searchAPI = appContext.getBean(SearchAasRegistryApiHTTPController.class);
+	}
+
+	@AfterClass
+	public static void tearDown() {
+		appContext.close();
+	}
+
+	@Before
+	public void preloadData() throws FileNotFoundException, DeserializationException {
 		preloadAasdf();
 		await().atMost(10, SECONDS).until(() ->
 				!storage.getAllAasDescriptors(new PaginationInfo(1, ""), new DescriptorFilter(null, null)).getResult().isEmpty()
 		);
 	}
 
-	@AfterClass
-	public static void tearDown() {
+	@After
+	public void resetRepo(){
 		List<org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor> descriptors = storage.getAllAasDescriptors(PaginationInfo.NO_LIMIT, new DescriptorFilter(null, null)).getResult();
 
 		descriptors.forEach(descriptor -> storage.removeAasDescriptor(descriptor.getId()));
-		appContext.close();
 	}
 
 	@Test

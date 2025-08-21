@@ -34,10 +34,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.QueryResponse;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.ResponseEntity;
@@ -55,14 +52,24 @@ public class TestSearchCdRepository {
     private static SearchCdRepositoryApiHTTPController searchAPI;
 
     @BeforeClass
-    public static void startCdRepo() throws Exception {
+    public static void startCdRepo() {
         appContext = new SpringApplicationBuilder(DummySearchCdRepositoryComponent.class).run(new String[] {});
         searchBackend = appContext.getBean(ConceptDescriptionRepository.class);
         searchAPI = appContext.getBean(SearchCdRepositoryApiHTTPController.class);
+
+    }
+
+    @Before
+    public void preloadData() throws FileNotFoundException, DeserializationException {
         preloadCds();
         await().atMost(10, SECONDS).until(() ->
                 !searchBackend.getAllConceptDescriptions(new PaginationInfo(1, "")).getResult().isEmpty()
         );
+    }
+
+    @After
+    public void cleareRepo(){
+        resetRepo();
     }
 
     @Test
@@ -96,12 +103,11 @@ public class TestSearchCdRepository {
 
     @AfterClass
     public static void shutdownCdRepo() {
-        resetRepo();
         appContext.close();
     }
 
     private static void resetRepo() {
-        searchBackend.getAllConceptDescriptions(new PaginationInfo(0, "")).getResult().forEach(cd -> {
+        searchBackend.getAllConceptDescriptions(new PaginationInfo(100, "")).getResult().forEach(cd -> {
             try {
                 searchBackend.deleteConceptDescription(cd.getId());
             } catch (Exception e) {
