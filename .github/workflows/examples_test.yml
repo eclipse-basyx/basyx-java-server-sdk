@@ -189,3 +189,22 @@ jobs:
 
       - name: Stop BaSyx Node-RED Example
         run: docker compose -f examples/BaSyxNodeRED/docker-compose.yml down
+
+  test-basyx-query-language:
+    runs-on: ubuntu-latest
+    name: Test BaSyx Query Language Example
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Start BaSyx Query Language Example
+        run: docker compose -f examples/BaSyxQueryLanguage/docker-compose.yml up -d
+
+      - name: Stop BaSyx Query Language Example
+        run: docker compose -f examples/BaSyxQueryLanguage/docker-compose.yml down
