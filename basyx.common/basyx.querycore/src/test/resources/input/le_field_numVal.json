@@ -1,0 +1,8 @@
+{
+  "$condition": {
+    "$le": [
+      { "$field": "$aas#administration.revision" },
+      { "$numVal": 2 }
+    ]
+  }
+}
