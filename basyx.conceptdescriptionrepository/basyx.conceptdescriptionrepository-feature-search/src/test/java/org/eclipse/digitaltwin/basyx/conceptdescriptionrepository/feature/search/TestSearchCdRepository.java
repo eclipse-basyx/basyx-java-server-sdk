@@ -60,11 +60,9 @@ public class TestSearchCdRepository {
     }
 
     @Before
-    public void preloadData() throws FileNotFoundException, DeserializationException {
+    public void preloadData() throws FileNotFoundException, DeserializationException, InterruptedException {
         preloadCds();
-        await().atMost(10, SECONDS).until(() ->
-                !searchBackend.getAllConceptDescriptions(new PaginationInfo(1, "")).getResult().isEmpty()
-        );
+        Thread.sleep(2000);
     }
 
     @After

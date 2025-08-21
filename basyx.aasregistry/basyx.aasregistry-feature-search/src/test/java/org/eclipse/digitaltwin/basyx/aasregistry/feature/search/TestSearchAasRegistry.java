@@ -79,11 +79,9 @@ public class TestSearchAasRegistry {
 	}
 
 	@Before
-	public void preloadData() throws FileNotFoundException, DeserializationException {
+	public void preloadData() throws FileNotFoundException, DeserializationException, InterruptedException {
 		preloadAasdf();
-		await().atMost(10, SECONDS).until(() ->
-				!storage.getAllAasDescriptors(new PaginationInfo(1, ""), new DescriptorFilter(null, null)).getResult().isEmpty()
-		);
+		Thread.sleep(2000);
 	}
 
 	@After

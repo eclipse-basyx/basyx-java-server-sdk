@@ -60,11 +60,9 @@ public class TestSearchSubmodelRepository {
     }
 
     @Before
-    public void loadSubmodels() throws FileNotFoundException, DeserializationException {
+    public void loadSubmodels() throws FileNotFoundException, DeserializationException, InterruptedException {
         preloadSubmodels();
-        await().atMost(10, SECONDS).until(() ->
-                !searchBackend.getAllSubmodels(new PaginationInfo(100, "")).getResult().isEmpty()
-        );
+        Thread.sleep(2000);
     }
 
     @Test

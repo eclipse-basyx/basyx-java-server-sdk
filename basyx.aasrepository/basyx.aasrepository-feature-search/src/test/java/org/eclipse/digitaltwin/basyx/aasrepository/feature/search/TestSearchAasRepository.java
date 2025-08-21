@@ -59,11 +59,9 @@ public class TestSearchAasRepository {
     }
 
     @Before
-    public void preloadData() throws FileNotFoundException, DeserializationException {
+    public void preloadData() throws FileNotFoundException, DeserializationException, InterruptedException {
         preloadShells();
-        await().atMost(10, SECONDS).until(() ->
-                !searchBackend.getAllAas(null, null, new PaginationInfo(1, "")).getResult().isEmpty()
-        );
+        Thread.sleep(2000);
     }
 
     @After

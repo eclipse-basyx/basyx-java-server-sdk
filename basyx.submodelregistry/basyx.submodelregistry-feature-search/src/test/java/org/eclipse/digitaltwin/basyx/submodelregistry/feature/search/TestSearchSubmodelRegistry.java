@@ -82,11 +82,9 @@ public class TestSearchSubmodelRegistry {
 	}
 
 	@Before
-	public void preloadData() throws FileNotFoundException, DeserializationException {
+	public void preloadData() throws FileNotFoundException, DeserializationException, InterruptedException {
 		preloadSmds();
-		await().atMost(10, SECONDS).until(() ->
-			!storage.getAllSubmodelDescriptors(new PaginationInfo(1, "")).getResult().isEmpty()
-		);
+		Thread.sleep(2000);
 	}
 
 	@After
