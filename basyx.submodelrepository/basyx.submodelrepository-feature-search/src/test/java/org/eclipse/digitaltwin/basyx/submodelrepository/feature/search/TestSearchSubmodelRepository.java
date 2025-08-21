@@ -34,10 +34,7 @@ import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.QueryResponse;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.ResponseEntity;
@@ -56,13 +53,17 @@ public class TestSearchSubmodelRepository {
     private static SearchSubmodelRepositoryApiHTTPController searchAPI;
 
     @BeforeClass
-    public static void startSmRepo() throws Exception {
+    public static void startSmRepo(){
         appContext = new SpringApplicationBuilder(DummySearchSubmodelRepositoryComponent.class).run(new String[] {});
         searchBackend = appContext.getBean(SubmodelRepository.class);
         searchAPI = appContext.getBean(SearchSubmodelRepositoryApiHTTPController.class);
+    }
+
+    @Before
+    public void loadSubmodels() throws FileNotFoundException, DeserializationException {
         preloadSubmodels();
         await().atMost(10, SECONDS).until(() ->
-                !searchBackend.getAllSubmodels(new PaginationInfo(1, "")).getResult().isEmpty()
+                !searchBackend.getAllSubmodels(new PaginationInfo(100, "")).getResult().isEmpty()
         );
     }
 
@@ -95,15 +96,17 @@ public class TestSearchSubmodelRepository {
         }
     }
 
-    @AfterClass
-    public static void shutdownAasRepo() {
-        searchBackend.getAllSubmodels(new PaginationInfo(0, "")).getResult().forEach(submodel -> {
+    @After
+    public void clearRepository(){
+        searchBackend.getAllSubmodels(new PaginationInfo(100, "")).getResult().forEach(submodel -> {
             try {
                 searchBackend.deleteSubmodel(submodel.getId());
-            } catch (Exception e) {
-                // Ignore exceptions during cleanup
-            }
+            } catch (Exception ignored) {}
         });
+    }
+
+    @AfterClass
+    public static void shutdownAasRepo() {
         appContext.close();
     }
 
