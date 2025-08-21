@@ -54,6 +54,12 @@
             <groupId>org.eclipse.digitaltwin.basyx</groupId>
             <artifactId>basyx.aasregistry-service-mongodb-storage</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>4.3.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

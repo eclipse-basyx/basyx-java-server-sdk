@@ -53,11 +53,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import static org.awaitility.Awaitility.await;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Tests for {@link org.eclipse.digitaltwin.basyx.aasregistry.feature.search.SearchAasRegistryStorage} feature
  *
- * @author danish
+ * @author zielstor, fried
  */
 public class TestSearchAasRegistry {
 
@@ -73,7 +75,9 @@ public class TestSearchAasRegistry {
 		storage = appContext.getBean(SearchAasRegistryStorage.class);
 		searchAPI = appContext.getBean(SearchAasRegistryApiHTTPController.class);
 		preloadAasdf();
-		Thread.sleep(2000);
+		await().atMost(10, SECONDS).until(() ->
+				!storage.getAllAasDescriptors(new PaginationInfo(0, ""), new DescriptorFilter(null, null)).getResult().isEmpty()
+		);
 	}
 
 	@AfterClass

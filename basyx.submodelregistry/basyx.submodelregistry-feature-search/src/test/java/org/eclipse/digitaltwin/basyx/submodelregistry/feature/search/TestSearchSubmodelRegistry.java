@@ -53,7 +53,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.junit.Assert.assertEquals;
-
+import static org.awaitility.Awaitility.await;
+import static java.util.concurrent.TimeUnit.SECONDS;
 /**
  * Tests for {@link SearchSubmodelRegistryStorage} feature
  *
@@ -74,7 +75,9 @@ public class TestSearchSubmodelRegistry {
 		storage = appContext.getBean(SearchSubmodelRegistryStorage.class);
 		searchAPI = appContext.getBean(SearchSubmodelRegistryApiHTTPController.class);
 		preloadSmds();
-		Thread.sleep(2000);
+		await().atMost(10, SECONDS).until(() ->
+				!storage.getAllSubmodelDescriptors(new PaginationInfo(0, "")).getResult().isEmpty()
+		);
 	}
 
 	@AfterClass

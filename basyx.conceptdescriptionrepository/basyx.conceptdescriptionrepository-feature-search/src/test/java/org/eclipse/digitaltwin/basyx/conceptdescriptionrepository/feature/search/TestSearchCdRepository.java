@@ -46,6 +46,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
+import static org.awaitility.Awaitility.await;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class TestSearchCdRepository {
     private static ConfigurableApplicationContext appContext;
@@ -58,7 +60,9 @@ public class TestSearchCdRepository {
         searchBackend = appContext.getBean(ConceptDescriptionRepository.class);
         searchAPI = appContext.getBean(SearchCdRepositoryApiHTTPController.class);
         preloadCds();
-        waitForData();
+        await().atMost(10, SECONDS).until(() ->
+                !searchBackend.getAllConceptDescriptions(new PaginationInfo(0, "")).getResult().isEmpty()
+        );
     }
 
     @Test
@@ -104,10 +108,6 @@ public class TestSearchCdRepository {
                 // Ignore exceptions during cleanup
             }
         });
-    }
-
-    private static void waitForData() throws InterruptedException {
-        Thread.sleep(2000);
     }
 
 }

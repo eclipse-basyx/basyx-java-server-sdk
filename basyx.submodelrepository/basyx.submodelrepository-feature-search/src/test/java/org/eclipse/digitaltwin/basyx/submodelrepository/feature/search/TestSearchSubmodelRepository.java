@@ -47,6 +47,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
 
+import static org.awaitility.Awaitility.await;
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 public class TestSearchSubmodelRepository {
     private static ConfigurableApplicationContext appContext;
     private static SubmodelRepository searchBackend;
@@ -58,7 +61,9 @@ public class TestSearchSubmodelRepository {
         searchBackend = appContext.getBean(SubmodelRepository.class);
         searchAPI = appContext.getBean(SearchSubmodelRepositoryApiHTTPController.class);
         preloadSubmodels();
-        Thread.sleep(2000);
+        await().atMost(10, SECONDS).until(() ->
+                !searchBackend.getAllSubmodels(new PaginationInfo(0, "")).getResult().isEmpty()
+        );
     }
 
     @Test

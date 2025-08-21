@@ -45,6 +45,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
+import static org.awaitility.Awaitility.await;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class TestSearchAasRepository {
     private static ConfigurableApplicationContext appContext;
@@ -52,12 +54,14 @@ public class TestSearchAasRepository {
     private static SearchAasRepositoryApiHTTPController searchAPI;
 
     @BeforeClass
-    public static void startSmRepo() throws Exception {
+    public static void startAasRepo() throws Exception {
         appContext = new SpringApplicationBuilder(DummySearchAasRepositoryComponent.class).run(new String[] {});
         searchBackend = appContext.getBean(AasRepository.class);
         searchAPI = appContext.getBean(SearchAasRepositoryApiHTTPController.class);
         preloadShells();
-        Thread.sleep(2000);
+        await().atMost(10, SECONDS).until(() ->
+                !searchBackend.getAllAas(null, null, new PaginationInfo(0, "")).getResult().isEmpty()
+        );
     }
 
     @Test
