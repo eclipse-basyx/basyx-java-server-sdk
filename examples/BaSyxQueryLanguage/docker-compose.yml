@@ -19,6 +19,8 @@ services:
         condition: service_healthy
       mongo:
         condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
   aas-registry:
     image: eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
     container_name: aas-registry
@@ -32,6 +34,8 @@ services:
     depends_on:
       mongo:
         condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
   sm-registry:
     image: eclipsebasyx/submodel-registry-log-mongodb:2.0.0-SNAPSHOT
     container_name: sm-registry
@@ -44,6 +48,8 @@ services:
     restart: always
     depends_on:
       mongo:
+        condition: service_healthy
+      elasticsearch:
         condition: service_healthy
   aas-discovery:
     image: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
@@ -85,6 +91,6 @@ services:
       CD_REPO_PATH: http://localhost:8081/concept-descriptions
       AAS_DISCOVERY_PATH: http://localhost:8084/lookup/shells
     restart: always
-   # depends_on:
+    # depends_on:
     #  aas-env:
     #    condition: service_healthy
