@@ -49,7 +49,9 @@ basyx:
   cors:
     allowed-origins: "*"
     allowed-methods: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
-  feature:
-    search:
-      enabled: true
-      indexname: smdesc-index-ci-test
+  submodelregistry:
+    feature:
+      experimental:
+        search:
+          enabled: true
+          indexname: smdesc-index-ci-test

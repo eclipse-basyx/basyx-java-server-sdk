@@ -4,9 +4,10 @@ basyx:
     allowed-methods: GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
   aasregistry:
     feature:
-      search:
-        enabled: true
-        indexname: aasdesc-index
+      experimental:
+        search:
+          enabled: true
+          indexname: aasdesc-index
 spring:
   data:
     mongodb:

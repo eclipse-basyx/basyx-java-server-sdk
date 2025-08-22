@@ -42,11 +42,11 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 @ConditionalOnProperty(name = SearchAasRepositoryFeature.FEATURENAME + ".enabled", havingValue = "true", matchIfMissing = false)
 public class SearchAasRepositoryFeature implements AasRepositoryFeature {
 	
-	public static final String FEATURENAME = "basyx.aasrepository.feature.search";
+	public static final String FEATURENAME = "basyx.aasrepository.feature.experimental.search";
 	public static final String DEFAULT_INDEX = "aas-index";
 	private final ElasticsearchClient esclient;
 
-	@Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
+	@Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.experimental.search.enabled:false}}")
 	private boolean enabled;
 
 	@Value("${" + SearchAasRepositoryFeature.FEATURENAME + ".indexname:" + SearchAasRepositoryFeature.DEFAULT_INDEX + "}")

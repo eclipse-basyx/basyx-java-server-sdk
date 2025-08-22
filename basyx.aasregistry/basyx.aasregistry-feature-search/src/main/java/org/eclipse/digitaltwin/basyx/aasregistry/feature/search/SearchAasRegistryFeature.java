@@ -43,10 +43,10 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-@ConditionalOnExpression("#{${" + SearchAasRegistryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
+@ConditionalOnExpression("#{${" + SearchAasRegistryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.experimental.search.enabled:false}}")
 @Order(1)
 public class SearchAasRegistryFeature implements AasRegistryStorageFeature {
-    public final static String FEATURENAME = "basyx.aasregistry.feature.search";
+    public final static String FEATURENAME = "basyx.aasregistry.feature.experimental.search";
     public static final String DEFAULT_INDEX = "aas-descr-index";
     private final ElasticsearchClient esclient;
 
@@ -54,7 +54,7 @@ public class SearchAasRegistryFeature implements AasRegistryStorageFeature {
         this.esclient = esclient;
     }
 
-    @Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
+    @Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.experimental.search.enabled:false}}")
     private boolean enabled;
 
     @Value("${" + FEATURENAME + ".indexname:" + DEFAULT_INDEX + "}")

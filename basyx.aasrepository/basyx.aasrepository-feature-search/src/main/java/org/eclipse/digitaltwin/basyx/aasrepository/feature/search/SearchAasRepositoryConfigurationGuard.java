@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component;
  * @author fried, aaronzi
  */
 @Component
-@ConditionalOnExpression("#{${" + SearchAasRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
+@ConditionalOnExpression("#{${" + SearchAasRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.experimental.search.enabled:false}}")
 public class SearchAasRepositoryConfigurationGuard implements InitializingBean {
     private static final Logger logger = LoggerFactory.getLogger(SearchAasRepositoryConfigurationGuard.class);
 

@@ -28,7 +28,7 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.feature.search;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Configuration;
 
-@ConditionalOnExpression("#{${" + SearchSubmodelRegistryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
+@ConditionalOnExpression("#{${" + SearchSubmodelRegistryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.experimental.search.enabled:false}}")
 @Configuration
 public class SearchSubmodelRegistryConfiguration {
 

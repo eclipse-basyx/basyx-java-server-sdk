@@ -33,14 +33,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
-@ConditionalOnExpression("#{${" + SearchSubmodelRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
+@ConditionalOnExpression("#{${" + SearchSubmodelRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.experimental.search.enabled:false}}")
 @Component
 public class SearchSubmodelRepositoryFeature implements SubmodelRepositoryFeature {
-	public static final String FEATURENAME = "basyx.submodelrepository.feature.search";
+	public static final String FEATURENAME = "basyx.submodelrepository.feature.experimental.search";
 	public static final String DEFAULT_INDEX = "sm-index";
 	private final ElasticsearchClient esclient;
 
-	@Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
+	@Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.experimental.search.enabled:false}}")
 	private boolean enabled;
 
 	@Value("${" + SearchSubmodelRepositoryFeature.FEATURENAME + ".indexname:" + SearchSubmodelRepositoryFeature.DEFAULT_INDEX + "}")
