@@ -46,7 +46,7 @@ import java.util.List;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-10T15:59:05.892Z[GMT]")
 @RestController
-@ConditionalOnExpression("#{${" + SearchCdRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
+@ConditionalOnExpression("#{${" + SearchCdRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.experimental.search.enabled:false}}")
 public class SearchCdRepositoryApiHTTPController implements SearchCdRepositoryHTTPApi {
 
 	private final ElasticsearchClient client;

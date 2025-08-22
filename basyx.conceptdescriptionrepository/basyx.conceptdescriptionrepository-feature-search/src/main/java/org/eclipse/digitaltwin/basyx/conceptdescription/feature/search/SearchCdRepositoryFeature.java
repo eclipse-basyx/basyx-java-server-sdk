@@ -33,14 +33,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
-@ConditionalOnExpression("#{${" + SearchCdRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
+@ConditionalOnExpression("#{${" + SearchCdRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.experimental.search.enabled:false}}")
 @Component
 public class SearchCdRepositoryFeature implements ConceptDescriptionRepositoryFeature {
-	public static final String FEATURENAME = "basyx.cdrepository.feature.search";
+	public static final String FEATURENAME = "basyx.cdrepository.feature.experimental.search";
 	public static final String DEFAULT_INDEX = "aas-index";
 	private final ElasticsearchClient esclient;
 
-	@Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
+	@Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.experimental.search.enabled:false}}")
 	private boolean enabled;
 
 	@Value("${" + SearchCdRepositoryFeature.FEATURENAME + ".indexname:" + SearchCdRepositoryFeature.DEFAULT_INDEX + "}")

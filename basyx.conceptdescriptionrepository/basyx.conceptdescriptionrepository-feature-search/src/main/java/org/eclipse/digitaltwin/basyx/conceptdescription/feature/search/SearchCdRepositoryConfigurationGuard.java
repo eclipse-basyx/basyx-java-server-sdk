@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component;
  * @author fried, aaronzi
  */
 @Component
-@ConditionalOnExpression("#{${" + SearchCdRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
+@ConditionalOnExpression("#{${" + SearchCdRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.experimental.search.enabled:false}}")
 public class SearchCdRepositoryConfigurationGuard implements InitializingBean {
     private static final Logger logger = LoggerFactory.getLogger(SearchCdRepositoryConfigurationGuard.class);
 

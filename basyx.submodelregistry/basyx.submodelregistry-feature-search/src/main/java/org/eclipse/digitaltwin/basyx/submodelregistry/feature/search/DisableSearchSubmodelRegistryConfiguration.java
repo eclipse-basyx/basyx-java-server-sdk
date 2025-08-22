@@ -42,7 +42,7 @@ import org.springframework.context.annotation.Configuration;
  * @author fried
  */
 @Configuration
-@ConditionalOnExpression("!(${" + SearchSubmodelRegistryFeature.FEATURENAME + ".enabled:false} || ${basyx.feature.search.enabled:false})")
+@ConditionalOnExpression("!(${" + SearchSubmodelRegistryFeature.FEATURENAME + ".enabled:false} || ${basyx.feature.experimental.search.enabled:false})")
 @EnableAutoConfiguration(exclude = {
         ElasticsearchClientAutoConfiguration.class,
         ElasticsearchRepositoriesAutoConfiguration.class,

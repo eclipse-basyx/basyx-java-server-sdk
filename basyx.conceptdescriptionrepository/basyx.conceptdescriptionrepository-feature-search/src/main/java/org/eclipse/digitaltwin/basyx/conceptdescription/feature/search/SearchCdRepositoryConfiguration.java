@@ -28,7 +28,7 @@ package org.eclipse.digitaltwin.basyx.conceptdescription.feature.search;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Configuration;
 
-@ConditionalOnExpression("#{${" + SearchCdRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
+@ConditionalOnExpression("#{${" + SearchCdRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.experimental.search.enabled:false}}")
 @Configuration
 public class SearchCdRepositoryConfiguration {
 

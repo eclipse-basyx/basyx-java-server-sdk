@@ -4,9 +4,10 @@ basyx:
     allowed-methods: GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
   submodelregistry:
     feature:
-      search:
-        enabled: true
-        indexname: smdesc-index
+      experimental:
+        search:
+          enabled: true
+          indexname: smdesc-index
 spring:
   data:
     mongodb:

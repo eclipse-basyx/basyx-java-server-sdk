@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component;
  * @author jannisjung, aaronzi
  */
 @Component
-@ConditionalOnExpression("#{${" + SearchSubmodelRegistryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
+@ConditionalOnExpression("#{${" + SearchSubmodelRegistryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.experimental.search.enabled:false}}")
 public class SearchSubmodelRegistryConfigurationGuard implements InitializingBean {
     private static final Logger logger = LoggerFactory.getLogger(SearchSubmodelRegistryConfigurationGuard.class);
 

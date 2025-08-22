@@ -42,10 +42,10 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-@ConditionalOnExpression("#{${" + SearchSubmodelRegistryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
+@ConditionalOnExpression("#{${" + SearchSubmodelRegistryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.experimental.search.enabled:false}}")
 @Order(1)
 public class SearchSubmodelRegistryFeature implements SubmodelRegistryStorageFeature {
-    public final static String FEATURENAME = "basyx.submodelregistry.feature.search";
+    public final static String FEATURENAME = "basyx.submodelregistry.feature.experimental.search";
     public static final String DEFAULT_INDEX = "sm-descr-index";
     private final ElasticsearchClient esclient;
 
@@ -53,7 +53,7 @@ public class SearchSubmodelRegistryFeature implements SubmodelRegistryStorageFea
         this.esclient = esclient;
     }
 
-    @Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.search.enabled:false}}")
+    @Value("#{${" + FEATURENAME + ".enabled:false} or ${basyx.feature.experimental.search.enabled:false}}")
     private boolean enabled;
 
     @Value("${" + FEATURENAME + ".indexname:" + DEFAULT_INDEX + "}")
