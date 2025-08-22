@@ -91,6 +91,6 @@ services:
       CD_REPO_PATH: http://localhost:8081/concept-descriptions
       AAS_DISCOVERY_PATH: http://localhost:8084/lookup/shells
     restart: always
-    # depends_on:
-    #  aas-env:
-    #    condition: service_healthy
+    depends_on:
+      aas-env:
+        condition: service_healthy
