@@ -21,3 +21,5 @@ For more details, see [basyx-databridge](https://github.com/eclipse-basyx/basyx-
 - GUI-based Configuration (Q1/2025)
 - RBAC support for the DataBridge (Q1/2025)
 - Integration of more complex data transformations, e.g., data aggregation of historic data (Q2/2025)
+
+

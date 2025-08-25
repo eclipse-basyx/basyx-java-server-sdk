@@ -39,18 +39,19 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilte
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.RegistrationEventSendingAasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("basyxRegistryApiDelegate")
 public class BasyxRegistryApiDelegate implements ShellDescriptorsApiDelegate {
 
 	private final AasRegistryStorage storage;
 
 	private final LocationBuilder locationBuilder;
 
-	public BasyxRegistryApiDelegate(AasRegistryStorage storage, RegistryEventSink eventSink, LocationBuilder builder) {
+	public BasyxRegistryApiDelegate(AasRegistryStorage storage, @Qualifier("RegistryEventLogSink") RegistryEventSink eventSink, LocationBuilder builder) {
 		this.storage = new RegistrationEventSendingAasRegistryStorage(storage, eventSink);
 		this.locationBuilder = builder;
 	}

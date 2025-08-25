@@ -1,0 +1,25 @@
+spring:
+  config:
+    activate:
+      on-profile: MongoDB
+  data:
+    mongodb:
+      authentication-database: aasregistry
+      database: aasregistry
+      host: localhost
+      port: 27017
+      username: smartsystemhub
+      password: smartsystemshubdatabaseforfactoryX
+
+basyx:
+  backend: MongoDB
+  aasdiscoveryservice:
+    mongodb:
+      collectionName: aasregistry
+
+
+
+registry:
+  type: MongoDB
+  discovery:
+    enabled: true

@@ -53,10 +53,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.annotation.Generated;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class AssetAdministrationShellDiscoveryApi {
 
+
+    private static final Logger log = LoggerFactory.getLogger(AssetAdministrationShellDiscoveryApi.class);
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
     private final String baseUri;
@@ -186,6 +190,7 @@ public class AssetAdministrationShellDiscoveryApi {
             byte[] body = objectMapper.writeValueAsBytes(assetIds);
             builder.method("POST", HttpRequest.BodyPublishers.ofByteArray(body));
         } catch (IOException e) {
+            log.debug(""+e.getLocalizedMessage());
             throw new ApiException(e);
         }
 
