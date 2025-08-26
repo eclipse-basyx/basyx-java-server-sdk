@@ -256,9 +256,8 @@ public class MongoDBAasOperations implements AasOperations {
         // Match specific assetIds (name + value pair inside array)
         if (assetIds != null && !assetIds.isEmpty()) {
             for (SpecificAssetId assetId : assetIds) {
-                criteriaList.add(Criteria.where("assetInformation.specificAssetIds")
-                        .elemMatch(Criteria.where("name").is(assetId.getName())
-                                .and("value").is(assetId.getValue())));
+                criteriaList.add(Criteria.where("assetInformation.specificAssetIds.name").is(assetId.getName()));
+                criteriaList.add(Criteria.where("assetInformation.specificAssetIds.value").is(assetId.getValue()));
             }
         }
 
