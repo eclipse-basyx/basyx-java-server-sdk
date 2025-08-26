@@ -758,7 +758,7 @@ jobs:
         run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
 
       - name: Test DTR component
-        run: mvn test -f "basyx.digitaltwinregistry.component/pom.xml"
+        run: mvn test -f ../basyx.aasdigitaltwinregistry/basyx.digitaltwinregistry.component/pom.xml
 
       - name: Fail if no Surefire reports found
         run: |
