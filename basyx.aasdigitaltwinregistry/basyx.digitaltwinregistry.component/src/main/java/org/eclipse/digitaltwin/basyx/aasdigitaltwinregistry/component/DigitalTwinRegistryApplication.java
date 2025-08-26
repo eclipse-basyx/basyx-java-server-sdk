@@ -27,13 +27,11 @@ package org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component;
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.component.AasDiscoveryServiceComponent;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.BasyxDescriptionApiDelegate;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.api.DescriptionApi;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.DescriptionApiDelegate;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.SearchApiController;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.ShellDescriptorsApiController;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.HomeController;
-import org.eclipse.digitaltwin.basyx.http.description.DescriptionController;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
@@ -102,9 +100,9 @@ import org.springframework.context.annotation.FilterType;
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.documentation.AasDiscoveryServiceApiDocumentationConfiguration.class)
         }
 )
-public class DigitalTwinRegistry {
+public class DigitalTwinRegistryApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(DigitalTwinRegistry.class, args);
+        SpringApplication.run(DigitalTwinRegistryApplication.class, args);
     }
 }
