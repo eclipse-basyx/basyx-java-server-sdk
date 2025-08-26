@@ -2,9 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
 	<modelVersion>4.0.0</modelVersion>
-
 	<parent>
 		<groupId>org.eclipse.digitaltwin.basyx</groupId>
 		<artifactId>basyx.aasregistry</artifactId>
@@ -21,7 +19,8 @@
 		<spring-cloud.version>2025.0.0</spring-cloud.version>
 		<openapi.folder>${project.basedir}/${openapi.folder.name}</openapi.folder>
 		<openapi.mongodb.file>${openapi.folder}/${openapi.mongodb.file.name}</openapi.mongodb.file>
-		<openapi.extensions.result.file>${openapi.folder}/temporary-extensions-result-file.yaml</openapi.extensions.result.file>
+		<openapi.extensions.result.file>${openapi.folder}/temporary-extensions-result-file.yaml
+		</openapi.extensions.result.file>
 		<openapi.result.file>${openapi.folder}/${openapi.name}</openapi.result.file>
 		<patch.mongo-extensions.name>patch-mongodb-annotations.yaml</patch.mongo-extensions.name>
 	</properties>
@@ -81,7 +80,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
@@ -94,10 +92,13 @@
 							<generateModels>true</generateModels>
 							<generateApis>false</generateApis>
 							<generateSupportingFiles>false</generateSupportingFiles>
+
 							<inputSpec>${openapi.result.file}</inputSpec>
 							<generatorName>spring</generatorName>
 							<library>spring-boot</library>
 							<output>${project.basedir}/${generated.folder}</output>
+
+							<!-- See https://openapi-generator.tech/docs/generators/spring -->
 							<configOptions>
 								<openApiNullable>false</openApiNullable>
 								<java8>true</java8>
@@ -117,7 +118,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -125,7 +125,6 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -142,25 +141,6 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-
-			<!-- ✅ Added Lombok Annotation Processing Support -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.11.0</version>
-				<configuration>
-					<annotationProcessorPaths>
-						<path>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-							<version>1.18.38</version>
-						</path>
-					</annotationProcessorPaths>
-					<compilerArgs>
-						<arg>-parameters</arg>
-					</compilerArgs>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -182,6 +162,7 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-function-context</artifactId>
 		</dependency>
+		<!-- Bean Validation API support -->
 		<dependency>
 			<groupId>jakarta.validation</groupId>
 			<artifactId>jakarta.validation-api</artifactId>
@@ -214,7 +195,6 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.38</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -239,7 +219,6 @@
 			</exclusions>
 		</dependency>
 	</dependencies>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -251,5 +230,4 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
 </project>

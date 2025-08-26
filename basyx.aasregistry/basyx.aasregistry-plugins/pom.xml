@@ -8,7 +8,7 @@
 	<artifactId>basyx.aasregistry-plugins</artifactId>
 	<name>BaSyx AAS Registry Plugins</name>
 	<description>BaSyx AAS Registry Plugins</description>
-	
+
 	<packaging>maven-plugin</packaging>
 	<properties></properties>
 	<dependencies>
@@ -39,7 +39,6 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.38</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>

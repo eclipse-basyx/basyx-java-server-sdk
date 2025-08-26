@@ -36,7 +36,6 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.RegistrationEve
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-@Component("basyxSearchApiDelegate")
 public class BasyxSearchApiDelegate implements SearchApiDelegate {
 
 	private final AasRegistryStorage storage;

@@ -59,25 +59,25 @@ import jakarta.validation.constraints.Min;
 @RestController
 public class LookupApiController implements LookupApi {
 
-    private final AasDiscoveryService aasDiscoveryService;
+	private final AasDiscoveryService aasDiscoveryService;
 	private final ObjectMapper objectMapper;
 
-    @Autowired
-    public LookupApiController(AasDiscoveryService aasDiscoveryService, ObjectMapper objectMapper) {
-    	this.aasDiscoveryService = aasDiscoveryService;
+	@Autowired
+	public LookupApiController(AasDiscoveryService aasDiscoveryService, ObjectMapper objectMapper) {
+		this.aasDiscoveryService = aasDiscoveryService;
 		this.objectMapper = objectMapper;
-    }
+	}
 
-    public ResponseEntity<Void> deleteAllAssetLinksById(@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier) {
-    	aasDiscoveryService.deleteAllAssetLinksById(aasIdentifier.getIdentifier());
+	public ResponseEntity<Void> deleteAllAssetLinksById(@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier) {
+		aasDiscoveryService.deleteAllAssetLinksById(aasIdentifier.getIdentifier());
 
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-    }
+	}
 
-    public ResponseEntity<PagedResult> getAllAssetAdministrationShellIdsByAssetLink(@Parameter(in = ParameterIn.QUERY, description = "A list of specific Asset identifiers. Each Asset identifier is a base64-url-encoded [SpecificAssetId](https://api.swaggerhub.com/domains/Plattform_i40/Part1-MetaModel-Schemas/V3.0.1#/components/schemas/SpecificAssetId)" ,schema=@Schema()) @Valid @RequestParam(value = "assetIds", required = false) List<Base64UrlEncodedIdentifier> assetIds,@Min(1)@Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array" ,schema=@Schema(allowableValues={ "1" }, minimum="1"
-)) @Valid @RequestParam(value = "limit", required = false) Integer limit,@Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue" ,schema=@Schema()) @Valid @RequestParam(value = "cursor", required = false) String cursor) {
+	public ResponseEntity<PagedResult> getAllAssetAdministrationShellIdsByAssetLink(@Parameter(in = ParameterIn.QUERY, description = "A list of specific Asset identifiers. Each Asset identifier is a base64-url-encoded [SpecificAssetId](https://api.swaggerhub.com/domains/Plattform_i40/Part1-MetaModel-Schemas/V3.0.1#/components/schemas/SpecificAssetId)" ,schema=@Schema()) @Valid @RequestParam(value = "assetIds", required = false) List<Base64UrlEncodedIdentifier> assetIds,@Min(1)@Parameter(in = ParameterIn.QUERY, description = "The maximum number of elements in the response array" ,schema=@Schema(allowableValues={ "1" }, minimum="1"
+	)) @Valid @RequestParam(value = "limit", required = false) Integer limit,@Parameter(in = ParameterIn.QUERY, description = "A server-generated identifier retrieved from pagingMetadata that specifies from which position the result listing should continue" ,schema=@Schema()) @Valid @RequestParam(value = "cursor", required = false) String cursor) {
 
-    	if (limit == null)
+		if (limit == null)
 			limit = 100;
 
 		if (cursor == null)
@@ -99,19 +99,19 @@ public class LookupApiController implements LookupApi {
 		paginatedAasIds.setPagingMetadata(new PagedResultPagingMetadata().cursor(filteredResult.getCursor()));
 
 		return new ResponseEntity<PagedResult>(paginatedAasIds, HttpStatus.OK);
-    }
+	}
 
-    public ResponseEntity<List<SpecificAssetId>> getAllAssetLinksById(@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier) {
-        List<SpecificAssetId> assetLinks = aasDiscoveryService.getAllAssetLinksById(aasIdentifier.getIdentifier());
-        
-        return new ResponseEntity<>(assetLinks, HttpStatus.OK);
-    }
+	public ResponseEntity<List<SpecificAssetId>> getAllAssetLinksById(@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier) {
+		List<SpecificAssetId> assetLinks = aasDiscoveryService.getAllAssetLinksById(aasIdentifier.getIdentifier());
 
-    public ResponseEntity<List<SpecificAssetId>> postAllAssetLinksById(@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,@Parameter(in = ParameterIn.DEFAULT, description = "A list of specific Asset identifiers", required=true, schema=@Schema()) @Valid @RequestBody List<SpecificAssetId> body) {
+		return new ResponseEntity<>(assetLinks, HttpStatus.OK);
+	}
+
+	public ResponseEntity<List<SpecificAssetId>> postAllAssetLinksById(@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required=true, schema=@Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier,@Parameter(in = ParameterIn.DEFAULT, description = "A list of specific Asset identifiers", required=true, schema=@Schema()) @Valid @RequestBody List<SpecificAssetId> body) {
 		List<SpecificAssetId> assetIDs = aasDiscoveryService.createAllAssetLinksById(aasIdentifier.getIdentifier(), body);
-        
-        return new ResponseEntity<List<SpecificAssetId>>(assetIDs, HttpStatus.CREATED);
-    }
+
+		return new ResponseEntity<List<SpecificAssetId>>(assetIDs, HttpStatus.CREATED);
+	}
 
 	private List<AssetLink> getDecodedAssetLinks(List<Base64UrlEncodedIdentifier> assetIds) throws JsonProcessingException {
 		List<AssetLink> result = new ArrayList<>();
@@ -122,10 +122,10 @@ public class LookupApiController implements LookupApi {
 		for (Base64UrlEncodedIdentifier base64UrlEncodedIdentifier : assetIds) {
 
 			var decodedString = base64UrlEncodedIdentifier.getIdentifier();
-				result.add(objectMapper.readValue(decodedString, AssetLink.class));
+			result.add(objectMapper.readValue(decodedString, AssetLink.class));
 
 		}
-		
+
 		return result;
 	}
 

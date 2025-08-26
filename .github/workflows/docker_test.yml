@@ -242,7 +242,6 @@ jobs:
 
       - name: Clean up
         run: exit 0
-
   build-test-aasx-fileserver:
     runs-on: ubuntu-latest
     name: AASX File Server - Build and Start Docker Image

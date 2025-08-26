@@ -53,17 +53,11 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(prefix = "events", name = "sink", havingValue = "log")
 public class RegistryEventLogSink implements RegistryEventSink {
 
-
-
 	@Autowired MongoDBCrudAasDiscovery mongoDBCrudAasDiscovery;
-
-
 
 	@Autowired
 	@Qualifier("mappingJackson2HttpMessageConverter")
 	private MappingJackson2HttpMessageConverter converter;
-
-
 
 	@Override
 	public void consumeEvent(RegistryEvent evt) {
