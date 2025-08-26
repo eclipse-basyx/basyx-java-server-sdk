@@ -61,7 +61,7 @@ public class InMemorySubmodelBackend extends InMemoryCrudRepository<Submodel> im
     @Override
     public CursorResult<List<Submodel>> getSubmodels(String semanticId, PaginationInfo pInfo) {
         Iterable<Submodel> iterable = findAll();
-		List<Submodel> submodels = StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
+		List<Submodel> submodels = StreamSupport.stream(iterable.spliterator(), false).toList();
 
 	    List<Submodel> filteredSubmodels = submodels.stream()
 	    		.filter((submodel) -> {
