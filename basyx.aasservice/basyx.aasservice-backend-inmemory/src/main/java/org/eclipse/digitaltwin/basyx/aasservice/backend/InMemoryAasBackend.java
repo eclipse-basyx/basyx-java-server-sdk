@@ -59,7 +59,7 @@ public class InMemoryAasBackend extends InMemoryCrudRepository<AssetAdministrati
 	@Override
 	public CursorResult<List<AssetAdministrationShell>> getShells(List<SpecificAssetId> assetIds, String idShort, PaginationInfo pInfo) {
 		Iterable<AssetAdministrationShell> iterable = getAllAas(assetIds, idShort);
-		List<AssetAdministrationShell> allAas = StreamSupport.stream(iterable.spliterator(), false).toList();
+		List<AssetAdministrationShell> allAas = StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
 
 		TreeMap<String, AssetAdministrationShell> aasMap = allAas.stream().collect(Collectors.toMap(AssetAdministrationShell::getId, aas -> aas, (a, b) -> a, TreeMap::new));
 
