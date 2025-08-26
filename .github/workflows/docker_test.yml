@@ -242,6 +242,7 @@ jobs:
 
       - name: Clean up
         run: exit 0
+
   build-test-aasx-fileserver:
     runs-on: ubuntu-latest
     name: AASX File Server - Build and Start Docker Image
@@ -562,6 +563,35 @@ jobs:
 
       - name: Test Submodel Registry Log MongoDB Docker Image
         run: chmod +x ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh && ./.github/workflows/scripts/build_start_docker_image_docker_compose.sh ./ci/workflows/test-submodel-registry-log-mongodb.yml test_submodel_registry_log_mongodb
+
+      - name: Clean up
+        run: exit 0
+
+  build-test-aas-digital-twin-registry:
+    runs-on: ubuntu-latest
+    name: AAS Digital Twin Registry - Build and Start Docker Image
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build BaSyx
+        run: |
+          mvn clean install ${MVN_ARGS_BUILD_BASYX_NO_TESTS}
+
+      - name: Build AAS Digital Twin Registry Docker Image
+        run: |
+          mvn package -DskipTests -Ddocker.namespace=test \
+            --pl "org.eclipse.digitaltwin.basyx:basyx.digitaltwinregistry.component"
+
+      - name: Test AAS Digital Twin Registry Docker Image
+        run: chmod +x ./.github/workflows/scripts/build_start_docker_image.sh && \
+          ./.github/workflows/scripts/build_start_docker_image.sh test/aas-digital-twin-registry ${VERSION} test_aas_digital_twin_registry
 
       - name: Clean up
         run: exit 0
