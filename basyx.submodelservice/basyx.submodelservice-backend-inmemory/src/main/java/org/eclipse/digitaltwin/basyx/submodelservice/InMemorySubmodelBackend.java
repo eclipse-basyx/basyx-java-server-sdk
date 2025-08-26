@@ -43,6 +43,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Implements the SubmodelService as in-memory variant
@@ -55,6 +56,27 @@ public class InMemorySubmodelBackend extends InMemoryCrudRepository<Submodel> im
 
     public InMemorySubmodelBackend() {
         super(Submodel::getId);
+    }
+
+    @Override
+    public CursorResult<List<Submodel>> getSubmodels(String semanticId, PaginationInfo pInfo) {
+        Iterable<Submodel> iterable = findAll();
+		List<Submodel> submodels = StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
+
+	    List<Submodel> filteredSubmodels = submodels.stream()
+	    		.filter((submodel) -> {
+	    			return submodel.getSemanticId() != null &&
+	    				submodel.getSemanticId().getKeys().stream().filter((key) -> {
+	    					return key.getValue().equals(semanticId);
+	    				}).findAny().isPresent();
+	    		})
+	    		.collect(Collectors.toList());
+
+		TreeMap<String, Submodel> submodelMap = filteredSubmodels.stream().collect(Collectors.toMap(Submodel::getId, submodel -> submodel, (a, b) -> a, TreeMap::new));
+
+		PaginationSupport<Submodel> paginationSupport = new PaginationSupport<>(submodelMap, Submodel::getId);
+
+		return paginationSupport.getPaged(pInfo);
     }
 
     @Override

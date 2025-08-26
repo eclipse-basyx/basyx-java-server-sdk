@@ -45,6 +45,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.SubmodelElement
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.factory.SubmodelElementValueMapperFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapper;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -75,23 +76,52 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
     }
 
     @Override
+    public CursorResult<List<Submodel>> getSubmodels(String semanticId, PaginationInfo pInfo) {
+        List<AggregationOperation> ops = new ArrayList<>();
+
+        ops.add(Aggregation.match(Criteria.where("semanticId.keys.value").is(semanticId)));
+
+        if (hasCursor(pInfo)) {
+            ops.add(Aggregation.match(Criteria.where("_id").gt(pInfo.getCursor())));
+        }
+
+        ops.add(Aggregation.sort(Sort.by(Sort.Direction.ASC, "_id")));
+
+        if (hasLimit(pInfo)) {
+            ops.add(Aggregation.limit(pInfo.getLimit()));
+        }
+
+        Aggregation aggregation = Aggregation.newAggregation(ops);
+        AggregationResults<Submodel> results =
+                mongoOperations.aggregate(aggregation, collectionName, Submodel.class);
+
+        List<Submodel> submodels = results.getMappedResults();
+
+        String nextCursor = submodels.isEmpty()
+                ? null
+                : submodels.get(submodels.size() - 1).getId();
+
+        return new CursorResult<>(nextCursor, submodels);
+    }
+
+    @Override
     public CursorResult<List<SubmodelElement>> getSubmodelElements(String submodelId, PaginationInfo pInfo) throws ElementDoesNotExistException {
         List<AggregationOperation> ops = new ArrayList<>();
 
         ops.add(Aggregation.match(Criteria.where("_id").is(submodelId)));
 
-        if (pInfo.getCursor() != null && !pInfo.getCursor().isEmpty()) {
+        if (hasCursor(pInfo)) {
             Document addCursorIndex = new Document("$addFields",
                     new Document("cursorIndex", new Document("$cond", Arrays.asList(new Document("$eq", Arrays.asList(new Document("$indexOfArray", Arrays.asList("$" + SUBMODEL_ELEMENTS_KEY + ".idShort", pInfo.getCursor())), -1)), 0,
                             new Document("$add", Arrays.asList(new Document("$indexOfArray", Arrays.asList("$" + SUBMODEL_ELEMENTS_KEY + ".idShort", pInfo.getCursor())), 1))))));
             ops.add(context -> addCursorIndex);
 
-            int limit = (pInfo.getLimit() != null && pInfo.getLimit() > 0) ? pInfo.getLimit() : Integer.MAX_VALUE;
+            int limit = hasLimit(pInfo) ? pInfo.getLimit() : Integer.MAX_VALUE;
 
             Document projectSlice = new Document("$project", new Document(SUBMODEL_ELEMENTS_KEY, new Document("$slice", Arrays.asList("$" + SUBMODEL_ELEMENTS_KEY, "$cursorIndex", limit))));
             ops.add(context -> projectSlice);
         } else {
-            if (pInfo.getLimit() != null && pInfo.getLimit() > 0) {
+            if (hasLimit(pInfo)) {
                 Document projectSlice = new Document("$project", new Document(SUBMODEL_ELEMENTS_KEY, new Document("$slice", Arrays.asList("$" + SUBMODEL_ELEMENTS_KEY, 0, pInfo.getLimit()))));
                 ops.add(context -> projectSlice);
             }
@@ -114,6 +144,14 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
             nextCursor = elements.get(elements.size() - 1).getIdShort();
 
         return new CursorResult<>(nextCursor, elements);
+    }
+
+    private static boolean hasLimit(PaginationInfo pInfo) {
+        return pInfo.getLimit() != null && pInfo.getLimit() > 0;
+    }
+
+    private static boolean hasCursor(PaginationInfo pInfo) {
+        return pInfo.getCursor() != null && !pInfo.getCursor().isEmpty();
     }
 
     @Override
