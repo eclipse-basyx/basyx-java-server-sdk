@@ -45,6 +45,16 @@ import java.util.List;
 public interface AasOperations {
 
     /**
+     * Retrieves all Asset Administration Shells
+     *
+     * @param assetIds  List of specific asset IDs to filter AASs
+     * @param idShort   idShort to filter AASs
+     * @param pInfo     the pagination information
+     * @return          a {@code CursorResult} containing a list of Asset Administration Shells
+     */
+    CursorResult<List<AssetAdministrationShell>> getShells(List<SpecificAssetId> assetIds, String idShort, PaginationInfo pInfo);
+
+    /**
      * Retrieves all Submodel References for the given AAS.
      *
      * @param aasId the identifier of the Asset Administration Shell

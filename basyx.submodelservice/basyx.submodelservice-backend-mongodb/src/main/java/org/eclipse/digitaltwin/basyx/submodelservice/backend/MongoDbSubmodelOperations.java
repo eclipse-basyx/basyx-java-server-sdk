@@ -146,14 +146,6 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
         return new CursorResult<>(nextCursor, elements);
     }
 
-    private static boolean hasLimit(PaginationInfo pInfo) {
-        return pInfo.getLimit() != null && pInfo.getLimit() > 0;
-    }
-
-    private static boolean hasCursor(PaginationInfo pInfo) {
-        return pInfo.getCursor() != null && !pInfo.getCursor().isEmpty();
-    }
-
     @Override
     public SubmodelElement getSubmodelElement(String submodelId, String idShortPath) throws ElementDoesNotExistException {
         List<AggregationOperation> ops = MongoFilterBuilder.buildAggregationOperations(submodelId, idShortPath);
@@ -332,6 +324,14 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
         } catch(ElementDoesNotExistException e) {
             return false;
         }
+    }
+
+    private static boolean hasLimit(PaginationInfo pInfo) {
+        return pInfo.getLimit() != null && pInfo.getLimit() > 0;
+    }
+
+    private static boolean hasCursor(PaginationInfo pInfo) {
+        return pInfo.getCursor() != null && !pInfo.getCursor().isEmpty();
     }
 
 }
