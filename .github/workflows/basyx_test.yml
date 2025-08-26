@@ -739,3 +739,30 @@ jobs:
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down
+
+
+  test-basyx-digital-twin-registry:
+    runs-on: ubuntu-latest
+    name: Digital-Twin-Registry
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+
+      - name: Test DTR component
+        run: mvn test -f "basyx.digitaltwinregistry.component/pom.xml"
+
+      - name: Fail if no Surefire reports found
+        run: |
+          if ! find . -type f -path "*/target/surefire-reports/*.xml" | grep -q .; then
+            echo "No Surefire test reports found. Failing CI.";
+            exit 1;
+          fi

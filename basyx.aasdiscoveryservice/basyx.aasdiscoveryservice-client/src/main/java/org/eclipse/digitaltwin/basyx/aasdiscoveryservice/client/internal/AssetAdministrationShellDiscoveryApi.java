@@ -190,7 +190,6 @@ public class AssetAdministrationShellDiscoveryApi {
             byte[] body = objectMapper.writeValueAsBytes(assetIds);
             builder.method("POST", HttpRequest.BodyPublishers.ofByteArray(body));
         } catch (IOException e) {
-            log.debug(""+e.getLocalizedMessage());
             throw new ApiException(e);
         }
 

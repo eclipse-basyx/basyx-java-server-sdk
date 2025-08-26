@@ -10,6 +10,14 @@
         <version>${revision}</version>
     </parent>
 
+    <properties>
+        <java.version>17</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <skipTests>false</skipTests>
+        <maven.test.skip>false</maven.test.skip>
+    </properties>
+
     <artifactId>basyx.digitaltwinregistry</artifactId>
     <name>BaSyx Digital Twin Registry</name>
     <description>BaSyx Digital Twin Registry</description>
