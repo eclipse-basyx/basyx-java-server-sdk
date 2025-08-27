@@ -755,10 +755,10 @@ jobs:
           cache: maven
 
       - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        run: mvn clean install -DskipTests
 
       - name: Test DTR component
-        run: mvn test -f ../basyx.aasdigitaltwinregistry/basyx.digitaltwinregistry.component/pom.xml
+        run: mvn test -f basyx.aasdigitaltwinregistry/basyx.digitaltwinregistry.component/pom.xml
 
       - name: Fail if no Surefire reports found
         run: |
