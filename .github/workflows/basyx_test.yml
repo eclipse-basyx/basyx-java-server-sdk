@@ -753,6 +753,10 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+      - name: Install Maven
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y maven 
 
       - name: Build BaSyx
         run: mvn clean install -DskipTests
