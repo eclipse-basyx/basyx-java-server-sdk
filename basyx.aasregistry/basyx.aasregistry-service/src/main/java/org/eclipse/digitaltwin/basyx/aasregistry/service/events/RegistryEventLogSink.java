@@ -48,6 +48,10 @@ import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+
+// we have to revert it and do with the flag approach
+
 @Log4j2
 @Component("RegistryEventLogSink")
 @ConditionalOnProperty(prefix = "events", name = "sink", havingValue = "log")
