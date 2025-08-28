@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>basyx.querycore</artifactId>
+    <name>BaSyx Query Core</name>
     <description>BaSyx Query Core</description>
 
     <dependencies>

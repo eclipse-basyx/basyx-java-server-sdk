@@ -10,6 +10,8 @@
     </parent>
 
     <artifactId>basyx.conceptdescriptionrepository-feature-search</artifactId>
+    <name>BaSyx Concept Description Repository Feature Search</name>
+    <description>Feature Search for the BaSyx Concept Description Repository</description>
 
     <dependencies>
         <dependency>
