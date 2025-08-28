@@ -1,0 +1,39 @@
+basyx:
+  aasdiscoveryservice:
+  cors:
+    allowed-methods: GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+    allowed-origins: '*'
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,mappings
+
+server:
+  port: 8081
+
+spring:
+  profiles:
+    active: logEvents,InMemory
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: BaSyx Digital Twin Registry
+
+description:
+  profiles: https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-001, https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-002, https://admin-shell.io/aas/API/3/0/DiscoveryServiceSpecification/SSP-001
+
+logging:
+  level:
+    root: DEBUG
+    org.eclipse.digitaltwin.basyx: DEBUG
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    csrf:
+      enabled: false
