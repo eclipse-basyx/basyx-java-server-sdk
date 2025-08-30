@@ -26,11 +26,8 @@
 package org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component;
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.component.AasDiscoveryServiceComponent;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.api.BasyxDescriptionApiDelegate;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.api.*;
 
-import org.eclipse.digitaltwin.basyx.aasregistry.service.api.DescriptionApiDelegate;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.api.SearchApiController;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.api.ShellDescriptorsApiController;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.HomeController;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventLogSink;
 import org.springframework.boot.SpringApplication;
@@ -48,6 +45,10 @@ import org.springframework.context.annotation.FilterType;
         },
         excludeFilters = {
 
+                @ComponentScan.Filter(
+                        type = FilterType.ASSIGNABLE_TYPE,
+                        value = BasyxSearchApiDelegate.class
+                ),
                 @ComponentScan.Filter(
                         type = FilterType.ASSIGNABLE_TYPE,
                         value = org.eclipse.digitaltwin.basyx.aasregistry.service.api.DescriptionApiController.class
@@ -69,10 +70,7 @@ import org.springframework.context.annotation.FilterType;
                         value = DescriptionApiDelegate.class
                 ),
 
-                @ComponentScan.Filter(
-                        type = FilterType.ASSIGNABLE_TYPE,
-                        value = BasyxDescriptionApiDelegate.class
-                ),
+
 
                 @ComponentScan.Filter(
                         type = FilterType.ASSIGNABLE_TYPE,
@@ -98,10 +96,7 @@ import org.springframework.context.annotation.FilterType;
                         type = FilterType.ASSIGNABLE_TYPE,
                         value = AasDiscoveryServiceComponent.class
                 ),
-                @ComponentScan.Filter(
-                        type = FilterType.REGEX,
-                        pattern = ".*(Delegate|Controller|Service|Repository|Component)$"
-                ),
+
 
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.SpringDocConfiguration.class),
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.documentation.AasDiscoveryServiceApiDocumentationConfiguration.class)
