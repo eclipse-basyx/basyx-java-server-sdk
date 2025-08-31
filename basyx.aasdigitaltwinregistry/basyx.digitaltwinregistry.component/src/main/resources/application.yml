@@ -18,7 +18,6 @@ spring:
     active: logEvents,MongoDB
   main:
     allow-bean-definition-overriding: true
-    allow-circular-references: true
   application:
     name: BaSyx Digital Twin Registry
 
