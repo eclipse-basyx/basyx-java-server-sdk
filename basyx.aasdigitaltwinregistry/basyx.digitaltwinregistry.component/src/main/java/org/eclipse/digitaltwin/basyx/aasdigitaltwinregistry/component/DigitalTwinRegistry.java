@@ -32,8 +32,6 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.HomeContr
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventLogSink;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 
@@ -48,6 +46,14 @@ import org.springframework.context.annotation.FilterType;
                 @ComponentScan.Filter(
                         type = FilterType.ASSIGNABLE_TYPE,
                         value = BasyxSearchApiDelegate.class
+                ),
+                @ComponentScan.Filter(
+                        type = FilterType.ASSIGNABLE_TYPE,
+                        value = BasyxDescriptionApiDelegate.class
+                ),
+                @ComponentScan.Filter(
+                        type = FilterType.ASSIGNABLE_TYPE,
+                        value = BasyxRegistryApiDelegate.class
                 ),
                 @ComponentScan.Filter(
                         type = FilterType.ASSIGNABLE_TYPE,
@@ -69,17 +75,6 @@ import org.springframework.context.annotation.FilterType;
                         type = FilterType.ASSIGNABLE_TYPE,
                         value = DescriptionApiDelegate.class
                 ),
-
-
-
-                @ComponentScan.Filter(
-                        type = FilterType.ASSIGNABLE_TYPE,
-                        value = MongoAutoConfiguration.class
-                ),
-                @ComponentScan.Filter(
-                        type = FilterType.ASSIGNABLE_TYPE,
-                        value = MongoDataAutoConfiguration.class
-                ),
                 @ComponentScan.Filter(
                         type = FilterType.ASSIGNABLE_TYPE,
                         value = SearchApiController.class
@@ -96,14 +91,15 @@ import org.springframework.context.annotation.FilterType;
                         type = FilterType.ASSIGNABLE_TYPE,
                         value = AasDiscoveryServiceComponent.class
                 ),
-
-
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.SpringDocConfiguration.class),
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.documentation.AasDiscoveryServiceApiDocumentationConfiguration.class)
+                @ComponentScan.Filter(
+                        type = FilterType.ASSIGNABLE_TYPE,
+                        value = org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.SpringDocConfiguration.class),
+                @ComponentScan.Filter(
+                        type = FilterType.ASSIGNABLE_TYPE,
+                        value = org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.documentation.AasDiscoveryServiceApiDocumentationConfiguration.class)
         }
 )
 public class DigitalTwinRegistry {
-
     public static void main(String[] args) {
         SpringApplication.run(DigitalTwinRegistry.class, args);
     }

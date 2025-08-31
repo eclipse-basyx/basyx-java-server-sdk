@@ -4,8 +4,10 @@ import jakarta.validation.Valid;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.backend.MongoDBCrudAasDiscovery;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.client.internal.AssetAdministrationShellDiscoveryApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.*;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.ShellDescriptorsApiDelegate;
+import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -21,19 +23,24 @@ import java.util.stream.Collectors;
 public class DiscoveryEnhancedShellDescriptors implements ShellDescriptorsApiDelegate {
 
     @Autowired
-    MongoDBCrudAasDiscovery mongoDBCrudAasDiscovery;
+    private MongoDBCrudAasDiscovery mongoDBCrudAasDiscovery;
+
+    AssetAdministrationShellDiscoveryApi assetAdministrationShellDiscoveryApi;
+
+    private final AasRegistryStorage storage;
 
     private final ShellDescriptorsApiDelegate originalDelegate;
 
 
     @Autowired
     public DiscoveryEnhancedShellDescriptors(
-            ObjectProvider<ShellDescriptorsApiDelegate> delegateProvider) {
+            AasRegistryStorage storage, ObjectProvider<ShellDescriptorsApiDelegate> delegateProvider) {
+        this.storage = storage;
         this.originalDelegate = delegateProvider.stream()
                 .filter(delegate -> !(delegate instanceof DiscoveryEnhancedShellDescriptors))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No original ShellDescriptorsApiDelegate found"));
-    }
+        }
 
 
     @Override

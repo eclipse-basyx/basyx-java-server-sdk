@@ -27,8 +27,6 @@
 package org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component.confguration;
 
 import lombok.AllArgsConstructor;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocumentBackend;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.backend.MongoDBCrudAasDiscovery;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.annotation.Bean;
@@ -37,8 +35,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @AllArgsConstructor
 public class BeanExclusionConfig {
-
-    private final AasDiscoveryDocumentBackend aasDiscoveryDocumentBackend;
 
     @Bean
     public static BeanFactoryPostProcessor removeDuplicateControllers() {
@@ -59,10 +55,5 @@ public class BeanExclusionConfig {
                 }
             }
         };
-    }
-
-    @Bean
-    public MongoDBCrudAasDiscovery mongoDBCrudAasDiscoveryBean() {
-        return new MongoDBCrudAasDiscovery(aasDiscoveryDocumentBackend, "Discovery");
     }
 }

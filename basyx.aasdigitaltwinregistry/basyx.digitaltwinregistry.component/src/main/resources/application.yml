@@ -15,19 +15,22 @@ server:
 
 spring:
   profiles:
-    active: logEvents,InMemory
+    active: logEvents,MongoDB
   main:
     allow-bean-definition-overriding: true
+    allow-circular-references: true
   application:
     name: BaSyx Digital Twin Registry
 
 description:
-  profiles: https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-001, https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-002, https://admin-shell.io/aas/API/3/0/DiscoveryServiceSpecification/SSP-001
+  profiles: https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-001,
+            https://admin-shell.io/aas/API/3/0/AssetAdministrationShellRegistryServiceSpecification/SSP-002,
+            https://admin-shell.io/aas/API/3/0/DiscoveryServiceSpecification/SSP-001
 
 logging:
   level:
-    root: DEBUG
-    org.eclipse.digitaltwin.basyx: DEBUG
+    root: INFO
+    org.eclipse.digitaltwin.basyx: INFO
 
 springdoc:
   api-docs:
