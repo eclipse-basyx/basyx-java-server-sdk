@@ -4,18 +4,18 @@ spring:
       on-profile: MongoDB
   data:
     mongodb:
-      authentication-database: aasregistry
-      database: aasregistry
-      host: localhost
-      port: 27017
-      username: smartsystemhub
-      password: smartsystemshubdatabaseforfactoryX
+      authentication-database: ${AUTHENTICATION_DATABASE:aasregistry}
+      database: ${AUTHENTICATION_DATABASE:aasregistry}
+      host: ${DATABASE_HOST:localhost}
+      port: ${DATABASE_PORT:localhost}
+      username: ${DATABASE_USERNAME:smartsystemhub}
+      password: ${DATABASE_PASSWORD:smartsystemshubdatabaseforfactoryX}
 
 basyx:
   backend: MongoDB
   aasdiscoveryservice:
     mongodb:
-      collectionName: aasregistry
+      collectionName: ${AUTHENTICATION_DATABASE:aasregistry}
 
 
 

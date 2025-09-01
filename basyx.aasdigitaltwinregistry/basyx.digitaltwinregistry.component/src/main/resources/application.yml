@@ -15,7 +15,7 @@ server:
 
 spring:
   profiles:
-    active: logEvents,MongoDB
+    active: logEvents,${SPRING_PROFILE:MongoDB}
   main:
     allow-bean-definition-overriding: true
   application:
@@ -28,8 +28,8 @@ description:
 
 logging:
   level:
-    root: INFO
-    org.eclipse.digitaltwin.basyx: INFO
+    root: ${LOGGING_LEVEL:INFO}
+    org.eclipse.digitaltwin.basyx: ${LOGGING_LEVEL:INFO}
 
 springdoc:
   api-docs:
