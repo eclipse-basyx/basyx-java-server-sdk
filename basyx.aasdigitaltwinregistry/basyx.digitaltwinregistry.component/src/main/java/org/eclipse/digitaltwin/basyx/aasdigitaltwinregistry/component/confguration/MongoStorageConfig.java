@@ -30,11 +30,9 @@ import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDoc
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.backend.MongoDBCrudAasDiscovery;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 @Configuration
 @RequiredArgsConstructor
-@Profile("MongoDB")
 public class MongoStorageConfig {
 
     @Bean
