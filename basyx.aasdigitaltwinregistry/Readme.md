@@ -1,6 +1,49 @@
-# BaSyx Digital Twin Registry - Environment Configuration
+
+
+# BaSyx Digital Twin Registry 
 
 ## Overview
+The **Digital Twin Registry** serves as a combined module that merges the capabilities of `AASRegistry` and `AASDiscovery`.  
+When a client calls the `/shell-description` endpoint, the module dynamically constructs both an `AssetAdministrationShellDescriptor` and an `aasDiscoveryDocumentEntity`.
+
+This dual-output ensures that the asset shell becomes immediately discoverable and accessible, blending registry and discovery functionalities in a seamless operation.
+
+---
+
+## How It Works
+
+- **Endpoint Integration**  
+
+  A single REST endpoint (`/shell-description`) triggers the generation of:
+    - An **AAS Descriptor**, representing the asset's metadata and management interface.
+    - A **Discovery Document**, enabling other components to locate or resolve the AAS.
+
+- **Unified Workflow**  
+  By combining `AASRegistry` and `AASDiscovery`, the module streamlines the typical sequential two-step — *discover then retrieve* — into a single integrated operation.
+
+---
+
+## Module Structure in the BaSyx SDK
+
+- **New Module Introduction**  
+  Within the main BaSyx SDK, a new module — `digitaltwinregistry` — has been introduced.  
+  It follows the **decorator pattern**, meaning it wraps around existing functionality to extend behavior without modifying original code.
+
+- **Delegate-Based Design**  
+  At its core, the module implements or creates a **delegate** for the `ShellDescriptorsApiDelegate` interface.  
+  This delegate intercepts API calls (particularly related to shell descriptions) and injects the registry-and-discovery logic — making the module effectively pluggable and maintainable.
+
+---
+
+## Summary
+
+In essence, the **Digital Twin Registry module**:
+
+- Combines **registry** and **discovery** into a unified action via `/shell-description`.
+- Is implemented as a **decorator delegate** (`ShellDescriptorsApiDelegate`), making it both modular and maintainable.
+- Seamlessly integrates with existing BaSyx storage options and aligns with broader architectural goals, such as centralized registries, tagging, and scalable discovery.
+
+## Environment
 This document describes the environment variables used to configure the BaSyx Digital Twin Registry application. The application supports multiple profiles with different storage backends.
 
 ---
