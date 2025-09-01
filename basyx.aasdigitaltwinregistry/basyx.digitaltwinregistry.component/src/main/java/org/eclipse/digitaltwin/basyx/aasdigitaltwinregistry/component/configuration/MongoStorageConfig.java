@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component.confguration;
+package org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component.configuration;
 
 import lombok.RequiredArgsConstructor;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDocumentBackend;

@@ -1,7 +1,7 @@
-package org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component.test.configuraitions;
+package org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component.test.configuration;
 
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component.confguration.BeanExclusionConfig;
+import org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component.configuration.BeanExclusionConfig;
 import org.junit.Test;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;

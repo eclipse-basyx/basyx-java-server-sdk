@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component.Delegate;
+package org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component.delegate;
 
 import jakarta.validation.Valid;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
