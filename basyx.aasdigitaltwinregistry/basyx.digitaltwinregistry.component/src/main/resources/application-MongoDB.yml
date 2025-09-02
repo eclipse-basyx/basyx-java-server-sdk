@@ -7,7 +7,7 @@ spring:
       authentication-database: ${AUTHENTICATION_DATABASE:aasregistry}
       database: ${AUTHENTICATION_DATABASE:aasregistry}
       host: ${DATABASE_HOST:localhost}
-      port: ${DATABASE_PORT:localhost}
+      port: ${DATABASE_PORT:27017}
       username: ${DATABASE_USERNAME:smartsystemhub}
       password: ${DATABASE_PASSWORD:smartsystemshubdatabaseforfactoryX}
 
