@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -65,7 +67,7 @@
 		<docker.target.platforms>linux/amd64, linux/arm64, linux/arm/v7</docker.target.platforms>
 		<docker.host.port>8081</docker.host.port>
 		<docker.container.port>8081</docker.container.port>
-		<aas4j-version>1.0.4</aas4j-version>
+		<aas4j-version>1.0.5</aas4j-version>
 		<querydsl-version>5.1.0</querydsl-version>
 		<jakarta-version>3.2.0</jakarta-version>
 	</properties>
@@ -86,7 +88,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>flatten-maven-plugin</artifactId>
-				<version>1.7.1</version>
+				<version>1.7.2</version>
 				<configuration>
 					<updatePomFile>true</updatePomFile>
 					<pomElements>
@@ -340,7 +342,7 @@
 			<dependency>
 				<groupId>org.yaml</groupId>
 				<artifactId>snakeyaml</artifactId>
-				<version>2.4</version>
+				<version>2.5</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springdoc</groupId>
@@ -366,7 +368,7 @@
 			<dependency>
 				<groupId>org.apache.tika</groupId>
 				<artifactId>tika-core</artifactId>
-				<version>3.2.1</version>
+				<version>3.2.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.reflections</groupId>
@@ -390,6 +392,11 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.core</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.querycore</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -534,6 +541,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-feature-search</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>
 					basyx.submodelrepository-feature-registry-integration</artifactId>
 				<version>${revision}</version>
@@ -648,6 +660,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-feature-search</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-feature-kafka</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
@@ -750,6 +767,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository-feature-search</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.conceptdescriptionrepository.component</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -839,6 +861,16 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelregistry-client-native</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-feature-search</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelregistry-feature-search</artifactId>
 				<version>${revision}</version>
 			</dependency>
 
@@ -980,6 +1012,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelrepository-feature-search</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>
 					basyx.submodelrepository-feature-operation-delegation</artifactId>
 				<version>${revision}</version>
@@ -1074,6 +1112,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasrepository-feature-mqtt</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasrepository-feature-search</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -1201,13 +1245,31 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.conceptdescriptionrepository-feature-search</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasregistry-feature-authorization</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-feature-search</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasregistry-feature-hierarchy</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.aasregistry-feature-search</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -1220,6 +1282,12 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.submodelregistry-feature-authorization</artifactId>
+				<version>${revision}</version>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.digitaltwin.basyx</groupId>
+				<artifactId>basyx.submodelregistry-feature-search</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
@@ -1351,7 +1419,7 @@
 			<dependency>
 				<groupId>org.openapitools</groupId>
 				<artifactId>jackson-databind-nullable</artifactId>
-				<version>0.2.6</version>
+				<version>0.2.7</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.code.findbugs</groupId>
@@ -1374,6 +1442,27 @@
 	</dependencies>
 
 	<profiles>
+		<profile>
+			<id>DashLicense</id>
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>org.eclipse.dash</groupId>
+						<artifactId>license-tool-plugin</artifactId>
+						<version>1.1.1-SNAPSHOT</version>
+						<executions>
+							<execution>
+								<id>license-check</id>
+								<goals>
+									<goal>license-check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 		<profile>
 			<id>MavenCentral</id>
 			<activation>
@@ -1408,19 +1497,6 @@
 								<phase>verify</phase>
 								<goals>
 									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.dash</groupId>
-						<artifactId>license-tool-plugin</artifactId>
-						<version>1.1.1-SNAPSHOT</version>
-						<executions>
-							<execution>
-								<id>license-check</id>
-								<goals>
-									<goal>license-check</goal>
 								</goals>
 							</execution>
 						</executions>
