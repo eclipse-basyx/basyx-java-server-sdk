@@ -1,9 +1,6 @@
 name: Dash License Check
 
 on:
-  push:
-    paths:
-      - '**/pom.xml'
   pull_request:
     paths:
       - '**/pom.xml'
