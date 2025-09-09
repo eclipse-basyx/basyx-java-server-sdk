@@ -26,9 +26,9 @@
 package org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component;
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.component.AasDiscoveryServiceComponent;
+import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.component.AasDiscoveryServiceFeaturePrinter;
 import org.eclipse.digitaltwin.basyx.aasregistry.feature.discovery.integration.DigitalTwinRegistryConfiguration;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.*;
-
 import org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.HomeController;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventLogSink;
 import org.springframework.boot.SpringApplication;
@@ -41,7 +41,6 @@ import org.springframework.context.annotation.FilterType;
 @ComponentScan(
 		basePackages = {
 				"org.eclipse.digitaltwin.basyx"
-
 		},
 		excludeFilters = {
 
@@ -95,14 +94,19 @@ import org.springframework.context.annotation.FilterType;
 				),
 				@ComponentScan.Filter(
 						type = FilterType.ASSIGNABLE_TYPE,
-						value = org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.SpringDocConfiguration.class),
+						value = org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.SpringDocConfiguration.class
+				),
 				@ComponentScan.Filter(
 						type = FilterType.ASSIGNABLE_TYPE,
-						value = org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.documentation.AasDiscoveryServiceApiDocumentationConfiguration.class)
+						value = AasDiscoveryServiceFeaturePrinter.class
+				),
+				@ComponentScan.Filter(
+						type = FilterType.ASSIGNABLE_TYPE,
+						value = org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.documentation.AasDiscoveryServiceApiDocumentationConfiguration.class
+				)
 
 		},
 		includeFilters = {
-		// Explicitly include your configuration
 		@ComponentScan.Filter(
 				type = FilterType.ASSIGNABLE_TYPE,
 				value = DigitalTwinRegistryConfiguration.class
