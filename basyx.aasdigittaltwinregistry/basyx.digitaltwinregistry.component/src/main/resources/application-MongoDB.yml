@@ -1,0 +1,25 @@
+spring:
+  config:
+    activate:
+      on-profile: MongoDB
+  data:
+    mongodb:
+      authentication-database: ${AUTHENTICATION_DATABASE:aasregistry}
+      database: ${AUTHENTICATION_DATABASE:aasregistry}
+      host: ${DATABASE_HOST:localhost}
+      port: ${DATABASE_PORT:27017}
+      username: ${DATABASE_USERNAME:smartsystemhub}
+      password: ${DATABASE_PASSWORD:smartsystemshubdatabaseforfactoryX}
+
+basyx:
+  backend: MongoDB
+  aasdiscoveryservice:
+    mongodb:
+      collectionName: ${AUTHENTICATION_DATABASE:aasregistry}
+
+
+
+registry:
+  type: MongoDB
+  discovery:
+    enabled: true

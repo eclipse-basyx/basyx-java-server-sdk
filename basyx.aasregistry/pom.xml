@@ -57,8 +57,9 @@
 		<module>basyx.aasregistry-feature-authorization</module>
 		<module>basyx.aasregistry-feature-hierarchy</module>
 		<module>basyx.aasregistry-feature-hierarchy-example</module>
+        <module>basyx.aasregistry-feature-discovey-integration</module>
 
-	</modules>
+    </modules>
 
 	<developers>
 		<developer>
