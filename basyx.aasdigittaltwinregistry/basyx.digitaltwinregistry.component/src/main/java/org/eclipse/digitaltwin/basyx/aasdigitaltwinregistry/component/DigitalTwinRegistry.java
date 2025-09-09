@@ -104,7 +104,6 @@ import org.springframework.context.annotation.FilterType;
 						type = FilterType.ASSIGNABLE_TYPE,
 						value = org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.documentation.AasDiscoveryServiceApiDocumentationConfiguration.class
 				)
-
 		},
 		includeFilters = {
 		@ComponentScan.Filter(
