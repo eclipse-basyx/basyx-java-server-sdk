@@ -25,7 +25,7 @@
 		<module>basyx.conceptdescriptionrepository</module>
 		<module>basyx.aasxfileserver</module>
 		<module>basyx.aasdiscoveryservice</module>
-		<module>basyx.aasdigittaltwinregistry</module>
+		<module>basyx.aasdigitaltwinregistry</module>
 	</modules>
 	<name>BaSyx Parent</name>
 	<description>Parent POM for Eclipse BaSyx</description>

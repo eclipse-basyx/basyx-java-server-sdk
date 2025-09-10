@@ -38,7 +38,7 @@ import org.springframework.context.annotation.Primary;
 
 @Configuration
 @Slf4j
-@ConditionalOnProperty(name = "digitaltwinregistry.enabled", havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(name = "discoveryintegration.enabled", havingValue = "true", matchIfMissing = false)
 public class DigitalTwinRegistryConfiguration {
 
 	@Bean
