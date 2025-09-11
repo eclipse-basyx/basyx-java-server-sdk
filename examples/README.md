@@ -41,3 +41,7 @@ See the separate [Client Example](BaSyxClient) for a comprehensive setup leverag
 ## BaSyx with Node-RED
 
 See the separate [Node-RED example](BaSyxNodeRED) for a comprehensive setup leveraging Node-RED and a demo MQTT client producing data that is written into an AAS and visualized via the AAS Web UI.
+
+## BaSyx AAS Query Language Example
+
+See the separate [AAS Query Language Example](BaSyxQueryLanguage) for a comprehensive setup leveraging the AAS Query Language.
