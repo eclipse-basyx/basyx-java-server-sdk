@@ -342,12 +342,12 @@
 			<dependency>
 				<groupId>org.yaml</groupId>
 				<artifactId>snakeyaml</artifactId>
-				<version>2.4</version>
+				<version>2.5</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springdoc</groupId>
 				<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-				<version>2.8.9</version>
+				<version>2.8.11</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.paho</groupId>
@@ -1419,7 +1419,7 @@
 			<dependency>
 				<groupId>org.openapitools</groupId>
 				<artifactId>jackson-databind-nullable</artifactId>
-				<version>0.2.6</version>
+				<version>0.2.7</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.code.findbugs</groupId>
@@ -1442,6 +1442,27 @@
 	</dependencies>
 
 	<profiles>
+		<profile>
+			<id>DashLicense</id>
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>org.eclipse.dash</groupId>
+						<artifactId>license-tool-plugin</artifactId>
+						<version>1.1.1-SNAPSHOT</version>
+						<executions>
+							<execution>
+								<id>license-check</id>
+								<goals>
+									<goal>license-check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 		<profile>
 			<id>MavenCentral</id>
 			<activation>
@@ -1476,19 +1497,6 @@
 								<phase>verify</phase>
 								<goals>
 									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.dash</groupId>
-						<artifactId>license-tool-plugin</artifactId>
-						<version>1.1.1-SNAPSHOT</version>
-						<executions>
-							<execution>
-								<id>license-check</id>
-								<goals>
-									<goal>license-check</goal>
 								</goals>
 							</execution>
 						</executions>

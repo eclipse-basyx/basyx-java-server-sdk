@@ -4,7 +4,7 @@
 * The administrator of the system controls the policy/access rules inside the Submodel.
 * Rules can be added or deleted during the system's runtime.
 
-<img width="60%" alt="image" src="images/DynamicRBACMgmt.png">
+![BaSyx RBAC Architecture](./images/DynamicRBACMgmt.png)
 
 ## Prerequisites
 1. REST API Client (e.g., [Postman](https://www.postman.com/downloads/))
@@ -20,7 +20,7 @@ docker-compose up -d
 This will start the BaSyx components and the Keycloak server. The Keycloak server can be found at http://localhost:9097.
 There you can login as admin with username `admin` and password `keycloak-admin`.
 
-<img width="60%" alt="image" src="images/users.png">
+![Users](./images/users.png)
 
 The example comes with an already configured realm `BaSyx` and a user `john.doe` with password `johndoe`.
 This user has the `admin` role and can access all BaSyx components and all information about each component.
@@ -28,7 +28,7 @@ This user has the `admin` role and can access all BaSyx components and all infor
 The entry point for accessing the Asset Administration Shells and their Submodels is the AAS Web UI running at http://localhost:3000.
 After opening the page you will be redirected to the Keycloak login page. Use the credentials of user `john.doe` to log in.
 
-<img width="60%" alt="image" src="images/login.png">
+![Login](./images/login.png)
 
 ## Security in BaSyx
 
@@ -112,7 +112,8 @@ Following shows how a JSON based RBAC rule looks like a Submodel-based rule:
 | ManufacturerFrame  | dave  | dave     |
 | ManufacturerGear   | dave  | dave     |
 
-<img width="60%" alt="image" src="images/AASDS2.png">
+![Dataspace](./images/AASDS2.png)
+
 
 ### View Rules for this example
 
@@ -139,7 +140,7 @@ Similarly, you can create idShorts using the below TargetInformation class as pe
 
 ### Scenario
 
-<img width="80%" alt="image" src="images/BicycleExampleDataspaceFlow_short.png">
+![Bicycle Example](./images/BicycleExampleDataspaceFlow_short.png)
 
 * When Frame Supplier delivers the product they also add a policy/rule (using Dynamic RBAC) so that the manufacturer can see the Digital Twin of the supplied product.
   - Postman -> AASDataspace -> Rules -> Frame (In Postman collection)

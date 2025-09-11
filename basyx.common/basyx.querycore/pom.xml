@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>basyx.querycore</artifactId>
+    <name>BaSyx Query Core</name>
     <description>BaSyx Query Core</description>
 
     <dependencies>
@@ -17,12 +18,12 @@
         <dependency>
             <groupId>co.elastic.clients</groupId>
             <artifactId>elasticsearch-java</artifactId>
-            <version>9.0.1</version>
+            <version>9.1.3</version>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-client</artifactId>
-            <version>9.0.1</version>
+            <version>9.1.3</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
