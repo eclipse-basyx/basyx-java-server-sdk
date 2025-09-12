@@ -188,5 +188,4 @@
             <artifactId>basyx.aasdiscoveryservice-client</artifactId>
         </dependency>
     </dependencies>
-
 </project>

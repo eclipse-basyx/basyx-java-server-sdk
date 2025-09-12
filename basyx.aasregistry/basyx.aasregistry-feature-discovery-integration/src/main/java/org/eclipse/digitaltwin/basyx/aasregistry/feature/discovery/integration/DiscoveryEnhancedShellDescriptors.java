@@ -34,14 +34,10 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.backend.MongoDBCrudAasDiscovery;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.*;
 import org.springframework.beans.factory.ObjectProvider;
-
 import org.springframework.http.ResponseEntity;
-
 import java.util.Base64;
 import java.util.List;
-
 import java.util.stream.Collectors;
-
 
 @Slf4j
 public class DiscoveryEnhancedShellDescriptors implements ShellDescriptorsApiDelegate {
