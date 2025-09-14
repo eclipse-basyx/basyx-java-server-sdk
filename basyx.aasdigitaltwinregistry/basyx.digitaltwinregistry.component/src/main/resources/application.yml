@@ -28,6 +28,7 @@ spring:
 
 discoveryintegration:
   enabled: true
+  baseUrl: http://localhost:8082
 
 
 description:
@@ -37,8 +38,8 @@ description:
 
 logging:
   level:
-    root: ${LOGGING_LEVEL:INFO}
-    org.eclipse.digitaltwin.basyx: ${LOGGING_LEVEL:INFO}
+    root: ${LOGGING_LEVEL:DEBUG}
+    org.eclipse.digitaltwin.basyx: ${LOGGING_LEVEL:DEBUG}
 
 springdoc:
   api-docs:
