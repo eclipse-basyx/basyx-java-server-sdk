@@ -47,4 +47,9 @@ public class AasRepoConfiguration {
 	public CorsPathPatternProvider getAasRepoDescriptionCorsUrlProvider() {
 		return new CorsPathPatternProvider("/description");
 	}
+
+	@Bean
+	public CorsPathPatternProvider getAasRepoServiceQueryCorsUrlProvider() {
+		return new CorsPathPatternProvider("/query/**");
+	}
 }
