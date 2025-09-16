@@ -63,6 +63,11 @@ public class RestConfiguration extends BaSyxHTTPConfiguration  {
 	}
 
 	@Bean
+	public CorsPathPatternProvider getSubmodelRegistryServiceQueryCorsUrlProvider() {
+		return new CorsPathPatternProvider("/query/**");
+	}
+
+	@Bean
 	public SerializationExtension getSubmodelRegistryExtension() {
 		return new Aas4JHTTPSerializationExtension();
 	}

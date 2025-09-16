@@ -58,6 +58,11 @@ public class RestConfiguration extends BaSyxHTTPConfiguration implements WebMvcC
 	}
 
 	@Bean
+	public CorsPathPatternProvider getAasRegistryServiceQueryCorsUrlProvider() {
+		return new CorsPathPatternProvider("/query/**");
+	}
+
+	@Bean
 	public SerializationExtension getExtension() {
 		return new Aas4JHTTPSerializationExtension();
 	}
