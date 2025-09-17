@@ -1,0 +1,1 @@
+{"bool":{"must":[{"exists":{"field":"displayName[].language.keyword"}},{"exists":{"field":"description.language.keyword"}},{"script":{"script":{"source":"doc['displayName[].language.keyword'].value == doc['description.language.keyword'].value","lang":"painless"}}}]}}

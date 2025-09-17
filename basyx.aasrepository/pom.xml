@@ -27,5 +27,6 @@
 		<module>basyx.aasrepository-tck</module>
 		<module>basyx.aasrepository.component</module>
 		<module>basyx.aasrepository-client</module>
-	</modules>
+        <module>basyx.aasrepository-feature-search</module>
+    </modules>
 </project>

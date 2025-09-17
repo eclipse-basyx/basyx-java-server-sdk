@@ -16,11 +16,11 @@
 
 	<properties>
 		<lombok.maven-plugin.version>1.18.20.0</lombok.maven-plugin.version>
-		<lombok.maven-plugin.lombok.version>1.18.38</lombok.maven-plugin.lombok.version>
+		<lombok.maven-plugin.lombok.version>1.18.40</lombok.maven-plugin.lombok.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<generated.folder>src/generated</generated.folder>
-		<swagger.codegen.version>3.0.71</swagger.codegen.version>
+		<swagger.codegen.version>3.0.72</swagger.codegen.version>
 		<spring.fox.version>3.0.0</spring.fox.version>
 		<openapi.folder.name>open-api</openapi.folder.name>
 		<openapi.base.name>
@@ -32,7 +32,7 @@
 		<mustache.compiler.version>0.9.14</mustache.compiler.version>
 		<docker.image.name>${project.artifactId}</docker.image.name>
 		<openapitools.version>6.6.0</openapitools.version>
-		<openapitools.jacksonnullable.version>0.2.6</openapitools.jacksonnullable.version>
+		<openapitools.jacksonnullable.version>0.2.7</openapitools.jacksonnullable.version>
 		<jsr305.version>3.0.2</jsr305.version>
 		<jsonpatch.plugin.version>0.5.1</jsonpatch.plugin.version>
 		<patch.base-extensions.name>patch-base-extensions.yaml</patch.base-extensions.name>
@@ -54,7 +54,8 @@
 		<module>basyx.submodelregistry-feature-authorization</module>
 		<module>basyx.submodelregistry-feature-hierarchy</module>
 		<module>basyx.submodelregistry-feature-hierarchy-example</module>
-	</modules>
+        <module>basyx.submodelregistry-feature-search</module>
+    </modules>
 
 	<developers>
 		<developer>

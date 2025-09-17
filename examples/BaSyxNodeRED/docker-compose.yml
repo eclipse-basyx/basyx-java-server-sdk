@@ -1,0 +1,100 @@
+services:
+  # Node-RED
+  nodered:
+    build: ./nodered
+    container_name: nodered
+    ports:
+      - "1880:1880"
+    volumes:
+      - ./nodered:/data
+    depends_on:
+      aas-env:
+        condition: service_healthy
+      mosquitto:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # MQTT Broker
+  mosquitto:
+    image: eclipse-mosquitto:2.0.15
+    container_name: mosquitto
+    ports:
+      - 1883:1883
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", mosquitto_sub -p 1883 -t 'topic' -C 1 -E -i probe -W 3]
+      interval: 5s
+      retries: 3
+      start_period: 1s
+      timeout: 10s
+
+  # MQTT Client
+  mqtt-client:
+    build: ./mqtt-client
+    container_name: mqtt-client
+    depends_on:
+      - mosquitto
+    restart: unless-stopped
+      
+  aas-env:
+    image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
+    container_name: aas-env
+    volumes:
+      - ./basyx/aas-env.properties:/application/application.properties
+      - ./aas:/application/aas
+    ports:
+      - 8081:8081
+    restart: unless-stopped
+    depends_on:
+      aas-registry:
+        condition: service_healthy
+      sm-registry:
+        condition: service_healthy
+      aas-discovery:
+        condition: service_healthy
+
+  aas-registry:
+    image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: aas-registry
+    ports:
+      - 8082:8080
+    volumes:
+      - ./basyx/aas-registry.yml:/workspace/config/application.yml
+    restart: unless-stopped
+
+  sm-registry:
+    image: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: sm-registry
+    ports:
+      - 8083:8080
+    volumes:
+      - ./basyx/sm-registry.yml:/workspace/config/application.yml
+    restart: unless-stopped
+
+  aas-discovery:
+    image: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
+    container_name: aas-discovery
+    ports:
+      - 8084:8081
+    volumes:
+      - ./basyx/aas-discovery.properties:/application/application.properties
+    restart: unless-stopped
+
+  aas-ui:
+    image: eclipsebasyx/aas-gui:SNAPSHOT
+    container_name: aas-ui
+    ports:
+      - "3000:3000"
+    environment:
+      AAS_DISCOVERY_PATH: "http://localhost:8084/lookup/shells"
+      AAS_REGISTRY_PATH: "http://localhost:8082/shell-descriptors"
+      SUBMODEL_REGISTRY_PATH: "http://localhost:8083/submodel-descriptors"
+      AAS_REPO_PATH: "http://localhost:8081/shells"
+      SUBMODEL_REPO_PATH: "http://localhost:8081/submodels"
+      CD_REPO_PATH: "http://localhost:8081/concept-descriptions"
+    restart: unless-stopped
+    depends_on:
+      aas-env:
+        condition: service_healthy

@@ -57,7 +57,7 @@
 		<module>basyx.aasregistry-feature-authorization</module>
 		<module>basyx.aasregistry-feature-hierarchy</module>
 		<module>basyx.aasregistry-feature-hierarchy-example</module>
-        <module>basyx.aasregistry-feature-discovery-integration</module>
+    <module>basyx.aasregistry-feature-discovery-integration</module>
     </modules>
 	<developers>
 		<developer>

@@ -1,0 +1,48 @@
+{
+  "$condition": {
+    "$and": [
+      {
+        "$eq": [
+          {
+            "$field": "$sm#kind"
+          },
+          {
+            "$strVal": "Instance"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$numCast": {
+              "$field": "$sm#administration.revision"
+            }
+          },
+          {
+            "$numVal": 9
+          }
+        ]
+      },
+      {
+        "$ne": [
+          {
+            "$field": "$sm#administration.version"
+          },
+          {
+            "$field": "$sm#administration.revision"
+          }
+        ]
+      },
+      {
+        "$contains": [
+          {
+            "$field": "$sm#semanticId.keys[]"
+          },
+          {
+            "$strVal": "SubmodelTemplates"
+          }
+        ]
+      }
+    ]
+  }
+}

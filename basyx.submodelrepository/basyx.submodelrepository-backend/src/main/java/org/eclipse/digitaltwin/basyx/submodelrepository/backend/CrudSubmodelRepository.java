@@ -92,23 +92,7 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo) {
-		Iterable<Submodel> iterable = submodelBackend.findAll(); 
-		List<Submodel> submodels = StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
-
-	    List<Submodel> filteredSubmodels = submodels.stream()
-	    		.filter((submodel) -> {
-	    			return submodel.getSemanticId() != null && 
-	    				submodel.getSemanticId().getKeys().stream().filter((key) -> {
-	    					return key.getValue().equals(semanticId);
-	    				}).findAny().isPresent();
-	    		})
-	    		.collect(Collectors.toList());
-	    
-		TreeMap<String, Submodel> submodelMap = filteredSubmodels.stream().collect(Collectors.toMap(Submodel::getId, submodel -> submodel, (a, b) -> a, TreeMap::new));
-
-		PaginationSupport<Submodel> paginationSupport = new PaginationSupport<>(submodelMap, Submodel::getId);
-
-		return paginationSupport.getPaged(pInfo);
+		return submodelBackend.getSubmodels(semanticId, pInfo);
 	}
 
 	@Override

@@ -40,7 +40,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Configuration
-@EnableWebMvc
 public class RestConfiguration extends BaSyxHTTPConfiguration  {
 	
 	@Bean
@@ -52,14 +51,7 @@ public class RestConfiguration extends BaSyxHTTPConfiguration  {
 	public RestTemplate submodelRegistryRestTemplate() {
 		return new RestTemplate();
 	}
-
-	@Bean
-	public MappingJackson2HttpMessageConverter submodelRegistryMappingJackson2HttpMessageConverter() {
-		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL);
-		builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		return new MappingJackson2HttpMessageConverter(builder.build());
-	}
-
+	
 	@Bean
 	public CorsPathPatternProvider getSubmodelRegistryServiceCorsUrlProvider() {
 		return new CorsPathPatternProvider("/submodel-descriptors/**");
@@ -71,7 +63,17 @@ public class RestConfiguration extends BaSyxHTTPConfiguration  {
 	}
 
 	@Bean
+	public CorsPathPatternProvider getSubmodelRegistryServiceQueryCorsUrlProvider() {
+		return new CorsPathPatternProvider("/query/**");
+	}
+
+	@Bean
 	public SerializationExtension getSubmodelRegistryExtension() {
 		return new Aas4JHTTPSerializationExtension();
+	}
+	
+	@Bean
+	public SerializationExtension getDisableExtension() {
+		return builder -> builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 	}
 }

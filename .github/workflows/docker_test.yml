@@ -31,10 +31,10 @@ jobs:
     runs-on: ubuntu-latest
     name: AAS Repository - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -58,10 +58,10 @@ jobs:
     runs-on: ubuntu-latest
     name: AAS Repository MongoDB - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -85,10 +85,10 @@ jobs:
     runs-on: ubuntu-latest
     name: AAS Environment - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -112,10 +112,10 @@ jobs:
     runs-on: ubuntu-latest
     name: AAS Environment MongoDB - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -139,10 +139,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Concept Description Repository - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -166,10 +166,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Concept Description Repository MongoDB - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -193,10 +193,10 @@ jobs:
     runs-on: ubuntu-latest
     name: AAS Discovery - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -220,10 +220,10 @@ jobs:
     runs-on: ubuntu-latest
     name: AAS Discovery MongoDB - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -246,10 +246,10 @@ jobs:
     runs-on: ubuntu-latest
     name: AASX File Server - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -273,10 +273,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Submodel Repository - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -300,10 +300,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Submodel Repository MongoDB - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -327,10 +327,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Submodel Service - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -354,10 +354,10 @@ jobs:
     runs-on: ubuntu-latest
     name: AAS Registry Kafka Mem - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -381,10 +381,10 @@ jobs:
     runs-on: ubuntu-latest
     name: AAS Registry Kafka MongoDB - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -408,10 +408,10 @@ jobs:
     runs-on: ubuntu-latest
     name: AAS Registry Log Mem - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -435,10 +435,10 @@ jobs:
     runs-on: ubuntu-latest
     name: AAS Registry Log MongoDB - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -462,10 +462,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Submodel Registry Kafka Mem - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -489,10 +489,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Submodel Registry Kafka MongoDB - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -516,10 +516,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Submodel Registry Log Mem - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -543,10 +543,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Submodel Registry Log MongoDB - Build and Start Docker Image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'

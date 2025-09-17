@@ -43,6 +43,14 @@ import java.util.List;
 public interface SubmodelOperations {
 
 	/**
+	 * Retrieves all Submodels with pagination support.
+	 *
+	 * @param 	pInfo	the pagination information
+	 * @return 	a {@code CursorResult} containing a list of Submodels
+	 */
+	CursorResult<List<Submodel>> getSubmodels(String semanticId, PaginationInfo pInfo);
+
+	/**
 	 * Retrieves all Submodel Elements for the given Submodel.
 	 *
 	 * @param submodelId the identifier of the Submodel
