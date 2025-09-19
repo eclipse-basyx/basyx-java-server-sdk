@@ -32,6 +32,8 @@ This will allow you to visualize and interact with the data stored in Elasticsea
 
 Here are some example queries you can use to get started:
 
+### **AAS Repository** (`/query/shells`)
+
 <details>
 <summary>Get all AAS with an idShort containing "Test", or a revision smaller than 11, or an globalAssetId not equal to assetKind or including a submodel with the idShort "BillOfMaterial"</summary>
 
@@ -87,6 +89,8 @@ Here are some example queries you can use to get started:
 ```
 
 </details>
+
+### **Submodel Repository** (`/query/submodels`)
 
 <details>
 <summary>Get all Submodels with kind "Instance", revision equal to 9, version not equal to revision, and semanticId containing "SubmodelTemplates"</summary>
@@ -144,6 +148,8 @@ Here are some example queries you can use to get started:
 
 </details>
 
+### **Concept Description Repository** (`/query/concept-descriptions`)
+
 <details>
 <summary>Get all Concept Descriptions with English description, revision equal to 9, and isCaseOf containing "acplt"</summary>
 
@@ -190,6 +196,8 @@ Here are some example queries you can use to get started:
 
 </details>
 
+### **AAS Registry** (`/query/shell-descriptors`)
+
 <details>
 <summary>Get all AAS Descriptors with localhost endpoints, assetKind "Instance", and idShort ending with "Mandatory"</summary>
 
@@ -233,6 +241,8 @@ Here are some example queries you can use to get started:
 ```
 
 </details>
+
+### **Submodel Registry** (`/query/submodel-descriptors`)
 
 <details>
 <summary>Get all Submodel Descriptors with localhost endpoints, revision equal to 9, and idShort not equal to semanticId</summary>
