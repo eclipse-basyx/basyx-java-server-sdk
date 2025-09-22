@@ -474,7 +474,7 @@ public class TestAuthorizedAasRepository {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_ASSET_UPDATER_CREDENTIAL);
 		
 		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificAssetInformationAccessURL(SPECIFIC_SHELL_ID_2), getAasJSONString("assetInfoSimple.json"), accessToken);
-		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), retrievalResponse.getCode());
 		
 		deleteElementWithAuthorization(getSpecificAasAccessURL(SPECIFIC_SHELL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
@@ -486,7 +486,7 @@ public class TestAuthorizedAasRepository {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_ASSET_UPDATER_TWO_CREDENTIAL);
 		
 		CloseableHttpResponse retrievalResponse = updateElementWithAuthorizationPutRequest(getSpecificAssetInformationAccessURL(SPECIFIC_SHELL_ID_2), getAasJSONString("assetInfoSimple.json"), accessToken);
-		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+		assertEquals(HttpStatus.NO_CONTENT.value(), retrievalResponse.getCode());
 		
 		deleteElementWithAuthorization(getSpecificAasAccessURL(SPECIFIC_SHELL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
