@@ -101,7 +101,7 @@ public class DiscoveryIntegrationAasRegistryTest {
 
 	@Test
 	public void testReplaceAasDescriptor() throws AasDescriptorNotFoundException {
-		log.info("Started unit test - testInsertAasDescriptor()");
+		log.info("Started unit test - testReplaceAasDescriptor()");
 		AssetAdministrationShellDescriptor descriptor = createTestDescriptor(AAS_DESCRIPTOR_ID);
 		List<org.eclipse.digitaltwin.basyx.aasregistry.model.SpecificAssetId> specificAssetIds =
 				createRegistrySpecificAssetIds();
@@ -125,8 +125,8 @@ public class DiscoveryIntegrationAasRegistryTest {
 	}
 
 	@Test
-	public void testReplaceAasDescriptor_WithEmptyAssetIds() throws AasDescriptorNotFoundException {
-		log.info("Started unit test - testInsertAasDescriptor()");
+	public void testReplaceAasDescriptorWithEmptyAssetIds() throws AasDescriptorNotFoundException {
+		log.info("Started unit test - testReplaceAasDescriptorWithEmptyAssetIds()");
 		AssetAdministrationShellDescriptor descriptor = createTestDescriptor(AAS_DESCRIPTOR_ID);
 		descriptor.setSpecificAssetIds(Collections.emptyList()); // Empty list
 
@@ -141,7 +141,7 @@ public class DiscoveryIntegrationAasRegistryTest {
 
 	@Test
 	public void testRemoveAasDescriptor() throws AasDescriptorNotFoundException {
-		log.info("Started unit test - testInsertAasDescriptor()");
+		log.info("Started unit test - testRemoveAasDescriptor()");
 		registry.removeAasDescriptor(AAS_DESCRIPTOR_ID);
 
 		verify(decoratedStorage).removeAasDescriptor(AAS_DESCRIPTOR_ID);
@@ -153,7 +153,7 @@ public class DiscoveryIntegrationAasRegistryTest {
 
 	@Test
 	public void testGetAasDescriptor() throws AasDescriptorNotFoundException {
-		log.info("Started unit test - testInsertAasDescriptor()");
+		log.info("Started unit test - testGetAasDescriptor()");
 		AssetAdministrationShellDescriptor expectedDescriptor = createTestDescriptor(AAS_DESCRIPTOR_ID);
 		when(decoratedStorage.getAasDescriptor(AAS_DESCRIPTOR_ID)).thenReturn(expectedDescriptor);
 
@@ -167,7 +167,7 @@ public class DiscoveryIntegrationAasRegistryTest {
 
 	@Test
 	public void testGetAllSubmodels() throws AasDescriptorNotFoundException {
-		log.info("Started unit test - testInsertAasDescriptor()");
+		log.info("Started unit test - testGetAllSubmodels()");
 		PaginationInfo paginationInfo = new PaginationInfo(10, null);
 		CursorResult<List<SubmodelDescriptor>> expectedResult =
 				new CursorResult<>("cursor", Collections.singletonList(createTestSubmodelDescriptor(SUBMODEL_ID)));
@@ -186,7 +186,7 @@ public class DiscoveryIntegrationAasRegistryTest {
 
 	@Test
 	public void testGetSubmodel() throws AasDescriptorNotFoundException, SubmodelNotFoundException {
-		log.info("Started unit test - testInsertAasDescriptor()");
+		log.info("Started unit test - testGetSubmodel()");
 		SubmodelDescriptor expectedSubmodel = createTestSubmodelDescriptor(SUBMODEL_ID);
 		when(decoratedStorage.getSubmodel(AAS_DESCRIPTOR_ID, SUBMODEL_ID)).thenReturn(expectedSubmodel);
 
@@ -201,7 +201,7 @@ public class DiscoveryIntegrationAasRegistryTest {
 
 	@Test
 	public void testInsertSubmodel() throws AasDescriptorNotFoundException, SubmodelAlreadyExistsException {
-		log.info("Started unit test - testInsertAasDescriptor()");
+		log.info("Started unit test - testInsertSubmodel()");
 		SubmodelDescriptor submodel = createTestSubmodelDescriptor(SUBMODEL_ID);
 
 		registry.insertSubmodel(AAS_DESCRIPTOR_ID, submodel);
@@ -214,7 +214,7 @@ public class DiscoveryIntegrationAasRegistryTest {
 
 	@Test
 	public void testReplaceSubmodel() throws AasDescriptorNotFoundException, SubmodelNotFoundException {
-		log.info("Started unit test - testInsertAasDescriptor()");
+		log.info("Started unit test - testReplaceSubmodel()");
 		SubmodelDescriptor submodel = createTestSubmodelDescriptor(SUBMODEL_ID);
 
 		registry.replaceSubmodel(AAS_DESCRIPTOR_ID, SUBMODEL_ID, submodel);
@@ -227,7 +227,7 @@ public class DiscoveryIntegrationAasRegistryTest {
 
 	@Test
 	public void testRemoveSubmodel() throws AasDescriptorNotFoundException, SubmodelNotFoundException {
-		log.info("Started unit test - testInsertAasDescriptor()");
+		log.info("Started unit test - testRemoveSubmodel()");
 		registry.removeSubmodel(AAS_DESCRIPTOR_ID, SUBMODEL_ID);
 
 		verify(decoratedStorage).removeSubmodel(AAS_DESCRIPTOR_ID, SUBMODEL_ID);
@@ -238,7 +238,7 @@ public class DiscoveryIntegrationAasRegistryTest {
 
 	@Test
 	public void testClear() {
-		log.info("Started unit test - testInsertAasDescriptor()");
+		log.info("Started unit test - testClear()");
 		Set<String> expectedResult = Set.of("id1", "id2");
 		when(decoratedStorage.clear()).thenReturn(expectedResult);
 
@@ -253,7 +253,7 @@ public class DiscoveryIntegrationAasRegistryTest {
 
 	@Test
 	public void testSearchAasDescriptors() {
-		log.info("Started unit test - testInsertAasDescriptor()");
+		log.info("Started unit test - testSearchAasDescriptors()");
 		ShellDescriptorSearchRequest request = new ShellDescriptorSearchRequest();
 		ShellDescriptorSearchResponse expectedResponse = new ShellDescriptorSearchResponse();
 
@@ -269,8 +269,8 @@ public class DiscoveryIntegrationAasRegistryTest {
 	}
 
 	@Test(expected = AasDescriptorAlreadyExistsException.class)
-	public void testInsertAasDescriptor_PropagatesStorageException() throws AasDescriptorAlreadyExistsException {
-		log.info("Started unit test - testInsertAasDescriptor()");
+	public void testInsertAasDescriptorPropagatesStorageException() throws AasDescriptorAlreadyExistsException {
+		log.info("Started unit test - testInsertAasDescriptorPropagatesStorageException()");
 		AssetAdministrationShellDescriptor descriptor = createTestDescriptor(AAS_DESCRIPTOR_ID);
 
 		doThrow(new AasDescriptorAlreadyExistsException(AAS_DESCRIPTOR_ID))
@@ -285,8 +285,8 @@ public class DiscoveryIntegrationAasRegistryTest {
 	}
 
 	@Test(expected = AasDescriptorNotFoundException.class)
-	public void testReplaceAasDescriptor_PropagatesStorageException() throws AasDescriptorNotFoundException {
-		log.info("Started unit test - testInsertAasDescriptor()");
+	public void testReplaceAasDescriptorPropagatesStorageException() throws AasDescriptorNotFoundException {
+		log.info("Started unit test - testReplaceAasDescriptorPropagatesStorageException()");
 		AssetAdministrationShellDescriptor descriptor = createTestDescriptor(AAS_DESCRIPTOR_ID);
 
 		doThrow(new AasDescriptorNotFoundException(AAS_DESCRIPTOR_ID))
@@ -300,8 +300,8 @@ public class DiscoveryIntegrationAasRegistryTest {
 	}
 
 	@Test(expected = AasDescriptorNotFoundException.class)
-	public void testRemoveAasDescriptor_PropagatesStorageException() throws AasDescriptorNotFoundException {
-		log.info("Started unit test - testInsertAasDescriptor()");
+	public void testRemoveAasDescriptorPropagatesStorageException() throws AasDescriptorNotFoundException {
+		log.info("Started unit test - testRemoveAasDescriptorPropagatesStorageException()");
 		doThrow(new AasDescriptorNotFoundException(AAS_DESCRIPTOR_ID))
 				.when(decoratedStorage).removeAasDescriptor(AAS_DESCRIPTOR_ID);
 
@@ -313,8 +313,8 @@ public class DiscoveryIntegrationAasRegistryTest {
 	}
 
 	@Test
-	public void testReplaceAasDescriptor_OrderOfOperations() throws AasDescriptorNotFoundException {
-		log.info("Started unit test - testInsertAasDescriptor()");
+	public void testReplaceAasDescriptorOrderOfOperations() throws AasDescriptorNotFoundException {
+		log.info("Started unit test - testReplaceAasDescriptorOrderOfOperations()");
 		AssetAdministrationShellDescriptor descriptor = createTestDescriptor(AAS_DESCRIPTOR_ID);
 		descriptor.setSpecificAssetIds(createRegistrySpecificAssetIds());
 
