@@ -180,7 +180,7 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 	@Override
 	public ResponseEntity<Void> putAssetInformationAasRepository(Base64UrlEncodedIdentifier aasIdentifier, @Valid AssetInformation body) {
 		aasRepository.setAssetInformation(aasIdentifier.getIdentifier(), body);
-		return new ResponseEntity<Void>(HttpStatus.OK);
+		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 
 	private String getEncodedCursorFromCursorResult(CursorResult<?> cursorResult) {
