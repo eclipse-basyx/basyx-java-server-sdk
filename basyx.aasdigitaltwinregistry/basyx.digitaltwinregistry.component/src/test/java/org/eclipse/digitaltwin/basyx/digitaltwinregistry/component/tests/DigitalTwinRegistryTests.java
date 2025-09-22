@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component.tests;
+package org.eclipse.digitaltwin.basyx.digitaltwinregistry.component.tests;
 
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;

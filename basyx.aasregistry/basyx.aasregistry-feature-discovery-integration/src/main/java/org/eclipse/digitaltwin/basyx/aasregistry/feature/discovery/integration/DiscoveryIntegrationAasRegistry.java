@@ -1,6 +1,6 @@
 
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -88,6 +88,18 @@ public class DiscoveryIntegrationAasRegistry implements AasRegistryStorage {
 	@Override
 	public void replaceAasDescriptor(@NonNull String aasDescriptorId, @NonNull AssetAdministrationShellDescriptor descriptor) throws AasDescriptorNotFoundException {
 		decorated.replaceAasDescriptor(aasDescriptorId, descriptor);
+		String encodedId = Base64.getEncoder().encodeToString(aasDescriptorId.getBytes());
+
+		List<SpecificAssetId> specificAssetIds = descriptor.getSpecificAssetIds().stream()
+				.map(rId -> {
+					SpecificAssetId assetId = new DefaultSpecificAssetId();
+					assetId.setName(rId.getName());
+					assetId.setValue(rId.getValue());
+					return assetId;
+				}).collect(Collectors.toList());
+
+		discoveryApi.deleteAllAssetLinksById(encodedId);
+		discoveryApi.createAllAssetLinksById(encodedId, specificAssetIds);
 	}
 
 	@Override

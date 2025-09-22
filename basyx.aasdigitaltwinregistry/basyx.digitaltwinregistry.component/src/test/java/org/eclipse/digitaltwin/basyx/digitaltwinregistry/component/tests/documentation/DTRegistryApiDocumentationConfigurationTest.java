@@ -23,14 +23,14 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component.tests.documentation;
+package org.eclipse.digitaltwin.basyx.digitaltwinregistry.component.tests.documentation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component.documentation.DTRegistryApiDocumentationConfiguration;
+import org.eclipse.digitaltwin.basyx.digitaltwinregistry.component.documentation.DTRegistryApiDocumentationConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 

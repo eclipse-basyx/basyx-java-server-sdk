@@ -14,12 +14,6 @@
     <name>BaSyx Digital Twin Registry Component</name>
     <description>BaSyx Digital Twin Registry Component</description>
 
-    <properties>
-        <java.version>17</java.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -215,7 +209,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component.DigitalTwinRegistry</mainClass>
+                    <mainClass>org.eclipse.digitaltwin.basyx.digitaltwinregistry.component.DigitalTwinRegistry</mainClass>
                 </configuration>
                 <executions>
                     <execution>

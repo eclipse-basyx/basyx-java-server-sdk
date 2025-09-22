@@ -16,12 +16,12 @@
 
 	<properties>
 		<lombok.maven-plugin.version>1.18.20.0</lombok.maven-plugin.version>
-		<lombok.maven-plugin.lombok.version>1.18.38</lombok.maven-plugin.lombok.version>
+		<lombok.maven-plugin.lombok.version>1.18.40</lombok.maven-plugin.lombok.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<generated.folder>src/generated</generated.folder>
-		<swagger.codegen.version>3.0.71</swagger.codegen.version>
+		<swagger.codegen.version>3.0.72</swagger.codegen.version>
 		<spring.fox.version>3.0.0</spring.fox.version>
 		<openapi.folder.name>open-api</openapi.folder.name>
 		<openapi.base.name>
@@ -34,7 +34,7 @@
 		<mustache.compiler.version>0.9.14</mustache.compiler.version>
 		<docker.image.name>${project.artifactId}</docker.image.name>
 		<openapitools.version>6.6.0</openapitools.version>
-		<openapitools.jacksonnullable.version>0.2.6</openapitools.jacksonnullable.version>
+		<openapitools.jacksonnullable.version>0.2.7</openapitools.jacksonnullable.version>
 		<jsr305.version>3.0.2</jsr305.version>
 		<jsonpatch.plugin.version>0.5.1</jsonpatch.plugin.version>
 		<patch.base-extensions.name>patch-base-extensions.yaml</patch.base-extensions.name>
@@ -57,9 +57,11 @@
 		<module>basyx.aasregistry-feature-authorization</module>
 		<module>basyx.aasregistry-feature-hierarchy</module>
 		<module>basyx.aasregistry-feature-hierarchy-example</module>
-    	<module>basyx.aasregistry-feature-discovery-integration</module>
 		<module>basyx.aasregistry-feature-search</module>
-    </modules>
+		<module>basyx.aasregistry-feature-discovery-integration</module>
+
+	</modules>
+
 	<developers>
 		<developer>
 			<name>Gerhard Sonnenberg</name>
@@ -102,6 +104,8 @@
 					<version>${swagger.codegen.version}</version>
 				</plugin>
 				<plugin>
+					<!-- If you want to override templates you can copy these:
+					https://github.com/OpenAPITools/openapi-generator/tree/v6.6.0/modules/openapi-generator/src/main/resources -->
 					<groupId>org.openapitools</groupId>
 					<artifactId>openapi-generator-maven-plugin</artifactId>
 					<version>${openapitools.version}</version>
@@ -276,6 +280,8 @@
 		<profile>
 			<id>dockerbuild</id>
 			<activation>
+				<!-- This profile is always active if there is a Dockerfile and
+				docker.namespace property is given -->
 				<file>
 					<exists>src/main/docker/Dockerfile</exists>
 				</file>

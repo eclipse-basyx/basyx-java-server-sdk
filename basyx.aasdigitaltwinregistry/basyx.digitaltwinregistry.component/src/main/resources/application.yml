@@ -7,8 +7,9 @@ basyx:
 
   aasregistry:
     feature:
-      aasdigitaltwinregistry:
+      discoveryintegration:
         enabled: true
+        baseUrl: http://localhost:8082
 
   endpoints:
     web:
@@ -25,10 +26,6 @@ spring:
     allow-bean-definition-overriding: true
   application:
     name: BaSyx Digital Twin Registry
-
-discoveryintegration:
-  enabled: true
-  baseUrl: http://localhost:8082
 
 
 description:

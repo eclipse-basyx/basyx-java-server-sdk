@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2024 the Eclipse BaSyx Authors
+ * Copyright (C) 2025 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -37,10 +37,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-@ConditionalOnProperty(name = "discoveryintegration.enabled", havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(name = "basyx.aasregistry.feature.discoveryintegration.enabled", havingValue = "true", matchIfMissing = false)
 public class DiscoveryIntegrationAasRegistryFeature implements AasRegistryStorageFeature {
 
-	@Value("${discoveryintegration.baseUrl:#{null}}")
+	@Value("${basyx.aasregistry.feature.discoveryintegration.baseUrl:#{null}}")
 	private String discoveryBaseURL;
 
 	private final AasDiscoveryService discoveryApi;

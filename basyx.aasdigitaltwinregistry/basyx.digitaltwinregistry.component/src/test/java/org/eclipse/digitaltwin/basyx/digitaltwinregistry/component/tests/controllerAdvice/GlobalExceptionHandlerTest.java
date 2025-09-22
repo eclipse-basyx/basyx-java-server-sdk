@@ -23,7 +23,7 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-package org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component.tests.controllerAdvice;
+package org.eclipse.digitaltwin.basyx.digitaltwinregistry.component.tests.controllerAdvice;
 
 
 import static org.junit.Assert.assertEquals;
@@ -35,7 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.digitaltwin.basyx.aasdigitaltwinregistry.component.controllerAdvice.GlobalExceptionHandler;
+import org.eclipse.digitaltwin.basyx.digitaltwinregistry.component.controllerAdvice.GlobalExceptionHandler;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.Message;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.Result;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.Message.MessageTypeEnum;

@@ -59,7 +59,7 @@ jobs:
           path: basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem/src/main/docker
         - name: submodel-registry-log-mongodb
           path: basyx.submodelregistry/basyx.submodelregistry-service-release-log-mongodb/src/main/docker
-        - name: aas-digitaltwinregistry
+        - name: digitaltwinregistry
           path: basyx.aasdigitaltwinregistry/basyx.digitaltwinregistry.component
 
     steps:
