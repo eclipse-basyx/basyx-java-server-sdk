@@ -16,7 +16,7 @@
 
 	<properties>
 		<lombok.maven-plugin.version>1.18.20.0</lombok.maven-plugin.version>
-		<lombok.maven-plugin.lombok.version>1.18.40</lombok.maven-plugin.lombok.version>
+		<lombok.maven-plugin.lombok.version>1.18.42</lombok.maven-plugin.lombok.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
