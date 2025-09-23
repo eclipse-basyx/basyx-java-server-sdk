@@ -25,13 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.digitaltwinregistry.component;
 
-
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.component.AasDiscoveryServiceComponent;
-import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.component.AasDiscoveryServiceFeaturePrinter;
-
 import org.eclipse.digitaltwin.basyx.aasregistry.service.api.*;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.HomeController;
-import org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.MongoDbConfiguration;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventLogSink;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -98,17 +94,10 @@ import org.springframework.context.annotation.FilterType;
 						type = FilterType.ASSIGNABLE_TYPE,
 						value = org.eclipse.digitaltwin.basyx.aasregistry.service.configuration.SpringDocConfiguration.class
 				),
-				@ComponentScan.Filter(
-						type = FilterType.ASSIGNABLE_TYPE,
-						value = AasDiscoveryServiceFeaturePrinter.class
-				),
+
 				@ComponentScan.Filter(
 						type = FilterType.ASSIGNABLE_TYPE,
 						value = org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.documentation.AasDiscoveryServiceApiDocumentationConfiguration.class
-				),
-				@ComponentScan.Filter(
-						type = FilterType.ASSIGNABLE_TYPE,
-						value = MongoDbConfiguration.class
 				)
 		}
 )

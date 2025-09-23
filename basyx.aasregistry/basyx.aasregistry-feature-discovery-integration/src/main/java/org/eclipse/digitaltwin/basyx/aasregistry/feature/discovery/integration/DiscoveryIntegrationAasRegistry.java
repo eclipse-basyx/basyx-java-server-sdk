@@ -72,7 +72,6 @@ public class DiscoveryIntegrationAasRegistry implements AasRegistryStorage {
 	@Override
 	public void insertAasDescriptor(AssetAdministrationShellDescriptor descr) throws AasDescriptorAlreadyExistsException {
 		decorated.insertAasDescriptor(descr);
-		String encodedId = Base64.getEncoder().encodeToString(descr.getId().getBytes());
 				@Valid List<org.eclipse.digitaltwin.basyx.aasregistry.model.@Valid SpecificAssetId> ids = descr.getSpecificAssetIds();
 				List<SpecificAssetId> specificAssetIds = ids.stream()
 						.map(rId -> {
@@ -81,15 +80,12 @@ public class DiscoveryIntegrationAasRegistry implements AasRegistryStorage {
 							assetId.setValue(rId.getValue());
 							return assetId;
 						}).collect(Collectors.toList());
-
-		discoveryApi.createAllAssetLinksById(encodedId, specificAssetIds);
+		discoveryApi.createAllAssetLinksById(descr.getId(), specificAssetIds);
 	}
 
 	@Override
 	public void replaceAasDescriptor(@NonNull String aasDescriptorId, @NonNull AssetAdministrationShellDescriptor descriptor) throws AasDescriptorNotFoundException {
 		decorated.replaceAasDescriptor(aasDescriptorId, descriptor);
-		String encodedId = Base64.getEncoder().encodeToString(aasDescriptorId.getBytes());
-
 		List<SpecificAssetId> specificAssetIds = descriptor.getSpecificAssetIds().stream()
 				.map(rId -> {
 					SpecificAssetId assetId = new DefaultSpecificAssetId();
@@ -98,14 +94,14 @@ public class DiscoveryIntegrationAasRegistry implements AasRegistryStorage {
 					return assetId;
 				}).collect(Collectors.toList());
 
-		discoveryApi.deleteAllAssetLinksById(encodedId);
-		discoveryApi.createAllAssetLinksById(encodedId, specificAssetIds);
+		discoveryApi.deleteAllAssetLinksById(aasDescriptorId);
+		discoveryApi.createAllAssetLinksById(aasDescriptorId, specificAssetIds);
 	}
 
 	@Override
 	public void removeAasDescriptor(@NonNull String aasDescriptorId) throws AasDescriptorNotFoundException {
 		decorated.removeAasDescriptor(aasDescriptorId);
-		discoveryApi.deleteAllAssetLinksById(Base64.getEncoder().encodeToString(aasDescriptorId.getBytes()));
+		discoveryApi.deleteAllAssetLinksById(aasDescriptorId);
 	}
 
 	@Override
