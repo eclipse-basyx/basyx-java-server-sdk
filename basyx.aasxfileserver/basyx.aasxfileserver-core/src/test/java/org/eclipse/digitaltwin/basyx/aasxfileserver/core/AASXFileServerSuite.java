@@ -123,7 +123,7 @@ public abstract class AASXFileServerSuite {
 
 		PackageDescription expectedPackageDescription = new DefaultPackageDescription();
 		expectedPackageDescription.setPackageId(initialPackageDescription.getPackageId());
-		expectedPackageDescription.setItems(DummyAASXFileServerFactory.SECOND_SHELL_IDS);
+		expectedPackageDescription.setAasIds(DummyAASXFileServerFactory.SECOND_SHELL_IDS);
 
 		CursorResult<List<PackageDescription>> pagedPackageDescriptions = server.getAllAASXPackageIds("", PaginationInfo.NO_LIMIT);
 		List<PackageDescription> actualPackageDescription = pagedPackageDescriptions.getResult();
