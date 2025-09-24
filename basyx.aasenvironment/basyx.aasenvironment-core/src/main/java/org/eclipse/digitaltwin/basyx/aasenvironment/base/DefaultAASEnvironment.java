@@ -414,6 +414,9 @@ public class DefaultAASEnvironment implements AasEnvironment {
 	}
 
 	private static boolean isURL(String path) {
+		if(path == null || path.isEmpty()) {
+			return false;
+		}
 		return path.startsWith("http");
 	}
 }
