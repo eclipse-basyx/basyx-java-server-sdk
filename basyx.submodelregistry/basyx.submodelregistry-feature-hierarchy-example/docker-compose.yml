@@ -5,6 +5,9 @@ services:
     image: submodel-registry-test/submodel-registry-feature-hierarchy-example:2.0.0-SNAPSHOT
     container_name: submodel-registry-root
     ports:
+	# Do NOT change any port while running in a Docker container.
+	# Changing this will make the service unreachable from outside the container.
+	# This port should only be changed when running the application without Docker
       - "8051:8080"
     environment:
       SERVER_SERVLET_CONTEXT_PATH: /
