@@ -195,14 +195,13 @@ public class DummySubmodelFactory {
 	}
 
 	private static List<SubmodelElement> createOperationalDataSubmodelElements() {
-		ArrayList<SubmodelElement> list = new ArrayList<>();
-
+		List<SubmodelElement> list = new ArrayList<>();
 		SubmodelElement sme1 = createProperty(SUBMODEL_OPERATIONAL_DATA_PROPERTY_ID_SHORT);
 		SubmodelElement sme2 = createProperty(SUBMODEL_ELEMENT_FIRST_ID_SHORT);
 		SubmodelElement sme3 = createProperty(SUBMODEL_ELEMENT_SECOND_ID_SHORT);
 
 		SubmodelElementCollection submodelElementCollection = new DefaultSubmodelElementCollection();
-		SubmodelElementList submodelElementList = new DefaultSubmodelElementList();
+		SubmodelElementList submodelElementList = new DefaultSubmodelElementList.Builder().orderRelevant(true).build();
 
 		List<SubmodelElement> submodelElementsCollection = new ArrayList<>();
 		List<SubmodelElement> submodelElementsList = new ArrayList<>();
@@ -231,8 +230,8 @@ public class DummySubmodelFactory {
 
 	private static SubmodelElementCollection createNestedElementCollection(SubmodelElement sme2) {
 		SubmodelElementCollection topLevelElementCollection = new DefaultSubmodelElementCollection();
-		SubmodelElementList submodelElementListInElementCollection = new DefaultSubmodelElementList();
-		SubmodelElementList submodelElementListInElementList = new DefaultSubmodelElementList();
+		SubmodelElementList submodelElementListInElementCollection = new DefaultSubmodelElementList.Builder().orderRelevant(true).build();
+		SubmodelElementList submodelElementListInElementList = new DefaultSubmodelElementList.Builder().orderRelevant(true).build();
 		SubmodelElementCollection submodelElementCollectionInElementList = new DefaultSubmodelElementCollection();
 		List<SubmodelElement> submodelElementCollectionInElementListCollection = new ArrayList<>();
 		List<SubmodelElement> listForSubmodelElementListInElementList = new ArrayList<>();
@@ -272,7 +271,7 @@ public class DummySubmodelFactory {
 		smeCollection.setIdShort(SUBMODEL_ELEMENT_COLLECTION_SIMPLE);
 		smeCollectionValue.add(createProperty(SUBMODEL_ELEMENT_FIRST_ID_SHORT));
 
-		SubmodelElementList smeList = new DefaultSubmodelElementList();
+		SubmodelElementList smeList = new DefaultSubmodelElementList.Builder().orderRelevant(true).build();
 		smeList.setIdShort(SUBMODEL_ELEMENT_LIST_SIMPLE);
 		smeListValue.add(createProperty(SUBMODEL_ELEMENT_SECOND_ID_SHORT));
 
