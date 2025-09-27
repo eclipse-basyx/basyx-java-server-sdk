@@ -9,7 +9,7 @@ basyx:
     feature:
       discoveryintegration:
         enabled: true
-        baseUrl: http://localhost:8082
+        baseUrl: http://localhost:8081
 
   endpoints:
     web:
@@ -21,7 +21,7 @@ server:
 
 spring:
   profiles:
-    active: logEvents,${SPRING_PROFILE:MongoDB}
+    active: logEvents,${SPRING_PROFILE:InMemory}
   main:
     allow-bean-definition-overriding: true
   application:
