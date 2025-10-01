@@ -36,6 +36,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNotFoundException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -59,13 +60,15 @@ public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage {
 	private static final String ID = "_id";
 
 	private final MongoTemplate template;
+	
+	private final String collectionName;
 
 	@Override
 	public CursorResult<List<SubmodelDescriptor>> getAllSubmodelDescriptors(@NonNull PaginationInfo pRequest) {
 		List<AggregationOperation> allAggregations = new LinkedList<>();
 		applySorting(allAggregations);
 		applyPagination(pRequest, allAggregations);
-		AggregationResults<SubmodelDescriptor> results = template.aggregate(Aggregation.newAggregation(allAggregations), SubmodelDescriptor.class, SubmodelDescriptor.class);
+		AggregationResults<SubmodelDescriptor> results = template.aggregate(Aggregation.newAggregation(allAggregations), collectionName, SubmodelDescriptor.class);
 		List<SubmodelDescriptor> foundDescriptors = results.getMappedResults();
 		String cursor = resolveCursor(pRequest, foundDescriptors);
 		return new CursorResult<List<SubmodelDescriptor>>(cursor, foundDescriptors);
@@ -75,13 +78,13 @@ public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage {
 	public Set<String> clear() {
 		Query query = Query.query(Criteria.where(ID).exists(true));
 		query.fields().include(ID);
-		List<SubmodelDescriptor> list = template.findAllAndRemove(query, SubmodelDescriptor.class);
+		List<SubmodelDescriptor> list = template.findAllAndRemove(query, SubmodelDescriptor.class, collectionName);
 		return list.stream().map(SubmodelDescriptor::getId).collect(Collectors.toSet());
 	}
 	
 	@Override
 	public SubmodelDescriptor getSubmodelDescriptor(@NonNull String submodelId) throws SubmodelNotFoundException {
-		SubmodelDescriptor descriptor = template.findById(submodelId, SubmodelDescriptor.class);
+		SubmodelDescriptor descriptor = template.findById(submodelId, SubmodelDescriptor.class, collectionName);
 		if (descriptor == null) {
 			throw new SubmodelNotFoundException(submodelId);
 		}
@@ -91,7 +94,7 @@ public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage {
 	@Override
 	public void insertSubmodelDescriptor(@NonNull SubmodelDescriptor descr) throws SubmodelAlreadyExistsException {
 		try {
-			template.insert(descr);
+			template.insert(descr, collectionName);
 		} catch (DuplicateKeyException ex) {
 			throw new SubmodelAlreadyExistsException(descr.getId());
 		}
@@ -104,7 +107,7 @@ public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage {
 			moveInTransaction(submodelId, descr);
 		} else {
 			Query query = Query.query(Criteria.where(ID).is(submodelId));
-			SubmodelDescriptor replaced = template.findAndReplace(query, descr);
+			SubmodelDescriptor replaced = template.findAndReplace(query, descr, collectionName);
 			if (replaced == null) {
 				throw new SubmodelNotFoundException(submodelId);
 			}
@@ -114,7 +117,7 @@ public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage {
 	@Override
 	public void removeSubmodelDescriptor(@NonNull String submodelId) throws SubmodelNotFoundException {
 		Query query = Query.query(Criteria.where(ID).is(submodelId));
-		if (template.remove(query, SubmodelDescriptor.class).getDeletedCount() == 0) {
+		if (template.remove(query, SubmodelDescriptor.class, collectionName).getDeletedCount() == 0) {
 			throw new SubmodelNotFoundException(submodelId);
 		}
 	}
@@ -123,10 +126,10 @@ public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage {
 		SessionScoped scoped = template.withSession(ClientSessionOptions.builder().build());
 		boolean removed = scoped.execute(operations -> {
 			Query query = Query.query(Criteria.where(ID).is(submodelId));
-			if (operations.remove(query, SubmodelDescriptor.class).getDeletedCount() == 0) {
+			if (operations.remove(query, SubmodelDescriptor.class, collectionName).getDeletedCount() == 0) {
 				return false;
 			}
-			operations.save(descriptor);
+			operations.save(descriptor, collectionName);
 			return true;
 		});
 		if (!removed) {
