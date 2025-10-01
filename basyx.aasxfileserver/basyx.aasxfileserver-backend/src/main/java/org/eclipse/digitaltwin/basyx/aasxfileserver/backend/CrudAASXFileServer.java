@@ -156,7 +156,7 @@ public class CrudAASXFileServer implements AASXFileServer {
 	}
 
 	private boolean containsShellId(PackageDescription packageDesc, String shellId) {
-		return packageDesc.getItems().stream().anyMatch(aasId -> aasId.equals(shellId));
+		return packageDesc.getAasIds().stream().anyMatch(aasId -> aasId.equals(shellId));
 	}
 
 	private Stream<Package> getPackages() {
@@ -167,7 +167,7 @@ public class CrudAASXFileServer implements AASXFileServer {
 	private static PackageDescription createPackageDescription(List<String> shellIds, String newPackageId) {
 		PackageDescription packageDescription = new DefaultPackageDescription();
 		packageDescription.setPackageId(newPackageId);
-		packageDescription.setItems(shellIds);
+		packageDescription.setAasIds(shellIds);
 
 		return packageDescription;
 	}

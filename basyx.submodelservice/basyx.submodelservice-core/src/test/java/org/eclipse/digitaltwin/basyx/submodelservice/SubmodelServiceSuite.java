@@ -146,7 +146,7 @@ public abstract class SubmodelServiceSuite {
 
 		List<SubmodelElement> submodelElementsList = new ArrayList<>();
 
-		SubmodelElementList submodelElementList = new DefaultSubmodelElementList();
+		SubmodelElementList submodelElementList = new DefaultSubmodelElementList.Builder().orderRelevant(true).build();
 		submodelElementList.setIdShort("testList");
 		List<SubmodelElement> listElements = new ArrayList<>();
 		Property testProperty = new DefaultProperty.Builder().idShort("propIdShort").category("cat1").value("123").valueType(DataTypeDefXsd.INTEGER).build();
@@ -734,7 +734,7 @@ public abstract class SubmodelServiceSuite {
 	}
 
 	private DefaultSubmodelElementList createDummySubmodelElementList(String idShort) {
-		return new DefaultSubmodelElementList.Builder().idShort(idShort).build();
+		return new DefaultSubmodelElementList.Builder().idShort(idShort).orderRelevant(true).build();
 	}
 
 	private SubmodelElementCollection createDummySubmodelElementCollection(String idShort) {
