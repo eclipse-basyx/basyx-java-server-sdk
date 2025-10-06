@@ -58,6 +58,7 @@
 		<module>basyx.aasregistry-feature-hierarchy</module>
 		<module>basyx.aasregistry-feature-hierarchy-example</module>
 		<module>basyx.aasregistry-feature-search</module>
+		<module>basyx.aasregistry-feature-discovery-integration</module>
 
 	</modules>
 
