@@ -1,3 +1,57 @@
+# Building the maven artifacts
+```shell
+PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
+cd ${PROJECT_ROOT}
+mvn clean install -DskipTests
+```
+Will produce the following component images:
+- AAS Environment: `basyx.aasenvironment/basyx.aasenvironment.component/target/basyx.aasenvironment.component-VERSION.jar`
+- AAS Registry: `basyx.aasregistry/basyx.aasregistry-service-release-log-mem/target/basyx.aasregistry-service-release-log-mem-VERSION.jar`
+- Submodel Registry: `basyx.aasdiscoveryservice/basyx.aasdiscoveryservice.component/target/basyx.aasdiscoveryservice.component-VERSION.jar`
+- AAS Discovery: `basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem/target/basyx.submodelregistry-service-release-log-mem-VERSION.jar`
+
+# Building the docker images
+## AAS Environment
+```shell
+PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
+AAS_ENVIRONMENT=0.3.5
+cd ${PROJECT_ROOT}/basyx.aasenvironment/basyx.aasenvironment.component
+docker build -t docker-twinmap.letsdev.de/aas-env-oauth:${AAS_ENVIRONMENT} .
+docker tag docker-twinmap.letsdev.de/aas-env-oauth:${AAS_ENVIRONMENT} docker-twinmap.letsdev.de/aas-env-oauth:${AAS_ENVIRONMENT}
+docker push docker-twinmap.letsdev.de/aas-env-oauth:${AAS_ENVIRONMENT}
+```
+## AAS Registry
+```shell
+PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
+AAS_REGISTRY=0.3.10
+cd ${PROJECT_ROOT}/basyx.aasregistry/basyx.aasregistry-service-release-log-mem
+docker build -t docker-twinmap.letsdev.de/aas-registry-log-mem-oauth:${AAS_REGISTRY} .
+docker tag docker-twinmap.letsdev.de/aas-registry-log-mem-oauth:${AAS_REGISTRY} docker-twinmap.letsdev.de/aas-registry-log-mem-oauth:${AAS_REGISTRY}
+docker push docker-twinmap.letsdev.de/aas-registry-log-mem-oauth:${AAS_REGISTRY}
+```
+## Submodel Registry
+```shell
+PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
+SM_REGISTRY_VERSION=0.3.10
+cd ${PROJECT_ROOT}/basyx.aasdiscoveryservice/basyx.aasdiscoveryservice.component
+docker build -t docker-twinmap.letsdev.de/aas-submodel-registry-log-mem-oauth:${SM_REGISTRY_VERSION} .
+docker tag docker-twinmap.letsdev.de/aas-submodel-registry-log-mem-oauth:${SM_REGISTRY_VERSION} docker-twinmap.letsdev.de/aas-submodel-registry-log-mem-oauth:${SM_REGISTRY_VERSION}
+docker push docker-twinmap.letsdev.de/aas-submodel-registry-log-mem-oauth:${SM_REGISTRY_VERSION}
+```
+## AAS Discovery
+```shell
+PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
+AAS_DISCOVERY_VERSION=0.3.3
+cd ${PROJECT_ROOT}/basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem
+docker build -t docker-twinmap.letsdev.de/aas-discovery-oauth:${AAS_DISCOVERY_VERSION} .
+docker tag docker-twinmap.letsdev.de/aas-discovery-oauth:${AAS_DISCOVERY_VERSION} docker-twinmap.letsdev.de/aas-discovery-oauth:${AAS_DISCOVERY_VERSION}
+docker push docker-twinmap.letsdev.de/aas-discovery-oauth:${AAS_DISCOVERY_VERSION}
+```
+
+
+# See README of original repository below.
+# ----------------------------------------
+
 # Eclipse BaSyx Java V2 SDK [![Docker Pulls](https://img.shields.io/docker/pulls/eclipsebasyx/aas-server?style=plastic)](https://hub.docker.com/search?q=eclipsebasyx)
 [![BaSyx Logo](https://www.eclipse.org/basyx/img/basyxlogo.png)](https://www.eclipse.org/basyx/)
  
