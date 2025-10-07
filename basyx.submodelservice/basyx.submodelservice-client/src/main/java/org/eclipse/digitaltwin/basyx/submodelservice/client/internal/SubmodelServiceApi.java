@@ -61,6 +61,8 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.AccessTokenRetrievalExcepti
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.util.MimeTypeUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -76,6 +78,9 @@ public class SubmodelServiceApi {
   private final Duration memberVarReadTimeout;
 	
   private TokenManager tokenManager;
+
+	@Autowired
+	private Environment env;
 
   public SubmodelServiceApi() {
     this(new ApiClient());
@@ -1495,13 +1500,17 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		}
 		
 		private void addAuthorizationHeaderIfAuthIsEnabled(HttpRequest.Builder localVarRequestBuilder) {
-			if (tokenManager != null) {
-		    	try {
-		    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
-				} catch (IOException e) {
-					e.printStackTrace();
-					throw new AccessTokenRetrievalException("Unable to request access token");
-				}
-		    }
+			// Using LD SSO
+			String apiToken = env.getProperty("ld-sso.api-token");
+			localVarRequestBuilder.header("Authorization", "Bearer " + apiToken);
+
+			//			if (tokenManager != null) {
+//		    	try {
+//		    		localVarRequestBuilder.header("Authorization", "Bearer " + tokenManager.getAccessToken());
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//					throw new AccessTokenRetrievalException("Unable to request access token");
+//				}
+//		    }
 		}
 }
