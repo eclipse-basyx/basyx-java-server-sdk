@@ -208,3 +208,22 @@ jobs:
 
       - name: Stop BaSyx Query Language Example
         run: docker compose -f examples/BaSyxQueryLanguage/docker-compose.yml down
+
+  test-basyx-cad:
+    runs-on: ubuntu-latest
+    name: Test BaSyx CAD file Example
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Start BaSyx CAD file Example
+        run: docker compose -f examples/BaSyxCADFiles/docker-compose.yml up -d
+
+      - name: Stop BaSyx CAD file Example
+        run: docker compose -f examples/BaSyxCADFiles/docker-compose.yml down
