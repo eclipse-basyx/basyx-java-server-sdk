@@ -71,10 +71,5 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>aasregistry-feature-discovery-integration</artifactId>
-			<version>${version}</version>
-		</dependency>
 	</dependencies>
 </project>
