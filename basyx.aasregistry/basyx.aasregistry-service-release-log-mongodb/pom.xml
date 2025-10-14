@@ -37,7 +37,6 @@
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.aasregistry-service-mongodb-storage</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.aasregistry-feature-search</artifactId>
@@ -72,6 +71,11 @@
 			<artifactId>elasticsearch-java</artifactId>
 			<version>9.1.5</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>aasregistry-feature-discovery-integration</artifactId>
+			<scope>test</scope>
+			<version>${revision}</version>
+		</dependency>
 	</dependencies>
-
 </project>
