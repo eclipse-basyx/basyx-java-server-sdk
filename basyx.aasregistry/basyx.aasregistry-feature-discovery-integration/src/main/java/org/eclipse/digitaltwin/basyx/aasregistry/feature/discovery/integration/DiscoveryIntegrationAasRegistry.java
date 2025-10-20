@@ -70,29 +70,49 @@ public class DiscoveryIntegrationAasRegistry implements AasRegistryStorage {
 	}
 
 	@Override
-	public void insertAasDescriptor(AssetAdministrationShellDescriptor descr) throws AasDescriptorAlreadyExistsException {
+	public void insertAasDescriptor(AssetAdministrationShellDescriptor descr)
+			throws AasDescriptorAlreadyExistsException {
 		decorated.insertAasDescriptor(descr);
-				@Valid List<org.eclipse.digitaltwin.basyx.aasregistry.model.@Valid SpecificAssetId> ids = descr.getSpecificAssetIds();
-				List<SpecificAssetId> specificAssetIds = ids.stream()
-						.map(rId -> {
-							SpecificAssetId assetId = new DefaultSpecificAssetId();
-							assetId.setName(rId.getName());
-							assetId.setValue(rId.getValue());
-							return assetId;
-						}).collect(Collectors.toList());
-		discoveryApi.createAllAssetLinksById(descr.getId(), specificAssetIds);
-	}
 
-	@Override
-	public void replaceAasDescriptor(@NonNull String aasDescriptorId, @NonNull AssetAdministrationShellDescriptor descriptor) throws AasDescriptorNotFoundException {
-		decorated.replaceAasDescriptor(aasDescriptorId, descriptor);
-		List<SpecificAssetId> specificAssetIds = descriptor.getSpecificAssetIds().stream()
+		List<org.eclipse.digitaltwin.basyx.aasregistry.model.SpecificAssetId> ids = descr.getSpecificAssetIds();
+		if (ids == null || ids.isEmpty()) {
+			log.debug("No specificAssetIds present for AAS '{}', skipping discovery integration", descr.getId());
+			return;
+		}
+
+		List<SpecificAssetId> specificAssetIds = ids.stream()
 				.map(rId -> {
 					SpecificAssetId assetId = new DefaultSpecificAssetId();
 					assetId.setName(rId.getName());
 					assetId.setValue(rId.getValue());
 					return assetId;
 				}).collect(Collectors.toList());
+
+		discoveryApi.createAllAssetLinksById(descr.getId(), specificAssetIds);
+	}
+
+	@Override
+	public void replaceAasDescriptor(@NonNull String aasDescriptorId,
+			@NonNull AssetAdministrationShellDescriptor descriptor)
+			throws AasDescriptorNotFoundException {
+		decorated.replaceAasDescriptor(aasDescriptorId, descriptor);
+
+		List<org.eclipse.digitaltwin.basyx.aasregistry.model.SpecificAssetId> ids = descriptor.getSpecificAssetIds();
+
+		if (ids == null || ids.isEmpty()) {
+			log.debug("No specificAssetIds present for AAS '{}', skipping discovery integration update", aasDescriptorId);
+			discoveryApi.deleteAllAssetLinksById(aasDescriptorId);
+			return;
+		}
+
+		List<SpecificAssetId> specificAssetIds = ids.stream()
+				.map(rId -> {
+					SpecificAssetId assetId = new DefaultSpecificAssetId();
+					assetId.setName(rId.getName());
+					assetId.setValue(rId.getValue());
+					return assetId;
+				})
+				.collect(Collectors.toList());
 
 		discoveryApi.deleteAllAssetLinksById(aasDescriptorId);
 		discoveryApi.createAllAssetLinksById(aasDescriptorId, specificAssetIds);
